@@ -3,15 +3,9 @@
   <span class="gameTitle">Immortality Idle</span>
   <div class="panelContainer">
     <div class="leftPanel">
-      <div class="timePanel">
-        <span class="panelHeader">How will you spend your time?</span>
-      </div>
-      <div class="attributesPanel">
-        <span class="panelHeader">Attributes</span>
-      </div>
-      <div class="healthPanel">
-        <span class="panelHeader">Status</span>
-      </div>
+      <app-time-panel class="timePanel"></app-time-panel>
+      <app-attributes-panel class="attributesPanel"></app-attributes-panel>
+      <app-health-panel class="healthPanel"></app-health-panel>
     </div>
     <div class="centerPanel">
       <div class="activityPanel">
@@ -25,14 +19,11 @@
       <div class="homePanel">
         <span class="panelHeader">Home</span>
       </div>
-      <div class="logPanel">
-        <span class="panelHeader">Log</span>
-      </div>
+      <app-log-panel class="logPanel"></app-log-panel>
+
     </div>
   </div>
-  <div class="inventoryPanel">
-    <span class="panelHeader">Inventory</span>
-  </div>
+  <app-inventory-panel class="inventoryPanel"></app-inventory-panel>
 </div>
 
 <!-- Footer -->
