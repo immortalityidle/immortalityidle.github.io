@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 const TICK_INTERVAL_MS = 500;
 
@@ -6,12 +7,14 @@ const TICK_INTERVAL_MS = 500;
   providedIn: 'root'
 })
 export class MainLoopService {
+  tickSubject = new Subject();
+
   constructor() {
   }
 
   start() {
     window.setInterval(()=> {
-      console.log('tick tock');
+      this.tickSubject.next(undefined);
     }, TICK_INTERVAL_MS);
   }
 }
