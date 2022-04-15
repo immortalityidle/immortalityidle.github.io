@@ -8,19 +8,12 @@
       <app-health-panel class="healthPanel"></app-health-panel>
     </div>
     <div class="centerPanel">
-      <div class="activityPanel">
-        <span class="panelHeader">Activities</span>
-      </div>
+      <app-activity-panel class="activityPanel"></app-activity-panel>
     </div>
     <div class="rightPanel">
-      <div class="equipmentPanel">
-        <span class="panelHeader">Equipment</span>
-      </div>
-      <div class="homePanel">
-        <span class="panelHeader">Home</span>
-      </div>
+      <app-equipment-panel class="equipmentPanel"></app-equipment-panel>
+      <app-home-panel class="homePanel"></app-home-panel>
       <app-log-panel class="logPanel"></app-log-panel>
-
     </div>
   </div>
   <app-inventory-panel class="inventoryPanel"></app-inventory-panel>
@@ -30,6 +23,5 @@
 <footer>
   This game should be hosted on immortalityidle.github.io. If you see it somewhere else, it's stolen.
 </footer>
-
 
 <router-outlet></router-outlet>

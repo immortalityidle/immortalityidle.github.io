@@ -12,6 +12,8 @@ import { HealthPanelComponent } from './health-panel/health-panel.component';
 import { HomePanelComponent } from './home-panel/home-panel.component';
 import { LogPanelComponent } from './log-panel/log-panel.component';
 import { InventoryPanelComponent } from './inventory-panel/inventory-panel.component';
+import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
+import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { InventoryPanelComponent } from './inventory-panel/inventory-panel.compo
     HealthPanelComponent,
     HomePanelComponent,
     LogPanelComponent,
-    InventoryPanelComponent
+    InventoryPanelComponent,
+    ActivityPanelComponent,
+    EquipmentPanelComponent
   ],
   imports: [
     BrowserModule,
