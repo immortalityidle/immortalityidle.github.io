@@ -1,5 +1,16 @@
-<span class="panelHeader">Status</span>
-<div *ngFor="let statusObject of gameStateService.gameState.characterState.status | keyvalue">
-<!--TODO: fancy bars instead of text-->
-{{statusObject.key | titlecase}}: {{statusObject.value.current}} / {{statusObject.value.max}}
-</div>
+<span class="panelHeader">You are {{gameStateService.gameState.characterState.age / (24 * 365) | number: '1.0-0'}} years,
+  {{(gameStateService.gameState.characterState.age / (24)) % 365 | number: '1.0-0'}} days old.
+  You expect to live to {{gameStateService.gameState.characterState.lifespan / (24 * 365) | number: '1.0-0'}}.
+</span>
+<table>
+  <tr *ngFor="let statusObject of gameStateService.gameState.characterState.status | keyvalue">
+    <td>{{statusObject.key | titlecase}}</td>
+    <td>
+      <progress style="width:100px"
+        [value]="statusObject.value.current"
+        [max]="statusObject.value.max">
+        <span></span>
+      </progress>
+    </td>
+  </tr>
+</table>

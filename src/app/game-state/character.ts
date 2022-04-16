@@ -28,4 +28,9 @@ export class Character {
       max: 100
     }
   }
+  money = 0;
+  // age in hours
+  age = 18 * 365 * 24;
+  lifespan = 30 * 365 * 24;
+
 }

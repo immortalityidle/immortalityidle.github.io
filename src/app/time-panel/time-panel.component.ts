@@ -31,6 +31,18 @@ export class TimePanelComponent implements OnInit {
         if (this.activities.length > 0) {
           this.currentActivity = this.activities[this.currentActivityIndex];
           this.currentActivity.consequence();
+          this.character.age++;
+          // check for death
+          if (this.character.status.health.current <= 0 || this.character.age >= this.character.lifespan){
+            //TODO: call reincarnation function
+          }
+          // check for exhaustion
+          if (this.character.status.stamina.current <= 0){
+            this.character.age += 24;
+            this.character.status.stamina.current = this.character.status.stamina.max;
+            this.currentActivityTickCount = 0;
+            this.currentActivityIndex = 0;
+          }
           if (this.currentActivityTickCount < this.currentActivity.repeatTimes) {
             this.currentActivityTickCount++;
           } else {

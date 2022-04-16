@@ -12,6 +12,7 @@ export class GameState {
       consequence: () => {
         this.characterState.attributes.strength += .1;
         this.characterState.status.stamina.current -= 5;
+        this.characterState.money += Math.floor(this.characterState.attributes.strength * 0.1);
       }
     });
 
@@ -21,6 +22,7 @@ export class GameState {
       consequence: () => {
         this.characterState.attributes.charisma += 1;
         this.characterState.status.stamina.current -= 1;
+        this.characterState.money += Math.floor(this.characterState.attributes.charisma * 0.1);
       }
     });
 
