@@ -85,6 +85,10 @@ export class TimePanelComponent implements OnInit {
 
   onRemoveClick(entry: ActivityLoopEntry): void{
     let index = this.loopEntries.indexOf(entry);
+    // make sure we're not running past the end of the entries array
+    if (index == this.loopEntries.length - 1){
+      this.currentIndex = 0;
+    }
     this.loopEntries.splice(index,1);
   }
 
