@@ -11,7 +11,7 @@ export interface ActivityReward {
 }
 
 export enum ActivityCostType {
-  Time
+  Placeholder
 }
 
 export interface ActivityCost {
@@ -21,6 +21,7 @@ export interface ActivityCost {
 
 export interface Activity {
   name: string;
+  timeCost: number;
   costs: ActivityCost[];
   rewards: ActivityReward[];
 }

@@ -12,6 +12,7 @@ import { MainLoopService } from '../main-loop.service';
 export class TimePanelComponent implements OnInit {
   character: Character;
 
+  currentActivity?: Activity = undefined;
   currentActivityIndex = 0;
   currentActivityTickCount = 0;
   activities: Activity[];
@@ -28,20 +29,20 @@ export class TimePanelComponent implements OnInit {
     this.mainLoopService.tickSubject.subscribe(
       (next) => {
         if (this.activities.length > 0) {
-          const currentActivity = this.activities[this.currentActivityIndex];
-          for(const cost of currentActivity.costs) {
+          this.currentActivity = this.activities[this.currentActivityIndex];
+          if (this.currentActivityTickCount < this.currentActivity.timeCost) {
+            this.currentActivityTickCount++;
+          } else {
+            this.earnReward(this.currentActivity);
+            this.currentActivityTickCount = 0;
+            this.currentActivityIndex++;
+            if (this.currentActivityIndex == this.activities.length) {
+              this.currentActivityIndex = 0;
+            }
+          }
+          for(const cost of this.currentActivity.costs) {
             switch (cost.type) {
-              case ActivityCostType.Time:
-                if (this.currentActivityTickCount < cost.amount) {
-                  this.currentActivityTickCount++;
-                } else {
-                  this.earnReward(currentActivity);
-                  this.currentActivityTickCount = 0;
-                  this.currentActivityIndex++;
-                  if (this.currentActivityIndex == this.activities.length) {
-                    this.currentActivityIndex = 0;
-                  }
-                }
+              case ActivityCostType.Placeholder:
                 break;
               default:
                 console.error('Unknown cost type:' + cost.type);

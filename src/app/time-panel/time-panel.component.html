@@ -1,4 +1,5 @@
 <span class="panelHeader">How will you spend your time?</span>
 <div *ngFor="let activity of activities">
   {{activity.name}}
+  <progress [value]="activity == currentActivity ? currentActivityTickCount : 0" [max]="activity.timeCost"> 32% </progress>
 </div>
