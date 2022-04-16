@@ -1,5 +1,13 @@
 <span class="panelHeader">How will you spend your time?</span>
-<div *ngFor="let activity of activities">
-  {{activity.name}}
-  <progress [value]="activity == currentActivity ? currentActivityTickCount : 0" [max]="activity.timeCost"> 32% </progress>
-</div>
+<table>
+  <tr *ngFor="let activity of activities">
+    <td><button (click)="onPlusClick(activity)">+</button><button (click)="onMinusClick(activity)">-</button></td>
+    <td>{{activity.name}}</td>
+    <td>
+      <progress style="width:{{activity.repeatTimes * 5}}px"
+        [value]="activity == currentActivity ? currentActivityTickCount : 0"
+        [max]="activity.repeatTimes">
+      </progress>
+    </td>
+  </tr>
+</table>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Activity, ActivityCostType, ActivityRewardType } from '../game-state/activity';
+import { Activity } from '../game-state/activity';
 import { Character, CharacterAttribute } from '../game-state/character';
 import { GameStateService } from '../game-state/game-state.service';
 import { MainLoopService } from '../main-loop.service';
@@ -30,22 +30,14 @@ export class TimePanelComponent implements OnInit {
       (next) => {
         if (this.activities.length > 0) {
           this.currentActivity = this.activities[this.currentActivityIndex];
-          if (this.currentActivityTickCount < this.currentActivity.timeCost) {
+          this.currentActivity.consequence();
+          if (this.currentActivityTickCount < this.currentActivity.repeatTimes) {
             this.currentActivityTickCount++;
           } else {
-            this.earnReward(this.currentActivity);
-            this.currentActivityTickCount = 0;
             this.currentActivityIndex++;
+            this.currentActivityTickCount = 0;
             if (this.currentActivityIndex == this.activities.length) {
               this.currentActivityIndex = 0;
-            }
-          }
-          for(const cost of this.currentActivity.costs) {
-            switch (cost.type) {
-              case ActivityCostType.Placeholder:
-                break;
-              default:
-                console.error('Unknown cost type:' + cost.type);
             }
           }
         }
@@ -53,32 +45,12 @@ export class TimePanelComponent implements OnInit {
     )
   }
 
-  earnReward(activity: Activity) {
-    for (const reward of activity.rewards) {
-      switch(reward.type) {
-        case ActivityRewardType.Attribute:
-          // TODO: This doesn't scale well. There's probably a better way to do this.
-          switch (reward.attribute) {
-            case CharacterAttribute.Charisma:
-              this.character.attributes.charisma++;
-              break;
-            case CharacterAttribute.Intelligence:
-              this.character.attributes.intelligence++;
-              break;
-            case CharacterAttribute.Speed:
-              this.character.attributes.speed++;
-              break;
-            case CharacterAttribute.Strength:
-              this.character.attributes.strength++;
-              break;
-            case CharacterAttribute.Toughness:
-              this.character.attributes.toughness++;
-              break;
-          }
-          break;
-        default:
-          console.error('Unknown reward type:' + reward.type);
-      }
-    }
+  onPlusClick(activity: Activity): void{
+    activity.repeatTimes++;
   }
+
+  onMinusClick(activity: Activity): void{
+    activity.repeatTimes--;
+  }
+
 }

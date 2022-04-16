@@ -1,4 +1,4 @@
-import { Activity, ActivityRewardType } from './activity';
+import { Activity } from './activity';
 import { Character, CharacterAttribute } from './character';
 
 export class GameState {
@@ -7,29 +7,30 @@ export class GameState {
 
   constructor() {
     this.activityLoop.push({
-      name: 'Software Testing',
-      timeCost: 10,
-      costs: [],
-      rewards: [
-        {
-          type: ActivityRewardType.Attribute,
-          attribute: CharacterAttribute.Toughness,
-          amount: 1,
-        },
-      ],
+      name: 'Blacksmithing',
+      repeatTimes: 5,
+      consequence: () => {
+        this.characterState.attributes.strength += .1;
+        this.characterState.status.stamina.current -= 5;
+      }
     });
 
     this.activityLoop.push({
-      name: 'Tripping and falling',
-      timeCost: 20,
-      costs: [],
-      rewards: [
-        {
-          type: ActivityRewardType.Attribute,
-          attribute: CharacterAttribute.Charisma,
-          amount: 1,
-        },
-      ],
+      name: 'Begging',
+      repeatTimes: 3,
+      consequence: () => {
+        this.characterState.attributes.charisma += 1;
+        this.characterState.status.stamina.current -= 1;
+      }
     });
+
+    this.activityLoop.push({
+      name: 'Resting',
+      repeatTimes: 8,
+      consequence: () => {
+        this.characterState.status.stamina.current += 1;
+      }
+    });
+
   }
 }
