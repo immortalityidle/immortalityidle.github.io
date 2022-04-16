@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -7,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ActivityPanelComponent implements OnInit {
 
-  constructor() { }
+  constructor(gameStateService: GameStateService) {
+  }
 
   ngOnInit(): void {
   }

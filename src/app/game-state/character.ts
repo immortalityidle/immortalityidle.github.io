@@ -1,3 +1,11 @@
+export enum CharacterAttribute {
+  Strength,
+  Toughness,
+  Speed,
+  Intelligence,
+  Charisma
+}
+
 export class Character {
   attributes = {
     strength: 0,

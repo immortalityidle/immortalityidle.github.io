@@ -1,4 +1,4 @@
  <span class="panelHeader">Attributes</span>
-<div *ngFor="let attribute of gameStateService.gameState.characterState.attributes | keyvalue">
+<div *ngFor="let attribute of character.attributes | keyvalue">
 {{attribute.key | titlecase}}: {{attribute.value}}
 </div>
