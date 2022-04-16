@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
-const TICK_INTERVAL_MS = 500;
+const TICK_INTERVAL_MS = 50;
 
 @Injectable({
   providedIn: 'root'

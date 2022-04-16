@@ -1,14 +1,14 @@
-export enum CharacterAttribute {
-  Strength,
-  Toughness,
-  Speed,
-  Intelligence,
-  Charisma,
-  Spirituality
+export interface  CharacterAttribute {
+  strength: number,
+  toughness: number,
+  speed: number,
+  intelligence: number,
+  charisma: number,
+  spirituality: number
 }
 
 export class Character {
-  attributes = {
+  attributes: CharacterAttribute = {
     strength: 1,
     toughness: 1,
     speed: 1,

@@ -1,19 +1,20 @@
 <span class="panelHeader">How will you spend your time?</span>
 <table>
-  <tr *ngFor="let activity of activities">
-    <td>{{activity.name}} ({{activity.repeatTimes}} hours)</td>
+  <tr *ngFor="let entry of loopEntries">
+    <td>{{entry.activity.name}} ({{entry.repeatTimes}} hours)</td>
     <td>
-      <progress style="width:{{activity.repeatTimes * 5}}px"
-        [value]="activity == currentActivity ? currentActivityTickCount : 0"
-        [max]="activity.repeatTimes">
+      <progress style="width:{{entry.repeatTimes * 5}}px"
+        [value]="entry == currentLoopEntry ? currentTickCount : 0"
+        [max]="entry.repeatTimes">
       </progress>
     </td>
     <td>
       <!-- TODO: pretty up these buttons -->
-      <button (click)="onPlusClick(activity)">+</button>
-      <button (click)="onMinusClick(activity)">-</button>
-      <button (click)="onUpClick(activity)">Up</button>
-      <button (click)="onDownClick(activity)">Down</button>
+      <button (click)="onPlusClick(entry)">+</button>
+      <button (click)="onMinusClick(entry)">-</button>
+      <button (click)="onUpClick(entry)">Up</button>
+      <button (click)="onDownClick(entry)">Down</button>
+      <button (click)="onRemoveClick(entry)">X</button>
     </td>
   </tr>
 </table>

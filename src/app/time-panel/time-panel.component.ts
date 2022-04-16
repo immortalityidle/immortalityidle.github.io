@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Activity } from '../game-state/activity';
-import { Character, CharacterAttribute } from '../game-state/character';
+import { ActivityLoopEntry } from '../game-state/activity';
+import { Character } from '../game-state/character';
 import { GameStateService } from '../game-state/game-state.service';
 import { MainLoopService } from '../main-loop.service';
 
@@ -12,25 +12,25 @@ import { MainLoopService } from '../main-loop.service';
 export class TimePanelComponent implements OnInit {
   character: Character;
 
-  currentActivity?: Activity = undefined;
-  currentActivityIndex = 0;
-  currentActivityTickCount = 0;
-  activities: Activity[];
+  currentLoopEntry?: ActivityLoopEntry = undefined;
+  currentIndex = 0;
+  currentTickCount = 0;
+  loopEntries: ActivityLoopEntry[];
 
   constructor(
     private mainLoopService: MainLoopService,
     gameStateService: GameStateService
   ) {
-    this.activities = gameStateService.gameState.activityLoop;
+    this.loopEntries = gameStateService.gameState.activityLoop;
     this.character = gameStateService.gameState.characterState;
   }
 
   ngOnInit(): void {
     this.mainLoopService.tickSubject.subscribe(
       (next) => {
-        if (this.activities.length > 0) {
-          this.currentActivity = this.activities[this.currentActivityIndex];
-          this.currentActivity.consequence();
+        if (this.loopEntries.length > 0) {
+          this.currentLoopEntry = this.loopEntries[this.currentIndex];
+          this.currentLoopEntry.activity.consequence();
           this.character.age++;
           // check for death
           if (this.character.status.health.current <= 0 || this.character.age >= this.character.lifespan){
@@ -40,16 +40,16 @@ export class TimePanelComponent implements OnInit {
           if (this.character.status.stamina.current <= 0){
             this.character.age += 24;
             this.character.status.stamina.current = this.character.status.stamina.max;
-            this.currentActivityTickCount = 0;
-            this.currentActivityIndex = 0;
+            this.currentTickCount = 0;
+            this.currentIndex = 0;
           }
-          if (this.currentActivityTickCount < this.currentActivity.repeatTimes) {
-            this.currentActivityTickCount++;
+          if (this.currentTickCount < this.currentLoopEntry.repeatTimes) {
+            this.currentTickCount++;
           } else {
-            this.currentActivityIndex++;
-            this.currentActivityTickCount = 0;
-            if (this.currentActivityIndex == this.activities.length) {
-              this.currentActivityIndex = 0;
+            this.currentIndex++;
+            this.currentTickCount = 0;
+            if (this.currentIndex == this.loopEntries.length) {
+              this.currentIndex = 0;
             }
           }
         }
@@ -57,30 +57,35 @@ export class TimePanelComponent implements OnInit {
     )
   }
 
-  onPlusClick(activity: Activity): void{
-    activity.repeatTimes++;
+  onPlusClick(entry: ActivityLoopEntry): void{
+    entry.repeatTimes++;
   }
 
-  onMinusClick(activity: Activity): void{
-    activity.repeatTimes--;
+  onMinusClick(entry: ActivityLoopEntry): void{
+    entry.repeatTimes--;
   }
 
-  onUpClick(activity: Activity): void{
-    let index = this.activities.indexOf(activity);
-    if (index != 0 && this.activities.length > 1){
-      let swapper = this.activities[index - 1];
-      this.activities[index - 1] = activity;
-      this.activities[index] = swapper;
+  onUpClick(entry: ActivityLoopEntry): void{
+    let index = this.loopEntries.indexOf(entry);
+    if (index != 0 && this.loopEntries.length > 1){
+      let swapper = this.loopEntries[index - 1];
+      this.loopEntries[index - 1] = entry;
+      this.loopEntries[index] = swapper;
     }
   }
 
-  onDownClick(activity: Activity): void{
-    let index = this.activities.indexOf(activity);
-    if (index != this.activities.length - 1 && this.activities.length > 1){
-      let swapper = this.activities[index + 1];
-      this.activities[index + 1] = activity;
-      this.activities[index] = swapper;
+  onDownClick(entry: ActivityLoopEntry): void{
+    let index = this.loopEntries.indexOf(entry);
+    if (index != this.loopEntries.length - 1 && this.loopEntries.length > 1){
+      let swapper = this.loopEntries[index + 1];
+      this.loopEntries[index + 1] = entry;
+      this.loopEntries[index] = swapper;
     }
+  }
+
+  onRemoveClick(entry: ActivityLoopEntry): void{
+    let index = this.loopEntries.indexOf(entry);
+    this.loopEntries.splice(index,1);
   }
 
 }
