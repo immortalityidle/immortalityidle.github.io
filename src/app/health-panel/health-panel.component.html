@@ -1,1 +1,5 @@
 <span class="panelHeader">Status</span>
+<div *ngFor="let statusObject of gameStateService.gameState.characterState.status | keyvalue">
+<!--TODO: fancy bars instead of text-->
+{{statusObject.key | titlecase}}: {{statusObject.value.current}} / {{statusObject.value.max}}
+</div>
