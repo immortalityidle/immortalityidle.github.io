@@ -1,4 +1,4 @@
  <span class="panelHeader">Attributes</span>
 <div *ngFor="let attribute of character.attributes | keyvalue">
-{{attribute.key | titlecase}}: {{attribute.value | number}}
+  <span *ngIf="(attribute.value != 0)">{{attribute.key | titlecase}}: {{attribute.value | number}}</span>
 </div>

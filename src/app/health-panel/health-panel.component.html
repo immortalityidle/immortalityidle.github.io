@@ -3,14 +3,16 @@
   You expect to live to {{gameStateService.gameState.characterState.lifespan / (24 * 365) | number: '1.0-0'}}.
 </span>
 <table>
-  <tr *ngFor="let statusObject of gameStateService.gameState.characterState.status | keyvalue">
+  <ng-container *ngFor="let statusObject of gameStateService.gameState.characterState.status | keyvalue">
+  <tr *ngIf="(statusObject.value.max != 0)">
     <td>{{statusObject.key | titlecase}}</td>
-    <td>
-      <progress style="width:100px"
+    <td class="{{statusObject.key}}">
+      <progress
         [value]="statusObject.value.current"
         [max]="statusObject.value.max">
-        <span></span>
+        <div></div>
       </progress>
     </td>
   </tr>
+  </ng-container>
 </table>

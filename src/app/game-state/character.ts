@@ -3,16 +3,18 @@ export enum CharacterAttribute {
   Toughness,
   Speed,
   Intelligence,
-  Charisma
+  Charisma,
+  Spirituality
 }
 
 export class Character {
   attributes = {
-    strength: 0,
-    toughness: 0,
-    speed: 0,
-    intelligence: 0,
-    charisma: 0
+    strength: 1,
+    toughness: 1,
+    speed: 1,
+    intelligence: 1,
+    charisma: 1,
+    spirituality: 0
   }
   status = {
     health: {
@@ -24,13 +26,21 @@ export class Character {
       max: 100
     },
     mana: {
-      current: 100,
-      max: 100
+      current: 0,
+      max: 0
     }
   }
   money = 0;
   // age in hours
   age = 18 * 365 * 24;
   lifespan = 30 * 365 * 24;
+  equipment = {
+    head: null,
+    body: null,
+    leftHand: null,
+    rightHand: null,
+    legs: null,
+    feet: null
+  }
 
 }

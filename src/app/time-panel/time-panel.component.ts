@@ -65,4 +65,22 @@ export class TimePanelComponent implements OnInit {
     activity.repeatTimes--;
   }
 
+  onUpClick(activity: Activity): void{
+    let index = this.activities.indexOf(activity);
+    if (index != 0 && this.activities.length > 1){
+      let swapper = this.activities[index - 1];
+      this.activities[index - 1] = activity;
+      this.activities[index] = swapper;
+    }
+  }
+
+  onDownClick(activity: Activity): void{
+    let index = this.activities.indexOf(activity);
+    if (index != this.activities.length - 1 && this.activities.length > 1){
+      let swapper = this.activities[index + 1];
+      this.activities[index + 1] = activity;
+      this.activities[index] = swapper;
+    }
+  }
+
 }

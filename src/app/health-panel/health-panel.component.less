@@ -1,7 +1,25 @@
 progress {
   text-align: center;
   height: fit-content;
+  width: 200px;
 }
+
 progress:after {
   content: attr(value);
+}
+
+progress > div {
+  min-height: 20px;
+}
+
+.panelHeader {
+  white-space: nowrap;
+}
+
+.health > progress {
+  accent-color: red;
+}
+
+.stamina > progress {
+  accent-color: lightgreen;
 }
