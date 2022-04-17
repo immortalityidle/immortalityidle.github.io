@@ -1,3 +1,5 @@
+import { Inventory } from "./inventory";
+
 export interface  CharacterAttribute {
   strength: number,
   toughness: number,
@@ -9,11 +11,11 @@ export interface  CharacterAttribute {
 
 export class Character {
   attributes: CharacterAttribute = {
-    strength: 1,
-    toughness: 1,
-    speed: 1,
-    intelligence: 1,
-    charisma: 1,
+    strength: 10,
+    toughness: 10,
+    speed: 10,
+    intelligence: 10,
+    charisma: 10,
     spirituality: 0
   }
   status = {
@@ -42,5 +44,6 @@ export class Character {
     legs: null,
     feet: null
   }
+  inventory: Inventory = new Inventory(32);
 
 }

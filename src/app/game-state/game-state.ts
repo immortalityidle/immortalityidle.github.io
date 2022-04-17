@@ -67,6 +67,7 @@ export class GameState {
       description: "Mold metal into weapons, armor, and useful things. You need to be strong to be successful at this job.",
       consequence: () => {
         this.characterState.attributes.strength += .1;
+        this.characterState.attributes.toughness += .1;
         this.characterState.status.stamina.current -= 5;
         this.characterState.money += this.characterState.attributes.strength * 0.1;
       },
@@ -78,7 +79,27 @@ export class GameState {
         charisma: 0,
         spirituality: 0
       }
+    },
+    {
+      name: 'Gather Herbs',
+      description: "Search the natural world for useful herbs.",
+      consequence: () => {
+        this.characterState.attributes.intelligence += .1;
+        this.characterState.attributes.speed += .1;
+        this.characterState.status.stamina.current -= 5;
+        //TODO: make adding same things you already have combine stuff in the same slot
+        this.characterState.inventory.addItem({name: "herbs", description: "Useful herbs", quantity: 1});
+      },
+      requirements: {
+        strength: 0,
+        toughness: 0,
+        speed: 10,
+        intelligence: 10,
+        charisma: 0,
+        spirituality: 0
+      }
     }
+
   ];
 
   constructor() {

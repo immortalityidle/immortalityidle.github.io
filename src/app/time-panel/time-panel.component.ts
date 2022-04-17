@@ -43,7 +43,7 @@ export class TimePanelComponent implements OnInit {
             this.currentTickCount = 0;
             this.currentIndex = 0;
           }
-          if (this.currentTickCount < this.currentLoopEntry.repeatTimes) {
+          if (this.currentTickCount < this.currentLoopEntry.repeatTimes - 1) {
             this.currentTickCount++;
           } else {
             this.currentIndex++;
