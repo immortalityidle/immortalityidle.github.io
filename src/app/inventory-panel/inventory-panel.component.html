@@ -1,4 +1,12 @@
-<span class="panelHeader">Inventory</span>
+<table>
+  <tr>
+    <td class="inventoryLabelColumn">Inventory</td>
+    <td class="moneyColumn">Money: </td>
+    <td class="moneyColumn">{{character.money | number: '1.0-0'}}</td>
+    <td></td>
+  </tr>
+</table>
+
 <div class="inventoryGrid">
   <div *ngFor="let item of inventoryService.items">
     <div class="itemSlot">{{item.name}}</div>

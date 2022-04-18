@@ -1,6 +1,6 @@
-<span class="panelHeader">You are {{characterService.characterState.age / (24 * 365) | number: '1.0-0'}} years,
-  {{(characterService.characterState.age / (24)) % 365 | number: '1.0-0'}} days old.
-  You expect to live to {{characterService.characterState.lifespan / (24 * 365) | number: '1.0-0'}}.
+<span class="panelHeader">You are {{characterService.characterState.age / 365 | number: '1.0-0'}} years,
+  {{characterService.characterState.age % 365 | number: '1.0-0'}} days old.
+  You expect to live to {{characterService.characterState.lifespan / 365 | number: '1.0-0'}}.
 </span>
 <table>
   <ng-container *ngFor="let statusObject of characterService.characterState.status | keyvalue">
@@ -8,7 +8,7 @@
     <td>{{statusObject.key | titlecase}}</td>
     <td class="{{statusObject.key}}">
       <progress
-        [value]="statusObject.value.current"
+        [value]="statusObject.value.value"
         [max]="statusObject.value.max">
         <div></div>
       </progress>

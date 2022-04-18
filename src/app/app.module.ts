@@ -4,8 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatCardModule} from '@angular/material/card';
-import {MatTabsModule} from '@angular/material/tabs';
 import { TimePanelComponent } from './time-panel/time-panel.component';
 import { AttributesPanelComponent } from './attributes-panel/attributes-panel.component';
 import { HealthPanelComponent } from './health-panel/health-panel.component';
@@ -30,9 +28,7 @@ import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.compo
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
-    MatCardModule,
-    MatTabsModule
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

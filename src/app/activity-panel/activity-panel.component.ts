@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
-import { Activity } from '../game-state/activity';
-import { Character, CharacterAttribute } from '../game-state/character';
+import { CharacterAttribute } from '../game-state/character';
 import { ActivityService } from './activity.service';
 import { CharacterService } from '../game-state/character.service';
+import { Activity } from '../game-state/activity';
+import { Character } from '../game-state/character';
 
 @Component({
   selector: 'app-activity-panel',
@@ -38,7 +39,8 @@ export class ActivityPanelComponent implements OnInit {
     const keys: (keyof CharacterAttribute)[] = Object.keys(character.attributes) as (keyof CharacterAttribute)[];
     for (const keyIndex in keys){
       const key = keys[keyIndex];
-      if (character.attributes[key] < activity.requirements[key]){
+      // @ts-ignore
+      if (character.attributes[key].value < activity.requirements[key]){
         return false;
       }
     }

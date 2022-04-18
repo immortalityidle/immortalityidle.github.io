@@ -1,7 +1,7 @@
 <span class="panelHeader">How will you spend your time?</span>
 <table>
   <tr *ngFor="let entry of loopEntries">
-    <td>{{entry.activity.name}} ({{entry.repeatTimes}} hours)</td>
+    <td>{{entry.activity.name}} ({{entry.repeatTimes}} {{(entry.repeatTimes == 1) ? "day" : "days"}})</td>
     <td>
       <progress style="width:{{entry.repeatTimes * 5}}px"
         [value]="entry == currentLoopEntry ? currentTickCount : 0"
