@@ -19,7 +19,7 @@ export class ActivityService {
         const key = keys[Math.floor(Math.random() * (keys.length - 1))];
         // @ts-ignore
         this.characterService.characterState.attributes[key] += .1;
-        this.characterService.characterState.status.stamina.current -= 5;
+        this.characterService.characterState.status.stamina.value -= 5;
         this.characterService.characterState.money += 0.1;
       },
       requirements: {
@@ -35,9 +35,9 @@ export class ActivityService {
       name: 'Resting',
       description: "Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.",
       consequence: () => {
-        this.characterService.characterState.status.stamina.current += (this.characterService.characterState.status.stamina.max / 8);
-        if (this.characterService.characterState.status.stamina.current > this.characterService.characterState.status.stamina.max){
-          this.characterService.characterState.status.stamina.current = this.characterService.characterState.status.stamina.max;
+        this.characterService.characterState.status.stamina.value += (this.characterService.characterState.status.stamina.max / 8);
+        if (this.characterService.characterState.status.stamina.value > this.characterService.characterState.status.stamina.max){
+          this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
         }
       },
       requirements: {
@@ -53,9 +53,9 @@ export class ActivityService {
       name: 'Begging',
       description: "Find a nice spot on the side of the street, look sad, and put your hand out. Someone might put a coin in it if you are charasmatic enough.",
       consequence: () => {
-        this.characterService.characterState.attributes.charisma += 0.1;
-        this.characterService.characterState.status.stamina.current -= 1;
-        this.characterService.characterState.money += this.characterService.characterState.attributes.charisma * 0.1;
+        this.characterService.characterState.attributes.charisma.value += 0.1;
+        this.characterService.characterState.status.stamina.value -= 1;
+        this.characterService.characterState.money += this.characterService.characterState.attributes.charisma.value * 0.1;
         //TODO: figure out diminishing returns for this
       },
       requirements: {
@@ -71,10 +71,10 @@ export class ActivityService {
       name: 'Blacksmithing',
       description: "Mold metal into weapons, armor, and useful things. You need to be strong to be successful at this job.",
       consequence: () => {
-        this.characterService.characterState.attributes.strength += .1;
-        this.characterService.characterState.attributes.toughness += .1;
-        this.characterService.characterState.status.stamina.current -= 5;
-        this.characterService.characterState.money += this.characterService.characterState.attributes.strength * 0.1;
+        this.characterService.characterState.attributes.strength.value += .1;
+        this.characterService.characterState.attributes.toughness.value += .1;
+        this.characterService.characterState.status.stamina.value -= 5;
+        this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.1;
       },
       requirements: {
         strength: 10,
@@ -89,9 +89,8 @@ export class ActivityService {
       name: 'Gather Herbs',
       description: "Search the natural world for useful herbs.",
       consequence: () => {
-        this.characterService.characterState.attributes.intelligence += .1;
-        this.characterService.characterState.attributes.speed += .1;
-        this.characterService.characterState.status.stamina.current -= 5;
+        this.characterService.characterState.attributes.intelligence.value += .1;
+        this.characterService.characterState.status.stamina.value -= 5;
         //TODO: make adding same things you already have combine stuff in the same slot
         this.inventoryService.addItem({name: "herbs", description: "Useful herbs", quantity: 1});
       },
