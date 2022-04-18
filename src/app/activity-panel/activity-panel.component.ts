@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { Activity, ActivityLoopEntry } from '../game-state/activity';
-import { Character, CharacterAttribute } from '../game-state/character';
+import { Character } from '../game-state/character';
 
 @Component({
   selector: 'app-activity-panel',
@@ -35,7 +35,7 @@ export class ActivityPanelComponent implements OnInit {
     for (const keyIndex in keys){
       const key = keys[keyIndex];
       // @ts-ignore
-      if (character.attributes[key] < activity.requirements[key]){
+      if (character.attributes[key].value < activity.requirements[key]){
         return false;
       }
     }

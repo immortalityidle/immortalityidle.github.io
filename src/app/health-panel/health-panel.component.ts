@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Character } from '../game-state/character';
 import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
@@ -8,7 +9,11 @@ import { GameStateService } from '../game-state/game-state.service';
 })
 export class HealthPanelComponent implements OnInit {
 
-  constructor(public gameStateService: GameStateService) { }
+  character: Character;
+
+  constructor(public gameStateService: GameStateService) { 
+    this.character = gameStateService.gameState.characterState;
+  }
 
   ngOnInit(): void {
   }

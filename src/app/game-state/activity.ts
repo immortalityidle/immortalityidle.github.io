@@ -1,9 +1,16 @@
-import { CharacterAttribute } from "./character";
+export interface Requirements {
+  strength: number;
+  toughness: number;
+  speed: number;
+  intelligence: number;
+  charisma: number;
+  spirituality: number;
+}
 
 export interface Activity {
   name: string;
   description: string;
-  requirements: CharacterAttribute;
+  requirements: Requirements;
   consequence: () => void;
 }
 

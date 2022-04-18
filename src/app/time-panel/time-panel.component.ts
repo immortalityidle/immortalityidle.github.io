@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { GameStateService } from '../game-state/game-state.service';
+import { Home } from '../game-state/home';
 import { MainLoopService } from '../main-loop.service';
 
 @Component({
@@ -11,6 +12,7 @@ import { MainLoopService } from '../main-loop.service';
 })
 export class TimePanelComponent implements OnInit {
   character: Character;
+  home: Home;
 
   currentLoopEntry?: ActivityLoopEntry = undefined;
   currentIndex = 0;
@@ -23,6 +25,7 @@ export class TimePanelComponent implements OnInit {
   ) {
     this.loopEntries = gameStateService.gameState.activityLoop;
     this.character = gameStateService.gameState.characterState;
+    this.home = gameStateService.gameState.home;
   }
 
   ngOnInit(): void {
@@ -31,15 +34,20 @@ export class TimePanelComponent implements OnInit {
         if (this.loopEntries.length > 0) {
           this.currentLoopEntry = this.loopEntries[this.currentIndex];
           this.currentLoopEntry.activity.consequence();
+          this.home.consequence();
           this.character.age++;
+          console.log("You spend the day doing " + this.currentLoopEntry.activity.name);
           // check for death
-          if (this.character.status.health.current <= 0 || this.character.age >= this.character.lifespan){
+          if (this.character.status.health.value <= 0 || this.character.age >= this.character.lifespan){
+            console.log("You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
             //TODO: call reincarnation function
           }
           // check for exhaustion
-          if (this.character.status.stamina.current <= 0){
-            this.character.age += 24;
-            this.character.status.stamina.current = this.character.status.stamina.max;
+          if (this.character.status.stamina.value < 0){
+            // take 5 days to recover, regain stamina, restart loop
+            console.log("You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.");
+            this.character.age += 5;
+            this.character.status.stamina.value = this.character.status.stamina.max;
             this.currentTickCount = 0;
             this.currentIndex = 0;
           }
@@ -86,7 +94,7 @@ export class TimePanelComponent implements OnInit {
   onRemoveClick(entry: ActivityLoopEntry): void{
     let index = this.loopEntries.indexOf(entry);
     // make sure we're not running past the end of the entries array
-    if (index == this.loopEntries.length - 1){
+    if (this.currentIndex >= this.loopEntries.length - 1){
       this.currentIndex = 0;
     }
     this.loopEntries.splice(index,1);
