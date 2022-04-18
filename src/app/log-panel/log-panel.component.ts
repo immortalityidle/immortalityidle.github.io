@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LogService } from './log.service';
 
 @Component({
   selector: 'app-log-panel',
@@ -7,7 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LogPanelComponent implements OnInit {
 
-  constructor() { }
+  constructor(logService: LogService) {
+    logService.logAdded.subscribe(
+      (next) => {
+        // TODO: Add the log
+        console.log(next);
+      }
+    )
+  }
 
   ngOnInit(): void {
   }

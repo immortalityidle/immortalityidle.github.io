@@ -1,6 +1,5 @@
-import { Inventory } from "./inventory";
 
-export interface  CharacterAttribute {
+export interface CharacterAttribute {
   strength: number,
   toughness: number,
   speed: number,
@@ -44,6 +43,4 @@ export class Character {
     legs: null,
     feet: null
   }
-  inventory: Inventory = new Inventory(32);
-
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
-import { Inventory, Item } from "../game-state/inventory";
+import { InventoryService } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -8,11 +8,7 @@ import { Inventory, Item } from "../game-state/inventory";
   styleUrls: ['./inventory-panel.component.less']
 })
 export class InventoryPanelComponent implements OnInit {
-
-  inventory: Inventory;
-
-  constructor(gameStateService: GameStateService) {
-    this.inventory = gameStateService.gameState.characterState.inventory;
+  constructor(public inventoryService: InventoryService) {
   }
 
   ngOnInit(): void {

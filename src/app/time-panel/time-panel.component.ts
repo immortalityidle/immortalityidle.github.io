@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivityService } from '../activity-panel/activity.service';
 import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
+import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { MainLoopService } from '../main-loop.service';
 
@@ -19,10 +21,12 @@ export class TimePanelComponent implements OnInit {
 
   constructor(
     private mainLoopService: MainLoopService,
-    gameStateService: GameStateService
+    activityService: ActivityService,
+    gameStateService: GameStateService,
+    characterService: CharacterService
   ) {
-    this.loopEntries = gameStateService.gameState.activityLoop;
-    this.character = gameStateService.gameState.characterState;
+    this.loopEntries = activityService.activityLoop;
+    this.character = characterService.characterState;
   }
 
   ngOnInit(): void {
