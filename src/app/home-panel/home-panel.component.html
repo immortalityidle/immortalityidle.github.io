@@ -4,5 +4,6 @@
 <br/>
 <span>You own {{character.land}} {{character.land == 1 ? "plot" : "plots"}} of land</span>
 <br/>
-<tr ></tr>
 <button *ngIf="(character.money > 100)" (click)="buyClick()">Buy Land</button>
+<br/>
+<button *ngIf="(home.name != nextHome.name && character.money >= nextHome.cost && character.land >= nextHome.landRequired)" (click)="upgradeClick()">Get a better house</button>

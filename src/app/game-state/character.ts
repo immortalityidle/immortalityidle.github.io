@@ -1,3 +1,4 @@
+import { HealthPanelComponent } from "../health-panel/health-panel.component";
 
 export interface CharacterAttribute {
   strength: number,
@@ -86,5 +87,14 @@ export class Character {
     rightHand: null,
     legs: null,
     feet: null
+  }
+
+  checkOverage(){
+    if (this.status.health.value > this.status.health.max){
+      this.status.health.value = this.status.health.max;
+    }
+    if (this.status.stamina.value > this.status.stamina.max){
+      this.status.stamina.value = this.status.stamina.max;
+    }
   }
 }

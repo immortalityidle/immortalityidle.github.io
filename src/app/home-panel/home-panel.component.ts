@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Home } from '../game-state/home';
 import { Character } from '../game-state/character';
-import { GameStateService } from '../game-state/game-state.service';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 
@@ -14,16 +13,25 @@ import { HomeService } from '../game-state/home.service';
 export class HomePanelComponent implements OnInit {
 
   home: Home;
+  nextHome: Home;
   character: Character;
 
-  constructor(
-    public characterService: CharacterService,
-    homeService: HomeService) {
+
+  constructor(public characterService: CharacterService,
+    public homeService: HomeService) {
     this.home = homeService.home;
+    this.nextHome = homeService.getNextHome();
     this.character = characterService.characterState;
   }
 
   ngOnInit(): void {
+  }
+
+
+  upgradeClick(){
+    this.homeService.upgradeToNextHome();
+    this.home = this.homeService.home;
+    this.nextHome = this.homeService.getNextHome();
   }
 
   buyClick(){

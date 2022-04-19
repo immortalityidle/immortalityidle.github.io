@@ -15,7 +15,6 @@ import { MainLoopService } from '../main-loop.service';
 })
 export class TimePanelComponent implements OnInit {
   character: Character;
-  home: Home;
 
   currentLoopEntry?: ActivityLoopEntry = undefined;
   currentIndex = 0;
@@ -26,12 +25,11 @@ export class TimePanelComponent implements OnInit {
     private mainLoopService: MainLoopService,
     activityService: ActivityService,
     characterService: CharacterService,
-    homeService: HomeService,
+    private homeService: HomeService,
     private logService: LogService
   ) {
     this.loopEntries = activityService.activityLoop;
     this.character = characterService.characterState;
-    this.home = homeService.home;
   }
 
   ngOnInit(): void {
@@ -40,7 +38,7 @@ export class TimePanelComponent implements OnInit {
         if (this.loopEntries.length > 0) {
           this.currentLoopEntry = this.loopEntries[this.currentIndex];
           this.currentLoopEntry.activity.consequence();
-          this.home.consequence();
+          this.homeService.home.consequence();
           this.character.age++;
           this.logService.addLogMessage("You spend the day doing " + this.currentLoopEntry.activity.name);
           // check for death

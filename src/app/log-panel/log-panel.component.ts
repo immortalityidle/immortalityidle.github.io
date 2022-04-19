@@ -13,7 +13,6 @@ export class LogPanelComponent implements OnInit {
     logService.logAdded.subscribe(
       (next) => {
         // TODO: Add the log
-        console.log(next);
         this.log.unshift(next);
       }
     );
