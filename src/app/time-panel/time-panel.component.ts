@@ -31,7 +31,7 @@ export class TimePanelComponent implements OnInit {
   ) {
     this.loopEntries = activityService.activityLoop;
     this.character = characterService.characterState;
-    this.home = homeService.home;;
+    this.home = homeService.home;
   }
 
   ngOnInit(): void {

@@ -8,8 +8,10 @@ export interface CharacterAttribute {
   spirituality: number
 }
 
+export type AttributeType = 'strength' | 'toughness' | 'speed' | 'intelligence' | 'charisma' | 'spirituality';
+
 export class Character {
-  attributes = {
+  attributes: {[key in AttributeType]: {description: string, value: number, aptitude: number}} = {
     strength: {
       description: "An immortal must have raw physical power.",
       value: 1,

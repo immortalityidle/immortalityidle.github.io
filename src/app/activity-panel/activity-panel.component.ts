@@ -39,7 +39,6 @@ export class ActivityPanelComponent implements OnInit {
     const keys: (keyof CharacterAttribute)[] = Object.keys(character.attributes) as (keyof CharacterAttribute)[];
     for (const keyIndex in keys){
       const key = keys[keyIndex];
-      // @ts-ignore
       if (character.attributes[key].value < activity.requirements[key]){
         return false;
       }

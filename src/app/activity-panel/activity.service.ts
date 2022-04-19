@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Activity, ActivityLoopEntry } from '../game-state/activity';
+import { AttributeType } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService } from '../game-state/inventory.service';
 
@@ -14,10 +15,9 @@ export class ActivityService {
       name: 'Odd Jobs',
       description: "Run errands, pull weeds, clean toilet pits, or whatever else you earn a coin doing. Undignified work for a future immortal, but you have to eat to live.",
       consequence: () => {
-        const keys = Object.keys(this.characterService.characterState.attributes);
+        const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
         // randomly choose any of the stats except the last one (spirituality)
         const key = keys[Math.floor(Math.random() * (keys.length - 1))];
-        // @ts-ignore
         this.characterService.characterState.attributes[key].value += .1;
         this.characterService.characterState.status.stamina.value -= 5;
         this.characterService.characterState.money += 0.1;
