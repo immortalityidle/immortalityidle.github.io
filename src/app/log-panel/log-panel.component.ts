@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LogService } from './log.service';
 
 @Component({
@@ -7,14 +7,16 @@ import { LogService } from './log.service';
   styleUrls: ['./log-panel.component.less']
 })
 export class LogPanelComponent implements OnInit {
+  log: string[] = [];
 
   constructor(logService: LogService) {
     logService.logAdded.subscribe(
       (next) => {
         // TODO: Add the log
         console.log(next);
+        this.log.unshift(next);
       }
-    )
+    );
   }
 
   ngOnInit(): void {

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { LogService } from '../log-panel/log.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
 
@@ -17,7 +18,7 @@ export class HomeService {
       landRequired: 0,
       consequence: () => {
         if (Math.random() < 0.3){
-          console.log("You got roughed up by the owner of the field. You should probably buy your own land.");
+          this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land.");
           this.characterService.characterState.status.health.value--;
         }
       }
@@ -34,7 +35,8 @@ export class HomeService {
       }
     }
   ];
-  constructor(private characterService: CharacterService) {
+  constructor(private characterService: CharacterService,
+    private logService: LogService) {
     this.home =this.homesList[0];
   }
 }

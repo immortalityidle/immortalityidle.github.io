@@ -6,6 +6,7 @@ import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { Home } from '../game-state/home';
 import { HomeService } from '../game-state/home.service';
+import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 
 @Component({
@@ -25,9 +26,9 @@ export class TimePanelComponent implements OnInit {
   constructor(
     private mainLoopService: MainLoopService,
     activityService: ActivityService,
-    gameStateService: GameStateService,
     characterService: CharacterService,
-    homeService: HomeService
+    homeService: HomeService,
+    private logService: LogService
   ) {
     this.loopEntries = activityService.activityLoop;
     this.character = characterService.characterState;
@@ -42,16 +43,16 @@ export class TimePanelComponent implements OnInit {
           this.currentLoopEntry.activity.consequence();
           this.home.consequence();
           this.character.age++;
-          console.log("You spend the day doing " + this.currentLoopEntry.activity.name);
+          this.logService.addLogMessage("You spend the day doing " + this.currentLoopEntry.activity.name);
           // check for death
           if (this.character.status.health.value <= 0 || this.character.age >= this.character.lifespan){
-            console.log("You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
+            this.logService.addLogMessage("You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
             //TODO: call reincarnation function
           }
           // check for exhaustion
           if (this.character.status.stamina.value < 0){
             // take 5 days to recover, regain stamina, restart loop
-            console.log("You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.");
+            this.logService.addLogMessage("You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.");
             this.character.age += 5;
             this.character.status.stamina.value = this.character.status.stamina.max;
             this.currentTickCount = 0;

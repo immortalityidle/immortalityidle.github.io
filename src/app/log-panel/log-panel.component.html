@@ -1,1 +1,9 @@
-<span class="panelHeader">Log</span>
+<div class="log">
+  <span class="panelHeader">Log</span>
+  <div>
+    <div *ngFor="let logMsg of log">
+      {{logMsg}}
+    </div>
+  </div>
+</div>
+

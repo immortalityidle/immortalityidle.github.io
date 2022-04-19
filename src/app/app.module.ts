@@ -12,6 +12,7 @@ import { LogPanelComponent } from './log-panel/log-panel.component';
 import { InventoryPanelComponent } from './inventory-panel/inventory-panel.component';
 import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
 import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.compo
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
