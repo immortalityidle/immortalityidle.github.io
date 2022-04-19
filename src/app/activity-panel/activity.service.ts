@@ -18,7 +18,7 @@ export class ActivityService {
         // randomly choose any of the stats except the last one (spirituality)
         const key = keys[Math.floor(Math.random() * (keys.length - 1))];
         // @ts-ignore
-        this.characterService.characterState.attributes[key] += .1;
+        this.characterService.characterState.attributes[key].value += .1;
         this.characterService.characterState.status.stamina.value -= 5;
         this.characterService.characterState.money += 0.1;
       },
@@ -35,9 +35,13 @@ export class ActivityService {
       name: 'Resting',
       description: "Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.",
       consequence: () => {
-        this.characterService.characterState.status.stamina.value += (this.characterService.characterState.status.stamina.max / 8);
+        this.characterService.characterState.status.stamina.value += (this.characterService.characterState.status.stamina.max / 2);
         if (this.characterService.characterState.status.stamina.value > this.characterService.characterState.status.stamina.max){
           this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
+        }
+        this.characterService.characterState.status.health.value += 2;
+        if (this.characterService.characterState.status.health.value > this.characterService.characterState.status.health.max){
+          this.characterService.characterState.status.health.value = this.characterService.characterState.status.health.max;
         }
       },
       requirements: {
@@ -109,13 +113,13 @@ export class ActivityService {
     private inventoryService: InventoryService) {
     this.activityLoop.push({
       activity: this.activities[0],
-      repeatTimes: 8
+      repeatTimes: 5
     });
 
     this.activityLoop.push(
       {
         activity: this.activities[1],
-        repeatTimes: 8
+        repeatTimes: 1
       }
     );
    }
