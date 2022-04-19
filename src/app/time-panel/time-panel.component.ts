@@ -3,7 +3,6 @@ import { ActivityService } from '../activity-panel/activity.service';
 import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { GameStateService } from '../game-state/game-state.service';
 import { Home } from '../game-state/home';
 import { HomeService } from '../game-state/home.service';
 import { LogService } from '../log-panel/log.service';

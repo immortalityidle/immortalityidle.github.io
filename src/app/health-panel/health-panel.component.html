@@ -7,7 +7,7 @@
   <tr *ngIf="(statusObject.value.max != 0)">
     <td>{{statusObject.key | titlecase}}</td>
     <td class="{{statusObject.key}}">
-      <progress
+      <progress class="status-progress"
         [value]="statusObject.value.value"
         [max]="statusObject.value.max">
         <div></div>
