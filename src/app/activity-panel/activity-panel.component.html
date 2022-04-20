@@ -4,7 +4,11 @@
     <ng-container *ngFor="let activity of activities">
       <tr *ngIf="(meetsRequirements(activity, character))">
         <td><button (click)="onClick(activity)">{{activity.name}}</button></td>
-        <td>{{activity.description}}</td>
+        <td>
+          {{activity.description}}
+          <br/>
+          {{activity.consequenceDescription}}
+        </td>
       </tr>
     </ng-container>
   </table>

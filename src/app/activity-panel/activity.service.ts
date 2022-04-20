@@ -14,11 +14,12 @@ export class ActivityService {
     {
       name: 'Odd Jobs',
       description: "Run errands, pull weeds, clean toilet pits, or whatever else you earn a coin doing. Undignified work for a future immortal, but you have to eat to live.",
+      consequenceDescription: "Increases a random attribute and provides a little money.",
       consequence: () => {
         const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
         // randomly choose any of the stats except the last one (spirituality)
         const key = keys[Math.floor(Math.random() * (keys.length - 1))];
-        this.characterService.characterState.attributes[key].value += .1;
+        this.characterService.characterState.increaseAttribute(key, 0.1);
         this.characterService.characterState.status.stamina.value -= 5;
         this.characterService.characterState.money += 0.1;
       },
@@ -34,15 +35,11 @@ export class ActivityService {
     {
       name: 'Resting',
       description: "Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.",
+      consequenceDescription: "Restores stamina and a little health.",
       consequence: () => {
         this.characterService.characterState.status.stamina.value += (this.characterService.characterState.status.stamina.max / 2);
-        if (this.characterService.characterState.status.stamina.value > this.characterService.characterState.status.stamina.max){
-          this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
-        }
         this.characterService.characterState.status.health.value += 2;
-        if (this.characterService.characterState.status.health.value > this.characterService.characterState.status.health.max){
-          this.characterService.characterState.status.health.value = this.characterService.characterState.status.health.max;
-        }
+        this.characterService.characterState.checkOverage();
       },
       requirements: {
         strength: 0,
@@ -56,8 +53,9 @@ export class ActivityService {
     {
       name: 'Begging',
       description: "Find a nice spot on the side of the street, look sad, and put your hand out. Someone might put a coin in it if you are charasmatic enough.",
+      consequenceDescription: "Increases charisma and provides a little money.",
       consequence: () => {
-        this.characterService.characterState.attributes.charisma.value += 0.1;
+        this.characterService.characterState.increaseAttribute("charisma",  0.1);
         this.characterService.characterState.status.stamina.value -= 1;
         this.characterService.characterState.money += this.characterService.characterState.attributes.charisma.value * 0.1;
         //TODO: figure out diminishing returns for this
@@ -67,17 +65,18 @@ export class ActivityService {
         toughness: 0,
         speed: 0,
         intelligence: 0,
-        charisma: 0,
+        charisma: 5,
         spirituality: 0
       }
     },
     {
       name: 'Blacksmithing',
       description: "Mold metal into weapons, armor, and useful things. You need to be strong to be successful at this job.",
+      consequenceDescription: "Increases strength and toughness and provides a little money.",
       consequence: () => {
-        this.characterService.characterState.attributes.strength.value += .1;
-        this.characterService.characterState.attributes.toughness.value += .1;
-        this.characterService.characterState.status.stamina.value -= 5;
+        this.characterService.characterState.increaseAttribute("strength",  0.1);
+        this.characterService.characterState.increaseAttribute("toughness",  0.1);
+        this.characterService.characterState.status.stamina.value -= 25;
         this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.1;
       },
       requirements: {
@@ -92,8 +91,10 @@ export class ActivityService {
     {
       name: 'Gather Herbs',
       description: "Search the natural world for useful herbs.",
+      consequenceDescription: "",
       consequence: () => {
-        this.characterService.characterState.attributes.intelligence.value += .1;
+        this.characterService.characterState.increaseAttribute("intelligence",  0.1);
+        this.characterService.characterState.increaseAttribute("speed",  0.1);
         this.characterService.characterState.status.stamina.value -= 5;
         //TODO: make adding same things you already have combine stuff in the same slot
         this.inventoryService.addItem({name: "herbs", description: "Useful herbs", quantity: 1});

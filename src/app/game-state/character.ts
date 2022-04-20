@@ -1,4 +1,5 @@
-import { HealthPanelComponent } from "../health-panel/health-panel.component";
+import { LogService } from "../log-panel/log.service";
+import { HomeService } from "./home.service";
 
 export interface CharacterAttribute {
   strength: number,
@@ -12,6 +13,7 @@ export interface CharacterAttribute {
 export type AttributeType = 'strength' | 'toughness' | 'speed' | 'intelligence' | 'charisma' | 'spirituality';
 
 export class Character {
+
   attributes: {[key in AttributeType]: {description: string, value: number, aptitude: number}} = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -87,6 +89,47 @@ export class Character {
     rightHand: null,
     legs: null,
     feet: null
+  }
+
+  // reset everything but increase aptitudes
+  reincarnate(){
+    this.status.health.max = 100;
+    this.status.health.value = 100;
+    this.status.stamina.max = 100;
+    this.status.stamina.value = 100;
+    this.status.mana.max = 0;
+    this.status.mana.value = 0;
+
+    let totalAptitude = 0;
+    const keys = Object.keys(this.attributes) as AttributeType[];
+    for (const key in keys){
+      if (this.attributes[keys[key]].value > 0){
+        // gain aptitude based on last life's value
+        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 100;
+        // start at the aptitude value
+        this.attributes[keys[key]].value = this.attributes[keys[key]].aptitude;
+      }
+      totalAptitude += this.attributes[keys[key]].aptitude;
+    }
+    const key = keys[Math.floor(Math.random() * (keys.length - 1))];
+    this.money = 0;
+    this.land = 0;
+    // age in days
+    this.age = 18 * 365;
+    // increase lifespan by 1% the average aptitude
+    this.lifespan = 30 * 365 + (0.01 * (totalAptitude / Object.keys(this.attributes).length));
+    this.equipment = {
+      head: null,
+      body: null,
+      leftHand: null,
+      rightHand: null,
+      legs: null,
+      feet: null
+    }
+  }
+
+  increaseAttribute(attribute: AttributeType, amount: number){
+    this.attributes[attribute].value += (amount * this.attributes[attribute].aptitude);
   }
 
   checkOverage(){

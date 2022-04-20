@@ -11,7 +11,7 @@
     <td>
       <!-- TODO: pretty up these buttons -->
       <button (click)="onPlusClick(entry)">+</button>
-      <button (click)="onMinusClick(entry)">-</button>
+      <button [disabled]="entry.repeatTimes <= 1" (click)="onMinusClick(entry)">-</button>
       <button (click)="onUpClick(entry)">Up</button>
       <button (click)="onDownClick(entry)">Down</button>
       <button (click)="onRemoveClick(entry)">X</button>

@@ -10,6 +10,7 @@ export interface Requirements {
 export interface Activity {
   name: string;
   description: string;
+  consequenceDescription: string;
   requirements: Requirements;
   consequence: () => void;
 }

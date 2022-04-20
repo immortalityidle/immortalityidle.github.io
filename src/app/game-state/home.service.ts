@@ -19,7 +19,7 @@ export class HomeService {
       consequence: () => {
         if (Math.random() < 0.3){
           this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land and put up a better tent.");
-          this.characterService.characterState.status.health.value--;
+          this.characterService.characterState.status.health.value -= 2;
         }
       }
     },
@@ -32,6 +32,46 @@ export class HomeService {
       consequence: () => {
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 1;
+        if (Math.random() < 0.1){
+          this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.");
+          this.characterService.characterState.status.health.value -= 2;
+        }
+        this.characterService.characterState.checkOverage();
+      }
+    },
+    {
+      name: "Dirty Shack",
+      description: "A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out.",
+      cost: 1000,
+      costPerDay: 2,
+      landRequired: 5,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 3;
+        this.characterService.characterState.status.stamina.value += 3;
+        this.characterService.characterState.checkOverage();
+      }
+    },
+    {
+      name: "Simple Hut",
+      description: "A very simple hut.",
+      cost: 1000,
+      costPerDay: 5,
+      landRequired: 10,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 5;
+        this.characterService.characterState.status.stamina.value += 5;
+        this.characterService.characterState.checkOverage();
+      }
+    },
+    {
+      name: "Pleasant Cottage",
+      description: "A nice little home where you can rest peacefully.",
+      cost: 1000,
+      costPerDay: 10,
+      landRequired: 20,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 10;
+        this.characterService.characterState.status.stamina.value += 10;
         this.characterService.characterState.checkOverage();
       }
     }
@@ -58,7 +98,5 @@ export class HomeService {
     this.characterService.characterState.land -= nextHome.landRequired;
     this.home = nextHome;
     this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
-
-    this.home = this.getNextHome();
   }
 }

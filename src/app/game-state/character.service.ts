@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { LogService } from '../log-panel/log.service';
 import { Character } from './character';
 
 @Injectable({
@@ -6,5 +7,4 @@ import { Character } from './character';
 })
 export class CharacterService {
   characterState = new Character();
-  constructor() { }
 }
