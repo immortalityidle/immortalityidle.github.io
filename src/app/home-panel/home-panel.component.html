@@ -1,6 +1,6 @@
-<span class="panelHeader">You live in a {{home.name}}</span>
+<span class="panelHeader">You live in a {{homeService.home.name}}</span>
 <br/>
-<span>{{home.description}}</span>
+<span>{{homeService.home.description}}</span>
 <br/>
 <span>You own {{character.land}} open {{character.land == 1 ? "plot" : "plots"}} of land</span>
 <br/>
@@ -8,7 +8,7 @@
     Buy Land
 </button>
 <br/>
-<button *ngIf="(home.name != nextHome.name)" [disabled]="character.money < nextHome.cost || character.land < nextHome.landRequired" 
+<button *ngIf="(homeService.home.name != nextHome.name)" [disabled]="character.money < nextHome.cost || character.land < nextHome.landRequired"
     title="A better home will cost {{nextHome.cost}} taels and take up {{nextHome.landRequired}} land." (click)="upgradeClick()">
     Get a better house
 </button>

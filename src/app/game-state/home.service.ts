@@ -7,8 +7,6 @@ import { Home } from './home';
   providedIn: 'root'
 })
 export class HomeService {
-  home: Home;
-
   homesList: Home[] = [
     {
       name: "Squatter Tent",
@@ -76,9 +74,11 @@ export class HomeService {
       }
     }
   ];
+
+  home = this.homesList[0];
+
   constructor(private characterService: CharacterService,
     private logService: LogService) {
-    this.home =this.homesList[0];
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -98,5 +98,9 @@ export class HomeService {
     this.characterService.characterState.land -= nextHome.landRequired;
     this.home = nextHome;
     this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
+  }
+
+  reset() {
+    this.home = this.homesList[0];
   }
 }

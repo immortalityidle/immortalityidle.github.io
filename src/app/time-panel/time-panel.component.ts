@@ -3,6 +3,7 @@ import { ActivityService } from '../activity-panel/activity.service';
 import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
+import { GameStateService } from '../game-state/game-state.service';
 import { Home } from '../game-state/home';
 import { HomeService } from '../game-state/home.service';
 import { LogService } from '../log-panel/log.service';
@@ -26,7 +27,8 @@ export class TimePanelComponent implements OnInit {
     activityService: ActivityService,
     characterService: CharacterService,
     private homeService: HomeService,
-    private logService: LogService
+    private logService: LogService,
+    private gameStateService: GameStateService
   ) {
     this.loopEntries = activityService.activityLoop;
     this.character = characterService.characterState;
@@ -44,11 +46,11 @@ export class TimePanelComponent implements OnInit {
           // check for death
           if (this.character.age >= this.character.lifespan){
             this.logService.addLogMessage("You reached the end of your natural life and passed away from old age. You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
-            this.character.reincarnate();
+            this.gameStateService.reincarnate();
           }
           if (this.character.status.health.value <= 0 || this.character.age >= this.character.lifespan){
             this.logService.addLogMessage("You succumb to your wounds and pass away. You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
-            this.character.reincarnate();
+            this.gameStateService.reincarnate();
           }
           // check for exhaustion
           if (this.character.status.stamina.value < 0){
