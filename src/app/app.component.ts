@@ -1,6 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { GameState } from './game-state/game-state';
 import { MainLoopService } from './main-loop.service';
+
+@Pipe({name: 'floor'})
+export class FloorPipe implements PipeTransform {
+    /**
+     *
+     * @param value
+     * @returns {number}
+     */
+    transform(value: number): number {
+        return Math.floor(value);
+    }
+}
 
 @Component({
   selector: 'app-root',

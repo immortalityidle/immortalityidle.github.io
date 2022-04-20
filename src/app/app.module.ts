@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppComponent, FloorPipe } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TimePanelComponent } from './time-panel/time-panel.component';
 import { AttributesPanelComponent } from './attributes-panel/attributes-panel.component';
@@ -24,7 +24,8 @@ import { FormsModule } from '@angular/forms';
     LogPanelComponent,
     InventoryPanelComponent,
     ActivityPanelComponent,
-    EquipmentPanelComponent
+    EquipmentPanelComponent,
+    FloorPipe
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Activity, ActivityLoopEntry } from '../game-state/activity';
-import { AttributeType } from '../game-state/character';
+import { AttributeType, CharacterAttribute } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService } from '../game-state/inventory.service';
 
@@ -123,5 +123,23 @@ export class ActivityService {
         repeatTimes: 1
       }
     );
+   }
+   meetsRequirements(activity: Activity): boolean {
+    const keys: (keyof CharacterAttribute)[] = Object.keys(this.characterService.characterState.attributes) as (keyof CharacterAttribute)[];
+    for (const keyIndex in keys){
+      const key = keys[keyIndex];
+      if (this.characterService.characterState.attributes[key].value < activity.requirements[key]){
+        return false;
+      }
+    }
+    return true;
+  }
+
+   checkRequirements(){
+     for (let i = this.activityLoop.length - 1; i >= 0; i--){
+      if (!this.meetsRequirements(this.activityLoop[i].activity)){
+        this.activityLoop.splice(i, 1);
+      }
+     }
    }
 }

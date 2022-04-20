@@ -2,7 +2,7 @@
 <div class="activitiesContainer">
   <table>
     <ng-container *ngFor="let activity of activities">
-      <tr *ngIf="(meetsRequirements(activity, character))">
+      <tr *ngIf="(meetsRequirements(activity))">
         <td><button (click)="onClick(activity)">{{activity.name}}</button></td>
         <td>
           {{activity.description}}

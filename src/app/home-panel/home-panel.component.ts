@@ -12,13 +12,10 @@ import { HomeService } from '../game-state/home.service';
 
 export class HomePanelComponent implements OnInit {
 
-  nextHome: Home;
   character: Character;
-
 
   constructor(public characterService: CharacterService,
     public homeService: HomeService) {
-    this.nextHome = homeService.getNextHome();
     this.character = characterService.characterState;
   }
 
@@ -28,7 +25,6 @@ export class HomePanelComponent implements OnInit {
 
   upgradeClick(){
     this.homeService.upgradeToNextHome();
-    this.nextHome = this.homeService.getNextHome();
   }
 
   buyClick(){

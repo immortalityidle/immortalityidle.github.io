@@ -8,7 +8,7 @@
     Buy Land
 </button>
 <br/>
-<button *ngIf="(homeService.home.name != nextHome.name)" [disabled]="character.money < nextHome.cost || character.land < nextHome.landRequired"
-    title="A better home will cost {{nextHome.cost}} taels and take up {{nextHome.landRequired}} land." (click)="upgradeClick()">
+<button *ngIf="(homeService.home.name != homeService.nextHome.name)" [disabled]="character.money < homeService.nextHome.cost || character.land < homeService.nextHome.landRequired"
+    title="A better home will cost {{homeService.nextHome.cost}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
     Get a better house
 </button>

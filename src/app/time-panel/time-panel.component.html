@@ -3,7 +3,7 @@
   <tr *ngFor="let entry of loopEntries">
     <td>{{entry.activity.name}} ({{entry.repeatTimes}} {{(entry.repeatTimes == 1) ? "day" : "days"}})</td>
     <td>
-      <progress style="width:{{entry.repeatTimes * 5}}px"
+      <progress style="width:{{entry.repeatTimes < 30 ? entry.repeatTimes * 5 : 30 * 5}}px"
         [value]="entry == currentLoopEntry ? currentTickCount : 0"
         [max]="entry.repeatTimes">
       </progress>

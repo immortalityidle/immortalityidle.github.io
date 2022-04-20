@@ -76,6 +76,7 @@ export class HomeService {
   ];
 
   home = this.homesList[0];
+  nextHome = this.homesList[1];
 
   constructor(private characterService: CharacterService,
     private logService: LogService) {
@@ -93,14 +94,14 @@ export class HomeService {
   }
 
   upgradeToNextHome(){
-    let nextHome = this.getNextHome();
-    this.characterService.characterState.money -= nextHome.cost;
-    this.characterService.characterState.land -= nextHome.landRequired;
-    this.home = nextHome;
+    this.characterService.characterState.money -= this.nextHome.cost;
+    this.characterService.characterState.land -= this.nextHome.landRequired;
+    this.home = this.nextHome;
     this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
-  }
+    this.nextHome = this.getNextHome();  }
 
   reset() {
     this.home = this.homesList[0];
+    this.nextHome = this.homesList[1];
   }
 }

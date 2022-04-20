@@ -35,14 +35,7 @@ export class ActivityPanelComponent implements OnInit {
     });
   }
 
-  meetsRequirements(activity: Activity, character: Character): boolean {
-    const keys: (keyof CharacterAttribute)[] = Object.keys(character.attributes) as (keyof CharacterAttribute)[];
-    for (const keyIndex in keys){
-      const key = keys[keyIndex];
-      if (character.attributes[key].value < activity.requirements[key]){
-        return false;
-      }
-    }
-    return true;
+  meetsRequirements(activity: Activity): boolean {
+    return this.activityService.meetsRequirements(activity);
   }
 }

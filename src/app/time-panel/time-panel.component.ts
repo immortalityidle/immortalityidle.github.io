@@ -9,6 +9,7 @@ import { HomeService } from '../game-state/home.service';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 
+
 @Component({
   selector: 'app-time-panel',
   templateUrl: './time-panel.component.html',

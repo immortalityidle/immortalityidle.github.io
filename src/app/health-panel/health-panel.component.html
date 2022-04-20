@@ -1,6 +1,6 @@
-<span class="panelHeader">You are {{characterService.characterState.age / 365 | number: '1.0-0'}} years,
+<span class="panelHeader">You are {{characterService.characterState.age / 365 | floor }} years,
   {{characterService.characterState.age % 365 | number: '1.0-0'}} days old.
-  You expect to live to {{characterService.characterState.lifespan / 365 | number: '1.0-0'}}.
+  You expect to live about {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.
 </span>
 <table>
   <ng-container *ngFor="let statusObject of characterService.characterState.status | keyvalue">
