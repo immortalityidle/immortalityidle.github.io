@@ -6,6 +6,7 @@ export interface Item {
   name: string;
   description: string;
   value: number;
+  type: string;
   useLabel?: string;
   useDescription?: string;
   useConsumes?: boolean;
@@ -26,25 +27,73 @@ export class InventoryService {
   maxItems: number = 32;
   maxStackSize = 99;
 
-  constructor(private logService: LogService, private characterService: CharacterService) { }
+  constructor(private logService: LogService, private characterService: CharacterService) { 
+    this.reset();
+  }
 
   itemRepo = {
+    rice: {
+      name: "rice",
+      type: "food",
+      value: 1,
+      description: "A basic staple of life. One pouch will sustain you for a day.",
+      useLabel: "Eat",
+      useDescription: "Fills your belly.",
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        this.characterService.characterState.checkOverage();
+      }
+    },
     herbs: {
       name: "herbs", 
+      type: "food",
       value: 2, 
       description: "Useful herbs. Can be eaten directly or used in creating pills or potions.", 
       useLabel: "Eat",
-      useDescription: "Restores a bit of health.",
+      useDescription: "Fills your belly and restores a bit of health.",
       useConsumes: true,
       use: () => {
+        this.characterService.characterState.status.nourishment.value++;
         this.characterService.characterState.status.health.value += 5;
         this.characterService.characterState.checkOverage();
       }
+    },
+    junk: {
+      name: "junk", 
+      type: "junk",
+      value: 1, 
+      description: "Some metal junk.", 
     }
   }
 
   reset(){
-    this.itemStacks = [];
+    this.logService.addLogMessage("Your mother gives you three big bags of rice as she sends you out to make your way in the world");
+    this.itemStacks = [
+      {item: this.itemRepo.rice, quantity:99}, 
+      {item: this.itemRepo.rice, quantity:99}, 
+      {item: this.itemRepo.rice, quantity:99}
+    ];
+  }
+
+  // find the cheapest food in the inventory and use it
+  eatFood(){
+    let foodStack = null;
+    let foodValue = Number.MAX_VALUE;
+    for (const itemIterator of this.itemStacks){
+      if (itemIterator.item.type == "food" && itemIterator.item.value < foodValue){
+        foodStack = itemIterator;
+      }
+    }
+    if (foodStack){
+      this.useItem(foodStack);
+    } else {
+      // no food found, buy a bowl of rice automatically
+      if (this.characterService.characterState.money > 0){
+        this.characterService.characterState.money--;
+        this.characterService.characterState.status.nourishment.value++;
+      }
+    }
   }
 
   addItem(item: Item){

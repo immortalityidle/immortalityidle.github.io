@@ -65,16 +65,24 @@ export class Character {
   };
   status = {
     health: {
+      description: "Physical well-being. Take too much damage and you will die.",
       value: 100,
       max: 100
     },
     stamina: {
+      description: "Physical energy to accomplish tasks. Most activities use stamina, and if you let yourself run down you could get sick and have to stay in bed for a few days.",
       value: 100,
       max: 100
     },
     mana: {
+      description: "Magical energy required for mysterious spiritual activities.",
       value: 0,
       max: 0
+    },
+    nourishment: {
+      description: "Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food you will automatically spend your money on a bowl of rice each day.",
+      value: 7,
+      max: 14
     }
   };
   money = 0;
@@ -93,10 +101,12 @@ export class Character {
 
   // reset everything but increase aptitudes
   reincarnate(){
-    this.status.health.max = 100;
     this.status.health.value = 100;
-    this.status.stamina.max = 100;
+    this.status.health.max = 100;
     this.status.stamina.value = 100;
+    this.status.stamina.max = 100;
+    this.status.nourishment.value = 7;
+    this.status.nourishment.max = 14;
     this.status.mana.max = 0;
     this.status.mana.value = 0;
 
@@ -138,6 +148,9 @@ export class Character {
     }
     if (this.status.stamina.value > this.status.stamina.max){
       this.status.stamina.value = this.status.stamina.max;
+    }
+    if (this.status.nourishment.value > this.status.nourishment.max){
+      this.status.nourishment.value = this.status.nourishment.max;
     }
   }
 }

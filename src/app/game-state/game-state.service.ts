@@ -22,6 +22,6 @@ export class GameStateService {
     this.characterService.characterState.reincarnate();
     this.homeService.reset();
     this.inventoryService.reset();
-    this.activityService.checkRequirements();
+    this.activityService.reset();
   }
 }

@@ -3,16 +3,32 @@
   You expect to live about {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.
 </span>
 <table>
-  <ng-container *ngFor="let statusObject of characterService.characterState.status | keyvalue">
-  <tr *ngIf="(statusObject.value.max != 0)">
-    <td>{{statusObject.key | titlecase}}</td>
-    <td class="{{statusObject.key}}">
+  <tr>
+    <td title="{{characterService.characterState.status.health.description}}">Health</td>
+    <td class="health">
       <progress class="status-progress"
-        [value]="statusObject.value.value"
-        [max]="statusObject.value.max">
+        [value]="characterService.characterState.status.health.value"
+        [max]="characterService.characterState.status.health.max">
+        <div></div>
+      </progress>
+    </td>
+    <td title="{{characterService.characterState.status.stamina.description}}">Stamina</td>
+    <td class="stamina">
+      <progress class="status-progress"
+        [value]="characterService.characterState.status.stamina.value"
+        [max]="characterService.characterState.status.stamina.max">
         <div></div>
       </progress>
     </td>
   </tr>
-  </ng-container>
+  <tr>
+    <td title="{{characterService.characterState.status.nourishment.description}}">Nutrition</td>
+    <td class="nourishment">
+      <progress class="status-progress"
+        [value]="characterService.characterState.status.nourishment.value"
+        [max]="characterService.characterState.status.nourishment.max">
+        <div></div>
+      </progress>
+    </td>
+  </tr>
 </table>

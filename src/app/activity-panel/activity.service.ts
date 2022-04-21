@@ -21,7 +21,7 @@ export class ActivityService {
         const key = keys[Math.floor(Math.random() * (keys.length - 1))];
         this.characterService.characterState.increaseAttribute(key, 0.1);
         this.characterService.characterState.status.stamina.value -= 5;
-        this.characterService.characterState.money += 0.1;
+        this.characterService.characterState.money += 1;
       },
       requirements: {
         strength: 0,
@@ -70,8 +70,8 @@ export class ActivityService {
       }
     },
     {
-      name: 'Blacksmithing',
-      description: "Mold metal into weapons, armor, and useful things. You need to be strong to be successful at this job.",
+      name: 'Apprentice Blacksmithing',
+      description: "Work for the local blacksmith. You mostly pump the bellows, but at least you're learning a trade.",
       consequenceDescription: "Increases strength and toughness and provides a little money.",
       consequence: () => {
         this.characterService.characterState.increaseAttribute("strength",  0.1);
@@ -82,6 +82,28 @@ export class ActivityService {
       requirements: {
         strength: 10,
         toughness: 10,
+        speed: 0,
+        intelligence: 0,
+        charisma: 0,
+        spirituality: 0
+      }
+    },
+    {
+      name: 'Blacksmithing',
+      description: "Mold metal into useful things. You might even produce something you want to keep now and then.",
+      consequenceDescription: "Increases strength and toughness and provides a little money.",
+      consequence: () => {
+        this.characterService.characterState.increaseAttribute("strength",  0.2);
+        this.characterService.characterState.increaseAttribute("toughness",  0.2);
+        this.characterService.characterState.status.stamina.value -= 25;
+        this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.3;
+        if (Math.random() < 0.1){
+          this.inventoryService.addItem(this.inventoryService.itemRepo.junk);
+        }
+      },
+      requirements: {
+        strength: 100,
+        toughness: 100,
         speed: 0,
         intelligence: 0,
         charisma: 0,
@@ -129,5 +151,9 @@ export class ActivityService {
         this.activityLoop.splice(i, 1);
       }
      }
+   }
+
+   reset(){
+    this.activityLoop = [];
    }
 }

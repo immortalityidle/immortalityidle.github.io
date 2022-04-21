@@ -1,4 +1,5 @@
 <span class="panelHeader">How will you spend your time?</span>
+<button (click)="pauseClick()">Pause</button>
 <table>
   <tr *ngFor="let entry of loopEntries">
     <td>{{entry.activity.name}} ({{entry.repeatTimes}} {{(entry.repeatTimes == 1) ? "day" : "days"}})</td>
