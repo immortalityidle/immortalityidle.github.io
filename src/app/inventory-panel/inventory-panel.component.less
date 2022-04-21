@@ -1,16 +1,36 @@
+.inventoryContainer{
+  position: relative;
+  height: 100%;
+}
+
 .itemSlot {
   border: 1px solid black;
   width: 30px;
   height: 30px;
   margin: 1px;
-  padding: 1px;
   font-size: x-small;
   text-align: center;
+  border-spacing: 0px;
+  cursor: pointer;
+}
+
+.selectedItem {
+  background-color: lightyellow;
+}
+
+.itemSlot > tr {
+  line-height: 12px;
 }
 
 .inventoryGrid {
   display: flex;
   flex-wrap: wrap;
+}
+
+.inventoryButtons {
+  position: absolute;
+  bottom: 1px;
+  left: 1px;
 }
 
 table {

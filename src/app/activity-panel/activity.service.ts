@@ -96,8 +96,7 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute("intelligence",  0.1);
         this.characterService.characterState.increaseAttribute("speed",  0.1);
         this.characterService.characterState.status.stamina.value -= 5;
-        //TODO: make adding same things you already have combine stuff in the same slot
-        this.inventoryService.addItem({name: "herbs", description: "Useful herbs", quantity: 1});
+        this.inventoryService.addItem({name: "herbs", grade: 1, value: 2, description: "Useful herbs", quantity: 1});
       },
       requirements: {
         strength: 0,
@@ -112,19 +111,8 @@ export class ActivityService {
   ];
   constructor(private characterService: CharacterService,
     private inventoryService: InventoryService) {
-    this.activityLoop.push({
-      activity: this.activities[0],
-      repeatTimes: 5
-    });
-
-    this.activityLoop.push(
-      {
-        activity: this.activities[1],
-        repeatTimes: 1
-      }
-    );
-   }
-   meetsRequirements(activity: Activity): boolean {
+  }
+    meetsRequirements(activity: Activity): boolean {
     const keys: (keyof CharacterAttribute)[] = Object.keys(this.characterService.characterState.attributes) as (keyof CharacterAttribute)[];
     for (const keyIndex in keys){
       const key = keys[keyIndex];

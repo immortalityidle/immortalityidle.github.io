@@ -38,7 +38,7 @@ export class TimePanelComponent implements OnInit {
   ngOnInit(): void {
     this.mainLoopService.tickSubject.subscribe(
       (next) => {
-        if (this.loopEntries.length > 0) {
+        if (this.loopEntries.length > 0 && this.currentIndex < this.loopEntries.length) {
           this.currentLoopEntry = this.loopEntries[this.currentIndex];
           this.currentLoopEntry.activity.consequence();
           this.homeService.home.consequence();
@@ -46,7 +46,7 @@ export class TimePanelComponent implements OnInit {
           //this.logService.addLogMessage("You spend the day doing " + this.currentLoopEntry.activity.name);
           // check for death
           if (this.character.age >= this.character.lifespan){
-            this.logService.addLogMessage("You reached the end of your natural life and passed away from old age. You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
+            this.logService.addLogMessage("You reach the end of your natural life and pass away from old age. You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
             this.gameStateService.reincarnate();
           }
           if (this.character.status.health.value <= 0 || this.character.age >= this.character.lifespan){
@@ -71,6 +71,9 @@ export class TimePanelComponent implements OnInit {
               this.currentIndex = 0;
             }
           }
+        } else {
+          // make sure that we reset the current index if activities get removed below the currentIndex
+          this.currentIndex = 0;
         }
       }
     )

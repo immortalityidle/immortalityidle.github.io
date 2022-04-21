@@ -1,14 +1,24 @@
-<table>
-  <tr>
-    <td class="inventoryLabelColumn">Inventory</td>
-    <td class="moneyColumn">Money: </td>
-    <td class="moneyColumn">{{characterService.characterState.money | number: '1.0-0'}} Taels</td>
-    <td></td>
-  </tr>
-</table>
+<div class="inventoryContainer">
+  <table>
+    <tr>
+      <td class="inventoryLabelColumn">Inventory</td>
+      <td class="moneyColumn">Money: </td>
+      <td class="moneyColumn">{{characterService.characterState.money | number: '1.0-0'}} Taels</td>
+      <td></td>
+    </tr>
+  </table>
 
-<div class="inventoryGrid">
-  <div *ngFor="let item of inventoryService.items">
-    <div class="itemSlot">{{item.name}}</div>
+  <div class="inventoryGrid">
+    <div *ngFor="let item of inventoryService.items">
+      <table class="itemSlot" (click)="slotClicked(item)" [ngClass]="{'selectedItem': item == selectedItem}" >
+        <tr>{{item.name}}</tr>
+        <tr>{{item.quantity}}</tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="inventoryButtons" *ngIf="selectedItem">
+    <button (click)="sell(1)">Sell</button>
+    <button (click)="sellAll()">Sell All</button>
   </div>
 </div>
