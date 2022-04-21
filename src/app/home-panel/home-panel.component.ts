@@ -22,7 +22,6 @@ export class HomePanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
   upgradeClick(){
     this.homeService.upgradeToNextHome();
   }

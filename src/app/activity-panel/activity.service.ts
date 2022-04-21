@@ -96,7 +96,7 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute("intelligence",  0.1);
         this.characterService.characterState.increaseAttribute("speed",  0.1);
         this.characterService.characterState.status.stamina.value -= 5;
-        this.inventoryService.addItem({name: "herbs", grade: 1, value: 2, description: "Useful herbs", quantity: 1});
+        this.inventoryService.addItem(this.inventoryService.itemRepo.herbs);
       },
       requirements: {
         strength: 0,

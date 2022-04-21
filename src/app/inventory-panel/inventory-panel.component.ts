@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
-import { InventoryService, Item } from '../game-state/inventory.service';
+import { InventoryService, ItemStack } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -8,7 +8,7 @@ import { InventoryService, Item } from '../game-state/inventory.service';
   styleUrls: ['./inventory-panel.component.less']
 })
 export class InventoryPanelComponent implements OnInit {
-  selectedItem: Item | null = null;
+  selectedItem: ItemStack | null = null;
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService) {
   }
@@ -16,12 +16,13 @@ export class InventoryPanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  slotClicked(item: Item){
+  slotClicked(item: ItemStack){
     if (this.selectedItem == item){
       this.selectedItem = null;
     } else {
       this.selectedItem = item;
     }
+    console.log(this.selectedItem);
   }
 
   sellAll(){
@@ -36,6 +37,12 @@ export class InventoryPanelComponent implements OnInit {
       if (this.selectedItem.quantity == quantity){
         this.selectedItem = null;
       }
+    }
+  }
+
+  use(){
+    if (this.selectedItem){
+      this.inventoryService.useItem(this.selectedItem);
     }
   }
 }

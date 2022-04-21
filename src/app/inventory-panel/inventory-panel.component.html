@@ -9,16 +9,19 @@
   </table>
 
   <div class="inventoryGrid">
-    <div *ngFor="let item of inventoryService.items">
-      <table class="itemSlot" (click)="slotClicked(item)" [ngClass]="{'selectedItem': item == selectedItem}" >
-        <tr>{{item.name}}</tr>
-        <tr>{{item.quantity}}</tr>
+    <div *ngFor="let itemStack of inventoryService.itemStacks">
+      <table class="itemSlot" (click)="slotClicked(itemStack)" [ngClass]="{'selectedItem': itemStack == selectedItem}" >
+        <tr>{{itemStack.item.name}}</tr>
+        <tr>{{itemStack.quantity}}</tr>
       </table>
     </div>
   </div>
 
   <div class="inventoryButtons" *ngIf="selectedItem">
-    <button (click)="sell(1)">Sell</button>
+    <button (click)="sell(1)" title="Sell one {{selectedItem.item.name}} for {{selectedItem.item.value}} taels.">Sell</button>
     <button (click)="sellAll()">Sell All</button>
+    <button *ngIf="(selectedItem.item.useLabel != undefined)" (click)="use()" title="{{selectedItem.item.useDescription}}">
+      {{selectedItem.item.useLabel}}
+    </button>
   </div>
 </div>
