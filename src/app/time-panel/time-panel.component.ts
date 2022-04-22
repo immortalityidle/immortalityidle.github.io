@@ -22,19 +22,17 @@ export class TimePanelComponent implements OnInit {
   currentLoopEntry?: ActivityLoopEntry = undefined;
   currentIndex = 0;
   currentTickCount = 0;
-  loopEntries: ActivityLoopEntry[];
   pause = false;
 
   constructor(
     private mainLoopService: MainLoopService,
-    activityService: ActivityService,
+    public activityService: ActivityService,
     characterService: CharacterService,
     private homeService: HomeService,
     private logService: LogService,
     private gameStateService: GameStateService,
     private inventoryService: InventoryService
   ) {
-    this.loopEntries = activityService.activityLoop;
     this.character = characterService.characterState;
   }
 
@@ -42,8 +40,9 @@ export class TimePanelComponent implements OnInit {
     this.mainLoopService.tickSubject.subscribe(
       (next) => {
         if (!this.pause){
-          if (this.loopEntries.length > 0 && this.currentIndex < this.loopEntries.length) {
-            this.currentLoopEntry = this.loopEntries[this.currentIndex];
+          const loopEntries = this.activityService.activityLoop;
+          if (loopEntries.length > 0 && this.currentIndex < loopEntries.length) {
+            this.currentLoopEntry = loopEntries[this.currentIndex];
             this.currentLoopEntry.activity.consequence();
             this.homeService.home.consequence();
             this.character.age++;
@@ -77,7 +76,7 @@ export class TimePanelComponent implements OnInit {
             } else {
               this.currentIndex++;
               this.currentTickCount = 0;
-              if (this.currentIndex == this.loopEntries.length) {
+              if (this.currentIndex == loopEntries.length) {
                 this.currentIndex = 0;
               }
             }
@@ -103,30 +102,33 @@ export class TimePanelComponent implements OnInit {
   }
 
   onUpClick(entry: ActivityLoopEntry): void{
-    let index = this.loopEntries.indexOf(entry);
-    if (index != 0 && this.loopEntries.length > 1){
-      let swapper = this.loopEntries[index - 1];
-      this.loopEntries[index - 1] = entry;
-      this.loopEntries[index] = swapper;
+    const loopEntries = this.activityService.activityLoop;
+    let index = loopEntries.indexOf(entry);
+    if (index != 0 && loopEntries.length > 1){
+      let swapper = loopEntries[index - 1];
+      loopEntries[index - 1] = entry;
+      loopEntries[index] = swapper;
     }
   }
 
   onDownClick(entry: ActivityLoopEntry): void{
-    let index = this.loopEntries.indexOf(entry);
-    if (index != this.loopEntries.length - 1 && this.loopEntries.length > 1){
-      let swapper = this.loopEntries[index + 1];
-      this.loopEntries[index + 1] = entry;
-      this.loopEntries[index] = swapper;
+    const loopEntries = this.activityService.activityLoop;
+    let index = loopEntries.indexOf(entry);
+    if (index != loopEntries.length - 1 && loopEntries.length > 1){
+      let swapper = loopEntries[index + 1];
+      loopEntries[index + 1] = entry;
+      loopEntries[index] = swapper;
     }
   }
 
   onRemoveClick(entry: ActivityLoopEntry): void{
-    let index = this.loopEntries.indexOf(entry);
+    const loopEntries = this.activityService.activityLoop;
+    let index = loopEntries.indexOf(entry);
     // make sure we're not running past the end of the entries array
-    if (this.currentIndex >= this.loopEntries.length - 1){
+    if (this.currentIndex >= loopEntries.length - 1){
       this.currentIndex = 0;
     }
-    this.loopEntries.splice(index,1);
+    loopEntries.splice(index,1);
   }
 
 }

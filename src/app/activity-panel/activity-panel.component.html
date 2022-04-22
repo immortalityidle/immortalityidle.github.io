@@ -1,7 +1,7 @@
 <span class="panelHeader">Activities</span>
 <div class="activitiesContainer">
   <table>
-    <ng-container *ngFor="let activity of activities">
+    <ng-container *ngFor="let activity of activityService.activities">
       <tr *ngIf="(meetsRequirements(activity))">
         <td><button (click)="onClick(activity)">{{activity.name}}</button></td>
         <td>

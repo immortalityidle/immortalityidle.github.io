@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
-import { CharacterAttribute } from '../game-state/character';
 import { ActivityService } from './activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { Activity } from '../game-state/activity';
@@ -13,15 +12,13 @@ import { Character } from '../game-state/character';
 })
 export class ActivityPanelComponent implements OnInit {
 
-  activities: Activity[];
   character: Character;
 
   constructor(
     public gameStateService: GameStateService,
-    private activityService: ActivityService,
+    public activityService: ActivityService,
     characterService: CharacterService
   ) {
-    this.activities = activityService.activities;
     this.character = characterService.characterState;
   }
 
