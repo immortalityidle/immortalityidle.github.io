@@ -3,6 +3,14 @@ import { LogService } from '../log-panel/log.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
 
+export enum HomeType {
+  SquatterTent,
+  OwnTent,
+  DirtyShack,
+  SimpleHut,
+  PleasantCottage
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -10,6 +18,7 @@ export class HomeService {
   homesList: Home[] = [
     {
       name: "Squatter Tent",
+      type: HomeType.SquatterTent,
       description: "A dirty tent pitched in an unused field. Costs nothing, but you get what you pay for. The owner of the land may not like that you're here.",
       cost: 0,
       costPerDay: 0,
@@ -23,6 +32,7 @@ export class HomeService {
     },
     {
       name: "Tent of Your Own",
+      type: HomeType.OwnTent,
       description: "A decent tent pitched on your own bit of land.",
       cost: 100,
       costPerDay: 0,
@@ -39,6 +49,7 @@ export class HomeService {
     },
     {
       name: "Dirty Shack",
+      type: HomeType.DirtyShack,
       description: "A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out.",
       cost: 1000,
       costPerDay: 2,
@@ -51,6 +62,7 @@ export class HomeService {
     },
     {
       name: "Simple Hut",
+      type: HomeType.SimpleHut,
       description: "A very simple hut.",
       cost: 1000,
       costPerDay: 5,
@@ -63,6 +75,7 @@ export class HomeService {
     },
     {
       name: "Pleasant Cottage",
+      type: HomeType.PleasantCottage,
       description: "A nice little home where you can rest peacefully.",
       cost: 1000,
       costPerDay: 10,
@@ -75,17 +88,26 @@ export class HomeService {
     }
   ];
 
-  home = this.homesList[0];
-  nextHome = this.homesList[1];
+  homeValue!: HomeType;
+  home!: Home;
+  nextHome!: Home;
 
-  constructor(private characterService: CharacterService,
-    private logService: LogService) {
+  constructor(
+    private characterService: CharacterService,
+    private logService: LogService
+  ) {
+      this.setCurrentHome(this.homesList[0]);
+      if (this.home === undefined ||
+        this.homeValue === undefined ||
+        this.nextHome === undefined) {
+        throw Error('Home service not initialized correctly.');
+      }
   }
 
   // gets the specs of the next home, doesn't actually upgrade
   getNextHome(){
     for (let i = 0; i < this.homesList.length - 1; i++){
-      if (this.home.name == this.homesList[i].name){
+      if (this.homeValue == this.homesList[i].type){
         return this.homesList[i + 1];
       }
     }
@@ -96,12 +118,26 @@ export class HomeService {
   upgradeToNextHome(){
     this.characterService.characterState.money -= this.nextHome.cost;
     this.characterService.characterState.land -= this.nextHome.landRequired;
-    this.home = this.nextHome;
+    this.setCurrentHome(this.nextHome);
     this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
-    this.nextHome = this.getNextHome();  }
+  }
 
   reset() {
-    this.home = this.homesList[0];
-    this.nextHome = this.homesList[1];
+    this.setCurrentHome(this.homesList[0]);
+  }
+
+  setCurrentHome(home: Home) {
+    this.homeValue = home.type;
+    this.home = this.getHomeFromValue(this.homeValue);
+    this.nextHome = this.getNextHome();
+  }
+
+  getHomeFromValue(value: HomeType): Home {
+    for (const home of this.homesList) {
+      if (home.type === value) {
+        return home;
+      }
+    }
+    throw Error('Home was not found with the given value');
   }
 }

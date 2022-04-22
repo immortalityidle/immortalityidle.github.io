@@ -1,6 +1,3 @@
-import { LogService } from "../log-panel/log.service";
-import { HomeService } from "./home.service";
-
 export interface CharacterAttribute {
   strength: number,
   toughness: number,
@@ -12,9 +9,33 @@ export interface CharacterAttribute {
 
 export type AttributeType = 'strength' | 'toughness' | 'speed' | 'intelligence' | 'charisma' | 'spirituality';
 
+type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number}};
+
+interface Equipment { // TODO: When we implement equipment, change the types here.
+  head: null,
+  body: null,
+  leftHand: null,
+  rightHand: null,
+  legs: null,
+  feet: null
+}
+
+type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
+type CharacterStatus = {[key in StatusType]: {description: string, value: number, max: number}}
+
+export interface CharacterProperties {
+  attributes: AttributeObject,
+  money: number,
+  land: number,
+  equipment: Equipment,
+  age: number
+}
+
+const INITIAL_AGE = 18 * 365;
 export class Character {
 
-  attributes: {[key in AttributeType]: {description: string, value: number, aptitude: number}} = {
+
+  attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
       value: 1,
@@ -63,7 +84,7 @@ export class Character {
       aptitude: 1
     }
   };
-  status = {
+  status: CharacterStatus = {
     health: {
       description: "Physical well-being. Take too much damage and you will die.",
       value: 100,
@@ -88,9 +109,9 @@ export class Character {
   money = 0;
   land = 0;
   // age in days
-  age = 18 * 365;
+  age = INITIAL_AGE;
   lifespan = 30 * 365;
-  equipment = {
+  equipment: Equipment = {
     head: null,
     body: null,
     leftHand: null,
@@ -125,7 +146,7 @@ export class Character {
     this.money = 0;
     this.land = 0;
     // age in days
-    this.age = 18 * 365;
+    this.age = INITIAL_AGE;
     // increase lifespan by 1% the average aptitude
     this.lifespan = 30 * 365 + (0.01 * (totalAptitude / Object.keys(this.attributes).length));
     this.equipment = {
@@ -152,5 +173,23 @@ export class Character {
     if (this.status.nourishment.value > this.status.nourishment.max){
       this.status.nourishment.value = this.status.nourishment.max;
     }
+  }
+
+  getProperties(): CharacterProperties {
+    return {
+      attributes: this.attributes,
+      money: this.money,
+      land: this.land,
+      equipment: this.equipment,
+      age: this.age
+    };
+  }
+
+  setProperties(properties: CharacterProperties) {
+    this.attributes = properties.attributes;
+    this.money = properties.money;
+    this.land = properties.land;
+    this.equipment = properties.equipment;
+    this.age = properties.age | INITIAL_AGE;
   }
 }

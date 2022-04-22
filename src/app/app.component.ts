@@ -1,5 +1,5 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
-import { GameState } from './game-state/game-state';
+import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './main-loop.service';
 
 @Pipe({name: 'floor'})
@@ -22,13 +22,13 @@ export class FloorPipe implements PipeTransform {
 export class AppComponent implements OnInit {
   title = 'immortalityidle';
 
-  gameState = new GameState();
-
   constructor(
-    private mainLoopService: MainLoopService
+    private mainLoopService: MainLoopService,
+    private gameStateService: GameStateService
   ) {}
 
   ngOnInit(): void {
+    this.gameStateService.loadFromLocalStorage();
     this.mainLoopService.start();
   }
 }
