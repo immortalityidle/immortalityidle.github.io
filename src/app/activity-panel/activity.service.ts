@@ -76,8 +76,8 @@ export class ActivityService {
       description: "Mold metal into useful things. You might even produce something you want to keep now and then.",
       consequenceDescription: "Increases strength and toughness and provides a little money.",
       consequence: () => {
-        this.characterService.characterState.increaseAttribute("strength",  0.2);
-        this.characterService.characterState.increaseAttribute("toughness",  0.2);
+        this.characterService.characterState.increaseAttribute("strength",  0.15);
+        this.characterService.characterState.increaseAttribute("toughness",  0.15);
         this.characterService.characterState.status.stamina.value -= 25;
         this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.3;
         if (Math.random() < 0.01){
@@ -113,7 +113,7 @@ export class ActivityService {
     }
 
   ];
-  
+
   constructor(private characterService: CharacterService,
     private inventoryService: InventoryService) {
   }
