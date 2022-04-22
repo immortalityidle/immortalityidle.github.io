@@ -40,9 +40,8 @@ export class TimePanelComponent implements OnInit {
     this.mainLoopService.tickSubject.subscribe(
       (next) => {
         if (!this.pause){
-          const loopEntries = this.activityService.activityLoop;
-          if (loopEntries.length > 0 && this.currentIndex < loopEntries.length) {
-            this.currentLoopEntry = loopEntries[this.currentIndex];
+          if (this.activityService.activityLoop.length > 0 && this.currentIndex < this.activityService.activityLoop.length) {
+            this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
             this.currentLoopEntry.activity.consequence();
             this.homeService.home.consequence();
             this.character.age++;
@@ -76,7 +75,7 @@ export class TimePanelComponent implements OnInit {
             } else {
               this.currentIndex++;
               this.currentTickCount = 0;
-              if (this.currentIndex == loopEntries.length) {
+              if (this.currentIndex == this.activityService.activityLoop.length) {
                 this.currentIndex = 0;
               }
             }
@@ -102,33 +101,30 @@ export class TimePanelComponent implements OnInit {
   }
 
   onUpClick(entry: ActivityLoopEntry): void{
-    const loopEntries = this.activityService.activityLoop;
-    let index = loopEntries.indexOf(entry);
-    if (index != 0 && loopEntries.length > 1){
-      let swapper = loopEntries[index - 1];
-      loopEntries[index - 1] = entry;
-      loopEntries[index] = swapper;
+    let index = this.activityService.activityLoop.indexOf(entry);
+    if (index != 0 && this.activityService.activityLoop.length > 1){
+      let swapper = this.activityService.activityLoop[index - 1];
+      this.activityService.activityLoop[index - 1] = entry;
+      this.activityService.activityLoop[index] = swapper;
     }
   }
 
   onDownClick(entry: ActivityLoopEntry): void{
-    const loopEntries = this.activityService.activityLoop;
-    let index = loopEntries.indexOf(entry);
-    if (index != loopEntries.length - 1 && loopEntries.length > 1){
-      let swapper = loopEntries[index + 1];
-      loopEntries[index + 1] = entry;
-      loopEntries[index] = swapper;
+    let index = this.activityService.activityLoop.indexOf(entry);
+    if (index != this.activityService.activityLoop.length - 1 && this.activityService.activityLoop.length > 1){
+      let swapper = this.activityService.activityLoop[index + 1];
+      this.activityService.activityLoop[index + 1] = entry;
+      this.activityService.activityLoop[index] = swapper;
     }
   }
 
   onRemoveClick(entry: ActivityLoopEntry): void{
-    const loopEntries = this.activityService.activityLoop;
-    let index = loopEntries.indexOf(entry);
+    let index = this.activityService.activityLoop.indexOf(entry);
     // make sure we're not running past the end of the entries array
-    if (this.currentIndex >= loopEntries.length - 1){
+    if (this.currentIndex >= this.activityService.activityLoop.length - 1){
       this.currentIndex = 0;
     }
-    loopEntries.splice(index,1);
+    this.activityService.activityLoop.splice(index,1);
   }
 
 }

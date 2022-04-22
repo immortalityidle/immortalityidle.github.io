@@ -1,13 +1,24 @@
 export interface CharacterAttribute {
-  strength: number,
-  toughness: number,
-  speed: number,
-  intelligence: number,
-  charisma: number,
-  spirituality: number
+  strength?: number,
+  toughness?: number,
+  speed?: number,
+  intelligence?: number,
+  charisma?: number,
+  spirituality?: number,
+  metalLore?: number,
+  plantLore?: number,
+  alchemy?: number
 }
 
-export type AttributeType = 'strength' | 'toughness' | 'speed' | 'intelligence' | 'charisma' | 'spirituality';
+export type AttributeType = 'strength' | 
+  'toughness' | 
+  'speed' | 
+  'intelligence' | 
+  'charisma' | 
+  'spirituality' |
+  'metalLore' |
+  'plantLore' | 
+  'alchemy';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number}};
 
@@ -65,9 +76,7 @@ export class Character {
       description: "An immortal must find deep connections to the divine.",
       value: 0,
       aptitude: 1
-    }
-  };
-  skills = {
+    },
     metalLore: {
       description: "Understanding metals and how to forge and use them.",
       value: 0,

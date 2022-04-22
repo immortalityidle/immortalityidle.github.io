@@ -14,6 +14,20 @@ export class FloorPipe implements PipeTransform {
     }
 }
 
+@Pipe({name: 'camelToTitle'})
+export class CamelToTitlePipe implements PipeTransform {
+    /**
+     *
+     * @param value
+     * @returns {string}
+     */
+     transform(value: string): string {
+      value = value.split(/(?=[A-Z])/).join(' ');
+      value = value[0].toUpperCase() + value.slice(1);
+      return value;
+  }
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

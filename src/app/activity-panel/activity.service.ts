@@ -17,19 +17,13 @@ export class ActivityService {
       consequenceDescription: "Increases a random attribute and provides a little money.",
       consequence: () => {
         const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
-        // randomly choose any of the stats except the last one (spirituality)
-        const key = keys[Math.floor(Math.random() * (keys.length - 1))];
+        // randomly choose any of the first five stats
+        const key = keys[Math.floor(Math.random() * 5)];
         this.characterService.characterState.increaseAttribute(key, 0.1);
         this.characterService.characterState.status.stamina.value -= 5;
         this.characterService.characterState.money += 1;
       },
       requirements: {
-        strength: 0,
-        toughness: 0,
-        speed: 0,
-        intelligence: 0,
-        charisma: 0,
-        spirituality: 0
       }
     },
     {
@@ -42,12 +36,6 @@ export class ActivityService {
         this.characterService.characterState.checkOverage();
       },
       requirements: {
-        strength: 0,
-        toughness: 0,
-        speed: 0,
-        intelligence: 0,
-        charisma: 0,
-        spirituality: 0
       }
     },
     {
@@ -61,12 +49,7 @@ export class ActivityService {
         //TODO: figure out diminishing returns for this
       },
       requirements: {
-        strength: 0,
-        toughness: 0,
-        speed: 0,
-        intelligence: 0,
-        charisma: 5,
-        spirituality: 0
+        charisma: 5
       }
     },
     {
@@ -78,14 +61,14 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute("toughness",  0.1);
         this.characterService.characterState.status.stamina.value -= 25;
         this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.1;
+        if (Math.random() < 0.01){
+          this.inventoryService.addItem(this.inventoryService.itemRepo.junk);
+          this.characterService.characterState.increaseAttribute("metalLore",  0.01);
+        }
       },
       requirements: {
         strength: 10,
-        toughness: 10,
-        speed: 0,
-        intelligence: 0,
-        charisma: 0,
-        spirituality: 0
+        toughness: 10
       }
     },
     {
@@ -97,17 +80,16 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute("toughness",  0.2);
         this.characterService.characterState.status.stamina.value -= 25;
         this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.3;
-        if (Math.random() < 0.1){
+        if (Math.random() < 0.01){
+          // make this better than junk
           this.inventoryService.addItem(this.inventoryService.itemRepo.junk);
+          this.characterService.characterState.increaseAttribute("metalLore",  0.1);
         }
       },
       requirements: {
         strength: 100,
         toughness: 100,
-        speed: 0,
-        intelligence: 0,
-        charisma: 0,
-        spirituality: 0
+        metalLore: 1
       }
     },
     {
@@ -119,41 +101,47 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute("speed",  0.1);
         this.characterService.characterState.status.stamina.value -= 5;
         this.inventoryService.addItem(this.inventoryService.itemRepo.herbs);
+        this.inventoryService.addItem(this.inventoryService.itemRepo.herbs);
+        if (Math.random() < 0.01){
+          this.characterService.characterState.increaseAttribute("plantLore",  0.1);
+        }
       },
       requirements: {
-        strength: 0,
-        toughness: 0,
         speed: 10,
-        intelligence: 10,
-        charisma: 0,
-        spirituality: 0
+        intelligence: 10
       }
     }
 
   ];
+  
   constructor(private characterService: CharacterService,
     private inventoryService: InventoryService) {
   }
-    meetsRequirements(activity: Activity): boolean {
-    const keys: (keyof CharacterAttribute)[] = Object.keys(this.characterService.characterState.attributes) as (keyof CharacterAttribute)[];
+
+  meetsRequirements(activity: Activity): boolean {
+    const keys: (keyof CharacterAttribute)[] = Object.keys(activity.requirements) as (keyof CharacterAttribute)[];
     for (const keyIndex in keys){
       const key = keys[keyIndex];
-      if (this.characterService.characterState.attributes[key].value < activity.requirements[key]){
+      let requirementValue = 0;
+      if (activity.requirements[key] != undefined){
+        requirementValue = activity.requirements[key]!;
+      }
+      if (this.characterService.characterState.attributes[key].value <= requirementValue){
         return false;
       }
     }
     return true;
   }
 
-   checkRequirements(){
-     for (let i = this.activityLoop.length - 1; i >= 0; i--){
+  checkRequirements(){
+    for (let i = this.activityLoop.length - 1; i >= 0; i--){
       if (!this.meetsRequirements(this.activityLoop[i].activity)){
         this.activityLoop.splice(i, 1);
       }
-     }
-   }
+    }
+  }
 
-   reset(){
+  reset(){
     this.activityLoop = [];
-   }
+  }
 }

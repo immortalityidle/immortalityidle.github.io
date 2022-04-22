@@ -1,17 +1,10 @@
-export interface Requirements {
-  strength: number;
-  toughness: number;
-  speed: number;
-  intelligence: number;
-  charisma: number;
-  spirituality: number;
-}
+import { CharacterAttribute } from '../game-state/character';
 
 export interface Activity {
   name: string;
   description: string;
   consequenceDescription: string;
-  requirements: Requirements;
+  requirements: CharacterAttribute;
   consequence: () => void;
 }
 
