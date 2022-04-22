@@ -10,14 +10,14 @@ export interface CharacterAttribute {
   alchemy?: number
 }
 
-export type AttributeType = 'strength' | 
-  'toughness' | 
-  'speed' | 
-  'intelligence' | 
-  'charisma' | 
+export type AttributeType = 'strength' |
+  'toughness' |
+  'speed' |
+  'intelligence' |
+  'charisma' |
   'spirituality' |
   'metalLore' |
-  'plantLore' | 
+  'plantLore' |
   'alchemy';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number}};
@@ -199,6 +199,6 @@ export class Character {
     this.money = properties.money;
     this.land = properties.land;
     this.equipment = properties.equipment;
-    this.age = properties.age | INITIAL_AGE;
+    this.age = properties.age || INITIAL_AGE;
   }
 }
