@@ -31,4 +31,8 @@ export class AppComponent implements OnInit {
     this.gameStateService.loadFromLocalStorage();
     this.mainLoopService.start();
   }
+
+  hardResetClicked(): void {
+    this.gameStateService.hardReset();
+  }
 }

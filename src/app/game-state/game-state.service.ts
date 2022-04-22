@@ -56,4 +56,9 @@ export class GameStateService {
     this.inventoryService.itemStacks = gameState.itemStacks;
     this.homeService.setCurrentHome(this.homeService.getHomeFromValue(gameState.home));
   }
+
+  hardReset(): void {
+    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY);
+    this.reincarnate();
+  }
 }
