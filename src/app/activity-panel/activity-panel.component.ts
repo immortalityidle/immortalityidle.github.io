@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from './activity.service';
 import { CharacterService } from '../game-state/character.service';
@@ -10,7 +10,7 @@ import { Character } from '../game-state/character';
   templateUrl: './activity-panel.component.html',
   styleUrls: ['./activity-panel.component.less']
 })
-export class ActivityPanelComponent implements OnInit {
+export class ActivityPanelComponent {
 
   character: Character;
 
@@ -20,9 +20,6 @@ export class ActivityPanelComponent implements OnInit {
     characterService: CharacterService
   ) {
     this.character = characterService.characterState;
-  }
-
-  ngOnInit(): void {
   }
 
   onClick(activity: Activity){

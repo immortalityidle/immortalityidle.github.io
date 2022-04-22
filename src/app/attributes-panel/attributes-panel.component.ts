@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { GameStateService } from '../game-state/game-state.service';
 
 
 @Component({
@@ -9,13 +8,10 @@ import { GameStateService } from '../game-state/game-state.service';
   templateUrl: './attributes-panel.component.html',
   styleUrls: ['./attributes-panel.component.less']
 })
-export class AttributesPanelComponent implements OnInit {
+export class AttributesPanelComponent {
   character: Character;
 
   constructor(characterService: CharacterService) {
     this.character = characterService.characterState;
    }
-
-  ngOnInit(): void {
-  }
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LogService } from './log.service';
 
 @Component({
@@ -9,8 +9,11 @@ import { LogService } from './log.service';
 export class LogPanelComponent implements OnInit {
   log: string[] = ["Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul. Your journey to immortality begins as a humble youth leaves home to experience the world. Be careful, the world can be a dangerous place."];
 
-  constructor(logService: LogService) {
-    logService.logAdded.subscribe(
+  constructor(private logService: LogService) {
+  }
+
+  ngOnInit(): void {
+    this.logService.logAdded.subscribe(
       (next) => {
         if (this.log.length == 0){
           this.log.unshift(next);
@@ -37,9 +40,6 @@ export class LogPanelComponent implements OnInit {
         }
       }
     );
-  }
-
-  ngOnInit(): void {
   }
 
 }

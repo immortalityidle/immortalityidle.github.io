@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 
 
@@ -7,11 +7,8 @@ import { CharacterService } from '../game-state/character.service';
   templateUrl: './health-panel.component.html',
   styleUrls: ['./health-panel.component.less']
 })
-export class HealthPanelComponent implements OnInit {
+export class HealthPanelComponent {
 
   constructor(public characterService: CharacterService) { }
-
-  ngOnInit(): void {
-  }
 
 }

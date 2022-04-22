@@ -2,13 +2,14 @@
 <br/>
 <span>{{homeService.home.description}}</span>
 <br/>
-<span>You own {{character.land}} open {{character.land == 1 ? "plot" : "plots"}} of land</span>
+<span>You own {{character.land}} open {{character.land === 1 ? "plot" : "plots"}} of land</span>
 <br/>
 <button  [disabled]="(character.money < 100)" (click)="buyClick()" title="Buy a plot of land for 100 taels.">
     Buy Land
 </button>
 <br/>
-<button *ngIf="(homeService.home.name != homeService.nextHome.name)" [disabled]="character.money < homeService.nextHome.cost || character.land < homeService.nextHome.landRequired"
+<button *ngIf="(homeService.home.name !== homeService.nextHome.name)"
+        [disabled]="character.money < homeService.nextHome.cost || character.land < homeService.nextHome.landRequired"
     title="A better home will cost {{homeService.nextHome.cost}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
     Get a better house
 </button>

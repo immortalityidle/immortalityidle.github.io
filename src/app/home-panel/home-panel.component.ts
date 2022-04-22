@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Home } from '../game-state/home';
+import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
@@ -10,16 +9,13 @@ import { HomeService } from '../game-state/home.service';
   styleUrls: ['./home-panel.component.less']
 })
 
-export class HomePanelComponent implements OnInit {
+export class HomePanelComponent {
 
   character: Character;
 
   constructor(public characterService: CharacterService,
     public homeService: HomeService) {
     this.character = characterService.characterState;
-  }
-
-  ngOnInit(): void {
   }
 
   upgradeClick(){

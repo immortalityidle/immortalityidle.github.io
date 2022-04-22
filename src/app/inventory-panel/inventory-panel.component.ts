@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, ItemStack } from '../game-state/inventory.service';
 
@@ -7,13 +7,10 @@ import { InventoryService, ItemStack } from '../game-state/inventory.service';
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less']
 })
-export class InventoryPanelComponent implements OnInit {
+export class InventoryPanelComponent {
   selectedItem: ItemStack | null = null;
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService) {
-  }
-
-  ngOnInit(): void {
   }
 
   slotClicked(item: ItemStack){
