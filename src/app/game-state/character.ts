@@ -1,3 +1,5 @@
+import { Item } from './inventory.service'
+
 export interface CharacterAttribute {
   strength?: number,
   toughness?: number,
@@ -22,13 +24,13 @@ export type AttributeType = 'strength' |
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number}};
 
-interface Equipment { // TODO: When we implement equipment, change the types here.
-  head: null,
-  body: null,
-  leftHand: null,
-  rightHand: null,
-  legs: null,
-  feet: null
+export interface EquipmentSlots {
+  head: Item | null,
+  body: Item | null,
+  leftHand: Item | null,
+  rightHand: Item | null,
+  legs: Item | null,
+  feet: Item | null,
 }
 
 type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
@@ -38,7 +40,7 @@ export interface CharacterProperties {
   attributes: AttributeObject,
   money: number,
   land: number,
-  equipment: Equipment,
+  equipment: EquipmentSlots,
   age: number
 }
 
@@ -120,7 +122,7 @@ export class Character {
   // age in days
   age = INITIAL_AGE;
   lifespan = 30 * 365;
-  equipment: Equipment = {
+  equipment: EquipmentSlots = {
     head: null,
     body: null,
     leftHand: null,

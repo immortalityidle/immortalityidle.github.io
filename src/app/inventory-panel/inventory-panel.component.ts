@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
+import { EquipmentSlots } from '../game-state/character'
 import { InventoryService, ItemStack } from '../game-state/inventory.service';
 
 @Component({
@@ -9,8 +10,10 @@ import { InventoryService, ItemStack } from '../game-state/inventory.service';
 })
 export class InventoryPanelComponent {
   selectedItem: ItemStack | null = null;
+  equipmentSlots: string[];
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService) {
+      this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
   }
 
   slotClicked(item: ItemStack){
@@ -40,6 +43,13 @@ export class InventoryPanelComponent {
   use(){
     if (this.selectedItem){
       this.inventoryService.useItem(this.selectedItem);
+    }
+  }
+
+  equip(){
+    if (this.selectedItem){
+      this.inventoryService.equip(this.selectedItem);
+      this.selectedItem = null;
     }
   }
 }

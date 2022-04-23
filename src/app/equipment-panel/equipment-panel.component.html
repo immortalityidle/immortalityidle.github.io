@@ -6,9 +6,19 @@
     <td></td>
   </tr>
   <tr>
-    <td><div class="equipmentSlot rightHandSlot"></div></td>
+    <td><div class="equipmentSlot rightHandSlot">
+      <table class="itemSlot"
+        title="{{character.equipment.rightHand?.description}}">
+        <tr><td>{{character.equipment.rightHand?.name}}</td></tr>
+      </table>
+    </div></td>
     <td><div class="equipmentSlot bodySlot"></div></td>
-    <td><div class="equipmentSlot leftHandSlot"></div></td>
+    <td><div class="equipmentSlot leftHandSlot">
+      <table class="itemSlot"
+        title="{{character.equipment.leftHand?.description}}">
+        <tr><td>{{character.equipment.leftHand?.name}}</td></tr>
+      </table>
+    </div></td>
   </tr>
   <tr>
     <td></td>
