@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { ActivityLoopEntry } from './activity';
 import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
 import { HomeType, HomeService } from './home.service';
@@ -11,7 +13,8 @@ const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 interface GameState {
   character: CharacterProperties,
   itemStacks: ItemStack[],
-  home: HomeType
+  home: HomeType,
+  activityLoop: ActivityLoopEntry[]
 }
 
 @Injectable({
@@ -24,7 +27,8 @@ export class GameStateService {
     private homeService: HomeService,
     private inventoryService: InventoryService,
     private logService: LogService,
-    private reincarnationService: ReincarnationService
+    private reincarnationService: ReincarnationService,
+    private activityService: ActivityService
   ) {
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
   }
@@ -35,7 +39,8 @@ export class GameStateService {
     const gameState: GameState = {
       character: this.characterService.characterState.getProperties(),
       itemStacks: this.inventoryService.itemStacks,
-      home: this.homeService.homeValue
+      home: this.homeService.homeValue,
+      activityLoop: this.activityService.activityLoop
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
     this.logService.addLogMessage('Game saved');
@@ -50,6 +55,7 @@ export class GameStateService {
     this.characterService.characterState.setProperties(gameState.character);
     this.inventoryService.itemStacks = gameState.itemStacks;
     this.homeService.setCurrentHome(this.homeService.getHomeFromValue(gameState.home));
+    this.activityService.activityLoop = gameState.activityLoop;
   }
 
   hardReset(): void {

@@ -41,7 +41,8 @@ export interface CharacterProperties {
   money: number,
   land: number,
   equipment: EquipmentSlots,
-  age: number
+  age: number,
+  status: CharacterStatus
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -192,8 +193,9 @@ export class Character {
       money: this.money,
       land: this.land,
       equipment: this.equipment,
-      age: this.age
-    };
+      age: this.age,
+      status: this.status
+    }
   }
 
   setProperties(properties: CharacterProperties) {
@@ -202,5 +204,6 @@ export class Character {
     this.land = properties.land;
     this.equipment = properties.equipment;
     this.age = properties.age || INITIAL_AGE;
+    this.status = properties.status;
   }
 }

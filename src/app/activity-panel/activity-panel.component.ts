@@ -24,7 +24,7 @@ export class ActivityPanelComponent {
 
   onClick(activity: Activity){
     this.activityService.activityLoop.push({
-      activity: activity,
+      activity: activity.activityType,
       repeatTimes: 1
     });
   }

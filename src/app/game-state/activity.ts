@@ -1,7 +1,19 @@
 import { CharacterAttribute } from '../game-state/character';
 
+export enum ActivityType {
+  OddJobs,
+  Resting,
+  Begging,
+  ApprenticeBlacksmithing,
+  Blacksmithing,
+  GatherHerbs,
+  ChopWood,
+  Woodworking
+}
+
 export interface Activity {
   name: string;
+  activityType: ActivityType;
   description: string;
   consequenceDescription: string;
   requirements: CharacterAttribute;
@@ -9,6 +21,6 @@ export interface Activity {
 }
 
 export interface ActivityLoopEntry {
-  activity: Activity;
+  activity: ActivityType;
   repeatTimes: number;
 }

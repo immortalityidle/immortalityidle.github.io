@@ -3,7 +3,6 @@ import { ActivityService } from '../activity-panel/activity.service';
 import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { InventoryService } from '../game-state/inventory.service';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 
@@ -26,7 +25,6 @@ export class TimePanelComponent implements OnInit {
     public activityService: ActivityService,
     characterService: CharacterService,
     private logService: LogService,
-    private inventoryService: InventoryService
   ) {
     this.character = characterService.characterState;
   }
@@ -37,9 +35,8 @@ export class TimePanelComponent implements OnInit {
         this.activityService.activityLoop.length > 0 &&
         this.currentIndex < this.activityService.activityLoop.length
       ) {
-        this.currentLoopEntry =
-          this.activityService.activityLoop[this.currentIndex];
-        this.currentLoopEntry.activity.consequence();
+        this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
+        this.activityService.getActivityByType(this.currentLoopEntry.activity).consequence();
         //this.logService.addLogMessage("You spend the day doing " + this.currentLoopEntry.activity.name);
 
         // check for exhaustion

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Activity, ActivityLoopEntry } from '../game-state/activity';
+import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { AttributeType, CharacterAttribute } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService } from '../game-state/inventory.service';
@@ -45,7 +45,7 @@ export class ActivityService {
 
   checkRequirements() {
     for (let i = this.activityLoop.length - 1; i >= 0; i--) {
-      if (!this.meetsRequirements(this.activityLoop[i].activity)) {
+      if (!this.meetsRequirements(this.getActivityByType(this.activityLoop[i].activity))) {
         this.activityLoop.splice(i, 1);
       }
     }
@@ -55,10 +55,20 @@ export class ActivityService {
     this.activityLoop = [];
   }
 
+  getActivityByType(activityType: ActivityType): Activity {
+    for (const activity of this.activities) {
+      if (activity.activityType === activityType) {
+        return activity;
+      }
+    }
+    throw Error('Could not find activity from type');
+  }
+
   getActivityList(): Activity[] {
     return [
       {
         name: 'Odd Jobs',
+        activityType: ActivityType.OddJobs,
         description:
           'Run errands, pull weeds, clean toilet pits, or whatever else you earn a coin doing. Undignified work for a future immortal, but you have to eat to live.',
         consequenceDescription:
@@ -77,6 +87,7 @@ export class ActivityService {
       },
       {
         name: 'Resting',
+        activityType: ActivityType.Resting,
         description:
           'Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
         consequenceDescription: 'Restores stamina and a little health.',
@@ -90,6 +101,7 @@ export class ActivityService {
       },
       {
         name: 'Begging',
+        activityType: ActivityType.Begging,
         description:
           'Find a nice spot on the side of the street, look sad, and put your hand out. Someone might put a coin in it if you are charasmatic enough.',
         consequenceDescription:
@@ -111,6 +123,7 @@ export class ActivityService {
       },
       {
         name: 'Apprentice Blacksmithing',
+        activityType: ActivityType.ApprenticeBlacksmithing,
         description:
           "Work for the local blacksmith. You mostly pump the bellows, but at least you're learning a trade.",
         consequenceDescription:
@@ -151,6 +164,7 @@ export class ActivityService {
       },
       {
         name: 'Blacksmithing',
+        activityType: ActivityType.Blacksmithing,
         description:
           'Mold metal into useful things. You might even produce something you want to keep now and then.',
         consequenceDescription:
@@ -195,6 +209,7 @@ export class ActivityService {
       },
       {
         name: 'Gather Herbs',
+        activityType: ActivityType.GatherHerbs,
         description: 'Search the natural world for useful herbs.',
         consequenceDescription: '',
         consequence: () => {
@@ -220,6 +235,7 @@ export class ActivityService {
       },
       {
         name: 'Chop Wood',
+        activityType: ActivityType.ChopWood,
         description: 'Work as a woodcutter, cutting logs in the forest.',
         consequenceDescription: '',
         consequence: () => {
@@ -242,6 +258,7 @@ export class ActivityService {
       },
       {
         name: 'Woodworking',
+        activityType: ActivityType.Woodworking,
         description: 'Carve wood into useful items.',
         consequenceDescription:
           'Increases strength and intelligence and provides a little money.',
