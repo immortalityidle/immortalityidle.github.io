@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
+import { MainLoopService } from '../main-loop.service';
+import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 
 export interface Item {
@@ -27,8 +29,19 @@ export class InventoryService {
   maxItems: number = 32;
   maxStackSize = 99;
 
-  constructor(private logService: LogService, private characterService: CharacterService) { 
+  constructor(
+    private logService: LogService,
+    private characterService: CharacterService,
+    mainLoopService: MainLoopService,
+    reincarnationService: ReincarnationService
+  ) {
     this.reset();
+    mainLoopService.tickSubject.subscribe(() => {
+      this.eatFood();
+    });
+    reincarnationService.reincarnateSubject.subscribe(() => {
+      this.reset();
+    });
   }
 
   itemRepo = {
@@ -46,10 +59,10 @@ export class InventoryService {
       }
     },
     herbs: {
-      name: "herbs", 
+      name: "herbs",
       type: "food",
-      value: 2, 
-      description: "Useful herbs. Can be eaten directly or used in creating pills or potions.", 
+      value: 2,
+      description: "Useful herbs. Can be eaten directly or used in creating pills or potions.",
       useLabel: "Eat",
       useDescription: "Fills your belly and restores a bit of health.",
       useConsumes: true,
@@ -60,18 +73,18 @@ export class InventoryService {
       }
     },
     junk: {
-      name: "junk", 
+      name: "junk",
       type: "junk",
-      value: 1, 
-      description: "Some metal junk.", 
+      value: 1,
+      description: "Some metal junk.",
     }
   }
 
   reset(){
     this.logService.addLogMessage("Your mother gives you three big bags of rice as she sends you out to make your way in the world");
     this.itemStacks = [
-      {item: this.itemRepo.rice, quantity:99}, 
-      {item: this.itemRepo.rice, quantity:99}, 
+      {item: this.itemRepo.rice, quantity:99},
+      {item: this.itemRepo.rice, quantity:99},
       {item: this.itemRepo.rice, quantity:99}
     ];
   }

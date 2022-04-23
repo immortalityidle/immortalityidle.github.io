@@ -8,13 +8,16 @@ const TICK_INTERVAL_MS = 50;
 })
 export class MainLoopService {
   tickSubject = new Subject();
+  pause = false;
 
   constructor() {
   }
 
   start() {
     window.setInterval(()=> {
-      this.tickSubject.next(undefined);
+      if (!this.pause) {
+        this.tickSubject.next(undefined);
+      }
     }, TICK_INTERVAL_MS);
   }
 }

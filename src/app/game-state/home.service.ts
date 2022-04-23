@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
+import { MainLoopService } from '../main-loop.service';
+import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
 
@@ -94,7 +96,9 @@ export class HomeService {
 
   constructor(
     private characterService: CharacterService,
-    private logService: LogService
+    private logService: LogService,
+    mainLoopService: MainLoopService,
+    reincarnationService: ReincarnationService
   ) {
       this.setCurrentHome(this.homesList[0]);
       if (this.home === undefined ||
@@ -102,6 +106,14 @@ export class HomeService {
         this.nextHome === undefined) {
         throw Error('Home service not initialized correctly.');
       }
+
+      mainLoopService.tickSubject.subscribe(() => {
+        this.home.consequence();
+      });
+
+      reincarnationService.reincarnateSubject.subscribe(() => {
+        this.reset();
+      });
   }
 
   // gets the specs of the next home, doesn't actually upgrade

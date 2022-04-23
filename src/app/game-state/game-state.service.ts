@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
+import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
 import { HomeType, HomeService } from './home.service';
@@ -23,18 +23,13 @@ export class GameStateService {
     private characterService: CharacterService,
     private homeService: HomeService,
     private inventoryService: InventoryService,
-    private activityService: ActivityService,
-    private logService: LogService
+    private logService: LogService,
+    private reincarnationService: ReincarnationService
   ) {
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
   }
 
-  reincarnate(): void {
-    this.characterService.characterState.reincarnate();
-    this.homeService.reset();
-    this.inventoryService.reset();
-    this.activityService.reset();
-  }
+
 
   savetoLocalStorage(): void {
     const gameState: GameState = {
@@ -59,6 +54,6 @@ export class GameStateService {
 
   hardReset(): void {
     window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY);
-    this.reincarnate();
+    this.reincarnationService.reincarnate();
   }
 }
