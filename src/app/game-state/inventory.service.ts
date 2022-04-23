@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { CharacterService } from './character.service';
+import { WeaponNames, ItemPrefixes } from './itemResources';
+
+export interface WeaponStats {
+  baseDamage: number;
+  material: string;
+  durability: number;
+  strengthScaling: number;
+  speedScaling: number;
+}
 
 export interface Item {
   name: string;
@@ -11,6 +20,7 @@ export interface Item {
   useDescription?: string;
   useConsumes?: boolean;
   use?: () => void;
+  weaponStats?: WeaponStats;
 }
 
 export interface ItemStack {
@@ -27,7 +37,7 @@ export class InventoryService {
   maxItems: number = 32;
   maxStackSize = 99;
 
-  constructor(private logService: LogService, private characterService: CharacterService) { 
+  constructor(private logService: LogService, private characterService: CharacterService) {
     this.reset();
   }
 
@@ -45,11 +55,11 @@ export class InventoryService {
         this.characterService.characterState.checkOverage();
       }
     },
-    herbs: {
-      name: "herbs", 
+    herb: {
+      name: "herbs",
       type: "food",
-      value: 2, 
-      description: "Useful herbs. Can be eaten directly or used in creating pills or potions.", 
+      value: 2,
+      description: "Useful herbs. Can be eaten directly or used in creating pills or potions.",
       useLabel: "Eat",
       useDescription: "Fills your belly and restores a bit of health.",
       useConsumes: true,
@@ -59,19 +69,52 @@ export class InventoryService {
         this.characterService.characterState.checkOverage();
       }
     },
+    log: {
+      name: "log",
+      type: "wood",
+      value: 1,
+      description: "A good-quality log."
+    },
     junk: {
-      name: "junk", 
+      name: "junk",
       type: "junk",
-      value: 1, 
-      description: "Some metal junk.", 
+      value: 1,
+      description: "Some metal junk.",
     }
+  }
+
+  // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
+  generateWeapon(grade: number, material: string){
+    let prefixMax = (grade / 10) * ItemPrefixes.length;
+    let prefixIndex = Math.floor(Math.random() * prefixMax);
+    let prefix = ItemPrefixes[prefixIndex];
+    let name = prefix + " " + WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
+    let type = "rightHand";
+    if (Math.random() < 0.5){
+      type = "leftHand";
+    }
+    let value = prefixIndex;
+    this.logService.addLogMessage("Your hard work paid off! You got a " + name + ".");
+    return {
+      name: name,
+      type: type,
+      value: value,
+      weaponStats: {
+        baseDamage: grade,
+        material: material,
+        durability: (prefixIndex * 10),
+        strengthScaling: (Math.random() * grade),
+        speedScaling: (Math.random() * grade)
+      },
+      description: "A unique and special weapon."
+    };
   }
 
   reset(){
     this.logService.addLogMessage("Your mother gives you three big bags of rice as she sends you out to make your way in the world");
     this.itemStacks = [
-      {item: this.itemRepo.rice, quantity:99}, 
-      {item: this.itemRepo.rice, quantity:99}, 
+      {item: this.itemRepo.rice, quantity:99},
+      {item: this.itemRepo.rice, quantity:99},
       {item: this.itemRepo.rice, quantity:99}
     ];
   }
@@ -134,5 +177,18 @@ export class InventoryService {
         this.itemStacks.splice(index, 1);
       }
     }
+  }
+  equip(itemStack: ItemStack){
+      //return the item already in the slot to the inventory, if any
+      // I hate typescript, can you make this right?
+      //@ts-ignore
+      if (this.characterService.characterState.equipment[itemStack.item.type]){
+        //@ts-ignore
+        this.addItem(this.characterService.characterState.equipment[itemStack.item.type]);
+      }
+      //@ts-ignore
+      this.characterService.characterState.equipment[itemStack.item.type] = itemStack.item;
+      let index = this.itemStacks.indexOf(itemStack);
+      this.itemStacks.splice(index, 1);
   }
 }

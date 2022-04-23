@@ -62,7 +62,11 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 25;
         this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.1;
         if (Math.random() < 0.01){
-          this.inventoryService.addItem(this.inventoryService.itemRepo.junk);
+          if (Math.random() < 0.01){
+            this.inventoryService.addItem(this.inventoryService.generateWeapon(1, "metal"));
+          } else {
+            this.inventoryService.addItem(this.inventoryService.itemRepo.junk);
+          }
           this.characterService.characterState.increaseAttribute("metalLore",  0.01);
         }
       },
@@ -81,9 +85,9 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 25;
         this.characterService.characterState.money += this.characterService.characterState.attributes.strength.value * 0.3;
         if (Math.random() < 0.01){
-          // make this better than junk
-          this.inventoryService.addItem(this.inventoryService.itemRepo.junk);
           this.characterService.characterState.increaseAttribute("metalLore",  0.1);
+          this.inventoryService.addItem(this.inventoryService.generateWeapon(
+            1 + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), "metal"));
         }
       },
       requirements: {
@@ -100,8 +104,8 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute("intelligence",  0.1);
         this.characterService.characterState.increaseAttribute("speed",  0.1);
         this.characterService.characterState.status.stamina.value -= 5;
-        this.inventoryService.addItem(this.inventoryService.itemRepo.herbs);
-        this.inventoryService.addItem(this.inventoryService.itemRepo.herbs);
+        this.inventoryService.addItem(this.inventoryService.itemRepo.herb);
+        this.inventoryService.addItem(this.inventoryService.itemRepo.herb);
         if (Math.random() < 0.01){
           this.characterService.characterState.increaseAttribute("plantLore",  0.1);
         }
@@ -110,10 +114,48 @@ export class ActivityService {
         speed: 10,
         intelligence: 10
       }
+    },
+    {
+      name: 'Chop Wood',
+      description: "Work as a woodcutter, cutting logs in the forest.",
+      consequenceDescription: "",
+      consequence: () => {
+        this.characterService.characterState.increaseAttribute("strength",  0.1);
+        this.characterService.characterState.status.stamina.value -= 10;
+        this.inventoryService.addItem(this.inventoryService.itemRepo.log);
+        if (Math.random() < 0.01){
+          this.characterService.characterState.increaseAttribute("plantLore",  0.1);
+        }
+      },
+      requirements: {
+        strength: 10
+      }
+    },
+    {
+      name: 'Woodworking',
+      description: "Carve wood into useful items.",
+      consequenceDescription: "Increases strength and intelligence and provides a little money.",
+      consequence: () => {
+        this.characterService.characterState.increaseAttribute("strength",  0.2);
+        this.characterService.characterState.increaseAttribute("intelligence",  0.2);
+        this.characterService.characterState.status.stamina.value -= 20;
+        this.characterService.characterState.money +=
+          (this.characterService.characterState.attributes.strength.value +
+            this.characterService.characterState.attributes.intelligence.value) * 0.3;
+        if (Math.random() < 0.01){
+          this.characterService.characterState.increaseAttribute("plantLore",  0.1);
+          this.inventoryService.addItem(this.inventoryService.generateWeapon(
+            1 + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), "wood"));
+        }
+      },
+      requirements: {
+        strength: 100,
+        intelligence: 100,
+        plantLore: 1
+      }
     }
-
   ];
-  
+
   constructor(private characterService: CharacterService,
     private inventoryService: InventoryService) {
   }
