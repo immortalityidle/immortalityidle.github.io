@@ -38,6 +38,7 @@ export class InventoryService {
   itemStacks: ItemStack[] = [];
   maxItems: number = 32;
   maxStackSize = 99;
+  noFood: boolean;
 
   constructor(
     private logService: LogService,
@@ -45,7 +46,7 @@ export class InventoryService {
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService
   ) {
-    this.reset();
+    this.noFood = false;
     mainLoopService.tickSubject.subscribe(() => {
       this.eatFood();
     });
@@ -143,8 +144,10 @@ export class InventoryService {
     }
     if (foodStack){
       this.useItem(foodStack);
+      this.noFood = false;
     } else {
       // no food found, buy a bowl of rice automatically
+      this.noFood = true;
       if (this.characterService.characterState.money > 0){
         this.characterService.characterState.money--;
         this.characterService.characterState.status.nourishment.value++;

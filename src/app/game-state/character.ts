@@ -118,7 +118,7 @@ export class Character {
       max: 14
     }
   };
-  money = 0;
+  money = 300;
   land = 0;
   // age in days
   age = INITIAL_AGE;

@@ -21,7 +21,7 @@ export class TimePanelComponent implements OnInit {
 
 
   constructor(
-    private mainLoopService: MainLoopService,
+    public mainLoopService: MainLoopService,
     public activityService: ActivityService,
     characterService: CharacterService,
     private logService: LogService,
@@ -60,6 +60,9 @@ export class TimePanelComponent implements OnInit {
             this.currentIndex = 0;
           }
         }
+      } else if (this.activityService.activityLoop.length == 0){
+        //automatically pause if there are no activities so you don't accidentally just die doing nothing
+        this.mainLoopService.pause = true;
       } else {
         // make sure that we reset the current index if activities get removed below the currentIndex
         this.currentIndex = 0;
