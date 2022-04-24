@@ -5,9 +5,9 @@
       <tr *ngIf="(meetsRequirements(activity))">
         <td><button (click)="onClick(activity)">{{activity.name}}</button></td>
         <td>
-          {{activity.description}}
+          {{activity.description[activity.level]}}
           <br/>
-          {{activity.consequenceDescription}}
+          {{activity.consequenceDescription[activity.level]}}
         </td>
       </tr>
     </ng-container>

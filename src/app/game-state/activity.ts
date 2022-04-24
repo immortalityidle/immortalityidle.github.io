@@ -13,11 +13,12 @@ export enum ActivityType {
 
 export interface Activity {
   name: string;
+  level: number;
   activityType: ActivityType;
-  description: string;
-  consequenceDescription: string;
-  requirements: CharacterAttribute;
-  consequence: () => void;
+  description: string[];
+  consequenceDescription: string[];
+  requirements: CharacterAttribute[];
+  consequence: (() => void)[];
 }
 
 export interface ActivityLoopEntry {

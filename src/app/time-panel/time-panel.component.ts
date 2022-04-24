@@ -36,7 +36,8 @@ export class TimePanelComponent implements OnInit {
         this.currentIndex < this.activityService.activityLoop.length
       ) {
         this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
-        this.activityService.getActivityByType(this.currentLoopEntry.activity).consequence();
+        let activity = this.activityService.getActivityByType(this.currentLoopEntry.activity);
+        activity.consequence[activity.level]();
         //this.logService.addLogMessage("You spend the day doing " + this.currentLoopEntry.activity.name);
 
         // check for exhaustion
