@@ -12,7 +12,7 @@ export enum ActivityType {
 }
 
 export interface Activity {
-  name: string;
+  name: string[];
   level: number;
   activityType: ActivityType;
   description: string[];

@@ -88,7 +88,7 @@ export class ActivityService {
     return [
       {
         level: 0,
-        name: 'Odd Jobs',
+        name: ['Odd Jobs'],
         activityType: ActivityType.OddJobs,
         description:
           ['Run errands, pull weeds, clean toilet pits, or whatever else you earn a coin doing. Undignified work for a future immortal, but you have to eat to live.'],
@@ -108,7 +108,7 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: 'Resting',
+        name: ['Resting'],
         activityType: ActivityType.Resting,
         description:['Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.'],
         consequenceDescription: ['Restores stamina and a little health.'],
@@ -122,38 +122,50 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: 'Begging',
+        name: ['Begging', 'Street Performing'],
         activityType: ActivityType.Begging,
         description:[
-          'Find a nice spot on the side of the street, look sad, and put your hand out. Someone might put a coin in it if you are charasmatic enough.'
+          'Find a nice spot on the side of the street, look sad, and put your hand out. Someone might put a coin in it if you are charasmatic enough.',
+          'Add some musical flair to your begging.'
         ],
-        consequenceDescription:['Increases charisma and provides a little money.'],
-        consequence: [() => {
-          this.characterService.characterState.increaseAttribute(
-            'charisma',
-            0.1
-          );
-          this.characterService.characterState.status.stamina.value -= 1;
-          this.characterService.characterState.money +=
-            this.characterService.characterState.attributes.charisma.value *
-            0.1;
-          //TODO: figure out diminishing returns for this
-        }],
-        requirements: [{
-          charisma: 5,
-        }]
+        consequenceDescription:['Increases charisma and provides a little money.',
+          'Increases charisma and provides some money.'],
+        consequence: [
+          () => {
+            this.characterService.characterState.increaseAttribute('charisma',0.1);
+            this.characterService.characterState.status.stamina.value -= 1;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.charisma.value);
+          },
+          () => {
+            this.characterService.characterState.increaseAttribute('charisma',0.2);
+            this.characterService.characterState.status.stamina.value -= 5;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.charisma.value);
+          }
+        ],
+        requirements: [
+          {
+            charisma: 5,
+          },
+          {
+            charisma: 20
+          }
+        ]
       },
       {
         level: 0,
-        name: 'Blacksmithing',
+        name: ['Apprentice Blacksmithing', 'Journeyman Blacksmithing', 'Blacksmithing'],
         activityType: ActivityType.ApprenticeBlacksmithing,
         description:[
           "Work for the local blacksmith. You mostly pump the bellows, but at least you're learning a trade.",
-          'Mold metal into useful things. You might even produce something you want to keep now and then.'
+          'Mold metal into useful things. You might even produce something you want to keep now and then.',
+          'Create useful and beautiful metal objects. You might produce a decent weapon occasionally.'
         ],
         consequenceDescription:[
           'Increases strength and toughness and provides a little money.',
-          'Increases strength and toughness and provides a little money.',
+          'Increases strength, toughness, and money.',
+          'Build your physical power, master your craft, and create weapons',
         ],
         consequence: [
           // grade 0
@@ -218,6 +230,23 @@ export class ActivityService {
                 )
               );
             }
+          },
+          // grade 2
+          () => {
+            this.characterService.characterState.increaseAttribute('strength',0.5);
+            this.characterService.characterState.increaseAttribute('toughness',0.5);
+            this.characterService.characterState.status.stamina.value -= 25;
+            this.characterService.characterState.money +=
+              this.characterService.characterState.attributes.strength.value * 0.5;
+            if (Math.random() < 0.01) {
+              this.characterService.characterState.increaseAttribute(
+                'metalLore',
+                0.2
+              );
+              this.inventoryService.addItem(
+                this.inventoryService.generateWeapon(
+                  1 + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+            }
           }
         ],
         requirements: [
@@ -229,12 +258,17 @@ export class ActivityService {
             strength: 100,
             toughness: 100,
             metalLore: 1,
+          },
+          {
+            strength: 1000,
+            toughness: 1000,
+            metalLore: 10,
           }
         ],
       },
       {
         level: 0,
-        name: 'Gather Herbs',
+        name: ['Gather Herbs'],
         activityType: ActivityType.GatherHerbs,
         description: ['Search the natural world for useful herbs.'],
         consequenceDescription: ['Find a couple of herbs and learn about plants'],
@@ -261,7 +295,7 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: 'Chop Wood',
+        name: ['Chop Wood'],
         activityType: ActivityType.ChopWood,
         description: ['Work as a woodcutter, cutting logs in the forest.'],
         consequenceDescription: ["Get a log and learn about plants."],
@@ -285,7 +319,7 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: 'Woodworking',
+        name: ['Apprentice Woodworking', 'Woodworking'],
         activityType: ActivityType.Woodworking,
         description: ['Work in a woodcarver\'s shop.', 'Carve wood into useful items.'],
         consequenceDescription:[

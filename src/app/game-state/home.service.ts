@@ -13,10 +13,17 @@ export enum HomeType {
   PleasantCottage
 }
 
+export interface Field {
+  cropName: string,
+  yield: number,
+  daysToHarvest: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class HomeService {
+  fields: Field[] = [];
   homesList: Home[] = [
     {
       name: "Squatter Tent",
@@ -66,7 +73,7 @@ export class HomeService {
       name: "Simple Hut",
       type: HomeType.SimpleHut,
       description: "A very simple hut.",
-      cost: 1000,
+      cost: 10000,
       costPerDay: 5,
       landRequired: 10,
       consequence: () => {
@@ -79,7 +86,7 @@ export class HomeService {
       name: "Pleasant Cottage",
       type: HomeType.PleasantCottage,
       description: "A nice little home where you can rest peacefully.",
-      cost: 1000,
+      cost: 100000,
       costPerDay: 10,
       landRequired: 20,
       consequence: () => {
