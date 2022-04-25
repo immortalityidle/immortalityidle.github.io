@@ -54,6 +54,14 @@ export class GameStateService {
     const gameState = JSON.parse(gameStateSerialized) as GameState;
     this.characterService.characterState.setProperties(gameState.character);
     this.inventoryService.itemStacks = gameState.itemStacks;
+    // restore functions to itemStacks, because JSON stringification throws them away
+    for (const itemStack of this.inventoryService.itemStacks){
+        //@ts-ignore
+        if (this.inventoryService.itemRepo[itemStack.item.name]){
+        //@ts-ignore
+        itemStack.item.use = this.inventoryService.itemRepo[itemStack.item.name].use;
+      }
+    }
     this.homeService.setCurrentHome(this.homeService.getHomeFromValue(gameState.home));
     this.activityService.activityLoop = gameState.activityLoop;
   }

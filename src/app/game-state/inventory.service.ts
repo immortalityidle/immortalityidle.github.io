@@ -55,6 +55,7 @@ export class InventoryService {
     });
   }
 
+  // Make sure the name field matches the object name, it's used to restore the use function on gameState load
   itemRepo = {
     rice: {
       name: "rice",
@@ -70,7 +71,7 @@ export class InventoryService {
       }
     },
     herb: {
-      name: "herbs",
+      name: "herb",
       type: "food",
       value: 2,
       description: "Useful herbs. Can be eaten directly or used in creating pills or potions.",

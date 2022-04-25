@@ -22,7 +22,6 @@ export class InventoryPanelComponent {
     } else {
       this.selectedItem = item;
     }
-    console.log(this.selectedItem);
   }
 
   sellAll(){
