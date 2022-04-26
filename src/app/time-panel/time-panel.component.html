@@ -1,5 +1,5 @@
 <span class="panelHeader">How will you spend your time?</span>
-<button (click)="pauseClick()">{{mainLoopService.pause ? "Play" : "Pause"}}</button>
+<mat-icon (click)="pauseClick()">{{mainLoopService.pause ? "play_arrow" : "pause"}}</mat-icon>
 <table>
   <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;">
     <td>{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
@@ -10,12 +10,11 @@
       </progress>
     </td>
     <td>
-      <!-- TODO: pretty up these buttons -->
-      <button (click)="onPlusClick(entry)">+</button>
-      <button [disabled]="entry.repeatTimes <= 1" (click)="onMinusClick(entry)">-</button>
-      <button (click)="onUpClick(entry)">Up</button>
-      <button (click)="onDownClick(entry)">Down</button>
-      <button (click)="onRemoveClick(entry)">X</button>
+      <mat-icon (click)="onPlusClick(entry)">add</mat-icon>
+      <mat-icon (click)="onMinusClick(entry)">remove</mat-icon>
+      <mat-icon (click)="onUpClick(entry)">arrow_upward</mat-icon>
+      <mat-icon (click)="onDownClick(entry)">arrow_downward</mat-icon>
+      <mat-icon (click)="onRemoveClick(entry)">clear</mat-icon>
     </td>
   </tr>
 </table>

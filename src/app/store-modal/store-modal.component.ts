@@ -4,6 +4,7 @@ import { StoreService } from './store.service';
 import { Item } from '../game-state/inventory.service';
 import { CharacterService } from '../game-state/character.service';
 import { Character } from '../game-state/character';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-store-modal',

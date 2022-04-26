@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -14,11 +14,13 @@ import { ActivityPanelComponent } from './activity-panel/activity-panel.componen
 import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.component';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { StoreModalComponent } from './store-modal/store-modal.component';
 
 const materialModules = [
-  MatDialogModule
+  MatDialogModule,
+  MatIconModule
 ];
 
 @NgModule({

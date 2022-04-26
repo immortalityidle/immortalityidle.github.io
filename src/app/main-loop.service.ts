@@ -8,7 +8,7 @@ const TICK_INTERVAL_MS = 50;
 })
 export class MainLoopService {
   tickSubject = new Subject();
-  pause = false;
+  pause = true;
 
   constructor() {
   }

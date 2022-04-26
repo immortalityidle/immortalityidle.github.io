@@ -19,22 +19,19 @@ export class CharacterService {
       this.characterState.age++;
       this.characterState.status.nourishment.value--;
       // check for death
+      let deathMessage = "";
       if (this.characterState.age >= this.characterState.lifespan) {
-        this.logService.addLogMessage(
-          "You reach the end of your natural life and pass away from old age. You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life."
-        );
-        this.reincarnationService.reincarnate();
+        deathMessage = "You reach the end of your natural life and pass away from old age.";
+      } else if (this.characterState.status.health.value <= 0) {
+        deathMessage = "You succumb to your wounds and die.";
+      } else if (this.characterState.status.nourishment.value <= 0) {
+        deathMessage = "You starve to death.";
       }
-      if (this.characterState.status.health.value <= 0) {
-        this.logService.addLogMessage(
-          "You succumb to your wounds and pass away. You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life."
-        );
-        this.reincarnationService.reincarnate();
-      }
-      if (this.characterState.status.nourishment.value <= 0) {
-        this.logService.addLogMessage(
-          "You starve to death. You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life."
-        );
+      if (deathMessage != ""){
+        this.logService.addLogMessage(deathMessage);
+        this.logService.addLogMessage("You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.");
+        this.logService.addLogMessage("Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again.");
+        this.logService.addLogMessage("It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!");
         this.reincarnationService.reincarnate();
       }
     });

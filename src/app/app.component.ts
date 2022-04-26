@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './main-loop.service';
 import { StoreModalComponent } from './store-modal/store-modal.component';
+import { HostListener } from '@angular/core';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -37,6 +38,13 @@ export class CamelToTitlePipe implements PipeTransform {
 })
 export class AppComponent implements OnInit {
   title = 'immortalityidle';
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    if (event.code == 'Space'){
+      this.mainLoopService.pause = !this.mainLoopService.pause;
+    }
+  }  
 
   constructor(
     private mainLoopService: MainLoopService,

@@ -4,10 +4,10 @@
       <td class="inventoryLabelColumn">Inventory</td>
       <td class="moneyColumn">Money: </td>
       <td class="moneyColumn">{{characterService.characterState.money | number: '1.0-0'}} Taels</td>
-      <td><span *ngIf="inventoryService.noFood" class="noFood"
+      <td><mat-icon *ngIf="inventoryService.noFood" 
         title="You have no food in your inventory, you will spend money on food each day to avoid starvation.">
-        No food!
-      </span></td>
+        no_food
+      </mat-icon></td>
     </tr>
   </table>
 

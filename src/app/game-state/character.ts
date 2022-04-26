@@ -22,7 +22,7 @@ export type AttributeType = 'strength' |
   'plantLore' |
   'alchemy';
 
-type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number}};
+type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number, icon: string}};
 
 export type EquipmentPosition = 'head' | 'body' | 'leftHand' | 'rightHand' | 'legs' | 'feet';
 
@@ -42,53 +42,60 @@ export interface CharacterProperties {
 
 const INITIAL_AGE = 18 * 365;
 export class Character {
-
-
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
       value: 1,
-      aptitude: 1
+      aptitude: 1,
+      icon: "fitness_center"
     },
     toughness: {
       description: "An immortal must develop resilience to endure hardship.",
       value: 1,
-      aptitude: 1
+      aptitude: 1,
+      icon: "castle"
     },
     speed: {
       description: "An immortal must be quick of foot and hand.",
       value: 1,
-      aptitude: 1
+      aptitude: 1,
+      icon: "directions_run"
     },
     intelligence: {
       description: "An immortal must understand the workings of the universe.",
       value: 1,
-      aptitude: 1
+      aptitude: 1,
+      icon: "local_library"
     },
     charisma: {
       description: "An immortal must influence the hearts and minds of others.",
       value: 1,
-      aptitude: 1
+      aptitude: 1,
+      icon: "chat_bubble_outline"
     },
     spirituality: {
       description: "An immortal must find deep connections to the divine.",
       value: 0,
-      aptitude: 1
+      aptitude: 1,
+      icon: "auto_awesome"
     },
     metalLore: {
       description: "Understanding metals and how to forge and use them.",
       value: 0,
-      aptitude: 1
+      aptitude: 1,
+      icon: "hardware"
     },
     plantLore: {
       description: "Understanding plants and how to grow and care for them.",
       value: 0,
-      aptitude: 1
+      aptitude: 1,
+      icon: "forest"
     },
     alchemy: {
       description: "Understanding potions and pills and how to make and use them.",
       value: 0,
-      aptitude: 1
+      aptitude: 1,
+      icon: "emoji_food_beverage"
     }
   };
   status: CharacterStatus = {
