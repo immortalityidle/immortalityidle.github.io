@@ -5,7 +5,7 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { ActivityLoopEntry } from './activity';
 import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
-import { HomeType, HomeService } from './home.service';
+import { HomeService, HomeProperties } from './home.service';
 import { InventoryService, ItemStack } from './inventory.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
@@ -13,7 +13,7 @@ const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 interface GameState {
   character: CharacterProperties,
   itemStacks: ItemStack[],
-  home: HomeType,
+  home: HomeProperties,
   activityLoop: ActivityLoopEntry[]
 }
 
@@ -39,7 +39,7 @@ export class GameStateService {
     const gameState: GameState = {
       character: this.characterService.characterState.getProperties(),
       itemStacks: this.inventoryService.itemStacks,
-      home: this.homeService.homeValue,
+      home: this.homeService.getProperties(),
       activityLoop: this.activityService.activityLoop
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
@@ -60,7 +60,7 @@ export class GameStateService {
         itemStack.item.use = this.inventoryService.itemRepo[itemStack.item.name].use;
       }
     }
-    this.homeService.setCurrentHome(this.homeService.getHomeFromValue(gameState.home));
+    this.homeService.setProperties(gameState.home);
     this.activityService.activityLoop = gameState.activityLoop;
   }
 

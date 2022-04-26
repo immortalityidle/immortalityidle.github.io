@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { EquipmentPosition } from './character';
 import { CharacterService } from './character.service';
+import { HomeService } from './home.service';
 import { WeaponNames, ItemPrefixes } from './itemResources';
 
 export interface WeaponStats {
@@ -44,13 +45,16 @@ export class InventoryService {
   maxStackSize = 999;
   noFood: boolean;
   selectedItem: ItemStack | null = null;
+  homeService: HomeService | null;
 
   constructor(
     private logService: LogService,
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService
+    reincarnationService: ReincarnationService,
+    private injector: Injector
   ) {
+    this.homeService = null; // initially null to avoid circular dependency
     this.noFood = false;
     mainLoopService.tickSubject.subscribe(() => {
       this.eatFood();
@@ -104,6 +108,23 @@ export class InventoryService {
       value: 1,
       description: 'Some metal junk.',
     },
+    farmingManual: {
+      name: "Manual of Perpetual Farming",
+      type: "manual",
+      description: "This manual teaches you to automatically replant fields when they are harvested.",
+      value: 10000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock automatic farm replanting.",
+      useConsumes: true,
+      use: () => {
+        if (!this.homeService){
+          this.homeService = this.injector.get(HomeService);
+        }
+        this.homeService.autoReplant = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+      }
+    }
+
   };
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)

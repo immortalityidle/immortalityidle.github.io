@@ -20,6 +20,13 @@ export interface Field {
   daysToHarvest: number
 }
 
+export interface HomeProperties {
+  homeValue: HomeType,
+  fields: Field[],
+  fieldYields: number,
+  autoReplant: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -102,6 +109,7 @@ export class HomeService {
   homeValue!: HomeType;
   home!: Home;
   nextHome!: Home;
+  autoReplant : boolean;
 
   constructor(
     private characterService: CharacterService,
@@ -110,6 +118,7 @@ export class HomeService {
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService
   ) {
+      this.autoReplant = false;
       this.setCurrentHome(this.homesList[0]);
       if (this.home === undefined ||
         this.homeValue === undefined ||
@@ -129,6 +138,22 @@ export class HomeService {
           this.setCurrentHome(this.nextHome);
         }
       });
+  }
+
+  getProperties(): HomeProperties {
+    return {
+      homeValue: this.homeValue,
+      fields: this.fields,
+      fieldYields: this.fieldYields,
+      autoReplant: this.autoReplant
+    }
+  }
+
+  setProperties(properties: HomeProperties) {
+    this.autoReplant = properties.autoReplant;
+    this.fields = properties.fields;
+    this.fieldYields = properties.fieldYields;
+    this.setCurrentHome(this.homesList[properties.homeValue]);
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -194,8 +219,13 @@ export class HomeService {
       if (this.fields[i].daysToHarvest == 0){
         this.inventoryService.addItems(this.inventoryService.itemRepo['rice'], this.fields[i].yield);
         this.fieldYields -= this.fields[i].yield;
-        this.fields.splice(i, 1);
-        this.characterService.characterState.land++;
+        if (this.autoReplant){
+          this.fields[i].daysToHarvest = 90;
+          this.fields[i].yield = 0;
+        } else {
+          this.fields.splice(i, 1);
+          this.characterService.characterState.land++;
+        }
       } else {
         this.fields[i].daysToHarvest--;
       }

@@ -1,1 +1,15 @@
-<span>Store goes here</span>
+<span>Store</span>
+<div class="inventoryGrid">
+    <div *ngFor="let item of storeService.storeItems">
+      <table class="itemSlot" (click)="slotClicked(item)"
+        [ngClass]="{'selectedItem': item === storeService.selectedItem}"
+        title="{{item.description}}">
+        <tr>{{item.name | titlecase}}</tr>
+      </table>
+      <span>{{item.value}}</span>
+    </div>
+</div>
+<button (click)="buy()"
+    [disabled]="(character.money < (storeService.selectedItem ? storeService.selectedItem.value : 0))">
+    Buy
+</button>

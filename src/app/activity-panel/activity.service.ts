@@ -93,7 +93,7 @@ export class ActivityService {
         name: ['Odd Jobs'],
         activityType: ActivityType.OddJobs,
         description:
-          ['Run errands, pull weeds, clean toilet pits, or whatever else you earn a coin doing. Undignified work for a future immortal, but you have to eat to live.'],
+          ['Run errands, pull weeds, clean toilet pits, or whatever else you can earn a coin doing. Undignified work for a future immortal, but you have to eat to live.'],
         consequenceDescription:
           ['Increases a random attribute and provides a little money.'],
         consequence: [() => {
@@ -352,14 +352,8 @@ export class ActivityService {
             }
           },
           () => {
-            this.characterService.characterState.increaseAttribute(
-              'strength',
-              0.1
-            );
-            this.characterService.characterState.increaseAttribute(
-              'intelligence',
-              0.1
-            );
+            this.characterService.characterState.increaseAttribute('strength', 0.1);
+            this.characterService.characterState.increaseAttribute('intelligence', 0.1);
             this.characterService.characterState.status.stamina.value -= 20;
             this.characterService.characterState.money +=
               (this.characterService.characterState.attributes.strength.value +
@@ -389,9 +383,11 @@ export class ActivityService {
         description:
           ['Plant crops in your fields. This is a waste of time if you don\'t have some fields ready to work.'],
         consequenceDescription:
-          ['Helps your fields to produce more food.'],
+          ['Increases strength and speed and helps your fields to produce more food.'],
         consequence: [() => {
           this.homeService.workFields();
+          this.characterService.characterState.increaseAttribute('strength', 0.1);
+          this.characterService.characterState.increaseAttribute('speed', 0.1);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore', 0.1);
           }
