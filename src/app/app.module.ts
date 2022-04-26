@@ -13,6 +13,13 @@ import { InventoryPanelComponent } from './inventory-panel/inventory-panel.compo
 import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
 import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.component';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+import { StoreModalComponent } from './store-modal/store-modal.component';
+
+const materialModules = [
+  MatDialogModule
+];
 
 @NgModule({
   declarations: [
@@ -26,13 +33,19 @@ import { FormsModule } from '@angular/forms';
     ActivityPanelComponent,
     EquipmentPanelComponent,
     FloorPipe,
-    CamelToTitlePipe
+    CamelToTitlePipe,
+    StoreModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    FormsModule
+    FormsModule,
+    CommonModule,
+    ...materialModules
+  ],
+  exports: [
+    ...materialModules
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,6 +1,8 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './main-loop.service';
+import { StoreModalComponent } from './store-modal/store-modal.component';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -38,7 +40,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private mainLoopService: MainLoopService,
-    private gameStateService: GameStateService
+    private gameStateService: GameStateService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -48,5 +51,11 @@ export class AppComponent implements OnInit {
 
   hardResetClicked(): void {
     this.gameStateService.hardReset();
+  }
+  storeClicked(): void {
+    const dialogRef = this.dialog.open(StoreModalComponent, {
+      width: '400px',
+      data: {someField: 'foo'}
+    });
   }
 }
