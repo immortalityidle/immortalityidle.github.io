@@ -192,7 +192,7 @@ export class HomeService {
   ageFields(){
     for (let i = this.fields.length - 1; i >= 0; i--){
       if (this.fields[i].daysToHarvest == 0){
-        this.inventoryService.addItems(this.inventoryService.itemRepo.rice, this.fields[i].yield);
+        this.inventoryService.addItems(this.inventoryService.itemRepo['rice'], this.fields[i].yield);
         this.fieldYields -= this.fields[i].yield;
         this.fields.splice(i, 1);
         this.characterService.characterState.land++;

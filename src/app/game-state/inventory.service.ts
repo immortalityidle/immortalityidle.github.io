@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { EquipmentPosition } from './character';
 import { CharacterService } from './character.service';
 import { WeaponNames, ItemPrefixes } from './itemResources';
 
@@ -25,15 +26,18 @@ export interface Item {
   weaponStats?: WeaponStats;
 }
 
+export interface Equipment extends Item {
+  slot: EquipmentPosition;
+}
+
 export interface ItemStack {
   item: Item;
   quantity: number;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class InventoryService {
   itemStacks: ItemStack[] = [];
   maxItems: number = 32;
@@ -56,61 +60,69 @@ export class InventoryService {
     });
   }
 
+  // TODO: Not sure that I love it, but key should probably be enumerated to possible items
   // Make sure the name field matches the object name, it's used to restore the use function on gameState load
-  itemRepo = {
+  itemRepo: {[key:string]: Item} = {
     rice: {
-      name: "rice",
-      type: "food",
+      name: 'rice',
+      type: 'food',
       value: 1,
-      description: "A basic staple of life. One pouch will sustain you for a day.",
-      useLabel: "Eat",
-      useDescription: "Fills your belly.",
+      description:
+        'A basic staple of life. One pouch will sustain you for a day.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly.',
       useConsumes: true,
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     herb: {
-      name: "herb",
-      type: "food",
+      name: 'herb',
+      type: 'food',
       value: 2,
-      description: "Useful herbs. Can be eaten directly or used in creating pills or potions.",
-      useLabel: "Eat",
-      useDescription: "Fills your belly and restores a bit of health.",
+      description:
+        'Useful herbs. Can be eaten directly or used in creating pills or potions.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and restores a bit of health.',
       useConsumes: true,
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         this.characterService.characterState.status.health.value += 5;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     log: {
-      name: "log",
-      type: "wood",
+      name: 'log',
+      type: 'wood',
       value: 1,
-      description: "A good-quality log."
+      description: 'A good-quality log.',
     },
     junk: {
-      name: "junk",
-      type: "junk",
+      name: 'junk',
+      type: 'junk',
       value: 1,
-      description: "Some metal junk.",
-    }
-  }
+      description: 'Some metal junk.',
+    },
+  };
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
-  generateWeapon(grade: number, material: string){
+  generateWeapon(grade: number, material: string) {
     let prefixMax = (grade / 10) * ItemPrefixes.length;
     let prefixIndex = Math.floor(Math.random() * prefixMax);
     let prefix = ItemPrefixes[prefixIndex];
-    let name = prefix + " " + WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
-    let type = "rightHand";
-    if (Math.random() < 0.5){
-      type = "leftHand";
+    let name =
+      prefix +
+      ' ' +
+      WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
+    let type = 'rightHand';
+    if (Math.random() < 0.5) {
+      type = 'leftHand';
     }
     let value = prefixIndex;
-    this.logService.addLogMessage("Your hard work paid off! You got a " + name + ".");
+    this.logService.addLogMessage(
+      'Your hard work paid off! You got a ' + name + '.'
+    );
     return {
       name: name,
       type: type,
@@ -118,104 +130,123 @@ export class InventoryService {
       weaponStats: {
         baseDamage: grade,
         material: material,
-        durability: (prefixIndex * 10),
-        strengthScaling: (Math.random() * grade),
-        speedScaling: (Math.random() * grade)
+        durability: prefixIndex * 10,
+        strengthScaling: Math.random() * grade,
+        speedScaling: Math.random() * grade,
       },
-      description: "A unique and special weapon."
+      description: 'A unique and special weapon.',
     };
   }
 
-  reset(){
-    if (Math.random() < .3){
-      this.logService.addLogMessage("Your mother gives you three big bags of rice as she sends you out to make your way in the world.");
+  reset() {
+    if (Math.random() < 0.3) {
+      this.logService.addLogMessage(
+        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.'
+      );
       this.itemStacks = [
-        {item: this.itemRepo.rice, quantity:99},
-        {item: this.itemRepo.rice, quantity:99},
-        {item: this.itemRepo.rice, quantity:99}
+        { item: this.itemRepo['rice'], quantity: 99 },
+        { item: this.itemRepo['rice'], quantity: 99 },
+        { item: this.itemRepo['rice'], quantity: 99 },
       ];
     }
   }
 
   // find the cheapest food in the inventory and use it
-  eatFood(){
+  eatFood() {
     let foodStack = null;
     let foodValue = Number.MAX_VALUE;
-    for (const itemIterator of this.itemStacks){
-      if (itemIterator.item.type == "food" && itemIterator.item.value < foodValue){
+    for (const itemIterator of this.itemStacks) {
+      if (
+        itemIterator.item.type == 'food' &&
+        itemIterator.item.value < foodValue
+      ) {
         foodStack = itemIterator;
       }
     }
-    if (foodStack){
+    if (foodStack) {
       this.useItem(foodStack);
       this.noFood = false;
     } else {
       // no food found, buy a bowl of rice automatically
       this.noFood = true;
-      if (this.characterService.characterState.money > 0){
+      if (this.characterService.characterState.money > 0) {
         this.characterService.characterState.money--;
         this.characterService.characterState.status.nourishment.value++;
       }
     }
   }
 
-  addItems(item: Item, quantity: number){
+  addItems(item: Item, quantity: number) {
     //doing this the slacker inefficient way, optimize later if needed
-    for (let i = 0; i < quantity; i++){
+    for (let i = 0; i < quantity; i++) {
       this.addItem(item);
     }
   }
 
-  addItem(item: Item){
-    for (const itemIterator of this.itemStacks){
-      if (itemIterator.item.name == item.name && (itemIterator.quantity < this.maxStackSize)){
+  addItem(item: Item) {
+    for (const itemIterator of this.itemStacks) {
+      if (
+        itemIterator.item.name == item.name &&
+        itemIterator.quantity < this.maxStackSize
+      ) {
         // it matches an existing item and there's room in the stack, add it to the stack and bail out
         itemIterator.quantity++;
         return;
       }
     }
     // couldn't stack it, make a new stack
-    if (this.itemStacks.length < this.maxItems){
-      this.itemStacks.push({item: item, quantity: 1});
+    if (this.itemStacks.length < this.maxItems) {
+      this.itemStacks.push({ item: item, quantity: 1 });
     } else {
-      this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you threw it away.`);
+      this.logService.addLogMessage(
+        `You don't have enough room for the ${item.name} so you threw it away.`
+      );
     }
   }
 
-  sell(itemStack: ItemStack, quantity: number){
+  sell(itemStack: ItemStack, quantity: number) {
     let index = this.itemStacks.indexOf(itemStack);
-    if (quantity >= itemStack.quantity){
+    if (quantity >= itemStack.quantity) {
       this.itemStacks.splice(index, 1);
-      this.characterService.characterState.money += (itemStack.quantity * itemStack.item.value);
+      this.characterService.characterState.money +=
+        itemStack.quantity * itemStack.item.value;
     } else {
       itemStack.quantity -= quantity;
-      this.characterService.characterState.money += (quantity * itemStack.item.value);
+      this.characterService.characterState.money +=
+        quantity * itemStack.item.value;
     }
   }
 
-  useItem(itemStack: ItemStack){
-    if (itemStack.item.use){
+  useItem(itemStack: ItemStack) {
+    if (itemStack.item.use) {
       itemStack.item.use();
     }
-    if (itemStack.item.useConsumes){
+    if (itemStack.item.useConsumes) {
       itemStack.quantity--;
-      if (itemStack.quantity <= 0){
+      if (itemStack.quantity <= 0) {
         let index = this.itemStacks.indexOf(itemStack);
         this.itemStacks.splice(index, 1);
       }
     }
   }
-  equip(itemStack: ItemStack){
-      //return the item already in the slot to the inventory, if any
-      // I hate typescript, can you make this right?
-      //@ts-ignore
-      if (this.characterService.characterState.equipment[itemStack.item.type]){
-        //@ts-ignore
-        this.addItem(this.characterService.characterState.equipment[itemStack.item.type]);
-      }
-      //@ts-ignore
-      this.characterService.characterState.equipment[itemStack.item.type] = itemStack.item;
-      let index = this.itemStacks.indexOf(itemStack);
-      this.itemStacks.splice(index, 1);
+  equip(itemStack: ItemStack) {
+    // return the item already in the slot to the inventory, if any
+    const item = itemStack.item;
+    if (!instanceOfEquipment(item)) {
+      throw Error('Tried to equip an item that was not equipable');
+    }
+
+    const itemToEquip =
+      this.characterService.characterState.equipment[item.slot];
+    if (itemToEquip) {
+      this.addItem(itemToEquip);
+    }
+    this.characterService.characterState.equipment[item.slot] = item;
+    let index = this.itemStacks.indexOf(itemStack);
+    this.itemStacks.splice(index, 1);
   }
+}
+
+function instanceOfEquipment(object: any): object is Equipment {
+  return 'slot' in object;
 }

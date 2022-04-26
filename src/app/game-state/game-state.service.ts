@@ -56,9 +56,7 @@ export class GameStateService {
     this.inventoryService.itemStacks = gameState.itemStacks;
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks){
-        //@ts-ignore
-        if (this.inventoryService.itemRepo[itemStack.item.name]){
-        //@ts-ignore
+      if (this.inventoryService.itemRepo[itemStack.item.name]){
         itemStack.item.use = this.inventoryService.itemRepo[itemStack.item.name].use;
       }
     }

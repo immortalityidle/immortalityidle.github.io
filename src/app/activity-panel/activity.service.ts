@@ -185,7 +185,7 @@ export class ActivityService {
                 );
               } else {
                 this.inventoryService.addItem(
-                  this.inventoryService.itemRepo.junk
+                  this.inventoryService.itemRepo['junk']
                 );
               }
               this.characterService.characterState.increaseAttribute(
@@ -269,8 +269,8 @@ export class ActivityService {
           );
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.status.stamina.value -= 5;
-          this.inventoryService.addItem(this.inventoryService.itemRepo.herb);
-          this.inventoryService.addItem(this.inventoryService.itemRepo.herb);
+          this.inventoryService.addItem(this.inventoryService.itemRepo['herb']);
+          this.inventoryService.addItem(this.inventoryService.itemRepo['herb']);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute(
               'plantLore',
@@ -295,7 +295,7 @@ export class ActivityService {
             0.1
           );
           this.characterService.characterState.status.stamina.value -= 10;
-          this.inventoryService.addItem(this.inventoryService.itemRepo.log);
+          this.inventoryService.addItem(this.inventoryService.itemRepo['log']);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute(
               'plantLore',

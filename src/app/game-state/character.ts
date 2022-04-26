@@ -1,4 +1,4 @@
-import { Item } from './inventory.service'
+import { Equipment, Item } from './inventory.service'
 
 export interface CharacterAttribute {
   strength?: number,
@@ -24,14 +24,9 @@ export type AttributeType = 'strength' |
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number}};
 
-export interface EquipmentSlots {
-  head: Item | null,
-  body: Item | null,
-  leftHand: Item | null,
-  rightHand: Item | null,
-  legs: Item | null,
-  feet: Item | null,
-}
+export type EquipmentPosition = 'head' | 'body' | 'leftHand' | 'rightHand' | 'legs' | 'feet';
+
+export type EquipmentSlots  = { [key in EquipmentPosition]: Equipment | null };
 
 type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
 type CharacterStatus = {[key in StatusType]: {description: string, value: number, max: number}}
