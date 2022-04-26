@@ -41,6 +41,10 @@ export class CharacterService {
 
     reincarnationService.reincarnateSubject.subscribe(()=> {
       this.characterState.reincarnate();
+      if (Math.random() < .3){
+        this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.");
+        this.characterState.money += 100;
+      }
     })
   }
 }

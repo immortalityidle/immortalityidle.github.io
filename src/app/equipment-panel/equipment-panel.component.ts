@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
+import { InventoryService } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-equipment-panel',
@@ -10,7 +11,8 @@ import { CharacterService } from '../game-state/character.service';
 export class EquipmentPanelComponent {
   character: Character;
 
-  constructor(characterService: CharacterService) {
+  constructor(characterService: CharacterService,
+    public inventoryService: InventoryService) {
     this.character = characterService.characterState;
   }
 }

@@ -172,7 +172,13 @@ export class Character {
   }
 
   increaseAttribute(attribute: AttributeType, amount: number){
-    this.attributes[attribute].value += (amount * this.attributes[attribute].aptitude);
+    let aptitude = this.attributes[attribute].aptitude;
+    if (aptitude < 10){
+      this.attributes[attribute].value += (amount * this.attributes[attribute].aptitude);
+    } else {
+      // slow the scaling as aptitude grows
+      this.attributes[attribute].value += (amount * (10 + Math.log10(this.attributes[attribute].aptitude)));
+    }
   }
 
   checkOverage(){

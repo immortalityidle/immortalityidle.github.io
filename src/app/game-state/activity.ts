@@ -8,7 +8,8 @@ export enum ActivityType {
   Blacksmithing,
   GatherHerbs,
   ChopWood,
-  Woodworking
+  Woodworking,
+  Farming
 }
 
 export interface Activity {
@@ -18,6 +19,7 @@ export interface Activity {
   description: string[];
   consequenceDescription: string[];
   requirements: CharacterAttribute[];
+  landRequirements?: number;
   consequence: (() => void)[];
 }
 

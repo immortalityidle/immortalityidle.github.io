@@ -4,6 +4,7 @@ import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
+import { InventoryService } from './inventory.service';
 
 export enum HomeType {
   SquatterTent,
@@ -24,6 +25,7 @@ export interface Field {
 })
 export class HomeService {
   fields: Field[] = [];
+  fieldYields = 0; // running tally of how much food is currently growing in your fields
   homesList: Home[] = [
     {
       name: "Squatter Tent",
@@ -103,6 +105,7 @@ export class HomeService {
 
   constructor(
     private characterService: CharacterService,
+    private inventoryService: InventoryService,
     private logService: LogService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService
@@ -116,10 +119,15 @@ export class HomeService {
 
       mainLoopService.tickSubject.subscribe(() => {
         this.home.consequence();
+        this.ageFields();
       });
 
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
+        if (Math.random() < .3){
+          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.");
+          this.setCurrentHome(this.nextHome);
+        }
       });
   }
 
@@ -158,5 +166,39 @@ export class HomeService {
       }
     }
     throw Error('Home was not found with the given value');
+  }
+
+  addField(){
+    if (this.characterService.characterState.land > 0){
+      this.characterService.characterState.land--;
+      this.fields.push({
+        cropName: "rice",
+        yield: 1,
+        daysToHarvest: 90
+      });
+      this.fieldYields++;
+    }
+  }
+
+  workFields(){
+    for (const field of this.fields){
+      if (field.yield < 100){  // arbitrary 100 rice per field, tune this later
+        field.yield++;
+        this.fieldYields++;
+      }
+    }
+  }
+
+  ageFields(){
+    for (let i = this.fields.length - 1; i >= 0; i--){
+      if (this.fields[i].daysToHarvest == 0){
+        this.inventoryService.addItems(this.inventoryService.itemRepo.rice, this.fields[i].yield);
+        this.fieldYields -= this.fields[i].yield;
+        this.fields.splice(i, 1);
+        this.characterService.characterState.land++;
+      } else {
+        this.fields[i].daysToHarvest--;
+      }
+    }
   }
 }

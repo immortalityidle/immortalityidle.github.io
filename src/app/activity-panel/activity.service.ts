@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { AttributeType, CharacterAttribute } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
+import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
@@ -17,6 +18,7 @@ export class ActivityService {
   constructor(
     private characterService: CharacterService,
     private inventoryService: InventoryService,
+    public homeService: HomeService,
     reincarnationService: ReincarnationService,
     mainLoopService: MainLoopService
   ) {
@@ -170,14 +172,8 @@ export class ActivityService {
         consequence: [
           // grade 0
           () => {
-            this.characterService.characterState.increaseAttribute(
-              'strength',
-              0.1
-            );
-            this.characterService.characterState.increaseAttribute(
-              'toughness',
-              0.1
-            );
+            this.characterService.characterState.increaseAttribute('strength', 0.1);
+            this.characterService.characterState.increaseAttribute('toughness',0.1);
             this.characterService.characterState.status.stamina.value -= 25;
             this.characterService.characterState.money +=
               this.characterService.characterState.attributes.strength.value *
@@ -200,14 +196,8 @@ export class ActivityService {
           },
           // grade 1
           () => {
-            this.characterService.characterState.increaseAttribute(
-              'strength',
-              0.2
-            );
-            this.characterService.characterState.increaseAttribute(
-              'toughness',
-              0.2
-            );
+            this.characterService.characterState.increaseAttribute('strength',0.2);
+            this.characterService.characterState.increaseAttribute('toughness',0.2);
             this.characterService.characterState.status.stamina.value -= 25;
             this.characterService.characterState.money +=
               this.characterService.characterState.attributes.strength.value *
@@ -376,10 +366,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.intelligence
                   .value) * 0.1;
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute(
-                'plantLore',
-                0.1
-              );
+              this.characterService.characterState.increaseAttribute('plantLore', 0.1);
             }
           }
         ],
@@ -394,6 +381,25 @@ export class ActivityService {
             plantLore: 1,
           }
         ],
+      },
+      {
+        level: 0,
+        name: ['Farming'],
+        activityType: ActivityType.Farming,
+        description:
+          ['Plant crops in your fields. This is a waste of time if you don\'t have some fields ready to work.'],
+        consequenceDescription:
+          ['Helps your fields to produce more food.'],
+        consequence: [() => {
+          this.homeService.workFields();
+          if (Math.random() < 0.01) {
+            this.characterService.characterState.increaseAttribute('plantLore', 0.1);
+          }
+      }],
+        requirements: [{
+          strength: 10,
+          speed: 10
+        }],
       },
     ];
   }

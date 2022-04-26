@@ -1,15 +1,21 @@
-<span class="panelHeader">You live in a {{homeService.home.name}}</span>
-<br/>
-<span>{{homeService.home.description}}</span>
-<br/>
-<span>You own {{character.land}} open {{character.land === 1 ? "plot" : "plots"}} of land</span>
-<br/>
-<button  [disabled]="(character.money < 100)" (click)="buyClick()" title="Buy a plot of land for 100 taels.">
-    Buy Land
-</button>
-<br/>
-<button *ngIf="(homeService.home.name !== homeService.nextHome.name)"
-        [disabled]="character.money < homeService.nextHome.cost || character.land < homeService.nextHome.landRequired"
-    title="A better home will cost {{homeService.nextHome.cost}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
-    Get a better house
-</button>
+<div class="homeContainer">
+    <span class="panelHeader">You live in a {{homeService.home.name}}</span>
+    <br/>
+    <span>{{homeService.home.description}}</span>
+    <br/>
+    <span>You own {{character.land}} open {{character.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length}} fields growing {{homeService.fieldYields}} food</span>
+    <br/>
+    <span class="buttonSpan">
+        <button  [disabled]="(character.money < 100)" (click)="buyClick()" title="Buy a plot of land for 100 taels.">
+            Buy Land
+        </button>
+        <button  [disabled]="(character.land < 1)" (click)="fieldClick()" title="Convert a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again.">
+            Plow Field
+        </button>
+        <button *ngIf="(homeService.home.name !== homeService.nextHome.name)"
+                [disabled]="character.money < homeService.nextHome.cost || character.land < homeService.nextHome.landRequired"
+            title="A better home will cost {{homeService.nextHome.cost}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
+            Get a better house
+        </button>
+    </span>
+</div>

@@ -14,20 +14,20 @@
   <div class="inventoryGrid">
     <div *ngFor="let itemStack of inventoryService.itemStacks">
       <table class="itemSlot" (click)="slotClicked(itemStack)"
-        [ngClass]="{'selectedItem': itemStack === selectedItem}"
+        [ngClass]="{'selectedItem': itemStack === inventoryService.selectedItem}"
         title="{{itemStack.item.description}}">
-        <tr>{{itemStack.item.name}}</tr>
-        <tr>{{itemStack.quantity}}</tr>
+        <tr>{{itemStack.item.name | titlecase}}</tr>
+        <tr *ngIf="itemStack.quantity > 1">{{itemStack.quantity}}</tr>
       </table>
     </div>
   </div>
 
-  <div class="inventoryButtons" *ngIf="selectedItem">
-    <button (click)="sell(1)" title="Sell one {{selectedItem.item.name}} for {{selectedItem.item.value}} taels.">Sell</button>
+  <div class="inventoryButtons" *ngIf="inventoryService.selectedItem">
+    <button (click)="sell(1)" title="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels.">Sell</button>
     <button (click)="sellAll()">Sell All</button>
-    <button *ngIf="(selectedItem.item.useLabel !== undefined)" (click)="use()" title="{{selectedItem.item.useDescription}}">
-      {{selectedItem.item.useLabel}}
+    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" title="{{inventoryService.selectedItem.item.useDescription}}">
+      {{inventoryService.selectedItem.item.useLabel}}
     </button>
-    <button *ngIf="(equipmentSlots.includes(selectedItem.item.type))" (click)="equip()">Equip</button>
+    <button *ngIf="(equipmentSlots.includes(inventoryService.selectedItem.item.type))" (click)="equip()">Equip</button>
   </div>
 </div>

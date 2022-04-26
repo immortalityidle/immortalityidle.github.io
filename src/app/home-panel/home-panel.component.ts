@@ -26,4 +26,8 @@ export class HomePanelComponent {
     this.character.money -= 100;
     this.character.land += 1;
   }
+
+  fieldClick(){
+    this.homeService.addField();
+  }
 }

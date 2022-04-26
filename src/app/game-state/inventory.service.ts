@@ -37,8 +37,9 @@ export interface ItemStack {
 export class InventoryService {
   itemStacks: ItemStack[] = [];
   maxItems: number = 32;
-  maxStackSize = 99;
+  maxStackSize = 999;
   noFood: boolean;
+  selectedItem: ItemStack | null = null;
 
   constructor(
     private logService: LogService,
@@ -126,12 +127,14 @@ export class InventoryService {
   }
 
   reset(){
-    this.logService.addLogMessage("Your mother gives you three big bags of rice as she sends you out to make your way in the world");
-    this.itemStacks = [
-      {item: this.itemRepo.rice, quantity:99},
-      {item: this.itemRepo.rice, quantity:99},
-      {item: this.itemRepo.rice, quantity:99}
-    ];
+    if (Math.random() < .3){
+      this.logService.addLogMessage("Your mother gives you three big bags of rice as she sends you out to make your way in the world.");
+      this.itemStacks = [
+        {item: this.itemRepo.rice, quantity:99},
+        {item: this.itemRepo.rice, quantity:99},
+        {item: this.itemRepo.rice, quantity:99}
+      ];
+    }
   }
 
   // find the cheapest food in the inventory and use it
@@ -153,6 +156,13 @@ export class InventoryService {
         this.characterService.characterState.money--;
         this.characterService.characterState.status.nourishment.value++;
       }
+    }
+  }
+
+  addItems(item: Item, quantity: number){
+    //doing this the slacker inefficient way, optimize later if needed
+    for (let i = 0; i < quantity; i++){
+      this.addItem(item);
     }
   }
 

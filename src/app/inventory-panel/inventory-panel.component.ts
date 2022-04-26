@@ -9,7 +9,6 @@ import { InventoryService, ItemStack } from '../game-state/inventory.service';
   styleUrls: ['./inventory-panel.component.less']
 })
 export class InventoryPanelComponent {
-  selectedItem: ItemStack | null = null;
   equipmentSlots: string[];
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService) {
@@ -17,38 +16,38 @@ export class InventoryPanelComponent {
   }
 
   slotClicked(item: ItemStack){
-    if (this.selectedItem == item){
-      this.selectedItem = null;
+    if (this.inventoryService.selectedItem == item){
+      this.inventoryService.selectedItem = null;
     } else {
-      this.selectedItem = item;
+      this.inventoryService.selectedItem = item;
     }
   }
 
   sellAll(){
-    if (this.selectedItem){
-      this.sell(this.selectedItem.quantity);
+    if (this.inventoryService.selectedItem){
+      this.sell(this.inventoryService.selectedItem.quantity);
     }
   }
 
   sell(quantity: number){
-    if (this.selectedItem){
-      this.inventoryService.sell(this.selectedItem, quantity);
-      if (this.selectedItem.quantity == quantity){
-        this.selectedItem = null;
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.sell(this.inventoryService.selectedItem, quantity);
+      if (this.inventoryService.selectedItem.quantity == quantity){
+        this.inventoryService.selectedItem = null;
       }
     }
   }
 
   use(){
-    if (this.selectedItem){
-      this.inventoryService.useItem(this.selectedItem);
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.useItem(this.inventoryService.selectedItem);
     }
   }
 
   equip(){
-    if (this.selectedItem){
-      this.inventoryService.equip(this.selectedItem);
-      this.selectedItem = null;
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.equip(this.inventoryService.selectedItem);
+      this.inventoryService.selectedItem = null;
     }
   }
 }
