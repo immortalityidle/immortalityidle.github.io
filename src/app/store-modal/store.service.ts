@@ -27,7 +27,12 @@ export class StoreService {
     if (this.selectedItem){
       if (this.selectedItem.value < this.characterService.characterState.money){
         this.characterService.characterState.money -= this.selectedItem.value;
-        this.inventoryService.addItem(this.selectedItem);
+        if (this.selectedItem.type == 'manual' && this.selectedItem.use){
+          // use manuals immediately
+          this.selectedItem.use();
+        } else {
+          this.inventoryService.addItem(this.selectedItem);
+        }
       }
     }
   }

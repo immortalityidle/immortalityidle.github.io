@@ -203,22 +203,12 @@ export class ActivityService {
               this.characterService.characterState.attributes.strength.value *
               0.3;
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute(
-                'metalLore',
-                0.1
-              );
-              this.inventoryService.addItem(
-                this.inventoryService.generateWeapon(
-                  1 +
-                    Math.floor(
-                      Math.log10(
-                        this.characterService.characterState.attributes.metalLore
-                          .value
-                      )
-                    ),
-                  'metal'
-                )
-              );
+              this.characterService.characterState.increaseAttribute('metalLore', 0.1);
+              let grade = this.inventoryService.consume('metal');
+              if (grade >= 1){ // if the metal was found
+                this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                    grade + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+              }
             }
           },
           // grade 2
@@ -229,13 +219,12 @@ export class ActivityService {
             this.characterService.characterState.money +=
               this.characterService.characterState.attributes.strength.value * 0.5;
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute(
-                'metalLore',
-                0.2
-              );
-              this.inventoryService.addItem(
-                this.inventoryService.generateWeapon(
-                  1 + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+              this.characterService.characterState.increaseAttribute('metalLore',0.2);
+              let grade = this.inventoryService.consume('metal');
+              if (grade >= 1){ // if the metal was found
+                this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+              }
             }
           }
         ],
@@ -318,51 +307,33 @@ export class ActivityService {
         ],
         consequence: [
           () => {
-            this.characterService.characterState.increaseAttribute(
-              'strength',
-              0.2
-            );
-            this.characterService.characterState.increaseAttribute(
-              'intelligence',
-              0.2
-            );
-            this.characterService.characterState.status.stamina.value -= 20;
-            this.characterService.characterState.money +=
-              (this.characterService.characterState.attributes.strength.value +
-                this.characterService.characterState.attributes.intelligence
-                  .value) *
-              0.3;
-            if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute(
-                'plantLore',
-                0.1
-              );
-              this.inventoryService.addItem(
-                this.inventoryService.generateWeapon(
-                  1 +
-                    Math.floor(
-                      Math.log10(
-                        this.characterService.characterState.attributes.metalLore
-                          .value
-                      )
-                    ),
-                  'wood'
-                )
-              );
-            }
-          },
-          () => {
             this.characterService.characterState.increaseAttribute('strength', 0.1);
             this.characterService.characterState.increaseAttribute('intelligence', 0.1);
             this.characterService.characterState.status.stamina.value -= 20;
             this.characterService.characterState.money +=
               (this.characterService.characterState.attributes.strength.value +
-                this.characterService.characterState.attributes.intelligence
-                  .value) * 0.1;
+                this.characterService.characterState.attributes.intelligence.value) * 0.1;
             if (Math.random() < 0.01) {
               this.characterService.characterState.increaseAttribute('plantLore', 0.1);
             }
-          }
+          },
+          () => {
+            this.characterService.characterState.increaseAttribute('strength',0.2);
+            this.characterService.characterState.increaseAttribute('intelligence',0.2);
+            this.characterService.characterState.status.stamina.value -= 20;
+            this.characterService.characterState.money +=
+              (this.characterService.characterState.attributes.strength.value +
+                this.characterService.characterState.attributes.intelligence.value) *
+              0.3;
+            if (Math.random() < 0.01) {
+              this.characterService.characterState.increaseAttribute('plantLore',0.1);
+              let grade = this.inventoryService.consume('wood');
+              if (grade >= 1){ // if the wood was found
+                this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'wood'));
+              }
+            }
+          },
         ],
         requirements: [
           {
@@ -395,6 +366,25 @@ export class ActivityService {
         requirements: [{
           strength: 10,
           speed: 10
+        }],
+      },
+      {
+        level: 0,
+        name: ['Mining'],
+        activityType: ActivityType.Mining,
+        description:
+          ['Dig in the ground for useable minerals.'],
+        consequenceDescription:
+          ['Increases strength and sometimes finds something useful.'],
+        consequence: [() => {
+          this.characterService.characterState.increaseAttribute('strength', 0.1);
+          if (Math.random() < 0.01) {
+            this.characterService.characterState.increaseAttribute('metalLore', 0.1);
+            this.inventoryService.addItem(this.inventoryService.itemRepo['metalOre']);
+          }
+      }],
+        requirements: [{
+          strength: 10
         }],
       },
     ];

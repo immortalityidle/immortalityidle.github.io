@@ -1,4 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
+import { getMatIconFailedToSanitizeLiteralError } from '@angular/material/icon';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
@@ -25,6 +26,7 @@ export interface Item {
   useConsumes?: boolean;
   use?: () => void;
   weaponStats?: WeaponStats;
+  owned?: () => boolean; // used for single-use permanent upgrades so we can see if they need to be bought again
 }
 
 export interface Equipment extends Item {
@@ -102,9 +104,15 @@ export class InventoryService {
       value: 1,
       description: 'A good-quality log.',
     },
+    metalOre: {
+      name: 'metal ore',
+      type: 'metal',
+      value: 1,
+      description: 'A chunk of metal ore.',
+    },
     junk: {
       name: 'junk',
-      type: 'junk',
+      type: 'metal',
       value: 1,
       description: 'Some metal junk.',
     },
@@ -117,18 +125,26 @@ export class InventoryService {
       useDescription: "Permanently unlock automatic farm replanting.",
       useConsumes: true,
       use: () => {
+        // check if homeService is injected yet, if not, inject it (circular dependency issues)
         if (!this.homeService){
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoReplant = true;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+      },
+      owned: () => {
+        // check if homeService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.homeService){
+          this.homeService = this.injector.get(HomeService);
+        }
+        return this.homeService?.autoReplant;
       }
     }
 
   };
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
-  generateWeapon(grade: number, material: string) {
+  generateWeapon(grade: number, material: string): Equipment {
     let prefixMax = (grade / 10) * ItemPrefixes.length;
     let prefixIndex = Math.floor(Math.random() * prefixMax);
     let prefix = ItemPrefixes[prefixIndex];
@@ -136,9 +152,9 @@ export class InventoryService {
       prefix +
       ' ' +
       WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
-    let type = 'rightHand';
+    let slot: EquipmentPosition = 'rightHand';
     if (Math.random() < 0.5) {
-      type = 'leftHand';
+      slot = 'leftHand';
     }
     let value = prefixIndex;
     this.logService.addLogMessage(
@@ -146,7 +162,8 @@ export class InventoryService {
     );
     return {
       name: name,
-      type: type,
+      type: "equipment",
+      slot: slot,
       value: value,
       weaponStats: {
         baseDamage: grade,
@@ -265,6 +282,24 @@ export class InventoryService {
     this.characterService.characterState.equipment[item.slot] = item;
     let index = this.itemStacks.indexOf(itemStack);
     this.itemStacks.splice(index, 1);
+  }
+
+  consume(consumeType: string): number{
+    let itemValue = -1;
+    for (const itemIterator of this.itemStacks) {
+      if (itemIterator.item.type == consumeType) {
+        itemValue = itemIterator.item.value;
+        itemIterator.quantity --;
+        if (itemIterator.quantity == 0){
+          //remove the stack if empty
+          let index = this.itemStacks.indexOf(itemIterator);
+          this.itemStacks.splice(index, 1);
+        }
+        return itemValue;
+      }
+    }
+
+    return itemValue;
   }
 }
 

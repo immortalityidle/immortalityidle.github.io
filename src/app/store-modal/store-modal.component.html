@@ -11,6 +11,6 @@
     </div>
 </div>
 <button (click)="buy()"
-    [disabled]="(character.money < (storeService.selectedItem ? storeService.selectedItem.value : 0))">
+    [disabled]="(character.money < (storeService.selectedItem ? storeService.selectedItem.value : 0) || (storeService.selectedItem?.owned === undefined ? false : storeService.selectedItem?.owned()))">
     Buy
 </button>

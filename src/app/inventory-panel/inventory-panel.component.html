@@ -28,6 +28,6 @@
     <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" title="{{inventoryService.selectedItem.item.useDescription}}">
       {{inventoryService.selectedItem.item.useLabel}}
     </button>
-    <button *ngIf="(equipmentSlots.includes(inventoryService.selectedItem.item.type))" (click)="equip()">Equip</button>
+    <button *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()">Equip</button>
   </div>
 </div>
