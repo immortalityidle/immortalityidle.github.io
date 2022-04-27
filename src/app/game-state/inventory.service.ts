@@ -1,5 +1,4 @@
 import { Injectable, Injector } from '@angular/core';
-import { getMatIconFailedToSanitizeLiteralError } from '@angular/material/icon';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
@@ -140,7 +139,6 @@ export class InventoryService {
         return this.homeService?.autoReplant;
       }
     }
-
   };
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
@@ -177,6 +175,7 @@ export class InventoryService {
   }
 
   reset() {
+    this.itemStacks = [];
     if (Math.random() < 0.3) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.'
@@ -267,6 +266,7 @@ export class InventoryService {
       }
     }
   }
+  
   equip(itemStack: ItemStack) {
     // return the item already in the slot to the inventory, if any
     const item = itemStack.item;
@@ -303,6 +303,6 @@ export class InventoryService {
   }
 }
 
-function instanceOfEquipment(object: any): object is Equipment {
+export function instanceOfEquipment(object: any): object is Equipment {
   return 'slot' in object;
 }

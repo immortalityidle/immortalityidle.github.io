@@ -21,16 +21,20 @@ export interface Field {
 }
 
 export interface HomeProperties {
+  land: number,
   homeValue: HomeType,
   fields: Field[],
   fieldYields: number,
   autoReplant: boolean
+  landPrice: number
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class HomeService {
+  land: number;
+  landPrice: number;
   fields: Field[] = [];
   fieldYields = 0; // running tally of how much food is currently growing in your fields
   homesList: Home[] = [
@@ -118,6 +122,8 @@ export class HomeService {
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService
   ) {
+      this.land = 0;
+      this.landPrice = 100;
       this.autoReplant = false;
       this.setCurrentHome(this.homesList[0]);
       if (this.home === undefined ||
@@ -143,6 +149,8 @@ export class HomeService {
   getProperties(): HomeProperties {
     return {
       homeValue: this.homeValue,
+      land: this.land,
+      landPrice: this.landPrice,
       fields: this.fields,
       fieldYields: this.fieldYields,
       autoReplant: this.autoReplant
@@ -150,6 +158,8 @@ export class HomeService {
   }
 
   setProperties(properties: HomeProperties) {
+    this.land = properties.land;
+    this.landPrice = properties.landPrice;
     this.autoReplant = properties.autoReplant;
     this.fields = properties.fields;
     this.fieldYields = properties.fieldYields;
@@ -169,13 +179,17 @@ export class HomeService {
 
   upgradeToNextHome(){
     this.characterService.characterState.money -= this.nextHome.cost;
-    this.characterService.characterState.land -= this.nextHome.landRequired;
+    this.land -= this.nextHome.landRequired;
     this.setCurrentHome(this.nextHome);
     this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
   }
 
   reset() {
     this.setCurrentHome(this.homesList[0]);
+    this.land = 0;
+    this.landPrice = 100;
+    this.fields = [];
+    this.fieldYields = 0;
   }
 
   setCurrentHome(home: Home) {
@@ -194,8 +208,8 @@ export class HomeService {
   }
 
   addField(){
-    if (this.characterService.characterState.land > 0){
-      this.characterService.characterState.land--;
+    if (this.land > 0){
+      this.land--;
       this.fields.push({
         cropName: "rice",
         yield: 1,
@@ -224,11 +238,18 @@ export class HomeService {
           this.fields[i].yield = 0;
         } else {
           this.fields.splice(i, 1);
-          this.characterService.characterState.land++;
+          this.land++;
         }
       } else {
         this.fields[i].daysToHarvest--;
       }
     }
   }
+
+  buyLand(){
+    this.characterService.characterState.money -= this.landPrice;
+    this.land++;
+    this.landPrice += 10;
+  }
+
 }

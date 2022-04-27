@@ -7,14 +7,14 @@
   </tr>
   <tr>
     <td><div class="equipmentSlot rightHandSlot">
-      <table class="itemSlot" [ngClass]="{'highlightSlot': inventoryService.selectedItem?.item?.type === 'rightHand'}"
+      <table class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
         title="{{character.equipment.rightHand?.description}}">
         <tr><td>{{character.equipment.rightHand?.name | titlecase}}</td></tr>
       </table>
     </div></td>
     <td><div class="equipmentSlot bodySlot"></div></td>
     <td><div class="equipmentSlot leftHandSlot">
-      <table class="itemSlot" [ngClass]="{'highlightSlot': inventoryService.selectedItem?.item?.type === 'leftHand'}"
+      <table class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
         title="{{character.equipment.leftHand?.description}}">
         <tr><td>{{character.equipment.leftHand?.name | titlecase}}</td></tr>
       </table>

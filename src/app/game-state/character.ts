@@ -34,7 +34,6 @@ type CharacterStatus = {[key in StatusType]: {description: string, value: number
 export interface CharacterProperties {
   attributes: AttributeObject,
   money: number,
-  land: number,
   equipment: EquipmentSlots,
   age: number,
   status: CharacterStatus
@@ -121,7 +120,6 @@ export class Character {
     }
   };
   money = 300;
-  land = 0;
   // age in days
   age = INITIAL_AGE;
   lifespan = 30 * 365;
@@ -158,7 +156,6 @@ export class Character {
     }
     const key = keys[Math.floor(Math.random() * (keys.length - 1))];
     this.money = 0;
-    this.land = 0;
     // age in days
     this.age = INITIAL_AGE;
     // increase lifespan by 1% the average aptitude
@@ -199,7 +196,6 @@ export class Character {
     return {
       attributes: this.attributes,
       money: this.money,
-      land: this.land,
       equipment: this.equipment,
       age: this.age,
       status: this.status
@@ -209,7 +205,6 @@ export class Character {
   setProperties(properties: CharacterProperties) {
     this.attributes = properties.attributes;
     this.money = properties.money;
-    this.land = properties.land;
     this.equipment = properties.equipment;
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
