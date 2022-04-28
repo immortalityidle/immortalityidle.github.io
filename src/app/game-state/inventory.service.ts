@@ -39,7 +39,21 @@ export interface ItemStack {
   quantity: number;
 }
 
-export type ItemType = 'rice' | 'herb' | 'log' | 'junk' | 'farmingManual' | 'weapon';
+export type ItemType =
+  | 'metalOre'
+  | 'rice'
+  | 'herb'
+  | 'log'
+  | 'junk'
+  | 'perpetualFarmingManual'
+  | 'weapon'
+  | 'restartActivityManual'
+  | 'cabbage'
+  | 'beans'
+  | 'melon'
+  | 'peach'
+  | 'broccoli'
+  | 'meat';
 
 @Injectable({
   providedIn: 'root',
@@ -94,6 +108,7 @@ export class InventoryService {
       },
     },
     cabbage: {
+      id: 'cabbage',
       name: 'cabbage',
       type: 'food',
       value: 5,
@@ -110,6 +125,7 @@ export class InventoryService {
       },
     },
     beans: {
+      id: 'beans',
       name: 'beans',
       type: 'food',
       value: 10,
@@ -126,6 +142,7 @@ export class InventoryService {
       },
     },
     broccoli: {
+      id: 'broccoli',
       name: 'broccoli',
       type: 'food',
       value: 10,
@@ -142,6 +159,7 @@ export class InventoryService {
       },
     },
     melon: {
+      id: 'melon',
       name: 'melon',
       type: 'food',
       value: 15,
@@ -158,6 +176,7 @@ export class InventoryService {
       },
     },
     peach: {
+      id: 'peach',
       name: 'peach',
       type: 'food',
       value: 20,
@@ -175,6 +194,7 @@ export class InventoryService {
       },
     },
     meat: {
+      id: 'meat',
       name: 'meat',
       type: 'food',
       value: 50,
@@ -190,6 +210,7 @@ export class InventoryService {
       },
     },
     herb: {
+      id: 'herb',
       name: 'herb',
       type: 'ingredient',
       value: 2,
@@ -210,6 +231,7 @@ export class InventoryService {
       description: 'A good-quality log.',
     },
     metalOre: {
+      id: 'metalOre',
       name: 'metal ore',
       type: 'metal',
       value: 1,
@@ -223,6 +245,7 @@ export class InventoryService {
       description: 'Some metal junk.',
     },
     perpetualFarmingManual: {
+      id: 'perpetualFarmingManual',
       name: "Manual of Perpetual Farming",
       type: "manual",
       description: "This manual teaches you to automatically replant fields when they are harvested.",
@@ -247,6 +270,7 @@ export class InventoryService {
       }
     },
     restartActivityManual: {
+      id: 'restartActivityManual',
       name: "Manual of Remembered Plans",
       type: "manual",
       description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
@@ -260,7 +284,7 @@ export class InventoryService {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoRestart = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD");
       },
       owned: () => {
         // check if actvityService is injected yet, if not, inject it (circular dependency issues)
@@ -289,7 +313,7 @@ export class InventoryService {
 
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
-  generateWeapon(grade: number, material: string): Item {
+  generateWeapon(grade: number, material: string): Equipment {
     let prefixMax = (grade / 10) * ItemPrefixes.length;
     let prefixIndex = Math.floor(Math.random() * prefixMax);
     let prefix = ItemPrefixes[prefixIndex];

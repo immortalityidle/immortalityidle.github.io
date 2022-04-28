@@ -4,7 +4,7 @@ import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
-import { InventoryService } from './inventory.service';
+import { InventoryService, ItemType } from './inventory.service';
 
 export enum HomeType {
   SquatterTent,
@@ -15,7 +15,7 @@ export enum HomeType {
 }
 
 export interface Field {
-  cropName: string,
+  cropName: ItemType,
   yield: number,
   maxYield: number,
   daysToHarvest: number
@@ -235,7 +235,7 @@ export class HomeService {
     }
     const cropItem = this.inventoryService.farmFoodList[cropIndex];
     // more valuable crops yield less and take longer to harvest, tune this later
-    return {cropName: cropItem.name,
+    return {cropName: cropItem.id,
       yield: 0,
       maxYield: Math.floor(100 / cropItem.value),
       daysToHarvest: 90 * cropItem.value
