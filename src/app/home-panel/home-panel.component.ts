@@ -18,16 +18,16 @@ export class HomePanelComponent {
     this.character = characterService.characterState;
   }
 
-  upgradeClick(){
+  upgradeClick(): void {
     this.homeService.upgradeToNextHome();
   }
 
-  buyClick(){
+  buyClick(): void {
     this.character.money -= 100;
     this.character.land += 1;
   }
 
-  fieldClick(){
+  fieldClick(): void {
     this.homeService.addField();
   }
 }

@@ -51,7 +51,7 @@ export class ActivityService {
     return true;
   }
 
-  checkRequirements() {
+  checkRequirements(): void {
     for (let i = this.activityLoop.length - 1; i >= 0; i--) {
       if (!this.meetsRequirements(this.getActivityByType(this.activityLoop[i].activity))) {
         this.activityLoop.splice(i, 1);
@@ -59,7 +59,7 @@ export class ActivityService {
     }
   }
 
-  upgradeActivities(){
+  upgradeActivities(): void {
     for (const activity of this.activities){
       if (activity.level < (activity.description.length - 1)){
         if (this.meetsRequirementsByLevel(activity, (activity.level + 1))){
@@ -69,7 +69,7 @@ export class ActivityService {
     }
   }
 
-  reset() {
+  reset(): void {
     this.activityLoop = [];
     // downgrade all activities to base level
     for (const activity of this.activities){
@@ -86,6 +86,7 @@ export class ActivityService {
     throw Error('Could not find activity from type');
   }
 
+  // TODO: Maybe pull these out as first class objects?
   getActivityList(): Activity[] {
     return [
       {

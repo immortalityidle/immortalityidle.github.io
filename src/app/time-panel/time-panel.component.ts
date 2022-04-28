@@ -44,7 +44,8 @@ export class TimePanelComponent implements OnInit {
         if (this.character.status.stamina.value < 0) {
           // take 5 days to recover, regain stamina, restart loop
           this.logService.addLogMessage(
-            'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.'
+            'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.',
+            'INJURY'
           );
           this.character.age += 5;
           this.character.status.stamina.value =

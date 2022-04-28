@@ -43,7 +43,8 @@ export class HomeService {
       landRequired: 0,
       consequence: () => {
         if (Math.random() < 0.3){
-          this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land and put up a better tent.");
+          this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land and put up a better tent.",
+          'INJURY');
           this.characterService.characterState.status.health.value -= 2;
         }
       }
@@ -59,7 +60,8 @@ export class HomeService {
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.1){
-          this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.");
+          this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.",
+          'INJURY');
           this.characterService.characterState.status.health.value -= 2;
         }
         this.characterService.characterState.checkOverage();
@@ -134,7 +136,8 @@ export class HomeService {
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
         if (Math.random() < .3){
-          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.");
+          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.",
+          'STANDARD');
           this.setCurrentHome(this.nextHome);
         }
       });
@@ -171,7 +174,8 @@ export class HomeService {
     this.characterService.characterState.money -= this.nextHome.cost;
     this.characterService.characterState.land -= this.nextHome.landRequired;
     this.setCurrentHome(this.nextHome);
-    this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
+    this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name,
+    'STANDARD');
   }
 
   reset() {

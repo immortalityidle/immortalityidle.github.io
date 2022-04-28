@@ -16,6 +16,7 @@ export interface WeaponStats {
 }
 
 export interface Item {
+  id: ItemType;
   name: string;
   description: string;
   value: number;
@@ -35,6 +36,8 @@ export interface ItemStack {
   item: Item;
   quantity: number;
 }
+
+export type ItemType = 'rice' | 'herb' | 'log' | 'junk' | 'farmingManual' | 'weapon';
 
 @Injectable({
   providedIn: 'root',
@@ -64,10 +67,13 @@ export class InventoryService {
     });
   }
 
-  // TODO: Not sure that I love it, but key should probably be enumerated to possible items
-  // Make sure the name field matches the object name, it's used to restore the use function on gameState load
-  itemRepo: {[key:string]: Item} = {
+
+
+  // Make sure the id field matches the object name, it's used to restore the use function on gameState load
+  // TODO: Maybe we want to create an item repo service and have these as first-class objects instead of properties in an object
+  itemRepo: {[key in ItemType]: Item} = {
     rice: {
+      id: 'rice',
       name: 'rice',
       type: 'food',
       value: 1,
@@ -82,6 +88,7 @@ export class InventoryService {
       },
     },
     herb: {
+      id: 'herb',
       name: 'herb',
       type: 'food',
       value: 2,
@@ -97,18 +104,21 @@ export class InventoryService {
       },
     },
     log: {
+      id: 'log',
       name: 'log',
       type: 'wood',
       value: 1,
       description: 'A good-quality log.',
     },
     junk: {
+      id: 'junk',
       name: 'junk',
       type: 'junk',
       value: 1,
       description: 'Some metal junk.',
     },
     farmingManual: {
+      id: 'farmingManual',
       name: "Manual of Perpetual Farming",
       type: "manual",
       description: "This manual teaches you to automatically replant fields when they are harvested.",
@@ -121,14 +131,21 @@ export class InventoryService {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoReplant = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.",
+        'STANDARD');
       }
+    },
+    weapon: { // This is just a placeholder so typescript doesn't yell at us when we create custom weapons.
+      id: 'weapon',
+      name: '',
+      type: '',
+      description: '',
+      value: 0,
     }
-
   };
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
-  generateWeapon(grade: number, material: string) {
+  generateWeapon(grade: number, material: string): Item {
     let prefixMax = (grade / 10) * ItemPrefixes.length;
     let prefixIndex = Math.floor(Math.random() * prefixMax);
     let prefix = ItemPrefixes[prefixIndex];
@@ -136,15 +153,17 @@ export class InventoryService {
       prefix +
       ' ' +
       WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
-    let type = 'rightHand';
+    let type: EquipmentPosition = 'rightHand';
     if (Math.random() < 0.5) {
       type = 'leftHand';
     }
     let value = prefixIndex;
     this.logService.addLogMessage(
-      'Your hard work paid off! You got a ' + name + '.'
+      'Your hard work paid off! You got a ' + name + '.',
+      'STANDARD'
     );
     return {
+      id: 'weapon',
       name: name,
       type: type,
       value: value,
@@ -159,10 +178,11 @@ export class InventoryService {
     };
   }
 
-  reset() {
+  reset(): void {
     if (Math.random() < 0.3) {
       this.logService.addLogMessage(
-        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.'
+        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
+        'STANDARD'
       );
       this.itemStacks = [
         { item: this.itemRepo['rice'], quantity: 99 },
@@ -173,7 +193,7 @@ export class InventoryService {
   }
 
   // find the cheapest food in the inventory and use it
-  eatFood() {
+  eatFood(): void {
     let foodStack = null;
     let foodValue = Number.MAX_VALUE;
     for (const itemIterator of this.itemStacks) {
@@ -197,14 +217,14 @@ export class InventoryService {
     }
   }
 
-  addItems(item: Item, quantity: number) {
+  addItems(item: Item, quantity: number): void {
     //doing this the slacker inefficient way, optimize later if needed
     for (let i = 0; i < quantity; i++) {
       this.addItem(item);
     }
   }
 
-  addItem(item: Item) {
+  addItem(item: Item): void {
     for (const itemIterator of this.itemStacks) {
       if (
         itemIterator.item.name == item.name &&
@@ -220,12 +240,13 @@ export class InventoryService {
       this.itemStacks.push({ item: item, quantity: 1 });
     } else {
       this.logService.addLogMessage(
-        `You don't have enough room for the ${item.name} so you threw it away.`
+        `You don't have enough room for the ${item.name} so you threw it away.`,
+        'STANDARD'
       );
     }
   }
 
-  sell(itemStack: ItemStack, quantity: number) {
+  sell(itemStack: ItemStack, quantity: number): void {
     let index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks.splice(index, 1);
@@ -238,7 +259,7 @@ export class InventoryService {
     }
   }
 
-  useItem(itemStack: ItemStack) {
+  useItem(itemStack: ItemStack): void {
     if (itemStack.item.use) {
       itemStack.item.use();
     }
@@ -250,7 +271,7 @@ export class InventoryService {
       }
     }
   }
-  equip(itemStack: ItemStack) {
+  equip(itemStack: ItemStack): void {
     // return the item already in the slot to the inventory, if any
     const item = itemStack.item;
     if (!instanceOfEquipment(item)) {

@@ -41,6 +41,8 @@ export interface CharacterProperties {
 }
 
 const INITIAL_AGE = 18 * 365;
+const BASE_LIFESPAN = 30 * 365;
+
 export class Character {
   attributes: AttributeObject = {
     strength: {
@@ -124,7 +126,7 @@ export class Character {
   land = 0;
   // age in days
   age = INITIAL_AGE;
-  lifespan = 30 * 365;
+  lifespan = BASE_LIFESPAN;
   equipment: EquipmentSlots = {
     head: null,
     body: null,
@@ -135,7 +137,7 @@ export class Character {
   }
 
   // reset everything but increase aptitudes
-  reincarnate(){
+  reincarnate(): void {
     this.status.health.value = 100;
     this.status.health.max = 100;
     this.status.stamina.value = 100;
@@ -161,8 +163,8 @@ export class Character {
     this.land = 0;
     // age in days
     this.age = INITIAL_AGE;
-    // increase lifespan by 1% the average aptitude
-    this.lifespan = 30 * 365 + (0.01 * (totalAptitude / Object.keys(this.attributes).length));
+    // increase lifespan by 2% of the average aptitude
+    this.lifespan = BASE_LIFESPAN + (0.02 * (totalAptitude / Object.keys(this.attributes).length));
     this.equipment = {
       head: null,
       body: null,
@@ -173,7 +175,7 @@ export class Character {
     }
   }
 
-  increaseAttribute(attribute: AttributeType, amount: number){
+  increaseAttribute(attribute: AttributeType, amount: number): void {
     let aptitude = this.attributes[attribute].aptitude;
     if (aptitude < 10){
       this.attributes[attribute].value += (amount * this.attributes[attribute].aptitude);
@@ -183,7 +185,7 @@ export class Character {
     }
   }
 
-  checkOverage(){
+  checkOverage(): void {
     if (this.status.health.value > this.status.health.max){
       this.status.health.value = this.status.health.max;
     }
@@ -206,7 +208,7 @@ export class Character {
     }
   }
 
-  setProperties(properties: CharacterProperties) {
+  setProperties(properties: CharacterProperties): void {
     this.attributes = properties.attributes;
     this.money = properties.money;
     this.land = properties.land;

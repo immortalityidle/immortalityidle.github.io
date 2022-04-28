@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
+export type LogType = 'STANDARD' | 'INJURY';
+
+export interface Log {
+  message: string,
+  type: LogType
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class LogService {
-  logAdded = new Subject<string>();
+  logAdded = new Subject<Log>();
 
   constructor() { }
 
-  addLogMessage(message: string): void {
-    // TODO: Do we need to keep these logs as state, or just pass them through?
-    this.logAdded.next(message);
+  addLogMessage(message: string, type: LogType): void {
+    this.logAdded.next({message, type});
   }
 }
