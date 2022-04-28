@@ -11,7 +11,8 @@ export enum ActivityType {
   Woodworking,
   Farming,
   Mining,
-  Hunting
+  Hunting,
+  Alchemy
 }
 
 export interface Activity {

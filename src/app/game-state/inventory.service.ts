@@ -3,7 +3,7 @@ import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
-import { EquipmentPosition } from './character';
+import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { WeaponNames, ItemPrefixes } from './itemResources';
@@ -25,12 +25,17 @@ export interface Item {
   useDescription?: string;
   useConsumes?: boolean;
   use?: () => void;
-  weaponStats?: WeaponStats;
   owned?: () => boolean; // used for single-use permanent upgrades so we can see if they need to be bought again
 }
 
 export interface Equipment extends Item {
   slot: EquipmentPosition;
+  weaponStats?: WeaponStats;
+}
+
+export interface Potion extends Item {
+  attribute: AttributeType,
+  increase: number
 }
 
 export interface ItemStack {
@@ -187,7 +192,7 @@ export class InventoryService {
       name: 'herb',
       type: 'ingredient',
       value: 2,
-      description: 'Useful herbs. Can used in creating pills or potions.',
+      description: 'Useful herbs. Can be used in creating pills or potions.',
       useLabel: 'Use',
       useDescription: 'Restores a bit of health.',
       useConsumes: true,
@@ -306,6 +311,26 @@ export class InventoryService {
     };
   }
 
+  generatePotion(grade: number): Potion {
+    const keys = Object.keys(
+      this.characterService.characterState.attributes
+    ) as AttributeType[];
+    // randomly choose any of the first five stats
+    const key = keys[Math.floor(Math.random() * 5)];
+
+    return {
+      name: "Potion of " + key,
+      type: "potion",
+      value: grade,
+      description: "A potion that increases " + key,
+      useLabel: 'Drink',
+      useDescription: '.',
+      useConsumes: true,
+      attribute: key,
+      increase: grade
+    };
+  }
+
   reset() {
     this.itemStacks = [];
     if (Math.random() < 0.3) {
@@ -384,7 +409,7 @@ export class InventoryService {
       this.characterService.characterState.money += quantity * itemStack.item.value;
     }
   }
-  
+
   sellAll(item: Item){
     for  (let i = this.itemStacks.length - 1; i >= 0; i--){
       if (this.itemStacks[i].item.name == item.name){
@@ -394,7 +419,9 @@ export class InventoryService {
   }
 
   useItem(itemStack: ItemStack) {
-    if (itemStack.item.use) {
+    if (itemStack.item.type == "potion" && instanceOfPotion(itemStack.item)){
+      this.usePotion(itemStack.item);
+    } else if (itemStack.item.use) {
       itemStack.item.use();
     }
     if (itemStack.item.useConsumes) {
@@ -402,10 +429,11 @@ export class InventoryService {
       if (itemStack.quantity <= 0) {
         let index = this.itemStacks.indexOf(itemStack);
         this.itemStacks.splice(index, 1);
+        this.selectedItem = null;
       }
     }
   }
-  
+
   equip(itemStack: ItemStack) {
     // return the item already in the slot to the inventory, if any
     const item = itemStack.item;
@@ -440,8 +468,17 @@ export class InventoryService {
 
     return itemValue;
   }
+
+  // a special use function for generated potions
+  usePotion(potion: Potion){
+    this.characterService.characterState.attributes[potion.attribute].value += potion.increase;
+  }
 }
 
 export function instanceOfEquipment(object: any): object is Equipment {
   return 'slot' in object;
+}
+
+export function instanceOfPotion(object: any): object is Potion {
+  return 'attribute' in object;
 }

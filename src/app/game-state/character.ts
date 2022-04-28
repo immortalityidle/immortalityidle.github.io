@@ -20,6 +20,7 @@ export type AttributeType = 'strength' |
   'spirituality' |
   'metalLore' |
   'plantLore' |
+  'animalLore' |
   'alchemy';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number, icon: string}};
@@ -90,6 +91,12 @@ export class Character {
       value: 0,
       aptitude: 1,
       icon: "forest"
+    },
+    animalLore: {
+      description: "Understanding animals and monsters and how to deal with them.",
+      value: 0,
+      aptitude: 1,
+      icon: "pets"
     },
     alchemy: {
       description: "Understanding potions and pills and how to make and use them.",
