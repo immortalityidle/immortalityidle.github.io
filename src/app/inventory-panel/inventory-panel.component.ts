@@ -15,7 +15,7 @@ export class InventoryPanelComponent {
       this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
   }
 
-  slotClicked(item: ItemStack){
+  slotClicked(item: ItemStack): void {
     if (this.inventoryService.selectedItem == item){
       this.inventoryService.selectedItem = null;
     } else {
@@ -23,7 +23,7 @@ export class InventoryPanelComponent {
     }
   }
 
-  sellAll(){
+  sellAll(): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.sellAll(this.inventoryService.selectedItem.item);
     }
@@ -35,7 +35,7 @@ export class InventoryPanelComponent {
     }
   }
 
-  sell(quantity: number){
+  sell(quantity: number): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.sell(this.inventoryService.selectedItem, quantity);
       if (this.inventoryService.selectedItem.quantity == quantity){
@@ -44,13 +44,13 @@ export class InventoryPanelComponent {
     }
   }
 
-  use(){
+  use(): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.useItem(this.inventoryService.selectedItem);
     }
   }
 
-  equip(){
+  equip(): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.equip(this.inventoryService.selectedItem);
       this.inventoryService.selectedItem = null;

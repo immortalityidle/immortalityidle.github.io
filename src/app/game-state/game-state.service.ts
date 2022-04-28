@@ -42,7 +42,8 @@ export class GameStateService {
       activities: this.activityService.getProperties()
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
-    this.logService.addLogMessage('Game saved');
+    this.logService.addLogMessage('Game saved',
+    'STANDARD');
   }
 
   loadFromLocalStorage(): void {
@@ -55,8 +56,8 @@ export class GameStateService {
     this.inventoryService.itemStacks = gameState.itemStacks;
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks){
-      if (this.inventoryService.itemRepo[itemStack.item.name]){
-        itemStack.item.use = this.inventoryService.itemRepo[itemStack.item.name].use;
+      if (this.inventoryService.itemRepo[itemStack.item.id]){
+        itemStack.item.use = this.inventoryService.itemRepo[itemStack.item.id].use;
       }
     }
     this.homeService.setProperties(gameState.home);

@@ -4,7 +4,7 @@ import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
-import { InventoryService } from './inventory.service';
+import { InventoryService, ItemType } from './inventory.service';
 
 export enum HomeType {
   SquatterTent,
@@ -15,7 +15,7 @@ export enum HomeType {
 }
 
 export interface Field {
-  cropName: string,
+  cropName: ItemType,
   yield: number,
   maxYield: number,
   daysToHarvest: number
@@ -48,7 +48,8 @@ export class HomeService {
       landRequired: 0,
       consequence: () => {
         if (Math.random() < 0.3){
-          this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land and put up a better tent.");
+          this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land and put up a better tent.",
+          'INJURY');
           this.characterService.characterState.status.health.value -= 2;
         }
       }
@@ -64,7 +65,8 @@ export class HomeService {
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.1){
-          this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.");
+          this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.",
+          'INJURY');
           this.characterService.characterState.status.health.value -= 2;
         }
         this.characterService.characterState.checkOverage();
@@ -140,7 +142,7 @@ export class HomeService {
         this.home.consequence();
         this.ageFields();
         if (this.home.costPerDay > this.characterService.characterState.money){
-          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.");
+          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY");
           this.characterService.characterState.status.health.value -= 20;
           this.characterService.characterState.money = 0;
         } else {
@@ -151,7 +153,7 @@ export class HomeService {
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
         if (Math.random() < .3){
-          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.");
+          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD");
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
           this.characterService.characterState.money += 5;
           this.setCurrentHome(this.nextHome);
@@ -196,7 +198,7 @@ export class HomeService {
       this.characterService.characterState.money -= this.nextHome.cost;
       this.land -= this.nextHome.landRequired;
       this.setCurrentHome(this.nextHome);
-      this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
+      this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name, "STANDARD");
     }
   }
 
@@ -233,7 +235,7 @@ export class HomeService {
     }
     const cropItem = this.inventoryService.farmFoodList[cropIndex];
     // more valuable crops yield less and take longer to harvest, tune this later
-    return {cropName: cropItem.name,
+    return {cropName: cropItem.id,
       yield: 0,
       maxYield: Math.floor(100 / cropItem.value),
       daysToHarvest: 90 * cropItem.value

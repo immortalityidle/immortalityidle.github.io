@@ -17,6 +17,7 @@ export interface WeaponStats {
 }
 
 export interface Item {
+  id: ItemType;
   name: string;
   description: string;
   value: number;
@@ -42,6 +43,23 @@ export interface ItemStack {
   item: Item;
   quantity: number;
 }
+
+export type ItemType =
+  | 'metalOre'
+  | 'rice'
+  | 'herb'
+  | 'log'
+  | 'junk'
+  | 'perpetualFarmingManual'
+  | 'weapon'
+  | 'restartActivityManual'
+  | 'cabbage'
+  | 'beans'
+  | 'melon'
+  | 'peach'
+  | 'broccoli'
+  | 'meat'
+  | 'potion';
 
 @Injectable({
   providedIn: 'root',
@@ -76,10 +94,13 @@ export class InventoryService {
     });
   }
 
-  // TODO: Not sure that I love it, but key should probably be enumerated to possible items
-  // Make sure the name field matches the object name, it's used to restore the use function on gameState load
-  itemRepo: {[key:string]: Item} = {
+
+
+  // Make sure the id field matches the object name, it's used to restore the use function on gameState load
+  // TODO: Maybe we want to create an item repo service and have these as first-class objects instead of properties in an object
+  itemRepo: {[key in ItemType]: Item} = {
     rice: {
+      id: 'rice',
       name: 'rice',
       type: 'food',
       value: 1,
@@ -93,6 +114,7 @@ export class InventoryService {
       },
     },
     cabbage: {
+      id: 'cabbage',
       name: 'cabbage',
       type: 'food',
       value: 5,
@@ -109,6 +131,7 @@ export class InventoryService {
       },
     },
     beans: {
+      id: 'beans',
       name: 'beans',
       type: 'food',
       value: 10,
@@ -125,6 +148,7 @@ export class InventoryService {
       },
     },
     broccoli: {
+      id: 'broccoli',
       name: 'broccoli',
       type: 'food',
       value: 10,
@@ -141,6 +165,7 @@ export class InventoryService {
       },
     },
     melon: {
+      id: 'melon',
       name: 'melon',
       type: 'food',
       value: 15,
@@ -157,6 +182,7 @@ export class InventoryService {
       },
     },
     peach: {
+      id: 'peach',
       name: 'peach',
       type: 'food',
       value: 20,
@@ -174,6 +200,7 @@ export class InventoryService {
       },
     },
     meat: {
+      id: 'meat',
       name: 'meat',
       type: 'food',
       value: 50,
@@ -189,6 +216,7 @@ export class InventoryService {
       },
     },
     herb: {
+      id: 'herb',
       name: 'herb',
       type: 'ingredient',
       value: 2,
@@ -202,24 +230,28 @@ export class InventoryService {
       },
     },
     log: {
+      id: 'log',
       name: 'log',
       type: 'wood',
       value: 1,
       description: 'A good-quality log.',
     },
     metalOre: {
+      id: 'metalOre',
       name: 'metal ore',
       type: 'metal',
       value: 1,
       description: 'A chunk of metal ore.',
     },
     junk: {
+      id: 'junk',
       name: 'junk',
       type: 'metal',
       value: 1,
       description: 'Some metal junk.',
     },
     perpetualFarmingManual: {
+      id: 'perpetualFarmingManual',
       name: "Manual of Perpetual Farming",
       type: "manual",
       description: "This manual teaches you to automatically replant fields when they are harvested.",
@@ -233,7 +265,7 @@ export class InventoryService {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoReplant = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD");
       },
       owned: () => {
         // check if homeService is injected yet, if not, inject it (circular dependency issues)
@@ -244,6 +276,7 @@ export class InventoryService {
       }
     },
     restartActivityManual: {
+      id: 'restartActivityManual',
       name: "Manual of Remembered Plans",
       type: "manual",
       description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
@@ -257,7 +290,7 @@ export class InventoryService {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoRestart = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD");
       },
       owned: () => {
         // check if actvityService is injected yet, if not, inject it (circular dependency issues)
@@ -266,7 +299,22 @@ export class InventoryService {
         }
         return this.activityService?.autoRestart;
       }
+    },
+    weapon: { // This is just a placeholder so typescript doesn't yell at us when we create custom weapons.
+      id: 'weapon',
+      name: '',
+      type: '',
+      description: '',
+      value: 0,
+    },
+    potion: { // This is just a placeholder so typescript doesn't yell at us when we create custom potions.
+      id: 'potion',
+      name: '',
+      type: '',
+      description: '',
+      value: 0,
     }
+
   };
 
   farmFoodList = [
@@ -293,9 +341,11 @@ export class InventoryService {
     }
     let value = prefixIndex;
     this.logService.addLogMessage(
-      'Your hard work paid off! You got a ' + name + '.'
+      'Your hard work paid off! You got a ' + name + '.',
+      'STANDARD'
     );
     return {
+      id: 'weapon',
       name: name,
       type: "equipment",
       slot: slot,
@@ -320,6 +370,7 @@ export class InventoryService {
 
     return {
       name: "Potion of " + key,
+      id: "potion",
       type: "potion",
       value: grade,
       description: "A potion that increases " + key,
@@ -331,11 +382,12 @@ export class InventoryService {
     };
   }
 
-  reset() {
+  reset(): void {
     this.itemStacks = [];
     if (Math.random() < 0.3) {
       this.logService.addLogMessage(
-        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.'
+        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
+        'STANDARD'
       );
       this.itemStacks = [
         { item: this.itemRepo['rice'], quantity: 99 },
@@ -346,7 +398,7 @@ export class InventoryService {
   }
 
   // find the best food in the inventory and use it
-  eatFood() {
+  eatFood(): void {
     let foodStack = null;
     let foodValue = 0;
     for (const itemIterator of this.itemStacks) {
@@ -370,14 +422,14 @@ export class InventoryService {
     }
   }
 
-  addItems(item: Item, quantity: number) {
+  addItems(item: Item, quantity: number): void {
     //doing this the slacker inefficient way, optimize later if needed
     for (let i = 0; i < quantity; i++) {
       this.addItem(item);
     }
   }
 
-  addItem(item: Item) {
+  addItem(item: Item): void {
     for (const itemIterator of this.itemStacks) {
       if (
         itemIterator.item.name == item.name &&
@@ -393,12 +445,13 @@ export class InventoryService {
       this.itemStacks.push({ item: item, quantity: 1 });
     } else {
       this.logService.addLogMessage(
-        `You don't have enough room for the ${item.name} so you threw it away.`
+        `You don't have enough room for the ${item.name} so you threw it away.`,
+        'STANDARD'
       );
     }
   }
 
-  sell(itemStack: ItemStack, quantity: number) {
+  sell(itemStack: ItemStack, quantity: number): void {
     let index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks.splice(index, 1);
@@ -418,7 +471,7 @@ export class InventoryService {
     }
   }
 
-  useItem(itemStack: ItemStack) {
+  useItem(itemStack: ItemStack): void {
     if (itemStack.item.type == "potion" && instanceOfPotion(itemStack.item)){
       this.usePotion(itemStack.item);
     } else if (itemStack.item.use) {
@@ -434,7 +487,7 @@ export class InventoryService {
     }
   }
 
-  equip(itemStack: ItemStack) {
+  equip(itemStack: ItemStack): void {
     // return the item already in the slot to the inventory, if any
     const item = itemStack.item;
     if (!instanceOfEquipment(item)) {

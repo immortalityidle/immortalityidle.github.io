@@ -1,8 +1,8 @@
 <div class="log">
   <span class="panelHeader">Log</span>
   <div>
-    <div *ngFor="let logMsg of log">
-      {{logMsg}}
+    <div *ngFor="let logMsg of log" [ngClass]="logMsg.type">
+      {{logMsg.message}}
     </div>
   </div>
 </div>
