@@ -17,6 +17,7 @@ export enum HomeType {
 export interface Field {
   cropName: string,
   yield: number,
+  maxYield: number,
   daysToHarvest: number
 }
 
@@ -57,7 +58,7 @@ export class HomeService {
       type: HomeType.OwnTent,
       description: "A decent tent pitched on your own bit of land.",
       cost: 100,
-      costPerDay: 0,
+      costPerDay: 1,
       landRequired: 1,
       consequence: () => {
         this.characterService.characterState.status.health.value += 1;
@@ -74,7 +75,7 @@ export class HomeService {
       type: HomeType.DirtyShack,
       description: "A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out.",
       cost: 1000,
-      costPerDay: 2,
+      costPerDay: 5,
       landRequired: 5,
       consequence: () => {
         this.characterService.characterState.status.health.value += 3;
@@ -87,7 +88,7 @@ export class HomeService {
       type: HomeType.SimpleHut,
       description: "A very simple hut.",
       cost: 10000,
-      costPerDay: 5,
+      costPerDay: 10,
       landRequired: 10,
       consequence: () => {
         this.characterService.characterState.status.health.value += 5;
@@ -100,7 +101,7 @@ export class HomeService {
       type: HomeType.PleasantCottage,
       description: "A nice little home where you can rest peacefully.",
       cost: 100000,
-      costPerDay: 10,
+      costPerDay: 20,
       landRequired: 20,
       consequence: () => {
         this.characterService.characterState.status.health.value += 10;
@@ -135,6 +136,13 @@ export class HomeService {
       mainLoopService.tickSubject.subscribe(() => {
         this.home.consequence();
         this.ageFields();
+        if (this.home.costPerDay > this.characterService.characterState.money){
+          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.");
+          this.characterService.characterState.status.health.value -= 20;
+          this.characterService.characterState.money = 0;
+        } else {
+          this.characterService.characterState.money -= this.home.costPerDay;
+        }
       });
 
       reincarnationService.reincarnateSubject.subscribe(() => {
@@ -207,21 +215,34 @@ export class HomeService {
     throw Error('Home was not found with the given value');
   }
 
+  getCrop(): Field{
+    let cropIndex = 0;
+    if (this.characterService.characterState.attributes.plantLore.value > 1){
+      cropIndex = Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value));
+    }
+    if (cropIndex >= this.inventoryService.farmFoodList.length){
+      cropIndex = this.inventoryService.farmFoodList.length - 1;
+    }
+    const cropItem = this.inventoryService.farmFoodList[cropIndex];
+    // more valuable crops yield less and take longer to harvest, tune this later
+    return {cropName: cropItem.name,
+      yield: 0,
+      maxYield: Math.floor(100 / cropItem.value),
+      daysToHarvest: 90 * cropItem.value
+    };
+  }
+
   addField(){
     if (this.land > 0){
       this.land--;
-      this.fields.push({
-        cropName: "rice",
-        yield: 1,
-        daysToHarvest: 90
-      });
+      this.fields.push(this.getCrop());
       this.fieldYields++;
     }
   }
 
   workFields(){
     for (const field of this.fields){
-      if (field.yield < 100){  // arbitrary 100 rice per field, tune this later
+      if (field.yield < field.maxYield){
         field.yield++;
         this.fieldYields++;
       }
@@ -231,11 +252,10 @@ export class HomeService {
   ageFields(){
     for (let i = this.fields.length - 1; i >= 0; i--){
       if (this.fields[i].daysToHarvest == 0){
-        this.inventoryService.addItems(this.inventoryService.itemRepo['rice'], this.fields[i].yield);
+        this.inventoryService.addItems(this.inventoryService.itemRepo[this.fields[i].cropName], this.fields[i].yield);
         this.fieldYields -= this.fields[i].yield;
         if (this.autoReplant){
-          this.fields[i].daysToHarvest = 90;
-          this.fields[i].yield = 0;
+          this.fields[i] = this.getCrop();
         } else {
           this.fields.splice(i, 1);
           this.land++;

@@ -7,12 +7,17 @@ import { InventoryService } from '../game-state/inventory.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 
+export interface ActivityProperties {
+  autoRestart: boolean,
+  activityLoop: ActivityLoopEntry[]
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
-
+  autoRestart: boolean = false;
   activities: Activity[] = this.getActivityList();
 
   constructor(
@@ -28,6 +33,18 @@ export class ActivityService {
     mainLoopService.tickSubject.subscribe(() => {
       this.upgradeActivities();
     });
+  }
+
+  getProperties(): ActivityProperties{
+    return {
+      autoRestart: this.autoRestart,
+      activityLoop: this.activityLoop
+    }
+  }
+
+  setProperties(properties: ActivityProperties){
+    this.autoRestart = properties.autoRestart;
+    this.activityLoop = properties.activityLoop;
   }
 
   meetsRequirements(activity: Activity): boolean {
@@ -70,10 +87,14 @@ export class ActivityService {
   }
 
   reset() {
-    this.activityLoop = [];
     // downgrade all activities to base level
     for (const activity of this.activities){
       activity.level = 0;
+    }
+    if (this.autoRestart){
+      this.checkRequirements();
+    } else {
+      this.activityLoop = [];
     }
   }
 
@@ -110,17 +131,37 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Resting'],
+        name: ['Resting', 'Meditation'],
         activityType: ActivityType.Resting,
-        description:['Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.'],
+        description:['Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
+          'Enter a meditative state and begin your journey toward spritual enlightenment.'],
         consequenceDescription: ['Restores stamina and a little health.'],
-        consequence: [() => {
-          this.characterService.characterState.status.stamina.value +=
-            this.characterService.characterState.status.stamina.max / 2;
-          this.characterService.characterState.status.health.value += 2;
-          this.characterService.characterState.checkOverage();
-        }],
-        requirements: [{}],
+        consequence: [
+          () => {
+            this.characterService.characterState.status.stamina.value +=
+              this.characterService.characterState.status.stamina.max / 2;
+            this.characterService.characterState.status.health.value += 2;
+            this.characterService.characterState.checkOverage();
+          },
+          () => {
+            this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
+            this.characterService.characterState.status.health.value += 10;
+            if (Math.random() < 0.01){
+              this.characterService.characterState.attributes.spirituality.value += 0.1;
+            }
+            this.characterService.characterState.checkOverage();
+          }
+        ],
+        requirements: [
+          {},
+          {
+            strength: 1000,
+            speed: 1000,
+            charisma: 1000,
+            intelligence: 1000,
+            toughness: 1000
+          }
+        ],
       },
       {
         level: 0,
@@ -151,7 +192,7 @@ export class ActivityService {
             charisma: 5,
           },
           {
-            charisma: 20
+            charisma: 50
           }
         ]
       },
@@ -230,12 +271,12 @@ export class ActivityService {
         ],
         requirements: [
           {
-            strength: 10,
-            toughness: 10,
+            strength: 50,
+            toughness: 50,
           },
           {
-            strength: 100,
-            toughness: 100,
+            strength: 200,
+            toughness: 200,
             metalLore: 1,
           },
           {
@@ -268,8 +309,8 @@ export class ActivityService {
           }
         }],
         requirements: [{
-          speed: 10,
-          intelligence: 10,
+          speed: 20,
+          intelligence: 20,
         }],
       },
       {
@@ -337,12 +378,12 @@ export class ActivityService {
         ],
         requirements: [
           {
-            strength: 10,
-            intelligence: 10
+            strength: 30,
+            intelligence: 30
           },
           {
-            strength: 100,
-            intelligence: 100,
+            strength: 300,
+            intelligence: 300,
             plantLore: 1,
           }
         ],
@@ -356,6 +397,7 @@ export class ActivityService {
         consequenceDescription:
           ['Increases strength and speed and helps your fields to produce more food.'],
         consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 20;
           this.homeService.workFields();
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           this.characterService.characterState.increaseAttribute('speed', 0.1);
@@ -372,19 +414,35 @@ export class ActivityService {
         level: 0,
         name: ['Mining'],
         activityType: ActivityType.Mining,
-        description:
-          ['Dig in the ground for useable minerals.'],
-        consequenceDescription:
-          ['Increases strength and sometimes finds something useful.'],
+        description: ['Dig in the ground for useable minerals.'],
+        consequenceDescription: ['Increases strength and sometimes finds something useful.'],
         consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 20;
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('metalLore', 0.1);
             this.inventoryService.addItem(this.inventoryService.itemRepo['metalOre']);
           }
-      }],
+        }],
         requirements: [{
           strength: 10
+        }],
+      },
+      {
+        level: 0,
+        name: ['Hunting'],
+        activityType: ActivityType.Hunting,
+        description: ['Hunt for animals in the nearby woods.'],
+        consequenceDescription: ['Increases speed and sometimes finds something useful.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 50;
+          this.characterService.characterState.increaseAttribute('speed', 0.1);
+          if (Math.random() < 0.01) {
+            this.inventoryService.addItem(this.inventoryService.itemRepo['meat']);
+          }
+        }],
+        requirements: [{
+          speed: 50
         }],
       },
     ];

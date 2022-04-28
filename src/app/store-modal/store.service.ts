@@ -19,7 +19,8 @@ export class StoreService {
     this.selectedItem = null;
 
     this.storeItems = [
-      inventoryService.itemRepo['farmingManual']
+      inventoryService.itemRepo['perpetualFarmingManual'],
+      inventoryService.itemRepo['restartActivityManual']
     ];
   }
 

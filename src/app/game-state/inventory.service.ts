@@ -1,4 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
+import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
@@ -47,6 +48,7 @@ export class InventoryService {
   noFood: boolean;
   selectedItem: ItemStack | null = null;
   homeService: HomeService | null;
+  activityService: ActivityService | null;
 
   constructor(
     private logService: LogService,
@@ -56,6 +58,7 @@ export class InventoryService {
     private injector: Injector
   ) {
     this.homeService = null; // initially null to avoid circular dependency
+    this.activityService = null; // initially null to avoid circular dependency
     this.noFood = false;
     mainLoopService.tickSubject.subscribe(() => {
       this.eatFood();
@@ -72,8 +75,7 @@ export class InventoryService {
       name: 'rice',
       type: 'food',
       value: 1,
-      description:
-        'A basic staple of life. One pouch will sustain you for a day.',
+      description: 'A basic staple of life. One pouch will sustain you for a day.',
       useLabel: 'Eat',
       useDescription: 'Fills your belly.',
       useConsumes: true,
@@ -82,17 +84,111 @@ export class InventoryService {
         this.characterService.characterState.checkOverage();
       },
     },
-    herb: {
-      name: 'herb',
+    cabbage: {
+      name: 'cabbage',
       type: 'food',
-      value: 2,
-      description:
-        'Useful herbs. Can be eaten directly or used in creating pills or potions.',
+      value: 5,
+      description: 'A simple, healthy vegetable.',
       useLabel: 'Eat',
-      useDescription: 'Fills your belly and restores a bit of health.',
+      useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.01){
+          this.characterService.characterState.status.health.max++;
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    beans: {
+      name: 'beans',
+      type: 'food',
+      value: 10,
+      description: 'A handful of healthy vegetables.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.02){
+          this.characterService.characterState.status.health.max++;
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    broccoli: {
+      name: 'broccoli',
+      type: 'food',
+      value: 10,
+      description: 'A very healthy vegetable.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.05){
+          this.characterService.characterState.status.health.max++;
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    melon: {
+      name: 'melon',
+      type: 'food',
+      value: 15,
+      description: 'A delicious fruit.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.1){
+          this.characterService.characterState.status.health.max++;
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    peach: {
+      name: 'peach',
+      type: 'food',
+      value: 20,
+      description: 'A highly prized and delicious fruit.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and can even extend your life.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.2){
+          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.lifespan += 10;
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    meat: {
+      name: 'meat',
+      type: 'food',
+      value: 50,
+      description: 'Some delicious meat.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly. Can also improve your health and stamina.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        this.characterService.characterState.status.health.max++;
+        this.characterService.characterState.status.stamina.max++;
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    herb: {
+      name: 'herb',
+      type: 'ingredient',
+      value: 2,
+      description: 'Useful herbs. Can used in creating pills or potions.',
+      useLabel: 'Use',
+      useDescription: 'Restores a bit of health.',
+      useConsumes: true,
+      use: () => {
         this.characterService.characterState.status.health.value += 5;
         this.characterService.characterState.checkOverage();
       },
@@ -115,7 +211,7 @@ export class InventoryService {
       value: 1,
       description: 'Some metal junk.',
     },
-    farmingManual: {
+    perpetualFarmingManual: {
       name: "Manual of Perpetual Farming",
       type: "manual",
       description: "This manual teaches you to automatically replant fields when they are harvested.",
@@ -138,8 +234,41 @@ export class InventoryService {
         }
         return this.homeService?.autoReplant;
       }
+    },
+    restartActivityManual: {
+      name: "Manual of Remembered Plans",
+      type: "manual",
+      description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
+      value: 1000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock preserving activity plans across reincarnations.",
+      useConsumes: true,
+      use: () => {
+        // check if actvityService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        this.activityService.autoRestart = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+      },
+      owned: () => {
+        // check if actvityService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        return this.activityService?.autoRestart;
+      }
     }
   };
+
+  farmFoodList = [
+    this.itemRepo['rice'],
+    this.itemRepo['cabbage'],
+    this.itemRepo['beans'],
+    this.itemRepo['melon'],
+    this.itemRepo['peach'],
+  ]
+
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
   generateWeapon(grade: number, material: string): Equipment {
@@ -188,14 +317,14 @@ export class InventoryService {
     }
   }
 
-  // find the cheapest food in the inventory and use it
+  // find the best food in the inventory and use it
   eatFood() {
     let foodStack = null;
-    let foodValue = Number.MAX_VALUE;
+    let foodValue = 0;
     for (const itemIterator of this.itemStacks) {
       if (
         itemIterator.item.type == 'food' &&
-        itemIterator.item.value < foodValue
+        itemIterator.item.value > foodValue
       ) {
         foodStack = itemIterator;
       }

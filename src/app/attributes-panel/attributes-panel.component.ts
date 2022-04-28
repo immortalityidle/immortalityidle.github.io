@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
+import { KeyValue } from '@angular/common';
 
 
 @Component({
@@ -14,4 +15,9 @@ export class AttributesPanelComponent {
   constructor(characterService: CharacterService) {
     this.character = characterService.characterState;
    }
+  
+   // Preserve original property order
+  originalOrder = (): number => {
+    return 0;
+  }
 }

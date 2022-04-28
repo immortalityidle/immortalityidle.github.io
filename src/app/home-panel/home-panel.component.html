@@ -5,6 +5,8 @@
     <br/>
     <span>You own {{homeService.land}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length}} fields growing {{homeService.fieldYields}} food</span>
     <br/>
+    <span>It costs {{homeService.home.costPerDay}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span>
+    <br/>
     <span class="buttonSpan">
         <button  [disabled]="(character.money < homeService.landPrice)" (click)="buyClick()" title="Buy a plot of land for {{homeService.landPrice}} taels.">
             Buy Land
