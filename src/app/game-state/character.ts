@@ -41,6 +41,7 @@ export interface CharacterProperties {
 
 const INITIAL_AGE = 18 * 365;
 export class Character {
+  dead: boolean = false;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",

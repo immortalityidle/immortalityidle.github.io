@@ -17,6 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { StoreModalComponent } from './store-modal/store-modal.component';
+import { TooltipModule } from 'ng2-tooltip-directive';
 
 const materialModules = [
   MatDialogModule,
@@ -44,6 +45,7 @@ const materialModules = [
     BrowserAnimationsModule,
     FormsModule,
     CommonModule,
+    TooltipModule.forRoot({'show-delay': 500}),
     ...materialModules
   ],
   exports: [

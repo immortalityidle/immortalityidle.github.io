@@ -8,15 +8,14 @@
     <span>It costs {{homeService.home.costPerDay}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span>
     <br/>
     <span class="buttonSpan">
-        <button  [disabled]="(character.money < homeService.landPrice)" (click)="buyClick()" title="Buy a plot of land for {{homeService.landPrice}} taels.">
+        <button  (click)="buyClick()" placement="left" tooltip="Buy a plot of land for {{homeService.landPrice}} taels.">
             Buy Land
         </button>
-        <button  [disabled]="(homeService.land < 1)" (click)="fieldClick()" title="Convert a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again.">
+        <button  (click)="fieldClick()" placement="left" tooltip="Convert a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again.">
             Plow Field
         </button>
         <button *ngIf="(homeService.home.name !== homeService.nextHome.name)"
-                [disabled]="character.money < homeService.nextHome.cost || homeService.land < homeService.nextHome.landRequired"
-            title="A better home will cost {{homeService.nextHome.cost}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
+                placement="left" tooltip="A better home will cost {{homeService.nextHome.cost}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
             Get a better house
         </button>
     </span>

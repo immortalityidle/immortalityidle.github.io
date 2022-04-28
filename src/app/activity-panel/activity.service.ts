@@ -31,6 +31,9 @@ export class ActivityService {
       this.reset();
     });
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.characterService.characterState.dead){
+        return;
+      }
       this.upgradeActivities();
     });
   }

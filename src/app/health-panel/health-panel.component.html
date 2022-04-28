@@ -4,7 +4,7 @@
 </span>
 <table>
   <tr>
-    <td title="{{characterService.characterState.status.health.description}}">Health</td>
+    <td tooltip="{{characterService.characterState.status.health.description}}" placement="right">Health</td>
     <td class="health">
       <progress class="status-progress"
         [value]="characterService.characterState.status.health.value"
@@ -12,7 +12,7 @@
         <div></div>
       </progress>
     </td>
-    <td title="{{characterService.characterState.status.stamina.description}}">Stamina</td>
+    <td tooltip="{{characterService.characterState.status.stamina.description}}" placement="right">Stamina</td>
     <td class="stamina">
       <progress class="status-progress"
         [value]="characterService.characterState.status.stamina.value"
@@ -22,7 +22,7 @@
     </td>
   </tr>
   <tr>
-    <td title="{{characterService.characterState.status.nourishment.description}}">Nutrition</td>
+    <td tooltip="{{characterService.characterState.status.nourishment.description}}" placement="right">Nutrition</td>
     <td class="nourishment">
       <progress class="status-progress"
         [value]="characterService.characterState.status.nourishment.value"

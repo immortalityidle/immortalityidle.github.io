@@ -16,6 +16,7 @@ export class CharacterService {
     private reincarnationService: ReincarnationService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
+      this.characterState.dead = false;
       this.characterState.age++;
       this.characterState.status.nourishment.value--;
       // check for death
@@ -33,6 +34,7 @@ export class CharacterService {
         this.logService.addLogMessage("Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again.");
         this.logService.addLogMessage("It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!");
         this.reincarnationService.reincarnate();
+        this.characterState.dead = true; // use this flag to stop other events until the next tick
       }
     });
 

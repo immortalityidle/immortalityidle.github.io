@@ -61,6 +61,9 @@ export class InventoryService {
     this.activityService = null; // initially null to avoid circular dependency
     this.noFood = false;
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.characterService.characterState.dead){
+        return;
+      }
       this.eatFood();
     });
     reincarnationService.reincarnateSubject.subscribe(() => {

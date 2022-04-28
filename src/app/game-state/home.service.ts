@@ -134,7 +134,10 @@ export class HomeService {
       }
 
       mainLoopService.tickSubject.subscribe(() => {
-        this.home.consequence();
+        if (this.characterService.characterState.dead){
+          return;
+        }
+          this.home.consequence();
         this.ageFields();
         if (this.home.costPerDay > this.characterService.characterState.money){
           this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.");
@@ -186,10 +189,13 @@ export class HomeService {
   }
 
   upgradeToNextHome(){
-    this.characterService.characterState.money -= this.nextHome.cost;
-    this.land -= this.nextHome.landRequired;
-    this.setCurrentHome(this.nextHome);
-    this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
+    if (this.characterService.characterState.money >= this.nextHome.cost &&
+      this.land >= this.nextHome.landRequired){
+      this.characterService.characterState.money -= this.nextHome.cost;
+      this.land -= this.nextHome.landRequired;
+      this.setCurrentHome(this.nextHome);
+      this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name);
+    }
   }
 
   reset() {
@@ -267,9 +273,11 @@ export class HomeService {
   }
 
   buyLand(){
-    this.characterService.characterState.money -= this.landPrice;
-    this.land++;
-    this.landPrice += 10;
+    if (this.characterService.characterState.money >= this.landPrice){
+      this.characterService.characterState.money -= this.landPrice;
+      this.land++;
+      this.landPrice += 10;
+    }
   }
 
 }

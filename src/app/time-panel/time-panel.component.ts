@@ -23,7 +23,7 @@ export class TimePanelComponent implements OnInit {
   constructor(
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
-    characterService: CharacterService,
+    private characterService: CharacterService,
     private logService: LogService,
   ) {
     this.character = characterService.characterState;
@@ -31,6 +31,10 @@ export class TimePanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.mainLoopService.tickSubject.subscribe(() => {
+      if (this.characterService.characterState.dead){
+        return;
+      }
+
       if (
         this.activityService.activityLoop.length > 0 &&
         this.currentIndex < this.activityService.activityLoop.length
