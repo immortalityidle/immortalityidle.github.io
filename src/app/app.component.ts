@@ -58,7 +58,9 @@ export class AppComponent implements OnInit {
   }
 
   hardResetClicked(): void {
-    this.gameStateService.hardReset();
+    if (confirm("This will reset everything, are you sure?")){
+      this.gameStateService.hardReset();
+    }
   }
   storeClicked(): void {
     const dialogRef = this.dialog.open(StoreModalComponent, {

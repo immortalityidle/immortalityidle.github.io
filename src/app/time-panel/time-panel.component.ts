@@ -18,12 +18,13 @@ export class TimePanelComponent implements OnInit {
   currentLoopEntry?: ActivityLoopEntry = undefined;
   currentIndex = 0;
   currentTickCount = 0;
+  exhaustionDays = 0;
 
 
   constructor(
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
-    characterService: CharacterService,
+    private characterService: CharacterService,
     private logService: LogService,
   ) {
     this.character = characterService.characterState;
@@ -31,6 +32,14 @@ export class TimePanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.mainLoopService.tickSubject.subscribe(() => {
+      if (this.characterService.characterState.dead){
+        return;
+      }
+      if (this.exhaustionDays > 0){
+        this.exhaustionDays--;
+        return;
+      }
+
       if (
         this.activityService.activityLoop.length > 0 &&
         this.currentIndex < this.activityService.activityLoop.length
@@ -47,11 +56,8 @@ export class TimePanelComponent implements OnInit {
             'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.',
             'INJURY'
           );
-          this.character.age += 5;
-          this.character.status.stamina.value =
-            this.character.status.stamina.max;
-          this.currentTickCount = 0;
-          this.currentIndex = 0;
+          this.exhaustionDays = 5;
+          this.character.status.stamina.value = this.character.status.stamina.max;
         }
         if (this.currentTickCount < this.currentLoopEntry.repeatTimes - 1) {
           this.currentTickCount++;

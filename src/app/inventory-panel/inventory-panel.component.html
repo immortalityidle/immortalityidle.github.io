@@ -5,7 +5,7 @@
       <td class="moneyColumn">Money: </td>
       <td class="moneyColumn">{{characterService.characterState.money | number: '1.0-0'}} Taels</td>
       <td><mat-icon *ngIf="inventoryService.noFood" 
-        title="You have no food in your inventory, you will spend money on food each day to avoid starvation.">
+        placement="left" tooltip="You have no food in your inventory, you will spend money on food each day to avoid starvation.">
         no_food
       </mat-icon></td>
     </tr>
@@ -15,7 +15,7 @@
     <div *ngFor="let itemStack of inventoryService.itemStacks">
       <table class="itemSlot" (click)="slotClicked(itemStack)"
         [ngClass]="{'selectedItem': itemStack === inventoryService.selectedItem}"
-        title="{{itemStack.item.description}}">
+        tooltip="{{itemStack.item.description}}" placement="left">
         <tr>{{itemStack.item.name | titlecase}}</tr>
         <tr *ngIf="itemStack.quantity > 1">{{itemStack.quantity}}</tr>
       </table>
@@ -23,11 +23,12 @@
   </div>
 
   <div class="inventoryButtons" *ngIf="inventoryService.selectedItem">
-    <button (click)="sell(1)" title="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels.">Sell</button>
+    <button (click)="sell(1)" placement="left" tooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels.">Sell</button>
+    <button (click)="sellStack()" placement="left" tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.">Sell Stack</button>
     <button (click)="sellAll()">Sell All</button>
-    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" title="{{inventoryService.selectedItem.item.useDescription}}">
+    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}">
       {{inventoryService.selectedItem.item.useLabel}}
     </button>
-    <button *ngIf="(equipmentSlots.includes(inventoryService.selectedItem.item.type))" (click)="equip()">Equip</button>
+    <button *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()">Equip</button>
   </div>
 </div>

@@ -23,8 +23,7 @@ export class HomePanelComponent {
   }
 
   buyClick(): void {
-    this.character.money -= 100;
-    this.character.land += 1;
+    this.homeService.buyLand();
   }
 
   fieldClick(): void {

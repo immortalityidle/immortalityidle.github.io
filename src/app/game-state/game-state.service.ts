@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActivityService } from '../activity-panel/activity.service';
+import { ActivityService, ActivityProperties } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
-import { ActivityLoopEntry } from './activity';
 import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
 import { HomeService, HomeProperties } from './home.service';
@@ -14,7 +13,7 @@ interface GameState {
   character: CharacterProperties,
   itemStacks: ItemStack[],
   home: HomeProperties,
-  activityLoop: ActivityLoopEntry[]
+  activities: ActivityProperties
 }
 
 @Injectable({
@@ -40,7 +39,7 @@ export class GameStateService {
       character: this.characterService.characterState.getProperties(),
       itemStacks: this.inventoryService.itemStacks,
       home: this.homeService.getProperties(),
-      activityLoop: this.activityService.activityLoop
+      activities: this.activityService.getProperties()
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
     this.logService.addLogMessage('Game saved',
@@ -62,7 +61,7 @@ export class GameStateService {
       }
     }
     this.homeService.setProperties(gameState.home);
-    this.activityService.activityLoop = gameState.activityLoop;
+    this.activityService.setProperties(gameState.activities);
   }
 
   hardReset(): void {

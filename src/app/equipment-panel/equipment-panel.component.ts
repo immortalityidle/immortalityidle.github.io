@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { InventoryService } from '../game-state/inventory.service';
+import { InventoryService, instanceOfEquipment } from '../game-state/inventory.service';
+import { ItemPrefixes } from '../game-state/itemResources';
 
 @Component({
   selector: 'app-equipment-panel',
@@ -15,4 +16,13 @@ export class EquipmentPanelComponent {
     public inventoryService: InventoryService) {
     this.character = characterService.characterState;
   }
+
+  getSelectedItemSlot(){
+    const item = this.inventoryService.selectedItem?.item;
+    if (!item || !instanceOfEquipment(item)) {
+      return null;
+    }
+    return item?.slot;
+  }
+
 }

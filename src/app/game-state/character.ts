@@ -34,7 +34,6 @@ type CharacterStatus = {[key in StatusType]: {description: string, value: number
 export interface CharacterProperties {
   attributes: AttributeObject,
   money: number,
-  land: number,
   equipment: EquipmentSlots,
   age: number,
   status: CharacterStatus
@@ -44,6 +43,7 @@ const INITIAL_AGE = 18 * 365;
 const BASE_LIFESPAN = 30 * 365;
 
 export class Character {
+  dead: boolean = false;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -123,7 +123,6 @@ export class Character {
     }
   };
   money = 300;
-  land = 0;
   // age in days
   age = INITIAL_AGE;
   lifespan = BASE_LIFESPAN;
@@ -160,11 +159,10 @@ export class Character {
     }
     const key = keys[Math.floor(Math.random() * (keys.length - 1))];
     this.money = 0;
-    this.land = 0;
     // age in days
     this.age = INITIAL_AGE;
     // increase lifespan by 2% of the average aptitude
-    this.lifespan = BASE_LIFESPAN + (0.02 * (totalAptitude / Object.keys(this.attributes).length));
+    this.lifespan = BASE_LIFESPAN + (0.1 * (totalAptitude / Object.keys(this.attributes).length));
     this.equipment = {
       head: null,
       body: null,
@@ -175,17 +173,19 @@ export class Character {
     }
   }
 
-  increaseAttribute(attribute: AttributeType, amount: number): void {
-    let aptitude = this.attributes[attribute].aptitude;
+  getAptitudeMultipier(aptitude: number): number {
     if (aptitude < 10){
-      this.attributes[attribute].value += (amount * this.attributes[attribute].aptitude);
+      return aptitude;
     } else {
-      // slow the scaling as aptitude grows
-      this.attributes[attribute].value += (amount * (10 + Math.log10(this.attributes[attribute].aptitude)));
+      return 10 + Math.log2(aptitude);
     }
   }
 
-  checkOverage(): void {
+  increaseAttribute(attribute: AttributeType, amount: number): void {
+    this.attributes[attribute].value += (amount * this.getAptitudeMultipier(this.attributes[attribute].aptitude));
+  }
+
+  checkOverage(){
     if (this.status.health.value > this.status.health.max){
       this.status.health.value = this.status.health.max;
     }
@@ -201,7 +201,6 @@ export class Character {
     return {
       attributes: this.attributes,
       money: this.money,
-      land: this.land,
       equipment: this.equipment,
       age: this.age,
       status: this.status
@@ -211,7 +210,6 @@ export class Character {
   setProperties(properties: CharacterProperties): void {
     this.attributes = properties.attributes;
     this.money = properties.money;
-    this.land = properties.land;
     this.equipment = properties.equipment;
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
