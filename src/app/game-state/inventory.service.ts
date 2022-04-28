@@ -377,12 +377,19 @@ export class InventoryService {
     let index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks.splice(index, 1);
-      this.characterService.characterState.money +=
-        itemStack.quantity * itemStack.item.value;
+      this.characterService.characterState.money += itemStack.quantity * itemStack.item.value;
+      this.selectedItem = null;
     } else {
       itemStack.quantity -= quantity;
-      this.characterService.characterState.money +=
-        quantity * itemStack.item.value;
+      this.characterService.characterState.money += quantity * itemStack.item.value;
+    }
+  }
+  
+  sellAll(item: Item){
+    for  (let i = this.itemStacks.length - 1; i >= 0; i--){
+      if (this.itemStacks[i].item.name == item.name){
+        this.sell(this.itemStacks[i], this.itemStacks[i].quantity);
+      }
     }
   }
 

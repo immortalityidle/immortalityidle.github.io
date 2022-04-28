@@ -137,7 +137,7 @@ export class HomeService {
         if (this.characterService.characterState.dead){
           return;
         }
-          this.home.consequence();
+        this.home.consequence();
         this.ageFields();
         if (this.home.costPerDay > this.characterService.characterState.money){
           this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.");
@@ -152,6 +152,8 @@ export class HomeService {
         this.reset();
         if (Math.random() < .3){
           this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.");
+          //and a few coins so you don't immediately get beat up for not having upkeep money for your house
+          this.characterService.characterState.money += 5;
           this.setCurrentHome(this.nextHome);
         }
       });

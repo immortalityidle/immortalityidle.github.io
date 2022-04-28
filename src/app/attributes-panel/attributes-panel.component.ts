@@ -12,7 +12,7 @@ import { KeyValue } from '@angular/common';
 export class AttributesPanelComponent {
   character: Character;
 
-  constructor(characterService: CharacterService) {
+  constructor(public characterService: CharacterService) {
     this.character = characterService.characterState;
    }
   

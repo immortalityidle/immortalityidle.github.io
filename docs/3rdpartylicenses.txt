@@ -66,6 +66,9 @@ MIT
 @angular/router
 MIT
 
+ng2-tooltip-directive
+MIT
+
 rxjs
 Apache-2.0
                                Apache License

@@ -25,6 +25,12 @@ export class InventoryPanelComponent {
 
   sellAll(){
     if (this.inventoryService.selectedItem){
+      this.inventoryService.sellAll(this.inventoryService.selectedItem.item);
+    }
+  }
+
+  sellStack(){
+    if (this.inventoryService.selectedItem){
       this.sell(this.inventoryService.selectedItem.quantity);
     }
   }

@@ -160,7 +160,7 @@ export class Character {
     // age in days
     this.age = INITIAL_AGE;
     // increase lifespan by 1% the average aptitude
-    this.lifespan = 30 * 365 + (0.01 * (totalAptitude / Object.keys(this.attributes).length));
+    this.lifespan = 30 * 365 + (0.1 * (totalAptitude / Object.keys(this.attributes).length));
     this.equipment = {
       head: null,
       body: null,
@@ -171,14 +171,16 @@ export class Character {
     }
   }
 
-  increaseAttribute(attribute: AttributeType, amount: number){
-    let aptitude = this.attributes[attribute].aptitude;
+  getAptitudeMultipier(aptitude: number){
     if (aptitude < 10){
-      this.attributes[attribute].value += (amount * this.attributes[attribute].aptitude);
+      return aptitude;
     } else {
-      // slow the scaling as aptitude grows
-      this.attributes[attribute].value += (amount * (10 + Math.log10(this.attributes[attribute].aptitude)));
+      return 10 + Math.log2(aptitude);
     }
+  }
+
+  increaseAttribute(attribute: AttributeType, amount: number){
+    this.attributes[attribute].value += (amount * this.getAptitudeMultipier(this.attributes[attribute].aptitude));
   }
 
   checkOverage(){
