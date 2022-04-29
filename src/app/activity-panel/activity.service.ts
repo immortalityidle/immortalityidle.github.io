@@ -239,7 +239,7 @@ export class ActivityService {
               this.characterService.characterState.attributes.toughness.value) +
               (this.characterService.characterState.attributes.metalLore.value * 2);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('metalLore', 0.2);
+              this.characterService.characterState.increaseAttribute('metalLore', 0.5);
               let grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
@@ -257,7 +257,7 @@ export class ActivityService {
               this.characterService.characterState.attributes.toughness.value) +
               (this.characterService.characterState.attributes.metalLore.value * 5);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('metalLore',0.5);
+              this.characterService.characterState.increaseAttribute('metalLore',0.8);
               let grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(

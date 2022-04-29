@@ -2,7 +2,7 @@
 <div class="inventoryGrid">
     <div *ngFor="let item of storeService.storeItems">
       <table class="itemSlot" (click)="slotClicked(item)"
-        [ngClass]="{'selectedItem': item === storeService.selectedItem}"
+        [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
         placement="left" tooltip="{{item.description}}">
         <tr><mat-icon>menu_book</mat-icon></tr>
         <tr>{{item.name | titlecase}}</tr>

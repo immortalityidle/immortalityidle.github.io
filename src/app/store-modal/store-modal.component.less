@@ -5,30 +5,35 @@
   }
   
 .itemSlot {
-border: 1px solid black;
-width: 60px;
-height: 60px;
-margin: 1px;
-font-size: x-small;
-text-align: center;
-border-spacing: 0px;
-background-color: gray;
-cursor: pointer;
+  border: 1px solid black;
+  width: 60px;
+  height: 60px;
+  margin: 1px;
+  font-size: x-small;
+  text-align: center;
+  border-spacing: 0px;
+  background-color: lightgray;
+  cursor: pointer;
 }
 
 .selectedItem {
-background-color: darkblue;
+  background-color: lightyellow;
+}
+
+.ownedItem {
+  background-color: darkgray !important;
+  border: 1px solid darkgray !important;
 }
 
 .itemSlot > tr {
-line-height: 12px;
+  line-height: 12px;
 }
 
 .inventoryGrid {
-display: flex;
-flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 table {
-width: 100%;
+  width: 100%;
 }
