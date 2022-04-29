@@ -67,10 +67,11 @@ export class HomeService {
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.1){
-          this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.",
+          this.logService.addLogMessage("You got roughed up in your sleep by some local troublemakers. They also stole some money. It might be time to get some walls.",
           'INJURY');
           const damageTaken = Math.max(0, 2 - ( this.characterService.characterState.attributes.toughness.value / 100));
           this.characterService.characterState.status.health.value -= damageTaken;
+          this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
           this.characterService.characterState.attributes.toughness.value += .01;
         }
         this.characterService.characterState.checkOverage();

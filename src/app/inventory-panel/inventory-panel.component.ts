@@ -38,9 +38,6 @@ export class InventoryPanelComponent {
   sell(quantity: number): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.sell(this.inventoryService.selectedItem, quantity);
-      if (this.inventoryService.selectedItem.quantity == quantity){
-        this.inventoryService.selectedItem = null;
-      }
     }
   }
 
