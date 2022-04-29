@@ -64,7 +64,7 @@ export class HomeService {
       costPerDay: 1,
       landRequired: 1,
       consequence: () => {
-        this.characterService.characterState.status.health.value += 1;
+        this.characterService.characterState.status.health.value += .1;
         this.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.1){
           this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.",
