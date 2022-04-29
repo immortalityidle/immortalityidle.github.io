@@ -42,6 +42,7 @@
 .centerPanel {
     flex: 2;
     display: flex;
+    flex-direction: column;
 }
 
 .rightPanel {
@@ -73,7 +74,14 @@
 .activityPanel {
     border: 1px solid black;
     margin: 4px;
-    flex-grow: 1;
+    height: 460px;
+    overflow: auto;
+}
+
+.battlePanel {
+    border: 1px solid black;
+    margin: 4px;
+    height: 150px;
 }
 
 .equipmentPanel {

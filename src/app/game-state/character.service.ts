@@ -29,8 +29,7 @@ export class CharacterService {
         deathMessage = "You starve to death.";
       }
       if (deathMessage != ""){
-        this.logService.addLogMessage(deathMessage,
-          'INJURY');
+        this.logService.addLogMessage(deathMessage, 'INJURY');
         this.logService.addLogMessage("You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
         'STANDARD');
         this.logService.addLogMessage("Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again.",

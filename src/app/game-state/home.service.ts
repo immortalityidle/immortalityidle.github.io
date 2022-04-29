@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BattleService } from '../battle-panel/battle.service';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService, TICKS_PER_DAY } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
@@ -48,12 +49,12 @@ export class HomeService {
       costPerDay: 0,
       landRequired: 0,
       consequence: () => {
-        if (Math.random() < 0.3){
-          this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land and put up a better tent.",
-          'INJURY');
-          const damageTaken = Math.max(0, 2 - ( this.characterService.characterState.attributes.toughness.value / 100));
-          this.characterService.characterState.status.health.value -= damageTaken;
-          this.characterService.characterState.attributes.toughness.value += .01;
+        if (Math.random() < 0.05){
+          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY');
+          this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
+        }
+        if (Math.random() < 0.6){
+          this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
         }
       }
     },
@@ -65,15 +66,14 @@ export class HomeService {
       costPerDay: 1,
       landRequired: 1,
       consequence: () => {
-        this.characterService.characterState.status.health.value += .1;
+        this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
-        if (Math.random() < 0.1){
-          this.logService.addLogMessage("You got roughed up in your sleep by some local troublemakers. They also stole some money. It might be time to get some walls.",
-          'INJURY');
-          const damageTaken = Math.max(0, 2 - ( this.characterService.characterState.attributes.toughness.value / 100));
-          this.characterService.characterState.status.health.value -= damageTaken;
+        if (Math.random() < 0.05){
+          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
-          this.characterService.characterState.attributes.toughness.value += .01;
+        }
+        if (Math.random() < 0.3){
+          this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
         }
         this.characterService.characterState.checkOverage();
       }
@@ -128,6 +128,7 @@ export class HomeService {
     private characterService: CharacterService,
     private inventoryService: InventoryService,
     private logService: LogService,
+    private battleService: BattleService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
     private itemRepoService: ItemRepoService

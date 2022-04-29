@@ -131,7 +131,7 @@ export class ActivityService {
           const key = keys[Math.floor(Math.random() * 5)];
           this.characterService.characterState.increaseAttribute(key, 0.1);
           this.characterService.characterState.status.stamina.value -= 5;
-          this.characterService.characterState.money += 1;
+          this.characterService.characterState.money += 2;
         }],
         requirements: [{}],
       },

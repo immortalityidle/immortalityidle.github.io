@@ -1,0 +1,27 @@
+<span tooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">
+    <mat-icon>fort</mat-icon>
+    Battles
+</span>
+<div class="battleContainer">
+    <table>
+      <ng-container *ngFor="let enemyStack of battleService.enemies">
+        <tr>
+          <td>
+              <button *ngIf="battleService.currentEnemy != enemyStack" (click)="battleService.fight(enemyStack)">Fight</button>
+              <span *ngIf="battleService.currentEnemy == enemyStack">Fighting</span>
+          </td>
+          <td>{{enemyStack.enemy.name}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
+          <td class="health">
+            <progress class="status-progress"
+              [value]="enemyStack.enemy.health"
+              [max]="enemyStack.enemy.maxHealth">
+              <div></div>
+            </progress>
+          </td>
+          <td tooltip="Accuracy"><mat-icon>compare_arrows</mat-icon>{{enemyStack.enemy.accuracy}}</td>
+          <td tooltip="Attack Power"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.attack}}</td>
+          <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense}}</td>
+        </tr>
+      </ng-container>
+    </table>
+  </div>
