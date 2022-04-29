@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, Item } from '../game-state/inventory.service';
+import { ItemRepoService } from '../game-state/item-repo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +15,14 @@ export class StoreService {
   constructor(
     private logService: LogService,
     private characterService: CharacterService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    itemRepoService: ItemRepoService
   ) {
     this.selectedItem = null;
 
     this.storeItems = [
-      inventoryService.itemRepo['perpetualFarmingManual'],
-      inventoryService.itemRepo['restartActivityManual']
+      itemRepoService.perpetualFarmingManual,
+      itemRepoService.restartActivityManual
     ];
   }
 

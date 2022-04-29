@@ -6,6 +6,7 @@ import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
 import { HomeService, HomeProperties } from './home.service';
 import { InventoryService, ItemStack } from './inventory.service';
+import { ItemRepoService } from './item-repo.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -27,12 +28,11 @@ export class GameStateService {
     private inventoryService: InventoryService,
     private logService: LogService,
     private reincarnationService: ReincarnationService,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    private itemRepoService: ItemRepoService
   ) {
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
   }
-
-
 
   savetoLocalStorage(): void {
     const gameState: GameState = {
@@ -56,8 +56,8 @@ export class GameStateService {
     this.inventoryService.itemStacks = gameState.itemStacks;
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks){
-      if (this.inventoryService.itemRepo[itemStack.item.id]){
-        itemStack.item.use = this.inventoryService.itemRepo[itemStack.item.id].use;
+      if (this.itemRepoService.getItemById(itemStack.item.id)){
+        itemStack.item.use = this.itemRepoService.getItemById(itemStack.item.id).use;
       }
     }
     this.homeService.setProperties(gameState.home);

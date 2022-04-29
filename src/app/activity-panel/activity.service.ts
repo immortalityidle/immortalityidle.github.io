@@ -4,6 +4,7 @@ import { AttributeType, CharacterAttribute } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
+import { ItemRepoService } from '../game-state/item-repo.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 
@@ -25,7 +26,8 @@ export class ActivityService {
     private inventoryService: InventoryService,
     public homeService: HomeService,
     reincarnationService: ReincarnationService,
-    mainLoopService: MainLoopService
+    mainLoopService: MainLoopService,
+    private itemRepoService: ItemRepoService
   ) {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -225,7 +227,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.toughness.value) +
               this.characterService.characterState.attributes.metalLore.value;
             if (Math.random() < 0.01) {
-              this.inventoryService.addItem(this.inventoryService.itemRepo['junk']);
+              this.inventoryService.addItem(this.itemRepoService.junk);
               this.characterService.characterState.increaseAttribute('metalLore',0.1);
             }
           },
@@ -293,8 +295,8 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('intelligence',0.1);
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.status.stamina.value -= 5;
-          this.inventoryService.addItem(this.inventoryService.itemRepo['herb']);
-          this.inventoryService.addItem(this.inventoryService.itemRepo['herb']);
+          this.inventoryService.addItem(this.itemRepoService.herb);
+          this.inventoryService.addItem(this.itemRepoService.herb);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);
           }
@@ -364,7 +366,7 @@ export class ActivityService {
         consequence: [() => {
           this.characterService.characterState.increaseAttribute('strength',0.1);
           this.characterService.characterState.status.stamina.value -= 10;
-          this.inventoryService.addItem(this.inventoryService.itemRepo['log']);
+          this.inventoryService.addItem(this.itemRepoService.log);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);
           }
@@ -458,7 +460,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('metalLore', 0.1);
-            this.inventoryService.addItem(this.inventoryService.itemRepo['metalOre']);
+            this.inventoryService.addItem(this.itemRepoService.metalOre);
           }
         }],
         requirements: [{
@@ -476,7 +478,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('animalLore', 0.1);
-            this.inventoryService.addItem(this.inventoryService.itemRepo['meat']);
+            this.inventoryService.addItem(this.itemRepoService.meat);
           }
         }],
         requirements: [{

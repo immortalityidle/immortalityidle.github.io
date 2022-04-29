@@ -5,6 +5,7 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
 import { InventoryService, ItemType } from './inventory.service';
+import { ItemRepoService } from './item-repo.service';
 
 export enum HomeType {
   SquatterTent,
@@ -128,7 +129,8 @@ export class HomeService {
     private inventoryService: InventoryService,
     private logService: LogService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService
+    reincarnationService: ReincarnationService,
+    private itemRepoService: ItemRepoService
   ) {
       this.land = 0;
       this.landPrice = 100;
@@ -269,7 +271,7 @@ export class HomeService {
   ageFields(){
     for (let i = this.fields.length - 1; i >= 0; i--){
       if (this.fields[i].daysToHarvest == 0){
-        this.inventoryService.addItems(this.inventoryService.itemRepo[this.fields[i].cropName], this.fields[i].yield);
+        this.inventoryService.addItems(this.itemRepoService.getItemById(this.fields[i].cropName), this.fields[i].yield);
         this.fieldYields -= this.fields[i].yield;
         if (this.autoReplant){
           this.fields[i] = this.getCrop();
