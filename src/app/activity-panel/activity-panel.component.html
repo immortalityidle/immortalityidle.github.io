@@ -2,6 +2,7 @@
 <div class="activitiesContainer">
   <table>
     <ng-container *ngFor="let activity of activityService.activities">
+      <!-- TODO: cache this value so angular interpolation doesn't spam the meetsRequirements function a million times-->
       <tr *ngIf="(meetsRequirements(activity))">
         <td><button (click)="onClick(activity)">{{activity.name[activity.level]}}</button></td>
         <td>

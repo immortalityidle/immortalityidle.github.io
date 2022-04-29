@@ -1,7 +1,7 @@
 <div class="log">
   <span class="panelHeader">Log</span>
   <div>
-    <div *ngFor="let logMsg of log" [ngClass]="logMsg.type">
+    <div *ngFor="let logMsg of log" [ngClass]="logMsg.type" class="logEntryDiv">
       {{logMsg.message}}
     </div>
   </div>

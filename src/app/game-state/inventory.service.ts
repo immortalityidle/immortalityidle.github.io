@@ -94,8 +94,6 @@ export class InventoryService {
     });
   }
 
-
-
   // Make sure the id field matches the object name, it's used to restore the use function on gameState load
   // TODO: Maybe we want to create an item repo service and have these as first-class objects instead of properties in an object
   itemRepo: {[key in ItemType]: Item} = {
@@ -280,7 +278,7 @@ export class InventoryService {
       name: "Manual of Remembered Plans",
       type: "manual",
       description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
-      value: 1000000,
+      value: 100000,
       useLabel: "Read",
       useDescription: "Permanently unlock preserving activity plans across reincarnations.",
       useConsumes: true,
@@ -324,7 +322,6 @@ export class InventoryService {
     this.itemRepo['melon'],
     this.itemRepo['peach'],
   ]
-
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
   generateWeapon(grade: number, material: string): Equipment {
