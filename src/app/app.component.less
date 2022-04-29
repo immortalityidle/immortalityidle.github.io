@@ -2,6 +2,12 @@
    font-family: Arial, Helvetica, sans-serif;
 }
 
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .top-line {
   display: flex;
   justify-content: space-between;
@@ -20,6 +26,7 @@
     background-color: #e6e6e6;
     display:flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 .panelContainer {
@@ -86,6 +93,7 @@
     border: 1px solid black;
     height: 150px;
     margin: 4px;
+    flex-grow: 1;
 }
 
 .inventoryPanel {
@@ -97,4 +105,5 @@
 footer {
     bottom: 1px;
     font-size: x-small;
+    margin: 10px;
 }

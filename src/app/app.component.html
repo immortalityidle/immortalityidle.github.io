@@ -1,32 +1,32 @@
+<div class="wrapper">
+  <div class="mainContainer">
+    <div class="top-line">
+      <span class="gameTitle">Immortality Idle - Can you become an immortal?</span>
+      <a href="" (click)="$event.preventDefault(); storeClicked()">Store</a>
+      <a href="" (click)="hardResetClicked()">Hard Reset</a>
+    </div>
+    <div class="panelContainer">
+      <div class="leftPanel">
+        <app-time-panel class="timePanel"></app-time-panel>
+        <app-attributes-panel class="attributesPanel"></app-attributes-panel>
+        <app-health-panel class="healthPanel"></app-health-panel>
+      </div>
+      <div class="centerPanel">
+        <app-activity-panel class="activityPanel"></app-activity-panel>
+      </div>
+      <div class="rightPanel">
+        <app-equipment-panel class="equipmentPanel"></app-equipment-panel>
+        <app-inventory-panel class="inventoryPanel"></app-inventory-panel>
+        <app-home-panel class="homePanel"></app-home-panel>
+      </div>
+    </div>
+    <app-log-panel class="logPanel"></app-log-panel>
+  </div>
 
-<div class="mainContainer">
-  <div class="top-line">
-    <span class="gameTitle">Immortality Idle - Can you become an immortal?</span>
-    <a href="" (click)="$event.preventDefault(); storeClicked()">Store</a>
-    <a href="" (click)="hardResetClicked()">Hard Reset</a>
-  </div>
-  <div class="panelContainer">
-    <div class="leftPanel">
-      <app-time-panel class="timePanel"></app-time-panel>
-      <app-attributes-panel class="attributesPanel"></app-attributes-panel>
-      <app-health-panel class="healthPanel"></app-health-panel>
-    </div>
-    <div class="centerPanel">
-      <app-activity-panel class="activityPanel"></app-activity-panel>
-    </div>
-    <div class="rightPanel">
-      <app-equipment-panel class="equipmentPanel"></app-equipment-panel>
-      <app-inventory-panel class="inventoryPanel"></app-inventory-panel>
-      <app-home-panel class="homePanel"></app-home-panel>
-    </div>
-  </div>
-  <app-log-panel class="logPanel"></app-log-panel>
+  <!-- Footer -->
+  <footer>
+    Alpha development version, expect a lot of changes. If things look broken, use Ctrl-F5 to force a refresh and/or do a Hard Reset.
+    <br/>
+    This game should be hosted on immortalityidle.github.io. If you see it somewhere else, it's stolen.
+  </footer>
 </div>
-
-<!-- Footer -->
-<footer>
-  Alpha development version, expect a lot of changes. If things look broken, use Ctrl-F5 to force a refresh and/or do a Hard Reset.
-  <br/>
-  This game should be hosted on immortalityidle.github.io. If you see it somewhere else, it's stolen.
-</footer>
-<router-outlet></router-outlet>
