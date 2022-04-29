@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService, TICKS_PER_DAY } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { Character } from './character';
 
@@ -17,8 +17,8 @@ export class CharacterService {
   ) {
     mainLoopService.tickSubject.subscribe(() => {
       this.characterState.dead = false;
-      this.characterState.age++;
-      this.characterState.status.nourishment.value--;
+      this.characterState.age += 1 / TICKS_PER_DAY;
+      this.characterState.status.nourishment.value -= 1/ TICKS_PER_DAY;
       // check for death
       let deathMessage = "";
       if (this.characterState.age >= this.characterState.lifespan) {
@@ -42,7 +42,7 @@ export class CharacterService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(()=> {
+    reincarnationService.reincarnateSubject.subscribe(() => {
       this.characterState.reincarnate();
       if (Math.random() < .3){
         this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",

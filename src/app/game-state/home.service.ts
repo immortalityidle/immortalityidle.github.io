@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService, TICKS_PER_DAY } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
@@ -50,7 +50,9 @@ export class HomeService {
         if (Math.random() < 0.3){
           this.logService.addLogMessage("You got roughed up by the owner of the field. You should probably buy your own land and put up a better tent.",
           'INJURY');
-          this.characterService.characterState.status.health.value -= 2;
+          const damageTaken = Math.max(0, 2 - ( this.characterService.characterState.attributes.toughness.value / 100));
+          this.characterService.characterState.status.health.value -= damageTaken;
+          this.characterService.characterState.attributes.toughness.value += .01;
         }
       }
     },
@@ -67,7 +69,9 @@ export class HomeService {
         if (Math.random() < 0.1){
           this.logService.addLogMessage("You got roughed up by some local troublemakers. It might be time to get some walls.",
           'INJURY');
-          this.characterService.characterState.status.health.value -= 2;
+          const damageTaken = Math.max(0, 2 - ( this.characterService.characterState.attributes.toughness.value / 100));
+          this.characterService.characterState.status.health.value -= damageTaken;
+          this.characterService.characterState.attributes.toughness.value += .01;
         }
         this.characterService.characterState.checkOverage();
       }
@@ -135,18 +139,20 @@ export class HomeService {
         throw Error('Home service not initialized correctly.');
       }
 
-      mainLoopService.tickSubject.subscribe(() => {
+      mainLoopService.tickSubject.subscribe((newDay) => {
         if (this.characterService.characterState.dead){
           return;
         }
-        this.home.consequence();
-        this.ageFields();
-        if (this.home.costPerDay > this.characterService.characterState.money){
-          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY");
-          this.characterService.characterState.status.health.value -= 20;
-          this.characterService.characterState.money = 0;
-        } else {
-          this.characterService.characterState.money -= this.home.costPerDay;
+        if (newDay) {
+          this.home.consequence();
+          this.ageFields();
+          if (this.home.costPerDay > this.characterService.characterState.money){
+            this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY");
+            this.characterService.characterState.status.health.value -= 20;
+            this.characterService.characterState.money = 0;
+          } else {
+            this.characterService.characterState.money -= this.home.costPerDay / TICKS_PER_DAY;
+          }
         }
       });
 
@@ -271,7 +277,7 @@ export class HomeService {
           this.land++;
         }
       } else {
-        this.fields[i].daysToHarvest--;
+        this.fields[i].daysToHarvest -= 1 / TICKS_PER_DAY;
       }
     }
   }

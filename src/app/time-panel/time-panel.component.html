@@ -4,9 +4,9 @@
   <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;">
     <td>{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
     <td>
-      <progress [ngStyle]="{'width.px': entry.repeatTimes < 30 ? entry.repeatTimes * 5 : 30 * 5}"
-        [value]="entry === currentLoopEntry ? currentTickCount : (indexOfelement < currentIndex ? entry.repeatTimes : 0)"
-        [max]="entry.repeatTimes">
+      <progress [ngStyle]="{'width.px': entry.repeatTimes < 15 ? entry.repeatTimes * 10 : 15 * 10}"
+        [value]="entry === currentLoopEntry ? currentTickCount : (indexOfelement < currentIndex ? entry.repeatTimes * TICKS_PER_DAY : 0)"
+        [max]="entry.repeatTimes * TICKS_PER_DAY">
       </progress>
     </td>
     <td>

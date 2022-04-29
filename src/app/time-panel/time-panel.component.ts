@@ -4,7 +4,7 @@ import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { LogService } from '../log-panel/log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService, TICKS_PER_DAY } from '../main-loop.service';
 
 
 @Component({
@@ -13,6 +13,7 @@ import { MainLoopService } from '../main-loop.service';
   styleUrls: ['./time-panel.component.less']
 })
 export class TimePanelComponent implements OnInit {
+  TICKS_PER_DAY = TICKS_PER_DAY; // So we can use in template
   character: Character;
 
   currentLoopEntry?: ActivityLoopEntry = undefined;
@@ -31,11 +32,11 @@ export class TimePanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.mainLoopService.tickSubject.subscribe(() => {
+    this.mainLoopService.tickSubject.subscribe((newDay) => {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (this.exhaustionDays > 0){
+      if (newDay && this.exhaustionDays > 0){
         this.exhaustionDays--;
         return;
       }
@@ -46,11 +47,12 @@ export class TimePanelComponent implements OnInit {
       ) {
         this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
         let activity = this.activityService.getActivityByType(this.currentLoopEntry.activity);
-        activity.consequence[activity.level]();
-        //this.logService.addLogMessage("You spend the day doing " + this.currentLoopEntry.activity.name);
+        if (newDay) {
+          activity.consequence[activity.level]();
+        }
 
         // check for exhaustion
-        if (this.character.status.stamina.value < 0) {
+        if (newDay && this.character.status.stamina.value < 0) {
           // take 5 days to recover, regain stamina, restart loop
           this.logService.addLogMessage(
             'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.',
@@ -59,14 +61,15 @@ export class TimePanelComponent implements OnInit {
           this.exhaustionDays = 5;
           this.character.status.stamina.value = this.character.status.stamina.max;
         }
-        if (this.currentTickCount < this.currentLoopEntry.repeatTimes - 1) {
+        if ((this.currentTickCount / TICKS_PER_DAY) <= this.currentLoopEntry.repeatTimes) {
           this.currentTickCount++;
         } else {
           this.currentIndex++;
-          this.currentTickCount = 0;
+          this.currentTickCount = 2;
           if (this.currentIndex == this.activityService.activityLoop.length) {
             this.currentIndex = 0;
           }
+          this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
         }
       } else if (this.activityService.activityLoop.length == 0){
         //automatically pause if there are no activities so you don't accidentally just die doing nothing
