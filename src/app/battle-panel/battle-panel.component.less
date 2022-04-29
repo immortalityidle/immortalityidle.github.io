@@ -1,0 +1,30 @@
+progress {
+  text-align: center;
+  height: fit-content;
+  width: 130px;
+}
+  
+progress:after {
+  content: attr(value);
+  line-height: 30px;
+}
+
+.panelHeader {
+  white-space: nowrap;
+}
+
+.health > progress {
+  accent-color: red;
+}
+
+.status-progress {
+  height:30px;
+}
+
+mat-icon {
+  height: 16px;
+  width: 16px;
+  font-size: 16px;
+  margin: 2px;
+  vertical-align: middle;
+}

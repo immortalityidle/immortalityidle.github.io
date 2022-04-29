@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { StoreModalComponent } from './store-modal/store-modal.component';
 import { TooltipModule } from 'ng2-tooltip-directive';
+import { BattlePanelComponent } from './battle-panel/battle-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -37,7 +38,8 @@ const materialModules = [
     EquipmentPanelComponent,
     FloorPipe,
     CamelToTitlePipe,
-    StoreModalComponent
+    StoreModalComponent,
+    BattlePanelComponent
   ],
   imports: [
     BrowserModule,

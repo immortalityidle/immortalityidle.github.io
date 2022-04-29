@@ -74,7 +74,7 @@ export class Character {
       description: "An immortal must influence the hearts and minds of others.",
       value: 1,
       aptitude: 1,
-      icon: "chat_bubble_outline"
+      icon: "forum"
     },
     spirituality: {
       description: "An immortal must find deep connections to the divine.",
@@ -164,7 +164,6 @@ export class Character {
       }
       totalAptitude += this.attributes[keys[key]].aptitude;
     }
-    const key = keys[Math.floor(Math.random() * (keys.length - 1))];
     this.money = 0;
     // age in days
     this.age = INITIAL_AGE;
