@@ -1,27 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { InventoryService } from '../game-state/inventory.service';
+import { Component } from '@angular/core';
 import { StoreService } from './store.service';
 import { Item } from '../game-state/inventory.service';
 import { CharacterService } from '../game-state/character.service';
 import { Character } from '../game-state/character';
-import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-store-modal',
   templateUrl: './store-modal.component.html',
   styleUrls: ['./store-modal.component.less']
 })
-export class StoreModalComponent implements OnInit {
+export class StoreModalComponent {
   character: Character;
 
-  constructor(inventoryService: InventoryService, 
+  constructor(
     public storeService: StoreService,
     public characterService: CharacterService
   ) {
     this.character = characterService.characterState;
-  }
-
-  ngOnInit(): void {
   }
 
   slotClicked(item: Item){
