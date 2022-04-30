@@ -1,9 +1,21 @@
 <div class="log">
   <span class="panelHeader">Log</span>
+  <span class="filters">
+    <input type="checkbox" (change)="topicFilterSystem($event)" id="filterSystem" checked/>
+    <label for="filterSystem">Show Game System Messages</label>
+    <input type="checkbox" (change)="topicFilterRebirth($event)" id="filterRebirth" checked/>
+    <label for="filterRebirth">Show Reincarnation Messages</label>
+    <input type="checkbox" (change)="topicFilterEvent($event)" id="filterEvent" checked/>
+    <label for="filterEvent">Show Event Messages</label>
+    <input type="checkbox" (change)="topicFilterCombat($event)" id="filterCombat" checked/>
+    <label for="filterCombat">Show Combat Messages</label>
+  </span>
   <div>
-    <div *ngFor="let logMsg of log" [ngClass]="logMsg.type" class="logEntryDiv">
-      {{logMsg.message}}
-    </div>
+    <ng-container *ngFor="let logMsg of log">
+      <div *ngIf="enabledTopics.includes(logMsg.topic)" [ngClass]="logMsg.type" class="logEntryDiv">
+        {{logMsg.message}}
+      </div>
+    </ng-container>
   </div>
 </div>
 

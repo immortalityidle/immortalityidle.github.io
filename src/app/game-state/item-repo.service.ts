@@ -189,7 +189,7 @@ export class ItemRepoService {
         this.homeService = this.injector.get(HomeService);
       }
       this.homeService.autoReplant = true;
-      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD");
+      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
     },
     owned: () => {
       // check if homeService is injected yet, if not, inject it (circular dependency issues)
@@ -215,7 +215,7 @@ export class ItemRepoService {
         this.activityService = this.injector.get(ActivityService);
       }
       this.activityService.autoRestart = true;
-      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD");
+      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
     },
     owned: () => {
       // check if actvityService is injected yet, if not, inject it (circular dependency issues)

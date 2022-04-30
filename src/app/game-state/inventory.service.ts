@@ -113,10 +113,7 @@ export class InventoryService {
       slot = 'leftHand';
     }
     let value = prefixIndex;
-    this.logService.addLogMessage(
-      'Your hard work paid off! You got a ' + name + '.',
-      'STANDARD'
-    );
+    this.logService.addLogMessage('Your hard work paid off! You got a ' + name + '.','STANDARD', 'EVENT');
     return {
       id: 'weapon',
       name: name,
@@ -160,8 +157,7 @@ export class InventoryService {
     if (Math.random() < 0.3) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
-        'STANDARD'
-      );
+        'STANDARD', 'EVENT');
       this.itemStacks = [
         { item: this.itemRepoService.rice, quantity: 99 },
         { item: this.itemRepoService.rice, quantity: 99 },
@@ -219,8 +215,7 @@ export class InventoryService {
     } else {
       this.logService.addLogMessage(
         `You don't have enough room for the ${item.name} so you threw it away.`,
-        'STANDARD'
-      );
+        'STANDARD', 'EVENT');
     }
   }
 

@@ -42,8 +42,7 @@ export class GameStateService {
       activities: this.activityService.getProperties()
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
-    this.logService.addLogMessage('Game saved',
-    'STANDARD');
+    this.logService.addLogMessage('Game saved', 'STANDARD', 'SYSTEM');
   }
 
   loadFromLocalStorage(): void {
@@ -62,6 +61,7 @@ export class GameStateService {
     }
     this.homeService.setProperties(gameState.home);
     this.activityService.setProperties(gameState.activities);
+    this.logService.addLogMessage('Game loaded', 'STANDARD', 'SYSTEM');
   }
 
   hardReset(): void {

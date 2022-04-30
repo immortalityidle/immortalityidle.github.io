@@ -65,7 +65,7 @@ export class BattleService {
     for (const enemyStack of this.enemies){
       for (let i = 0; i < enemyStack.quantity; i++){
         if (Math.random() < enemyStack.enemy.accuracy / 100){
-          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + enemyStack.enemy.attack + " damage", 'INJURY');
+          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + enemyStack.enemy.attack + " damage", 'INJURY', 'COMBAT');
           this.characterService.characterState.status.health.value -= enemyStack.enemy.attack;
           // TODO: decide if we always get tougher by getting attacked
           this.characterService.characterState.attributes.toughness.value += .01;
@@ -76,11 +76,10 @@ export class BattleService {
 
   youAttack(){
     if (this.currentEnemy){
-      console.log(this.currentEnemy);
       // TODO make this depend on things like your stats and gear and the enemy's defense
       this.currentEnemy.enemy.health -= 1;
       if (this.currentEnemy.enemy.health <= 0){
-        this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD');
+        this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
         this.currentEnemy.quantity--;
         if (this.currentEnemy.quantity <= 0){
           let index = this.enemies.indexOf(this.currentEnemy);
@@ -90,7 +89,7 @@ export class BattleService {
           this.currentEnemy.enemy.health = this.currentEnemy.enemy.maxHealth;
         }
       } else {
-        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name, 'STANDARD');
+        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
       }
     }
   }
@@ -100,7 +99,7 @@ export class BattleService {
   }
 
   addEnemy(enemy: Enemy){
-    this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD');
+    this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name == enemy.name) {
         // it matches an existing enemy, add it to the stack and bail out

@@ -50,7 +50,7 @@ export class HomeService {
       landRequired: 0,
       consequence: () => {
         if (Math.random() < 0.05){
-          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY');
+          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.6){
@@ -69,7 +69,7 @@ export class HomeService {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.05){
-          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY');
+          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.3){
@@ -151,7 +151,7 @@ export class HomeService {
           this.home.consequence();
           this.ageFields();
           if (this.home.costPerDay > this.characterService.characterState.money){
-            this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY");
+            this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
             this.characterService.characterState.status.health.value -= 20;
             this.characterService.characterState.money = 0;
           } else {
@@ -163,7 +163,7 @@ export class HomeService {
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
         if (Math.random() < .3){
-          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD");
+          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD", 'REBIRTH');
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
           this.characterService.characterState.money += 5;
           this.setCurrentHome(this.nextHome);
@@ -208,7 +208,7 @@ export class HomeService {
       this.characterService.characterState.money -= this.nextHome.cost;
       this.land -= this.nextHome.landRequired;
       this.setCurrentHome(this.nextHome);
-      this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name, "STANDARD");
+      this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name, "STANDARD", 'EVENT');
     }
   }
 

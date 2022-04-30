@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
 export type LogType = 'STANDARD' | 'INJURY';
+export type LogTopic = 'COMBAT' | 'REBIRTH' | 'EVENT' | 'SYSTEM';
 
 export interface Log {
   message: string,
-  type: LogType
+  type: LogType,
+  topic: LogTopic
 }
 
 @Injectable({
@@ -16,7 +18,7 @@ export class LogService {
 
   constructor() { }
 
-  addLogMessage(message: string, type: LogType): void {
-    this.logAdded.next({message, type});
+  addLogMessage(message: string, type: LogType, topic: LogTopic): void {
+    this.logAdded.next({message, type, topic});
   }
 }
