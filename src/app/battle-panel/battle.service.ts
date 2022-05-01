@@ -19,6 +19,12 @@ export interface EnemyStack {
   quantity: number
 }
 
+export interface BattleProperties {
+  enemies: EnemyStack[],
+  currentEnemy: EnemyStack | null
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -59,6 +65,18 @@ export class BattleService {
 
   reset(){
     this.enemies = [];
+  }
+
+  getProperties(): BattleProperties {
+    return {
+      enemies: this.enemies,
+      currentEnemy: this.currentEnemy
+    }
+  }
+
+  setProperties(properties: BattleProperties) {
+    this.enemies = properties.enemies;
+    this.currentEnemy = properties.currentEnemy;
   }
 
   enemiesAttack(){
@@ -121,7 +139,15 @@ export class BattleService {
       maxHealth: 2,
       accuracy: 5,
       attack: 0.5,
-      defense: 0,
+      defense: 0
+    },
+    wolf: {
+      name: "a hungry wolf",
+      health: 20,
+      maxHealth: 20,
+      accuracy: 50,
+      attack: 5,
+      defense: 2
     }
   }
 

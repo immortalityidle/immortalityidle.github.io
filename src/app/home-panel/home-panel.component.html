@@ -8,7 +8,10 @@
     <br/>
     <span>You own {{homeService.land}} open {{homeService.land === 1 ? "plot" : "plots"}} of land</span>
     <br/>
-    <span>Your {{homeService.fields.length}} fields are growing {{homeService.fieldYields}} food</span>
+    <span>
+      <mat-icon tooltip="{{homeService.fieldsTooltip}}">grass</mat-icon>
+      Your {{homeService.fields.length}} fields are growing {{homeService.fieldYields}} food
+    </span>
     <br/>
     <span class="buttonSpan">
         <button  (click)="buyClick()" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels.">

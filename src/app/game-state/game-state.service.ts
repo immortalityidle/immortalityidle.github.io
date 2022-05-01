@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivityService, ActivityProperties } from '../activity-panel/activity.service';
+import { BattleService, BattleProperties } from '../battle-panel/battle.service';
 import { LogService } from '../log-panel/log.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterProperties } from './character';
@@ -14,7 +15,8 @@ interface GameState {
   character: CharacterProperties,
   itemStacks: ItemStack[],
   home: HomeProperties,
-  activities: ActivityProperties
+  activities: ActivityProperties,
+  battles: BattleProperties
 }
 
 @Injectable({
@@ -29,7 +31,8 @@ export class GameStateService {
     private logService: LogService,
     private reincarnationService: ReincarnationService,
     private activityService: ActivityService,
-    private itemRepoService: ItemRepoService
+    private itemRepoService: ItemRepoService,
+    private battleService: BattleService
   ) {
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
   }
@@ -39,7 +42,8 @@ export class GameStateService {
       character: this.characterService.characterState.getProperties(),
       itemStacks: this.inventoryService.itemStacks,
       home: this.homeService.getProperties(),
-      activities: this.activityService.getProperties()
+      activities: this.activityService.getProperties(),
+      battles: this.battleService.getProperties()
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
     this.logService.addLogMessage('Game saved', 'STANDARD', 'SYSTEM');
@@ -61,6 +65,7 @@ export class GameStateService {
     }
     this.homeService.setProperties(gameState.home);
     this.activityService.setProperties(gameState.activities);
+    this.battleService.setProperties(gameState.battles);
     this.logService.addLogMessage('Game loaded', 'STANDARD', 'SYSTEM');
   }
 

@@ -47,7 +47,7 @@ const materialModules = [
     BrowserAnimationsModule,
     FormsModule,
     CommonModule,
-    TooltipModule.forRoot({'show-delay': 500}),
+    TooltipModule.forRoot({'show-delay': 500, 'hideDelay': 50}),
     ...materialModules
   ],
   exports: [

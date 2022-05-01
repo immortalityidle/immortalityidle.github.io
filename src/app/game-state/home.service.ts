@@ -40,17 +40,18 @@ export class HomeService {
   landPrice: number;
   fields: Field[] = [];
   fieldYields = 0; // running tally of how much food is currently growing in your fields
+  fieldsTooltip: string = "";
   homesList: Home[] = [
     {
       name: "Squatter Tent",
       type: HomeType.SquatterTent,
-      description: "A dirty tent pitched in an unused field. Costs nothing, but you get what you pay for. The owner of the land may not like that you're here.",
+      description: "A dirty tent pitched in an unused field. Costs nothing, but you get what you pay for. The mice around here are pretty nasty and you might get robbed by bandits.",
       cost: 0,
       costPerDay: 0,
       landRequired: 0,
       consequence: () => {
         if (Math.random() < 0.05){
-          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY', 'EVENT');
+          this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.6){
@@ -61,7 +62,7 @@ export class HomeService {
     {
       name: "Tent of Your Own",
       type: HomeType.OwnTent,
-      description: "A decent tent pitched on your own bit of land.",
+      description: "A decent tent pitched on your own bit of land. The occasional mouse or ruffian might give you trouble. Automatically restores 1 stamina and a bit of health each night.",
       cost: 100,
       costPerDay: 1,
       landRequired: 1,
@@ -69,7 +70,7 @@ export class HomeService {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.05){
-          this.logService.addLogMessage("Some local troublemakers stole some money. It might be time to get some walls.", 'INJURY', 'EVENT');
+          this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.3){
@@ -81,12 +82,12 @@ export class HomeService {
     {
       name: "Dirty Shack",
       type: HomeType.DirtyShack,
-      description: "A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out.",
+      description: "A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out. Automatically restores 3 stamina and a bit of health each night.",
       cost: 1000,
       costPerDay: 5,
       landRequired: 5,
       consequence: () => {
-        this.characterService.characterState.status.health.value += 3;
+        this.characterService.characterState.status.health.value += .3;
         this.characterService.characterState.status.stamina.value += 3;
         this.characterService.characterState.checkOverage();
       }
@@ -94,12 +95,12 @@ export class HomeService {
     {
       name: "Simple Hut",
       type: HomeType.SimpleHut,
-      description: "A very simple hut.",
+      description: "A very simple hut. Automatically restores 5 stamina and a bit of health each night.",
       cost: 10000,
       costPerDay: 10,
       landRequired: 10,
       consequence: () => {
-        this.characterService.characterState.status.health.value += 5;
+        this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.checkOverage();
       }
@@ -107,12 +108,12 @@ export class HomeService {
     {
       name: "Pleasant Cottage",
       type: HomeType.PleasantCottage,
-      description: "A nice little home where you can rest peacefully.",
+      description: "A nice little home where you can rest peacefully. Automatically restores 10 stamina and a bit of health each night.",
       cost: 100000,
       costPerDay: 20,
       landRequired: 20,
       consequence: () => {
-        this.characterService.characterState.status.health.value += 10;
+        this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 10;
         this.characterService.characterState.checkOverage();
       }
@@ -218,6 +219,7 @@ export class HomeService {
     this.landPrice = 100;
     this.fields = [];
     this.fieldYields = 0;
+    this.fieldsTooltip = "";
   }
 
   setCurrentHome(home: Home) {
@@ -248,7 +250,7 @@ export class HomeService {
     return {cropName: cropItem.id,
       yield: 0,
       maxYield: Math.floor(100 / cropItem.value),
-      daysToHarvest: 90 * cropItem.value
+      daysToHarvest: Math.floor(90 * cropItem.value)
     };
   }
 
@@ -270,8 +272,12 @@ export class HomeService {
   }
 
   ageFields(){
+    let nextHarvest = Number.MAX_VALUE;
     for (let i = this.fields.length - 1; i >= 0; i--){
-      if (this.fields[i].daysToHarvest == 0){
+      if (this.fields[i].daysToHarvest < nextHarvest){
+        nextHarvest = this.fields[i].daysToHarvest;
+      }
+      if (this.fields[i].daysToHarvest <= 0){
         this.inventoryService.addItems(this.itemRepoService.getItemById(this.fields[i].cropName), this.fields[i].yield);
         this.fieldYields -= this.fields[i].yield;
         if (this.autoReplant){
@@ -281,8 +287,11 @@ export class HomeService {
           this.land++;
         }
       } else {
-        this.fields[i].daysToHarvest -= 1 / TICKS_PER_DAY;
+        this.fields[i].daysToHarvest--;
       }
+    }
+    if (nextHarvest < Number.MAX_VALUE){
+      this.fieldsTooltip = "Next harvest in " + nextHarvest + " days.";
     }
   }
 

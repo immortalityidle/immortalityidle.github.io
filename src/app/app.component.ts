@@ -40,12 +40,12 @@ export class AppComponent implements OnInit {
   title = 'immortalityidle';
 
   @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) { 
+  handleKeyboardEvent(event: KeyboardEvent) {
     if (event.code == 'Space'){
       this.mainLoopService.pause = !this.mainLoopService.pause;
       event.preventDefault();
     }
-  }  
+  }
 
   constructor(
     private mainLoopService: MainLoopService,
@@ -63,6 +63,11 @@ export class AppComponent implements OnInit {
       this.gameStateService.hardReset();
     }
   }
+
+  saveClicked(): void {
+    this.gameStateService.savetoLocalStorage();
+  }
+
   storeClicked(): void {
     const dialogRef = this.dialog.open(StoreModalComponent, {
       width: '400px',
