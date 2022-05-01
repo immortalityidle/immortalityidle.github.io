@@ -3,7 +3,7 @@ import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
-import { Item, ItemType } from './inventory.service';
+import { InventoryService, Item, ItemType } from './inventory.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,7 @@ import { Item, ItemType } from './inventory.service';
 export class ItemRepoService {
   homeService?: HomeService;
   activityService?: ActivityService;
+  inventoryService?: InventoryService;
 
   rice: Item = {
     id: 'rice',
@@ -67,7 +68,7 @@ export class ItemRepoService {
     id: 'broccoli',
     name: 'broccoli',
     type: 'food',
-    value: 10,
+    value: 20,
     description: 'A very healthy vegetable.',
     useLabel: 'Eat',
     useDescription: 'Fills your belly and helps you be healthy.',
@@ -85,7 +86,7 @@ export class ItemRepoService {
     id: 'melon',
     name: 'melon',
     type: 'food',
-    value: 15,
+    value: 30,
     description: 'A delicious fruit.',
     useLabel: 'Eat',
     useDescription: 'Fills your belly and helps you be healthy.',
@@ -103,7 +104,7 @@ export class ItemRepoService {
     id: 'peach',
     name: 'peach',
     type: 'food',
-    value: 20,
+    value: 50,
     description: 'A highly prized and delicious fruit.',
     useLabel: 'Eat',
     useDescription: 'Fills your belly and can even extend your life.',
@@ -226,9 +227,37 @@ export class ItemRepoService {
     }
   };
 
+  autoSellManual: Item = {
+    id: 'autoSellManual',
+    name: "Manual of Mercantile Fluency",
+    type: "manual",
+    description: "This manual teaches you to automatically sell items.",
+    value: 100000,
+    useLabel: "Read",
+    useDescription: "Permanently unlock Autosell button in the inventory panel.",
+    useConsumes: true,
+    use: () => {
+      // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+      if (!this.inventoryService){
+        this.inventoryService = this.injector.get(InventoryService);
+      }
+      this.inventoryService.unlockAutoSell = true;
+      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+    },
+    owned: () => {
+      // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+      if (!this.inventoryService){
+        this.inventoryService = this.injector.get(InventoryService);
+      }
+      return this.inventoryService.unlockAutoSell;
+    }
+  };
+
+
   constructor(private characterService: CharacterService,
     private injector: Injector,
-    private logService: LogService) { }
+    private logService: LogService
+    ) { }
 
     getItemById(id: ItemType): Item {
       switch (id) {
@@ -256,6 +285,8 @@ export class ItemRepoService {
           return this.perpetualFarmingManual;
         case 'restartActivityManual':
           return this.restartActivityManual;
+        case 'autoSellManual':
+          return this.autoSellManual;
         case 'rice':
           return this.rice;
         default:

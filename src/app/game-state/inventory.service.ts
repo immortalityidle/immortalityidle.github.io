@@ -43,6 +43,13 @@ export interface ItemStack {
   quantity: number;
 }
 
+
+export interface InventoryProperties {
+  itemStacks: ItemStack[],
+  unlockAutoSell: boolean,
+  autoSellItems: string[]
+}
+
 export type ItemType =
   | 'metalOre'
   | 'rice'
@@ -52,6 +59,7 @@ export type ItemType =
   | 'perpetualFarmingManual'
   | 'weapon'
   | 'restartActivityManual'
+  | 'autoSellManual'
   | 'cabbage'
   | 'beans'
   | 'melon'
@@ -69,6 +77,8 @@ export class InventoryService {
   maxStackSize = 999;
   noFood: boolean;
   selectedItem: ItemStack | null = null;
+  unlockAutoSell: boolean;
+  autoSellItems: string[];
 
   constructor(
     private logService: LogService,
@@ -78,6 +88,8 @@ export class InventoryService {
     private itemRepoService: ItemRepoService
   ) {
     this.noFood = false;
+    this.unlockAutoSell = false;
+    this.autoSellItems = [];
     mainLoopService.tickSubject.subscribe((newDay) => {
       if (this.characterService.characterState.dead){
         return;
@@ -89,6 +101,20 @@ export class InventoryService {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+  }
+
+  getProperties(): InventoryProperties {
+    return {
+      itemStacks: this.itemStacks,
+      unlockAutoSell: this.unlockAutoSell,
+      autoSellItems: this.autoSellItems
+    }
+  }
+
+  setProperties(properties: InventoryProperties) {
+    this.itemStacks = properties.itemStacks;
+    this.unlockAutoSell = properties.unlockAutoSell;
+    this.autoSellItems = properties.autoSellItems;
   }
 
   farmFoodList = [
@@ -154,6 +180,7 @@ export class InventoryService {
 
   reset(): void {
     this.itemStacks = [];
+    this.autoSellItems = [];
     if (Math.random() < 0.3) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
@@ -199,6 +226,10 @@ export class InventoryService {
   }
 
   addItem(item: Item): void {
+    if (this.autoSellItems.includes(item.name)){
+      this.characterService.characterState.money += item.value;
+      return;
+    }
     for (const itemIterator of this.itemStacks) {
       if (
         itemIterator.item.name == item.name &&
@@ -237,6 +268,13 @@ export class InventoryService {
         this.sell(this.itemStacks[i], this.itemStacks[i].quantity);
       }
     }
+  }
+
+  autoSell(item: Item){
+    if (!this.autoSellItems.includes(item.name)){
+      this.autoSellItems.push(item.name);
+    }
+    this.sellAll(item);
   }
 
   useItem(itemStack: ItemStack): void {

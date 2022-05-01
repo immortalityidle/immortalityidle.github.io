@@ -41,6 +41,12 @@ export class InventoryPanelComponent {
     }
   }
 
+  autoSell(){
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.autoSell(this.inventoryService.selectedItem.item);
+    }
+  }
+
   use(): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.useItem(this.inventoryService.selectedItem);

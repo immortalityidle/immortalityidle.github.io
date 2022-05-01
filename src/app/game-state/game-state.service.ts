@@ -6,14 +6,14 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
 import { HomeService, HomeProperties } from './home.service';
-import { InventoryService, ItemStack } from './inventory.service';
+import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
 interface GameState {
   character: CharacterProperties,
-  itemStacks: ItemStack[],
+  inventory: InventoryProperties,
   home: HomeProperties,
   activities: ActivityProperties,
   battles: BattleProperties
@@ -40,7 +40,7 @@ export class GameStateService {
   savetoLocalStorage(): void {
     const gameState: GameState = {
       character: this.characterService.characterState.getProperties(),
-      itemStacks: this.inventoryService.itemStacks,
+      inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),
       activities: this.activityService.getProperties(),
       battles: this.battleService.getProperties()
@@ -56,7 +56,7 @@ export class GameStateService {
     }
     const gameState = JSON.parse(gameStateSerialized) as GameState;
     this.characterService.characterState.setProperties(gameState.character);
-    this.inventoryService.itemStacks = gameState.itemStacks;
+    this.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks){
       if (this.itemRepoService.getItemById(itemStack.item.id)){

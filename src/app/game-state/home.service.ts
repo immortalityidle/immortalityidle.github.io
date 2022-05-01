@@ -246,11 +246,11 @@ export class HomeService {
       cropIndex = this.inventoryService.farmFoodList.length - 1;
     }
     const cropItem = this.inventoryService.farmFoodList[cropIndex];
-    // more valuable crops yield less and take longer to harvest, tune this later
+    // more valuable crops yield less per field and take longer to harvest, tune this later
     return {cropName: cropItem.id,
       yield: 0,
-      maxYield: Math.floor(100 / cropItem.value),
-      daysToHarvest: Math.floor(90 * cropItem.value)
+      maxYield: Math.floor((500 / cropItem.value) + this.characterService.characterState.attributes.plantLore.value),
+      daysToHarvest: 90 + cropItem.value
     };
   }
 
@@ -263,10 +263,14 @@ export class HomeService {
   }
 
   workFields(){
+    let workValue = 1;
+    if (this.characterService.characterState.attributes.plantLore.value >= 10){
+      workValue += Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value));
+    }
     for (const field of this.fields){
       if (field.yield < field.maxYield){
-        field.yield++;
-        this.fieldYields++;
+        field.yield += workValue;
+        this.fieldYields += workValue;
       }
     }
   }
