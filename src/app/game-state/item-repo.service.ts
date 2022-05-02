@@ -394,6 +394,12 @@ export class ItemRepoService {
             this.inventoryService = this.injector.get(InventoryService);
           }
           return this.inventoryService?.generatePotion(1);
+        case 'weapon':
+          // problem with this id thing. for now just roll a new weapon
+          if (!this.inventoryService){
+            this.inventoryService = this.injector.get(InventoryService);
+          }
+          return this.inventoryService?.generateWeapon(1, "metal");
         default:
           throw new Error(`Failed to get item for ID: ${id}`);
       }
