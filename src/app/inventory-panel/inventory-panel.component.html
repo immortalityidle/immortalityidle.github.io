@@ -26,14 +26,14 @@
     <button (click)="sell(1)" placement="left" tooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels.">Sell</button>
     <button (click)="sellStack()" placement="left" tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.">Sell Stack</button>
     <button (click)="sellAll()">Sell All</button>
-    <button *ngIf="inventoryService.unlockAutoSell"
+    <button *ngIf="inventoryService.autoSellUnlocked"
       tooltip="For the rest of this lifetime, you will automatically sell this kind of item whenever you get one."
       (click)="autoSell()">Autosell</button>
     <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()"
       placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}">
       {{inventoryService.selectedItem.item.useLabel}}
     </button>
-    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.unlockAutoUse)"
+    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
       (click)="autoUse()" placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}">
       Auto-{{inventoryService.selectedItem.item.useLabel}}
     </button>

@@ -28,14 +28,26 @@ export interface HomeProperties {
   homeValue: HomeType,
   fields: Field[],
   fieldYields: number,
-  autoReplant: boolean
-  landPrice: number
+  autoReplant: boolean,
+  landPrice: number,
+  autoBuyLandUnlocked: boolean,
+  autoBuyLandLimit: number,
+  autoBuyHomeUnlocked: boolean,
+  autoBuyHomeLimit: HomeType,
+  autoFieldUnlocked: boolean,
+  autoFieldLimit: number
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class HomeService {
+  autoBuyLandUnlocked: boolean = false;
+  autoBuyLandLimit: number = 50;
+  autoBuyHomeUnlocked: boolean = false;
+  autoBuyHomeLimit: HomeType = 1;
+  autoFieldUnlocked: boolean = false;
+  autoFieldLimit: number = 50;
   land: number;
   landPrice: number;
   fields: Field[] = [];
@@ -157,6 +169,7 @@ export class HomeService {
         } else {
           this.characterService.characterState.money -= this.home.costPerDay;
         }
+        this.autoBuy();
       });
 
       reincarnationService.reincarnateSubject.subscribe(() => {
@@ -177,7 +190,13 @@ export class HomeService {
       landPrice: this.landPrice,
       fields: this.fields,
       fieldYields: this.fieldYields,
-      autoReplant: this.autoReplant
+      autoReplant: this.autoReplant,
+      autoBuyLandUnlocked: this.autoBuyLandUnlocked,
+      autoBuyLandLimit: this.autoBuyLandLimit,
+      autoBuyHomeUnlocked: this.autoBuyHomeUnlocked,
+      autoBuyHomeLimit: this.autoBuyHomeLimit,
+      autoFieldUnlocked: this.autoFieldUnlocked,
+      autoFieldLimit: this.autoFieldLimit,
     }
   }
 
@@ -188,6 +207,12 @@ export class HomeService {
     this.fields = properties.fields;
     this.fieldYields = properties.fieldYields;
     this.setCurrentHome(this.homesList[properties.homeValue]);
+    this.autoBuyLandUnlocked = properties.autoBuyLandUnlocked;
+    this.autoBuyLandLimit = properties.autoBuyLandLimit;
+    this.autoBuyHomeUnlocked = properties.autoBuyHomeUnlocked;
+    this.autoBuyHomeLimit = properties.autoBuyHomeLimit;
+    this.autoFieldUnlocked = properties.autoFieldUnlocked;
+    this.autoFieldLimit = properties.autoFieldLimit;
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -305,4 +330,33 @@ export class HomeService {
     }
   }
 
+  autoBuy(){
+    if (this.autoBuyHomeUnlocked && this.homeValue < this.autoBuyHomeLimit){
+      if (this.land >= this.nextHome.landRequired){
+        //autoBuy is on, we have enough land, check if we have the money for the house plus the next few days' rent and food
+        if ((this.nextHome.cost + (this.nextHome.costPerDay * 3) + 3)  < this.characterService.characterState.money){
+          this.upgradeToNextHome();
+        } else {
+          // we can't afford the next house, bail out and don't autoBuy more land
+          return;
+        }
+      }
+    }
+    if (this.autoBuyLandUnlocked && (this.land + this.fields.length) < this.autoBuyLandLimit){
+      //autoBuy is on, check if we have the money for the land plus the next few days' rent and food
+      if (this.characterService.characterState.money > this.landPrice  + (this.nextHome.costPerDay * 3) + 3 ){
+        this.buyLand();
+      }
+    }
+    if (this.autoFieldUnlocked && this.fields.length < this.autoFieldLimit){
+      // don't autofield if we're trying to autoBuy a home
+      if (this.autoBuyHomeLimit){
+        if (this.homeValue >= this.autoBuyHomeLimit){
+          this.addField();
+        }
+      } else {
+        this.addField();
+      }
+    }
+  }
 }

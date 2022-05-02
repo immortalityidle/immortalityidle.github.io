@@ -11,6 +11,38 @@
     </div>
 </div>
 <button (click)="buy()"
-    [disabled]="(character.money < (storeService.selectedItem ? storeService.selectedItem.value : 0) || (storeService.selectedItem?.owned === undefined ? false : storeService.selectedItem?.owned()))">
+    [disabled]="buyDisabled">
     Buy
 </button>
+<hr>
+<div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
+  Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" (change)="autoBuyLandLimitChanged($event)"/> land
+</div>
+<div *ngIf="homeService.autoFieldUnlocked" class="optionField">
+  Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" (change)="autoFieldLimitChanged($event)"/> fields
+</div>
+<div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
+  Automatically upgrade your home up to a
+  <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
+    <option *ngFor="let home of homeService.homesList" value="{{home.type}}"
+      [selected]="homeService.autoBuyHomeLimit === home.type">
+      {{home.name}}
+    </option>
+  </select>
+</div>
+<div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
+  Automatically Sold Items:
+  <br/>
+  <span *ngFor="let itemName of inventoryService.autoSellItems">
+    -{{itemName | titlecase}}
+    <button (click)="inventoryService.unAutoSell(itemName)">Stop Selling</button>
+  </span>
+</div>
+<div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
+  Automatically Used Items:
+  <br/>
+  <span *ngFor="let itemName of inventoryService.autoUseItems">
+    -{{itemName | titlecase}}
+    <button (click)="inventoryService.unAutoUse(itemName)">Stop Using</button>
+  </span>
+</div>

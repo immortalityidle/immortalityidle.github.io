@@ -47,9 +47,9 @@ export interface ItemStack {
 
 export interface InventoryProperties {
   itemStacks: ItemStack[],
-  unlockAutoSell: boolean,
+  autoSellUnlocked: boolean,
   autoSellItems: string[],
-  unlockAutoUse: boolean,
+  autoUseUnlocked: boolean,
   autoUseItems: string[]
 }
 
@@ -64,6 +64,9 @@ export type ItemType =
   | 'restartActivityManual'
   | 'autoSellManual'
   | 'autoUseManual'
+  | 'autoBuyLandManual'
+  | 'autoBuyHomeManual'
+  | 'autoFieldManual'
   | 'cabbage'
   | 'beans'
   | 'melon'
@@ -81,9 +84,9 @@ export class InventoryService {
   maxStackSize = 999;
   noFood: boolean;
   selectedItem: ItemStack | null = null;
-  unlockAutoSell: boolean;
+  autoSellUnlocked: boolean;
   autoSellItems: string[];
-  unlockAutoUse: boolean;
+  autoUseUnlocked: boolean;
   autoUseItems: string[];
 
   constructor(
@@ -94,9 +97,9 @@ export class InventoryService {
     private itemRepoService: ItemRepoService
   ) {
     this.noFood = false;
-    this.unlockAutoSell = false;
+    this.autoSellUnlocked = false;
     this.autoSellItems = [];
-    this.unlockAutoUse = false;
+    this.autoUseUnlocked = false;
     this.autoUseItems = [];
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
@@ -112,18 +115,18 @@ export class InventoryService {
   getProperties(): InventoryProperties {
     return {
       itemStacks: this.itemStacks,
-      unlockAutoSell: this.unlockAutoSell,
+      autoSellUnlocked: this.autoSellUnlocked,
       autoSellItems: this.autoSellItems,
-      unlockAutoUse: this.unlockAutoUse,
+      autoUseUnlocked: this.autoUseUnlocked,
       autoUseItems: this.autoUseItems,
     }
   }
 
   setProperties(properties: InventoryProperties) {
     this.itemStacks = properties.itemStacks;
-    this.unlockAutoSell = properties.unlockAutoSell;
+    this.autoSellUnlocked = properties.autoSellUnlocked;
     this.autoSellItems = properties.autoSellItems;
-    this.unlockAutoUse = properties.unlockAutoUse;
+    this.autoUseUnlocked = properties.autoUseUnlocked;
     this.autoUseItems = properties.autoUseItems;
   }
 
@@ -187,7 +190,6 @@ export class InventoryService {
 
   reset(): void {
     this.itemStacks = [];
-    this.autoSellItems = [];
     if (Math.random() < 0.3) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
@@ -290,6 +292,11 @@ export class InventoryService {
     this.sellAll(item);
   }
 
+  unAutoSell(itemName: string){
+    let index = this.autoSellItems.indexOf(itemName);
+    this.autoSellItems.splice(index, 1);
+  }
+
   useItem(itemStack: ItemStack): void {
     if (itemStack.item.type == "potion" && instanceOfPotion(itemStack.item)){
       this.usePotion(itemStack.item);
@@ -316,6 +323,11 @@ export class InventoryService {
         this.useItem(this.itemStacks[i]);
       }
     }
+  }
+
+  unAutoUse(itemName: string){
+    let index = this.autoUseItems.indexOf(itemName);
+    this.autoUseItems.splice(index, 1);
   }
 
   equip(itemStack: ItemStack): void {

@@ -25,6 +25,9 @@ export class StoreService {
       itemRepoService.autoSellManual,
       itemRepoService.autoUseManual,
       itemRepoService.restartActivityManual,
+      itemRepoService.autoBuyLandManual,
+      itemRepoService.autoBuyHomeManual,
+      itemRepoService.autoFieldManual,
     ];
   }
 

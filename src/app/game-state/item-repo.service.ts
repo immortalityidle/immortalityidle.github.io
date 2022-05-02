@@ -175,12 +175,14 @@ export class ItemRepoService {
     description: 'Some metal junk.',
   };
 
+  //TODO: tune prices on all manuals, currently silly cheap for testing
+
   perpetualFarmingManual: Item = {
     id: 'perpetualFarmingManual',
     name: "Manual of Perpetual Farming",
     type: "manual",
     description: "This manual teaches you to automatically replant fields when they are harvested.",
-    value: 10000,
+    value: 1,
     useLabel: "Read",
     useDescription: "Permanently unlock automatic farm replanting.",
     useConsumes: true,
@@ -206,7 +208,7 @@ export class ItemRepoService {
     name: "Manual of Remembered Plans",
     type: "manual",
     description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
-    value: 20000,
+    value: 1,
     useLabel: "Read",
     useDescription: "Permanently unlock preserving activity plans across reincarnations.",
     useConsumes: true,
@@ -232,7 +234,7 @@ export class ItemRepoService {
     name: "Manual of Mercantile Fluency",
     type: "manual",
     description: "This manual teaches you to automatically sell items.",
-    value: 100000,
+    value: 1,
     useLabel: "Read",
     useDescription: "Permanently unlock Autosell button in the inventory panel.",
     useConsumes: true,
@@ -241,7 +243,7 @@ export class ItemRepoService {
       if (!this.inventoryService){
         this.inventoryService = this.injector.get(InventoryService);
       }
-      this.inventoryService.unlockAutoSell = true;
+      this.inventoryService.autoSellUnlocked = true;
       this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
     },
     owned: () => {
@@ -249,16 +251,16 @@ export class ItemRepoService {
       if (!this.inventoryService){
         this.inventoryService = this.injector.get(InventoryService);
       }
-      return this.inventoryService.unlockAutoSell;
+      return this.inventoryService.autoSellUnlocked;
     }
   };
 
   autoUseManual: Item = {
     id: 'autoUseManual',
-    name: "Manual of Perpetual Usage",
+    name: "Manual of Facilitated Usage",
     type: "manual",
     description: "This manual teaches you to automatically use items.",
-    value: 100000,
+    value: 1,
     useLabel: "Read",
     useDescription: "Permanently unlock Autouse button in the inventory panel.",
     useConsumes: true,
@@ -267,7 +269,7 @@ export class ItemRepoService {
       if (!this.inventoryService){
         this.inventoryService = this.injector.get(InventoryService);
       }
-      this.inventoryService.unlockAutoUse = true;
+      this.inventoryService.autoUseUnlocked = true;
       this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
     },
     owned: () => {
@@ -275,10 +277,81 @@ export class ItemRepoService {
       if (!this.inventoryService){
         this.inventoryService = this.injector.get(InventoryService);
       }
-      return this.inventoryService.unlockAutoUse;
+      return this.inventoryService.autoUseUnlocked;
     }
   };
 
+  autoBuyLandManual: Item = {
+    id: 'autoBuyLandManual',
+    name: "Manual of Land Acquisition",
+    type: "manual",
+    description: "This manual teaches you to automatically purchase land.",
+    value: 1,
+    useLabel: "Read",
+    useDescription: "Permanently unlock automatic land purchasing.",
+    useConsumes: true,
+    use: () => {
+      if (!this.homeService){
+        this.homeService = this.injector.get(HomeService);
+      }
+      this.homeService.autoBuyLandUnlocked = true;
+      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+    },
+    owned: () => {
+      if (!this.homeService){
+        this.homeService = this.injector.get(HomeService);
+      }
+      return this.homeService.autoBuyLandUnlocked;
+    }
+  };
+
+  autoBuyHomeManual: Item = {
+    id: 'autoBuyHomeManual',
+    name: "Manual of Home Improvement",
+    type: "manual",
+    description: "This manual teaches you to automatically upgrade your home.",
+    value: 1,
+    useLabel: "Read",
+    useDescription: "Permanently unlock automatic home upgrades.",
+    useConsumes: true,
+    use: () => {
+      if (!this.homeService){
+        this.homeService = this.injector.get(HomeService);
+      }
+      this.homeService.autoBuyHomeUnlocked = true;
+      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+    },
+    owned: () => {
+      if (!this.homeService){
+        this.homeService = this.injector.get(HomeService);
+      }
+      return this.homeService.autoBuyHomeUnlocked;
+    }
+  };
+
+  autoFieldManual: Item = {
+    id: 'autoFieldManual',
+    name: "Manual of Field Conversion",
+    type: "manual",
+    description: "This manual teaches you to automatically plow open land into fields.",
+    value: 1,
+    useLabel: "Read",
+    useDescription: "Permanently unlock automatic field plowing.",
+    useConsumes: true,
+    use: () => {
+      if (!this.homeService){
+        this.homeService = this.injector.get(HomeService);
+      }
+      this.homeService.autoFieldUnlocked = true;
+      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+    },
+    owned: () => {
+      if (!this.homeService){
+        this.homeService = this.injector.get(HomeService);
+      }
+      return this.homeService.autoFieldUnlocked;
+    }
+  };
 
   constructor(private characterService: CharacterService,
     private injector: Injector,
