@@ -53,6 +53,12 @@ export class InventoryPanelComponent {
     }
   }
 
+  autoUse(): void {
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.autoUse(this.inventoryService.selectedItem.item);
+    }
+  }
+
   equip(): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.equip(this.inventoryService.selectedItem);

@@ -4,7 +4,7 @@ import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { LogService } from '../log-panel/log.service';
-import { MainLoopService, TICKS_PER_DAY } from '../main-loop.service';
+import { MainLoopService } from '../main-loop.service';
 
 
 @Component({
@@ -13,7 +13,6 @@ import { MainLoopService, TICKS_PER_DAY } from '../main-loop.service';
   styleUrls: ['./time-panel.component.less']
 })
 export class TimePanelComponent implements OnInit {
-  TICKS_PER_DAY = TICKS_PER_DAY; // So we can use in template
   character: Character;
 
   currentLoopEntry?: ActivityLoopEntry = undefined;
@@ -32,11 +31,11 @@ export class TimePanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.mainLoopService.tickSubject.subscribe((newDay) => {
+    this.mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (newDay && this.exhaustionDays > 0){
+      if (this.exhaustionDays > 0){
         this.exhaustionDays--;
         return;
       }
@@ -47,12 +46,10 @@ export class TimePanelComponent implements OnInit {
       ) {
         this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
         let activity = this.activityService.getActivityByType(this.currentLoopEntry.activity);
-        if (newDay) {
-          activity.consequence[activity.level]();
-        }
+        activity.consequence[activity.level]();
 
         // check for exhaustion
-        if (newDay && this.character.status.stamina.value < 0) {
+        if (this.character.status.stamina.value < 0) {
           // take 5 days to recover, regain stamina, restart loop
           this.logService.addLogMessage(
             'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.',
@@ -61,7 +58,7 @@ export class TimePanelComponent implements OnInit {
           this.exhaustionDays = 5;
           this.character.status.stamina.value = this.character.status.stamina.max;
         }
-        if ((this.currentTickCount / TICKS_PER_DAY) <= this.currentLoopEntry.repeatTimes) {
+        if (this.currentTickCount <= this.currentLoopEntry.repeatTimes) {
           this.currentTickCount++;
         } else {
           this.currentIndex++;
@@ -82,7 +79,27 @@ export class TimePanelComponent implements OnInit {
   }
 
   pauseClick(){
-    this.mainLoopService.pause = !this.mainLoopService.pause;
+    this.mainLoopService.pause = true;
+  }
+
+  standardClick(){
+    this.mainLoopService.pause = false;
+    this.mainLoopService.tickDivider = 10;
+  }
+
+  fastClick(){
+    this.mainLoopService.pause = false;
+    this.mainLoopService.tickDivider = 5;
+  }
+
+  fasterClick(){
+    this.mainLoopService.pause = false;
+    this.mainLoopService.tickDivider = 2;
+  }
+
+  fastestClick(){
+    this.mainLoopService.pause = false;
+    this.mainLoopService.tickDivider = 1;
   }
 
   onPlusClick(entry: ActivityLoopEntry): void{

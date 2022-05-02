@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
 const TICK_INTERVAL_MS = 25;
-export const TICKS_PER_DAY = 2;
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +12,8 @@ export class MainLoopService {
    */
   tickSubject = new Subject<boolean>();
   pause = true;
+  tickDivider = 10;
+
   tickCount = 0;
 
   constructor() {
@@ -22,7 +23,10 @@ export class MainLoopService {
     window.setInterval(()=> {
       if (!this.pause) {
         this.tickCount++;
-        this.tickSubject.next(this.tickCount % TICKS_PER_DAY == 0);
+        if (this.tickCount >= this.tickDivider){
+          this.tickCount = 0;
+          this.tickSubject.next(true);
+        }
       }
     }, TICK_INTERVAL_MS);
   }

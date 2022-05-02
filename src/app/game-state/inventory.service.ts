@@ -1,3 +1,4 @@
+import { _isTestEnvironment } from '@angular/cdk/platform';
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
@@ -47,7 +48,9 @@ export interface ItemStack {
 export interface InventoryProperties {
   itemStacks: ItemStack[],
   unlockAutoSell: boolean,
-  autoSellItems: string[]
+  autoSellItems: string[],
+  unlockAutoUse: boolean,
+  autoUseItems: string[]
 }
 
 export type ItemType =
@@ -60,6 +63,7 @@ export type ItemType =
   | 'weapon'
   | 'restartActivityManual'
   | 'autoSellManual'
+  | 'autoUseManual'
   | 'cabbage'
   | 'beans'
   | 'melon'
@@ -79,6 +83,8 @@ export class InventoryService {
   selectedItem: ItemStack | null = null;
   unlockAutoSell: boolean;
   autoSellItems: string[];
+  unlockAutoUse: boolean;
+  autoUseItems: string[];
 
   constructor(
     private logService: LogService,
@@ -90,13 +96,13 @@ export class InventoryService {
     this.noFood = false;
     this.unlockAutoSell = false;
     this.autoSellItems = [];
-    mainLoopService.tickSubject.subscribe((newDay) => {
+    this.unlockAutoUse = false;
+    this.autoUseItems = [];
+    mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (newDay) {
-        this.eatFood();
-      }
+      this.eatFood();
     });
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -107,7 +113,9 @@ export class InventoryService {
     return {
       itemStacks: this.itemStacks,
       unlockAutoSell: this.unlockAutoSell,
-      autoSellItems: this.autoSellItems
+      autoSellItems: this.autoSellItems,
+      unlockAutoUse: this.unlockAutoUse,
+      autoUseItems: this.autoUseItems,
     }
   }
 
@@ -115,6 +123,8 @@ export class InventoryService {
     this.itemStacks = properties.itemStacks;
     this.unlockAutoSell = properties.unlockAutoSell;
     this.autoSellItems = properties.autoSellItems;
+    this.unlockAutoUse = properties.unlockAutoUse;
+    this.autoUseItems = properties.autoUseItems;
   }
 
   farmFoodList = [
@@ -130,10 +140,7 @@ export class InventoryService {
     let prefixMax = (grade / 10) * ItemPrefixes.length;
     let prefixIndex = Math.floor(Math.random() * prefixMax);
     let prefix = ItemPrefixes[prefixIndex];
-    let name =
-      prefix +
-      ' ' +
-      WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
+    let name = prefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     let slot: EquipmentPosition = 'rightHand';
     if (Math.random() < 0.5) {
       slot = 'leftHand';
@@ -226,6 +233,12 @@ export class InventoryService {
   }
 
   addItem(item: Item): void {
+    if (this.autoUseItems.includes(item.name)){
+      if (item.use && item.useConsumes){
+        item.use()
+      }
+      return;
+    }
     if (this.autoSellItems.includes(item.name)){
       this.characterService.characterState.money += item.value;
       return;
@@ -289,6 +302,18 @@ export class InventoryService {
         let index = this.itemStacks.indexOf(itemStack);
         this.itemStacks.splice(index, 1);
         this.selectedItem = null;
+      }
+    }
+  }
+
+  autoUse(item: Item){
+    if (!this.autoUseItems.includes(item.name)){
+      this.autoUseItems.push(item.name);
+    }
+    // use all the ones you have now
+    for (let i = this.itemStacks.length - 1; i >= 0; i--){
+      while (this.itemStacks.length > i && this.itemStacks[i].item.name == item.name){
+        this.useItem(this.itemStacks[i]);
       }
     }
   }

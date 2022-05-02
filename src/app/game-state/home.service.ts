@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BattleService } from '../battle-panel/battle.service';
 import { LogService } from '../log-panel/log.service';
-import { MainLoopService, TICKS_PER_DAY } from '../main-loop.service';
+import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
@@ -144,20 +144,18 @@ export class HomeService {
         throw Error('Home service not initialized correctly.');
       }
 
-      mainLoopService.tickSubject.subscribe((newDay) => {
+      mainLoopService.tickSubject.subscribe(() => {
         if (this.characterService.characterState.dead){
           return;
         }
-        if (newDay) {
-          this.home.consequence();
-          this.ageFields();
-          if (this.home.costPerDay > this.characterService.characterState.money){
-            this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
-            this.characterService.characterState.status.health.value -= 20;
-            this.characterService.characterState.money = 0;
-          } else {
-            this.characterService.characterState.money -= this.home.costPerDay / TICKS_PER_DAY;
-          }
+        this.home.consequence();
+        this.ageFields();
+        if (this.home.costPerDay > this.characterService.characterState.money){
+          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
+          this.characterService.characterState.status.health.value -= 20;
+          this.characterService.characterState.money = 0;
+        } else {
+          this.characterService.characterState.money -= this.home.costPerDay;
         }
       });
 

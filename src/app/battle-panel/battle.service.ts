@@ -21,7 +21,8 @@ export interface EnemyStack {
 
 export interface BattleProperties {
   enemies: EnemyStack[],
-  currentEnemy: EnemyStack | null
+  currentEnemy: EnemyStack | null,
+  kills: number
 }
 
 
@@ -33,6 +34,8 @@ export class BattleService {
 
   enemies: EnemyStack[];
   currentEnemy: EnemyStack | null;
+  kills: number;
+
 
   constructor(
     private logService: LogService,
@@ -43,18 +46,17 @@ export class BattleService {
   ) {
     this.enemies = [];
     this.currentEnemy = null;
+    this.kills = 0;
 
-    mainLoopService.tickSubject.subscribe((newDay) => {
+    mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (newDay) {
-        if (this.currentEnemy == null && this.enemies.length > 0){
-          this.currentEnemy = this.enemies[0];
-        }
-        this.enemiesAttack();
-        this.youAttack();
+      if (this.currentEnemy == null && this.enemies.length > 0){
+        this.currentEnemy = this.enemies[0];
       }
+      this.enemiesAttack();
+      this.youAttack();
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
@@ -70,13 +72,15 @@ export class BattleService {
   getProperties(): BattleProperties {
     return {
       enemies: this.enemies,
-      currentEnemy: this.currentEnemy
+      currentEnemy: this.currentEnemy,
+      kills: this.kills
     }
   }
 
   setProperties(properties: BattleProperties) {
     this.enemies = properties.enemies;
     this.currentEnemy = properties.currentEnemy;
+    this.kills = properties.kills;
   }
 
   enemiesAttack(){
@@ -94,9 +98,20 @@ export class BattleService {
 
   youAttack(){
     if (this.currentEnemy){
-      // TODO make this depend on things like your stats and gear and the enemy's defense
-      this.currentEnemy.enemy.health -= 1;
+      // TODO add stat scaling
+      let damage = 1;
+      if (this.characterService.characterState.equipment.leftHand){
+        damage += (this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 0);
+      }
+      if (this.characterService.characterState.equipment.rightHand){
+        damage += (this.characterService.characterState.equipment.rightHand.weaponStats?.baseDamage || 0);
+      }
+      damage -= this.currentEnemy.enemy.defense;
+
+      this.currentEnemy.enemy.health -= damage;
+
       if (this.currentEnemy.enemy.health <= 0){
+        this.kills++;
         this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
         this.currentEnemy.quantity--;
         if (this.currentEnemy.quantity <= 0){

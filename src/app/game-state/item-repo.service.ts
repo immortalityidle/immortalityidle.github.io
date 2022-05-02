@@ -206,7 +206,7 @@ export class ItemRepoService {
     name: "Manual of Remembered Plans",
     type: "manual",
     description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
-    value: 100000,
+    value: 20000,
     useLabel: "Read",
     useDescription: "Permanently unlock preserving activity plans across reincarnations.",
     useConsumes: true,
@@ -253,6 +253,32 @@ export class ItemRepoService {
     }
   };
 
+  autoUseManual: Item = {
+    id: 'autoUseManual',
+    name: "Manual of Perpetual Usage",
+    type: "manual",
+    description: "This manual teaches you to automatically use items.",
+    value: 100000,
+    useLabel: "Read",
+    useDescription: "Permanently unlock Autouse button in the inventory panel.",
+    useConsumes: true,
+    use: () => {
+      // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+      if (!this.inventoryService){
+        this.inventoryService = this.injector.get(InventoryService);
+      }
+      this.inventoryService.unlockAutoUse = true;
+      this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+    },
+    owned: () => {
+      // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+      if (!this.inventoryService){
+        this.inventoryService = this.injector.get(InventoryService);
+      }
+      return this.inventoryService.unlockAutoUse;
+    }
+  };
+
 
   constructor(private characterService: CharacterService,
     private injector: Injector,
@@ -289,6 +315,12 @@ export class ItemRepoService {
           return this.autoSellManual;
         case 'rice':
           return this.rice;
+        case 'potion':
+          // problem with this id thing. for now just roll a new potion
+          if (!this.inventoryService){
+            this.inventoryService = this.injector.get(InventoryService);
+          }
+          return this.inventoryService?.generatePotion(1);
         default:
           throw new Error(`Failed to get item for ID: ${id}`);
       }

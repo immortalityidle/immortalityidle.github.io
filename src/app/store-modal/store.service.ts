@@ -23,6 +23,7 @@ export class StoreService {
     this.storeItems = [
       itemRepoService.perpetualFarmingManual,
       itemRepoService.autoSellManual,
+      itemRepoService.autoUseManual,
       itemRepoService.restartActivityManual,
     ];
   }

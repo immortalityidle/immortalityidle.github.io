@@ -1,12 +1,17 @@
 <span class="panelHeader">How will you spend your days?</span>
-<mat-icon (click)="pauseClick()" tooltip="Pause the game (spacebar)">{{mainLoopService.pause ? "play_arrow" : "pause"}}</mat-icon>
+<mat-icon (click)="pauseClick()" tooltip="Pause the game (spacebar)">pause</mat-icon>
+<mat-icon (click)="standardClick()" tooltip="Standard Game Speed">play_arrow</mat-icon>
+<mat-icon (click)="fastClick()" tooltip="Fast Game Speed">fast_forward</mat-icon>
+<mat-icon (click)="fasterClick()" tooltip="Faster Game Speed">skip_next</mat-icon>
+<mat-icon (click)="fastestClick()" tooltip="Fastest Game Speed">bolt</mat-icon>
+
 <table>
   <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;">
     <td>{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
     <td>
       <progress class="activity-progress"
-        [value]="entry === currentLoopEntry ? currentTickCount : (indexOfelement < currentIndex ? entry.repeatTimes * TICKS_PER_DAY : 0)"
-        [max]="entry.repeatTimes * TICKS_PER_DAY">
+        [value]="entry === currentLoopEntry ? currentTickCount : (indexOfelement < currentIndex ? entry.repeatTimes : 0)"
+        [max]="entry.repeatTimes">
       </progress>
     </td>
     <td>

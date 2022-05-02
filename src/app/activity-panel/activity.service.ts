@@ -515,6 +515,47 @@ export class ActivityService {
           speed: 50
         }],
       },
+      {
+        level: 0,
+        name: ['Body Cultivation'],
+        activityType: ActivityType.BodyCultivation,
+        description: ['Focus on the development of your body. Unblock your meridians, let your chi flow, and prepare your body for immortality.'],
+        consequenceDescription: ['Uses 100 stamina. Increases your physical abilities and strengthen your aptitudes in them.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 100;
+          this.characterService.characterState.increaseAttribute('strength', 1);
+          this.characterService.characterState.increaseAttribute('speed', 1);
+          this.characterService.characterState.increaseAttribute('toughness', 1);
+          this.characterService.characterState.attributes.strength.aptitude += 0.1;
+          this.characterService.characterState.attributes.speed.aptitude += 0.1;
+          this.characterService.characterState.attributes.toughness.aptitude += 0.1;
+        }],
+        requirements: [{
+          strength: 5000,
+          speed: 5000,
+          toughness: 5000,
+          spirituality: 1
+        }],
+      },
+      {
+        level: 0,
+        name: ['Mind Cultivation'],
+        activityType: ActivityType.BodyCultivation,
+        description: ['Focus on the development of your mind. Unblock your meridians, let your chi flow, and prepare your mind for immortality.'],
+        consequenceDescription: ['Uses 100 stamina. Increases your mental abilities and strengthen your aptitudes in them.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 100;
+          this.characterService.characterState.increaseAttribute('intelligence', 1);
+          this.characterService.characterState.increaseAttribute('charisma', 1);
+          this.characterService.characterState.attributes.intelligence.aptitude += 0.1;
+          this.characterService.characterState.attributes.charisma.aptitude += 0.1;
+        }],
+        requirements: [{
+          charisma: 5000,
+          intelligence: 5000,
+          spirituality: 1
+        }],
+      }
     ];
   }
 }
