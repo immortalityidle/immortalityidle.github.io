@@ -137,4 +137,8 @@ export class TimePanelComponent implements OnInit {
     this.activityService.activityLoop.splice(index,1);
   }
 
+  pauseOnDeath(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.activityService.pauseOnDeath = event.target.checked;
+  }
 }

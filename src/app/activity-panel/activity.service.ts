@@ -11,6 +11,7 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,
+  pauseOnDeath: boolean,
   activityLoop: ActivityLoopEntry[]
 }
 
@@ -20,6 +21,7 @@ export interface ActivityProperties {
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
   autoRestart: boolean = false;
+  pauseOnDeath: boolean = true;
   activities: Activity[] = this.getActivityList();
 
   constructor(
@@ -27,7 +29,7 @@ export class ActivityService {
     private inventoryService: InventoryService,
     public homeService: HomeService,
     reincarnationService: ReincarnationService,
-    mainLoopService: MainLoopService,
+    private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
     private battleService: BattleService
   ) {
@@ -45,12 +47,14 @@ export class ActivityService {
   getProperties(): ActivityProperties{
     return {
       autoRestart: this.autoRestart,
+      pauseOnDeath: this.pauseOnDeath,
       activityLoop: this.activityLoop
     }
   }
 
   setProperties(properties: ActivityProperties){
     this.autoRestart = properties.autoRestart;
+    this.pauseOnDeath = properties.pauseOnDeath;
     this.activityLoop = properties.activityLoop;
   }
 
@@ -100,6 +104,9 @@ export class ActivityService {
     }
     if (this.autoRestart){
       this.checkRequirements();
+      if (this.pauseOnDeath){
+        this.mainLoopService.pause = true;
+      }
     } else {
       this.activityLoop = [];
     }

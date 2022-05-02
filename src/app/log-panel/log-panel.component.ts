@@ -9,14 +9,9 @@ const INITIAL_LOG = "Once in a very long while, a soul emerges from the chaos th
 })
 export class LogPanelComponent implements OnInit {
   log: Log[] = [{message: INITIAL_LOG, type: 'STANDARD', topic: 'EVENT'}];
-  systemTopicEnabled: boolean = true;
-  combatTopicEnabled: boolean = true;
-  rebirthTopicEnabled: boolean = true;
-  eventTopicEnabled: boolean = true;
-  enabledTopics: string = "";
 
-  constructor(private logService: LogService) {
-    this.updateEnabledTopics();
+
+  constructor(public logService: LogService) {
   }
 
   ngOnInit(): void {
@@ -49,41 +44,24 @@ export class LogPanelComponent implements OnInit {
     );
   }
 
-  updateEnabledTopics(){
-    this.enabledTopics = "";
-    if (this.systemTopicEnabled){
-      this.enabledTopics += 'SYSTEM';
-    }
-    if (this.combatTopicEnabled){
-      this.enabledTopics += 'COMBAT';
-    }
-    if (this.rebirthTopicEnabled){
-      this.enabledTopics += 'REBIRTH';
-    }
-    if (this.eventTopicEnabled){
-      this.enabledTopics += 'EVENT';
-    }
-
-  }
-
   topicFilterSystem(event: Event ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.systemTopicEnabled = event.target.checked;
-    this.updateEnabledTopics();
+    this.logService.systemTopicEnabled = event.target.checked;
+    this.logService.updateEnabledTopics();
   }
   topicFilterCombat(event: Event ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.combatTopicEnabled = event.target.checked;
-    this.updateEnabledTopics();
+    this.logService.combatTopicEnabled = event.target.checked;
+    this.logService.updateEnabledTopics();
   }
   topicFilterRebirth(event: Event ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.rebirthTopicEnabled = event.target.checked;
-    this.updateEnabledTopics();
+    this.logService.rebirthTopicEnabled = event.target.checked;
+    this.logService.updateEnabledTopics();
   }
   topicFilterEvent(event: Event ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.eventTopicEnabled = event.target.checked;
-    this.updateEnabledTopics();
+    this.logService.eventTopicEnabled = event.target.checked;
+    this.logService.updateEnabledTopics();
   }
 }
