@@ -168,7 +168,7 @@ export class Character {
     // age in days
     this.age = INITIAL_AGE;
     // increase lifespan based on average aptitude
-    this.lifespan = BASE_LIFESPAN + (0.1 * (totalAptitude / Object.keys(this.attributes).length)) + this.attributes.spirituality.value;
+    this.lifespan = BASE_LIFESPAN + (0.8 * (totalAptitude / Object.keys(this.attributes).length)) + this.attributes.spirituality.value;
     this.equipment = {
       head: null,
       body: null,

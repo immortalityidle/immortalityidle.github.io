@@ -342,15 +342,17 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Apprentice Alchemist', 'Journeyman Alchemist'],
+        name: ['Apprentice Alchemist', 'Journeyman Alchemist', 'Alchemist'],
         activityType: ActivityType.Alchemy,
         description: [
           'Get a job at the alchemist\'s workshop. It smells awful but you might learn a few things.',
-          'Get a cauldron and do a little brewing of your own. '
+          'Get a cauldron and do a little brewing of your own.',
+          'Open up your own potion shop.',
         ],
         consequenceDescription: [
           'Uses 10 stamina. Get smarter, make a few taels, and learn the secrets of alchemy.',
-          'Uses 10 stamina. Get smarter, make monay, practice your craft. If you have some herbs, you might make a usable potion or pill.'
+          'Uses 10 stamina. Get smarter, make monay, practice your craft. If you have some herbs, you might make a usable potion.',
+          'Uses 10 stamina. Get smarter, make monay, and make some decent potions.'
         ],
         consequence: [
           () => {
@@ -373,11 +375,27 @@ export class ActivityService {
               ((this.characterService.characterState.attributes.plantLore.value +
               this.characterService.characterState.attributes.animalLore.value) * 2);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('plantLore',0.1);
-              this.characterService.characterState.increaseAttribute('animalLore',0.1);
+              this.characterService.characterState.increaseAttribute('plantLore',0.2);
+              this.characterService.characterState.increaseAttribute('animalLore',0.2);
               let grade = this.inventoryService.consume('ingredient');
               if (grade >= 1){ // if the ingredient was found
                 this.inventoryService.addItem(this.inventoryService.generatePotion(grade));
+              }
+            }
+          },
+          () => {
+            this.characterService.characterState.increaseAttribute('intelligence',0.5);
+            this.characterService.characterState.status.stamina.value -= 10;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.intelligence.value) +
+              ((this.characterService.characterState.attributes.plantLore.value +
+              this.characterService.characterState.attributes.animalLore.value) * 5);
+            if (Math.random() < 0.01) {
+              this.characterService.characterState.increaseAttribute('plantLore',0.5);
+              this.characterService.characterState.increaseAttribute('animalLore',0.5);
+              let grade = this.inventoryService.consume('ingredient');
+              if (grade >= 1){ // if the ingredient was found
+                this.inventoryService.addItem(this.inventoryService.generatePotion(grade + 1));
               }
             }
           }
@@ -389,6 +407,9 @@ export class ActivityService {
           {
             intelligence: 1000,
           },
+          {
+            intelligence: 10000,
+          }
         ],
       },
       {

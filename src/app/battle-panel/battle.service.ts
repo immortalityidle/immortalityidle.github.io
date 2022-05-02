@@ -67,6 +67,7 @@ export class BattleService {
 
   reset(){
     this.enemies = [];
+    this.currentEnemy = null;
   }
 
   getProperties(): BattleProperties {

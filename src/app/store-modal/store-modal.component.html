@@ -7,7 +7,7 @@
         <tr><mat-icon>menu_book</mat-icon></tr>
         <tr>{{item.name | titlecase}}</tr>
       </table>
-      <span>{{item.value}}</span>
+      <div class="priceLabel">{{item.value}}</div>
     </div>
 </div>
 <button (click)="buy()"
@@ -33,16 +33,15 @@
 <div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
   Automatically Sold Items:
   <br/>
-  <span *ngFor="let itemName of inventoryService.autoSellItems">
+  <div *ngFor="let itemName of inventoryService.autoSellItems">
     -{{itemName | titlecase}}
     <button (click)="inventoryService.unAutoSell(itemName)">Stop Selling</button>
-  </span>
+  </div>
 </div>
 <div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
-  Automatically Used Items:
-  <br/>
-  <span *ngFor="let itemName of inventoryService.autoUseItems">
+  <span>Automatically Used Items:</span>
+  <div *ngFor="let itemName of inventoryService.autoUseItems">
     -{{itemName | titlecase}}
     <button (click)="inventoryService.unAutoUse(itemName)">Stop Using</button>
-  </span>
+  </div>
 </div>

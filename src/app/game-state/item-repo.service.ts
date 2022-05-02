@@ -113,7 +113,7 @@ export class ItemRepoService {
       this.characterService.characterState.status.nourishment.value++;
       if (Math.random() < 0.2){
         this.characterService.characterState.status.health.max++;
-        this.characterService.characterState.lifespan += 10;
+        this.characterService.characterState.lifespan += 1;
       }
       this.characterService.characterState.checkOverage();
     },

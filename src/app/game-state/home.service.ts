@@ -272,7 +272,7 @@ export class HomeService {
     // more valuable crops yield less per field and take longer to harvest, tune this later
     return {cropName: cropItem.id,
       yield: 0,
-      maxYield: Math.floor((500 / cropItem.value) + this.characterService.characterState.attributes.plantLore.value),
+      maxYield: Math.floor((100 / cropItem.value) + this.characterService.characterState.attributes.plantLore.value),
       daysToHarvest: 90 + cropItem.value
     };
   }
