@@ -139,6 +139,7 @@ export class InventoryService {
     this.itemRepoService.rice,
     this.itemRepoService.cabbage,
     this.itemRepoService.beans,
+    this.itemRepoService.broccoli,
     this.itemRepoService.melon,
     this.itemRepoService.peach,
   ]
