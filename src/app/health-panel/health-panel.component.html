@@ -7,8 +7,8 @@
     <td tooltip="{{characterService.characterState.status.health.description}}" placement="right">Health</td>
     <td class="health">
       <progress class="status-progress"
-        [value]="characterService.characterState.status.health.value"
-        [max]="characterService.characterState.status.health.max">
+        [value]="Math.floor(characterService.characterState.status.health.value)"
+        [max]="Math.floor(characterService.characterState.status.health.max)">
         <div></div>
       </progress>
     </td>

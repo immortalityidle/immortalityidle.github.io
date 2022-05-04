@@ -9,6 +9,10 @@ import { CharacterService } from '../game-state/character.service';
 })
 export class HealthPanelComponent {
 
-  constructor(public characterService: CharacterService) { }
+  Math: Math;
+  constructor(public characterService: CharacterService) {
+    this.Math = Math;
+  }
+
 
 }

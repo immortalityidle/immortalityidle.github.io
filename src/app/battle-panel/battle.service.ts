@@ -92,6 +92,8 @@ export class BattleService {
           this.characterService.characterState.status.health.value -= enemyStack.enemy.attack;
           // TODO: decide if we always get tougher by getting attacked
           this.characterService.characterState.attributes.toughness.value += .01;
+        } else {
+          this.logService.addLogMessage("Miss! " + enemyStack.enemy.name + " tries to hit you but fails.", 'STANDARD', 'COMBAT');
         }
       }
     }
@@ -108,6 +110,10 @@ export class BattleService {
         damage += (this.characterService.characterState.equipment.rightHand.weaponStats?.baseDamage || 0);
       }
       damage -= this.currentEnemy.enemy.defense;
+      if (damage < 1){
+        // pity damage
+        damage = 1;
+      }
 
       this.currentEnemy.enemy.health -= damage;
 
@@ -123,7 +129,7 @@ export class BattleService {
           this.currentEnemy.enemy.health = this.currentEnemy.enemy.maxHealth;
         }
       } else {
-        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
+        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + damage + " damage", 'STANDARD', 'COMBAT');
       }
     }
   }

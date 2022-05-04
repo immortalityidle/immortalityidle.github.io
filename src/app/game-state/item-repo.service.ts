@@ -104,6 +104,9 @@ export class ItemRepoService {
       this.characterService.characterState.status.nourishment.value++;
       if (Math.random() < 0.05){
         this.characterService.characterState.status.health.max++;
+        if (this.characterService.characterState.lifespan < (365 * 40)){
+          this.characterService.characterState.lifespan += 1;
+        }
       }
       this.characterService.characterState.checkOverage();
     },
@@ -122,6 +125,9 @@ export class ItemRepoService {
       this.characterService.characterState.status.nourishment.value++;
       if (Math.random() < 0.1){
         this.characterService.characterState.status.health.max++;
+        if (this.characterService.characterState.lifespan < (365 * 54)){
+          this.characterService.characterState.lifespan += 1;
+        }
       }
       this.characterService.characterState.checkOverage();
     },
@@ -134,13 +140,15 @@ export class ItemRepoService {
     value: 50,
     description: 'A highly prized and delicious fruit.',
     useLabel: 'Eat',
-    useDescription: 'Fills your belly and can even extend your life.',
+    useDescription: 'Fills your belly and can even lead to a long life.',
     useConsumes: true,
     use: () => {
       this.characterService.characterState.status.nourishment.value++;
       if (Math.random() < 0.2){
         this.characterService.characterState.status.health.max++;
-        this.characterService.characterState.lifespan += 1;
+        if (this.characterService.characterState.lifespan < (365 * 72)){
+          this.characterService.characterState.lifespan += 1;
+        }
       }
       this.characterService.characterState.checkOverage();
     },
