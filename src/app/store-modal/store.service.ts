@@ -21,13 +21,13 @@ export class StoreService {
     this.selectedItem = null;
 
     this.storeItems = [
-      itemRepoService.perpetualFarmingManual,
-      itemRepoService.autoSellManual,
-      itemRepoService.autoUseManual,
-      itemRepoService.restartActivityManual,
-      itemRepoService.autoBuyLandManual,
-      itemRepoService.autoBuyHomeManual,
-      itemRepoService.autoFieldManual,
+      itemRepoService.items['perpetualFarmingManual'],
+      itemRepoService.items['autoSellManual'],
+      itemRepoService.items['autoUseManual'],
+      itemRepoService.items['restartActivityManual'],
+      itemRepoService.items['autoBuyLandManual'],
+      itemRepoService.items['autoBuyHomeManual'],
+      itemRepoService.items['autoFieldManual'],
     ];
   }
 

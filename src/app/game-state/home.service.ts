@@ -5,7 +5,7 @@ import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
-import { InventoryService, ItemType } from './inventory.service';
+import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 
 export enum HomeType {
@@ -17,7 +17,7 @@ export enum HomeType {
 }
 
 export interface Field {
-  cropName: ItemType,
+  cropName: string,
   yield: number,
   maxYield: number,
   daysToHarvest: number
@@ -305,7 +305,7 @@ export class HomeService {
         nextHarvest = this.fields[i].daysToHarvest;
       }
       if (this.fields[i].daysToHarvest <= 0){
-        this.inventoryService.addItems(this.itemRepoService.getItemById(this.fields[i].cropName), this.fields[i].yield);
+        this.inventoryService.addItems(this.itemRepoService.items[this.fields[i].cropName], this.fields[i].yield);
         this.fieldYields -= this.fields[i].yield;
         if (this.autoReplant){
           this.fields[i] = this.getCrop();

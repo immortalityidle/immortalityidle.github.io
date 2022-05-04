@@ -261,7 +261,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.toughness.value) +
               this.characterService.characterState.attributes.metalLore.value;
             if (Math.random() < 0.01) {
-              this.inventoryService.addItem(this.itemRepoService.junk);
+              this.inventoryService.addItem(this.itemRepoService.items['junk']);
               this.characterService.characterState.increaseAttribute('metalLore',0.1);
             }
           },
@@ -324,13 +324,12 @@ export class ActivityService {
         name: ['Gather Herbs'],
         activityType: ActivityType.GatherHerbs,
         description: ['Search the natural world for useful herbs.'],
-        consequenceDescription: ['Uses 10 stamina. Find a couple of herbs and learn about plants'],
+        consequenceDescription: ['Uses 10 stamina. Find herbs and learn about plants'],
         consequence: [() => {
           this.characterService.characterState.increaseAttribute('intelligence',0.1);
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.status.stamina.value -= 10;
-          this.inventoryService.addItem(this.itemRepoService.herb);
-          this.inventoryService.addItem(this.itemRepoService.herb);
+          this.inventoryService.addItem(this.itemRepoService.items['herb']);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);
           }
@@ -421,7 +420,7 @@ export class ActivityService {
         consequence: [() => {
           this.characterService.characterState.increaseAttribute('strength',0.1);
           this.characterService.characterState.status.stamina.value -= 10;
-          this.inventoryService.addItem(this.itemRepoService.log);
+          this.inventoryService.addItem(this.itemRepoService.items['log']);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);
           }
@@ -516,11 +515,11 @@ export class ActivityService {
           if (Math.random() < 0.05) {
             this.characterService.characterState.increaseAttribute('metalLore', 0.1);
             if (this.characterService.characterState.attributes.metalLore.value < 3){
-              this.inventoryService.addItem(this.itemRepoService.copperOre);  
+              this.inventoryService.addItem(this.itemRepoService.items['copperOre']);
             } else if (this.characterService.characterState.attributes.metalLore.value < 6){
-              this.inventoryService.addItem(this.itemRepoService.bronzeOre);  
+              this.inventoryService.addItem(this.itemRepoService.items['bronzeOre']);
             } else {
-              this.inventoryService.addItem(this.itemRepoService.ironOre);  
+              this.inventoryService.addItem(this.itemRepoService.items['ironOre']);
             }
           }
         }],
@@ -540,11 +539,11 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
           let grade = this.inventoryService.consume("ore");
           if (grade == 1){
-            this.inventoryService.addItem(this.itemRepoService.copperBar);  
+            this.inventoryService.addItem(this.itemRepoService.items['copperBar']);
           } else if (grade == 2){
-            this.inventoryService.addItem(this.itemRepoService.bronzeBar);  
+            this.inventoryService.addItem(this.itemRepoService.items['bronzeBar']);
           } else if (grade == 3){
-            this.inventoryService.addItem(this.itemRepoService.ironBar);
+            this.inventoryService.addItem(this.itemRepoService.items['ironBar']);
           }
         }],
         requirements: [{
@@ -562,7 +561,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           if (Math.random() < 0.1) {
             this.characterService.characterState.increaseAttribute('animalLore', 0.1);
-            this.inventoryService.addItem(this.itemRepoService.meat);
+            this.inventoryService.addItem(this.itemRepoService.items['meat']);
           }
           if (Math.random() < 0.01) {
             this.battleService.addEnemy(this.battleService.enemyRepo.wolf);

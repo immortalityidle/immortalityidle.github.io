@@ -5,7 +5,7 @@ import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
-import { ItemRepoService, ItemType } from './item-repo.service';
+import { ItemRepoService } from './item-repo.service';
 import { WeaponNames, ItemPrefixes } from './itemResources';
 
 export interface WeaponStats {
@@ -17,7 +17,7 @@ export interface WeaponStats {
 }
 
 export interface Item {
-  id: ItemType;
+  id: string;
   name: string;
   description: string;
   value: number;
@@ -52,8 +52,6 @@ export interface InventoryProperties {
   autoUseUnlocked: boolean,
   autoUseItems: string[]
 }
-
-
 
 @Injectable({
   providedIn: 'root',
@@ -111,12 +109,12 @@ export class InventoryService {
   }
 
   farmFoodList = [
-    this.itemRepoService.rice,
-    this.itemRepoService.cabbage,
-    this.itemRepoService.beans,
-    this.itemRepoService.broccoli,
-    this.itemRepoService.melon,
-    this.itemRepoService.peach,
+    this.itemRepoService.items['rice'],
+    this.itemRepoService.items['cabbage'],
+    this.itemRepoService.items['beans'],
+    this.itemRepoService.items['broccoli'],
+    this.itemRepoService.items['melon'],
+    this.itemRepoService.items['peach']
   ]
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
@@ -176,9 +174,7 @@ export class InventoryService {
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
         'STANDARD', 'EVENT');
       this.itemStacks = [
-        { item: this.itemRepoService.rice, quantity: 99 },
-        { item: this.itemRepoService.rice, quantity: 99 },
-        { item: this.itemRepoService.rice, quantity: 99 },
+        { item: this.itemRepoService.items['rice'], quantity: 300 }
       ];
     }
   }
