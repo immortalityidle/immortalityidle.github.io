@@ -5,7 +5,7 @@ import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
-import { ItemRepoService } from './item-repo.service';
+import { ItemRepoService, ItemType } from './item-repo.service';
 import { WeaponNames, ItemPrefixes } from './itemResources';
 
 export interface WeaponStats {
