@@ -515,7 +515,36 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           if (Math.random() < 0.05) {
             this.characterService.characterState.increaseAttribute('metalLore', 0.1);
-            this.inventoryService.addItem(this.itemRepoService.metalOre);
+            if (this.characterService.characterState.attributes.metalLore.value < 3){
+              this.inventoryService.addItem(this.itemRepoService.copperOre);  
+            } else if (this.characterService.characterState.attributes.metalLore.value < 6){
+              this.inventoryService.addItem(this.itemRepoService.bronzeOre);  
+            } else {
+              this.inventoryService.addItem(this.itemRepoService.ironOre);  
+            }
+          }
+        }],
+        requirements: [{
+          strength: 10
+        }],
+      },
+      {
+        level: 0,
+        name: ['Smelting'],
+        activityType: ActivityType.Smelting,
+        description: ['Smelt metal ores into usable metal.'],
+        consequenceDescription: ['Uses 30 stamina. Increases toughness and intelligence. If you have metal ores, you can make them into bars.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 20;
+          this.characterService.characterState.increaseAttribute('toughness', 0.1);
+          this.characterService.characterState.increaseAttribute('intelligence', 0.1);
+          let grade = this.inventoryService.consume("ore");
+          if (grade == 1){
+            this.inventoryService.addItem(this.itemRepoService.copperBar);  
+          } else if (grade == 2){
+            this.inventoryService.addItem(this.itemRepoService.bronzeBar);  
+          } else if (grade == 3){
+            this.inventoryService.addItem(this.itemRepoService.ironBar);
           }
         }],
         requirements: [{
@@ -568,7 +597,7 @@ export class ActivityService {
       {
         level: 0,
         name: ['Mind Cultivation'],
-        activityType: ActivityType.BodyCultivation,
+        activityType: ActivityType.MindCultivation,
         description: ['Focus on the development of your mind. Unblock your meridians, let your chi flow, and prepare your mind for immortality.'],
         consequenceDescription: ['Uses 100 stamina. Increases your mental abilities and strengthen your aptitudes in them.'],
         consequence: [() => {

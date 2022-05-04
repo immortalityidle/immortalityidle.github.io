@@ -54,7 +54,12 @@ export interface InventoryProperties {
 }
 
 export type ItemType =
-  | 'metalOre'
+  | 'copperOre'
+  | 'bronzeOre'
+  | 'ironOre'
+  | 'copperBar'
+  | 'bronzeBar'
+  | 'ironBar'
   | 'rice'
   | 'herb'
   | 'log'

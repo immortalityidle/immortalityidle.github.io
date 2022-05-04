@@ -159,12 +159,52 @@ export class ItemRepoService {
     description: 'A good-quality log.',
   };
 
-  metalOre: Item = {
-    id: 'metalOre',
-    name: 'metal ore',
+  copperOre: Item = {
+    id: 'copperOre',
+    name: 'copper ore',
+    type: 'ore',
+    value: 1,
+    description: 'A chunk of copper ore.',
+  };
+
+  bronzeOre: Item = {
+    id: 'bronzeOre',
+    name: 'mixed ore',
+    type: 'ore',
+    value: 2,
+    description: 'A chunk of ore containing copper, tin, lead, and zinc.'
+  };
+
+  ironOre: Item = {
+    id: 'ironOre',
+    name: 'iron ore',
+    type: 'ore',
+    value: 3,
+    description: 'A chunk of iron ore.',
+  };
+
+  copperBar: Item = {
+    id: 'copperBar',
+    name: 'copper bar',
     type: 'metal',
     value: 1,
-    description: 'A chunk of metal ore.',
+    description: 'A bar of copper.',
+  };
+
+  bronzeBar: Item = {
+    id: 'bronzeBar',
+    name: 'bronze bar',
+    type: 'metal',
+    value: 2,
+    description: 'A bar of bronze.',
+  };
+
+  ironBar: Item = {
+    id: 'ironBar',
+    name: 'iron bar',
+    type: 'metal',
+    value: 3,
+    description: 'A bar of iron.',
   };
 
   junk: Item = {
@@ -376,8 +416,18 @@ export class ItemRepoService {
           return this.meat;
         case 'melon':
           return this.melon;
-        case 'metalOre':
-          return this.metalOre;
+        case 'copperOre':
+          return this.copperOre;
+        case 'bronzeOre':
+          return this.bronzeOre;
+        case 'ironOre':
+          return this.ironOre;
+        case 'copperBar':
+          return this.copperBar;
+        case 'bronzeBar':
+          return this.bronzeBar;
+        case 'ironBar':
+          return this.ironBar;
         case 'peach':
           return this.peach;
         case 'perpetualFarmingManual':
