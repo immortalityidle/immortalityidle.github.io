@@ -3,7 +3,34 @@ import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
-import { InventoryService, Item, ItemType } from './inventory.service';
+import { InventoryService, Item } from './inventory.service';
+
+export type ItemType =
+  | 'copperOre'
+  | 'bronzeOre'
+  | 'ironOre'
+  | 'copperBar'
+  | 'bronzeBar'
+  | 'ironBar'
+  | 'rice'
+  | 'herb'
+  | 'log'
+  | 'junk'
+  | 'perpetualFarmingManual'
+  | 'weapon'
+  | 'restartActivityManual'
+  | 'autoSellManual'
+  | 'autoUseManual'
+  | 'autoBuyLandManual'
+  | 'autoBuyHomeManual'
+  | 'autoFieldManual'
+  | 'cabbage'
+  | 'beans'
+  | 'melon'
+  | 'peach'
+  | 'broccoli'
+  | 'meat'
+  | 'potion';
 
 @Injectable({
   providedIn: 'root'

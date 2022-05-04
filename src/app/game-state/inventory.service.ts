@@ -53,32 +53,7 @@ export interface InventoryProperties {
   autoUseItems: string[]
 }
 
-export type ItemType =
-  | 'copperOre'
-  | 'bronzeOre'
-  | 'ironOre'
-  | 'copperBar'
-  | 'bronzeBar'
-  | 'ironBar'
-  | 'rice'
-  | 'herb'
-  | 'log'
-  | 'junk'
-  | 'perpetualFarmingManual'
-  | 'weapon'
-  | 'restartActivityManual'
-  | 'autoSellManual'
-  | 'autoUseManual'
-  | 'autoBuyLandManual'
-  | 'autoBuyHomeManual'
-  | 'autoFieldManual'
-  | 'cabbage'
-  | 'beans'
-  | 'melon'
-  | 'peach'
-  | 'broccoli'
-  | 'meat'
-  | 'potion';
+
 
 @Injectable({
   providedIn: 'root',
