@@ -9,6 +9,7 @@ export interface CharacterAttribute {
   spirituality?: number,
   metalLore?: number,
   plantLore?: number,
+  animalLore?: number,
   alchemy?: number
 }
 

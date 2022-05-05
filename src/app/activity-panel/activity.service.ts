@@ -363,8 +363,9 @@ export class ActivityService {
               this.characterService.characterState.attributes.plantLore.value +
               this.characterService.characterState.attributes.animalLore.value;
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('plantLore',0.1);
-              this.characterService.characterState.increaseAttribute('animalLore',0.1);
+              this.characterService.characterState.increaseAttribute('plantLore',0.05);
+              this.characterService.characterState.increaseAttribute('animalLore',0.05);
+              this.characterService.characterState.increaseAttribute('alchemy',0.1);
             }
           },
           () => {
@@ -375,10 +376,12 @@ export class ActivityService {
               ((this.characterService.characterState.attributes.plantLore.value +
               this.characterService.characterState.attributes.animalLore.value) * 2);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('plantLore',0.2);
-              this.characterService.characterState.increaseAttribute('animalLore',0.2);
+              this.characterService.characterState.increaseAttribute('plantLore',0.1);
+              this.characterService.characterState.increaseAttribute('animalLore',0.1);
+              this.characterService.characterState.increaseAttribute('alchemy',0.2);
               let grade = this.inventoryService.consume('ingredient');
               if (grade >= 1){ // if the ingredient was found
+                grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
                 this.inventoryService.addItem(this.inventoryService.generatePotion(grade));
               }
             }
@@ -391,9 +394,11 @@ export class ActivityService {
               ((this.characterService.characterState.attributes.plantLore.value +
               this.characterService.characterState.attributes.animalLore.value) * 5);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('plantLore',0.5);
-              this.characterService.characterState.increaseAttribute('animalLore',0.5);
+              this.characterService.characterState.increaseAttribute('plantLore',0.2);
+              this.characterService.characterState.increaseAttribute('animalLore',0.2);
+              this.characterService.characterState.increaseAttribute('alchemy',0.5);
               let grade = this.inventoryService.consume('ingredient');
+              grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
               if (grade >= 1){ // if the ingredient was found
                 this.inventoryService.addItem(this.inventoryService.generatePotion(grade + 1));
               }
@@ -406,9 +411,15 @@ export class ActivityService {
           },
           {
             intelligence: 1000,
+            alchemy: 1,
+            animalLore: 1,
+            plantLore: 1
           },
           {
             intelligence: 10000,
+            alchemy: 10,
+            animalLore: 10,
+            plantLore: 10
           }
         ],
       },
@@ -421,7 +432,7 @@ export class ActivityService {
         consequence: [() => {
           this.characterService.characterState.increaseAttribute('strength',0.1);
           this.characterService.characterState.status.stamina.value -= 10;
-          this.inventoryService.addItem(this.itemRepoService.items['log']);
+          this.inventoryService.addItem(this.inventoryService.getWood());
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);
           }
@@ -432,12 +443,17 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Apprentice Woodworking', 'Woodworking'],
+        name: ['Apprentice Woodworking', 'Journeyman Woodworking', 'Journeyman Woodworking'],
         activityType: ActivityType.Woodworking,
-        description: ['Work in a woodcarver\'s shop.', 'Carve wood into useful items.'],
+        description: [
+          'Work in a woodcarver\'s shop.', 
+          'Carve wood into useful items.',
+          'Open your own woodworking shop.'
+        ],
         consequenceDescription:[
           'Uses 20 stamina. Increases strength and intelligence and provides a little money.',
           'Uses 20 stamina. Increases strength and intelligence and provides a little money. You may make something you want to keep now and then.',
+          'Uses 20 stamina. Increases strength and intelligence, earn some money, create wooden equipment.',
         ],
         consequence: [
           () => {
@@ -461,14 +477,31 @@ export class ActivityService {
               this.characterService.characterState.attributes.intelligence.value) +
               (this.characterService.characterState.attributes.plantLore.value * 2);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('plantLore',0.1);
+              this.characterService.characterState.increaseAttribute('plantLore',0.5);
               let grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'wood'));
+                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
               }
             }
           },
+          () => {
+            this.characterService.characterState.increaseAttribute('strength',0.5);
+            this.characterService.characterState.increaseAttribute('intelligence',0.5);
+            this.characterService.characterState.status.stamina.value -= 20;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.strength.value +
+              this.characterService.characterState.attributes.intelligence.value) +
+              (this.characterService.characterState.attributes.plantLore.value * 5);
+            if (Math.random() < 0.01) {
+              this.characterService.characterState.increaseAttribute('plantLore',0.8);
+              let grade = this.inventoryService.consume('wood');
+              if (grade >= 1){ // if the wood was found
+                this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
+              }
+            }
+          }
         ],
         requirements: [
           {
@@ -479,6 +512,11 @@ export class ActivityService {
             strength: 300,
             intelligence: 300,
             plantLore: 1,
+          },
+          {
+            strength: 1000,
+            intelligence: 1000,
+            plantLore: 10,
           }
         ],
       },
@@ -513,15 +551,9 @@ export class ActivityService {
         consequence: [() => {
           this.characterService.characterState.status.stamina.value -= 20;
           this.characterService.characterState.increaseAttribute('strength', 0.1);
-          if (Math.random() < 0.05) {
+          if (Math.random() < 0.5) {
             this.characterService.characterState.increaseAttribute('metalLore', 0.1);
-            if (this.characterService.characterState.attributes.metalLore.value < 3){
-              this.inventoryService.addItem(this.itemRepoService.items['copperOre']);
-            } else if (this.characterService.characterState.attributes.metalLore.value < 6){
-              this.inventoryService.addItem(this.itemRepoService.items['bronzeOre']);
-            } else {
-              this.inventoryService.addItem(this.itemRepoService.items['ironOre']);
-            }
+            this.inventoryService.addItem(this.inventoryService.getOre());
           }
         }],
         requirements: [{
@@ -539,12 +571,8 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('toughness', 0.1);
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
           let grade = this.inventoryService.consume("ore");
-          if (grade == 1){
-            this.inventoryService.addItem(this.itemRepoService.items['copperBar']);
-          } else if (grade == 2){
-            this.inventoryService.addItem(this.itemRepoService.items['bronzeBar']);
-          } else if (grade == 3){
-            this.inventoryService.addItem(this.itemRepoService.items['ironBar']);
+          if (grade >= 1){
+            this.inventoryService.addItem(this.inventoryService.getBar(grade));
           }
         }],
         requirements: [{
