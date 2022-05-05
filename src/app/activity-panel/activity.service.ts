@@ -329,7 +329,8 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('intelligence',0.1);
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.status.stamina.value -= 10;
-          this.inventoryService.addItem(this.itemRepoService.items['herb']);
+          // the grade on herbs probably needs diminishing returns
+          this.inventoryService.addItem(this.inventoryService.generateHerb());
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);
           }

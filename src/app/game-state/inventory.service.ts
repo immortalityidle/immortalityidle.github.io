@@ -6,7 +6,7 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
-import { WeaponNames, ItemPrefixes } from './itemResources';
+import { WeaponNames, ItemPrefixes, herbNames, herbQuality } from './itemResources';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -154,7 +154,7 @@ export class InventoryService {
     const key = keys[Math.floor(Math.random() * 5)];
 
     return {
-      name: "Potion of " + key,
+      name: "Potion of " + key + " +" + grade,
       id: "potion",
       type: "potion",
       value: grade,
@@ -164,6 +164,33 @@ export class InventoryService {
       useConsumes: true,
       attribute: key,
       increase: grade
+    };
+  }
+
+  generateHerb(): Item {
+    let grade = 0;
+    if (this.characterService.characterState.attributes.plantLore.value >= 2){
+      // TODO: tune this
+      grade = Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value));
+    }
+    let name: string;
+    let quality: string;
+    if (grade >= herbNames.length * herbQuality.length){
+      // maxed out
+      name = herbNames[herbNames.length - 1];
+      quality = herbQuality[herbQuality.length - 1];
+    } else {
+      let nameIndex = grade % herbNames.length;
+      let qualityIndex = Math.floor(grade / herbQuality.length);
+      name = herbNames[nameIndex];
+      quality = herbQuality[qualityIndex];
+    }
+    return {
+      id: 'herb',
+      name: quality + " " + name,
+      type: 'ingredient',
+      value: grade + 1,
+      description: 'Useful herbs. Can be used in creating pills or potions.'
     };
   }
 

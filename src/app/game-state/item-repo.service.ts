@@ -138,20 +138,6 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    herb: {
-      id: 'herb',
-      name: 'herb',
-      type: 'ingredient',
-      value: 2,
-      description: 'Useful herbs. Can be used in creating pills or potions.',
-      useLabel: 'Use',
-      useDescription: 'Restores a bit of health.',
-      useConsumes: true,
-      use: () => {
-        this.characterService.characterState.status.health.value += 5;
-        this.characterService.characterState.checkOverage();
-      },
-    },
     log: {
       id: 'log',
       name: 'log',
@@ -387,7 +373,7 @@ export class ItemRepoService {
       }
     }
   }
-
+  
   constructor(private characterService: CharacterService,
     private injector: Injector,
     private logService: LogService) {
