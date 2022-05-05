@@ -380,11 +380,11 @@ export class ItemRepoService {
 
   }
 
-  getItemById(id: string): Item {
+  getItemById(id: string): Item | undefined {
     if (this.items[id]){
       return this.items[id];
     }
-    return this.items['junk'];
+    return undefined;
   }
 }
 

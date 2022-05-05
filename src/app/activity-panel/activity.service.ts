@@ -254,7 +254,7 @@ export class ActivityService {
           // grade 0
           () => {
             this.characterService.characterState.increaseAttribute('strength', 0.1);
-            this.characterService.characterState.increaseAttribute('toughness',0.1);
+            this.characterService.characterState.increaseAttribute('toughness', 0.1);
             this.characterService.characterState.status.stamina.value -= 25;
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.strength.value +
@@ -262,7 +262,7 @@ export class ActivityService {
               this.characterService.characterState.attributes.metalLore.value;
             if (Math.random() < 0.01) {
               this.inventoryService.addItem(this.itemRepoService.items['junk']);
-              this.characterService.characterState.increaseAttribute('metalLore',0.1);
+              this.characterService.characterState.increaseAttribute('metalLore', 0.1);
             }
           },
           // grade 1
