@@ -443,7 +443,7 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Apprentice Woodworking', 'Journeyman Woodworking', 'Journeyman Woodworking'],
+        name: ['Apprentice Woodworking', 'Journeyman Woodworking', 'Woodworking'],
         activityType: ActivityType.Woodworking,
         description: [
           'Work in a woodcarver\'s shop.', 
