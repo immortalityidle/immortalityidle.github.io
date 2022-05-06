@@ -3,7 +3,7 @@ import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
-import { InventoryService, Item } from './inventory.service';
+import { Furniture, InventoryService, Item } from './inventory.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,69 @@ export class ItemRepoService {
   homeService?: HomeService;
   activityService?: ActivityService;
   inventoryService?: InventoryService;
+
+  furniture: {[key: string]: Furniture} = {
+    blanket: {
+      id: 'blanket',
+      name: "Blanket",
+      type: 'furniture',
+      slot: 'bed',
+      value: 1,
+      description: "A tattered blanket. Not much, but it could keep you warm at night.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.status.stamina.value++;
+      },
+    },
+    mat: {
+      id: 'mat',
+      name: "Sleeping Mmt",
+      type: 'furniture',
+      slot: 'bed',
+      value: 1,
+      description: "A thin woven mat to sleep on. Improves stamina gain each night.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.status.stamina.value += 2;
+      }
+    },
+    canopyBed: {
+      id: 'canopyBed',
+      name: "Canopy Bed",
+      type: 'furniture',
+      slot: 'bed',
+      value: 1,
+      description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.status.stamina.value += 3;
+      }
+    },
+    heatedBed: {
+      id: 'heatedBed',
+      name: "Heated Bed",
+      type: 'furniture',
+      slot: 'bed',
+      value: 1,
+      description: "A bed built over a small clay oven. Keeps you toasty on even the coldest nights.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.status.stamina.value += 4;
+      }
+    },
+    bedOfNails: {
+      id: 'bedOfNails',
+      name: "Bed of Nails",
+      type: 'furniture',
+      slot: 'bed',
+      value: 1,
+      description: "A solid board with nails poking upwards. Certain to toughen you up.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('toughness', 0.1);
+      }
+    }
+  }
 
   items: {[key: string]: Item} = {
     rice: {

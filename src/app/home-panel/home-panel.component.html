@@ -3,6 +3,9 @@
       <mat-icon tooltip="{{homeService.home.description}}">home</mat-icon>
       You live in a {{homeService.home.name}}
     </span>
+    <mat-icon class="rightFloat" *ngIf="homeService.home.furnitureSlots.length" tooltip="Buy Furniture" (click)="storeClicked()">
+        shopping_cart
+    </mat-icon>
     <br/>
     <span>It costs {{homeService.home.costPerDay}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span>
     <br/>
@@ -13,6 +16,13 @@
       Your {{homeService.fields.length}} fields are growing {{homeService.fieldYields}} food
     </span>
     <br/>
+    <div>
+        <div *ngFor="let slot of homeService.home.furnitureSlots"  class="furnitureSlots">
+            <span *ngIf="!homeService.furniture[slot]" class="furnitureSlot" tooltip="{{slot}}">{{slot}}</span>
+            <span *ngIf="homeService.furniture[slot]" class="furnitureSlot" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name}}</span>
+        </div>
+    </div>
+    
     <span class="buttonSpan">
         <button  (click)="buyClick()" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels.">
             Buy Land

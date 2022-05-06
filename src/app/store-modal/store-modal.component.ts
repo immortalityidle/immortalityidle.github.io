@@ -5,6 +5,7 @@ import { CharacterService } from '../game-state/character.service';
 import { Character } from '../game-state/character';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
+import { ItemRepoService } from '../game-state/item-repo.service'
 
 @Component({
   selector: 'app-store-modal',
@@ -19,7 +20,8 @@ export class StoreModalComponent {
     public storeService: StoreService,
     public characterService: CharacterService,
     public homeService: HomeService,
-    public inventoryService: InventoryService
+    public inventoryService: InventoryService,
+    public itemRepoService: ItemRepoService
   ) {
     this.character = characterService.characterState;
   }
@@ -36,10 +38,6 @@ export class StoreModalComponent {
         this.buyDisabled = false;
       }
     }
-  }
-
-  buy(){
-    this.storeService.buy();
   }
 
   autoBuyLandLimitChanged(event: Event){

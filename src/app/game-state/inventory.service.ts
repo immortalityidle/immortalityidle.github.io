@@ -1,5 +1,4 @@
 import { _isTestEnvironment } from '@angular/cdk/platform';
-import { getNumberOfCurrencyDigits } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
@@ -8,6 +7,7 @@ import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
 import { WeaponNames, ItemPrefixes, herbNames, herbQuality } from './itemResources';
+import { FurniturePosition } from './home.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -38,6 +38,10 @@ export interface Equipment extends Item {
 export interface Potion extends Item {
   attribute: AttributeType,
   increase: number
+}
+
+export interface Furniture extends Item {
+  slot: FurniturePosition
 }
 
 export interface ItemStack {
@@ -431,4 +435,8 @@ export function instanceOfEquipment(object: any): object is Equipment {
 
 export function instanceOfPotion(object: any): object is Potion {
   return 'attribute' in object;
+}
+
+export function instanceOfFurniture(object: any): object is Furniture {
+  return 'slot' in object;
 }
