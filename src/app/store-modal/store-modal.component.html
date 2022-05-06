@@ -1,47 +1,66 @@
 <span>Store</span>
-<div class="inventoryGrid">
-    <div *ngFor="let item of storeService.storeItems">
+<div *ngIf="storeService.selling === 'manuals'">
+  <div class="inventoryGrid">
+      <div *ngFor="let item of storeService.manuals">
+        <table class="itemSlot" (click)="slotClicked(item)"
+          [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
+          placement="left" tooltip="{{item.description}}">
+          <tr><mat-icon>menu_book</mat-icon></tr>
+          <tr>{{item.name | titlecase}}</tr>
+        </table>
+        <div class="priceLabel">{{item.value}}</div>
+      </div>
+  </div>
+  <button (click)="storeService.buyManual()"
+      [disabled]="buyDisabled">
+      Buy
+  </button>
+  <hr>
+  <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
+    Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" (change)="autoBuyLandLimitChanged($event)"/> land
+  </div>
+  <div *ngIf="homeService.autoFieldUnlocked" class="optionField">
+    Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" (change)="autoFieldLimitChanged($event)"/> fields
+  </div>
+  <div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
+    Automatically upgrade your home up to a
+    <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
+      <option *ngFor="let home of homeService.homesList" value="{{home.type}}"
+        [selected]="homeService.autoBuyHomeLimit === home.type">
+        {{home.name}}
+      </option>
+    </select>
+  </div>
+  <div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
+    Automatically Sold Items:
+    <br/>
+    <div *ngFor="let itemName of inventoryService.autoSellItems">
+      -{{itemName | titlecase}}
+      <button (click)="inventoryService.unAutoSell(itemName)">Stop Selling</button>
+    </div>
+  </div>
+  <div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
+    <span>Automatically Used Items:</span>
+    <div *ngFor="let itemName of inventoryService.autoUseItems">
+      -{{itemName | titlecase}}
+      <button (click)="inventoryService.unAutoUse(itemName)">Stop Using</button>
+    </div>
+  </div>
+</div>
+<div *ngIf="storeService.selling === 'furniture'">
+  <div class="inventoryGrid">
+    <div *ngFor="let item of storeService.furniture">
       <table class="itemSlot" (click)="slotClicked(item)"
-        [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
+        [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: homeService.furniture[item.slot] == item}"
         placement="left" tooltip="{{item.description}}">
-        <tr><mat-icon>menu_book</mat-icon></tr>
+        <tr><mat-icon>{{item.slot}}</mat-icon></tr>
         <tr>{{item.name | titlecase}}</tr>
       </table>
       <div class="priceLabel">{{item.value}}</div>
     </div>
-</div>
-<button (click)="buy()"
-    [disabled]="buyDisabled">
-    Buy
-</button>
-<hr>
-<div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
-  Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" (change)="autoBuyLandLimitChanged($event)"/> land
-</div>
-<div *ngIf="homeService.autoFieldUnlocked" class="optionField">
-  Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" (change)="autoFieldLimitChanged($event)"/> fields
-</div>
-<div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
-  Automatically upgrade your home up to a
-  <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
-    <option *ngFor="let home of homeService.homesList" value="{{home.type}}"
-      [selected]="homeService.autoBuyHomeLimit === home.type">
-      {{home.name}}
-    </option>
-  </select>
-</div>
-<div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
-  Automatically Sold Items:
-  <br/>
-  <div *ngFor="let itemName of inventoryService.autoSellItems">
-    -{{itemName | titlecase}}
-    <button (click)="inventoryService.unAutoSell(itemName)">Stop Selling</button>
   </div>
-</div>
-<div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
-  <span>Automatically Used Items:</span>
-  <div *ngFor="let itemName of inventoryService.autoUseItems">
-    -{{itemName | titlecase}}
-    <button (click)="inventoryService.unAutoUse(itemName)">Stop Using</button>
-  </div>
+  <button (click)="storeService.buyFurniture()"
+      [disabled]="buyDisabled">
+      Buy
+  </button>
 </div>

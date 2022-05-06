@@ -1,4 +1,4 @@
-import { HomeType } from "./home.service";
+import { FurniturePosition, HomeType } from "./home.service";
 
 export interface Home {
   name: string;
@@ -8,5 +8,6 @@ export interface Home {
   costPerDay: number;
   landRequired: number;
   consequence: () => void;
+  furnitureSlots: FurniturePosition[];
 }
 

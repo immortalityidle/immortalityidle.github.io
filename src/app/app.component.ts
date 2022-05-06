@@ -4,6 +4,7 @@ import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './main-loop.service';
 import { StoreModalComponent } from './store-modal/store-modal.component';
 import { HostListener } from '@angular/core';
+import { StoreService } from './store-modal/store.service';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -50,6 +51,7 @@ export class AppComponent implements OnInit {
   constructor(
     private mainLoopService: MainLoopService,
     private gameStateService: GameStateService,
+    private storeService: StoreService,
     public dialog: MatDialog
   ) {}
 
@@ -69,6 +71,7 @@ export class AppComponent implements OnInit {
   }
 
   storeClicked(): void {
+    this.storeService.selling = "manuals";
     const dialogRef = this.dialog.open(StoreModalComponent, {
       width: '500px',
       data: {someField: 'foo'}

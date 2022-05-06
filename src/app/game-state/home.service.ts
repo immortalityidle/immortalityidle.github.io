@@ -5,7 +5,7 @@ import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
 import { Home } from './home';
-import { InventoryService } from './inventory.service';
+import { Furniture, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 
 export enum HomeType {
@@ -38,6 +38,9 @@ export interface HomeProperties {
   autoFieldLimit: number
 }
 
+export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
+export type FurnitureSlots  = { [key in FurniturePosition]: Furniture | null};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -53,6 +56,13 @@ export class HomeService {
   fields: Field[] = [];
   fieldYields = 0; // running tally of how much food is currently growing in your fields
   fieldsTooltip: string = "";
+  furniture: FurnitureSlots = {
+    bed: null,
+    bathtub: null,
+    kitchen: null,
+    workbench: null
+  }
+
   homesList: Home[] = [
     {
       name: "Squatter Tent",
@@ -69,7 +79,8 @@ export class HomeService {
         if (Math.random() < 0.6){
           this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
         }
-      }
+      },
+      furnitureSlots: []
     },
     {
       name: "Tent of Your Own",
@@ -89,7 +100,8 @@ export class HomeService {
           this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
         }
         this.characterService.characterState.checkOverage();
-      }
+      },
+      furnitureSlots: []
     },
     {
       name: "Dirty Shack",
@@ -102,7 +114,10 @@ export class HomeService {
         this.characterService.characterState.status.health.value += .3;
         this.characterService.characterState.status.stamina.value += 3;
         this.characterService.characterState.checkOverage();
-      }
+      },
+      furnitureSlots: [
+        'bed'
+      ]
     },
     {
       name: "Simple Hut",
@@ -115,7 +130,10 @@ export class HomeService {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.checkOverage();
-      }
+      },
+      furnitureSlots: [
+        'bed'
+      ]
     },
     {
       name: "Pleasant Cottage",
@@ -128,7 +146,10 @@ export class HomeService {
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 10;
         this.characterService.characterState.checkOverage();
-      }
+      },
+      furnitureSlots: [
+        'bed'
+      ]
     }
   ];
 

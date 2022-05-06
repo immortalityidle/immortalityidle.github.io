@@ -2,7 +2,10 @@
   <div class="mainContainer">
     <div class="top-line">
       <span class="gameTitle">Immortality Idle - Can you become an immortal?</span>
-      <a href="" tooltip="A store that sells special items for aspiring immortals." (click)="$event.preventDefault(); storeClicked()">Store</a>
+      <mat-icon tooltip="A store that sells special items for aspiring immortals." 
+        (click)="storeClicked()">
+        shopping_cart
+      </mat-icon>
       <a href="" tooltip="Autosaves fire every couple of minutes, but sometimes an immortal needs to save right now." (click)="saveClicked()">Save</a>
       <a href="" tooltip="Completely restart your journey toward immortality." (click)="hardResetClicked()">Hard Reset</a>
     </div>
@@ -18,8 +21,8 @@
       </div>
       <div class="rightPanel">
         <app-equipment-panel class="equipmentPanel"></app-equipment-panel>
-        <app-inventory-panel class="inventoryPanel"></app-inventory-panel>
         <app-home-panel class="homePanel"></app-home-panel>
+        <app-inventory-panel class="inventoryPanel"></app-inventory-panel>
       </div>
     </div>
     <app-log-panel class="logPanel"></app-log-panel>
