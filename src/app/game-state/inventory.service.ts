@@ -134,7 +134,7 @@ export class InventoryService {
       slot = 'leftHand';
     }
     let value = prefixIndex;
-    this.logService.addLogMessage('Your hard work paid off! You created a new weaon: ' + name + '!','STANDARD', 'EVENT');
+    this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'EVENT');
     return {
       id: 'weapon',
       name: name,
