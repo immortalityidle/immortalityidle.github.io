@@ -22,6 +22,7 @@
 }
 
 .mainContainer {
+    height: 100%;
     width: 100%;
     background-color: #e6e6e6;
     display:flex;
@@ -31,12 +32,14 @@
 
 .panelContainer {
     display: flex;
+    min-height: 0;
 }
 
 .leftPanel {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-width: 425px;
 }
 
 .centerPanel {
@@ -54,45 +57,42 @@
 
 .timePanel {
   border: 1px solid black;
-  height: 300px;
+  flex-grow: 1;
   margin: 4px;
   overflow: auto;
 }
 
 .attributesPanel {
     border: 1px solid black;
-    height: 210px;
     margin: 4px;
 }
 
 .healthPanel {
     border: 1px solid black;
-    height: 90px;
     margin: 4px;
 }
 
 .activityPanel {
     border: 1px solid black;
     margin: 4px;
-    height: 460px;
+    flex-grow: 3;
     overflow: auto;
 }
 
 .battlePanel {
     border: 1px solid black;
     margin: 4px;
-    height: 150px;
+    flex-grow: 1;
+    min-height: 70px;
 }
 
 .equipmentPanel {
     border: 1px solid black;
-    height: 200px;
     margin: 4px;
 }
 
 .homePanel {
     border: 1px solid black;
-    height: 200px;
     margin: 4px;
 }
 
@@ -105,7 +105,7 @@
 
 .inventoryPanel {
     border: 1px solid black;
-    height: 200px;
+    flex-grow: 1;
     margin: 4px;
 }
 
