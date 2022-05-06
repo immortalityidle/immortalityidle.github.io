@@ -1,4 +1,5 @@
 import { _isTestEnvironment } from '@angular/cdk/platform';
+import { getNumberOfCurrencyDigits } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
@@ -121,14 +122,19 @@ export class InventoryService {
   generateWeapon(grade: number, material: string): Equipment {
     let prefixMax = (grade / 10) * ItemPrefixes.length;
     let prefixIndex = Math.floor(Math.random() * prefixMax);
+    if (prefixIndex >= ItemPrefixes.length){
+      // make sure we don't go over the top
+      prefixIndex = ItemPrefixes.length - 1;
+    }
     let prefix = ItemPrefixes[prefixIndex];
     let name = prefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     let slot: EquipmentPosition = 'rightHand';
-    if (Math.random() < 0.5) {
+    if (material === "wood") {
+      // incentivizing to do both metal and wood. Maybe change this later.
       slot = 'leftHand';
     }
     let value = prefixIndex;
-    this.logService.addLogMessage('Your hard work paid off! You got a ' + name + '.','STANDARD', 'EVENT');
+    this.logService.addLogMessage('Your hard work paid off! You created a new weaon: ' + name + '!','STANDARD', 'EVENT');
     return {
       id: 'weapon',
       name: name,
@@ -192,6 +198,50 @@ export class InventoryService {
       value: grade + 1,
       description: 'Useful herbs. Can be used in creating pills or potions.'
     };
+  }
+
+  getOre(): Item {
+    if (this.characterService.characterState.attributes.metalLore.value < 3){
+      return this.itemRepoService.items['copperOre'];
+    } else if (this.characterService.characterState.attributes.metalLore.value < 6){
+      return this.itemRepoService.items['bronzeOre'];
+    } else {
+      return this.itemRepoService.items['ironOre'];
+    }
+  }
+
+  getBar(grade: number): Item{
+    if (grade == 3){
+      return this.itemRepoService.items['ironBar'];
+    } else if (grade == 2){
+      return this.itemRepoService.items['bronzeBar'];
+    } else {
+      return this.itemRepoService.items['copperBar'];
+    }
+  }
+
+  getWood(): Item{
+    if (this.characterService.characterState.attributes.plantLore.value > 300 &&
+      this.characterService.characterState.attributes.spirituality.value > 10){
+        return  this.itemRepoService.items['peachwoodLog'];  
+    } else if (this.characterService.characterState.attributes.plantLore.value > 200 &&
+      this.characterService.characterState.attributes.spirituality.value > 1){
+        return  this.itemRepoService.items['blackwoodLog'];
+    } else if (this.characterService.characterState.attributes.plantLore.value > 100){
+        return  this.itemRepoService.items['zitanLog'];
+    } else if (this.characterService.characterState.attributes.plantLore.value > 50){
+      return  this.itemRepoService.items['rosewoodLog'];
+    } else if (this.characterService.characterState.attributes.plantLore.value > 40){
+      return  this.itemRepoService.items['pearwoodLog'];
+    } else if (this.characterService.characterState.attributes.plantLore.value > 30){
+      return  this.itemRepoService.items['laurelwoodLog'];
+    } else if (this.characterService.characterState.attributes.plantLore.value > 20){
+      return  this.itemRepoService.items['walnutLog'];
+    } else if (this.characterService.characterState.attributes.plantLore.value > 10){
+      return  this.itemRepoService.items['cypressLog'];
+    } else {
+      return  this.itemRepoService.items['elmLog'];
+    }
   }
 
   reset(): void {
