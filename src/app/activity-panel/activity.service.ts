@@ -602,6 +602,27 @@ export class ActivityService {
       },
       {
         level: 0,
+        name: ['Fishing'],
+        // cormorant fishing later!
+        activityType: ActivityType.Fishing,
+        description: ['Grab your net and see if you can catch some fish.'],
+        consequenceDescription: ['Uses 50 stamina. Increases intelligence and strength and might catch a fish.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 50;
+          this.characterService.characterState.increaseAttribute('strength', 0.1);
+          this.characterService.characterState.increaseAttribute('intelligence', 0.1);
+          if (Math.random() < 0.1) {
+            this.characterService.characterState.increaseAttribute('animalLore', 0.1);
+            this.inventoryService.addItem(this.itemRepoService.items['carp']);
+          }
+        }],
+        requirements: [{
+          strength: 50,
+          intelligence: 50
+        }],
+      },
+      {
+        level: 0,
         name: ['Body Cultivation'],
         activityType: ActivityType.BodyCultivation,
         description: ['Focus on the development of your body. Unblock your meridians, let your chi flow, and prepare your body for immortality.'],

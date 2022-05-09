@@ -66,12 +66,13 @@ export class AppComponent implements OnInit {
     }
   }
 
-  saveClicked(): void {
+  saveClicked(event: Event): void {
+    event.preventDefault();
     this.gameStateService.savetoLocalStorage();
   }
 
   storeClicked(): void {
-    this.storeService.selling = "manuals";
+    this.storeService.setStoreInventory("manuals");
     const dialogRef = this.dialog.open(StoreModalComponent, {
       width: '500px',
       data: {someField: 'foo'}

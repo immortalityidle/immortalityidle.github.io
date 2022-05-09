@@ -26,6 +26,7 @@ export interface Field {
 export interface HomeProperties {
   land: number,
   homeValue: HomeType,
+  furniture: FurnitureSlots,
   fields: Field[],
   fieldYields: number,
   autoReplant: boolean,
@@ -34,6 +35,8 @@ export interface HomeProperties {
   autoBuyLandLimit: number,
   autoBuyHomeUnlocked: boolean,
   autoBuyHomeLimit: HomeType,
+  autoBuyFurnitureUnlocked: boolean,
+  autoBuyFurniture: FurnitureSlots,
   autoFieldUnlocked: boolean,
   autoFieldLimit: number
 }
@@ -46,11 +49,18 @@ export type FurnitureSlots  = { [key in FurniturePosition]: Furniture | null};
 })
 export class HomeService {
   autoBuyLandUnlocked: boolean = false;
-  autoBuyLandLimit: number = 50;
+  autoBuyLandLimit: number = 5;
   autoBuyHomeUnlocked: boolean = false;
-  autoBuyHomeLimit: HomeType = 1;
+  autoBuyHomeLimit: HomeType = 2;
+  autoBuyFurnitureUnlocked: boolean = false;
+  autoBuyFurniture: FurnitureSlots = {
+    bed: null,
+    bathtub: null,
+    kitchen: null,
+    workbench: null
+  }
   autoFieldUnlocked: boolean = false;
-  autoFieldLimit: number = 50;
+  autoFieldLimit: number = 0;
   land: number;
   landPrice: number;
   fields: Field[] = [];
@@ -62,6 +72,8 @@ export class HomeService {
     kitchen: null,
     workbench: null
   }
+  furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
+
 
   homesList: Home[] = [
     {
@@ -148,7 +160,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
-        'bed'
+        'bed',
+        'bathtub'
       ]
     }
   ];
@@ -182,6 +195,12 @@ export class HomeService {
           return;
         }
         this.home.consequence();
+        for (let slot of this.furniturePositionsArray){
+          let furniturePiece = this.furniture[slot];
+          if (furniturePiece?.use){
+            furniturePiece?.use();
+          }
+        }
         this.ageFields();
         if (this.home.costPerDay > this.characterService.characterState.money){
           this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
@@ -207,6 +226,7 @@ export class HomeService {
   getProperties(): HomeProperties {
     return {
       homeValue: this.homeValue,
+      furniture: this.furniture,
       land: this.land,
       landPrice: this.landPrice,
       fields: this.fields,
@@ -216,6 +236,8 @@ export class HomeService {
       autoBuyLandLimit: this.autoBuyLandLimit,
       autoBuyHomeUnlocked: this.autoBuyHomeUnlocked,
       autoBuyHomeLimit: this.autoBuyHomeLimit,
+      autoBuyFurnitureUnlocked: this.autoBuyFurnitureUnlocked,
+      autoBuyFurniture: this.autoBuyFurniture,
       autoFieldUnlocked: this.autoFieldUnlocked,
       autoFieldLimit: this.autoFieldLimit,
     }
@@ -232,8 +254,16 @@ export class HomeService {
     this.autoBuyLandLimit = properties.autoBuyLandLimit;
     this.autoBuyHomeUnlocked = properties.autoBuyHomeUnlocked;
     this.autoBuyHomeLimit = properties.autoBuyHomeLimit;
+    this.autoBuyFurnitureUnlocked = properties.autoBuyFurnitureUnlocked;
+    this.autoBuyFurniture = properties.autoBuyFurniture;
     this.autoFieldUnlocked = properties.autoFieldUnlocked;
     this.autoFieldLimit = properties.autoFieldLimit;
+    for (let slot of this.furniturePositionsArray){
+      let savedFurniture = properties.furniture[slot];
+      if (savedFurniture){
+        this.furniture[slot] = this.itemRepoService.getFurnitureById(savedFurniture.id);
+      }
+    }
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -264,6 +294,10 @@ export class HomeService {
     this.fields = [];
     this.fieldYields = 0;
     this.fieldsTooltip = "";
+    this.furniture.bed = null;
+    this.furniture.bathtub = null;
+    this.furniture.kitchen = null;
+    this.furniture.workbench = null;
   }
 
   setCurrentHome(home: Home) {
@@ -377,6 +411,20 @@ export class HomeService {
         }
       } else {
         this.addField();
+      }
+    }
+    if (this.autoBuyFurnitureUnlocked){
+      for (let slot of this.furniturePositionsArray){
+        if (this.home.furnitureSlots.includes(slot)){
+          let thingToBuy = this.autoBuyFurniture[slot];
+          if (thingToBuy && this.furniture[slot]?.id !== thingToBuy.id){
+            // try to buy the thing
+            if (thingToBuy.value < this.characterService.characterState.money){
+              this.characterService.characterState.money -= thingToBuy.value;
+              this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
+            }
+          }
+        }
       }
     }
   }

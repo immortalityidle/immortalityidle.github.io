@@ -13,6 +13,7 @@ export enum ActivityType {
   Mining,
   Smelting,
   Hunting,
+  Fishing,
   Alchemy,
   BodyCultivation,
   MindCultivation

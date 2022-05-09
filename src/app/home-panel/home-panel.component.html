@@ -16,10 +16,10 @@
       Your {{homeService.fields.length}} fields are growing {{homeService.fieldYields}} food
     </span>
     <br/>
-    <div>
-        <div *ngFor="let slot of homeService.home.furnitureSlots"  class="furnitureSlots">
-            <span *ngIf="!homeService.furniture[slot]" class="furnitureSlot" tooltip="{{slot}}">{{slot}}</span>
-            <span *ngIf="homeService.furniture[slot]" class="furnitureSlot" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name}}</span>
+    <div class="furnitureSlots">
+        <div *ngFor="let slot of homeService.home.furnitureSlots">
+            <div *ngIf="!homeService.furniture[slot]" class="furnitureSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
+            <div *ngIf="homeService.furniture[slot]" class="furnitureSlot" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
         </div>
     </div>
     

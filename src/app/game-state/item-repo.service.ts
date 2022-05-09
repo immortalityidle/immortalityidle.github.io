@@ -73,6 +73,67 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
       }
+    },
+    waterBucket: {
+      id: 'waterBucket',
+      name: "water bucket ",
+      type: 'furniture',
+      slot: 'bathtub',
+      value: 1,
+      description: "A bucket of water that lets you splash water on your face.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('charisma', 0.01);
+      }
+    },
+    washBasin: {
+      id: 'washBasin',
+      name: "wash basin",
+      type: 'furniture',
+      slot: 'bathtub',
+      value: 1,
+      description: "A wash basin with a rag to clean yourself.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('charisma', 0.05);
+      }
+    },
+    woodenTub: {
+      id: 'woodenTub',
+      name: "wooden tub",
+      type: 'furniture',
+      slot: 'bathtub',
+      value: 1,
+      description: "A tall and narrow tub where you can squat and bathe.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('charisma', 0.1);
+      }
+    },
+    bronzeTub: {
+      id: 'bronzeTub',
+      name: "bronze tub",
+      type: 'furniture',
+      slot: 'bathtub',
+      value: 1,
+      description: "A luxurious tub where you can get sparkling clean.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('charisma', 0.2);
+      }
+    },
+    heatedTub: {
+      id: 'heatedTub',
+      name: "heated tub",
+      type: 'furniture',
+      slot: 'bathtub',
+      value: 1,
+      description: "A luxurious tub with its own heating stove. Good for your health and beauty.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('charisma', 0.2);
+        this.characterService.characterState.status.health.max += 1;
+      }
     }
   }
 
@@ -198,6 +259,24 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         this.characterService.characterState.status.health.max++;
         this.characterService.characterState.status.stamina.max++;
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    carp: {
+      id: 'carp',
+      name: 'carp',
+      type: 'food',
+      value: 50,
+      description: 'A common fish.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly. Might also improve your health and stamina.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.2){
+          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.stamina.max++;
+        }
         this.characterService.characterState.checkOverage();
       },
     },
@@ -468,6 +547,29 @@ export class ItemRepoService {
         return this.homeService.autoBuyHomeUnlocked;
       }
     },
+    autoBuyFurnitureManual: {
+      id: 'autoBuyFurnitureManual',
+      name: "Manual of Home Furnishing",
+      type: "manual",
+      description: "This manual teaches you to automatically buy the last furniture you bought for your home in future lives.",
+      value: 1,
+      useLabel: "Read",
+      useDescription: "Permanently unlock automatic purchasing for furniture.",
+      useConsumes: true,
+      use: () => {
+        if (!this.homeService){
+          this.homeService = this.injector.get(HomeService);
+        }
+        this.homeService.autoBuyFurnitureUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (!this.homeService){
+          this.homeService = this.injector.get(HomeService);
+        }
+        return this.homeService.autoBuyFurnitureUnlocked;
+      }
+    },
     autoFieldManual: {
       id: 'autoFieldManual',
       name: "Manual of Field Conversion",
@@ -505,5 +607,13 @@ export class ItemRepoService {
     }
     return undefined;
   }
+
+  getFurnitureById(id: string): Furniture | null {
+    if (this.furniture[id]){
+      return this.furniture[id];
+    }
+    return null;
+  }
+
 }
 

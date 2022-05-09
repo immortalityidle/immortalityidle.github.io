@@ -36,7 +36,7 @@ export class HomePanelComponent {
   }
 
   storeClicked(): void {
-    this.storeService.selling = "furniture";
+    this.storeService.setStoreInventory("furniture");
     const dialogRef = this.dialog.open(StoreModalComponent, {
       width: '500px',
       data: {someField: 'foo'}

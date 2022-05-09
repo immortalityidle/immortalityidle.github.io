@@ -24,24 +24,28 @@ export class StoreService {
   ) {
     this.selectedItem = null;
 
-    this.manuals = [
-      itemRepoService.items['perpetualFarmingManual'],
-      itemRepoService.items['autoSellManual'],
-      itemRepoService.items['autoUseManual'],
-      itemRepoService.items['restartActivityManual'],
-      itemRepoService.items['autoBuyLandManual'],
-      itemRepoService.items['autoBuyHomeManual'],
-      itemRepoService.items['autoFieldManual'],
-    ];
+    this.manuals = [];
+    for (let key in itemRepoService.items){
+      let item = itemRepoService.items[key];
+      if (item.type == 'manual'){
+        this.manuals.push(itemRepoService.items[key]);
+      }
+    }
+    this.furniture = [];
 
-    this.furniture = [
-      itemRepoService.furniture['blanket'],
-      itemRepoService.furniture['mat'],
-      itemRepoService.furniture['canopyBed'],
-      itemRepoService.furniture['heatedBed'],
-      itemRepoService.furniture['bedOfNails'],
-    ];
+  }
 
+  setStoreInventory(selling: string){
+    this.selling = selling;
+    if (selling == "furniture"){
+      this.furniture = [];
+      for (let key in this.itemRepoService.furniture){
+        let furniture = this.itemRepoService.furniture[key];
+        if (this.homeService.home.furnitureSlots.includes(furniture.slot)){
+          this.furniture.push(furniture);
+        }
+      }
+    }
   }
 
   buyManual(){
@@ -67,6 +71,7 @@ export class StoreService {
       if (this.selectedItem.value < this.characterService.characterState.money){
         this.characterService.characterState.money -= this.selectedItem.value;
         this.homeService.furniture[slot] = this.selectedItem;
+        this.homeService.autoBuyFurniture[slot] = this.selectedItem;
       }
     }
   }
