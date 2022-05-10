@@ -190,6 +190,42 @@ export class ItemRepoService {
         this.characterService.characterState.increaseAttribute('speed', 0.1);
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
       }
+    },
+    anvil: {
+      id: 'anvil',
+      name: "anvil",
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1,
+      description: "An anvil to work on blacksmithing.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('metalLore', 0.1);
+      }
+    },
+    herbGarden: {
+      id: 'herbGarden',
+      name: "herb garden",
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1,
+      description: "An pleasant garden growing herbs.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('plantLore', 0.1);
+      }
+    },
+    cauldron: {
+      id: 'cauldron',
+      name: "cauldron",
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1,
+      description: "A cauldron for practicing alchemy.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('alchemy', 0.1);
+      }
     }
   }
 

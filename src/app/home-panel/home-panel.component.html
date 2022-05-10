@@ -31,7 +31,7 @@
             Plow Field
         </button>
         <button *ngIf="(homeService.home.name !== homeService.nextHome.name)"
-                placement="bottom" tooltip="A better home will cost {{homeService.nextHome.cost}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
+                placement="bottom" tooltip="A better home will cost {{homeService.nextHome.cost | number: '1.0-0'}} taels and take up {{homeService.nextHome.landRequired}} land." (click)="upgradeClick()">
             Get a better house
         </button>
     </span>

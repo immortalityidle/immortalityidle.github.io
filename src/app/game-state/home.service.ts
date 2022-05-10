@@ -597,6 +597,11 @@ export class HomeService {
           // we can't afford the next house, bail out and don't autoBuy more land
           return;
         }
+      } else {
+        //try to buy land
+        if (this.characterService.characterState.money > this.landPrice  + (this.nextHome.costPerDay * 3) + 3 ){
+          this.buyLand();
+        }
       }
     }
     if (this.autoBuyLandUnlocked && (this.land + this.fields.length) < this.autoBuyLandLimit){

@@ -260,7 +260,11 @@ export class ActivityService {
               Math.log2(this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.toughness.value) +
               this.characterService.characterState.attributes.metalLore.value;
-            if (Math.random() < 0.01) {
+            let blacksmithSuccessChance = 0.01;
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+              blacksmithSuccessChance += 0.05;
+            }
+            if (Math.random() < blacksmithSuccessChance) {
               this.inventoryService.addItem(this.itemRepoService.items['junk']);
               this.characterService.characterState.increaseAttribute('metalLore', 0.1);
             }
@@ -274,7 +278,11 @@ export class ActivityService {
               Math.log2(this.characterService.characterState.attributes.strength.value +
               this.characterService.characterState.attributes.toughness.value) +
               (this.characterService.characterState.attributes.metalLore.value * 2);
-            if (Math.random() < 0.01) {
+            let blacksmithSuccessChance = 0.02;
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+              blacksmithSuccessChance += 0.05;
+            }
+            if (Math.random() < blacksmithSuccessChance) {
               this.characterService.characterState.increaseAttribute('metalLore', 0.5);
               let grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
@@ -292,7 +300,11 @@ export class ActivityService {
               Math.log2(this.characterService.characterState.attributes.strength.value +
               this.characterService.characterState.attributes.toughness.value) +
               (this.characterService.characterState.attributes.metalLore.value * 5);
-            if (Math.random() < 0.05) {
+            let blacksmithSuccessChance = 0.05;
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+              blacksmithSuccessChance += 0.05;
+            }
+            if (Math.random() < blacksmithSuccessChance) {
               this.characterService.characterState.increaseAttribute('metalLore',0.8);
               let grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
@@ -331,6 +343,9 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 10;
           // the grade on herbs probably needs diminishing returns
           this.inventoryService.addItem(this.inventoryService.generateHerb());
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == 'herbGarden'){
+            this.inventoryService.addItem(this.inventoryService.generateHerb());
+          }
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);
           }
@@ -362,7 +377,11 @@ export class ActivityService {
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
               this.characterService.characterState.attributes.plantLore.value +
               this.characterService.characterState.attributes.animalLore.value;
-            if (Math.random() < 0.01) {
+            let alchemySuccessChance = 0.01;
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
+              alchemySuccessChance += 0.05;
+            }
+            if (Math.random() < alchemySuccessChance) {
               this.characterService.characterState.increaseAttribute('plantLore',0.05);
               this.characterService.characterState.increaseAttribute('animalLore',0.05);
               this.characterService.characterState.increaseAttribute('alchemy',0.1);
@@ -375,7 +394,11 @@ export class ActivityService {
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
               ((this.characterService.characterState.attributes.plantLore.value +
               this.characterService.characterState.attributes.animalLore.value) * 2);
-            if (Math.random() < 0.01) {
+            let alchemySuccessChance = 0.02;
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
+              alchemySuccessChance += 0.05;
+            }
+            if (Math.random() < alchemySuccessChance) {
               this.characterService.characterState.increaseAttribute('plantLore',0.1);
               this.characterService.characterState.increaseAttribute('animalLore',0.1);
               this.characterService.characterState.increaseAttribute('alchemy',0.2);
@@ -393,7 +416,11 @@ export class ActivityService {
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
               ((this.characterService.characterState.attributes.plantLore.value +
               this.characterService.characterState.attributes.animalLore.value) * 5);
-            if (Math.random() < 0.01) {
+            let alchemySuccessChance = 0.05;
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
+              alchemySuccessChance += 0.05;
+            }
+            if (Math.random() < alchemySuccessChance) {
               this.characterService.characterState.increaseAttribute('plantLore',0.2);
               this.characterService.characterState.increaseAttribute('animalLore',0.2);
               this.characterService.characterState.increaseAttribute('alchemy',0.5);
