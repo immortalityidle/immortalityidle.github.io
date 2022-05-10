@@ -13,7 +13,17 @@ export enum HomeType {
   OwnTent,
   DirtyShack,
   SimpleHut,
-  PleasantCottage
+  PleasantCottage,
+  LargeHouse,
+  CourtyardHouse,
+  Manor,
+  Mansion,
+  Palace,
+  Castle,
+  Fortress,
+  Mountain,
+  ForbiddenCity,
+  Capital
 }
 
 export interface Field {
@@ -144,7 +154,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
-        'bed'
+        'bed',
+        'bathtub'
       ]
     },
     {
@@ -161,7 +172,198 @@ export class HomeService {
       },
       furnitureSlots: [
         'bed',
-        'bathtub'
+        'bathtub',
+        'kitchen'
+      ]
+    },
+    {
+      name: "Large House",
+      type: HomeType.LargeHouse,
+      description: "A large house where you can live and work. Automatically restores 15 stamina and a bit of health each night.",
+      cost: 1000000,
+      costPerDay: 50,
+      landRequired: 50,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 2;
+        this.characterService.characterState.status.stamina.value += 15;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Courtyard House",
+      type: HomeType.CourtyardHouse,
+      description: "A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina and a bit of health each night.",
+      cost: 10000000,
+      costPerDay: 80,
+      landRequired: 80,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 3;
+        this.characterService.characterState.status.stamina.value += 20;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Manor",
+      type: HomeType.Manor,
+      description: "A large manor house. You are really moving up in the world. Automatically restores 25 stamina and a bit of health each night.",
+      cost: 100000000,
+      costPerDay: 100,
+      landRequired: 100,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 4;
+        this.characterService.characterState.status.stamina.value += 25;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Mansion",
+      type: HomeType.Mansion,
+      description: "An elaborate mansion. Automatically restores 30 stamina and a bit of health each night.",
+      cost: 1000000000,
+      costPerDay: 120,
+      landRequired: 120,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 5;
+        this.characterService.characterState.status.stamina.value += 30;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Palace",
+      type: HomeType.Palace,
+      description: "A lavish palace. Automatically restores 35 stamina and a bit of health each night.",
+      cost: 10000000000,
+      costPerDay: 150,
+      landRequired: 150,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 10;
+        this.characterService.characterState.status.stamina.value += 35;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Castle",
+      type: HomeType.Castle,
+      description: "An imposing castle. Automatically restores 40 stamina and a bit of health each night.",
+      cost: 10000000000,
+      costPerDay: 150,
+      landRequired: 150,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 15;
+        this.characterService.characterState.status.stamina.value += 40;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Fortress",
+      type: HomeType.Fortress,
+      description: "An indomitable fortress. Automatically restores 50 stamina and a bit of health each night.",
+      cost: 100000000000,
+      costPerDay: 180,
+      landRequired: 180,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 20;
+        this.characterService.characterState.status.stamina.value += 50;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Mountain",
+      type: HomeType.Mountain,
+      description: "An entire mighty mountain. Automatically restores 100 stamina and a bit of health each night.",
+      cost: 1000000000000,
+      costPerDay: 500,
+      landRequired: 500,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 30;
+        this.characterService.characterState.status.stamina.value += 100;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Forbidden City",
+      type: HomeType.ForbiddenCity,
+      description: "A city of your very own. Automatically restores 200 stamina and a bit of health each night.",
+      cost: 10000000000000,
+      costPerDay: 1000,
+      landRequired: 1000,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 50;
+        this.characterService.characterState.status.stamina.value += 200;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ]
+    },
+    {
+      name: "Capital",
+      type: HomeType.Capital,
+      description: "The entire empire is yours now. Automatically restores 300 stamina and a bit of health each night.",
+      cost: 100000000000000,
+      costPerDay: 10000,
+      landRequired: 10000,
+      consequence: () => {
+        this.characterService.characterState.status.health.value += 80;
+        this.characterService.characterState.status.stamina.value += 300;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
       ]
     }
   ];

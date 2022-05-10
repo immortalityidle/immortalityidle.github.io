@@ -38,11 +38,13 @@ export interface CharacterProperties {
   money: number,
   equipment: EquipmentSlots,
   age: number,
-  status: CharacterStatus
+  status: CharacterStatus,
+  baseLifespan: number,
+  foodLifespan: number,
+  statLifespan: number
 }
 
 const INITIAL_AGE = 18 * 365;
-const BASE_LIFESPAN = 30 * 365;
 
 export class Character {
   dead: boolean = false;
@@ -133,7 +135,10 @@ export class Character {
   money = 300;
   // age in days
   age = INITIAL_AGE;
-  lifespan = BASE_LIFESPAN;
+  baseLifespan = 30 * 365;
+  foodLifespan = 0; // bonus to lifespan based on food you've eaten
+  statLifespan = 0; // bonus to lifespan based on stat aptitudes
+  lifespan = this.baseLifespan + this.foodLifespan + this.statLifespan;
   equipment: EquipmentSlots = {
     head: null,
     body: null,
@@ -168,8 +173,10 @@ export class Character {
     this.money = 0;
     // age in days
     this.age = INITIAL_AGE;
-    // increase lifespan based on average aptitude
-    this.lifespan = BASE_LIFESPAN + (0.8 * (totalAptitude / Object.keys(this.attributes).length)) + this.attributes.spirituality.value;
+    this.baseLifespan += 1; //bonus day just for doing another reincarnation cycle
+    this.statLifespan = (0.8 * (totalAptitude / Object.keys(this.attributes).length));
+    this.foodLifespan = 0;
+    this.recalculateLifespan();
     this.equipment = {
       head: null,
       body: null,
@@ -178,6 +185,10 @@ export class Character {
       legs: null,
       feet: null
     }
+  }
+
+  recalculateLifespan(): void{
+    this.lifespan = this.baseLifespan + this.foodLifespan + this.statLifespan + this.attributes.spirituality.value;
   }
 
   getAptitudeMultipier(aptitude: number): number {
@@ -210,7 +221,10 @@ export class Character {
       money: this.money,
       equipment: this.equipment,
       age: this.age,
-      status: this.status
+      status: this.status,
+      baseLifespan: this.baseLifespan,
+      foodLifespan: this.foodLifespan,
+      statLifespan: this.statLifespan
     }
   }
 
@@ -220,5 +234,9 @@ export class Character {
     this.equipment = properties.equipment;
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
+    this.baseLifespan = properties.baseLifespan;
+    this.foodLifespan = properties.foodLifespan;
+    this.statLifespan = properties.statLifespan;
+    this.recalculateLifespan();
   }
 }

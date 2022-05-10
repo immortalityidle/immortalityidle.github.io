@@ -134,6 +134,62 @@ export class ItemRepoService {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
         this.characterService.characterState.status.health.max += 1;
       }
+    },
+    cookPot: {
+      id: 'cookPot',
+      name: "cook pot",
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 1,
+      description: "A simple pot over a fire to boil your food.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.01);
+        this.characterService.characterState.increaseAttribute('speed', 0.01);
+        this.characterService.characterState.increaseAttribute('toughness', 0.01);
+      }
+    },
+    roastingSpit: {
+      id: 'roastingSpit',
+      name: "roasting spit",
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 1,
+      description: "A simple spit to go along with your cookpot, letting you add more variety to your diet.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.02);
+        this.characterService.characterState.increaseAttribute('speed', 0.02);
+        this.characterService.characterState.increaseAttribute('toughness', 0.02);
+      }
+    },
+    wok: {
+      id: 'wok',
+      name: "wok",
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 1,
+      description: "A large metal wok to stir-fry a tasty dinner.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.05);
+        this.characterService.characterState.increaseAttribute('speed', 0.05);
+        this.characterService.characterState.increaseAttribute('toughness', 0.05);
+      }
+    },
+    chefKitchen: {
+      id: 'chefKitchen',
+      name: "chef kitchen",
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 1,
+      description: "An elaborate kitchen that allows you to cook anything.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.1);
+        this.characterService.characterState.increaseAttribute('speed', 0.1);
+        this.characterService.characterState.increaseAttribute('toughness', 0.1);
+      }
     }
   }
 
@@ -199,8 +255,8 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.05){
           this.characterService.characterState.status.health.max++;
-          if (this.characterService.characterState.lifespan < (365 * 40)){
-            this.characterService.characterState.lifespan += 1;
+          if (this.characterService.characterState.foodLifespan < (365 * 40)){
+            this.characterService.characterState.foodLifespan += 1;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -219,8 +275,8 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.1){
           this.characterService.characterState.status.health.max++;
-          if (this.characterService.characterState.lifespan < (365 * 54)){
-            this.characterService.characterState.lifespan += 1;
+          if (this.characterService.characterState.foodLifespan < (365 * 54)){
+            this.characterService.characterState.foodLifespan += 1;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -239,8 +295,8 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.2){
           this.characterService.characterState.status.health.max++;
-          if (this.characterService.characterState.lifespan < (365 * 72)){
-            this.characterService.characterState.lifespan += 1;
+          if (this.characterService.characterState.foodLifespan < (365 * 72)){
+            this.characterService.characterState.foodLifespan += 1;
           }
         }
         this.characterService.characterState.checkOverage();

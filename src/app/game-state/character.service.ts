@@ -16,6 +16,7 @@ export class CharacterService {
     private reincarnationService: ReincarnationService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
+      this.characterState.recalculateLifespan();
       this.characterState.dead = false;
       this.characterState.age++;
       this.characterState.status.nourishment.value--;
@@ -23,10 +24,19 @@ export class CharacterService {
       let deathMessage = "";
       if (this.characterState.age >= this.characterState.lifespan) {
         deathMessage = "You reach the end of your natural life and pass away from old age.";
+      } else if (this.characterState.status.nourishment.value <= 0) {
+        if (this.characterState.attributes.spirituality.value > 0){
+          // you're spritual now, you can fast!
+          this.characterState.status.health.value -= 20;
+          this.characterState.increaseAttribute('spirituality', 0.1);
+          if (this.characterState.status.health.value <= 0) {
+            deathMessage = "You starve to death.";
+          }
+        } else {
+          deathMessage = "You starve to death.";
+        }
       } else if (this.characterState.status.health.value <= 0) {
         deathMessage = "You succumb to your wounds and die.";
-      } else if (this.characterState.status.nourishment.value <= 0) {
-        deathMessage = "You starve to death.";
       }
       if (deathMessage != ""){
         this.logService.addLogMessage(deathMessage, 'INJURY', 'REBIRTH');
