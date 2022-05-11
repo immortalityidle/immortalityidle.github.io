@@ -4,7 +4,7 @@ import { BattleService, BattleProperties } from '../battle-panel/battle.service'
 import { LogProperties, LogService } from '../log-panel/log.service';
 import { MainLoopProperties, MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
-import { CharacterProperties } from './character';
+import { CharacterProperties, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { HomeService, HomeProperties } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
@@ -82,5 +82,21 @@ export class GameStateService {
   hardReset(): void {
     window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY);
     this.reincarnationService.reincarnate();
+  }
+
+  cheat(): void {
+    this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","SYSTEM");
+    this.characterService.characterState.money = 1000000000;
+    for (let key in this.itemRepoService.items){
+      let item = this.itemRepoService.items[key];
+      if (item.type == 'manual' && item.use) {
+        item.use();
+      }
+    }
+    const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
+    for (const key in keys){
+      let attribute = this.characterService.characterState.attributes[keys[key]];
+      attribute.aptitude += 1000;
+    }
   }
 }

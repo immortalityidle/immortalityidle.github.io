@@ -78,4 +78,18 @@ export class AppComponent implements OnInit {
       data: {someField: 'foo'}
     });
   }
+
+  storeOptionsClicked(): void {
+    this.storeService.setStoreInventory("options");
+    const dialogRef = this.dialog.open(StoreModalComponent, {
+      width: '500px',
+      data: {someField: 'foo'}
+    });
+  }
+
+  cheat(event: Event): void {
+    event.preventDefault();
+    this.gameStateService.cheat();
+  }
+
 }

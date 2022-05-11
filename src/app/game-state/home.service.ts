@@ -114,7 +114,7 @@ export class HomeService {
       consequence: () => {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
-        if (Math.random() < 0.05){
+        if (Math.random() < 0.03){
           this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
@@ -612,7 +612,7 @@ export class HomeService {
     }
     if (this.autoFieldUnlocked && this.fields.length < this.autoFieldLimit){
       // don't autofield if we're trying to autoBuy a home
-      if (this.autoBuyHomeLimit){
+      if (this.autoBuyHomeUnlocked){
         if (this.homeValue >= this.autoBuyHomeLimit){
           this.addField();
         }

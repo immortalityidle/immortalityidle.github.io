@@ -37,6 +37,11 @@
       (click)="autoUse()" placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}  Ctrl-click items to auto-use.">
       Auto-{{inventoryService.selectedItem.item.useLabel}}
     </button>
+    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked)"
+      (click)="autoBalance()" placement="left" tooltip="Balance between automatically using and selling this item.">
+      Auto-balance
+    </button>
+
     <button *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()">Equip</button>
   </div>
 </div>

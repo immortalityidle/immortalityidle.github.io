@@ -140,7 +140,7 @@ export class ActivityService {
           const key = keys[Math.floor(Math.random() * 5)];
           this.characterService.characterState.increaseAttribute(key, 0.1);
           this.characterService.characterState.status.stamina.value -= 5;
-          this.characterService.characterState.money += 2;
+          this.characterService.characterState.money += 3;
         }],
         requirements: [{}],
       },
@@ -320,13 +320,13 @@ export class ActivityService {
             toughness: 50,
           },
           {
-            strength: 200,
-            toughness: 200,
+            strength: 400,
+            toughness: 400,
             metalLore: 1,
           },
           {
-            strength: 1000,
-            toughness: 1000,
+            strength: 2000,
+            toughness: 2000,
             metalLore: 10,
           }
         ],
@@ -434,7 +434,7 @@ export class ActivityService {
         ],
         requirements: [
           {
-            intelligence: 100,
+            intelligence: 200,
           },
           {
             intelligence: 1000,
@@ -443,7 +443,7 @@ export class ActivityService {
             plantLore: 1
           },
           {
-            intelligence: 10000,
+            intelligence: 8000,
             alchemy: 10,
             animalLore: 10,
             plantLore: 10
@@ -465,7 +465,7 @@ export class ActivityService {
           }
         }],
         requirements: [{
-          strength: 10,
+          strength: 100,
         }],
       },
       {
@@ -532,17 +532,17 @@ export class ActivityService {
         ],
         requirements: [
           {
-            strength: 30,
-            intelligence: 30
+            strength: 100,
+            intelligence: 100
           },
           {
-            strength: 300,
-            intelligence: 300,
+            strength: 800,
+            intelligence: 800,
             plantLore: 1,
           },
           {
-            strength: 1000,
-            intelligence: 1000,
+            strength: 2000,
+            intelligence: 2000,
             plantLore: 10,
           }
         ],
@@ -565,8 +565,8 @@ export class ActivityService {
           }
       }],
         requirements: [{
-          strength: 10,
-          speed: 10
+          strength: 30,
+          speed: 30
         }],
       },
       {
@@ -584,7 +584,7 @@ export class ActivityService {
           }
         }],
         requirements: [{
-          strength: 10
+          strength: 80
         }],
       },
       {
@@ -603,7 +603,8 @@ export class ActivityService {
           }
         }],
         requirements: [{
-          strength: 10
+          toughness: 100,
+          intelligence: 100
         }],
       },
       {
@@ -624,7 +625,7 @@ export class ActivityService {
           }
         }],
         requirements: [{
-          speed: 50
+          speed: 200
         }],
       },
       {
@@ -644,8 +645,8 @@ export class ActivityService {
           }
         }],
         requirements: [{
-          strength: 50,
-          intelligence: 50
+          strength: 60,
+          intelligence: 60
         }],
       },
       {

@@ -4,7 +4,7 @@ import { Item } from '../game-state/inventory.service';
 import { CharacterService } from '../game-state/character.service';
 import { Character } from '../game-state/character';
 import { HomeService } from '../game-state/home.service';
-import { InventoryService } from '../game-state/inventory.service';
+import { InventoryService, BalanceItem } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service'
 
 @Component({
@@ -52,4 +52,15 @@ export class StoreModalComponent {
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.homeService.autoBuyHomeLimit = parseInt(event.target.value);
   }
+
+  autoBalanceUseChanged(event: Event, balanceItem: BalanceItem){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    balanceItem.useNumber = parseInt(event.target.value);
+  }
+
+  autoBalanceSellChanged(event: Event, balanceItem: BalanceItem){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    balanceItem.sellNumber = parseInt(event.target.value);
+  }
+
 }

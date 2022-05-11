@@ -80,6 +80,12 @@ export class InventoryPanelComponent {
     }
   }
 
+  autoBalance(): void {
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.autoBalance(this.inventoryService.selectedItem.item);
+    }
+  }
+
   equip(): void {
     if (this.inventoryService.selectedItem){
       this.inventoryService.equip(this.inventoryService.selectedItem);

@@ -491,7 +491,7 @@ export class ItemRepoService {
       name: "Manual of Expeditious Time Perception",
       type: "manual",
       description: "This manual teaches you to percieve time as moving faster.",
-      value: 1,
+      value: 500,
       useLabel: "Read",
       useDescription: "Permanently unlock fast game speed.",
       useConsumes: true,
@@ -512,7 +512,7 @@ export class ItemRepoService {
       name: "Manual of Greatly Expeditious Time Perception",
       type: "manual",
       description: "This manual teaches you to percieve time as moving much faster.",
-      value: 1,
+      value: 7000,
       useLabel: "Read",
       useDescription: "Permanently unlock faster game speed.",
       useConsumes: true,
@@ -533,7 +533,7 @@ export class ItemRepoService {
       name: "Manual of Ludicrous Time Perception",
       type: "manual",
       description: "This manual teaches you to percieve time as moving incredibly fast.",
-      value: 1,
+      value: 100000,
       useLabel: "Read",
       useDescription: "Permanently unlock fastest game speed.",
       useConsumes: true,
@@ -549,13 +549,12 @@ export class ItemRepoService {
         }
       }
     },
-
     perpetualFarmingManual: {
       id: 'perpetualFarmingManual',
       name: "Manual of Perpetual Farming",
       type: "manual",
       description: "This manual teaches you to automatically replant fields when they are harvested.",
-      value: 1,
+      value: 50000,
       useLabel: "Read",
       useDescription: "Permanently unlock automatic farm replanting.",
       useConsumes: true,
@@ -584,7 +583,7 @@ export class ItemRepoService {
       name: "Manual of Remembered Plans",
       type: "manual",
       description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
-      value: 1,
+      value: 200000,
       useLabel: "Read",
       useDescription: "Permanently unlock preserving activity plans across reincarnations.",
       useConsumes: true,
@@ -613,7 +612,7 @@ export class ItemRepoService {
       name: "Manual of Mercantile Fluency",
       type: "manual",
       description: "This manual teaches you to automatically sell items.",
-      value: 1,
+      value: 80000,
       useLabel: "Read",
       useDescription: "Permanently unlock Autosell button in the inventory panel.",
       useConsumes: true,
@@ -638,7 +637,7 @@ export class ItemRepoService {
       name: "Manual of Facilitated Usage",
       type: "manual",
       description: "This manual teaches you to automatically use items.",
-      value: 1,
+      value: 3000000,
       useLabel: "Read",
       useDescription: "Permanently unlock Autouse button in the inventory panel.",
       useConsumes: true,
@@ -658,12 +657,37 @@ export class ItemRepoService {
         return this.inventoryService.autoUseUnlocked;
       }
     },
+    autoBalanceManual: {
+      id: 'autoBalanceManual',
+      name: "Manual of Balanced Consumption and Mercantile Moderation",
+      type: "manual",
+      description: "This manual teaches you to automatically balance between using and selling items.",
+      value: 50000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock Autobalance button in the inventory panel.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoBalanceUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoBalanceUnlocked;
+      }
+    },
     autoBuyLandManual: {
       id: 'autoBuyLandManual',
       name: "Manual of Land Acquisition",
       type: "manual",
       description: "This manual teaches you to automatically purchase land.",
-      value: 1,
+      value: 2000000,
       useLabel: "Read",
       useDescription: "Permanently unlock automatic land purchasing.",
       useConsumes: true,
@@ -686,7 +710,7 @@ export class ItemRepoService {
       name: "Manual of Home Improvement",
       type: "manual",
       description: "This manual teaches you to automatically upgrade your home.",
-      value: 1,
+      value: 10000000,
       useLabel: "Read",
       useDescription: "Permanently unlock automatic home upgrades.",
       useConsumes: true,
@@ -709,7 +733,7 @@ export class ItemRepoService {
       name: "Manual of Home Furnishing",
       type: "manual",
       description: "This manual teaches you to automatically buy the last furniture you bought for your home in future lives.",
-      value: 1,
+      value: 80000000,
       useLabel: "Read",
       useDescription: "Permanently unlock automatic purchasing for furniture.",
       useConsumes: true,
@@ -732,7 +756,7 @@ export class ItemRepoService {
       name: "Manual of Field Conversion",
       type: "manual",
       description: "This manual teaches you to automatically plow open land into fields.",
-      value: 1,
+      value: 2000000,
       useLabel: "Read",
       useDescription: "Permanently unlock automatic field plowing.",
       useConsumes: true,

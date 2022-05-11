@@ -1,5 +1,6 @@
-<span>Store</span>
 <div *ngIf="storeService.selling === 'manuals'">
+  <span>Manuals Shop</span>
+  <hr/>
   <div class="inventoryGrid">
       <div *ngFor="let item of storeService.manuals">
         <table class="itemSlot" (click)="slotClicked(item)"
@@ -8,14 +9,17 @@
           <tr><mat-icon>menu_book</mat-icon></tr>
           <tr>{{item.name | titlecase}}</tr>
         </table>
-        <div class="priceLabel">{{item.value}}</div>
+        <div class="priceLabel">{{item.value | number: '1.0-0'}}</div>
       </div>
   </div>
   <button (click)="storeService.buyManual()"
       [disabled]="buyDisabled">
       Buy
   </button>
-  <hr>
+</div>
+<div *ngIf="storeService.selling === 'options'">
+  <span>Manuals Options</span>
+  <hr/>
   <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
     Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
   </div>
@@ -49,8 +53,21 @@
       </div>
     </div>
   </div>
+  <div *ngIf="inventoryService.autoBalanceUnlocked" class="optionField">
+    <span>Automatically Balanced Items:</span>
+    <div class="scrollingDiv">
+      <div *ngFor="let balanceItem of inventoryService.autoBalanceItems">
+        -{{balanceItem.name | titlecase}}
+        Use <input value="{{balanceItem.useNumber}}" type="number" (change)="autoBalanceUseChanged($event, balanceItem)"/>
+        then Sell <input value="{{balanceItem.sellNumber}}" type="number" (change)="autoBalanceSellChanged($event, balanceItem)"/>
+        <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
+      </div>
+    </div>
+  </div>
 </div>
 <div *ngIf="storeService.selling === 'furniture'">
+  <span>Furniture Shop</span>
+  <hr/>
   <div class="inventoryGrid">
     <div *ngFor="let item of storeService.furniture">
       <table class="itemSlot" (click)="slotClicked(item)"

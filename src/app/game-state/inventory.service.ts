@@ -49,13 +49,21 @@ export interface ItemStack {
   quantity: number;
 }
 
+export interface BalanceItem {
+  useNumber: number;
+  sellNumber: number;
+  index: number;
+  name: string;
+}
 
 export interface InventoryProperties {
   itemStacks: ItemStack[],
   autoSellUnlocked: boolean,
   autoSellItems: string[],
   autoUseUnlocked: boolean,
-  autoUseItems: string[]
+  autoUseItems: string[],
+  autoBalanceUnlocked: boolean,
+  autoBalanceItems: BalanceItem[]
 }
 
 @Injectable({
@@ -71,6 +79,8 @@ export class InventoryService {
   autoSellItems: string[];
   autoUseUnlocked: boolean;
   autoUseItems: string[];
+  autoBalanceUnlocked: boolean;
+  autoBalanceItems: BalanceItem[];
 
   constructor(
     private logService: LogService,
@@ -84,6 +94,9 @@ export class InventoryService {
     this.autoSellItems = [];
     this.autoUseUnlocked = false;
     this.autoUseItems = [];
+    this.autoBalanceUnlocked = false;
+    this.autoBalanceItems = [];
+
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
@@ -102,6 +115,8 @@ export class InventoryService {
       autoSellItems: this.autoSellItems,
       autoUseUnlocked: this.autoUseUnlocked,
       autoUseItems: this.autoUseItems,
+      autoBalanceUnlocked: this.autoBalanceUnlocked,
+      autoBalanceItems: this.autoBalanceItems
     }
   }
 
@@ -111,6 +126,8 @@ export class InventoryService {
     this.autoSellItems = properties.autoSellItems;
     this.autoUseUnlocked = properties.autoUseUnlocked;
     this.autoUseItems = properties.autoUseItems;
+    this.autoBalanceUnlocked = properties.autoBalanceUnlocked;
+    this.autoBalanceItems = properties.autoBalanceItems;
   }
 
   farmFoodList = [
@@ -293,9 +310,26 @@ export class InventoryService {
   }
 
   addItem(item: Item): void {
+    for (let balanceItem of this.autoBalanceItems){
+      if (balanceItem.name == item.name){
+        if (balanceItem.index < balanceItem.useNumber){
+          if (item.use && item.useConsumes){
+            item.use();
+          }
+        } else {
+
+          this.characterService.characterState.money += item.value;
+        }
+        balanceItem.index++;
+        if (balanceItem.index >= balanceItem.sellNumber + balanceItem.useNumber){
+          balanceItem.index = 0;
+        }
+        return;
+      }
+    }
     if (this.autoUseItems.includes(item.name)){
       if (item.use && item.useConsumes){
-        item.use()
+        item.use();
       }
       return;
     }
@@ -392,6 +426,31 @@ export class InventoryService {
   unAutoUse(itemName: string){
     let index = this.autoUseItems.indexOf(itemName);
     this.autoUseItems.splice(index, 1);
+  }
+
+  autoBalance(item: Item){
+    for (let balanceItem of this.autoBalanceItems){
+      if (balanceItem.name == item.name){
+        // it's already in the list, bail out
+        return;
+      }
+    }
+    this.autoBalanceItems.push({
+      name: item.name,
+      index: 0,
+      useNumber: 1,
+      sellNumber: 1
+    });
+  }
+
+  unAutoBalance(itemName: string){
+    for (let index = 0; index < this.autoBalanceItems.length; index++){
+      
+      if (this.autoBalanceItems[index].name == itemName){
+        this.autoBalanceItems.splice(index, 1);
+        return;
+      }
+    }
   }
 
   equip(itemStack: ItemStack): void {
