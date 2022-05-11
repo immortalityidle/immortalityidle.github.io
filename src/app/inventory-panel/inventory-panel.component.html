@@ -13,7 +13,7 @@
 
   <div class="inventoryGrid">
     <div *ngFor="let itemStack of inventoryService.itemStacks">
-      <table class="itemSlot" (click)="slotClicked(itemStack)"
+      <table class="itemSlot" (click)="slotClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
         [ngClass]="{'selectedItem': itemStack === inventoryService.selectedItem}"
         tooltip="{{itemStack.item.description}}" placement="left">
         <tr>{{itemStack.item.name | titlecase}}</tr>
@@ -23,18 +23,18 @@
   </div>
 
   <div class="inventoryButtons" *ngIf="inventoryService.selectedItem">
-    <button (click)="sell(1)" placement="left" tooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels.">Sell</button>
-    <button (click)="sellStack()" placement="left" tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.">Sell Stack</button>
+    <button (click)="sell(1)" placement="left" tooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">Sell</button>
+    <button (click)="sellStack()" placement="left" tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">Sell Stack</button>
     <button (click)="sellAll()">Sell All</button>
     <button *ngIf="inventoryService.autoSellUnlocked"
-      tooltip="For the rest of this lifetime, you will automatically sell this kind of item whenever you get one."
+      tooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell."
       (click)="autoSell()">Autosell</button>
     <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()"
-      placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}">
+      placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
       {{inventoryService.selectedItem.item.useLabel}}
     </button>
     <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
-      (click)="autoUse()" placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}">
+      (click)="autoUse()" placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}  Ctrl-click items to auto-use.">
       Auto-{{inventoryService.selectedItem.item.useLabel}}
     </button>
     <button *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()">Equip</button>

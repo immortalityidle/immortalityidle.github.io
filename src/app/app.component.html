@@ -2,12 +2,12 @@
   <div class="mainContainer">
     <div class="top-line">
       <span class="gameTitle">Immortality Idle - Can you become an immortal?</span>
-      <mat-icon tooltip="A store that sells special items for aspiring immortals." 
+      <mat-icon tooltip="A store that sells special items for aspiring immortals."
         (click)="storeClicked()">
         shopping_cart
       </mat-icon>
       <a href="" tooltip="Autosaves fire every couple of minutes, but sometimes an immortal needs to save right now." (click)="saveClicked($event)">Save</a>
-      <a href="" tooltip="Completely restart your journey toward immortality." (click)="hardResetClicked()">Hard Reset</a>
+      <a href="" tooltip="Completely restart your journey toward immortality." placement="left" (click)="hardResetClicked()">Hard Reset</a>
     </div>
     <div class="panelContainer">
       <div class="leftPanel">
@@ -28,10 +28,4 @@
     <app-log-panel class="logPanel"></app-log-panel>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    Alpha development version, expect a lot of changes. If things look broken, use Ctrl-F5 to force a refresh and/or do a Hard Reset.
-    <br/>
-    This game should be hosted on immortalityidle.github.io. If you see it somewhere else, it's stolen.
-  </footer>
 </div>

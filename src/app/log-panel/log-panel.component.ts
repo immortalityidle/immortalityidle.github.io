@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Log, LogService, LogTopic } from './log.service';
 
-const INITIAL_LOG = "Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul. Your journey to immortality begins as a humble youth leaves home to experience the world. Be careful, the world can be a dangerous place.";
 @Component({
   selector: 'app-log-panel',
   templateUrl: './log-panel.component.html',
   styleUrls: ['./log-panel.component.less']
 })
 export class LogPanelComponent implements OnInit {
-  log: Log[] = [{message: INITIAL_LOG, type: 'STANDARD', topic: 'EVENT'}];
+  log: Log[] = [
+    {message: "Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.", type: 'STANDARD', topic: 'EVENT'},
+    {message: "Your journey to immortality begins as a humble youth leaves home to experience the world.", type: 'STANDARD', topic: 'EVENT'},
+    {message: "Be careful, the world can be a dangerous place.", type: 'STANDARD', topic: 'EVENT'},
+  ];
 
 
   constructor(public logService: LogService) {

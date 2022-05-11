@@ -170,7 +170,7 @@ export class InventoryService {
       value: grade,
       description: "A potion that increases " + key,
       useLabel: 'Drink',
-      useDescription: '.',
+      useDescription: 'Drink to increase your ' + key + '.',
       useConsumes: true,
       attribute: key,
       increase: grade
@@ -227,7 +227,7 @@ export class InventoryService {
   getWood(): Item{
     if (this.characterService.characterState.attributes.plantLore.value > 300 &&
       this.characterService.characterState.attributes.spirituality.value > 10){
-        return  this.itemRepoService.items['peachwoodLog'];  
+        return  this.itemRepoService.items['peachwoodLog'];
     } else if (this.characterService.characterState.attributes.plantLore.value > 200 &&
       this.characterService.characterState.attributes.spirituality.value > 1){
         return  this.itemRepoService.items['blackwoodLog'];
@@ -372,13 +372,19 @@ export class InventoryService {
   }
 
   autoUse(item: Item){
+    if (item.type != "potion" && !item.use){
+      // it's not usable, bail out.
+      return;
+    }
     if (!this.autoUseItems.includes(item.name)){
       this.autoUseItems.push(item.name);
     }
-    // use all the ones you have now
-    for (let i = this.itemStacks.length - 1; i >= 0; i--){
-      while (this.itemStacks.length > i && this.itemStacks[i].item.name == item.name){
-        this.useItem(this.itemStacks[i]);
+    if (item.useConsumes){
+      // use all the ones you have now
+      for (let i = this.itemStacks.length - 1; i >= 0; i--){
+        while (this.itemStacks.length > i && this.itemStacks[i].item.name == item.name){
+          this.useItem(this.itemStacks[i]);
+        }
       }
     }
   }

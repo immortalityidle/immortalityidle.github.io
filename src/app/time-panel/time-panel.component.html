@@ -2,9 +2,9 @@
   How will you spend your days?
   <mat-icon (click)="pauseClick()" tooltip="Pause the game (spacebar)">pause</mat-icon>
   <mat-icon (click)="standardClick()" tooltip="Standard Game Speed">play_arrow</mat-icon>
-  <mat-icon (click)="fastClick()" tooltip="Fast Game Speed">fast_forward</mat-icon>
-  <mat-icon (click)="fasterClick()" tooltip="Faster Game Speed">skip_next</mat-icon>
-  <mat-icon (click)="fastestClick()" tooltip="Fastest Game Speed">bolt</mat-icon>
+  <mat-icon *ngIf="mainLoopService.unlockFastSpeed" (click)="fastClick()" tooltip="Fast Game Speed">fast_forward</mat-icon>
+  <mat-icon *ngIf="mainLoopService.unlockFasterSpeed" (click)="fasterClick()" tooltip="Faster Game Speed">skip_next</mat-icon>
+  <mat-icon *ngIf="mainLoopService.unlockFastestSpeed" (click)="fastestClick()" tooltip="Fastest Game Speed">bolt</mat-icon>
   <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
     [checked]="activityService.pauseOnDeath"/>
   <label *ngIf="activityService.autoRestart" for="pauseOnDeath">Pause on Death</label>

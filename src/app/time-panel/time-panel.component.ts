@@ -20,6 +20,9 @@ export class TimePanelComponent implements OnInit {
   currentTickCount = 0;
   exhaustionDays = 0;
 
+  unlockFastSpeed: boolean = false;
+  unlockFasterSpeed: boolean = false;
+  unlockFastestSpeed: boolean = false;
 
   constructor(
     public mainLoopService: MainLoopService,

@@ -3,6 +3,13 @@ import { Subject } from 'rxjs';
 
 const TICK_INTERVAL_MS = 25;
 
+export interface MainLoopProperties {
+  unlockFastSpeed: boolean,
+  unlockFasterSpeed: boolean,
+  unlockFastestSpeed: boolean
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +23,25 @@ export class MainLoopService {
 
   tickCount = 0;
 
+  unlockFastSpeed: boolean = false;
+  unlockFasterSpeed: boolean = false;
+  unlockFastestSpeed: boolean = false;
+
   constructor() {
+  }
+
+  getProperties(): MainLoopProperties {
+    return {
+      unlockFastSpeed: this.unlockFastSpeed,
+      unlockFasterSpeed: this.unlockFasterSpeed,
+      unlockFastestSpeed: this.unlockFastestSpeed
+    }
+  }
+
+  setProperties(properties: MainLoopProperties) {
+    this.unlockFastSpeed = properties.unlockFastSpeed;
+    this.unlockFasterSpeed = properties.unlockFasterSpeed;
+    this.unlockFastestSpeed = properties.unlockFastestSpeed;
   }
 
   start() {

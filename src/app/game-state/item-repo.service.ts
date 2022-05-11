@@ -1,6 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { ActivityService } from '../activity-panel/activity.service';
 import { LogService } from '../log-panel/log.service';
+import { MainLoopService } from '../main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { Furniture, InventoryService, Item } from './inventory.service';
@@ -485,6 +486,70 @@ export class ItemRepoService {
       description: 'Some metal junk.',
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing
+    fastPlayManual: {
+      id: 'fastPlayManual',
+      name: "Manual of Expeditious Time Perception",
+      type: "manual",
+      description: "This manual teaches you to percieve time as moving faster.",
+      value: 1,
+      useLabel: "Read",
+      useDescription: "Permanently unlock fast game speed.",
+      useConsumes: true,
+      use: () => {
+        this.mainLoopService.unlockFastSpeed = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (this.mainLoopService.unlockFastSpeed){
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    fasterPlayManual: {
+      id: 'fasterPlayManual',
+      name: "Manual of Greatly Expeditious Time Perception",
+      type: "manual",
+      description: "This manual teaches you to percieve time as moving much faster.",
+      value: 1,
+      useLabel: "Read",
+      useDescription: "Permanently unlock faster game speed.",
+      useConsumes: true,
+      use: () => {
+        this.mainLoopService.unlockFasterSpeed = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (this.mainLoopService.unlockFasterSpeed){
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    fastestPlayManual: {
+      id: 'fastestPlayManual',
+      name: "Manual of Ludicrous Time Perception",
+      type: "manual",
+      description: "This manual teaches you to percieve time as moving incredibly fast.",
+      value: 1,
+      useLabel: "Read",
+      useDescription: "Permanently unlock fastest game speed.",
+      useConsumes: true,
+      use: () => {
+        this.mainLoopService.unlockFastestSpeed = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (this.mainLoopService.unlockFastestSpeed){
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+
     perpetualFarmingManual: {
       id: 'perpetualFarmingManual',
       name: "Manual of Perpetual Farming",
@@ -686,10 +751,11 @@ export class ItemRepoService {
       }
     }
   }
-  
+
   constructor(private characterService: CharacterService,
     private injector: Injector,
-    private logService: LogService) {
+    private logService: LogService,
+    private mainLoopService: MainLoopService) {
 
   }
 

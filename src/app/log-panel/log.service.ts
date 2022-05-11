@@ -30,7 +30,9 @@ export class LogService {
   eventTopicEnabled: boolean = true;
   enabledTopics: string = "";
 
-  constructor() { }
+  constructor() {
+    this.updateEnabledTopics();
+  }
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
     this.logAdded.next({message, type, topic});

@@ -15,11 +15,32 @@ export class InventoryPanelComponent {
       this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
   }
 
-  slotClicked(item: ItemStack): void {
-    if (this.inventoryService.selectedItem == item){
-      this.inventoryService.selectedItem = null;
-    } else {
+  slotClicked(item: ItemStack, event: MouseEvent): void {
+    event.preventDefault();
+    if (event.shiftKey){
       this.inventoryService.selectedItem = item;
+      this.use();
+    } else if (event.ctrlKey){
+      this.inventoryService.selectedItem = item;
+      this.autoUse();
+    } else {
+      if (this.inventoryService.selectedItem == item){
+        this.inventoryService.selectedItem = null;
+      } else {
+        this.inventoryService.selectedItem = item;
+      }
+    }
+  }
+
+  slotRightClicked(item: ItemStack, event: MouseEvent){
+    event.preventDefault();
+    this.inventoryService.selectedItem = item;
+    if (event.ctrlKey){
+      this.autoSell();
+    } else if (event.shiftKey){
+      this.sellStack();
+    } else {
+      this.sell(1);
     }
   }
 

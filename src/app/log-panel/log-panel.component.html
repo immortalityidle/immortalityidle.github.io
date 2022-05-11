@@ -10,12 +10,21 @@
     <input type="checkbox" (change)="topicFilterCombat($event)" id="filterCombat" [checked]="logService.combatTopicEnabled"/>
     <label for="filterCombat">Show Combat Messages</label>
   </span>
-  <div>
+  <div class="logContainer">
     <ng-container *ngFor="let logMsg of log">
       <div *ngIf="logService.enabledTopics.includes(logMsg.topic)" [ngClass]="logMsg.type" class="logEntryDiv">
         {{logMsg.message}}
       </div>
     </ng-container>
   </div>
+  <div class="disclaimer">
+    <span class="disclaimerLeft">
+      Alpha development version, expect a lot of changes. If things look broken, use Ctrl-F5 to force a refresh and/or do a Hard Reset.
+    </span>
+    <span class="disclaimerRight">
+      This game should be hosted on immortalityidle.github.io. If you see it somewhere else, it's stolen.
+    </span>
+  </div>
+
 </div>
 

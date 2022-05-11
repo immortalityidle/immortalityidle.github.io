@@ -333,7 +333,7 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Gather Herbs'],
+        name: ['Gathering Herbs'],
         activityType: ActivityType.GatherHerbs,
         description: ['Search the natural world for useful herbs.'],
         consequenceDescription: ['Uses 10 stamina. Find herbs and learn about plants'],
@@ -357,7 +357,7 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Apprentice Alchemist', 'Journeyman Alchemist', 'Alchemist'],
+        name: ['Apprentice Alchemy', 'Journeyman Alchemy', 'Alchemy'],
         activityType: ActivityType.Alchemy,
         description: [
           'Get a job at the alchemist\'s workshop. It smells awful but you might learn a few things.',
@@ -452,7 +452,7 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Chop Wood'],
+        name: ['Chopping Wood'],
         activityType: ActivityType.ChopWood,
         description: ['Work as a woodcutter, cutting logs in the forest.'],
         consequenceDescription: ["Uses 10 stamina. Get a log and learn about plants."],
@@ -473,7 +473,7 @@ export class ActivityService {
         name: ['Apprentice Woodworking', 'Journeyman Woodworking', 'Woodworking'],
         activityType: ActivityType.Woodworking,
         description: [
-          'Work in a woodcarver\'s shop.', 
+          'Work in a woodcarver\'s shop.',
           'Carve wood into useful items.',
           'Open your own woodworking shop.'
         ],

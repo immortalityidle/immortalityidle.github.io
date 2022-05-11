@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivityService, ActivityProperties } from '../activity-panel/activity.service';
 import { BattleService, BattleProperties } from '../battle-panel/battle.service';
 import { LogProperties, LogService } from '../log-panel/log.service';
+import { MainLoopProperties, MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
@@ -17,7 +18,8 @@ interface GameState {
   home: HomeProperties,
   activities: ActivityProperties,
   battles: BattleProperties,
-  logs: LogProperties
+  logs: LogProperties,
+  mainLoop: MainLoopProperties
 }
 
 @Injectable({
@@ -33,7 +35,9 @@ export class GameStateService {
     private reincarnationService: ReincarnationService,
     private activityService: ActivityService,
     private itemRepoService: ItemRepoService,
-    private battleService: BattleService
+    private battleService: BattleService,
+    private mainLoopService: MainLoopService
+
   ) {
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
   }
@@ -45,7 +49,8 @@ export class GameStateService {
       home: this.homeService.getProperties(),
       activities: this.activityService.getProperties(),
       battles: this.battleService.getProperties(),
-      logs: this.logService.getProperties()
+      logs: this.logService.getProperties(),
+      mainLoop: this.mainLoopService.getProperties()
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
     this.logService.addLogMessage('Game saved', 'STANDARD', 'SYSTEM');
@@ -71,6 +76,7 @@ export class GameStateService {
     this.battleService.setProperties(gameState.battles);
     this.logService.setProperties(gameState.logs);
     this.logService.addLogMessage('Game loaded', 'STANDARD', 'SYSTEM');
+    this.mainLoopService.setProperties(gameState.mainLoop);
   }
 
   hardReset(): void {
