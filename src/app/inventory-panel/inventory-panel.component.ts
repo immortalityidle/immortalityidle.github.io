@@ -6,7 +6,7 @@ import { InventoryService, ItemStack } from '../game-state/inventory.service';
 @Component({
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
-  styleUrls: ['./inventory-panel.component.less']
+  styleUrls: ['./inventory-panel.component.less', '../app.component.less']
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];

@@ -7,7 +7,7 @@ import { KeyValue } from '@angular/common';
 @Component({
   selector: 'app-attributes-panel',
   templateUrl: './attributes-panel.component.html',
-  styleUrls: ['./attributes-panel.component.less']
+  styleUrls: ['./attributes-panel.component.less', '../app.component.less']
 })
 export class AttributesPanelComponent {
   character: Character;

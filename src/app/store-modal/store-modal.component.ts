@@ -10,7 +10,7 @@ import { ItemRepoService } from '../game-state/item-repo.service'
 @Component({
   selector: 'app-store-modal',
   templateUrl: './store-modal.component.html',
-  styleUrls: ['./store-modal.component.less']
+  styleUrls: ['./store-modal.component.less', '../app.component.less']
 })
 export class StoreModalComponent {
   character: Character;

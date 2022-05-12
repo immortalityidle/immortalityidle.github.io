@@ -1,3 +1,10 @@
+
+@bodyText: black;
+@bodyBackground: #faf8f8;
+@panelBackground: #faf8f8;
+@panelBorder: #121212;
+@shadowColor: #aaaaaa;
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -53,51 +60,31 @@
 }
 
 .timePanel {
-  border: 1px solid black;
   flex-grow: 1;
-  margin: 4px;
   overflow: auto;
 }
 
 .attributesPanel {
-    border: 1px solid black;
-    margin: 4px;
     overflow: auto;
 }
 
-.healthPanel {
-    border: 1px solid black;
-    margin: 4px;
-}
 
 .activityPanel {
-    border: 1px solid black;
-    margin: 4px;
     flex-grow: 3;
     overflow: auto;
 }
 
 .battlePanel {
-    border: 1px solid black;
-    margin: 4px;
     flex-grow: 1;
     min-height: 100px;
 }
 
-.equipmentPanel {
-    border: 1px solid black;
-    margin: 4px;
-}
 
 .homePanel {
-    border: 1px solid black;
-    margin: 4px;
     min-height: 150px;
 }
 
 .logPanel {
-    border: 1px solid black;
-    margin: 4px;
     flex-grow: 1;
     height: 160px;
     min-height: 160px;
@@ -105,9 +92,7 @@
 }
 
 .inventoryPanel {
-    border: 1px solid black;
     flex-grow: 1;
-    margin: 4px;
     overflow: auto;
 }
 
@@ -125,3 +110,20 @@ mat-icon {
 .cheat {
     font-size: 3px;
 }
+
+.panel {
+    background-color: @panelBackground;
+    margin: 4px;
+    border: 2px solid @panelBorder;
+    border-radius: 4px;
+    box-shadow: 2px 2px 2px 1px @shadowColor;
+}
+
+.panelHeader {
+    border-bottom: 1px solid @panelBorder;
+    color: @bodyText;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 4px;
+}
+

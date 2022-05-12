@@ -8,7 +8,7 @@ import { Character } from '../game-state/character';
 @Component({
   selector: 'app-activity-panel',
   templateUrl: './activity-panel.component.html',
-  styleUrls: ['./activity-panel.component.less']
+  styleUrls: ['./activity-panel.component.less', '../app.component.less']
 })
 export class ActivityPanelComponent {
 

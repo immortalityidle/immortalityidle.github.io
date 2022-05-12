@@ -10,7 +10,7 @@ import { MainLoopService } from '../main-loop.service';
 @Component({
   selector: 'app-time-panel',
   templateUrl: './time-panel.component.html',
-  styleUrls: ['./time-panel.component.less']
+  styleUrls: ['./time-panel.component.less', '../app.component.less']
 })
 export class TimePanelComponent implements OnInit {
   character: Character;

@@ -7,7 +7,7 @@ import { ItemPrefixes } from '../game-state/itemResources';
 @Component({
   selector: 'app-equipment-panel',
   templateUrl: './equipment-panel.component.html',
-  styleUrls: ['./equipment-panel.component.less']
+  styleUrls: ['./equipment-panel.component.less', '../app.component.less']
 })
 export class EquipmentPanelComponent {
   character: Character;

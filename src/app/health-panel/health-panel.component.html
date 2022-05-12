@@ -1,7 +1,7 @@
-<span class="panelHeader">You are {{characterService.characterState.age / 365 | floor }} years,
+<h3 class="panelHeader">You are {{characterService.characterState.age / 365 | floor }} years,
   {{characterService.characterState.age % 365 | number: '1.0-0'}} days old.
-  You expect to live about {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.
-</span>
+  You expect to live {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.
+</h3>
 <table>
   <tr>
     <td tooltip="{{characterService.characterState.status.health.description}}" placement="right">Health</td>

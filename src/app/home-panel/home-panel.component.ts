@@ -9,7 +9,7 @@ import { StoreModalComponent } from '../store-modal/store-modal.component';
 @Component({
   selector: 'app-home-panel',
   templateUrl: './home-panel.component.html',
-  styleUrls: ['./home-panel.component.less']
+  styleUrls: ['./home-panel.component.less', '../app.component.less']
 })
 
 export class HomePanelComponent {

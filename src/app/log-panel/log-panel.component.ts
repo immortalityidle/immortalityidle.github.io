@@ -4,7 +4,7 @@ import { Log, LogService, LogTopic } from './log.service';
 @Component({
   selector: 'app-log-panel',
   templateUrl: './log-panel.component.html',
-  styleUrls: ['./log-panel.component.less']
+  styleUrls: ['./log-panel.component.less', '../app.component.less']
 })
 export class LogPanelComponent implements OnInit {
   log: Log[] = [
