@@ -201,8 +201,12 @@ export class Character {
   getAptitudeMultipier(aptitude: number): number {
     if (aptitude < 10){
       return aptitude;
+    } else if (aptitude < 100){
+      return 10 + ((aptitude - 10) / 2);
+    } else if (aptitude < 1000){
+      return 100 + ((aptitude - 100) / 10);
     } else {
-      return 10 + Math.log2(aptitude);
+      return 1000 + Math.log2(aptitude - 999);
     }
   }
 

@@ -29,7 +29,7 @@ export class ItemRepoService {
     },
     mat: {
       id: 'mat',
-      name: "Sleeping Mmt",
+      name: "Sleeping Mat",
       type: 'furniture',
       slot: 'bed',
       value: 100,
