@@ -63,7 +63,8 @@ export interface InventoryProperties {
   autoUseUnlocked: boolean,
   autoUseItems: string[],
   autoBalanceUnlocked: boolean,
-  autoBalanceItems: BalanceItem[]
+  autoBalanceItems: BalanceItem[],
+  autoPotionUnlocked: boolean
 }
 
 @Injectable({
@@ -81,6 +82,7 @@ export class InventoryService {
   autoUseItems: string[];
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
+  autoPotionUnlocked: boolean;
 
   constructor(
     private logService: LogService,
@@ -96,6 +98,7 @@ export class InventoryService {
     this.autoUseItems = [];
     this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
+    this.autoPotionUnlocked = false;
 
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
@@ -116,7 +119,8 @@ export class InventoryService {
       autoUseUnlocked: this.autoUseUnlocked,
       autoUseItems: this.autoUseItems,
       autoBalanceUnlocked: this.autoBalanceUnlocked,
-      autoBalanceItems: this.autoBalanceItems
+      autoBalanceItems: this.autoBalanceItems,
+      autoPotionUnlocked: this.autoPotionUnlocked
     }
   }
 
@@ -128,6 +132,7 @@ export class InventoryService {
     this.autoUseItems = properties.autoUseItems;
     this.autoBalanceUnlocked = properties.autoBalanceUnlocked;
     this.autoBalanceItems = properties.autoBalanceItems;
+    this.autoPotionUnlocked = properties.autoPotionUnlocked;
   }
 
   farmFoodList = [
@@ -290,7 +295,7 @@ export class InventoryService {
       }
     }
     if (foodStack) {
-      this.useItem(foodStack);
+      this.useItemStack(foodStack);
       this.noFood = false;
     } else {
       // no food found, buy a bowl of rice automatically
@@ -327,10 +332,12 @@ export class InventoryService {
         return;
       }
     }
+    if (this.autoPotionUnlocked && item.type == "potion"){
+      this.useItem(item);
+      return;
+    }
     if (this.autoUseItems.includes(item.name)){
-      if (item.use && item.useConsumes){
-        item.use();
-      }
+      this.useItem(item);
       return;
     }
     if (this.autoSellItems.includes(item.name)){
@@ -389,12 +396,8 @@ export class InventoryService {
     this.autoSellItems.splice(index, 1);
   }
 
-  useItem(itemStack: ItemStack): void {
-    if (itemStack.item.type == "potion" && instanceOfPotion(itemStack.item)){
-      this.usePotion(itemStack.item);
-    } else if (itemStack.item.use) {
-      itemStack.item.use();
-    }
+  useItemStack(itemStack: ItemStack): void {
+    this.useItem(itemStack.item);
     if (itemStack.item.useConsumes) {
       itemStack.quantity--;
       if (itemStack.quantity <= 0) {
@@ -402,6 +405,14 @@ export class InventoryService {
         this.itemStacks.splice(index, 1);
         this.selectedItem = null;
       }
+    }
+  }
+
+  useItem(item: Item): void {
+    if (item.type == "potion" && instanceOfPotion(item)){
+      this.usePotion(item);
+    } else if (item.use) {
+      item.use();
     }
   }
 
@@ -417,7 +428,7 @@ export class InventoryService {
       // use all the ones you have now
       for (let i = this.itemStacks.length - 1; i >= 0; i--){
         while (this.itemStacks.length > i && this.itemStacks[i].item.name == item.name){
-          this.useItem(this.itemStacks[i]);
+          this.useItemStack(this.itemStacks[i]);
         }
       }
     }

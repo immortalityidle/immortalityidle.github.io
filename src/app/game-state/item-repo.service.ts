@@ -276,6 +276,7 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.01){
           this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
         }
         this.characterService.characterState.checkOverage();
       },
@@ -293,6 +294,7 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.02){
           this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
         }
         this.characterService.characterState.checkOverage();
       },
@@ -310,6 +312,7 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.05){
           this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 40)){
             this.characterService.characterState.foodLifespan += 1;
           }
@@ -330,6 +333,7 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.1){
           this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 54)){
             this.characterService.characterState.foodLifespan += 1;
           }
@@ -350,6 +354,7 @@ export class ItemRepoService {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.2){
           this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value += 2;
           if (this.characterService.characterState.foodLifespan < (365 * 72)){
             this.characterService.characterState.foodLifespan += 1;
           }
@@ -797,6 +802,31 @@ export class ItemRepoService {
           this.homeService = this.injector.get(HomeService);
         }
         return this.homeService.autoFieldUnlocked;
+      }
+    },
+    autoPotionManual: {
+      id: 'autoPotionManual',
+      name: "Manual of Gluttonous Potion Consumption",
+      type: "manual",
+      description: "This manual teaches you to automatically use all potions.",
+      value: 200000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock autodrinking all potions.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoPotionUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoPotionUnlocked;
       }
     }
   }

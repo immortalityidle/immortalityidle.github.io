@@ -70,7 +70,7 @@ export class InventoryPanelComponent {
 
   use(): void {
     if (this.inventoryService.selectedItem){
-      this.inventoryService.useItem(this.inventoryService.selectedItem);
+      this.inventoryService.useItemStack(this.inventoryService.selectedItem);
     }
   }
 
