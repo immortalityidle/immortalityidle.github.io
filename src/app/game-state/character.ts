@@ -166,7 +166,7 @@ export class Character {
         // gain aptitude based on last life's value
         this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 100;
         // start at the aptitude value
-        this.attributes[keys[key]].value = this.attributes[keys[key]].aptitude;
+        this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].aptitude);
       }
       totalAptitude += this.attributes[keys[key]].aptitude;
     }
@@ -185,6 +185,13 @@ export class Character {
       legs: null,
       feet: null
     }
+  }
+
+  getAttributeStartingValue(aptitude: number): number{
+    if (aptitude < 1000){
+      return aptitude;
+    }
+    return 1000 + Math.log2(aptitude - 999);
   }
 
   recalculateLifespan(): void{

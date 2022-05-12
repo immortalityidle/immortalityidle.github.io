@@ -208,7 +208,7 @@ export class InventoryService {
       quality = herbQuality[herbQuality.length - 1];
     } else {
       let nameIndex = grade % herbNames.length;
-      let qualityIndex = Math.floor(grade / herbQuality.length);
+      let qualityIndex = Math.floor(grade / herbNames.length);
       name = herbNames[nameIndex];
       quality = herbQuality[qualityIndex];
     }

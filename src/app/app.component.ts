@@ -92,4 +92,8 @@ export class AppComponent implements OnInit {
     this.gameStateService.cheat();
   }
 
+  rebirthClicked(event: Event){
+    event.preventDefault();
+    this.gameStateService.rebirth();
+  }
 }

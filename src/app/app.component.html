@@ -14,7 +14,10 @@
           settings
         </mat-icon>
       </span>
-      <a class="cheat" href="" (click)="cheat($event)">.</a>
+      <span>
+        <a href="" tooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">Rebirth</a>
+        <a class="cheat" href="" (click)="cheat($event)">.</a>
+      </span>
       <a href="" tooltip="Autosaves fire every couple of minutes, but sometimes an immortal needs to save right now." (click)="saveClicked($event)">Save</a>
       <a href="" tooltip="Completely restart your journey toward immortality." placement="left" (click)="hardResetClicked()">Hard Reset</a>
     </div>

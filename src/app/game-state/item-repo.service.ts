@@ -20,8 +20,8 @@ export class ItemRepoService {
       name: "Blanket",
       type: 'furniture',
       slot: 'bed',
-      value: 1,
-      description: "A tattered blanket. Not much, but it could keep you warm at night.",
+      value: 10,
+      description: "A tattered blanket. Not much, but it could keep you warm at night. Increases daily stamina recovery by 1.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value++;
@@ -32,8 +32,8 @@ export class ItemRepoService {
       name: "Sleeping Mmt",
       type: 'furniture',
       slot: 'bed',
-      value: 1,
-      description: "A thin woven mat to sleep on. Improves stamina gain each night.",
+      value: 100,
+      description: "A thin woven mat to sleep on. . Increases daily stamina recovery by 2.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 2;
@@ -44,8 +44,8 @@ export class ItemRepoService {
       name: "Canopy Bed",
       type: 'furniture',
       slot: 'bed',
-      value: 1,
-      description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night.",
+      value: 10000,
+      description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 3.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 3;
@@ -56,11 +56,12 @@ export class ItemRepoService {
       name: "Heated Bed",
       type: 'furniture',
       slot: 'bed',
-      value: 1,
-      description: "A bed built over a small clay oven. Keeps you toasty on even the coldest nights.",
+      value: 100000,
+      description: "A bed built over a small clay oven. Keeps you toasty on even the coldest nights. Increases daily stamina recovery by 5 and improves health recovery.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 4;
+        this.characterService.characterState.status.stamina.value += 5;
+        this.characterService.characterState.status.health.value += 1;
       }
     },
     bedOfNails: {
@@ -68,10 +69,11 @@ export class ItemRepoService {
       name: "Bed of Nails",
       type: 'furniture',
       slot: 'bed',
-      value: 1,
-      description: "A solid board with nails poking upwards. Certain to toughen you up.",
+      value: 10000,
+      description: "A solid board with nails poking upwards. You won't sleep as well, but it is certain to toughen you up.",
       useConsumes: false,
       use: () => {
+        this.characterService.characterState.status.stamina.value -= 1;
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
       }
     },
@@ -80,8 +82,8 @@ export class ItemRepoService {
       name: "water bucket ",
       type: 'furniture',
       slot: 'bathtub',
-      value: 1,
-      description: "A bucket of water that lets you splash water on your face.",
+      value: 10,
+      description: "A bucket of water that lets you splash water on your face. Increases charisma.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.01);
@@ -92,8 +94,8 @@ export class ItemRepoService {
       name: "wash basin",
       type: 'furniture',
       slot: 'bathtub',
-      value: 1,
-      description: "A wash basin with a rag to clean yourself.",
+      value: 1000,
+      description: "A wash basin with a rag to clean yourself. Increases charisma.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.05);
@@ -104,11 +106,12 @@ export class ItemRepoService {
       name: "wooden tub",
       type: 'furniture',
       slot: 'bathtub',
-      value: 1,
-      description: "A tall and narrow tub where you can squat and bathe.",
+      value: 10000,
+      description: "A tall and narrow tub where you can squat and bathe. Increases charisma and health recovery.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.1);
+        this.characterService.characterState.status.health.value += 1;
       }
     },
     bronzeTub: {
@@ -116,11 +119,12 @@ export class ItemRepoService {
       name: "bronze tub",
       type: 'furniture',
       slot: 'bathtub',
-      value: 1,
-      description: "A luxurious tub where you can get sparkling clean.",
+      value: 1000000,
+      description: "A luxurious tub where you can get sparkling clean. Increases charisma and health recovery.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
+        this.characterService.characterState.status.health.value += 1;
       }
     },
     heatedTub: {
@@ -128,11 +132,13 @@ export class ItemRepoService {
       name: "heated tub",
       type: 'furniture',
       slot: 'bathtub',
-      value: 1,
+      value: 100000000,
       description: "A luxurious tub with its own heating stove. Good for your health and beauty.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
+        this.characterService.characterState.status.stamina.value += 5;
+        this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.health.max += 1;
       }
     },
@@ -141,8 +147,8 @@ export class ItemRepoService {
       name: "cook pot",
       type: 'furniture',
       slot: 'kitchen',
-      value: 1,
-      description: "A simple pot over a fire to boil your food.",
+      value: 10,
+      description: "A simple pot over a fire to boil your food. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.01);
@@ -155,8 +161,8 @@ export class ItemRepoService {
       name: "roasting spit",
       type: 'furniture',
       slot: 'kitchen',
-      value: 1,
-      description: "A simple spit to go along with your cookpot, letting you add more variety to your diet.",
+      value: 1000,
+      description: "A simple spit to go along with your cookpot, letting you add more variety to your diet. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.02);
@@ -169,8 +175,8 @@ export class ItemRepoService {
       name: "wok",
       type: 'furniture',
       slot: 'kitchen',
-      value: 1,
-      description: "A large metal wok to stir-fry a tasty dinner.",
+      value: 1000000,
+      description: "A large metal wok to stir-fry a tasty dinner. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.05);
@@ -183,8 +189,8 @@ export class ItemRepoService {
       name: "chef kitchen",
       type: 'furniture',
       slot: 'kitchen',
-      value: 1,
-      description: "An elaborate kitchen that allows you to cook anything.",
+      value: 1000000000,
+      description: "An elaborate kitchen that allows you to cook anything. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.1);
@@ -197,7 +203,7 @@ export class ItemRepoService {
       name: "anvil",
       type: 'furniture',
       slot: 'workbench',
-      value: 1,
+      value: 1000000,
       description: "An anvil to work on blacksmithing.",
       useConsumes: false,
       use: () => {
@@ -209,11 +215,23 @@ export class ItemRepoService {
       name: "herb garden",
       type: 'furniture',
       slot: 'workbench',
-      value: 1,
+      value: 1000000,
       description: "An pleasant garden growing herbs.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('plantLore', 0.1);
+      }
+    },
+    dogKennel: {
+      id: 'dogKennel',
+      name: "dog kennel",
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1000000,
+      description: "A kennel for training hunting dogs.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('animalLore', 0.1);
       }
     },
     cauldron: {
@@ -221,7 +239,7 @@ export class ItemRepoService {
       name: "cauldron",
       type: 'furniture',
       slot: 'workbench',
-      value: 1,
+      value: 1000000,
       description: "A cauldron for practicing alchemy.",
       useConsumes: false,
       use: () => {
@@ -372,6 +390,13 @@ export class ItemRepoService {
         }
         this.characterService.characterState.checkOverage();
       },
+    },
+    hide: {
+      id: 'hide',
+      name: 'hide',
+      type: 'hide',
+      value: 50,
+      description: 'A basic animal hide.'
     },
     elmLog: {
       id: 'elmLog',

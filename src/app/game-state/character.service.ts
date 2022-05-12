@@ -9,6 +9,7 @@ import { Character } from './character';
 })
 export class CharacterService {
   characterState = new Character();
+  forceRebirth: boolean = false;
 
   constructor(
     mainLoopService: MainLoopService,
@@ -22,7 +23,9 @@ export class CharacterService {
       this.characterState.status.nourishment.value--;
       // check for death
       let deathMessage = "";
-      if (this.characterState.age >= this.characterState.lifespan) {
+      if (this.forceRebirth){
+        deathMessage = "You release your soul from your body.";
+      } else if (this.characterState.age >= this.characterState.lifespan) {
         deathMessage = "You reach the end of your natural life and pass away from old age.";
       } else if (this.characterState.status.nourishment.value <= 0) {
         if (this.characterState.attributes.spirituality.value > 0){
@@ -40,9 +43,11 @@ export class CharacterService {
       }
       if (deathMessage != ""){
         this.logService.addLogMessage(deathMessage, 'INJURY', 'REBIRTH');
-        this.logService.addLogMessage(
-          "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
-          'STANDARD', 'REBIRTH');
+        if (!this.forceRebirth){
+          this.logService.addLogMessage(
+            "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
+            'STANDARD', 'REBIRTH');
+        }
         this.logService.addLogMessage(
           "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again.",
           'STANDARD', 'REBIRTH');
@@ -51,6 +56,7 @@ export class CharacterService {
           'STANDARD', 'REBIRTH');
         this.reincarnationService.reincarnate();
         this.characterState.dead = true; // use this flag to stop other events until the next tick
+        this.forceRebirth = false;
       }
     });
 

@@ -616,7 +616,11 @@ export class ActivityService {
         consequence: [() => {
           this.characterService.characterState.status.stamina.value -= 50;
           this.characterService.characterState.increaseAttribute('speed', 0.1);
-          if (Math.random() < 0.1) {
+          let huntingSuccessChance = 0.1;
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "dogKennel"){
+            huntingSuccessChance += 0.4;
+          }
+          if (Math.random() < huntingSuccessChance) {
             this.characterService.characterState.increaseAttribute('animalLore', 0.1);
             this.inventoryService.addItem(this.itemRepoService.items['meat']);
           }

@@ -4,6 +4,7 @@ import { CharacterService } from '../game-state/character.service';
 import { InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { ItemRepoService } from '../game-state/item-repo.service';
 
 export interface Enemy {
   name: string,
@@ -12,6 +13,7 @@ export interface Enemy {
   accuracy: number,
   attack: number,
   defense: number,
+  loot: Item[]
 };
 
 export interface EnemyStack {
@@ -40,6 +42,7 @@ export class BattleService {
   constructor(
     private logService: LogService,
     private characterService: CharacterService,
+    private itemRepoService: ItemRepoService,
     private inventoryService: InventoryService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService
@@ -120,6 +123,9 @@ export class BattleService {
       if (this.currentEnemy.enemy.health <= 0){
         this.kills++;
         this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
+        for (let item of this.currentEnemy.enemy.loot){
+          this.inventoryService.addItem(item);
+        }
         this.currentEnemy.quantity--;
         if (this.currentEnemy.quantity <= 0){
           let index = this.enemies.indexOf(this.currentEnemy);
@@ -161,7 +167,8 @@ export class BattleService {
       maxHealth: 2,
       accuracy: 5,
       attack: 0.5,
-      defense: 0
+      defense: 0,
+      loot: []
     },
     wolf: {
       name: "a hungry wolf",
@@ -169,7 +176,11 @@ export class BattleService {
       maxHealth: 20,
       accuracy: 50,
       attack: 5,
-      defense: 2
+      defense: 2,
+      loot: [
+        this.itemRepoService.items['meat'],
+        this.itemRepoService.items['hide']
+      ]
     }
   }
 

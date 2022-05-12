@@ -84,6 +84,10 @@ export class GameStateService {
     this.reincarnationService.reincarnate();
   }
 
+  rebirth(): void {
+    this.characterService.forceRebirth = true;
+  }
+
   cheat(): void {
     this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","SYSTEM");
     this.characterService.characterState.money = 1000000000;

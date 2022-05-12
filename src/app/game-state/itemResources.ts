@@ -439,8 +439,6 @@ export var ItemPrefixes = [
 ]
 
 export var herbNames = [
-  "rhubarb",
-  "cucumber",
   "patchouli",
   "alangium",
   "lobelia",
@@ -473,7 +471,7 @@ export var herbNames = [
 ]
 
 export var herbQuality = [
-  "dead",
+  "rotten",
   "wilted",
   "poor",
   "weak",
