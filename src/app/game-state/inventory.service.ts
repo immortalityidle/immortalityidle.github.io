@@ -161,6 +161,7 @@ export class InventoryService {
     }
     let value = prefixIndex;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'EVENT');
+    let durability = Math.floor(Math.random() * prefixIndex * 10);
     return {
       id: 'weapon',
       name: name,
@@ -168,13 +169,13 @@ export class InventoryService {
       slot: slot,
       value: value,
       weaponStats: {
-        baseDamage: grade,
+        baseDamage: prefixIndex,
         material: material,
-        durability: prefixIndex * 10,
+        durability: durability,
         strengthScaling: Math.random() * grade,
         speedScaling: Math.random() * grade,
       },
-      description: 'A unique and special weapon.',
+      description: 'A unique weapon made of ' + material + ".<br/>Base Damage: " + prefixIndex + "<br/>Durability: " + durability
     };
   }
 
@@ -456,7 +457,7 @@ export class InventoryService {
 
   unAutoBalance(itemName: string){
     for (let index = 0; index < this.autoBalanceItems.length; index++){
-      
+
       if (this.autoBalanceItems[index].name == itemName){
         this.autoBalanceItems.splice(index, 1);
         return;
