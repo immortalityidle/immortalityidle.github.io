@@ -1,6 +1,7 @@
-<h3 tooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">
-    <mat-icon>fort</mat-icon>
+<h3>
+    <mat-icon tooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">fort</mat-icon>
     Battles
+    <span class="rightAligned"><button (click)="battleService.trouble()">Look for Trouble</button></span>
 </h3>
 <div class="battleContainer">
     <table>
@@ -10,7 +11,7 @@
               <button *ngIf="battleService.currentEnemy !== enemyStack" (click)="battleService.fight(enemyStack)">Fight</button>
               <span *ngIf="battleService.currentEnemy === enemyStack">Fighting</span>
           </td>
-          <td>{{enemyStack.enemy.name}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
+          <td>{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
           <td class="health">
             <progress class="status-progress"
               [value]="enemyStack.enemy.health"

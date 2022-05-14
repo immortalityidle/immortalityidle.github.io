@@ -24,7 +24,8 @@ export interface EnemyStack {
 export interface BattleProperties {
   enemies: EnemyStack[],
   currentEnemy: EnemyStack | null,
-  kills: number
+  kills: number,
+  troubleKills: number
 }
 
 
@@ -37,6 +38,7 @@ export class BattleService {
   enemies: EnemyStack[];
   currentEnemy: EnemyStack | null;
   kills: number;
+  troubleKills: number;
 
 
   constructor(
@@ -50,6 +52,7 @@ export class BattleService {
     this.enemies = [];
     this.currentEnemy = null;
     this.kills = 0;
+    this.troubleKills = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
@@ -71,13 +74,15 @@ export class BattleService {
   reset(){
     this.enemies = [];
     this.currentEnemy = null;
+    this.kills = 0;
   }
 
   getProperties(): BattleProperties {
     return {
       enemies: this.enemies,
       currentEnemy: this.currentEnemy,
-      kills: this.kills
+      kills: this.kills,
+      troubleKills: this.troubleKills
     }
   }
 
@@ -85,6 +90,7 @@ export class BattleService {
     this.enemies = properties.enemies;
     this.currentEnemy = properties.currentEnemy;
     this.kills = properties.kills;
+    this.troubleKills = properties.troubleKills;
   }
 
   enemiesAttack(){
@@ -155,9 +161,33 @@ export class BattleService {
     }
     // it didn't match any, create a new enemyStack
     this.enemies.push({enemy: JSON.parse(JSON.stringify(enemy)), quantity: 1});
-}
+  }
 
-  addItem(item: Item): void {
+  // generate a monster based on current troubleKills
+  trouble(){
+    if (this.enemies.length != 0){
+      return;
+    }
+    let rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
+    let index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
+    let nameIndex = Math.floor(index / this.monsterQualities.length);
+    let qualityIndex = index % this.monsterQualities.length;
+
+    let monsterName = this.monsterQualities[qualityIndex] + " " + this.monsterNames[nameIndex];
+    if (rank > 0){
+      monsterName += " " + (rank + 1);
+    }
+
+    this.addEnemy({
+      name: monsterName,
+      health: this.troubleKills * 10,
+      maxHealth: this.troubleKills * 10,
+      accuracy: 50,
+      attack: this.troubleKills / 10,
+      defense: Math.floor(Math.log2(this.troubleKills)),
+      loot: []
+    });
+    this.troubleKills++;
   }
 
   enemyRepo = {
@@ -184,4 +214,14 @@ export class BattleService {
     }
   }
 
+  monsterNames = ["spider", "rat", "lizard", "snake", "imp", "jackalope", "goblin", "zombie", "hobgoblin",
+    "basilisk", "mogwai", "gremlin", "orc", "tiger", "ghost", "troll", "manticore", "merlion",
+    "bugbear", "yeti", "dreameater", "unicorn", "hellhound", "chimaera", "undine", "minotaur", "bunyip",
+    "wyvern", "doomworm", "giant", "phoenix", "titan", "stormbringer"];
+
+  monsterQualities = [
+    "a pathetic", "an infant", "a sickly", "a wimpy", "a weak", "a tired", "a poor",
+    "an average", "a healthy", "a big", "a tough", "a strong", "a mighty", "a powerful",
+    "a dangeround", "a terrifying", "an abominable", "a demonic", "a diabolical", "an infernal"
+  ];
 }
