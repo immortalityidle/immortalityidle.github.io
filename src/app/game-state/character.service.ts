@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
-import { Character } from './character';
+import { Character, AttributeType } from './character';
 
 @Injectable({
   providedIn: 'root'
@@ -67,6 +67,25 @@ export class CharacterService {
           'STANDARD', 'REBIRTH');
         this.characterState.money += 100;
       }
-    })
+    });
+
   }
+
+  condenseSoulCore(){
+    this.logService.addLogMessage("Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.", 'STANDARD', 'REBIRTH');
+    this.characterState.condenseSoulCoreCost *= 10;
+    this.characterState.aptitudeGainDivider /= 2;
+    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
+    for (const key in keys){
+      let attribute = this.characterState.attributes[keys[key]];
+      attribute.aptitude = 1;
+      if (parseInt(key) < 5){
+        attribute.value = 1;
+      } else {
+        attribute.value = 0;
+      }
+    }
+    this.forceRebirth = true;
+  }
+
 }

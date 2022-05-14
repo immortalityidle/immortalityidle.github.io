@@ -84,3 +84,13 @@
       Buy
   </button>
 </div>
+<div *ngIf="storeService.selling === 'ascension'">
+  <span>Ascension Shop</span>
+  <hr/>
+  <button 
+    (click)="storeService.ascendAttributeGain()"
+    tooltip="Requires {{characterService.characterState.condenseSoulCoreCost}} spirituality. End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each reincarnation."
+  >
+    Condense Soul Core
+  </button>
+</div>

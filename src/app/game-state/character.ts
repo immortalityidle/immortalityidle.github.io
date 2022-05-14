@@ -1,3 +1,4 @@
+import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { Equipment, Item } from './inventory.service'
 
 export interface CharacterAttribute {
@@ -41,13 +42,25 @@ export interface CharacterProperties {
   status: CharacterStatus,
   baseLifespan: number,
   foodLifespan: number,
-  statLifespan: number
+  statLifespan: number,
+  attributeScaling1: number,
+  attributeScaling2: number,
+  attributeScaling3: number,
+  attributeSoftCap: number,
+  aptitudeGainDivider: number,
+  condenseSoulCoreCost: number
 }
 
 const INITIAL_AGE = 18 * 365;
 
 export class Character {
   dead: boolean = false;
+  attributeScaling1: number = 10;
+  attributeScaling2: number = 100;
+  attributeScaling3: number = 1000;
+  attributeSoftCap: number = 10000;
+  aptitudeGainDivider: number = 100;
+  condenseSoulCoreCost: number = 10;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -164,7 +177,7 @@ export class Character {
     for (const key in keys){
       if (this.attributes[keys[key]].value > 0){
         // gain aptitude based on last life's value
-        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 100;
+        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / this.aptitudeGainDivider;
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].aptitude);
       }
@@ -188,10 +201,10 @@ export class Character {
   }
 
   getAttributeStartingValue(aptitude: number): number{
-    if (aptitude < 1000){
+    if (aptitude < this.attributeSoftCap){
       return aptitude;
     }
-    return 1000 + Math.log2(aptitude - 999);
+    return this.attributeSoftCap + Math.log2(aptitude - (this.attributeSoftCap - 1));
   }
 
   recalculateLifespan(): void{
@@ -199,14 +212,16 @@ export class Character {
   }
 
   getAptitudeMultipier(aptitude: number): number {
-    if (aptitude < 10){
+    if (aptitude < this.attributeScaling1){
       return aptitude;
-    } else if (aptitude < 100){
-      return 10 + ((aptitude - 10) / 2);
-    } else if (aptitude < 1000){
-      return 100 + ((aptitude - 100) / 10);
+    } else if (aptitude < this.attributeScaling2){
+      return this.attributeScaling1 + ((aptitude - this.attributeScaling1) / 4);
+    } else if (aptitude < this.attributeScaling3){
+      return this.attributeScaling2 + ((aptitude - this.attributeScaling2) / 20);
+    } else if (aptitude < this.attributeSoftCap){
+      return this.attributeScaling3 + ((aptitude - this.attributeScaling3) / 100);
     } else {
-      return 1000 + Math.log2(aptitude - 999);
+      return this.attributeSoftCap + Math.log2(aptitude - (this.attributeSoftCap - 1));
     }
   }
 
@@ -235,7 +250,13 @@ export class Character {
       status: this.status,
       baseLifespan: this.baseLifespan,
       foodLifespan: this.foodLifespan,
-      statLifespan: this.statLifespan
+      statLifespan: this.statLifespan,
+      attributeScaling1: this.attributeScaling1,
+      attributeScaling2: this.attributeScaling2,
+      attributeScaling3: this.attributeScaling3,
+      attributeSoftCap: this.attributeSoftCap,
+      aptitudeGainDivider: this.aptitudeGainDivider,
+      condenseSoulCoreCost: this.condenseSoulCoreCost
     }
   }
 
@@ -248,6 +269,12 @@ export class Character {
     this.baseLifespan = properties.baseLifespan;
     this.foodLifespan = properties.foodLifespan;
     this.statLifespan = properties.statLifespan;
+    this.attributeScaling1 = properties.attributeScaling1;
+    this.attributeScaling2 = properties.attributeScaling1;
+    this.attributeScaling3 = properties.attributeScaling1;
+    this.attributeSoftCap = properties.attributeSoftCap;
+    this.aptitudeGainDivider = properties.aptitudeGainDivider;
+    this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
     this.recalculateLifespan();
   }
 }

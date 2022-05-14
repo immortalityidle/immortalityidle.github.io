@@ -5,6 +5,7 @@ import { MainLoopService } from './main-loop.service';
 import { StoreModalComponent } from './store-modal/store-modal.component';
 import { HostListener } from '@angular/core';
 import { StoreService } from './store-modal/store.service';
+import { CharacterService } from './game-state/character.service';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -52,6 +53,7 @@ export class AppComponent implements OnInit {
     private mainLoopService: MainLoopService,
     private gameStateService: GameStateService,
     private storeService: StoreService,
+    public characterService: CharacterService,
     public dialog: MatDialog
   ) {}
 
@@ -95,5 +97,13 @@ export class AppComponent implements OnInit {
   rebirthClicked(event: Event){
     event.preventDefault();
     this.gameStateService.rebirth();
+  }
+
+  ascensionStoreClicked(){
+    this.storeService.setStoreInventory("ascension");
+    const dialogRef = this.dialog.open(StoreModalComponent, {
+      width: '500px',
+      data: {someField: 'foo'}
+    });
   }
 }

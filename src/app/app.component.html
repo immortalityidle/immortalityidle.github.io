@@ -14,8 +14,14 @@
           settings
         </mat-icon>
       </span>
+      <span *ngIf="characterService.characterState.attributes.spirituality.value > 10">
+        <mat-icon tooltip="Ascension Store."
+          (click)="ascensionStoreClicked()">
+          keyboard_double_arrow_up
+        </mat-icon>
+      </span>
       <span>
-        <a href="" tooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">Rebirth</a>
+        <a href="" tooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">Reincarnate</a>
         <a class="cheat" href="" (click)="cheat($event)">.</a>
       </span>
       <a href="" tooltip="Autosaves fire every couple of minutes, but sometimes an immortal needs to save right now." (click)="saveClicked($event)">Save</a>
