@@ -284,10 +284,12 @@ export class ActivityService {
             }
             if (Math.random() < blacksmithSuccessChance) {
               this.characterService.characterState.increaseAttribute('metalLore', 0.5);
-              let grade = this.inventoryService.consume('metal');
-              if (grade >= 1){ // if the metal was found
-                this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                    grade + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('metal');
+                if (grade >= 1){ // if the metal was found
+                  this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                      grade + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                }
               }
             }
           },
@@ -306,10 +308,12 @@ export class ActivityService {
             }
             if (Math.random() < blacksmithSuccessChance) {
               this.characterService.characterState.increaseAttribute('metalLore',0.8);
-              let grade = this.inventoryService.consume('metal');
-              if (grade >= 1){ // if the metal was found
-                this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('metal');
+                if (grade >= 1){ // if the metal was found
+                  this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                }
               }
             }
           }
@@ -402,10 +406,12 @@ export class ActivityService {
               this.characterService.characterState.increaseAttribute('plantLore',0.1);
               this.characterService.characterState.increaseAttribute('animalLore',0.1);
               this.characterService.characterState.increaseAttribute('alchemy',0.2);
-              let grade = this.inventoryService.consume('ingredient');
-              if (grade >= 1){ // if the ingredient was found
-                grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
-                this.inventoryService.addItem(this.inventoryService.generatePotion(grade));
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('ingredient');
+                if (grade >= 1){ // if the ingredient was found
+                  grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
+                  this.inventoryService.addItem(this.inventoryService.generatePotion(grade));
+                }
               }
             }
           },
@@ -424,10 +430,12 @@ export class ActivityService {
               this.characterService.characterState.increaseAttribute('plantLore',0.2);
               this.characterService.characterState.increaseAttribute('animalLore',0.2);
               this.characterService.characterState.increaseAttribute('alchemy',0.5);
-              let grade = this.inventoryService.consume('ingredient');
-              grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
-              if (grade >= 1){ // if the ingredient was found
-                this.inventoryService.addItem(this.inventoryService.generatePotion(grade + 1));
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('ingredient');
+                grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
+                if (grade >= 1){ // if the ingredient was found
+                  this.inventoryService.addItem(this.inventoryService.generatePotion(grade + 1));
+                }
               }
             }
           }
@@ -505,10 +513,12 @@ export class ActivityService {
               (this.characterService.characterState.attributes.plantLore.value * 2);
             if (Math.random() < 0.01) {
               this.characterService.characterState.increaseAttribute('plantLore',0.5);
-              let grade = this.inventoryService.consume('wood');
-              if (grade >= 1){ // if the wood was found
-                this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('wood');
+                if (grade >= 1){ // if the wood was found
+                  this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                    grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
+                }
               }
             }
           },
@@ -522,10 +532,12 @@ export class ActivityService {
               (this.characterService.characterState.attributes.plantLore.value * 5);
             if (Math.random() < 0.01) {
               this.characterService.characterState.increaseAttribute('plantLore',0.8);
-              let grade = this.inventoryService.consume('wood');
-              if (grade >= 1){ // if the wood was found
-                this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('wood');
+                if (grade >= 1){ // if the wood was found
+                  this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                    grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
+                }
               }
             }
           }
@@ -597,9 +609,11 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 20;
           this.characterService.characterState.increaseAttribute('toughness', 0.1);
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
-          let grade = this.inventoryService.consume("ore");
-          if (grade >= 1){
-            this.inventoryService.addItem(this.inventoryService.getBar(grade));
+          if (this.inventoryService.openInventorySlots() > 0){
+            let grade = this.inventoryService.consume("ore");
+            if (grade >= 1){
+              this.inventoryService.addItem(this.inventoryService.getBar(grade));
+            }
           }
         }],
         requirements: [{

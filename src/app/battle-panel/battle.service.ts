@@ -222,6 +222,6 @@ export class BattleService {
   monsterQualities = [
     "a pathetic", "an infant", "a sickly", "a wimpy", "a weak", "a tired", "a poor",
     "an average", "a healthy", "a big", "a tough", "a strong", "a mighty", "a powerful",
-    "a dangeround", "a terrifying", "an abominable", "a demonic", "a diabolical", "an infernal"
+    "a dangerous", "a terrifying", "an abominable", "a demonic", "a diabolical", "an infernal"
   ];
 }

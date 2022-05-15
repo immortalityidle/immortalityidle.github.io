@@ -45,6 +45,7 @@ export class MainLoopService {
   }
 
   start() {
+    // TODO: check out chrome's thing where it slows ticks way down when the tab isn't active and figure out how to compensate
     window.setInterval(()=> {
       if (!this.pause) {
         this.tickCount++;

@@ -25,4 +25,26 @@ export class EquipmentPanelComponent {
     return item?.slot;
   }
 
+  allowDrop(event: DragEvent){
+    if (event.dataTransfer?.types[0] == "inventory"){
+      event.preventDefault();
+    }
+  }
+
+  drag(slot: string, event: DragEvent){
+    event.dataTransfer?.setData("equipment", slot);
+  }
+
+  drop(slot: string, event: DragEvent){
+    event.preventDefault();
+    let sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
+    let sourceIndex = parseInt(sourceIndexString);
+    if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
+      let itemToEquip = this.inventoryService.itemStacks[sourceIndex];
+      if (itemToEquip){
+        this.inventoryService.equip(itemToEquip);
+        this.inventoryService.selectedItem = null;
+      }
+    }
+  }
 }

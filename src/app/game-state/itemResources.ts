@@ -438,6 +438,41 @@ export var ItemPrefixes = [
   "unthinkable",
 ]
 
+export var ItemSuffixes = [
+  "irritation",
+  "annoyance",
+  "embarassment",
+  "confusion",
+  "frostbite",
+  "flames",
+  "wounding",
+  "light",
+  "darkness",
+  "power",
+  "decimation",
+  "destruction",
+  "supremacy",
+  "annihilation",
+]
+
+export var ItemSuffixModifiers = [
+  "partial",
+  "substantial",
+  "blinding",
+  "overwhelming",
+  "complete",
+  "burning",
+  "total",
+  "incalculable",
+  "unfathomable",
+  "obliterating",
+  "limitless",
+  "infinite",
+  "eternal",
+  "supreme",
+  "perfect"
+]
+
 export var herbNames = [
   "patchouli",
   "alangium",

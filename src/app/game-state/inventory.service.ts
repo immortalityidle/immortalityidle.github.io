@@ -6,7 +6,7 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
-import { WeaponNames, ItemPrefixes, herbNames, herbQuality } from './itemResources';
+import { WeaponNames, ItemPrefixes, ItemSuffixes, ItemSuffixModifiers, herbNames, herbQuality } from './itemResources';
 import { FurniturePosition } from './home.service';
 
 export interface WeaponStats {
@@ -155,38 +155,49 @@ export class InventoryService {
     }
   }
 
-  // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
+  // materials are wood or metal (TODO: more detail on materials)
   generateWeapon(grade: number, material: string): Equipment {
-    let prefixMax = (grade / 10) * ItemPrefixes.length;
-    let prefixIndex = Math.floor(Math.random() * prefixMax);
-    if (prefixIndex >= ItemPrefixes.length){
-      // make sure we don't go over the top
-      prefixIndex = ItemPrefixes.length - 1;
-    }
+    let prefixIndex = grade % ItemPrefixes.length;
+    let suffixIndex = Math.floor(grade / ItemPrefixes.length);
     let prefix = ItemPrefixes[prefixIndex];
-    let name = prefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
+    let suffix = "";
+    if (suffixIndex > 0){
+      let suffixModifierIndex = Math.floor(suffixIndex / ItemSuffixes.length);
+      if (suffixModifierIndex > 0){
+        if (suffixModifierIndex > ItemSuffixModifiers.length){
+          suffixModifierIndex = ItemSuffixModifiers.length;
+          suffixIndex = ItemSuffixes.length - 1;
+        } else {
+          suffixIndex = suffixIndex % ItemSuffixes.length;
+        }
+        let suffixModifier = ItemSuffixModifiers[suffixModifierIndex - 1];
+        suffix = " of " + suffixModifier + " " + ItemSuffixes[suffixIndex];
+      } else {
+        suffix = " of " + ItemSuffixes[suffixIndex - 1];
+      }
+    }
+    let name = prefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)] + suffix;
     let slot: EquipmentPosition = 'rightHand';
     if (material === "wood") {
       // incentivizing to do both metal and wood. Maybe change this later.
       slot = 'leftHand';
     }
-    let value = prefixIndex;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'EVENT');
-    let durability = Math.floor(Math.random() * prefixIndex * 10);
+    let durability = Math.floor(Math.random() * grade * 10);
     return {
       id: 'weapon',
       name: name,
       type: "equipment",
       slot: slot,
-      value: value,
+      value: grade,
       weaponStats: {
-        baseDamage: prefixIndex,
+        baseDamage: grade,
         material: material,
         durability: durability,
         strengthScaling: Math.random() * grade,
         speedScaling: Math.random() * grade,
       },
-      description: 'A unique weapon made of ' + material + ".<br/>Base Damage: " + prefixIndex + "<br/>Durability: " + durability
+      description: 'A unique weapon made of ' + material + ".<br/>Base Damage: " + grade + "<br/>Durability: " + durability
     };
   }
 
@@ -334,7 +345,7 @@ export class InventoryService {
     }
   }
 
-  addItem(item: Item): void {
+  addItem(item: Item): number {
     for (let balanceItem of this.autoBalanceItems){
       if (balanceItem.name == item.name){
         if (balanceItem.index < balanceItem.useNumber){
@@ -349,45 +360,50 @@ export class InventoryService {
         if (balanceItem.index >= balanceItem.sellNumber + balanceItem.useNumber){
           balanceItem.index = 0;
         }
-        return;
+        return -1;
       }
     }
     if (this.autoPotionUnlocked && item.type == "potion"){
       this.useItem(item);
-      return;
+      return -1;
     }
     if (this.autoUseItems.includes(item.name)){
       this.useItem(item);
-      return;
+      return -1;
     }
     if (this.autoSellItems.includes(item.name)){
       this.characterService.characterState.money += item.value;
-      return;
+      return -1;
     }
-    for (const itemIterator of this.itemStacks) {
-      if (itemIterator == null){
-        continue;
-      }
-      if (
-        itemIterator.item.name == item.name &&
-        itemIterator.quantity < this.maxStackSize
-      ) {
-        // it matches an existing item and there's room in the stack, add it to the stack and bail out
-        itemIterator.quantity++;
-        return;
+    if (item.type != "equipment"){
+      // try to stack the new item with existing items
+      for (let i = 0; i < this.itemStacks.length; i++) {
+        let itemIterator = this.itemStacks[i];
+        if (itemIterator == null){
+          continue;
+        }
+        if (
+          itemIterator.item.name == item.name &&
+          itemIterator.quantity < this.maxStackSize
+        ) {
+          // it matches an existing item and there's room in the stack, add it to the stack and bail out
+          itemIterator.quantity++;
+          return i;
+        }
       }
     }
     // couldn't stack it, make a new stack
     for (let i = 0; i < this.itemStacks.length; i++) {
       if (this.itemStacks[i] == null){
         this.itemStacks[i] = { item: item, quantity: 1 };
-        return;
+        return i;
       }
     }
     // if we're here we didn't find a slot for it.
     this.logService.addLogMessage(
       `You don't have enough room for the ${item.name} so you threw it away.`,
       'STANDARD', 'EVENT');
+    return -1;
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
@@ -545,6 +561,33 @@ export class InventoryService {
   // a special use function for generated potions
   usePotion(potion: Potion){
     this.characterService.characterState.attributes[potion.attribute].value += potion.increase;
+  }
+
+  // return the number of open inventory slots
+  openInventorySlots(){
+    let openSlots = 0;
+    for (const itemIterator of this.itemStacks) {
+      if (itemIterator == null){
+        openSlots++;
+      }
+    }
+    return openSlots;
+  }
+
+  // Create a new piece of equipment based on the two provided. Caller needs to do the destroying of the old items.
+  mergeEquipment(item1: Equipment, item2: Equipment, destinationInventoryIndex: number){
+    if (item1.slot != item2.slot){
+      // not the same slot, bail out
+      return;
+    }
+    // TODO: make this work for other things than weapons eventually
+    let inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + ""));
+    // if we can, move the new item to the desired destination index
+    if (inventoryIndex != destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] == null){
+      this.itemStacks[destinationInventoryIndex] = this.itemStacks[inventoryIndex];
+      this.itemStacks[inventoryIndex] = null;
+    }
+
   }
 }
 

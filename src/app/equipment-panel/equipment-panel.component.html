@@ -2,31 +2,31 @@
 <table>
   <tr>
     <td></td>
-    <td><div class="equipmentSlot headSlot"></div></td>
+    <td><div class="equipmentSlot"></div></td>
     <td></td>
   </tr>
   <tr>
-    <td><div class="equipmentSlot rightHandSlot">
-      <table class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
-        tooltip="{{character.equipment.rightHand?.description}}" placement="left">
-        <tr><td>{{character.equipment.rightHand?.name | titlecase}}</td></tr>
-      </table>
-    </div></td>
-    <td><div class="equipmentSlot bodySlot"></div></td>
-    <td><div class="equipmentSlot leftHandSlot">
-      <table class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
-        tooltip="{{character.equipment.leftHand?.description}}" placement="left">
-        <tr><td>{{character.equipment.leftHand?.name | titlecase}}</td></tr>
-      </table>
-    </div></td>
+    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
+      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('rightHand', $event)" (dragstart)="drag('rightHand', $event)"
+      tooltip="{{character.equipment.rightHand?.description}}" placement="left"
+    >
+      {{character.equipment.rightHand?.name | titlecase}}
+    </td>
+    <td><div class="equipmentSlot"></div></td>
+    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
+      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('leftHand', $event)" (dragstart)="drag('leftHand', $event)"
+      tooltip="{{character.equipment.leftHand?.description}}" placement="left"
+    >
+      {{character.equipment.leftHand?.name | titlecase}}
+    </td>
   </tr>
   <tr>
     <td></td>
-    <td><div class="equipmentSlot legsSlot"></div></td>
+    <td><div class="equipmentSlot"></div></td>
     <td></td>
   </tr>
   <tr>
     <td></td>
-    <td><div class="equipmentSlot feetSlot"></div></td>
+    <td><div class="equipmentSlot"></div></td>
     <td></td>
   </tr>

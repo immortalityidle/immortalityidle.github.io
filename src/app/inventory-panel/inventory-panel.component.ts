@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
-import { EquipmentSlots } from '../game-state/character'
-import { InventoryService, ItemStack } from '../game-state/inventory.service';
+import { EquipmentPosition } from '../game-state/character'
+import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -94,25 +94,54 @@ export class InventoryPanelComponent {
   }
 
   allowDrop(event: DragEvent){
-    if (event.dataTransfer?.types[0] == "inventory"){
+    if (event.dataTransfer?.types[0] == "inventory" || event.dataTransfer?.types[0] == "equipment"){
       event.preventDefault();
     }
-
-    event.preventDefault();
   }
 
   drag(sourceIndex: number, event: DragEvent){
+    this.inventoryService.selectedItem = this.inventoryService.itemStacks[sourceIndex];
     event.dataTransfer?.setData("inventory", sourceIndex + "");
   }
 
   drop(destIndex: number, event: DragEvent){
     event.preventDefault();
-    let sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
-    let sourceIndex = parseInt(sourceIndexString);
-    if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
-      let swapper = this.inventoryService.itemStacks[destIndex];
-      this.inventoryService.itemStacks[destIndex] = this.inventoryService.itemStacks[sourceIndex];
-      this.inventoryService.itemStacks[sourceIndex] = swapper;
+    if (event.dataTransfer?.types[0] == "inventory"){
+      let sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
+      let sourceIndex = parseInt(sourceIndexString);
+      if (sourceIndex == destIndex){
+        return;
+      }
+      if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
+        let sourceItemStack = this.inventoryService.itemStacks[sourceIndex];
+        let destItemStack = this.inventoryService.itemStacks[destIndex];
+        let sourceItem = sourceItemStack?.item;
+        let destItem = destItemStack?.item;
+        if (sourceItem && destItem){
+          if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)){
+            if (sourceItem.slot == destItem.slot){
+              this.inventoryService.itemStacks[destIndex] = null;
+              this.inventoryService.itemStacks[sourceIndex] = null
+              this.inventoryService.selectedItem = null;
+              this.inventoryService.mergeEquipment(sourceItem, destItem, destIndex);
+              return;
+            }
+          }
+        }
+        // it wasn't a merge, just swap their positions
+        this.inventoryService.itemStacks[destIndex] = sourceItemStack;
+        this.inventoryService.itemStacks[sourceIndex] = destItemStack;
+      }
+    } else if (event.dataTransfer?.types[0] == "equipment"){
+      //unequiping something
+      let slot: EquipmentPosition = (event.dataTransfer?.getData("equipment") + "") as EquipmentPosition;
+      let item = this.characterService.characterState.equipment[slot];
+      // check for existence and make sure there's an empty slot for it
+      if (item && this.inventoryService.openInventorySlots() > 0){
+        this.inventoryService.addItem(item as Item);
+        this.characterService.characterState.equipment[slot] = null;
+        this.inventoryService.selectedItem = null;
+      }
     }
   }
 }

@@ -20,7 +20,7 @@
         [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem)}"
         tooltip="{{itemStack?.item?.description}}" placement="left">
         <tr>{{itemStack?.item?.name | titlecase}}</tr>
-        <tr *ngIf="itemStack?.quantity || 0 > 1">{{itemStack?.quantity}}</tr>
+        <tr *ngIf="(itemStack?.quantity || 0) > 1">{{itemStack?.quantity}}</tr>
       </table>
     </div>
   </div>
