@@ -43,24 +43,22 @@ export interface CharacterProperties {
   baseLifespan: number,
   foodLifespan: number,
   statLifespan: number,
-  attributeScaling1: number,
-  attributeScaling2: number,
-  attributeScaling3: number,
+  attributeScalingLimit: number,
   attributeSoftCap: number,
   aptitudeGainDivider: number,
-  condenseSoulCoreCost: number
+  condenseSoulCoreCost: number,
+  reinforceMeridiansCost: number
 }
 
 const INITIAL_AGE = 18 * 365;
 
 export class Character {
   dead: boolean = false;
-  attributeScaling1: number = 10;
-  attributeScaling2: number = 100;
-  attributeScaling3: number = 1000;
+  attributeScalingLimit: number = 10;
   attributeSoftCap: number = 10000;
   aptitudeGainDivider: number = 100;
   condenseSoulCoreCost: number = 10;
+  reinforceMeridiansCost: number = 1000;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -211,17 +209,29 @@ export class Character {
     this.lifespan = this.baseLifespan + this.foodLifespan + this.statLifespan + this.attributes.spirituality.value;
   }
 
+  //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
   getAptitudeMultipier(aptitude: number): number {
-    if (aptitude < this.attributeScaling1){
+    if (aptitude < this.attributeScalingLimit){
+      // linear up to the scaling limit
       return aptitude;
-    } else if (aptitude < this.attributeScaling2){
-      return this.attributeScaling1 + ((aptitude - this.attributeScaling1) / 4);
-    } else if (aptitude < this.attributeScaling3){
-      return this.attributeScaling2 + ((aptitude - this.attributeScaling2) / 20);
+    } else if (aptitude < this.attributeScalingLimit * 10){
+      // from the limit to 10x the limit, change growth rate to 1/4
+      return this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4);
+    } else if (aptitude < this.attributeScalingLimit * 100){
+      // from the 10x limit to 100x the limit, change growth rate to 1/20
+      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+        ((aptitude - (this.attributeScalingLimit * 10)) / 20);
     } else if (aptitude < this.attributeSoftCap){
-      return this.attributeScaling3 + ((aptitude - this.attributeScaling3) / 100);
+      // from the 100x limit to softcap, change growth rate to 1/100
+      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+        (this.attributeScalingLimit * 90 / 20) +
+        ((aptitude - (this.attributeScalingLimit * 100)) / 100);
     } else {
-      return this.attributeSoftCap + Math.log2(aptitude - (this.attributeSoftCap - 1));
+      // increase by log2 of whatever is over the softcap
+      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+        (this.attributeScalingLimit * 90 / 20) +
+        (this.attributeScalingLimit * (this.attributeSoftCap - 100) / 100) +
+        Math.log2(aptitude - this.attributeSoftCap + 1);
     }
   }
 
@@ -251,12 +261,11 @@ export class Character {
       baseLifespan: this.baseLifespan,
       foodLifespan: this.foodLifespan,
       statLifespan: this.statLifespan,
-      attributeScaling1: this.attributeScaling1,
-      attributeScaling2: this.attributeScaling2,
-      attributeScaling3: this.attributeScaling3,
+      attributeScalingLimit: this.attributeScalingLimit,
       attributeSoftCap: this.attributeSoftCap,
       aptitudeGainDivider: this.aptitudeGainDivider,
-      condenseSoulCoreCost: this.condenseSoulCoreCost
+      condenseSoulCoreCost: this.condenseSoulCoreCost,
+      reinforceMeridiansCost: this.reinforceMeridiansCost
     }
   }
 
@@ -269,12 +278,11 @@ export class Character {
     this.baseLifespan = properties.baseLifespan;
     this.foodLifespan = properties.foodLifespan;
     this.statLifespan = properties.statLifespan;
-    this.attributeScaling1 = properties.attributeScaling1;
-    this.attributeScaling2 = properties.attributeScaling1;
-    this.attributeScaling3 = properties.attributeScaling1;
+    this.attributeScalingLimit = properties.attributeScalingLimit;
     this.attributeSoftCap = properties.attributeSoftCap;
     this.aptitudeGainDivider = properties.aptitudeGainDivider;
     this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
+    this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     this.recalculateLifespan();
   }
 }

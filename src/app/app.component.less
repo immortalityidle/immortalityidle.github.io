@@ -1,9 +1,4 @@
-
-@bodyText: black;
-@bodyBackground: #faf8f8;
-@panelBackground: #faf8f8;
-@panelBorder: #121212;
-@shadowColor: #aaaaaa;
+@import (reference) "../styles.less";
 
 .wrapper {
   display: flex;
@@ -27,7 +22,7 @@
 .mainContainer {
     height: 100%;
     width: 100%;
-    background-color: #e6e6e6;
+    background-color: @bodyBackground;
     display:flex;
     flex-direction: column;
     flex-grow: 1;
@@ -76,7 +71,9 @@
 
 .battlePanel {
     flex-grow: 1;
-    min-height: 100px;
+    height: 150px;
+    min-height: 150px;
+    max-height: 150px;
 }
 
 

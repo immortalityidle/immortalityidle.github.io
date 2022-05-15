@@ -15,7 +15,7 @@ export class InventoryPanelComponent {
       this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
   }
 
-  slotClicked(item: ItemStack, event: MouseEvent): void {
+  slotClicked(item: ItemStack | null, event: MouseEvent): void {
     event.preventDefault();
     if (event.shiftKey){
       this.inventoryService.selectedItem = item;
@@ -32,7 +32,7 @@ export class InventoryPanelComponent {
     }
   }
 
-  slotRightClicked(item: ItemStack, event: MouseEvent){
+  slotRightClicked(item: ItemStack| null, event: MouseEvent){
     event.preventDefault();
     this.inventoryService.selectedItem = item;
     if (event.ctrlKey){
@@ -90,6 +90,29 @@ export class InventoryPanelComponent {
     if (this.inventoryService.selectedItem){
       this.inventoryService.equip(this.inventoryService.selectedItem);
       this.inventoryService.selectedItem = null;
+    }
+  }
+
+  allowDrop(event: DragEvent){
+    if (event.dataTransfer?.types[0] == "inventory"){
+      event.preventDefault();
+    }
+
+    event.preventDefault();
+  }
+
+  drag(sourceIndex: number, event: DragEvent){
+    event.dataTransfer?.setData("inventory", sourceIndex + "");
+  }
+
+  drop(destIndex: number, event: DragEvent){
+    event.preventDefault();
+    let sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
+    let sourceIndex = parseInt(sourceIndexString);
+    if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
+      let swapper = this.inventoryService.itemStacks[destIndex];
+      this.inventoryService.itemStacks[destIndex] = this.inventoryService.itemStacks[sourceIndex];
+      this.inventoryService.itemStacks[sourceIndex] = swapper;
     }
   }
 }

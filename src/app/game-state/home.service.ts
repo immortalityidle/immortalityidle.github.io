@@ -93,6 +93,7 @@ export class HomeService {
       cost: 0,
       costPerDay: 0,
       landRequired: 0,
+      maxInventory: 10,
       consequence: () => {
         if (Math.random() < 0.05){
           this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
@@ -111,6 +112,7 @@ export class HomeService {
       cost: 100,
       costPerDay: 1,
       landRequired: 1,
+      maxInventory: 12,
       consequence: () => {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
@@ -132,6 +134,7 @@ export class HomeService {
       cost: 1000,
       costPerDay: 5,
       landRequired: 5,
+      maxInventory: 15,
       consequence: () => {
         this.characterService.characterState.status.health.value += .3;
         this.characterService.characterState.status.stamina.value += 3;
@@ -148,6 +151,7 @@ export class HomeService {
       cost: 10000,
       costPerDay: 10,
       landRequired: 10,
+      maxInventory: 18,
       consequence: () => {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 5;
@@ -165,6 +169,7 @@ export class HomeService {
       cost: 100000,
       costPerDay: 20,
       landRequired: 20,
+      maxInventory: 20,
       consequence: () => {
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 10;
@@ -183,6 +188,7 @@ export class HomeService {
       cost: 1000000,
       costPerDay: 50,
       landRequired: 50,
+      maxInventory: 24,
       consequence: () => {
         this.characterService.characterState.status.health.value += 2;
         this.characterService.characterState.status.stamina.value += 15;
@@ -202,6 +208,7 @@ export class HomeService {
       cost: 10000000,
       costPerDay: 80,
       landRequired: 80,
+      maxInventory: 28,
       consequence: () => {
         this.characterService.characterState.status.health.value += 3;
         this.characterService.characterState.status.stamina.value += 20;
@@ -221,6 +228,7 @@ export class HomeService {
       cost: 100000000,
       costPerDay: 100,
       landRequired: 100,
+      maxInventory: 30,
       consequence: () => {
         this.characterService.characterState.status.health.value += 4;
         this.characterService.characterState.status.stamina.value += 25;
@@ -240,6 +248,7 @@ export class HomeService {
       cost: 1000000000,
       costPerDay: 120,
       landRequired: 120,
+      maxInventory: 32,
       consequence: () => {
         this.characterService.characterState.status.health.value += 5;
         this.characterService.characterState.status.stamina.value += 30;
@@ -259,6 +268,7 @@ export class HomeService {
       cost: 10000000000,
       costPerDay: 150,
       landRequired: 150,
+      maxInventory: 36,
       consequence: () => {
         this.characterService.characterState.status.health.value += 10;
         this.characterService.characterState.status.stamina.value += 35;
@@ -278,6 +288,7 @@ export class HomeService {
       cost: 10000000000,
       costPerDay: 150,
       landRequired: 150,
+      maxInventory: 40,
       consequence: () => {
         this.characterService.characterState.status.health.value += 15;
         this.characterService.characterState.status.stamina.value += 40;
@@ -297,6 +308,7 @@ export class HomeService {
       cost: 100000000000,
       costPerDay: 180,
       landRequired: 180,
+      maxInventory: 50,
       consequence: () => {
         this.characterService.characterState.status.health.value += 20;
         this.characterService.characterState.status.stamina.value += 50;
@@ -316,6 +328,7 @@ export class HomeService {
       cost: 1000000000000,
       costPerDay: 500,
       landRequired: 500,
+      maxInventory: 60,
       consequence: () => {
         this.characterService.characterState.status.health.value += 30;
         this.characterService.characterState.status.stamina.value += 100;
@@ -335,6 +348,7 @@ export class HomeService {
       cost: 10000000000000,
       costPerDay: 1000,
       landRequired: 1000,
+      maxInventory: 80,
       consequence: () => {
         this.characterService.characterState.status.health.value += 50;
         this.characterService.characterState.status.stamina.value += 200;
@@ -354,6 +368,7 @@ export class HomeService {
       cost: 100000000000000,
       costPerDay: 10000,
       landRequired: 10000,
+      maxInventory: 100,
       consequence: () => {
         this.characterService.characterState.status.health.value += 80;
         this.characterService.characterState.status.stamina.value += 300;
@@ -506,6 +521,7 @@ export class HomeService {
     this.homeValue = home.type;
     this.home = this.getHomeFromValue(this.homeValue);
     this.nextHome = this.getNextHome();
+    this.inventoryService.changeMaxItems(this.home.maxInventory);
   }
 
   getHomeFromValue(value: HomeType): Home {

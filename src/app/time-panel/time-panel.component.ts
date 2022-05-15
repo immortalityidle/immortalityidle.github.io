@@ -144,4 +144,25 @@ export class TimePanelComponent implements OnInit {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.activityService.pauseOnDeath = event.target.checked;
   }
+
+  allowDrop(event: DragEvent){
+    if (event.dataTransfer?.types[0] == "activityloop"){
+      event.preventDefault();
+    }
+  }
+
+  drag(sourceIndex: number, event: DragEvent){
+    event.dataTransfer?.setData("activityloop", "" + sourceIndex);
+  }
+
+  drop(destIndex: number, event: DragEvent){
+    event.preventDefault();
+    let sourceIndexString: string = event.dataTransfer?.getData("activityloop") + "";
+    let sourceIndex = parseInt(sourceIndexString);
+    if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length){
+      let activity = this.activityService.activityLoop.splice(sourceIndex, 1);
+      this.activityService.activityLoop.splice(destIndex, 0, activity[0]);
+    }
+  }
+
 }

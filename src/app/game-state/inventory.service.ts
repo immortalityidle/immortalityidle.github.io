@@ -57,7 +57,7 @@ export interface BalanceItem {
 }
 
 export interface InventoryProperties {
-  itemStacks: ItemStack[],
+  itemStacks: (ItemStack | null)[],
   autoSellUnlocked: boolean,
   autoSellItems: string[],
   autoUseUnlocked: boolean,
@@ -71,8 +71,8 @@ export interface InventoryProperties {
   providedIn: 'root',
 })
 export class InventoryService {
-  itemStacks: ItemStack[] = [];
-  maxItems: number = 32;
+  itemStacks: (ItemStack | null)[] = [];
+  maxItems: number = 10;
   maxStackSize = 999;
   noFood: boolean;
   selectedItem: ItemStack | null = null;
@@ -99,6 +99,10 @@ export class InventoryService {
     this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
+
+    for (let i = 0; i < this.maxItems; i++){
+      this.itemStacks.push(null);
+    }
 
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
@@ -143,6 +147,13 @@ export class InventoryService {
     this.itemRepoService.items['melon'],
     this.itemRepoService.items['peach']
   ]
+
+  changeMaxItems(newValue: number){
+    this.maxItems = newValue;
+    while (this.itemStacks.length < newValue){
+      this.itemStacks.push(null);
+    }
+  }
 
   // weapon grades from 1-10, materials are wood or metal (TODO: more detail on materials)
   generateWeapon(grade: number, material: string): Equipment {
@@ -273,6 +284,11 @@ export class InventoryService {
 
   reset(): void {
     this.itemStacks = [];
+    this.maxItems = 10;
+    for (let i = 0; i < this.maxItems; i++){
+      this.itemStacks.push(null);
+    }
+
     if (Math.random() < 0.3) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
@@ -288,6 +304,9 @@ export class InventoryService {
     let foodStack = null;
     let foodValue = 0;
     for (const itemIterator of this.itemStacks) {
+      if (itemIterator == null){
+        continue;
+      }
       if (
         itemIterator.item.type == 'food' &&
         itemIterator.item.value > foodValue
@@ -346,6 +365,9 @@ export class InventoryService {
       return;
     }
     for (const itemIterator of this.itemStacks) {
+      if (itemIterator == null){
+        continue;
+      }
       if (
         itemIterator.item.name == item.name &&
         itemIterator.quantity < this.maxStackSize
@@ -356,19 +378,22 @@ export class InventoryService {
       }
     }
     // couldn't stack it, make a new stack
-    if (this.itemStacks.length < this.maxItems) {
-      this.itemStacks.push({ item: item, quantity: 1 });
-    } else {
-      this.logService.addLogMessage(
-        `You don't have enough room for the ${item.name} so you threw it away.`,
-        'STANDARD', 'EVENT');
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      if (this.itemStacks[i] == null){
+        this.itemStacks[i] = { item: item, quantity: 1 };
+        return;
+      }
     }
+    // if we're here we didn't find a slot for it.
+    this.logService.addLogMessage(
+      `You don't have enough room for the ${item.name} so you threw it away.`,
+      'STANDARD', 'EVENT');
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
     let index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
-      this.itemStacks.splice(index, 1);
+      this.itemStacks[index] = null;
       this.characterService.characterState.money += itemStack.quantity * itemStack.item.value;
       this.selectedItem = null;
     } else {
@@ -378,9 +403,12 @@ export class InventoryService {
   }
 
   sellAll(item: Item){
-    for  (let i = this.itemStacks.length - 1; i >= 0; i--){
-      if (this.itemStacks[i].item.name == item.name){
-        this.sell(this.itemStacks[i], this.itemStacks[i].quantity);
+    for (let itemIterator of this.itemStacks) {
+      if (itemIterator ==  null){
+        continue;
+      }
+      if (itemIterator.item.name == item.name){
+        this.sell(itemIterator, itemIterator.quantity);
       }
     }
   }
@@ -403,7 +431,7 @@ export class InventoryService {
       itemStack.quantity--;
       if (itemStack.quantity <= 0) {
         let index = this.itemStacks.indexOf(itemStack);
-        this.itemStacks.splice(index, 1);
+        this.itemStacks[index] = null;
         this.selectedItem = null;
       }
     }
@@ -427,9 +455,19 @@ export class InventoryService {
     }
     if (item.useConsumes){
       // use all the ones you have now
-      for (let i = this.itemStacks.length - 1; i >= 0; i--){
-        while (this.itemStacks.length > i && this.itemStacks[i].item.name == item.name){
-          this.useItemStack(this.itemStacks[i]);
+      for (let i = 0; i < this.itemStacks.length; i++) {
+        if (this.itemStacks[i] == null){
+          continue;
+        }
+        if (this.itemStacks[i]?.item.name == item.name && item.useConsumes){
+          while (this.itemStacks[i] != null){
+            // this code is stupid because typescript is stupid.
+            let itemStack = this.itemStacks[i];
+            if (itemStack == null){
+              continue;
+            }
+            this.useItemStack(itemStack);
+          }
         }
       }
     }
@@ -453,6 +491,8 @@ export class InventoryService {
       useNumber: 1,
       sellNumber: 1
     });
+    // sell current stock, incoming items will be balanced
+    this.sellAll(item);
   }
 
   unAutoBalance(itemName: string){
@@ -479,24 +519,26 @@ export class InventoryService {
     }
     this.characterService.characterState.equipment[item.slot] = item;
     let index = this.itemStacks.indexOf(itemStack);
-    this.itemStacks.splice(index, 1);
+    this.itemStacks[index] = null;
   }
 
   consume(consumeType: string): number{
     let itemValue = -1;
     for (const itemIterator of this.itemStacks) {
+      if (itemIterator == null){
+        continue;
+      }
       if (itemIterator.item.type == consumeType) {
         itemValue = itemIterator.item.value;
         itemIterator.quantity --;
         if (itemIterator.quantity == 0){
           //remove the stack if empty
           let index = this.itemStacks.indexOf(itemIterator);
-          this.itemStacks.splice(index, 1);
+          this.itemStacks[index] = null;
         }
         return itemValue;
       }
     }
-
     return itemValue;
   }
 

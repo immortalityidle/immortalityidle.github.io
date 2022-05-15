@@ -14,12 +14,13 @@
   </h3>
 
   <div class="inventoryGrid">
-    <div *ngFor="let itemStack of inventoryService.itemStacks">
+    <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
       <table class="itemSlot" (click)="slotClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
-        [ngClass]="{'selectedItem': itemStack === inventoryService.selectedItem}"
-        tooltip="{{itemStack.item.description}}" placement="left">
-        <tr>{{itemStack.item.name | titlecase}}</tr>
-        <tr *ngIf="itemStack.quantity > 1">{{itemStack.quantity}}</tr>
+        draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
+        [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem)}"
+        tooltip="{{itemStack?.item?.description}}" placement="left">
+        <tr>{{itemStack?.item?.name | titlecase}}</tr>
+        <tr *ngIf="itemStack?.quantity || 0 > 1">{{itemStack?.quantity}}</tr>
       </table>
     </div>
   </div>

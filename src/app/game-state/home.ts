@@ -7,6 +7,7 @@ export interface Home {
   cost: number;
   costPerDay: number;
   landRequired: number;
+  maxInventory: number;
   consequence: () => void;
   furnitureSlots: FurniturePosition[];
 }

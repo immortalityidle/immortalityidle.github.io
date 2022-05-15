@@ -1,21 +1,24 @@
+@import (reference) "../../styles.less";
+
 .inventoryContainer{
   position: relative;
   height: 100%;
 }
 
 .itemSlot {
-  border: 1px solid black;
-  width: 30px;
-  height: 30px;
+  border: 1px solid @panelBorder;
+  width: 52px;
+  height: 52px;
   margin: 1px;
   font-size: x-small;
   text-align: center;
   border-spacing: 0px;
+  background-color: @itemSlotColor;
   cursor: pointer;
 }
 
 .selectedItem {
-  background-color: lightyellow;
+  background-color: @itemSlotHighlight;
 }
 
 .itemSlot > tr {
@@ -25,6 +28,11 @@
 .inventoryGrid {
   display: flex;
   flex-wrap: wrap;
+  height: calc(100% - 80px);
+  overflow: auto;
+  margin-top: 2px;
+  margin-left: 2px;
+  border-bottom: 1px solid @panelBorder;
 }
 
 .inventoryButtons {

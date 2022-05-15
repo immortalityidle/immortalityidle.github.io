@@ -72,8 +72,36 @@ export class CharacterService {
   }
 
   condenseSoulCore(){
-    this.logService.addLogMessage("Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.", 'STANDARD', 'REBIRTH');
-    this.characterState.condenseSoulCoreCost *= 10;
+    this.logService.addLogMessage(
+      "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
+      'STANDARD', 'REBIRTH');
+    this.logService.addLogMessage(
+      "You now gain twice as much aptitude each time you reincarnate.",
+      'STANDARD', 'REBIRTH');
+      this.characterState.condenseSoulCoreCost *= 10;
+    this.characterState.aptitudeGainDivider /= 2;
+    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
+    for (const key in keys){
+      let attribute = this.characterState.attributes[keys[key]];
+      attribute.aptitude = 1;
+      if (parseInt(key) < 5){
+        attribute.value = 1;
+      } else {
+        attribute.value = 0;
+      }
+    }
+    this.forceRebirth = true;
+  }
+
+  reinforceMeridians(){
+    this.logService.addLogMessage(
+      "The pathways that carry your chi through your body have been strengthened and reinforced.",
+      'STANDARD', 'REBIRTH');
+      this.logService.addLogMessage(
+        "Your aptitudes can now give you a greater increase when gaining attributes.",
+        'STANDARD', 'REBIRTH');
+
+    this.characterState.reinforceMeridiansCost *= 10;
     this.characterState.aptitudeGainDivider /= 2;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){

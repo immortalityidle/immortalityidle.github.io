@@ -63,15 +63,18 @@ export class GameStateService {
     }
     const gameState = JSON.parse(gameStateSerialized) as GameState;
     this.characterService.characterState.setProperties(gameState.character);
+    this.homeService.setProperties(gameState.home);
     this.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks){
+      if (itemStack == null){
+        continue;
+      }
       const item = this.itemRepoService.getItemById(itemStack.item.id);
       if (item) {
         itemStack.item = item;
       }
     }
-    this.homeService.setProperties(gameState.home);
     this.activityService.setProperties(gameState.activities);
     this.battleService.setProperties(gameState.battles);
     this.logService.setProperties(gameState.logs);

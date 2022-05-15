@@ -1,10 +1,11 @@
+@import (reference) "../../styles.less";
 
 table {
   width: 100%;
 }
 
 td {
-  border-top: 1px white solid;
+  border-bottom: 1px @tableDividerColor solid;
   white-space: nowrap;
 }
 
@@ -31,6 +32,10 @@ mat-icon {
 label {
   font-size: 10px;
   vertical-align: top;
+}
+
+.iconActive {
+  background-color: @activeButtonColor;
 }
 
 .panelHeader {
