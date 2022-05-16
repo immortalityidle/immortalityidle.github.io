@@ -475,19 +475,110 @@ export class ItemRepoService {
       value: 1,
       description: 'A chunk of copper ore.',
     },
+    tinOre: {
+      id: 'tinOre',
+      name: 'tin ore',
+      type: 'ore',
+      value: 2,
+      description: 'A chunk of tin ore.'
+    },
     bronzeOre: {
       id: 'bronzeOre',
       name: 'mixed ore',
       type: 'ore',
-      value: 2,
+      value: 3,
       description: 'A chunk of ore containing copper, tin, lead, and zinc.'
     },
     ironOre: {
       id: 'ironOre',
       name: 'iron ore',
       type: 'ore',
-      value: 3,
+      value: 4,
       description: 'A chunk of iron ore.',
+    },
+    steelOre: {
+      id: 'steelOre',
+      name: 'coal-mixed iron ore',
+      type: 'ore',
+      value: 5,
+      description: 'A chunk of iron ore laced with coal.',
+    },
+    mithrilOre: {
+      id: 'mithrilOre',
+      name: 'mithril ore',
+      type: 'ore',
+      value: 6,
+      description: 'A chunk of mithril ore.',
+    },
+    greensteelOre: {
+      id: 'greensteelOre',
+      name: 'greensteel ore',
+      type: 'ore',
+      value: 7,
+      description: 'A chunk of greensteel ore.',
+    },
+    bluesteelOre: {
+      id: 'bluesteelOre',
+      name: 'bluesteel ore',
+      type: 'ore',
+      value: 8,
+      description: 'A chunk of bluesteel ore.',
+    },
+    redsteelOre: {
+      id: 'redsteelOre',
+      name: 'redsteel ore',
+      type: 'ore',
+      value: 8,
+      description: 'A chunk of redsteel ore.',
+    },
+    flamesteelOre: {
+      id: 'flamesteelOre',
+      name: 'flamesteel ore',
+      type: 'ore',
+      value: 10,
+      description: 'A chunk of flamesteel ore.',
+    },
+    froststeelOre: {
+      id: 'froststeelOre',
+      name: 'froststeel ore',
+      type: 'ore',
+      value: 11,
+      description: 'A chunk of froststeel ore.',
+    },
+    brightsteelOre: {
+      id: 'brightsteelOre',
+      name: 'brightsteel ore',
+      type: 'ore',
+      value: 12,
+      description: 'A chunk of brightsteel ore.',
+    },
+    darksteelOre: {
+      id: 'darksteelOre',
+      name: 'darksteel ore',
+      type: 'ore',
+      value: 13,
+      description: 'A chunk of darksteel ore.',
+    },
+    felsteelOre: {
+      id: 'felsteelOre',
+      name: 'felsteel ore',
+      type: 'ore',
+      value: 14,
+      description: 'A chunk of cloudsteel ore.',
+    },
+    cloudsteelOre: {
+      id: 'cloudsteelOre',
+      name: 'cloudsteel ore',
+      type: 'ore',
+      value: 15,
+      description: 'A chunk of cloudsteel ore.',
+    },
+    adamantOre: {
+      id: 'adamantOre',
+      name: 'adamant ore',
+      type: 'ore',
+      value: 16,
+      description: 'A chunk of adamant ore.',
     },
     copperBar: {
       id: 'copperBar',
@@ -496,19 +587,110 @@ export class ItemRepoService {
       value: 1,
       description: 'A bar of copper.',
     },
+    tinBar: {
+      id: 'tinBar',
+      name: 'tin bar',
+      type: 'metal',
+      value: 2,
+      description: 'A bar of tin.',
+    },
     bronzeBar: {
       id: 'bronzeBar',
       name: 'bronze bar',
       type: 'metal',
-      value: 2,
+      value: 3,
       description: 'A bar of bronze.',
     },
     ironBar: {
       id: 'ironBar',
       name: 'iron bar',
       type: 'metal',
-      value: 3,
+      value: 4,
       description: 'A bar of iron.',
+    },
+    steelBar: {
+      id: 'steelBar',
+      name: 'steelBar',
+      type: 'ore',
+      value: 5,
+      description: 'A bar of steel.',
+    },
+    mithrilBar: {
+      id: 'mithrilBar',
+      name: 'mithril bar',
+      type: 'ore',
+      value: 6,
+      description: 'A bar of of mithril.',
+    },
+    greensteelBar: {
+      id: 'greensteelBar',
+      name: 'greensteelBar bar',
+      type: 'ore',
+      value: 7,
+      description: 'A bar of greensteel.',
+    },
+    bluesteelBar: {
+      id: 'bluesteelBar',
+      name: 'bluesteel bar',
+      type: 'ore',
+      value: 8,
+      description: 'A bar of bluesteel.',
+    },
+    redsteelBar: {
+      id: 'redsteelBar',
+      name: 'redsteel bar',
+      type: 'ore',
+      value: 8,
+      description: 'A bar of redsteel.',
+    },
+    flamesteelBar: {
+      id: 'flamesteelBar',
+      name: 'flamesteel bar',
+      type: 'ore',
+      value: 10,
+      description: 'A bar of flamesteel.',
+    },
+    froststeelBar: {
+      id: 'froststeelBar',
+      name: 'froststeel bar',
+      type: 'ore',
+      value: 11,
+      description: 'A bar of froststeel.',
+    },
+    brightsteelBar: {
+      id: 'brightsteelBar',
+      name: 'brightsteel bar',
+      type: 'ore',
+      value: 12,
+      description: 'A bar of brightsteel.',
+    },
+    darksteelBar: {
+      id: 'darksteelBar',
+      name: 'darksteel bar',
+      type: 'ore',
+      value: 13,
+      description: 'A bar of darksteel.',
+    },
+    felsteelBar: {
+      id: 'felsteelBar',
+      name: 'felsteel bar',
+      type: 'ore',
+      value: 14,
+      description: 'A bar of cloudsteel.',
+    },
+    cloudsteelBar: {
+      id: 'cloudsteelBar',
+      name: 'cloudsteel bar',
+      type: 'ore',
+      value: 15,
+      description: 'A bar of cloudsteel.',
+    },
+    adamantBar: {
+      id: 'adamantBar',
+      name: 'adamant bar',
+      type: 'ore',
+      value: 16,
+      description: 'A bar of adamant.',
     },
     junk: {
       id: 'junk',
@@ -879,6 +1061,33 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoWeaponMergeUnlocked;
+      }
+    },
+    useSpiritGemManual: {
+      id: 'useSpiritGemManual',
+      name: "Manual of Spirit Gem Comprehension",
+      type: "manual",
+      description: "This manual teaches you to incorporate spirit gems in your crafting.",
+      value: 12000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock including spirit gems when creating items.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.useSpiritGemUnlocked = true;
+        this.inventoryService.useSpiritGemWeapons = true;
+        this.inventoryService.useSpiritGemPotions = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.useSpiritGemUnlocked;
       }
     }
   }

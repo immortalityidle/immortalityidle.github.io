@@ -63,4 +63,14 @@ export class StoreModalComponent {
     balanceItem.sellNumber = parseInt(event.target.value);
   }
 
+  useSpiritGemWeaponsChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.useSpiritGemWeapons = event.target.checked;
+  }
+
+  useSpiritGemPotionsChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.useSpiritGemPotions = event.target.checked;
+  }
+
 }

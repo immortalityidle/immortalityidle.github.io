@@ -64,7 +64,10 @@ export interface InventoryProperties {
   autoBalanceUnlocked: boolean,
   autoBalanceItems: BalanceItem[],
   autoPotionUnlocked: boolean,
-  autoWeaponMergeUnlocked: boolean
+  autoWeaponMergeUnlocked: boolean,
+  useSpiritGemUnlocked: boolean,
+  useSpiritGemWeapons: boolean,
+  useSpiritGemPotions: boolean,
 }
 
 @Injectable({
@@ -84,6 +87,9 @@ export class InventoryService {
   autoBalanceItems: BalanceItem[];
   autoPotionUnlocked: boolean;
   autoWeaponMergeUnlocked: boolean;
+  useSpiritGemUnlocked: boolean;
+  useSpiritGemWeapons: boolean;
+  useSpiritGemPotions: boolean;
 
   constructor(
     private logService: LogService,
@@ -101,7 +107,10 @@ export class InventoryService {
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
     this.autoWeaponMergeUnlocked = false;
-
+    this.useSpiritGemUnlocked = false;
+    this.useSpiritGemWeapons = false;
+    this.useSpiritGemPotions = false;
+  
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
     }
@@ -130,7 +139,11 @@ export class InventoryService {
       autoBalanceUnlocked: this.autoBalanceUnlocked,
       autoBalanceItems: this.autoBalanceItems,
       autoPotionUnlocked: this.autoPotionUnlocked,
-      autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked
+      autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked,
+      useSpiritGemUnlocked: this.useSpiritGemUnlocked,
+      useSpiritGemWeapons: this.useSpiritGemWeapons,
+      useSpiritGemPotions: this.useSpiritGemPotions,
+  
     }
   }
 
@@ -144,6 +157,9 @@ export class InventoryService {
     this.autoBalanceItems = properties.autoBalanceItems;
     this.autoPotionUnlocked = properties.autoPotionUnlocked;
     this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked;
+    this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked;
+    this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
+    this.useSpiritGemPotions = properties.useSpiritGemPotions;
   }
 
   farmFoodList = [
@@ -164,6 +180,15 @@ export class InventoryService {
 
   // materials are wood or metal (TODO: more detail on materials)
   generateWeapon(grade: number, material: string): Equipment {
+
+    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
+      // consume a spirit gem and increase the grade
+      let value = this.consume("spiritGem");
+      if (value > 0){
+        grade += value / 5;
+      }
+    }
+
     let prefixIndex = grade % ItemPrefixes.length;
     let suffixIndex = Math.floor(grade / ItemPrefixes.length);
     let prefix = ItemPrefixes[prefixIndex];
@@ -209,14 +234,25 @@ export class InventoryService {
   }
 
   generatePotion(grade: number): Potion {
+
+    if (this.useSpiritGemUnlocked && this.useSpiritGemPotions){
+      // consume a spirit gem and increase the grade
+      let value = this.consume("spiritGem");
+      if (value > 0){
+        grade += value / 5;
+      }
+    }
+
     const keys = Object.keys(
       this.characterService.characterState.attributes
     ) as AttributeType[];
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
+    let name = "Potion of " + key + " +" + grade;
+    this.logService.addLogMessage("Alchemy Success! Created a " + name, "STANDARD","EVENT");
 
     return {
-      name: "Potion of " + key + " +" + grade,
+      name: name,
       id: "potion",
       type: "potion",
       value: grade,
@@ -231,9 +267,9 @@ export class InventoryService {
 
   generateHerb(): Item {
     let grade = 0;
-    if (this.characterService.characterState.attributes.plantLore.value >= 2){
+    if (this.characterService.characterState.attributes.plantLore.value >= 3){
       // TODO: tune this
-      grade = Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value));
+      grade = 2 + Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value - 2));
     }
     let name: string;
     let quality: string;
@@ -253,6 +289,16 @@ export class InventoryService {
       type: 'ingredient',
       value: grade + 1,
       description: 'Useful herbs. Can be used in creating pills or potions.'
+    };
+  }
+
+  generateSpiritGem(grade: number): Item {
+    return {
+      id: 'spiritGemGrade' + grade,
+      name: 'spirit gem grade ' + grade,
+      type: 'spiritGem',
+      value: grade * 10,
+      description: 'A spirit gem.'
     };
   }
 

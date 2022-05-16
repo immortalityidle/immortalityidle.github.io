@@ -21,10 +21,10 @@
   <span>Manuals Options</span>
   <hr/>
   <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
-    Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
+    Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
   </div>
   <div *ngIf="homeService.autoFieldUnlocked" class="optionField">
-    Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" (change)="autoFieldLimitChanged($event)"/> fields
+    Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
   </div>
   <div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
     Automatically upgrade your home up to a
@@ -34,6 +34,16 @@
         {{home.name}}
       </option>
     </select>
+  </div>
+  <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
+    <input type="checkbox" (change)="useSpiritGemWeaponsChange($event)"
+      id="useSpiritGemWeapons"  [checked]="inventoryService.useSpiritGemWeapons"/>
+    <label for="useSpiritGemWeapons">Use spirit gem when crafting weapons</label>
+  </div>
+  <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
+    <input type="checkbox" (change)="useSpiritGemPotionsChange($event)"
+      id="useSpiritGemWeapons"  [checked]="inventoryService.useSpiritGemPotions"/>
+    <label for="useSpiritGemWeapons">Use spirit gem when crafting potions</label>
   </div>
   <div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
     Automatically Sold Items:
@@ -58,8 +68,8 @@
     <div class="scrollingDiv">
       <div *ngFor="let balanceItem of inventoryService.autoBalanceItems">
         -{{balanceItem.name | titlecase}}
-        Use <input value="{{balanceItem.useNumber}}" type="number" (change)="autoBalanceUseChanged($event, balanceItem)"/>
-        then Sell <input value="{{balanceItem.sellNumber}}" type="number" (change)="autoBalanceSellChanged($event, balanceItem)"/>
+        Use <input value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
+        then Sell <input value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
         <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
       </div>
     </div>

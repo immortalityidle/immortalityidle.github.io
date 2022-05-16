@@ -81,6 +81,7 @@ export class BattleService {
     this.enemies = [];
     this.currentEnemy = null;
     this.kills = 0;
+    this.troubleKills = 0;
   }
 
   getProperties(): BattleProperties {
@@ -195,7 +196,7 @@ export class BattleService {
       accuracy: 50,
       attack: this.troubleKills / 10,
       defense: Math.floor(Math.log2(this.troubleKills)),
-      loot: []
+      loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)))]
     });
     this.troubleKills++;
   }
