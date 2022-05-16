@@ -25,7 +25,9 @@ export interface BattleProperties {
   enemies: EnemyStack[],
   currentEnemy: EnemyStack | null,
   kills: number,
-  troubleKills: number
+  troubleKills: number,
+  autoTroubleUnlocked: boolean,
+  autoTroubleEnabled: boolean
 }
 
 
@@ -39,7 +41,8 @@ export class BattleService {
   currentEnemy: EnemyStack | null;
   kills: number;
   troubleKills: number;
-
+  autoTroubleUnlocked: boolean = false;
+  autoTroubleEnabled: boolean = false;
 
   constructor(
     private logService: LogService,
@@ -63,6 +66,9 @@ export class BattleService {
       }
       this.enemiesAttack();
       this.youAttack();
+      if (this.autoTroubleEnabled){
+        this.trouble();
+      }
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
@@ -82,7 +88,9 @@ export class BattleService {
       enemies: this.enemies,
       currentEnemy: this.currentEnemy,
       kills: this.kills,
-      troubleKills: this.troubleKills
+      troubleKills: this.troubleKills,
+      autoTroubleUnlocked: this.autoTroubleUnlocked,
+      autoTroubleEnabled: this.autoTroubleEnabled
     }
   }
 
@@ -91,6 +99,8 @@ export class BattleService {
     this.currentEnemy = properties.currentEnemy;
     this.kills = properties.kills;
     this.troubleKills = properties.troubleKills;
+    this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
+    this.autoTroubleEnabled = properties.autoTroubleEnabled;
   }
 
   enemiesAttack(){

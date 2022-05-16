@@ -1,7 +1,12 @@
 <h3>
     <mat-icon tooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">fort</mat-icon>
     Battles
-    <span class="rightAligned"><button (click)="battleService.trouble()">Look for Trouble</button></span>
+    <span class="rightAligned">
+      <button *ngIf="!battleService.autoTroubleUnlocked" (click)="battleService.trouble()">Look for Trouble</button>
+      <input *ngIf="battleService.autoTroubleUnlocked"  type="checkbox" (change)="autoTroubleChange($event)"
+        id="autoTroubleCheckbox"  [checked]="battleService.autoTroubleEnabled"/>
+      <label *ngIf="battleService.autoTroubleUnlocked" for="autoTroubleCheckbox">Look for Trouble</label>
+    </span>
 </h3>
 <div class="battleContainer">
     <table>

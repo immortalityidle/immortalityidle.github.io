@@ -1,5 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { ActivityService } from '../activity-panel/activity.service';
+import { BattleService } from '../battle-panel/battle.service';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { CharacterService } from './character.service';
@@ -13,6 +14,7 @@ export class ItemRepoService {
   homeService?: HomeService;
   activityService?: ActivityService;
   inventoryService?: InventoryService;
+  battleService?: BattleService;
 
   furniture: {[key: string]: Furniture} = {
     blanket: {
@@ -827,6 +829,56 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoPotionUnlocked;
+      }
+    },
+    autoTroubleManual: {
+      id: 'autoTroubleManual',
+      name: "Manual of Consistent Troublemaking",
+      type: "manual",
+      description: "This manual teaches you to automatically look for trouble.",
+      value: 500000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock automatic trouble in the battle panel.",
+      useConsumes: true,
+      use: () => {
+        // check if battleService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.battleService){
+          this.battleService = this.injector.get(BattleService);
+        }
+        this.battleService.autoTroubleUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if battleService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.battleService){
+          this.battleService = this.injector.get(BattleService);
+        }
+        return this.battleService?.autoTroubleUnlocked;
+      }
+    },
+    autoWeaponMergeManual: {
+      id: 'autoWeaponMergeManual',
+      name: "Manual of Effortless Weapon Merging",
+      type: "manual",
+      description: "This manual teaches you to automatically merge weapons.",
+      value: 1000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock automatic weapon merging in the inventory panel.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoWeaponMergeUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoWeaponMergeUnlocked;
       }
     }
   }

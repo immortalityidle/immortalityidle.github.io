@@ -517,7 +517,7 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('wood');
                 if (grade >= 1){ // if the wood was found
                   this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                    grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
+                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
                 }
               }
             }
@@ -536,7 +536,7 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('wood');
                 if (grade >= 1){ // if the wood was found
                   this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                    grade + Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
+                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value)), 'wood'));
                 }
               }
             }

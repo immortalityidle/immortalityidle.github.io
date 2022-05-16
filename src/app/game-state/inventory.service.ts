@@ -1,4 +1,3 @@
-import { _isTestEnvironment } from '@angular/cdk/platform';
 import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
@@ -64,7 +63,8 @@ export interface InventoryProperties {
   autoUseItems: string[],
   autoBalanceUnlocked: boolean,
   autoBalanceItems: BalanceItem[],
-  autoPotionUnlocked: boolean
+  autoPotionUnlocked: boolean,
+  autoWeaponMergeUnlocked: boolean
 }
 
 @Injectable({
@@ -83,6 +83,7 @@ export class InventoryService {
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
   autoPotionUnlocked: boolean;
+  autoWeaponMergeUnlocked: boolean;
 
   constructor(
     private logService: LogService,
@@ -99,6 +100,7 @@ export class InventoryService {
     this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
+    this.autoWeaponMergeUnlocked = false;
 
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
@@ -109,6 +111,9 @@ export class InventoryService {
         return;
       }
       this.eatFood();
+      if (this.autoWeaponMergeUnlocked){
+        this.autoWeaponMerge();
+      }
     });
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -124,7 +129,8 @@ export class InventoryService {
       autoUseItems: this.autoUseItems,
       autoBalanceUnlocked: this.autoBalanceUnlocked,
       autoBalanceItems: this.autoBalanceItems,
-      autoPotionUnlocked: this.autoPotionUnlocked
+      autoPotionUnlocked: this.autoPotionUnlocked,
+      autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked
     }
   }
 
@@ -137,6 +143,7 @@ export class InventoryService {
     this.autoBalanceUnlocked = properties.autoBalanceUnlocked;
     this.autoBalanceItems = properties.autoBalanceItems;
     this.autoPotionUnlocked = properties.autoPotionUnlocked;
+    this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked;
   }
 
   farmFoodList = [
@@ -589,6 +596,42 @@ export class InventoryService {
     }
 
   }
+
+  autoWeaponMerge(){
+    this.autoMerge('leftHand');
+    this.autoMerge('rightHand');
+  }
+
+  autoMerge(slot: EquipmentPosition){
+    let mergeDestinationIndex = -1;
+    let destinationItem: Equipment | null = null;
+    let sourceItem: Equipment  | null = null;
+    for (let i = 0; i < this.itemStacks.length; i++){
+      let item = this.itemStacks[i]?.item;
+      if (item){
+        if (instanceOfEquipment(item)){
+          if (item.slot == slot){
+            if (mergeDestinationIndex == -1){
+              mergeDestinationIndex = i;
+              destinationItem = item;
+            } else {
+              sourceItem = item;
+              if (destinationItem){
+                if (this.selectedItem == this.itemStacks[mergeDestinationIndex] || this.selectedItem == this.itemStacks[i]){
+                  this.selectedItem = null;
+                }
+                this.itemStacks[mergeDestinationIndex] = null;
+                this.itemStacks[i] = null;
+                this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex );
+                return;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
 
 export function instanceOfEquipment(object: any): object is Equipment {

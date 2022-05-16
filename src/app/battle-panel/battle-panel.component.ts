@@ -11,6 +11,12 @@ export class BattlePanelComponent implements OnInit {
   constructor(public battleService: BattleService) { }
 
   ngOnInit(): void {
+    // so that eslint stops whining
+    let a;
   }
 
+  autoTroubleChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.battleService.autoTroubleEnabled = event.target.checked;
+  }
 }
