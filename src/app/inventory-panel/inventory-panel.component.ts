@@ -18,8 +18,13 @@ export class InventoryPanelComponent {
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
     event.preventDefault();
     if (event.shiftKey){
+      let oldSelected = null;
+      if (oldSelected != item){
+        oldSelected = this.inventoryService.selectedItem;
+      }
       this.inventoryService.selectedItem = item;
       this.use();
+      this.inventoryService.selectedItem = oldSelected;
     } else if (event.ctrlKey){
       this.inventoryService.selectedItem = item;
       this.autoUse();

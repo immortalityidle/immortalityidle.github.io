@@ -697,7 +697,7 @@ export class ItemRepoService {
       id: 'junk',
       name: 'junk',
       type: 'metal',
-      value: 1,
+      value: 10,
       description: 'Some metal junk.',
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing

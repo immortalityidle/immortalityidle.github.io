@@ -163,7 +163,7 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
             this.characterService.characterState.status.health.value += 10;
             if (Math.random() < 0.01){
-              this.characterService.characterState.attributes.spirituality.value += 0.1;
+              this.characterService.characterState.increaseAttribute('spirituality', 0.1);
             }
             this.characterService.characterState.checkOverage();
           }
@@ -682,6 +682,9 @@ export class ActivityService {
           this.characterService.characterState.attributes.strength.aptitude += 0.1;
           this.characterService.characterState.attributes.speed.aptitude += 0.1;
           this.characterService.characterState.attributes.toughness.aptitude += 0.1;
+          if (Math.random() < 0.01){
+            this.characterService.characterState.increaseAttribute('spirituality', 0.1);
+          }
         }],
         requirements: [{
           strength: 5000,
@@ -702,7 +705,10 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('charisma', 1);
           this.characterService.characterState.attributes.intelligence.aptitude += 0.1;
           this.characterService.characterState.attributes.charisma.aptitude += 0.1;
-        }],
+          if (Math.random() < 0.01){
+            this.characterService.characterState.increaseAttribute('spirituality', 0.1);
+          }
+      }],
         requirements: [{
           charisma: 5000,
           intelligence: 5000,
