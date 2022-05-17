@@ -199,31 +199,31 @@ export class ActivityService {
           () => {
             this.characterService.characterState.increaseAttribute('charisma',0.1);
             this.characterService.characterState.status.stamina.value -= 5;
-            this.characterService.characterState.money +=
+            this.characterService.characterState.money += 3 +
               Math.log2(this.characterService.characterState.attributes.charisma.value);
           },
           () => {
             this.characterService.characterState.increaseAttribute('charisma',0.2);
             this.characterService.characterState.status.stamina.value -= 5;
-            this.characterService.characterState.money +=
+            this.characterService.characterState.money += 10 +
               Math.log2(this.characterService.characterState.attributes.charisma.value);
           },
           () => {
             this.characterService.characterState.increaseAttribute('charisma',0.3);
             this.characterService.characterState.status.stamina.value -= 5;
-            this.characterService.characterState.money +=
+            this.characterService.characterState.money += 20 +
               Math.log2(this.characterService.characterState.attributes.charisma.value * 2);
           },
           () => {
             this.characterService.characterState.increaseAttribute('charisma',0.5);
             this.characterService.characterState.status.stamina.value -= 5;
-            this.characterService.characterState.money +=
+            this.characterService.characterState.money += 30 +
               Math.log2(this.characterService.characterState.attributes.charisma.value * 10);
           }
         ],
         requirements: [
           {
-            charisma: 5,
+            charisma: 3,
           },
           {
             charisma: 100
@@ -288,7 +288,7 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('metal');
                 if (grade >= 1){ // if the metal was found
                   this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                      grade + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                      (grade / 10) + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
                 }
               }
             }
@@ -312,7 +312,7 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('metal');
                 if (grade >= 1){ // if the metal was found
                   this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                    (grade / 10) + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
                 }
               }
             }
@@ -574,11 +574,12 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore', 0.1);
+            this.characterService.characterState.increaseAttribute('earthLore', 0.1);
           }
       }],
         requirements: [{
-          strength: 30,
-          speed: 30
+          strength: 10,
+          speed: 10
         }],
       },
       {
@@ -591,12 +592,12 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 20;
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           if (Math.random() < 0.5) {
-            this.characterService.characterState.increaseAttribute('metalLore', 0.1);
+            this.characterService.characterState.increaseAttribute('earthLore', 0.1);
             this.inventoryService.addItem(this.inventoryService.getOre());
           }
         }],
         requirements: [{
-          strength: 80
+          strength: 70
         }],
       },
       {
@@ -652,19 +653,19 @@ export class ActivityService {
         // cormorant fishing later!
         activityType: ActivityType.Fishing,
         description: ['Grab your net and see if you can catch some fish.'],
-        consequenceDescription: ['Uses 50 stamina. Increases intelligence and strength and might catch a fish.'],
+        consequenceDescription: ['Uses 50 stamina. Increases intelligence and strength and you might catch a fish.'],
         consequence: [() => {
           this.characterService.characterState.status.stamina.value -= 50;
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
-          if (Math.random() < 0.1) {
+          if (Math.random() < 0.2) {
             this.characterService.characterState.increaseAttribute('animalLore', 0.1);
             this.inventoryService.addItem(this.itemRepoService.items['carp']);
           }
         }],
         requirements: [{
-          strength: 60,
-          intelligence: 60
+          strength: 15,
+          intelligence: 15
         }],
       },
       {

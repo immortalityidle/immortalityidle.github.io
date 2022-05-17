@@ -90,6 +90,7 @@ export class InventoryService {
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useSpiritGemPotions: boolean;
+  fed: boolean = false;
 
   constructor(
     private logService: LogService,
@@ -303,23 +304,40 @@ export class InventoryService {
   }
 
   getOre(): Item {
-    if (this.characterService.characterState.attributes.metalLore.value < 3){
-      return this.itemRepoService.items['copperOre'];
-    } else if (this.characterService.characterState.attributes.metalLore.value < 6){
-      return this.itemRepoService.items['bronzeOre'];
+    let oreValue;
+    if (this.characterService.characterState.attributes.earthLore.value < 20){
+      oreValue = 1 + Math.floor(this.characterService.characterState.attributes.earthLore.value / 5);
+    } else if (this.characterService.characterState.attributes.earthLore.value < 70){
+      oreValue = 5 + Math.floor((this.characterService.characterState.attributes.earthLore.value - 20) / 10);
     } else {
-      return this.itemRepoService.items['ironOre'];
+      oreValue = 9 + Math.floor(Math.log10(this.characterService.characterState.attributes.earthLore.value - 60));
     }
+    let lastOre =  this.itemRepoService.items['copperBar'];
+    for (let key in this.itemRepoService.items){
+      let item = this.itemRepoService.items[key];
+      if (item.type == 'ore'){
+        lastOre = item;
+        if (item.value == oreValue){
+          return item;
+        }
+      }
+    }
+    return lastOre;
   }
 
-  getBar(grade: number): Item{
-    if (grade == 3){
-      return this.itemRepoService.items['ironBar'];
-    } else if (grade == 2){
-      return this.itemRepoService.items['bronzeBar'];
-    } else {
-      return this.itemRepoService.items['copperBar'];
+  getBar(oreValue: number): Item{
+    // metal bars should always be 10x the value of the associated ore
+    let barValue = oreValue * 10;
+    for (let key in this.itemRepoService.items){
+      let item = this.itemRepoService.items[key];
+      if (item.type == 'metal'){
+        if (item.value == barValue){
+          return item;
+        }
+      }
     }
+    // couldn't figure out the bar, just return copper
+    return this.itemRepoService.items['copperBar'];
   }
 
   getWood(): Item{
@@ -365,6 +383,12 @@ export class InventoryService {
 
   // find the best food in the inventory and use it
   eatFood(): void {
+    if (this.fed){
+      // we already ate something this tick
+      this.noFood = false;
+      this.fed = false;
+      return;
+    }
     let foodStack = null;
     let foodValue = 0;
     for (const itemIterator of this.itemStacks) {
@@ -389,6 +413,7 @@ export class InventoryService {
         this.characterService.characterState.status.nourishment.value++;
       }
     }
+    this.fed = false;
   }
 
   addItems(item: Item, quantity: number): void {
@@ -402,11 +427,8 @@ export class InventoryService {
     for (let balanceItem of this.autoBalanceItems){
       if (balanceItem.name == item.name){
         if (balanceItem.index < balanceItem.useNumber){
-          if (item.use && item.useConsumes){
-            item.use();
-          }
+          this.useItem(item);
         } else {
-
           this.characterService.characterState.money += item.value;
         }
         balanceItem.index++;
@@ -511,6 +533,9 @@ export class InventoryService {
       this.usePotion(item);
     } else if (item.use) {
       item.use();
+      if (item.type == "food"){
+        this.fed = true;
+      }
     }
   }
 

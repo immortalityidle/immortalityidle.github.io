@@ -8,6 +8,7 @@ export interface CharacterAttribute {
   intelligence?: number,
   charisma?: number,
   spirituality?: number,
+  earthLore?: number,
   metalLore?: number,
   plantLore?: number,
   animalLore?: number,
@@ -20,6 +21,7 @@ export type AttributeType = 'strength' |
   'intelligence' |
   'charisma' |
   'spirituality' |
+  'earthLore' |
   'metalLore' |
   'plantLore' |
   'animalLore' |
@@ -95,6 +97,12 @@ export class Character {
       value: 0,
       aptitude: 1,
       icon: "auto_awesome"
+    },
+    earthLore: {
+      description: "Understanding the earth and how to draw power and materials from it.",
+      value: 0,
+      aptitude: 1,
+      icon: "landslide"
     },
     metalLore: {
       description: "Understanding metals and how to forge and use them.",

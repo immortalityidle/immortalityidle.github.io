@@ -66,7 +66,8 @@ export class BattleService {
       }
       this.enemiesAttack();
       this.youAttack();
-      if (this.autoTroubleEnabled){
+      if (this.autoTroubleEnabled && 
+        this.characterService.characterState.status.health.value == this.characterService.characterState.status.health.max){
         this.trouble();
       }
     });
