@@ -57,7 +57,6 @@ export class GameStateService {
   }
 
   loadFromLocalStorage(): void {
-    console.log("loaded");
     const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY);
     if (!gameStateSerialized) {
       return;
