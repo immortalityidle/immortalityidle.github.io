@@ -288,6 +288,22 @@ export var WeaponNames = [
     "zweihänder"
 ];
 
+export var ChestArmorNames = [
+  "jacket", "coat", "breastplate", "jerkin", "hauberk", "vest", "tunic", "chestguard"
+]
+
+export var LegArmorNames = [
+  "pants", "greaves", "shinguards", "trousers", "shorts", "leggings", "skirt",
+]
+
+export var HelmetNames = [
+  "helmet", "helm", "mask", "faceguard", "cap", "hat", "hood",
+]
+
+export var ShoeNames = [
+  'sandals', 'boots', 'shoes', 'footwear', 'slippers'
+]
+
 // prefixes in increasing order of goodness
 export var ItemPrefixes = [
   "atrocious",
@@ -438,7 +454,7 @@ export var ItemPrefixes = [
   "unthinkable",
 ]
 
-export var ItemSuffixes = [
+export var WeaponSuffixes = [
   "irritation",
   "annoyance",
   "embarassment",
@@ -455,7 +471,7 @@ export var ItemSuffixes = [
   "annihilation",
 ]
 
-export var ItemSuffixModifiers = [
+export var WeaponSuffixModifiers = [
   "partial",
   "substantial",
   "blinding",
@@ -466,6 +482,30 @@ export var ItemSuffixModifiers = [
   "incalculable",
   "unfathomable",
   "obliterating",
+  "limitless",
+  "infinite",
+  "eternal",
+  "supreme",
+  "perfect"
+]
+
+export var ArmorSuffixes = [
+  "protection",
+  "defense",
+  "light",
+  "darkness",
+  "power",
+  "supremacy",
+  "invulnerability",
+]
+
+export var ArmorSuffixModifiers = [
+  "partial",
+  "substantial",
+  "complete",
+  "total",
+  "incalculable",
+  "unfathomable",
   "limitless",
   "infinite",
   "eternal",

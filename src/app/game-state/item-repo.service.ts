@@ -414,7 +414,7 @@ export class ItemRepoService {
       id: 'hide',
       name: 'hide',
       type: 'hide',
-      value: 50,
+      value: 1,
       description: 'A basic animal hide.'
     },
     elmLog: {
@@ -479,6 +479,41 @@ export class ItemRepoService {
       type: 'wood',
       value: 9,
       description: 'A spiritual quality log.',
+    },
+    diamondwoodLog: {
+      id: 'diamondwoodLog',
+      name: 'diamondwood log',
+      type: 'wood',
+      value: 10,
+      description: 'A log as hard as diamond.',
+    },
+    titanwoodLog: {
+      id: 'titanwoodLog',
+      name: 'titanwood log',
+      type: 'wood',
+      value: 11,
+      description: 'A log with the strength of titans.',
+    },
+    dragonwoodLog: {
+      id: 'dragonwoodLog',
+      name: 'dragonwood log',
+      type: 'wood',
+      value: 12,
+      description: 'A log blessed by dragons.',
+    },
+    devilwoodLog: {
+      id: 'devilwoodLog',
+      name: 'devilwood log',
+      type: 'wood',
+      value: 13,
+      description: 'A demonic quality log.',
+    },
+    divinewoodLog: {
+      id: 'divinewoodLog',
+      name: 'divinewood log',
+      type: 'wood',
+      value: 14,
+      description: 'A divine quality log.',
     },
     copperOre: {
       id: 'copperOre',
@@ -1074,6 +1109,31 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoWeaponMergeUnlocked;
+      }
+    },
+    autoArmorMergeManual: {
+      id: 'autoArmorMergeManual',
+      name: "Manual of Effortless Armor Merging",
+      type: "manual",
+      description: "This manual teaches you to automatically merge armor.",
+      value: 1000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock automatic armor merging in the inventory panel.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoArmorMergeUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoArmorMergeUnlocked;
       }
     },
     useSpiritGemManual: {

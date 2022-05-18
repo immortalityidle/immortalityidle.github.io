@@ -2,7 +2,12 @@
 <table>
   <tr>
     <td></td>
-    <td><div class="equipmentSlot"></div></td>
+    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}"
+      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
+      tooltip="{{character.equipment.head?.description}}" placement="left"
+    >
+      {{character.equipment.head?.name | titlecase}}
+    </td>
     <td></td>
   </tr>
   <tr>
@@ -12,7 +17,12 @@
     >
       {{character.equipment.rightHand?.name | titlecase}}
     </td>
-    <td><div class="equipmentSlot"></div></td>
+    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}"
+      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('body', $event)" (dragstart)="drag('body', $event)"
+      tooltip="{{character.equipment.body?.description}}" placement="left"
+    >
+      {{character.equipment.body?.name | titlecase}}
+    </td>
     <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('leftHand', $event)" (dragstart)="drag('leftHand', $event)"
       tooltip="{{character.equipment.leftHand?.description}}" placement="left"
@@ -22,11 +32,21 @@
   </tr>
   <tr>
     <td></td>
-    <td><div class="equipmentSlot"></div></td>
+    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
+      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"
+      tooltip="{{character.equipment.legs?.description}}" placement="left"
+    >
+      {{character.equipment.legs?.name | titlecase}}
+    </td>
     <td></td>
   </tr>
   <tr>
     <td></td>
-    <td><div class="equipmentSlot"></div></td>
+    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
+      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('feet', $event)" (dragstart)="drag('feet', $event)"
+      tooltip="{{character.equipment.feet?.description}}" placement="left"
+    >
+      {{character.equipment.feet?.name | titlecase}}
+    </td>
     <td></td>
   </tr>

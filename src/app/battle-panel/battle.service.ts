@@ -74,7 +74,7 @@ export class BattleService {
         this.yearlyMonsterDay = 0;
         this.trouble();
       }
-      if (this.autoTroubleEnabled && 
+      if (this.autoTroubleEnabled &&
         this.characterService.characterState.status.health.value == this.characterService.characterState.status.health.max){
         this.trouble();
       }
@@ -212,6 +212,7 @@ export class BattleService {
     this.troubleKills++;
   }
 
+  // Don't put items with use() functions in the loot (like food). They don't get persisted.
   enemyRepo = {
     mouse: {
       name: "a pesky mouse",
@@ -230,7 +231,6 @@ export class BattleService {
       attack: 5,
       defense: 2,
       loot: [
-        this.itemRepoService.items['meat'],
         this.itemRepoService.items['hide']
       ]
     }

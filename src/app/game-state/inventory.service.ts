@@ -5,15 +5,19 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
-import { WeaponNames, ItemPrefixes, ItemSuffixes, ItemSuffixModifiers, herbNames, herbQuality } from './itemResources';
+import { WeaponNames, ItemPrefixes, WeaponSuffixes, WeaponSuffixModifiers, ArmorSuffixes, ArmorSuffixModifiers, herbNames, herbQuality, ChestArmorNames, LegArmorNames, ShoeNames, HelmetNames } from './itemResources';
 import { FurniturePosition } from './home.service';
 
 export interface WeaponStats {
   baseDamage: number;
   material: string;
   durability: number;
-  strengthScaling: number;
-  speedScaling: number;
+}
+
+export interface ArmorStats {
+  defense: number;
+  material: string;
+  durability: number;
 }
 
 export interface Item {
@@ -32,6 +36,7 @@ export interface Item {
 export interface Equipment extends Item {
   slot: EquipmentPosition;
   weaponStats?: WeaponStats;
+  armorStats?: ArmorStats;
 }
 
 export interface Potion extends Item {
@@ -65,6 +70,7 @@ export interface InventoryProperties {
   autoBalanceItems: BalanceItem[],
   autoPotionUnlocked: boolean,
   autoWeaponMergeUnlocked: boolean,
+  autoArmorMergeUnlocked: boolean,
   useSpiritGemUnlocked: boolean,
   useSpiritGemWeapons: boolean,
   useSpiritGemPotions: boolean,
@@ -87,6 +93,7 @@ export class InventoryService {
   autoBalanceItems: BalanceItem[];
   autoPotionUnlocked: boolean;
   autoWeaponMergeUnlocked: boolean;
+  autoArmorMergeUnlocked: boolean;
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useSpiritGemPotions: boolean;
@@ -108,10 +115,11 @@ export class InventoryService {
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
     this.autoWeaponMergeUnlocked = false;
+    this.autoArmorMergeUnlocked = false;
     this.useSpiritGemUnlocked = false;
     this.useSpiritGemWeapons = false;
     this.useSpiritGemPotions = false;
-  
+
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
     }
@@ -123,6 +131,9 @@ export class InventoryService {
       this.eatFood();
       if (this.autoWeaponMergeUnlocked){
         this.autoWeaponMerge();
+      }
+      if (this.autoArmorMergeUnlocked){
+        this.autoArmorMerge();
       }
     });
     reincarnationService.reincarnateSubject.subscribe(() => {
@@ -141,10 +152,11 @@ export class InventoryService {
       autoBalanceItems: this.autoBalanceItems,
       autoPotionUnlocked: this.autoPotionUnlocked,
       autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked,
+      autoArmorMergeUnlocked: this.autoArmorMergeUnlocked,
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
       useSpiritGemWeapons: this.useSpiritGemWeapons,
       useSpiritGemPotions: this.useSpiritGemPotions,
-  
+
     }
   }
 
@@ -158,6 +170,7 @@ export class InventoryService {
     this.autoBalanceItems = properties.autoBalanceItems;
     this.autoPotionUnlocked = properties.autoPotionUnlocked;
     this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked;
+    this.autoArmorMergeUnlocked = properties.autoArmorMergeUnlocked;
     this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked;
     this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
     this.useSpiritGemPotions = properties.useSpiritGemPotions;
@@ -195,26 +208,28 @@ export class InventoryService {
     let prefix = ItemPrefixes[prefixIndex];
     let suffix = "";
     if (suffixIndex > 0){
-      let suffixModifierIndex = Math.floor(suffixIndex / ItemSuffixes.length);
+      let suffixModifierIndex = Math.floor(suffixIndex / WeaponSuffixes.length);
       if (suffixModifierIndex > 0){
-        if (suffixModifierIndex > ItemSuffixModifiers.length){
-          suffixModifierIndex = ItemSuffixModifiers.length;
-          suffixIndex = ItemSuffixes.length - 1;
+        if (suffixModifierIndex > WeaponSuffixModifiers.length){
+          suffixModifierIndex = WeaponSuffixModifiers.length;
+          suffixIndex = WeaponSuffixes.length - 1;
         } else {
-          suffixIndex = suffixIndex % ItemSuffixes.length;
+          suffixIndex = suffixIndex % WeaponSuffixes.length;
         }
-        let suffixModifier = ItemSuffixModifiers[suffixModifierIndex - 1];
-        suffix = " of " + suffixModifier + " " + ItemSuffixes[suffixIndex];
+        let suffixModifier = WeaponSuffixModifiers[suffixModifierIndex - 1];
+        suffix = " of " + suffixModifier + " " + WeaponSuffixes[suffixIndex];
       } else {
-        suffix = " of " + ItemSuffixes[suffixIndex - 1];
+        suffix = " of " + WeaponSuffixes[suffixIndex - 1];
       }
     }
-    let name = prefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)] + suffix;
+    let materialPrefix = material;
     let slot: EquipmentPosition = 'rightHand';
     if (material === "wood") {
       // incentivizing to do both metal and wood. Maybe change this later.
       slot = 'leftHand';
+      materialPrefix = "wooden";
     }
+    let name = prefix + ' ' + materialPrefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)] + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'EVENT');
     let durability = Math.floor(Math.random() * grade * 10);
     return {
@@ -226,9 +241,7 @@ export class InventoryService {
       weaponStats: {
         baseDamage: grade,
         material: material,
-        durability: durability,
-        strengthScaling: Math.random() * grade,
-        speedScaling: Math.random() * grade,
+        durability: durability
       },
       description: 'A unique weapon made of ' + material + ".<br/>Base Damage: " + grade + "<br/>Durability: " + durability
     };
@@ -301,6 +314,67 @@ export class InventoryService {
       value: grade * 10,
       description: 'A spirit gem.'
     };
+  }
+
+  generateArmor(grade: number, material: string, slot: EquipmentPosition): Equipment{
+    let prefixIndex = grade % ItemPrefixes.length;
+    let suffixIndex = Math.floor(grade / ItemPrefixes.length);
+    let prefix = ItemPrefixes[prefixIndex];
+    let suffix = "";
+    if (suffixIndex > 0){
+      let suffixModifierIndex = Math.floor(suffixIndex / ArmorSuffixes.length);
+      if (suffixModifierIndex > 0){
+        if (suffixModifierIndex > ArmorSuffixModifiers.length){
+          suffixModifierIndex = ArmorSuffixModifiers.length;
+          suffixIndex = ArmorSuffixes.length - 1;
+        } else {
+          suffixIndex = suffixIndex % ArmorSuffixes.length;
+        }
+        let suffixModifier = ArmorSuffixModifiers[suffixModifierIndex - 1];
+        suffix = " of " + suffixModifier + " " + ArmorSuffixes[suffixIndex];
+      } else {
+        suffix = " of " + ArmorSuffixes[suffixIndex - 1];
+      }
+    }
+    let materialPrefix = material;
+    let namePicker = ChestArmorNames;
+    if (slot == 'legs'){
+      namePicker = LegArmorNames;
+    } else if (slot == 'head'){
+      namePicker = HelmetNames;
+    } else if (slot == 'feet'){
+      namePicker = ShoeNames;
+    }
+    let name = prefix + ' ' + materialPrefix + ' ' + namePicker[Math.floor(Math.random() * namePicker.length)] + suffix;
+    this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'EVENT');
+    let durability = Math.floor(Math.random() * grade * 10);
+    return {
+      id: 'armor',
+      name: name,
+      type: "equipment",
+      slot: slot,
+      value: grade,
+      armorStats: {
+        defense: grade,
+        material: material,
+        durability: durability
+      },
+      description: 'A unique piece of armor made of ' + material + ".<br/>Defense: " + grade + "<br/>Durability: " + durability
+    };
+
+  }
+
+  randomArmorSlot(): EquipmentPosition{
+    let randomNumber = Math.random();
+    if (randomNumber < 0.25){
+      return 'body';
+    } else if (randomNumber < 0.5){
+      return 'head';
+    } else if (randomNumber < 0.75){
+      return 'feet';
+    } else {
+      return 'legs';
+    }
   }
 
   getOre(): Item {
@@ -395,10 +469,7 @@ export class InventoryService {
       if (itemIterator == null){
         continue;
       }
-      if (
-        itemIterator.item.type == 'food' &&
-        itemIterator.item.value > foodValue
-      ) {
+      if (itemIterator.item.type == 'food' && itemIterator.item.value > foodValue) {
         foodStack = itemIterator;
       }
     }
@@ -658,19 +729,30 @@ export class InventoryService {
       // not the same slot, bail out
       return;
     }
-    // TODO: make this work for other things than weapons eventually
-    let inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + ""));
+    let inventoryIndex = 0;
+    if (item1.slot == 'rightHand' || item1.slot == 'leftHand'){
+      // TODO: make this work for other things than weapons eventually
+      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + ""));
+    } else {
+      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot));
+    }
     // if we can, move the new item to the desired destination index
     if (inventoryIndex != destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] == null){
       this.itemStacks[destinationInventoryIndex] = this.itemStacks[inventoryIndex];
       this.itemStacks[inventoryIndex] = null;
     }
-
   }
 
   autoWeaponMerge(){
     this.autoMerge('leftHand');
     this.autoMerge('rightHand');
+  }
+
+  autoArmorMerge(){
+    this.autoMerge('head');
+    this.autoMerge('body');
+    this.autoMerge('legs');
+    this.autoMerge('feet');
   }
 
   autoMerge(slot: EquipmentPosition){

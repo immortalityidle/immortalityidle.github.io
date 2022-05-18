@@ -9,6 +9,7 @@ export enum ActivityType {
   GatherHerbs,
   ChopWood,
   Woodworking,
+  Leatherworking,
   Farming,
   Mining,
   Smelting,

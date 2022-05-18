@@ -29,7 +29,7 @@ export type AttributeType = 'strength' |
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number, icon: string}};
 
-export type EquipmentPosition = 'head' | 'body' | 'leftHand' | 'rightHand' | 'legs' | 'feet';
+export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
 
 export type EquipmentSlots  = { [key in EquipmentPosition]: Equipment | null };
 

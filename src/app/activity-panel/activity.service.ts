@@ -561,6 +561,91 @@ export class ActivityService {
       },
       {
         level: 0,
+        name: ['Apprentice Leatherworking', 'Journeyman Leatherworking', 'Leatherworking'],
+        activityType: ActivityType.Leatherworking,
+        description: [
+          'Work in a tannery, where hides are turned into leather items.',
+          'Convert hides into leather items.',
+          'Open your own tannery.'
+        ],
+        consequenceDescription:[
+          'Uses 20 stamina. Increases speed and toughness and provides a little money.',
+          'Uses 20 stamina. Increases speed and toughness and provides a little money. You may make something you want to keep now and then.',
+          'Uses 20 stamina. Increases speed and toughness, earn some money, create leather equipment.',
+        ],
+        consequence: [
+          () => {
+            this.characterService.characterState.increaseAttribute('speed', 0.1);
+            this.characterService.characterState.increaseAttribute('toughness', 0.1);
+            this.characterService.characterState.status.stamina.value -= 20;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.speed.value +
+              this.characterService.characterState.attributes.toughness.value) +
+              this.characterService.characterState.attributes.animalLore.value;
+            if (Math.random() < 0.01) {
+              this.characterService.characterState.increaseAttribute('animalLore', 0.1);
+            }
+          },
+          () => {
+            this.characterService.characterState.increaseAttribute('speed',0.2);
+            this.characterService.characterState.increaseAttribute('toughness',0.2);
+            this.characterService.characterState.status.stamina.value -= 20;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.speed.value +
+              this.characterService.characterState.attributes.toughness.value) +
+              (this.characterService.characterState.attributes.animalLore.value * 2);
+            if (Math.random() < 0.01) {
+              this.characterService.characterState.increaseAttribute('animalLore',0.5);
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('hide');
+                if (grade >= 1){ // if the wood was found
+                  this.inventoryService.addItem(this.inventoryService.generateArmor(
+                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.animalLore.value)), 'leather',
+                    this.inventoryService.randomArmorSlot()));
+                }
+              }
+            }
+          },
+          () => {
+            this.characterService.characterState.increaseAttribute('speed',0.5);
+            this.characterService.characterState.increaseAttribute('toughness',0.5);
+            this.characterService.characterState.status.stamina.value -= 20;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.speed.value +
+              this.characterService.characterState.attributes.toughness.value) +
+              (this.characterService.characterState.attributes.animalLore.value * 5);
+            if (Math.random() < 0.01) {
+              this.characterService.characterState.increaseAttribute('animalLore',0.8);
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('hide');
+                if (grade >= 1){ // if the wood was found
+                  this.inventoryService.addItem(this.inventoryService.generateArmor(
+                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.animalLore.value)), 'leather',
+                    this.inventoryService.randomArmorSlot()));
+                }
+              }
+            }
+          }
+        ],
+        requirements: [
+          {
+            speed: 100,
+            toughness: 100
+          },
+          {
+            speed: 800,
+            toughness: 800,
+            animalLore: 1,
+          },
+          {
+            speed: 2000,
+            toughness: 2000,
+            animalLore: 10,
+          }
+        ],
+      },
+      {
+        level: 0,
         name: ['Farming'],
         activityType: ActivityType.Farming,
         description:
@@ -638,6 +723,7 @@ export class ActivityService {
           if (Math.random() < huntingSuccessChance) {
             this.characterService.characterState.increaseAttribute('animalLore', 0.1);
             this.inventoryService.addItem(this.itemRepoService.items['meat']);
+            this.inventoryService.addItem(this.itemRepoService.items['hide']);
           }
           if (Math.random() < 0.01) {
             this.battleService.addEnemy(this.battleService.enemyRepo.wolf);
