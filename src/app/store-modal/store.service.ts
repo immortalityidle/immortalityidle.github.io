@@ -76,11 +76,20 @@ export class StoreService {
     }
   }
 
-  ascendAttributeGain(){
+  condenseSoulCore(){
     if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.condenseSoulCoreCost){
       this.logService.addLogMessage("You don't have the spirituality required for to ascend.","INJURY","EVENT");
       return;
     }
     this.characterService.condenseSoulCore()
   }
+
+  reinforceMeridians(){
+    if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.reinforceMeridiansCost){
+      this.logService.addLogMessage("You don't have the spirituality required for to ascend.","INJURY","EVENT");
+      return;
+    }
+    this.characterService.reinforceMeridians()
+  }
+
 }

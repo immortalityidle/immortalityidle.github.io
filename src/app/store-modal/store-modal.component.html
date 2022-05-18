@@ -98,9 +98,18 @@
   <span>Ascension Shop</span>
   <hr/>
   <button 
-    (click)="storeService.ascendAttributeGain()"
+    (click)="storeService.condenseSoulCore()"
     tooltip="Requires {{characterService.characterState.condenseSoulCoreCost}} spirituality. End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each reincarnation."
   >
     Condense Soul Core
   </button>
+  <br/>
+  <button 
+    (click)="storeService.reinforceMeridians()"
+    tooltip="Requires {{characterService.characterState.reinforceMeridiansCost}} spirituality. End your current life, sacrifice all attributes and aptitudes, and permanently increase the power of your aptitudes when gaining attributes."
+  >
+    Reinforce Meridians
+  </button>
+
+  
 </div>

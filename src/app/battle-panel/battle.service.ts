@@ -91,6 +91,7 @@ export class BattleService {
     this.currentEnemy = null;
     this.kills = 0;
     this.troubleKills = 0;
+    this.yearlyMonsterDay = 0;
   }
 
   getProperties(): BattleProperties {
