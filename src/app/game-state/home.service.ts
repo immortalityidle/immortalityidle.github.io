@@ -84,7 +84,6 @@ export class HomeService {
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
 
-
   homesList: Home[] = [
     {
       name: "Squatter Tent",
@@ -591,7 +590,7 @@ export class HomeService {
       }
     }
     if (nextHarvest < Number.MAX_VALUE){
-      this.fieldsTooltip = "Next harvest in " + nextHarvest + " days.";
+      this.fieldsTooltip = "Currently growing " + this.fields[0].cropName + ". Next harvest in " + nextHarvest + " days.";
     }
   }
 

@@ -247,6 +247,18 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.increaseAttribute('alchemy', 0.1);
       }
+    },
+    prayerShrine: {
+      id: 'prayerShrine',
+      name: "prayer shrine",
+      type: 'furniture',
+      slot: 'workbench',
+      value: 10000000,
+      description: "A quiet shrine for contemplative prayer.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('spirituality', 0.01);
+      }
     }
   }
 

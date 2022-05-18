@@ -27,7 +27,8 @@ export interface BattleProperties {
   kills: number,
   troubleKills: number,
   autoTroubleUnlocked: boolean,
-  autoTroubleEnabled: boolean
+  autoTroubleEnabled: boolean,
+  monthlyMonsterDay: number
 }
 
 
@@ -43,6 +44,7 @@ export class BattleService {
   troubleKills: number;
   autoTroubleUnlocked: boolean = false;
   autoTroubleEnabled: boolean = false;
+  yearlyMonsterDay: number;
 
   constructor(
     private logService: LogService,
@@ -56,6 +58,7 @@ export class BattleService {
     this.currentEnemy = null;
     this.kills = 0;
     this.troubleKills = 0;
+    this.yearlyMonsterDay = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
@@ -66,6 +69,11 @@ export class BattleService {
       }
       this.enemiesAttack();
       this.youAttack();
+      this.yearlyMonsterDay++;
+      if (this.yearlyMonsterDay >= 365){
+        this.yearlyMonsterDay = 0;
+        this.trouble();
+      }
       if (this.autoTroubleEnabled && 
         this.characterService.characterState.status.health.value == this.characterService.characterState.status.health.max){
         this.trouble();
@@ -92,7 +100,8 @@ export class BattleService {
       kills: this.kills,
       troubleKills: this.troubleKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
-      autoTroubleEnabled: this.autoTroubleEnabled
+      autoTroubleEnabled: this.autoTroubleEnabled,
+      monthlyMonsterDay: this.yearlyMonsterDay
     }
   }
 
@@ -103,6 +112,7 @@ export class BattleService {
     this.troubleKills = properties.troubleKills;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.autoTroubleEnabled = properties.autoTroubleEnabled;
+    this.yearlyMonsterDay = properties.monthlyMonsterDay;
   }
 
   enemiesAttack(){
