@@ -78,7 +78,7 @@ export class CharacterService {
     this.logService.addLogMessage(
       "You now gain twice as much aptitude each time you reincarnate.",
       'STANDARD', 'REBIRTH');
-      this.characterState.condenseSoulCoreCost *= 10;
+    this.characterState.condenseSoulCoreCost *= 10;
     this.characterState.aptitudeGainDivider /= 2;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
@@ -93,6 +93,16 @@ export class CharacterService {
     this.forceRebirth = true;
   }
 
+  sourCoreRank(): number {
+    let rank = 0;
+    let cost = this.characterState.condenseSoulCoreOriginalCost;
+    while (cost < this.characterState.condenseSoulCoreCost){
+      cost *= 10;
+      rank++;
+    }
+    return rank;
+  }
+
   reinforceMeridians(){
     this.logService.addLogMessage(
       "The pathways that carry your chi through your body have been strengthened and reinforced.",
@@ -102,7 +112,7 @@ export class CharacterService {
         'STANDARD', 'REBIRTH');
 
     this.characterState.reinforceMeridiansCost *= 10;
-    this.characterState.aptitudeGainDivider /= 2;
+    this.characterState.attributeScalingLimit *= 2;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
@@ -114,6 +124,16 @@ export class CharacterService {
       }
     }
     this.forceRebirth = true;
+  }
+
+  meridianRank(): number {
+    let rank = 0;
+    let cost = this.characterState.reinforceMeridiansOriginalCost;
+    while (cost < this.characterState.reinforceMeridiansCost){
+      cost *= 10;
+      rank++;
+    }
+    return rank;
   }
 
 }

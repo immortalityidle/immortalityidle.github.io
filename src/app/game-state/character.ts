@@ -60,7 +60,9 @@ export class Character {
   attributeSoftCap: number = 10000;
   aptitudeGainDivider: number = 100;
   condenseSoulCoreCost: number = 10;
+  condenseSoulCoreOriginalCost: number = 10;
   reinforceMeridiansCost: number = 1000;
+  reinforceMeridiansOriginalCost: number = 1000;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",

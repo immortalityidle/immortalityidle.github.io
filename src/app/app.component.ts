@@ -2,9 +2,11 @@ import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './main-loop.service';
-import { StoreModalComponent } from './store-modal/store-modal.component';
+import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
+import { OptionsModalComponent } from './options-modal/options-modal.component';
+import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';
 import { HostListener } from '@angular/core';
-import { StoreService } from './store-modal/store.service';
+import { StoreService } from './game-state/store.service';
 import { CharacterService } from './game-state/character.service';
 
 @Pipe({name: 'floor'})
@@ -74,16 +76,14 @@ export class AppComponent implements OnInit {
   }
 
   storeClicked(): void {
-    this.storeService.setStoreInventory("manuals");
-    const dialogRef = this.dialog.open(StoreModalComponent, {
+    const dialogRef = this.dialog.open(ManualStoreModalComponent, {
       width: '500px',
       data: {someField: 'foo'}
     });
   }
 
   storeOptionsClicked(): void {
-    this.storeService.setStoreInventory("options");
-    const dialogRef = this.dialog.open(StoreModalComponent, {
+    const dialogRef = this.dialog.open(OptionsModalComponent, {
       width: '500px',
       data: {someField: 'foo'}
     });
@@ -100,8 +100,8 @@ export class AppComponent implements OnInit {
   }
 
   ascensionStoreClicked(){
-    this.storeService.setStoreInventory("ascension");
-    const dialogRef = this.dialog.open(StoreModalComponent, {
+    this.storeService.updateAscensions();
+    const dialogRef = this.dialog.open(AscensionStoreModalComponent, {
       width: '500px',
       data: {someField: 'foo'}
     });

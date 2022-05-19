@@ -1,0 +1,31 @@
+<div>
+  <span>Ascension Shop</span>
+  <hr/>
+  <table>
+    <tr>
+      <td>
+        <button (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
+      </td>
+      <td>
+        End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each reincarnation.
+        <br>
+        Current Rank: {{storeService.soulCoreRank}}
+        <br>
+        Next rank requires {{characterService.characterState.condenseSoulCoreCost | number}} spirituality.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button (click)="storeService.reinforceMeridians()">Reinforce Meridians</button>
+      </td>
+      <td>
+        End your current life, sacrifice all attributes and aptitudes, and permanently increase the power of your aptitudes when gaining attributes.
+        <br>
+        Current Rank: {{storeService.meridianRank}}
+        <br>
+        Next rank requires {{characterService.characterState.reinforceMeridiansCost | number}} spirituality.
+      </td>
+    </tr>
+  </table>
+
+</div>

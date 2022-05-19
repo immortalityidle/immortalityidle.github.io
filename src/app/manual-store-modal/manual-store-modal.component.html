@@ -1,0 +1,19 @@
+<div>
+  <span>Manuals Shop</span>
+  <hr/>
+  <div class="inventoryGrid">
+      <div *ngFor="let item of storeService.manuals">
+        <table class="itemSlot" (click)="slotClicked(item)"
+          [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
+          placement="left" tooltip="{{item.description}}">
+          <tr><mat-icon>menu_book</mat-icon></tr>
+          <tr>{{item.name | titlecase}}</tr>
+        </table>
+        <div class="priceLabel">{{item.value | number: '1.0-0'}}</div>
+      </div>
+  </div>
+  <button (click)="storeService.buyManual()"
+      [disabled]="buyDisabled">
+      Buy
+  </button>
+</div>

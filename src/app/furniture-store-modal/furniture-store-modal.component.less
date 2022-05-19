@@ -1,0 +1,48 @@
+.inventoryContainer{
+  position: relative;
+  height: 100%;
+}
+
+.itemSlot {
+border: 1px solid black;
+width: 90px;
+height: 90px;
+margin: 1px;
+font-size: x-small;
+text-align: center;
+border-spacing: 0px;
+background-color: lightgray;
+cursor: pointer;
+}
+
+.priceLabel {
+width: 60px;
+text-align: center;
+}
+
+.selectedItem {
+background-color: lightyellow;
+}
+
+.ownedItem {
+background-color: darkgray !important;
+border: 1px solid darkgray !important;
+}
+
+.itemSlot > tr {
+line-height: 12px;
+}
+
+.inventoryGrid {
+display: flex;
+flex-wrap: wrap;
+}
+
+table {
+width: 100%;
+}
+
+button {
+margin-top: 2px;
+}
+

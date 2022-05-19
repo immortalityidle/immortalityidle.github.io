@@ -3,8 +3,8 @@ import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
-import { StoreService } from '../store-modal/store.service';
-import { StoreModalComponent } from '../store-modal/store-modal.component';
+import { StoreService } from '../game-state/store.service';
+import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
 
 @Component({
   selector: 'app-home-panel',
@@ -36,8 +36,8 @@ export class HomePanelComponent {
   }
 
   storeClicked(): void {
-    this.storeService.setStoreInventory("furniture");
-    const dialogRef = this.dialog.open(StoreModalComponent, {
+    this.storeService.setStoreInventory();
+    const dialogRef = this.dialog.open(FurnitureStoreModalComponent, {
       width: '500px',
       data: {someField: 'foo'}
     });

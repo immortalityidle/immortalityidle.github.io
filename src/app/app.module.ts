@@ -16,9 +16,12 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { StoreModalComponent } from './store-modal/store-modal.component';
+import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { TooltipModule } from 'ng2-tooltip-directive';
 import { BattlePanelComponent } from './battle-panel/battle-panel.component';
+import { FurnitureStoreModalComponent } from './furniture-store-modal/furniture-store-modal.component';
+import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';
+import { OptionsModalComponent } from './options-modal/options-modal.component';
 
 const materialModules = [
   MatDialogModule,
@@ -38,8 +41,11 @@ const materialModules = [
     EquipmentPanelComponent,
     FloorPipe,
     CamelToTitlePipe,
-    StoreModalComponent,
-    BattlePanelComponent
+    ManualStoreModalComponent,
+    BattlePanelComponent,
+    FurnitureStoreModalComponent,
+    AscensionStoreModalComponent,
+    OptionsModalComponent
   ],
   imports: [
     BrowserModule,

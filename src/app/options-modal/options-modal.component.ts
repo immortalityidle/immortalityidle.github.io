@@ -1,44 +1,18 @@
 import { Component } from '@angular/core';
-import { StoreService } from './store.service';
-import { Item } from '../game-state/inventory.service';
-import { CharacterService } from '../game-state/character.service';
-import { Character } from '../game-state/character';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem } from '../game-state/inventory.service';
-import { ItemRepoService } from '../game-state/item-repo.service'
 
 @Component({
-  selector: 'app-store-modal',
-  templateUrl: './store-modal.component.html',
-  styleUrls: ['./store-modal.component.less', '../app.component.less']
+  selector: 'app-options-modal',
+  templateUrl: './options-modal.component.html',
+  styleUrls: ['./options-modal.component.less']
 })
-export class StoreModalComponent {
-  character: Character;
-  buyDisabled: boolean = true;
+export class OptionsModalComponent {
 
   constructor(
-    public storeService: StoreService,
-    public characterService: CharacterService,
     public homeService: HomeService,
-    public inventoryService: InventoryService,
-    public itemRepoService: ItemRepoService
-  ) {
-    this.character = characterService.characterState;
-  }
-
-  slotClicked(item: Item){
-    if (this.storeService.selectedItem == item){
-      this.storeService.selectedItem = null;
-      this.buyDisabled = true;
-    } else {
-      this.storeService.selectedItem = item;
-      if ((item.owned && item.owned()) || this.characterService.characterState.money < item.value){
-        this.buyDisabled = true;
-      } else {
-        this.buyDisabled = false;
-      }
-    }
-  }
+    public inventoryService: InventoryService
+  ) { }
 
   autoBuyLandLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
