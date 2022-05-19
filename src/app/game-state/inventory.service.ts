@@ -557,7 +557,9 @@ export class InventoryService {
     if (quantity >= itemStack.quantity) {
       this.itemStacks[index] = null;
       this.characterService.characterState.money += itemStack.quantity * itemStack.item.value;
-      this.selectedItem = null;
+      if (itemStack == this.selectedItem){
+        this.selectedItem = null;
+      }
     } else {
       itemStack.quantity -= quantity;
       this.characterService.characterState.money += quantity * itemStack.item.value;
@@ -594,7 +596,9 @@ export class InventoryService {
       if (itemStack.quantity <= 0) {
         let index = this.itemStacks.indexOf(itemStack);
         this.itemStacks[index] = null;
-        this.selectedItem = null;
+        if (itemStack == this.selectedItem){
+          this.selectedItem = null;
+        }
       }
     }
   }
