@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { CharacterService } from '../game-state/character.service';
 import { Furniture, InventoryService, Item, instanceOfFurniture } from '../game-state/inventory.service';
-import { HomeService } from '../game-state/home.service';
+import { HomeService, HomeType } from '../game-state/home.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { MatDialog } from '@angular/material/dialog';
+import { Home } from './home';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,9 @@ export class StoreService {
   selectedItem: Item | null;
   soulCoreRank: number = 0;
   meridianRank: number = 0;
+  bloodlineLabel: string = "";
+  bloodlineDescription: string = "";
+  bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
 
   constructor(
     private logService: LogService,
@@ -80,11 +84,37 @@ export class StoreService {
   updateAscensions(){
     this.soulCoreRank = this.characterService.sourCoreRank();
     this.meridianRank = this.characterService.meridianRank();
+    if (this.characterService.characterState.bloodlineRank == 0){
+      this.bloodlineLabel = "Establish Bloodline";
+    } else {
+      this.bloodlineLabel = "Enhance Bloodline";
+    }
+    if (this.characterService.characterState.bloodlineRank == 0){
+      this.bloodlineDescription = "Establish a bloodline. All of your future reincarnations will be born as your own descendants. Your weapons equipped on death will become family heirlooms and will be inherited by your future self.";
+      this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mansion];
+    } else if (this.characterService.characterState.bloodlineRank == 1){
+      this.bloodlineDescription = "Enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self.";
+      this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Palace];
+    } else if (this.characterService.characterState.bloodlineRank == 2){
+      this.bloodlineDescription = "Enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit some of your past self's money.";
+      this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Castle];
+    } else if (this.characterService.characterState.bloodlineRank == 3){
+      this.bloodlineDescription = "Enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest.";
+      this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Fortress];
+    } else if (this.characterService.characterState.bloodlineRank == 4){
+      this.bloodlineDescription = "Enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";
+      this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mountain];
+    }
+
   }
 
   condenseSoulCore(){
     if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.condenseSoulCoreCost){
-      this.logService.addLogMessage("You don't have the spirituality required for to ascend.","INJURY","EVENT");
+      this.logService.addLogMessage("You don't have the spirituality required to ascend.","INJURY","EVENT");
+      return;
+    }
+    if (this.soulCoreRank >= 9){
+      this.logService.addLogMessage("You can't condense your soul core any further.","INJURY","EVENT");
       return;
     }
     this.characterService.condenseSoulCore();
@@ -93,10 +123,31 @@ export class StoreService {
 
   reinforceMeridians(){
     if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.reinforceMeridiansCost){
-      this.logService.addLogMessage("You don't have the spirituality required for to ascend.","INJURY","EVENT");
+      this.logService.addLogMessage("You don't have the spirituality required to ascend.","INJURY","EVENT");
+      return;
+    }
+    if (this.meridianRank >= 9){
+      this.logService.addLogMessage("You can't reinforce your meridians any further.","INJURY","EVENT");
       return;
     }
     this.characterService.reinforceMeridians();
+    this.dialog.closeAll();
+  }
+
+  upgradeBloodline(){
+    if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.bloodlineCost){
+      this.logService.addLogMessage("You don't have the spirituality required to ascend.","INJURY","EVENT");
+      return;
+    }
+    if (this.meridianRank >= 4){
+      this.logService.addLogMessage("You can't reinforce your meridians any further.","INJURY","EVENT");
+      return;
+    }
+    if (this.homeService.home.type < this.bloodLineHomeRequirement.type){
+      this.logService.addLogMessage("You don't have a powerful enough home to ascend.","INJURY","EVENT");
+      return;
+    }
+    this.characterService.upgradeBloodline();
     this.dialog.closeAll();
   }
 

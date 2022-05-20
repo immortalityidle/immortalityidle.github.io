@@ -4,7 +4,7 @@
   <table>
     <tr>
       <td>
-        <button (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
+        <button [disabled]="storeService.soulCoreRank > 8" (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
       </td>
       <td>
         End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each reincarnation.
@@ -16,7 +16,7 @@
     </tr>
     <tr>
       <td>
-        <button (click)="storeService.reinforceMeridians()">Reinforce Meridians</button>
+        <button [disabled]="storeService.meridianRank > 8" (click)="storeService.reinforceMeridians()">Reinforce Meridians</button>
       </td>
       <td>
         End your current life, sacrifice all attributes and aptitudes, and permanently increase the power of your aptitudes when gaining attributes.
@@ -24,6 +24,18 @@
         Current Rank: {{storeService.meridianRank}}
         <br>
         Next rank requires {{characterService.characterState.reinforceMeridiansCost | number}} spirituality.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button [disabled]="characterService.characterState.bloodlineRank >= 4" (click)="storeService.upgradeBloodline()">{{storeService.bloodlineLabel}}</button>
+      </td>
+      <td>
+        {{storeService.bloodlineDescription}}
+        <br>
+        Current Rank: {{characterService.characterState.bloodlineRank}}
+        <br>
+        Next rank requires {{characterService.characterState.bloodlineCost | number}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
       </td>
     </tr>
   </table>

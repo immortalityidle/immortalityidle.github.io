@@ -93,7 +93,7 @@ export class GameStateService {
 
   cheat(): void {
     this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","SYSTEM");
-    this.characterService.characterState.money = 1000000000;
+    this.characterService.characterState.money += 1000000000;
     for (let key in this.itemRepoService.items){
       let item = this.itemRepoService.items[key];
       if (item.type == 'manual' && item.use) {
@@ -103,7 +103,8 @@ export class GameStateService {
     const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterService.characterState.attributes[keys[key]];
-      attribute.aptitude += 1000;
+      attribute.aptitude += 1000000;
+      attribute.value += 1000000;
     }
   }
 }

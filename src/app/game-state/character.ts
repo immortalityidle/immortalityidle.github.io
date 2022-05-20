@@ -49,7 +49,9 @@ export interface CharacterProperties {
   attributeSoftCap: number,
   aptitudeGainDivider: number,
   condenseSoulCoreCost: number,
-  reinforceMeridiansCost: number
+  reinforceMeridiansCost: number,
+  bloodlineCost: number,
+  bloodlineRank: number
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -63,6 +65,8 @@ export class Character {
   condenseSoulCoreOriginalCost: number = 10;
   reinforceMeridiansCost: number = 1000;
   reinforceMeridiansOriginalCost: number = 1000;
+  bloodlineCost: number = 1000000;
+  bloodlineRank: number = 0;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -191,20 +195,38 @@ export class Character {
       }
       totalAptitude += this.attributes[keys[key]].aptitude;
     }
-    this.money = 0;
+    if (this.bloodlineRank < 2){
+      this.money = 0;
+    } else if (this.bloodlineRank < 3){
+      this.money = this.money / 8;
+    } else {
+      this.money = 4 * this.money;
+    }
     // age in days
     this.age = INITIAL_AGE;
     this.baseLifespan += 1; //bonus day just for doing another reincarnation cycle
-    this.statLifespan = (0.8 * (totalAptitude / Object.keys(this.attributes).length));
+    if (this.bloodlineRank < 4){
+      this.statLifespan = (0.1 * (totalAptitude / Object.keys(this.attributes).length));
+    } else {
+      this.statLifespan = (totalAptitude / Object.keys(this.attributes).length);
+    }
+    this.statLifespan = (0.1 * (totalAptitude / Object.keys(this.attributes).length));
     this.foodLifespan = 0;
     this.recalculateLifespan();
-    this.equipment = {
-      head: null,
-      body: null,
-      leftHand: null,
-      rightHand: null,
-      legs: null,
-      feet: null
+    if (this.bloodlineRank == 0){
+      this.equipment = {
+        head: null,
+        body: null,
+        leftHand: null,
+        rightHand: null,
+        legs: null,
+        feet: null
+      }
+    } else if (this.bloodlineRank == 1){
+      this.equipment.body = null;
+      this.equipment.head = null;
+      this.equipment.legs = null;
+      this.equipment.feet = null;
     }
   }
 
@@ -275,7 +297,9 @@ export class Character {
       attributeSoftCap: this.attributeSoftCap,
       aptitudeGainDivider: this.aptitudeGainDivider,
       condenseSoulCoreCost: this.condenseSoulCoreCost,
-      reinforceMeridiansCost: this.reinforceMeridiansCost
+      reinforceMeridiansCost: this.reinforceMeridiansCost,
+      bloodlineCost: this.bloodlineCost,
+      bloodlineRank: this.bloodlineRank
     }
   }
 
@@ -293,6 +317,8 @@ export class Character {
     this.aptitudeGainDivider = properties.aptitudeGainDivider;
     this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
+    this.bloodlineCost = properties.bloodlineCost;
+    this.bloodlineRank = properties.bloodlineRank;
     this.recalculateLifespan();
   }
 }

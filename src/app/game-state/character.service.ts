@@ -72,6 +72,10 @@ export class CharacterService {
   }
 
   condenseSoulCore(){
+    if (this.characterState.aptitudeGainDivider <= 10){
+      // double check we're not going over the max rank
+      return;
+    }
     this.logService.addLogMessage(
       "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
       'STANDARD', 'REBIRTH');
@@ -79,7 +83,7 @@ export class CharacterService {
       "You now gain twice as much aptitude each time you reincarnate.",
       'STANDARD', 'REBIRTH');
     this.characterState.condenseSoulCoreCost *= 10;
-    this.characterState.aptitudeGainDivider /= 2;
+    this.characterState.aptitudeGainDivider -= 10;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
@@ -104,6 +108,10 @@ export class CharacterService {
   }
 
   reinforceMeridians(){
+    if (this.characterState.attributeScalingLimit >= 10240){
+      // double check we're not going over the max rank
+      return;
+    }
     this.logService.addLogMessage(
       "The pathways that carry your chi through your body have been strengthened and reinforced.",
       'STANDARD', 'REBIRTH');
@@ -134,6 +142,32 @@ export class CharacterService {
       rank++;
     }
     return rank;
+  }
+
+  upgradeBloodline() {
+    if (this.characterState.bloodlineRank > 8){
+      // double check we're not going over the max rank
+      return;
+    }
+    this.logService.addLogMessage(
+      "You sacrifice your current life to strengthen a permanent bloodline that will pass on to all of your descendants.",
+      'STANDARD', 'REBIRTH');
+    this.logService.addLogMessage(
+      "You will be reborn into your own family line and reap greater benefits from your previous lives.",
+      'STANDARD', 'REBIRTH');
+    this.characterState.bloodlineCost *= 10;
+    this.characterState.bloodlineRank++;
+    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
+    for (const key in keys){
+      let attribute = this.characterState.attributes[keys[key]];
+      attribute.aptitude = 1;
+      if (parseInt(key) < 5){
+        attribute.value = 1;
+      } else {
+        attribute.value = 0;
+      }
+    }
+    this.forceRebirth = true;
   }
 
 }
