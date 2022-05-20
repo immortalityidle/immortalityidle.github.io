@@ -23,6 +23,7 @@
   <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
     [checked]="activityService.pauseOnDeath"/>
   <label *ngIf="activityService.autoRestart" for="pauseOnDeath">Pause on Death</label>
+  <h6 *ngIf="mainLoopService.bankedTicks > 0">Your perception of time is accelerated by the time you spent offline for the next {{mainLoopService.bankedTicks}} days</h6>
 </h3>
 <table>
   <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;"
