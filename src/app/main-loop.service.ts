@@ -10,6 +10,7 @@ export interface MainLoopProperties {
   lastTime: number;
   tickDivider: number;
   pause: boolean;
+  bankedTicks: number;
 }
 
 
@@ -42,7 +43,8 @@ export class MainLoopService {
       unlockFastestSpeed: this.unlockFastestSpeed,
       lastTime: this.lastTime,
       tickDivider: this.tickDivider,
-      pause: this.pause
+      pause: this.pause,
+      bankedTicks: this.bankedTicks
     }
   }
 
@@ -54,7 +56,7 @@ export class MainLoopService {
     this.pause = properties.pause;
     this.lastTime = properties.lastTime;
     let newTime = new Date().getTime();
-    this.bankedTicks = Math.floor((newTime - this.lastTime) / TICK_INTERVAL_MS);
+    this.bankedTicks = properties.bankedTicks + Math.floor((newTime - this.lastTime) / TICK_INTERVAL_MS);
     this.lastTime = newTime;
   }
 
