@@ -5,17 +5,17 @@
         Immortality Idle - Can you become an immortal?
       </span>
       <span>
-        <mat-icon tooltip="A store that sells special items for aspiring immortals."
+        <mat-icon tooltip="A store that sells special items for aspiring immortals." class="iconButton"
           (click)="storeClicked()">
           shopping_cart
         </mat-icon>
-        <mat-icon tooltip="Configuration options for purchased items."
+        <mat-icon tooltip="Configuration options for purchased items." class="iconButton"
           (click)="storeOptionsClicked()">
           settings
         </mat-icon>
       </span>
       <span *ngIf="characterService.characterState.attributes.spirituality.value > 10">
-        <mat-icon tooltip="Ascension Store."
+        <mat-icon tooltip="Ascension Store." class="iconButton"
           (click)="ascensionStoreClicked()">
           keyboard_double_arrow_up
         </mat-icon>

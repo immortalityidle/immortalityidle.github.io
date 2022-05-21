@@ -184,6 +184,10 @@ export class BattleService {
     }
     // it didn't match any, create a new enemyStack
     this.enemies.push({enemy: JSON.parse(JSON.stringify(enemy)), quantity: 1});
+    if (this.currentEnemy == null){
+      this.currentEnemy = this.enemies[0];
+    }
+
   }
 
   // generate a monster based on current troubleKills

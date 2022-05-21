@@ -1,19 +1,17 @@
 <div class="log">
   <h3 class="panelHeader"><span>Log</span>
     <span class="filters">
-      <input type="checkbox" (change)="topicFilterSystem($event)" id="filterSystem" [checked]="logService.systemTopicEnabled"/>
-      <label for="filterSystem">Show Game System Messages</label>
-      <input type="checkbox" (change)="topicFilterRebirth($event)" id="filterRebirth" [checked]="logService.rebirthTopicEnabled"/>
+      <input type="radio" (change)="topicFilterRebirth($event)" id="filterRebirth" [checked]="logService.logTopic === 'REBIRTH'"/>
       <label for="filterRebirth">Show Reincarnation Messages</label>
-      <input type="checkbox" (change)="topicFilterEvent($event)" id="filterEvent" [checked]="logService.eventTopicEnabled"/>
+      <input type="radio" (change)="topicFilterEvent($event)" id="filterEvent" [checked]="logService.logTopic === 'EVENT'"/>
       <label for="filterEvent">Show Event Messages</label>
-      <input type="checkbox" (change)="topicFilterCombat($event)" id="filterCombat" [checked]="logService.combatTopicEnabled"/>
+      <input type="radio" (change)="topicFilterCombat($event)" id="filterCombat" [checked]="logService.logTopic === 'COMBAT'"/>
       <label for="filterCombat">Show Combat Messages</label>
     </span>
   </h3>
   <div class="logContainer">
-    <ng-container *ngFor="let logMsg of log">
-      <div *ngIf="logService.enabledTopics.includes(logMsg.topic)" [ngClass]="logMsg.type" class="logEntryDiv">
+    <ng-container *ngFor="let logMsg of logService.currentLog">
+      <div [ngClass]="logMsg.type" class="logEntryDiv">
         {{logMsg.message}}
       </div>
     </ng-container>

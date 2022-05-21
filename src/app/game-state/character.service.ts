@@ -42,6 +42,7 @@ export class CharacterService {
         deathMessage = "You succumb to your wounds and die.";
       }
       if (deathMessage != ""){
+        this.logService.updateLogTopic('REBIRTH');
         this.logService.addLogMessage(deathMessage, 'INJURY', 'REBIRTH');
         if (!this.forceRebirth){
           this.logService.addLogMessage(

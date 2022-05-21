@@ -1,8 +1,9 @@
+import { EventListenerFocusTrapInertStrategy } from '@angular/cdk/a11y';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
 export type LogType = 'STANDARD' | 'INJURY';
-export type LogTopic = 'COMBAT' | 'REBIRTH' | 'EVENT' | 'SYSTEM';
+export type LogTopic = 'COMBAT' | 'REBIRTH' | 'EVENT';
 
 export interface Log {
   message: string,
@@ -11,10 +12,7 @@ export interface Log {
 }
 
 export interface LogProperties {
-  systemTopicEnabled: boolean,
-  combatTopicEnabled: boolean,
-  rebirthTopicEnabled: boolean,
-  eventTopicEnabled: boolean
+  logTopic: LogTopic
 }
 
 
@@ -24,14 +22,21 @@ export interface LogProperties {
 export class LogService {
   logAdded = new Subject<Log>();
 
-  systemTopicEnabled: boolean = true;
-  combatTopicEnabled: boolean = true;
-  rebirthTopicEnabled: boolean = true;
-  eventTopicEnabled: boolean = true;
+  logTopic: LogTopic = 'EVENT';
   enabledTopics: string = "";
+  eventLog: Log[] = [
+    {message: "Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.", type: 'STANDARD', topic: 'EVENT'},
+    {message: "Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.", type: 'STANDARD', topic: 'EVENT'},
+    {message: "It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.", type: 'STANDARD', topic: 'EVENT'},
+    {message: "Be careful, the world can be a dangerous place.", type: 'STANDARD', topic: 'EVENT'},
+  ];
+
+  rebirthLog: Log[] = [];
+  combatLog: Log[] = [];
+  currentLog = this.eventLog;
 
   constructor() {
-    this.updateEnabledTopics();
+    this.updateLogTopic('EVENT');
   }
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
@@ -40,38 +45,23 @@ export class LogService {
 
   getProperties(): LogProperties {
     return {
-      systemTopicEnabled: this.systemTopicEnabled,
-      combatTopicEnabled: this.combatTopicEnabled,
-      rebirthTopicEnabled: this.rebirthTopicEnabled,
-      eventTopicEnabled: this.eventTopicEnabled
+      logTopic: this.logTopic
     }
   }
 
   setProperties(properties: LogProperties) {
-    this.systemTopicEnabled = properties.systemTopicEnabled;
-    this.combatTopicEnabled = properties.combatTopicEnabled;
-    this.rebirthTopicEnabled = properties.rebirthTopicEnabled;
-    this.eventTopicEnabled = properties.eventTopicEnabled;
-    this.updateEnabledTopics();
+    this.updateLogTopic(properties.logTopic);
   }
 
-  updateEnabledTopics(){
-    this.enabledTopics = "";
-    if (this.systemTopicEnabled){
-      this.enabledTopics += 'SYSTEM';
+  updateLogTopic(logTopic: LogTopic){
+    this.logTopic = logTopic;
+    if (logTopic == 'COMBAT'){
+      this.currentLog = this.combatLog;
+    } else if (logTopic == 'REBIRTH'){
+      this.currentLog = this.rebirthLog;
+    } else {
+      this.currentLog = this.eventLog;
     }
-    if (this.combatTopicEnabled){
-      this.enabledTopics += 'COMBAT';
-    }
-    if (this.rebirthTopicEnabled){
-      this.enabledTopics += 'REBIRTH';
-    }
-    if (this.eventTopicEnabled){
-      this.enabledTopics += 'EVENT';
-    }
-
   }
-
-
 
 }

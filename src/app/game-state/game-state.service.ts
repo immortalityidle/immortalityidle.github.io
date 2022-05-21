@@ -27,6 +27,8 @@ interface GameState {
 })
 export class GameStateService {
 
+  lastSaved: number = 0;
+
   constructor(
     private characterService: CharacterService,
     private homeService: HomeService,
@@ -53,7 +55,7 @@ export class GameStateService {
       mainLoop: this.mainLoopService.getProperties()
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
-    this.logService.addLogMessage('Game saved', 'STANDARD', 'SYSTEM');
+    this.lastSaved = new Date().getTime();
   }
 
   loadFromLocalStorage(): void {
@@ -78,7 +80,6 @@ export class GameStateService {
     this.activityService.setProperties(gameState.activities);
     this.battleService.setProperties(gameState.battles);
     this.logService.setProperties(gameState.logs);
-    this.logService.addLogMessage('Game loaded', 'STANDARD', 'SYSTEM');
     this.mainLoopService.setProperties(gameState.mainLoop);
   }
 
@@ -92,7 +93,7 @@ export class GameStateService {
   }
 
   cheat(): void {
-    this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","SYSTEM");
+    this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","EVENT");
     this.characterService.characterState.money += 1000000000;
     for (let key in this.itemRepoService.items){
       let item = this.itemRepoService.items[key];
