@@ -31,7 +31,13 @@
     </td>
   </tr>
   <tr>
-    <td></td>
+    <td rowspan="2">
+      <span tooltip="Accuracy. Your chance to hit monsters when you attack them. Based on your speed."><mat-icon>manage_accounts</mat-icon>{{character.accuracy | percent}}</span>
+      <br/>
+      <span tooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons."><mat-icon>flare</mat-icon>{{character.attackPower}}</span>
+      <br/>
+      <span tooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor."><mat-icon>shield</mat-icon>{{character.defense}}</span>
+    </td>
     <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"
       tooltip="{{character.equipment.legs?.description}}" placement="left"
@@ -41,7 +47,6 @@
     <td></td>
   </tr>
   <tr>
-    <td></td>
     <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('feet', $event)" (dragstart)="drag('feet', $event)"
       tooltip="{{character.equipment.feet?.description}}" placement="left"

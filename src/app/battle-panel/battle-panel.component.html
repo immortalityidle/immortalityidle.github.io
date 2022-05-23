@@ -24,8 +24,8 @@
               <div></div>
             </progress>
           </td>
-          <td tooltip="Accuracy"><mat-icon>compare_arrows</mat-icon>{{enemyStack.enemy.accuracy}}</td>
-          <td tooltip="Attack Power"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.attack}}</td>
+          <td tooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
+          <td tooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack}}</td>
           <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense}}</td>
         </tr>
       </ng-container>

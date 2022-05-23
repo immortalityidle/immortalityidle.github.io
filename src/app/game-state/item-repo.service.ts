@@ -35,10 +35,11 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bed',
       value: 100,
-      description: "A thin woven mat to sleep on. . Increases daily stamina recovery by 2.",
+      description: "A thin woven mat to sleep on. Increases daily stamina recovery by 1 and restores a bit of health.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 2;
+        this.characterService.characterState.status.stamina.value += 1;
+        this.characterService.characterState.status.health.value += 0.1;
       }
     },
     canopyBed: {
@@ -47,10 +48,11 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bed',
       value: 10000,
-      description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 3.",
+      description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 2 and restores a bit of health.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 3;
+        this.characterService.characterState.status.stamina.value += 2;
+        this.characterService.characterState.status.health.value += 0.02;
       }
     },
     heatedBed: {

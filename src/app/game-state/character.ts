@@ -68,6 +68,10 @@ export class Character {
   reinforceMeridiansOriginalCost: number = 1000;
   bloodlineCost: number = 1000000;
   bloodlineRank: number = 0;
+  accuracy: number = 0;
+  accuracyExponentMultiplier: number = 0.01;
+  attackPower: number = 0;
+  defense: number = 0;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -215,7 +219,7 @@ export class Character {
     this.statLifespan = (0.1 * (totalAptitude / Object.keys(this.attributes).length));
     this.foodLifespan = 0;
     this.alchemyLifespan = 0;
-    this.recalculateLifespan();
+    this.recalculateDerivedStats();
     if (this.bloodlineRank == 0){
       this.equipment = {
         head: null,
@@ -240,8 +244,17 @@ export class Character {
     return this.attributeSoftCap + Math.log2(aptitude - (this.attributeSoftCap - 1));
   }
 
-  recalculateLifespan(): void{
+  recalculateDerivedStats(): void{
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.attributes.spirituality.value;
+    this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
+    this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
+    this.attackPower = Math.floor(Math.log10(this.attributes.strength.value)) || 1;
+    if (this.equipment.leftHand){
+      this.attackPower += (this.equipment.leftHand.weaponStats?.baseDamage || 0);
+    }
+    if (this.equipment.rightHand){
+      this.attackPower += (this.equipment.rightHand.weaponStats?.baseDamage || 0);
+    }
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
@@ -324,6 +337,6 @@ export class Character {
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     this.bloodlineCost = properties.bloodlineCost;
     this.bloodlineRank = properties.bloodlineRank;
-    this.recalculateLifespan();
+    this.recalculateDerivedStats();
   }
 }

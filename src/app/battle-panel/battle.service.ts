@@ -5,6 +5,7 @@ import { InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
+import { formatNumber } from '@angular/common';
 
 export interface Enemy {
   name: string,
@@ -119,11 +120,12 @@ export class BattleService {
   enemiesAttack(){
     for (const enemyStack of this.enemies){
       for (let i = 0; i < enemyStack.quantity; i++){
-        if (Math.random() < enemyStack.enemy.accuracy / 100){
-          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + enemyStack.enemy.attack + " damage", 'INJURY', 'COMBAT');
-          this.characterService.characterState.status.health.value -= enemyStack.enemy.attack;
-          // TODO: decide if we always get tougher by getting attacked
-          this.characterService.characterState.attributes.toughness.value += .01;
+        if (Math.random() < enemyStack.enemy.accuracy){
+          let damage = enemyStack.enemy.attack;
+          damage = damage / (1 + this.characterService.characterState.defense * 0.1);
+          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + formatNumber(damage,"en-US", "1.0-2") + " damage", 'INJURY', 'COMBAT');
+          this.characterService.characterState.status.health.value -= damage;
+          this.characterService.characterState.increaseAttribute('toughness', 0.01);
         } else {
           this.logService.addLogMessage("Miss! " + enemyStack.enemy.name + " tries to hit you but fails.", 'STANDARD', 'COMBAT');
         }
@@ -133,21 +135,21 @@ export class BattleService {
 
   youAttack(){
     if (this.currentEnemy){
+
+      if (Math.random() > this.characterService.characterState.accuracy){
+        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " but miss.", 'STANDARD', 'COMBAT');
+        return;
+      }
+
       // TODO add stat scaling
-      let damage = 1;
-      if (this.characterService.characterState.equipment.leftHand){
-        damage += (this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 0);
-      }
-      if (this.characterService.characterState.equipment.rightHand){
-        damage += (this.characterService.characterState.equipment.rightHand.weaponStats?.baseDamage || 0);
-      }
-      damage -= this.currentEnemy.enemy.defense;
+      let damage = this.characterService.characterState.attackPower;
+      damage = damage / (1 + this.currentEnemy.enemy.defense * 0.1);
       if (damage < 1){
         // pity damage
         damage = 1;
       }
 
-      this.currentEnemy.enemy.health -= damage;
+      this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
 
       if (this.currentEnemy.enemy.health <= 0){
         this.kills++;
@@ -209,7 +211,7 @@ export class BattleService {
       name: monsterName,
       health: this.troubleKills * 10,
       maxHealth: this.troubleKills * 10,
-      accuracy: 50,
+      accuracy: 0.5,
       attack: this.troubleKills / 10,
       defense: Math.floor(Math.log2(this.troubleKills)),
       loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)))]
@@ -223,8 +225,8 @@ export class BattleService {
       name: "a pesky mouse",
       health: 2,
       maxHealth: 2,
-      accuracy: 5,
-      attack: 0.5,
+      accuracy: 0.03,
+      attack: 0.3,
       defense: 0,
       loot: []
     },
@@ -232,7 +234,7 @@ export class BattleService {
       name: "a hungry wolf",
       health: 20,
       maxHealth: 20,
-      accuracy: 50,
+      accuracy: 0.5,
       attack: 5,
       defense: 2,
       loot: [
