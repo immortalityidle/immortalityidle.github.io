@@ -44,6 +44,11 @@ export interface Potion extends Item {
   increase: number
 }
 
+export interface Pill extends Item {
+  effect: string,
+  power: number
+}
+
 export interface Furniture extends Item {
   slot: FurniturePosition
 }
@@ -247,13 +252,16 @@ export class InventoryService {
     };
   }
 
-  generatePotion(grade: number): Potion {
+  generatePotion(grade: number): void {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemPotions){
       // consume a spirit gem and increase the grade
       let value = this.consume("spiritGem");
       if (value > 0){
         grade += value / 5;
+      }
+      if (Math.random() < 0.1){
+        this.generatePill(grade);
       }
     }
 
@@ -265,7 +273,7 @@ export class InventoryService {
     let name = "Potion of " + key + " +" + grade;
     this.logService.addLogMessage("Alchemy Success! Created a " + name, "STANDARD","EVENT");
 
-    return {
+    this.addItem( {
       name: name,
       id: "potion",
       type: "potion",
@@ -276,7 +284,25 @@ export class InventoryService {
       useConsumes: true,
       attribute: key,
       increase: grade
-    };
+    } as Potion);
+  }
+
+  generatePill(grade: number): void {
+    let effect = "Longevity"; // add more later
+    let name = effect + " Pill " + " +" + grade;
+    this.logService.addLogMessage("Alchemy Success! Created a " + name, "STANDARD","EVENT");
+    this.addItem( {
+      name: name,
+      id: "pill",
+      type: "pill",
+      value: grade * 10,
+      description: "A pill that increases " + effect,
+      useLabel: 'Swallow',
+      useDescription: 'Use to increase your ' + effect + '.',
+      useConsumes: true,
+      effect: effect,
+      power: grade
+    } as Pill);
   }
 
   generateHerb(): Item {
@@ -606,6 +632,9 @@ export class InventoryService {
   useItem(item: Item): void {
     if (item.type == "potion" && instanceOfPotion(item)){
       this.usePotion(item);
+    } else if (item.type == "pill" && instanceOfPill(item)){
+
+      this.usePill(item);
     } else if (item.use) {
       item.use();
       if (item.type == "food"){
@@ -615,7 +644,7 @@ export class InventoryService {
   }
 
   autoUse(item: Item){
-    if (item.type != "potion" && !item.use){
+    if (item.type != "potion" && item.type != "pill" && !item.use){
       // it's not usable, bail out.
       return;
     }
@@ -716,6 +745,16 @@ export class InventoryService {
     this.characterService.characterState.attributes[potion.attribute].value += potion.increase;
   }
 
+  // a special use function for generated pills
+  usePill(pill: Pill){
+    if (pill.effect == "Longevity"){
+      this.characterService.characterState.alchemyLifespan += pill.power;
+      if (this.characterService.characterState.alchemyLifespan > 36500){
+        this.characterService.characterState.alchemyLifespan = 36500;
+      }
+    }
+  }
+
   // return the number of open inventory slots
   openInventorySlots(){
     let openSlots = 0;
@@ -797,6 +836,10 @@ export function instanceOfEquipment(object: any): object is Equipment {
 
 export function instanceOfPotion(object: any): object is Potion {
   return 'attribute' in object;
+}
+
+export function instanceOfPill(object: any): object is Pill {
+  return 'effect' in object;
 }
 
 export function instanceOfFurniture(object: any): object is Furniture {

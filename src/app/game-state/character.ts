@@ -44,6 +44,7 @@ export interface CharacterProperties {
   status: CharacterStatus,
   baseLifespan: number,
   foodLifespan: number,
+  alchemyLifespan: number,
   statLifespan: number,
   attributeScalingLimit: number,
   attributeSoftCap: number,
@@ -162,8 +163,9 @@ export class Character {
   age = INITIAL_AGE;
   baseLifespan = 30 * 365;
   foodLifespan = 0; // bonus to lifespan based on food you've eaten
+  alchemyLifespan = 0;
   statLifespan = 0; // bonus to lifespan based on stat aptitudes
-  lifespan = this.baseLifespan + this.foodLifespan + this.statLifespan;
+  lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan;
   equipment: EquipmentSlots = {
     head: null,
     body: null,
@@ -212,6 +214,7 @@ export class Character {
     }
     this.statLifespan = (0.1 * (totalAptitude / Object.keys(this.attributes).length));
     this.foodLifespan = 0;
+    this.alchemyLifespan = 0;
     this.recalculateLifespan();
     if (this.bloodlineRank == 0){
       this.equipment = {
@@ -238,7 +241,7 @@ export class Character {
   }
 
   recalculateLifespan(): void{
-    this.lifespan = this.baseLifespan + this.foodLifespan + this.statLifespan + this.attributes.spirituality.value;
+    this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.attributes.spirituality.value;
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
@@ -292,6 +295,7 @@ export class Character {
       status: this.status,
       baseLifespan: this.baseLifespan,
       foodLifespan: this.foodLifespan,
+      alchemyLifespan: this.alchemyLifespan,
       statLifespan: this.statLifespan,
       attributeScalingLimit: this.attributeScalingLimit,
       attributeSoftCap: this.attributeSoftCap,
@@ -310,7 +314,8 @@ export class Character {
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
     this.baseLifespan = properties.baseLifespan;
-    this.foodLifespan = properties.foodLifespan;
+    this.foodLifespan = properties.foodLifespan || 0;
+    this.alchemyLifespan = properties.alchemyLifespan || 0;
     this.statLifespan = properties.statLifespan;
     this.attributeScalingLimit = properties.attributeScalingLimit;
     this.attributeSoftCap = properties.attributeSoftCap;

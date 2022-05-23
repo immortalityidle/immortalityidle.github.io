@@ -366,12 +366,12 @@ export class ActivityService {
         description: [
           'Get a job at the alchemist\'s workshop. It smells awful but you might learn a few things.',
           'Get a cauldron and do a little brewing of your own.',
-          'Open up your own potion shop.',
+          'Open up your own alchemy shop.',
         ],
         consequenceDescription: [
           'Uses 10 stamina. Get smarter, make a few taels, and learn the secrets of alchemy.',
-          'Uses 10 stamina. Get smarter, make monay, practice your craft. If you have some herbs, you might make a usable potion.',
-          'Uses 10 stamina. Get smarter, make monay, and make some decent potions.'
+          'Uses 10 stamina. Get smarter, make money, practice your craft. If you have some herbs, you might make a usable potion or pill.',
+          'Uses 10 stamina. Get smarter, make money, and make some decent potions or pills.'
         ],
         consequence: [
           () => {
@@ -410,7 +410,7 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('ingredient');
                 if (grade >= 1){ // if the ingredient was found
                   grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
-                  this.inventoryService.addItem(this.inventoryService.generatePotion(grade));
+                  this.inventoryService.generatePotion(grade);
                 }
               }
             }
@@ -434,7 +434,7 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('ingredient');
                 grade += Math.floor(Math.log2(this.characterService.characterState.attributes.alchemy.value));
                 if (grade >= 1){ // if the ingredient was found
-                  this.inventoryService.addItem(this.inventoryService.generatePotion(grade + 1));
+                  this.inventoryService.generatePotion(grade + 1);
                 }
               }
             }
