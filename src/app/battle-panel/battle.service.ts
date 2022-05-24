@@ -212,7 +212,7 @@ export class BattleService {
       health: this.troubleKills * 10,
       maxHealth: this.troubleKills * 10,
       accuracy: 0.5,
-      attack: this.troubleKills / 10,
+      attack: this.troubleKills / 5,
       defense: Math.floor(Math.log2(this.troubleKills)),
       loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)))]
     });

@@ -26,25 +26,40 @@
   </div>
 
   <div class="inventoryButtons" *ngIf="inventoryService.selectedItem">
-    <button (click)="sell(1)" placement="left" tooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">Sell</button>
-    <button (click)="sellStack()" placement="left" tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">Sell Stack</button>
-    <button (click)="sellAll()">Sell All</button>
-    <button *ngIf="inventoryService.autoSellUnlocked"
-      tooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell."
-      (click)="autoSell()">Autosell</button>
-    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()"
-      placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
-      {{inventoryService.selectedItem.item.useLabel}}
-    </button>
-    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
-      (click)="autoUse()" placement="left" tooltip="{{inventoryService.selectedItem.item.useDescription}}  Ctrl-click items to auto-use.">
-      Auto-{{inventoryService.selectedItem.item.useLabel}}
-    </button>
-    <button *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked)"
-      (click)="autoBalance()" placement="left" tooltip="Balance between automatically using and selling this item.">
-      Auto-balance
-    </button>
 
-    <button *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()">Equip</button>
+    <mat-icon (click)="sell(1)" placement="left" class="iconButton"
+      tooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">
+      attach_money
+    </mat-icon>
+    <mat-icon (click)="sellStack()" placement="left" class="iconButton"
+      tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
+      paid
+    </mat-icon>
+    <mat-icon (click)="sellAll()" class="iconButton" placement="left" 
+      tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
+      shopping_basket
+    </mat-icon>
+    <mat-icon *ngIf="inventoryService.autoSellUnlocked" class="iconButton" (click)="autoSell()" placement="left" 
+      tooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell.">
+      currency_exchange
+    </mat-icon>
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" class="iconButton"
+      placement="left" tooltip="{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
+      auto_awesome
+    </mat-icon>
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
+      (click)="autoUse()" placement="left" class="iconButton"
+      tooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Ctrl-click items to auto-use.">
+      auto_mode
+    </mat-icon>
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked)"
+      class="iconButton" (click)="autoBalance()" placement="left" tooltip="Balance between automatically using and selling this item.">
+      balance
+    </mat-icon>
+
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()"  class="iconButton"
+      placement="left" tooltip="Equip this.">
+      shield
+    </mat-icon>
   </div>
 </div>

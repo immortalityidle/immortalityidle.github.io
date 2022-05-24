@@ -256,10 +256,12 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'workbench',
       value: 10000000,
-      description: "A quiet shrine for contemplative prayer.",
+      description: "A quiet shrine for contemplative prayer. You won't be able to use this unless you have some innate spirituality.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('spirituality', 0.01);
+        if (this.characterService.characterState.attributes.spirituality.value > 0){
+          this.characterService.characterState.increaseAttribute('spirituality', 0.01);
+        }
       }
     }
   }
@@ -311,6 +313,9 @@ export class ItemRepoService {
         if (Math.random() < 0.02){
           this.characterService.characterState.status.health.max++;
           this.characterService.characterState.status.health.value++;
+          if (this.characterService.characterState.foodLifespan < (365 * 5)){
+            this.characterService.characterState.foodLifespan += 1;
+          }
         }
         this.characterService.characterState.checkOverage();
       },
@@ -319,8 +324,8 @@ export class ItemRepoService {
       id: 'broccoli',
       name: 'broccoli',
       type: 'food',
-      value: 20,
-      description: 'A very healthy vegetable.',
+      value: 15,
+      description: 'Little green trees. A very healthy vegetable.',
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
@@ -329,7 +334,70 @@ export class ItemRepoService {
         if (Math.random() < 0.05){
           this.characterService.characterState.status.health.max++;
           this.characterService.characterState.status.health.value++;
-          if (this.characterService.characterState.foodLifespan < (365 * 40)){
+          if (this.characterService.characterState.foodLifespan < (365 * 10)){
+            this.characterService.characterState.foodLifespan += 1;
+          }
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    calabash: {
+      id: 'calabash',
+      name: 'calabash',
+      type: 'food',
+      value: 20,
+      description: 'A tasty guard with health-giving properties.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.08){
+          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
+          if (this.characterService.characterState.foodLifespan < (365 * 15)){
+            this.characterService.characterState.foodLifespan += 1;
+          }
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    taro: {
+      id: 'taro',
+      name: 'taro',
+      type: 'food',
+      value: 25,
+      description: 'A healthy root vegetable.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.1){
+          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
+          if (this.characterService.characterState.foodLifespan < (365 * 20)){
+            this.characterService.characterState.foodLifespan += 1;
+          }
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    pear: {
+      id: 'pear',
+      name: 'pear',
+      type: 'food',
+      value: 30,
+      description: 'A tasty fruit.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.12){
+          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
+          if (this.characterService.characterState.foodLifespan < (365 * 25)){
             this.characterService.characterState.foodLifespan += 1;
           }
         }
@@ -340,17 +408,59 @@ export class ItemRepoService {
       id: 'melon',
       name: 'melon',
       type: 'food',
-      value: 30,
+      value: 35,
+      description: 'A yummy fruit.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.15){
+          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
+          if (this.characterService.characterState.foodLifespan < (365 * 30)){
+            this.characterService.characterState.foodLifespan += 1;
+          }
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    plum: {
+      id: 'plum',
+      name: 'plum',
+      type: 'food',
+      value: 40,
+      description: 'An excellent fruit.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and helps you be healthy.',
+      useConsumes: true,
+      use: () => {
+        this.characterService.characterState.status.nourishment.value++;
+        if (Math.random() < 0.18){
+          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.status.health.value++;
+          if (this.characterService.characterState.foodLifespan < (365 * 35)){
+            this.characterService.characterState.foodLifespan += 1;
+          }
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
+    apricot: {
+      id: 'apricot',
+      name: 'apricot',
+      type: 'food',
+      value: 45,
       description: 'A delicious fruit.',
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
-        if (Math.random() < 0.1){
+        if (Math.random() < 0.20){
           this.characterService.characterState.status.health.max++;
           this.characterService.characterState.status.health.value++;
-          if (this.characterService.characterState.foodLifespan < (365 * 54)){
+          if (this.characterService.characterState.foodLifespan < (365 * 40)){
             this.characterService.characterState.foodLifespan += 1;
           }
         }
@@ -368,7 +478,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
-        if (Math.random() < 0.2){
+        if (Math.random() < 0.22){
           this.characterService.characterState.status.health.max++;
           this.characterService.characterState.status.health.value += 2;
           if (this.characterService.characterState.foodLifespan < (365 * 72)){
@@ -388,8 +498,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly. Can also improve your health and stamina.',
       useConsumes: true,
       use: () => {
-        this.characterService.characterState.status.nourishment.value++;
+        this.characterService.characterState.status.nourishment.value += 2;
         this.characterService.characterState.status.health.max++;
+        this.characterService.characterState.status.health.value += 10;
         this.characterService.characterState.status.stamina.max++;
         this.characterService.characterState.checkOverage();
       },
@@ -1061,6 +1172,31 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoPotionUnlocked;
+      }
+    },
+    autoPillManual: {
+      id: 'autoPotionManual',
+      name: "Manual of Reckless Pill Consumption",
+      type: "manual",
+      description: "This manual teaches you to automatically use all pills.",
+      value: 10000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock autoswallowing all pills.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoPillUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoPillUnlocked;
       }
     },
     autoTroubleManual: {

@@ -69,8 +69,8 @@ export class MainLoopService {
       let repeatTimes = Math.floor(timeDiff / TICK_INTERVAL_MS) || 1;
       if (!this.pause) {
         if (this.bankedTicks > 0){
-          repeatTimes += 1;
-          this.bankedTicks -= 1;
+          repeatTimes += 10 / this.tickDivider;
+          this.bankedTicks -= 10 / this.tickDivider;
         }
         for (let i = 0; i < repeatTimes; i++){
           this.tickCount++;

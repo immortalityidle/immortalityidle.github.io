@@ -74,6 +74,7 @@ export interface InventoryProperties {
   autoBalanceUnlocked: boolean,
   autoBalanceItems: BalanceItem[],
   autoPotionUnlocked: boolean,
+  autoPillUnlocked: boolean,
   autoWeaponMergeUnlocked: boolean,
   autoArmorMergeUnlocked: boolean,
   useSpiritGemUnlocked: boolean,
@@ -97,6 +98,7 @@ export class InventoryService {
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
   autoPotionUnlocked: boolean;
+  autoPillUnlocked: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
   useSpiritGemUnlocked: boolean;
@@ -119,6 +121,7 @@ export class InventoryService {
     this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
+    this.autoPillUnlocked = false;
     this.autoWeaponMergeUnlocked = false;
     this.autoArmorMergeUnlocked = false;
     this.useSpiritGemUnlocked = false;
@@ -156,6 +159,7 @@ export class InventoryService {
       autoBalanceUnlocked: this.autoBalanceUnlocked,
       autoBalanceItems: this.autoBalanceItems,
       autoPotionUnlocked: this.autoPotionUnlocked,
+      autoPillUnlocked: this.autoPillUnlocked,
       autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked,
       autoArmorMergeUnlocked: this.autoArmorMergeUnlocked,
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
@@ -167,16 +171,17 @@ export class InventoryService {
 
   setProperties(properties: InventoryProperties) {
     this.itemStacks = properties.itemStacks;
-    this.autoSellUnlocked = properties.autoSellUnlocked;
+    this.autoSellUnlocked = properties.autoSellUnlocked || false;
     this.autoSellItems = properties.autoSellItems;
-    this.autoUseUnlocked = properties.autoUseUnlocked;
+    this.autoUseUnlocked = properties.autoUseUnlocked || false;
     this.autoUseItems = properties.autoUseItems;
-    this.autoBalanceUnlocked = properties.autoBalanceUnlocked;
+    this.autoBalanceUnlocked = properties.autoBalanceUnlocked || false;
     this.autoBalanceItems = properties.autoBalanceItems;
-    this.autoPotionUnlocked = properties.autoPotionUnlocked;
-    this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked;
-    this.autoArmorMergeUnlocked = properties.autoArmorMergeUnlocked;
-    this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked;
+    this.autoPotionUnlocked = properties.autoPotionUnlocked || false;
+    this.autoPillUnlocked = properties.autoPillUnlocked || false;
+    this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked || false;
+    this.autoArmorMergeUnlocked = properties.autoArmorMergeUnlocked || false;
+    this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked || false;
     this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
     this.useSpiritGemPotions = properties.useSpiritGemPotions;
   }
@@ -186,7 +191,12 @@ export class InventoryService {
     this.itemRepoService.items['cabbage'],
     this.itemRepoService.items['beans'],
     this.itemRepoService.items['broccoli'],
+    this.itemRepoService.items['calabash'],
+    this.itemRepoService.items['taro'],
+    this.itemRepoService.items['pear'],
     this.itemRepoService.items['melon'],
+    this.itemRepoService.items['plum'],
+    this.itemRepoService.items['apricot'],
     this.itemRepoService.items['peach']
   ]
 
@@ -271,7 +281,7 @@ export class InventoryService {
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
     let name = "Potion of " + key + " +" + grade;
-    this.logService.addLogMessage("Alchemy Success! Created a " + name, "STANDARD","EVENT");
+    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","EVENT");
 
     this.addItem( {
       name: name,
@@ -290,7 +300,7 @@ export class InventoryService {
   generatePill(grade: number): void {
     let effect = "Longevity"; // add more later
     let name = effect + " Pill " + " +" + grade;
-    this.logService.addLogMessage("Alchemy Success! Created a " + name, "STANDARD","EVENT");
+    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","EVENT");
     this.addItem( {
       name: name,
       id: "pill",
@@ -307,9 +317,11 @@ export class InventoryService {
 
   generateHerb(): Item {
     let grade = 0;
-    if (this.characterService.characterState.attributes.plantLore.value >= 3){
-      // TODO: tune this
-      grade = 2 + Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value - 2));
+    let plantLore = this.characterService.characterState.attributes.plantLore.value;
+    if (plantLore < 10000){
+      grade = Math.floor(Math.sqrt(plantLore));
+    } else {
+      grade = 100 + Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value - 10000));
     }
     let name: string;
     let quality: string;
@@ -539,6 +551,10 @@ export class InventoryService {
       this.useItem(item);
       return -1;
     }
+    if (this.autoPillUnlocked && item.type == "pill"){
+      this.useItem(item);
+      return -1;
+    }
     if (this.autoUseItems.includes(item.name)){
       this.useItem(item);
       return -1;
@@ -722,19 +738,27 @@ export class InventoryService {
 
   consume(consumeType: string): number{
     let itemValue = -1;
-    for (const itemIterator of this.itemStacks) {
+    let itemIndex = -1;
+    for (let i = 0; i < this.itemStacks.length; i++){
+      let itemIterator = this.itemStacks[i];
       if (itemIterator == null){
         continue;
       }
       if (itemIterator.item.type == consumeType) {
-        itemValue = itemIterator.item.value;
+        if (itemValue < itemIterator.item.value){
+          itemValue = itemIterator.item.value;
+          itemIndex = i;
+        }
+      }
+    }
+    if (itemIndex >= 0){
+      let itemIterator = this.itemStacks[itemIndex];
+      if (itemIterator != null){
         itemIterator.quantity --;
         if (itemIterator.quantity == 0){
           //remove the stack if empty
-          let index = this.itemStacks.indexOf(itemIterator);
-          this.itemStacks[index] = null;
+          this.itemStacks[itemIndex] = null;
         }
-        return itemValue;
       }
     }
     return itemValue;
