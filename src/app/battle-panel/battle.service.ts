@@ -141,7 +141,6 @@ export class BattleService {
         return;
       }
 
-      // TODO add stat scaling
       let damage = this.characterService.characterState.attackPower;
       damage = damage / (1 + this.currentEnemy.enemy.defense * 0.1);
       if (damage < 1){
@@ -150,6 +149,23 @@ export class BattleService {
       }
 
       this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
+      // degrade weapon
+      if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats){
+        this.characterService.characterState.equipment.leftHand.weaponStats.durability--;
+        this.inventoryService.updateWeaponDescription(this.characterService.characterState.equipment.leftHand);
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.durability <= 0){
+          this.inventoryService.addItem(this.characterService.characterState.equipment.leftHand);
+          this.characterService.characterState.equipment.leftHand = null;
+        }
+      }
+      if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats){
+        this.characterService.characterState.equipment.rightHand.weaponStats.durability--;
+        this.inventoryService.updateWeaponDescription(this.characterService.characterState.equipment.rightHand);
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.durability <= 0){
+          this.inventoryService.addItem(this.characterService.characterState.equipment.rightHand);
+          this.characterService.characterState.equipment.rightHand = null;
+        }
+      }
 
       if (this.currentEnemy.enemy.health <= 0){
         this.kills++;

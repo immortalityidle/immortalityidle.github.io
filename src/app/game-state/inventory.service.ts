@@ -262,6 +262,12 @@ export class InventoryService {
     };
   }
 
+  updateWeaponDescription(weapon: Equipment){
+    weapon.description = 'A unique weapon made of ' + 
+      weapon.weaponStats?.material + ".<br/>Base Damage: " + 
+      weapon.weaponStats?.baseDamage + "<br/>Durability: " + weapon.weaponStats?.durability;
+  }  
+
   generatePotion(grade: number): void {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemPotions){
