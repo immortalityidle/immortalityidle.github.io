@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable,Injector } from '@angular/core';
 import { Subject } from 'rxjs';
+import { CharacterService } from './game-state/character.service';
 
 const TICK_INTERVAL_MS = 25;
 
@@ -33,8 +34,10 @@ export class MainLoopService {
   lastTime: number = new Date().getTime();
   bankedTicks: number = 0;
   offlineDivider: number = 10;
+  characterService?: CharacterService;
 
-  constructor() {
+  constructor(
+    private injector: Injector) {
   }
 
   getProperties(): MainLoopProperties {
@@ -65,6 +68,10 @@ export class MainLoopService {
   }
 
   start() {
+    if (!this.characterService){
+      this.characterService = this.injector.get(CharacterService);
+    }
+
     window.setInterval(()=> {
       let newTime = new Date().getTime();
       let timeDiff = newTime - this.lastTime;
@@ -75,6 +82,12 @@ export class MainLoopService {
         if (this.bankedTicks > 0){
           repeatTimes += 10 / this.tickDivider;
           this.bankedTicks -= 10 / this.tickDivider;
+        }
+        if (this.characterService && this.characterService.characterState.lifespan > 100){
+          repeatTimes++;
+        }
+        if (this.characterService && this.characterService.characterState.lifespan > 1000){
+          repeatTimes++;
         }
         for (let i = 0; i < repeatTimes; i++){
           this.tickCount++;
