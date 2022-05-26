@@ -240,7 +240,6 @@ export class InventoryService {
     let materialPrefix = material;
     let slot: EquipmentPosition = 'rightHand';
     if (material === "wood") {
-      // incentivizing to do both metal and wood. Maybe change this later.
       slot = 'leftHand';
       materialPrefix = "wooden";
     }
@@ -353,10 +352,10 @@ export class InventoryService {
   generateSpiritGem(grade: number): Item {
     return {
       id: 'spiritGemGrade' + grade,
-      name: 'spirit gem grade ' + grade,
+      name: 'monster gem grade ' + grade,
       type: 'spiritGem',
       value: grade * 10,
-      description: 'A spirit gem.'
+      description: 'A spirit gem dropped by a monster.'
     };
   }
 
@@ -761,9 +760,27 @@ export class InventoryService {
       let itemIterator = this.itemStacks[itemIndex];
       if (itemIterator != null){
         itemIterator.quantity --;
-        if (itemIterator.quantity == 0){
+        if (itemIterator.quantity <= 0){
           //remove the stack if empty
           this.itemStacks[itemIndex] = null;
+        }
+      }
+    }
+    return itemValue;
+  }
+
+  checkFor(itemType: string): number{
+    let itemValue = -1;
+    let itemIndex = -1;
+    for (let i = 0; i < this.itemStacks.length; i++){
+      let itemIterator = this.itemStacks[i];
+      if (itemIterator == null){
+        continue;
+      }
+      if (itemIterator.item.type == itemType) {
+        if (itemValue < itemIterator.item.value){
+          itemValue = itemIterator.item.value;
+          itemIndex = i;
         }
       }
     }
@@ -858,6 +875,14 @@ export class InventoryService {
     }
   }
 
+  mergeSpiritGem(stack: ItemStack){
+    if (stack.quantity < 10){
+      return;
+    }
+    stack.quantity -= 10;
+    this.addItem(this.generateSpiritGem((stack.item.value / 10) + 1));
+  }
+  
 }
 
 export function instanceOfEquipment(object: any): object is Equipment {

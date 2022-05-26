@@ -56,10 +56,13 @@
       class="iconButton" (click)="autoBalance()" placement="left" tooltip="Balance between automatically using and selling this item.">
       balance
     </mat-icon>
-
     <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()"  class="iconButton"
       placement="left" tooltip="Equip this.">
       shield
+    </mat-icon>
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'spiritGem')" (click)="mergeSpiritGem()"  class="iconButton"
+      placement="left" tooltip="Merge 10 of these into a higher grade gem.">
+      diamond
     </mat-icon>
   </div>
 </div>

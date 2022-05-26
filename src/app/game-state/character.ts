@@ -255,6 +255,18 @@ export class Character {
     if (this.equipment.rightHand){
       this.attackPower += (this.equipment.rightHand.weaponStats?.baseDamage || 0);
     }
+    if (this.equipment.head){
+      this.defense += (this.equipment.head.armorStats?.defense || 0);
+    }
+    if (this.equipment.body){
+      this.defense += (this.equipment.body.armorStats?.defense || 0);
+    }
+    if (this.equipment.legs){
+      this.defense += (this.equipment.legs.armorStats?.defense || 0);
+    }
+    if (this.equipment.feet){
+      this.defense += (this.equipment.feet.armorStats?.defense || 0);
+    }
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly

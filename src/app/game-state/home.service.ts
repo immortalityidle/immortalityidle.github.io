@@ -4,9 +4,20 @@ import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterService } from './character.service';
-import { Home } from './home';
 import { Furniture, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
+
+export interface Home {
+  name: string;
+  type: HomeType;
+  description: string;
+  cost: number;
+  costPerDay: number;
+  landRequired: number;
+  maxInventory: number;
+  consequence: () => void;
+  furnitureSlots: FurniturePosition[];
+}
 
 export enum HomeType {
   SquatterTent,

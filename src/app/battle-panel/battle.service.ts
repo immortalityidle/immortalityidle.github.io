@@ -75,8 +75,7 @@ export class BattleService {
         this.yearlyMonsterDay = 0;
         this.trouble();
       }
-      if (this.autoTroubleEnabled &&
-        this.characterService.characterState.status.health.value == this.characterService.characterState.status.health.max){
+      if (this.autoTroubleEnabled){
         this.trouble();
       }
     });

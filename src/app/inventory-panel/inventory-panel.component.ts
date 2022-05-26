@@ -98,6 +98,15 @@ export class InventoryPanelComponent {
     }
   }
 
+  mergeSpiritGem(){
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.mergeSpiritGem(this.inventoryService.selectedItem);
+      if (this.inventoryService.selectedItem.quantity == 0){
+        this.inventoryService.selectedItem = null;
+      }
+    }
+  }
+
   allowDrop(event: DragEvent){
     if (event.dataTransfer?.types[0] == "inventory" || event.dataTransfer?.types[0] == "equipment"){
       event.preventDefault();
