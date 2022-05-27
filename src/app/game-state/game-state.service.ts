@@ -6,6 +6,7 @@ import { MainLoopProperties, MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 import { CharacterProperties, AttributeType } from './character';
 import { CharacterService } from './character.service';
+import { FollowersService, FollowersProperties } from './followers.service';
 import { HomeService, HomeProperties } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
@@ -18,6 +19,7 @@ interface GameState {
   home: HomeProperties,
   activities: ActivityProperties,
   battles: BattleProperties,
+  followers: FollowersProperties,
   logs: LogProperties,
   mainLoop: MainLoopProperties
 }
@@ -38,6 +40,7 @@ export class GameStateService {
     private activityService: ActivityService,
     private itemRepoService: ItemRepoService,
     private battleService: BattleService,
+    private followersService: FollowersService,
     private mainLoopService: MainLoopService
 
   ) {
@@ -51,6 +54,7 @@ export class GameStateService {
       home: this.homeService.getProperties(),
       activities: this.activityService.getProperties(),
       battles: this.battleService.getProperties(),
+      followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
       mainLoop: this.mainLoopService.getProperties()
     };
@@ -79,6 +83,7 @@ export class GameStateService {
     }
     this.activityService.setProperties(gameState.activities);
     this.battleService.setProperties(gameState.battles);
+    this.followersService.setProperties(gameState.followers);
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
   }
@@ -107,5 +112,6 @@ export class GameStateService {
       attribute.aptitude += 1000000;
       attribute.value += 1000000;
     }
+    this.inventoryService.addItem(this.inventoryService.generateSpiritGem(25));
   }
 }

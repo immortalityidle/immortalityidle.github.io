@@ -17,6 +17,7 @@ export class CharacterService {
     private reincarnationService: ReincarnationService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
+      this.characterState.totalTicks++;
       this.characterState.recalculateDerivedStats();
       this.characterState.dead = false;
       this.characterState.age++;
@@ -94,10 +95,13 @@ export class CharacterService {
         attribute.value = 0;
       }
     }
+    if (this.soulCoreRank() > 5 && this.meridianRank() > 4){
+      this.characterState.followersUnlocked = true;
+    }
     this.forceRebirth = true;
   }
 
-  sourCoreRank(): number {
+  soulCoreRank(): number {
     let rank = 0;
     let cost = this.characterState.condenseSoulCoreOriginalCost;
     while (cost < this.characterState.condenseSoulCoreCost){
@@ -130,6 +134,9 @@ export class CharacterService {
       } else {
         attribute.value = 0;
       }
+    }
+    if (this.soulCoreRank() > 5 && this.meridianRank() > 4){
+      this.characterState.followersUnlocked = true;
     }
     this.forceRebirth = true;
   }

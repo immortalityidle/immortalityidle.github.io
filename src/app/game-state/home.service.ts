@@ -59,7 +59,8 @@ export interface HomeProperties {
   autoBuyFurnitureUnlocked: boolean,
   autoBuyFurniture: FurnitureSlots,
   autoFieldUnlocked: boolean,
-  autoFieldLimit: number
+  autoFieldLimit: number,
+  nextHomeCostReduction: number
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -396,6 +397,8 @@ export class HomeService {
   homeValue!: HomeType;
   home!: Home;
   nextHome!: Home;
+  nextHomeCostReduction: number = 0;
+  nextHomeCost: number = 0;
   autoReplant : boolean;
 
   constructor(
@@ -420,6 +423,10 @@ export class HomeService {
       mainLoopService.tickSubject.subscribe(() => {
         if (this.characterService.characterState.dead){
           return;
+        }
+        this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
+        if (this.nextHomeCost < 0){
+          this.nextHomeCost = 0;
         }
         this.home.consequence();
         for (let slot of this.furniturePositionsArray){
@@ -467,6 +474,7 @@ export class HomeService {
       autoBuyFurniture: this.autoBuyFurniture,
       autoFieldUnlocked: this.autoFieldUnlocked,
       autoFieldLimit: this.autoFieldLimit,
+      nextHomeCostReduction: this.nextHomeCostReduction
     }
   }
 
@@ -477,14 +485,15 @@ export class HomeService {
     this.fields = properties.fields;
     this.fieldYields = properties.fieldYields;
     this.setCurrentHome(this.homesList[properties.homeValue]);
-    this.autoBuyLandUnlocked = properties.autoBuyLandUnlocked;
-    this.autoBuyLandLimit = properties.autoBuyLandLimit;
-    this.autoBuyHomeUnlocked = properties.autoBuyHomeUnlocked;
-    this.autoBuyHomeLimit = properties.autoBuyHomeLimit;
-    this.autoBuyFurnitureUnlocked = properties.autoBuyFurnitureUnlocked;
-    this.autoBuyFurniture = properties.autoBuyFurniture;
-    this.autoFieldUnlocked = properties.autoFieldUnlocked;
-    this.autoFieldLimit = properties.autoFieldLimit;
+    this.autoBuyLandUnlocked = properties.autoBuyLandUnlocked || false;
+    this.autoBuyLandLimit = properties.autoBuyLandLimit || 0;
+    this.autoBuyHomeUnlocked = properties.autoBuyHomeUnlocked || false;
+    this.autoBuyHomeLimit = properties.autoBuyHomeLimit || 3;
+    this.autoBuyFurnitureUnlocked = properties.autoBuyFurnitureUnlocked || false;
+    this.autoBuyFurniture = properties.autoBuyFurniture || false;
+    this.autoFieldUnlocked = properties.autoFieldUnlocked || false;
+    this.autoFieldLimit = properties.autoFieldLimit || 0;
+    this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     for (let slot of this.furniturePositionsArray){
       let savedFurniture = properties.furniture[slot];
       if (savedFurniture){
@@ -505,16 +514,17 @@ export class HomeService {
   }
 
   upgradeToNextHome(){
-    if (this.characterService.characterState.money >= this.nextHome.cost &&
-      this.land >= this.nextHome.landRequired){
-      this.characterService.characterState.money -= this.nextHome.cost;
+    if (this.characterService.characterState.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired){
+      this.characterService.characterState.money -= this.nextHomeCost;
       this.land -= this.nextHome.landRequired;
+      this.nextHomeCostReduction = 0;
       this.setCurrentHome(this.nextHome);
       this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name, "STANDARD", 'EVENT');
     }
   }
 
   reset() {
+    this.nextHomeCostReduction = 0;
     this.setCurrentHome(this.homesList[0]);
     this.land = 0;
     this.landPrice = 100;
@@ -531,6 +541,7 @@ export class HomeService {
     this.homeValue = home.type;
     this.home = this.getHomeFromValue(this.homeValue);
     this.nextHome = this.getNextHome();
+    this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
     this.inventoryService.changeMaxItems(this.home.maxInventory);
   }
 

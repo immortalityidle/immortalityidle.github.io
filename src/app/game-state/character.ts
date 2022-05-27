@@ -52,7 +52,9 @@ export interface CharacterProperties {
   condenseSoulCoreCost: number,
   reinforceMeridiansCost: number,
   bloodlineCost: number,
-  bloodlineRank: number
+  bloodlineRank: number,
+  totalTicks: number,
+  followersUnlocked: boolean
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -68,6 +70,8 @@ export class Character {
   reinforceMeridiansOriginalCost: number = 1000;
   bloodlineCost: number = 1000000;
   bloodlineRank: number = 0;
+  totalTicks: number = 0;
+  followersUnlocked: boolean = false;
   accuracy: number = 0;
   accuracyExponentMultiplier: number = 0.01;
   attackPower: number = 0;
@@ -201,9 +205,9 @@ export class Character {
       }
       totalAptitude += this.attributes[keys[key]].aptitude;
     }
-    if (this.bloodlineRank < 2){
+    if (this.bloodlineRank < 3){
       this.money = 0;
-    } else if (this.bloodlineRank < 3){
+    } else if (this.bloodlineRank < 4){
       this.money = this.money / 8;
     } else {
       this.money = 4 * this.money;
@@ -328,7 +332,9 @@ export class Character {
       condenseSoulCoreCost: this.condenseSoulCoreCost,
       reinforceMeridiansCost: this.reinforceMeridiansCost,
       bloodlineCost: this.bloodlineCost,
-      bloodlineRank: this.bloodlineRank
+      bloodlineRank: this.bloodlineRank,
+      totalTicks: this.totalTicks,
+      followersUnlocked: this.followersUnlocked
     }
   }
 
@@ -349,6 +355,8 @@ export class Character {
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     this.bloodlineCost = properties.bloodlineCost;
     this.bloodlineRank = properties.bloodlineRank;
+    this.totalTicks = properties.totalTicks || 0;
+    this.followersUnlocked = properties.followersUnlocked || false;
     this.recalculateDerivedStats();
   }
 }

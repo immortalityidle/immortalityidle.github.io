@@ -25,7 +25,7 @@
           waves
         </mat-icon>
         <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" placement="bottom" (click)="upgradeClick()" class="iconButton"
-          tooltip="Get a better house. A better home will cost {{homeService.nextHome.cost | number: '1.0-0'}} taels and take up {{homeService.nextHome.landRequired}} land.">
+          tooltip="Get a better house. A better home will cost {{homeService.nextHomeCost | number: '1.0-0'}} taels and take up {{homeService.nextHome.landRequired}} land.">
           add_business
         </mat-icon>
         <mat-icon class="iconButton" *ngIf="homeService.home.furnitureSlots.length"

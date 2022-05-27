@@ -81,7 +81,7 @@ export class StoreService {
   }
 
   updateAscensions(){
-    this.soulCoreRank = this.characterService.sourCoreRank();
+    this.soulCoreRank = this.characterService.soulCoreRank();
     this.meridianRank = this.characterService.meridianRank();
     if (this.characterService.characterState.bloodlineRank == 0){
       this.bloodlineLabel = "Establish Bloodline";
@@ -147,8 +147,8 @@ export class StoreService {
       this.logService.addLogMessage("You don't have the spirituality required to ascend.","INJURY","EVENT");
       return;
     }
-    if (this.meridianRank >= 4){
-      this.logService.addLogMessage("You can't reinforce your meridians any further.","INJURY","EVENT");
+    if (this.characterService.characterState.bloodlineRank >= 4){
+      this.logService.addLogMessage("You can't enhance your bloodline any further.","INJURY","EVENT");
       return;
     }
     if (this.homeService.home.type < this.bloodLineHomeRequirement.type){

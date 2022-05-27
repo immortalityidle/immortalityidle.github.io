@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { KeyValue } from '@angular/common';
+import { FollowersService, Follower } from '../game-state/followers.service';
 
 
 @Component({
@@ -12,7 +12,8 @@ import { KeyValue } from '@angular/common';
 export class AttributesPanelComponent {
   character: Character;
 
-  constructor(public characterService: CharacterService) {
+  constructor(public characterService: CharacterService,
+    public followerService: FollowersService) {
     this.character = characterService.characterState;
    }
   
