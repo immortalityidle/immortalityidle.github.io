@@ -1,7 +1,9 @@
 <div class="homeContainer">
     <h3 class="panelHeader">
-      <mat-icon tooltip="{{homeService.home.description}}">home</mat-icon>
-      You live in a {{homeService.home.name}}
+      <mat-icon tooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">home</mat-icon>
+      <span tooltip="{{homeService.home.description}}">
+        You live in a {{homeService.home.name}}
+      </span>
     </h3>
     <div class="homeInfo">It costs {{homeService.home.costPerDay}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</div>
     <div class="homeInfo">You own {{homeService.land}} open {{homeService.land === 1 ? "plot" : "plots"}} of land</div>

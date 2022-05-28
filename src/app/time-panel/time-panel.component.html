@@ -1,23 +1,28 @@
 <h3 class="panelHeader">
-  How will you spend your days?
+  <span tooltip="Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential.">
+    <mat-icon>
+      calendar_month
+    </mat-icon>
+    How will you spend your days?
+  </span>
   <mat-icon (click)="pauseClick()" [ngClass]="{'iconActive': this.mainLoopService.pause}"
-    tooltip="Pause the game (spacebar)">
+    tooltip="Pause the game (spacebar)" class="iconButton">
     pause
   </mat-icon>
   <mat-icon (click)="standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"
-    tooltip="Standard Game Speed">
+    tooltip="Standard Game Speed" class="iconButton">
     play_arrow
   </mat-icon>
   <mat-icon *ngIf="mainLoopService.unlockFastSpeed" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 5 && !this.mainLoopService.pause)}"
-    (click)="fastClick()" tooltip="Fast Game Speed">
+    (click)="fastClick()" tooltip="Fast Game Speed" class="iconButton">
     fast_forward
   </mat-icon>
   <mat-icon *ngIf="mainLoopService.unlockFasterSpeed" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 2 && !this.mainLoopService.pause)}"
-    (click)="fasterClick()" tooltip="Faster Game Speed">
+    (click)="fasterClick()" tooltip="Faster Game Speed" class="iconButton">
     skip_next
   </mat-icon>
   <mat-icon *ngIf="mainLoopService.unlockFastestSpeed" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 1 && !this.mainLoopService.pause)}"
-    (click)="fastestClick()" tooltip="Fastest Game Speed">
+    (click)="fastestClick()" tooltip="Fastest Game Speed" class="iconButton">
     bolt
   </mat-icon>
   <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
@@ -36,11 +41,11 @@
       </progress>
     </td>
     <td>
-      <mat-icon tooltip="Spend more days on this." (click)="onPlusClick(entry)">add</mat-icon>
-      <mat-icon tooltip="Spend fewer days on this." (click)="onMinusClick(entry)">remove</mat-icon>
-      <mat-icon tooltip="Move this activity up in the schedule." (click)="onUpClick(entry)">arrow_upward</mat-icon>
-      <mat-icon tooltip="Move this activity down in the schedule." (click)="onDownClick(entry)">arrow_downward</mat-icon>
-      <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)">clear</mat-icon>
+      <mat-icon tooltip="Spend more days on this." (click)="onPlusClick(entry)" class="iconButton">add</mat-icon>
+      <mat-icon tooltip="Spend fewer days on this." (click)="onMinusClick(entry)" class="iconButton">remove</mat-icon>
+      <mat-icon tooltip="Move this activity up in the schedule." (click)="onUpClick(entry)" class="iconButton">arrow_upward</mat-icon>
+      <mat-icon tooltip="Move this activity down in the schedule." (click)="onDownClick(entry)" class="iconButton">arrow_downward</mat-icon>
+      <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>
     </td>
   </tr>
 </table>

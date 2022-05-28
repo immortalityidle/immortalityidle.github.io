@@ -1,7 +1,13 @@
 <table>
   <tr>
     <td>
-      <h3 class="panelHeader">Attributes</h3>
+      <h3 class="panelHeader">
+        <mat-icon placement="right"
+          tooltip="Your attributes define your growing immortal characteristics. You can grow your attributes through the activities that you choose. Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.">
+          bar_chart
+        </mat-icon>
+        Attributes
+      </h3>
       <div *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
         <span *ngIf="(attribute.value.value !== 0)" placement="right" tooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | number:'1.0-2'}} multiplies your gains by {{characterService.characterState.getAptitudeMultipier(attribute.value.aptitude)  | number: '1.0-2'}}.">
           <mat-icon>{{attribute.value.icon}}</mat-icon>

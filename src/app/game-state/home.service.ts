@@ -147,7 +147,7 @@ export class HomeService {
       landRequired: 5,
       maxInventory: 15,
       consequence: () => {
-        this.characterService.characterState.status.health.value += .3;
+        this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 3;
         this.characterService.characterState.checkOverage();
       },
@@ -164,7 +164,7 @@ export class HomeService {
       landRequired: 10,
       maxInventory: 18,
       consequence: () => {
-        this.characterService.characterState.status.health.value += .5;
+        this.characterService.characterState.status.health.value += .7;
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.checkOverage();
       },
