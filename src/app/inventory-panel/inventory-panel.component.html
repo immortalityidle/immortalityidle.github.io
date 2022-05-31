@@ -4,7 +4,7 @@
     <tr>
       <td class="inventoryLabelColumn">Inventory</td>
       <td class="moneyLabelColumn">Money: </td>
-      <td class="moneyColumn">{{characterService.characterState.money | number: '1.0-0'}} Taels</td>
+      <td class="moneyColumn">{{characterService.characterState.money | bigNumber}} Taels</td>
       <td><mat-icon *ngIf="inventoryService.noFood" class="noFood"
         placement="left" tooltip="You have no food in your inventory. You will spend money on food each day to avoid starvation.">
         soup_kitchen

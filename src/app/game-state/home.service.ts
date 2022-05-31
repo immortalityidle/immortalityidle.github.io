@@ -579,8 +579,7 @@ export class HomeService {
     }
   }
 
-  workFields(){
-    let workValue = 1;
+  workFields(workValue: number){
     if (this.characterService.characterState.attributes.plantLore.value >= 10){
       workValue += Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value));
     }

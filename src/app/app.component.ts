@@ -8,6 +8,7 @@ import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-
 import { HostListener } from '@angular/core';
 import { StoreService } from './game-state/store.service';
 import { CharacterService } from './game-state/character.service';
+import { formatNumber } from '@angular/common';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -32,6 +33,28 @@ export class CamelToTitlePipe implements PipeTransform {
       value = value.split(/(?=[A-Z])/).join(' ');
       value = value[0].toUpperCase() + value.slice(1);
       return value;
+  }
+}
+
+@Pipe({name: 'bigNumber'})
+export class BigNumberPipe implements PipeTransform {
+    /**
+     *
+     * @param value
+     * @returns {string}
+     */
+     transform(value: number): string {
+      if (value < 1000000){
+        return formatNumber(value,"en-US", "1.0-0");
+      } else if (value < 1000000000){
+        return formatNumber(value / 1000,"en-US", "1.0-0") + "K";
+      } else if (value < 1000000000000){
+        return formatNumber(value / 1000000,"en-US", "1.0-0") + "M";
+      } else if (value < 1000000000000000){
+        return formatNumber(value / 1000000000,"en-US", "1.0-0") + "B";
+      } else {
+        return formatNumber(value / 1000000000000,"en-US", "1.0-0") + "T";
+      }
   }
 }
 

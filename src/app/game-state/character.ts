@@ -46,6 +46,7 @@ export interface CharacterProperties {
   foodLifespan: number,
   alchemyLifespan: number,
   statLifespan: number,
+  spiritualityLifespan: number,
   attributeScalingLimit: number,
   attributeSoftCap: number,
   aptitudeGainDivider: number,
@@ -171,9 +172,10 @@ export class Character {
   age = INITIAL_AGE;
   baseLifespan = 30 * 365;
   foodLifespan = 0; // bonus to lifespan based on food you've eaten
-  alchemyLifespan = 0;
-  statLifespan = 0; // bonus to lifespan based on stat aptitudes
-  lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan;
+  alchemyLifespan = 0; // bonus to lifespan based on pills you've eaten
+  statLifespan = 0; // bonus to lifespan based on base stat aptitudes
+  spiritualityLifespan = 0; // bonus to lifespan based on spirituality
+  lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan;
   equipment: EquipmentSlots = {
     head: null,
     body: null,
@@ -194,7 +196,20 @@ export class Character {
     this.status.mana.max = 0;
     this.status.mana.value = 0;
 
+    // age in days
+    this.age = INITIAL_AGE;
+    this.baseLifespan += 1; //bonus day just for doing another reincarnation cycle
+    this.foodLifespan = 0;
+    this.alchemyLifespan = 0;
+    this.spiritualityLifespan = 0;
     let totalAptitude = 0;
+    totalAptitude += this.attributes.strength.value + this.attributes.toughness.value + 
+      this.attributes.speed.value + this.attributes.intelligence.value + this.attributes.charisma.value;
+    this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
+    if (this.bloodlineRank < 4){
+      this.statLifespan *= 0.1;
+    }
+
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys){
       if (this.attributes[keys[key]].value > 0){
@@ -203,7 +218,6 @@ export class Character {
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].aptitude);
       }
-      totalAptitude += this.attributes[keys[key]].aptitude;
     }
     if (this.bloodlineRank < 3){
       this.money = 0;
@@ -212,17 +226,6 @@ export class Character {
     } else {
       this.money = 4 * this.money;
     }
-    // age in days
-    this.age = INITIAL_AGE;
-    this.baseLifespan += 1; //bonus day just for doing another reincarnation cycle
-    if (this.bloodlineRank < 4){
-      this.statLifespan = (0.1 * (totalAptitude / Object.keys(this.attributes).length));
-    } else {
-      this.statLifespan = (totalAptitude / Object.keys(this.attributes).length);
-    }
-    this.statLifespan = (0.1 * (totalAptitude / Object.keys(this.attributes).length));
-    this.foodLifespan = 0;
-    this.alchemyLifespan = 0;
     this.recalculateDerivedStats();
     if (this.bloodlineRank == 0){
       this.equipment = {
@@ -249,7 +252,9 @@ export class Character {
   }
 
   recalculateDerivedStats(): void{
-    this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.attributes.spirituality.value;
+    console.log("recalculating spiritual lifespan bonus", this.attributes.spirituality.value, this.getAptitudeMultipier(this.attributes.spirituality.value));
+    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value);
+    this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
     this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
     this.attackPower = Math.floor(Math.log10(this.attributes.strength.value)) || 1;
@@ -326,6 +331,7 @@ export class Character {
       foodLifespan: this.foodLifespan,
       alchemyLifespan: this.alchemyLifespan,
       statLifespan: this.statLifespan,
+      spiritualityLifespan: this.spiritualityLifespan,
       attributeScalingLimit: this.attributeScalingLimit,
       attributeSoftCap: this.attributeSoftCap,
       aptitudeGainDivider: this.aptitudeGainDivider,
@@ -347,7 +353,8 @@ export class Character {
     this.baseLifespan = properties.baseLifespan;
     this.foodLifespan = properties.foodLifespan || 0;
     this.alchemyLifespan = properties.alchemyLifespan || 0;
-    this.statLifespan = properties.statLifespan;
+    this.statLifespan = properties.statLifespan || 0;
+    this.spiritualityLifespan = properties.spiritualityLifespan || 0;
     this.attributeScalingLimit = properties.attributeScalingLimit;
     this.attributeSoftCap = properties.attributeSoftCap;
     this.aptitudeGainDivider = properties.aptitudeGainDivider;

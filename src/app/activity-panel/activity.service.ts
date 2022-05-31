@@ -654,7 +654,11 @@ export class ActivityService {
           ['Uses 20 stamina. Increases strength and speed and helps your fields to produce more food.'],
         consequence: [() => {
           this.characterService.characterState.status.stamina.value -= 20;
-          this.homeService.workFields();
+          let farmPower = Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value + this.characterService.characterState.attributes.earthLore.value));
+          if (farmPower < 1){
+            farmPower = 1;
+          }
+          this.homeService.workFields(farmPower);
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           if (Math.random() < 0.01) {
