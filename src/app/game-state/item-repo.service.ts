@@ -1010,9 +1010,9 @@ export class ItemRepoService {
     autoUseManual: {
       id: 'autoUseManual',
       name: "Manual of Facilitated Usage",
-      type: "manual",
+      type: "manual", 
       description: "This manual teaches you to automatically use items.",
-      value: 3000000,
+      value: 1000000,
       useLabel: "Read",
       useDescription: "Permanently unlock Autouse button in the inventory panel.",
       useConsumes: true,
@@ -1299,6 +1299,31 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.useSpiritGemUnlocked;
+      }
+    },
+    bestHerbsManual: {
+      id: 'bestHerbsManual',
+      name: "Manual of the Herbal Connoisseur",
+      type: "manual",
+      description: "This manual teaches you to automatically sell any herbs below your current ability to gather.",
+      value: 5000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock including autoselling lower grade herbs.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoSellOldHerbs = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoSellOldHerbs;
       }
     }
   }

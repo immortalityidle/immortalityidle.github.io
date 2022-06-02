@@ -44,16 +44,16 @@ export class BigNumberPipe implements PipeTransform {
      * @returns {string}
      */
      transform(value: number): string {
-      if (value < 1000000){
+      if (value < 10000){
         return formatNumber(value,"en-US", "1.0-0");
+      } else if (value < 1000000){
+        return formatNumber(value / 1000,"en-US", "1.0-2") + "K";
       } else if (value < 1000000000){
-        return formatNumber(value / 1000,"en-US", "1.0-0") + "K";
+        return formatNumber(value / 1000000,"en-US", "1.0-2") + "M";
       } else if (value < 1000000000000){
-        return formatNumber(value / 1000000,"en-US", "1.0-0") + "M";
-      } else if (value < 1000000000000000){
-        return formatNumber(value / 1000000000,"en-US", "1.0-0") + "B";
+        return formatNumber(value / 1000000000,"en-US", "1.0-2") + "B";
       } else {
-        return formatNumber(value / 1000000000000,"en-US", "1.0-0") + "T";
+        return formatNumber(value / 1000000000000,"en-US", "1.0-2") + "T";
       }
   }
 }

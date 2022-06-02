@@ -9,7 +9,7 @@
           <tr><mat-icon>menu_book</mat-icon></tr>
           <tr>{{item.name | titlecase}}</tr>
         </table>
-        <div class="priceLabel">{{item.value | number: '1.0-0'}}</div>
+        <div class="priceLabel">{{item.value | bigNumber}}</div>
       </div>
   </div>
   <button (click)="storeService.buyManual()"

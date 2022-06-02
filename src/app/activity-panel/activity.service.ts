@@ -346,9 +346,9 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.status.stamina.value -= 10;
           // the grade on herbs probably needs diminishing returns
-          this.inventoryService.addItem(this.inventoryService.generateHerb());
+          this.inventoryService.generateHerb();
           if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == 'herbGarden'){
-            this.inventoryService.addItem(this.inventoryService.generateHerb());
+            this.inventoryService.generateHerb();
           }
           if (Math.random() < 0.01) {
             this.characterService.characterState.increaseAttribute('plantLore',0.1);

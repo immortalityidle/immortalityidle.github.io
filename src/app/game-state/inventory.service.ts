@@ -80,6 +80,7 @@ export interface InventoryProperties {
   useSpiritGemUnlocked: boolean,
   useSpiritGemWeapons: boolean,
   useSpiritGemPotions: boolean,
+  autoSellOldHerbs: boolean
 }
 
 @Injectable({
@@ -104,6 +105,7 @@ export class InventoryService {
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useSpiritGemPotions: boolean;
+  autoSellOldHerbs: boolean;
   fed: boolean = false;
 
   constructor(
@@ -127,6 +129,7 @@ export class InventoryService {
     this.useSpiritGemUnlocked = false;
     this.useSpiritGemWeapons = false;
     this.useSpiritGemPotions = false;
+    this.autoSellOldHerbs = false;
 
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
@@ -165,7 +168,7 @@ export class InventoryService {
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
       useSpiritGemWeapons: this.useSpiritGemWeapons,
       useSpiritGemPotions: this.useSpiritGemPotions,
-
+      autoSellOldHerbs: this.autoSellOldHerbs
     }
   }
 
@@ -184,6 +187,7 @@ export class InventoryService {
     this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked || false;
     this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
     this.useSpiritGemPotions = properties.useSpiritGemPotions;
+    this.autoSellOldHerbs = properties.autoSellOldHerbs || false;
   }
 
   farmFoodList = [
@@ -320,7 +324,7 @@ export class InventoryService {
     } as Pill);
   }
 
-  generateHerb(): Item {
+  generateHerb(): void {
     let grade = 0;
     let plantLore = this.characterService.characterState.attributes.plantLore.value;
     if (plantLore < 10000){
@@ -340,13 +344,25 @@ export class InventoryService {
       name = herbNames[nameIndex];
       quality = herbQuality[qualityIndex];
     }
-    return {
+    let value = grade + 1;
+    this.addItem({
       id: 'herb',
       name: quality + " " + name,
       type: 'ingredient',
-      value: grade + 1,
+      value: value,
       description: 'Useful herbs. Can be used in creating pills or potions.'
-    };
+    });
+    if (this.autoSellOldHerbs){
+      // sell any herb cheaper than what we just picked
+      for (let i = 0; i < this.itemStacks.length; i++){
+        let itemStack = this.itemStacks[i];
+        if (itemStack && itemStack.item.id == "herb" ){
+          if (itemStack.item.value < value ){
+            this.sell(itemStack, itemStack.quantity);
+          }
+        }
+      }
+    }
   }
 
   generateSpiritGem(grade: number): Item {
