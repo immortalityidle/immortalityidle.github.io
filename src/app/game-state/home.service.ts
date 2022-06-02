@@ -95,6 +95,7 @@ export class HomeService {
     workbench: null
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
+  bulkWork: number = 1;
 
   homesList: Home[] = [
     {
@@ -110,7 +111,7 @@ export class HomeService {
           this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
-        if (Math.random() < 0.6){
+        if (Math.random() < 0.4){
           this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
         }
       },
@@ -131,7 +132,7 @@ export class HomeService {
           this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
-        if (Math.random() < 0.3){
+        if (Math.random() < 0.2){
           this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
         }
         this.characterService.characterState.checkOverage();
@@ -566,7 +567,7 @@ export class HomeService {
     // more valuable crops yield less per field and take longer to harvest, tune this later
     return {cropName: cropItem.id,
       yield: 0,
-      maxYield: Math.floor((100 / cropItem.value) + this.characterService.characterState.attributes.plantLore.value),
+      maxYield: Math.floor(100 / cropItem.value),
       daysToHarvest: 90 + cropItem.value
     };
   }
@@ -580,8 +581,14 @@ export class HomeService {
   }
 
   workFields(workValue: number){
-    if (this.characterService.characterState.attributes.plantLore.value >= 10){
-      workValue += Math.floor(Math.log10(this.characterService.characterState.attributes.plantLore.value));
+    if (this.fields.length > 1000){
+      // don't iterate anymore, we'll do bulk calculations
+      this.bulkWork += workValue;
+      let crop = this.getCrop();
+      if (this.bulkWork > crop.maxYield){
+        this.bulkWork = crop.maxYield;
+      }
+      return;
     }
     for (const field of this.fields){
       if (field.yield < field.maxYield){
@@ -592,6 +599,17 @@ export class HomeService {
   }
 
   ageFields(){
+    if (this.fields.length > 1000){
+      let crop = this.getCrop();
+      let cropYield = Math.floor(this.fields.length * this.bulkWork / crop.daysToHarvest);
+      this.fieldsTooltip = "Currently growing a " + crop.cropName + " crop. " + cropYield + " harvested per day.";
+      this.inventoryService.addItems(this.itemRepoService.items[crop.cropName], cropYield);
+      this.bulkWork--;
+      if (this.bulkWork < 1){
+        this.bulkWork = 1;
+      }
+      return;
+    }
     let nextHarvest = Number.MAX_VALUE;
     for (let i = this.fields.length - 1; i >= 0; i--){
       if (this.fields[i].daysToHarvest < nextHarvest){
@@ -611,7 +629,7 @@ export class HomeService {
       }
     }
     if (nextHarvest < Number.MAX_VALUE){
-      this.fieldsTooltip = "Currently growing " + this.fields[0].cropName + ". Next harvest in " + nextHarvest + " days.";
+      this.fieldsTooltip = "Currently growing a " + this.fields[0].cropName + " crop. Next harvest in " + nextHarvest + " days.";
     }
   }
 

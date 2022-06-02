@@ -252,7 +252,6 @@ export class Character {
   }
 
   recalculateDerivedStats(): void{
-    console.log("recalculating spiritual lifespan bonus", this.attributes.spirituality.value, this.getAptitudeMultipier(this.attributes.spirituality.value));
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value);
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);

@@ -34,7 +34,7 @@ export class ItemRepoService {
       name: "Sleeping Mat",
       type: 'furniture',
       slot: 'bed',
-      value: 100,
+      value: 1000,
       description: "A thin woven mat to sleep on. Increases daily stamina recovery by 1 and restores a bit of health.",
       useConsumes: false,
       use: () => {

@@ -61,9 +61,6 @@ export class MainLoopService {
     this.lastTime = properties.lastTime;
     let newTime = new Date().getTime();
     this.bankedTicks = properties.bankedTicks + Math.floor((newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider));
-    if (this.bankedTicks > 1000000){
-      this.bankedTicks = 1000000;
-    }
     this.lastTime = newTime;
   }
 
