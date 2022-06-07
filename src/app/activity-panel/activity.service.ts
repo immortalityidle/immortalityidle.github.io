@@ -12,7 +12,9 @@ import { ReincarnationService } from '../reincarnation/reincarnation.service';
 export interface ActivityProperties {
   autoRestart: boolean,
   pauseOnDeath: boolean,
-  activityLoop: ActivityLoopEntry[]
+  activityLoop: ActivityLoopEntry[],
+  unlockedActivities: ActivityType[],
+  openApprenticeships: number
 }
 
 @Injectable({
@@ -23,6 +25,7 @@ export class ActivityService {
   autoRestart: boolean = false;
   pauseOnDeath: boolean = true;
   activities: Activity[] = this.getActivityList();
+  openApprenticeships: number = 1;
 
   constructor(
     private characterService: CharacterService,
@@ -45,24 +48,44 @@ export class ActivityService {
   }
 
   getProperties(): ActivityProperties{
+    let unlockedActivities: ActivityType[] = [];
+    for (const activity of this.activities){
+      if (activity.unlocked){
+        unlockedActivities.push(activity.activityType);
+      }
+    }
     return {
       autoRestart: this.autoRestart,
       pauseOnDeath: this.pauseOnDeath,
-      activityLoop: this.activityLoop
+      activityLoop: this.activityLoop,
+      unlockedActivities: unlockedActivities,
+      openApprenticeships: this.openApprenticeships
     }
   }
 
   setProperties(properties: ActivityProperties){
+    let unlockedActivities = properties.unlockedActivities || [ActivityType.OddJobs, ActivityType.Resting];
+    for (const activity of this.activities){
+        activity.unlocked = unlockedActivities.includes(activity.activityType);
+    }
     this.autoRestart = properties.autoRestart;
     this.pauseOnDeath = properties.pauseOnDeath;
     this.activityLoop = properties.activityLoop;
+    this.openApprenticeships = properties.openApprenticeships || 0;
   }
 
   meetsRequirements(activity: Activity): boolean {
-    return this.meetsRequirementsByLevel(activity, activity.level);
+    if (this.meetsRequirementsByLevel(activity, activity.level)){
+      activity.unlocked = true;
+      return true;
+    }
+    return false;
   }
 
   meetsRequirementsByLevel(activity: Activity, level: number): boolean {
+    if (activity.skipApprenticeshipLevel > activity.level && this.openApprenticeships <= 0){
+      return false;
+    }
     const keys: (keyof CharacterAttribute)[] = Object.keys(
       activity.requirements[level]
     ) as (keyof CharacterAttribute)[];
@@ -99,9 +122,13 @@ export class ActivityService {
 
   reset(): void {
     // downgrade all activities to base level
+    this.openApprenticeships = 1;
     for (const activity of this.activities){
       activity.level = 0;
+      activity.unlocked = false;
     }
+    this.activities[0].unlocked = true;
+    this.activities[1].unlocked = true;
     if (this.autoRestart){
       this.checkRequirements();
       if (this.pauseOnDeath){
@@ -121,7 +148,25 @@ export class ActivityService {
     throw Error('Could not find activity from type');
   }
 
-  // TODO: Maybe pull these out as first class objects?
+  checkApprenticeship(activityType: ActivityType){
+    if (this.openApprenticeships == 0){
+      return;
+    }
+    this.openApprenticeships--;
+    for (const activity of this.activities) {
+      if (activity.activityType !== activityType && activity.level < activity.skipApprenticeshipLevel) {
+        // relock all other apprentice activities
+        activity.unlocked = false;
+        // and remove any entries for them from the activity loop
+        for (let i = this.activityLoop.length - 1; i >= 0; i--){
+          if (this.activityLoop[i].activity == activity.activityType){
+            this.activityLoop.splice(i, 1);
+          }
+        }
+      }
+    }
+  }
+
   getActivityList(): Activity[] {
     return [
       {
@@ -143,6 +188,8 @@ export class ActivityService {
           this.characterService.characterState.money += 3;
         }],
         requirements: [{}],
+        unlocked: true,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -178,6 +225,8 @@ export class ActivityService {
             toughness: 1000
           }
         ],
+        unlocked: true,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -234,12 +283,14 @@ export class ActivityService {
           {
             charisma: 10000
           }
-        ]
+        ],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
         name: ['Apprentice Blacksmithing', 'Journeyman Blacksmithing', 'Blacksmithing'],
-        activityType: ActivityType.ApprenticeBlacksmithing,
+        activityType: ActivityType.Blacksmithing,
         description:[
           "Work for the local blacksmith. You mostly pump the bellows, but at least you're learning a trade.",
           'Mold metal into useful things. You might even produce something you want to keep now and then.',
@@ -253,6 +304,7 @@ export class ActivityService {
         consequence: [
           // grade 0
           () => {
+            this.checkApprenticeship(ActivityType.Blacksmithing);
             this.characterService.characterState.increaseAttribute('strength', 0.1);
             this.characterService.characterState.increaseAttribute('toughness', 0.1);
             this.characterService.characterState.status.stamina.value -= 25;
@@ -271,6 +323,7 @@ export class ActivityService {
           },
           // grade 1
           () => {
+            this.checkApprenticeship(ActivityType.Blacksmithing);
             this.characterService.characterState.increaseAttribute('strength',0.2);
             this.characterService.characterState.increaseAttribute('toughness',0.2);
             this.characterService.characterState.status.stamina.value -= 25;
@@ -334,6 +387,8 @@ export class ActivityService {
             metalLore: 10,
           }
         ],
+        unlocked: false,
+        skipApprenticeshipLevel: 2
       },
       {
         level: 0,
@@ -358,6 +413,8 @@ export class ActivityService {
           speed: 20,
           intelligence: 20,
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -375,6 +432,7 @@ export class ActivityService {
         ],
         consequence: [
           () => {
+            this.checkApprenticeship(ActivityType.Alchemy);
             this.characterService.characterState.increaseAttribute('intelligence',0.1);
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
@@ -392,6 +450,7 @@ export class ActivityService {
             }
           },
           () => {
+            this.checkApprenticeship(ActivityType.Alchemy);
             this.characterService.characterState.increaseAttribute('intelligence',0.2);
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
@@ -457,6 +516,8 @@ export class ActivityService {
             plantLore: 10
           }
         ],
+        unlocked: false,
+        skipApprenticeshipLevel: 2
       },
       {
         level: 0,
@@ -475,6 +536,8 @@ export class ActivityService {
         requirements: [{
           strength: 100,
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -492,6 +555,7 @@ export class ActivityService {
         ],
         consequence: [
           () => {
+            this.checkApprenticeship(ActivityType.Woodworking);
             this.characterService.characterState.increaseAttribute('strength', 0.1);
             this.characterService.characterState.increaseAttribute('intelligence', 0.1);
             this.characterService.characterState.status.stamina.value -= 20;
@@ -504,6 +568,7 @@ export class ActivityService {
             }
           },
           () => {
+            this.checkApprenticeship(ActivityType.Woodworking);
             this.characterService.characterState.increaseAttribute('strength',0.2);
             this.characterService.characterState.increaseAttribute('intelligence',0.2);
             this.characterService.characterState.status.stamina.value -= 20;
@@ -558,6 +623,8 @@ export class ActivityService {
             plantLore: 10,
           }
         ],
+        unlocked: false,
+        skipApprenticeshipLevel: 2
       },
       {
         level: 0,
@@ -575,6 +642,7 @@ export class ActivityService {
         ],
         consequence: [
           () => {
+            this.checkApprenticeship(ActivityType.Leatherworking);
             this.characterService.characterState.increaseAttribute('speed', 0.1);
             this.characterService.characterState.increaseAttribute('toughness', 0.1);
             this.characterService.characterState.status.stamina.value -= 20;
@@ -587,6 +655,7 @@ export class ActivityService {
             }
           },
           () => {
+            this.checkApprenticeship(ActivityType.Leatherworking);
             this.characterService.characterState.increaseAttribute('speed',0.2);
             this.characterService.characterState.increaseAttribute('toughness',0.2);
             this.characterService.characterState.status.stamina.value -= 20;
@@ -643,6 +712,8 @@ export class ActivityService {
             animalLore: 10,
           }
         ],
+        unlocked: false,
+        skipApprenticeshipLevel: 2
       },
       {
         level: 0,
@@ -670,6 +741,8 @@ export class ActivityService {
           strength: 10,
           speed: 10
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -688,6 +761,8 @@ export class ActivityService {
         requirements: [{
           strength: 70
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -710,6 +785,8 @@ export class ActivityService {
           toughness: 100,
           intelligence: 100
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -736,6 +813,8 @@ export class ActivityService {
         requirements: [{
           speed: 200
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -757,6 +836,8 @@ export class ActivityService {
           strength: 15,
           intelligence: 15
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -782,6 +863,8 @@ export class ActivityService {
           toughness: 5000,
           spirituality: 1
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       },
       {
         level: 0,
@@ -798,12 +881,14 @@ export class ActivityService {
           if (Math.random() < 0.01){
             this.characterService.characterState.increaseAttribute('spirituality', 0.1);
           }
-      }],
+        }],
         requirements: [{
           charisma: 5000,
           intelligence: 5000,
           spirituality: 1
         }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
       }
     ];
   }

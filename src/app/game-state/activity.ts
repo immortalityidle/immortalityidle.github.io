@@ -4,7 +4,6 @@ export enum ActivityType {
   OddJobs,
   Resting,
   Begging,
-  ApprenticeBlacksmithing,
   Blacksmithing,
   GatherHerbs,
   ChopWood,
@@ -29,6 +28,8 @@ export interface Activity {
   requirements: CharacterAttribute[];
   landRequirements?: number;
   consequence: (() => void)[];
+  unlocked: boolean;
+  skipApprenticeshipLevel: number;
 }
 
 export interface ActivityLoopEntry {

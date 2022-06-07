@@ -1,5 +1,5 @@
 <h3 class="panelHeader">
-  <span tooltip="Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential.">
+  <span tooltip="Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential. Add activities from the activities panel. Repeat them if you want to, or rearrange them by dragging them where you want them to go.">
     <mat-icon>
       calendar_month
     </mat-icon>
@@ -43,8 +43,6 @@
     <td>
       <mat-icon tooltip="Spend more days on this." (click)="onPlusClick(entry)" class="iconButton">add</mat-icon>
       <mat-icon tooltip="Spend fewer days on this." (click)="onMinusClick(entry)" class="iconButton">remove</mat-icon>
-      <mat-icon tooltip="Move this activity up in the schedule." (click)="onUpClick(entry)" class="iconButton">arrow_upward</mat-icon>
-      <mat-icon tooltip="Move this activity down in the schedule." (click)="onDownClick(entry)" class="iconButton">arrow_downward</mat-icon>
       <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>
     </td>
   </tr>

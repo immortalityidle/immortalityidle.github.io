@@ -30,6 +30,9 @@ export class ActivityPanelComponent {
   }
 
   meetsRequirements(activity: Activity): boolean {
+    if (activity.unlocked){
+      return true;
+    }
     return this.activityService.meetsRequirements(activity);
   }
 }

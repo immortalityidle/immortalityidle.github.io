@@ -113,24 +113,6 @@ export class TimePanelComponent implements OnInit {
     entry.repeatTimes--;
   }
 
-  onUpClick(entry: ActivityLoopEntry): void{
-    let index = this.activityService.activityLoop.indexOf(entry);
-    if (index != 0 && this.activityService.activityLoop.length > 1){
-      let swapper = this.activityService.activityLoop[index - 1];
-      this.activityService.activityLoop[index - 1] = entry;
-      this.activityService.activityLoop[index] = swapper;
-    }
-  }
-
-  onDownClick(entry: ActivityLoopEntry): void{
-    let index = this.activityService.activityLoop.indexOf(entry);
-    if (index != this.activityService.activityLoop.length - 1 && this.activityService.activityLoop.length > 1){
-      let swapper = this.activityService.activityLoop[index + 1];
-      this.activityService.activityLoop[index + 1] = entry;
-      this.activityService.activityLoop[index] = swapper;
-    }
-  }
-
   onRemoveClick(entry: ActivityLoopEntry): void{
     let index = this.activityService.activityLoop.indexOf(entry);
     // make sure we're not running past the end of the entries array
