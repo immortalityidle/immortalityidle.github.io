@@ -1,0 +1,18 @@
+<div>
+    <h3>Your Farm</h3>
+    <hr/>
+    <div>
+        Your {{homeService.fields.length}} fields produced an average of {{homeService.averageYield | number: '1.0-2'}} food per day last year
+    </div>
+    <div class="farmGrid">
+        <div *ngFor="let field of homeService.fields | slice:0:300">
+          <table class="fieldSlot"
+            tooltip="You will harvest {{field.yield}} in {{field.daysToHarvest}} days">
+            <tr>{{field.cropName | titlecase}}</tr>
+            <tr>{{field.yield}}</tr>
+            <tr>{{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}</tr>
+          </table>
+        </div>
+      </div>
+</div>
+

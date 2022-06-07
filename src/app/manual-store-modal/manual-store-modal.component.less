@@ -1,3 +1,4 @@
+@import (reference) "../../styles.less";
 
 .inventoryContainer{
     position: relative;
@@ -5,14 +6,14 @@
   }
 
 .itemSlot {
-  border: 1px solid black;
+  border: 1px solid @panelBorder;
   width: 90px;
   height: 90px;
   margin: 1px;
   font-size: x-small;
   text-align: center;
   border-spacing: 0px;
-  background-color: lightgray;
+  background-color: @storeButtonColor;
   cursor: pointer;
 }
 
@@ -22,12 +23,12 @@
 }
 
 .selectedItem {
-  background-color: lightyellow;
+  background-color: @itemSlotHighlight;
 }
 
 .ownedItem {
-  background-color: darkgray !important;
-  border: 1px solid darkgray !important;
+  background-color: @storeButtonDisabledColor !important;
+  border: 1px solid @storeButtonDisabledColor !important;
 }
 
 .itemSlot > tr {

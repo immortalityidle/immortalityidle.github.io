@@ -41,7 +41,8 @@ export interface Field {
   cropName: string,
   yield: number,
   maxYield: number,
-  daysToHarvest: number
+  daysToHarvest: number,
+  originalDaysToHarvest: number
 }
 
 export interface HomeProperties {
@@ -49,7 +50,7 @@ export interface HomeProperties {
   homeValue: HomeType,
   furniture: FurnitureSlots,
   fields: Field[],
-  fieldYields: number,
+  averageYield: number,
   autoReplant: boolean,
   landPrice: number,
   autoBuyLandUnlocked: boolean,
@@ -86,8 +87,7 @@ export class HomeService {
   land: number;
   landPrice: number;
   fields: Field[] = [];
-  fieldYields = 0; // running tally of how much food is currently growing in your fields
-  fieldsTooltip: string = "";
+  averageYield = 0; // running average of how much food is produced
   furniture: FurnitureSlots = {
     bed: null,
     bathtub: null,
@@ -95,7 +95,6 @@ export class HomeService {
     workbench: null
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
-  bulkWork: number = 1;
 
   homesList: Home[] = [
     {
@@ -465,7 +464,7 @@ export class HomeService {
       land: this.land,
       landPrice: this.landPrice,
       fields: this.fields,
-      fieldYields: this.fieldYields,
+      averageYield: this.averageYield,
       autoReplant: this.autoReplant,
       autoBuyLandUnlocked: this.autoBuyLandUnlocked,
       autoBuyLandLimit: this.autoBuyLandLimit,
@@ -484,7 +483,7 @@ export class HomeService {
     this.landPrice = properties.landPrice;
     this.autoReplant = properties.autoReplant;
     this.fields = properties.fields;
-    this.fieldYields = properties.fieldYields;
+    this.averageYield = properties.averageYield || 0;
     this.setCurrentHome(this.homesList[properties.homeValue]);
     this.autoBuyLandUnlocked = properties.autoBuyLandUnlocked || false;
     this.autoBuyLandLimit = properties.autoBuyLandLimit || 0;
@@ -530,8 +529,7 @@ export class HomeService {
     this.land = 0;
     this.landPrice = 100;
     this.fields = [];
-    this.fieldYields = 0;
-    this.fieldsTooltip = "";
+    this.averageYield = 0;
     this.furniture.bed = null;
     this.furniture.bathtub = null;
     this.furniture.kitchen = null;
@@ -566,9 +564,10 @@ export class HomeService {
     const cropItem = this.inventoryService.farmFoodList[cropIndex];
     // more valuable crops yield less per field and take longer to harvest, tune this later
     return {cropName: cropItem.id,
-      yield: 0,
+      yield: 1,
       maxYield: Math.floor(100 / cropItem.value),
-      daysToHarvest: 90 + cropItem.value
+      daysToHarvest: 180 + cropItem.value,
+      originalDaysToHarvest: 180 + cropItem.value
     };
   }
 
@@ -576,48 +575,34 @@ export class HomeService {
     if (this.land > 0){
       this.land--;
       this.fields.push(this.getCrop());
-      this.fieldYields++;
     }
   }
 
   workFields(workValue: number){
-    if (this.fields.length > 1000){
-      // don't iterate anymore, we'll do bulk calculations
-      this.bulkWork += workValue;
-      let crop = this.getCrop();
-      if (this.bulkWork > crop.maxYield){
-        this.bulkWork = crop.maxYield;
-      }
-      return;
-    }
-    for (const field of this.fields){
+    for (let i = 0; i < this.fields.length && i < 300; i++){
+      let field = this.fields[i];
       if (field.yield < field.maxYield){
         field.yield += workValue;
-        this.fieldYields += workValue;
       }
     }
   }
 
+  // only ever really work the first 300 fields that we show. 
+  // After that prorate yields by the amount of fields over 300.
   ageFields(){
-    if (this.fields.length > 1000){
-      let crop = this.getCrop();
-      let cropYield = Math.floor(this.fields.length * this.bulkWork / crop.daysToHarvest);
-      this.fieldsTooltip = "Currently growing a " + crop.cropName + " crop. " + cropYield + " harvested per day.";
-      this.inventoryService.addItems(this.itemRepoService.items[crop.cropName], cropYield);
-      this.bulkWork--;
-      if (this.bulkWork < 1){
-        this.bulkWork = 1;
-      }
-      return;
+    let startIndex = this.fields.length - 1;
+    if (startIndex > 299){
+      startIndex = 299;
     }
-    let nextHarvest = Number.MAX_VALUE;
-    for (let i = this.fields.length - 1; i >= 0; i--){
-      if (this.fields[i].daysToHarvest < nextHarvest){
-        nextHarvest = this.fields[i].daysToHarvest;
-      }
+    let totalDailyYield = 0;
+    for (let i = startIndex; i >= 0; i--){
       if (this.fields[i].daysToHarvest <= 0){
-        this.inventoryService.addItems(this.itemRepoService.items[this.fields[i].cropName], this.fields[i].yield);
-        this.fieldYields -= this.fields[i].yield;
+        let fieldYield = this.fields[i].yield;
+        if (this.fields.length > 300){
+          fieldYield = Math.floor(this.fields.length / 300);
+        }
+        totalDailyYield += fieldYield;
+        this.inventoryService.addItems(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
         if (this.autoReplant){
           this.fields[i] = this.getCrop();
         } else {
@@ -628,9 +613,7 @@ export class HomeService {
         this.fields[i].daysToHarvest--;
       }
     }
-    if (nextHarvest < Number.MAX_VALUE){
-      this.fieldsTooltip = "Currently growing a " + this.fields[0].cropName + " crop. Next harvest in " + nextHarvest + " days.";
-    }
+    this.averageYield = ((this.averageYield * 364) + totalDailyYield) / 365;
   }
 
   buyLand(){

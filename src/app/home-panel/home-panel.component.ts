@@ -5,6 +5,8 @@ import { HomeService } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
 import { StoreService } from '../game-state/store.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
+import { FarmPanelComponent } from '../farm-panel/farm-panel.component';
+
 
 @Component({
   selector: 'app-home-panel',
@@ -27,18 +29,18 @@ export class HomePanelComponent {
     this.homeService.upgradeToNextHome();
   }
 
-  buyClick(): void {
-    this.homeService.buyLand();
-  }
-
-  fieldClick(): void {
-    this.homeService.addField();
-  }
-
   storeClicked(): void {
     this.storeService.setStoreInventory();
     const dialogRef = this.dialog.open(FurnitureStoreModalComponent, {
       width: '500px',
+      data: {someField: 'foo'}
+    });
+  }
+
+  farmClicked(): void {
+    this.storeService.setStoreInventory();
+    const dialogRef = this.dialog.open(FarmPanelComponent, {
+      width: '800px',
       data: {someField: 'foo'}
     });
   }

@@ -1,17 +1,19 @@
+@import (reference) "../../styles.less";
+
 .log {
   height: 100%;
 }
 
 .STANDARD {
-  color: black;
+  color: @bodyText;
 }
 
 .INJURY {
-  color: red;
+  color: @healthColor;
 }
 
 .logEntryDiv {
-  border-top: 1px #eeeeee dotted;
+  border-top: 1px @tableDividerColor dotted;
   white-space: nowrap;
   font-size: 12px;
   line-height: 12px;

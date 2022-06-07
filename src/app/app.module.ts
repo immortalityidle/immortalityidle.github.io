@@ -22,6 +22,7 @@ import { BattlePanelComponent } from './battle-panel/battle-panel.component';
 import { FurnitureStoreModalComponent } from './furniture-store-modal/furniture-store-modal.component';
 import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';
 import { OptionsModalComponent } from './options-modal/options-modal.component';
+import { FarmPanelComponent } from './farm-panel/farm-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -46,7 +47,8 @@ const materialModules = [
     BattlePanelComponent,
     FurnitureStoreModalComponent,
     AscensionStoreModalComponent,
-    OptionsModalComponent
+    OptionsModalComponent,
+    FarmPanelComponent
   ],
   imports: [
     BrowserModule,

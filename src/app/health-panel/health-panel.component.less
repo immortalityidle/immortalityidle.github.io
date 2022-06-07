@@ -1,3 +1,5 @@
+@import (reference) "../../styles.less";
+
 progress {
   text-align: center;
   height: fit-content;
@@ -14,15 +16,15 @@ progress:after {
 }
 
 .health > progress {
-  accent-color: red;
+  accent-color: @healthColor;
 }
 
 .stamina > progress {
-  accent-color: lightgreen;
+  accent-color: @staminaColor;
 }
 
 .nourishment > progress {
-  accent-color: yellow;
+  accent-color: @nutritionColor;
 }
 
 .status-progress {
