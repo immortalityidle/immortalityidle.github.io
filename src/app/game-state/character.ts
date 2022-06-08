@@ -10,9 +10,9 @@ export interface CharacterAttribute {
   spirituality?: number,
   earthLore?: number,
   metalLore?: number,
-  plantLore?: number,
-  animalLore?: number,
-  alchemy?: number
+  woodLore?: number,
+  waterLore?: number,
+  animalTraining?: number,
 }
 
 export type AttributeType = 'strength' |
@@ -23,9 +23,10 @@ export type AttributeType = 'strength' |
   'spirituality' |
   'earthLore' |
   'metalLore' |
-  'plantLore' |
-  'animalLore' |
-  'alchemy';
+  'woodLore' |
+  'waterLore' |
+  'fireLore' |
+  'animalTraining';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number, icon: string}};
 
@@ -126,24 +127,30 @@ export class Character {
       aptitude: 1,
       icon: "hardware"
     },
-    plantLore: {
+    woodLore: {
       description: "Understanding plants and how to grow and care for them.",
       value: 0,
       aptitude: 1,
       icon: "forest"
     },
-    animalLore: {
-      description: "Understanding animals and monsters and how to deal with them.",
-      value: 0,
-      aptitude: 1,
-      icon: "pets"
-    },
-    alchemy: {
+    waterLore: {
       description: "Understanding potions and pills and how to make and use them.",
       value: 0,
       aptitude: 1,
       icon: "emoji_food_beverage"
-    }
+    },
+    fireLore: {
+      description: "Burn! Burn! BURN!!!",
+      value: 0,
+      aptitude: 1,
+      icon: "emoji_food_beverage"
+    },
+    animalTraining: {
+      description: "Skill in working with animals and monsters.",
+      value: 0,
+      aptitude: 1,
+      icon: "pets"
+    },
   };
   status: CharacterStatus = {
     health: {
@@ -203,7 +210,7 @@ export class Character {
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
     let totalAptitude = 0;
-    totalAptitude += this.attributes.strength.value + this.attributes.toughness.value + 
+    totalAptitude += this.attributes.strength.value + this.attributes.toughness.value +
       this.attributes.speed.value + this.attributes.intelligence.value + this.attributes.charisma.value;
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
     if (this.bloodlineRank < 4){

@@ -9,12 +9,12 @@
     <div class="homeInfo">You own {{homeService.land}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length}} fields</div>
     <div class="furnitureSlots">
         <div *ngFor="let slot of homeService.home.furnitureSlots">
-            <div *ngIf="!homeService.furniture[slot]" class="furnitureSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
-            <div *ngIf="homeService.furniture[slot]" class="furnitureSlot" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
+            <div *ngIf="!homeService.furniture[slot]" class="itemSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
+            <div *ngIf="homeService.furniture[slot]" class="itemSlot" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
         </div>
     </div>
     <span class="buttonSpan">
-        <mat-icon  (click)="homeService.buyLand()" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels." class="iconButton">
+        <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels. Shift-click to buy 10 plots, Ctrl-click to buy all the land you can afford." class="iconButton">
           add
         </mat-icon>
         <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" placement="bottom" (click)="upgradeClick()" class="iconButton"
@@ -25,10 +25,10 @@
           tooltip="Buy Furniture" (click)="storeClicked()">
           shopping_cart
         </mat-icon>
-        <mat-icon  (click)="homeService.addField()" placement="bottom" class="iconButton"
-          tooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again.">
+        <mat-icon tooltip="View your farm." class="iconButton rightFloat" (click)="farmClicked()">grass</mat-icon>
+        <mat-icon  (click)="plowClicked($event)" placement="bottom" class="iconButton rightFloat"
+          tooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
           waves
         </mat-icon>
-        <mat-icon tooltip="View your farm." class="iconButton rightFloat" (click)="farmClicked()">grass</mat-icon>
     </span>
 </div>

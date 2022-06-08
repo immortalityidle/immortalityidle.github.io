@@ -266,10 +266,10 @@ export class InventoryService {
   }
 
   updateWeaponDescription(weapon: Equipment){
-    weapon.description = 'A unique weapon made of ' + 
-      weapon.weaponStats?.material + ".<br/>Base Damage: " + 
+    weapon.description = 'A unique weapon made of ' +
+      weapon.weaponStats?.material + ".<br/>Base Damage: " +
       weapon.weaponStats?.baseDamage + "<br/>Durability: " + weapon.weaponStats?.durability;
-  }  
+  }
 
   generatePotion(grade: number): void {
 
@@ -326,11 +326,11 @@ export class InventoryService {
 
   generateHerb(): void {
     let grade = 0;
-    let plantLore = this.characterService.characterState.attributes.plantLore.value;
-    if (plantLore < 10000){
-      grade = Math.floor(Math.sqrt(plantLore));
+    let woodLore = this.characterService.characterState.attributes.woodLore.value;
+    if (woodLore < 10000){
+      grade = Math.floor(Math.sqrt(woodLore));
     } else {
-      grade = 100 + Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value - 10000));
+      grade = 100 + Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value - 10000));
     }
     let name: string;
     let quality: string;
@@ -474,23 +474,23 @@ export class InventoryService {
   }
 
   getWood(): Item{
-    if (this.characterService.characterState.attributes.plantLore.value > 300 &&
+    if (this.characterService.characterState.attributes.woodLore.value > 300 &&
       this.characterService.characterState.attributes.spirituality.value > 10){
         return  this.itemRepoService.items['peachwoodLog'];
-    } else if (this.characterService.characterState.attributes.plantLore.value > 200 &&
+    } else if (this.characterService.characterState.attributes.woodLore.value > 200 &&
       this.characterService.characterState.attributes.spirituality.value > 1){
         return  this.itemRepoService.items['blackwoodLog'];
-    } else if (this.characterService.characterState.attributes.plantLore.value > 100){
+    } else if (this.characterService.characterState.attributes.woodLore.value > 100){
         return  this.itemRepoService.items['zitanLog'];
-    } else if (this.characterService.characterState.attributes.plantLore.value > 50){
+    } else if (this.characterService.characterState.attributes.woodLore.value > 50){
       return  this.itemRepoService.items['rosewoodLog'];
-    } else if (this.characterService.characterState.attributes.plantLore.value > 40){
+    } else if (this.characterService.characterState.attributes.woodLore.value > 40){
       return  this.itemRepoService.items['pearwoodLog'];
-    } else if (this.characterService.characterState.attributes.plantLore.value > 30){
+    } else if (this.characterService.characterState.attributes.woodLore.value > 30){
       return  this.itemRepoService.items['laurelwoodLog'];
-    } else if (this.characterService.characterState.attributes.plantLore.value > 20){
+    } else if (this.characterService.characterState.attributes.woodLore.value > 20){
       return  this.itemRepoService.items['walnutLog'];
-    } else if (this.characterService.characterState.attributes.plantLore.value > 10){
+    } else if (this.characterService.characterState.attributes.woodLore.value > 10){
       return  this.itemRepoService.items['cypressLog'];
     } else {
       return  this.itemRepoService.items['elmLog'];
@@ -898,7 +898,7 @@ export class InventoryService {
     stack.quantity -= 10;
     this.addItem(this.generateSpiritGem((stack.item.value / 10) + 1));
   }
-  
+
 }
 
 export function instanceOfEquipment(object: any): object is Equipment {

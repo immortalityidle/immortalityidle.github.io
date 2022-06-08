@@ -23,7 +23,7 @@ export class HealthPanelComponent {
       tooltip += "<br>Healthy Food: " + this.yearify(this.characterService.characterState.foodLifespan);
     }
     if (this.characterService.characterState.alchemyLifespan > 0){
-      tooltip += "<br>Alchemy: " + this.yearify(this.characterService.characterState.alchemyLifespan);
+      tooltip += "<br>alchemy: " + this.yearify(this.characterService.characterState.alchemyLifespan);
     }
     if (this.characterService.characterState.statLifespan > 0){
       tooltip += "<br>Basic Attributes: " + this.yearify(this.characterService.characterState.statLifespan);

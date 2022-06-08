@@ -211,7 +211,7 @@ export class ItemRepoService {
       description: "An anvil to work on blacksmithing.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('metalLore', 0.1);
+        this.characterService.characterState.increaseAttribute('metalLore', 0.01);
       }
     },
     herbGarden: {
@@ -223,7 +223,7 @@ export class ItemRepoService {
       description: "An pleasant garden growing herbs.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('plantLore', 0.1);
+        this.characterService.characterState.increaseAttribute('woodLore', 0.01);
       }
     },
     dogKennel: {
@@ -235,7 +235,7 @@ export class ItemRepoService {
       description: "A kennel for training hunting dogs.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('animalLore', 0.1);
+        this.characterService.characterState.increaseAttribute('animalTraining', 0.01);
       }
     },
     cauldron: {
@@ -247,7 +247,7 @@ export class ItemRepoService {
       description: "A cauldron for practicing alchemy.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('alchemy', 0.1);
+        this.characterService.characterState.increaseAttribute('waterLore', 0.01);
       }
     },
     prayerShrine: {
@@ -1010,7 +1010,7 @@ export class ItemRepoService {
     autoUseManual: {
       id: 'autoUseManual',
       name: "Manual of Facilitated Usage",
-      type: "manual", 
+      type: "manual",
       description: "This manual teaches you to automatically use items.",
       value: 1000000,
       useLabel: "Read",

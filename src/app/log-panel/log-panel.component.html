@@ -1,8 +1,10 @@
 <div class="log">
-  <h3 class="panelHeader"><span>Log</span>
+  <h3 class="panelHeader">
+    <span>Log</span>
+    <span class="headerNote">Newest messages appear at the top</span>
     <span class="filters">
-      <input type="radio" (change)="topicFilterRebirth($event)" id="filterRebirth" [checked]="logService.logTopic === 'REBIRTH'"/>
-      <label for="filterRebirth">Show Reincarnation Messages</label>
+      <input type="radio" (change)="topicFilterStory($event)" id="filterStory" [checked]="logService.logTopic === 'STORY'"/>
+      <label for="filterStory">Show Story Messages</label>
       <input type="radio" (change)="topicFilterEvent($event)" id="filterEvent" [checked]="logService.logTopic === 'EVENT'"/>
       <label for="filterEvent">Show Event Messages</label>
       <input type="radio" (change)="topicFilterCombat($event)" id="filterCombat" [checked]="logService.logTopic === 'COMBAT'"/>

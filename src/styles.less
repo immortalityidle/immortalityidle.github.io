@@ -1,13 +1,13 @@
 @bodyText: black;
-@bodyBackground: #efefef;
-@panelBackground: #fcfcfc;
-@panelBorder: #121212;
-@shadowColor: #aaaaaa;
-@tableDividerColor: #dddddd;
+@bodyBackground: #e0dec6; //#efefef;
+@panelBackground: #fffaaa; //#fcfcfc;
+@panelBorder: #7f6b00; //#121212;
+//@shadowColor: #7f6b00;//#aaaaaa;
+@tableDividerColor: #cfaf88;
 @activeButtonColor: aqua;
 @itemSlotColor: lightyellow;
 @itemSlotHighlight: aqua;
-@storeButtonColor: lightgray;
+@storeButtonColor: #fffaaa;
 @storeButtonDisabledColor: darkgray;
 @healthColor: red;
 @staminaColor: lightgreen;
@@ -24,4 +24,33 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.iconButton {
+  border: 1px @panelBorder solid;
+  border-radius: 3px;
+}
+
+button {
+  background-color: #fffddd;
+  border: 1px solid #7f6b00;
+  border-radius: 6px;
+  color: @bodyText;
+  cursor: pointer;
+}
+
+button:disabled {
+  color: @bodyText;
+}
+
+.itemSlot {
+  border-radius: 4px;
+  border: 1px solid @panelBorder;
+  margin: 1px;
+  font-size: x-small;
+  text-align: center;
+  border-spacing: 0px;
+  cursor: pointer;
+  background-color: @itemSlotColor;
+
 }

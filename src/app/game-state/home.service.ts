@@ -449,7 +449,7 @@ export class HomeService {
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
         if (Math.random() < .3){
-          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD", 'REBIRTH');
+          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD", 'EVENT');
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
           this.characterService.characterState.money += 5;
           this.setCurrentHome(this.nextHome);
@@ -555,8 +555,8 @@ export class HomeService {
 
   getCrop(): Field{
     let cropIndex = 0;
-    if (this.characterService.characterState.attributes.plantLore.value > 1){
-      cropIndex = Math.floor(Math.log2(this.characterService.characterState.attributes.plantLore.value));
+    if (this.characterService.characterState.attributes.woodLore.value > 1){
+      cropIndex = Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value));
     }
     if (cropIndex >= this.inventoryService.farmFoodList.length){
       cropIndex = this.inventoryService.farmFoodList.length - 1;
@@ -587,7 +587,7 @@ export class HomeService {
     }
   }
 
-  // only ever really work the first 300 fields that we show. 
+  // only ever really work the first 300 fields that we show.
   // After that prorate yields by the amount of fields over 300.
   ageFields(){
     let startIndex = this.fields.length - 1;

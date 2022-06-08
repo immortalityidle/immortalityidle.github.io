@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment } from '../game-state/inventory.service';
-import { ItemPrefixes } from '../game-state/itemResources';
+
 
 @Component({
   selector: 'app-equipment-panel',

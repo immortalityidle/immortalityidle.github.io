@@ -45,4 +45,33 @@ export class HomePanelComponent {
     });
   }
 
+  buyClicked(event: MouseEvent): void {
+    event.preventDefault();
+    if (event.shiftKey){
+      for (let i = 0; i < 10; i++){
+        this.homeService.buyLand();
+      }
+    } else if (event.ctrlKey){
+      while (this.character.money > this.homeService.landPrice){
+        this.homeService.buyLand();
+      }
+    } else {
+      this.homeService.buyLand();
+    }
+  }
+
+  plowClicked(event: MouseEvent): void {
+    if (event.shiftKey){
+      for (let i = 0; i < 10; i++){
+        this.homeService.addField();
+      }
+    } else if (event.ctrlKey){
+      while (this.homeService.land > 0){
+        this.homeService.addField();
+      }
+    } else {
+      this.homeService.addField();
+    }
+  }
+
 }

@@ -43,18 +43,18 @@ export class CharacterService {
         deathMessage = "You succumb to your wounds and die.";
       }
       if (deathMessage != ""){
-        this.logService.addLogMessage(deathMessage, 'INJURY', 'REBIRTH');
+        this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
         if (!this.forceRebirth){
           this.logService.addLogMessage(
             "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
-            'STANDARD', 'REBIRTH');
+            'STANDARD', 'EVENT');
         }
         this.logService.addLogMessage(
           "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again.",
-          'STANDARD', 'REBIRTH');
+          'STANDARD', 'EVENT');
         this.logService.addLogMessage(
           "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
-          'STANDARD', 'REBIRTH');
+          'STANDARD', 'EVENT');
         this.reincarnationService.reincarnate();
         this.characterState.dead = true; // use this flag to stop other events until the next tick
         this.forceRebirth = false;
@@ -65,7 +65,7 @@ export class CharacterService {
       this.characterState.reincarnate();
       if (Math.random() < .3){
         this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
-          'STANDARD', 'REBIRTH');
+          'STANDARD', 'EVENT');
         this.characterState.money += 100;
       }
     });
@@ -79,10 +79,10 @@ export class CharacterService {
     }
     this.logService.addLogMessage(
       "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
-      'STANDARD', 'REBIRTH');
+      'STANDARD', 'STORY');
     this.logService.addLogMessage(
       "You now gain twice as much aptitude each time you reincarnate.",
-      'STANDARD', 'REBIRTH');
+      'STANDARD', 'STORY');
     this.characterState.condenseSoulCoreCost *= 10;
     this.characterState.aptitudeGainDivider -= 10;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
@@ -118,10 +118,10 @@ export class CharacterService {
     }
     this.logService.addLogMessage(
       "The pathways that carry your chi through your body have been strengthened and reinforced.",
-      'STANDARD', 'REBIRTH');
+      'STANDARD', 'STORY');
       this.logService.addLogMessage(
         "Your aptitudes can now give you a greater increase when gaining attributes.",
-        'STANDARD', 'REBIRTH');
+        'STANDARD', 'STORY');
 
     this.characterState.reinforceMeridiansCost *= 10;
     this.characterState.attributeScalingLimit *= 2;
@@ -158,10 +158,10 @@ export class CharacterService {
     }
     this.logService.addLogMessage(
       "You sacrifice your current life to strengthen a permanent bloodline that will pass on to all of your descendants.",
-      'STANDARD', 'REBIRTH');
+      'STANDARD', 'STORY');
     this.logService.addLogMessage(
       "You will be reborn into your own family line and reap greater benefits from your previous lives.",
-      'STANDARD', 'REBIRTH');
+      'STANDARD', 'STORY');
     this.characterState.bloodlineCost *= 10;
     this.characterState.bloodlineRank++;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];

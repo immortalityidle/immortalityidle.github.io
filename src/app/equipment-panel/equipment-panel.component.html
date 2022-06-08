@@ -2,7 +2,7 @@
 <table>
   <tr>
     <td></td>
-    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}"
+    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
       tooltip="{{character.equipment.head?.description}}" placement="left"
     >
@@ -11,19 +11,19 @@
     <td></td>
   </tr>
   <tr>
-    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
+    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('rightHand', $event)" (dragstart)="drag('rightHand', $event)"
       tooltip="{{character.equipment.rightHand?.description}}" placement="left"
     >
       {{character.equipment.rightHand?.name | titlecase}}
     </td>
-    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}"
+    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('body', $event)" (dragstart)="drag('body', $event)"
       tooltip="{{character.equipment.body?.description}}" placement="left"
     >
       {{character.equipment.body?.name | titlecase}}
     </td>
-    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
+    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('leftHand', $event)" (dragstart)="drag('leftHand', $event)"
       tooltip="{{character.equipment.leftHand?.description}}" placement="left"
     >
@@ -38,7 +38,7 @@
       <br/>
       <span tooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor."><mat-icon>shield</mat-icon>{{character.defense}}</span>
     </td>
-    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
+    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"
       tooltip="{{character.equipment.legs?.description}}" placement="left"
     >
@@ -47,7 +47,7 @@
     <td></td>
   </tr>
   <tr>
-    <td class="equipmentSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
+    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('feet', $event)" (dragstart)="drag('feet', $event)"
       tooltip="{{character.equipment.feet?.description}}" placement="left"
     >
