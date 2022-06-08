@@ -2,7 +2,11 @@
     <h3>Your Farm</h3>
     <hr/>
     <div>
-        Your {{homeService.fields.length}} fields produced an average of {{homeService.averageYield | number: '1.0-2'}} food per day last year
+      Your {{homeService.fields.length}} fields produced an average of {{homeService.averageYield | number: '1.0-2'}} food per day last year
+      <mat-icon class="iconButton" (click)="clearClicked($event)" placement="bottom" class="iconButton rightFloat"
+        tooltip="Clear a field. Converts a the field back into an open plot of land. Shift-click to clear 10 fields, Ctrl-click to clear all your fields.">
+        delete_sweep
+      </mat-icon>        
     </div>
     <div class="farmGrid">
         <div *ngFor="let field of homeService.fields | slice:0:300">

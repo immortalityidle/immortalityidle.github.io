@@ -578,6 +578,13 @@ export class HomeService {
     }
   }
 
+  clearField(){
+    if (this.fields.length > 0){
+      this.fields.pop();
+      this.land++;
+    }
+  }
+
   workFields(workValue: number){
     for (let i = 0; i < this.fields.length && i < 300; i++){
       let field = this.fields[i];
