@@ -107,6 +107,10 @@ export class InventoryService {
   useSpiritGemPotions: boolean;
   autoSellOldHerbs: boolean;
   fed: boolean = false;
+  lifetimeUsedItems: number = 0;
+  lifetimeSoldItems: number = 0;
+  lifetimePotionsUsed: number = 0;
+  lifetimePillsUsed: number = 0;
 
   constructor(
     private logService: LogService,
@@ -498,6 +502,10 @@ export class InventoryService {
   }
 
   reset(): void {
+    this.lifetimeUsedItems = 0;
+    this.lifetimeSoldItems = 0;
+    this.lifetimePotionsUsed = 0;
+    this.lifetimePillsUsed = 0;
     this.itemStacks = [];
     this.maxItems = 10;
     for (let i = 0; i < this.maxItems; i++){
@@ -616,6 +624,7 @@ export class InventoryService {
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
+    this.lifetimeSoldItems += quantity;
     let index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks[index] = null;
@@ -667,6 +676,7 @@ export class InventoryService {
   }
 
   useItem(item: Item): void {
+    this.lifetimeUsedItems++;
     if (item.type == "potion" && instanceOfPotion(item)){
       this.usePotion(item);
     } else if (item.type == "pill" && instanceOfPill(item)){
@@ -805,11 +815,13 @@ export class InventoryService {
 
   // a special use function for generated potions
   usePotion(potion: Potion){
+    this.lifetimePotionsUsed++;
     this.characterService.characterState.attributes[potion.attribute].value += potion.increase;
   }
 
   // a special use function for generated pills
   usePill(pill: Pill){
+    this.lifetimePillsUsed++
     if (pill.effect == "Longevity"){
       this.characterService.characterState.alchemyLifespan += pill.power;
       if (this.characterService.characterState.alchemyLifespan > 36500){

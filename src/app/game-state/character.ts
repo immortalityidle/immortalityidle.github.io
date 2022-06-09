@@ -55,13 +55,14 @@ export interface CharacterProperties {
   reinforceMeridiansCost: number,
   bloodlineCost: number,
   bloodlineRank: number,
-  totalTicks: number,
-  followersUnlocked: boolean
+  followersUnlocked: boolean,
+  totalLives: number
 }
 
 const INITIAL_AGE = 18 * 365;
 
 export class Character {
+  totalLives: number = 1;
   dead: boolean = false;
   attributeScalingLimit: number = 10;
   attributeSoftCap: number = 10000;
@@ -72,7 +73,6 @@ export class Character {
   reinforceMeridiansOriginalCost: number = 1000;
   bloodlineCost: number = 1000000;
   bloodlineRank: number = 0;
-  totalTicks: number = 0;
   followersUnlocked: boolean = false;
   accuracy: number = 0;
   accuracyExponentMultiplier: number = 0.01;
@@ -194,6 +194,7 @@ export class Character {
 
   // reset everything but increase aptitudes
   reincarnate(): void {
+    this.totalLives++;
     this.status.health.value = 100;
     this.status.health.max = 100;
     this.status.stamina.value = 100;
@@ -345,8 +346,8 @@ export class Character {
       reinforceMeridiansCost: this.reinforceMeridiansCost,
       bloodlineCost: this.bloodlineCost,
       bloodlineRank: this.bloodlineRank,
-      totalTicks: this.totalTicks,
-      followersUnlocked: this.followersUnlocked
+      followersUnlocked: this.followersUnlocked,
+      totalLives: this.totalLives
     }
   }
 
@@ -368,8 +369,8 @@ export class Character {
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     this.bloodlineCost = properties.bloodlineCost;
     this.bloodlineRank = properties.bloodlineRank;
-    this.totalTicks = properties.totalTicks || 0;
     this.followersUnlocked = properties.followersUnlocked || false;
+    this.totalLives = properties.totalLives || 1;
     this.recalculateDerivedStats();
   }
 }

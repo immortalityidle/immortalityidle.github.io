@@ -24,6 +24,7 @@ export class ManualStoreModalComponent {
     public itemRepoService: ItemRepoService
   ) {
     this.character = characterService.characterState;
+    storeService.storeOpened = true;
   }
 
   slotClicked(item: Item){

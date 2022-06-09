@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 
 export type LogType = 'STANDARD' | 'INJURY';
 export type LogTopic = 'COMBAT' | 'STORY' | 'EVENT';

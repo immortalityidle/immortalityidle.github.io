@@ -17,7 +17,6 @@ export class CharacterService {
     private reincarnationService: ReincarnationService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
-      this.characterState.totalTicks++;
       this.characterState.recalculateDerivedStats();
       this.characterState.dead = false;
       this.characterState.age++;
