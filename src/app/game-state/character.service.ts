@@ -10,7 +10,8 @@ import { Character, AttributeType } from './character';
 export class CharacterService {
   characterState = new Character();
   forceRebirth: boolean = false;
-
+  fatherGift: boolean = false;
+    
   constructor(
     mainLoopService: MainLoopService,
     private logService: LogService,
@@ -54,6 +55,7 @@ export class CharacterService {
         this.logService.addLogMessage(
           "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
           'STANDARD', 'EVENT');
+        this.characterState.reincarnate(); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
         this.characterState.dead = true; // use this flag to stop other events until the next tick
         this.forceRebirth = false;
@@ -61,11 +63,10 @@ export class CharacterService {
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
-      this.characterState.reincarnate();
-      if (Math.random() < .3){
+      if (this.fatherGift){
         this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
           'STANDARD', 'EVENT');
-        this.characterState.money += 100;
+        this.characterState.money += 200;
       }
     });
 
@@ -161,7 +162,7 @@ export class CharacterService {
     this.logService.addLogMessage(
       "You will be reborn into your own family line and reap greater benefits from your previous lives.",
       'STANDARD', 'STORY');
-    this.characterState.bloodlineCost *= 10;
+    this.characterState.bloodlineCost *= 1000;
     this.characterState.bloodlineRank++;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){

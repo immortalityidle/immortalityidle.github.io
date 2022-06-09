@@ -23,8 +23,8 @@
   </div>
   <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
     <input type="checkbox" (change)="useSpiritGemPotionsChange($event)"
-      id="useSpiritGemWeapons"  [checked]="inventoryService.useSpiritGemPotions"/>
-    <label for="useSpiritGemWeapons">Use spirit gem when crafting potions</label>
+      id="useSpiritGemPotions"  [checked]="inventoryService.useSpiritGemPotions"/>
+    <label for="useSpiritGemPotions">Use spirit gem when crafting potions</label>
   </div>
   <div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
     Automatically Sold Items:

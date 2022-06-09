@@ -95,6 +95,7 @@ export class HomeService {
     workbench: null
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
+  grandfatherTent: boolean = false;
 
   homesList: Home[] = [
     {
@@ -448,7 +449,7 @@ export class HomeService {
 
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
-        if (Math.random() < .3){
+        if (this.grandfatherTent){
           this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD", 'EVENT');
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
           this.characterService.characterState.money += 5;
@@ -565,7 +566,7 @@ export class HomeService {
     // more valuable crops yield less per field and take longer to harvest, tune this later
     return {cropName: cropItem.id,
       yield: 1,
-      maxYield: Math.floor(100 / cropItem.value),
+      maxYield: Math.floor(200 / cropItem.value),
       daysToHarvest: 180 + cropItem.value,
       originalDaysToHarvest: 180 + cropItem.value
     };

@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, Injector, OnInit } from '@angular/core';
 import { LogService } from '../log-panel/log.service';
 import { CharacterService } from '../game-state/character.service';
 import { Furniture, InventoryService, Item, instanceOfFurniture } from '../game-state/inventory.service';
@@ -7,6 +7,8 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { StoreService } from './store.service';
 import { MainLoopService } from '../main-loop.service';
 import { BattleService } from '../battle-panel/battle.service';
+import { GameStateService } from './game-state.service';
+import { ActivityService } from '../activity-panel/activity.service';
 
 export interface Achievement {
   name: string;
@@ -24,18 +26,20 @@ export interface AchievementProperties {
   providedIn: 'root'
 })
 export class AchievementService {
-
+  gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
 
   constructor(
     private mainLoopService: MainLoopService,
+    private injector: Injector,    
     private logService: LogService,
     private characterService: CharacterService,
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService,
     private storeService: StoreService,
     private battleService: BattleService,
-    public homeService: HomeService
+    private homeService: HomeService,
+    private activityService: ActivityService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (let achievement of this.achievements) {
@@ -63,7 +67,7 @@ export class AchievementService {
     },
     {
       name: "Played a Bit",
-      description: "You worked toward immortality for ten years and unlocked the " + this.itemRepoService.items['fasterPlayManual'].name,
+      description: "You worked toward immortality for ten years across your lifetimes and unlocked the " + this.itemRepoService.items['fasterPlayManual'].name,
       check: () => {
         return this.mainLoopService.totalTicks > 3650;
       },
@@ -74,7 +78,7 @@ export class AchievementService {
     },
     {
       name: "Basically an Expert",
-      description: "You worked toward immortality for one hundred years and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
+      description: "You worked toward immortality for one hundred years across your lifetimes and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
       check: () => {
         return this.mainLoopService.totalTicks > 36500;
       },
@@ -85,9 +89,9 @@ export class AchievementService {
     },
     {
       name: "Agricultural Aptitude",
-      description: "You plowed one hundred fields and unlocked the " + this.itemRepoService.items['perpetualFarmingManual'].name,
+      description: "You plowed 88 fields and unlocked the " + this.itemRepoService.items['perpetualFarmingManual'].name,
       check: () => {
-        return this.homeService.fields.length > 100;
+        return this.homeService.fields.length >= 88;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['perpetualFarmingManual']);
@@ -129,9 +133,9 @@ export class AchievementService {
     },
     {
       name: "All Things In Moderation",
-      description: "You sold and used 518 items and unlocked the " + this.itemRepoService.items['autoBalanceManual'].name,
+      description: "You sold and used 8888 items and unlocked the " + this.itemRepoService.items['autoBalanceManual'].name,
       check: () => {
-        return this.inventoryService.lifetimeUsedItems >= 518 && this.inventoryService.lifetimeSoldItems >= 518;
+        return this.inventoryService.lifetimeUsedItems >= 8888 && this.inventoryService.lifetimeSoldItems >= 8888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBalanceManual']);
@@ -153,7 +157,7 @@ export class AchievementService {
       name: "Real Housewives of Immortality",
       description: "You acquired a very fine home and unlocked the " + this.itemRepoService.items['autoBuyHomeManual'].name,
       check: () => {
-        return this.homeService.homeValue >= HomeType.Manor;
+        return this.homeService.homeValue >= HomeType.CourtyardHouse;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyHomeManual']);
@@ -187,9 +191,9 @@ export class AchievementService {
     },
     {
       name: "Guzzler",
-      description: "You drank 888 potions and unlocked the " + this.itemRepoService.items['autoPotionManual'].name,
+      description: "You drank 88 potions and unlocked the " + this.itemRepoService.items['autoPotionManual'].name,
       check: () => {
-        return this.inventoryService.lifetimePotionsUsed >= 888;
+        return this.inventoryService.lifetimePotionsUsed >= 88;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoPotionManual']);
@@ -279,13 +283,64 @@ export class AchievementService {
       },
       unlocked: false
     },
+    {
+      name: "Grandpa's Old Tent",
+      description: "You've gone through eight cycles of reincarnation and come to understand the value of grangparents.",
+      check: () => {
+        return this.characterService.characterState.totalLives > 8;
+      },
+      effect: () => {
+        this.homeService.grandfatherTent = true;
+      },
+      unlocked: false
+    },
+    {
+      name: "Paternal Pride",
+      description: "You've worked 888 days of odd jobs and come to understand the value of fathers.",
+      check: () => {
+        return this.activityService.oddJobDays > 888;
+      },
+      effect: () => {
+        this.characterService.fatherGift = true;
+      },
+      unlocked: false
+    },
+    {
+      name: "Maternal Love",
+      description: "You've done 888 days of begging and come to understand the value of mothers.",
+      check: () => {
+        return this.activityService.beggingDays > 888;
+      },
+      effect: () => {
+        this.inventoryService.motherGift = true;
+      },
+      unlocked: false
+    },
+    {
+      name: "Grandma's Stick",
+      description: "You've developed spirituality and come to understand the value of grandmothers.",
+      check: () => {
+        return this.characterService.characterState.attributes.spirituality.value > 0;
+      },
+      effect: () => {
+        this.inventoryService.grandmotherGift = true;
+      },
+      unlocked: false
+    },
 
+    
+    
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean){
     if (newAchievement){
       this.unlockedAchievements.push(achievement.name);
       this.logService.addLogMessage(achievement.description, 'STANDARD', 'STORY');
+      // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+      if (!this.gameStateService){
+        this.gameStateService = this.injector.get(GameStateService);
+      }
+      this.gameStateService.savetoLocalStorage();
     }
     achievement.effect();
     achievement.unlocked = true;

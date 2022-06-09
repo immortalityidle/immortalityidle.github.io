@@ -71,7 +71,7 @@ export class Character {
   condenseSoulCoreOriginalCost: number = 10;
   reinforceMeridiansCost: number = 1000;
   reinforceMeridiansOriginalCost: number = 1000;
-  bloodlineCost: number = 1000000;
+  bloodlineCost: number = 100;
   bloodlineRank: number = 0;
   followersUnlocked: boolean = false;
   accuracy: number = 0;

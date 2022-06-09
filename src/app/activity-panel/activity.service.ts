@@ -26,6 +26,8 @@ export class ActivityService {
   pauseOnDeath: boolean = true;
   activities: Activity[] = this.getActivityList();
   openApprenticeships: number = 1;
+  oddJobDays: number = 0;
+  beggingDays: number = 0;
 
   constructor(
     private characterService: CharacterService,
@@ -43,8 +45,12 @@ export class ActivityService {
       if (this.characterService.characterState.dead){
         return;
       }
-      this.upgradeActivities();
     });
+    mainLoopService.longTickSubject.subscribe(() => {
+      this.upgradeActivities();
+      this.checkRequirements();
+    });
+
   }
 
   getProperties(): ActivityProperties{
@@ -75,15 +81,15 @@ export class ActivityService {
   }
 
   meetsRequirements(activity: Activity): boolean {
-    if (this.meetsRequirementsByLevel(activity, activity.level)){
+    if (this.meetsRequirementsByLevel(activity, activity.level, true)){
       activity.unlocked = true;
       return true;
     }
     return false;
   }
 
-  meetsRequirementsByLevel(activity: Activity, level: number): boolean {
-    if (activity.skipApprenticeshipLevel > activity.level && this.openApprenticeships <= 0){
+  meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
+    if (apprenticeCheck && !activity.unlocked && activity.skipApprenticeshipLevel > level && this.openApprenticeships <= 0){
       return false;
     }
     const keys: (keyof CharacterAttribute)[] = Object.keys(
@@ -103,8 +109,13 @@ export class ActivityService {
   }
 
   checkRequirements(): void {
+    for (let activity of this.activities){
+      if (!activity.unlocked && this.meetsRequirements(activity)){
+        activity.unlocked = true;
+      }
+    }
     for (let i = this.activityLoop.length - 1; i >= 0; i--) {
-      if (!this.meetsRequirements(this.getActivityByType(this.activityLoop[i].activity))) {
+      if (!this.getActivityByType(this.activityLoop[i].activity).unlocked) {
         this.activityLoop.splice(i, 1);
       }
     }
@@ -113,7 +124,7 @@ export class ActivityService {
   upgradeActivities(): void {
     for (const activity of this.activities){
       if (activity.level < (activity.description.length - 1)){
-        if (this.meetsRequirementsByLevel(activity, (activity.level + 1))){
+        if (this.meetsRequirementsByLevel(activity, (activity.level + 1), false)){
           activity.level++;
         }
       }
@@ -123,9 +134,15 @@ export class ActivityService {
   reset(): void {
     // downgrade all activities to base level
     this.openApprenticeships = 1;
+    this.oddJobDays = 0;
+    this.beggingDays = 0;
     for (const activity of this.activities){
       activity.level = 0;
       activity.unlocked = false;
+    }
+    for (let i = 0; i < 5; i++){
+      // upgrade to anything that the starting attributes allow
+      this.upgradeActivities();
     }
     this.activities[0].unlocked = true;
     this.activities[1].unlocked = true;
@@ -186,6 +203,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute(key, 0.1);
           this.characterService.characterState.status.stamina.value -= 5;
           this.characterService.characterState.money += 3;
+          this.oddJobDays++;
         }],
         requirements: [{}],
         unlocked: true,
@@ -250,25 +268,29 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value -= 5;
             this.characterService.characterState.money += 3 +
               Math.log2(this.characterService.characterState.attributes.charisma.value);
+            this.beggingDays++;
           },
           () => {
             this.characterService.characterState.increaseAttribute('charisma',0.2);
             this.characterService.characterState.status.stamina.value -= 5;
             this.characterService.characterState.money += 10 +
               Math.log2(this.characterService.characterState.attributes.charisma.value);
-          },
+            this.beggingDays++;
+            },
           () => {
             this.characterService.characterState.increaseAttribute('charisma',0.3);
             this.characterService.characterState.status.stamina.value -= 5;
             this.characterService.characterState.money += 20 +
               Math.log2(this.characterService.characterState.attributes.charisma.value * 2);
-          },
+            this.beggingDays++;
+            },
           () => {
             this.characterService.characterState.increaseAttribute('charisma',0.5);
             this.characterService.characterState.status.stamina.value -= 5;
             this.characterService.characterState.money += 30 +
               Math.log2(this.characterService.characterState.attributes.charisma.value * 10);
-          }
+            this.beggingDays++;
+            }
         ],
         requirements: [
           {
@@ -437,15 +459,13 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
-              this.characterService.characterState.attributes.woodLore.value +
-              this.characterService.characterState.attributes.animalTraining.value;
+              this.characterService.characterState.attributes.woodLore.value;
             let alchemySuccessChance = 0.01;
             if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
               alchemySuccessChance += 0.05;
             }
             if (Math.random() < alchemySuccessChance) {
               this.characterService.characterState.increaseAttribute('woodLore',0.05);
-              this.characterService.characterState.increaseAttribute('animalTraining',0.05);
               this.characterService.characterState.increaseAttribute('waterLore',0.1);
             }
           },
@@ -455,15 +475,13 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
-              ((this.characterService.characterState.attributes.woodLore.value +
-              this.characterService.characterState.attributes.animalTraining.value) * 2);
+              (this.characterService.characterState.attributes.woodLore.value * 2);
             let alchemySuccessChance = 0.02;
             if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
               alchemySuccessChance += 0.05;
             }
             if (Math.random() < alchemySuccessChance) {
               this.characterService.characterState.increaseAttribute('woodLore',0.1);
-              this.characterService.characterState.increaseAttribute('animalTraining',0.1);
               this.characterService.characterState.increaseAttribute('waterLore',0.2);
               if (this.inventoryService.openInventorySlots() > 0){
                 let grade = this.inventoryService.consume('ingredient');
@@ -479,15 +497,13 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
-              ((this.characterService.characterState.attributes.woodLore.value +
-              this.characterService.characterState.attributes.animalTraining.value) * 5);
+              (this.characterService.characterState.attributes.woodLore.value * 5);
             let alchemySuccessChance = 1 - Math.exp(0 - 0.025 * Math.log(this.characterService.characterState.attributes.waterLore.value));
             if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
               alchemySuccessChance += 0.05;
             }
             if (Math.random() < alchemySuccessChance) {
               this.characterService.characterState.increaseAttribute('woodLore',0.2);
-              this.characterService.characterState.increaseAttribute('animalTraining',0.2);
               this.characterService.characterState.increaseAttribute('waterLore',0.3);
               if (this.inventoryService.openInventorySlots() > 0){
                 let grade = this.inventoryService.consume('ingredient');
@@ -506,13 +522,11 @@ export class ActivityService {
           {
             intelligence: 1000,
             waterLore: 1,
-            animalTraining: 1,
             woodLore: 1
           },
           {
             intelligence: 8000,
             waterLore: 10,
-            animalTraining: 10,
             woodLore: 10
           }
         ],
