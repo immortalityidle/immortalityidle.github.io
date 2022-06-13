@@ -100,7 +100,7 @@ export class AppComponent implements OnInit {
 
   storeClicked(): void {
     const dialogRef = this.dialog.open(ManualStoreModalComponent, {
-      width: '500px',
+      width: '510px',
       data: {someField: 'foo'}
     });
   }
