@@ -112,7 +112,9 @@ export class TimePanelComponent implements OnInit {
   }
 
   onMinusClick(entry: ActivityLoopEntry): void{
-    entry.repeatTimes--;
+    if (entry.repeatTimes > 0) {
+      entry.repeatTimes--;
+    }
   }
 
   onRemoveClick(entry: ActivityLoopEntry): void{
