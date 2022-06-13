@@ -4,6 +4,7 @@ import { BattleService, BattleProperties } from '../battle-panel/battle.service'
 import { LogProperties, LogService } from '../log-panel/log.service';
 import { MainLoopProperties, MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { AchievementProperties, AchievementService } from './achievement.service';
 import { CharacterProperties, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties } from './followers.service';
@@ -14,6 +15,7 @@ import { ItemRepoService } from './item-repo.service';
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
 interface GameState {
+  achievements: AchievementProperties,
   character: CharacterProperties,
   inventory: InventoryProperties,
   home: HomeProperties,
@@ -41,7 +43,8 @@ export class GameStateService {
     private itemRepoService: ItemRepoService,
     private battleService: BattleService,
     private followersService: FollowersService,
-    private mainLoopService: MainLoopService
+    private mainLoopService: MainLoopService,
+    private achievementService: AchievementService
 
   ) {
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
@@ -49,6 +52,7 @@ export class GameStateService {
 
   savetoLocalStorage(): void {
     const gameState: GameState = {
+      achievements: this.achievementService.getProperties(),
       character: this.characterService.characterState.getProperties(),
       inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),
@@ -60,6 +64,7 @@ export class GameStateService {
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
     this.lastSaved = new Date().getTime();
+    this.logService.addLogMessage("Game saved", "STANDARD", "EVENT");
   }
 
   loadFromLocalStorage(): void {
@@ -68,6 +73,7 @@ export class GameStateService {
       return;
     }
     const gameState = JSON.parse(gameStateSerialized) as GameState;
+    this.achievementService.setProperties(gameState.achievements);
     this.characterService.characterState.setProperties(gameState.character);
     this.homeService.setProperties(gameState.home);
     this.inventoryService.setProperties(gameState.inventory);
@@ -86,6 +92,7 @@ export class GameStateService {
     this.followersService.setProperties(gameState.followers);
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
+    this.logService.addLogMessage("Game loaded", "STANDARD", "EVENT");
   }
 
   hardReset(): void {

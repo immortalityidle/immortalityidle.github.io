@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivityService } from '../activity-panel/activity.service';
+import { AchievementService } from '../game-state/achievement.service';
 import { ActivityLoopEntry } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
@@ -29,6 +30,7 @@ export class TimePanelComponent implements OnInit {
     public activityService: ActivityService,
     private characterService: CharacterService,
     private logService: LogService,
+    private achievmentService: AchievementService
   ) {
     this.character = characterService.characterState;
   }

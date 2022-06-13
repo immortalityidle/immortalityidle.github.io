@@ -23,6 +23,7 @@ import { FurnitureStoreModalComponent } from './furniture-store-modal/furniture-
 import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';
 import { OptionsModalComponent } from './options-modal/options-modal.component';
 import { FarmPanelComponent } from './farm-panel/farm-panel.component';
+import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -48,7 +49,8 @@ const materialModules = [
     FurnitureStoreModalComponent,
     AscensionStoreModalComponent,
     OptionsModalComponent,
-    FarmPanelComponent
+    FarmPanelComponent,
+    AchievementPanelComponent
   ],
   imports: [
     BrowserModule,

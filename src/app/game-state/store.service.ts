@@ -19,6 +19,7 @@ export class StoreService {
   bloodlineLabel: string = "";
   bloodlineDescription: string = "";
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
+  storeOpened: boolean = false;
 
   constructor(
     private logService: LogService,
@@ -31,12 +32,6 @@ export class StoreService {
     this.selectedItem = null;
 
     this.manuals = [];
-    for (let key in itemRepoService.items){
-      let item = itemRepoService.items[key];
-      if (item.type == 'manual'){
-        this.manuals.push(itemRepoService.items[key]);
-      }
-    }
     this.furniture = [];
 
   }
@@ -50,6 +45,12 @@ export class StoreService {
       }
     }
     this.selectedItem = null;
+  }
+
+  unlockManual(manual: Item){
+    if (!this.manuals.includes(manual)){
+      this.manuals.push(manual);
+    }
   }
 
   buyManual(){

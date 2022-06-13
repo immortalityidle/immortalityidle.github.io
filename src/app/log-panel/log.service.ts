@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 
 export type LogType = 'STANDARD' | 'INJURY';
 export type LogTopic = 'COMBAT' | 'STORY' | 'EVENT';
@@ -84,8 +83,8 @@ export class LogService {
   }
 
   setProperties(properties: LogProperties) {
-    this.updateLogTopic(properties.logTopic);
     this.storyLog = properties.storyLog || [];
+    this.updateLogTopic(properties.logTopic);
   }
 
   updateLogTopic(logTopic: LogTopic){

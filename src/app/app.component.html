@@ -14,6 +14,11 @@
           settings
         </mat-icon>
       </span>
+      <mat-icon tooltip="Achievements!" class="iconButton"
+        (click)="achievementsClicked()">
+        star
+      </mat-icon>
+
       <span *ngIf="characterService.characterState.attributes.spirituality.value > 10">
         <mat-icon tooltip="Ascension Store." class="iconButton"
           (click)="ascensionStoreClicked()">

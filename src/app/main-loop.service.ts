@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { CharacterService } from './game-state/character.service';
 
 const TICK_INTERVAL_MS = 25;
+const LONG_TICK_INTERVAL_MS = 1000;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean,
@@ -12,8 +13,8 @@ export interface MainLoopProperties {
   tickDivider: number;
   pause: boolean;
   bankedTicks: number;
+  totalTicks: number;
 }
-
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +24,11 @@ export class MainLoopService {
    * Sends true on new day
    */
   tickSubject = new Subject<boolean>();
+  longTickSubject = new Subject<boolean>();
   pause = true;
   tickDivider = 10;
-
   tickCount = 0;
-
+  totalTicks = 0;
   unlockFastSpeed: boolean = false;
   unlockFasterSpeed: boolean = false;
   unlockFastestSpeed: boolean = false;
@@ -48,7 +49,8 @@ export class MainLoopService {
       lastTime: this.lastTime,
       tickDivider: this.tickDivider,
       pause: this.pause,
-      bankedTicks: this.bankedTicks
+      bankedTicks: this.bankedTicks,
+      totalTicks: this.totalTicks
     }
   }
 
@@ -62,12 +64,17 @@ export class MainLoopService {
     let newTime = new Date().getTime();
     this.bankedTicks = properties.bankedTicks + Math.floor((newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider));
     this.lastTime = newTime;
+    this.totalTicks = properties.totalTicks || 0;
   }
 
   start() {
     if (!this.characterService){
       this.characterService = this.injector.get(CharacterService);
     }
+
+    window.setInterval(()=> {
+      this.longTickSubject.next(true);
+    }, LONG_TICK_INTERVAL_MS);
 
     window.setInterval(()=> {
       let newTime = new Date().getTime();
@@ -90,6 +97,7 @@ export class MainLoopService {
           this.tickCount++;
           if (this.tickCount >= this.tickDivider){
             this.tickCount = 0;
+            this.totalTicks++;
             this.tickSubject.next(true);
           }
         }

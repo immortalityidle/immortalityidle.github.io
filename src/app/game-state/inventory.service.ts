@@ -107,6 +107,12 @@ export class InventoryService {
   useSpiritGemPotions: boolean;
   autoSellOldHerbs: boolean;
   fed: boolean = false;
+  lifetimeUsedItems: number = 0;
+  lifetimeSoldItems: number = 0;
+  lifetimePotionsUsed: number = 0;
+  lifetimePillsUsed: number = 0;
+  motherGift: boolean = false;
+  grandmotherGift: boolean = false;
 
   constructor(
     private logService: LogService,
@@ -140,6 +146,11 @@ export class InventoryService {
         return;
       }
       this.eatFood();
+    });
+    mainLoopService.longTickSubject.subscribe(() => {
+      if (this.characterService.characterState.dead){
+        return;
+      }
       if (this.autoWeaponMergeUnlocked){
         this.autoWeaponMerge();
       }
@@ -261,7 +272,7 @@ export class InventoryService {
         material: material,
         durability: durability
       },
-      description: 'A unique weapon made of ' + material + ".<br/>Base Damage: " + grade + "<br/>Durability: " + durability
+      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " + grade + "<br/>Durability: " + durability
     };
   }
 
@@ -418,7 +429,7 @@ export class InventoryService {
         material: material,
         durability: durability
       },
-      description: 'A unique piece of armor made of ' + material + ".<br/>Defense: " + grade + "<br/>Durability: " + durability
+      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " + grade + "<br/>Durability: " + durability
     };
 
   }
@@ -498,19 +509,37 @@ export class InventoryService {
   }
 
   reset(): void {
+    this.lifetimeUsedItems = 0;
+    this.lifetimeSoldItems = 0;
+    this.lifetimePotionsUsed = 0;
+    this.lifetimePillsUsed = 0;
     this.itemStacks = [];
     this.maxItems = 10;
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
     }
 
-    if (Math.random() < 0.3) {
+    if (this.motherGift) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
         'STANDARD', 'EVENT');
-      this.itemStacks = [
-        { item: this.itemRepoService.items['rice'], quantity: 300 }
-      ];
+      this.itemStacks[0] = { item: this.itemRepoService.items['rice'], quantity: 300 };
+    }
+    if (this.grandmotherGift) {
+      let stick: Equipment = {
+        id: 'weapon',
+        name: "Grandmother's Walking Stick",
+        type: "equipment",
+        slot: "leftHand",
+        value: 10,
+        weaponStats: {
+          baseDamage: 10,
+          material: "wood",
+          durability: 100
+        },
+        description: "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: 10<br/>Durability: 100"
+      };
+      this.addItem(stick);
     }
   }
 
@@ -616,6 +645,7 @@ export class InventoryService {
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
+    this.lifetimeSoldItems += quantity;
     let index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks[index] = null;
@@ -667,6 +697,7 @@ export class InventoryService {
   }
 
   useItem(item: Item): void {
+    this.lifetimeUsedItems++;
     if (item.type == "potion" && instanceOfPotion(item)){
       this.usePotion(item);
     } else if (item.type == "pill" && instanceOfPill(item)){
@@ -743,8 +774,14 @@ export class InventoryService {
   equip(itemStack: ItemStack): void {
     // return the item already in the slot to the inventory, if any
     const item = itemStack.item;
+
     if (!instanceOfEquipment(item)) {
       throw Error('Tried to equip an item that was not equipable');
+    }
+    if (item.armorStats?.durability === 0 || item.weaponStats?.durability === 0){
+      //it's broken, bail out
+      this.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.","STANDARD","EVENT")
+      return;
     }
 
     const itemToEquip =
@@ -805,11 +842,13 @@ export class InventoryService {
 
   // a special use function for generated potions
   usePotion(potion: Potion){
+    this.lifetimePotionsUsed++;
     this.characterService.characterState.attributes[potion.attribute].value += potion.increase;
   }
 
   // a special use function for generated pills
   usePill(pill: Pill){
+    this.lifetimePillsUsed++
     if (pill.effect == "Longevity"){
       this.characterService.characterState.alchemyLifespan += pill.power;
       if (this.characterService.characterState.alchemyLifespan > 36500){

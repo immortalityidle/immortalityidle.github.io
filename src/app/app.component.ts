@@ -9,6 +9,7 @@ import { HostListener } from '@angular/core';
 import { StoreService } from './game-state/store.service';
 import { CharacterService } from './game-state/character.service';
 import { formatNumber } from '@angular/common';
+import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -125,6 +126,13 @@ export class AppComponent implements OnInit {
   ascensionStoreClicked(){
     this.storeService.updateAscensions();
     const dialogRef = this.dialog.open(AscensionStoreModalComponent, {
+      width: '500px',
+      data: {someField: 'foo'}
+    });
+  }
+
+  achievementsClicked(){
+    const dialogRef = this.dialog.open(AchievementPanelComponent, {
       width: '500px',
       data: {someField: 'foo'}
     });
