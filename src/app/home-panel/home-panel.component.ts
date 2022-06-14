@@ -25,10 +25,6 @@ export class HomePanelComponent {
     this.character = characterService.characterState;
   }
 
-  upgradeClick(): void {
-    this.homeService.upgradeToNextHome();
-  }
-
   storeClicked(): void {
     this.storeService.setStoreInventory();
     const dialogRef = this.dialog.open(FurnitureStoreModalComponent, {

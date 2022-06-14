@@ -11,6 +11,7 @@ export class CharacterService {
   characterState = new Character();
   forceRebirth: boolean = false;
   fatherGift: boolean = false;
+  lifespanTooltip: string = "";
     
   constructor(
     mainLoopService: MainLoopService,
@@ -62,6 +63,10 @@ export class CharacterService {
       }
     });
 
+    mainLoopService.longTickSubject.subscribe(() => {
+      this.setLifespanTooltip();
+    });
+
     reincarnationService.reincarnateSubject.subscribe(() => {
       if (this.fatherGift){
         this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
@@ -70,6 +75,36 @@ export class CharacterService {
       }
     });
 
+  }
+
+  setLifespanTooltip(){
+    if (this.characterState.foodLifespan + this.characterState.alchemyLifespan + this.characterState.statLifespan + this.characterState.spiritualityLifespan <= 0){
+      this.lifespanTooltip = "You have done nothing to extend your lifespan";
+    }
+    let tooltip = "Your lifespan is extended by"
+    if (this.characterState.foodLifespan > 0){
+      tooltip += "<br>Healthy Food: " + this.yearify(this.characterState.foodLifespan);
+    }
+    if (this.characterState.alchemyLifespan > 0){
+      tooltip += "<br>alchemy: " + this.yearify(this.characterState.alchemyLifespan);
+    }
+    if (this.characterState.statLifespan > 0){
+      tooltip += "<br>Basic Attributes: " + this.yearify(this.characterState.statLifespan);
+    }
+    if (this.characterState.spiritualityLifespan > 0){
+      tooltip += "<br>Spirituality: " + this.yearify(this.characterState.spiritualityLifespan);
+    }
+    this.lifespanTooltip = tooltip;
+  }
+
+  yearify(value: number){
+    if (value < 365){
+      return "< 1 year";
+    } else if (value < 730){
+      return "1 year";
+    } else {
+      return Math.floor(value / 365) + " years";
+    }
   }
 
   condenseSoulCore(){

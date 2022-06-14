@@ -17,6 +17,7 @@ export interface Home {
   maxInventory: number;
   consequence: () => void;
   furnitureSlots: FurniturePosition[];
+  daysToBuild: number;
 }
 
 export enum HomeType {
@@ -61,7 +62,9 @@ export interface HomeProperties {
   autoBuyFurniture: FurnitureSlots,
   autoFieldUnlocked: boolean,
   autoFieldLimit: number,
-  nextHomeCostReduction: number
+  nextHomeCostReduction: number,
+  houseBuildingProgress: number,
+  upgrading: boolean
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -96,6 +99,8 @@ export class HomeService {
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
   grandfatherTent: boolean = false;
+  houseBuildingProgress: number = 1;
+  upgrading: boolean = false;
 
   homesList: Home[] = [
     {
@@ -115,7 +120,8 @@ export class HomeService {
           this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
         }
       },
-      furnitureSlots: []
+      furnitureSlots: [],
+      daysToBuild: 1
     },
     {
       name: "Tent of Your Own",
@@ -137,7 +143,8 @@ export class HomeService {
         }
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: []
+      furnitureSlots: [],
+      daysToBuild: 1
     },
     {
       name: "Dirty Shack",
@@ -154,7 +161,8 @@ export class HomeService {
       },
       furnitureSlots: [
         'bed'
-      ]
+      ],
+      daysToBuild: 1
     },
     {
       name: "Simple Hut",
@@ -172,7 +180,8 @@ export class HomeService {
       furnitureSlots: [
         'bed',
         'bathtub'
-      ]
+      ],
+      daysToBuild: 10
     },
     {
       name: "Pleasant Cottage",
@@ -191,7 +200,8 @@ export class HomeService {
         'bed',
         'bathtub',
         'kitchen'
-      ]
+      ],
+      daysToBuild: 30
     },
     {
       name: "Large House",
@@ -211,7 +221,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 90
     },
     {
       name: "Courtyard House",
@@ -231,7 +242,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 180
     },
     {
       name: "Manor",
@@ -251,7 +263,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 365
     },
     {
       name: "Mansion",
@@ -271,7 +284,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 3650
     },
     {
       name: "Palace",
@@ -291,7 +305,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 36500
     },
     {
       name: "Castle",
@@ -311,7 +326,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 365000
     },
     {
       name: "Fortress",
@@ -331,7 +347,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 3650000
     },
     {
       name: "Mountain",
@@ -351,7 +368,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 36500000
     },
     {
       name: "Forbidden City",
@@ -371,7 +389,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 365000000
     },
     {
       name: "Capital",
@@ -391,7 +410,8 @@ export class HomeService {
         'bathtub',
         'kitchen',
         'workbench'
-      ]
+      ],
+      daysToBuild: 3650000000
     }
   ];
 
@@ -424,6 +444,9 @@ export class HomeService {
       mainLoopService.tickSubject.subscribe(() => {
         if (this.characterService.characterState.dead){
           return;
+        }
+        if (this.upgrading){
+          this.upgradeTick();
         }
         this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
         if (this.nextHomeCost < 0){
@@ -475,7 +498,9 @@ export class HomeService {
       autoBuyFurniture: this.autoBuyFurniture,
       autoFieldUnlocked: this.autoFieldUnlocked,
       autoFieldLimit: this.autoFieldLimit,
-      nextHomeCostReduction: this.nextHomeCostReduction
+      nextHomeCostReduction: this.nextHomeCostReduction,
+      houseBuildingProgress: this.houseBuildingProgress,
+      upgrading: this.upgrading
     }
   }
 
@@ -495,6 +520,8 @@ export class HomeService {
     this.autoFieldUnlocked = properties.autoFieldUnlocked || false;
     this.autoFieldLimit = properties.autoFieldLimit || 0;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
+    this.houseBuildingProgress = properties.houseBuildingProgress || 1;
+    this.upgrading = properties.upgrading || false;
     for (let slot of this.furniturePositionsArray){
       let savedFurniture = properties.furniture[slot];
       if (savedFurniture){
@@ -515,12 +542,27 @@ export class HomeService {
   }
 
   upgradeToNextHome(){
+    if (this.houseBuildingProgress < 1){
+      // currently upgrading, bail out
+      return;
+    }
     if (this.characterService.characterState.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired){
       this.characterService.characterState.money -= this.nextHomeCost;
       this.land -= this.nextHome.landRequired;
       this.nextHomeCostReduction = 0;
+      this.houseBuildingProgress = 0;
+      this.upgrading = true;
+      this.logService.addLogMessage("You start upgrading your home to a " + this.nextHome.name, "STANDARD", 'EVENT');
+    }
+  }
+
+  upgradeTick(){
+    this.houseBuildingProgress += 1 / this.nextHome.daysToBuild;
+    if (this.houseBuildingProgress >= 1){
+      this.houseBuildingProgress = 1;
+      this.upgrading = false;
       this.setCurrentHome(this.nextHome);
-      this.logService.addLogMessage("You upgraded your home. You now live in a " + this.home.name, "STANDARD", 'EVENT');
+      this.logService.addLogMessage("You finished upgrading your home. You now live in a " + this.home.name, "STANDARD", 'EVENT');
     }
   }
 

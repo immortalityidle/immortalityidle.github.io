@@ -285,7 +285,7 @@ export class AchievementService {
     },
     {
       name: "Grandpa's Old Tent",
-      description: "You've gone through eight cycles of reincarnation and come to understand the value of grangparents.",
+      description: "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
       check: () => {
         return this.characterService.characterState.totalLives > 8;
       },

@@ -31,6 +31,11 @@ export class FollowersService {
   jobs: jobsType = {
     "builder": (follower: Follower) => {
       this.homeService.nextHomeCostReduction += follower.power;
+      for (let i = 0; i < follower.power; i++){
+        if (this.homeService.upgrading){
+          this.homeService.upgradeTick();
+        }
+      }
     },
     "hunter": (follower: Follower) => {
       for (let i = 0; i < follower.power; i++){
