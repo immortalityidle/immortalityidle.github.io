@@ -577,6 +577,8 @@ export class HomeService {
     this.furniture.bathtub = null;
     this.furniture.kitchen = null;
     this.furniture.workbench = null;
+    this.upgrading = false;
+    this.houseBuildingProgress = 1;
   }
 
   setCurrentHome(home: Home) {

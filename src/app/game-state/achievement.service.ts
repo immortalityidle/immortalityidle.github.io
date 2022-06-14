@@ -276,10 +276,35 @@ export class AchievementService {
       name: "Ingredient Snob",
       description: "You achieved a deep understanding of herbs and unlocked the " + this.itemRepoService.items['bestHerbsManual'].name,
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 1024;
+        return this.characterService.characterState.attributes.woodLore.value > 1024 &&
+          this.characterService.characterState.attributes.waterLore.value > 1024;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestHerbsManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Wood Snob",
+      description: "You achieved a deep understanding of wood and unlocked the " + this.itemRepoService.items['bestWoodManual'].name,
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 1024 &&
+          this.characterService.characterState.attributes.intelligence.value > 1024;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestWoodManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Ore Snob",
+      description: "You achieved a deep understanding of metal ore and unlocked the " + this.itemRepoService.items['bestOreManual'].name,
+      check: () => {
+        return this.characterService.characterState.attributes.metalLore.value > 1024 && 
+          this.characterService.characterState.attributes.earthLore.value > 1024;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestOreManual']);
       },
       unlocked: false
     },
@@ -324,6 +349,45 @@ export class AchievementService {
       },
       effect: () => {
         this.inventoryService.grandmotherGift = true;
+      },
+      unlocked: false
+    },
+    {
+      name: "Weapons Grandmaster",
+      description: "You wielded epic weapons of both metal and wood and unlocked the " + this.itemRepoService.items['bestWeaponManual'].name,
+      check: () => {
+        if (this.characterService.characterState.equipment?.rightHand?.weaponStats &&
+          this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 8888 &&
+          this.characterService.characterState.equipment?.leftHand?.weaponStats &&
+          this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 8888
+          ){
+          return true;
+        }
+        return false;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestWeaponManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Tank!",
+      description: "You armored yourself with epic defenses and unlocked the " + this.itemRepoService.items['bestArmorManual'].name,
+      check: () => {
+        if (this.characterService.characterState.equipment?.head?.armorStats &&
+          this.characterService.characterState.equipment?.head?.armorStats.defense >= 8888 &&
+          this.characterService.characterState.equipment?.body?.armorStats &&
+          this.characterService.characterState.equipment?.body?.armorStats.defense >= 8888 &&
+          this.characterService.characterState.equipment?.legs?.armorStats &&
+          this.characterService.characterState.equipment?.legs?.armorStats.defense >= 8888 &&
+          this.characterService.characterState.equipment?.feet?.armorStats &&
+          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 8888){
+          return true;
+        }
+        return false;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestArmorManual']);
       },
       unlocked: false
     },

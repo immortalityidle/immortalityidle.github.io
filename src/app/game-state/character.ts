@@ -56,7 +56,7 @@ export interface CharacterProperties {
   bloodlineCost: number,
   bloodlineRank: number,
   followersUnlocked: boolean,
-  totalLives: number
+  totalLives: number,
 }
 
 const INITIAL_AGE = 18 * 365;

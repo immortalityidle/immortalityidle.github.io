@@ -843,6 +843,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
           if (Math.random() < 0.2) {
             this.characterService.characterState.increaseAttribute('animalTraining', 0.1);
+            this.characterService.characterState.increaseAttribute('waterLore', 0.05);
             this.inventoryService.addItem(this.itemRepoService.items['carp']);
           }
         }],

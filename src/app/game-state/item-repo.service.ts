@@ -1308,7 +1308,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically sell any herbs below your current ability to gather.",
       value: 5000000,
       useLabel: "Read",
-      useDescription: "Permanently unlock including autoselling lower grade herbs.",
+      useDescription: "Permanently unlock autoselling lower grade herbs.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1325,7 +1325,108 @@ export class ItemRepoService {
         }
         return this.inventoryService.autoSellOldHerbs;
       }
+    },
+    bestWoodManual: {
+      id: 'bestWoodManual',
+      name: "Manual of the Discerning Wood Collector",
+      type: "manual",
+      description: "This manual teaches you to automatically sell any logs below your current ability to gather.",
+      value: 5000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock autoselling lower grade logs.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoSellOldWood = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoSellOldWood;
+      }
+    },
+    bestOreManual: {
+      id: 'bestOreManual',
+      name: "Manual of Mineral Pragmatism",
+      type: "manual",
+      description: "This manual teaches you to automatically sell any ores below your current ability to gather.",
+      value: 5000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock autoselling lower grade ores.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoSellOldOre = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoSellOldOre;
+      }
+    },
+    bestWeaponManual: {
+      id: 'bestWeaponManual',
+      name: "Manual of Wise Weapon Selection",
+      type: "manual",
+      description: "This manual teaches you to automatically equip the best weapons that you have.",
+      value: 10000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock autoequipping the best weapons in your inventory.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoequipBestWeapon = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoequipBestWeapon;
+      }
+    },
+    bestArmorManual: {
+      id: 'bestArmorManual',
+      name: "Manual of Defensive Preparation",
+      type: "manual",
+      description: "This manual teaches you to automatically equip the best armor that you have.",
+      value: 10000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock autoequipping the best armor in your inventory.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoequipBestArmor = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoequipBestArmor;
+      }
     }
+
   }
 
   constructor(private characterService: CharacterService,

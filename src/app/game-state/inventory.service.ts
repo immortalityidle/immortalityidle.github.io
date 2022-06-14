@@ -80,7 +80,11 @@ export interface InventoryProperties {
   useSpiritGemUnlocked: boolean,
   useSpiritGemWeapons: boolean,
   useSpiritGemPotions: boolean,
-  autoSellOldHerbs: boolean
+  autoSellOldHerbs: boolean,
+  autoSellOldWood: boolean,
+  autoSellOldOre: boolean,
+  autoequipBestWeapon: boolean,
+  autoequipBestArmor: boolean
 }
 
 @Injectable({
@@ -102,10 +106,14 @@ export class InventoryService {
   autoPillUnlocked: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
+  autoequipBestWeapon: boolean;
+  autoequipBestArmor: boolean;
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useSpiritGemPotions: boolean;
   autoSellOldHerbs: boolean;
+  autoSellOldWood: boolean;
+  autoSellOldOre: boolean;
   fed: boolean = false;
   lifetimeUsedItems: number = 0;
   lifetimeSoldItems: number = 0;
@@ -132,10 +140,15 @@ export class InventoryService {
     this.autoPillUnlocked = false;
     this.autoWeaponMergeUnlocked = false;
     this.autoArmorMergeUnlocked = false;
+    this.autoequipBestWeapon = false;
+    this.autoequipBestArmor = false;
+  
     this.useSpiritGemUnlocked = false;
     this.useSpiritGemWeapons = false;
     this.useSpiritGemPotions = false;
     this.autoSellOldHerbs = false;
+    this.autoSellOldWood = false;
+    this.autoSellOldOre = false;
 
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
@@ -156,6 +169,12 @@ export class InventoryService {
       }
       if (this.autoArmorMergeUnlocked){
         this.autoArmorMerge();
+      }
+      if (this.autoequipBestWeapon){
+        this.autoequipWeapons();
+      }
+      if (this.autoequipBestArmor){
+        this.autoequipArmor();
       }
     });
     reincarnationService.reincarnateSubject.subscribe(() => {
@@ -179,7 +198,11 @@ export class InventoryService {
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
       useSpiritGemWeapons: this.useSpiritGemWeapons,
       useSpiritGemPotions: this.useSpiritGemPotions,
-      autoSellOldHerbs: this.autoSellOldHerbs
+      autoSellOldHerbs: this.autoSellOldHerbs,
+      autoSellOldWood: this.autoSellOldWood,
+      autoSellOldOre: this.autoSellOldOre,
+      autoequipBestWeapon: this.autoequipBestWeapon,
+      autoequipBestArmor: this.autoequipBestArmor,
     }
   }
 
@@ -199,6 +222,10 @@ export class InventoryService {
     this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
     this.useSpiritGemPotions = properties.useSpiritGemPotions;
     this.autoSellOldHerbs = properties.autoSellOldHerbs || false;
+    this.autoSellOldWood = properties.autoSellOldWood || false;
+    this.autoSellOldOre = properties.autoSellOldOre || false;
+    this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
+    this.autoequipBestArmor = properties.autoequipBestArmor || false;
   }
 
   farmFoodList = [
@@ -459,10 +486,18 @@ export class InventoryService {
     let lastOre =  this.itemRepoService.items['copperBar'];
     for (let key in this.itemRepoService.items){
       let item = this.itemRepoService.items[key];
-      if (item.type == 'ore'){
+      if (item.type == 'ore' && item.value > lastOre.value && item.value <= oreValue){
         lastOre = item;
-        if (item.value == oreValue){
-          return item;
+      }
+    }
+    if (this.autoSellOldOre){
+      // sell any wood cheaper than what we just got
+      for (let i = 0; i < this.itemStacks.length; i++){
+        let itemStack = this.itemStacks[i];
+        if (itemStack && itemStack.item.type == "ore" ){
+          if (itemStack.item.value < lastOre.value ){
+            this.sell(itemStack, itemStack.quantity);
+          }
         }
       }
     }
@@ -485,27 +520,40 @@ export class InventoryService {
   }
 
   getWood(): Item{
+    let wood: Item;
     if (this.characterService.characterState.attributes.woodLore.value > 300 &&
       this.characterService.characterState.attributes.spirituality.value > 10){
-        return  this.itemRepoService.items['peachwoodLog'];
+        wood = this.itemRepoService.items['peachwoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 200 &&
       this.characterService.characterState.attributes.spirituality.value > 1){
-        return  this.itemRepoService.items['blackwoodLog'];
+        wood =   this.itemRepoService.items['blackwoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 100){
-        return  this.itemRepoService.items['zitanLog'];
+      wood = this.itemRepoService.items['zitanLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 50){
-      return  this.itemRepoService.items['rosewoodLog'];
+      wood = this.itemRepoService.items['rosewoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 40){
-      return  this.itemRepoService.items['pearwoodLog'];
+      wood = this.itemRepoService.items['pearwoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 30){
-      return  this.itemRepoService.items['laurelwoodLog'];
+      wood = this.itemRepoService.items['laurelwoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 20){
-      return  this.itemRepoService.items['walnutLog'];
+      wood = this.itemRepoService.items['walnutLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 10){
-      return  this.itemRepoService.items['cypressLog'];
+      wood = this.itemRepoService.items['cypressLog'];
     } else {
-      return  this.itemRepoService.items['elmLog'];
+      wood = this.itemRepoService.items['elmLog'];
     }
+    if (this.autoSellOldWood){
+      // sell any wood cheaper than what we just got
+      for (let i = 0; i < this.itemStacks.length; i++){
+        let itemStack = this.itemStacks[i];
+        if (itemStack && itemStack.item.type == "wood" ){
+          if (itemStack.item.value < wood.value ){
+            this.sell(itemStack, itemStack.quantity);
+          }
+        }
+      }
+    }
+    return wood;
   }
 
   reset(): void {
@@ -784,14 +832,41 @@ export class InventoryService {
       return;
     }
 
-    const itemToEquip =
-      this.characterService.characterState.equipment[item.slot];
+    const itemToEquip = this.characterService.characterState.equipment[item.slot];
     if (itemToEquip) {
       this.addItem(itemToEquip);
     }
     this.characterService.characterState.equipment[item.slot] = item;
     let index = this.itemStacks.indexOf(itemStack);
     this.itemStacks[index] = null;
+  }
+
+  equipBest(slot: EquipmentPosition){
+    let equippedPower = 0;
+    let weapon = true;
+    if (slot == 'leftHand' || slot == 'rightHand'){
+      equippedPower = this.characterService.characterState.equipment[slot]?.weaponStats?.baseDamage || 0;
+    } else {
+      weapon = false;
+      equippedPower = this.characterService.characterState.equipment[slot]?.armorStats?.defense || 0;
+    }
+    for (let i = 0; i < this.itemStacks.length; i++){
+      let itemIterator = this.itemStacks[i];
+      if (itemIterator != null){
+        let item = itemIterator.item;
+        if (instanceOfEquipment(item) && item.slot == slot) {
+          let itemPower = 0
+          if (weapon && item.weaponStats && item.weaponStats?.durability > 0){
+            itemPower = item.weaponStats?.baseDamage;
+          } else if (!weapon && item.armorStats && item.armorStats?.durability > 0){
+            itemPower = item.armorStats?.defense;
+          }
+          if (itemPower > equippedPower){
+            this.equip(itemIterator);
+          }
+        }
+      }
+    }
   }
 
   consume(consumeType: string): number{
@@ -898,6 +973,18 @@ export class InventoryService {
     this.autoMerge('body');
     this.autoMerge('legs');
     this.autoMerge('feet');
+  }
+
+  autoequipWeapons(){
+    this.equipBest('leftHand');
+    this.equipBest('rightHand');
+  }
+
+  autoequipArmor(){
+    this.equipBest('head');
+    this.equipBest('body');
+    this.equipBest('legs');
+    this.equipBest('feet');
   }
 
   autoMerge(slot: EquipmentPosition){

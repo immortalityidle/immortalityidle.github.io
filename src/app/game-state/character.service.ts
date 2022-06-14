@@ -86,7 +86,7 @@ export class CharacterService {
       tooltip += "<br>Healthy Food: " + this.yearify(this.characterState.foodLifespan);
     }
     if (this.characterState.alchemyLifespan > 0){
-      tooltip += "<br>alchemy: " + this.yearify(this.characterState.alchemyLifespan);
+      tooltip += "<br>Alchemy: " + this.yearify(this.characterState.alchemyLifespan);
     }
     if (this.characterState.statLifespan > 0){
       tooltip += "<br>Basic Attributes: " + this.yearify(this.characterState.statLifespan);
@@ -107,6 +107,7 @@ export class CharacterService {
     }
   }
 
+  
   condenseSoulCore(){
     if (this.characterState.aptitudeGainDivider <= 10){
       // double check we're not going over the max rank
