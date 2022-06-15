@@ -235,7 +235,7 @@ export class ItemRepoService {
       description: "A kennel for training hunting dogs.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('animalTraining', 0.01);
+        this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
       }
     },
     cauldron: {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivityService } from '../activity-panel/activity.service';
 import { AchievementService } from '../game-state/achievement.service';
-import { ActivityLoopEntry } from '../game-state/activity';
+import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { LogService } from '../log-panel/log.service';
@@ -28,7 +28,7 @@ export class TimePanelComponent implements OnInit {
   constructor(
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
-    private characterService: CharacterService,
+    public characterService: CharacterService,
     private logService: LogService,
     private achievmentService: AchievementService
   ) {
@@ -80,6 +80,11 @@ export class TimePanelComponent implements OnInit {
         // make sure that we reset the current index if activities get removed below the currentIndex
         this.currentIndex = 0;
       }
+      if (this.activityService.spiritActivity && this.characterService.characterState.status.mana.value >= 5){
+        let activity = this.activityService.getActivityByType(this.activityService.spiritActivity);
+        activity.consequence[activity.level]();
+        this.characterService.characterState.status.mana.value -= 5;
+      }
     });
   }
 
@@ -126,13 +131,17 @@ export class TimePanelComponent implements OnInit {
     this.activityService.activityLoop.splice(index,1);
   }
 
+  removeSpiritActivity(){
+    this.activityService.spiritActivity = null;
+  }
+
   pauseOnDeath(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.activityService.pauseOnDeath = event.target.checked;
   }
 
   allowDrop(event: DragEvent){
-    if (event.dataTransfer?.types[0] == "activityloop"){
+    if (event.dataTransfer?.types[0] == "activityloop" || event.dataTransfer?.types[0] == "activity"){
       event.preventDefault();
     }
   }
@@ -143,12 +152,55 @@ export class TimePanelComponent implements OnInit {
 
   drop(destIndex: number, event: DragEvent){
     event.preventDefault();
+    event.stopPropagation();
     let sourceIndexString: string = event.dataTransfer?.getData("activityloop") + "";
-    let sourceIndex = parseInt(sourceIndexString);
-    if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length){
-      let activity = this.activityService.activityLoop.splice(sourceIndex, 1);
-      this.activityService.activityLoop.splice(destIndex, 0, activity[0]);
+    if (sourceIndexString == ""){
+      sourceIndexString = event.dataTransfer?.getData("activity") + "";
+      if (sourceIndexString == ""){
+        // could find a source from either of the acceptable locations
+        return;
+      }
+      let sourceType = parseInt(sourceIndexString);
+      let newEntry = {
+        activity: sourceType,
+        repeatTimes: 1
+      };
+      if (destIndex >= this.activityService.activityLoop.length){
+        this.activityService.activityLoop.push(newEntry);
+      } else {
+        this.activityService.activityLoop.splice(destIndex, 0, newEntry);
+      }
+    } else {
+      let sourceIndex = parseInt(sourceIndexString);
+      if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length){
+        let activity = this.activityService.activityLoop.splice(sourceIndex, 1);
+        if (destIndex >= this.activityService.activityLoop.length){
+          this.activityService.activityLoop.push(activity[0]);
+        } else {
+          this.activityService.activityLoop.splice(destIndex, 0, activity[0]);
+        }
+      }  
     }
   }
+
+  spiritActivityDrop(event: DragEvent){
+    event.preventDefault();
+    let sourceIndexString: string = event.dataTransfer?.getData("activityloop") + "";
+    if (sourceIndexString == ""){
+      sourceIndexString = event.dataTransfer?.getData("activity") + "";
+      if (sourceIndexString == ""){
+        // could find a source from either of the acceptable locations
+        return;
+      }
+      let sourceType = parseInt(sourceIndexString);
+      this.activityService.spiritActivity = sourceType;
+    } else {    
+      let sourceIndex = parseInt(sourceIndexString);
+      if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length){
+        let activity = this.activityService.activityLoop[sourceIndex].activity;
+        this.activityService.spiritActivity = activity;
+      }
+    }
+  }  
 
 }

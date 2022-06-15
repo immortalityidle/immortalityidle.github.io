@@ -1,4 +1,3 @@
-import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { Equipment, Item } from './inventory.service'
 
 export interface CharacterAttribute {
@@ -12,7 +11,8 @@ export interface CharacterAttribute {
   metalLore?: number,
   woodLore?: number,
   waterLore?: number,
-  animalTraining?: number,
+  fireLore?: number,
+  animalHandling?: number
 }
 
 export type AttributeType = 'strength' |
@@ -26,7 +26,7 @@ export type AttributeType = 'strength' |
   'woodLore' |
   'waterLore' |
   'fireLore' |
-  'animalTraining';
+  'animalHandling';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number, icon: string}};
 
@@ -56,6 +56,7 @@ export interface CharacterProperties {
   bloodlineCost: number,
   bloodlineRank: number,
   followersUnlocked: boolean,
+  manaUnlocked: boolean,
   totalLives: number,
 }
 
@@ -74,6 +75,7 @@ export class Character {
   bloodlineCost: number = 100;
   bloodlineRank: number = 0;
   followersUnlocked: boolean = false;
+  manaUnlocked: boolean = false;
   accuracy: number = 0;
   accuracyExponentMultiplier: number = 0.01;
   attackPower: number = 0;
@@ -145,7 +147,7 @@ export class Character {
       aptitude: 1,
       icon: "emoji_food_beverage"
     },
-    animalTraining: {
+    animalHandling: {
       description: "Skill in working with animals and monsters.",
       value: 0,
       aptitude: 1,
@@ -325,6 +327,9 @@ export class Character {
     if (this.status.nourishment.value > this.status.nourishment.max){
       this.status.nourishment.value = this.status.nourishment.max;
     }
+    if (this.status.mana.value > this.status.mana.max){
+      this.status.mana.value = this.status.mana.max;
+    }
   }
 
   getProperties(): CharacterProperties {
@@ -347,6 +352,7 @@ export class Character {
       bloodlineCost: this.bloodlineCost,
       bloodlineRank: this.bloodlineRank,
       followersUnlocked: this.followersUnlocked,
+      manaUnlocked: this.manaUnlocked,
       totalLives: this.totalLives
     }
   }
@@ -370,6 +376,7 @@ export class Character {
     this.bloodlineCost = properties.bloodlineCost;
     this.bloodlineRank = properties.bloodlineRank;
     this.followersUnlocked = properties.followersUnlocked || false;
+    this.manaUnlocked = properties.manaUnlocked || false;
     this.totalLives = properties.totalLives || 1;
     this.recalculateDerivedStats();
   }

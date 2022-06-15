@@ -391,6 +391,27 @@ export class AchievementService {
       },
       unlocked: false
     },
+    {
+      name: "You're a wizard now.",
+      description: "Enlightenment! You found a deep understanding of the dao with a high, balanced levels of lore in each of the five elements. Mana is now unlocked.",
+      check: () => {
+        let lowValue = this.characterService.characterState.attributes.metalLore.value * 0.9;
+        let highValue = this.characterService.characterState.attributes.metalLore.value * 1.1;
+        return lowValue > 1000 && 
+          this.characterService.characterState.attributes.fireLore.value >= lowValue && 
+          this.characterService.characterState.attributes.fireLore.value <= highValue && 
+          this.characterService.characterState.attributes.earthLore.value >= lowValue && 
+          this.characterService.characterState.attributes.earthLore.value <= highValue && 
+          this.characterService.characterState.attributes.woodLore.value >= lowValue && 
+          this.characterService.characterState.attributes.woodLore.value <= highValue && 
+          this.characterService.characterState.attributes.waterLore.value >= lowValue && 
+          this.characterService.characterState.attributes.waterLore.value <= highValue;
+      },
+      effect: () => {
+        this.characterService.characterState.manaUnlocked = true;
+      },
+      unlocked: false
+    },
 
     
     

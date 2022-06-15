@@ -6,6 +6,7 @@ import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
+import { LogService } from '../log-panel/log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from '../reincarnation/reincarnation.service';
 
@@ -14,7 +15,8 @@ export interface ActivityProperties {
   pauseOnDeath: boolean,
   activityLoop: ActivityLoopEntry[],
   unlockedActivities: ActivityType[],
-  openApprenticeships: number
+  openApprenticeships: number,
+  spiritActivity: ActivityType | null
 }
 
 @Injectable({
@@ -22,6 +24,7 @@ export interface ActivityProperties {
 })
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
+  spiritActivity: ActivityType | null = null;
   autoRestart: boolean = false;
   pauseOnDeath: boolean = true;
   activities: Activity[] = this.getActivityList();
@@ -36,7 +39,8 @@ export class ActivityService {
     reincarnationService: ReincarnationService,
     private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
-    private battleService: BattleService
+    private battleService: BattleService,
+    private logService: LogService
   ) {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -65,7 +69,8 @@ export class ActivityService {
       pauseOnDeath: this.pauseOnDeath,
       activityLoop: this.activityLoop,
       unlockedActivities: unlockedActivities,
-      openApprenticeships: this.openApprenticeships
+      openApprenticeships: this.openApprenticeships,
+      spiritActivity: this.spiritActivity
     }
   }
 
@@ -77,6 +82,7 @@ export class ActivityService {
     this.autoRestart = properties.autoRestart;
     this.pauseOnDeath = properties.pauseOnDeath;
     this.activityLoop = properties.activityLoop;
+    this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
   }
 
@@ -191,7 +197,7 @@ export class ActivityService {
         name: ['Odd Jobs'],
         activityType: ActivityType.OddJobs,
         description:
-          ['Run errands, pull weeds, clean toilet pits, or whatever else you can earn a coin doing. Undignified work for a future immortal, but you have to eat to live.'],
+          ['Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.'],
         consequenceDescription:
           ['Uses 5 stamina. Increases a random attribute and provides a little money.'],
         consequence: [() => {
@@ -229,6 +235,9 @@ export class ActivityService {
             this.characterService.characterState.status.health.value += 10;
             if (Math.random() < 0.01){
               this.characterService.characterState.increaseAttribute('spirituality', 0.1);
+            }
+            if (this.characterService.characterState.manaUnlocked){
+              this.characterService.characterState.status.mana.value += 1;
             }
             this.characterService.characterState.checkOverage();
           }
@@ -663,9 +672,9 @@ export class ActivityService {
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.speed.value +
               this.characterService.characterState.attributes.toughness.value) +
-              this.characterService.characterState.attributes.animalTraining.value;
+              this.characterService.characterState.attributes.animalHandling.value;
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('animalTraining', 0.1);
+              this.characterService.characterState.increaseAttribute('animalHandling', 0.1);
             }
           },
           () => {
@@ -676,14 +685,14 @@ export class ActivityService {
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.speed.value +
               this.characterService.characterState.attributes.toughness.value) +
-              (this.characterService.characterState.attributes.animalTraining.value * 2);
+              (this.characterService.characterState.attributes.animalHandling.value * 2);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('animalTraining',0.2);
+              this.characterService.characterState.increaseAttribute('animalHandling',0.2);
               if (this.inventoryService.openInventorySlots() > 0){
                 let grade = this.inventoryService.consume('hide');
                 if (grade >= 1){ // if the wood was found
                   this.inventoryService.addItem(this.inventoryService.generateArmor(
-                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.animalTraining.value)), 'leather',
+                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.animalHandling.value)), 'leather',
                     this.inventoryService.randomArmorSlot()));
                 }
               }
@@ -696,14 +705,14 @@ export class ActivityService {
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.speed.value +
               this.characterService.characterState.attributes.toughness.value) +
-              (this.characterService.characterState.attributes.animalTraining.value * 5);
+              (this.characterService.characterState.attributes.animalHandling.value * 5);
             if (Math.random() < 0.01) {
-              this.characterService.characterState.increaseAttribute('animalTraining',0.3);
+              this.characterService.characterState.increaseAttribute('animalHandling',0.3);
               if (this.inventoryService.openInventorySlots() > 0){
                 let grade = this.inventoryService.consume('hide');
                 if (grade >= 1){ // if the wood was found
                   this.inventoryService.addItem(this.inventoryService.generateArmor(
-                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.animalTraining.value)), 'leather',
+                    grade + Math.floor(Math.log2(this.characterService.characterState.attributes.animalHandling.value)), 'leather',
                     this.inventoryService.randomArmorSlot()));
                 }
               }
@@ -718,12 +727,12 @@ export class ActivityService {
           {
             speed: 800,
             toughness: 800,
-            animalTraining: 1,
+            animalHandling: 1,
           },
           {
             speed: 2000,
             toughness: 2000,
-            animalTraining: 10,
+            animalHandling: 10,
           }
         ],
         unlocked: false,
@@ -816,7 +825,7 @@ export class ActivityService {
             huntingSuccessChance += 0.4;
           }
           if (Math.random() < huntingSuccessChance) {
-            this.characterService.characterState.increaseAttribute('animalTraining', 0.1);
+            this.characterService.characterState.increaseAttribute('animalHandling', 0.1);
             this.inventoryService.addItem(this.itemRepoService.items['meat']);
             this.inventoryService.addItem(this.itemRepoService.items['hide']);
           }
@@ -842,7 +851,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
           if (Math.random() < 0.2) {
-            this.characterService.characterState.increaseAttribute('animalTraining', 0.1);
+            this.characterService.characterState.increaseAttribute('animalHandling', 0.1);
             this.characterService.characterState.increaseAttribute('waterLore', 0.05);
             this.inventoryService.addItem(this.itemRepoService.items['carp']);
           }
@@ -901,6 +910,36 @@ export class ActivityService {
           charisma: 5000,
           intelligence: 5000,
           spirituality: 1
+        }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
+      },
+      {
+        level: 0,
+        name: ['Core Cultivation'],
+        activityType: ActivityType.CoreCultivation,
+        description: ['Focus on the development of your soul core.'],
+        consequenceDescription: ['A very advances cultivation technique. Make sure you have achieved a deep understanding of elemental balance before attempting this. Uses 200 stamina. Gives you a small chance of increasing your mana capabilities.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 200;
+          if (this.characterService.characterState.manaUnlocked){
+            if (Math.random() < 0.01){
+              this.characterService.characterState.status.mana.max++;
+              this.characterService.characterState.status.mana.value++;
+            }
+          } else {
+            let damage = this.characterService.characterState.status.health.max * 0.1;
+            this.characterService.characterState.status.health.value -= damage;
+            this.logService.addLogMessage("You fail miserably at cultivating your core and hurt yourself badly.","INJURY","EVENT");
+          }
+        }],
+        requirements: [{
+          woodLore: 1000,
+          waterLore: 1000,
+          fireLore: 1000,
+          metalLore: 1000,
+          earthLore: 1000,
+          spirituality: 1000
         }],
         unlocked: false,
         skipApprenticeshipLevel: 0

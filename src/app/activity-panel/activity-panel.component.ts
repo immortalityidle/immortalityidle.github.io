@@ -29,4 +29,7 @@ export class ActivityPanelComponent {
     });
   }
 
+  drag(activity: Activity, event: DragEvent){
+    event.dataTransfer?.setData("activity", "" + activity.activityType);
+  }
 }

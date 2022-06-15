@@ -19,7 +19,6 @@ export class CharacterService {
     private reincarnationService: ReincarnationService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
-      this.characterState.recalculateDerivedStats();
       this.characterState.dead = false;
       this.characterState.age++;
       this.characterState.status.nourishment.value--;
@@ -64,6 +63,10 @@ export class CharacterService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
+      if (this.characterState.dead){
+        return;
+      }
+      this.characterState.recalculateDerivedStats();
       this.setLifespanTooltip();
     });
 

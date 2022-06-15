@@ -16,7 +16,9 @@ export enum ActivityType {
   Fishing,
   Alchemy,
   BodyCultivation,
-  MindCultivation
+  MindCultivation,
+  CoreCultivation,
+  
 }
 
 export interface Activity {
