@@ -313,8 +313,10 @@ export class Character {
     }
   }
 
-  increaseAttribute(attribute: AttributeType, amount: number): void {
-    this.attributes[attribute].value += (amount * this.getAptitudeMultipier(this.attributes[attribute].aptitude));
+  increaseAttribute(attribute: AttributeType, amount: number): number {
+    let increaseAmount = (amount * this.getAptitudeMultipier(this.attributes[attribute].aptitude));
+    this.attributes[attribute].value += increaseAmount;
+    return increaseAmount;
   }
 
   checkOverage(){

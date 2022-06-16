@@ -29,7 +29,9 @@ export interface BattleProperties {
   troubleKills: number,
   autoTroubleUnlocked: boolean,
   autoTroubleEnabled: boolean,
-  monthlyMonsterDay: number
+  monthlyMonsterDay: number,
+  enableManaShield: boolean,
+  enableManaAttack: boolean
 }
 
 
@@ -37,7 +39,6 @@ export interface BattleProperties {
   providedIn: 'root'
 })
 export class BattleService {
-  //TODO: add this to save/load functions
 
   enemies: EnemyStack[];
   currentEnemy: EnemyStack | null;
@@ -46,6 +47,8 @@ export class BattleService {
   autoTroubleUnlocked: boolean = false;
   autoTroubleEnabled: boolean = false;
   yearlyMonsterDay: number;
+  enableManaShield: boolean = false;
+  enableManaAttack: boolean = false;
 
   constructor(
     private logService: LogService,
@@ -102,7 +105,9 @@ export class BattleService {
       troubleKills: this.troubleKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
       autoTroubleEnabled: this.autoTroubleEnabled,
-      monthlyMonsterDay: this.yearlyMonsterDay
+      monthlyMonsterDay: this.yearlyMonsterDay,
+      enableManaShield: this.enableManaShield,
+      enableManaAttack: this.enableManaAttack,
     }
   }
 
@@ -114,6 +119,8 @@ export class BattleService {
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.autoTroubleEnabled = properties.autoTroubleEnabled;
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
+    this.enableManaShield = properties.enableManaShield;
+    this.enableManaAttack = properties.enableManaAttack;
   }
 
   enemiesAttack(){

@@ -10,6 +10,7 @@ import { StoreService } from './game-state/store.service';
 import { CharacterService } from './game-state/character.service';
 import { formatNumber } from '@angular/common';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
+import { ImpossibleTaskService } from './game-state/impossibleTask.service';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -80,6 +81,7 @@ export class AppComponent implements OnInit {
     private gameStateService: GameStateService,
     private storeService: StoreService,
     public characterService: CharacterService,
+    public impossibleTaskService: ImpossibleTaskService,
     public dialog: MatDialog
   ) {}
 
@@ -136,5 +138,9 @@ export class AppComponent implements OnInit {
       width: '500px',
       data: {someField: 'foo'}
     });
+  }
+
+  impossibleTasksClicked(){
+    console.log("TODO: add this.");
   }
 }

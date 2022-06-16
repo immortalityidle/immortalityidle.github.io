@@ -9,6 +9,7 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
+import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,
@@ -40,7 +41,8 @@ export class ActivityService {
     private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
     private battleService: BattleService,
-    private logService: LogService
+    private logService: LogService,
+    private impossibleTaskService: ImpossibleTaskService
   ) {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -116,7 +118,7 @@ export class ActivityService {
 
   checkRequirements(): void {
     for (let activity of this.activities){
-      if (!activity.unlocked && this.meetsRequirements(activity)){
+      if (!activity.unlocked && !activity.impossible && this.meetsRequirements(activity)){
         activity.unlocked = true;
       }
     }
@@ -191,6 +193,30 @@ export class ActivityService {
   }
 
   getActivityList(): Activity[] {
+
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.Swim){
+      return [
+        {
+          level: 0,
+          name: ['Swim Deeper'],
+          activityType: ActivityType.Swim,
+          description: ['Swim down further into the depths.'],
+          consequenceDescription: ['Reduce Stamina by 20. Reduce health by 100.'],
+          consequence: [() => {
+            this.characterService.characterState.status.stamina.value -= 20;
+            this.characterService.characterState.status.health.value -= 100;
+            this.impossibleTaskService.tasks[ImpossibleTaskType.Swim].progress++;
+            this.impossibleTaskService.checkCompletion();
+          }],
+          requirements: [{
+          }],
+          unlocked: false,
+          skipApprenticeshipLevel: 0,
+          impossible: true
+        },
+      ]
+    }
+
     return [
       {
         level: 0,
@@ -217,12 +243,14 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Resting', 'Meditation'],
+        name: ['Resting', 'Meditation', 'Communing With Divinity'],
         activityType: ActivityType.Resting,
         description:['Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
-          'Enter a meditative state and begin your journey toward spritual enlightenment.'],
+          'Enter a meditative state and begin your journey toward spritual enlightenment.',
+          'Extend your senses beyond the mortal realm and connect to deeper realities.'],
         consequenceDescription: ['Restores half your stamina and a little health.',
-          'Restores all your stamina and some health.'],
+          'Restores all your stamina and some health.',
+          'Restores all your stamina, health, and mana.'],
         consequence: [
           () => {
             this.characterService.characterState.status.stamina.value +=
@@ -240,6 +268,13 @@ export class ActivityService {
               this.characterService.characterState.status.mana.value += 1;
             }
             this.characterService.characterState.checkOverage();
+          },
+          () => {
+            this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
+            this.characterService.characterState.status.health.value = this.characterService.characterState.status.health.max;
+            this.characterService.characterState.status.mana.value = this.characterService.characterState.status.mana.max;
+            this.characterService.characterState.increaseAttribute('spirituality', 0.1);
+            this.characterService.characterState.checkOverage();
           }
         ],
         requirements: [
@@ -250,6 +285,19 @@ export class ActivityService {
             charisma: 1000,
             intelligence: 1000,
             toughness: 1000
+          },
+          {
+            strength: 1000000,
+            speed: 1000000,
+            charisma: 1000000,
+            intelligence: 1000000,
+            toughness: 1000000,
+            spirituality: 100000,
+            fireLore: 10000,
+            waterLore: 10000,
+            earthLore: 10000,
+            metalLore: 10000,
+            woodLore: 10000,
           }
         ],
         unlocked: true,
@@ -320,17 +368,19 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Apprentice Blacksmithing', 'Journeyman Blacksmithing', 'Blacksmithing'],
+        name: ['Apprentice Blacksmithing', 'Journeyman Blacksmithing', 'Blacksmithing', 'Master Blacksmithing'],
         activityType: ActivityType.Blacksmithing,
         description:[
           "Work for the local blacksmith. You mostly pump the bellows, but at least you're learning a trade.",
           'Mold metal into useful things. You might even produce something you want to keep now and then.',
-          'Create useful and beautiful metal objects. You might produce a decent weapon occasionally.'
+          'Create useful and beautiful metal objects. You might produce a decent weapon occasionally.',
+          'Work the forges like a true master.',
         ],
         consequenceDescription:[
           'Uses 25 stamina. Increases strength and toughness and provides a little money.',
           'Uses 25 stamina. Increases strength, toughness, and money.',
-          'Uses 25 stamina. Build your physical power, master your craft, and create weapons',
+          'Uses 25 stamina. Build your physical power, master your craft, and create weapons.',
+          'Uses 50 stamina. Bring down your mighty hammer and create works of metal wonder.',
         ],
         consequence: [
           // grade 0
@@ -385,6 +435,7 @@ export class ActivityService {
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.strength.value +
               this.characterService.characterState.attributes.toughness.value) +
+              this.characterService.characterState.attributes.fireLore.value +
               (this.characterService.characterState.attributes.metalLore.value * 5);
             let blacksmithSuccessChance = 0.05;
             if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
@@ -397,6 +448,31 @@ export class ActivityService {
                 if (grade >= 1){ // if the metal was found
                   this.inventoryService.addItem(this.inventoryService.generateWeapon(
                     (grade / 10) + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                }
+              }
+            }
+          },
+          // grade 3
+          () => {
+            this.characterService.characterState.increaseAttribute('strength', 1);
+            this.characterService.characterState.increaseAttribute('toughness', 1);
+            this.characterService.characterState.status.stamina.value -= 50;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.strength.value +
+              this.characterService.characterState.attributes.toughness.value) +
+              this.characterService.characterState.attributes.fireLore.value +
+              (this.characterService.characterState.attributes.metalLore.value * 10);
+            let blacksmithSuccessChance = 0.2;
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+              blacksmithSuccessChance += 0.2;
+            }
+            if (Math.random() < blacksmithSuccessChance) {
+              this.characterService.characterState.increaseAttribute('metalLore',0.5);
+              if (this.inventoryService.openInventorySlots() > 0){
+                let grade = this.inventoryService.consume('metal');
+                if (grade >= 1){ // if the metal was found
+                  this.inventoryService.addItem(this.inventoryService.generateWeapon(
+                    (grade / 5) + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
                 }
               }
             }
@@ -416,6 +492,12 @@ export class ActivityService {
             strength: 2000,
             toughness: 2000,
             metalLore: 10,
+          },
+          {
+            strength: 10000,
+            toughness: 10000,
+            metalLore: 100,
+            fireLore: 10
           }
         ],
         unlocked: false,
@@ -449,17 +531,19 @@ export class ActivityService {
       },
       {
         level: 0,
-        name: ['Apprentice Alchemy', 'Journeyman Alchemy', 'Alchemy'],
+        name: ['Apprentice Alchemy', 'Journeyman Alchemy', 'Alchemy', 'Master Alchemy'],
         activityType: ActivityType.Alchemy,
         description: [
           'Get a job at the alchemist\'s workshop. It smells awful but you might learn a few things.',
           'Get a cauldron and do a little brewing of your own.',
           'Open up your own alchemy shop.',
+          'Brew power, precipitate life, stir in some magic, and create consumable miracles.',
         ],
         consequenceDescription: [
           'Uses 10 stamina. Get smarter, make a few taels, and learn the secrets of alchemy.',
           'Uses 10 stamina. Get smarter, make money, practice your craft. If you have some herbs, you might make a usable potion or pill.',
-          'Uses 10 stamina. Get smarter, make money, and make some decent potions or pills.'
+          'Uses 10 stamina. Get smarter, make money, and make some decent potions or pills.',
+          'Uses 20 stamina. Create amazing potions and pills.'
         ],
         consequence: [
           () => {
@@ -468,7 +552,7 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
-              this.characterService.characterState.attributes.woodLore.value;
+              this.characterService.characterState.attributes.waterLore.value;
             let alchemySuccessChance = 0.01;
             if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
               alchemySuccessChance += 0.05;
@@ -484,7 +568,7 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
-              (this.characterService.characterState.attributes.woodLore.value * 2);
+              (this.characterService.characterState.attributes.waterLore.value * 2);
             let alchemySuccessChance = 0.02;
             if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
               alchemySuccessChance += 0.05;
@@ -496,7 +580,7 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('ingredient');
                 if (grade >= 1){ // if the ingredient was found
                   grade += Math.floor(Math.log2(this.characterService.characterState.attributes.waterLore.value));
-                  this.inventoryService.generatePotion(grade);
+                  this.inventoryService.generatePotion(grade, false);
                 }
               }
             }
@@ -506,7 +590,7 @@ export class ActivityService {
             this.characterService.characterState.status.stamina.value -= 10;
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
-              (this.characterService.characterState.attributes.woodLore.value * 5);
+              (this.characterService.characterState.attributes.waterLore.value * 5);
             let alchemySuccessChance = 1 - Math.exp(0 - 0.025 * Math.log(this.characterService.characterState.attributes.waterLore.value));
             if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
               alchemySuccessChance += 0.05;
@@ -518,8 +602,24 @@ export class ActivityService {
                 let grade = this.inventoryService.consume('ingredient');
                 if (grade >= 1){ // if the ingredient was found
                   grade += Math.floor(Math.log2(this.characterService.characterState.attributes.waterLore.value));
-                  this.inventoryService.generatePotion(grade + 1);
+                  this.inventoryService.generatePotion(grade + 1, false);
                 }
+              }
+            }
+          },
+          () => {
+            this.characterService.characterState.increaseAttribute('intelligence', 1);
+            this.characterService.characterState.status.stamina.value -= 20;
+            this.characterService.characterState.money +=
+              Math.log2(this.characterService.characterState.attributes.intelligence.value) +
+              (this.characterService.characterState.attributes.waterLore.value * 10);
+            this.characterService.characterState.increaseAttribute('woodLore',0.4);
+            this.characterService.characterState.increaseAttribute('waterLore',0.6);
+            if (this.inventoryService.openInventorySlots() > 0){
+              let grade = this.inventoryService.consume('ingredient');
+              if (grade >= 1){ // if the ingredient was found
+                grade += Math.floor(Math.log2(this.characterService.characterState.attributes.waterLore.value));
+                this.inventoryService.generatePotion(grade + 1, true);
               }
             }
           }
@@ -530,13 +630,18 @@ export class ActivityService {
           },
           {
             intelligence: 1000,
-            waterLore: 1,
+            waterLore: 10,
             woodLore: 1
           },
           {
             intelligence: 8000,
-            waterLore: 10,
+            waterLore: 100,
             woodLore: 10
+          },
+          {
+            intelligence: 100000,
+            waterLore: 1000,
+            woodLore: 100
           }
         ],
         unlocked: false,
@@ -859,6 +964,26 @@ export class ActivityService {
         requirements: [{
           strength: 15,
           intelligence: 15
+        }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
+      },
+      {
+        level: 0,
+        name: ['Burning Things'],
+        activityType: ActivityType.Burning,
+        description: ['Light things on fire and watch them burn.'],
+        consequenceDescription: ['Uses 5 stamina. You will be charged for what you burn. Teaches you to love fire.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 5;
+          let moneyCost = this.characterService.characterState.increaseAttribute('fireLore', 0.1);
+          this.characterService.characterState.money -= moneyCost;
+          if (this.characterService.characterState.money < 0){
+            this.characterService.characterState.money = 0;
+          }
+        }],
+        requirements: [{
+          intelligence: 10
         }],
         unlocked: false,
         skipApprenticeshipLevel: 0

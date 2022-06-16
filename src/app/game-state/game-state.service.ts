@@ -11,6 +11,7 @@ import { FollowersService, FollowersProperties } from './followers.service';
 import { HomeService, HomeProperties } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
+import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -23,7 +24,8 @@ interface GameState {
   battles: BattleProperties,
   followers: FollowersProperties,
   logs: LogProperties,
-  mainLoop: MainLoopProperties
+  mainLoop: MainLoopProperties,
+  impossibleTasks: ImpossibleTaskProperties
 }
 
 @Injectable({
@@ -44,7 +46,8 @@ export class GameStateService {
     private battleService: BattleService,
     private followersService: FollowersService,
     private mainLoopService: MainLoopService,
-    private achievementService: AchievementService
+    private achievementService: AchievementService,
+    private impossibleTaskService: ImpossibleTaskService
 
   ) {
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
@@ -53,6 +56,7 @@ export class GameStateService {
   savetoLocalStorage(): void {
     const gameState: GameState = {
       achievements: this.achievementService.getProperties(),
+      impossibleTasks: this.impossibleTaskService.getProperties(),
       character: this.characterService.characterState.getProperties(),
       inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),
@@ -74,6 +78,7 @@ export class GameStateService {
     }
     const gameState = JSON.parse(gameStateSerialized) as GameState;
     this.achievementService.setProperties(gameState.achievements);
+    this.impossibleTaskService.setProperties(gameState.impossibleTasks);
     this.characterService.characterState.setProperties(gameState.character);
     this.homeService.setProperties(gameState.home);
     this.inventoryService.setProperties(gameState.inventory);
@@ -97,6 +102,7 @@ export class GameStateService {
 
   hardReset(): void {
     window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY);
+    this.characterService.characterState.reincarnate();
     this.reincarnationService.reincarnate();
     this.logService.reset();
   }

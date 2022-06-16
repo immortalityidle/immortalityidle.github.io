@@ -15,10 +15,11 @@ export enum ActivityType {
   Hunting,
   Fishing,
   Alchemy,
+  Burning,
   BodyCultivation,
   MindCultivation,
   CoreCultivation,
-  
+  Swim
 }
 
 export interface Activity {
@@ -32,6 +33,7 @@ export interface Activity {
   consequence: (() => void)[];
   unlocked: boolean;
   skipApprenticeshipLevel: number;
+  impossible?: boolean;
 }
 
 export interface ActivityLoopEntry {

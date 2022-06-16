@@ -309,7 +309,7 @@ export class InventoryService {
       weapon.weaponStats?.baseDamage + "<br/>Durability: " + weapon.weaponStats?.durability;
   }
 
-  generatePotion(grade: number): void {
+  generatePotion(grade: number, masterLevel: boolean): void {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemPotions){
       // consume a spirit gem and increase the grade
@@ -319,6 +319,13 @@ export class InventoryService {
       }
       if (Math.random() < 0.1){
         this.generatePill(grade);
+        return;
+      }
+    } else if (masterLevel){
+      // master level can make pills even without gems
+      if (Math.random() < 0.1){
+        this.generatePill(grade);
+        return;
       }
     }
 

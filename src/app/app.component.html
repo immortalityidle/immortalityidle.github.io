@@ -16,9 +16,12 @@
       </span>
       <mat-icon tooltip="Achievements!" class="iconButton"
         (click)="achievementsClicked()">
-        star
+        military_tech
       </mat-icon>
-
+      <mat-icon tooltip="Impossible Tasks" class="iconButton" *ngIf="impossibleTaskService.impossibleTasksUnlocked"
+        (click)="impossibleTasksClicked()">
+        priority_high
+      </mat-icon>
       <span *ngIf="characterService.characterState.attributes.spirituality.value > 10">
         <mat-icon tooltip="Ascension Store." class="iconButton"
           (click)="ascensionStoreClicked()">
