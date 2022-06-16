@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivityService } from '../activity-panel/activity.service';
+import { ActivityService } from '../game-state/activity.service';
 import { AchievementService } from '../game-state/achievement.service';
 import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { LogService } from '../log-panel/log.service';
+import { LogService } from '../game-state/log.service';
 import { MainLoopService } from '../main-loop.service';
 
 

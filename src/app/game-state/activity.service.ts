@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BattleService } from '../battle-panel/battle.service';
+import { BattleService } from './battle.service';
 import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { AttributeType, CharacterAttribute } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
-import { LogService } from '../log-panel/log.service';
+import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
-import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { ReincarnationService } from './reincarnation.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,

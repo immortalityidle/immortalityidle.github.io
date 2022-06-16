@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { LogService } from '../log-panel/log.service';
+import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
 import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
-import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { ReincarnationService } from './reincarnation.service';
 
 export interface Follower {
   name: string;

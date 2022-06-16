@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LogService } from '../log-panel/log.service';
+import { LogService } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { Furniture, InventoryService, Item, instanceOfFurniture } from '../game-state/inventory.service';
 import { HomeService, HomeType, Home } from '../game-state/home.service';

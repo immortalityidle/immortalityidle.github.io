@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ActivityService, ActivityProperties } from '../activity-panel/activity.service';
-import { BattleService, BattleProperties } from '../battle-panel/battle.service';
-import { LogProperties, LogService } from '../log-panel/log.service';
+import { ActivityService, ActivityProperties } from './activity.service';
+import { BattleService, BattleProperties } from './battle.service';
+import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from '../main-loop.service';
-import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { ReincarnationService } from './reincarnation.service';
 import { AchievementProperties, AchievementService } from './achievement.service';
 import { CharacterProperties, AttributeType } from './character';
 import { CharacterService } from './character.service';

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BattleService } from '../battle-panel/battle.service';
-import { LogService } from '../log-panel/log.service';
+import { BattleService } from './battle.service';
+import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
-import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from './character.service';
 import { Furniture, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
@@ -192,6 +192,7 @@ export class HomeService {
       landRequired: 20,
       maxInventory: 20,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 0.1;
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 10;
         this.characterService.characterState.checkOverage();
@@ -212,6 +213,7 @@ export class HomeService {
       landRequired: 50,
       maxInventory: 24,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 0.2;
         this.characterService.characterState.status.health.value += 2;
         this.characterService.characterState.status.stamina.value += 15;
         this.characterService.characterState.checkOverage();
@@ -233,6 +235,7 @@ export class HomeService {
       landRequired: 80,
       maxInventory: 28,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 0.3;
         this.characterService.characterState.status.health.value += 3;
         this.characterService.characterState.status.stamina.value += 20;
         this.characterService.characterState.checkOverage();
@@ -254,6 +257,7 @@ export class HomeService {
       landRequired: 100,
       maxInventory: 30,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 0.4;
         this.characterService.characterState.status.health.value += 4;
         this.characterService.characterState.status.stamina.value += 25;
         this.characterService.characterState.checkOverage();
@@ -275,6 +279,7 @@ export class HomeService {
       landRequired: 120,
       maxInventory: 32,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 0.5;
         this.characterService.characterState.status.health.value += 5;
         this.characterService.characterState.status.stamina.value += 30;
         this.characterService.characterState.checkOverage();
@@ -296,6 +301,7 @@ export class HomeService {
       landRequired: 150,
       maxInventory: 36,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 1;
         this.characterService.characterState.status.health.value += 10;
         this.characterService.characterState.status.stamina.value += 35;
         this.characterService.characterState.checkOverage();
@@ -317,6 +323,7 @@ export class HomeService {
       landRequired: 150,
       maxInventory: 40,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 2;
         this.characterService.characterState.status.health.value += 15;
         this.characterService.characterState.status.stamina.value += 40;
         this.characterService.characterState.checkOverage();
@@ -338,6 +345,7 @@ export class HomeService {
       landRequired: 180,
       maxInventory: 50,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 3;
         this.characterService.characterState.status.health.value += 20;
         this.characterService.characterState.status.stamina.value += 50;
         this.characterService.characterState.checkOverage();
@@ -359,6 +367,7 @@ export class HomeService {
       landRequired: 500,
       maxInventory: 60,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 4;
         this.characterService.characterState.status.health.value += 30;
         this.characterService.characterState.status.stamina.value += 100;
         this.characterService.characterState.checkOverage();
@@ -380,6 +389,7 @@ export class HomeService {
       landRequired: 1000,
       maxInventory: 80,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 5;
         this.characterService.characterState.status.health.value += 50;
         this.characterService.characterState.status.stamina.value += 200;
         this.characterService.characterState.checkOverage();
@@ -401,6 +411,7 @@ export class HomeService {
       landRequired: 10000,
       maxInventory: 100,
       consequence: () => {
+        this.characterService.characterState.status.mana.value += 10;
         this.characterService.characterState.status.health.value += 80;
         this.characterService.characterState.status.stamina.value += 300;
         this.characterService.characterState.checkOverage();

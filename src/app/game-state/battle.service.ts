@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { LogService } from '../log-panel/log.service';
+import { LogService } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from '../main-loop.service';
-import { ReincarnationService } from '../reincarnation/reincarnation.service';
+import { ReincarnationService } from './reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { formatNumber } from '@angular/common';
 
@@ -258,14 +258,21 @@ export class BattleService {
     }
   }
 
-  monsterNames = ["spider", "rat", "lizard", "snake", "imp", "jackalope", "goblin", "zombie", "hobgoblin",
-    "basilisk", "mogwai", "gremlin", "orc", "tiger", "ghost", "troll", "manticore", "merlion",
-    "bugbear", "yeti", "dreameater", "unicorn", "hellhound", "chimaera", "undine", "minotaur", "bunyip",
-    "wyvern", "doomworm", "giant", "phoenix", "titan", "stormbringer"];
+  monsterNames = ["spider", "rat", "lizard", "snake", "imp", "ooze", "jackalope", "goblin", "monkey", "redcap",
+    "skeleton", "zombie", "hobgoblin", "kobold", "chupacabra", "incubus", "succubus", "jackal",
+    "basilisk", "mogwai", "ghoul", "gremlin", "orc", "tiger", "ghost", "troll", "manticore", "merlion", "landshark",
+    "bugbear", "yeti", "dreameater", "unicorn", "ogre", "banshee", "harpy", "werewolf", "golem", "leshy",
+    "hellhound", "chimaera", "undine", "minotaur", "bunyip", "cyclops", "rakshasa", "oni", "nyuk", "cavebear",
+    "wendigo", "dinosaur", "wyvern", "doomworm", "thunderbird", "vampire", "beholder", "hydra",
+    "roc", "giant", "kraken", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"];
 
   monsterQualities = [
-    "a pathetic", "an infant", "a sickly", "a wimpy", "a weak", "a tired", "a poor",
-    "an average", "a healthy", "a big", "a tough", "a strong", "a mighty", "a powerful",
-    "a dangerous", "a terrifying", "an abominable", "a demonic", "a diabolical", "an infernal"
+    "an infant", "a puny", "a pathetic", "a sickly", "a starving", "a wimpy", "a weak", "a badly wounded", 
+    "a tired", "a poor", "a small", "a despondent", "a frightened", "a skinny", "a sad", "a stinking", "a typical",
+    "an average", "a healthy", "a big", "a tough", "a strong", "a fearsome", "a gutsy",
+    "a hefty", "a brawny", "an athletic", "a muscular", "a rugged", "a resilient", "an angry",
+    "a clever", "a fierce", "a devious", "a mighty", "a powerful", "a noble", 
+    "a dangerous", "a terrifying", "a flame-shrouded", "an abominable", "a monstrous", 
+    "a dominating", "a demonic", "a diabolical", "an infernal"
   ];
 }

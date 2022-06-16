@@ -1,14 +1,14 @@
 import { Injectable, Injector, OnInit } from '@angular/core';
-import { LogService } from '../log-panel/log.service';
-import { CharacterService } from '../game-state/character.service';
-import { Furniture, InventoryService, Item, instanceOfFurniture } from '../game-state/inventory.service';
-import { HomeService, HomeType, Home } from '../game-state/home.service';
-import { ItemRepoService } from '../game-state/item-repo.service';
+import { LogService } from './log.service';
+import { CharacterService } from './character.service';
+import { Furniture, InventoryService, Item, instanceOfFurniture } from './inventory.service';
+import { HomeService, HomeType, Home } from './home.service';
+import { ItemRepoService } from './item-repo.service';
 import { StoreService } from './store.service';
 import { MainLoopService } from '../main-loop.service';
-import { BattleService } from '../battle-panel/battle.service';
+import { BattleService } from './battle.service';
 import { GameStateService } from './game-state.service';
-import { ActivityService } from '../activity-panel/activity.service';
+import { ActivityService } from './activity.service';
 
 export interface Achievement {
   name: string;

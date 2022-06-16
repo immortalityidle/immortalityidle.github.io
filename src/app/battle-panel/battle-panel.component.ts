@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BattleService, Enemy } from './battle.service';
+import { BattleService, Enemy } from '../game-state/battle.service';
 
 @Component({
   selector: 'app-battle-panel',

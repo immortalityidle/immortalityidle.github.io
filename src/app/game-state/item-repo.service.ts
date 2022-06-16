@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
-import { ActivityService } from '../activity-panel/activity.service';
-import { BattleService } from '../battle-panel/battle.service';
-import { LogService } from '../log-panel/log.service';
+import { ActivityService } from './activity.service';
+import { BattleService } from './battle.service';
+import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';

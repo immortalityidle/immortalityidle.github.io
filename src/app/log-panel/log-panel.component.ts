@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Log, LogService, LogTopic } from './log.service';
+import { Log, LogService, LogTopic } from '../game-state/log.service';
 
 @Component({
   selector: 'app-log-panel',

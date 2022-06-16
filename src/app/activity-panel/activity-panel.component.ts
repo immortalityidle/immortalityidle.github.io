@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
-import { ActivityService } from './activity.service';
+import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { Activity } from '../game-state/activity';
 import { Character } from '../game-state/character';
