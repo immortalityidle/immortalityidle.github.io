@@ -55,7 +55,6 @@ export interface CharacterProperties {
   reinforceMeridiansCost: number,
   bloodlineCost: number,
   bloodlineRank: number,
-  followersUnlocked: boolean,
   manaUnlocked: boolean,
   totalLives: number,
 }
@@ -66,7 +65,7 @@ export class Character {
   totalLives: number = 1;
   dead: boolean = false;
   attributeScalingLimit: number = 10;
-  attributeSoftCap: number = 10000;
+  attributeSoftCap: number = 100000;
   aptitudeGainDivider: number = 100;
   condenseSoulCoreCost: number = 10;
   condenseSoulCoreOriginalCost: number = 10;
@@ -74,7 +73,6 @@ export class Character {
   reinforceMeridiansOriginalCost: number = 1000;
   bloodlineCost: number = 100;
   bloodlineRank: number = 0;
-  followersUnlocked: boolean = false;
   manaUnlocked: boolean = false;
   accuracy: number = 0;
   accuracyExponentMultiplier: number = 0.01;
@@ -226,7 +224,7 @@ export class Character {
         // gain aptitude based on last life's value
         this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / this.aptitudeGainDivider;
         // start at the aptitude value
-        this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].aptitude);
+        this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
       }
     }
     if (this.bloodlineRank < 3){
@@ -254,11 +252,14 @@ export class Character {
     }
   }
 
-  getAttributeStartingValue(aptitude: number): number{
-    if (aptitude < this.attributeSoftCap){
-      return aptitude;
+  getAttributeStartingValue(value: number, aptitude: number): number{
+    if (value < 1){
+      return value / 10;
     }
-    return this.attributeSoftCap + Math.log2(aptitude - (this.attributeSoftCap - 1));
+    if (aptitude < this.attributeSoftCap){
+      return aptitude / 10;
+    }
+    return (this.attributeSoftCap / 10) + Math.log2(aptitude - (this.attributeSoftCap - 1));
   }
 
   recalculateDerivedStats(): void{
@@ -353,7 +354,6 @@ export class Character {
       reinforceMeridiansCost: this.reinforceMeridiansCost,
       bloodlineCost: this.bloodlineCost,
       bloodlineRank: this.bloodlineRank,
-      followersUnlocked: this.followersUnlocked,
       manaUnlocked: this.manaUnlocked,
       totalLives: this.totalLives
     }
@@ -377,7 +377,6 @@ export class Character {
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     this.bloodlineCost = properties.bloodlineCost;
     this.bloodlineRank = properties.bloodlineRank;
-    this.followersUnlocked = properties.followersUnlocked || false;
     this.manaUnlocked = properties.manaUnlocked || false;
     this.totalLives = properties.totalLives || 1;
     this.recalculateDerivedStats();

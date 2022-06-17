@@ -24,6 +24,7 @@ import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-
 import { OptionsModalComponent } from './options-modal/options-modal.component';
 import { FarmPanelComponent } from './farm-panel/farm-panel.component';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
+import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -50,7 +51,8 @@ const materialModules = [
     AscensionStoreModalComponent,
     OptionsModalComponent,
     FarmPanelComponent,
-    AchievementPanelComponent
+    AchievementPanelComponent,
+    ImpossibleTaskPanelComponent
   ],
   imports: [
     BrowserModule,

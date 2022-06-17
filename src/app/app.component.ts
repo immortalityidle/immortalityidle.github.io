@@ -11,6 +11,7 @@ import { CharacterService } from './game-state/character.service';
 import { formatNumber } from '@angular/common';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { ImpossibleTaskService } from './game-state/impossibleTask.service';
+import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -141,6 +142,9 @@ export class AppComponent implements OnInit {
   }
 
   impossibleTasksClicked(){
-    console.log("TODO: add this.");
+    const dialogRef = this.dialog.open(ImpossibleTaskPanelComponent, {
+      width: '500px',
+      data: {someField: 'foo'}
+    });
   }
 }

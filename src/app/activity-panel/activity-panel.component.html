@@ -8,7 +8,15 @@
   <table>
     <ng-container *ngFor="let activity of activityService.activities">
       <tr *ngIf="(activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
-        <td><button (click)="onClick(activity)">{{activity.name[activity.level]}}</button></td>
+        <td>
+          <span class="noWrap">
+            <button (click)="onClick(activity)">{{activity.name[activity.level]}}</button>
+            <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0"
+              tooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life.">
+              model_training
+            </mat-icon>
+          </span>
+        </td>
         <td>
           {{activity.description[activity.level]}}
           <br/>

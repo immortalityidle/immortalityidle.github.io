@@ -10,6 +10,7 @@ import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
+import { FollowersService } from './followers.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,
@@ -17,7 +18,8 @@ export interface ActivityProperties {
   activityLoop: ActivityLoopEntry[],
   unlockedActivities: ActivityType[],
   openApprenticeships: number,
-  spiritActivity: ActivityType | null
+  spiritActivity: ActivityType | null,
+  completedApprenticeships: ActivityType[];
 }
 
 @Injectable({
@@ -32,6 +34,7 @@ export class ActivityService {
   openApprenticeships: number = 1;
   oddJobDays: number = 0;
   beggingDays: number = 0;
+  completedApprenticeships: ActivityType[] = [];
 
   constructor(
     private characterService: CharacterService,
@@ -42,6 +45,7 @@ export class ActivityService {
     private itemRepoService: ItemRepoService,
     private battleService: BattleService,
     private logService: LogService,
+    private followerService: FollowersService,
     private impossibleTaskService: ImpossibleTaskService
   ) {
     reincarnationService.reincarnateSubject.subscribe(() => {
@@ -72,11 +76,13 @@ export class ActivityService {
       activityLoop: this.activityLoop,
       unlockedActivities: unlockedActivities,
       openApprenticeships: this.openApprenticeships,
-      spiritActivity: this.spiritActivity
+      spiritActivity: this.spiritActivity,
+      completedApprenticeships: this.completedApprenticeships
     }
   }
 
   setProperties(properties: ActivityProperties){
+    this.completedApprenticeships = properties.completedApprenticeships || [];
     let unlockedActivities = properties.unlockedActivities || [ActivityType.OddJobs, ActivityType.Resting];
     for (const activity of this.activities){
         activity.unlocked = unlockedActivities.includes(activity.activityType);
@@ -97,8 +103,14 @@ export class ActivityService {
   }
 
   meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
-    if (apprenticeCheck && !activity.unlocked && activity.skipApprenticeshipLevel > level && this.openApprenticeships <= 0){
-      return false;
+    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0){
+      if (level < activity.skipApprenticeshipLevel){
+        return false;
+      }
+      if (activity.skipApprenticeshipLevel > 0 && !this.completedApprenticeships.includes(activity.activityType) ){
+        // we've never completed an apprenticeship in this job and it needs one
+        return false;
+      }
     }
     const keys: (keyof CharacterAttribute)[] = Object.keys(
       activity.requirements[level]
@@ -134,6 +146,12 @@ export class ActivityService {
       if (activity.level < (activity.description.length - 1)){
         if (this.meetsRequirementsByLevel(activity, (activity.level + 1), false)){
           activity.level++;
+          // check to see if we got above apprenticeship skip level
+          if (activity.unlocked && activity.skipApprenticeshipLevel == activity.level){
+            if (!this.completedApprenticeships.includes(activity.activityType)){
+              this.completedApprenticeships.push(activity.activityType);
+            }
+          }
         }
       }
     }
@@ -1065,6 +1083,34 @@ export class ActivityService {
           metalLore: 1000,
           earthLore: 1000,
           spirituality: 1000
+        }],
+        unlocked: false,
+        skipApprenticeshipLevel: 0
+      },
+      {
+        level: 0,
+        name: ['Recruit Followers'],
+        activityType: ActivityType.Recruiting,
+        description: ['Look for followers willing to serve you.'],
+        consequenceDescription: ['Costs 100 stamina and 1M taels. Gives you a small chance of finding a follower, if you are powerful to attract any.'],
+        consequence: [() => {
+          this.characterService.characterState.status.stamina.value -= 100;
+          this.characterService.characterState.money -= 1000000;
+          if (this.characterService.characterState.money < 0){
+            this.characterService.characterState.money = 0;
+          }
+          if (this.followerService.followersUnlocked && this.characterService.characterState.money > 0){
+            if (Math.random() < 0.01){
+              this.followerService.generateFollower();
+            }
+          } else {
+            let damage = this.characterService.characterState.status.health.max * 0.1;
+            this.characterService.characterState.status.health.value -= damage;
+            this.logService.addLogMessage("You fail miserably at your attempt to recruit followers. An angry mob chases you down and gives you a beating for your arrogance.","INJURY","EVENT");
+          }
+        }],
+        requirements: [{
+          charisma: 1000000000,
         }],
         unlocked: false,
         skipApprenticeshipLevel: 0

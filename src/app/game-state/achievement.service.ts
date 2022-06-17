@@ -9,6 +9,9 @@ import { MainLoopService } from '../main-loop.service';
 import { BattleService } from './battle.service';
 import { GameStateService } from './game-state.service';
 import { ActivityService } from './activity.service';
+import { ActivityType } from './activity';
+import { ImpossibleTaskService } from './impossibleTask.service';
+import { FollowersService } from './followers.service';
 
 export interface Achievement {
   name: string;
@@ -39,7 +42,9 @@ export class AchievementService {
     private storeService: StoreService,
     private battleService: BattleService,
     private homeService: HomeService,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    private followerService: FollowersService,
+    private impossibleTaskService: ImpossibleTaskService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (let achievement of this.achievements) {
@@ -100,15 +105,55 @@ export class AchievementService {
     },
     {
       name: "Persitent Reincarnator",
-      description: "You lived 48 lives and unlocked the " + this.itemRepoService.items['restartActivityManual'].name,
+      description: "You lived 28 lives and unlocked the " + this.itemRepoService.items['restartActivityManual'].name,
       check: () => {
-        return this.characterService.characterState.totalLives >= 48;
+        return this.characterService.characterState.totalLives >= 28;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['restartActivityManual']);
       },
       unlocked: false
     },
+    {
+      name: "Clang! Clang! Clang!",
+      description: "You reached proficiency in blacksmithing and can now work as a Blacksmith without going through an apprenticeship (you still need the attributes for the Blacksmithing activity).",
+      check: () => {
+        return this.activityService.completedApprenticeships.includes(ActivityType.Blacksmithing);
+      },
+      effect: () => {
+      },
+      unlocked: false
+    },
+    {
+      name: "Bubble, Bubble",
+      description: "You reached proficiency in alchemy and can now work as a Alchemist without going through an apprenticeship (you still need the attributes for the Alchemy activity).",
+      check: () => {
+        return this.activityService.completedApprenticeships.includes(ActivityType.Alchemy);
+      },
+      effect: () => {
+      },
+      unlocked: false
+    },    
+    {
+      name: "Tanner",
+      description: "You reached proficiency in leatherworking and can now work as a Leatherworker without going through an apprenticeship (you still need the attributes for the Leatherworking activity).",
+      check: () => {
+        return this.activityService.completedApprenticeships.includes(ActivityType.Leatherworking);
+      },
+      effect: () => {
+      },
+      unlocked: false
+    },    
+    {
+      name: "Carpenter",
+      description: "You reached proficiency in woodworking and can now work as a Woodworker without going through an apprenticeship (you still need the attributes for the Woodworking activity).",
+      check: () => {
+        return this.activityService.completedApprenticeships.includes(ActivityType.Woodworking);
+      },
+      effect: () => {
+      },
+      unlocked: false
+    },    
     {
       name: "This Sparks Joy",
       description: "You used 888 items and unlocked the " + this.itemRepoService.items['autoUseManual'].name,
@@ -409,6 +454,32 @@ export class AchievementService {
       },
       effect: () => {
         this.characterService.characterState.manaUnlocked = true;
+      },
+      unlocked: false
+    },
+    {
+      name: "Sect Leader",
+      description: "You have become powerful enough that you may now start attracting followers.",
+      check: () => {
+        return (this.characterService.soulCoreRank() >= 1) && 
+          (this.characterService.meridianRank() >= 1) && 
+          this.characterService.characterState.bloodlineRank >= 1;
+      },
+      effect: () => {
+        this.followerService.followersUnlocked = true;
+      },
+      unlocked: false
+    },
+    {
+      name: "Impossible",
+      description: "You have achieved incredible power and are ready to begin taking on impossible tasks.",
+      check: () => {
+        return (this.characterService.soulCoreRank() >= 4) && 
+          (this.characterService.meridianRank() >= 4) && 
+          this.characterService.characterState.bloodlineRank >= 4;
+      },
+      effect: () => {
+        this.impossibleTaskService.impossibleTasksUnlocked = true;
       },
       unlocked: false
     },

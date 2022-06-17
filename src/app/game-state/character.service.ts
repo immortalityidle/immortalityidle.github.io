@@ -134,9 +134,6 @@ export class CharacterService {
         attribute.value = 0;
       }
     }
-    if (this.soulCoreRank() > 5 && this.meridianRank() > 4){
-      this.characterState.followersUnlocked = true;
-    }
     this.forceRebirth = true;
   }
 
@@ -173,9 +170,6 @@ export class CharacterService {
       } else {
         attribute.value = 0;
       }
-    }
-    if (this.soulCoreRank() > 5 && this.meridianRank() > 4){
-      this.characterState.followersUnlocked = true;
     }
     this.forceRebirth = true;
   }

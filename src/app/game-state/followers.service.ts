@@ -14,84 +14,128 @@ export interface Follower {
   lifespan: number;
   job: string;
   power: number;
+  cost: number;
 }
 
 export interface FollowersProperties {
-  followers: Follower[]
+  followersUnlocked: boolean,
+  followers: Follower[],
 }
 
-type jobsType = {[key: string]: (follower: Follower) => void};
+type jobsType = {
+  [key: string]: {
+    work: (follower: Follower) => void,
+    description: string
+  }
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class FollowersService {
 
+  followersUnlocked: boolean = false;
   followers: Follower[] = [];
   jobs: jobsType = {
-    "builder": (follower: Follower) => {
-      this.homeService.nextHomeCostReduction += follower.power;
-      for (let i = 0; i < follower.power; i++){
-        if (this.homeService.upgrading){
-          this.homeService.upgradeTick();
+    "builder": {
+      work: (follower: Follower) => {
+        this.homeService.nextHomeCostReduction += follower.power;
+        for (let i = 0; i < follower.power; i++){
+          if (this.homeService.upgrading){
+            this.homeService.upgradeTick();
+          }
         }
-      }
+      },
+      description: "Builders reduce the cost of the next home you upgrade to. They can also help you build it faster."
     },
-    "hunter": (follower: Follower) => {
-      for (let i = 0; i < follower.power; i++){
-        this.inventoryService.addItem(this.itemRepoService.items['meat']);
-        this.inventoryService.addItem(this.itemRepoService.items['hide']);
-      }
+    "hunter": {
+      work: (follower: Follower) => {
+        for (let i = 0; i < follower.power; i++){
+          this.inventoryService.addItem(this.itemRepoService.items['meat']);
+          this.inventoryService.addItem(this.itemRepoService.items['hide']);
+        }
+      },
+      description: "Hunters collect meat and hides for you."
     },
-    "farmer": (follower: Follower) => {
-      this.homeService.workFields(follower.power);
-    }, 
-    "weaponsmith": (follower: Follower) => {
-      if (this.characterService.characterState.equipment.rightHand && 
-        this.characterService.characterState.equipment.rightHand.weaponStats){
-        this.characterService.characterState.equipment.rightHand.weaponStats.durability += follower.power;
-      }
-      if (this.characterService.characterState.equipment.leftHand && 
-        this.characterService.characterState.equipment.leftHand.weaponStats){
-        this.characterService.characterState.equipment.leftHand.weaponStats.durability += follower.power;
-      }
+    "farmer": {
+      work: (follower: Follower) => {
+        this.homeService.workFields(follower.power);
+      },
+    description: "Farmers work your fields, helping your crops to grow."
     },
-    "armorer": (follower: Follower) => {
-      if (this.characterService.characterState.equipment.head && 
-        this.characterService.characterState.equipment.head.armorStats){
-        this.characterService.characterState.equipment.head.armorStats.durability += follower.power;
-      }
-      if (this.characterService.characterState.equipment.body && 
-        this.characterService.characterState.equipment.body.armorStats){
-        this.characterService.characterState.equipment.body.armorStats.durability += follower.power;
-      }
-      if (this.characterService.characterState.equipment.legs && 
-        this.characterService.characterState.equipment.legs.armorStats){
-        this.characterService.characterState.equipment.legs.armorStats.durability += follower.power;
-      }
-      if (this.characterService.characterState.equipment.feet && 
-        this.characterService.characterState.equipment.feet.armorStats){
-        this.characterService.characterState.equipment.feet.armorStats.durability += follower.power;
-      }
+    "weaponsmith": {
+      work: (follower: Follower) => {
+        if (this.characterService.characterState.equipment.rightHand && 
+          this.characterService.characterState.equipment.rightHand.weaponStats){
+          this.characterService.characterState.equipment.rightHand.weaponStats.durability += follower.power;
+        }
+        if (this.characterService.characterState.equipment.leftHand && 
+          this.characterService.characterState.equipment.leftHand.weaponStats){
+          this.characterService.characterState.equipment.leftHand.weaponStats.durability += follower.power;
+        }
+      },
+      description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day."
     },
-    "brawler": (follower: Follower) => {
-      this.characterService.characterState.increaseAttribute("strength", follower.power);
+    "armorer": {
+      work: (follower: Follower) => {
+        if (this.characterService.characterState.equipment.head && 
+          this.characterService.characterState.equipment.head.armorStats){
+          this.characterService.characterState.equipment.head.armorStats.durability += follower.power;
+        }
+        if (this.characterService.characterState.equipment.body && 
+          this.characterService.characterState.equipment.body.armorStats){
+          this.characterService.characterState.equipment.body.armorStats.durability += follower.power;
+        }
+        if (this.characterService.characterState.equipment.legs && 
+          this.characterService.characterState.equipment.legs.armorStats){
+          this.characterService.characterState.equipment.legs.armorStats.durability += follower.power;
+        }
+        if (this.characterService.characterState.equipment.feet && 
+          this.characterService.characterState.equipment.feet.armorStats){
+          this.characterService.characterState.equipment.feet.armorStats.durability += follower.power;
+        }
+      },
+      description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day."
     },
-    "sprinter": (follower: Follower) => {
-      this.characterService.characterState.increaseAttribute("speed", follower.power);
+    "brawler": {
+      work: (follower: Follower) => {
+
+        this.characterService.characterState.increaseAttribute("strength", follower.power);
+      },
+      description: "Brawlers will spar with you in wrestling and boxing matches, increasing your strength."
     },
-    "trainer": (follower: Follower) => {
-      this.characterService.characterState.increaseAttribute("toughness", follower.power);
+    "sprinter": {
+      work: (follower: Follower) => {
+
+        this.characterService.characterState.increaseAttribute("speed", follower.power);
+      },
+      description: "Sprinters challenge you to footraces and help you increase your speed."
     },
-    "tutor": (follower: Follower) => {
-      this.characterService.characterState.increaseAttribute("intelligence", follower.power);
+    "trainer": {
+      work: (follower: Follower) => {
+
+        this.characterService.characterState.increaseAttribute("toughness", follower.power);
+      },
+      description: "Trainers make sure you follow their strict fitness and diet rules, increasing your toughness."
     },
-    "mediator": (follower: Follower) => {
-      this.characterService.characterState.increaseAttribute("charisma", follower.power);
+    "tutor": {
+      work: (follower: Follower) => {
+        this.characterService.characterState.increaseAttribute("intelligence", follower.power);
+      },
+      description: "Tutors teach you all about the wonders of the universe, increasing your intelligence."
     },
-    "priest": (follower: Follower) => {
-      this.characterService.characterState.increaseAttribute("spirituality", follower.power);
-    }
+    "mediator": {
+      work: (follower: Follower) => {
+        this.characterService.characterState.increaseAttribute("charisma", follower.power);
+      },
+      description: "Mediators teach you how to persuade others, increasing your charisma."
+    },
+    "priest": {
+      work: (follower: Follower) => {
+        this.characterService.characterState.increaseAttribute("spirituality", follower.power);
+      },
+      description: "Priests help you get closer to the divine, increasing your sprituality."
+    },
   };
 
   constructor(
@@ -104,14 +148,14 @@ export class FollowersService {
     reincarnationService: ReincarnationService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
-      if (!this.characterService.characterState.followersUnlocked){
+      if (!this.followersUnlocked){
         return;
       }
       if (this.characterService.characterState.dead){
         return;
       }
-      if (this.characterService.characterState.age % 36500 == 0){
-        // another 100xth birthday, you get a follower
+      if (this.characterService.characterState.age % 18250 == 0){
+        // another 50xth birthday, you get a follower
         this.generateFollower();
       }
       for (let i = this.followers.length - 1; i >= 0; i--){
@@ -120,6 +164,8 @@ export class FollowersService {
         if (this.followers[i].age >= this.followers[i].lifespan){
           // follower aged off
           this.followers.splice(i,1);
+        } else {
+          this.characterService.characterState.money -= this.followers[i].cost;
         }
       }
     });
@@ -130,7 +176,7 @@ export class FollowersService {
   }
 
   followerWorks(follower: Follower){
-    this.jobs[follower.job](follower);
+    this.jobs[follower.job].work(follower);
   }
 
   reset() {
@@ -139,22 +185,31 @@ export class FollowersService {
 
   getProperties(): FollowersProperties {
     return {
+      followersUnlocked: this.followersUnlocked,
       followers: this.followers,
     }
   }
 
   setProperties(properties: FollowersProperties) {
     this.followers = properties.followers || [];
+    this.followersUnlocked = properties.followersUnlocked || false;
   }
 
   generateFollower(){
+    let maxFollowers = 1 + this.homeService.homeValue + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+    if (this.followers.length >= maxFollowers){
+      this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");
+      return;
+    }
+
     this.logService.addLogMessage("A new follower has come to learn at your feet.","STANDARD","EVENT");
     this.followers.push({
       name: this.generateFollowerName(),
       age: 0,
-      lifespan: this.characterService.characterState.lifespan / 100,
+      lifespan: this.characterService.characterState.lifespan / 10,
       job: this.generateFollowerJob(),
-      power: 1
+      power: 1,
+      cost: 100
     });
   }
 
@@ -166,4 +221,10 @@ export class FollowersService {
     const keys = Object.keys(this.jobs);
     return keys[Math.floor(Math.random() * keys.length)];    
   }
+
+  dismissFollower(follower: Follower){
+    let index = this.followers.indexOf(follower);
+    this.followers.splice(index, 1);
+  }
+
 }
