@@ -130,7 +130,7 @@ export class ActivityService {
 
   checkRequirements(): void {
     for (let activity of this.activities){
-      if (!activity.unlocked && !activity.impossible && this.meetsRequirements(activity)){
+      if (!activity.unlocked && this.meetsRequirements(activity)){
         activity.unlocked = true;
       }
     }
@@ -210,6 +210,13 @@ export class ActivityService {
     }
   }
 
+  reloadActivities(){
+    this.activityLoop = [];
+    this.spiritActivity = null;
+    this.activities = this.getActivityList();
+  
+  }
+
   getActivityList(): Activity[] {
 
     if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.Swim){
@@ -228,9 +235,8 @@ export class ActivityService {
           }],
           requirements: [{
           }],
-          unlocked: false,
-          skipApprenticeshipLevel: 0,
-          impossible: true
+          unlocked: true,
+          skipApprenticeshipLevel: 0
         },
       ]
     }

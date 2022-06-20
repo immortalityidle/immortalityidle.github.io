@@ -11,8 +11,13 @@
         <br>
         Current Rank: {{storeService.soulCoreRank}}
         <br>
-        Next rank requires {{characterService.characterState.condenseSoulCoreCost | number}} spirituality and a grade {{storeService.soulCoreRank + 12}} monster core.
-      </td>
+        <span *ngIf="storeService.soulCoreRank < 9">
+          Next rank requires {{characterService.characterState.condenseSoulCoreCost | number}} spirituality and a grade {{storeService.soulCoreRank + 12}} monster core.
+        </span>
+        <span *ngIf="storeService.soulCoreRank >= 9">
+          Max Rank
+        </span>
+        </td>
     </tr>
     <tr>
       <td>
@@ -23,7 +28,12 @@
         <br>
         Current Rank: {{storeService.meridianRank}}
         <br>
-        Next rank requires {{characterService.characterState.reinforceMeridiansCost | number}} spirituality and a grade {{storeService.meridianRank + 16}} monster core.
+        <span *ngIf="storeService.meridianRank < 9">
+            Next rank requires {{characterService.characterState.reinforceMeridiansCost | number}} spirituality and a grade {{storeService.meridianRank + 16}} monster core.
+        </span>
+        <span *ngIf="storeService.meridianRank >= 9">
+          Max Rank
+        </span>
       </td>
     </tr>
     <tr>
@@ -35,7 +45,12 @@
         <br>
         Current Rank: {{characterService.characterState.bloodlineRank}}
         <br>
-        Next rank requires {{characterService.characterState.bloodlineCost | number}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
+        <span *ngIf="characterService.characterState.bloodlineRank < 4">
+          Next rank requires {{characterService.characterState.bloodlineCost | number}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
+        </span>
+        <span *ngIf="characterService.characterState.bloodlineRank >= 4">
+          Max Rank
+        </span>
       </td>
     </tr>
   </table>

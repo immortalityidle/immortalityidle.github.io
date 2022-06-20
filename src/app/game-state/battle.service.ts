@@ -49,6 +49,8 @@ export class BattleService {
   yearlyMonsterDay: number;
   enableManaShield: boolean = false;
   enableManaAttack: boolean = false;
+  tickCounter: number;
+  ticksPerFight: number = 10;
 
   constructor(
     private logService: LogService,
@@ -63,11 +65,17 @@ export class BattleService {
     this.kills = 0;
     this.troubleKills = 0;
     this.yearlyMonsterDay = 0;
+    this.tickCounter = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
       }
+      if (this.tickCounter < this.ticksPerFight){
+        this.tickCounter++;
+        return;
+      }
+      this.tickCounter = 0;
       if (this.currentEnemy == null && this.enemies.length > 0){
         this.currentEnemy = this.enemies[0];
       }

@@ -177,6 +177,39 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Waster",
+      description: "You throw away 10,000 items and unlocked the " + this.itemRepoService.items['betterStorageManual'].name,
+      check: () => {
+        return this.inventoryService.thrownAwayItems >= 10000;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['betterStorageManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Landfill",
+      description: "You throw away 100,000 items and unlocked the " + this.itemRepoService.items['evenBetterStorageManual'].name,
+      check: () => {
+        return this.inventoryService.maxStackSize >= 1000 && this.inventoryService.thrownAwayItems >= 100000;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['evenBetterStorageManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Hoarder",
+      description: "You really love holding vast amounts of materials and unlocked the " + this.itemRepoService.items['bestStorageManual'].name,
+      check: () => {
+        return this.inventoryService.maxStackSize >= 10000;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestStorageManual']);
+      },
+      unlocked: false
+    },
+    {
       name: "All Things In Moderation",
       description: "You sold and used 8888 items and unlocked the " + this.itemRepoService.items['autoBalanceManual'].name,
       check: () => {

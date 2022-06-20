@@ -5,6 +5,21 @@
         <table>
             <tr *ngFor="let task of impossibleTaskService.tasks">
                 <td>{{task.name}}</td>
+                <td>
+                  <progress class="status-progress"
+                    [value]="task.progress"
+                    [max]="task.progressRequired">
+                    <div></div>
+                  </progress>
+                </td>
+                <td>
+                  <span *ngIf="impossibleTaskService.activeTaskIndex == task.taskType">
+                    <button (click)="impossibleTaskService.stopTask()">Stop</button>
+                  </span>
+                  <span *ngIf="impossibleTaskService.activeTaskIndex == -1 && impossibleTaskService.nextTask == task.taskType">
+                    <button (click)="impossibleTaskService.startTask()">Start</button>
+                  </span>
+                </td>
             </tr>
         </table>
     </div>

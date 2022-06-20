@@ -1425,6 +1425,81 @@ export class ItemRepoService {
         }
         return this.inventoryService.autoequipBestArmor;
       }
+    },
+    betterStorageManual: {
+      id: 'betterStorageManual',
+      name: "Manual of Efficient Item Storage",
+      type: "manual",
+      description: "This manual teaches you to store items more efficiently so you can keep more in each stack.",
+      value: 1000000,
+      useLabel: "Read",
+      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.maxStackSize *= 10;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.maxStackSize >= 1000;
+      }
+    },
+    evenBetterStorageManual: {
+      id: 'evenBetterStorageManual',
+      name: "Manual of Hyperefficient Item Storage",
+      type: "manual",
+      description: "This manual teaches you to store items more efficiently so you can keep more in each stack.",
+      value: 100000000,
+      useLabel: "Read",
+      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.maxStackSize *= 10;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.maxStackSize >= 10000;
+      }
+    },
+    bestStorageManual: {
+      id: 'bestStorageManual',
+      name: "Manual of Hyperspatial Item Storage",
+      type: "manual",
+      description: "This manual teaches you to store items more efficiently so you can keep more in each stack.",
+      value: 100000000,
+      useLabel: "Read",
+      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.maxStackSize *= 10;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.maxStackSize >= 100000;
+      }
     }
 
   }

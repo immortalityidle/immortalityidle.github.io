@@ -84,7 +84,9 @@ export interface InventoryProperties {
   autoSellOldWood: boolean,
   autoSellOldOre: boolean,
   autoequipBestWeapon: boolean,
-  autoequipBestArmor: boolean
+  autoequipBestArmor: boolean,
+  maxStackSize: number,
+  thrownAwayItems: number
 }
 
 @Injectable({
@@ -93,7 +95,7 @@ export interface InventoryProperties {
 export class InventoryService {
   itemStacks: (ItemStack | null)[] = [];
   maxItems: number = 10;
-  maxStackSize = 999;
+  maxStackSize = 100;
   noFood: boolean;
   selectedItem: ItemStack | null = null;
   autoSellUnlocked: boolean;
@@ -121,6 +123,7 @@ export class InventoryService {
   lifetimePillsUsed: number = 0;
   motherGift: boolean = false;
   grandmotherGift: boolean = false;
+  thrownAwayItems: number = 0;
 
   constructor(
     private logService: LogService,
@@ -203,6 +206,8 @@ export class InventoryService {
       autoSellOldOre: this.autoSellOldOre,
       autoequipBestWeapon: this.autoequipBestWeapon,
       autoequipBestArmor: this.autoequipBestArmor,
+      maxStackSize: this.maxStackSize,
+      thrownAwayItems: this.thrownAwayItems
     }
   }
 
@@ -226,6 +231,8 @@ export class InventoryService {
     this.autoSellOldOre = properties.autoSellOldOre || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
+    this.maxStackSize = properties.maxStackSize || 100;
+    this.thrownAwayItems = properties.thrownAwayItems || 0;
   }
 
   farmFoodList = [
@@ -696,6 +703,7 @@ export class InventoryService {
     this.logService.addLogMessage(
       `You don't have enough room for the ${item.name} so you threw it away.`,
       'STANDARD', 'EVENT');
+    this.thrownAwayItems++;
     return -1;
   }
 

@@ -34,7 +34,6 @@ export interface Activity {
   consequence: (() => void)[];
   unlocked: boolean;
   skipApprenticeshipLevel: number;
-  impossible?: boolean;
 }
 
 export interface ActivityLoopEntry {

@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
+import { ActivityService } from './activity.service';
 
 export enum ImpossibleTaskType {
   Swim,
@@ -34,15 +35,17 @@ export interface ImpossibleTaskProperties {
 })
 export class ImpossibleTaskService {
 
+  activityService?: ActivityService;
   impossibleTasksUnlocked: boolean = false;
   activeTaskIndex: number = -1;
+  nextTask: number = 0;
 
   tasks: ImpossibleTask[] = [
     {
       name: "Swim to the bottom of the ocean",
       taskType: ImpossibleTaskType.Swim,
       progress: 0,
-      progressRequired: 1000,
+      progressRequired: 10000,
       complete: false,
     },
     {
@@ -104,6 +107,7 @@ export class ImpossibleTaskService {
   ];
 
   constructor(
+    private injector: Injector,
     private logService: LogService,
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
@@ -113,6 +117,19 @@ export class ImpossibleTaskService {
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
+      }
+    });
+
+    mainLoopService.longTickSubject.subscribe(() => {
+      if (this.nextTask >= this.tasks.length){
+        // all tasks done
+        return;
+      }
+      for (let i = 0; i < this.tasks.length; i++){
+        if (this.tasks[i].complete && this.tasks[i].taskType == this.nextTask){
+          this.nextTask++;
+          return;
+        }
       }
     });
 
@@ -148,8 +165,24 @@ export class ImpossibleTaskService {
     let task = this.tasks[this.activeTaskIndex];
     if (task.progress >= task.progressRequired){
       task.complete = true;
-      this.activeTaskIndex = -1;
+      this.stopTask();
     }
+  }
+
+  startTask(){
+    this.activeTaskIndex = this.nextTask;
+    if (!this.activityService){
+      this.activityService = this.injector.get(ActivityService);
+    }
+    this.activityService.reloadActivities();
+  }
+
+  stopTask(){
+    this.activeTaskIndex = -1;
+    if (!this.activityService){
+      this.activityService = this.injector.get(ActivityService);
+    }
+    this.activityService.reloadActivities();
   }
 
 }

@@ -114,7 +114,7 @@ export class GameStateService {
 
   cheat(): void {
     this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","EVENT");
-    this.characterService.characterState.money += 1000000000;
+    this.characterService.characterState.money += 10000000000;
     for (let key in this.itemRepoService.items){
       let item = this.itemRepoService.items[key];
       if (item.type == 'manual' && item.use) {
@@ -124,9 +124,13 @@ export class GameStateService {
     const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterService.characterState.attributes[keys[key]];
-      attribute.aptitude += 1000000;
-      attribute.value += 1000000;
+      attribute.aptitude += 10000000;
+      attribute.value += 10000000;
     }
     this.inventoryService.addItem(this.inventoryService.generateSpiritGem(25));
+    this.homeService.upgradeToNextHome();
+    while (this.homeService.upgrading){
+      this.homeService.upgradeTick();
+    }
   }
 }
