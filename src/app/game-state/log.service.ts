@@ -28,6 +28,9 @@ export class LogService {
     {message: "Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.", type: 'STANDARD', topic: 'STORY'},
     {message: "Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.", type: 'STANDARD', topic: 'STORY'},
   ];
+  newStory: string = "";
+  newEvents: string = "";
+  newCombat: string = "";
 
   eventLog: Log[] = [];
   combatLog: Log[] = [];
@@ -73,6 +76,16 @@ export class LogService {
     if (log.length > 100 && topic != 'STORY'){
       log.splice(100, 1);
     }
+    if (this.logTopic != topic){
+      if (topic == 'STORY'){
+        this.newStory = " (new)";
+      } else if (topic == 'EVENT'){
+        this.newEvents = " (new)";
+      } else {
+        this.newCombat = " (new)";
+      }
+    }
+
   }
 
   getProperties(): LogProperties {
@@ -90,10 +103,13 @@ export class LogService {
   updateLogTopic(logTopic: LogTopic){
     this.logTopic = logTopic;
     if (logTopic == 'COMBAT'){
+      this.newCombat = "";
       this.currentLog = this.combatLog;
     } else if (logTopic == 'STORY'){
+      this.newStory = "";
       this.currentLog = this.storyLog;
     } else {
+      this.newEvents = "";
       this.currentLog = this.eventLog;
     }
   }

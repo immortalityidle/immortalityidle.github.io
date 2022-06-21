@@ -860,6 +860,13 @@ export class ItemRepoService {
       value: 10,
       description: 'Some metal junk.',
     },
+    unbreakableChain: {
+      id: 'unbreakableChain',
+      name: 'uubreakable chain',
+      type: 'chain',
+      value: 1,
+      description: 'This chain is specially forged for a single purpose.',
+    },
     //TODO: tune prices on all manuals, currently silly cheap for testing
     fastPlayManual: {
       id: 'fastPlayManual',

@@ -20,7 +20,9 @@ export enum ActivityType {
   MindCultivation,
   CoreCultivation,
   Recruiting,
-  Swim
+  Swim,
+  ForgeChains,
+  AttachChains
 }
 
 export interface Activity {

@@ -4,11 +4,11 @@
     <span class="headerNote">Newest messages appear at the top</span>
     <span class="filters">
       <input type="radio" (change)="topicFilterStory($event)" id="filterStory" [checked]="logService.logTopic === 'STORY'"/>
-      <label for="filterStory">Show Story Messages</label>
+      <label for="filterStory">Show Story Messages <span class="highlightText">{{logService.newStory}}</span></label>
       <input type="radio" (change)="topicFilterEvent($event)" id="filterEvent" [checked]="logService.logTopic === 'EVENT'"/>
-      <label for="filterEvent">Show Event Messages</label>
+      <label for="filterEvent">Show Event Messages {{logService.newEvents}}</label>
       <input type="radio" (change)="topicFilterCombat($event)" id="filterCombat" [checked]="logService.logTopic === 'COMBAT'"/>
-      <label for="filterCombat">Show Combat Messages</label>
+      <label for="filterCombat">Show Combat Messages {{logService.newCombat}}</label>
     </span>
   </h3>
   <div class="logContainer">

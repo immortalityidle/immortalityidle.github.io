@@ -232,6 +232,63 @@ export class ActivityService {
             this.characterService.characterState.status.health.value -= 100;
             this.impossibleTaskService.tasks[ImpossibleTaskType.Swim].progress++;
             this.impossibleTaskService.checkCompletion();
+            if (this.impossibleTaskService.tasks[ImpossibleTaskType.Swim].complete){
+              this.logService.addLogMessage("You have acheived the impossible and dived all the way to the bottom of the ocean.","STANDARD","STORY");
+            }
+          }],
+          requirements: [{
+          }],
+          unlocked: true,
+          skipApprenticeshipLevel: 0
+        },
+      ]
+    }
+
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.RaiseIsland){
+      return [
+        {
+          level: 0,
+          name: ['Forge Unbreakable Chain'],
+          activityType: ActivityType.ForgeChains,
+          description: ['Forge a chain strong enough to pull the island from the depths.'],
+          consequenceDescription: ['Reduce Stamina by 100. If you have the right facilities and materials you might be able to create an unbreakable chain.'],
+          consequence: [() => {
+            this.characterService.characterState.status.stamina.value -= 100;
+            let metalValue = this.inventoryService.consume('metal');
+            if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil" && metalValue >= 150){
+              if (Math.random() > 0.01){
+                this.logService.addLogMessage("Your anvil rings with power, a new chain is forged!","STANDARD","EVENT");
+                this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
+              }
+            } else {
+              this.logService.addLogMessage("You fumble with the wrong tools and materials and hurt yourself.","INJURY","EVENT");
+              this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+            }
+          }],
+          requirements: [{
+          }],
+          unlocked: true,
+          skipApprenticeshipLevel: 0
+        },
+        {
+          level: 0,
+          name: ['Attach Chains to the Island'],
+          activityType: ActivityType.AttachChains,
+          description: ['Swim deep and attach one of your chains to the island.'],
+          consequenceDescription: ['Reduce Stamina by 1000. Requires an unbreakable chain.'],
+          consequence: [() => {
+            this.characterService.characterState.status.stamina.value -= 1000;
+            if (this.inventoryService.consume("chain") > 0){
+                this.logService.addLogMessage("You attach a chain to the island. and give your chains a tug.","STANDARD","EVENT");
+                this.impossibleTaskService.tasks[ImpossibleTaskType.RaiseIsland].progress++;
+                this.impossibleTaskService.checkCompletion();
+                if (this.impossibleTaskService.tasks[ImpossibleTaskType.RaiseIsland].complete){
+                  this.logService.addLogMessage("With a mighty pull, the island comes loose. You haul it to the surface.","STANDARD","STORY");
+                }
+            } else {
+              this.logService.addLogMessage("You fumble around in the depths without a chain until a shark comes by and takes a bite.","INJURY","EVENT");
+              this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+            }
           }],
           requirements: [{
           }],

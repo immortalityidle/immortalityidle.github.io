@@ -483,7 +483,7 @@ export class HomeService {
         if (this.grandfatherTent){
           this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD", 'EVENT');
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
-          this.characterService.characterState.money += 5;
+          this.characterService.characterState.money += 50;
           this.setCurrentHome(this.nextHome);
         }
       });

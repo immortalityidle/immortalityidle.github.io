@@ -4,7 +4,17 @@
     <div>
         <table>
             <tr *ngFor="let task of impossibleTaskService.tasks">
-                <td>{{task.name}}</td>
+                <td>
+                  <span *ngIf="impossibleTaskService.nextTask <= task.taskType">
+                    <mat-icon tooltip="{{task.description}}">
+                      help
+                    </mat-icon>
+                    {{task.name}}
+                  </span>
+                  <span *ngIf="impossibleTaskService.nextTask > task.taskType">
+                    ????????????
+                  </span>
+                </td>
                 <td>
                   <progress class="status-progress"
                     [value]="task.progress"
