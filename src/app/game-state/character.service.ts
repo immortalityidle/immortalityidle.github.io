@@ -1,20 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
 import { formatNumber } from '@angular/common';
+import { ActivityService } from './activity.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
+  activityService?: ActivityService;
   characterState: Character;
   forceRebirth: boolean = false;
   fatherGift: boolean = false;
   lifespanTooltip: string = "";
     
   constructor(
+    private injector: Injector,
     mainLoopService: MainLoopService,
     private logService: LogService,
     private reincarnationService: ReincarnationService
@@ -27,7 +30,7 @@ export class CharacterService {
       // check for death
       let deathMessage = "";
       if (this.forceRebirth){
-        deathMessage = "You release your soul from your body at the age of " +  + ".";
+        deathMessage = "You release your soul from your body at the age of " + this.formatAge() + ".";
       } else if (this.characterState.age >= this.characterState.lifespan) {
         deathMessage = "You reach the end of your natural life and pass away from natural causes at the age of " + this.formatAge() + ".";
       } else if (this.characterState.status.nourishment.value <= 0) {
@@ -142,6 +145,11 @@ export class CharacterService {
         attribute.value = 0;
       }
     }
+    if (!this.activityService){
+      this.activityService = this.injector.get(ActivityService);
+    }
+    this.activityService.reloadActivities();
+    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
     this.forceRebirth = true;
   }
 
@@ -179,6 +187,11 @@ export class CharacterService {
         attribute.value = 0;
       }
     }
+    if (!this.activityService){
+      this.activityService = this.injector.get(ActivityService);
+    }
+    this.activityService.reloadActivities();
+    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
     this.forceRebirth = true;
   }
 

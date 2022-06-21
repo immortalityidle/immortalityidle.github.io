@@ -29,7 +29,7 @@ export class FurnitureStoreModalComponent {
       this.buyDisabled = true;
     } else {
       this.storeService.selectedItem = item;
-      if ((item.owned && item.owned()) || this.characterService.characterState.money < item.value){
+      if (item.owned && item.owned()){
         this.buyDisabled = true;
       } else {
         this.buyDisabled = false;
