@@ -1,4 +1,6 @@
 import { Equipment, Item } from './inventory.service'
+import { LogService } from './log.service';
+import { formatNumber } from '@angular/common';
 
 export interface CharacterAttribute {
   strength?: number,
@@ -62,6 +64,10 @@ export interface CharacterProperties {
 const INITIAL_AGE = 18 * 365;
 
 export class Character {
+
+  constructor(private logService: LogService){
+  }
+
   totalLives: number = 1;
   dead: boolean = false;
   attributeScalingLimit: number = 10;
@@ -222,7 +228,9 @@ export class Character {
     for (const key in keys){
       if (this.attributes[keys[key]].value > 0){
         // gain aptitude based on last life's value
-        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / this.aptitudeGainDivider;
+        let addedValue = this.attributes[keys[key]].value / this.aptitudeGainDivider
+        this.attributes[keys[key]].aptitude += addedValue;
+        this.logService.addLogMessage("Your aptitude for " + keys[key] + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
       }

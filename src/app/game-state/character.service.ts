@@ -3,12 +3,13 @@ import { LogService } from './log.service';
 import { MainLoopService } from '../main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
+import { formatNumber } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
-  characterState = new Character();
+  characterState: Character;
   forceRebirth: boolean = false;
   fatherGift: boolean = false;
   lifespanTooltip: string = "";
@@ -18,6 +19,7 @@ export class CharacterService {
     private logService: LogService,
     private reincarnationService: ReincarnationService
   ) {
+    this.characterState = new Character(logService);
     mainLoopService.tickSubject.subscribe(() => {
       this.characterState.dead = false;
       this.characterState.age++;
@@ -25,22 +27,22 @@ export class CharacterService {
       // check for death
       let deathMessage = "";
       if (this.forceRebirth){
-        deathMessage = "You release your soul from your body.";
+        deathMessage = "You release your soul from your body at the age of " +  + ".";
       } else if (this.characterState.age >= this.characterState.lifespan) {
-        deathMessage = "You reach the end of your natural life and pass away from old age.";
+        deathMessage = "You reach the end of your natural life and pass away from natural causes at the age of " + this.formatAge() + ".";
       } else if (this.characterState.status.nourishment.value <= 0) {
         if (this.characterState.attributes.spirituality.value > 0){
           // you're spritual now, you can fast!
           this.characterState.status.health.value -= 20;
           this.characterState.increaseAttribute('spirituality', 0.1);
           if (this.characterState.status.health.value <= 0) {
-            deathMessage = "You starve to death.";
+            deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
           }
         } else {
-          deathMessage = "You starve to death.";
+          deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
         }
       } else if (this.characterState.status.health.value <= 0) {
-        deathMessage = "You succumb to your wounds and die.";
+        deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
       }
       if (deathMessage != ""){
         this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
@@ -49,16 +51,16 @@ export class CharacterService {
             "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
             'STANDARD', 'EVENT');
         }
-        this.logService.addLogMessage(
-          "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again.",
-          'STANDARD', 'EVENT');
-        this.logService.addLogMessage(
-          "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
-          'STANDARD', 'EVENT');
         this.characterState.reincarnate(); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
         this.characterState.dead = true; // use this flag to stop other events until the next tick
         this.forceRebirth = false;
+        this.logService.addLogMessage(
+          "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number " + this.characterState.totalLives + " will be the one.",
+          'STANDARD', 'EVENT');
+        this.logService.addLogMessage(
+          "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
+          'STANDARD', 'EVENT');
       }
     });
 
@@ -78,6 +80,12 @@ export class CharacterService {
       }
     });
 
+  }
+
+  formatAge(): string{
+    let years = Math.floor(this.characterState.age / 365);
+    let days = this.characterState.age % 365;
+    return years + " years, " + days + " days"
   }
 
   setLifespanTooltip(){

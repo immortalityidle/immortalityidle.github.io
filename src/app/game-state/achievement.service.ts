@@ -93,17 +93,6 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Agricultural Aptitude",
-      description: "You plowed 88 fields and unlocked the " + this.itemRepoService.items['perpetualFarmingManual'].name,
-      check: () => {
-        return this.homeService.fields.length >= 88;
-      },
-      effect: () => {
-        this.storeService.unlockManual(this.itemRepoService.items['perpetualFarmingManual']);
-      },
-      unlocked: false
-    },
-    {
       name: "Persitent Reincarnator",
       description: "You lived 28 lives and unlocked the " + this.itemRepoService.items['restartActivityManual'].name,
       check: () => {

@@ -52,7 +52,6 @@ export interface HomeProperties {
   furniture: FurnitureSlots,
   fields: Field[],
   averageYield: number,
-  autoReplant: boolean,
   landPrice: number,
   autoBuyLandUnlocked: boolean,
   autoBuyLandLimit: number,
@@ -431,8 +430,7 @@ export class HomeService {
   nextHome!: Home;
   nextHomeCostReduction: number = 0;
   nextHomeCost: number = 0;
-  autoReplant : boolean;
-
+  
   constructor(
     private characterService: CharacterService,
     private inventoryService: InventoryService,
@@ -444,7 +442,6 @@ export class HomeService {
   ) {
       this.land = 0;
       this.landPrice = 100;
-      this.autoReplant = false;
       this.setCurrentHome(this.homesList[0]);
       if (this.home === undefined ||
         this.homeValue === undefined ||
@@ -500,7 +497,6 @@ export class HomeService {
       landPrice: this.landPrice,
       fields: this.fields,
       averageYield: this.averageYield,
-      autoReplant: this.autoReplant,
       autoBuyLandUnlocked: this.autoBuyLandUnlocked,
       autoBuyLandLimit: this.autoBuyLandLimit,
       autoBuyHomeUnlocked: this.autoBuyHomeUnlocked,
@@ -518,7 +514,6 @@ export class HomeService {
   setProperties(properties: HomeProperties) {
     this.land = properties.land;
     this.landPrice = properties.landPrice;
-    this.autoReplant = properties.autoReplant;
     this.fields = properties.fields;
     this.averageYield = properties.averageYield || 0;
     this.setCurrentHome(this.homesList[properties.homeValue]);
@@ -666,12 +661,7 @@ export class HomeService {
         }
         totalDailyYield += fieldYield;
         this.inventoryService.addItems(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
-        if (this.autoReplant){
-          this.fields[i] = this.getCrop();
-        } else {
-          this.fields.splice(i, 1);
-          this.land++;
-        }
+        this.fields[i] = this.getCrop();
       } else {
         this.fields[i].daysToHarvest--;
       }

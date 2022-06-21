@@ -924,35 +924,6 @@ export class ItemRepoService {
         }
       }
     },
-    perpetualFarmingManual: {
-      id: 'perpetualFarmingManual',
-      name: "Manual of Perpetual Farming",
-      type: "manual",
-      description: "This manual teaches you to automatically replant fields when they are harvested.",
-      value: 50000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic farm replanting.",
-      useConsumes: true,
-      use: () => {
-        // check if homeService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.homeService){
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoReplant = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
-      },
-      owned: () => {
-        // check if homeService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.homeService){
-          this.homeService = this.injector.get(HomeService);
-        }
-        if (this.homeService?.autoReplant){
-          return true;
-        } else {
-          return false;
-        }
-      }
-    },
     restartActivityManual: {
       id: 'restartActivityManual',
       name: "Manual of Remembered Plans",
