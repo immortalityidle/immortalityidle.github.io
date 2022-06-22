@@ -50,6 +50,8 @@ export class GameStateService {
     private impossibleTaskService: ImpossibleTaskService
 
   ) {
+    // @ts-ignore
+    window['GameStateService'] = this;
     window.setInterval(this.savetoLocalStorage.bind(this), 10000);
   }
 
