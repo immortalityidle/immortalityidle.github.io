@@ -30,6 +30,8 @@ export interface BattleProperties {
   autoTroubleUnlocked: boolean,
   autoTroubleEnabled: boolean,
   monthlyMonsterDay: number,
+  manaShieldUnlocked: boolean,
+  manaAttackUnlocked: boolean,
   enableManaShield: boolean,
   enableManaAttack: boolean
 }
@@ -49,6 +51,8 @@ export class BattleService {
   yearlyMonsterDay: number;
   enableManaShield: boolean = false;
   enableManaAttack: boolean = false;
+  manaShieldUnlocked: boolean = false;
+  manaAttackUnlocked: boolean = false;
   tickCounter: number;
   ticksPerFight: number = 10;
 
@@ -114,6 +118,8 @@ export class BattleService {
       autoTroubleUnlocked: this.autoTroubleUnlocked,
       autoTroubleEnabled: this.autoTroubleEnabled,
       monthlyMonsterDay: this.yearlyMonsterDay,
+      manaShieldUnlocked: this.manaShieldUnlocked,
+      manaAttackUnlocked: this.manaAttackUnlocked,
       enableManaShield: this.enableManaShield,
       enableManaAttack: this.enableManaAttack,
     }
@@ -137,6 +143,10 @@ export class BattleService {
         if (Math.random() < enemyStack.enemy.accuracy){
           let damage = enemyStack.enemy.attack;
           damage = damage / (1 + this.characterService.characterState.defense * 0.1);
+          if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10){
+            damage /= 2;
+            this.characterService.characterState.status.mana.value -= 10;
+          }
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + formatNumber(damage,"en-US", "1.0-2") + " damage", 'INJURY', 'COMBAT');
           this.characterService.characterState.status.health.value -= damage;
           this.characterService.characterState.increaseAttribute('toughness', 0.01);
@@ -161,7 +171,10 @@ export class BattleService {
         // pity damage
         damage = 1;
       }
-
+      if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10){
+        damage *= 2;
+        this.characterService.characterState.status.mana.value -= 10;
+      }
       this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
       // degrade weapon
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats){
@@ -284,9 +297,9 @@ export class BattleService {
   monsterQualities = [
     "an infant", "a puny", "a pathetic", "a sickly", "a starving", "a wimpy", "a weak", "a badly wounded", 
     "a tired", "a poor", "a small", "a despondent", "a frightened", "a skinny", "a sad", "a stinking", "a typical",
-    "an average", "a healthy", "a big", "a tough", "a strong", "a fearsome", "a gutsy",
+    "an average", "a healthy", "a big", "a tough", "a strong", "a fearsome", "a gutsy", "a quick",
     "a hefty", "a brawny", "an athletic", "a muscular", "a rugged", "a resilient", "an angry",
-    "a clever", "a fierce", "a devious", "a mighty", "a powerful", "a noble", 
+    "a clever", "a fierce", "a devious", "a mighty", "a powerful", "a noble", "a magical",
     "a dangerous", "a terrifying", "a flame-shrouded", "an abominable", "a monstrous", 
     "a dominating", "a demonic", "a diabolical", "an infernal"
   ];

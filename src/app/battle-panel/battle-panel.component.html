@@ -1,6 +1,18 @@
 <h3>
     <mat-icon tooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">fort</mat-icon>
     Battles
+    <span *ngIf="characterService.characterState.manaUnlocked">
+      <span class="battleOption" *ngIf="battleService.manaShieldUnlocked"
+        tooltip="Your mana can form a protective shroud around your body, protecting you and decreasing the damage that you take. It requires 10 mana each time the mana shield protects you.">
+        <input type="checkbox" (change)="manaShieldToggle($event)" id="manaShield" [checked]="battleService.enableManaShield"/>
+        <label for="manaShield">Activate Mana Shield</label>
+      </span>
+      <span class="battleOption" *ngIf="battleService.manaAttackUnlocked" 
+        tooltip="You can focus your mana around your weapon or fist to project greater power into your attacks. Doing this will double the damage that you inflict. Each use of this ability requires 10 mana.">
+        <input type="checkbox" (change)="manaAttackToggle($event)" id="manaShield" [checked]="battleService.enableManaAttack"/>
+        <label for="manaShield">Activate Mana Strike</label>
+      </span>
+    </span>    
     <span class="rightAligned">
       <button *ngIf="!battleService.autoTroubleUnlocked" (click)="battleService.trouble()">Look for Trouble</button>
       <input *ngIf="battleService.autoTroubleUnlocked"  type="checkbox" (change)="autoTroubleChange($event)"
@@ -30,4 +42,5 @@
         </tr>
       </ng-container>
     </table>
+    
   </div>

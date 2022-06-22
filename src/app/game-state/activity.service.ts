@@ -694,7 +694,7 @@ export class ActivityService {
             this.characterService.characterState.money +=
               Math.log2(this.characterService.characterState.attributes.intelligence.value) +
               (this.characterService.characterState.attributes.waterLore.value * 10);
-            this.characterService.characterState.increaseAttribute('woodLore',0.4);
+            this.characterService.characterState.increaseAttribute('woodLore',0.3);
             this.characterService.characterState.increaseAttribute('waterLore',0.6);
             if (this.inventoryService.openInventorySlots() > 0){
               let grade = this.inventoryService.consume('ingredient');

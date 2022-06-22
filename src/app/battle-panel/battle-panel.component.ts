@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BattleService, Enemy } from '../game-state/battle.service';
+import { CharacterService } from '../game-state/character.service';
 
 @Component({
   selector: 'app-battle-panel',
@@ -8,7 +9,12 @@ import { BattleService, Enemy } from '../game-state/battle.service';
 })
 export class BattlePanelComponent implements OnInit {
 
-  constructor(public battleService: BattleService) { }
+  constructor(
+    public battleService: BattleService,
+    public characterService: CharacterService
+  ){ 
+
+  }
 
   ngOnInit(): void {
     // so that eslint stops whining
@@ -18,5 +24,19 @@ export class BattlePanelComponent implements OnInit {
   autoTroubleChange(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.battleService.autoTroubleEnabled = event.target.checked;
+  }
+
+  manaShieldToggle(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    if (this.characterService.characterState.manaUnlocked){
+      this.battleService.enableManaShield = event.target.checked;
+    }
+  }
+
+  manaAttackToggle(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;  
+    if (this.characterService.characterState.manaUnlocked){
+      this.battleService.enableManaAttack = event.target.checked;
+    }
   }
 }

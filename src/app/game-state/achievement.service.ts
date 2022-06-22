@@ -505,9 +505,50 @@ export class AchievementService {
       },
       unlocked: false
     },
-
-    
-    
+    {
+      name: "Harmony of Mind and Body",
+      description: "You have balanced your powerful mind and body and unlocked the ability to use your mana to strike down your enemies.",
+      check: () => {
+        let lowValue = this.characterService.characterState.attributes.strength.value * 0.9;
+        let highValue = this.characterService.characterState.attributes.strength.value * 1.1;
+        return this.characterService.characterState.manaUnlocked && lowValue > 1000000 && 
+          this.characterService.characterState.attributes.speed.value >= lowValue && 
+          this.characterService.characterState.attributes.speed.value <= highValue && 
+          this.characterService.characterState.attributes.toughness.value >= lowValue && 
+          this.characterService.characterState.attributes.toughness.value <= highValue && 
+          this.characterService.characterState.attributes.charisma.value >= lowValue && 
+          this.characterService.characterState.attributes.charisma.value <= highValue && 
+          this.characterService.characterState.attributes.intelligence.value >= lowValue && 
+          this.characterService.characterState.attributes.intelligence.value <= highValue;
+      },
+      effect: () => {
+        this.battleService.manaAttackUnlocked = true;
+      },
+      unlocked: false
+    },
+    {
+      name: "Unity of Spirit, Mind, and Body",
+      description: "You have balanced your powerful spirit with your mind and body. You unlocked the ability to use your mana to protect yourself.",
+      check: () => {
+        let lowValue = this.characterService.characterState.attributes.strength.value * 0.9;
+        let highValue = this.characterService.characterState.attributes.strength.value * 1.1;
+        return this.characterService.characterState.manaUnlocked && lowValue > 1000000 && 
+          this.characterService.characterState.attributes.spirituality.value >= lowValue && 
+          this.characterService.characterState.attributes.spirituality.value <= highValue && 
+          this.characterService.characterState.attributes.speed.value >= lowValue && 
+          this.characterService.characterState.attributes.speed.value <= highValue && 
+          this.characterService.characterState.attributes.toughness.value >= lowValue && 
+          this.characterService.characterState.attributes.toughness.value <= highValue && 
+          this.characterService.characterState.attributes.charisma.value >= lowValue && 
+          this.characterService.characterState.attributes.charisma.value <= highValue && 
+          this.characterService.characterState.attributes.intelligence.value >= lowValue && 
+          this.characterService.characterState.attributes.intelligence.value <= highValue;
+      },
+      effect: () => {
+        this.battleService.manaShieldUnlocked = true;
+      },
+      unlocked: false
+    }
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean){
