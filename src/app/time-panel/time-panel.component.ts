@@ -45,11 +45,34 @@ export class TimePanelComponent implements OnInit {
         return;
       }
 
-      if (
-        this.activityService.activityLoop.length > 0 &&
+      if (this.activityService.activityLoop.length > 0 &&
         this.currentIndex < this.activityService.activityLoop.length
       ) {
         this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
+        // check if our current activity is zero-day
+        if (this.currentLoopEntry.repeatTimes == 0){
+          // don't do the activity, instead see if there's a next one we can switch to
+          let index = 0;
+          if (this.currentIndex < this.activityService.activityLoop.length - 1){
+            index = this.currentIndex + 1;
+          }
+          while (index != this.currentIndex && this.activityService.activityLoop[index].repeatTimes == 0){
+            index++;
+            if (index >= this.activityService.activityLoop.length){
+              index = 0;
+            }
+          }
+          if (index == this.currentIndex){
+            // we looped all the way around without getting any non-zero repeatTimes, pause the game and bail out
+            this.mainLoopService.pause = true;
+            return;
+          } else {
+            //switch to the found non-zero activity and restart the ticks for it
+            this.currentIndex = index;
+            this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
+            this.currentTickCount = 0;
+          }
+        }
         let activity = this.activityService.getActivityByType(this.currentLoopEntry.activity);
         activity.consequence[activity.level]();
 
@@ -67,7 +90,7 @@ export class TimePanelComponent implements OnInit {
           this.currentTickCount++;
         } else {
           this.currentIndex++;
-          this.currentTickCount = 2;
+          this.currentTickCount = 0;
           if (this.currentIndex == this.activityService.activityLoop.length) {
             this.currentIndex = 0;
           }
@@ -80,6 +103,7 @@ export class TimePanelComponent implements OnInit {
         // make sure that we reset the current index if activities get removed below the currentIndex
         this.currentIndex = 0;
       }
+      // do the spirit activity if we can
       if (this.activityService.spiritActivity && this.characterService.characterState.status.mana.value >= 5){
         let activity = this.activityService.getActivityByType(this.activityService.spiritActivity);
         activity.consequence[activity.level]();

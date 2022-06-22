@@ -61,9 +61,20 @@ export class AchievementService {
   achievements: Achievement[] = [
     {
       name: "Bookworm",
-      description: "You opened the manuals shop and unlocked the " + this.itemRepoService.items['fastPlayManual'].name,
+      description: "You opened the manuals shop and unlocked the " + this.itemRepoService.items['restartActivityManual'].name,
       check: () => {
         return this.storeService.storeOpened;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['restartActivityManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Played a Bit",
+      description: "You worked toward immortality for ten years across your lifetimes and unlocked the " + this.itemRepoService.items['fastPlayManual'].name,
+      check: () => {
+        return this.mainLoopService.totalTicks > 3650;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fastPlayManual']);
@@ -71,10 +82,10 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Played a Bit",
-      description: "You worked toward immortality for ten years across your lifetimes and unlocked the " + this.itemRepoService.items['fasterPlayManual'].name,
+      name: "Basically an Expert",
+      description: "You worked toward immortality for one hundred years across your lifetimes and unlocked the " + this.itemRepoService.items['fasterPlayManual'].name,
       check: () => {
-        return this.mainLoopService.totalTicks > 3650;
+        return this.mainLoopService.totalTicks > 36500;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fasterPlayManual']);
@@ -82,24 +93,13 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Basically an Expert",
-      description: "You worked toward immortality for one hundred years across your lifetimes and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
+      name: "Persitent Reincarnator",
+      description: "You lived 88 lives and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
       check: () => {
-        return this.mainLoopService.totalTicks > 36500;
+        return this.characterService.characterState.totalLives >= 88 && this.mainLoopService.totalTicks > 36500;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fastestPlayManual']);
-      },
-      unlocked: false
-    },
-    {
-      name: "Persitent Reincarnator",
-      description: "You lived 28 lives and unlocked the " + this.itemRepoService.items['restartActivityManual'].name,
-      check: () => {
-        return this.characterService.characterState.totalLives >= 28;
-      },
-      effect: () => {
-        this.storeService.unlockManual(this.itemRepoService.items['restartActivityManual']);
       },
       unlocked: false
     },

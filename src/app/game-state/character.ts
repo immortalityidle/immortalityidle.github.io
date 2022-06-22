@@ -30,7 +30,7 @@ export type AttributeType = 'strength' |
   'fireLore' |
   'animalHandling';
 
-type AttributeObject = {[key in AttributeType]: {description: string, value: number, aptitude: number, icon: string}};
+type AttributeObject = {[key in AttributeType]: {description: string, value: number, lifeStartValue: number, aptitude: number, icon: string}};
 
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
 
@@ -88,72 +88,84 @@ export class Character {
     strength: {
       description: "An immortal must have raw physical power.",
       value: 1,
+      lifeStartValue: 1,
       aptitude: 1,
       icon: "fitness_center"
     },
     toughness: {
       description: "An immortal must develop resilience to endure hardship.",
       value: 1,
+      lifeStartValue: 1,
       aptitude: 1,
       icon: "castle"
     },
     speed: {
       description: "An immortal must be quick of foot and hand.",
       value: 1,
+      lifeStartValue: 1,
       aptitude: 1,
       icon: "directions_run"
     },
     intelligence: {
       description: "An immortal must understand the workings of the universe.",
       value: 1,
+      lifeStartValue: 1,
       aptitude: 1,
       icon: "local_library"
     },
     charisma: {
       description: "An immortal must influence the hearts and minds of others.",
       value: 1,
+      lifeStartValue: 1,
       aptitude: 1,
       icon: "forum"
     },
     spirituality: {
       description: "An immortal must find deep connections to the divine.",
       value: 0,
+      lifeStartValue: 0,
       aptitude: 1,
       icon: "auto_awesome"
     },
     earthLore: {
       description: "Understanding the earth and how to draw power and materials from it.",
       value: 0,
+      lifeStartValue: 0,
       aptitude: 1,
       icon: "landslide"
     },
     metalLore: {
       description: "Understanding metals and how to forge and use them.",
       value: 0,
+      lifeStartValue: 0,
       aptitude: 1,
       icon: "hardware"
     },
     woodLore: {
       description: "Understanding plants and how to grow and care for them.",
       value: 0,
+      lifeStartValue: 0,
       aptitude: 1,
       icon: "forest"
     },
     waterLore: {
       description: "Understanding potions and pills and how to make and use them.",
       value: 0,
+      lifeStartValue: 0,
       aptitude: 1,
       icon: "emoji_food_beverage"
     },
     fireLore: {
       description: "Burn! Burn! BURN!!!",
       value: 0,
+      lifeStartValue: 0,
       aptitude: 1,
       icon: "emoji_food_beverage"
     },
     animalHandling: {
       description: "Skill in working with animals and monsters.",
       value: 0,
+      lifeStartValue: 0,
       aptitude: 1,
       icon: "pets"
     },
@@ -228,11 +240,12 @@ export class Character {
     for (const key in keys){
       if (this.attributes[keys[key]].value > 0){
         // gain aptitude based on last life's value
-        let addedValue = this.attributes[keys[key]].value / this.aptitudeGainDivider
+        let addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0 )) / this.aptitudeGainDivider;
         this.attributes[keys[key]].aptitude += addedValue;
         this.logService.addLogMessage("Your aptitude for " + keys[key] + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
+        this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
     if (this.bloodlineRank < 3){
