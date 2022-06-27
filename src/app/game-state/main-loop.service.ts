@@ -1,9 +1,9 @@
 import { Injectable,Injector } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CharacterService } from './game-state/character.service';
+import { CharacterService } from './character.service';
 
 const TICK_INTERVAL_MS = 25;
-const LONG_TICK_INTERVAL_MS = 1000;
+const LONG_TICK_INTERVAL_MS = 500;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean,
@@ -97,11 +97,15 @@ export class MainLoopService {
           this.tickCount++;
           if (this.tickCount >= this.tickDivider){
             this.tickCount = 0;
-            this.totalTicks++;
-            this.tickSubject.next(true);
+            this.tick();
           }
         }
       }
     }, TICK_INTERVAL_MS);
+  }
+
+  tick(){
+    this.totalTicks++;
+    this.tickSubject.next(true);
   }
 }

@@ -5,7 +5,7 @@ import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { LogService } from '../game-state/log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService } from '../game-state/main-loop.service';
 
 
 @Component({
@@ -113,7 +113,11 @@ export class TimePanelComponent implements OnInit {
   }
 
   pauseClick(){
-    this.mainLoopService.pause = true;
+    if (this.mainLoopService.pause){
+      this.mainLoopService.tick();
+    } else {
+      this.mainLoopService.pause = true;
+    }
   }
 
   standardClick(){

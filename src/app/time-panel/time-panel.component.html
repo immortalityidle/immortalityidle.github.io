@@ -7,7 +7,7 @@
       How will you spend your days?
     </span>
     <mat-icon (click)="pauseClick()" [ngClass]="{'iconActive': this.mainLoopService.pause}"
-      tooltip="Pause the game (spacebar)" class="iconButton">
+      tooltip="Pause the game (spacebar). Clicking this again while paused will step time forward a single day." class="iconButton">
       pause
     </mat-icon>
     <mat-icon (click)="standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"

@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 import { LogService } from './log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { Furniture, InventoryService, Item } from './inventory.service';

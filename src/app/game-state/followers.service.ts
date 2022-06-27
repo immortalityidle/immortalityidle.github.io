@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LogService } from './log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';

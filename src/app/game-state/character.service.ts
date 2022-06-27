@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
 import { formatNumber } from '@angular/common';

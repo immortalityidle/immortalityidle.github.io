@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BattleService } from './battle.service';
 import { LogService } from './log.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from './character.service';
 import { Furniture, InventoryService } from './inventory.service';

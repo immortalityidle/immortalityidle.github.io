@@ -1,7 +1,7 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from './game-state/game-state.service';
-import { MainLoopService } from './main-loop.service';
+import { MainLoopService } from './game-state/main-loop.service';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { OptionsModalComponent } from './options-modal/options-modal.component';
 import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';

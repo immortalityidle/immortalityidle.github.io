@@ -5,7 +5,7 @@ import { Furniture, InventoryService, Item, instanceOfFurniture } from './invent
 import { HomeService, HomeType, Home } from './home.service';
 import { ItemRepoService } from './item-repo.service';
 import { StoreService } from './store.service';
-import { MainLoopService } from '../main-loop.service';
+import { MainLoopService } from './main-loop.service';
 import { BattleService } from './battle.service';
 import { GameStateService } from './game-state.service';
 import { ActivityService } from './activity.service';
