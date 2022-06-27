@@ -268,7 +268,7 @@ export class BattleService {
       name: "a pesky mouse",
       health: 2,
       maxHealth: 2,
-      accuracy: 0.03,
+      accuracy: 0.15,
       attack: 0.3,
       defense: 0,
       loot: []

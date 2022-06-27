@@ -12,6 +12,7 @@ import { formatNumber } from '@angular/common';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { ImpossibleTaskService } from './game-state/impossibleTask.service';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
+import {environment} from '../environments/environment';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -68,6 +69,7 @@ export class BigNumberPipe implements PipeTransform {
 })
 export class AppComponent implements OnInit {
   title = 'immortalityidle';
+  applicationVersion = environment.appVersion;
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {

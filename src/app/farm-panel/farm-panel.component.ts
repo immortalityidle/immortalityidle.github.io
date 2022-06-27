@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 
 @Component({
@@ -8,7 +9,8 @@ import { HomeService } from '../game-state/home.service';
 })
 export class FarmPanelComponent {
 
-  constructor(public homeService: HomeService) { 
+  constructor(public homeService: HomeService,
+    private characterService: CharacterService) { 
 
   }
 
@@ -26,6 +28,35 @@ export class FarmPanelComponent {
       this.homeService.clearField();
     }
 
+  }
+
+  buyClicked(event: MouseEvent): void {
+    event.preventDefault();
+    if (event.shiftKey){
+      for (let i = 0; i < 10; i++){
+        this.homeService.buyLand();
+      }
+    } else if (event.ctrlKey){
+      while (this.characterService.characterState.money > this.homeService.landPrice){
+        this.homeService.buyLand();
+      }
+    } else {
+      this.homeService.buyLand();
+    }
+  }
+
+  plowClicked(event: MouseEvent): void {
+    if (event.shiftKey){
+      for (let i = 0; i < 10; i++){
+        this.homeService.addField();
+      }
+    } else if (event.ctrlKey){
+      while (this.homeService.land > 0){
+        this.homeService.addField();
+      }
+    } else {
+      this.homeService.addField();
+    }
   }
 
 }

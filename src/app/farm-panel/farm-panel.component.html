@@ -3,6 +3,13 @@
     <hr/>
     <div>
       Your {{homeService.fields.length}} fields produced an average of {{homeService.averageYield | number: '1.0-2'}} food per day over the last year.
+      <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels. Shift-click to buy 10 plots, Ctrl-click to buy all the land you can afford." class="iconButton">
+        add
+      </mat-icon>
+      <mat-icon  (click)="plowClicked($event)" placement="bottom" class="iconButton rightFloat"
+        tooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
+        waves
+      </mat-icon>      
       <mat-icon class="iconButton" (click)="clearClicked($event)" placement="bottom" class="iconButton rightFloat"
         tooltip="Clear a field. Converts a the field back into an open plot of land. Shift-click to clear 10 fields, Ctrl-click to clear all your fields.">
         delete_sweep
