@@ -862,10 +862,31 @@ export class ItemRepoService {
     },
     unbreakableChain: {
       id: 'unbreakableChain',
-      name: 'uubreakable chain',
+      name: 'unbreakable chain',
       type: 'chain',
       value: 1,
-      description: 'This chain is specially forged for a single purpose.',
+      description: 'This chain is specially forged to be incredibly strong.',
+    },
+    everlastingBrick: {
+      id: 'everlastingBrick',
+      name: 'everlasting brick',
+      type: 'brick',
+      value: 1,
+      description: 'This brick is specially made to bear unimaginable weight.',
+    },
+    everlastingMortar: {
+      id: 'everlastingMortar',
+      name: 'everlasting mortar',
+      type: 'mortar',
+      value: 1,
+      description: 'This mortar is specially made to hold up even the highest building.',
+    },
+    scaffolding: {
+      id: 'scaffolding',
+      name: 'scaffolding',
+      type: 'scaffolding',
+      value: 1,
+      description: 'This scaffolding allows you to work for the next level of your tower.',
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing
     fastPlayManual: {

@@ -24,9 +24,10 @@ export class CharacterService {
   ) {
     this.characterState = new Character(logService);
     mainLoopService.tickSubject.subscribe(() => {
-      this.characterState.dead = false;
-      this.characterState.age++;
-      this.characterState.status.nourishment.value--;
+      if (!this.characterState.dead){
+        this.characterState.age++;
+        this.characterState.status.nourishment.value--;
+      }
       // check for death
       let deathMessage = "";
       if (this.forceRebirth){
@@ -54,6 +55,7 @@ export class CharacterService {
             "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
             'STANDARD', 'EVENT');
         }
+        this.characterState.dead = false;
         this.characterState.reincarnate(); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
         this.characterState.dead = true; // use this flag to stop other events until the next tick

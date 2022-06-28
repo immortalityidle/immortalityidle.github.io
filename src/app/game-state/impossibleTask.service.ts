@@ -124,12 +124,6 @@ export class ImpossibleTaskService {
     reincarnationService: ReincarnationService
   ) {
 
-    mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead){
-        return;
-      }
-    });
-
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.nextTask >= this.tasks.length){
         // all tasks done
@@ -151,7 +145,9 @@ export class ImpossibleTaskService {
 
   reset(){
     for (let task of this.tasks){
-      task.progress = 0;
+      if (task.progress < task.progressRequired){
+        task.progress = 0;
+      }
     }
     this.activeTaskIndex = -1;
   }

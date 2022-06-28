@@ -196,6 +196,7 @@ export class FollowersService {
   }
 
   generateFollower(){
+    // TODO high end homes should allow a lot more followers
     let maxFollowers = 1 + this.homeService.homeValue + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
     if (this.followers.length >= maxFollowers){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");

@@ -22,7 +22,12 @@ export enum ActivityType {
   Recruiting,
   Swim,
   ForgeChains,
-  AttachChains
+  AttachChains,
+  MakeBrick,
+  MakeMortar,
+  MakeScaffold,
+  BuildTower,
+
 }
 
 export interface Activity {

@@ -150,6 +150,11 @@ export class BattleService {
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + formatNumber(damage,"en-US", "1.0-2") + " damage", 'INJURY', 'COMBAT');
           this.characterService.characterState.status.health.value -= damage;
           this.characterService.characterState.increaseAttribute('toughness', 0.01);
+          if (this.characterService.characterState.status.health.value <= 0){
+            this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
+            this.characterService.characterState.dead = true;
+            return;
+          }
         } else {
           this.logService.addLogMessage("Miss! " + enemyStack.enemy.name + " tries to hit you but fails.", 'STANDARD', 'COMBAT');
         }
