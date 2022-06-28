@@ -37,7 +37,7 @@
       <td>{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
       <td>
         <progress class="activity-progress"
-          [value]="entry === currentLoopEntry ? currentTickCount : (indexOfelement < currentIndex ? entry.repeatTimes : 0)"
+          [value]="indexOfelement < activityService.currentIndex ? entry.repeatTimes : indexOfelement > activityService.currentIndex ? 0 : activityService.currentTickCount"
           [max]="entry.repeatTimes">
         </progress>
       </td>

@@ -35,6 +35,10 @@ export class ActivityService {
   oddJobDays: number = 0;
   beggingDays: number = 0;
   completedApprenticeships: ActivityType[] = [];
+  currentIndex = 0;
+  currentTickCount = 0;
+  exhaustionDays = 0;
+  currentLoopEntry?: ActivityLoopEntry = undefined;
 
   constructor(
     private characterService: CharacterService,
@@ -54,6 +58,75 @@ export class ActivityService {
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
+      }
+      if (this.exhaustionDays > 0){
+        this.exhaustionDays--;
+        return;
+      }
+
+      if (this.activityLoop.length > 0 &&
+        this.currentIndex < this.activityLoop.length
+      ) {
+        this.currentLoopEntry = this.activityLoop[this.currentIndex];
+        // check if our current activity is zero-day
+        if (this.currentLoopEntry.repeatTimes == 0){
+          // don't do the activity, instead see if there's a next one we can switch to
+          let index = 0;
+          if (this.currentIndex < this.activityLoop.length - 1){
+            index = this.currentIndex + 1;
+          }
+          while (index != this.currentIndex && this.activityLoop[index].repeatTimes == 0){
+            index++;
+            if (index >= this.activityLoop.length){
+              index = 0;
+            }
+          }
+          if (index == this.currentIndex){
+            // we looped all the way around without getting any non-zero repeatTimes, pause the game and bail out
+            this.mainLoopService.pause = true;
+            return;
+          } else {
+            //switch to the found non-zero activity and restart the ticks for it
+            this.currentIndex = index;
+            this.currentLoopEntry = this.activityLoop[this.currentIndex];
+            this.currentTickCount = 0;
+          }
+        }
+        let activity = this.getActivityByType(this.currentLoopEntry.activity);
+        activity.consequence[activity.level]();
+
+        // check for exhaustion
+        if (this.characterService.characterState.status.stamina.value < 0) {
+          // take 5 days to recover, regain stamina, restart loop
+          this.logService.addLogMessage(
+            'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.',
+            'INJURY', 'EVENT'
+          );
+          this.exhaustionDays = 5;
+          this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
+        }
+
+        this.currentTickCount++;
+        if (this.currentTickCount >= this.currentLoopEntry.repeatTimes) {
+          // hit the end of the current activity repeats, move on to the next
+          this.currentTickCount = 0;
+          this.currentIndex++;
+          if (this.currentIndex >= this.activityLoop.length) {
+            this.currentIndex = 0;
+          }
+        }
+      } else if (this.activityLoop.length == 0){
+        //automatically pause if there are no activities so you don't accidentally just die doing nothing
+        this.mainLoopService.pause = true;
+      } else {
+        // make sure that we reset the current index if activities get removed below the currentIndex
+        this.currentIndex = 0;
+      }
+      // do the spirit activity if we can
+      if (this.spiritActivity && this.characterService.characterState.status.mana.value >= 5){
+        let activity = this.getActivityByType(this.spiritActivity);
+        activity.consequence[activity.level]();
+        this.characterService.characterState.status.mana.value -= 5;
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {

@@ -14,12 +14,6 @@ import { MainLoopService } from '../game-state/main-loop.service';
   styleUrls: ['./time-panel.component.less', '../app.component.less']
 })
 export class TimePanelComponent implements OnInit {
-  character: Character;
-
-  currentLoopEntry?: ActivityLoopEntry = undefined;
-  currentIndex = 0;
-  currentTickCount = 0;
-  exhaustionDays = 0;
 
   unlockFastSpeed: boolean = false;
   unlockFasterSpeed: boolean = false;
@@ -29,87 +23,10 @@ export class TimePanelComponent implements OnInit {
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
     public characterService: CharacterService,
-    private logService: LogService,
-    private achievmentService: AchievementService
   ) {
-    this.character = characterService.characterState;
   }
 
   ngOnInit(): void {
-    this.mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead){
-        return;
-      }
-      if (this.exhaustionDays > 0){
-        this.exhaustionDays--;
-        return;
-      }
-
-      if (this.activityService.activityLoop.length > 0 &&
-        this.currentIndex < this.activityService.activityLoop.length
-      ) {
-        this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
-        // check if our current activity is zero-day
-        if (this.currentLoopEntry.repeatTimes == 0){
-          // don't do the activity, instead see if there's a next one we can switch to
-          let index = 0;
-          if (this.currentIndex < this.activityService.activityLoop.length - 1){
-            index = this.currentIndex + 1;
-          }
-          while (index != this.currentIndex && this.activityService.activityLoop[index].repeatTimes == 0){
-            index++;
-            if (index >= this.activityService.activityLoop.length){
-              index = 0;
-            }
-          }
-          if (index == this.currentIndex){
-            // we looped all the way around without getting any non-zero repeatTimes, pause the game and bail out
-            this.mainLoopService.pause = true;
-            return;
-          } else {
-            //switch to the found non-zero activity and restart the ticks for it
-            this.currentIndex = index;
-            this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
-            this.currentTickCount = 0;
-          }
-        }
-        let activity = this.activityService.getActivityByType(this.currentLoopEntry.activity);
-        activity.consequence[activity.level]();
-
-        // check for exhaustion
-        if (this.character.status.stamina.value < 0) {
-          // take 5 days to recover, regain stamina, restart loop
-          this.logService.addLogMessage(
-            'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.',
-            'INJURY', 'EVENT'
-          );
-          this.exhaustionDays = 5;
-          this.character.status.stamina.value = this.character.status.stamina.max;
-        }
-        if (this.currentTickCount <= this.currentLoopEntry.repeatTimes) {
-          this.currentTickCount++;
-        } else {
-          this.currentIndex++;
-          this.currentTickCount = 0;
-          if (this.currentIndex == this.activityService.activityLoop.length) {
-            this.currentIndex = 0;
-          }
-          this.currentLoopEntry = this.activityService.activityLoop[this.currentIndex];
-        }
-      } else if (this.activityService.activityLoop.length == 0){
-        //automatically pause if there are no activities so you don't accidentally just die doing nothing
-        this.mainLoopService.pause = true;
-      } else {
-        // make sure that we reset the current index if activities get removed below the currentIndex
-        this.currentIndex = 0;
-      }
-      // do the spirit activity if we can
-      if (this.activityService.spiritActivity && this.characterService.characterState.status.mana.value >= 5){
-        let activity = this.activityService.getActivityByType(this.activityService.spiritActivity);
-        activity.consequence[activity.level]();
-        this.characterService.characterState.status.mana.value -= 5;
-      }
-    });
   }
 
   pauseClick(){
@@ -153,8 +70,8 @@ export class TimePanelComponent implements OnInit {
   onRemoveClick(entry: ActivityLoopEntry): void{
     let index = this.activityService.activityLoop.indexOf(entry);
     // make sure we're not running past the end of the entries array
-    if (this.currentIndex >= this.activityService.activityLoop.length - 1){
-      this.currentIndex = 0;
+    if (this.activityService.currentIndex >= this.activityService.activityLoop.length - 1){
+      this.activityService.currentIndex = 0;
     }
     this.activityService.activityLoop.splice(index,1);
   }
