@@ -21,26 +21,40 @@
     </span>
 </h3>
 <div class="battleContainer">
-    <table>
-      <ng-container *ngFor="let enemyStack of battleService.enemies">
-        <tr>
-          <td>
-              <button *ngIf="battleService.currentEnemy !== enemyStack" (click)="battleService.fight(enemyStack)">Fight</button>
-              <span *ngIf="battleService.currentEnemy === enemyStack">Fighting</span>
-          </td>
-          <td>{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
-          <td class="health">
-            <progress class="status-progress"
-              [value]="enemyStack.enemy.health"
-              [max]="enemyStack.enemy.maxHealth">
-              <div></div>
-            </progress>
-          </td>
-          <td tooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
-          <td tooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack}}</td>
-          <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense}}</td>
-        </tr>
-      </ng-container>
-    </table>
-    
-  </div>
+  <table class="clashTable" *ngIf="battleService.enemies.length > 0">
+    <tr>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 4 || battleService.tickCounter == 5">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 3 || battleService.tickCounter == 6">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 2 || battleService.tickCounter == 7">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 1 || battleService.tickCounter == 8">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 0 || battleService.tickCounter == 9">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 10">crisis_alert</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 0 || battleService.tickCounter == 9">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 1 || battleService.tickCounter == 8">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 2 || battleService.tickCounter == 7">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 3 || battleService.tickCounter == 6">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 4 || battleService.tickCounter == 5">arrow_backward</mat-icon></td>
+    </tr>
+  </table>
+  <table>
+    <ng-container *ngFor="let enemyStack of battleService.enemies">
+      <tr>
+        <td>
+            <button *ngIf="battleService.currentEnemy !== enemyStack" (click)="battleService.fight(enemyStack)">Fight</button>
+            <span *ngIf="battleService.currentEnemy === enemyStack">Fighting</span>
+        </td>
+        <td>{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
+        <td class="health">
+          <progress class="status-progress"
+            [value]="enemyStack.enemy.health"
+            [max]="enemyStack.enemy.maxHealth">
+            <div></div>
+          </progress>
+        </td>
+        <td tooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
+        <td tooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack}}</td>
+        <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense}}</td>
+      </tr>
+    </ng-container>
+  </table>  
+</div>

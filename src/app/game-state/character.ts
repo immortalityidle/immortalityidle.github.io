@@ -160,7 +160,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
-      icon: "emoji_food_beverage"
+      icon: "local_fire_department"
     },
     animalHandling: {
       description: "Skill in working with animals and monsters.",

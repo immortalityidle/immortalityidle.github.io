@@ -55,10 +55,10 @@ export class CharacterService {
             "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
             'STANDARD', 'EVENT');
         }
-        this.characterState.dead = false;
+        this.characterState.dead = true;
         this.characterState.reincarnate(); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
-        this.characterState.dead = true; // use this flag to stop other events until the next tick
+        this.characterState.dead = false;
         this.forceRebirth = false;
         this.logService.addLogMessage(
           "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number " + this.characterState.totalLives + " will be the one.",
