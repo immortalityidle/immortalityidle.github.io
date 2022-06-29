@@ -34,14 +34,14 @@
   <table>
     <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
-      <td>{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
-      <td>
+      <td [ngClass]="{'currentRow': indexOfelement == activityService.currentIndex}">{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
+      <td [ngClass]="{'currentRow': indexOfelement == activityService.currentIndex}">
         <progress class="activity-progress"
-          [value]="indexOfelement < activityService.currentIndex ? entry.repeatTimes : indexOfelement > activityService.currentIndex ? 0 : activityService.currentTickCount"
+          [value]="indexOfelement != activityService.currentIndex ? entry.repeatTimes : activityService.currentTickCount"
           [max]="entry.repeatTimes">
         </progress>
       </td>
-      <td>
+      <td [ngClass]="{'currentRow': indexOfelement == activityService.currentIndex}">
         <mat-icon tooltip="Spend more days on this." (click)="onPlusClick(entry)" class="iconButton">add</mat-icon>
         <mat-icon tooltip="Spend fewer days on this." (click)="onMinusClick(entry)" class="iconButton">remove</mat-icon>
         <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>

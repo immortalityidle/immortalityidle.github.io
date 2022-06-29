@@ -252,6 +252,8 @@ export class ActivityService {
     } else {
       this.activityLoop = [];
     }
+    this.currentTickCount = 0;
+    this.currentIndex = 0;
   }
 
   getActivityByType(activityType: ActivityType): Activity {
