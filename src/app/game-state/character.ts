@@ -59,6 +59,10 @@ export interface CharacterProperties {
   bloodlineRank: number,
   manaUnlocked: boolean,
   totalLives: number,
+  healthBonusFood: number,
+  healthBonusBath: number,
+  healthBonusMagic: number,
+
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -84,6 +88,9 @@ export class Character {
   accuracyExponentMultiplier: number = 0.01;
   attackPower: number = 0;
   defense: number = 0;
+  healthBonusFood: number = 0;
+  healthBonusBath: number = 0;
+  healthBonusMagic: number = 0;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -222,6 +229,10 @@ export class Character {
     this.status.mana.max = 0;
     this.status.mana.value = 0;
 
+    this.healthBonusFood = 0;
+    this.healthBonusBath = 0;
+    this.healthBonusMagic = 0;
+
     // age in days
     this.age = INITIAL_AGE;
     this.baseLifespan += 1; //bonus day just for doing another reincarnation cycle
@@ -284,6 +295,9 @@ export class Character {
   }
 
   recalculateDerivedStats(): void{
+    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + 
+      Math.floor(Math.log2(this.attributes.toughness.value) * 5);
+
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value);
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
@@ -342,6 +356,15 @@ export class Character {
   }
 
   checkOverage(){
+    if (this.healthBonusFood > 1900){
+      this.healthBonusFood = 1900;
+    }
+    if (this.healthBonusBath > 8000){
+      this.healthBonusBath = 8000;
+    }
+    if (this.healthBonusMagic > 10000){
+      this.healthBonusMagic = 10000;
+    }
     if (this.status.health.value > this.status.health.max){
       this.status.health.value = this.status.health.max;
     }
@@ -376,7 +399,10 @@ export class Character {
       bloodlineCost: this.bloodlineCost,
       bloodlineRank: this.bloodlineRank,
       manaUnlocked: this.manaUnlocked,
-      totalLives: this.totalLives
+      totalLives: this.totalLives,
+      healthBonusFood: this.healthBonusFood,
+      healthBonusBath: this.healthBonusBath,
+      healthBonusMagic: this.healthBonusMagic,
     }
   }
 
@@ -400,6 +426,9 @@ export class Character {
     this.bloodlineRank = properties.bloodlineRank;
     this.manaUnlocked = properties.manaUnlocked || false;
     this.totalLives = properties.totalLives || 1;
+    this.healthBonusFood = properties.healthBonusFood || 0;
+    this.healthBonusBath = properties.healthBonusBath || 0;
+    this.healthBonusMagic = properties.healthBonusMagic || 0;
     this.recalculateDerivedStats();
   }
 }

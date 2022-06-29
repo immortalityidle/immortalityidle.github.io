@@ -4,4 +4,4 @@ Immmortality Idle is an idle game based on the tradition of Chinese cultivation 
 
 This game is open source, so use the code as much as you want. Please keep anything you derive from this code open as well.
 
-This project was generated with Angular version 13.3.3, so use "ng serve" to run locally, "ng build" to create deployables.
+This project was generated with Angular version 13.3.3. Use "ng serve" to run locally, "npm run build" to create deployables.

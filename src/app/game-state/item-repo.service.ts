@@ -143,7 +143,8 @@ export class ItemRepoService {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.status.health.max += 1;
+        this.characterService.characterState.healthBonusBath++;
+        this.characterService.characterState.checkOverage();
       }
     },
     cookPot: {
@@ -293,7 +294,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.01){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
         }
         this.characterService.characterState.checkOverage();
@@ -311,7 +312,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.02){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 5)){
             this.characterService.characterState.foodLifespan += 1;
@@ -332,7 +333,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.05){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 10)){
             this.characterService.characterState.foodLifespan += 1;
@@ -353,7 +354,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.08){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 15)){
             this.characterService.characterState.foodLifespan += 1;
@@ -374,7 +375,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.1){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 20)){
             this.characterService.characterState.foodLifespan += 1;
@@ -395,7 +396,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.12){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 25)){
             this.characterService.characterState.foodLifespan += 1;
@@ -416,7 +417,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.15){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 30)){
             this.characterService.characterState.foodLifespan += 1;
@@ -437,7 +438,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.18){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 35)){
             this.characterService.characterState.foodLifespan += 1;
@@ -458,7 +459,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.20){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value++;
           if (this.characterService.characterState.foodLifespan < (365 * 40)){
             this.characterService.characterState.foodLifespan += 1;
@@ -479,7 +480,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.22){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.health.value += 2;
           if (this.characterService.characterState.foodLifespan < (365 * 72)){
             this.characterService.characterState.foodLifespan += 1;
@@ -499,7 +500,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.characterService.characterState.status.nourishment.value += 2;
-        this.characterService.characterState.status.health.max++;
+        this.characterService.characterState.healthBonusFood++;
         this.characterService.characterState.status.health.value += 10;
         this.characterService.characterState.status.stamina.max++;
         this.characterService.characterState.checkOverage();
@@ -517,7 +518,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.nourishment.value++;
         if (Math.random() < 0.1){
-          this.characterService.characterState.status.health.max++;
+          this.characterService.characterState.healthBonusFood++;
           this.characterService.characterState.status.stamina.max++;
         }
         this.characterService.characterState.checkOverage();

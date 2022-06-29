@@ -331,6 +331,7 @@ export class ActivityService {
     newList.push(this.BodyCultivation);
     newList.push(this.MindCultivation);
     newList.push(this.CoreCultivation);
+    newList.push(this.InfuseBody);
     newList.push(this.Recruiting);
     newList.push(this.Burning);
     return newList;
@@ -373,6 +374,8 @@ export class ActivityService {
   MindCultivation: Activity;
   // @ts-ignore
   CoreCultivation: Activity;
+  // @ts-ignore
+  InfuseBody: Activity;
   // @ts-ignore
   Recruiting: Activity;
   // @ts-ignore
@@ -1460,6 +1463,35 @@ export class ActivityService {
       unlocked: false,
       skipApprenticeshipLevel: 0
     };
+
+    this.InfuseBody = {
+      level: 0,
+      name: ['Infuse Body'],
+      activityType: ActivityType.InfuseBody,
+      description: ['Direct your magical energy into reinforcing your physical body, making it healthier and more able to sustain damage without falling.'],
+      consequenceDescription: ['A magical technique that usess 10 mana and 200 stamina. Make sure you have enough magical power before attempting this.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 200;
+        if (this.characterService.characterState.manaUnlocked && this.characterService.characterState.status.mana.value >= 10){
+          this.characterService.characterState.status.mana.value -= 10;
+          this.characterService.characterState.healthBonusMagic++;
+        } else {
+          let damage = this.characterService.characterState.status.health.max * 0.1;
+          this.characterService.characterState.status.health.value -= damage;
+          this.logService.addLogMessage("Your magic is too weak to infuse your body. You fail miserably and hurt yourself badly.","INJURY","EVENT");
+        }
+      }],
+      requirements: [{
+        woodLore: 1000,
+        waterLore: 1000,
+        fireLore: 1000,
+        metalLore: 1000,
+        earthLore: 1000,
+        spirituality: 1000
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }
 
     this.Recruiting = {
       level: 0,
