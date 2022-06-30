@@ -57,13 +57,24 @@ export class TimePanelComponent implements OnInit {
     this.mainLoopService.tickDivider = 1;
   }
 
-  onPlusClick(entry: ActivityLoopEntry): void{
-    entry.repeatTimes++;
+  onPlusClick(entry: ActivityLoopEntry, event: MouseEvent): void{
+    event.preventDefault();
+    if (event.shiftKey){
+      entry.repeatTimes += 10;
+    } else {
+      entry.repeatTimes++;
+    }
   }
 
-  onMinusClick(entry: ActivityLoopEntry): void{
-    if (entry.repeatTimes > 0) {
+  onMinusClick(entry: ActivityLoopEntry, event: MouseEvent): void{
+    event.preventDefault();
+    if (event.shiftKey){
+      entry.repeatTimes -= 10
+    } else {
       entry.repeatTimes--;
+    }
+    if (entry.repeatTimes < 0) {
+      entry.repeatTimes = 0;
     }
   }
 

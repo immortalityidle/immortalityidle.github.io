@@ -21,6 +21,7 @@ export class StoreService {
   bloodlineDescription: string = "";
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
   storeOpened: boolean = false;
+  furniturePrices: { [key: string]: number; } = {};
 
   constructor(
     private logService: LogService,
@@ -34,6 +35,7 @@ export class StoreService {
 
     this.manuals = [];
     this.furniture = [];
+    
 
   }
 
@@ -43,9 +45,15 @@ export class StoreService {
       let furniture = this.itemRepoService.furniture[key];
       if (this.homeService.home.furnitureSlots.includes(furniture.slot)){
         this.furniture.push(furniture);
+        if (this.homeService.ownedFurniture.includes(furniture.name)){
+          this.furniturePrices[furniture.name] = 0;
+        } else {
+          this.furniturePrices[furniture.name] = furniture.value;
+        }
       }
     }
     this.selectedItem = null;
+    
   }
 
   unlockManual(manual: Item){
@@ -75,7 +83,12 @@ export class StoreService {
       }
       let slot = this.selectedItem.slot;
       if (this.selectedItem.value < this.characterService.characterState.money){
-        this.characterService.characterState.money -= this.selectedItem.value;
+        if (!this.homeService.ownedFurniture.includes(this.selectedItem.name)){
+          // only pay for it once per lifetime
+          this.characterService.characterState.money -= this.selectedItem.value;
+          this.homeService.ownedFurniture.push(this.selectedItem.name);
+          this.furniturePrices[this.selectedItem.name] = 0;
+        }
         this.homeService.furniture[slot] = this.selectedItem;
         this.homeService.autoBuyFurniture[slot] = this.selectedItem;
       }

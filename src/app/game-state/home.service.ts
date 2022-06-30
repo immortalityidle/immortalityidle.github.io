@@ -63,7 +63,8 @@ export interface HomeProperties {
   autoFieldLimit: number,
   nextHomeCostReduction: number,
   houseBuildingProgress: number,
-  upgrading: boolean
+  upgrading: boolean,
+  ownedFurniture: string[]
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -97,6 +98,7 @@ export class HomeService {
     workbench: null
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
+  ownedFurniture: string[] = [];
   grandfatherTent: boolean = false;
   houseBuildingProgress: number = 1;
   upgrading: boolean = false;
@@ -507,7 +509,8 @@ export class HomeService {
       autoFieldLimit: this.autoFieldLimit,
       nextHomeCostReduction: this.nextHomeCostReduction,
       houseBuildingProgress: this.houseBuildingProgress,
-      upgrading: this.upgrading
+      upgrading: this.upgrading,
+      ownedFurniture: this.ownedFurniture
     }
   }
 
@@ -534,6 +537,7 @@ export class HomeService {
         this.furniture[slot] = this.itemRepoService.getFurnitureById(savedFurniture.id);
       }
     }
+    this.ownedFurniture = properties.ownedFurniture || [];
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -585,6 +589,7 @@ export class HomeService {
     this.furniture.workbench = null;
     this.upgrading = false;
     this.houseBuildingProgress = 1;
+    this.ownedFurniture = [];
   }
 
   setCurrentHome(home: Home) {

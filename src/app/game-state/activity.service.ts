@@ -872,6 +872,7 @@ export class ActivityService {
           strength: 2000,
           toughness: 2000,
           metalLore: 10,
+          fireLore: 1
         },
         {
           strength: 10000,
@@ -1012,18 +1013,17 @@ export class ActivityService {
         },
         {
           intelligence: 1000,
+          waterLore: 1
+        },
+        {
+          intelligence: 8000,
           waterLore: 10,
           woodLore: 1
         },
         {
-          intelligence: 8000,
+          intelligence: 100000,
           waterLore: 100,
           woodLore: 10
-        },
-        {
-          intelligence: 100000,
-          waterLore: 1000,
-          woodLore: 100
         }
       ],
       unlocked: false,
