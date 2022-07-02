@@ -27,6 +27,7 @@ export class TimePanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    let a;
   }
 
   pauseClick(){
@@ -96,6 +97,11 @@ export class TimePanelComponent implements OnInit {
     this.activityService.pauseOnDeath = event.target.checked;
   }
 
+  useSavedTicks(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.mainLoopService.useSavedTicks = event.target.checked;
+  }
+
   allowDrop(event: DragEvent){
     if (event.dataTransfer?.types[0] == "activityloop" || event.dataTransfer?.types[0] == "activity"){
       event.preventDefault();
@@ -135,7 +141,7 @@ export class TimePanelComponent implements OnInit {
         } else {
           this.activityService.activityLoop.splice(destIndex, 0, activity[0]);
         }
-      }  
+      }
     }
   }
 
@@ -150,13 +156,13 @@ export class TimePanelComponent implements OnInit {
       }
       let sourceType = parseInt(sourceIndexString);
       this.activityService.spiritActivity = sourceType;
-    } else {    
+    } else {
       let sourceIndex = parseInt(sourceIndexString);
       if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length){
         let activity = this.activityService.activityLoop[sourceIndex].activity;
         this.activityService.spiritActivity = activity;
       }
     }
-  }  
+  }
 
 }

@@ -7,7 +7,7 @@
           tooltip="{{achievement.description}}">
           {{achievement.name}}
         </div>
-        <div class="itemSlot" *ngIf="!achievement.unlocked">
+        <div class="itemSlot" *ngIf="!achievement.unlocked" tooltip="{{achievement.hint}}">
           ?
         </div>
       </div>

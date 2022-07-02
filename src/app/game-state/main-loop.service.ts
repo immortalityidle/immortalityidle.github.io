@@ -36,6 +36,7 @@ export class MainLoopService {
   bankedTicks: number = 0;
   offlineDivider: number = 10;
   characterService?: CharacterService;
+  useSavedTicks: boolean = true;
 
   constructor(
     private injector: Injector) {
@@ -83,14 +84,14 @@ export class MainLoopService {
       // do multiple tick events if chrome has been throttling the interval (cause the tab isn't active)
       let repeatTimes = Math.floor(timeDiff / TICK_INTERVAL_MS) || 1;
       if (!this.pause) {
-        if (this.bankedTicks > 0){
+        if (this.bankedTicks > 0 && this.useSavedTicks){
           repeatTimes += 10 / this.tickDivider;
           this.bankedTicks -= 10 / this.tickDivider;
         }
-        if (this.characterService && this.characterService.characterState.lifespan > 100){
+        if (this.characterService && this.characterService.characterState.lifespan > 36500){
           repeatTimes++;
         }
-        if (this.characterService && this.characterService.characterState.lifespan > 1000){
+        if (this.characterService && this.characterService.characterState.lifespan > 365000){
           repeatTimes++;
         }
         for (let i = 0; i < repeatTimes; i++){

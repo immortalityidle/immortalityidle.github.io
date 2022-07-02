@@ -29,19 +29,23 @@
     <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
       [checked]="activityService.pauseOnDeath"/>
     <label *ngIf="activityService.autoRestart" for="pauseOnDeath">Pause on Death</label>
-    <h6 *ngIf="mainLoopService.bankedTicks > 0">Your perception of time is accelerated by your offline time. {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</h6>
+    <h6 *ngIf="mainLoopService.bankedTicks > 0">
+      <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
+        [checked]="mainLoopService.useSavedTicks"/>
+      <label for="useSavedTicks">Use offline time to accelerate reality. {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</label>
+    </h6>
   </h3>
   <table>
     <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
-      <td [ngClass]="{'currentRow': indexOfelement == activityService.currentIndex}">{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
-      <td [ngClass]="{'currentRow': indexOfelement == activityService.currentIndex}">
+      <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
+      <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">
         <progress class="activity-progress"
-          [value]="indexOfelement != activityService.currentIndex ? entry.repeatTimes : activityService.currentTickCount"
+          [value]="indexOfelement !== activityService.currentIndex ? entry.repeatTimes : activityService.currentTickCount"
           [max]="entry.repeatTimes">
         </progress>
       </td>
-      <td [ngClass]="{'currentRow': indexOfelement == activityService.currentIndex}">
+      <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">
         <mat-icon tooltip="Spend more days on this. Shift-click to add 10 days." (click)="onPlusClick(entry, $event)" class="iconButton">add</mat-icon>
         <mat-icon tooltip="Spend fewer days on this. Shift-click to remove 10 days." (click)="onMinusClick(entry, $event)" class="iconButton">remove</mat-icon>
         <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>

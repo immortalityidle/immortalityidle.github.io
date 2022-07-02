@@ -145,7 +145,7 @@ export class InventoryService {
     this.autoArmorMergeUnlocked = false;
     this.autoequipBestWeapon = false;
     this.autoequipBestArmor = false;
-  
+
     this.useSpiritGemUnlocked = false;
     this.useSpiritGemWeapons = false;
     this.useSpiritGemPotions = false;
@@ -571,6 +571,7 @@ export class InventoryService {
   }
 
   reset(): void {
+    this.selectedItem = null;
     this.lifetimeUsedItems = 0;
     this.lifetimeSoldItems = 0;
     this.lifetimePotionsUsed = 0;

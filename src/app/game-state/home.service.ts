@@ -432,7 +432,7 @@ export class HomeService {
   nextHome!: Home;
   nextHomeCostReduction: number = 0;
   nextHomeCost: number = 0;
-  
+
   constructor(
     private characterService: CharacterService,
     private inventoryService: InventoryService,
@@ -717,12 +717,14 @@ export class HomeService {
     }
     if (this.autoBuyFurnitureUnlocked){
       for (let slot of this.furniturePositionsArray){
-        if (this.home.furnitureSlots.includes(slot)){
+        // check if we have a previous purchase and the slot is still empty
+        if (this.home.furnitureSlots.includes(slot) && this.furniture[slot] == null){
           let thingToBuy = this.autoBuyFurniture[slot];
           if (thingToBuy && this.furniture[slot]?.id !== thingToBuy.id){
             // try to buy the thing
             if (thingToBuy.value < this.characterService.characterState.money){
               this.characterService.characterState.money -= thingToBuy.value;
+              this.ownedFurniture.push(thingToBuy.name);
               this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
             }
           }
