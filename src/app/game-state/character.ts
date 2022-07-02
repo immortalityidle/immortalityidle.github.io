@@ -295,7 +295,7 @@ export class Character {
   }
 
   recalculateDerivedStats(): void{
-    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + 
+    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic +
       Math.floor(Math.log2(this.attributes.toughness.value) * 5);
 
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value);
@@ -351,6 +351,10 @@ export class Character {
 
   increaseAttribute(attribute: AttributeType, amount: number): number {
     let increaseAmount = (amount * this.getAptitudeMultipier(this.attributes[attribute].aptitude));
+    // sanity check that gain is never less than base gain
+    if (increaseAmount < amount){
+      increaseAmount = amount;
+    }
     this.attributes[attribute].value += increaseAmount;
     return increaseAmount;
   }
