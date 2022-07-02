@@ -51,6 +51,7 @@ export interface HomeProperties {
   homeValue: HomeType,
   furniture: FurnitureSlots,
   fields: Field[],
+  extraFields: number,
   averageYield: number,
   landPrice: number,
   autoBuyLandUnlocked: boolean,
@@ -90,6 +91,7 @@ export class HomeService {
   land: number;
   landPrice: number;
   fields: Field[] = [];
+  extraFields: number = 0;
   averageYield = 0; // running average of how much food is produced
   furniture: FurnitureSlots = {
     bed: null,
@@ -498,6 +500,7 @@ export class HomeService {
       land: this.land,
       landPrice: this.landPrice,
       fields: this.fields,
+      extraFields: this.extraFields,
       averageYield: this.averageYield,
       autoBuyLandUnlocked: this.autoBuyLandUnlocked,
       autoBuyLandLimit: this.autoBuyLandLimit,
@@ -510,7 +513,8 @@ export class HomeService {
       nextHomeCostReduction: this.nextHomeCostReduction,
       houseBuildingProgress: this.houseBuildingProgress,
       upgrading: this.upgrading,
-      ownedFurniture: this.ownedFurniture
+      ownedFurniture: this.ownedFurniture,
+
     }
   }
 
@@ -518,6 +522,7 @@ export class HomeService {
     this.land = properties.land;
     this.landPrice = properties.landPrice;
     this.fields = properties.fields;
+    this.extraFields = properties.extraFields || 0;
     this.averageYield = properties.averageYield || 0;
     this.setCurrentHome(this.homesList[properties.homeValue]);
     this.autoBuyLandUnlocked = properties.autoBuyLandUnlocked || false;
@@ -630,11 +635,20 @@ export class HomeService {
   addField(){
     if (this.land > 0){
       this.land--;
-      this.fields.push(this.getCrop());
+      if (this.fields.length >= 300){
+        this.extraFields++;
+      } else {
+        this.fields.push(this.getCrop());
+      }
     }
   }
 
   clearField(){
+    if (this.extraFields > 0){
+      this.extraFields--;
+      this.land++;
+      return;
+    }
     if (this.fields.length > 0){
       this.fields.pop();
       this.land++;
@@ -661,8 +675,8 @@ export class HomeService {
     for (let i = startIndex; i >= 0; i--){
       if (this.fields[i].daysToHarvest <= 0){
         let fieldYield = this.fields[i].yield;
-        if (this.fields.length > 300){
-          fieldYield = Math.floor(this.fields.length / 300);
+        if (this.fields.length + this.extraFields > 300){
+          fieldYield = Math.floor((this.fields.length + this.extraFields) / 300);
         }
         totalDailyYield += fieldYield;
         this.inventoryService.addItems(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
@@ -705,7 +719,7 @@ export class HomeService {
         this.buyLand();
       }
     }
-    if (this.autoFieldUnlocked && this.fields.length < this.autoFieldLimit){
+    if (this.autoFieldUnlocked && (this.fields.length + this.extraFields) < this.autoFieldLimit){
       // don't autofield if we're trying to autoBuy a home
       if (this.autoBuyHomeUnlocked){
         if (this.homeValue >= this.autoBuyHomeLimit){
