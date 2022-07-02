@@ -43,6 +43,7 @@ export class HomePanelComponent {
 
   buyClicked(event: MouseEvent): void {
     event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       for (let i = 0; i < 10; i++){
         this.homeService.buyLand();
@@ -57,6 +58,8 @@ export class HomePanelComponent {
   }
 
   plowClicked(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       for (let i = 0; i < 10; i++){
         this.homeService.addField();

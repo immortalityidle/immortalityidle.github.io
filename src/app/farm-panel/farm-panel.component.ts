@@ -10,12 +10,13 @@ import { HomeService } from '../game-state/home.service';
 export class FarmPanelComponent {
 
   constructor(public homeService: HomeService,
-    private characterService: CharacterService) { 
+    private characterService: CharacterService) {
 
   }
 
   clearClicked(event: MouseEvent){
     event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       for (let i = 0; i < 10; i++){
         this.homeService.clearField();
@@ -32,6 +33,7 @@ export class FarmPanelComponent {
 
   buyClicked(event: MouseEvent): void {
     event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       for (let i = 0; i < 10; i++){
         this.homeService.buyLand();
@@ -46,6 +48,8 @@ export class FarmPanelComponent {
   }
 
   plowClicked(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       for (let i = 0; i < 10; i++){
         this.homeService.addField();

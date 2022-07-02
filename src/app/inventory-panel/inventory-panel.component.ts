@@ -17,6 +17,7 @@ export class InventoryPanelComponent {
 
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
     event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       let oldSelected = null;
       if (oldSelected != item){
@@ -39,6 +40,7 @@ export class InventoryPanelComponent {
 
   slotRightClicked(item: ItemStack| null, event: MouseEvent){
     event.preventDefault();
+    event.stopPropagation();
     this.inventoryService.selectedItem = item;
     if (event.ctrlKey){
       this.autoSell();

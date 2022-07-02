@@ -268,7 +268,7 @@ export class AchievementService {
       description: "You plowed 888 fields and unlocked the " + this.itemRepoService.items['autoFieldManual'].name,
       hint: "An aspiring immortal should have vast tracts of fertile land.",
       check: () => {
-        return this.homeService.fields.length >= 888;
+        return this.homeService.fields.length + this.homeService.extraFields >= 888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoFieldManual']);

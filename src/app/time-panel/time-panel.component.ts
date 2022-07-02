@@ -60,6 +60,7 @@ export class TimePanelComponent implements OnInit {
 
   onPlusClick(entry: ActivityLoopEntry, event: MouseEvent): void{
     event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       entry.repeatTimes += 10;
     } else {
@@ -69,6 +70,7 @@ export class TimePanelComponent implements OnInit {
 
   onMinusClick(entry: ActivityLoopEntry, event: MouseEvent): void{
     event.preventDefault();
+    event.stopPropagation();
     if (event.shiftKey){
       entry.repeatTimes -= 10
     } else {
