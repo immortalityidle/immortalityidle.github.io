@@ -288,7 +288,7 @@ export class ActivityService {
     this.activityLoop = [];
     this.spiritActivity = null;
     this.activities = this.getActivityList();
-  
+
   }
 
   getActivityList(): Activity[] {
@@ -307,7 +307,7 @@ export class ActivityService {
       newList.push(this.AttachChains);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.BuildTower){    
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.BuildTower){
       newList.push(this.MakeBrick);
       newList.push(this.MakeMortar);
       newList.push(this.MakeScaffold);
@@ -1290,6 +1290,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 20;
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
         this.characterService.characterState.increaseAttribute('intelligence', 0.1);
+        this.characterService.characterState.increaseAttribute('metalLore', 0.01);
         if (this.inventoryService.openInventorySlots() > 0){
           let grade = this.inventoryService.consume("ore");
           if (grade >= 1){
