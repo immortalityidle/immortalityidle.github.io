@@ -1,19 +1,20 @@
 @bodyText: black;
-@bodyBackground: #e0dec6; //#efefef;
-@panelBackground: #fffaaa; //#fcfcfc;
-@panelBorder: #7f6b00; //#121212;
+@bodyBackground: #C4E9CC; //#efefef;
+@panelBackground: #e9f7ec; //#fcfcfc;
+@panelBorder: #a4c9aC; //#121212;
 //@shadowColor: #7f6b00;//#aaaaaa;
-@tableDividerColor: #cfaf88;
+@tableDividerColor: #a4c9aC;
 @activeButtonColor: #d8deff;
-@itemSlotColor: lightyellow;
+@itemSlotColor: rgb(252, 252, 239);
 @itemSlotHighlight: #d8deff;
-@storeButtonColor: #fffaaa;
+@storeButtonColor: #fdfffc;
 @storeButtonDisabledColor: darkgray;
 @healthColor: red;
 @staminaColor: lightgreen;
 @nutritionColor: yellow;
 @manaColor: lightblue;
-
+@buttonColor: #fdfffc;
+@buttonBorder: #a4c9aC;
 
 html, body { height: 100%; }
 body {
@@ -28,13 +29,13 @@ body {
 }
 
 .iconButton {
-  border: 1px @panelBorder solid;
+  border: 1px @bodyText solid;
   border-radius: 3px;
 }
 
 button {
-  background-color: #fffddd;
-  border: 1px solid #7f6b00;
+  background-color: @buttonColor;
+  border: 1px solid @buttonBorder;
   border-radius: 6px;
   color: @bodyText;
   cursor: pointer;
@@ -54,4 +55,8 @@ button:disabled {
   cursor: pointer;
   background-color: @itemSlotColor;
 
+}
+
+.mat-dialog-container {
+  background-color: @bodyBackground;
 }
