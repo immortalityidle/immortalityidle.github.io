@@ -587,6 +587,7 @@ export class HomeService {
     this.land = 0;
     this.landPrice = 100;
     this.fields = [];
+    this.extraFields = 0;
     this.averageYield = 0;
     this.furniture.bed = null;
     this.furniture.bathtub = null;
