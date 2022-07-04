@@ -252,7 +252,10 @@ export class Character {
       if (this.attributes[keys[key]].value > 0){
         // gain aptitude based on last life's value
         let addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0 )) / this.aptitudeGainDivider;
-        this.attributes[keys[key]].aptitude += addedValue;
+        if (addedValue > 0){
+          // never reduce aptitudes during reincarnation
+          this.attributes[keys[key]].aptitude += addedValue;
+        }
         this.logService.addLogMessage("Your aptitude for " + keys[key] + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
@@ -285,6 +288,12 @@ export class Character {
   }
 
   getAttributeStartingValue(value: number, aptitude: number): number{
+    if (value < 0){
+      value = 0;
+    }
+    if (aptitude < 0){
+      aptitude = 0;
+    }
     if (value < 1){
       return value / 10;
     }
