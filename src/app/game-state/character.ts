@@ -276,7 +276,7 @@ export class Character {
         legs: null,
         feet: null
       }
-    } else if (this.bloodlineRank == 1){
+    } else if (this.bloodlineRank <= 1){
       this.equipment.body = null;
       this.equipment.head = null;
       this.equipment.legs = null;

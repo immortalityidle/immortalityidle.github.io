@@ -15,7 +15,7 @@ export class CharacterService {
   forceRebirth: boolean = false;
   fatherGift: boolean = false;
   lifespanTooltip: string = "";
-    
+
   constructor(
     private injector: Injector,
     mainLoopService: MainLoopService,
@@ -123,7 +123,7 @@ export class CharacterService {
     }
   }
 
-  
+
   condenseSoulCore(){
     if (this.characterState.aptitudeGainDivider <= 10){
       // double check we're not going over the max rank
@@ -140,6 +140,7 @@ export class CharacterService {
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
+      attribute.lifeStartValue = 0;
       attribute.aptitude = 1;
       if (parseInt(key) < 5){
         attribute.value = 1;
@@ -182,6 +183,7 @@ export class CharacterService {
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
+      attribute.lifeStartValue = 0;
       attribute.aptitude = 1;
       if (parseInt(key) < 5){
         attribute.value = 1;
@@ -223,6 +225,7 @@ export class CharacterService {
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
+      attribute.lifeStartValue = 0;
       attribute.aptitude = 1;
       if (parseInt(key) < 5){
         attribute.value = 1;
