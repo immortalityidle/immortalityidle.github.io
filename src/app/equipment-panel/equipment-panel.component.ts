@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { Character } from '../game-state/character';
+import { Character, EquipmentPosition } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { InventoryService, instanceOfEquipment } from '../game-state/inventory.service';
-
+import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-equipment-panel',
@@ -12,9 +11,22 @@ import { InventoryService, instanceOfEquipment } from '../game-state/inventory.s
 export class EquipmentPanelComponent {
   character: Character;
 
-  constructor(characterService: CharacterService,
+  constructor(private characterService: CharacterService,
     public inventoryService: InventoryService) {
     this.character = characterService.characterState;
+  }
+
+  slotDoubleClicked(slot: EquipmentPosition, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    let item = this.characterService.characterState.equipment[slot];
+    // check for existence and make sure there's an empty slot for it
+    if (item && this.inventoryService.openInventorySlots() > 0){
+      this.inventoryService.addItem(item as Item);
+      this.characterService.characterState.equipment[slot] = null;
+      this.inventoryService.selectedItem = null;
+    }
+
   }
 
   getSelectedItemSlot(){
