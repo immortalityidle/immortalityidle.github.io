@@ -15,7 +15,7 @@
 
   <div class="inventoryGrid">
     <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
-      <table class="itemSlot" (click)="slotClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
+      <table class="itemSlot" (click)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
         draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
         [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem)}"
         tooltip="{{itemStack?.item?.description}}" placement="bottom">
@@ -35,11 +35,11 @@
       tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
       paid
     </mat-icon>
-    <mat-icon (click)="sellAll()" class="iconButton" placement="left" 
+    <mat-icon (click)="sellAll()" class="iconButton" placement="left"
       tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
       shopping_basket
     </mat-icon>
-    <mat-icon *ngIf="inventoryService.autoSellUnlocked" class="iconButton" (click)="autoSell()" placement="left" 
+    <mat-icon *ngIf="inventoryService.autoSellUnlocked" class="iconButton" (click)="autoSell()" placement="left"
       tooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell.">
       currency_exchange
     </mat-icon>
@@ -57,7 +57,7 @@
       balance
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()"  class="iconButton"
-      placement="left" tooltip="Equip this.">
+      placement="left" tooltip="Equip this. Double-click weapons or armor to equip.">
       shield
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'spiritGem')" (click)="mergeSpiritGem()"  class="iconButton"

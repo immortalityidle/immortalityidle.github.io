@@ -255,8 +255,8 @@ export class Character {
         if (addedValue > 0){
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
+          this.logService.addLogMessage("Your aptitude for " + keys[key] + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
         }
-        this.logService.addLogMessage("Your aptitude for " + keys[key] + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;

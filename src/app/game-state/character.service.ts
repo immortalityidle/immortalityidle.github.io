@@ -97,7 +97,7 @@ export class CharacterService {
     if (this.characterState.foodLifespan + this.characterState.alchemyLifespan + this.characterState.statLifespan + this.characterState.spiritualityLifespan <= 0){
       this.lifespanTooltip = "You have done nothing to extend your lifespan";
     }
-    let tooltip = "Your lifespan is extended by"
+    let tooltip = "Your base lifespan of " + this.yearify(this.characterState.baseLifespan) + " is extended by"
     if (this.characterState.foodLifespan > 0){
       tooltip += "<br>Healthy Food: " + this.yearify(this.characterState.foodLifespan);
     }

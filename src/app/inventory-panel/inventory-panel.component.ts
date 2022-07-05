@@ -38,6 +38,16 @@ export class InventoryPanelComponent {
     }
   }
 
+  slotDoubleClicked(item: ItemStack | null, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.inventoryService.selectedItem = item;
+    if (this.inventoryService.selectedItem){
+      this.inventoryService.equip(this.inventoryService.selectedItem);
+      this.inventoryService.selectedItem = null;
+    }
+  }
+
   slotRightClicked(item: ItemStack| null, event: MouseEvent){
     event.preventDefault();
     event.stopPropagation();
