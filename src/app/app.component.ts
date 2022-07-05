@@ -93,7 +93,8 @@ export class AppComponent implements OnInit {
     this.mainLoopService.start();
   }
 
-  hardResetClicked(): void {
+  hardResetClicked(event: Event): void {
+    event.preventDefault();
     if (confirm("This will reset everything, are you sure?")){
       this.gameStateService.hardReset();
     }

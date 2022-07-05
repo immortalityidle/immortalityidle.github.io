@@ -104,9 +104,7 @@ export class GameStateService {
 
   hardReset(): void {
     window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY);
-    this.characterService.characterState.reincarnate();
-    this.reincarnationService.reincarnate();
-    this.logService.reset();
+    window.location.href = window.location.href;
   }
 
   rebirth(): void {

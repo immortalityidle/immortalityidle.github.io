@@ -13,14 +13,14 @@ export class LogPanelComponent {
 
   topicFilterCombat(event: Event ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.logService.updateLogTopic('COMBAT');
+    this.logService.enableLogTopic('COMBAT', event.target.checked);
   }
   topicFilterStory(event: Event ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.logService.updateLogTopic('STORY');
+    this.logService.enableLogTopic('STORY', event.target.checked);
   }
   topicFilterEvent(event: Event ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.logService.updateLogTopic('EVENT');
+    this.logService.enableLogTopic('EVENT', event.target.checked);
   }
 }
