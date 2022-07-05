@@ -13,7 +13,7 @@
         <label for="manaShield">Activate Mana Strike</label>
       </span>
     </span>    
-    <span class="rightAligned">
+    <span class="rightAligned" tooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
       <button *ngIf="!battleService.autoTroubleUnlocked" (click)="battleService.trouble()">Look for Trouble</button>
       <input *ngIf="battleService.autoTroubleUnlocked"  type="checkbox" (change)="autoTroubleChange($event)"
         id="autoTroubleCheckbox"  [checked]="battleService.autoTroubleEnabled"/>
