@@ -100,12 +100,17 @@ export class ActivityService {
         // check for exhaustion
         if (this.characterService.characterState.status.stamina.value < 0) {
           // take 5 days to recover, regain stamina, restart loop
-          this.logService.addLogMessage(
-            'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.',
-            'INJURY', 'EVENT'
-          );
+          this.logService.addLogMessage('You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.', 'INJURY', 'EVENT');
           this.exhaustionDays = 5;
           this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
+        }
+        // check for mana overuse
+        if (this.characterService.characterState.status.mana.value < 0) {
+          this.logService.addLogMessage('You overextend your mana and damage your mana channels. It takes you 10 days to recover.','INJURY', 'EVENT');
+          if (this.characterService.characterState.status.mana.max > 1){
+            this.characterService.characterState.status.mana.max -= 1;
+          }
+          this.exhaustionDays = 10;
         }
 
         this.currentTickCount++;
@@ -314,6 +319,21 @@ export class ActivityService {
       newList.push(this.BuildTower);
     }
 
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.TameWinds){
+      newList.push(this.ResearchWind);
+      newList.push(this.TameWinds);
+    }
+
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.LearnToFly){
+      newList.push(this.LearnToFly);
+    }
+
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.BefriendDragon){
+      newList.push(this.OfferDragonFood);
+      newList.push(this.OfferDragonWealth);
+      newList.push(this.TalkToDragon);
+    }
+
     newList.push(this.OddJobs);
     newList.push(this.Resting);
     newList.push(this.Begging);
@@ -392,6 +412,18 @@ export class ActivityService {
   MakeScaffold: Activity;
   // @ts-ignore
   BuildTower: Activity;
+  // @ts-ignore
+  TameWinds: Activity;
+  // @ts-ignore
+  ResearchWind: Activity;
+  // @ts-ignore
+  LearnToFly: Activity;
+  // @ts-ignore
+  OfferDragonFood: Activity;
+  // @ts-ignore
+  OfferDragonWealth: Activity;
+  // @ts-ignore
+  TalkToDragon: Activity;
 
   defineActivities(){
     this.Swim = {
@@ -595,6 +627,168 @@ export class ActivityService {
       skipApprenticeshipLevel: 0
     }
 
+    this.ResearchWind = {
+      level: 0,
+      name: ['Research Wind Control'],
+      activityType: ActivityType.ResearchWind,
+      description: ['Delve deep into wind lore to understand how the neverending storm can be controlled.'],
+      consequenceDescription: ['Reduce Stamina and Mana by 100. Compile your research and if you have done enough you may produce a Tome of Wind Control.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 100;
+        this.characterService.characterState.status.mana.value -= 100;
+        if (this.characterService.characterState.status.stamina.value >= 0 && this.characterService.characterState.status.mana.value >= 0){
+          if (Math.random() < 0.01){
+            this.logService.addLogMessage("Research breakthrough! You produce a tome!.","STANDARD","EVENT");
+            this.inventoryService.addItem(this.itemRepoService.items['windTome']);
+          }
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    };
+
+    this.TameWinds = {
+      level: 0,
+      name: ['Tame Winds'],
+      activityType: ActivityType.TameWinds,
+      description: ['Use your research to tame the winds.'],
+      consequenceDescription: ['Reduce Stamina by 100. Use a Tome of Wind Control to tame the hurricane.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 100;
+        let value = 0;
+        value = this.inventoryService.consume('windTome');
+        if (value > 0){
+          this.impossibleTaskService.tasks[ImpossibleTaskType.TameWinds].progress++;
+          this.impossibleTaskService.checkCompletion();
+          if (this.impossibleTaskService.tasks[ImpossibleTaskType.TameWinds].complete){
+            this.logService.addLogMessage("You acheived the impossible and tamed a hurricane.","STANDARD","STORY");
+          }
+        } else {
+          this.logService.addLogMessage("You try to tame the winds, but without the proper preparation you are blown off the top of the tower.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.5;
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    };
+
+    this.LearnToFly = {
+      level: 0,
+      name: ['Learn To Fly'],
+      activityType: ActivityType.LearnToFly,
+      description: ['Jump off your tower and practice flying. This will definitely go well for you.'],
+      consequenceDescription: ['You will certainly, probably, maybe not die doing this.'],
+      consequence: [() => {
+        this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress++;
+        if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress < 2222){
+          this.logService.addLogMessage("Jumping off an impossibly tall tower ends about like you might expect. Your wounds may take a bit to heal, but at least you learned something.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= 1000;
+        } else if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress < 4444){
+          this.logService.addLogMessage("You feel like you might have flown a litte bit, somewhere near the time you hit the ground.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= 500;
+        } else if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress < 6666){
+          this.logService.addLogMessage("You definitely did better that time. You did some great flying but sticking the landing is still tricky.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= 100;
+        } else {
+          this.logService.addLogMessage("Almost there! Perfect landings are so hard.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= 10;
+        }
+        this.impossibleTaskService.checkCompletion();
+        if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].complete){
+          this.logService.addLogMessage("You mastered flight! You can go anywhere in the world now, even where the ancient dragons live.","STANDARD","STORY");
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.OfferDragonFood = {
+      level: 0,
+      name: ['Offer Food'],
+      activityType: ActivityType.OfferDragonFood,
+      description: ['It turns out that dragons love peaches. Bring the dragon a bunch and he may be more friendly.'],
+      consequenceDescription: ['You will need at least 1000 food for this to work.'],
+      consequence: [() => {
+        let value = 0;
+        for (let i = 0; i < 1000; i++){
+          value = this.inventoryService.consume('food');
+        }
+        if (value < 1){
+          this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= 1000;
+          return;
+        }
+        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress < 2000){
+          this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress++;  
+        } else {
+          this.logService.addLogMessage("The dragon doesn't seem interested in any more food.","STANDARD","EVENT");
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.OfferDragonWealth = {
+      level: 0,
+      name: ['Offer Wealth'],
+      activityType: ActivityType.OfferDragonWealth,
+      description: ['You have heard that dragons like treasure. Bring the dragon a bunch and he may be more friendly.'],
+      consequenceDescription: ['You will need at least a billion taels for this to work.'],
+      consequence: [() => {
+        if (this.characterService.characterState.money < 1000000000){
+          this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= 1000;
+          return;
+        }
+        this.characterService.characterState.money -= 1000000000;
+        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress < 4000){
+          this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress++;
+        } else {
+          this.logService.addLogMessage("The dragon doesn't seem interested in any more money.","STANDARD","EVENT");
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.TalkToDragon = {
+      level: 0,
+      name: ['Talk to the Dragon'],
+      activityType: ActivityType.TalkToDragon,
+      description: ['Try to strike up a conversation with the dragon.'],
+      consequenceDescription: ['The dragon probably likes you enough to talk to you now, right?'],
+      consequence: [() => {
+        if (this.characterService.characterState.attributes.charisma.value < 10000000000){
+          this.logService.addLogMessage("The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= 1000;
+          return;
+        }
+        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress < 3500){
+          this.logService.addLogMessage("The dragon doesn't like like you enough to talk to you, but at least he doesn't attack you.","STANDARD","EVENT");
+          return;
+        }
+        this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress++;
+        this.impossibleTaskService.checkCompletion();
+        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].complete){
+          this.logService.addLogMessage("You did the impossible and made friends with a dragon!","STANDARD","STORY");
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
+  
     this.OddJobs = {
       level: 0,
       name: ['Odd Jobs'],

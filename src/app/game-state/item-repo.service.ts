@@ -889,6 +889,13 @@ export class ItemRepoService {
       value: 1,
       description: 'This scaffolding allows you to work for the next level of your tower.',
     },
+    windTome: {
+      id: 'windTome',
+      name: 'Tome of Wind Control',
+      type: 'windTome',
+      value: 1,
+      description: 'This book contains a great deal of research on how winds work and how they can be tamed.',
+    },
     //TODO: tune prices on all manuals, currently silly cheap for testing
     fastPlayManual: {
       id: 'fastPlayManual',

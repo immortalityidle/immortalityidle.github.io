@@ -28,6 +28,12 @@ export enum ActivityType {
   MakeMortar,
   MakeScaffold,
   BuildTower,
+  ResearchWind,
+  TameWinds,
+  LearnToFly,
+  OfferDragonFood,
+  OfferDragonWealth,
+  TalkToDragon,
 
 }
 

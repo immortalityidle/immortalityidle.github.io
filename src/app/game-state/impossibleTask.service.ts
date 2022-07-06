@@ -9,7 +9,7 @@ export enum ImpossibleTaskType {
   Swim,
   RaiseIsland,
   BuildTower,
-  Tamewinds,
+  TameWinds,
   LearnToFly,
   BefriendDragon,
   ConquerTheWorld,
@@ -69,7 +69,7 @@ export class ImpossibleTaskService {
     {
       name: "Tame the winds",
       description: "The entrance to the shrine is sealed by a fierce hurricane that never stops blowing. You'll need to defeat the power of the storm to get in.",
-      taskType: ImpossibleTaskType.Tamewinds,
+      taskType: ImpossibleTaskType.TameWinds,
       progress: 0,
       progressRequired: 1000,
       complete: false,
@@ -79,15 +79,15 @@ export class ImpossibleTaskService {
       description: "A carving in the sky shrine shows you that the ancient dragons have the secret of immortality. The dragons never fly where mortals can reach them, but fortunately the shrine contains an inscription that teaches you the fundamentals of flight.",
       taskType: ImpossibleTaskType.LearnToFly,
       progress: 0,
-      progressRequired: 1000,
+      progressRequired: 8888,
       complete: false,
     },
     {
       name: "Befriend a dragon",
-      description: "You fly far and wide across the world and finally find an ancient dragon.",
+      description: "You fly far and wide across the world and finally find an ancient dragon. You'll need to convince it to speak with you to get any secrets from it.",
       taskType: ImpossibleTaskType.BefriendDragon,
       progress: 0,
-      progressRequired: 1000,
+      progressRequired: 5000,
       complete: false,
     },
     {
@@ -184,6 +184,10 @@ export class ImpossibleTaskService {
   }
 
   stopTask(){
+    if (this.activeTaskIndex == ImpossibleTaskType.Swim){
+      // back to the surface with you!
+      this.tasks[this.activeTaskIndex].progress = 0;
+    }
     this.activeTaskIndex = -1;
     if (!this.activityService){
       this.activityService = this.injector.get(ActivityService);
