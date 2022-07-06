@@ -1,6 +1,6 @@
 {
   "name": "immortalityidle",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
