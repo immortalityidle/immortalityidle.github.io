@@ -347,7 +347,7 @@ export class ItemRepoService {
       name: 'calabash',
       type: 'food',
       value: 20,
-      description: 'A tasty guard with health-giving properties.',
+      description: 'A tasty gourd with health-giving properties.',
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
