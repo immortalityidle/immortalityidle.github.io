@@ -13,7 +13,7 @@
   </h3>
   <div class="logContainer">
     <ng-container *ngFor="let logMsg of logService.currentLog">
-      <div  class="logEntryDiv">
+      <div [ngClass]="logMsg.type" class="logEntryDiv">
         {{logMsg.message}}
       </div>
     </ng-container>

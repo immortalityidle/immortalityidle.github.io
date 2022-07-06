@@ -6,6 +6,7 @@ import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { Furniture, InventoryService, Item } from './inventory.service';
+import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class ItemRepoService {
   activityService?: ActivityService;
   inventoryService?: InventoryService;
   battleService?: BattleService;
+  impossibleTaskService?: ImpossibleTaskService;
 
   furniture: {[key: string]: Furniture} = {
     blanket: {
@@ -895,6 +897,35 @@ export class ItemRepoService {
       type: 'windTome',
       value: 1,
       description: 'This book contains a great deal of research on how winds work and how they can be tamed.',
+    },
+    army: {
+      id: 'army',
+      name: 'a vast army',
+      type: 'army',
+      value: 1,
+      description: 'This is an army. It fits nicely in your backpack due to your mastery of transdimensional magic.',
+    },
+    immortality: {
+      id: 'immortality',
+      name: 'Essence of Immortality',
+      type: 'immortality',
+      value: 1,
+      description: 'The object of your obsession. Using this will make you immortal.',
+      useLabel: 'Become Immortal',
+      useDescription: 'Become immortal and win the game.',
+      useConsumes: true,
+      use: () => {
+        if (!this.impossibleTaskService){
+          this.impossibleTaskService = this.injector.get(ImpossibleTaskService);
+        }
+        this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].progress++;
+        this.impossibleTaskService.checkCompletion();
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete){
+          this.logService.addLogMessage("YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!", "INJURY", 'STORY');
+          this.logService.addLogMessage("You won this game in " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes. I wonder if other immortals have ever done it faster?", "STANDARD", 'STORY');
+          this.characterService.characterState.immortal = true;
+        }
+      },
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing
     fastPlayManual: {

@@ -3,7 +3,7 @@ import { BattleService } from './battle.service';
 import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { AttributeType, CharacterAttribute } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { HomeService } from '../game-state/home.service';
+import { HomeService, HomeType } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { LogService } from './log.service';
@@ -334,6 +334,15 @@ export class ActivityService {
       newList.push(this.TalkToDragon);
     }
 
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.ConquerTheWorld){
+      newList.push(this.GatherArmies);
+      newList.push(this.ConquerTheWorld);
+    }
+
+    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.RearrangeTheStars){
+      newList.push(this.MoveStars);
+    }
+
     newList.push(this.OddJobs);
     newList.push(this.Resting);
     newList.push(this.Begging);
@@ -424,6 +433,13 @@ export class ActivityService {
   OfferDragonWealth: Activity;
   // @ts-ignore
   TalkToDragon: Activity;
+  // @ts-ignore
+  GatherArmies: Activity;
+  // @ts-ignore
+  ConquerTheWorld: Activity;
+  // @ts-ignore
+  MoveStars: Activity;
+
 
   defineActivities(){
     this.Swim = {
@@ -435,9 +451,9 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 20;
         this.characterService.characterState.status.health.value -= 100;
-        this.impossibleTaskService.tasks[ImpossibleTaskType.Swim].progress++;
+        this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress++;
         this.impossibleTaskService.checkCompletion();
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.Swim].complete){
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].complete){
           this.logService.addLogMessage("You have acheived the impossible and dived all the way to the bottom of the ocean.","STANDARD","STORY");
         }
       }],
@@ -482,9 +498,9 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 1000;
         if (this.inventoryService.consume("chain") > 0){
             this.logService.addLogMessage("You attach a chain to the island. and give your chains a tug.","STANDARD","EVENT");
-            this.impossibleTaskService.tasks[ImpossibleTaskType.RaiseIsland].progress++;
+            this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].progress++;
             this.impossibleTaskService.checkCompletion();
-            if (this.impossibleTaskService.tasks[ImpossibleTaskType.RaiseIsland].complete){
+            if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete){
               this.logService.addLogMessage("With a mighty pull, the island comes loose. You haul it to the surface.","STANDARD","STORY");
             }
         } else {
@@ -615,9 +631,9 @@ export class ActivityService {
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
           return;
         }
-        this.impossibleTaskService.tasks[ImpossibleTaskType.BuildTower].progress++;
+        this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].progress++;
         this.impossibleTaskService.checkCompletion();
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BuildTower].complete){
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].complete){
           this.logService.addLogMessage("You have acheived the impossible and built a tower beyond the heavens.","STANDARD","STORY");
         }
       }],
@@ -660,9 +676,9 @@ export class ActivityService {
         let value = 0;
         value = this.inventoryService.consume('windTome');
         if (value > 0){
-          this.impossibleTaskService.tasks[ImpossibleTaskType.TameWinds].progress++;
+          this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].progress++;
           this.impossibleTaskService.checkCompletion();
-          if (this.impossibleTaskService.tasks[ImpossibleTaskType.TameWinds].complete){
+          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].complete){
             this.logService.addLogMessage("You acheived the impossible and tamed a hurricane.","STANDARD","STORY");
           }
         } else {
@@ -683,14 +699,14 @@ export class ActivityService {
       description: ['Jump off your tower and practice flying. This will definitely go well for you.'],
       consequenceDescription: ['You will certainly, probably, maybe not die doing this.'],
       consequence: [() => {
-        this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress++;
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress < 2222){
+        this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress++;
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 2222){
           this.logService.addLogMessage("Jumping off an impossibly tall tower ends about like you might expect. Your wounds may take a bit to heal, but at least you learned something.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
-        } else if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress < 4444){
+        } else if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 4444){
           this.logService.addLogMessage("You feel like you might have flown a litte bit, somewhere near the time you hit the ground.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 500;
-        } else if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].progress < 6666){
+        } else if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 6666){
           this.logService.addLogMessage("You definitely did better that time. You did some great flying but sticking the landing is still tricky.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 100;
         } else {
@@ -698,7 +714,7 @@ export class ActivityService {
           this.characterService.characterState.status.health.value -= 10;
         }
         this.impossibleTaskService.checkCompletion();
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.LearnToFly].complete){
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].complete){
           this.logService.addLogMessage("You mastered flight! You can go anywhere in the world now, even where the ancient dragons live.","STANDARD","STORY");
         }
       }],
@@ -724,8 +740,8 @@ export class ActivityService {
           this.characterService.characterState.status.health.value -= 1000;
           return;
         }
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress < 2000){
-          this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress++;  
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 2000){
+          this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;  
         } else {
           this.logService.addLogMessage("The dragon doesn't seem interested in any more food.","STANDARD","EVENT");
         }
@@ -749,8 +765,8 @@ export class ActivityService {
           return;
         }
         this.characterService.characterState.money -= 1000000000;
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress < 4000){
-          this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress++;
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 4000){
+          this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         } else {
           this.logService.addLogMessage("The dragon doesn't seem interested in any more money.","STANDARD","EVENT");
         }
@@ -773,13 +789,13 @@ export class ActivityService {
           this.characterService.characterState.status.health.value -= 1000;
           return;
         }
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress < 3500){
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 3500){
           this.logService.addLogMessage("The dragon doesn't like like you enough to talk to you, but at least he doesn't attack you.","STANDARD","EVENT");
           return;
         }
-        this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].progress++;
+        this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         this.impossibleTaskService.checkCompletion();
-        if (this.impossibleTaskService.tasks[ImpossibleTaskType.BefriendDragon].complete){
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].complete){
           this.logService.addLogMessage("You did the impossible and made friends with a dragon!","STANDARD","STORY");
         }
       }],
@@ -789,6 +805,95 @@ export class ActivityService {
       skipApprenticeshipLevel: 0
     }
   
+    this.GatherArmies = {
+      level: 0,
+      name: ['Gather Armies'],
+      activityType: ActivityType.GatherArmies,
+      description: ['Gather troops into armies. This will require vast amounts of food and money.'],
+      consequenceDescription: ["You rule a country by now, right? If not, this isn't going to go well."],
+      consequence: [() => {
+        if (this.homeService.homeValue < HomeType.Capital){
+          this.logService.addLogMessage("You don't even have your own kingdom? What were you thinking? The nearby rulers send their forces against you.","INJURY","EVENT");
+          for (let i = 0; i < 3; i++){
+            this.battleService.addEnemy(this.battleService.enemyRepo.army);
+          }
+          return;
+        }
+        let value = 0;
+        for (let i = 0; i < 10000; i++){
+          value = this.inventoryService.consume('food');
+        }
+        if (value < 1){
+          this.logService.addLogMessage("You don't have enough food to feed your army, so they revolt and fight you instead.","INJURY","EVENT");
+          this.battleService.addEnemy(this.battleService.enemyRepo.army);
+          return;
+        }
+        if (this.characterService.characterState.money < 10000000000){
+          this.logService.addLogMessage("You don't have enough money to pay your army, so they revolt and fight you instead.","INJURY","EVENT");
+          this.battleService.addEnemy(this.battleService.enemyRepo.army);
+          return;
+        }
+        this.characterService.characterState.money -= 10000000000;
+        this.inventoryService.addItem(this.itemRepoService.items['army']);
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.ConquerTheWorld = {
+      level: 0,
+      name: ['Conquer More Territory'],
+      activityType: ActivityType.ConquerTheWorld,
+      description: ['Send out your armies to conquer the world.'],
+      consequenceDescription: ["I'm sure you have plenty of armies for this. You wouldn't try this without enough armies, that would end badly."],
+      consequence: [() => {
+        let value = 0;
+        for (let i = 0; i < this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress; i++){
+          value = this.inventoryService.consume('army');
+        }
+        if (value < 1){
+          for (let i = 0; i < 5; i++){
+            this.battleService.addEnemy(this.battleService.enemyRepo.army);
+          }
+          return;
+        }
+        this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress++;
+        this.impossibleTaskService.checkCompletion();
+        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].complete){
+          this.logService.addLogMessage("You did the impossible and conquered the world! Under your wise rule all human suffering ceases.","STANDARD","STORY");
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.MoveStars = {
+      level: 0,
+      name: ['Move Stars'],
+      activityType: ActivityType.MoveStars,
+      description: ['Extend your vast magical powers into the heavens and force the starts into alignment.'],
+      consequenceDescription: ["Costs 1000 stamina and 1000 magic."],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 1000;
+        this.characterService.characterState.status.mana.value -= 1000;
+        if (this.characterService.characterState.status.stamina.value >= 0 && this.characterService.characterState.status.mana.value >= 0){
+          this.impossibleTaskService.taskProgress[ImpossibleTaskType.RearrangeTheStars].progress++;
+          this.impossibleTaskService.checkCompletion();
+          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RearrangeTheStars].complete){
+            this.logService.addLogMessage("You did the impossible and rearranged the stars themselves. You are so near to achieving immortality you can almost taste it. It tastes like peaches.","STANDARD","STORY");
+          }
+        }
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
+
     this.OddJobs = {
       level: 0,
       name: ['Odd Jobs'],

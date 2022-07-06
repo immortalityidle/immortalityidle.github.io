@@ -62,7 +62,7 @@ export interface CharacterProperties {
   healthBonusFood: number,
   healthBonusBath: number,
   healthBonusMagic: number,
-
+  immortal: boolean,
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -91,6 +91,7 @@ export class Character {
   healthBonusFood: number = 0;
   healthBonusBath: number = 0;
   healthBonusMagic: number = 0;
+  immortal: boolean = false;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -420,6 +421,7 @@ export class Character {
       healthBonusFood: this.healthBonusFood,
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
+      immortal: this.immortal
     }
   }
 
@@ -446,6 +448,7 @@ export class Character {
     this.healthBonusFood = properties.healthBonusFood || 0;
     this.healthBonusBath = properties.healthBonusBath || 0;
     this.healthBonusMagic = properties.healthBonusMagic || 0;
+    this.immortal = properties.immortal || false;
     this.recalculateDerivedStats();
   }
 }

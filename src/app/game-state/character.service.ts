@@ -32,9 +32,9 @@ export class CharacterService {
       let deathMessage = "";
       if (this.forceRebirth){
         deathMessage = "You release your soul from your body at the age of " + this.formatAge() + ".";
-      } else if (this.characterState.age >= this.characterState.lifespan) {
+      } else if (this.characterState.age >= this.characterState.lifespan && !this.characterState.immortal) {
         deathMessage = "You reach the end of your natural life and pass away from natural causes at the age of " + this.formatAge() + ".";
-      } else if (this.characterState.status.nourishment.value <= 0) {
+      } else if (this.characterState.status.nourishment.value <= 0 && !this.characterState.immortal) {
         if (this.characterState.attributes.spirituality.value > 0){
           // you're spritual now, you can fast!
           this.characterState.status.health.value -= 20;
@@ -45,27 +45,33 @@ export class CharacterService {
         } else {
           deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
         }
-      } else if (this.characterState.status.health.value <= 0) {
+      } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
         deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
       }
       if (deathMessage != ""){
-        this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
-        if (!this.forceRebirth){
-          this.logService.addLogMessage(
-            "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
-            'STANDARD', 'EVENT');
+        if (!this.characterState.immortal){
+          this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
+          if (!this.forceRebirth){
+            this.logService.addLogMessage(
+              "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
+              'STANDARD', 'EVENT');
+          }
         }
         this.characterState.dead = true;
         this.characterState.reincarnate(); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
         this.characterState.dead = false;
         this.forceRebirth = false;
-        this.logService.addLogMessage(
-          "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number " + this.characterState.totalLives + " will be the one.",
-          'STANDARD', 'EVENT');
-        this.logService.addLogMessage(
-          "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
-          'STANDARD', 'EVENT');
+        if (this.characterState.immortal){
+          this.logService.addLogMessage("You are born anew, still an immortal but with the fresh vigor of youth.", 'STANDARD', 'EVENT');
+        } else {
+          this.logService.addLogMessage(
+            "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number " + this.characterState.totalLives + " will be the one.",
+            'STANDARD', 'EVENT');
+          this.logService.addLogMessage(
+            "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
+            'STANDARD', 'EVENT');
+        }
       }
     });
 
@@ -94,8 +100,13 @@ export class CharacterService {
   }
 
   setLifespanTooltip(){
+    if (this.characterState.immortal){
+      this.lifespanTooltip = "You are immortal.";
+      return;
+    }
     if (this.characterState.foodLifespan + this.characterState.alchemyLifespan + this.characterState.statLifespan + this.characterState.spiritualityLifespan <= 0){
-      this.lifespanTooltip = "You have done nothing to extend your lifespan";
+      this.lifespanTooltip = "You have done nothing to extend your lifespan.";
+      return;
     }
     let tooltip = "Your base lifespan of " + this.yearify(this.characterState.baseLifespan) + " is extended by"
     if (this.characterState.foodLifespan > 0){

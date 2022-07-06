@@ -70,7 +70,6 @@ export class GameStateService {
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
     this.lastSaved = new Date().getTime();
-    this.logService.addLogMessage("Game saved", "STANDARD", "EVENT");
   }
 
   loadFromLocalStorage(): void {
@@ -99,7 +98,6 @@ export class GameStateService {
     this.followersService.setProperties(gameState.followers);
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
-    this.logService.addLogMessage("Game loaded", "STANDARD", "EVENT");
   }
 
   hardReset(): void {

@@ -75,7 +75,7 @@ export class AchievementService {
     {
       name: "Played a Bit",
       description: "You worked toward immortality for ten years across your lifetimes and unlocked the " + this.itemRepoService.items['fastPlayManual'].name,
-      hint: "Just keep playing, I'm sure this will come to an aspiring immortal eventually.",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.mainLoopService.totalTicks > 3650;
       },
@@ -87,7 +87,7 @@ export class AchievementService {
     {
       name: "Basically an Expert",
       description: "You worked toward immortality for one hundred years across your lifetimes and unlocked the " + this.itemRepoService.items['fasterPlayManual'].name,
-      hint: "Just keep playing, I'm sure this will come to an aspiring immortal eventually.",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.mainLoopService.totalTicks > 36500;
       },
@@ -99,7 +99,7 @@ export class AchievementService {
     {
       name: "Persitent Reincarnator",
       description: "You lived 88 lives and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
-      hint: "Just keep playing, I'm sure this will come to an aspiring immortal eventually.",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.characterService.characterState.totalLives >= 88 && this.mainLoopService.totalTicks > 36500;
       },
@@ -406,7 +406,7 @@ export class AchievementService {
     {
       name: "Grandpa's Old Tent",
       description: "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
-      hint: "Just keep playing, I'm sure this will come to an aspiring immortal eventually.",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.characterService.characterState.totalLives > 8;
       },
@@ -418,7 +418,7 @@ export class AchievementService {
     {
       name: "Paternal Pride",
       description: "You've worked 888 days of odd jobs and come to understand the value of fathers.",
-      hint: "Just keep playing, I'm sure this will come to an aspiring immortal eventually.",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.activityService.oddJobDays > 888;
       },
@@ -430,7 +430,7 @@ export class AchievementService {
     {
       name: "Maternal Love",
       description: "You've done 888 days of begging and come to understand the value of mothers.",
-      hint: "Just keep playing, I'm sure this will come to an aspiring immortal eventually.",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.activityService.beggingDays > 888;
       },
@@ -442,7 +442,7 @@ export class AchievementService {
     {
       name: "Grandma's Stick",
       description: "You've developed spirituality and come to understand the value of grandmothers.",
-      hint: "Just keep playing, I'm sure this will come to an aspiring immortal eventually.",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.characterService.characterState.attributes.spirituality.value > 0;
       },

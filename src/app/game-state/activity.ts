@@ -34,6 +34,9 @@ export enum ActivityType {
   OfferDragonFood,
   OfferDragonWealth,
   TalkToDragon,
+  GatherArmies,
+  ConquerTheWorld,
+  MoveStars
 
 }
 

@@ -152,7 +152,9 @@ export class BattleService {
           this.characterService.characterState.increaseAttribute('toughness', 0.01);
           if (this.characterService.characterState.status.health.value <= 0){
             this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
-            this.characterService.characterState.dead = true;
+            if (!this.characterService.characterState.immortal){
+              this.characterService.characterState.dead = true;
+            }
             return;
           }
         } else {
@@ -287,6 +289,26 @@ export class BattleService {
       defense: 2,
       loot: [
         this.itemRepoService.items['hide']
+      ]
+    },
+    army: {
+      name: "an angry army",
+      health: 20000000,
+      maxHealth: 20000000,
+      accuracy: 0.9,
+      attack: 1000000,
+      defense: 1000000,
+      loot: []
+    },
+    death: {
+      name: "death itself",
+      health: 100000000,
+      maxHealth: 100000000,
+      accuracy: 0.99,
+      attack: 10000000,
+      defense: 10000000,
+      loot: [
+        this.itemRepoService.items['immortality']
       ]
     }
   }
