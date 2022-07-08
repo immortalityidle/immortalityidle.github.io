@@ -95,7 +95,7 @@ export class AppComponent implements OnInit {
 
   hardResetClicked(event: Event): void {
     event.preventDefault();
-    if (confirm("This will reset everything, are you sure?")){
+    if (confirm("This will reset everything permanently. Are you sure?")){
       this.gameStateService.hardReset();
     }
   }
@@ -121,7 +121,9 @@ export class AppComponent implements OnInit {
 
   rebirthClicked(event: Event){
     event.preventDefault();
-    this.gameStateService.rebirth();
+    if (confirm("This will end your current life. Are you sure?")){
+      this.gameStateService.rebirth();
+    }
   }
 
   ascensionStoreClicked(){
