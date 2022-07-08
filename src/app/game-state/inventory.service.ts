@@ -497,7 +497,7 @@ export class InventoryService {
     } else {
       oreValue = 9 + Math.floor(Math.log10(this.characterService.characterState.attributes.earthLore.value - 60));
     }
-    let lastOre =  this.itemRepoService.items['copperBar'];
+    let lastOre =  this.itemRepoService.items['copperOre'];
     for (let key in this.itemRepoService.items){
       let item = this.itemRepoService.items[key];
       if (item.type == 'ore' && item.value > lastOre.value && item.value <= oreValue){
