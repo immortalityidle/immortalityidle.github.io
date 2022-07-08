@@ -1769,7 +1769,7 @@ export class ActivityService {
       name: ['Infuse Body'],
       activityType: ActivityType.InfuseBody,
       description: ['Direct your magical energy into reinforcing your physical body, making it healthier and more able to sustain damage without falling.'],
-      consequenceDescription: ['A magical technique that usess 10 mana and 200 stamina. Make sure you have enough magical power before attempting this.'],
+      consequenceDescription: ['A magical technique that uses 10 mana and 200 stamina. Make sure you have enough magical power before attempting this.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 200;
         if (this.characterService.characterState.manaUnlocked && this.characterService.characterState.status.mana.value >= 10){
