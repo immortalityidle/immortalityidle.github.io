@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
+import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 
 @Component({
   selector: 'app-farm-panel',
   templateUrl: './farm-panel.component.html',
-  styleUrls: ['./farm-panel.component.less']
+  styleUrls: ['./farm-panel.component.less', '../app.component.less']
 })
 export class FarmPanelComponent {
 
   constructor(public homeService: HomeService,
-    private characterService: CharacterService) {
+    private characterService: CharacterService,
+    public gameStateService: GameStateService
+
+    ) {
 
   }
 

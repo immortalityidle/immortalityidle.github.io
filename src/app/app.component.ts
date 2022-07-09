@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private mainLoopService: MainLoopService,
-    private gameStateService: GameStateService,
+    public gameStateService: GameStateService,
     private storeService: StoreService,
     public characterService: CharacterService,
     public impossibleTaskService: ImpossibleTaskService,
@@ -146,5 +146,8 @@ export class AppComponent implements OnInit {
       width: '500px',
       data: {someField: 'foo'}
     });
+  }
+  darkModeToggle(){
+    this.gameStateService.isDarkMode = !this.gameStateService.isDarkMode;
   }
 }

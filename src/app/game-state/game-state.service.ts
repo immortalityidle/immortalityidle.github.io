@@ -25,7 +25,8 @@ interface GameState {
   followers: FollowersProperties,
   logs: LogProperties,
   mainLoop: MainLoopProperties,
-  impossibleTasks: ImpossibleTaskProperties
+  impossibleTasks: ImpossibleTaskProperties,
+  darkMode: boolean
 }
 
 @Injectable({
@@ -34,6 +35,7 @@ interface GameState {
 export class GameStateService {
 
   lastSaved: number = 0;
+  isDarkMode: boolean = false;
 
   constructor(
     private characterService: CharacterService,
@@ -66,7 +68,8 @@ export class GameStateService {
       battles: this.battleService.getProperties(),
       followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
-      mainLoop: this.mainLoopService.getProperties()
+      mainLoop: this.mainLoopService.getProperties(),
+      darkMode: this.isDarkMode,
     };
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
     this.lastSaved = new Date().getTime();
@@ -98,6 +101,7 @@ export class GameStateService {
     this.followersService.setProperties(gameState.followers);
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
+    this.isDarkMode = gameState.darkMode || false;
   }
 
   hardReset(): void {

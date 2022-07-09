@@ -1,4 +1,4 @@
-<div>
+<div class='darkMode'>
     <h3>Impossible Tasks</h3>
     <hr/>
     <div>
@@ -28,10 +28,10 @@
                       done
                     </mat-icon>
                   </span>
-                  <span *ngIf="impossibleTaskService.activeTaskIndex == task.taskType">
+                  <span *ngIf="impossibleTaskService.activeTaskIndex === task.taskType">
                     <button (click)="impossibleTaskService.stopTask()">Stop</button>
                   </span>
-                  <span *ngIf="impossibleTaskService.activeTaskIndex == -1 && impossibleTaskService.nextTask == task.taskType">
+                  <span *ngIf="impossibleTaskService.activeTaskIndex === -1 && impossibleTaskService.nextTask === task.taskType">
                     <button (click)="impossibleTaskService.startTask()">Start</button>
                   </span>
                 </td>

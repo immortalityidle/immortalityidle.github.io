@@ -5,6 +5,7 @@ import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service'
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-furniture-store-modal',
@@ -20,7 +21,8 @@ export class FurnitureStoreModalComponent {
     public characterService: CharacterService,
     public homeService: HomeService,
     public inventoryService: InventoryService,
-    public itemRepoService: ItemRepoService
+    public itemRepoService: ItemRepoService,
+    public gameStateService: GameStateService
   ) { }
 
   slotClicked(item: Item){

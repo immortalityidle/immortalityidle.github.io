@@ -1,4 +1,4 @@
-<div>
+<div class='darkMode'>
   <span>Furniture Shop</span>
   <hr/>
   <div class="inventoryGrid">
@@ -9,7 +9,7 @@
         <tr><mat-icon>{{item.slot}}</mat-icon></tr>
         <tr>{{item.name | titlecase}}</tr>
       </table>
-      <div class="priceLabel">{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
+      <div class="priceLabel"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div>
     </div>
   </div>
   <button (click)="storeService.buyFurniture()"

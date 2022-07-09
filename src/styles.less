@@ -1,22 +1,45 @@
-@bodyText: black;
-@bodyBackground: #C4E9CC; //#efefef;
-@panelBackground: #e9f7ec; //#fcfcfc;
-@panelBorder: #a4c9aC; //#121212;
-//@shadowColor: #7f6b00;//#aaaaaa;
-@tableDividerColor: #a4c9aC;
-@activeButtonColor: #d8deff;
-@itemSlotColor: rgb(252, 252, 239);
-@itemSlotHighlight: #d8deff;
-@storeButtonColor: #fdfffc;
-@storeButtonDisabledColor: darkgray;
-@healthColor: red;
-@staminaColor: lightgreen;
-@nutritionColor: yellow;
-@manaColor: lightblue;
-@buttonColor: #fdfffc;
-@buttonBorder: #a4c9aC;
+:root {
+  --bodyText: black;
+  --bodyBackground: #C4E9CC; //#efefef;
+  --panelBackground: #e9f7ec; //#fcfcfc;
+  --panelBorder: #a4c9aC; //#121212;
+  --tableDividerColor: #a4c9aC;
+  --activeButtonColor: #d8deff;
+  --itemSlotColor: rgb(252, 252, 239);
+  --itemSlotHighlight: #d8deff;
+  --storeButtonColor: #fdfffc;
+  --storeButtonDisabledColor: #555555;
+  --healthColor: red;
+  --staminaColor: lightgreen;
+  --nutritionColor: yellow;
+  --manaColor: lightblue;
+  --buttonColor: #fdfffc;
+  --buttonBorder: #a4c9aC;
+  --dialogBackground: #333333;
+}
+:root .darkMode{
+  --bodyText: white;
+  --bodyBackground: #000000;
+  --panelBackground: #222222;
+  --panelBorder: #aaaaaa;
+  --tableDividerColor: #aaaaaa;
+  --activeButtonColor: #004444;
+  --itemSlotColor: #555555;
+  --itemSlotHighlight: #004444;
+  --storeButtonColor: #777777;
+  --storeButtonDisabledColor: darkgray;
+  --healthColor: red;
+  --staminaColor: lightgreen;
+  --nutritionColor: yellow;
+  --manaColor: lightblue;
+  --buttonColor: #777777;
+  --buttonBorder: #999999;
+  --dialogBackground: #333333;
+}
+
 
 html, body { height: 100%; }
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -28,35 +51,51 @@ body {
   user-select: none;
 }
 
+span {
+  color: var(--bodyText);
+}
+
+td {
+  color: var(--bodyText);
+}
+
+a {
+  color: var(--bodyText);
+}
+
+h3 {
+  color: var(--bodyText);
+}
+
 .iconButton {
-  border: 1px @bodyText solid;
+  border: 1px var(--bodyText) solid;
   border-radius: 3px;
 }
 
 button {
-  background-color: @buttonColor;
-  border: 1px solid @buttonBorder;
+  background-color: var(--buttonColor);
+  border: 1px solid var(--buttonBorder);
   border-radius: 6px;
-  color: @bodyText;
+  color: var(--bodyText);
   cursor: pointer;
 }
 
 button:disabled {
-  color: @bodyText;
+  color: var(--bodyText);
 }
 
 .itemSlot {
   border-radius: 4px;
-  border: 1px solid @panelBorder;
+  border: 1px solid var(--panelBorder);
   margin: 1px;
   font-size: x-small;
   text-align: center;
   border-spacing: 0px;
   cursor: pointer;
-  background-color: @itemSlotColor;
-
+  background-color: var(--itemSlotColor);
+  color: var(--bodyText);
 }
 
 .mat-dialog-container {
-  background-color: @bodyBackground;
+  background-color: var(--dialogBackground);
 }

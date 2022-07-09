@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
   <div class="mainContainer">
     <div class="top-line">
       <span class="gameTitle">
@@ -36,7 +36,10 @@
         (click)="saveClicked($event)">
         save
       </mat-icon>
-
+      <span>
+        <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode"/>
+        <label for="darkMode">Dark Mode</label>
+      </span>
       <a href="" tooltip="Completely restart your journey toward immortality." placement="left" (click)="hardResetClicked($event)">Hard Reset</a>
     </div>
     <div class="panelContainer">
