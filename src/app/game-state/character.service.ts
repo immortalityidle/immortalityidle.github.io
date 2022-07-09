@@ -144,7 +144,7 @@ export class CharacterService {
       "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
       'STANDARD', 'STORY');
     this.logService.addLogMessage(
-      "You now gain twice as much aptitude each time you reincarnate.",
+      "You now gain additional aptitude each time you reincarnate.",
       'STANDARD', 'STORY');
     this.characterState.condenseSoulCoreCost *= 10;
     this.characterState.aptitudeGainDivider -= 10;
