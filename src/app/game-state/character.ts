@@ -241,8 +241,8 @@ export class Character {
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
     let totalAptitude = 0;
-    totalAptitude += this.attributes.strength.value + this.attributes.toughness.value +
-      this.attributes.speed.value + this.attributes.intelligence.value + this.attributes.charisma.value;
+    totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
+      this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
     if (this.bloodlineRank < 4){
       this.statLifespan *= 0.1;
