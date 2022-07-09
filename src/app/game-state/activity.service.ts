@@ -1584,7 +1584,7 @@ export class ActivityService {
       name: ['Smelting'],
       activityType: ActivityType.Smelting,
       description: ['Smelt metal ores into usable metal.'],
-      consequenceDescription: ['Uses 30 stamina. Increases toughness and intelligence. If you have metal ores, you can make them into bars.'],
+      consequenceDescription: ['Uses 20 stamina. Increases toughness and intelligence. If you have metal ores, you can make them into bars.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 20;
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
