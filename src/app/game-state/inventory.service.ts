@@ -735,6 +735,9 @@ export class InventoryService {
   }
 
   autoSell(item: Item){
+    if (!this.autoSellUnlocked){
+      return;
+    }
     if (!this.autoSellItems.includes(item.name)){
       this.autoSellItems.push(item.name);
     }
@@ -776,6 +779,9 @@ export class InventoryService {
   }
 
   autoUse(item: Item){
+    if (!this.autoUseUnlocked){
+      return;
+    }
     if (item.type != "potion" && item.type != "pill" && !item.use){
       // it's not usable, bail out.
       return;

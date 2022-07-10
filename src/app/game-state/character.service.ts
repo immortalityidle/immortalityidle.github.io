@@ -18,7 +18,7 @@ export class CharacterService {
 
   constructor(
     private injector: Injector,
-    mainLoopService: MainLoopService,
+    private mainLoopService: MainLoopService,
     private logService: LogService,
     private reincarnationService: ReincarnationService
   ) {
@@ -165,6 +165,7 @@ export class CharacterService {
     this.activityService.reloadActivities();
     this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
     this.forceRebirth = true;
+    this.mainLoopService.tick();
   }
 
   soulCoreRank(): number {
@@ -208,6 +209,7 @@ export class CharacterService {
     this.activityService.reloadActivities();
     this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
     this.forceRebirth = true;
+    this.mainLoopService.tick();
   }
 
   meridianRank(): number {
@@ -245,6 +247,7 @@ export class CharacterService {
       }
     }
     this.forceRebirth = true;
+    this.mainLoopService.tick();
   }
 
 }
