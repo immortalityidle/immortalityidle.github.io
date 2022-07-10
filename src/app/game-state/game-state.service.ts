@@ -58,20 +58,7 @@ export class GameStateService {
   }
 
   savetoLocalStorage(): void {
-    const gameState: GameState = {
-      achievements: this.achievementService.getProperties(),
-      impossibleTasks: this.impossibleTaskService.getProperties(),
-      character: this.characterService.characterState.getProperties(),
-      inventory: this.inventoryService.getProperties(),
-      home: this.homeService.getProperties(),
-      activities: this.activityService.getProperties(),
-      battles: this.battleService.getProperties(),
-      followers: this.followersService.getProperties(),
-      logs: this.logService.getProperties(),
-      mainLoop: this.mainLoopService.getProperties(),
-      darkMode: this.isDarkMode,
-    };
-    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, JSON.stringify(gameState));
+    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, this.getGameExport());
     this.lastSaved = new Date().getTime();
   }
 
@@ -79,6 +66,18 @@ export class GameStateService {
     const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY);
     if (!gameStateSerialized) {
       return;
+    }
+    this.importGame(gameStateSerialized);
+  }
+
+  importGame(value: string){
+    let gameStateSerialized: string;
+    if (value.substring(0, 3) == "iig"){
+      // it's a new save file
+      gameStateSerialized = atob(value.substring(3));
+    } else {
+      // it's a legacy save file
+      gameStateSerialized = value;
     }
     const gameState = JSON.parse(gameStateSerialized) as GameState;
     this.achievementService.setProperties(gameState.achievements);
@@ -102,6 +101,26 @@ export class GameStateService {
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
     this.isDarkMode = gameState.darkMode || false;
+
+  }
+
+  getGameExport(): string{
+    const gameState: GameState = {
+      achievements: this.achievementService.getProperties(),
+      impossibleTasks: this.impossibleTaskService.getProperties(),
+      character: this.characterService.characterState.getProperties(),
+      inventory: this.inventoryService.getProperties(),
+      home: this.homeService.getProperties(),
+      activities: this.activityService.getProperties(),
+      battles: this.battleService.getProperties(),
+      followers: this.followersService.getProperties(),
+      logs: this.logService.getProperties(),
+      mainLoop: this.mainLoopService.getProperties(),
+      darkMode: this.isDarkMode,
+    };
+    let gameStateString = JSON.stringify(gameState);
+    gameStateString = "iig" + btoa(gameStateString);
+    return gameStateString;
   }
 
   hardReset(): void {

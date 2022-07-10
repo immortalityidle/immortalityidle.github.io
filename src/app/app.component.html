@@ -40,6 +40,10 @@
         <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode"/>
         <label for="darkMode">Dark Mode</label>
       </span>
+      <mat-icon tooltip="Import or export your save game file. Sometimes immortals need a different browser." class="iconButton"
+        (click)="exportClicked()">
+        upload
+      </mat-icon>
       <a href="" tooltip="Completely restart your journey toward immortality." placement="left" (click)="hardResetClicked($event)">Hard Reset</a>
     </div>
     <div class="panelContainer">
