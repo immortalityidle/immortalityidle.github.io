@@ -546,7 +546,7 @@ export class ActivityService {
       description: ['Set up the scaffolding for the next level of your tower.'],
       consequenceDescription: ['Reduce Stamina by 1000. If you have the right facilities and materials you might succeed in setting up the scaffolding for the next level.'],
       consequence: [() => {
-        this.characterService.characterState.status.stamina.value -= 100;
+        this.characterService.characterState.status.stamina.value -= 1000;
         let woodValue = 0;
         for (let i = 0; i < 200; i++){
           woodValue = this.inventoryService.consume('wood');
