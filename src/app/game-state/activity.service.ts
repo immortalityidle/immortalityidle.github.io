@@ -1826,7 +1826,7 @@ export class ActivityService {
       unlocked: false,
       skipApprenticeshipLevel: 0
     }
-
+    
     this.Recruiting = {
       level: 0,
       name: ['Recruit Followers'],

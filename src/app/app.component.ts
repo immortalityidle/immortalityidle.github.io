@@ -14,6 +14,7 @@ import { ImpossibleTaskService } from './game-state/impossibleTask.service';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
 import {environment} from '../environments/environment';
 import { ExportPanelComponent } from './export-panel/export-panel.component';
+import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -138,6 +139,13 @@ export class AppComponent implements OnInit {
     this.storeService.updateAscensions();
     const dialogRef = this.dialog.open(AscensionStoreModalComponent, {
       width: '500px',
+      data: {someField: 'foo'}
+    });
+  }
+
+  tutorialClicked(){
+    const dialogRef = this.dialog.open(TutorialPanelComponent, {
+      width: '700px',
       data: {someField: 'foo'}
     });
   }

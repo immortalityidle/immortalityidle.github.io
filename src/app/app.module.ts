@@ -26,6 +26,7 @@ import { FarmPanelComponent } from './farm-panel/farm-panel.component';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
 import { ExportPanelComponent } from './export-panel/export-panel.component';
+import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -54,7 +55,8 @@ const materialModules = [
     FarmPanelComponent,
     AchievementPanelComponent,
     ImpossibleTaskPanelComponent,
-    ExportPanelComponent
+    ExportPanelComponent,
+    TutorialPanelComponent
   ],
   imports: [
     BrowserModule,
