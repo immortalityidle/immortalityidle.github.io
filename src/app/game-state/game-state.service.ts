@@ -74,7 +74,7 @@ export class GameStateService {
     let gameStateSerialized: string;
     if (value.substring(0, 3) == "iig"){
       // it's a new save file
-      gameStateSerialized = atob(value.substring(3));
+      gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
       // it's a legacy save file
       gameStateSerialized = value;
@@ -119,7 +119,8 @@ export class GameStateService {
       darkMode: this.isDarkMode,
     };
     let gameStateString = JSON.stringify(gameState);
-    gameStateString = "iig" + btoa(gameStateString);
+    //gameStateString = "iig" + btoa(gameStateString);
+    gameStateString = "iig" + btoa(encodeURIComponent(gameStateString));
     return gameStateString;
   }
 
