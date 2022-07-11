@@ -25,15 +25,30 @@
     height: 100%;
     width: 100%;
     background-color: var(--bodyBackground);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.bodyContainer {
+    width: 100%;
     display:flex;
     flex-direction: column;
-    min-height: 0;
     flex-grow: 1;
+    overflow: auto;
 }
 
 .panelContainer {
     display: flex;
     min-height: 0;
+    flex-grow: 2;
+    overflow: auto;
+    min-height: 520px;
+}
+
+.logContainer {
+    min-height: 0;
+    width: 100%;
     flex-grow: 1;
 }
 
@@ -42,40 +57,43 @@
     display: flex;
     flex-direction: column;
     min-width: 435px;
+    min-height: 500px;
 }
 
 .centerPanel {
     flex: 2;
     display: flex;
     flex-direction: column;
+    min-height: 500px;
 }
 
 .rightPanel {
-    flex: 3;
+    flex: 2;
     display: flex;
     flex-direction: column;
     width: 360px;
     max-width: 320px;
-}
-
-.adPanel {
-    display: flex;
-    flex-direction: column;
+    min-height: 500px;
 }
 
 .timePanel {
   flex-grow: 1;
   overflow: auto;
-  min-height: 300px;
+  min-height: 200px;
 }
 
 .attributesPanel {
+    flex-grow: 1;
     overflow: auto;
+    min-height: 100px;
 }
 
+.healthPanel {
+    min-height: 100px;
+}
 
 .activityPanel {
-    flex-grow: 3;
+    flex-grow: 1;
     overflow: auto;
 }
 
@@ -91,19 +109,15 @@
 }
 
 .logPanel {
+    display: flex;
     flex-grow: 1;
-    height: 160px;
-    min-height: 160px;
-    max-height: 160px;
+    min-height: 100px;
 }
 
 .inventoryPanel {
     flex-grow: 1;
+    min-height: 100px;
     overflow: auto;
-}
-
-.cheat {
-    font-size: 3px;
 }
 
 .panel {

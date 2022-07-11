@@ -1,6 +1,6 @@
 import { Equipment, Item } from './inventory.service'
 import { LogService } from './log.service';
-import { formatNumber } from '@angular/common';
+import { formatNumber, TitleCasePipe } from '@angular/common';
 
 export interface CharacterAttribute {
   strength?: number,
@@ -69,7 +69,8 @@ const INITIAL_AGE = 18 * 365;
 
 export class Character {
 
-  constructor(private logService: LogService){
+  constructor(private logService: LogService,
+    private titlecasePipe: TitleCasePipe){
   }
 
   totalLives: number = 1;
@@ -260,7 +261,7 @@ export class Character {
         if (addedValue > 0){
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
-          this.logService.addLogMessage("Your aptitude for " + keys[key] + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
+          this.logService.addLogMessage("Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
         }
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);

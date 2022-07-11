@@ -11,20 +11,12 @@
       <label for="filterCombat">Show Combat Messages {{logService.newCombat}}</label>
     </span>
   </h3>
-  <div class="logContainer">
+  <div class="logBox">
     <ng-container *ngFor="let logMsg of logService.currentLog">
       <div [ngClass]="logMsg.type" class="logEntryDiv">
         {{logMsg.message}}
       </div>
     </ng-container>
   </div>
-  <div class="disclaimer">
-    <span class="disclaimerLeft">
-      This game should be hosted on immortalityidle.github.io. If you see it somewhere else, it's stolen.
-    </span>
-    <span class="disclaimerRight">
-    </span>
-  </div>
-
 </div>
 

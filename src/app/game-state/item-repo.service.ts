@@ -727,7 +727,7 @@ export class ItemRepoService {
       name: 'felsteel ore',
       type: 'ore',
       value: 14,
-      description: 'A chunk of cloudsteel ore.',
+      description: 'A chunk of felsteel ore.',
     },
     cloudsteelOre: {
       id: 'cloudsteelOre',
@@ -840,7 +840,7 @@ export class ItemRepoService {
       name: 'felsteel bar',
       type: 'metal',
       value: 140,
-      description: 'A bar of cloudsteel.',
+      description: 'A bar of felsteel.',
     },
     cloudsteelBar: {
       id: 'cloudsteelBar',

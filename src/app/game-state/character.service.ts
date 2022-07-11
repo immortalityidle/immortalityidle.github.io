@@ -3,7 +3,7 @@ import { LogService } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
-import { formatNumber } from '@angular/common';
+import { formatNumber, TitleCasePipe } from '@angular/common';
 import { ActivityService } from './activity.service';
 
 @Injectable({
@@ -20,9 +20,10 @@ export class CharacterService {
     private injector: Injector,
     private mainLoopService: MainLoopService,
     private logService: LogService,
-    private reincarnationService: ReincarnationService
+    private reincarnationService: ReincarnationService,
+    titleCasePipe: TitleCasePipe
   ) {
-    this.characterState = new Character(logService);
+    this.characterState = new Character(logService, titleCasePipe);
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.characterState.dead){
         this.characterState.age++;

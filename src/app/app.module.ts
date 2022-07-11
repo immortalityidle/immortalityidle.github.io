@@ -15,7 +15,7 @@ import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.compo
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { TooltipModule } from 'ng2-tooltip-directive';
 import { BattlePanelComponent } from './battle-panel/battle-panel.component';
@@ -68,7 +68,9 @@ const materialModules = [
   exports: [
     ...materialModules
   ],
-  providers: [],
+  providers: [
+    TitleCasePipe,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

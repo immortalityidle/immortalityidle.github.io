@@ -714,7 +714,7 @@ export class HomeService {
         }
       }
     }
-    if (this.autoBuyLandUnlocked && (this.land + this.fields.length) < this.autoBuyLandLimit){
+    if (this.autoBuyLandUnlocked && (this.land + this.fields.length + this.extraFields) < this.autoBuyLandLimit){
       //autoBuy is on, check if we have the money for the land plus the next few days' rent and food
       if (this.characterService.characterState.money > this.landPrice  + (this.nextHome.costPerDay * 3) + 3 ){
         this.buyLand();

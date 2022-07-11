@@ -1,7 +1,9 @@
 @import (reference) "../../styles.less";
 
 .log {
-  height: 100%;
+  flex-direction: column;
+  max-height: 200px;
+  width: 100%;
 }
 
 .STANDARD {
@@ -21,25 +23,11 @@
   margin-top: 1px;
 }
 
-.filters {
-  float: right;
-}
-
-.logContainer {
-  margin-top: -18px;
-  height: 100px;
-  width: 100%;
+.logBox {
   overflow: auto;
-}
-
-.disclaimer {
-  bottom: 1px;
-  font-size: x-small;
-  margin: 10px;
-}
-
-.disclaimerRight {
-  float: right;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 170px;
 }
 
 .headerNote {
@@ -49,6 +37,7 @@
 
 .panelHeader {
   white-space: nowrap;
+  flex: 0 1 auto;
 }
 
 .highlightText {
