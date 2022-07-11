@@ -20,6 +20,7 @@ export enum ActivityType {
   MindCultivation,
   CoreCultivation,
   InfuseBody,
+  ExtendLife,
   Recruiting,
   Swim,
   ForgeChains,

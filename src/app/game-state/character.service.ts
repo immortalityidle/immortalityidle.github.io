@@ -105,7 +105,7 @@ export class CharacterService {
       this.lifespanTooltip = "You are immortal.";
       return;
     }
-    if (this.characterState.foodLifespan + this.characterState.alchemyLifespan + this.characterState.statLifespan + this.characterState.spiritualityLifespan <= 0){
+    if (this.characterState.foodLifespan + this.characterState.alchemyLifespan + this.characterState.statLifespan + this.characterState.spiritualityLifespan + this.characterState.magicLifespan <= 0){
       this.lifespanTooltip = "You have done nothing to extend your lifespan.";
       return;
     }
@@ -121,6 +121,9 @@ export class CharacterService {
     }
     if (this.characterState.spiritualityLifespan > 0){
       tooltip += "<br>Spirituality: " + this.yearify(this.characterState.spiritualityLifespan);
+    }
+    if (this.characterState.spiritualityLifespan > 0){
+      tooltip += "<br>Magic: " + this.yearify(this.characterState.magicLifespan);
     }
     this.lifespanTooltip = tooltip;
   }

@@ -361,6 +361,7 @@ export class ActivityService {
     newList.push(this.MindCultivation);
     newList.push(this.CoreCultivation);
     newList.push(this.InfuseBody);
+    newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
     newList.push(this.Burning);
     return newList;
@@ -405,6 +406,8 @@ export class ActivityService {
   CoreCultivation: Activity;
   // @ts-ignore
   InfuseBody: Activity;
+  // @ts-ignore
+  ExtendLife: Activity;
   // @ts-ignore
   Recruiting: Activity;
   // @ts-ignore
@@ -1788,6 +1791,37 @@ export class ActivityService {
         metalLore: 1000,
         earthLore: 1000,
         spirituality: 1000
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.ExtendLife = {
+      level: 0,
+      name: ['Extend Life'],
+      activityType: ActivityType.ExtendLife,
+      description: ['Direct your magical energy into extending your lifespan, making you live longer.'],
+      consequenceDescription: ['A magical technique that uses 20 mana and 400 stamina. Make sure you have enough magical power before attempting this.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 400;
+        if (this.characterService.characterState.manaUnlocked && this.characterService.characterState.status.mana.value >= 20){
+          this.characterService.characterState.status.mana.value -= 20;
+          if (this.characterService.characterState.magicLifespan < 36500){
+            this.characterService.characterState.magicLifespan += 10;
+          }
+        } else {
+          let damage = this.characterService.characterState.status.health.max * 0.1;
+          this.characterService.characterState.status.health.value -= damage;
+          this.logService.addLogMessage("Your magic is too weak to extend your life. You fail miserably and hurt yourself badly.","INJURY","EVENT");
+        }
+      }],
+      requirements: [{
+        woodLore: 10000,
+        waterLore: 10000,
+        fireLore: 10000,
+        metalLore: 10000,
+        earthLore: 10000,
+        spirituality: 10000
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0

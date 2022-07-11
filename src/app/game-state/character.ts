@@ -50,6 +50,7 @@ export interface CharacterProperties {
   alchemyLifespan: number,
   statLifespan: number,
   spiritualityLifespan: number,
+  magicLifespan: number,
   attributeScalingLimit: number,
   attributeSoftCap: number,
   aptitudeGainDivider: number,
@@ -209,7 +210,8 @@ export class Character {
   alchemyLifespan = 0; // bonus to lifespan based on pills you've eaten
   statLifespan = 0; // bonus to lifespan based on base stat aptitudes
   spiritualityLifespan = 0; // bonus to lifespan based on spirituality
-  lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan;
+  magicLifespan = 0;
+  lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
   equipment: EquipmentSlots = {
     head: null,
     body: null,
@@ -245,6 +247,7 @@ export class Character {
     this.foodLifespan = 0;
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
+    this.magicLifespan = 0;
     let totalAptitude = 0;
     totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
       this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
@@ -311,10 +314,10 @@ export class Character {
 
   recalculateDerivedStats(): void{
     this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic +
-      Math.floor(Math.log2(this.attributes.toughness.value) * 5);
+      Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5);
 
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value);
-    this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan;
+    this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
     this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
     this.attackPower = Math.floor(Math.log10(this.attributes.strength.value)) || 1;
@@ -414,6 +417,7 @@ export class Character {
       alchemyLifespan: this.alchemyLifespan,
       statLifespan: this.statLifespan,
       spiritualityLifespan: this.spiritualityLifespan,
+      magicLifespan: this.magicLifespan,
       attributeScalingLimit: this.attributeScalingLimit,
       attributeSoftCap: this.attributeSoftCap,
       aptitudeGainDivider: this.aptitudeGainDivider,
@@ -441,6 +445,7 @@ export class Character {
     this.alchemyLifespan = properties.alchemyLifespan || 0;
     this.statLifespan = properties.statLifespan || 0;
     this.spiritualityLifespan = properties.spiritualityLifespan || 0;
+    this.magicLifespan = properties.magicLifespan || 0;
     this.attributeScalingLimit = properties.attributeScalingLimit;
     this.attributeSoftCap = properties.attributeSoftCap;
     this.aptitudeGainDivider = properties.aptitudeGainDivider;
