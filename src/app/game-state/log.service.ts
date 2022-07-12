@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { isEmpty } from 'rxjs';
 
 export type LogType = 'STANDARD' | 'INJURY';
-export type LogTopic = 'COMBAT' | 'STORY' | 'EVENT';
+export type LogTopic = 'COMBAT' | 'CRAFTING' | 'STORY' | 'EVENT';
 
 export interface Log {
   message: string,
@@ -24,9 +25,11 @@ export class LogService {
   newStory: string = "";
   newEvents: string = "";
   newCombat: string = "";
+  newCrafting: string = "";
   storyLog: Log[] = [];
   eventLog: Log[] = [];
   combatLog: Log[] = [];
+  craftingLog: Log[] = [];
   currentLog: Log[] = [];
 
   constructor() {
@@ -42,6 +45,8 @@ export class LogService {
       log = this.combatLog;
     } else if (topic == 'STORY'){
       log = this.storyLog;
+    } else if (topic == 'CRAFTING'){
+      log = this.craftingLog;
     }
 
     let newMessage = {
@@ -62,6 +67,8 @@ export class LogService {
         this.newStory = " (new)";
       } else if (topic == 'EVENT'){
         this.newEvents = " (new)";
+      } else if (topic == 'CRAFTING'){
+        this.newCrafting = " (new)";
       } else {
         this.newCombat = " (new)";
       }
@@ -121,53 +128,49 @@ export class LogService {
   }
 
   updateLogTopics(){
-    let combatLog: Log[] = [];
-    let eventLog: Log[] = [];
-    let storyLog: Log[] = [];
+    let logs: Log[][] = [];
 
     if (this.logTopics.includes('COMBAT')){
       this.newCombat = "";
-      combatLog = [...this.combatLog];
+      logs.push([...this.combatLog]);
     }
     if (this.logTopics.includes('STORY')){
       this.newStory = "";
-      storyLog = [...this.storyLog];
+      logs.push([...this.storyLog]);
       }
     if (this.logTopics.includes('EVENT')){
       this.newEvents = "";
-      eventLog = [...this.eventLog];
+      logs.push([...this.eventLog]);
+    }
+    if (this.logTopics.includes('CRAFTING')){
+      this.newCrafting = "";
+      logs.push([...this.craftingLog]);
     }
 
     this.currentLog = [];
-
-    while(combatLog.length != 0 || eventLog.length != 0 || storyLog.length != 0){
+    if (logs.length == 0){
+      return;
+    }
+    //@ts-ignore
+    let isEmpty = a => Array.isArray(a) && a.every(isEmpty);
+    while(!isEmpty(logs)){
       // figure out the oldest log entry and add it to the currentLog until everything is added
       let latestTimestamp = Number.MAX_VALUE;
-      let latestLog: Log[] = combatLog;
-      if (combatLog.length != 0){
-        let combatTimestamp = combatLog[combatLog.length - 1].timestamp || 0;
-        if (combatTimestamp < latestTimestamp){
-          latestTimestamp = combatTimestamp;
+      let latestLog: Log[] = logs[0];
+      for (let index = 0; index < logs.length; index++){
+        let loopLog = logs[index];
+        if (loopLog.length == 0){
+          continue;
         }
-      }
-      if (storyLog.length != 0){
-        let storyTimestamp = storyLog[storyLog.length - 1].timestamp || 0;
-        if (storyTimestamp < latestTimestamp){
-          latestLog = storyLog;
-          latestTimestamp = storyTimestamp;
-        }
-      }
-      if (eventLog.length != 0){
-        let eventTimestamp = eventLog[eventLog.length - 1].timestamp || 0;
-        if (eventTimestamp < latestTimestamp){
-          latestLog = eventLog;
-          latestTimestamp = eventTimestamp;
+        let timestamp = loopLog[loopLog.length - 1].timestamp || 0;
+        if (timestamp < latestTimestamp){
+          latestTimestamp = timestamp;
+          latestLog = loopLog;
         }
       }
       this.addToCurrentLog(latestLog[latestLog.length - 1]);
       latestLog.splice(latestLog.length - 1, 1);
     }
-
   }
 
 }

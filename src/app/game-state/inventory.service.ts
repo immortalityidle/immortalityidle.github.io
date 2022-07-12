@@ -293,7 +293,7 @@ export class InventoryService {
       materialPrefix = "wooden";
     }
     let name = prefix + ' ' + materialPrefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)] + suffix;
-    this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'EVENT');
+    this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'CRAFTING');
     let durability = Math.floor(Math.random() * grade * 10);
     return {
       id: 'weapon',
@@ -342,7 +342,7 @@ export class InventoryService {
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
     let name = "Potion of " + key + " +" + grade;
-    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","EVENT");
+    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
 
     this.addItem( {
       name: name,
@@ -361,7 +361,7 @@ export class InventoryService {
   generatePill(grade: number): void {
     let effect = "Longevity"; // add more later
     let name = effect + " Pill " + " +" + grade;
-    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","EVENT");
+    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
     this.addItem( {
       name: name,
       id: "pill",
@@ -457,7 +457,7 @@ export class InventoryService {
       namePicker = ShoeNames;
     }
     let name = prefix + ' ' + materialPrefix + ' ' + namePicker[Math.floor(Math.random() * namePicker.length)] + suffix;
-    this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'EVENT');
+    this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'CRAFTING');
     let durability = Math.floor(Math.random() * grade * 10);
     return {
       id: 'armor',

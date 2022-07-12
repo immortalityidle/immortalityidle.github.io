@@ -3,11 +3,13 @@
     <span>Log</span>
     <span class="headerNote">Newest messages appear at the top, so read from the bottom up.</span>
     <span class="filters">
-      <input type="checkbox" (change)="topicFilterStory($event)" id="filterStory" [checked]="logService.logTopics.includes('STORY')"/>
+      <input type="checkbox" (change)="topicFilter($event, 'STORY')" id="filterStory" [checked]="logService.logTopics.includes('STORY')"/>
       <label for="filterStory">Show Story Messages <span class="highlightText">{{logService.newStory}}</span></label>
-      <input type="checkbox" (change)="topicFilterEvent($event)" id="filterEvent" [checked]="logService.logTopics.includes('EVENT')"/>
+      <input type="checkbox" (change)="topicFilter($event, 'EVENT')" id="filterEvent" [checked]="logService.logTopics.includes('EVENT')"/>
       <label for="filterEvent">Show Event Messages {{logService.newEvents}}</label>
-      <input type="checkbox" (change)="topicFilterCombat($event)" id="filterCombat" [checked]="logService.logTopics.includes('COMBAT')"/>
+      <input type="checkbox" (change)="topicFilter($event, 'CRAFTING')" id="filterCrafting" [checked]="logService.logTopics.includes('CRAFTING')"/>
+      <label for="filterCrafting">Show Crafting Messages {{logService.newCrafting}}</label>
+      <input type="checkbox" (change)="topicFilter($event, 'COMBAT')" id="filterCombat" [checked]="logService.logTopics.includes('COMBAT')"/>
       <label for="filterCombat">Show Combat Messages {{logService.newCombat}}</label>
     </span>
   </h3>

@@ -11,16 +11,8 @@ export class LogPanelComponent {
   constructor(public logService: LogService) {
   }
 
-  topicFilterCombat(event: Event ){
+  topicFilter(event: Event, topic: LogTopic ){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.logService.enableLogTopic('COMBAT', event.target.checked);
-  }
-  topicFilterStory(event: Event ){
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.logService.enableLogTopic('STORY', event.target.checked);
-  }
-  topicFilterEvent(event: Event ){
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.logService.enableLogTopic('EVENT', event.target.checked);
+    this.logService.enableLogTopic(topic, event.target.checked);
   }
 }
