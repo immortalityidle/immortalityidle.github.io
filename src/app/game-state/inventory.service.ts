@@ -1045,6 +1045,28 @@ export class InventoryService {
     }
     stack.quantity -= 10;
     this.addItem(this.generateSpiritGem((stack.item.value / 10) + 1));
+    if (stack.quantity == 0){
+      // go find the stack and remove it
+      for (let i = 0; i < this.itemStacks.length; i++){
+        if (this.itemStacks[i] == stack){
+          this.itemStacks[i] = null;
+          return;
+        }
+      }
+    }
+  }
+
+  mergeAnySpiritGem(){
+    for (let i = 0; i < this.itemStacks.length; i++){
+      let itemIterator = this.itemStacks[i];
+      if (itemIterator == null){
+        continue;
+      }
+      if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10){
+        this.mergeSpiritGem(itemIterator);
+        return;
+      }
+    }
   }
 
 }

@@ -12,7 +12,7 @@
         Current Rank: {{storeService.soulCoreRank}}
         <br>
         <span *ngIf="storeService.soulCoreRank < 9">
-          Next rank requires {{characterService.characterState.condenseSoulCoreCost | number}} spirituality and a grade {{storeService.soulCoreRank + 12}} monster core.
+          Next rank requires {{characterService.characterState.condenseSoulCoreCost | number}} spirituality and a grade {{storeService.soulCoreRank + 12}} monster gem.
         </span>
         <span *ngIf="storeService.soulCoreRank >= 9">
           Max Rank
@@ -29,7 +29,7 @@
         Current Rank: {{storeService.meridianRank}}
         <br>
         <span *ngIf="storeService.meridianRank < 9">
-            Next rank requires {{characterService.characterState.reinforceMeridiansCost | number}} spirituality and a grade {{storeService.meridianRank + 16}} monster core.
+            Next rank requires {{characterService.characterState.reinforceMeridiansCost | number}} spirituality and a grade {{storeService.meridianRank + 16}} monster gem.
         </span>
         <span *ngIf="storeService.meridianRank >= 9">
           Max Rank

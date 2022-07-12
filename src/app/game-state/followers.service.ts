@@ -7,6 +7,7 @@ import { FirstNames } from './followerResources';
 import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
+import { BattleService } from './battle.service';
 
 export interface Follower {
   name: string;
@@ -99,14 +100,12 @@ export class FollowersService {
     },
     "brawler": {
       work: (follower: Follower) => {
-
         this.characterService.characterState.increaseAttribute("strength", follower.power);
       },
       description: "Brawlers will spar with you in wrestling and boxing matches, increasing your strength."
     },
     "sprinter": {
       work: (follower: Follower) => {
-
         this.characterService.characterState.increaseAttribute("speed", follower.power);
       },
       description: "Sprinters challenge you to footraces and help you increase your speed."
@@ -136,6 +135,22 @@ export class FollowersService {
       },
       description: "Priests help you get closer to the divine, increasing your sprituality."
     },
+    "gemologist": {
+      work: (follower: Follower) => {
+        for (let i = 0; i < follower.power; i++){
+          this.inventoryService.mergeAnySpiritGem();
+        }
+      },
+      description: "Gemologists combine monster gems into higher grades."
+    },
+    "scout": {
+      work: (follower: Follower) => {
+        for (let i = 0; i < follower.power; i++){
+          this.battleService.tickCounter++;
+        }
+      },
+      description: "Scouts help you track down and fight monsters faster."
+    }
   };
 
   constructor(
@@ -145,7 +160,8 @@ export class FollowersService {
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService
+    reincarnationService: ReincarnationService,
+    private battleService: BattleService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.followersUnlocked){
