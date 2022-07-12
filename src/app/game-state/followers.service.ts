@@ -21,6 +21,8 @@ export interface Follower {
 export interface FollowersProperties {
   followersUnlocked: boolean,
   followers: Follower[],
+  autoDismissUnlocked: boolean,
+  autoDismissJobs: string[],
 }
 
 type jobsType = {
@@ -37,6 +39,10 @@ export class FollowersService {
 
   followersUnlocked: boolean = false;
   followers: Follower[] = [];
+  followersRecruited: number = 0;
+  autoDismissUnlocked: boolean = false;
+  autoDismissJobs: string[] = [];
+
   jobs: jobsType = {
     "builder": {
       work: (follower: Follower) => {
@@ -197,25 +203,36 @@ export class FollowersService {
 
   reset() {
     this.followers.splice(0, this.followers.length);
+    this.followersRecruited = 0;
   }
 
   getProperties(): FollowersProperties {
     return {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
+      autoDismissUnlocked: this.autoDismissUnlocked,
+      autoDismissJobs: this.autoDismissJobs
     }
   }
 
   setProperties(properties: FollowersProperties) {
     this.followers = properties.followers || [];
     this.followersUnlocked = properties.followersUnlocked || false;
+    this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
+    this.autoDismissJobs = properties.autoDismissJobs || [];
   }
 
   generateFollower(){
-    // TODO high end homes should allow a lot more followers
-    let maxFollowers = 1 + this.homeService.homeValue + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+    this.followersRecruited++;
+    let maxFollowers = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
     if (this.followers.length >= maxFollowers){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");
+      return;
+    }
+
+    let job = this.generateFollowerJob();
+    if (this.autoDismissJobs.includes(job)){
+      this.logService.addLogMessage("A new follower shows up, but you they were a " + job + " and you don't want any of those.","STANDARD","EVENT");
       return;
     }
 
@@ -224,7 +241,7 @@ export class FollowersService {
       name: this.generateFollowerName(),
       age: 0,
       lifespan: this.characterService.characterState.lifespan / 10,
-      job: this.generateFollowerJob(),
+      job: job,
       power: 1,
       cost: 100
     });
@@ -242,6 +259,28 @@ export class FollowersService {
   dismissFollower(follower: Follower){
     let index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
+  }
+
+  dismissFollowerJob(job: string){
+    if (!this.autoDismissJobs.includes(job)){
+      this.autoDismissJobs.push(job);
+    }
+    for (let index = this.followers.length - 1; index >= 0; index--){
+      if (this.followers[index].job == job){
+        this.followers.splice(index, 1);
+      }
+    }
+  }
+
+  unAutoDismiss(job: string){
+    if (!this.autoDismissJobs.includes(job)){
+      return;
+    }
+    for (let index = this.autoDismissJobs.length - 1; index >= 0; index--){
+      if (this.autoDismissJobs[index] == job){
+        this.autoDismissJobs.splice(index, 1);
+      }
+    }
   }
 
 }

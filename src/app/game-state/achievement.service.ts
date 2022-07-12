@@ -587,6 +587,18 @@ export class AchievementService {
         this.battleService.manaShieldUnlocked = true;
       },
       unlocked: false
+    },
+    {
+      name: "Disposable Followers",
+      description: "You have recruited so many people you can now freely dismiss followers using the " +  this.itemRepoService.items['followerAutoDismissManual'].name,
+      hint: "The One Hundred Companions.",
+      check: () => {
+        return this.followerService.followersRecruited >= 100;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['followerAutoDismissManual']);
+      },
+      unlocked: false
     }
   ];
 

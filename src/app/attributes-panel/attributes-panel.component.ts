@@ -21,4 +21,14 @@ export class AttributesPanelComponent {
   originalOrder = (): number => {
     return 0;
   }
+
+  dismissFollower(event: MouseEvent, follower: Follower){
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.ctrlKey && this.followerService.autoDismissUnlocked){
+      this.followerService.dismissFollowerJob(follower.job);
+    } else {
+      this.followerService.dismissFollower(follower);
+    }
+  }
 }

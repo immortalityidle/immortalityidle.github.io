@@ -22,6 +22,7 @@ export enum ActivityType {
   InfuseBody,
   ExtendLife,
   Recruiting,
+  TrainingFollowers,
   Swim,
   ForgeChains,
   AttachChains,

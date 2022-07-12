@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem } from '../game-state/inventory.service';
@@ -13,7 +14,8 @@ export class OptionsModalComponent {
   constructor(
     public homeService: HomeService,
     public inventoryService: InventoryService,
-    public gameStateService: GameStateService
+    public gameStateService: GameStateService,
+    public followerService: FollowersService
   ) { }
 
   autoBuyLandLimitChanged(event: Event){

@@ -363,6 +363,7 @@ export class ActivityService {
     newList.push(this.InfuseBody);
     newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
+    newList.push(this.TrainingFollowers);
     newList.push(this.Burning);
     return newList;
   }
@@ -442,6 +443,8 @@ export class ActivityService {
   ConquerTheWorld: Activity;
   // @ts-ignore
   MoveStars: Activity;
+  // @ts-ignore
+  TrainingFollowers: Activity;
 
 
   defineActivities(){
@@ -1855,5 +1858,30 @@ export class ActivityService {
       unlocked: false,
       skipApprenticeshipLevel: 0
     }
+
+    this.TrainingFollowers = {
+      level: 0,
+      name: ['Training Followers'],
+      activityType: ActivityType.TrainingFollowers,
+      description: ['Train your followers to make them more powerful.'],
+      consequenceDescription: ['Costs 1000 stamina. Gives you a small chance for each follower of increasing their power. You probably should not try this if you have no followers.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 1000;
+        if (this.followerService.followersUnlocked){
+          for (let follower of this.followerService.followers){
+            if (Math.random() < 0.01){
+              follower.power++;
+              this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "EVENT");
+            }
+          }
+        }
+      }],
+      requirements: [{
+        charisma: 10000000000,
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }
+
   }
 }

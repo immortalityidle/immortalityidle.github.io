@@ -7,6 +7,7 @@ import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { Furniture, InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
+import { FollowersService } from './followers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class ItemRepoService {
   inventoryService?: InventoryService;
   battleService?: BattleService;
   impossibleTaskService?: ImpossibleTaskService;
+  followerService?: FollowersService;
 
   furniture: {[key: string]: Furniture} = {
     blanket: {
@@ -1538,8 +1540,32 @@ export class ItemRepoService {
         }
         return this.inventoryService.maxStackSize >= 100000;
       }
+    },
+    followerAutoDismissManual: {
+      id: 'followerAutoDismissManual',
+      name: "Manual of Judicious Disciple Selection",
+      type: "manual",
+      description: "This manual teaches you automatically dismiss followers based on their jobs.",
+      value: 100000000000,
+      useLabel: "Read",
+      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        this.followerService.autoDismissUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        return this.followerService.autoDismissUnlocked;
+      }
     }
-
   }
 
   constructor(private characterService: CharacterService,

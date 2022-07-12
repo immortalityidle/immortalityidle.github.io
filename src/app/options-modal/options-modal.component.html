@@ -73,4 +73,15 @@
       </div>
     </div>
   </div>
+  <div *ngIf="followerService.autoDismissUnlocked" class="optionField">
+    <span>Automatically Dismissed Followers (by Job):</span>
+    <div class="scrollingDiv">
+      <div *ngFor="let jobName of followerService.autoDismissJobs">
+        <span>
+          -{{jobName | titlecase}}
+          <button (click)="followerService.unAutoDismiss(jobName)">Stop Dismissing</button>
+        </span>
+      </div>
+    </div>
+  </div>
 </div>
