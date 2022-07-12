@@ -3,7 +3,7 @@
     <div class="top-line">
       <span class="gameTitle">
         Immortality Idle - Can you become an immortal?
-        <span class="versionNumber">v{{applicationVersion}}</span>
+        <span class="versionNumber" (click)="changelogClicked()">v{{applicationVersion}}</span>
       </span>
       <mat-icon tooltip="Confused? Click here." class="iconButton"
         (click)="tutorialClicked()">

@@ -1741,7 +1741,7 @@ export class ActivityService {
       name: ['Core Cultivation'],
       activityType: ActivityType.CoreCultivation,
       description: ['Focus on the development of your soul core.'],
-      consequenceDescription: ['A very advances cultivation technique. Make sure you have achieved a deep understanding of elemental balance before attempting this. Uses 200 stamina. Gives you a small chance of increasing your mana capabilities.'],
+      consequenceDescription: ['A very advanced cultivation technique. Make sure you have achieved a deep understanding of elemental balance before attempting this. Uses 200 stamina. Gives you a small chance of increasing your mana capabilities.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 200;
         if (this.characterService.characterState.manaUnlocked){
