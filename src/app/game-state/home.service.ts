@@ -699,8 +699,15 @@ export class HomeService {
   }
 
   autoBuy(){
-    let priceBuffer = (this.nextHome.costPerDay + 1) * 14; // Two weeks, by popular request.
+    let priceBuffer = (this.home.costPerDay + 1) * 14; // Two weeks, by popular request.
     if (this.autoBuyHomeUnlocked && this.homeValue < this.autoBuyHomeLimit){
+      // check for final building to avoid buying excess building land.
+      if (!this.upgrading && this.nexthome.HomeType < this.autoBuyHomeLimit){
+        //try to buy land, and do it instantly.
+        while (this.characterService.characterState.money > this.landPrice + priceBuffer && this.land < this.nextHome.landRequired){
+          this.buyLand();
+        }
+      }
       if (this.land >= this.nextHome.landRequired){
         // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
         if ((this.characterService.characterState.money > this.nextHome.cost + priceBuffer )){
@@ -708,14 +715,6 @@ export class HomeService {
         } else {
           // we can't afford the next house, bail out and don't autoBuy more land
           return;
-        }
-      } else {
-        // check for final building to avoid buying excess building land.
-        if (!this.upgrading && this.nexthome.HomeType < this.autoBuyHomeLimit){
-          //try to buy land
-          if (this.characterService.characterState.money > this.landPrice  + priceBuffer ){
-            this.buyLand();
-          }
         }
       }
     }
