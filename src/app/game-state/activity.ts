@@ -53,6 +53,7 @@ export interface Activity {
   consequence: (() => void)[];
   unlocked: boolean;
   skipApprenticeshipLevel: number;
+  lastIncome?: number;
 }
 
 export interface ActivityLoopEntry {
