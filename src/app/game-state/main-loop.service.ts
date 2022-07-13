@@ -3,7 +3,6 @@ import { Subject } from 'rxjs';
 import { CharacterService } from './character.service';
 
 const TICK_INTERVAL_MS = 25;
-const MID_TICK_INTERVAL_MS = 100;
 const LONG_TICK_INTERVAL_MS = 500;
 
 export interface MainLoopProperties {
@@ -25,7 +24,6 @@ export class MainLoopService {
    * Sends true on new day
    */
   tickSubject = new Subject<boolean>();
-  midTickSubject = new Subject<boolean>();
   longTickSubject = new Subject<boolean>();
   pause = true;
   tickDivider = 10;
@@ -78,10 +76,6 @@ export class MainLoopService {
     window.setInterval(()=> {
       this.longTickSubject.next(true);
     }, LONG_TICK_INTERVAL_MS);
-    
-    window.setInterval(()=> {
-      this.midTickSubject.next(true);
-    }, MID_TICK_INTERVAL_MS);
 
     window.setInterval(()=> {
       let newTime = new Date().getTime();

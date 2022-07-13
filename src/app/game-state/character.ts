@@ -277,7 +277,10 @@ export class Character {
     } else if (this.bloodlineRank < 4){
       this.money = this.money / 8;
     } else {
-      this.money = this.money / 2;
+      this.money = 4 * this.money;
+    }
+    if (this.money > this.maxMoney){
+      this.money = this.maxMoney;
     }
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
