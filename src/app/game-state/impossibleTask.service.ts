@@ -32,7 +32,8 @@ export interface ImpossibleTaskProgress {
 
 export interface ImpossibleTaskProperties {
   taskProgress: ImpossibleTaskProgress[],
-  impossibleTasksUnlocked: boolean
+  impossibleTasksUnlocked: boolean,
+  activeTaskIndex: number,
 }
 
 @Injectable({
@@ -171,17 +172,22 @@ export class ImpossibleTaskService {
 
   reset(){
     for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
-      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired){
+      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex != ImpossibleTaskType.BuildTower){
         this.taskProgress[taskIndex].progress = 0;
       }
     }
     this.activeTaskIndex = -1;
+    if (!this.activityService){
+      this.activityService = this.injector.get(ActivityService);
+    }
+    this.activityService.reloadActivities();
   }
 
   getProperties(): ImpossibleTaskProperties {
     return {
       taskProgress: this.taskProgress,
-      impossibleTasksUnlocked: this.impossibleTasksUnlocked
+      impossibleTasksUnlocked: this.impossibleTasksUnlocked,
+      activeTaskIndex: this.activeTaskIndex
     }
   }
 
@@ -225,6 +231,15 @@ export class ImpossibleTaskService {
       },
     ];
     this.impossibleTasksUnlocked = properties.impossibleTasksUnlocked;
+    if (properties.activeTaskIndex == undefined){
+      this.activeTaskIndex = -1;
+    } else {
+      this.activeTaskIndex = properties.activeTaskIndex;
+    }
+    if (!this.activityService){
+      this.activityService = this.injector.get(ActivityService);
+    }
+    this.activityService.reloadActivities();
   }
 
   checkCompletion(){

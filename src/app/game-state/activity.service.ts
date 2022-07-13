@@ -169,6 +169,7 @@ export class ActivityService {
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
+    this.reloadActivities();
   }
 
   meetsRequirements(activity: Activity): boolean {
@@ -292,10 +293,20 @@ export class ActivityService {
   }
 
   reloadActivities(){
-    this.activityLoop = [];
-    this.spiritActivity = null;
     this.activities = this.getActivityList();
-
+    for (let i = this.activityLoop.length - 1; i >= 0; i--){
+      let found = false;
+      for (let activity of this.activities){
+        if (activity.activityType == this.activityLoop[i].activity){
+          found = true;
+        }
+      }
+      if (!found){
+        // the activity isn't available now, remove it
+        this.activityLoop.splice(i, 1);
+      }
+    }
+    this.spiritActivity = null;
   }
 
   getActivityList(): Activity[] {
