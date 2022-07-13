@@ -531,11 +531,22 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         let oreValue = 0;
+        let builderPower = 0;
         for (let i = 0; i < 200; i++){
           oreValue = this.inventoryService.consume('ore');
         }
+        for (let follower of this.followerService.followers){
+          if (follower.job = "builder"){
+            builderPower += follower.power;
+          }
+        }
         if (oreValue >= 10){
           this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
+          for (let i = 0; i < builderPower; i++){
+            this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
+          }
+          this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items.everlastingBrick.name,"CRAFTING","EVENT");;
+        
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
@@ -556,11 +567,21 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         let woodValue = 0;
-        for (let i = 0; i < 200; i++){
+        let builderPower = 0;
+         for (let i = 0; i < 200; i++){
           woodValue = this.inventoryService.consume('wood');
+        }
+        for (let follower of this.followerService.followers){
+          if (follower.job = "builder"){
+            builderPower += follower.power;
+          }
         }
         if (woodValue >= 11){
           this.inventoryService.addItem(this.itemRepoService.items['scaffolding']);
+           for (let i = 0; i < builderPower; i++){
+            this.inventoryService.addItem(this.itemRepoService.items['scaffolding']);
+          }
+          this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items.scaffolding.name,"CRAFTING","EVENT");;
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials, hurt yourself, and break your weak attempt at scaffolding.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
@@ -581,9 +602,20 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         let oreValue = 0;
+        let builderPower = 0;
+        for (let follower of this.followerService.followers){
+          if (follower.job = "builder"){
+            builderPower += follower.power;
+          }
+        }
+        builderPower = Math.floor(builderPower / 10);
         oreValue = this.inventoryService.consume('ore');
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron" && oreValue >= 10){
           this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
+          for (let i = 0; i < builderPower; i++){
+            this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
+          }
+          this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items.everlastingMortar.name,"CRAFTING","EVENT");;
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
