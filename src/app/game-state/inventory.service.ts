@@ -163,7 +163,7 @@ export class InventoryService {
       }
       this.eatFood();
     });
-    mainLoopService.longTickSubject.subscribe(() => {
+    mainLoopService.midTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
       }
