@@ -276,7 +276,7 @@ export class Character {
     } else if (this.bloodlineRank < 4){
       this.money = this.money / 8;
     } else {
-      this.money = 4 * this.money;
+      this.money = this.money / 2;
     }
     this.recalculateDerivedStats();
     if (this.bloodlineRank == 0){
