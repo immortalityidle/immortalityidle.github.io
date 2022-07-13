@@ -20,6 +20,7 @@ export interface ActivityProperties {
   openApprenticeships: number,
   spiritActivity: ActivityType | null,
   completedApprenticeships: ActivityType[],
+  currentApprenticeship: ActivityType
 }
 
 @Injectable({
@@ -39,6 +40,8 @@ export class ActivityService {
   currentTickCount = 0;
   exhaustionDays = 0;
   currentLoopEntry?: ActivityLoopEntry = undefined;
+  currentApprenticeship: ActivityType = ActivityType.Resting;
+
 
   constructor(
     private characterService: CharacterService,
@@ -154,7 +157,8 @@ export class ActivityService {
       unlockedActivities: unlockedActivities,
       openApprenticeships: this.openApprenticeships,
       spiritActivity: this.spiritActivity,
-      completedApprenticeships: this.completedApprenticeships
+      completedApprenticeships: this.completedApprenticeships,
+      currentApprenticeship: this.currentApprenticeship,
     }
   }
 
@@ -170,6 +174,7 @@ export class ActivityService {
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
+    this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
     for (let i = 0; i < 5; i++){
       // upgrade to anything that the loaded attributes allow
       this.upgradeActivities(true);
@@ -186,7 +191,7 @@ export class ActivityService {
   }
 
   meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
-    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0){
+    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType != this.currentApprenticeship){
       if (level < activity.skipApprenticeshipLevel){
         return false;
       }
@@ -249,6 +254,7 @@ export class ActivityService {
   reset(): void {
     // downgrade all activities to base level
     this.openApprenticeships = 1;
+    this.currentApprenticeship = ActivityType.Resting;
     this.oddJobDays = 0;
     this.beggingDays = 0;
     for (const activity of this.activities){
@@ -289,6 +295,7 @@ export class ActivityService {
       return;
     }
     this.openApprenticeships--;
+    this.currentApprenticeship = activityType;
     for (const activity of this.activities) {
       if (activity.activityType !== activityType && activity.level < activity.skipApprenticeshipLevel) {
         // relock all other apprentice activities
@@ -318,6 +325,10 @@ export class ActivityService {
       }
     }
     this.spiritActivity = null;
+    for (let i = 0; i < 5; i++){
+      // upgrade to anything that the current attributes allow
+      this.upgradeActivities(true);
+    }
     this.checkRequirements(true);
   }
 

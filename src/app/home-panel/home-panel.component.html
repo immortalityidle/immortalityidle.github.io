@@ -13,7 +13,7 @@
             <div *ngIf="homeService.furniture[slot]" class="itemSlot" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
         </div>
     </div>
-    <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length == 0">
+    <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length === 0">
       <span class="mouseWarning">Tent living is rough. All these pesky mice could become a real problem. You might want to buy some land and get a better home.</span>
     </div>
     <span class="buttonSpan">
