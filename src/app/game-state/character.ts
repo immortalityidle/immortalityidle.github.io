@@ -74,6 +74,7 @@ export class Character {
     private titlecasePipe: TitleCasePipe){
   }
 
+  maxMoney = 1000000000000000000000000;
   totalLives: number = 1;
   dead: boolean = false;
   attributeScalingLimit: number = 10;
@@ -276,7 +277,10 @@ export class Character {
     } else if (this.bloodlineRank < 4){
       this.money = this.money / 8;
     } else {
-      this.money = this.money / 2;
+      this.money = 4 * this.money;
+    }
+    if (this.money > this.maxMoney){
+      this.money = this.maxMoney;
     }
     this.recalculateDerivedStats();
     if (this.bloodlineRank == 0){
@@ -315,7 +319,9 @@ export class Character {
   recalculateDerivedStats(): void{
     this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic +
       Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5);
-
+    if (this.money > this.maxMoney){
+      this.money = this.maxMoney;
+    }
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
@@ -403,6 +409,9 @@ export class Character {
     if (this.status.mana.value > this.status.mana.max){
       this.status.mana.value = this.status.mana.max;
     }
+    if (this.money > this.maxMoney){
+      this.money = this.maxMoney;
+    }
   }
 
   getProperties(): CharacterProperties {
@@ -437,6 +446,9 @@ export class Character {
   setProperties(properties: CharacterProperties): void {
     this.attributes = properties.attributes;
     this.money = properties.money;
+    if (this.money > this.maxMoney){
+      this.money = this.maxMoney;
+    }
     this.equipment = properties.equipment;
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
