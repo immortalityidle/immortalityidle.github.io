@@ -535,7 +535,22 @@ export class InventoryService {
 
   getWood(): Item{
     let wood: Item;
-    if (this.characterService.characterState.attributes.woodLore.value > 300 &&
+    if (this.characterService.characterState.attributes.woodLore.value > 500000000 &&
+      this.characterService.characterState.attributes.spirituality.value > 50000000){
+        wood = this.itemRepoService.items['divinewoodLog'];
+    } else if (this.characterService.characterState.attributes.woodLore.value > 10000000 &&
+      this.characterService.characterState.attributes.spirituality.value > 1000000){
+        wood = this.itemRepoService.items['devilwoodLog'];
+    } else if (this.characterService.characterState.attributes.woodLore.value > 200000 &&
+      this.characterService.characterState.attributes.spirituality.value > 20000){
+        wood = this.itemRepoService.items['dragonwoodLog'];
+    } else if (this.characterService.characterState.attributes.woodLore.value > 10000 &&
+      this.characterService.characterState.attributes.spirituality.value > 1000){
+        wood = this.itemRepoService.items['titanwoodLog'];
+    } else if (this.characterService.characterState.attributes.woodLore.value > 1000 &&
+      this.characterService.characterState.attributes.spirituality.value > 100){
+        wood = this.itemRepoService.items['diamondwoodLog'];
+    } else if (this.characterService.characterState.attributes.woodLore.value > 300 &&
       this.characterService.characterState.attributes.spirituality.value > 10){
         wood = this.itemRepoService.items['peachwoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 200 &&

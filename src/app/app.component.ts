@@ -59,8 +59,12 @@ export class BigNumberPipe implements PipeTransform {
         return formatNumber(value / 1000000,"en-US", "1.0-2") + "M";
       } else if (value < 1000000000000){
         return formatNumber(value / 1000000000,"en-US", "1.0-2") + "B";
-      } else {
+      } else if (value < 1000000000000000){
         return formatNumber(value / 1000000000000,"en-US", "1.0-2") + "T";
+      } else if (value < 1000000000000000000){
+        return formatNumber(value / 1000000000000000,"en-US", "1.0-2") + "q";
+      } else {
+        return formatNumber(value / 1000000000000000000,"en-US", "1.0-2") + "Q";
       }
   }
 }
