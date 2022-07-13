@@ -316,6 +316,11 @@ export class InventoryService {
       weapon.weaponStats?.baseDamage + "<br/>Durability: " + weapon.weaponStats?.durability;
   }
 
+  updateArmorDescription(armor: Equipment){
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material + 
+      "<br/>Defense: " + armor.armorStats?.defense + "<br/>Durability: " + armor.armorStats?.durability
+  }
+
   generatePotion(grade: number, masterLevel: boolean): void {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemPotions){
@@ -716,9 +721,12 @@ export class InventoryService {
       }
     }
     // if we're here we didn't find a slot for it.
-    this.logService.addLogMessage(
-      `You don't have enough room for the ${item.name} so you threw it away.`,
-      'STANDARD', 'EVENT');
+    if (this.autoSellUnlocked){
+      this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
+      this.characterService.characterState.money += item.value;
+    } else {
+      this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you threw it away.`, 'STANDARD', 'EVENT');
+    }
     this.thrownAwayItems++;
     return -1;
   }
