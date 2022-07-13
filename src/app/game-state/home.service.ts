@@ -474,8 +474,7 @@ export class HomeService {
         this.ageFields();
         if (this.home.costPerDay > this.characterService.characterState.money){
           this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
-          //Thugs want money and they can't collect if you're dead, so scare the player. But the rats and monsters want you dead, and this makes for easier pickings and it scales with health.
-          this.characterService.characterState.status.health.value *= 0.5;
+          this.characterService.characterState.status.health.value -= 20;
           this.characterService.characterState.money = 0;
         } else {
           this.characterService.characterState.money -= this.home.costPerDay;
@@ -699,11 +698,11 @@ export class HomeService {
   }
 
   autoBuy(){
-    let priceBuffer = (this.home.costPerDay + 1) * 14; // Two weeks, by popular request.
+    let priceBuffer = (this.home.costPerDay + 1) * 10; // Ten days, by popular request.
     if (this.autoBuyHomeUnlocked && this.homeValue < this.autoBuyHomeLimit){
-      // check for final building to avoid buying excess building land.
-      if (!this.upgrading && this.nexthome.HomeType < this.autoBuyHomeLimit){
-        //try to buy land, and do it instantly.
+      // Don't buy land while upgrading.
+      if (!this.upgrading){
+        //try to buy as much land as needed.
         while (this.characterService.characterState.money > this.landPrice + priceBuffer && this.land < this.nextHome.landRequired){
           this.buyLand();
         }
@@ -719,13 +718,13 @@ export class HomeService {
       }
     }
     // if there's no autohome, autohome is finished, or there's enough money to cover buying a new plot of land and the home, try buying land.
-    if (!this.autoBuyHomeUnlocked ||
+    if ((!this.autoBuyHomeUnlocked ||
         this.homeValue >= this.autoBuyHomeLimit ||
-        (this.characterService.characterState.money >= this.nextHome.cost + this.landPrice + priceBuffer )){
+        (this.characterService.characterState.money >= this.nextHome.cost + this.landPrice + priceBuffer )) &&
+        this.autoBuyLandUnlocked){
       //keep checking if we have the money for the land plus food and rent.
-      while (this.autoBuyLandUnlocked &&
-             (this.land + this.fields.length + this.extraFields) < this.autoBuyLandLimit &&
-             (this.characterService.characterState.money > this.landPrice + priceBuffer) ){
+      while ((this.land + this.fields.length + this.extraFields) < this.autoBuyLandLimit &&
+             (this.characterService.characterState.money >= this.landPrice + priceBuffer) ){
         //break if reduced to money for home.
         if (this.autoBuyHomeUnlocked &&
            (this.upgrading || this.homeValue < this.autoBuyHomeLimit) &&
