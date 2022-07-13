@@ -699,40 +699,53 @@ export class HomeService {
   }
 
   autoBuy(){
+    let priceBuffer = (this.nextHome.costPerDay + 1) * 14; // Two weeks, by popular request.
     if (this.autoBuyHomeUnlocked && this.homeValue < this.autoBuyHomeLimit){
       if (this.land >= this.nextHome.landRequired){
-        //autoBuy is on, we have enough land, check if we have the money for the house plus the next couple weeks' rent and food by popular demand.
-        if ((this.characterService.characterState.money > this.nextHome.cost + (this.nextHome.costPerDay * 14) + 14)){
+        // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
+        if ((this.characterService.characterState.money > this.nextHome.cost + priceBuffer )){
           this.upgradeToNextHome();
         } else {
           // we can't afford the next house, bail out and don't autoBuy more land
           return;
         }
       } else {
-        //check for final building to avoid buying excess building land.
+        // check for final building to avoid buying excess building land.
         if (!this.upgrading && this.nexthome.HomeType < this.autoBuyHomeLimit){
           //try to buy land
-          if (this.characterService.characterState.money > this.landPrice  + (this.nextHome.costPerDay * 14) + 14 ){
+          if (this.characterService.characterState.money > this.landPrice  + priceBuffer ){
             this.buyLand();
           }
         }
       }
     }
-    // don't buy extra land if we're too poor to buy the next home.
-    if ((this.characterService.characterState.money > this.nextHome.cost + (this.nextHome.costPerDay * 14) + 14)){
-      if (this.autoBuyLandUnlocked && (this.land + this.fields.length + this.extraFields) < this.autoBuyLandLimit){
-        //autoBuy is on, check if we have the money for the land plus the next couple weeks' rent and food by popular demand.
-        if (this.characterService.characterState.money > this.landPrice  + (this.nextHome.costPerDay * 14) + 14 ){
-          this.buyLand();
+    // if there's no autohome, autohome is finished, or there's enough money to cover buying a new plot of land and the home, try buying land.
+    if (!this.autoBuyHomeUnlocked ||
+        this.homeValue >= this.autoBuyHomeLimit ||
+        (this.characterService.characterState.money >= this.nextHome.cost + this.landPrice + priceBuffer )){
+      //keep checking if we have the money for the land plus food and rent.
+      while (this.autoBuyLandUnlocked &&
+             (this.land + this.fields.length + this.extraFields) < this.autoBuyLandLimit &&
+             (this.characterService.characterState.money > this.landPrice + priceBuffer) ){
+        //break if reduced to money for home.
+        if (this.autoBuyHomeUnlocked &&
+           (this.upgrading || this.homeValue < this.autoBuyHomeLimit) &&
+           (this.characterService.characterState.money < this.nextHome.cost + this.landPrice + priceBuffer )){
+          break;
+        this.buyLand();
         }
       }
     }
-    if (this.autoFieldUnlocked && (this.fields.length + this.extraFields) < this.autoFieldLimit){
-      if (this.autoBuyHomeUnlocked){
-        if (this.homeValue >= this.autoBuyHomeLimit){
-          this.addField();
+    // if there's no autohome, autohome is finished, or it has more than enough land for the next home, make a field.
+    if (!this.autoBuyHomeUnlocked || (this.homeValue >= this.autoBuyHomeLimit) || (this.upgrading && this.land > this.nextHome.landRequired)){
+      //keep making fields til either we hit goal, there's no land, or we break for home upgrade.
+      while (this.autoFieldUnlocked && (this.fields.length + this.extraFields) < this.autoFieldLimit && (this.land > 0)){
+        //break if reduced to land for home upgrade.
+        if(this.autoBuyHomeUnlocked && 
+           (this.upgrading || this.homeValue < this.autoBuyHomeLimit) && 
+           this.land <= this.nextHome.landRequired){
+          break;
         }
-      } else {
         this.addField();
       }
     }
@@ -743,7 +756,7 @@ export class HomeService {
           let thingToBuy = this.autoBuyFurniture[slot];
           if (thingToBuy && this.furniture[slot]?.id !== thingToBuy.id){
             // check if we have the money for the furniture plus the next couple weeks' rent and food by popular demand.
-            if (this.characterService.characterState.money > thingToBuy.value + (this.nextHome.costPerDay * 14) + 14 ){
+            if (this.characterService.characterState.money > thingToBuy.value + priceBuffer ){
               this.characterService.characterState.money -= thingToBuy.value;
               this.ownedFurniture.push(thingToBuy.name);
               this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
