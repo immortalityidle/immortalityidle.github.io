@@ -149,6 +149,7 @@ export class TimePanelComponent implements OnInit {
 
   spiritActivityDrop(event: DragEvent){
     event.preventDefault();
+    event.stopPropagation();
     let sourceIndexString: string = event.dataTransfer?.getData("activityloop") + "";
     if (sourceIndexString == ""){
       sourceIndexString = event.dataTransfer?.getData("activity") + "";

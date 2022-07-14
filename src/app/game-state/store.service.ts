@@ -82,7 +82,7 @@ export class StoreService {
         return;
       }
       let slot = this.selectedItem.slot;
-      if (this.selectedItem.value < this.characterService.characterState.money){
+      if (this.selectedItem.value < this.characterService.characterState.money || this.homeService.ownedFurniture.includes(this.selectedItem.name)){
         if (!this.homeService.ownedFurniture.includes(this.selectedItem.name)){
           // only pay for it once per lifetime
           this.characterService.characterState.money -= this.selectedItem.value;

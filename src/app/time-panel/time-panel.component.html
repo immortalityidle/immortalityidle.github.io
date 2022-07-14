@@ -70,4 +70,16 @@
       </td>
     </tr>
   </table>
+  <div>
+    <span>
+      <mat-icon tooltip="Save your current schedule of actviities." class="iconButton" (click)="activityService.saveActivityLoop()">
+        content_paste
+      </mat-icon>
+      <mat-icon tooltip="Load your saved schedule of actviities. Note that activities that you cannot do right now will not be loaded." 
+        class="iconButton" (click)="activityService.loadActivityLoop()">
+        content_paste_go
+      </mat-icon>
+
+    </span>
+  </div>
 </div>
