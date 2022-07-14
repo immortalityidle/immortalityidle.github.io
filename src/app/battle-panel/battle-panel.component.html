@@ -52,8 +52,8 @@
           </progress>
         </td>
         <td tooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
-        <td tooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack}}</td>
-        <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense}}</td>
+        <td tooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack | bigNumber}}</td>
+        <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense | bigNumber}}</td>
       </tr>
     </ng-container>
   </table>  
