@@ -144,7 +144,11 @@ export class BattleService {
       for (let i = 0; i < enemyStack.quantity; i++){
         if (Math.random() < enemyStack.enemy.accuracy){
           let damage = enemyStack.enemy.attack;
-          damage = damage / (1 + this.characterService.characterState.defense * 0.1);
+          let combatDefense = this.characterService.characterState.defense;
+          // with 20k max health currently, the curve has to be related to Death's damage so player has the chance to survive and oneshot Death.
+          damage = damage / (1 + Math.pow(100 + this.enemyRepo.death.attack / 20000, (-damage + combatDefense) / combatDefense) );
+          //Keep mice scary
+          if (damage < this.enemyRepo.mouse.attack) damage = this.enemyRepo.mouse.attack;
           if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10){
             damage /= 2;
             this.characterService.characterState.status.mana.value -= 10;
@@ -194,11 +198,10 @@ export class BattleService {
       }
 
       let damage = this.characterService.characterState.attackPower;
-      damage = damage / (1 + this.currentEnemy.enemy.defense * 0.1);
-      if (damage < 1){
-        // pity damage
-        damage = 1;
-      }
+      let combatDefense = this.currentEnemy.enemy.defense;
+      damage = damage / (1 + Math.pow(10 , (-damage + combatDefense) / combatDefense) );
+      // pity damage
+      if (damage < 1) damage = 1;
       if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10){
         damage *= 2;
         this.characterService.characterState.status.mana.value -= 10;
@@ -284,7 +287,7 @@ export class BattleService {
       maxHealth: this.troubleKills * 10,
       accuracy: 0.5,
       attack: this.troubleKills / 5,
-      defense: Math.floor(Math.log2(this.troubleKills)),
+      defense: this.troubleKills / 5,
       loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)))]
     });
     this.troubleKills++;

@@ -75,10 +75,12 @@ export class FollowersService {
         if (this.characterService.characterState.equipment.rightHand && 
           this.characterService.characterState.equipment.rightHand.weaponStats){
           this.characterService.characterState.equipment.rightHand.weaponStats.durability += follower.power;
+          this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage += Math.floor(follower.power/10);
         }
         if (this.characterService.characterState.equipment.leftHand && 
           this.characterService.characterState.equipment.leftHand.weaponStats){
           this.characterService.characterState.equipment.leftHand.weaponStats.durability += follower.power;
+          this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage += Math.floor(follower.power/10);
         }
       },
       description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day."
@@ -88,18 +90,22 @@ export class FollowersService {
         if (this.characterService.characterState.equipment.head && 
           this.characterService.characterState.equipment.head.armorStats){
           this.characterService.characterState.equipment.head.armorStats.durability += follower.power;
+          this.characterService.characterState.equipment.head.armorStats.defense += Math.floor(follower.power/10);
         }
         if (this.characterService.characterState.equipment.body && 
           this.characterService.characterState.equipment.body.armorStats){
           this.characterService.characterState.equipment.body.armorStats.durability += follower.power;
+          this.characterService.characterState.equipment.body.armorStats.defense += Math.floor(follower.power/10);
         }
         if (this.characterService.characterState.equipment.legs && 
           this.characterService.characterState.equipment.legs.armorStats){
           this.characterService.characterState.equipment.legs.armorStats.durability += follower.power;
+          this.characterService.characterState.equipment.legs.armorStats.defense += Math.floor(follower.power/10);
         }
         if (this.characterService.characterState.equipment.feet && 
           this.characterService.characterState.equipment.feet.armorStats){
           this.characterService.characterState.equipment.feet.armorStats.durability += follower.power;
+          this.characterService.characterState.equipment.feet.armorStats.defense += Math.floor(follower.power/10);
         }
       },
       description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day."
