@@ -282,9 +282,6 @@ export class Character {
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
-    if (this.money > this.maxMoney){
-      this.money = this.maxMoney;
-    }
     this.recalculateDerivedStats();
     if (this.bloodlineRank == 0){
       this.equipment = {
