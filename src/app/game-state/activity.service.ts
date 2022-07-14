@@ -584,7 +584,7 @@ export class ActivityService {
           oreValue = this.inventoryService.consume('ore');
         }
         for (let follower of this.followerService.followers){
-          if (follower.job = "builder"){
+          if (follower.job == "builder"){
             builderPower += follower.power;
           }
         }
