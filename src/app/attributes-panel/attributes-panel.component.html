@@ -29,7 +29,7 @@
             <span tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}. {{followerService.jobs[follower.job].description}}<br/>{{follower.name}} has followed you for {{follower.age / 365 | number: '1.0-1'}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | number: '1.0-1'}} more years.">
               {{follower.name | titlecase}} the {{follower.job | titlecase}}
             </span>
-            <mat-icon class="smallerIcon" (click)="dismissFollower($event, follower)" tooltip="Dismiss this follower. If you have the right knowledge, you can ctrl-click to automatically dismiss all followers with this job.">
+            <mat-icon class="smallerIcon" (click)="dismissFollower($event, follower)" tooltip="Dismiss this follower. If you have the right knowledge, you can shift-click to automatically dismiss all followers with this job.">
               cancel
             </mat-icon>
         </div>
