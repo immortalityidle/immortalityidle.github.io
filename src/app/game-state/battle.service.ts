@@ -146,9 +146,13 @@ export class BattleService {
           let damage = enemyStack.enemy.attack;
           let combatDefense = this.characterService.characterState.defense;
           // with 20k max health currently, the curve has to be related to Death's damage so player has the chance to survive and oneshot Death.
-          if (combatDefense > 0) damage = damage / (1 + Math.pow(100 + this.enemyRepo.death.attack / 20000, (-damage + combatDefense) / combatDefense) );
+          if (combatDefense > 0) {
+            damage = damage / (1 + Math.pow(100 + this.enemyRepo.death.attack / 20000, (-damage + combatDefense) / combatDefense) );
+          }
           //Keep mice scary
-          if (damage < this.enemyRepo.mouse.attack) damage = this.enemyRepo.mouse.attack;
+          if (damage < this.enemyRepo.mouse.attack) {
+            damage = this.enemyRepo.mouse.attack;
+          }
           if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10){
             damage /= 2;
             this.characterService.characterState.status.mana.value -= 10;
@@ -199,9 +203,13 @@ export class BattleService {
 
       let damage = this.characterService.characterState.attackPower;
       let combatDefense = this.currentEnemy.enemy.defense;
-      if (combatDefense > 0) damage = damage / (1 + Math.pow(10 , (-damage + combatDefense) / combatDefense) );
+      if (combatDefense > 0) {
+        damage = damage / (1 + Math.pow(10 , (-damage + combatDefense) / combatDefense) );
+      }
       // pity damage
-      if (damage < 1) damage = 1;
+      if (damage < 1) {
+        damage = 1;
+      }
       if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10){
         damage *= 2;
         this.characterService.characterState.status.mana.value -= 10;
