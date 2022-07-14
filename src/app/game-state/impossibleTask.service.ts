@@ -26,7 +26,7 @@ export interface ImpossibleTask {
 }
 
 export interface ImpossibleTaskProgress {
-  progress: number, 
+  progress: number,
   complete: boolean
 }
 

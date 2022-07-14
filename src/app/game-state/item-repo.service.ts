@@ -1204,6 +1204,11 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoPotionUnlocked = true;
+        for (let index = this.inventoryService.autoUseItems.length - 1; index >= 0; index--){
+          if (this.inventoryService.autoUseItems[index].includes("Potion")){
+            this.inventoryService.autoUseItems.splice(index, 1);
+          }
+        }
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
@@ -1229,6 +1234,11 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoPillUnlocked = true;
+        for (let index = this.inventoryService.autoUseItems.length - 1; index >= 0; index--){
+          if (this.inventoryService.autoUseItems[index].includes("Pill")){
+            this.inventoryService.autoUseItems.splice(index, 1);
+          }
+        }
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {

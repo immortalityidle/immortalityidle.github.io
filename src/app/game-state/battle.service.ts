@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { LogService } from './log.service';
 import { CharacterService } from '../game-state/character.service';
-import { InventoryService, Item } from '../game-state/inventory.service';
+import { Equipment, InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { formatNumber } from '@angular/common';
+import { devOnlyGuardedExpression } from '@angular/compiler';
+import { EquipmentSlots } from './character';
 
 export interface Enemy {
   name: string,
@@ -150,6 +152,25 @@ export class BattleService {
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + formatNumber(damage,"en-US", "1.0-2") + " damage", 'INJURY', 'COMBAT');
           this.characterService.characterState.status.health.value -= damage;
           this.characterService.characterState.increaseAttribute('toughness', 0.01);
+
+          // degrade armor
+          let degradables = [];
+          if (this.characterService.characterState.equipment.head){
+            degradables.push(this.characterService.characterState.equipment.head);
+          }
+          if (this.characterService.characterState.equipment.body){
+            degradables.push(this.characterService.characterState.equipment.body);
+          }
+          if (this.characterService.characterState.equipment.legs){
+            degradables.push(this.characterService.characterState.equipment.legs);
+          }
+          if (this.characterService.characterState.equipment.feet){
+            degradables.push(this.characterService.characterState.equipment.feet);
+          }
+          if (degradables.length > 0){
+            this.degradeArmor(degradables[Math.floor(Math.random() * degradables.length)]);
+          }
+
           if (this.characterService.characterState.status.health.value <= 0){
             this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
             if (!this.characterService.characterState.immortal){
@@ -267,6 +288,18 @@ export class BattleService {
       loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)))]
     });
     this.troubleKills++;
+  }
+
+  degradeArmor(armor: Equipment){
+    if (armor.armorStats){
+      armor.armorStats.durability--;
+      this.inventoryService.updateArmorDescription(armor);
+      if (armor.armorStats.durability <= 0){
+        // it broke, unequip it
+        this.inventoryService.addItem(armor);
+        this.characterService.characterState.equipment[armor.slot] = null;
+      }
+    }
   }
 
   // Don't put items with use() functions in the loot (like food). They don't get persisted.
