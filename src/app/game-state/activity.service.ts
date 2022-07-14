@@ -337,11 +337,11 @@ export class ActivityService {
   }
 
   saveActivityLoop(){
-    this.savedActivityLoop = [...this.activityLoop];
+    this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop)); 
   }
 
   loadActivityLoop(){
-    this.activityLoop = [...this.savedActivityLoop];
+    this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop)); 
     this.checkRequirements(true);
   }
 
