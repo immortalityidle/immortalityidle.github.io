@@ -639,7 +639,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 1000;
         let numBuilders = 0;
         for (let follower of this.followerService.followers){
-          if (follower.job = "builder"){
+          if (follower.job == "builder"){
             numBuilders++;
           }
         }
