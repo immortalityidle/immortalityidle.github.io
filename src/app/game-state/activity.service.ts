@@ -20,6 +20,8 @@ export interface ActivityProperties {
   openApprenticeships: number,
   spiritActivity: ActivityType | null,
   completedApprenticeships: ActivityType[],
+  currentApprenticeship: ActivityType,
+  savedActivityLoop: ActivityLoopEntry[],
 }
 
 @Injectable({
@@ -27,6 +29,7 @@ export interface ActivityProperties {
 })
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
+  savedActivityLoop: ActivityLoopEntry[] = [];
   spiritActivity: ActivityType | null = null;
   autoRestart: boolean = false;
   pauseOnDeath: boolean = true;
@@ -39,6 +42,8 @@ export class ActivityService {
   currentTickCount = 0;
   exhaustionDays = 0;
   currentLoopEntry?: ActivityLoopEntry = undefined;
+  currentApprenticeship: ActivityType = ActivityType.Resting;
+
 
   constructor(
     private characterService: CharacterService,
@@ -154,7 +159,9 @@ export class ActivityService {
       unlockedActivities: unlockedActivities,
       openApprenticeships: this.openApprenticeships,
       spiritActivity: this.spiritActivity,
-      completedApprenticeships: this.completedApprenticeships
+      completedApprenticeships: this.completedApprenticeships,
+      currentApprenticeship: this.currentApprenticeship,
+      savedActivityLoop: this.savedActivityLoop,
     }
   }
 
@@ -170,6 +177,8 @@ export class ActivityService {
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
+    this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
+    this.savedActivityLoop = properties.savedActivityLoop || [];
     for (let i = 0; i < 5; i++){
       // upgrade to anything that the loaded attributes allow
       this.upgradeActivities(true);
@@ -186,7 +195,7 @@ export class ActivityService {
   }
 
   meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
-    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0){
+    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType != this.currentApprenticeship){
       if (level < activity.skipApprenticeshipLevel){
         return false;
       }
@@ -231,7 +240,7 @@ export class ActivityService {
     for (const activity of this.activities){
       if (activity.level < (activity.description.length - 1)){
         if (this.meetsRequirementsByLevel(activity, (activity.level + 1), false)){
-          if (!squelchLogs){
+          if (!squelchLogs && activity.unlocked){
             this.logService.addLogMessage("Congratulations on your promotion! " + activity.name[activity.level] + " upgraded to " + activity.name[activity.level + 1], "STANDARD", "EVENT");
           }
           activity.level++;
@@ -249,6 +258,7 @@ export class ActivityService {
   reset(): void {
     // downgrade all activities to base level
     this.openApprenticeships = 1;
+    this.currentApprenticeship = ActivityType.Resting;
     this.oddJobDays = 0;
     this.beggingDays = 0;
     for (const activity of this.activities){
@@ -289,6 +299,7 @@ export class ActivityService {
       return;
     }
     this.openApprenticeships--;
+    this.currentApprenticeship = activityType;
     for (const activity of this.activities) {
       if (activity.activityType !== activityType && activity.level < activity.skipApprenticeshipLevel) {
         // relock all other apprentice activities
@@ -318,8 +329,22 @@ export class ActivityService {
       }
     }
     this.spiritActivity = null;
+    for (let i = 0; i < 5; i++){
+      // upgrade to anything that the current attributes allow
+      this.upgradeActivities(true);
+    }
     this.checkRequirements(true);
   }
+
+  saveActivityLoop(){
+    this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop)); 
+  }
+
+  loadActivityLoop(){
+    this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop)); 
+    this.checkRequirements(true);
+  }
+
 
   getActivityList(): Activity[] {
     this.defineActivities();
@@ -628,7 +653,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 1000;
         let numBuilders = 0;
         for (let follower of this.followerService.followers){
-          if (follower.job = "builder"){
+          if (follower.job == "builder"){
             numBuilders++;
           }
         }
