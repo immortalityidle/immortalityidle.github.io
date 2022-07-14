@@ -199,7 +199,7 @@ export class BattleService {
 
       let damage = this.characterService.characterState.attackPower;
       let combatDefense = this.currentEnemy.enemy.defense;
-      damage = damage / (1 + Math.pow(10 , (-damage + combatDefense) / combatDefense) );
+      if (combatDefense > 0) damage = damage / (1 + Math.pow(10 , (-damage + combatDefense) / combatDefense) );
       // pity damage
       if (damage < 1) damage = 1;
       if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10){
