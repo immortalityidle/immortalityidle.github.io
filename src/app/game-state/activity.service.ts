@@ -579,7 +579,7 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         let oreValue = 0;
-        let builderPower = 0;
+        let builderPower = 10; //divided by 10 later
         for (let i = 0; i < 200; i++){
           oreValue = this.inventoryService.consume('ore');
         }
@@ -590,7 +590,6 @@ export class ActivityService {
         }
         builderPower = Math.floor(builderPower /10);
         if (oreValue >= 10){
-          this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
           for (let i = 0; i < builderPower; i++){
             this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
           }
@@ -642,7 +641,7 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         let oreValue = 0;
-        let builderPower = 0;
+        let builderPower = 100; //divided by 100 later
         for (let follower of this.followerService.followers){
           if (follower.job = "builder"){
             builderPower += follower.power;
@@ -651,7 +650,6 @@ export class ActivityService {
         builderPower = Math.floor(builderPower / 100);
         oreValue = this.inventoryService.consume('ore');
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron" && oreValue >= 10){
-          this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
           for (let i = 0; i < builderPower; i++){
             this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
           }
