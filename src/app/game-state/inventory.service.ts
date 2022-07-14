@@ -1060,7 +1060,9 @@ export class InventoryService {
                         destinationItem = item;
                     }
                   }
-                } else mergeDestinationIndex = -1;
+                } else {
+                  mergeDestinationIndex = -1;
+                }
               }
             }
           }
