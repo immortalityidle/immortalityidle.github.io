@@ -326,11 +326,11 @@ export class BattleService {
     },
     army: {
       name: "an angry army",
-      health: 20000000,
+      health: 2000000,
       maxHealth: 20000000,
       accuracy: 0.9,
       attack: 1000000,
-      defense: 1000000,
+      defense: 500000,
       loot: []
     },
     death: {
