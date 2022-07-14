@@ -19,7 +19,8 @@ export interface ActivityProperties {
   unlockedActivities: ActivityType[],
   openApprenticeships: number,
   spiritActivity: ActivityType | null,
-  completedApprenticeships: ActivityType[];
+  completedApprenticeships: ActivityType[],
+  currentApprenticeship: ActivityType
 }
 
 @Injectable({
@@ -39,6 +40,8 @@ export class ActivityService {
   currentTickCount = 0;
   exhaustionDays = 0;
   currentLoopEntry?: ActivityLoopEntry = undefined;
+  currentApprenticeship: ActivityType = ActivityType.Resting;
+
 
   constructor(
     private characterService: CharacterService,
@@ -134,8 +137,8 @@ export class ActivityService {
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {
-      this.upgradeActivities();
-      this.checkRequirements();
+      this.upgradeActivities(false);
+      this.checkRequirements(false);
     });
 
   }
@@ -154,11 +157,13 @@ export class ActivityService {
       unlockedActivities: unlockedActivities,
       openApprenticeships: this.openApprenticeships,
       spiritActivity: this.spiritActivity,
-      completedApprenticeships: this.completedApprenticeships
+      completedApprenticeships: this.completedApprenticeships,
+      currentApprenticeship: this.currentApprenticeship,
     }
   }
 
   setProperties(properties: ActivityProperties){
+    this.reloadActivities();
     this.completedApprenticeships = properties.completedApprenticeships || [];
     let unlockedActivities = properties.unlockedActivities || [ActivityType.OddJobs, ActivityType.Resting];
     for (const activity of this.activities){
@@ -169,7 +174,12 @@ export class ActivityService {
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
-    this.reloadActivities();
+    this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
+    for (let i = 0; i < 5; i++){
+      // upgrade to anything that the loaded attributes allow
+      this.upgradeActivities(true);
+    }
+
   }
 
   meetsRequirements(activity: Activity): boolean {
@@ -181,7 +191,7 @@ export class ActivityService {
   }
 
   meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
-    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0){
+    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType != this.currentApprenticeship){
       if (level < activity.skipApprenticeshipLevel){
         return false;
       }
@@ -206,10 +216,13 @@ export class ActivityService {
     return true;
   }
 
-  checkRequirements(): void {
+  checkRequirements(squelchLogs: boolean): void {
     for (let activity of this.activities){
       if (!activity.unlocked && this.meetsRequirements(activity)){
         activity.unlocked = true;
+        if (!squelchLogs){
+          this.logService.addLogMessage("A new activity is available. Maybe you should try " + activity.name[activity.level] + ".", "STANDARD", "EVENT");
+        }
       }
     }
     for (let i = this.activityLoop.length - 1; i >= 0; i--) {
@@ -219,10 +232,13 @@ export class ActivityService {
     }
   }
 
-  upgradeActivities(): void {
+  upgradeActivities(squelchLogs: boolean): void {
     for (const activity of this.activities){
       if (activity.level < (activity.description.length - 1)){
         if (this.meetsRequirementsByLevel(activity, (activity.level + 1), false)){
+          if (!squelchLogs){
+            this.logService.addLogMessage("Congratulations on your promotion! " + activity.name[activity.level] + " upgraded to " + activity.name[activity.level + 1], "STANDARD", "EVENT");
+          }
           activity.level++;
           // check to see if we got above apprenticeship skip level
           if (activity.unlocked && activity.skipApprenticeshipLevel == activity.level){
@@ -238,6 +254,7 @@ export class ActivityService {
   reset(): void {
     // downgrade all activities to base level
     this.openApprenticeships = 1;
+    this.currentApprenticeship = ActivityType.Resting;
     this.oddJobDays = 0;
     this.beggingDays = 0;
     for (const activity of this.activities){
@@ -246,14 +263,14 @@ export class ActivityService {
     }
     for (let i = 0; i < 5; i++){
       // upgrade to anything that the starting attributes allow
-      this.upgradeActivities();
+      this.upgradeActivities(true);
     }
     if (this.impossibleTaskService.activeTaskIndex != ImpossibleTaskType.Swim){
       this.getActivityByType(ActivityType.Resting).unlocked = true;
       this.getActivityByType(ActivityType.OddJobs).unlocked = true;
     }
     if (this.autoRestart){
-      this.checkRequirements();
+      this.checkRequirements(true);
       if (this.pauseOnDeath){
         this.mainLoopService.pause = true;
       }
@@ -278,6 +295,7 @@ export class ActivityService {
       return;
     }
     this.openApprenticeships--;
+    this.currentApprenticeship = activityType;
     for (const activity of this.activities) {
       if (activity.activityType !== activityType && activity.level < activity.skipApprenticeshipLevel) {
         // relock all other apprentice activities
@@ -307,6 +325,11 @@ export class ActivityService {
       }
     }
     this.spiritActivity = null;
+    for (let i = 0; i < 5; i++){
+      // upgrade to anything that the current attributes allow
+      this.upgradeActivities(true);
+    }
+    this.checkRequirements(true);
   }
 
   getActivityList(): Activity[] {
@@ -1508,7 +1531,7 @@ export class ActivityService {
         'Work in a tannery, where hides are turned into leather items.',
         'Convert hides into leather items.',
         'Open your own tannery.',
-        'Fashion!.'
+        'Fashion!'
       ],
       consequenceDescription:[
         'Uses 20 stamina. Increases speed and toughness and provides a little money.',
@@ -1958,6 +1981,7 @@ export class ActivityService {
           for (let follower of this.followerService.followers){
             if (Math.random() < 0.01){
               follower.power++;
+              follower.cost += 100;
               this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "EVENT");
             }
           }
