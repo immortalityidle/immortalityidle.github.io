@@ -1053,7 +1053,16 @@ export class InventoryService {
                 this.itemStacks[mergeDestinationIndex] = null;
                 this.itemStacks[i] = null;
                 this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex );
-                return;
+                item = this.itemStacks[mergeDestinationIndex]?.item;
+                if (item){
+                  if (instanceOfEquipment(item)){
+                    if (item.slot == slot){
+                        destinationItem = item;
+                    }
+                  }
+                } else {
+                  mergeDestinationIndex = -1;
+                }
               }
             }
           }
