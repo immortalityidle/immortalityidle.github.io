@@ -20,7 +20,8 @@ export interface ActivityProperties {
   openApprenticeships: number,
   spiritActivity: ActivityType | null,
   completedApprenticeships: ActivityType[],
-  currentApprenticeship: ActivityType
+  currentApprenticeship: ActivityType,
+  savedActivityLoop: ActivityLoopEntry[],
 }
 
 @Injectable({
@@ -28,6 +29,7 @@ export interface ActivityProperties {
 })
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
+  savedActivityLoop: ActivityLoopEntry[] = [];
   spiritActivity: ActivityType | null = null;
   autoRestart: boolean = false;
   pauseOnDeath: boolean = true;
@@ -159,6 +161,7 @@ export class ActivityService {
       spiritActivity: this.spiritActivity,
       completedApprenticeships: this.completedApprenticeships,
       currentApprenticeship: this.currentApprenticeship,
+      savedActivityLoop: this.savedActivityLoop,
     }
   }
 
@@ -175,6 +178,7 @@ export class ActivityService {
     this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
     this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
+    this.savedActivityLoop = properties.savedActivityLoop || [];
     for (let i = 0; i < 5; i++){
       // upgrade to anything that the loaded attributes allow
       this.upgradeActivities(true);
@@ -236,7 +240,7 @@ export class ActivityService {
     for (const activity of this.activities){
       if (activity.level < (activity.description.length - 1)){
         if (this.meetsRequirementsByLevel(activity, (activity.level + 1), false)){
-          if (!squelchLogs){
+          if (!squelchLogs && activity.unlocked){
             this.logService.addLogMessage("Congratulations on your promotion! " + activity.name[activity.level] + " upgraded to " + activity.name[activity.level + 1], "STANDARD", "EVENT");
           }
           activity.level++;
@@ -331,6 +335,16 @@ export class ActivityService {
     }
     this.checkRequirements(true);
   }
+
+  saveActivityLoop(){
+    this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop)); 
+  }
+
+  loadActivityLoop(){
+    this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop)); 
+    this.checkRequirements(true);
+  }
+
 
   getActivityList(): Activity[] {
     this.defineActivities();
@@ -639,7 +653,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 1000;
         let numBuilders = 0;
         for (let follower of this.followerService.followers){
-          if (follower.job = "builder"){
+          if (follower.job == "builder"){
             numBuilders++;
           }
         }
