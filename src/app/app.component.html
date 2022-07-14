@@ -52,23 +52,29 @@
       <a href="https://discord.gg/Tyn9F9nhxg" target="_blank" rel="noopener noreferrer" tooltip="Have questions? Try the Immortality Idle Discord.">Discord</a>
     </div>
     <div class="bodyContainer">
-      <div class="panelContainer">
+      <div appResizable class="panelContainer" #panelContainer="appResizable">
         <div class="leftPanel">
-          <app-time-panel class="timePanel panel"></app-time-panel>
-          <app-attributes-panel class="attributesPanel panel"></app-attributes-panel>
-          <app-health-panel class="healthPanel panel"></app-health-panel>
+          <app-time-panel appResizable class="timePanel panel" #timePanel="appResizable"></app-time-panel>
+          <app-vertical-panel-slider [top]="timePanel" [bottom]="attributesPanel"></app-vertical-panel-slider>
+          <app-attributes-panel appResizable class="attributesPanel panel" #attributesPanel="appResizable"></app-attributes-panel>
+          <app-vertical-panel-slider [top]="attributesPanel" [bottom]="healthPanel"></app-vertical-panel-slider>
+          <app-health-panel appResizable class="healthPanel panel" #healthPanel="appResizable"></app-health-panel>
         </div>
         <div class="centerPanel">
-          <app-activity-panel class="activityPanel panel"></app-activity-panel>
-          <app-battle-panel class="battlePanel panel"></app-battle-panel>
+          <app-activity-panel appResizable class="activityPanel panel" #activityPanel="appResizable"></app-activity-panel>
+          <app-vertical-panel-slider [top]="activityPanel" [bottom]="battlePanel"></app-vertical-panel-slider>
+          <app-battle-panel appResizable class="battlePanel panel" #battlePanel="appResizable"></app-battle-panel>
         </div>
         <div class="rightPanel">
-          <app-equipment-panel class="equipmentPanel panel"></app-equipment-panel>
-          <app-home-panel class="homePanel panel"></app-home-panel>
-          <app-inventory-panel class="inventoryPanel panel"></app-inventory-panel>
+          <app-equipment-panel appResizable class="equipmentPanel panel" #equipmentPanel="appResizable"></app-equipment-panel>
+          <app-vertical-panel-slider [top]="equipmentPanel" [bottom]="homePanel"></app-vertical-panel-slider>
+          <app-home-panel appResizable class="homePanel panel" #homePanel="appResizable"></app-home-panel>
+          <app-vertical-panel-slider [top]="homePanel" [bottom]="inventoryPanel"></app-vertical-panel-slider>
+          <app-inventory-panel appResizable class="inventoryPanel panel" #inventoryPanel="appResizable"></app-inventory-panel>
         </div>
       </div>
-      <div class="logContainer">
+      <app-vertical-panel-slider [top]="panelContainer" [bottom]="logContainer"></app-vertical-panel-slider>
+      <div appResizable class="logContainer" #logContainer="appResizable">
         <app-log-panel class="logPanel panel"></app-log-panel>
       </div>
     </div>

@@ -1,7 +1,8 @@
 @import (reference) "../../styles.less";
 
 .homeContainer{
-  position: relative;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   padding-left: 2px;
 }
@@ -17,11 +18,11 @@
   margin: 6px;
 }
 
-.buttonSpan{
-  position: absolute;
-  bottom: 1px;
-  left: 1px;
-  width: 100%;
+.buttons {
+  border-top: 1px solid var(--panelBorder);
+  min-height: 0;
+  display: flex;
+  justify-content: space-between;
 }
 
 mat-icon {
@@ -43,12 +44,16 @@ mat-icon {
   height: 36px;
 }
 
-.rightFloat {
-  float: right;
-  margin-right: 4px;
-}
-
 .status-progress {
   width: 100px;
   margin-left: 4px;
+}
+
+.overflow {
+  overflow: auto;
+}
+
+.panelHeader {
+  display: flex;
+  gap: 4px;
 }

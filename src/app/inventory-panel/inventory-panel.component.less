@@ -1,8 +1,9 @@
 @import (reference) "../../styles.less";
 
 .inventoryContainer{
-  position: relative;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .itemSlot {
@@ -18,20 +19,19 @@
   line-height: 12px;
 }
 
+.overflow {
+  overflow: auto;
+}
+
 .inventoryGrid {
   display: flex;
   flex-wrap: wrap;
-  height: calc(100% - 64px);
-  overflow: auto;
   margin-top: 2px;
   margin-left: 2px;
-  border-bottom: 1px solid var(--panelBorder);
 }
 
 .inventoryButtons {
-  position: absolute;
-  bottom: 1px;
-  left: 1px;
+  border-top: 1px solid var(--panelBorder)
 }
 
 table {
@@ -58,4 +58,9 @@ table {
   margin-top: 4px;
   vertical-align: middle;
   color: var(--healthColor);
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-evenly;
 }
