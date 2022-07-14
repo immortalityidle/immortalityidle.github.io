@@ -32,7 +32,7 @@
     <h6 *ngIf="mainLoopService.bankedTicks > 0">
       <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
         [checked]="mainLoopService.useSavedTicks"/>
-      <label for="useSavedTicks">Use offline time to accelerate reality. {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</label>
+      <label for="useSavedTicks">Use banked time to accelerate reality. {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</label>
     </h6>
   </h3>
   <table>

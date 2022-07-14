@@ -83,7 +83,9 @@ export class MainLoopService {
       this.lastTime = newTime;
       // do multiple tick events if chrome has been throttling the interval (cause the tab isn't active)
       let repeatTimes = Math.floor(timeDiff / TICK_INTERVAL_MS) || 1;
-      if (!this.pause) {
+      if (this.pause) {
+        this.bankedTicks++;
+      } else {
         if (this.bankedTicks > 0 && this.useSavedTicks){
           repeatTimes += 10 / this.tickDivider;
           this.bankedTicks -= 10 / this.tickDivider;

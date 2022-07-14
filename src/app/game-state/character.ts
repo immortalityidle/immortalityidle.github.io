@@ -397,6 +397,9 @@ export class Character {
     if (this.healthBonusMagic > 10000){
       this.healthBonusMagic = 10000;
     }
+    if (this.status.stamina.max > 1000000){
+      this.status.stamina.max = 1000000;
+    }
     if (this.status.health.value > this.status.health.max){
       this.status.health.value = this.status.health.max;
     }
