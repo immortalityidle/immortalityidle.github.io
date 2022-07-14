@@ -494,7 +494,7 @@ export class AchievementService {
     },
     {
       name: "You're a wizard now.",
-      description: "Enlightenment! You found a deep understanding of the dao with a high, balanced levels of lore in each of the five elements. Mana is now unlocked.",
+      description: "Enlightenment! You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements. Mana is now unlocked for all future lives.",
       hint: "Seek the balance of the dao.",
       check: () => {
         let lowValue = this.characterService.characterState.attributes.metalLore.value * 0.9;

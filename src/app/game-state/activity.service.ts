@@ -611,7 +611,7 @@ export class ActivityService {
       name: ['Build Scaffolding'],
       activityType: ActivityType.MakeScaffold,
       description: ['Set up the scaffolding for the next level of your tower.'],
-      consequenceDescription: ['Reduce Stamina by 1000. If you have the right facilities and materials you might succeed in setting up the scaffolding for the next level.'],
+      consequenceDescription: ['Reduce Stamina by 1000. If you have the right materials you might succeed in setting up the scaffolding for the next level.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         let woodValue = 0;

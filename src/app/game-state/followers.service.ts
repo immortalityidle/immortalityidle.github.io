@@ -232,7 +232,7 @@ export class FollowersService {
 
     let job = this.generateFollowerJob();
     if (this.autoDismissJobs.includes(job)){
-      this.logService.addLogMessage("A new follower shows up, but you they were a " + job + " and you don't want any of those.","STANDARD","EVENT");
+      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any of those.","STANDARD","EVENT");
       return;
     }
 
