@@ -730,8 +730,8 @@ export class HomeService {
            (this.upgrading || this.homeValue < this.autoBuyHomeLimit) &&
            (this.characterService.characterState.money < this.nextHome.cost + this.landPrice + priceBuffer )){
           break;
-        this.buyLand();
         }
+        this.buyLand();
       }
     }
     // if there's no autohome, autohome is finished, or it has more than enough land for the next home, make a field.
