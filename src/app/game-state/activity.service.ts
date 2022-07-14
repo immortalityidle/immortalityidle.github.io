@@ -107,7 +107,7 @@ export class ActivityService {
           // take 5 days to recover, regain stamina, restart loop
           this.logService.addLogMessage('You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.', 'INJURY', 'EVENT');
           this.exhaustionDays = 5;
-          this.characterService.characterState.status.stamina.value = this.characterService.characterState.status.stamina.max;
+          this.characterService.characterState.status.stamina.value = 100;
         }
         // check for mana overuse
         if (this.characterService.characterState.status.mana.value < 0) {
@@ -906,7 +906,7 @@ export class ActivityService {
       consequenceDescription: ["I'm sure you have plenty of armies for this. You wouldn't try this without enough armies, that would end badly."],
       consequence: [() => {
         let value = 0;
-        for (let i = 0; i < this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress; i++){
+        for (let i = 0; i < this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress + 1; i++){
           value = this.inventoryService.consume('army');
         }
         if (value < 1){
