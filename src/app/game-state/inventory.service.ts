@@ -124,6 +124,7 @@ export class InventoryService {
   motherGift: boolean = false;
   grandmotherGift: boolean = false;
   thrownAwayItems: number = 0;
+  mergeCounter: number = 0;
 
   constructor(
     private logService: LogService,
@@ -162,16 +163,21 @@ export class InventoryService {
         return;
       }
       this.eatFood();
+      if (this.mergeCounter >= 20){
+        if (this.autoWeaponMergeUnlocked){
+          this.autoWeaponMerge();
+        }
+        if (this.autoArmorMergeUnlocked){
+          this.autoArmorMerge();
+        }
+        this.mergeCounter = 0;
+      } else {
+        this.mergeCounter++;
+      }
     });
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
-      }
-      if (this.autoWeaponMergeUnlocked){
-        this.autoWeaponMerge();
-      }
-      if (this.autoArmorMergeUnlocked){
-        this.autoArmorMerge();
       }
       if (this.autoequipBestWeapon){
         this.autoequipWeapons();
@@ -256,7 +262,7 @@ export class InventoryService {
     }
   }
 
-  // materials are wood or metal (TODO: more detail on materials)
+  // materials are wood or metal
   generateWeapon(grade: number, material: string): Equipment {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
@@ -294,7 +300,7 @@ export class InventoryService {
     }
     let name = prefix + ' ' + materialPrefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)] + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'CRAFTING');
-    let durability = Math.floor(Math.random() * grade * 10);
+    let durability = grade * 10 + Math.floor(Math.random() * grade * 5);
     return {
       id: 'weapon',
       name: name,
@@ -317,7 +323,7 @@ export class InventoryService {
   }
 
   updateArmorDescription(armor: Equipment){
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material + 
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material +
       "<br/>Defense: " + armor.armorStats?.defense + "<br/>Durability: " + armor.armorStats?.durability
   }
 
@@ -463,7 +469,7 @@ export class InventoryService {
     }
     let name = prefix + ' ' + materialPrefix + ' ' + namePicker[Math.floor(Math.random() * namePicker.length)] + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'CRAFTING');
-    let durability = Math.floor(Math.random() * grade * 10);
+    let durability = grade * 5 + Math.floor(Math.random() * grade * 5);
     return {
       id: 'armor',
       name: name,
@@ -996,7 +1002,6 @@ export class InventoryService {
     }
     let inventoryIndex = 0;
     if (item1.slot == 'rightHand' || item1.slot == 'leftHand'){
-      // TODO: make this work for other things than weapons eventually
       inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + ""));
     } else {
       inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot));
@@ -1036,6 +1041,7 @@ export class InventoryService {
     let mergeDestinationIndex = -1;
     let destinationItem: Equipment | null = null;
     let sourceItem: Equipment  | null = null;
+    let lastdestinationIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
       let item = this.itemStacks[i]?.item;
       if (item){
@@ -1043,6 +1049,7 @@ export class InventoryService {
           if (item.slot == slot){
             if (mergeDestinationIndex == -1){
               mergeDestinationIndex = i;
+              lastdestinationIndex = i;
               destinationItem = item;
             } else {
               sourceItem = item;
@@ -1052,7 +1059,7 @@ export class InventoryService {
                 }
                 this.itemStacks[mergeDestinationIndex] = null;
                 this.itemStacks[i] = null;
-                this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex );
+                this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex);
                 item = this.itemStacks[mergeDestinationIndex]?.item;
                 if (item){
                   if (instanceOfEquipment(item)){
@@ -1068,6 +1075,20 @@ export class InventoryService {
           }
         }
       }
+    }
+    // finally, merge the last item with that slot into the equipped item (if present and both weapon and armor autoequips are unlocked)
+    if (destinationItem != null && this.autoequipBestWeapon && this.autoequipBestArmor){
+      sourceItem = this.characterService.characterState.equipment[slot];
+      if (sourceItem == null){
+        return;
+      }
+      if (slot == 'rightHand' || slot == 'leftHand'){
+        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
+      } else {
+        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", slot);
+      }
+      this.characterService.characterState.equipment[slot] = destinationItem;
+      this.itemStacks[lastdestinationIndex] = null;
     }
   }
 
