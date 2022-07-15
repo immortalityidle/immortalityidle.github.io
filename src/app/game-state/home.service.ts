@@ -62,6 +62,8 @@ export interface HomeProperties {
   autoBuyFurniture: FurnitureSlots,
   autoFieldUnlocked: boolean,
   autoFieldLimit: number,
+  useAutoBuyReserve: boolean,
+  autoBuyReserveAmount: number,
   nextHomeCostReduction: number,
   houseBuildingProgress: number,
   upgrading: boolean,
@@ -88,6 +90,8 @@ export class HomeService {
   }
   autoFieldUnlocked: boolean = false;
   autoFieldLimit: number = 0;
+  useAutoBuyReserve: boolean = false;
+  autoBuyReserveAmount: number = 0;
   land: number;
   landPrice: number;
   fields: Field[] = [];
@@ -509,6 +513,8 @@ export class HomeService {
       autoBuyFurnitureUnlocked: this.autoBuyFurnitureUnlocked,
       autoBuyFurniture: this.autoBuyFurniture,
       autoFieldUnlocked: this.autoFieldUnlocked,
+      useAutoBuyReserve: this.useAutoBuyReserve,
+      autoBuyReserveAmount: this.autoBuyReserveAmount,
       autoFieldLimit: this.autoFieldLimit,
       nextHomeCostReduction: this.nextHomeCostReduction,
       houseBuildingProgress: this.houseBuildingProgress,
@@ -533,6 +539,8 @@ export class HomeService {
     this.autoBuyFurniture = properties.autoBuyFurniture || false;
     this.autoFieldUnlocked = properties.autoFieldUnlocked || false;
     this.autoFieldLimit = properties.autoFieldLimit || 0;
+    this.useAutoBuyReserve = properties.useAutoBuyReserve || false;
+    this.autoBuyReserveAmount = properties.autoBuyReserveAmount || 0;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
     this.upgrading = properties.upgrading || false;
@@ -698,7 +706,8 @@ export class HomeService {
   }
 
   autoBuy(){
-    let priceBuffer = (this.home.costPerDay + 1) * 10; // Ten days, by popular request.
+    // Use auto-buy reserve amount if enabled in settings, otherwise default to 10 days living expenses (food + lodging)
+    let priceBuffer = this.useAutoBuyReserve ? this.autoBuyReserveAmount : (this.home.costPerDay + 1) * 10;
     if (this.autoBuyHomeUnlocked && this.homeValue < this.autoBuyHomeLimit){
       // Don't buy land while upgrading.
       if (!this.upgrading){

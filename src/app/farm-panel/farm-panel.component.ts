@@ -43,8 +43,10 @@ export class FarmPanelComponent {
         this.homeService.buyLand();
       }
     } else if (event.ctrlKey){
-      while (this.characterService.characterState.money > this.homeService.landPrice){
+      let counter = 0;
+      while (this.characterService.characterState.money > this.homeService.landPrice && counter < 10000){
         this.homeService.buyLand();
+        counter++;
       }
     } else {
       this.homeService.buyLand();

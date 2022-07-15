@@ -404,6 +404,18 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Gem Snob",
+      description: "You have sold 888 gems and unlocked the " +  this.itemRepoService.items['bestGemsManual'].name,
+      hint: "I hear the market for fine jewelry is so hot right now.",
+      check: () => {
+        return this.inventoryService.lifetimeGemsSold >= 888;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestGemsManual']);
+      },
+      unlocked: false
+    },    
+    {
       name: "Grandpa's Old Tent",
       description: "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
@@ -494,20 +506,18 @@ export class AchievementService {
     },
     {
       name: "You're a wizard now.",
-      description: "Enlightenment! You found a deep understanding of the dao with a high, balanced levels of lore in each of the five elements. Mana is now unlocked.",
+      description: "Enlightenment! You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements. Mana is now unlocked for all future lives.",
       hint: "Seek the balance of the dao.",
       check: () => {
-        let lowValue = this.characterService.characterState.attributes.metalLore.value * 0.9;
-        let highValue = this.characterService.characterState.attributes.metalLore.value * 1.1;
-        return lowValue > 1000 &&
-          this.characterService.characterState.attributes.fireLore.value >= lowValue &&
-          this.characterService.characterState.attributes.fireLore.value <= highValue &&
-          this.characterService.characterState.attributes.earthLore.value >= lowValue &&
-          this.characterService.characterState.attributes.earthLore.value <= highValue &&
-          this.characterService.characterState.attributes.woodLore.value >= lowValue &&
-          this.characterService.characterState.attributes.woodLore.value <= highValue &&
-          this.characterService.characterState.attributes.waterLore.value >= lowValue &&
-          this.characterService.characterState.attributes.waterLore.value <= highValue;
+        let fireLore = this.characterService.characterState.attributes.fireLore.value;
+        let earthLore = this.characterService.characterState.attributes.earthLore.value;
+        let woodLore = this.characterService.characterState.attributes.woodLore.value;
+        let waterLore = this.characterService.characterState.attributes.waterLore.value;
+        let metalLore = this.characterService.characterState.attributes.metalLore.value; //Reduce the bulk
+        
+        let lowValue = Math.min(metalLore , waterLore, woodLore, earthLore , fireLore);
+        let highValue = Math.max(metalLore , waterLore, woodLore , earthLore , fireLore);
+        return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.characterService.characterState.manaUnlocked = true;
@@ -547,17 +557,15 @@ export class AchievementService {
       description: "You have balanced your powerful mind and body and unlocked the ability to use your mana to strike down your enemies.",
       hint: "The dao embraces all things in perfect harmony.",
       check: () => {
-        let lowValue = this.characterService.characterState.attributes.strength.value * 0.9;
-        let highValue = this.characterService.characterState.attributes.strength.value * 1.1;
-        return this.characterService.characterState.manaUnlocked && lowValue > 1000000 &&
-          this.characterService.characterState.attributes.speed.value >= lowValue &&
-          this.characterService.characterState.attributes.speed.value <= highValue &&
-          this.characterService.characterState.attributes.toughness.value >= lowValue &&
-          this.characterService.characterState.attributes.toughness.value <= highValue &&
-          this.characterService.characterState.attributes.charisma.value >= lowValue &&
-          this.characterService.characterState.attributes.charisma.value <= highValue &&
-          this.characterService.characterState.attributes.intelligence.value >= lowValue &&
-          this.characterService.characterState.attributes.intelligence.value <= highValue;
+        let speed = this.characterService.characterState.attributes.speed.value;
+        let toughness = this.characterService.characterState.attributes.toughness.value;
+        let charisma = this.characterService.characterState.attributes.charisma.value;
+        let intelligence = this.characterService.characterState.attributes.intelligence.value;
+        let strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
+        
+        let lowValue = Math.min(speed , toughness, charisma , intelligence , strength);
+        let highValue = Math.max(speed , toughness, charisma , intelligence , strength);
+        return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.battleService.manaAttackUnlocked = true;
@@ -569,19 +577,16 @@ export class AchievementService {
       description: "You have balanced your powerful spirit with your mind and body. You unlocked the ability to use your mana to protect yourself.",
       hint: "The dao embraces all things in perfect harmony.",
       check: () => {
-        let lowValue = this.characterService.characterState.attributes.strength.value * 0.9;
-        let highValue = this.characterService.characterState.attributes.strength.value * 1.1;
-        return this.characterService.characterState.manaUnlocked && lowValue > 1000000 &&
-          this.characterService.characterState.attributes.spirituality.value >= lowValue &&
-          this.characterService.characterState.attributes.spirituality.value <= highValue &&
-          this.characterService.characterState.attributes.speed.value >= lowValue &&
-          this.characterService.characterState.attributes.speed.value <= highValue &&
-          this.characterService.characterState.attributes.toughness.value >= lowValue &&
-          this.characterService.characterState.attributes.toughness.value <= highValue &&
-          this.characterService.characterState.attributes.charisma.value >= lowValue &&
-          this.characterService.characterState.attributes.charisma.value <= highValue &&
-          this.characterService.characterState.attributes.intelligence.value >= lowValue &&
-          this.characterService.characterState.attributes.intelligence.value <= highValue;
+        let spirituality = this.characterService.characterState.attributes.spirituality.value;
+        let speed = this.characterService.characterState.attributes.speed.value;
+        let toughness = this.characterService.characterState.attributes.toughness.value;
+        let charisma = this.characterService.characterState.attributes.charisma.value;
+        let intelligence = this.characterService.characterState.attributes.intelligence.value;
+        let strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
+        
+        let lowValue = Math.min(speed , toughness, charisma , intelligence , strength, spirituality);
+        let highValue = Math.max(speed , toughness, charisma , intelligence , strength, spirituality);
+        return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.battleService.manaShieldUnlocked = true;
@@ -599,7 +604,20 @@ export class AchievementService {
         this.storeService.unlockManual(this.itemRepoService.items['followerAutoDismissManual']);
       },
       unlocked: false
-    }
+    },
+    {
+      name: "Ascension",
+      description: "You have developed enough spirituality to ascend.",
+      hint: "Only with spiritual development can you ascend to higher states.",
+      check: () => {
+        return this.characterService.characterState.attributes.spirituality.value >= 10;
+      },
+      effect: () => {
+        this.characterService.characterState.ascensionUnlocked = true;
+      },
+      unlocked: false
+    },
+    
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean){

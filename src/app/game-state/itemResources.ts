@@ -418,6 +418,7 @@ export var ItemPrefixes = [
   "bulky",
   "extended",
   "rare",
+  "lovely",
   "extensive",
   "extravagant",
   "gigantic",
@@ -428,6 +429,7 @@ export var ItemPrefixes = [
   "lengthy",
   "long",
   "oversize",
+  "beautiful",
   "prodigious",
   "stupendous",
   "titanic",
@@ -465,13 +467,15 @@ export var WeaponSuffixes = [
 ]
 
 export var WeaponSuffixModifiers = [
+  "weak",
   "partial",
+  "limited",
   "substantial",
   "blinding",
-  "overwhelming",
   "complete",
   "burning",
   "total",
+  "overwhelming",
   "incalculable",
   "unfathomable",
   "obliterating",
@@ -483,20 +487,32 @@ export var WeaponSuffixModifiers = [
 ]
 
 export var ArmorSuffixes = [
+  "comfort",
+  "screening",
+  "safety",
+  "cover",
+  "shelter",
   "protection",
+  "security",
   "defense",
   "light",
   "darkness",
+  "immunity",
   "power",
+  "inviolability",
   "supremacy",
   "invulnerability",
+  "invincibility"
 ]
 
 export var ArmorSuffixModifiers = [
+  "weak",
+  "limited",
   "partial",
   "substantial",
   "complete",
   "total",
+  "overwhelming",
   "incalculable",
   "unfathomable",
   "limitless",

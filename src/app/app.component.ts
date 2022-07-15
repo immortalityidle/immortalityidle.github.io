@@ -78,6 +78,8 @@ export class AppComponent implements OnInit {
   title = 'immortalityidle';
   applicationVersion = environment.appVersion;
 
+  activateSliders = false;
+
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.code == 'Space'){
@@ -164,7 +166,7 @@ export class AppComponent implements OnInit {
 
   achievementsClicked(){
     const dialogRef = this.dialog.open(AchievementPanelComponent, {
-      width: '500px',
+      width: '750px',
       data: {someField: 'foo'}
     });
   }

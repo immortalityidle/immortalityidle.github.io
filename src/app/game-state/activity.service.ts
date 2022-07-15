@@ -574,16 +574,27 @@ export class ActivityService {
       level: 0,
       name: ['Create an Everlasting Brick'],
       activityType: ActivityType.MakeBrick,
-      description: ['Create a brick sturdy enough to support the weight of your tower.'],
-      consequenceDescription: ['Reduce Stamina by 100. If you have the right materials you will create an everlasting brick.'],
+      description: ['Create bricks sturdy enough to support the weight of your tower.'],
+      consequenceDescription: ['Reduce Stamina by 100. If you have the right followers and materials you will create some everlasting bricks.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         let oreValue = 0;
+        let builderPower = 10; //divided by 10 later
         for (let i = 0; i < 200; i++){
           oreValue = this.inventoryService.consume('ore');
         }
+        for (let follower of this.followerService.followers){
+          if (follower.job == "builder"){
+            builderPower += follower.power;
+          }
+        }
+        builderPower = Math.floor(builderPower /10);
         if (oreValue >= 10){
-          this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
+          for (let i = 0; i < builderPower; i++){
+            this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
+          }
+          this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingBrick'].name,"STANDARD","CRAFTING");;
+        
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
@@ -600,15 +611,16 @@ export class ActivityService {
       name: ['Build Scaffolding'],
       activityType: ActivityType.MakeScaffold,
       description: ['Set up the scaffolding for the next level of your tower.'],
-      consequenceDescription: ['Reduce Stamina by 1000. If you have the right facilities and materials you might succeed in setting up the scaffolding for the next level.'],
+      consequenceDescription: ['Reduce Stamina by 1000. If you have the right materials you might succeed in setting up the scaffolding for the next level.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         let woodValue = 0;
-        for (let i = 0; i < 200; i++){
+         for (let i = 0; i < 200; i++){
           woodValue = this.inventoryService.consume('wood');
         }
         if (woodValue >= 11){
           this.inventoryService.addItem(this.itemRepoService.items['scaffolding']);
+          this.logService.addLogMessage("You made " + this.itemRepoService.items['scaffolding'].name,"STANDARD","CRAFTING");;
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials, hurt yourself, and break your weak attempt at scaffolding.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
@@ -625,13 +637,23 @@ export class ActivityService {
       name: ['Mix Everlasting Mortar'],
       activityType: ActivityType.MakeMortar,
       description: ['Mix mortar powerful enough to hold your mighty tower together.'],
-      consequenceDescription: ['Reduce Stamina by 100. If you have the right facilities and materials you might succeed in mixing some proper mortar.'],
+      consequenceDescription: ['Reduce Stamina by 100. If you have the right followers, facilities, and materials you might succeed in mixing some proper mortar.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         let oreValue = 0;
+        let builderPower = 100; //divided by 100 later
+        for (let follower of this.followerService.followers){
+          if (follower.job = "builder"){
+            builderPower += follower.power;
+          }
+        }
+        builderPower = Math.floor(builderPower / 100);
         oreValue = this.inventoryService.consume('ore');
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron" && oreValue >= 10){
-          this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
+          for (let i = 0; i < builderPower; i++){
+            this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
+          }
+          this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingMortar'].name,"STANDARD","CRAFTING");;
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
@@ -1264,9 +1286,7 @@ export class ActivityService {
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == 'herbGarden'){
           this.inventoryService.generateHerb();
         }
-        if (Math.random() < 0.01) {
-          this.characterService.characterState.increaseAttribute('woodLore',0.1);
-        }
+        this.characterService.characterState.increaseAttribute('woodLore',0.003);
       }],
       requirements: [{
         speed: 20,
@@ -1346,7 +1366,7 @@ export class ActivityService {
             alchemySuccessChance += 0.05;
           }
           if (Math.random() < alchemySuccessChance) {
-            this.characterService.characterState.increaseAttribute('woodLore',0.2);
+            this.characterService.characterState.increaseAttribute('woodLore',0.15);
             this.characterService.characterState.increaseAttribute('waterLore',0.3);
             if (this.inventoryService.openInventorySlots() > 0){
               let grade = this.inventoryService.consume('ingredient');
@@ -1364,7 +1384,7 @@ export class ActivityService {
             (this.characterService.characterState.attributes.waterLore.value * 10);
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Alchemy).lastIncome = money;
-          this.characterService.characterState.increaseAttribute('woodLore',0.3);
+          this.characterService.characterState.increaseAttribute('woodLore',0.2);
           this.characterService.characterState.increaseAttribute('waterLore',0.6);
           if (this.inventoryService.openInventorySlots() > 0){
             let grade = this.inventoryService.consume('ingredient');
@@ -1408,9 +1428,7 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute('strength',0.1);
         this.characterService.characterState.status.stamina.value -= 10;
         this.inventoryService.addItem(this.inventoryService.getWood());
-        if (Math.random() < 0.01) {
-          this.characterService.characterState.increaseAttribute('woodLore',0.1);
-        }
+        this.characterService.characterState.increaseAttribute('woodLore',0.01);
       }],
       requirements: [{
         strength: 100,
@@ -1460,8 +1478,8 @@ export class ActivityService {
             (this.characterService.characterState.attributes.woodLore.value * 2);
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Woodworking).lastIncome = money;
-          if (Math.random() < 0.01) {
-            this.characterService.characterState.increaseAttribute('woodLore',0.2);
+          if (Math.random() < 0.02) {
+            this.characterService.characterState.increaseAttribute('woodLore',0.25);
             if (this.inventoryService.openInventorySlots() > 0){
               let grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
@@ -1480,8 +1498,8 @@ export class ActivityService {
             (this.characterService.characterState.attributes.woodLore.value * 5);
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Woodworking).lastIncome = money;
-          if (Math.random() < 0.01) {
-            this.characterService.characterState.increaseAttribute('woodLore',0.3);
+          if (Math.random() < 0.05) {
+            this.characterService.characterState.increaseAttribute('woodLore',0.4);
             if (this.inventoryService.openInventorySlots() > 0){
               let grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
@@ -1500,8 +1518,8 @@ export class ActivityService {
             (this.characterService.characterState.attributes.woodLore.value * 10);
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Woodworking).lastIncome = money;
+          this.characterService.characterState.increaseAttribute('woodLore',0.6);
           if (Math.random() < 0.2) {
-            this.characterService.characterState.increaseAttribute('woodLore',0.5);
             if (this.inventoryService.openInventorySlots() > 0){
               let grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
@@ -1770,9 +1788,9 @@ export class ActivityService {
       // cormorant fishing later!
       activityType: ActivityType.Fishing,
       description: ['Grab your net and see if you can catch some fish.'],
-      consequenceDescription: ['Uses 50 stamina. Increases intelligence and strength and you might catch a fish.'],
+      consequenceDescription: ['Uses 30 stamina. Increases intelligence and strength and you might catch a fish.'],
       consequence: [() => {
-        this.characterService.characterState.status.stamina.value -= 50;
+        this.characterService.characterState.status.stamina.value -= 30;
         this.characterService.characterState.increaseAttribute('strength', 0.1);
         this.characterService.characterState.increaseAttribute('intelligence', 0.1);
         if (Math.random() < 0.2) {

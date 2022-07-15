@@ -921,6 +921,7 @@ export class ItemRepoService {
           this.impossibleTaskService = this.injector.get(ImpossibleTaskService);
         }
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].progress++;
+        this.impossibleTaskService.activeTaskIndex = ImpossibleTaskType.OvercomeDeath; // just in case. Don't want this use to fail.
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete){
           this.logService.addLogMessage("YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!", "INJURY", 'STORY');
@@ -1574,6 +1575,32 @@ export class ItemRepoService {
           this.followerService = this.injector.get(FollowersService);
         }
         return this.followerService.autoDismissUnlocked;
+      }
+    },
+    bestGemsManual: {
+      id: 'bestGemsManual',
+      name: "Manual of Gemological Purity",
+      type: "manual",
+      description: "This manual teaches you automatically sell gems that are below the value of the gems your current monster drops.",
+      value: 1000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock gem autoselling for lower level gems.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoSellOldGemsUnlocked = true;
+        this.inventoryService.autoSellOldGemsEnabled = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoSellOldGemsUnlocked;
       }
     }
   }

@@ -95,6 +95,7 @@ export class Character {
   healthBonusBath: number = 0;
   healthBonusMagic: number = 0;
   immortal: boolean = false;
+  ascensionUnlocked: boolean = false;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -240,11 +241,7 @@ export class Character {
 
     // age in days
     this.age = INITIAL_AGE;
-    this.baseLifespan += 1; //bonus day just for doing another reincarnation cycle
-    if (this.baseLifespan > 25550){
-      // cap base at 70 years
-      this.baseLifespan = 25550;
-    }
+    this.increaseBaseLifespan(1, 70); //bonus day just for doing another reincarnation cycle, cap base at 70 years
     this.foodLifespan = 0;
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
@@ -387,6 +384,22 @@ export class Character {
     return increaseAmount;
   }
 
+  /**increase in days 
+   * 
+   * limit in years
+   * 
+   * returns false if limit is reached.
+  */
+  increaseBaseLifespan(increase: number, limit: number): boolean {
+    if (this.baseLifespan + increase < limit * 365){
+      this.baseLifespan += increase;
+      return true;
+    } else if (this.baseLifespan < limit * 365) {
+      this.baseLifespan = limit * 365;
+    }
+    return false;
+  }
+
   checkOverage(){
     if (this.healthBonusFood > 1900){
       this.healthBonusFood = 1900;
@@ -396,6 +409,9 @@ export class Character {
     }
     if (this.healthBonusMagic > 10000){
       this.healthBonusMagic = 10000;
+    }
+    if (this.status.stamina.max > 1000000){
+      this.status.stamina.max = 1000000;
     }
     if (this.status.health.value > this.status.health.max){
       this.status.health.value = this.status.health.max;

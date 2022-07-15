@@ -6,8 +6,6 @@ import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { formatNumber } from '@angular/common';
-import { devOnlyGuardedExpression } from '@angular/compiler';
-import { EquipmentSlots } from './character';
 
 export interface Enemy {
   name: string,
@@ -57,6 +55,7 @@ export class BattleService {
   manaAttackUnlocked: boolean = false;
   tickCounter: number;
   ticksPerFight: number = 10;
+  highestGem: number = 0;
 
   constructor(
     private logService: LogService,
@@ -237,7 +236,13 @@ export class BattleService {
         this.kills++;
         this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
         for (let item of this.currentEnemy.enemy.loot){
-          this.inventoryService.addItem(item);
+          let lootItem = this.itemRepoService.getItemById(item.id);
+          if (lootItem){
+            this.inventoryService.addItem(lootItem);
+          } else {
+            // the item was generated, not part of the repo, so just add it instead of using the lookup
+            this.inventoryService.addItem(item);
+          }
         }
         this.currentEnemy.quantity--;
         if (this.currentEnemy.quantity <= 0){
@@ -289,6 +294,7 @@ export class BattleService {
       monsterName += " " + (rank + 1);
     }
 
+    let gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
     this.addEnemy({
       name: monsterName,
       health: this.troubleKills * 10,
@@ -296,7 +302,7 @@ export class BattleService {
       accuracy: 0.5,
       attack: this.troubleKills / 5,
       defense: this.troubleKills / 5,
-      loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)))]
+      loot: [gem]
     });
     this.troubleKills++;
   }
@@ -337,11 +343,11 @@ export class BattleService {
     },
     army: {
       name: "an angry army",
-      health: 20000000,
+      health: 2000000,
       maxHealth: 20000000,
       accuracy: 0.9,
       attack: 1000000,
-      defense: 1000000,
+      defense: 500000,
       loot: []
     },
     death: {
@@ -366,12 +372,12 @@ export class BattleService {
     "roc", "giant", "kraken", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"];
 
   monsterQualities = [
-    "an infant", "a puny", "a pathetic", "a sickly", "a starving", "a wimpy", "a weak", "a badly wounded", 
+    "an infant", "a puny", "a pathetic", "a sickly", "a starving", "a wimpy", "a weak", "a badly wounded",
     "a tired", "a poor", "a small", "a despondent", "a frightened", "a skinny", "a sad", "a stinking", "a typical",
     "an average", "a healthy", "a big", "a tough", "a strong", "a fearsome", "a gutsy", "a quick",
     "a hefty", "a brawny", "an athletic", "a muscular", "a rugged", "a resilient", "an angry",
     "a clever", "a fierce", "a devious", "a mighty", "a powerful", "a noble", "a magical",
-    "a dangerous", "a terrifying", "a flame-shrouded", "an abominable", "a monstrous", 
+    "a dangerous", "a terrifying", "a flame-shrouded", "an abominable", "a monstrous",
     "a dominating", "a demonic", "a diabolical", "an infernal"
   ];
 }
