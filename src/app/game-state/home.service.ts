@@ -695,7 +695,7 @@ export class HomeService {
  */
   buyLand(count: number): number{
     let maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
-    if(!maximumCount){
+    if(!maximumCount || !count){
       return 0;
     }
     let increase = 0;
@@ -790,7 +790,7 @@ export class HomeService {
         this.addField();
       }
     }
-    
+
     if (this.autoBuyFurnitureUnlocked){
       for (let slot of this.furniturePositionsArray){
         // check if we have a previous purchase and the slot is still empty
