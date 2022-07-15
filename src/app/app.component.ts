@@ -166,7 +166,7 @@ export class AppComponent implements OnInit {
 
   achievementsClicked(){
     const dialogRef = this.dialog.open(AchievementPanelComponent, {
-      width: '500px',
+      width: '750px',
       data: {someField: 'foo'}
     });
   }

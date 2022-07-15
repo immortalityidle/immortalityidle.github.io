@@ -921,6 +921,7 @@ export class ItemRepoService {
           this.impossibleTaskService = this.injector.get(ImpossibleTaskService);
         }
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].progress++;
+        this.impossibleTaskService.activeTaskIndex = ImpossibleTaskType.OvercomeDeath; // just in case. Don't want this use to fail.
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete){
           this.logService.addLogMessage("YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!", "INJURY", 'STORY');

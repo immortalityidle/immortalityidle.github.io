@@ -79,7 +79,10 @@
         class="iconButton" (click)="activityService.loadActivityLoop()">
         content_paste_go
       </mat-icon>
-
+      <mat-icon tooltip="Clear your current schedule." 
+        class="iconButton" (click)="activityService.activityLoop = []">
+        delete_sweep
+      </mat-icon>
     </span>
   </div>
 </div>
