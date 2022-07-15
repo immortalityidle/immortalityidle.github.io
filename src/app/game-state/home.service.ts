@@ -689,23 +689,56 @@ export class HomeService {
     this.averageYield = ((this.averageYield * 364) + totalDailyYield) / 365;
   }
 
-  buyLand(){
-    if (this.characterService.characterState.money >= this.landPrice){
-      this.characterService.characterState.money -= this.landPrice;
-      this.land++;
-      this.landPrice += 10;
+/**
+ * Set count to -1 for max 
+ * @returns count of actual purchase
+ */
+  buyLand(count: number): number{
+    let maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
+    if(!maximumCount){
+      return 0;
     }
+    let increase = 0;
+    let price = 0;
+    if (count > 0){
+      count = Math.min(count,maximumCount);
+    } else {
+      count = maximumCount;
+    }
+    increase = 10 * (count * (count + 1) / 2); //mathmatically increase by linear sum n (n + 1) / 2
+    price = this.landPrice * count + increase;
+    if (this.characterService.characterState.money >= price){
+      this.characterService.characterState.money -= price;
+      this.land += count;
+      this.landPrice += 10 * count;
+    }
+    return count;
+  }
+
+  /**
+   * 
+   * @param money the money available for use
+   * @returns count of affordable land
+   */
+  calculateAffordableLand(money: number): number{
+    let x = money;
+    let C = this.landPrice;
+    return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)))/10); // I know this looks nuts but I tested it on its own ^_^;;
+    
   }
 
   autoBuy(){
     let priceBuffer = (this.home.costPerDay + 1) * 10; // Ten days, by popular request.
+
     if (this.autoBuyHomeUnlocked && this.homeValue < this.autoBuyHomeLimit){
       // Don't buy land while upgrading.
       if (!this.upgrading){
         //try to buy as much land as needed.
-        while (this.characterService.characterState.money > this.landPrice + priceBuffer && this.land < this.nextHome.landRequired){
-          this.buyLand();
-        }
+        let landRequired = Math.min(
+          this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
+          this.nextHome.landRequired
+        )
+        this.buyLand(landRequired);
       }
       if (this.land >= this.nextHome.landRequired){
         // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
@@ -717,23 +750,33 @@ export class HomeService {
         }
       }
     }
+
     // if there's no autohome, autohome is finished, or there's enough money to cover buying a new plot of land and the home, try buying land.
     if ((!this.autoBuyHomeUnlocked ||
         this.homeValue >= this.autoBuyHomeLimit ||
         (this.characterService.characterState.money >= this.nextHome.cost + this.landPrice + priceBuffer )) &&
         this.autoBuyLandUnlocked){
-      //keep checking if we have the money for the land plus food and rent.
-      while ((this.land + this.fields.length + this.extraFields) < this.autoBuyLandLimit &&
-             (this.characterService.characterState.money >= this.landPrice + priceBuffer) ){
-        //break if reduced to money for home.
+      //check if we have the money for the land plus food and rent.
+      if ((this.characterService.characterState.money >= this.landPrice + priceBuffer) ){
+        //include next home cost if there's potentially another home
         if (this.autoBuyHomeUnlocked &&
-           (this.upgrading || this.homeValue < this.autoBuyHomeLimit) &&
-           (this.characterService.characterState.money < this.nextHome.cost + this.landPrice + priceBuffer )){
-          break;
+           (this.upgrading || this.homeValue < this.autoBuyHomeLimit)
+           ){
+          let landRequired = Math.min(
+            this.calculateAffordableLand(this.characterService.characterState.money - this.nextHome.cost - priceBuffer),
+            this.autoBuyLandLimit - (this.land + this.fields.length + this.extraFields)
+          )
+          this.buyLand(landRequired);
+        } else {
+          let landRequired = Math.min(
+            this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
+            this.autoBuyLandLimit - (this.land + this.fields.length + this.extraFields)
+          )
+          this.buyLand(landRequired);
         }
-        this.buyLand();
       }
     }
+
     // if there's no autohome, autohome is finished, or it has more than enough land for the next home, make a field.
     if (!this.autoBuyHomeUnlocked || (this.homeValue >= this.autoBuyHomeLimit) || (this.upgrading && this.land > this.nextHome.landRequired)){
       //keep making fields til either we hit goal, there's no land, or we break for home upgrade.
@@ -747,6 +790,7 @@ export class HomeService {
         this.addField();
       }
     }
+    
     if (this.autoBuyFurnitureUnlocked){
       for (let slot of this.furniturePositionsArray){
         // check if we have a previous purchase and the slot is still empty
