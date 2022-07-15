@@ -1,48 +1,14 @@
 @import (reference) "../../styles.less";
 
-.progress-bar {
-  overflow: hidden;
-  background-color: #3b3b3b;
-  border-radius: 10px;
-  border: 1px solid #555;
-  
-  width: 130px;
-  height: 30px;
-  height: fit-content;
-  position: relative;
-
-  writing-mode: horizontal-tb !important;
-  display: inline-block;
-  box-sizing: border-box;
-  vertical-align: -0.2em;
-
-  z-index: 0;
-
-  text-align: center;
-}
-
-.progress-bar::after {
-  content: attr(value);
-}
-
-.progress-bar > span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  
-  background-color: green;
-
-  display: block;
-  height: 100%;
-}
-
 .panelHeader {
   white-space: nowrap;
 }
 
-.health > .progress-bar > span
-{
+.progress-bar {
+  vertical-align: -0.3em;
+}
+
+.health > .progress-bar > span {
   background-color: var(--healthColor);
 }
 

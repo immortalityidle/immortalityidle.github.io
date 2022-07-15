@@ -45,11 +45,15 @@
         </td>
         <td>{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
         <td class="health">
-          <progress class="status-progress"
-            [value]="enemyStack.enemy.health"
-            [max]="enemyStack.enemy.maxHealth">
-            <div></div>
-          </progress>
+          <div class="progress-bar"
+            [attr.value]="Math.floor(enemyStack.enemy.health)"
+            [attr.max]="Math.floor(enemyStack.enemy.maxHealth)">
+            <span 
+              [style.width.%]="100 * 
+                Math.floor(enemyStack.enemy.health) / 
+                Math.floor(enemyStack.enemy.maxHealth)">
+            </span>
+          </div>
         </td>
         <td tooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
         <td tooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack | bigNumber}}</td>
