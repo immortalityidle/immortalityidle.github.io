@@ -724,10 +724,6 @@ export class HomeService {
         // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
         if ((this.characterService.characterState.money > this.nextHome.cost + priceBuffer )){
           this.upgradeToNextHome();
-        } else {
-          // we can't afford the next house, bail out and don't autoBuy more land
-          console.log("Can't afford home let's hope nothing bad happens");
-          // return
         }
       }
     }
