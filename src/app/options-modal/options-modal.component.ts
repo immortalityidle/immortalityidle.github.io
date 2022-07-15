@@ -30,7 +30,14 @@ export class OptionsModalComponent {
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.homeService.autoBuyHomeLimit = parseInt(event.target.value);
   }
-
+  useAutoBuyReserveChanged(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.homeService.useAutoBuyReserve = event.target.checked;
+  }
+  autoBuyReserveAmountChanged(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.homeService.autoBuyReserveAmount = parseInt(event.target.value);
+  }
   autoBalanceUseChanged(event: Event, balanceItem: BalanceItem){
     if (!(event.target instanceof HTMLInputElement)) return;
     balanceItem.useNumber = parseInt(event.target.value);
