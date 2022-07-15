@@ -143,10 +143,10 @@ export class BattleService {
       for (let i = 0; i < enemyStack.quantity; i++){
         if (Math.random() < enemyStack.enemy.accuracy){
           let damage = enemyStack.enemy.attack;
-          let combatDefense = this.characterService.characterState.defense;
+          let defense = this.characterService.characterState.defense;
           // with 20k max health currently, the curve has to be related to Death's damage so player has the chance to survive and oneshot Death.
-          if (combatDefense > 0) {
-            damage = damage / (1 + Math.pow(100 + this.enemyRepo.death.attack / 20000, (-damage + combatDefense) / combatDefense) );
+          if (defense >= 1) {
+            damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
           }
           //Keep mice scary
           if (damage < this.enemyRepo.mouse.attack) {
@@ -201,9 +201,9 @@ export class BattleService {
       }
 
       let damage = this.characterService.characterState.attackPower;
-      let combatDefense = this.currentEnemy.enemy.defense;
-      if (combatDefense > 0) {
-        damage = damage / (1 + Math.pow(10 , (-damage + combatDefense) / combatDefense) );
+      let defense = this.currentEnemy.enemy.defense;
+      if (defense >= 1) {
+        damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
       }
       // pity damage
       if (damage < 1) {
@@ -352,11 +352,11 @@ export class BattleService {
     },
     death: {
       name: "death itself",
-      health: 100000000,
-      maxHealth: 100000000,
+      health: 1000000000,
+      maxHealth: 1000000000,
       accuracy: 0.99,
-      attack: 10000000,
-      defense: 10000000,
+      attack: 100000000,
+      defense: 100000000,
       loot: [
         this.itemRepoService.items['immortality']
       ]
