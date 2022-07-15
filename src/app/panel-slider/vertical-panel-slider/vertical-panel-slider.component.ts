@@ -15,7 +15,7 @@ export class VerticalPanelSliderComponent extends PanelSliderComponent {
   bottomInitialSize?: Size;
   dragBeginY = 0;
 
-  constructor() { 
+  constructor() {
     super();
   }
 

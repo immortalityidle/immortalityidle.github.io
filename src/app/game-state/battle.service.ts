@@ -226,7 +226,13 @@ export class BattleService {
         this.kills++;
         this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
         for (let item of this.currentEnemy.enemy.loot){
-          this.inventoryService.addItem(item);
+          let lootItem = this.itemRepoService.getItemById(item.id);
+          if (lootItem){
+            this.inventoryService.addItem(lootItem);
+          } else {
+            // the item was generated, not part of the repo, so just add it instead of using the lookup
+            this.inventoryService.addItem(item);
+          }
         }
         this.currentEnemy.quantity--;
         if (this.currentEnemy.quantity <= 0){
@@ -355,12 +361,12 @@ export class BattleService {
     "roc", "giant", "kraken", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"];
 
   monsterQualities = [
-    "an infant", "a puny", "a pathetic", "a sickly", "a starving", "a wimpy", "a weak", "a badly wounded", 
+    "an infant", "a puny", "a pathetic", "a sickly", "a starving", "a wimpy", "a weak", "a badly wounded",
     "a tired", "a poor", "a small", "a despondent", "a frightened", "a skinny", "a sad", "a stinking", "a typical",
     "an average", "a healthy", "a big", "a tough", "a strong", "a fearsome", "a gutsy", "a quick",
     "a hefty", "a brawny", "an athletic", "a muscular", "a rugged", "a resilient", "an angry",
     "a clever", "a fierce", "a devious", "a mighty", "a powerful", "a noble", "a magical",
-    "a dangerous", "a terrifying", "a flame-shrouded", "an abominable", "a monstrous", 
+    "a dangerous", "a terrifying", "a flame-shrouded", "an abominable", "a monstrous",
     "a dominating", "a demonic", "a diabolical", "an infernal"
   ];
 }
