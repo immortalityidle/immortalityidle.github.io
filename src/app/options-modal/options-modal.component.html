@@ -14,14 +14,37 @@
   <div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
     <span>
       Automatically upgrade your home up to a
-    <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
-      <option *ngFor="let home of homeService.homesList" value="{{home.type}}"
-        [selected]="homeService.autoBuyHomeLimit === home.type">
-        {{home.name}}
-      </option>
-    </select>
-  </span>
-</div>
+      <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
+        <option *ngFor="let home of homeService.homesList" value="{{home.type}}"
+          [selected]="homeService.autoBuyHomeLimit === home.type">
+          {{home.name}}
+        </option>
+      </select>
+    </span>
+  </div>
+  <div *ngIf="homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked" class="optionField">
+    <span>
+      <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
+        id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
+      <label for="useAutoBuyReserve">Auto-buying should always reserve </label>
+      <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
+    </span>
+  </div>
+
+  <div *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon"  class="optionField">
+    <span>
+      <input type="checkbox" (change)="autoequipEnableChange($event)"
+        id="autoequipEnable"  [checked]="inventoryService.autoequipBestEnabled"/>
+      <label for="autoequipEnable">Automatically equip best equipment</label>
+    </span>
+  </div>
+  <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">
+    <span>
+      <input type="checkbox" (change)="autosellOldGems($event)"
+        id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
+      <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
+    </span>
+  </div>
   <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
     <span>
       <input type="checkbox" (change)="useSpiritGemWeaponsChange($event)"

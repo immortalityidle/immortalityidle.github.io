@@ -35,36 +35,37 @@
     display:flex;
     flex-direction: column;
     flex-grow: 1;
-    overflow: auto;
+    min-height: 0;
 }
 
 .panelContainer {
     display: flex;
     min-height: 0;
-    flex-grow: 2;
+    flex: 1 0 75%;
     overflow: auto;
-    min-height: 500px;
 }
 
 .logContainer {
-    min-height: 0;
     width: 100%;
-    flex-grow: 1;
+    flex: 1 1 110px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .leftPanel {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-width: 435px;
-    min-height: 480px;
+    min-width: 440px;
+    gap: 8px;
 }
 
 .centerPanel {
     flex: 2;
     display: flex;
     flex-direction: column;
-    min-height: 480px;
+    gap: 8px;
 }
 
 .rightPanel {
@@ -73,51 +74,72 @@
     flex-direction: column;
     width: 360px;
     max-width: 320px;
-    min-height: 480px;
+    gap: 8px;
 }
 
 .timePanel {
-  flex-grow: 1;
+  flex: 1 1 auto;
   overflow: auto;
-  min-height: 200px;
+  margin-bottom: 0 !important;
 }
 
 .attributesPanel {
-    flex-grow: 1;
+    flex: 1 1 auto;
     overflow: auto;
-    min-height: 100px;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 .healthPanel {
-    min-height: 100px;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: auto;
+    flex: 0 0 auto;
 }
 
 .activityPanel {
-    flex-grow: 1;
     overflow: auto;
+    flex-grow: 2;
+    margin-bottom: 0 !important;
 }
 
 .battlePanel {
-    flex-grow: 1;
-    height: 150px;
-    min-height: 150px;
-    max-height: 150px;
+    flex: 1 0 auto;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: auto;
 }
 
 .homePanel {
-    min-height: 150px;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
 }
 
 .logPanel {
     display: flex;
     flex-grow: 1;
-    min-height: 100px;
+    margin-top: 0 !important;
+    min-height: 0;
 }
 
 .inventoryPanel {
     flex-grow: 1;
-    min-height: 100px;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.equipmentPanel {
+    margin-bottom: 0 !important;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
 }
 
 .panel {

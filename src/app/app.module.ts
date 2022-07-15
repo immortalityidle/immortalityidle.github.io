@@ -28,6 +28,9 @@ import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible
 import { ExportPanelComponent } from './export-panel/export-panel.component';
 import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.component';
+import { VerticalPanelSliderComponent } from './panel-slider/vertical-panel-slider/vertical-panel-slider.component';
+import { ResizableDirective } from './panel-slider/resizable.directive';
+import { HorizontalPanelSliderComponent } from './panel-slider/horizontal-panel-slider/horizontal-panel-slider.component';
 
 const materialModules = [
   MatDialogModule,
@@ -58,7 +61,10 @@ const materialModules = [
     ImpossibleTaskPanelComponent,
     ExportPanelComponent,
     TutorialPanelComponent,
-    ChangelogPanelComponent
+    ChangelogPanelComponent,
+    VerticalPanelSliderComponent,
+    ResizableDirective,
+    HorizontalPanelSliderComponent,
   ],
   imports: [
     BrowserModule,

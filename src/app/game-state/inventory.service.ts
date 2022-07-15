@@ -85,8 +85,11 @@ export interface InventoryProperties {
   autoSellOldOre: boolean,
   autoequipBestWeapon: boolean,
   autoequipBestArmor: boolean,
+  autoequipBestEnabled: boolean,
   maxStackSize: number,
-  thrownAwayItems: number
+  thrownAwayItems: number,
+  autoSellOldGemsUnlocked: boolean,
+  autoSellOldGemsEnabled: boolean,
 }
 
 @Injectable({
@@ -110,6 +113,7 @@ export class InventoryService {
   autoArmorMergeUnlocked: boolean;
   autoequipBestWeapon: boolean;
   autoequipBestArmor: boolean;
+  autoequipBestEnabled: boolean = true;
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useSpiritGemPotions: boolean;
@@ -121,9 +125,13 @@ export class InventoryService {
   lifetimeSoldItems: number = 0;
   lifetimePotionsUsed: number = 0;
   lifetimePillsUsed: number = 0;
+  lifetimeGemsSold: number = 0;
   motherGift: boolean = false;
   grandmotherGift: boolean = false;
   thrownAwayItems: number = 0;
+  mergeCounter: number = 0;
+  autoSellOldGemsUnlocked: boolean;
+  autoSellOldGemsEnabled: boolean;
 
   constructor(
     private logService: LogService,
@@ -152,6 +160,8 @@ export class InventoryService {
     this.autoSellOldHerbs = false;
     this.autoSellOldWood = false;
     this.autoSellOldOre = false;
+    this.autoSellOldGemsUnlocked = false;
+    this.autoSellOldGemsEnabled = false;
 
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
@@ -162,21 +172,26 @@ export class InventoryService {
         return;
       }
       this.eatFood();
+      if (this.mergeCounter >= 20){
+        if (this.autoWeaponMergeUnlocked){
+          this.autoWeaponMerge();
+        }
+        if (this.autoArmorMergeUnlocked){
+          this.autoArmorMerge();
+        }
+        this.mergeCounter = 0;
+      } else {
+        this.mergeCounter++;
+      }
     });
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (this.autoWeaponMergeUnlocked){
-        this.autoWeaponMerge();
-      }
-      if (this.autoArmorMergeUnlocked){
-        this.autoArmorMerge();
-      }
-      if (this.autoequipBestWeapon){
+      if (this.autoequipBestWeapon && this.autoequipBestEnabled){
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor){
+      if (this.autoequipBestArmor && this.autoequipBestEnabled){
         this.autoequipArmor();
       }
     });
@@ -206,8 +221,12 @@ export class InventoryService {
       autoSellOldOre: this.autoSellOldOre,
       autoequipBestWeapon: this.autoequipBestWeapon,
       autoequipBestArmor: this.autoequipBestArmor,
+      autoequipBestEnabled: this.autoequipBestEnabled,
       maxStackSize: this.maxStackSize,
-      thrownAwayItems: this.thrownAwayItems
+      thrownAwayItems: this.thrownAwayItems,
+      autoSellOldGemsUnlocked: this.autoSellOldGemsUnlocked,
+      autoSellOldGemsEnabled: this.autoSellOldGemsEnabled,
+    
     }
   }
 
@@ -231,8 +250,12 @@ export class InventoryService {
     this.autoSellOldOre = properties.autoSellOldOre || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
+    this.autoequipBestEnabled = properties.autoequipBestEnabled || true;
     this.maxStackSize = properties.maxStackSize || 100;
     this.thrownAwayItems = properties.thrownAwayItems || 0;
+    this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;
+    this.autoSellOldGemsEnabled = properties.autoSellOldGemsEnabled || false;
+
   }
 
   farmFoodList = [
@@ -256,14 +279,14 @@ export class InventoryService {
     }
   }
 
-  // materials are wood or metal (TODO: more detail on materials)
+  // materials are wood or metal
   generateWeapon(grade: number, material: string): Equipment {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
       // consume a spirit gem and increase the grade
       let value = this.consume("spiritGem");
       if (value > 0){
-        grade += value / 5;
+        grade += value;
       }
     }
 
@@ -294,7 +317,7 @@ export class InventoryService {
     }
     let name = prefix + ' ' + materialPrefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)] + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'CRAFTING');
-    let durability = Math.floor(Math.random() * grade * 10);
+    let durability = grade * 10 + Math.floor(Math.random() * grade * 5);
     return {
       id: 'weapon',
       name: name,
@@ -317,7 +340,7 @@ export class InventoryService {
   }
 
   updateArmorDescription(armor: Equipment){
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material + 
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material +
       "<br/>Defense: " + armor.armorStats?.defense + "<br/>Durability: " + armor.armorStats?.durability
   }
 
@@ -327,7 +350,7 @@ export class InventoryService {
       // consume a spirit gem and increase the grade
       let value = this.consume("spiritGem");
       if (value > 0){
-        grade += value / 5;
+        grade += value;
       }
       if (Math.random() < 0.1){
         this.generatePill(grade);
@@ -463,7 +486,7 @@ export class InventoryService {
     }
     let name = prefix + ' ' + materialPrefix + ' ' + namePicker[Math.floor(Math.random() * namePicker.length)] + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'CRAFTING');
-    let durability = Math.floor(Math.random() * grade * 10);
+    let durability = grade * 5 + Math.floor(Math.random() * grade * 5);
     return {
       id: 'armor',
       name: name,
@@ -596,6 +619,7 @@ export class InventoryService {
     this.lifetimeSoldItems = 0;
     this.lifetimePotionsUsed = 0;
     this.lifetimePillsUsed = 0;
+    this.lifetimeGemsSold = 0;
     this.itemStacks = [];
     this.maxItems = 10;
     for (let i = 0; i < this.maxItems; i++){
@@ -692,6 +716,16 @@ export class InventoryService {
       this.useItem(item);
       return -1;
     }
+    if (this.autoSellOldGemsEnabled && item.type == "spiritGem"){
+      //clear out any old gems of lesser value
+      for (let i = 0; i < this.itemStacks.length; i++){
+        let itemStack = this.itemStacks[i];
+        if (itemStack != null && itemStack.item.type == "spiritGem" && itemStack.item.value < item.value){
+          this.characterService.characterState.money += itemStack.item.value * itemStack.quantity;
+          this.itemStacks[i] = null;
+        }
+      }
+    }
     if (this.autoSellItems.includes(item.name)){
       this.characterService.characterState.money += item.value;
       return -1;
@@ -733,6 +767,9 @@ export class InventoryService {
 
   sell(itemStack: ItemStack, quantity: number): void {
     this.lifetimeSoldItems += quantity;
+    if (itemStack.item.type == "spiritGem"){
+      this.lifetimeGemsSold += quantity;
+    }
     let index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks[index] = null;
@@ -996,7 +1033,6 @@ export class InventoryService {
     }
     let inventoryIndex = 0;
     if (item1.slot == 'rightHand' || item1.slot == 'leftHand'){
-      // TODO: make this work for other things than weapons eventually
       inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + ""));
     } else {
       inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot));
@@ -1036,6 +1072,7 @@ export class InventoryService {
     let mergeDestinationIndex = -1;
     let destinationItem: Equipment | null = null;
     let sourceItem: Equipment  | null = null;
+    let lastdestinationIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
       let item = this.itemStacks[i]?.item;
       if (item){
@@ -1043,6 +1080,7 @@ export class InventoryService {
           if (item.slot == slot){
             if (mergeDestinationIndex == -1){
               mergeDestinationIndex = i;
+              lastdestinationIndex = i;
               destinationItem = item;
             } else {
               sourceItem = item;
@@ -1052,7 +1090,7 @@ export class InventoryService {
                 }
                 this.itemStacks[mergeDestinationIndex] = null;
                 this.itemStacks[i] = null;
-                this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex );
+                this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex);
                 item = this.itemStacks[mergeDestinationIndex]?.item;
                 if (item){
                   if (instanceOfEquipment(item)){
@@ -1068,6 +1106,20 @@ export class InventoryService {
           }
         }
       }
+    }
+    // finally, merge the last item with that slot into the equipped item (if present and both weapon and armor autoequips are unlocked)
+    if (destinationItem != null && this.autoequipBestWeapon && this.autoequipBestArmor){
+      sourceItem = this.characterService.characterState.equipment[slot];
+      if (sourceItem == null){
+        return;
+      }
+      if (slot == 'rightHand' || slot == 'leftHand'){
+        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
+      } else {
+        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot);
+      }
+      this.characterService.characterState.equipment[slot] = destinationItem;
+      this.itemStacks[lastdestinationIndex] = null;
     }
   }
 
