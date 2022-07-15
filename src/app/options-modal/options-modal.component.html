@@ -29,6 +29,13 @@
       <label for="autoequipEnable">Automatically equip best equipment</label>
     </span>
   </div>
+  <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">
+    <span>
+      <input type="checkbox" (change)="autosellOldGems($event)"
+        id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
+      <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
+    </span>
+  </div>
   <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
     <span>
       <input type="checkbox" (change)="useSpiritGemWeaponsChange($event)"

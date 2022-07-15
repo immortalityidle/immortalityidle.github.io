@@ -27,7 +27,7 @@
         (click)="impossibleTasksClicked()">
         priority_high
       </mat-icon>
-      <span *ngIf="characterService.characterState.attributes.spirituality.value > 10">
+      <span *ngIf="characterService.characterState.ascensionUnlocked">
         <mat-icon tooltip="Ascension Techniques." class="iconButton"
           (click)="ascensionStoreClicked()">
           keyboard_double_arrow_up
