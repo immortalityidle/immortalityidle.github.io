@@ -24,14 +24,14 @@
       <div class="progress-bar" [attr.value]="Math.floor(characterService.characterState.status.health.value)">
         <span 
           [style.width.%]="100 * 
-            characterService.characterState.status.health.value / 
-            characterService.characterState.status.health.max">
+            Math.floor(characterService.characterState.status.health.value) / 
+            Math.floor(characterService.characterState.status.health.max)">
         </span>
       </div>
     </td>
     <td tooltip="{{characterService.characterState.status.stamina.description}}" placement="right">Stamina</td>
     <td class="stamina">
-      <div class="progress-bar" [attr.value]="Math.floor(characterService.characterState.status.stamina.value)">
+      <div class="progress-bar" [attr.value]="characterService.characterState.status.stamina.value">
         <span 
           [style.width.%]="100 * 
             characterService.characterState.status.stamina.value / 
@@ -43,7 +43,7 @@
   <tr>
     <td tooltip="{{characterService.characterState.status.nourishment.description}}" placement="right">Nutrition</td>
     <td class="nourishment">
-      <div class="progress-bar" [attr.value]="Math.floor(characterService.characterState.status.nourishment.value)">
+      <div class="progress-bar" [attr.value]="characterService.characterState.status.nourishment.value">
         <span 
           [style.width.%]="100 * 
             characterService.characterState.status.nourishment.value / 
@@ -53,7 +53,7 @@
     </td>
     <td tooltip="{{characterService.characterState.status.mana.description}}" placement="right">Mana</td>
     <td class="mana">
-      <div class="progress-bar" [attr.value]="Math.floor(characterService.characterState.status.mana.value)">
+      <div class="progress-bar" [attr.value]="characterService.characterState.status.mana.value">
         <span 
           [style.width.%]="100 * 
             characterService.characterState.status.mana.value / 
