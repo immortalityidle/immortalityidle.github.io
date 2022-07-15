@@ -33,7 +33,8 @@
     <span>
       <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
         id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
-        <label for="useAutoBuyReserve">Auto-buying should always reserve <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels</label>
+      <label for="useAutoBuyReserve">Auto-buying should always reserve </label>
+      <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
     </span>
   </div>
 
@@ -42,6 +43,13 @@
       <input type="checkbox" (change)="autoequipEnableChange($event)"
         id="autoequipEnable"  [checked]="inventoryService.autoequipBestEnabled"/>
       <label for="autoequipEnable">Automatically equip best equipment</label>
+    </span>
+  </div>
+  <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">
+    <span>
+      <input type="checkbox" (change)="autosellOldGems($event)"
+        id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
+      <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
     </span>
   </div>
   <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">

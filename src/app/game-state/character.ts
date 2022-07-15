@@ -95,6 +95,7 @@ export class Character {
   healthBonusBath: number = 0;
   healthBonusMagic: number = 0;
   immortal: boolean = false;
+  ascensionUnlocked: boolean = false;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
