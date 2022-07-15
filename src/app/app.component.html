@@ -55,25 +55,25 @@
       <div appResizable class="panelContainer" #panelContainer="appResizable">
         <div class="leftPanel">
           <app-time-panel appResizable class="timePanel panel" #timePanel="appResizable"></app-time-panel>
-          <app-vertical-panel-slider [top]="timePanel" [bottom]="attributesPanel"></app-vertical-panel-slider>
+          <app-vertical-panel-slider *ngIf="activateSliders" [top]="timePanel" [bottom]="attributesPanel"></app-vertical-panel-slider>
           <app-attributes-panel appResizable class="attributesPanel panel" #attributesPanel="appResizable"></app-attributes-panel>
-          <app-vertical-panel-slider [top]="attributesPanel" [bottom]="healthPanel"></app-vertical-panel-slider>
+          <app-vertical-panel-slider *ngIf="activateSliders" [top]="attributesPanel" [bottom]="healthPanel"></app-vertical-panel-slider>
           <app-health-panel appResizable class="healthPanel panel" #healthPanel="appResizable"></app-health-panel>
         </div>
         <div class="centerPanel">
           <app-activity-panel appResizable class="activityPanel panel" #activityPanel="appResizable"></app-activity-panel>
-          <app-vertical-panel-slider [top]="activityPanel" [bottom]="battlePanel"></app-vertical-panel-slider>
+          <app-vertical-panel-slider *ngIf="activateSliders" [top]="activityPanel" [bottom]="battlePanel"></app-vertical-panel-slider>
           <app-battle-panel appResizable class="battlePanel panel" #battlePanel="appResizable"></app-battle-panel>
         </div>
         <div class="rightPanel">
           <app-equipment-panel appResizable class="equipmentPanel panel" #equipmentPanel="appResizable"></app-equipment-panel>
-          <app-vertical-panel-slider [top]="equipmentPanel" [bottom]="homePanel"></app-vertical-panel-slider>
+          <app-vertical-panel-slider *ngIf="activateSliders" [top]="equipmentPanel" [bottom]="homePanel"></app-vertical-panel-slider>
           <app-home-panel appResizable class="homePanel panel" #homePanel="appResizable"></app-home-panel>
-          <app-vertical-panel-slider [top]="homePanel" [bottom]="inventoryPanel"></app-vertical-panel-slider>
+          <app-vertical-panel-slider *ngIf="activateSliders" [top]="homePanel" [bottom]="inventoryPanel"></app-vertical-panel-slider>
           <app-inventory-panel appResizable class="inventoryPanel panel" #inventoryPanel="appResizable"></app-inventory-panel>
         </div>
       </div>
-      <app-vertical-panel-slider [top]="panelContainer" [bottom]="logContainer"></app-vertical-panel-slider>
+      <app-vertical-panel-slider *ngIf="activateSliders" [top]="panelContainer" [bottom]="logContainer"></app-vertical-panel-slider>
       <div appResizable class="logContainer" #logContainer="appResizable">
         <app-log-panel class="logPanel panel"></app-log-panel>
       </div>
