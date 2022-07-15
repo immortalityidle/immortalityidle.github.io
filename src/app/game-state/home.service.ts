@@ -726,7 +726,8 @@ export class HomeService {
           this.upgradeToNextHome();
         } else {
           // we can't afford the next house, bail out and don't autoBuy more land
-          return;
+          console.log("Can't afford home let's hope nothing bad happens");
+          // return
         }
       }
     }
@@ -763,15 +764,17 @@ export class HomeService {
     if (this.autoBuyFurnitureUnlocked){
       for (let slot of this.furniturePositionsArray){
         if (this.autoBuyFurnitureProgressive){
-          if (this.home.furnitureSlots.includes(slot) && this.furniture[slot] != this.autoBuyFurniture[slot]){
-            let thingToBuy = this.autoBuyFurniture[slot];
-            while (thingToBuy && this.characterService.characterState.money < thingToBuy.value + priceBuffer){
-              thingToBuy = this.itemRepoService.getFurnitureById(thingToBuy.previousId ?? '');
-            }
-            if (thingToBuy) {
-              this.characterService.characterState.money -= thingToBuy.value;
-              this.ownedFurniture.push(thingToBuy.name);
-              this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
+          let thingToBuy = this.autoBuyFurniture[slot];
+          if (thingToBuy && this.home.furnitureSlots.includes(slot) && this.furniture[slot]?.id !== thingToBuy.id){
+            while (thingToBuy && thingToBuy.id != this.furniture[slot]?.id){
+              if (this.characterService.characterState.money > thingToBuy.value + priceBuffer){
+                this.characterService.characterState.money -= thingToBuy.value;
+                this.ownedFurniture.push(thingToBuy.name);
+                this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
+                break;
+              } else {
+                thingToBuy = this.itemRepoService.getFurnitureById(thingToBuy.previousId ?? '');
+              }
             }
           }
         } else {
