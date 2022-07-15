@@ -12,6 +12,7 @@ export class VerticalPanelSliderComponent extends PanelSliderComponent {
   @Input() bottom?: ResizableDirective;
 
   topInitialSize?: Size;
+  bottomInitialSize?: Size;
   dragBeginY = 0;
 
   constructor() { 
@@ -22,12 +23,14 @@ export class VerticalPanelSliderComponent extends PanelSliderComponent {
     super.handleMouseDown(event);
     this.dragBeginY = event.y;
     this.topInitialSize = this.top?.getSize();
+    this.bottomInitialSize = this.bottom?.getSize();
   }
 
   override handleMouseMove(event: MouseEvent): void {
-    if (this.topInitialSize === undefined) {
-      throw new Error('topInitialSize was not defined');
+    if (this.topInitialSize === undefined || this.bottomInitialSize === undefined) {
+      throw new Error('initial size was not defined');
     }
     this.top?.setMaxHeight(this.topInitialSize.height - this.dragBeginY + event.y);
+    this.bottom?.setMaxHeight(this.bottomInitialSize.height + this.dragBeginY - event.y);
   }
 }
