@@ -9,8 +9,8 @@
       </span>
       <span class="battleOption" *ngIf="battleService.manaAttackUnlocked" 
         tooltip="You can focus your mana around your weapon or fist to project greater power into your attacks. Doing this will double the damage that you inflict. Each use of this ability requires 10 mana.">
-        <input type="checkbox" (change)="manaAttackToggle($event)" id="manaShield" [checked]="battleService.enableManaAttack"/>
-        <label for="manaShield">Activate Mana Strike</label>
+        <input type="checkbox" (change)="manaAttackToggle($event)" id="manaStrike" [checked]="battleService.enableManaAttack"/>
+        <label for="manaStrike">Activate Mana Strike</label>
       </span>
     </span>    
     <span class="rightAligned" tooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
