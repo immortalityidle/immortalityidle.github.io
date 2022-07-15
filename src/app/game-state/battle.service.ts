@@ -351,8 +351,8 @@ export class BattleService {
       loot: []
     },
     death: {
-      name: "death itself",
-      health: 1000000000,
+      name: "Death itself",
+      health: 1000000000000000, // Make Death last 85k years when fighting with full scouts and a 1 billion attack weapon. That's about 3 full days of real time right now.
       maxHealth: 1000000000,
       accuracy: 0.99,
       attack: 100000000,
