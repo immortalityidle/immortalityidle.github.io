@@ -51,4 +51,8 @@ export class OptionsModalComponent {
     this.inventoryService.useSpiritGemPotions = event.target.checked;
   }
 
+  autoequipEnableChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoequipBestEnabled = event.target.checked;
+  }
 }

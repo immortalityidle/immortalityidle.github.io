@@ -500,12 +500,12 @@ export class AchievementService {
         let fireLore = this.characterService.characterState.attributes.fireLore.value;
         let earthLore = this.characterService.characterState.attributes.earthLore.value;
         let woodLore = this.characterService.characterState.attributes.woodLore.value;
-        let waterLore = this.characterService.characterState.attributes.fireLore.value;
-        let metalLore = this.characterService.characterState.attributes.fireLore.value; //Reduce the bulk
+        let waterLore = this.characterService.characterState.attributes.waterLore.value;
+        let metalLore = this.characterService.characterState.attributes.metalLore.value; //Reduce the bulk
         
-        let lowValue = Math.min(metalLore , waterLore, woodLore , earthLore , fireLore);
+        let lowValue = Math.min(metalLore , waterLore, woodLore, earthLore , fireLore);
         let highValue = Math.max(metalLore , waterLore, woodLore , earthLore , fireLore);
-        return lowValue > 1000 && highValue < lowValue * 1.21; // 1.1 * 1.1 = 1.21
+        return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.characterService.characterState.manaUnlocked = true;
@@ -553,7 +553,7 @@ export class AchievementService {
         
         let lowValue = Math.min(speed , toughness, charisma , intelligence , strength);
         let highValue = Math.max(speed , toughness, charisma , intelligence , strength);
-        return lowValue > 1000000 && highValue < lowValue * 1.21; // 1.1 * 1.1 = 1.21
+        return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.battleService.manaAttackUnlocked = true;
@@ -574,7 +574,7 @@ export class AchievementService {
         
         let lowValue = Math.min(speed , toughness, charisma , intelligence , strength, spirituality);
         let highValue = Math.max(speed , toughness, charisma , intelligence , strength, spirituality);
-        return lowValue > 1000000 && highValue < lowValue * 1.21; // 1.1 * 1.1 = 1.21
+        return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.battleService.manaShieldUnlocked = true;

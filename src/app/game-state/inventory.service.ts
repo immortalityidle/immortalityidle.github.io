@@ -85,6 +85,7 @@ export interface InventoryProperties {
   autoSellOldOre: boolean,
   autoequipBestWeapon: boolean,
   autoequipBestArmor: boolean,
+  autoequipBestEnabled: boolean,
   maxStackSize: number,
   thrownAwayItems: number
 }
@@ -110,6 +111,7 @@ export class InventoryService {
   autoArmorMergeUnlocked: boolean;
   autoequipBestWeapon: boolean;
   autoequipBestArmor: boolean;
+  autoequipBestEnabled: boolean = true;
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useSpiritGemPotions: boolean;
@@ -179,10 +181,10 @@ export class InventoryService {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (this.autoequipBestWeapon){
+      if (this.autoequipBestWeapon && this.autoequipBestEnabled){
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor){
+      if (this.autoequipBestArmor && this.autoequipBestEnabled){
         this.autoequipArmor();
       }
     });
@@ -212,6 +214,7 @@ export class InventoryService {
       autoSellOldOre: this.autoSellOldOre,
       autoequipBestWeapon: this.autoequipBestWeapon,
       autoequipBestArmor: this.autoequipBestArmor,
+      autoequipBestEnabled: this.autoequipBestEnabled,
       maxStackSize: this.maxStackSize,
       thrownAwayItems: this.thrownAwayItems
     }
@@ -237,6 +240,7 @@ export class InventoryService {
     this.autoSellOldOre = properties.autoSellOldOre || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
+    this.autoequipBestEnabled = properties.autoequipBestEnabled || true;
     this.maxStackSize = properties.maxStackSize || 100;
     this.thrownAwayItems = properties.thrownAwayItems || 0;
   }
