@@ -26,7 +26,8 @@
     <span>
       <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
         id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
-        <label for="useAutoBuyReserve">Auto-buying should always reserve <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels</label>
+      <label for="useAutoBuyReserve">Auto-buying should always reserve </label>
+      <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
     </span>
   </div>
 
