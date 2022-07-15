@@ -47,7 +47,7 @@
 
 .logContainer {
     width: 100%;
-    flex-grow: 1;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
 }
@@ -74,13 +74,13 @@
 }
 
 .timePanel {
-  flex-grow: 1;
+  flex: 1 1 auto;
   overflow: auto;
   margin-bottom: 0 !important;
 }
 
 .attributesPanel {
-    flex-grow: 1;
+    flex: 1 1 auto;
     overflow: auto;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
@@ -89,6 +89,8 @@
 .healthPanel {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
+    overflow: auto;
+    flex: 1 0 auto;
 }
 
 .activityPanel {
@@ -97,10 +99,10 @@
 }
 
 .battlePanel {
-    flex-grow: 1;
-    flex-basis: 150px;
+    flex: 1 0 auto;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
+    overflow: auto;
 }
 
 .homePanel {
@@ -108,12 +110,14 @@
     margin-bottom: 0 !important;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 .logPanel {
     display: flex;
     flex-grow: 1;
     margin-top: 0 !important;
+    min-height: 0;
 }
 
 .inventoryPanel {
@@ -128,6 +132,9 @@
 .equipmentPanel {
     margin-bottom: 0 !important;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
 }
 
 .panel {
