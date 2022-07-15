@@ -59,6 +59,7 @@ export interface HomeProperties {
   autoBuyHomeUnlocked: boolean,
   autoBuyHomeLimit: HomeType,
   autoBuyFurnitureUnlocked: boolean,
+  autoBuyFurnitureProgressive: boolean
   autoBuyFurniture: FurnitureSlots,
   autoFieldUnlocked: boolean,
   autoFieldLimit: number,
@@ -82,6 +83,7 @@ export class HomeService {
   autoBuyHomeUnlocked: boolean = false;
   autoBuyHomeLimit: HomeType = 2;
   autoBuyFurnitureUnlocked: boolean = false;
+  autoBuyFurnitureProgressive: boolean = false;
   autoBuyFurniture: FurnitureSlots = {
     bed: null,
     bathtub: null,
@@ -511,6 +513,7 @@ export class HomeService {
       autoBuyHomeUnlocked: this.autoBuyHomeUnlocked,
       autoBuyHomeLimit: this.autoBuyHomeLimit,
       autoBuyFurnitureUnlocked: this.autoBuyFurnitureUnlocked,
+      autoBuyFurnitureProgressive: this.autoBuyFurnitureProgressive,
       autoBuyFurniture: this.autoBuyFurniture,
       autoFieldUnlocked: this.autoFieldUnlocked,
       useAutoBuyReserve: this.useAutoBuyReserve,
@@ -536,6 +539,7 @@ export class HomeService {
     this.autoBuyHomeUnlocked = properties.autoBuyHomeUnlocked || false;
     this.autoBuyHomeLimit = properties.autoBuyHomeLimit || 3;
     this.autoBuyFurnitureUnlocked = properties.autoBuyFurnitureUnlocked || false;
+    this.autoBuyFurnitureProgressive = properties.autoBuyFurnitureProgressive || false;
     this.autoBuyFurniture = properties.autoBuyFurniture || false;
     this.autoFieldUnlocked = properties.autoFieldUnlocked || false;
     this.autoFieldLimit = properties.autoFieldLimit || 0;
@@ -720,9 +724,6 @@ export class HomeService {
         // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
         if ((this.characterService.characterState.money > this.nextHome.cost + priceBuffer )){
           this.upgradeToNextHome();
-        } else {
-          // we can't afford the next house, bail out and don't autoBuy more land
-          return;
         }
       }
     }
@@ -758,15 +759,31 @@ export class HomeService {
     }
     if (this.autoBuyFurnitureUnlocked){
       for (let slot of this.furniturePositionsArray){
-        // check if we have a previous purchase and the slot is still empty
-        if (this.home.furnitureSlots.includes(slot) && this.furniture[slot] == null){
+        if (this.autoBuyFurnitureProgressive){
           let thingToBuy = this.autoBuyFurniture[slot];
-          if (thingToBuy && this.furniture[slot]?.id !== thingToBuy.id){
-            // check if we have the money for the furniture plus the next couple weeks' rent and food by popular demand.
-            if (this.characterService.characterState.money > thingToBuy.value + priceBuffer ){
-              this.characterService.characterState.money -= thingToBuy.value;
-              this.ownedFurniture.push(thingToBuy.name);
-              this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
+          if (thingToBuy && this.home.furnitureSlots.includes(slot) && this.furniture[slot]?.id !== thingToBuy.id){
+            while (thingToBuy && thingToBuy.id != this.furniture[slot]?.id){
+              if (this.characterService.characterState.money > thingToBuy.value + priceBuffer){
+                this.characterService.characterState.money -= thingToBuy.value;
+                this.ownedFurniture.push(thingToBuy.name);
+                this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
+                break;
+              } else {
+                thingToBuy = this.itemRepoService.getFurnitureById(thingToBuy.previousId ?? '');
+              }
+            }
+          }
+        } else {
+          // check if we have a previous purchase and the slot is still empty
+          if (this.home.furnitureSlots.includes(slot) && this.furniture[slot] == null){
+            let thingToBuy = this.autoBuyFurniture[slot];
+            if (thingToBuy && this.furniture[slot]?.id !== thingToBuy.id){
+              // check if we have the money for the furniture plus the next couple weeks' rent and food by popular demand.
+              if (this.characterService.characterState.money > thingToBuy.value + priceBuffer ){
+                this.characterService.characterState.money -= thingToBuy.value;
+                this.ownedFurniture.push(thingToBuy.name);
+                this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
+              }
             }
           }
         }

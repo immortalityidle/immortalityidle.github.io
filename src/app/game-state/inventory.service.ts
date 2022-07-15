@@ -50,7 +50,8 @@ export interface Pill extends Item {
 }
 
 export interface Furniture extends Item {
-  slot: FurniturePosition
+  slot: FurniturePosition,
+  previousId?: string
 }
 
 export interface ItemStack {
