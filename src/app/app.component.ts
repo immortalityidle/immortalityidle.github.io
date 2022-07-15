@@ -151,10 +151,7 @@ export class AppComponent implements OnInit {
   }
 
   tutorialClicked(){
-    const dialogRef = this.dialog.open(TutorialPanelComponent, {
-      width: '700px',
-      data: {someField: 'foo'}
-    });
+    this.gameStateService.cheat();
   }
 
   changelogClicked(){

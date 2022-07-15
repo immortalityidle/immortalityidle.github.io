@@ -39,6 +39,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bed',
       value: 1000,
+      previousId: 'blanket',
       description: "A thin woven mat to sleep on. Increases daily stamina recovery by 1 and restores a bit of health.",
       useConsumes: false,
       use: () => {
@@ -52,6 +53,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bed',
       value: 10000,
+      previousId: 'mat',
       description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 2 and restores a bit of health.",
       useConsumes: false,
       use: () => {
@@ -65,6 +67,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bed',
       value: 100000,
+      previousId: 'canopyBed',
       description: "A bed built over a small clay oven. Keeps you toasty on even the coldest nights. Increases daily stamina recovery by 5 and improves health recovery.",
       useConsumes: false,
       use: () => {
@@ -78,6 +81,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bed',
       value: 10000,
+      previousId: 'mat',
       description: "A solid board with nails poking upwards. You won't sleep as well, but it is certain to toughen you up.",
       useConsumes: false,
       use: () => {
@@ -103,6 +107,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 1000,
+      previousId: 'waterBucket',
       description: "A wash basin with a rag to clean yourself. Increases charisma.",
       useConsumes: false,
       use: () => {
@@ -115,6 +120,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 10000,
+      previousId: 'washBasin',
       description: "A tall and narrow tub where you can squat and bathe. Increases charisma and health recovery.",
       useConsumes: false,
       use: () => {
@@ -128,6 +134,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 1000000,
+      previousId: 'woodenTub',
       description: "A luxurious tub where you can get sparkling clean. Increases charisma and health recovery.",
       useConsumes: false,
       use: () => {
@@ -141,6 +148,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 100000000,
+      previousId: 'bronzeTub',
       description: "A luxurious tub with its own heating stove. Good for your health and beauty.",
       useConsumes: false,
       use: () => {
@@ -171,6 +179,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'kitchen',
       value: 1000,
+      previousId: 'cookPot',
       description: "A simple spit to go along with your cookpot, letting you add more variety to your diet. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
@@ -185,6 +194,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'kitchen',
       value: 1000000,
+      previousId: 'roastingSpit',
       description: "A large metal wok to stir-fry a tasty dinner. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
@@ -199,6 +209,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'kitchen',
       value: 1000000000,
+      previousId: 'wok',
       description: "An elaborate kitchen that allows you to cook anything. Improves all physical attributes.",
       useConsumes: false,
       use: () => {

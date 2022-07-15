@@ -30,6 +30,10 @@ export class OptionsModalComponent {
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.homeService.autoBuyHomeLimit = parseInt(event.target.value);
   }
+  autoBuyFurnitureProgressiveChanged(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.homeService.autoBuyFurnitureProgressive = event.target.checked;
+  }
   useAutoBuyReserveChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.useAutoBuyReserve = event.target.checked;

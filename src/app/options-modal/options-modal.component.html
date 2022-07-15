@@ -22,6 +22,13 @@
       </select>
     </span>
   </div>
+  <div *ngIf="homeService.autoBuyFurnitureUnlocked" class="optionField">
+    <span>
+      <input type="checkbox" (change)="autoBuyFurnitureProgressiveChanged($event)"
+        id="autoBuyFurnitureProgressive"  [checked]="homeService.autoBuyFurnitureProgressive"/>
+        <label for="autoBuyFurnitureProgressive">Automatically buy cheaper furniture up to last purchased furniture</label>
+    </span>
+  </div>
   <div *ngIf="homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked" class="optionField">
     <span>
       <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
