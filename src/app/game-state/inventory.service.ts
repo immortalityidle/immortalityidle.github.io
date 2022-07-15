@@ -1116,7 +1116,7 @@ export class InventoryService {
       if (slot == 'rightHand' || slot == 'leftHand'){
         destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
       } else {
-        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", slot);
+        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot);
       }
       this.characterService.characterState.equipment[slot] = destinationItem;
       this.itemStacks[lastdestinationIndex] = null;
