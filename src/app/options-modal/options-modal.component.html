@@ -22,6 +22,14 @@
       </select>
     </span>
   </div>
+  <div *ngIf="homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked" class="optionField">
+    <span>
+      <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
+        id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
+        <label for="useAutoBuyReserve">Auto-buying should always reserve <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels</label>
+    </span>
+  </div>
+
   <div *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon"  class="optionField">
     <span>
       <input type="checkbox" (change)="autoequipEnableChange($event)"
