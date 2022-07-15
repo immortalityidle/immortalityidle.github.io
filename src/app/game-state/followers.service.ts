@@ -8,6 +8,7 @@ import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
+import { EquipmentPosition } from './character';
 
 export interface Follower {
   name: string;
@@ -89,29 +90,14 @@ export class FollowersService {
     },
     "armorer": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.head && 
-          this.characterService.characterState.equipment.head.armorStats){
-          this.characterService.characterState.equipment.head.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.head.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.head.value += Math.floor(follower.power/10);
-        }
-        if (this.characterService.characterState.equipment.body && 
-          this.characterService.characterState.equipment.body.armorStats){
-          this.characterService.characterState.equipment.body.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.body.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.body.value += Math.floor(follower.power/10);
-        }
-        if (this.characterService.characterState.equipment.legs && 
-          this.characterService.characterState.equipment.legs.armorStats){
-          this.characterService.characterState.equipment.legs.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.legs.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.legs.value += Math.floor(follower.power/10);
-        }
-        if (this.characterService.characterState.equipment.feet && 
-          this.characterService.characterState.equipment.feet.armorStats){
-          this.characterService.characterState.equipment.feet.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.feet.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.feet.value += Math.floor(follower.power/10);
+        const keys = Object.keys(this.characterService.characterState.equipment) as EquipmentPosition[];
+        for (const key in keys){
+          if (this.characterService.characterState.equipment[keys[key]] && 
+            this.characterService.characterState.equipment[keys[key]]?.armorStats){
+            this.characterService.characterState.equipment[keys[key]].armorStats.durability += follower.power;
+            this.characterService.characterState.equipment[keys[key]].armorStats.defense += Math.floor(follower.power/10);
+            this.characterService.characterState.equipment[keys[key]].value += Math.floor(follower.power/10);
+          }
         }
       },
       description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day."
