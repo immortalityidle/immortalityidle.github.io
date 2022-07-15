@@ -30,7 +30,11 @@ export class VerticalPanelSliderComponent extends PanelSliderComponent {
     if (this.topInitialSize === undefined || this.bottomInitialSize === undefined) {
       throw new Error('initial size was not defined');
     }
-    this.top?.setMaxHeight(this.topInitialSize.height - this.dragBeginY + event.y);
-    this.bottom?.setMaxHeight(this.bottomInitialSize.height + this.dragBeginY - event.y);
+    const newTopMaxHeight = this.topInitialSize.height - this.dragBeginY + event.y;
+    const newBottomMaxHeight = this.bottomInitialSize.height + this.dragBeginY - event.y;
+    if (newTopMaxHeight > 0 && newBottomMaxHeight > 0) {
+      this.top?.setMaxHeight(newTopMaxHeight);
+      this.bottom?.setMaxHeight(newBottomMaxHeight);
+    }
   }
 }

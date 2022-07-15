@@ -73,7 +73,7 @@
           <app-inventory-panel appResizable class="inventoryPanel panel" #inventoryPanel="appResizable"></app-inventory-panel>
         </div>
       </div>
-      <app-vertical-panel-slider *ngIf="activateSliders" [top]="panelContainer" [bottom]="logContainer"></app-vertical-panel-slider>
+      <app-vertical-panel-slider [top]="panelContainer" [bottom]="logContainer"></app-vertical-panel-slider>
       <div appResizable class="logContainer" #logContainer="appResizable">
         <app-log-panel class="logPanel panel"></app-log-panel>
       </div>
