@@ -78,6 +78,8 @@ export class AppComponent implements OnInit {
   title = 'immortalityidle';
   applicationVersion = environment.appVersion;
 
+  activateSliders = false;
+
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.code == 'Space'){
