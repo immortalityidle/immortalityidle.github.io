@@ -55,4 +55,9 @@ export class OptionsModalComponent {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoequipBestEnabled = event.target.checked;
   }
+
+  autosellOldGems(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldGemsEnabled = event.target.checked;
+  }
 }

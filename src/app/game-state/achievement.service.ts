@@ -404,6 +404,18 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Gem Snob",
+      description: "You have sold 888 gems and unlocked the " +  this.itemRepoService.items['bestGemsManual'].name,
+      hint: "I hear the market for fine jewelry is so hot right now.",
+      check: () => {
+        return this.inventoryService.lifetimeGemsSold >= 888;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestGemsManual']);
+      },
+      unlocked: false
+    },    
+    {
       name: "Grandpa's Old Tent",
       description: "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
@@ -592,7 +604,20 @@ export class AchievementService {
         this.storeService.unlockManual(this.itemRepoService.items['followerAutoDismissManual']);
       },
       unlocked: false
-    }
+    },
+    {
+      name: "Ascension",
+      description: "You have developed enough spirituality to ascend.",
+      hint: "Only with spiritual development can you ascend to higher states.",
+      check: () => {
+        return this.characterService.characterState.attributes.spirituality.value >= 10;
+      },
+      effect: () => {
+        this.characterService.characterState.ascensionUnlocked = true;
+      },
+      unlocked: false
+    },
+    
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean){

@@ -6,8 +6,6 @@ import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { formatNumber } from '@angular/common';
-import { devOnlyGuardedExpression } from '@angular/compiler';
-import { EquipmentSlots } from './character';
 
 export interface Enemy {
   name: string,
@@ -57,6 +55,7 @@ export class BattleService {
   manaAttackUnlocked: boolean = false;
   tickCounter: number;
   ticksPerFight: number = 10;
+  highestGem: number = 0;
 
   constructor(
     private logService: LogService,
@@ -284,6 +283,7 @@ export class BattleService {
       monsterName += " " + (rank + 1);
     }
 
+    let gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
     this.addEnemy({
       name: monsterName,
       health: this.troubleKills * 10,
@@ -291,7 +291,7 @@ export class BattleService {
       accuracy: 0.5,
       attack: this.troubleKills / 5,
       defense: Math.floor(Math.log2(this.troubleKills)),
-      loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)))]
+      loot: [gem]
     });
     this.troubleKills++;
   }
