@@ -7,7 +7,7 @@
     </h3>
     <div class="overflow">
       <div class="homeInfo"><span>It costs {{homeService.home.costPerDay}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
-      <div class="homeInfo"><span>You own {{homeService.land}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length + homeService.extraFields}} fields</span></div>
+      <div class="homeInfo"><span>You own {{homeService.land | bigNumber}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length + homeService.extraFields | bigNumber}} fields</span></div>
       <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length > 0">
           <div *ngFor="let slot of homeService.home.furnitureSlots">
               <div *ngIf="!homeService.furniture[slot]" class="itemSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
@@ -20,11 +20,11 @@
     </div>
     <div class="buttons">
         <div class="button-group">
-            <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
+            <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
               add
             </mat-icon>
             <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" placement="bottom" (click)="homeService.upgradeToNextHome()" class="iconButton"
-              tooltip="Get a better house. A better home will cost {{homeService.nextHomeCost | number: '1.0-0'}} taels and take up {{homeService.nextHome.landRequired}} land.">
+              tooltip="Get a better house. A better home will cost {{homeService.nextHomeCost | bigNumber}} taels and take up {{homeService.nextHome.landRequired | bigNumber}} land.">
               add_business
             </mat-icon>
             <mat-icon class="iconButton" *ngIf="homeService.home.furnitureSlots.length"
