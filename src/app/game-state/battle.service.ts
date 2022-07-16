@@ -144,7 +144,7 @@ export class BattleService {
         if (Math.random() < enemyStack.enemy.accuracy){
           let damage = enemyStack.enemy.attack;
           let defense = this.characterService.characterState.defense;
-          // with 20k max health currently, the curve has to be related to Death's damage so player has the chance to survive and oneshot Death.
+          // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
           if (defense >= 1) {
             damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
           }
@@ -347,7 +347,7 @@ export class BattleService {
       maxHealth: 20000000, 
       accuracy: 0.9,
       attack: 10000000,
-      defense: 10000000, // Army was a bit weak when I accidentally fought them, increased defense should help.
+      defense: 10000000, 
       loot: []
     },
     death: {
