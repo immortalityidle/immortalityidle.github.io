@@ -100,7 +100,11 @@ export class MainLoopService {
           this.tickCount++;
           if (this.tickCount >= this.tickDivider){
             this.tickCount = 0;
-            this.tick();
+            if (this.pause) {
+              this.bankedTicks++;
+            } else {
+              this.tick();
+            }
           }
         }
       }

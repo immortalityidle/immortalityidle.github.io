@@ -5,6 +5,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
 import { formatNumber, TitleCasePipe } from '@angular/common';
 import { ActivityService } from './activity.service';
+import { Subscription } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class CharacterService {
   forceRebirth: boolean = false;
   fatherGift: boolean = false;
   lifespanTooltip: string = "";
+  deathSubscriber?: Subscription;
 
   constructor(
     private injector: Injector,
@@ -61,7 +63,11 @@ export class CharacterService {
         this.characterState.dead = true;
         this.characterState.reincarnate(); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
-        this.characterState.dead = false;
+        // Revive the character in the next tick update for making sure that everything is stopped.
+        this.deathSubscriber = this.mainLoopService.tickSubject.subscribe(() => {
+          this.characterState.dead = false;
+          this.deathSubscriber?.unsubscribe();
+        });
         this.forceRebirth = false;
         if (this.characterState.immortal){
           this.logService.addLogMessage("You are born anew, still an immortal but with the fresh vigor of youth.", 'STANDARD', 'EVENT');
