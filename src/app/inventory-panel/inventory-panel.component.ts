@@ -112,6 +112,8 @@ export class InventoryPanelComponent {
 
   mergeSpiritGem(){
     if (this.inventoryService.selectedItem){
+      // if I'm manually doing a gem merge, I don't want the rest of the stack to be automatically sold
+      this.inventoryService.autoSellOldGemsEnabled = false;
       this.inventoryService.mergeSpiritGem(this.inventoryService.selectedItem);
       if (this.inventoryService.selectedItem.quantity == 0){
         this.inventoryService.selectedItem = null;
