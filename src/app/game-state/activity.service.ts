@@ -1710,7 +1710,7 @@ export class ActivityService {
       level: 0,
       name: ['Mining'],
       activityType: ActivityType.Mining,
-      description: ['Dig in the ground for useable minerals.'],
+      description: ['Dig in the ground for usable minerals.'],
       consequenceDescription: ['Uses 20 stamina. Increases strength and sometimes finds something useful.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 20;
