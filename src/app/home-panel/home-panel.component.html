@@ -20,7 +20,7 @@
     </div>
     <div class="buttons">
         <div class="button-group">
-            <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels. Shift-click to buy 10 plots, Ctrl-click to buy all the land you can afford (or 10,000, whichever comes first)." class="iconButton">
+            <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
               add
             </mat-icon>
             <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" placement="bottom" (click)="homeService.upgradeToNextHome()" class="iconButton"
