@@ -746,7 +746,9 @@ export class HomeService {
           this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
           this.nextHome.landRequired
         )
-        this.buyLand(landRequired);
+        if (landRequired > 0){
+          this.buyLand(landRequired);
+        }
       }
       if (this.land >= this.nextHome.landRequired){
         // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
@@ -774,13 +776,17 @@ export class HomeService {
             this.calculateAffordableLand(this.characterService.characterState.money - this.nextHome.cost - priceBuffer),
             this.autoBuyLandLimit - (this.land + this.fields.length + this.extraFields)
           )
-          this.buyLand(landRequired);
+          if (landRequired > 0){
+            this.buyLand(landRequired);
+          }
         } else {
           let landRequired = Math.min(
             this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
             this.autoBuyLandLimit - (this.land + this.fields.length + this.extraFields)
           )
-          this.buyLand(landRequired);
+          if (landRequired > 0){
+            this.buyLand(landRequired);
+          }
         }
       }
     }
