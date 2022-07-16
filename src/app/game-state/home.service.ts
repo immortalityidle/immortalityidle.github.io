@@ -698,7 +698,7 @@ export class HomeService {
   }
 
 /**
- * Set count to -1 for half max 
+ * Set count to -1 for half max
  * @returns count of actual purchase
  */
   buyLand(count: number): number{
@@ -724,7 +724,7 @@ export class HomeService {
   }
 
   /**
-   * 
+   *
    * @param money the money available for use
    * @returns count of affordable land
    */
@@ -732,7 +732,7 @@ export class HomeService {
     let x = money;
     let C = this.landPrice;
     return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)))/10); // I know this looks nuts but I tested it on its own ^_^;;
-    
+
   }
 
   autoBuy(){
@@ -745,9 +745,9 @@ export class HomeService {
         let landRequired = Math.min(
           this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
           this.nextHome.landRequired
-        )
-        if (landRequired > 0){
-          this.buyLand(landRequired);
+        );
+        if (landRequired > this.land){
+          this.buyLand(landRequired - this.land);
         }
       // ... Unless there's a home after the next home.
       } else if (this.homeValue + 1 < this.autoBuyHomeLimit){
@@ -808,8 +808,8 @@ export class HomeService {
       //keep making fields til either we hit goal, there's no land, or we break for home upgrade.
       while (this.autoFieldUnlocked && (this.fields.length + this.extraFields) < this.autoFieldLimit && (this.land > 0)){
         //break if reduced to land for home upgrade.
-        if(this.autoBuyHomeUnlocked && 
-           (this.upgrading || this.homeValue < this.autoBuyHomeLimit) && 
+        if(this.autoBuyHomeUnlocked &&
+           (this.upgrading || this.homeValue < this.autoBuyHomeLimit) &&
            this.land <= this.nextHome.landRequired){
           break;
         }
