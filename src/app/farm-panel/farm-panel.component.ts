@@ -39,17 +39,11 @@ export class FarmPanelComponent {
     event.preventDefault();
     event.stopPropagation();
     if (event.shiftKey){
-      for (let i = 0; i < 10; i++){
-        this.homeService.buyLand();
-      }
+      this.homeService.buyLand(10);
     } else if (event.ctrlKey){
-      let counter = 0;
-      while (this.characterService.characterState.money > this.homeService.landPrice && counter < 10000){
-        this.homeService.buyLand();
-        counter++;
-      }
+      this.homeService.buyLand(-1);
     } else {
-      this.homeService.buyLand();
+      this.homeService.buyLand(1);
     }
   }
 
