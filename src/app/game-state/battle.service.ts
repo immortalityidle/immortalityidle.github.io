@@ -336,24 +336,24 @@ export class BattleService {
       maxHealth: 20,
       accuracy: 0.5,
       attack: 5,
-      defense: 2,
+      defense: 5,
       loot: [
         this.itemRepoService.items['hide']
       ]
     },
     army: {
       name: "an angry army",
-      health: 2000000,
-      maxHealth: 20000000,
+      health: 20000000,
+      maxHealth: 20000000, 
       accuracy: 0.9,
-      attack: 1000000,
-      defense: 500000,
+      attack: 10000000,
+      defense: 10000000, // Army was a bit weak when I accidentally fought them, increased defense should help.
       loot: []
     },
     death: {
       name: "Death itself",
-      health: 1000000000000000, // Make Death last 85k years when fighting with full scouts and a 1 billion attack weapon. That's about 3 full days of real time right now.
-      maxHealth: 1000000000,
+      health: 1000000000000000, // Make Death last 85k years when fighting with level 10 scount and a 1 billion attack weapon. That's about 3 full days of real time right now.
+      maxHealth: 1000000000000000, // but 1 billion attack takes less than a full realtime day, and they'll probably be improving the weapon during the fight too.
       accuracy: 0.99,
       attack: 100000000,
       defense: 100000000,

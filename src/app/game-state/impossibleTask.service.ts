@@ -87,7 +87,7 @@ export class ImpossibleTaskService {
       name: "Conquer the world",
       description: "The dragon finally relents and allows you to speak with it. It shows you the fighting and suffering in the mortal realm and says the situation is most displeasing. Before he will help you, he wants you to solve the problem. Guess it's time to conquer the world and set all things right.",
       taskType: ImpossibleTaskType.ConquerTheWorld,
-      progressRequired: 100,
+      progressRequired: 300, //With Bloodline 4 you can buy millions of land. At that point you just wait for 45150 armies as you get peaches.
     },
     {
       name: "Rearrange the stars",

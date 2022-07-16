@@ -92,27 +92,27 @@ export class FollowersService {
       work: (follower: Follower) => {
         if (this.characterService.characterState.equipment.head && 
           this.characterService.characterState.equipment.head.armorStats){
-          this.characterService.characterState.equipment.head.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.head.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.head.value += Math.floor(follower.power/10);
+          this.characterService.characterState.equipment.head.armorStats.durability += Math.ceil(follower.power/2);
+          this.characterService.characterState.equipment.head.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
+          this.characterService.characterState.equipment.head.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
         if (this.characterService.characterState.equipment.body && 
           this.characterService.characterState.equipment.body.armorStats){
-          this.characterService.characterState.equipment.body.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.body.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.body.value += Math.floor(follower.power/10);
+          this.characterService.characterState.equipment.body.armorStats.durability += Math.ceil(follower.power/2);
+          this.characterService.characterState.equipment.body.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
+          this.characterService.characterState.equipment.body.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
         if (this.characterService.characterState.equipment.legs && 
           this.characterService.characterState.equipment.legs.armorStats){
-          this.characterService.characterState.equipment.legs.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.legs.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.legs.value += Math.floor(follower.power/10);
+          this.characterService.characterState.equipment.legs.armorStats.durability += Math.ceil(follower.power/2);
+          this.characterService.characterState.equipment.legs.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
+          this.characterService.characterState.equipment.legs.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
         if (this.characterService.characterState.equipment.feet && 
           this.characterService.characterState.equipment.feet.armorStats){
-          this.characterService.characterState.equipment.feet.armorStats.durability += follower.power;
-          this.characterService.characterState.equipment.feet.armorStats.defense += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.feet.value += Math.floor(follower.power/10);
+          this.characterService.characterState.equipment.feet.armorStats.durability += Math.ceil(follower.power/2);
+          this.characterService.characterState.equipment.feet.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
+          this.characterService.characterState.equipment.feet.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
       },
       description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day."
