@@ -25,7 +25,7 @@ export class ActivityPanelComponent {
   onClick(activity: Activity): void {
     this.activityService.activityLoop.push({
       activity: activity.activityType,
-      repeatTimes: 1
+      repeatTimes: event.shiftKey ? 10 : 1
     });
   }
 
