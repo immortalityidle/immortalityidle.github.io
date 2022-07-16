@@ -40,10 +40,13 @@
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
       <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
       <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">
-        <progress class="activity-progress"
-          [value]="indexOfelement !== activityService.currentIndex ? entry.repeatTimes : activityService.currentTickCount"
-          [max]="entry.repeatTimes">
-        </progress>
+        <div class="progress-bar">
+          <span 
+            [style.width.%]="100 * 
+              (indexOfelement !== activityService.currentIndex ? entry.repeatTimes : activityService.currentTickCount) / 
+              entry.repeatTimes">
+          </span>
+        </div>
       </td>
       <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">
         <mat-icon tooltip="Spend more days on this. Shift-click to add 10 days." (click)="onPlusClick(entry, $event)" class="iconButton">add</mat-icon>
@@ -63,7 +66,9 @@
     <tr *ngIf="activityService.spiritActivity">
       <td>{{activityService.getActivityByType(activityService.spiritActivity).name[activityService.getActivityByType(activityService.spiritActivity).level]}}</td>
       <td>
-        <progress class="spiritual-activity-progress activity-progress"></progress>
+        <div class="progress-bar indeterminate">
+          <span></span>
+        </div>
       </td>
       <td>
         <mat-icon tooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton">clear</mat-icon>
