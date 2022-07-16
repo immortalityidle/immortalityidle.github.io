@@ -46,8 +46,8 @@
         </progress>
       </td>
       <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">
-        <mat-icon tooltip="Spend more days on this. Shift-click to add 10 days." (click)="onPlusClick(entry, $event)" class="iconButton">add</mat-icon>
         <mat-icon tooltip="Spend fewer days on this. Shift-click to remove 10 days." (click)="onMinusClick(entry, $event)" class="iconButton">remove</mat-icon>
+        <mat-icon tooltip="Spend more days on this. Shift-click to add 10 days." (click)="onPlusClick(entry, $event)" class="iconButton">add</mat-icon>
         <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>
       </td>
     </tr>
