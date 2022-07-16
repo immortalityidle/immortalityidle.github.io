@@ -643,7 +643,7 @@ export class ActivityService {
         let oreValue = 0;
         let builderPower = 100; //divided by 100 later
         for (let follower of this.followerService.followers){
-          if (follower.job = "builder"){
+          if (follower.job == "builder"){
             builderPower += follower.power;
           }
         }

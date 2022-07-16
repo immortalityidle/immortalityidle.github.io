@@ -9,11 +9,12 @@ import { CharacterService } from '../game-state/character.service';
 })
 export class BattlePanelComponent implements OnInit {
 
+  Math: Math;
   constructor(
     public battleService: BattleService,
     public characterService: CharacterService
   ){ 
-
+    this.Math = Math;
   }
 
   ngOnInit(): void {

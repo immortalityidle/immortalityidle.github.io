@@ -9,6 +9,7 @@
   --itemSlotHighlight: #d8deff;
   --storeButtonColor: #fdfffc;
   --storeButtonDisabledColor: #555555;
+  --progressBackgroundColor: #efefef;
   --healthColor: red;
   --staminaColor: lightgreen;
   --nutritionColor: yellow;
@@ -28,6 +29,7 @@
   --itemSlotHighlight: #004444;
   --storeButtonColor: #777777;
   --storeButtonDisabledColor: darkgray;
+  --progressBackgroundColor: #3b3b3b;
   --healthColor: red;
   --staminaColor: lightgreen;
   --nutritionColor: yellow;
@@ -98,4 +100,73 @@ button:disabled {
 
 .mat-dialog-container {
   background-color: var(--dialogBackground);
+}
+
+.progress-bar {
+  overflow: hidden;
+  background-color: var(--progressBackgroundColor);
+  border-radius: 10px;
+  border: 1px solid #555;
+
+  width: 130px;
+  min-height: 8px;
+  height: 30px;
+  height: fit-content;
+  position: relative;
+
+  writing-mode: horizontal-tb !important;
+  display: inline-block;
+  box-sizing: border-box;
+
+  z-index: 0;
+
+  text-align: center;
+}
+
+.progress-bar::after {
+  color: white;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+        90deg, 
+        rgba(0,0,0,0)    0%, 
+        rgba(0,0,0,0.4) 40%, 
+        rgba(0,0,0,0.4) 60%, 
+        rgba(0,0,0,0)  100%);
+}
+
+.progress-bar[value]::after {
+  content: attr(value);
+}
+
+.progress-bar[max]::after {
+  content: attr(value) "/" attr(max);
+}
+
+.progress-bar > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+
+  background-color: #0075ff;
+
+  display: block;
+  height: 100%;
+}
+
+@keyframes anim-indetermiate {
+  0% {left: 0%};
+  100% {left: 75%}
+}
+
+.progress-bar.indeterminate > span {
+  border-radius: 10px;
+  width: 25%;
+  animation-name: anim-indetermiate;
+  animation-duration: 1.35s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
