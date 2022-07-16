@@ -7,12 +7,12 @@
         <input type="checkbox" (change)="manaShieldToggle($event)" id="manaShield" [checked]="battleService.enableManaShield"/>
         <label for="manaShield">Activate Mana Shield</label>
       </span>
-      <span class="battleOption" *ngIf="battleService.manaAttackUnlocked" 
+      <span class="battleOption" *ngIf="battleService.manaAttackUnlocked"
         tooltip="You can focus your mana around your weapon or fist to project greater power into your attacks. Doing this will double the damage that you inflict. Each use of this ability requires 10 mana.">
         <input type="checkbox" (change)="manaAttackToggle($event)" id="manaStrike" [checked]="battleService.enableManaAttack"/>
         <label for="manaStrike">Activate Mana Strike</label>
       </span>
-    </span>    
+    </span>
     <span class="rightAligned" tooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
       <button *ngIf="!battleService.autoTroubleUnlocked" (click)="battleService.trouble()">Look for Trouble</button>
       <input *ngIf="battleService.autoTroubleUnlocked"  type="checkbox" (change)="autoTroubleChange($event)"
@@ -23,6 +23,7 @@
 <div class="battleContainer">
   <table class="clashTable" *ngIf="battleService.enemies.length > 0">
     <tr>
+      <td class="fixedCell"><mat-icon class="clashIcon"></mat-icon></td>
       <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 4 || battleService.tickCounter == 5">arrow_forward</mat-icon></td>
       <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 3 || battleService.tickCounter == 6">arrow_forward</mat-icon></td>
       <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 2 || battleService.tickCounter == 7">arrow_forward</mat-icon></td>
@@ -48,9 +49,9 @@
           <div class="progress-bar"
             [attr.value]="Math.floor(enemyStack.enemy.health)"
             [attr.max]="Math.floor(enemyStack.enemy.maxHealth)">
-            <span 
-              [style.width.%]="100 * 
-                Math.floor(enemyStack.enemy.health) / 
+            <span
+              [style.width.%]="100 *
+                Math.floor(enemyStack.enemy.health) /
                 Math.floor(enemyStack.enemy.maxHealth)">
             </span>
           </div>
@@ -60,5 +61,5 @@
         <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense | bigNumber}}</td>
       </tr>
     </ng-container>
-  </table>  
+  </table>
 </div>
