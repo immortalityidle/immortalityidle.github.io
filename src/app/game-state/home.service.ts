@@ -555,8 +555,8 @@ export class HomeService {
 
   // gets the specs of the next home, doesn't actually upgrade
   getNextHome(){
-    for (let i = 0; i < this.homesList.length - 1; i++){
-      if (this.homeValue == this.homesList[i].type){
+    for (let i = this.homeValue; i < this.homesList.length - 1; i++){
+      if (this.homeValue === this.homesList[i].type){
         return this.homesList[i + 1];
       }
     }
@@ -749,10 +749,22 @@ export class HomeService {
         if (landRequired > 0){
           this.buyLand(landRequired);
         }
+      // ... Unless there's a home after the next home.
+      } else if (this.homeValue + 1 < this.autoBuyHomeLimit){
+        let nnHome = this.getHomeFromValue(this.nextHome.type + 1);
+        if (nnHome && nnHome.landRequired > this.land){
+          let landRequired = Math.min(
+            this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
+            nnHome.landRequired - this.land
+          )
+          if (landRequired > 0){
+            this.buyLand(landRequired);
+          }
+        }
       }
       if (this.land >= this.nextHome.landRequired){
         // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
-        if ((this.characterService.characterState.money > this.nextHome.cost + priceBuffer )){
+        if ((this.characterService.characterState.money >= this.nextHomeCost + priceBuffer )){
           this.upgradeToNextHome();
         } else {
           // we can't afford the next house, bail out and don't autoBuy more land
