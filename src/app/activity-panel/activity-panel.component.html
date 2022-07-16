@@ -11,7 +11,7 @@
         <td>
           <span class="noWrap">
             <button (click)="onClick(activity, $event)" 
-                    tooltip="Add this activity to the bottom of your queue. Shift-click to start at 10 days.">
+                    tooltip="Add this activity to your schedule. Shift click to also repeat it for 10 days.">
               {{activity.name[activity.level]}}
             </button>
             <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0"
