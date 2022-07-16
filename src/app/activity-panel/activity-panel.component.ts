@@ -22,7 +22,7 @@ export class ActivityPanelComponent {
     this.character = characterService.characterState;
   }
 
-  onClick(activity: Activity): void {
+  onClick(activity: Activity, event: MouseEvent): void {
     this.activityService.activityLoop.push({
       activity: activity.activityType,
       repeatTimes: event.shiftKey ? 10 : 1
