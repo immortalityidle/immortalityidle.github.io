@@ -3,7 +3,7 @@
     <hr/>
     <div class="yieldText">
       <span>Your {{homeService.fields.length + homeService.extraFields}} fields produced an average of {{homeService.averageYield | number: '1.0-2'}} food per day over the last year.</span>
-      <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels. Shift-click to buy 10 plots, Ctrl-click to buy all the land you can afford." class="iconButton">
+      <mat-icon  (click)="buyClicked($event)" placement="bottom" tooltip="Buy a plot of land for {{homeService.landPrice}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
         add
       </mat-icon>
       <mat-icon  (click)="plowClicked($event)" placement="bottom" class="iconButton rightFloat"

@@ -698,7 +698,7 @@ export class HomeService {
   }
 
 /**
- * Set count to -1 for max 
+ * Set count to -1 for half max 
  * @returns count of actual purchase
  */
   buyLand(count: number): number{
@@ -711,7 +711,7 @@ export class HomeService {
     if (count > 0){
       count = Math.min(count,maximumCount);
     } else {
-      count = maximumCount;
+      count = Math.floor(maximumCount / 2);
     }
     increase = 10 * (count * (count + 1) / 2); //mathmatically increase by linear sum n (n + 1) / 2
     price = this.landPrice * count + increase;
