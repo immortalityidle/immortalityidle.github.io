@@ -1,38 +1,27 @@
 @import (reference) "../../styles.less";
 
-progress {
-  text-align: center;
-  height: fit-content;
-  width: 130px;
-}
-
-progress:after {
-  content: attr(value);
-  line-height: 30px;
-}
-
 .panelHeader {
   white-space: nowrap;
 }
 
-.health > progress {
-  accent-color: var(--healthColor);
+.progress-bar {
+  vertical-align: -0.3em;
 }
 
-.stamina > progress {
-  accent-color: var(--staminaColor);
+.health > .progress-bar > span {
+  background-color: var(--healthColor);
 }
 
-.nourishment > progress {
-  accent-color: var(--nutritionColor);
+.stamina > .progress-bar > span {
+  background-color: var(--staminaColor);
 }
 
-.mana > progress {
-  accent-color: var(--manaColor);
+.nourishment > .progress-bar > span {
+  background-color: var(--nutritionColor);
 }
 
-.status-progress {
-  height:30px;
+.mana > .progress-bar > span {
+  background-color: var(--manaColor);
 }
 
 .headerCell {
@@ -42,3 +31,5 @@ progress:after {
 td {
   font-size:12px;
 }
+
+

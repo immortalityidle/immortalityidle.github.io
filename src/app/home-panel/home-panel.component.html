@@ -31,11 +31,9 @@
               tooltip="Buy Furniture" (click)="storeClicked()">
               shopping_cart
             </mat-icon>
-            <progress *ngIf="homeService.upgrading" class="status-progress" tooltip="Upgrading your home."
-              [value]="homeService.houseBuildingProgress"
-              [max]="1">
-              <div></div>
-            </progress>
+            <div *ngIf="homeService.upgrading" class="progress-bar" tooltip="Upgrading your home.">
+              <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
+            </div>
         </div>
         <div class="button-group">
             <mat-icon tooltip="View your farm." class="iconButton" (click)="farmClicked()">grass</mat-icon>
