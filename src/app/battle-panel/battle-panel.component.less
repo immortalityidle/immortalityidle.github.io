@@ -4,27 +4,16 @@ h3 {
   margin-bottom: 0px;
 }
 
-progress {
-  text-align: center;
-  height: fit-content;
-  width: 130px;
-}
-
-progress:after {
-  content: attr(value);
-  line-height: 30px;
-}
-
 .panelHeader {
   white-space: nowrap;
 }
 
-.health > progress {
-  accent-color: var(--healthColor);
+.progress-bar {
+  vertical-align: -0.3em;
 }
 
-.status-progress {
-  height:30px;
+.health > .progress-bar > span {
+  background-color: var(--healthColor);
 }
 
 mat-icon {
@@ -55,4 +44,8 @@ mat-icon {
 .clashIcon {
   margin-top: 0px;
   margin-bottom: 0px;
+}
+
+.battleContainer {
+  min-height: 60px;
 }
