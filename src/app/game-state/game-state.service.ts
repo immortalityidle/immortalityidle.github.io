@@ -35,7 +35,7 @@ interface GameState {
 export class GameStateService {
 
   lastSaved: number = 0;
-  isDarkMode: boolean = false;
+  isDarkMode: boolean = true;
 
   constructor(
     private characterService: CharacterService,
