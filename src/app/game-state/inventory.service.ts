@@ -29,7 +29,7 @@ export interface Item {
   useLabel?: string;
   useDescription?: string;
   useConsumes?: boolean;
-  use?: () => void;
+  use?: (count?: number) => void;
   owned?: () => boolean; // used for single-use permanent upgrades so we can see if they need to be bought again
 }
 
@@ -809,10 +809,16 @@ export class InventoryService {
     this.autoSellItems.splice(index, 1);
   }
 
-  useItemStack(itemStack: ItemStack): void {
-    this.useItem(itemStack.item);
+  useItemStack(itemStack: ItemStack, count?:number): void {
+    if(!count){
+      count = 1;
+    }
+    if (count > itemStack.quantity) {
+      count = itemStack.quantity
+    }
+    this.useItem(itemStack.item, count);
     if (itemStack.item.useConsumes) {
-      itemStack.quantity--;
+      itemStack.quantity -= count;
       if (itemStack.quantity <= 0) {
         let index = this.itemStacks.indexOf(itemStack);
         this.itemStacks[index] = null;
@@ -823,15 +829,18 @@ export class InventoryService {
     }
   }
 
-  useItem(item: Item): void {
+  useItem(item: Item, count?: number): void {
+    if(!count){
+      count = 1;
+    }
     this.lifetimeUsedItems++;
     if (item.type == "potion" && instanceOfPotion(item)){
-      this.usePotion(item);
+      this.usePotion(item, count); // Multiplies the effect by the stack count removed if count is > 1
     } else if (item.type == "pill" && instanceOfPill(item)){
 
-      this.usePill(item);
+      this.usePill(item, count); // Multiplies the effect by the stack count removed if count is > 1
     } else if (item.use) {
-      item.use();
+      item.use(count); // Multiplies the effect by the stack count removed if count is > 1
       if (item.type == "food"){
         this.fed = true;
       }
@@ -862,7 +871,7 @@ export class InventoryService {
             if (itemStack == null){
               continue;
             }
-            this.useItemStack(itemStack);
+            this.useItemStack(itemStack, itemStack.quantity);
           }
         }
       }
@@ -998,16 +1007,22 @@ export class InventoryService {
   }
 
   // a special use function for generated potions
-  usePotion(potion: Potion){
-    this.lifetimePotionsUsed++;
-    this.characterService.characterState.attributes[potion.attribute].value += potion.increase;
+  usePotion(potion: Potion, count?: number){
+    if(!count){
+      count = 1;
+    }
+    this.lifetimePotionsUsed += count;
+    this.characterService.characterState.attributes[potion.attribute].value += potion.increase * count;
   }
 
   // a special use function for generated pills
-  usePill(pill: Pill){
-    this.lifetimePillsUsed++
+  usePill(pill: Pill, count?: number){
+    if(!count){
+      count = 1;
+    }
+    this.lifetimePillsUsed += count;
     if (pill.effect == "Longevity"){
-      this.characterService.characterState.alchemyLifespan += pill.power;
+      this.characterService.characterState.alchemyLifespan += pill.power * count;
       if (this.characterService.characterState.alchemyLifespan > 36500){
         this.characterService.characterState.alchemyLifespan = 36500;
       }
