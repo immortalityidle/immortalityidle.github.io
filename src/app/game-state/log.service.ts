@@ -63,6 +63,7 @@ export class LogService {
     if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > 1000) || !log[0].message.includes(newMessage.message)) {
       // Initialization || Repeat Not Found && Timestamp is within 1 second
       log.unshift(newMessage);
+      this.addToCurrentLog(newMessage);
     } else {
       // Repeat Found, update Property & Message Reference
       const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message)
@@ -81,9 +82,7 @@ export class LogService {
     if (log.length > 100 && topic != 'STORY'){
       log.splice(100, 1);
     }
-    if (this.logTopics.includes(topic)){
-      this.addToCurrentLog(newMessage);
-    } else {
+    if (!this.logTopics.includes(topic)) {
       if (topic == 'STORY'){
         this.newStory = " (new)";
       } else if (topic == 'EVENT'){
