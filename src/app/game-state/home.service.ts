@@ -641,26 +641,49 @@ export class HomeService {
     };
   }
 
-  addField(){
-    if (this.land > 0){
-      this.land--;
+  addField(quantity = 1){
+    if (quantity < 0){
+      quantity = this.land;
+    }
+    while (quantity > 0 && this.land > 0){
       if (this.fields.length >= 300){
-        this.extraFields++;
+        this.extraFields += quantity;
+        this.land -= quantity;
+        return;
       } else {
         this.fields.push(this.getCrop());
+        this.land--;
+        quantity--;
       }
     }
   }
-
-  clearField(){
-    if (this.extraFields > 0){
-      this.extraFields--;
-      this.land++;
+  
+/**
+ * 
+ * @param quantity -1 for all
+ */
+  clearField(quantity = 1){
+    if (quantity < 0){
+      this.land += this.extraFields;
+      this.extraFields = 0;
+      this.land += this.fields.length;
+      this.fields.splice(0);
       return;
     }
+    if (this.extraFields > 0 && quantity <= this.extraFields){
+      this.extraFields -= quantity;
+      this.land += quantity;
+      return;
+    } else {
+      quantity -= this.extraFields;
+      this.extraFields = 0;
+    }
     if (this.fields.length > 0){
-      this.fields.pop();
-      this.land++;
+      if (quantity > this.fields.length){
+        quantity = this.fields.length;
+      }
+      this.land += quantity;
+      this.fields.splice(this.fields.length - quantity);
     }
   }
 
