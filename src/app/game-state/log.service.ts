@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { isEmpty } from 'rxjs';
 
+const LOG_MERGE_INTERVAL_MS = 1000;
 export type LogType = 'STANDARD' | 'INJURY';
 export type LogTopic = 'COMBAT' | 'CRAFTING' | 'STORY' | 'EVENT';
 
 export interface Log {
   message: string,
-  mergedMessage?: string,
   type: LogType,
   topic: LogTopic,
   timestamp: number
@@ -57,25 +57,20 @@ export class LogService {
       timestamp: Date.now()
     };
 
-    if (topic == "EVENT" && log[0] && log[0].timestamp) {
-      console.log(`${(newMessage.timestamp - log[0].timestamp) < 1000}`)
-    }
-    if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > 1000) || !log[0].message.includes(newMessage.message)) {
-      // Initialization || Repeat Not Found && Timestamp is within 1 second
+    if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
+      // Initialization || Repeat Not Found || Repeat is not within 1 second
       log.unshift(newMessage);
       this.addToCurrentLog(newMessage);
     } else {
-      // Repeat Found, update Property & Message Reference
+      // Repeat Found
       const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message)
       let repeatNumber = 2;
-      
       if(hasRepeatNumber) {
         repeatNumber = parseInt(hasRepeatNumber[1]) + 1
       }
       
-      const mergedMessage = `${newMessage.message} (${repeatNumber})`;
-      log[0].message = mergedMessage;
-      newMessage['mergedMessage'] = mergedMessage;
+      // Update message reference
+      log[0].message = `${newMessage.message} (${repeatNumber})`;
     }
 
     // check if we need to age off the oldest logs
@@ -95,21 +90,14 @@ export class LogService {
     }
   }
 
-  /** Add Message To Current Log 
-   * 
-   * If messages are duplicates, replace with merged reference
-  */
-   addToCurrentLog(newMessage: Log): void {
+  /** Add Message To Current Log */
+  private addToCurrentLog(newMessage: Log): void {
     // Maximum Log Length of 300
     if (this.currentLog.length >= 300){
       this.currentLog.pop();
     }
 
-    if (this.currentLog.length == 0 || !this.currentLog[0].message.includes(newMessage.message) || !newMessage.mergedMessage) {
-      this.currentLog.unshift(newMessage);
-    } else {
-      this.currentLog[0].message = newMessage.mergedMessage;
-    }
+    this.currentLog.unshift(newMessage);
   }
 
   getProperties(): LogProperties {
