@@ -60,7 +60,9 @@ export class LogService {
     if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
       // Initialization || Repeat Not Found || Repeat is not within 1 second
       log.unshift(newMessage);
-      this.addToCurrentLog(newMessage);
+      if (this.logTopics.includes(topic)) {
+        this.addToCurrentLog(newMessage);
+      }
     } else {
       // Repeat Found
       const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message)
