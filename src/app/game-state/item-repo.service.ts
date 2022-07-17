@@ -1406,10 +1406,10 @@ export class ItemRepoService {
       id: 'bestOreManual',
       name: "Manual of Mineral Pragmatism",
       type: "manual",
-      description: "This manual teaches you to automatically sell any ores below your current ability to gather.",
+      description: "This manual teaches you to automatically sell any ores and bars below your current ability to gather.",
       value: 5000000,
       useLabel: "Read",
-      useDescription: "Permanently unlock autoselling lower grade ores.",
+      useDescription: "Permanently unlock autoselling lower grade ores and bars.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
