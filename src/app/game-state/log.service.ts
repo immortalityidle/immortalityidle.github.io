@@ -5,8 +5,8 @@ export type LogType = 'STANDARD' | 'INJURY';
 export type LogTopic = 'COMBAT' | 'CRAFTING' | 'STORY' | 'EVENT';
 
 export interface Log {
-  rawMessage: string,
   message: string,
+  mergedMessage: string,
   type: LogType,
   topic: LogTopic,
   timestamp: number
@@ -51,8 +51,8 @@ export class LogService {
     }
 
     let newMessage = {
-      rawMessage: message,
       message: message,
+      mergedMessage: message,
       type: type,
       topic: topic,
       timestamp: Date.now()
@@ -71,7 +71,7 @@ export class LogService {
       }
       
       log[0].message = `${newMessage.message} (${repeatNumber})`
-      newMessage.message = `${newMessage.message} (${repeatNumber})`
+      newMessage.mergedMessage = `${newMessage.message} (${repeatNumber})`
     }
 
     // check if we need to age off the oldest logs
@@ -103,10 +103,10 @@ export class LogService {
       this.currentLog.pop();
     }
 
-    if (this.currentLog.length == 0 || !this.currentLog[0].message.includes(newMessage.rawMessage)) {
+    if (this.currentLog.length == 0 || !this.currentLog[0].message.includes(newMessage.message)) {
       this.currentLog.unshift(newMessage);
     } else {
-      this.currentLog[0].message = newMessage.message;
+      this.currentLog[0].message = newMessage.mergedMessage;
     }
   }
 
