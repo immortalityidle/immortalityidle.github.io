@@ -255,7 +255,7 @@ export class Character {
     totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
       this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
-    if (this.bloodlineRank < 4){
+    if (this.bloodlineRank < 5){
       this.statLifespan *= 0.1;
     }
 
@@ -274,18 +274,18 @@ export class Character {
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
-    if (this.bloodlineRank < 3){
+    if (this.bloodlineRank < 3) {
       this.money = 0;
-    } else if (this.bloodlineRank < 4){
+    } else if (this.bloodlineRank < 4) {
       this.money = this.money / 8;
     } else {
       this.money = 4 * this.money;
     }
-    if (this.money > this.maxMoney){
+    if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
     this.recalculateDerivedStats();
-    if (this.bloodlineRank == 0){
+    if (this.bloodlineRank == 0) {
       this.equipment = {
         head: null,
         body: null,
@@ -294,7 +294,7 @@ export class Character {
         legs: null,
         feet: null
       }
-    } else if (this.bloodlineRank <= 1){
+    } else if (this.bloodlineRank <= 1) {
       this.equipment.body = null;
       this.equipment.head = null;
       this.equipment.legs = null;
