@@ -56,7 +56,7 @@ export class ItemRepoService {
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 2;
-        this.characterService.characterState.status.health.value += 0.02;
+        this.characterService.characterState.status.health.value += 0.2;
       }
     },
     heatedBed: {

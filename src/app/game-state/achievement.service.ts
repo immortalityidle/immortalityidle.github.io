@@ -414,7 +414,7 @@ export class AchievementService {
         this.storeService.unlockManual(this.itemRepoService.items['bestGemsManual']);
       },
       unlocked: false
-    },    
+    },
     {
       name: "Grandpa's Old Tent",
       description: "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
@@ -514,13 +514,17 @@ export class AchievementService {
         let woodLore = this.characterService.characterState.attributes.woodLore.value;
         let waterLore = this.characterService.characterState.attributes.waterLore.value;
         let metalLore = this.characterService.characterState.attributes.metalLore.value; //Reduce the bulk
-        
+
         let lowValue = Math.min(metalLore , waterLore, woodLore, earthLore , fireLore);
         let highValue = Math.max(metalLore , waterLore, woodLore , earthLore , fireLore);
         return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.characterService.characterState.manaUnlocked = true;
+        if (this.characterService.characterState.status.mana.max == 0){
+          this.characterService.characterState.status.mana.max = 1;
+          this.characterService.characterState.status.mana.value = 1;
+        }
       },
       unlocked: false
     },
@@ -562,7 +566,7 @@ export class AchievementService {
         let charisma = this.characterService.characterState.attributes.charisma.value;
         let intelligence = this.characterService.characterState.attributes.intelligence.value;
         let strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
-        
+
         let lowValue = Math.min(speed , toughness, charisma , intelligence , strength);
         let highValue = Math.max(speed , toughness, charisma , intelligence , strength);
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
@@ -583,7 +587,7 @@ export class AchievementService {
         let charisma = this.characterService.characterState.attributes.charisma.value;
         let intelligence = this.characterService.characterState.attributes.intelligence.value;
         let strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
-        
+
         let lowValue = Math.min(speed , toughness, charisma , intelligence , strength, spirituality);
         let highValue = Math.max(speed , toughness, charisma , intelligence , strength, spirituality);
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
@@ -617,7 +621,7 @@ export class AchievementService {
       },
       unlocked: false
     },
-    
+
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean){
