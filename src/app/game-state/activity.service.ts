@@ -2011,9 +2011,12 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 1000;
         if (this.followerService.followersUnlocked){
           for (let follower of this.followerService.followers){
-            if (Math.random() < 0.01){
+            if (follower.power > 100) {
+              follower.power = 100; // Set max level to 100
+            }
+            if (Math.random() < (1 - follower.power / 100) / 100){ // Softcap the increase
               follower.power++;
-              follower.cost += 100;
+              follower.cost = 100 * follower.power;
               this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "EVENT");
             }
           }
