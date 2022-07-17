@@ -549,7 +549,7 @@ export class AchievementService {
       check: () => {
         return (this.characterService.soulCoreRank() >= 4) &&
           (this.characterService.meridianRank() >= 4) &&
-          this.characterService.characterState.bloodlineRank >= 4;
+          this.characterService.characterState.bloodlineRank >= 5;
       },
       effect: () => {
         this.impossibleTaskService.impossibleTasksUnlocked = true;
