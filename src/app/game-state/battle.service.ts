@@ -179,7 +179,11 @@ export class BattleService {
           }
 
           if (this.characterService.characterState.status.health.value <= 0){
-            this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
+            if(enemyStack.enemy.name == "Death itself"){
+              this.logService.addLogMessage(enemyStack.enemy.name + " overkilled you by " + Math.floor(-this.characterService.characterState.status.health.value) + " damage. You were defeated.", 'INJURY', 'EVENT');
+            } else {
+              this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
+            }
             if (!this.characterService.characterState.immortal){
               this.characterService.characterState.dead = true;
             }
