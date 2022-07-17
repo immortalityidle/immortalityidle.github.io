@@ -42,11 +42,11 @@ export class LogService {
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
     let log  = this.eventLog;
-    if (topic == 'COMBAT'){
+    if (topic == 'COMBAT') {
       log = this.combatLog;
-    } else if (topic == 'STORY'){
+    } else if (topic == 'STORY') {
       log = this.storyLog;
-    } else if (topic == 'CRAFTING'){
+    } else if (topic == 'CRAFTING') {
       log = this.craftingLog;
     }
 
@@ -65,10 +65,10 @@ export class LogService {
       }
     } else {
       // Repeat Found
-      const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message)
+      const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message);
       let repeatNumber = 2;
       if(hasRepeatNumber) {
-        repeatNumber = parseInt(hasRepeatNumber[1]) + 1
+        repeatNumber = parseInt(hasRepeatNumber[1]) + 1;
       }
       
       // Update message reference
@@ -80,7 +80,7 @@ export class LogService {
       log.splice(100, 1);
     }
     if (!this.logTopics.includes(topic)) {
-      if (topic == 'STORY'){
+      if (topic == 'STORY') {
         this.newStory = " (new)";
       } else if (topic == 'EVENT'){
         this.newEvents = " (new)";
