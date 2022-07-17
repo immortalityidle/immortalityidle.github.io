@@ -143,7 +143,15 @@ export class BattleService {
       for (let i = 0; i < enemyStack.quantity; i++){
         if (Math.random() < enemyStack.enemy.accuracy){
           let damage = enemyStack.enemy.attack;
-          damage = damage / (1 + this.characterService.characterState.defense * 0.1);
+          let defense = this.characterService.characterState.defense;
+          // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
+          if (defense >= 1) {
+            damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
+          }
+          //Keep mice scary
+          if (damage < this.enemyRepo.mouse.attack) {
+            damage = this.enemyRepo.mouse.attack;
+          }
           if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10){
             damage /= 2;
             this.characterService.characterState.status.mana.value -= 10;
@@ -193,9 +201,12 @@ export class BattleService {
       }
 
       let damage = this.characterService.characterState.attackPower;
-      damage = damage / (1 + this.currentEnemy.enemy.defense * 0.1);
-      if (damage < 1){
-        // pity damage
+      let defense = this.currentEnemy.enemy.defense;
+      if (defense >= 1) {
+        damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
+      }
+      // pity damage
+      if (damage < 1) {
         damage = 1;
       }
       if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10){
@@ -290,7 +301,7 @@ export class BattleService {
       maxHealth: this.troubleKills * 10,
       accuracy: 0.5,
       attack: this.troubleKills / 5,
-      defense: Math.floor(Math.log2(this.troubleKills)),
+      defense: this.troubleKills / 5,
       loot: [gem]
     });
     this.troubleKills++;
@@ -325,27 +336,27 @@ export class BattleService {
       maxHealth: 20,
       accuracy: 0.5,
       attack: 5,
-      defense: 2,
+      defense: 5,
       loot: [
         this.itemRepoService.items['hide']
       ]
     },
     army: {
       name: "an angry army",
-      health: 2000000,
-      maxHealth: 20000000,
+      health: 20000000,
+      maxHealth: 20000000, 
       accuracy: 0.9,
-      attack: 1000000,
-      defense: 500000,
+      attack: 10000000,
+      defense: 10000000, 
       loot: []
     },
     death: {
-      name: "death itself",
-      health: 100000000,
-      maxHealth: 100000000,
+      name: "Death itself",
+      health: 1000000000000000, // Make Death last 85k years when fighting with level 10 scount and a 1 billion attack weapon. That's about 3 full days of real time right now.
+      maxHealth: 1000000000000000, // but 1 billion attack takes less than a full realtime day, and they'll probably be improving the weapon during the fight too.
       accuracy: 0.99,
-      attack: 10000000,
-      defense: 10000000,
+      attack: 100000000,
+      defense: 100000000,
       loot: [
         this.itemRepoService.items['immortality']
       ]
