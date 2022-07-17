@@ -6,7 +6,7 @@ export type LogTopic = 'COMBAT' | 'CRAFTING' | 'STORY' | 'EVENT';
 
 export interface Log {
   message: string,
-  mergedMessage: string,
+  mergedMessage?: string,
   type: LogType,
   topic: LogTopic,
   timestamp: number
@@ -50,16 +50,18 @@ export class LogService {
       log = this.craftingLog;
     }
 
-    let newMessage = {
+    let newMessage: Log = {
       message: message,
-      mergedMessage: message,
       type: type,
       topic: topic,
       timestamp: Date.now()
     };
 
-    if (log.length == 0 || !log[0].message.includes(newMessage.message)) {
-      // Initialization || Repeat Not Found
+    if (topic == "EVENT" && log[0] && log[0].timestamp) {
+      console.log(`${(newMessage.timestamp - log[0].timestamp) < 1000}`)
+    }
+    if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > 1000) || !log[0].message.includes(newMessage.message)) {
+      // Initialization || Repeat Not Found && Timestamp is within 1 second
       log.unshift(newMessage);
     } else {
       // Repeat Found, update Property & Message Reference
@@ -70,8 +72,9 @@ export class LogService {
         repeatNumber = parseInt(hasRepeatNumber[1]) + 1
       }
       
-      log[0].message = `${newMessage.message} (${repeatNumber})`
-      newMessage.mergedMessage = `${newMessage.message} (${repeatNumber})`
+      const mergedMessage = `${newMessage.message} (${repeatNumber})`;
+      log[0].message = mergedMessage;
+      newMessage['mergedMessage'] = mergedMessage;
     }
 
     // check if we need to age off the oldest logs
@@ -103,7 +106,7 @@ export class LogService {
       this.currentLog.pop();
     }
 
-    if (this.currentLog.length == 0 || !this.currentLog[0].message.includes(newMessage.message)) {
+    if (this.currentLog.length == 0 || !this.currentLog[0].message.includes(newMessage.message) || !newMessage.mergedMessage) {
       this.currentLog.unshift(newMessage);
     } else {
       this.currentLog[0].message = newMessage.mergedMessage;
