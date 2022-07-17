@@ -5,6 +5,7 @@ export type LogType = 'STANDARD' | 'INJURY';
 export type LogTopic = 'COMBAT' | 'CRAFTING' | 'STORY' | 'EVENT';
 
 export interface Log {
+  rawMessage: string,
   message: string,
   type: LogType,
   topic: LogTopic,
@@ -50,12 +51,29 @@ export class LogService {
     }
 
     let newMessage = {
+      rawMessage: message,
       message: message,
       type: type,
       topic: topic,
       timestamp: Date.now()
     };
-    log.unshift(newMessage);
+
+    if (log.length == 0 || !log[0].message.includes(newMessage.message)) {
+      // Initialization || Repeat Not Found
+      log.unshift(newMessage);
+    } else {
+      // Repeat Found, update Property & Message Reference
+      const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message)
+      let repeatNumber = 2;
+      
+      if(hasRepeatNumber) {
+        repeatNumber = parseInt(hasRepeatNumber[1]) + 1
+      }
+      
+      log[0].message = `${newMessage.message} (${repeatNumber})`
+      newMessage.message = `${newMessage.message} (${repeatNumber})`
+    }
+
     // check if we need to age off the oldest logs
     if (log.length > 100 && topic != 'STORY'){
       log.splice(100, 1);
@@ -75,28 +93,20 @@ export class LogService {
     }
   }
 
-  addToCurrentLog(newMessage: Log){
-    if (this.currentLog.length != 0 && this.currentLog[0].message.includes(newMessage.message)){
-      // the line is a repeat, increment the repeat count at the end of the line instead of adding a new line
-      let repeatCountString = this.currentLog[0].message.split(" ").pop()?.replace("(", "")?.replace(")", "");
-      let repeatCount: number = 0;
-      if (repeatCountString){
-        repeatCount = parseInt(repeatCountString);
-      }
-      if (repeatCount != 0 && !isNaN(repeatCount)){
-        repeatCount++;
-        this.currentLog[0].message = newMessage.message + " (" + repeatCount + ")";
-      } else {
-        // it's the first repeat, give it a repeat count
-        this.currentLog[0].message = newMessage.message + " (2)";
-      }
-    } else {
+  /** Add Message To Current Log 
+   * 
+   * If messages are duplicates, replace with merged reference
+  */
+   addToCurrentLog(newMessage: Log): void {
+    // Maximum Log Length of 300
+    if (this.currentLog.length >= 300){
+      this.currentLog.pop();
+    }
+
+    if (this.currentLog.length == 0 || !this.currentLog[0].message.includes(newMessage.rawMessage)) {
       this.currentLog.unshift(newMessage);
-      if (this.currentLog.length > 300){
-        // peel off the oldest
-        this.currentLog.splice(this.currentLog.length - 1, 1);
-      }
-      
+    } else {
+      this.currentLog[0].message = newMessage.message;
     }
   }
 
