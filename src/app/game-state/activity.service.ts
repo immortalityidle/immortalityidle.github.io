@@ -337,11 +337,11 @@ export class ActivityService {
   }
 
   saveActivityLoop(){
-    this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop)); 
+    this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop));
   }
 
   loadActivityLoop(){
-    this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop)); 
+    this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop));
     this.checkRequirements(true);
   }
 
@@ -594,7 +594,7 @@ export class ActivityService {
             this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
           }
           this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingBrick'].name,"STANDARD","CRAFTING");;
-        
+
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
@@ -1004,9 +1004,9 @@ export class ActivityService {
       description:['Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
         'Enter a meditative state and begin your journey toward spritual enlightenment.',
         'Extend your senses beyond the mortal realm and connect to deeper realities.'],
-      consequenceDescription: ['Restores some stamina and a little health.',
-        'Restores more stamina and some health.',
-        'Restores lots of stamina, health, and mana.'],
+      consequenceDescription: ['Restores 50 stamina and 2 health.',
+        'Restores 100 stamina, 10 health, and 1 mana (if unlocked).',
+        'Restores 200 stamina, 20 health, and 10 mana (if unlocked).'],
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value += 50;
@@ -1028,7 +1028,7 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value += 200;
           this.characterService.characterState.status.health.value += 20;
           this.characterService.characterState.status.mana.value += 10
-          this.characterService.characterState.increaseAttribute('spirituality', 0.1);
+          this.characterService.characterState.increaseAttribute('spirituality', 0.5);
           this.characterService.characterState.checkOverage();
         }
       ],

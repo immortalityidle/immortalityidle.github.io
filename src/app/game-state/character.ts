@@ -232,8 +232,13 @@ export class Character {
     this.status.stamina.max = 100;
     this.status.nourishment.value = 7;
     this.status.nourishment.max = 14;
-    this.status.mana.max = 0;
-    this.status.mana.value = 0;
+    if (this.manaUnlocked){
+      this.status.mana.max = 1;
+      this.status.mana.value = 1;
+    } else {
+      this.status.mana.max = 0;
+      this.status.mana.value = 0;
+    }
 
     this.healthBonusFood = 0;
     this.healthBonusBath = 0;
@@ -384,10 +389,10 @@ export class Character {
     return increaseAmount;
   }
 
-  /**increase in days 
-   * 
+  /**increase in days
+   *
    * limit in years
-   * 
+   *
    * returns false if limit is reached.
   */
   increaseBaseLifespan(increase: number, limit: number): boolean {

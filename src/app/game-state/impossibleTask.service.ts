@@ -167,13 +167,16 @@ export class ImpossibleTaskService {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
-
   }
 
   reset(){
     for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
       if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex != ImpossibleTaskType.BuildTower){
-        this.taskProgress[taskIndex].progress = 0;
+        if (this.taskProgress[taskIndex].complete){
+          this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
+        } else {
+          this.taskProgress[taskIndex].progress = 0;
+        }
       }
     }
     this.activeTaskIndex = -1;
