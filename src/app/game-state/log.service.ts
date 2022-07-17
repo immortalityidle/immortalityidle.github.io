@@ -96,7 +96,6 @@ export class LogService {
     if (this.currentLog.length >= 300){
       this.currentLog.pop();
     }
-
     this.currentLog.unshift(newMessage);
   }
 
