@@ -281,11 +281,11 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         this.characterService.characterState.checkOverage();
       },
     },
@@ -298,14 +298,14 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.01){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
         }
         this.characterService.characterState.checkOverage();
       },
@@ -319,16 +319,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.02){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 5)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 5)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if(this.characterService.characterState.foodLifespan < (365 * 5)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -345,16 +345,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.05){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 10)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 10)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 10)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -371,16 +371,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.08){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 15)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 15)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 15)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -397,16 +397,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.1){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 20)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 20)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 20)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -423,16 +423,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.12){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 25)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 25)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 25)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -449,16 +449,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.15){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 30)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 30)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 30)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -475,16 +475,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.18){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 35)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 35)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 35)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -501,16 +501,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.20){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 40)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 40)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 40)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -527,16 +527,16 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and can even lead to a long life.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.22){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.health.value += count * 2;
-          if (this.characterService.characterState.foodLifespan + count <= (365 * 72)){
-            this.characterService.characterState.foodLifespan += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.health.value += quantity * 2;
+          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 72)){
+            this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 72)){
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
@@ -553,14 +553,14 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly. Can also improve your health and stamina.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count * 2;
-        this.characterService.characterState.healthBonusFood += count;
-        this.characterService.characterState.status.health.value += count * 10;
-        this.characterService.characterState.status.stamina.max += count;
+        this.characterService.characterState.status.nourishment.value += quantity * 2;
+        this.characterService.characterState.healthBonusFood += quantity;
+        this.characterService.characterState.status.health.value += quantity * 10;
+        this.characterService.characterState.status.stamina.max += quantity;
         this.characterService.characterState.checkOverage();
       },
     },
@@ -573,14 +573,14 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly. Might also improve your health and stamina.',
       useConsumes: true,
-      use: (count?: number) => {
-        if (!count){
-          count = 1;
+      use: (quantity?: number) => {
+        if (!quantity){
+          quantity = 1;
         }
-        this.characterService.characterState.status.nourishment.value += count;
+        this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.1){
-          this.characterService.characterState.healthBonusFood += count;
-          this.characterService.characterState.status.stamina.max += count;
+          this.characterService.characterState.healthBonusFood += quantity;
+          this.characterService.characterState.status.stamina.max += quantity;
         }
         this.characterService.characterState.checkOverage();
       },

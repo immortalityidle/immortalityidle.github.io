@@ -688,7 +688,7 @@ export class HomeService {
           fieldYield = Math.floor((this.fields.length + this.extraFields) / 300);
         }
         totalDailyYield += fieldYield;
-        this.inventoryService.addItems(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
+        this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
         this.fields[i] = this.getCrop();
       } else {
         this.fields[i].daysToHarvest--;
