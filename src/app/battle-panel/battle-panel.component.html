@@ -44,7 +44,7 @@
             <button *ngIf="battleService.currentEnemy !== enemyStack" (click)="battleService.fight(enemyStack)">Fight</button>
             <span *ngIf="battleService.currentEnemy === enemyStack">Fighting</span>
         </td>
-        <td>{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
+        <td class="enemyName">{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
         <td class="health">
           <div class="progress-bar"
             [attr.value]="Math.floor(enemyStack.enemy.health)"
