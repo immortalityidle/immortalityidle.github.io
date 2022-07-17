@@ -30,7 +30,7 @@ export interface Item {
   useLabel?: string;
   useDescription?: string;
   useConsumes?: boolean;
-  use?: (quantity?: number) => void;
+  use?: (quantity: number = 1) => void;
   owned?: () => boolean; // used for single-use permanent upgrades so we can see if they need to be bought again
 }
 
