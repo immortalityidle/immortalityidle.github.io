@@ -44,6 +44,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.stamina.value += 1;
         this.characterService.characterState.status.health.value += 0.1;
+        this.characterService.characterState.checkOverage();
       }
     },
     canopyBed: {
@@ -57,6 +58,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.stamina.value += 2;
         this.characterService.characterState.status.health.value += 0.2;
+        this.characterService.characterState.checkOverage();
       }
     },
     heatedBed: {
@@ -70,6 +72,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.status.health.value += 1;
+        this.characterService.characterState.checkOverage();
       }
     },
     bedOfNails: {
@@ -120,6 +123,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.1);
         this.characterService.characterState.status.health.value += 1;
+        this.characterService.characterState.checkOverage();
       }
     },
     bronzeTub: {
@@ -133,6 +137,7 @@ export class ItemRepoService {
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
         this.characterService.characterState.status.health.value += 1;
+        this.characterService.characterState.checkOverage();
       }
     },
     heatedTub: {
