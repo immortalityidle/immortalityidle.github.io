@@ -147,7 +147,7 @@ export class CharacterService {
     }
   }
 
-  ascend(){
+  resetAptitudes(){
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
