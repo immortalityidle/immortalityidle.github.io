@@ -12,6 +12,7 @@ import { HomeService, HomeProperties } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
+import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -24,6 +25,7 @@ interface GameState {
   battles: BattleProperties,
   followers: FollowersProperties,
   logs: LogProperties,
+  autoBuy: AutoBuyerProperties,
   mainLoop: MainLoopProperties,
   impossibleTasks: ImpossibleTaskProperties,
   darkMode: boolean
@@ -47,6 +49,7 @@ export class GameStateService {
     private itemRepoService: ItemRepoService,
     private battleService: BattleService,
     private followersService: FollowersService,
+    private autoBuyerService: AutoBuyerService,
     private mainLoopService: MainLoopService,
     private achievementService: AchievementService,
     private impossibleTaskService: ImpossibleTaskService
@@ -99,6 +102,7 @@ export class GameStateService {
     this.battleService.setProperties(gameState.battles);
     this.followersService.setProperties(gameState.followers);
     this.logService.setProperties(gameState.logs);
+    this.autoBuyerService.setProperties(gameState.autoBuy);
     this.mainLoopService.setProperties(gameState.mainLoop);
     this.isDarkMode = gameState.darkMode || false;
 
@@ -115,6 +119,7 @@ export class GameStateService {
       battles: this.battleService.getProperties(),
       followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
+      autoBuy: this.autoBuyerService.getProperties(),
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
     };

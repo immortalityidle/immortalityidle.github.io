@@ -8,6 +8,7 @@ import { HomeService } from './home.service';
 import { Furniture, InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
+import { AutoBuyerService } from './autoBuyer.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class ItemRepoService {
   battleService?: BattleService;
   impossibleTaskService?: ImpossibleTaskService;
   followerService?: FollowersService;
+  autoBuyerService?: AutoBuyerService;
 
   furniture: {[key: string]: Furniture} = {
     blanket: {
@@ -888,6 +890,27 @@ export class ItemRepoService {
       value: 10,
       description: 'Some metal junk.',
     },
+    pillMold: {
+      id: 'pillMold',
+      name: 'pill mold',
+      type: 'pillMold',
+      value: 100,
+      description: 'A metal mold for compressing a very powerful pill.',
+    },
+    pillBox: {
+      id: 'pillBox',
+      name: 'pill box',
+      type: 'pillBox',
+      value: 100,
+      description: 'A wooden box required for holding a very powerful pill.',
+    },
+    pillPouch: {
+      id: 'pillPouch',
+      name: 'pill pouch',
+      type: 'pillPouch',
+      value: 100,
+      description: 'A leather pouch designed to fit inside a pill box and preserve the power of certain very potent pills.',
+    },
     unbreakableChain: {
       id: 'unbreakableChain',
       name: 'unbreakable chain',
@@ -1188,6 +1211,29 @@ export class ItemRepoService {
           this.homeService = this.injector.get(HomeService);
         }
         return this.homeService.autoBuyFurnitureUnlocked;
+      }
+    },
+    autoBuyerSettingsManual: {
+      id: 'autoBuySettingsManual',
+      name: "Manual of Customized Automation",
+      type: "manual",
+      description: "This manual teaches you to customize the order and behavior of auto-buying.",
+      value: 1000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock auto-buying customization",
+      useConsumes: true,
+      use: () => {
+        if (!this.autoBuyerService){
+          this.autoBuyerService = this.injector.get(AutoBuyerService);
+        }
+        this.autoBuyerService.autoBuyerSettingsUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (!this.autoBuyerService){
+          this.autoBuyerService = this.injector.get(AutoBuyerService);
+        }
+        return this.autoBuyerService.autoBuyerSettingsUnlocked;
       }
     },
     autoFieldManual: {
