@@ -281,10 +281,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         this.characterService.characterState.checkOverage();
       },
@@ -298,10 +295,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.01){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -319,10 +313,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.02){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -345,10 +336,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.05){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -371,10 +359,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.08){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -397,10 +382,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.1){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -423,10 +405,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.12){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -449,10 +428,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.15){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -475,10 +451,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.18){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -501,10 +474,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.20){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -527,10 +497,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly and can even lead to a long life.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.22){
           this.characterService.characterState.healthBonusFood += quantity;
@@ -553,10 +520,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly. Can also improve your health and stamina.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity * 2;
         this.characterService.characterState.healthBonusFood += quantity;
         this.characterService.characterState.status.health.value += quantity * 10;
@@ -573,10 +537,7 @@ export class ItemRepoService {
       useLabel: 'Eat',
       useDescription: 'Fills your belly. Might also improve your health and stamina.',
       useConsumes: true,
-      use: (quantity?: number) => {
-        if (!quantity){
-          quantity = 1;
-        }
+      use: (quantity: number = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.1){
           this.characterService.characterState.healthBonusFood += quantity;
