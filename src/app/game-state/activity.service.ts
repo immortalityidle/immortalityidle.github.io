@@ -82,7 +82,7 @@ export class ActivityService {
           if (this.currentIndex < this.activityLoop.length - 1){
             index = this.currentIndex + 1;
           }
-          while (index != this.currentIndex && this.activityLoop[index].repeatTimes === 0){
+          while (index !== this.currentIndex && this.activityLoop[index].repeatTimes === 0){
             index++;
             if (index >= this.activityLoop.length){
               index = 0;
@@ -195,7 +195,7 @@ export class ActivityService {
   }
 
   meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
-    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType != this.currentApprenticeship){
+    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType !== this.currentApprenticeship){
       if (level < activity.skipApprenticeshipLevel){
         return false;
       }
@@ -210,7 +210,7 @@ export class ActivityService {
     for (const keyIndex in keys) {
       const key = keys[keyIndex];
       let requirementValue = 0;
-      if (activity.requirements[level][key] != undefined) {
+      if (activity.requirements[level][key] !== undefined) {
         requirementValue = activity.requirements[level][key]!;
       }
       if (this.characterService.characterState.attributes[key].value <= requirementValue) {
@@ -269,7 +269,7 @@ export class ActivityService {
       // upgrade to anything that the starting attributes allow
       this.upgradeActivities(true);
     }
-    if (this.impossibleTaskService.activeTaskIndex != ImpossibleTaskType.Swim){
+    if (this.impossibleTaskService.activeTaskIndex !== ImpossibleTaskType.Swim){
       this.getActivityByType(ActivityType.Resting).unlocked = true;
       this.getActivityByType(ActivityType.OddJobs).unlocked = true;
     }

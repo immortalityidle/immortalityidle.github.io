@@ -720,7 +720,7 @@ export class InventoryService {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
-        if (itemStack != null && itemStack.item.type === "spiritGem" && itemStack.item.value < item.value){
+        if (itemStack !== null && itemStack.item.type === "spiritGem" && itemStack.item.value < item.value){
           this.characterService.characterState.money += itemStack.item.value * itemStack.quantity;
           this.itemStacks[i] = null;
         }
@@ -730,7 +730,7 @@ export class InventoryService {
       this.characterService.characterState.money += item.value;
       return -1;
     }
-    if (item.type != "equipment"){
+    if (item.type !== "equipment"){
       // try to stack the new item with existing items
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemIterator = this.itemStacks[i];
@@ -842,7 +842,7 @@ export class InventoryService {
     if (!this.autoUseUnlocked){
       return;
     }
-    if (item.type != "potion" && item.type != "pill" && !item.use){
+    if (item.type !== "potion" && item.type !== "pill" && !item.use){
       // it's not usable, bail out.
       return;
     }
@@ -856,7 +856,7 @@ export class InventoryService {
           continue;
         }
         if (this.itemStacks[i]?.item.name === item.name && item.useConsumes){
-          while (this.itemStacks[i] != null){
+          while (this.itemStacks[i] !== null){
             // this code is stupid because typescript is stupid.
             const itemStack = this.itemStacks[i];
             if (itemStack === null){
@@ -934,7 +934,7 @@ export class InventoryService {
     }
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
-      if (itemIterator != null){
+      if (itemIterator !== null){
         const item = itemIterator.item;
         if (instanceOfEquipment(item) && item.slot === slot) {
           let itemPower = 0
@@ -968,7 +968,7 @@ export class InventoryService {
     }
     if (itemIndex >= 0){
       const itemIterator = this.itemStacks[itemIndex];
-      if (itemIterator != null){
+      if (itemIterator !== null){
         itemIterator.quantity --;
         if (itemIterator.quantity <= 0){
           //remove the stack if empty
@@ -1027,7 +1027,7 @@ export class InventoryService {
 
   // Create a new piece of equipment based on the two provided. Caller needs to do the destroying of the old items.
   mergeEquipment(item1: Equipment, item2: Equipment, destinationInventoryIndex: number){
-    if (item1.slot != item2.slot){
+    if (item1.slot !== item2.slot){
       // not the same slot, bail out
       return;
     }
@@ -1038,7 +1038,7 @@ export class InventoryService {
       inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot));
     }
     // if we can, move the new item to the desired destination index
-    if (inventoryIndex != destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null){
+    if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null){
       this.itemStacks[destinationInventoryIndex] = this.itemStacks[inventoryIndex];
       this.itemStacks[inventoryIndex] = null;
     }
@@ -1108,7 +1108,7 @@ export class InventoryService {
       }
     }
     // finally, merge the last item with that slot into the equipped item (if present and both weapon and armor autoequips are unlocked)
-    if (destinationItem != null && this.autoequipBestWeapon && this.autoequipBestArmor){
+    if (destinationItem !== null && this.autoequipBestWeapon && this.autoequipBestArmor){
       sourceItem = this.characterService.characterState.equipment[slot];
       if (sourceItem === null){
         return;

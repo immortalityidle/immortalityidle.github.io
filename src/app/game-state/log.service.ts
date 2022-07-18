@@ -57,7 +57,7 @@ export class LogService {
     };
     log.unshift(newMessage);
     // check if we need to age off the oldest logs
-    if (log.length > 100 && topic != 'STORY'){
+    if (log.length > 100 && topic !== 'STORY'){
       log.splice(100, 1);
     }
     if (this.logTopics.includes(topic)){
@@ -76,14 +76,14 @@ export class LogService {
   }
 
   addToCurrentLog(newMessage: Log){
-    if (this.currentLog.length != 0 && this.currentLog[0].message.includes(newMessage.message)){
+    if (this.currentLog.length !== 0 && this.currentLog[0].message.includes(newMessage.message)){
       // the line is a repeat, increment the repeat count at the end of the line instead of adding a new line
       const repeatCountString = this.currentLog[0].message.split(" ").pop()?.replace("(", "")?.replace(")", "");
       let repeatCount = 0;
       if (repeatCountString){
         repeatCount = parseInt(repeatCountString);
       }
-      if (repeatCount != 0 && !isNaN(repeatCount)){
+      if (repeatCount !== 0 && !isNaN(repeatCount)){
         repeatCount++;
         this.currentLog[0].message = newMessage.message + " (" + repeatCount + ")";
       } else {

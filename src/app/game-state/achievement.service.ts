@@ -253,10 +253,10 @@ export class AchievementService {
       description: "You filled all your furniture slots and unlocked the " + this.itemRepoService.items['autoBuyFurnitureManual'].name,
       hint: "Immortals have discerning taste in furnishings.",
       check: () => {
-        return this.homeService.furniture.bathtub != null &&
-          this.homeService.furniture.bed != null &&
-          this.homeService.furniture.kitchen != null &&
-          this.homeService.furniture.workbench != null;
+        return this.homeService.furniture.bathtub !== null &&
+          this.homeService.furniture.bed !== null &&
+          this.homeService.furniture.kitchen !== null &&
+          this.homeService.furniture.workbench !== null;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyFurnitureManual']);

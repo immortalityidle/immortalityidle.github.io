@@ -20,7 +20,7 @@ export class InventoryPanelComponent {
     event.stopPropagation();
     if (event.shiftKey){
       let oldSelected = null;
-      if (oldSelected != item){
+      if (oldSelected !== item){
         oldSelected = this.inventoryService.selectedItem;
       }
       this.inventoryService.selectedItem = item;

@@ -171,7 +171,7 @@ export class ImpossibleTaskService {
 
   reset(){
     for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
-      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex != ImpossibleTaskType.BuildTower){
+      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex !== ImpossibleTaskType.BuildTower){
         if (this.taskProgress[taskIndex].complete){
           this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
         } else {

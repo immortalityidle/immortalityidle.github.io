@@ -281,7 +281,7 @@ export class BattleService {
 
   // generate a monster based on current troubleKills
   trouble(){
-    if (this.enemies.length != 0){
+    if (this.enemies.length !== 0){
       return;
     }
     const rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
