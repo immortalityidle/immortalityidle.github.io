@@ -187,7 +187,7 @@ export class InventoryService {
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
         return;
-      }//TODO: check if it'll be getting merged to short circuit
+      }//TODO: check if merge is going to superscede, so we don't have to do work
       if (this.autoequipBestWeapon){
         this.autoequipWeapons();
       }
