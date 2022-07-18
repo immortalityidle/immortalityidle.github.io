@@ -246,7 +246,6 @@ export class Character {
 
     // age in days
     this.age = INITIAL_AGE;
-    this.increaseBaseLifespan(1, 70); //bonus day just for doing another reincarnation cycle, cap base at 70 years
     this.foodLifespan = 0;
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
