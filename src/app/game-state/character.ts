@@ -370,7 +370,7 @@ export class Character {
         (this.attributeScalingLimit * 90 / 20) +
         ((aptitude - (this.attributeScalingLimit * 100)) / 100);
     } else {
-       // increase by log2 of whatever is over the softcap
+      // increase by log2 of whatever is over the softcap
       return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeScalingLimit * (this.attributeSoftCap - 100) / 100) +
