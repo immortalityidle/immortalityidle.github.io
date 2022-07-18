@@ -1122,15 +1122,15 @@ export class InventoryService {
         }
       }
     }
-    // finally, merge the last item with that slot into the equipped item (if present and both weapon and armor autoequips are unlocked)
-    if (destinationItem != null && this.autoequipBestWeapon && this.autoequipBestArmor){
+    // finally, merge the last item with that slot into the equipped item (if present and weapon or armor autoequips are unlocked)
+    if (destinationItem != null && (this.autoequipBestWeapon || this.autoequipBestArmor)){
       sourceItem = this.characterService.characterState.equipment[slot];
       if (sourceItem == null){
         return;
       }
-      if (slot == 'rightHand' || slot == 'leftHand'){
+      if (this.autoequipBestWeapon && (slot == 'rightHand' || slot == 'leftHand')){
         destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
-      } else {
+      } if (this.autoequipBestArmor && (slot != 'rightHand' || slot != 'leftHand')) {
         destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot);
       }
       this.characterService.characterState.equipment[slot] = destinationItem;
