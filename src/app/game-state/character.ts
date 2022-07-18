@@ -371,7 +371,7 @@ export class Character {
         ((aptitude - (this.attributeScalingLimit * 100)) / 100);
     } else {
       // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
-      let pow = 0.5; // Power can be balanced as needed, currently square root (0.5). Higher power reduces returns.
+      let pow = 0.6; // Power can be balanced as needed. Higher power reduces returns.
       return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
