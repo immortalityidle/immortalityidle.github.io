@@ -14,7 +14,8 @@ export interface Enemy {
   accuracy: number,
   attack: number,
   defense: number,
-  loot: Item[]
+  loot: Item[],
+  unique?: boolean
 };
 
 export interface EnemyStack {
@@ -271,7 +272,9 @@ export class BattleService {
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name == enemy.name) {
         // it matches an existing enemy, add it to the stack and bail out
-        enemyIterator.quantity++;
+        if (!enemy.unique){
+          enemyIterator.quantity++;
+        }
         return;
       }
     }
@@ -363,7 +366,8 @@ export class BattleService {
       defense: 100000000,
       loot: [
         this.itemRepoService.items['immortality']
-      ]
+      ],
+      unique: true
     }
   }
 

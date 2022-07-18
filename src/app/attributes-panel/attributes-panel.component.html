@@ -9,7 +9,9 @@
         Attributes
       </h3>
       <div *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
-        <span *ngIf="(attribute.value.value !== 0)" placement="right" tooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | number:'1.0-2'}} multiplies your gains by {{characterService.characterState.getAptitudeMultipier(attribute.value.aptitude)  | number: '1.0-2'}}.">
+        <span *ngIf="(attribute.value.value !== 0)" placement="right" tooltip="{{attribute.value.description}} Your aptitude of 
+        {{attribute.value.aptitude > 10000000 ? (attribute.value.aptitude | bigNumber) : (attribute.value.aptitude | number: '1.0-2')}}
+        multiplies your gains by {{characterService.characterState.getAptitudeMultipier(attribute.value.aptitude)  | number: '1.0-2'}}.">
           <mat-icon>{{attribute.value.icon}}</mat-icon>
           {{attribute.key | camelToTitle}}: 
           {{attribute.value.value > 10000000 ? (attribute.value.value | bigNumber) : attribute.value.value > 1000 ? (attribute.value.value | number:'1.0-0') : (attribute.value.value | number: '1.0-1')}}
@@ -29,7 +31,10 @@
             <span tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}. {{followerService.jobs[follower.job].description}}<br/>{{follower.name}} has followed you for {{follower.age / 365 | number: '1.0-1'}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | number: '1.0-1'}} more years.">
               {{follower.name | titlecase}} the {{follower.job | titlecase}}
             </span>
-            <mat-icon class="smallerIcon" (click)="dismissFollower($event, follower)" tooltip="Dismiss this follower. If you have the right knowledge, you can shift-click to automatically dismiss all followers with this job.">
+            <mat-icon class="smallerIcon"
+            (click)="dismissFollower($event, follower)"
+            [tooltip]="followerService.autoDismissUnlocked ? 'Dismiss this follower.\n\nShift-click to automatically dismiss this job type': 'Dismiss this follower.'"
+            tooltipClass="tooltip-break">
               cancel
             </mat-icon>
         </div>
