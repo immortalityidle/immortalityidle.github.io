@@ -27,7 +27,7 @@ export class CharacterService {
   ) {
     this.characterState = new Character(logService, titleCasePipe);
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.mainLoopService.totalTicks % 3650){
+      if (this.mainLoopService.totalTicks % 3650 == 0){
         this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
       }
       if (!this.characterState.dead){
