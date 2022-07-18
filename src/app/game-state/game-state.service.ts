@@ -126,6 +126,7 @@ export class GameStateService {
 
   hardReset(): void {
     window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY);
+    // eslint-disable-next-line no-self-assign
     window.location.href = window.location.href;
   }
 
