@@ -8,7 +8,6 @@ import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
-import { EquipmentPosition } from './character';
 
 export interface Follower {
   name: string;
