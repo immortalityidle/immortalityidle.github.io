@@ -30,7 +30,33 @@
       <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
     </span>
   </div>
-
+  <div *ngIf="autoBuyerService.autoBuyerSettingsUnlocked" class="optionField">
+    <span>
+      Auto-Buyer Options:
+      <table class="priorityTable">
+        <tr>
+          <th colspan="3">Priority Order</th>
+          <th>Enabled</th>
+          <th>Wait For Finish</th>
+        </tr>
+        <tr *ngFor="let setting of autoBuyerService.autoBuyerSettings; let index = index; let first = first; let last = last;">
+          <td>
+            <button [disabled]="first" class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, true)">&#9650;</button>
+          </td>
+          <td>
+            <button [disabled]="last"  class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, false)">&#9660;</button>
+          </td>
+          <td class="priorityTableNameColumn">{{setting.label}}</td>
+          <td class="priorityTableCheckboxColumn">
+            <input type="checkbox" (change)="autoBuySettingsEnabledChange($event, setting)" [checked]="setting.enabled"/>
+          </td>
+          <td class="priorityTableCheckboxColumn">
+            <input type="checkbox" (change)="autoBuySettingsWaitForFinishChange($event, setting)" [checked]="setting.waitForFinish"/>
+          </td>
+        </tr>
+      </table>
+    </span>
+  </div>
   <div *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon"  class="optionField">
     <span>
       <input type="checkbox" (change)="autoequipEnableChange($event)"
