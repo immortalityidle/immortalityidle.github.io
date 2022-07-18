@@ -1129,7 +1129,7 @@ export class InventoryService {
       if (sourceItem == null){
         return;
       }
-      if (slot == 'rightHand' || slot == 'leftHand' && this.autoequipBestWeapon) {
+      if ((slot == 'rightHand' || slot == 'leftHand') && this.autoequipBestWeapon) {
         destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
       } else if (this.autoequipBestArmor) {
         destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot);
