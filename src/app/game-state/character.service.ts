@@ -147,20 +147,7 @@ export class CharacterService {
     }
   }
 
-
-  condenseSoulCore(){
-    if (this.characterState.aptitudeGainDivider <= 10){
-      // double check we're not going over the max rank
-      return;
-    }
-    this.logService.addLogMessage(
-      "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
-      'STANDARD', 'STORY');
-    this.logService.addLogMessage(
-      "You now gain additional aptitude each time you reincarnate.",
-      'STANDARD', 'STORY');
-    this.characterState.condenseSoulCoreCost *= 10;
-    this.characterState.aptitudeGainDivider -= 10;
+  ascend(){
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
@@ -179,6 +166,22 @@ export class CharacterService {
     this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
     this.forceRebirth = true;
     this.mainLoopService.tick();
+  }
+
+  condenseSoulCore(){
+    if (this.characterState.aptitudeGainDivider <= 10){
+      // double check we're not going over the max rank
+      return;
+    }
+    this.logService.addLogMessage(
+      "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
+      'STANDARD', 'STORY');
+    this.logService.addLogMessage(
+      "You now gain additional aptitude each time you reincarnate.",
+      'STANDARD', 'STORY');
+    this.characterState.condenseSoulCoreCost *= 10;
+    this.characterState.aptitudeGainDivider -= 10;
+    this.ascend();
   }
 
   soulCoreRank(): number {
@@ -205,24 +208,7 @@ export class CharacterService {
 
     this.characterState.reinforceMeridiansCost *= 10;
     this.characterState.attributeScalingLimit *= 2;
-    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
-    for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
-      attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
-      if (parseInt(key) < 5){
-        attribute.value = 1;
-      } else {
-        attribute.value = 0;
-      }
-    }
-    if (!this.activityService){
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
-    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
-    this.forceRebirth = true;
-    this.mainLoopService.tick();
+    this.ascend();
   }
 
   meridianRank(): number {
@@ -248,19 +234,7 @@ export class CharacterService {
       'STANDARD', 'STORY');
     this.characterState.bloodlineCost *= 1000;
     this.characterState.bloodlineRank++;
-    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
-    for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
-      attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
-      if (parseInt(key) < 5){
-        attribute.value = 1;
-      } else {
-        attribute.value = 0;
-      }
-    }
-    this.forceRebirth = true;
-    this.mainLoopService.tick();
+    this.ascend();
   }
 
 }
