@@ -90,11 +90,20 @@ export class MainLoopService {
           repeatTimes += 10 / this.tickDivider;
           this.bankedTicks -= 10 / this.tickDivider;
         }
-        if (this.characterService && this.characterService.characterState.lifespan > 36500){
-          repeatTimes++;
-        }
-        if (this.characterService && this.characterService.characterState.lifespan > 365000){
-          repeatTimes++;
+        if (this.characterService) {
+          // should never be null but this keeps the compiler happy
+          if (this.characterService.characterState.lifespan > 36500){
+            // add one extra tick at 100 years old
+            repeatTimes++;
+          }
+          if (this.characterService.characterState.lifespan > 365000){
+            // and an extra tick at 1000 years old
+            repeatTimes++;
+          }
+          for (let i = 0; i < Math.floor(this.characterService.characterState.lifespan / 1825000); i++){
+            // and one extra for every 5000 years old
+            repeatTimes++;
+          }
         }
         for (let i = 0; i < repeatTimes; i++){
           this.tickCount++;
