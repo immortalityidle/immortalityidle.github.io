@@ -187,7 +187,7 @@ export class InventoryService {
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
         return;
-      }
+      }//TODO: check if it'll be getting merged to short circuit
       if (this.autoequipBestWeapon){
         this.autoequipWeapons();
       }
@@ -1129,10 +1129,10 @@ export class InventoryService {
         return;
       }
       if (this.autoequipBestWeapon && (slot == 'rightHand' || slot == 'leftHand')){
-        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
+          destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
       } if (this.autoequipBestArmor && (slot != 'rightHand' || slot != 'leftHand')) {
         destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot);
-      }
+      }//TODO might want to add a check for if autoequipBest is enabled
       this.characterService.characterState.equipment[slot] = destinationItem;
       this.itemStacks[lastdestinationIndex] = null;
     }
