@@ -28,6 +28,7 @@
         "eqeqeq": "error",
         "@typescript-eslint/no-empty-function": "warn",
         "@typescript-eslint/ban-ts-comment": "warn",
+        "@angular-eslint/no-empty-lifecycle-method": "warn",
         "@angular-eslint/directive-selector": [
           "error",
           {
