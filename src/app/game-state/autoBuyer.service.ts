@@ -24,26 +24,7 @@ type AutoBuyersMap = {[key in AutoBuyerType]: AutoBuyer}
 export class AutoBuyerService {
   autoBuyerSettingsUnlocked: boolean = false;
   
-  autoBuyerSettings: AutoBuyerSetting[] = [
-    { 
-      label: 'Home',
-      type: 'home',
-      enabled: true,
-      waitForFinish: true
-    },
-    {
-      label: 'Furniture',
-      type: 'furniture',
-      enabled: true,
-      waitForFinish: true
-    },
-    { 
-      label: 'Land/Field',
-      type: 'land',
-      enabled: true,
-      waitForFinish: true
-    }
-  ];
+  autoBuyerSettings: AutoBuyerSetting[] = this.getDefaultSettings();
 
   autobuyers: AutoBuyersMap = {
     'home': new HomeAutoBuyer(this, this.homeService, this.characterService),
@@ -72,8 +53,34 @@ export class AutoBuyerService {
   }
 
   setProperties(properties: AutoBuyerProperties) {
-    this.autoBuyerSettingsUnlocked = properties.autoBuyerSettingsUnlocked || false;
-    this.autoBuyerSettings = properties.autoBuyerSettings;
+    if (properties) {
+      this.autoBuyerSettingsUnlocked = properties.autoBuyerSettingsUnlocked || false;
+      this.autoBuyerSettings = properties.autoBuyerSettings || this.getDefaultSettings();
+    } else {
+      this.autoBuyerSettingsUnlocked = false;
+      this.autoBuyerSettings = this.getDefaultSettings();
+    }
+  }
+
+  getDefaultSettings(): AutoBuyerSetting[] {
+    return [{ 
+      label: 'Home',
+      type: 'home',
+      enabled: true,
+      waitForFinish: true
+    },
+    {
+      label: 'Furniture',
+      type: 'furniture',
+      enabled: true,
+      waitForFinish: true
+    },
+    { 
+      label: 'Land/Field',
+      type: 'land',
+      enabled: true,
+      waitForFinish: true
+    }];
   }
 
   tick() {
