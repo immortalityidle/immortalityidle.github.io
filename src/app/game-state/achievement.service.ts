@@ -278,7 +278,7 @@ export class AchievementService {
     {
       name: "Industrial Revolution",
       description: "You've found all the basic autobuyers and unlocked the " + this.itemRepoService.items['autoBuyerSettingsManual'].name,
-      hint: "Immortals have discerning taste in furnishings.",
+      hint: "Become really, really lazy",
       check: () => {
         return this.homeService.autoBuyHomeUnlocked &&
           this.homeService.autoBuyLandUnlocked &&
