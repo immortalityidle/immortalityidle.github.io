@@ -181,7 +181,7 @@ export class CharacterService {
       'STANDARD', 'STORY');
     this.characterState.condenseSoulCoreCost *= 10;
     this.characterState.aptitudeGainDivider -= 10;
-    this.ascend();
+    this.resetAptitudes();
   }
 
   soulCoreRank(): number {
@@ -208,7 +208,7 @@ export class CharacterService {
 
     this.characterState.reinforceMeridiansCost *= 10;
     this.characterState.attributeScalingLimit *= 2;
-    this.ascend();
+    this.resetAptitudes();
   }
 
   meridianRank(): number {
@@ -234,7 +234,7 @@ export class CharacterService {
       'STANDARD', 'STORY');
     this.characterState.bloodlineCost *= 1000;
     this.characterState.bloodlineRank++;
-    this.ascend();
+    this.resetAptitudes();
   }
 
 }
