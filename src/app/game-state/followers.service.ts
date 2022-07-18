@@ -38,10 +38,10 @@ type jobsType = {
 })
 export class FollowersService {
 
-  followersUnlocked: boolean = false;
+  followersUnlocked = false;
   followers: Follower[] = [];
-  followersRecruited: number = 0;
-  autoDismissUnlocked: boolean = false;
+  followersRecruited = 0;
+  autoDismissUnlocked = false;
   autoDismissJobs: string[] = [];
 
   jobs: jobsType = {
@@ -237,13 +237,13 @@ export class FollowersService {
 
   generateFollower(){
     this.followersRecruited++;
-    let maxFollowers = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+    const maxFollowers = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
     if (this.followers.length >= maxFollowers){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");
       return;
     }
 
-    let job = this.generateFollowerJob();
+    const job = this.generateFollowerJob();
     if (this.autoDismissJobs.includes(job)){
       this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any of those.","STANDARD","EVENT");
       return;
@@ -270,7 +270,7 @@ export class FollowersService {
   }
 
   dismissFollower(follower: Follower){
-    let index = this.followers.indexOf(follower);
+    const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
   }
 

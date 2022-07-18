@@ -12,9 +12,9 @@ import { ActivityService } from './activity.service';
 export class CharacterService {
   activityService?: ActivityService;
   characterState: Character;
-  forceRebirth: boolean = false;
-  fatherGift: boolean = false;
-  lifespanTooltip: string = "";
+  forceRebirth = false;
+  fatherGift = false;
+  lifespanTooltip = "";
 
   constructor(
     private injector: Injector,
@@ -95,8 +95,8 @@ export class CharacterService {
   }
 
   formatAge(): string{
-    let years = Math.floor(this.characterState.age / 365);
-    let days = this.characterState.age % 365;
+    const years = Math.floor(this.characterState.age / 365);
+    const days = this.characterState.age % 365;
     return years + " years, " + days + " days"
   }
 
@@ -154,7 +154,7 @@ export class CharacterService {
     this.characterState.aptitudeGainDivider -= 10;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
+      const attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
       attribute.aptitude = 1;
       if (parseInt(key) < 5){
@@ -198,7 +198,7 @@ export class CharacterService {
     this.characterState.attributeScalingLimit *= 2;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
+      const attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
       attribute.aptitude = 1;
       if (parseInt(key) < 5){
@@ -241,7 +241,7 @@ export class CharacterService {
     this.characterState.bloodlineRank++;
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
+      const attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
       attribute.aptitude = 1;
       if (parseInt(key) < 5){

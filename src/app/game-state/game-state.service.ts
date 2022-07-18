@@ -34,8 +34,8 @@ interface GameState {
 })
 export class GameStateService {
 
-  lastSaved: number = 0;
-  isDarkMode: boolean = true;
+  lastSaved = 0;
+  isDarkMode = true;
 
   constructor(
     private characterService: CharacterService,
@@ -137,15 +137,15 @@ export class GameStateService {
   cheat(): void {
     this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","EVENT");
     this.characterService.characterState.money += 10000000000;
-    for (let key in this.itemRepoService.items){
-      let item = this.itemRepoService.items[key];
+    for (const key in this.itemRepoService.items){
+      const item = this.itemRepoService.items[key];
       if (item.type == 'manual' && item.use) {
         item.use();
       }
     }
     const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
     for (const key in keys){
-      let attribute = this.characterService.characterState.attributes[keys[key]];
+      const attribute = this.characterService.characterState.attributes[keys[key]];
       attribute.aptitude += 10000000;
       attribute.value += 10000000;
     }

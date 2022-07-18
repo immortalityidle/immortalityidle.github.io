@@ -42,9 +42,9 @@ export interface ImpossibleTaskProperties {
 export class ImpossibleTaskService {
 
   activityService?: ActivityService;
-  impossibleTasksUnlocked: boolean = false;
-  activeTaskIndex: number = -1;
-  nextTask: number = 0;
+  impossibleTasksUnlocked = false;
+  activeTaskIndex = -1;
+  nextTask = 0;
 
   tasks: ImpossibleTask[] = [
     {

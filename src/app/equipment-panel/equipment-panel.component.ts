@@ -19,7 +19,7 @@ export class EquipmentPanelComponent {
   slotDoubleClicked(slot: EquipmentPosition, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    let item = this.characterService.characterState.equipment[slot];
+    const item = this.characterService.characterState.equipment[slot];
     // check for existence and make sure there's an empty slot for it
     if (item && this.inventoryService.openInventorySlots() > 0){
       this.inventoryService.addItem(item as Item);
@@ -49,10 +49,10 @@ export class EquipmentPanelComponent {
 
   drop(slot: string, event: DragEvent){
     event.preventDefault();
-    let sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
-    let sourceIndex = parseInt(sourceIndexString);
+    const sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
+    const sourceIndex = parseInt(sourceIndexString);
     if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
-      let itemToEquip = this.inventoryService.itemStacks[sourceIndex];
+      const itemToEquip = this.inventoryService.itemStacks[sourceIndex];
       if (itemToEquip){
         this.inventoryService.equip(itemToEquip);
         this.inventoryService.selectedItem = null;

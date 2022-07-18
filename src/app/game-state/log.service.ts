@@ -22,10 +22,10 @@ export interface LogProperties {
 export class LogService {
 
   logTopics: LogTopic[] = ['STORY','EVENT'];
-  newStory: string = "";
-  newEvents: string = "";
-  newCombat: string = "";
-  newCrafting: string = "";
+  newStory = "";
+  newEvents = "";
+  newCombat = "";
+  newCrafting = "";
   storyLog: Log[] = [];
   eventLog: Log[] = [];
   combatLog: Log[] = [];
@@ -49,7 +49,7 @@ export class LogService {
       log = this.craftingLog;
     }
 
-    let newMessage = {
+    const newMessage = {
       message: message,
       type: type,
       topic: topic,
@@ -78,8 +78,8 @@ export class LogService {
   addToCurrentLog(newMessage: Log){
     if (this.currentLog.length != 0 && this.currentLog[0].message.includes(newMessage.message)){
       // the line is a repeat, increment the repeat count at the end of the line instead of adding a new line
-      let repeatCountString = this.currentLog[0].message.split(" ").pop()?.replace("(", "")?.replace(")", "");
-      let repeatCount: number = 0;
+      const repeatCountString = this.currentLog[0].message.split(" ").pop()?.replace("(", "")?.replace(")", "");
+      let repeatCount = 0;
       if (repeatCountString){
         repeatCount = parseInt(repeatCountString);
       }
@@ -128,7 +128,7 @@ export class LogService {
   }
 
   updateLogTopics(){
-    let logs: Log[][] = [];
+    const logs: Log[][] = [];
 
     if (this.logTopics.includes('COMBAT')){
       this.newCombat = "";
@@ -152,17 +152,17 @@ export class LogService {
       return;
     }
     //@ts-ignore
-    let isEmpty = a => Array.isArray(a) && a.every(isEmpty);
+    const isEmpty = a => Array.isArray(a) && a.every(isEmpty);
     while(!isEmpty(logs)){
       // figure out the oldest log entry and add it to the currentLog until everything is added
       let latestTimestamp = Number.MAX_VALUE;
       let latestLog: Log[] = logs[0];
       for (let index = 0; index < logs.length; index++){
-        let loopLog = logs[index];
+        const loopLog = logs[index];
         if (loopLog.length == 0){
           continue;
         }
-        let timestamp = loopLog[loopLog.length - 1].timestamp || 0;
+        const timestamp = loopLog[loopLog.length - 1].timestamp || 0;
         if (timestamp < latestTimestamp){
           latestTimestamp = timestamp;
           latestLog = loopLog;

@@ -14,7 +14,7 @@ import { GameStateService } from '../game-state/game-state.service';
 })
 export class FurnitureStoreModalComponent {
 
-  buyDisabled: boolean = true;
+  buyDisabled = true;
 
   constructor(
     public storeService: StoreService,

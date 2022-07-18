@@ -15,7 +15,7 @@ export interface Enemy {
   attack: number,
   defense: number,
   loot: Item[]
-};
+}
 
 export interface EnemyStack {
   enemy: Enemy,
@@ -46,16 +46,16 @@ export class BattleService {
   currentEnemy: EnemyStack | null;
   kills: number;
   troubleKills: number;
-  autoTroubleUnlocked: boolean = false;
-  autoTroubleEnabled: boolean = false;
+  autoTroubleUnlocked = false;
+  autoTroubleEnabled = false;
   yearlyMonsterDay: number;
-  enableManaShield: boolean = false;
-  enableManaAttack: boolean = false;
-  manaShieldUnlocked: boolean = false;
-  manaAttackUnlocked: boolean = false;
+  enableManaShield = false;
+  enableManaAttack = false;
+  manaShieldUnlocked = false;
+  manaAttackUnlocked = false;
   tickCounter: number;
-  ticksPerFight: number = 10;
-  highestGem: number = 0;
+  ticksPerFight = 10;
+  highestGem = 0;
 
   constructor(
     private logService: LogService,
@@ -143,7 +143,7 @@ export class BattleService {
       for (let i = 0; i < enemyStack.quantity; i++){
         if (Math.random() < enemyStack.enemy.accuracy){
           let damage = enemyStack.enemy.attack;
-          let defense = this.characterService.characterState.defense;
+          const defense = this.characterService.characterState.defense;
           // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
           if (defense >= 1) {
             damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
@@ -161,7 +161,7 @@ export class BattleService {
           this.characterService.characterState.increaseAttribute('toughness', 0.01);
 
           // degrade armor
-          let degradables = [];
+          const degradables = [];
           if (this.characterService.characterState.equipment.head){
             degradables.push(this.characterService.characterState.equipment.head);
           }
@@ -201,7 +201,7 @@ export class BattleService {
       }
 
       let damage = this.characterService.characterState.attackPower;
-      let defense = this.currentEnemy.enemy.defense;
+      const defense = this.currentEnemy.enemy.defense;
       if (defense >= 1) {
         damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
       }
@@ -235,8 +235,8 @@ export class BattleService {
       if (this.currentEnemy.enemy.health <= 0){
         this.kills++;
         this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
-        for (let item of this.currentEnemy.enemy.loot){
-          let lootItem = this.itemRepoService.getItemById(item.id);
+        for (const item of this.currentEnemy.enemy.loot){
+          const lootItem = this.itemRepoService.getItemById(item.id);
           if (lootItem){
             this.inventoryService.addItem(lootItem);
           } else {
@@ -246,7 +246,7 @@ export class BattleService {
         }
         this.currentEnemy.quantity--;
         if (this.currentEnemy.quantity <= 0){
-          let index = this.enemies.indexOf(this.currentEnemy);
+          const index = this.enemies.indexOf(this.currentEnemy);
           this.enemies.splice(index, 1);
           this.currentEnemy = null;
         } else {
@@ -284,17 +284,17 @@ export class BattleService {
     if (this.enemies.length != 0){
       return;
     }
-    let rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
-    let index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
-    let nameIndex = Math.floor(index / this.monsterQualities.length);
-    let qualityIndex = index % this.monsterQualities.length;
+    const rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
+    const index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
+    const nameIndex = Math.floor(index / this.monsterQualities.length);
+    const qualityIndex = index % this.monsterQualities.length;
 
     let monsterName = this.monsterQualities[qualityIndex] + " " + this.monsterNames[nameIndex];
     if (rank > 0){
       monsterName += " " + (rank + 1);
     }
 
-    let gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
+    const gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
     this.addEnemy({
       name: monsterName,
       health: this.troubleKills * 10,

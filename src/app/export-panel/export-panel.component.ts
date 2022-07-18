@@ -17,7 +17,7 @@ export class ExportPanelComponent {
   }
 
   exportClick(){
-    let textArea = <HTMLTextAreaElement>document.getElementById('saveFileTextArea');
+    const textArea = <HTMLTextAreaElement>document.getElementById('saveFileTextArea');
     textArea.value = this.gameStateService.getGameExport();
   }
 }

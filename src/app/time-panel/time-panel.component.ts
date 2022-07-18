@@ -15,9 +15,9 @@ import { MainLoopService } from '../game-state/main-loop.service';
 })
 export class TimePanelComponent implements OnInit {
 
-  unlockFastSpeed: boolean = false;
-  unlockFasterSpeed: boolean = false;
-  unlockFastestSpeed: boolean = false;
+  unlockFastSpeed = false;
+  unlockFasterSpeed = false;
+  unlockFastestSpeed = false;
 
   constructor(
     public mainLoopService: MainLoopService,
@@ -82,7 +82,7 @@ export class TimePanelComponent implements OnInit {
   }
 
   onRemoveClick(entry: ActivityLoopEntry): void{
-    let index = this.activityService.activityLoop.indexOf(entry);
+    const index = this.activityService.activityLoop.indexOf(entry);
     // make sure we're not running past the end of the entries array
     if (this.activityService.currentIndex >= this.activityService.activityLoop.length - 1){
       this.activityService.currentIndex = 0;
@@ -124,8 +124,8 @@ export class TimePanelComponent implements OnInit {
         // could find a source from either of the acceptable locations
         return;
       }
-      let sourceType = parseInt(sourceIndexString);
-      let newEntry = {
+      const sourceType = parseInt(sourceIndexString);
+      const newEntry = {
         activity: sourceType,
         repeatTimes: 1
       };
@@ -135,9 +135,9 @@ export class TimePanelComponent implements OnInit {
         this.activityService.activityLoop.splice(destIndex, 0, newEntry);
       }
     } else {
-      let sourceIndex = parseInt(sourceIndexString);
+      const sourceIndex = parseInt(sourceIndexString);
       if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length){
-        let activity = this.activityService.activityLoop.splice(sourceIndex, 1);
+        const activity = this.activityService.activityLoop.splice(sourceIndex, 1);
         if (destIndex >= this.activityService.activityLoop.length){
           this.activityService.activityLoop.push(activity[0]);
         } else {
@@ -157,12 +157,12 @@ export class TimePanelComponent implements OnInit {
         // could find a source from either of the acceptable locations
         return;
       }
-      let sourceType = parseInt(sourceIndexString);
+      const sourceType = parseInt(sourceIndexString);
       this.activityService.spiritActivity = sourceType;
     } else {
-      let sourceIndex = parseInt(sourceIndexString);
+      const sourceIndex = parseInt(sourceIndexString);
       if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length){
-        let activity = this.activityService.activityLoop[sourceIndex].activity;
+        const activity = this.activityService.activityLoop[sourceIndex].activity;
         this.activityService.spiritActivity = activity;
       }
     }

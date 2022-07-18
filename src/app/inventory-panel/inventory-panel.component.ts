@@ -135,16 +135,16 @@ export class InventoryPanelComponent {
   drop(destIndex: number, event: DragEvent){
     event.preventDefault();
     if (event.dataTransfer?.types[0] == "inventory"){
-      let sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
-      let sourceIndex = parseInt(sourceIndexString);
+      const sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
+      const sourceIndex = parseInt(sourceIndexString);
       if (sourceIndex == destIndex){
         return;
       }
       if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
-        let sourceItemStack = this.inventoryService.itemStacks[sourceIndex];
-        let destItemStack = this.inventoryService.itemStacks[destIndex];
-        let sourceItem = sourceItemStack?.item;
-        let destItem = destItemStack?.item;
+        const sourceItemStack = this.inventoryService.itemStacks[sourceIndex];
+        const destItemStack = this.inventoryService.itemStacks[destIndex];
+        const sourceItem = sourceItemStack?.item;
+        const destItem = destItemStack?.item;
         if (sourceItem && destItem){
           if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)){
             if (sourceItem.slot == destItem.slot){
@@ -162,8 +162,8 @@ export class InventoryPanelComponent {
       }
     } else if (event.dataTransfer?.types[0] == "equipment"){
       //unequiping something
-      let slot: EquipmentPosition = (event.dataTransfer?.getData("equipment") + "") as EquipmentPosition;
-      let item = this.characterService.characterState.equipment[slot];
+      const slot: EquipmentPosition = (event.dataTransfer?.getData("equipment") + "") as EquipmentPosition;
+      const item = this.characterService.characterState.equipment[slot];
       // check for existence and make sure there's an empty slot for it
       if (item && this.inventoryService.openInventorySlots() > 0){
         this.inventoryService.addItem(item as Item);

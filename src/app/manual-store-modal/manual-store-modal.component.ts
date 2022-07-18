@@ -15,7 +15,7 @@ import { GameStateService } from '../game-state/game-state.service';
 })
 export class ManualStoreModalComponent {
   character: Character;
-  buyDisabled: boolean = true;
+  buyDisabled = true;
 
   constructor(
     public storeService: StoreService,
