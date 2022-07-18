@@ -185,13 +185,13 @@ export class InventoryService {
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead){
+      if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
         return;
       }
-      if (this.autoequipBestWeapon && this.autoequipBestEnabled){
+      if (this.autoequipBestWeapon){
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor && this.autoequipBestEnabled){
+      if (this.autoequipBestArmor){
         this.autoequipArmor();
       }
     });
