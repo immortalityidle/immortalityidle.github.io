@@ -374,7 +374,7 @@ export class Character {
       let pow = 0.5; // Power can be balanced as needed, currently square root (0.5). Higher power reduces returns.
       return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        ((this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100) +
+        (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
         (aptitude - this.attributeSoftCap + 1) / (1 + Math.pow (aptitude - this.attributeSoftCap + 1, pow));
     }
   }
