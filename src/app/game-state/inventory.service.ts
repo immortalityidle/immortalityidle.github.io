@@ -1122,17 +1122,19 @@ export class InventoryService {
         }
       }
     }
-    // finally, merge the last item with that slot into the equipped item (if present and weapon or armor autoequips are unlocked)
+    // finally, merge the last item with that slot into the equipped item (if present and corresponding autoequip is unlocked)
     if (destinationItem != null && (this.autoequipBestWeapon || this.autoequipBestArmor)){
       sourceItem = this.characterService.characterState.equipment[slot];
       if (sourceItem == null){
         return;
       }
-      if (this.autoequipBestWeapon && (slot == 'rightHand' || slot == 'leftHand')){
+      if (slot == 'rightHand' || slot == 'leftHand' && this.autoequipBestWeapon) {
           destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
-      } if (this.autoequipBestArmor && (slot != 'rightHand' || slot != 'leftHand')) {
+      } else if (this.autoequipBestArmor) {
         destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot);
-      }//TODO might want to add a check for if autoequipBest is enabled
+      } else {//slot doesn't match the auto-equip owned.
+        return;
+      }//TODO: We might want to check if auto-equip-best is enabled at this point.
       this.characterService.characterState.equipment[slot] = destinationItem;
       this.itemStacks[lastdestinationIndex] = null;
     }
