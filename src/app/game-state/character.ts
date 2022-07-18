@@ -232,8 +232,13 @@ export class Character {
     this.status.stamina.max = 100;
     this.status.nourishment.value = 7;
     this.status.nourishment.max = 14;
-    this.status.mana.max = 0;
-    this.status.mana.value = 0;
+    if (this.manaUnlocked){
+      this.status.mana.max = 1;
+      this.status.mana.value = 1;
+    } else {
+      this.status.mana.max = 0;
+      this.status.mana.value = 0;
+    }
 
     this.healthBonusFood = 0;
     this.healthBonusBath = 0;
@@ -250,7 +255,7 @@ export class Character {
     totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
       this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
-    if (this.bloodlineRank < 4){
+    if (this.bloodlineRank < 5){
       this.statLifespan *= 0.1;
     }
 
@@ -269,18 +274,18 @@ export class Character {
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
-    if (this.bloodlineRank < 3){
+    if (this.bloodlineRank < 3) {
       this.money = 0;
-    } else if (this.bloodlineRank < 4){
+    } else if (this.bloodlineRank < 4) {
       this.money = this.money / 8;
     } else {
       this.money = 4 * this.money;
     }
-    if (this.money > this.maxMoney){
+    if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
     this.recalculateDerivedStats();
-    if (this.bloodlineRank == 0){
+    if (this.bloodlineRank == 0) {
       this.equipment = {
         head: null,
         body: null,
@@ -289,7 +294,7 @@ export class Character {
         legs: null,
         feet: null
       }
-    } else if (this.bloodlineRank <= 1){
+    } else if (this.bloodlineRank <= 1) {
       this.equipment.body = null;
       this.equipment.head = null;
       this.equipment.legs = null;
@@ -384,10 +389,10 @@ export class Character {
     return increaseAmount;
   }
 
-  /**increase in days 
-   * 
+  /**increase in days
+   *
    * limit in years
-   * 
+   *
    * returns false if limit is reached.
   */
   increaseBaseLifespan(increase: number, limit: number): boolean {

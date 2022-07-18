@@ -38,17 +38,17 @@
     </tr>
     <tr>
       <td>
-        <button [disabled]="characterService.characterState.bloodlineRank >= 4" (click)="storeService.upgradeBloodline()">{{storeService.bloodlineLabel}}</button>
+        <button [disabled]="characterService.characterState.bloodlineRank >= 5" (click)="storeService.upgradeBloodline()">{{storeService.bloodlineLabel}}</button>
       </td>
       <td>
         {{storeService.bloodlineDescription}}
         <br>
         Current Rank: {{characterService.characterState.bloodlineRank}}
         <br>
-        <span *ngIf="characterService.characterState.bloodlineRank < 4">
+        <span *ngIf="characterService.characterState.bloodlineRank < 5">
           Next rank requires {{characterService.characterState.bloodlineCost | number}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
         </span>
-        <span *ngIf="characterService.characterState.bloodlineRank >= 4">
+        <span *ngIf="characterService.characterState.bloodlineRank >= 5">
           Max Rank
         </span>
       </td>

@@ -533,8 +533,8 @@ export class InventoryService {
       }
     }
     if (this.autoSellOldOre){
-      // sell any wood cheaper than what we just got
-      for (let i = 0; i < this.itemStacks.length; i++){
+      // sell any ore cheaper than what we just got
+      for (let i = 0; i < this.itemStacks.length; i++) {
         let itemStack = this.itemStacks[i];
         if (itemStack && itemStack.item.type == "ore" ){
           if (itemStack.item.value < lastOre.value ){
@@ -549,16 +549,31 @@ export class InventoryService {
   getBar(oreValue: number): Item{
     // metal bars should always be 10x the value of the associated ore
     let barValue = oreValue * 10;
-    for (let key in this.itemRepoService.items){
+    
+    let lastMetal =  this.itemRepoService.items['copperBar'];
+    for (let key in this.itemRepoService.items) {
       let item = this.itemRepoService.items[key];
       if (item.type == 'metal'){
         if (item.value == barValue){
-          return item;
+          lastMetal = item;
+          break;
         }
       }
     }
-    // couldn't figure out the bar, just return copper
-    return this.itemRepoService.items['copperBar'];
+
+    if (this.autoSellOldOre){
+      // sell any metal cheaper than what we just got
+      for (let i = 0; i < this.itemStacks.length; i++) {
+        let itemStack = this.itemStacks[i];
+        if (itemStack){
+          if (itemStack.item.type == 'metal' && itemStack.item.value < lastMetal.value ){
+            this.sell(itemStack, itemStack.quantity);
+          }
+        }
+      }
+    }
+    
+    return lastMetal;
   }
 
   getWood(): Item{

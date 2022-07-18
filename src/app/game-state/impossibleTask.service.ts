@@ -87,7 +87,7 @@ export class ImpossibleTaskService {
       name: "Conquer the world",
       description: "The dragon finally relents and allows you to speak with it. It shows you the fighting and suffering in the mortal realm and says the situation is most displeasing. Before he will help you, he wants you to solve the problem. Guess it's time to conquer the world and set all things right.",
       taskType: ImpossibleTaskType.ConquerTheWorld,
-      progressRequired: 100,
+      progressRequired: 300, //With Bloodline 4 you can buy millions of land. At that point you just wait for 45150 armies as you get peaches.
     },
     {
       name: "Rearrange the stars",
@@ -167,13 +167,16 @@ export class ImpossibleTaskService {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
-
   }
 
   reset(){
     for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
       if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex != ImpossibleTaskType.BuildTower){
-        this.taskProgress[taskIndex].progress = 0;
+        if (this.taskProgress[taskIndex].complete){
+          this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
+        } else {
+          this.taskProgress[taskIndex].progress = 0;
+        }
       }
     }
     this.activeTaskIndex = -1;

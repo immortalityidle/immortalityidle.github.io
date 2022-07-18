@@ -697,7 +697,7 @@ export class HomeService {
   }
 
 /**
- * Set count to -1 for half max 
+ * Set count to -1 for half max
  * @returns count of actual purchase
  */
   buyLand(count: number): number{
@@ -723,7 +723,7 @@ export class HomeService {
   }
 
   /**
-   * 
+   *
    * @param money the money available for use
    * @returns count of affordable land
    */
@@ -731,7 +731,7 @@ export class HomeService {
     let x = money;
     let C = this.landPrice;
     return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)))/10); // I know this looks nuts but I tested it on its own ^_^;;
-    
+
   }
 
   buyFurniture(itemId: string) {
