@@ -344,7 +344,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 10)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 10)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 10;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -367,7 +367,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 15)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 15)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 15;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -390,7 +390,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 20)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 20)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 20;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -413,7 +413,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 25)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 25)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 25;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -436,7 +436,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 30)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 30)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 30;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -459,7 +459,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 35)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 35)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 35;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -482,7 +482,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 40)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 40)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 40;
           }
         }
         this.characterService.characterState.checkOverage();
@@ -505,7 +505,7 @@ export class ItemRepoService {
           if (this.characterService.characterState.foodLifespan + quantity <= (365 * 72)){
             this.characterService.characterState.foodLifespan += quantity;
           } else if (this.characterService.characterState.foodLifespan < (365 * 72)){
-            this.characterService.characterState.foodLifespan = 365 * 5;
+            this.characterService.characterState.foodLifespan = 365 * 72;
           }
         }
         this.characterService.characterState.checkOverage();
