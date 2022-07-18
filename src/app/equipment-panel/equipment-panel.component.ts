@@ -38,7 +38,7 @@ export class EquipmentPanelComponent {
   }
 
   allowDrop(event: DragEvent){
-    if (event.dataTransfer?.types[0] == "inventory"){
+    if (event.dataTransfer?.types[0] === "inventory"){
       event.preventDefault();
     }
   }

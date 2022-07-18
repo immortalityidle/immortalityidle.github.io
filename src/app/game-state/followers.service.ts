@@ -189,7 +189,7 @@ export class FollowersService {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (this.characterService.characterState.age % 18250 == 0){
+      if (this.characterService.characterState.age % 18250 === 0){
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
@@ -279,7 +279,7 @@ export class FollowersService {
       this.autoDismissJobs.push(job);
     }
     for (let index = this.followers.length - 1; index >= 0; index--){
-      if (this.followers[index].job == job){
+      if (this.followers[index].job === job){
         this.followers.splice(index, 1);
       }
     }
@@ -290,7 +290,7 @@ export class FollowersService {
       return;
     }
     for (let index = this.autoDismissJobs.length - 1; index >= 0; index--){
-      if (this.autoDismissJobs[index] == job){
+      if (this.autoDismissJobs[index] === job){
         this.autoDismissJobs.splice(index, 1);
       }
     }

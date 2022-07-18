@@ -820,7 +820,7 @@ export class HomeService {
     if (this.autoBuyFurnitureUnlocked){
       for (const slot of this.furniturePositionsArray){
         // check if we have a previous purchase and the slot is still empty
-        if (this.home.furnitureSlots.includes(slot) && this.furniture[slot] == null){
+        if (this.home.furnitureSlots.includes(slot) && this.furniture[slot] === null){
           const thingToBuy = this.autoBuyFurniture[slot];
           if (thingToBuy && this.furniture[slot]?.id !== thingToBuy.id){
             // check if we have the money for the furniture plus the next couple weeks' rent and food by popular demand.

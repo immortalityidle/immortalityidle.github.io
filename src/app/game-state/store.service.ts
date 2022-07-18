@@ -66,7 +66,7 @@ export class StoreService {
     if (this.selectedItem){
       if (this.selectedItem.value < this.characterService.characterState.money){
         this.characterService.characterState.money -= this.selectedItem.value;
-        if (this.selectedItem.type == 'manual' && this.selectedItem.use){
+        if (this.selectedItem.type === 'manual' && this.selectedItem.use){
           // use manuals immediately
           this.selectedItem.use();
         } else {
@@ -98,24 +98,24 @@ export class StoreService {
   updateAscensions(){
     this.soulCoreRank = this.characterService.soulCoreRank();
     this.meridianRank = this.characterService.meridianRank();
-    if (this.characterService.characterState.bloodlineRank == 0){
+    if (this.characterService.characterState.bloodlineRank === 0){
       this.bloodlineLabel = "Establish Bloodline";
     } else {
       this.bloodlineLabel = "Enhance Bloodline";
     }
-    if (this.characterService.characterState.bloodlineRank == 0){
+    if (this.characterService.characterState.bloodlineRank === 0){
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and establish a bloodline. All of your future reincarnations will be born as your own descendants. Your weapons equipped on death will become family heirlooms and will be inherited by your future self.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mansion];
-    } else if (this.characterService.characterState.bloodlineRank == 1){
+    } else if (this.characterService.characterState.bloodlineRank === 1){
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Palace];
-    } else if (this.characterService.characterState.bloodlineRank == 2){
+    } else if (this.characterService.characterState.bloodlineRank === 2){
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit some of your past self's money.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Castle];
-    } else if (this.characterService.characterState.bloodlineRank == 3){
+    } else if (this.characterService.characterState.bloodlineRank === 3){
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Fortress];
-    } else if (this.characterService.characterState.bloodlineRank == 4){
+    } else if (this.characterService.characterState.bloodlineRank === 4){
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mountain];
     }

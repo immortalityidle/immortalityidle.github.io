@@ -41,11 +41,11 @@ export class LogService {
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
     let log  = this.eventLog;
-    if (topic == 'COMBAT'){
+    if (topic === 'COMBAT'){
       log = this.combatLog;
-    } else if (topic == 'STORY'){
+    } else if (topic === 'STORY'){
       log = this.storyLog;
-    } else if (topic == 'CRAFTING'){
+    } else if (topic === 'CRAFTING'){
       log = this.craftingLog;
     }
 
@@ -63,11 +63,11 @@ export class LogService {
     if (this.logTopics.includes(topic)){
       this.addToCurrentLog(newMessage);
     } else {
-      if (topic == 'STORY'){
+      if (topic === 'STORY'){
         this.newStory = " (new)";
-      } else if (topic == 'EVENT'){
+      } else if (topic === 'EVENT'){
         this.newEvents = " (new)";
-      } else if (topic == 'CRAFTING'){
+      } else if (topic === 'CRAFTING'){
         this.newCrafting = " (new)";
       } else {
         this.newCombat = " (new)";
@@ -116,7 +116,7 @@ export class LogService {
   enableLogTopic(topic: LogTopic, enabled: boolean){
     if (!enabled && this.logTopics.includes(topic)){
       for (let index = 0; index < this.logTopics.length; index++){
-        if (this.logTopics[index] == topic){
+        if (this.logTopics[index] === topic){
           this.logTopics.splice(index, 1);
         }
       }
@@ -148,7 +148,7 @@ export class LogService {
     }
 
     this.currentLog = [];
-    if (logs.length == 0){
+    if (logs.length === 0){
       return;
     }
     //@ts-ignore
@@ -159,7 +159,7 @@ export class LogService {
       let latestLog: Log[] = logs[0];
       for (let index = 0; index < logs.length; index++){
         const loopLog = logs[index];
-        if (loopLog.length == 0){
+        if (loopLog.length === 0){
           continue;
         }
         const timestamp = loopLog[loopLog.length - 1].timestamp || 0;

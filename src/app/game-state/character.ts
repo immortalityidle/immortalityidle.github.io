@@ -285,7 +285,7 @@ export class Character {
       this.money = this.maxMoney;
     }
     this.recalculateDerivedStats();
-    if (this.bloodlineRank == 0){
+    if (this.bloodlineRank === 0){
       this.equipment = {
         head: null,
         body: null,

@@ -30,7 +30,7 @@ export class InventoryPanelComponent {
       this.inventoryService.selectedItem = item;
       this.autoUse();
     } else {
-      if (this.inventoryService.selectedItem == item){
+      if (this.inventoryService.selectedItem === item){
         this.inventoryService.selectedItem = null;
       } else {
         this.inventoryService.selectedItem = item;
@@ -115,14 +115,14 @@ export class InventoryPanelComponent {
       // if I'm manually doing a gem merge, I don't want the rest of the stack to be automatically sold
       this.inventoryService.autoSellOldGemsEnabled = false;
       this.inventoryService.mergeSpiritGem(this.inventoryService.selectedItem);
-      if (this.inventoryService.selectedItem.quantity == 0){
+      if (this.inventoryService.selectedItem.quantity === 0){
         this.inventoryService.selectedItem = null;
       }
     }
   }
 
   allowDrop(event: DragEvent){
-    if (event.dataTransfer?.types[0] == "inventory" || event.dataTransfer?.types[0] == "equipment"){
+    if (event.dataTransfer?.types[0] === "inventory" || event.dataTransfer?.types[0] === "equipment"){
       event.preventDefault();
     }
   }
@@ -134,10 +134,10 @@ export class InventoryPanelComponent {
 
   drop(destIndex: number, event: DragEvent){
     event.preventDefault();
-    if (event.dataTransfer?.types[0] == "inventory"){
+    if (event.dataTransfer?.types[0] === "inventory"){
       const sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
       const sourceIndex = parseInt(sourceIndexString);
-      if (sourceIndex == destIndex){
+      if (sourceIndex === destIndex){
         return;
       }
       if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
@@ -147,7 +147,7 @@ export class InventoryPanelComponent {
         const destItem = destItemStack?.item;
         if (sourceItem && destItem){
           if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)){
-            if (sourceItem.slot == destItem.slot){
+            if (sourceItem.slot === destItem.slot){
               this.inventoryService.itemStacks[destIndex] = null;
               this.inventoryService.itemStacks[sourceIndex] = null
               this.inventoryService.selectedItem = null;
@@ -160,7 +160,7 @@ export class InventoryPanelComponent {
         this.inventoryService.itemStacks[destIndex] = sourceItemStack;
         this.inventoryService.itemStacks[sourceIndex] = destItemStack;
       }
-    } else if (event.dataTransfer?.types[0] == "equipment"){
+    } else if (event.dataTransfer?.types[0] === "equipment"){
       //unequiping something
       const slot: EquipmentPosition = (event.dataTransfer?.getData("equipment") + "") as EquipmentPosition;
       const item = this.characterService.characterState.equipment[slot];

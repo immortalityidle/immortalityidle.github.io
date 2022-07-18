@@ -105,7 +105,7 @@ export class TimePanelComponent implements OnInit {
   }
 
   allowDrop(event: DragEvent){
-    if (event.dataTransfer?.types[0] == "activityloop" || event.dataTransfer?.types[0] == "activity"){
+    if (event.dataTransfer?.types[0] === "activityloop" || event.dataTransfer?.types[0] === "activity"){
       event.preventDefault();
     }
   }
@@ -118,9 +118,9 @@ export class TimePanelComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     let sourceIndexString: string = event.dataTransfer?.getData("activityloop") + "";
-    if (sourceIndexString == ""){
+    if (sourceIndexString === ""){
       sourceIndexString = event.dataTransfer?.getData("activity") + "";
-      if (sourceIndexString == ""){
+      if (sourceIndexString === ""){
         // could find a source from either of the acceptable locations
         return;
       }
@@ -151,9 +151,9 @@ export class TimePanelComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     let sourceIndexString: string = event.dataTransfer?.getData("activityloop") + "";
-    if (sourceIndexString == ""){
+    if (sourceIndexString === ""){
       sourceIndexString = event.dataTransfer?.getData("activity") + "";
-      if (sourceIndexString == ""){
+      if (sourceIndexString === ""){
         // could find a source from either of the acceptable locations
         return;
       }

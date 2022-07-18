@@ -81,7 +81,7 @@ export class BattleService {
         return;
       }
       this.tickCounter = 0;
-      if (this.currentEnemy == null && this.enemies.length > 0){
+      if (this.currentEnemy === null && this.enemies.length > 0){
         this.currentEnemy = this.enemies[0];
       }
       this.enemiesAttack();
@@ -265,7 +265,7 @@ export class BattleService {
   addEnemy(enemy: Enemy){
     this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
     for (const enemyIterator of this.enemies) {
-      if (enemyIterator.enemy.name == enemy.name) {
+      if (enemyIterator.enemy.name === enemy.name) {
         // it matches an existing enemy, add it to the stack and bail out
         enemyIterator.quantity++;
         return;
@@ -273,7 +273,7 @@ export class BattleService {
     }
     // it didn't match any, create a new enemyStack
     this.enemies.push({enemy: JSON.parse(JSON.stringify(enemy)), quantity: 1});
-    if (this.currentEnemy == null){
+    if (this.currentEnemy === null){
       this.currentEnemy = this.enemies[0];
     }
 

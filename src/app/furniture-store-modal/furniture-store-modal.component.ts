@@ -26,7 +26,7 @@ export class FurnitureStoreModalComponent {
   ) { }
 
   slotClicked(item: Item){
-    if (this.storeService.selectedItem == item){
+    if (this.storeService.selectedItem === item){
       this.storeService.selectedItem = null;
       this.buyDisabled = true;
     } else {

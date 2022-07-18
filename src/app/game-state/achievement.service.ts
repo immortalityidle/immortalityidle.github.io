@@ -169,7 +169,7 @@ export class AchievementService {
       description: "You filled your entire inventory and unlocked the " + this.itemRepoService.items['autoSellManual'].name,
       hint: "So much stuff.",
       check: () => {
-        return this.inventoryService.openInventorySlots() == 0;
+        return this.inventoryService.openInventorySlots() === 0;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoSellManual']);
@@ -521,7 +521,7 @@ export class AchievementService {
       },
       effect: () => {
         this.characterService.characterState.manaUnlocked = true;
-        if (this.characterService.characterState.status.mana.max == 0){
+        if (this.characterService.characterState.status.mana.max === 0){
           this.characterService.characterState.status.mana.max = 1;
           this.characterService.characterState.status.mana.value = 1;
         }

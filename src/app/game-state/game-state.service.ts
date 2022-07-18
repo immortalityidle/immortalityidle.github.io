@@ -72,7 +72,7 @@ export class GameStateService {
 
   importGame(value: string){
     let gameStateSerialized: string;
-    if (value.substring(0, 3) == "iig"){
+    if (value.substring(0, 3) === "iig"){
       // it's a new save file
       gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
@@ -87,7 +87,7 @@ export class GameStateService {
     this.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks){
-      if (itemStack == null){
+      if (itemStack === null){
         continue;
       }
       const item = this.itemRepoService.getItemById(itemStack.item.id);
@@ -139,7 +139,7 @@ export class GameStateService {
     this.characterService.characterState.money += 10000000000;
     for (const key in this.itemRepoService.items){
       const item = this.itemRepoService.items[key];
-      if (item.type == 'manual' && item.use) {
+      if (item.type === 'manual' && item.use) {
         item.use();
       }
     }

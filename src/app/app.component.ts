@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.code == 'Space'){
+    if (event.code === 'Space'){
       this.mainLoopService.pause = !this.mainLoopService.pause;
       event.preventDefault();
     }
