@@ -162,7 +162,7 @@ export class CharacterService {
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
+      attribute.aptitude = 1 + attribute.aptitude * (1 - this.characterState.aptitudeGainDivider / 100) / 10; // keep up to 9% of aptitudes after Ascension
       if (parseInt(key) < 5){
         attribute.value = 1;
       } else {
@@ -206,7 +206,7 @@ export class CharacterService {
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
+      attribute.aptitude = 1 + attribute.aptitude * (1 - this.characterState.aptitudeGainDivider / 100) / 10; // keep up to 9% of aptitudes after Ascension
       if (parseInt(key) < 5){
         attribute.value = 1;
       } else {
@@ -249,7 +249,7 @@ export class CharacterService {
     for (const key in keys){
       let attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
+      attribute.aptitude = 1 + attribute.aptitude * (1 - this.characterState.aptitudeGainDivider / 100) / 10; // keep up to 9% of aptitudes after Ascension
       if (parseInt(key) < 5){
         attribute.value = 1;
       } else {
