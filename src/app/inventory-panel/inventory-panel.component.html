@@ -14,7 +14,8 @@
       <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
         <table class="itemSlot" (click)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
           draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
-          [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem)}"
+          [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem),
+          'brokenItem': (itemStack !== null && !inventoryService.hasDurability(itemStack) )}"
           tooltip="{{itemStack?.item?.description}}" placement="bottom">
           <tr>{{itemStack?.item?.name | titlecase}}</tr>
           <tr *ngIf="(itemStack?.quantity || 0) > 1">{{itemStack?.quantity}}</tr>

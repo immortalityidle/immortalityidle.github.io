@@ -1012,6 +1012,15 @@ export class InventoryService {
     return itemValue;
   }
 
+  // returns false only for equipment with 0 durability
+  hasDurability(itemStack: ItemStack): boolean {
+    const item = itemStack.item;
+
+    if (!instanceOfEquipment(item)) return true;
+
+    return (item.armorStats?.durability !== 0 && item.weaponStats?.durability !== 0);
+  }
+
   // a special use function for generated potions
   usePotion(potion: Potion){
     this.lifetimePotionsUsed++;
