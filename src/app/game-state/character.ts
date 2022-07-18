@@ -323,7 +323,7 @@ export class Character {
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
-    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.aptitude) * 5;
+    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
     this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
@@ -370,12 +370,11 @@ export class Character {
         (this.attributeScalingLimit * 90 / 20) +
         ((aptitude - (this.attributeScalingLimit * 100)) / 100);
     } else {
-     // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
-     let pow = 0.5; // Power can be balanced as needed, currently square root (0.5). Higher power reduces returns.
-     return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+       // increase by log2 of whatever is over the softcap
+      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        ((this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100) +
-        (aptitude - this.attributeSoftCap + 1) / (1 + Math.pow (aptitude - this.attributeSoftCap + 1, pow));
+        (this.attributeScalingLimit * (this.attributeSoftCap - 100) / 100) +
+        Math.log2(aptitude - this.attributeSoftCap + 1);
     }
   }
 
