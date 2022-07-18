@@ -1242,6 +1242,9 @@ export class ActivityService {
               }
             }
           }
+          if (Math.random() < 0.001){
+            this.inventoryService.addItem(this.itemRepoService.items['pillMold']);
+          }
         }
       ],
       requirements: [
@@ -1528,6 +1531,9 @@ export class ActivityService {
               }
             }
           }
+          if (Math.random() < 0.001){
+            this.inventoryService.addItem(this.itemRepoService.items['pillBox']);
+          }
         }
       ],
       requirements: [
@@ -1648,6 +1654,9 @@ export class ActivityService {
                   this.inventoryService.randomArmorSlot()));
               }
             }
+          }
+          if (Math.random() < 0.001){
+            this.inventoryService.addItem(this.itemRepoService.items['pillPouch']);
           }
         }
       ],
