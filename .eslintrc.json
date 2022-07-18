@@ -14,6 +14,10 @@
         ],
         "createDefaultProgram": true
       },
+      "parser": "@typescript-eslint/parser",
+      "plugins": [
+        "@typescript-eslint"
+      ],
       "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
@@ -21,6 +25,7 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "eqeqeq": "error",
         "@typescript-eslint/no-empty-function": "warn",
         "@typescript-eslint/ban-ts-comment": "warn",
         "@angular-eslint/directive-selector": [
