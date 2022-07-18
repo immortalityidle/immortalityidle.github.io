@@ -890,6 +890,27 @@ export class ItemRepoService {
       value: 10,
       description: 'Some metal junk.',
     },
+    pillMold: {
+      id: 'pillMold',
+      name: 'pill mold',
+      type: 'pillMold',
+      value: 100,
+      description: 'A metal mold for compressing a very powerful pill.',
+    },
+    pillBox: {
+      id: 'pillBox',
+      name: 'pill box',
+      type: 'pillBox',
+      value: 100,
+      description: 'A wooden box required for holding a very powerful pill.',
+    },
+    pillPouch: {
+      id: 'pillPouch',
+      name: 'pill pouch',
+      type: 'pillPouch',
+      value: 100,
+      description: 'A leather pouch designed to fit inside a pill box and preserve the power of certain very potent pills.',
+    },
     unbreakableChain: {
       id: 'unbreakableChain',
       name: 'unbreakable chain',
@@ -1194,7 +1215,7 @@ export class ItemRepoService {
     },
     autoBuyerSettingsManual: {
       id: 'autoBuySettingsManual',
-      name: "Manual of Customizaed Automation",
+      name: "Manual of Customized Automation",
       type: "manual",
       description: "This manual teaches you to customize the order and behavior of auto-buying.",
       value: 1000000000,

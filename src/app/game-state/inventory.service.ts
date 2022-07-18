@@ -389,16 +389,29 @@ export class InventoryService {
 
   generatePill(grade: number): void {
     let effect = "Longevity"; // add more later
+    let description = "A pill that increases your lifespan.";
+    let useDescription = "Use to increase your lifespan.";
+    let value = grade * 10;
     let name = effect + " Pill " + " +" + grade;
+    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0 && this.characterService.characterState.empowermentFactor < 1000){
+      this.consume("pillBox");
+      this.consume("pillMold");
+      this.consume("pillPouch");
+      effect = "Empowerment"
+      description = "A pill that permanently empowers the increase of your attributes based on your aptitudes.";
+      useDescription = "Use to permanently empower the increase of your attributes based on your aptitudes.";
+      value = 1;
+      name = "Empowerment Pill";
+    }
     this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
     this.addItem( {
       name: name,
       id: "pill",
       type: "pill",
-      value: grade * 10,
-      description: "A pill that increases " + effect,
+      value: value,
+      description: description,
       useLabel: 'Swallow',
-      useDescription: 'Use to increase your ' + effect + '.',
+      useDescription: useDescription,
       useConsumes: true,
       effect: effect,
       power: grade
@@ -1070,7 +1083,6 @@ export class InventoryService {
 
   checkFor(itemType: string): number{
     let itemValue = -1;
-    let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
       let itemIterator = this.itemStacks[i];
       if (itemIterator == null){
@@ -1079,7 +1091,6 @@ export class InventoryService {
       if (itemIterator.item.type == itemType) {
         if (itemValue < itemIterator.item.value){
           itemValue = itemIterator.item.value;
-          itemIndex = i;
         }
       }
     }
@@ -1106,7 +1117,10 @@ export class InventoryService {
       if (this.characterService.characterState.alchemyLifespan > 36500){
         this.characterService.characterState.alchemyLifespan = 36500;
       }
+    } else if (pill.effect == "Empowerment"){
+      this.characterService.characterState.empowermentFactor += 0.01;
     }
+    this.characterService.characterState.checkOverage();
   }
 
   // return the number of open inventory slots
