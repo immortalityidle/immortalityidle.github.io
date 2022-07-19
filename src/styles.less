@@ -91,18 +91,25 @@ button:disabled {
 .itemSlot {
   border-radius: 4px;
   border: 1px solid var(--panelBorder);
-  margin: 1px;
+  padding: 2px;
   font-size: x-small;
   text-align: center;
   border-spacing: 0px;
   cursor: pointer;
   background-color: var(--itemSlotColor);
   color: var(--bodyText);
+  box-sizing: border-box;
 }
 
 .itemSlot.brokenItem {
   border: 2px dashed var(--panelBorder);
   filter:brightness(85%);
+}
+
+.textOverflow {
+  // white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mat-dialog-container {

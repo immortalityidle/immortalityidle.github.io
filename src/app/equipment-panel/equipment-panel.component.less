@@ -1,16 +1,27 @@
 @import (reference) "../../styles.less";
 
+.equipmentContainer {
+  margin: 2px auto 2px auto;
+  display: grid;
+  grid-template:
+    '. head .'
+    'right body left'
+    'stats legs .'
+    'stats feet .';
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+}
+
 .itemSlot {
   width: 80px;
-  height: 32px;
+  height: 48px;
   line-height: 12px;
 }
+
 
 
 .highlightSlot {
   background-color: var(--itemSlotHighlight);
 }
 
-table {
-  margin: auto;
-}
+

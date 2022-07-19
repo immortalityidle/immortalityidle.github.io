@@ -1,19 +1,85 @@
-<div class='darkMode'>
+<div class="darkMode furnitureModal">
   <span>Furniture Shop</span>
   <hr/>
-  <div class="inventoryGrid">
-    <div *ngFor="let item of storeService.furniture">
-      <table class="itemSlot" (click)="slotClicked(item)"
-        [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: homeService.furniture[item.slot] === item}"
+  <br>
+  <div *ngIf="storeService.getFurnitureForSlot('bed').length > 0">
+    <span>Bed</span>
+    <hr/>
+    <div class="inventoryGrid">
+      <div *ngFor="let item of storeService.getFurnitureForSlot('bed')">
+        <div class="itemSlot"
+        [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
         placement="left" tooltip="{{item.description}}">
-        <tr><mat-icon>{{item.slot}}</mat-icon></tr>
-        <tr>{{item.name | titlecase}}</tr>
-      </table>
-      <div class="priceLabel"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div>
+          <div><mat-icon>{{item.slot}}</mat-icon></div>
+          <div>{{item.name | titlecase}}</div>
+          <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
+        </div>
+        <button (click)="storeService.buyFurniture(item)">
+            {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
+        </button>
+        <!-- <div class="priceLabel" *ngIf="item.slot === 'bed'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
+      </div>
     </div>
   </div>
-  <button (click)="storeService.buyFurniture()"
+  <div *ngIf="storeService.getFurnitureForSlot('bathtub').length > 0">
+    <span>Bathtub</span>
+    <hr/>
+    <div class="inventoryGrid">
+      <div *ngFor="let item of storeService.getFurnitureForSlot('bathtub')">
+        <div class="itemSlot"
+        [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
+        placement="left" tooltip="{{item.description}}">
+          <div><mat-icon>{{item.slot}}</mat-icon></div>
+          <div>{{item.name | titlecase}}</div>
+          <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
+        </div>
+        <button (click)="storeService.buyFurniture(item)">
+            {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
+        </button>
+        <!-- <div class="priceLabel" *ngIf="item.slot === 'bathtub'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
+      </div>
+    </div>
+  </div>
+  <div *ngIf="storeService.getFurnitureForSlot('kitchen').length > 0">
+    <span>Kitchen</span>
+    <hr/>
+    <div class="inventoryGrid">
+      <div *ngFor="let item of storeService.getFurnitureForSlot('kitchen')">
+        <div class="itemSlot"
+        [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
+        placement="left" tooltip="{{item.description}}">
+          <div><mat-icon>{{item.slot}}</mat-icon></div>
+          <div>{{item.name | titlecase}}</div>
+          <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
+        </div>
+        <button (click)="storeService.buyFurniture(item)">
+            {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
+        </button>
+        <!-- <div class="priceLabel" *ngIf="item.slot === 'kitchen'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
+      </div>
+    </div>
+  </div>
+  <div *ngIf="storeService.getFurnitureForSlot('workbench').length > 0">
+    <span>Workbench</span>
+    <hr/>
+    <div class="inventoryGrid">
+      <div *ngFor="let item of storeService.getFurnitureForSlot('workbench')">
+        <div class="itemSlot"
+        [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
+        placement="left" tooltip="{{item.description}}">
+          <div><mat-icon>{{item.slot}}</mat-icon></div>
+          <div>{{item.name | titlecase}}</div>
+          <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
+        </div>
+        <button (click)="storeService.buyFurniture(item)">
+            {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
+        </button>
+        <!-- <div class="priceLabel" *ngIf="item.slot === 'workbench'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
+      </div>
+    </div>
+  </div>
+  <!-- <button (click)="storeService.buyFurniture()"
       [disabled]="buyDisabled">
       Buy
-  </button>
+  </button> -->
 </div>
