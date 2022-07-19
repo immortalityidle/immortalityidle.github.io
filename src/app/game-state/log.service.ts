@@ -57,7 +57,7 @@ export class LogService {
       timestamp: Date.now()
     };
 
-    if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
+    if (log.length === 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
       // Initialization || Repeat Not Found || Repeat is not within 1 second
       log.unshift(newMessage);
       if (this.logTopics.includes(topic)) {
@@ -80,7 +80,7 @@ export class LogService {
       log.splice(100, 1);
     }
     if (!this.logTopics.includes(topic)) {
-      if (topic == 'STORY') {
+      if (topic === 'STORY') {
         this.newStory = " (new)";
       } else if (topic === 'EVENT'){
         this.newEvents = " (new)";

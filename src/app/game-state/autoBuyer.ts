@@ -48,7 +48,7 @@ export class HomeAutoBuyer extends AutoBuyer {
     // Don't buy land while upgrading.
     if (!this.homeService.upgrading) {
       //try to buy as much land as needed.
-      let landRequired = Math.min(
+      const landRequired = Math.min(
         this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
         this.homeService.nextHome.landRequired - this.homeService.land
       )
@@ -57,9 +57,9 @@ export class HomeAutoBuyer extends AutoBuyer {
       }
       // ... Unless there's a home after the next home.
     } else if (this.homeService.homeValue + 1 < this.homeService.autoBuyHomeLimit) {
-      let nnHome = this.homeService.getHomeFromValue(this.homeService.nextHome.type + 1);
+      const nnHome = this.homeService.getHomeFromValue(this.homeService.nextHome.type + 1);
       if (nnHome && nnHome.landRequired > this.homeService.land) {
-        let landRequired = Math.min(
+        const landRequired = Math.min(
           this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
           nnHome.landRequired - this.homeService.land
         )
@@ -100,7 +100,7 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
   run(reserveAmount: number) {
     if (this.homeService.autoBuyLandUnlocked 
       && this.characterService.characterState.money >= this.homeService.landPrice + reserveAmount) {
-      let landRequired = Math.min(
+      const landRequired = Math.min(
         this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
         this.homeService.autoBuyLandLimit - (this.homeService.land + this.homeService.fields.length + this.homeService.extraFields)
       )
@@ -119,7 +119,7 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
   isBlocked(): boolean {
     // This autobuyer can be blocked if it needs more fields, but we haven't unlocked buying land yet
     if (this.homeService.autoFieldUnlocked && !this.homeService.autoBuyLandUnlocked) {
-      return this.homeService.land == 0 && this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit
+      return this.homeService.land === 0 && this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit
     }
 
     return false;
@@ -151,10 +151,10 @@ export class FurnitureAutoBuyer extends AutoBuyer {
   }
 
   run(reserveAmount: number) {
-    for (let slot of this.homeService.furniturePositionsArray) {
+    for (const slot of this.homeService.furniturePositionsArray) {
       // check if we have a previous purchase and the slot is still empty
-      if (this.homeService.home.furnitureSlots.includes(slot) && this.homeService.furniture[slot] == null) {
-        let thingToBuy = this.homeService.autoBuyFurniture[slot];
+      if (this.homeService.home.furnitureSlots.includes(slot) && this.homeService.furniture[slot] === null) {
+        const thingToBuy = this.homeService.autoBuyFurniture[slot];
         if (thingToBuy && this.homeService.furniture[slot]?.id !== thingToBuy.id) {
           // check if we have the money for the furniture plus the next couple weeks' rent and food by popular demand.
           if (this.characterService.characterState.money > thingToBuy.value + reserveAmount) {
@@ -171,8 +171,8 @@ export class FurnitureAutoBuyer extends AutoBuyer {
     let allNeededSlotsOpen = true;
     let allAvailableSlotsComplete = true;
 
-    for (let slot of this.homeService.furniturePositionsArray) {
-      let targetItem = this.homeService.autoBuyFurniture[slot];
+    for (const slot of this.homeService.furniturePositionsArray) {
+      const targetItem = this.homeService.autoBuyFurniture[slot];
       if (targetItem) {
         if (this.homeService.home.furnitureSlots.includes(slot)) {
           if (this.homeService.furniture[slot]?.id != targetItem.id) {
@@ -191,8 +191,8 @@ export class FurnitureAutoBuyer extends AutoBuyer {
 
   isWaiting(): boolean {
     let neededSlotsIncludedInNextHome = false;
-    for (let slot of this.homeService.furniturePositionsArray) {
-      let targetItem = this.homeService.autoBuyFurniture[slot];
+    for (const slot of this.homeService.furniturePositionsArray) {
+      const targetItem = this.homeService.autoBuyFurniture[slot];
       if (targetItem) {
         // If the current home doesn't include a slot that the next one does...
         if (!this.homeService.home.furnitureSlots.includes(slot)
@@ -207,8 +207,8 @@ export class FurnitureAutoBuyer extends AutoBuyer {
   }
 
   isComplete(): boolean {
-    for (let slot of this.homeService.furniturePositionsArray) {
-      let targetItem = this.homeService.autoBuyFurniture[slot];
+    for (const slot of this.homeService.furniturePositionsArray) {
+      const targetItem = this.homeService.autoBuyFurniture[slot];
       // Automatically consider unfilled auto-buy slots complete
       if (targetItem) {
         // If we don't have the slot, or we don't have the last bought furniture, consider incomplete

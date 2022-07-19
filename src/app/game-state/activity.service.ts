@@ -528,7 +528,7 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         const metalValue = this.inventoryService.consume('metal');
-        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil" && metalValue >= 150){
+        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil" && metalValue >= 150){
           if (Math.random() < 0.1){
             this.logService.addLogMessage("Your anvil rings with power. A new chain is forged!","STANDARD","CRAFTING");
             this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
