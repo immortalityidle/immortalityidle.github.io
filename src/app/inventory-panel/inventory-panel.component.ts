@@ -16,7 +16,6 @@ export class InventoryPanelComponent {
   }
 
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
-    event.preventDefault();
     event.stopPropagation();
     if (event.shiftKey){
       let oldSelected = null;
