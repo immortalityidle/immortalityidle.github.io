@@ -805,7 +805,7 @@ export class InventoryService {
     }
 
     let firstStack = -1;
-    if (item.type != "equipment"){
+    if (item.type !== "equipment"){
       // try to stack the new item with existing items
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemIterator = this.itemStacks[i];

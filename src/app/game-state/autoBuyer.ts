@@ -175,7 +175,7 @@ export class FurnitureAutoBuyer extends AutoBuyer {
       const targetItem = this.homeService.autoBuyFurniture[slot];
       if (targetItem) {
         if (this.homeService.home.furnitureSlots.includes(slot)) {
-          if (this.homeService.furniture[slot]?.id != targetItem.id) {
+          if (this.homeService.furniture[slot]?.id !== targetItem.id) {
             allAvailableSlotsComplete = false;
           }
         } else {
@@ -213,7 +213,7 @@ export class FurnitureAutoBuyer extends AutoBuyer {
       if (targetItem) {
         // If we don't have the slot, or we don't have the last bought furniture, consider incomplete
         if (!this.homeService.home.furnitureSlots.includes(slot)
-          || this.homeService.furniture[slot]?.id != targetItem.id) {
+          || this.homeService.furniture[slot]?.id !== targetItem.id) {
           return false;
         }
       }
