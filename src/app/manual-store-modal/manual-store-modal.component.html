@@ -10,7 +10,6 @@
           <div>{{item.name | titlecase}}</div>
           <div *ngIf="item.owned && !(item.owned())">$ {{item.value | bigNumber}}</div>
         </div>
-        <!-- <div class="priceLabel"><span>{{item.value | bigNumber}}</span></div> -->
       </div>
   </div>
   <button (click)="storeService.buyManual()"

@@ -17,7 +17,6 @@
         <button (click)="storeService.buyFurniture(item)">
             {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
         </button>
-        <!-- <div class="priceLabel" *ngIf="item.slot === 'bed'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
       </div>
     </div>
   </div>
@@ -36,7 +35,6 @@
         <button (click)="storeService.buyFurniture(item)">
             {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
         </button>
-        <!-- <div class="priceLabel" *ngIf="item.slot === 'bathtub'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
       </div>
     </div>
   </div>
@@ -55,7 +53,6 @@
         <button (click)="storeService.buyFurniture(item)">
             {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
         </button>
-        <!-- <div class="priceLabel" *ngIf="item.slot === 'kitchen'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
       </div>
     </div>
   </div>
@@ -74,12 +71,7 @@
         <button (click)="storeService.buyFurniture(item)">
             {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
         </button>
-        <!-- <div class="priceLabel" *ngIf="item.slot === 'workbench'"><span>{{storeService.furniturePrices[item.name] | number: '1.0-0'}}</span></div> -->
       </div>
     </div>
   </div>
-  <!-- <button (click)="storeService.buyFurniture()"
-      [disabled]="buyDisabled">
-      Buy
-  </button> -->
 </div>

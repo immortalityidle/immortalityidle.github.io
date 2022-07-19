@@ -679,7 +679,7 @@ export class InventoryService {
     }
   }
 
-  // find the best food in the inventory and use it
+  /** Finds the best food in the inventory and uses it. */ 
   eatFood(): void {
     if (this.fed){
       // we already ate something this tick
@@ -1096,8 +1096,8 @@ export class InventoryService {
     }
     return itemValue;
   }
-
-  /** returns false only for equipment with 0 durability */
+  
+  /** Checks for equipment durability. Returns false if equipment has 0 durability. */
   hasDurability(itemStack: ItemStack): boolean {
     const item = itemStack.item;
 
@@ -1106,7 +1106,7 @@ export class InventoryService {
     return (item.armorStats?.durability !== 0 && item.weaponStats?.durability !== 0);
   }
 
-  // a special use function for generated potions
+  /** A special use function for generated potions. */
   usePotion(potion: Potion, quantity = 1){
     if (quantity < 1){
       quantity = 1; //handle potential 0 and negatives just in case
@@ -1115,7 +1115,7 @@ export class InventoryService {
     this.characterService.characterState.attributes[potion.attribute].value += potion.increase * quantity;
   }
 
-  // a special use function for generated pills
+  /** A special use function for generated pills*/
   usePill(pill: Pill, quantity = 1){
     if (quantity < 1){
       quantity = 1; //handle potential 0 and negatives just in case
@@ -1132,7 +1132,7 @@ export class InventoryService {
     this.characterService.characterState.checkOverage();
   }
 
-  // return the number of open inventory slots
+  /** Returns the number of open inventory slots. */
   openInventorySlots(){
     let openSlots = 0;
     for (const itemIterator of this.itemStacks) {
@@ -1143,7 +1143,7 @@ export class InventoryService {
     return openSlots;
   }
 
-  // Create a new piece of equipment based on the two provided. Caller needs to do the destroying of the old items.
+  /** Create a new piece of equipment based on the two provided. Caller needs to do the destroying of the old items. */
   mergeEquipment(item1: Equipment, item2: Equipment, destinationInventoryIndex: number){
     if (item1.slot != item2.slot){
       // not the same slot, bail out
