@@ -11,7 +11,7 @@
       <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length > 0">
           <div *ngFor="let slot of homeService.home.furnitureSlots">
               <div *ngIf="!homeService.furniture[slot]" class="itemSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
-              <div *ngIf="homeService.furniture[slot]" class="itemSlot" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
+              <div *ngIf="homeService.furniture[slot]" class="itemSlot textOverflow" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
           </div>
       </div>
       <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length === 0">

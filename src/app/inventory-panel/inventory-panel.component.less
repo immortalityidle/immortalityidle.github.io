@@ -1,21 +1,38 @@
 @import (reference) "../../styles.less";
 
-.inventoryContainer{
+.inventoryContainer {
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
+.inventoryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 2px;
+  justify-content: center;
+  gap: 3px;
+}
+
 .itemSlot {
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+}
+
+.itemSlot .half {
+  height: fit-content;
+  max-height: 50%;
 }
 
 .selectedItem {
   background-color: var(--itemSlotHighlight);
 }
 
-.itemSlot > tr {
+.itemSlot > div {
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
   line-height: 12px;
 }
 
@@ -23,19 +40,8 @@
   overflow: auto;
 }
 
-.inventoryGrid {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 2px;
-  margin-left: 2px;
-}
-
 .inventoryButtons {
   border-top: 1px solid var(--panelBorder)
-}
-
-table {
-  width: 100%;
 }
 
 .inventoryLabelColumn {
