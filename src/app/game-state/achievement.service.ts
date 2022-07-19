@@ -276,6 +276,21 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Industrial Revolution",
+      description: "You've found all the basic autobuyers and unlocked the " + this.itemRepoService.items['autoBuyerSettingsManual'].name,
+      hint: "Become really, really lazy",
+      check: () => {
+        return this.homeService.autoBuyHomeUnlocked &&
+          this.homeService.autoBuyLandUnlocked &&
+          this.homeService.autoFieldUnlocked &&
+          this.homeService.autoBuyFurnitureUnlocked
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['autoBuyerSettingsManual']);
+      },
+      unlocked: false
+    },
+    {
       name: "Guzzler",
       description: "You drank 88 potions and unlocked the " + this.itemRepoService.items['autoPotionManual'].name,
       hint: "Glug, glug, glug.",

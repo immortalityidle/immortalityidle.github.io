@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { StoreService } from '../game-state/store.service';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';

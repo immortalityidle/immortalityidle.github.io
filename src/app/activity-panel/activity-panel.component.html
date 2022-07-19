@@ -10,8 +10,13 @@
       <tr *ngIf="(activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
         <td>
           <span class="noWrap">
-            <button (click)="onClick(activity, $event)" 
-                    tooltip="Add this activity to your schedule. Shift click to also repeat it for 10 days.">
+            <button (click)="onClick(activity, $event)"
+                    tooltip="Add this to your schedule
+
+                    Shift- or Ctrl-click to repeat it 10x
+                    Shift-Ctrl-click to repeat it 100x
+                    Alt-click to add it to the top"
+                    tooltipClass="tooltip-break">
               {{activity.name[activity.level]}}
             </button>
             <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0"
