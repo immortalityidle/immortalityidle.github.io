@@ -237,4 +237,20 @@ export class CharacterService {
     this.resetAptitudes();
   }
 
+  infuseEmpowerment(){
+    if(this.characterState.empowermentFactor >= 1000){
+      // double check overage.
+      return;
+    }
+    this.logService.addLogMessage(
+      "You sacrifice your current life to infuse the pills lying dormant in your body, empowering your aptitudes.",
+      'STANDARD', 'STORY');
+    this.characterState.empowermentFactor += this.characterState.empowermentConsumed;
+    this.characterState.empowermentConsumed = 0;
+    this.characterState.checkOverage();
+    this.logService.addLogMessage(
+      "Your aptitudes are currently permanently multiplied by " + (1 + (this.characterState.empowermentFactor - 1 ) * this.characterState.empowermentFactor / 1000) + ".",
+      'STANDARD', 'STORY');
+    this.resetAptitudes();
+  }
 }

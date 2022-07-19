@@ -181,4 +181,13 @@ export class StoreService {
     this.dialog.closeAll();
   }
 
+  infuseEmpowerment(){
+    if(this.characterService.characterState.empowermentFactor >= 1000){
+      this.logService.addLogMessage("You can't empower yourself further.","INJURY","EVENT");
+      return;
+    }
+    this.characterService.infuseEmpowerment();
+    this.dialog.closeAll();
+  }
+
 }

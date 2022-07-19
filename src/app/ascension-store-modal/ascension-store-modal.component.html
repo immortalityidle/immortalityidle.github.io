@@ -17,7 +17,7 @@
         <span *ngIf="storeService.soulCoreRank >= 9">
           Max Rank
         </span>
-        </td>
+      </td>
     </tr>
     <tr>
       <td>
@@ -49,6 +49,23 @@
           Next rank requires {{characterService.characterState.bloodlineCost | number}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
         </span>
         <span *ngIf="characterService.characterState.bloodlineRank >= 5">
+          Max Rank
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button [disabled]="characterService.characterState.empowermentFactor >= 1000" (click)="storeService.infuseEmpowerment()">Infuse Empowerment</button>
+      </td>
+      <td>
+        End your current life, sacrifice all attributes and aptitudes, and permanently increase your base aptitude multiplier.
+        <br>
+        Pills Infused: {{characterService.characterState.empowermentFactor * 100}}
+        <br>
+        <span *ngIf="characterService.characterState.empowermentFactor < 1000">
+          Infuse an additional {{characterService.characterState.empowermentConsumed * 100 | number}} pills you've consumed.
+        </span>
+        <span *ngIf="characterService.characterState.empowermentFactor >= 1000">
           Max Rank
         </span>
       </td>

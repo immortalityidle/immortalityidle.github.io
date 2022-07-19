@@ -393,7 +393,8 @@ export class InventoryService {
     let useDescription = "Use to increase your lifespan.";
     let value = grade * 10;
     let name = effect + " Pill " + " +" + grade;
-    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0 && this.characterService.characterState.empowermentFactor < 1000){
+    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0 && 
+    this.characterService.characterState.empowermentFactor + this.characterService.characterState.empowermentConsumed < 1000){
       this.consume("pillBox");
       this.consume("pillMold");
       this.consume("pillPouch");
@@ -1118,7 +1119,7 @@ export class InventoryService {
         this.characterService.characterState.alchemyLifespan = 36500;
       }
     } else if (pill.effect == "Empowerment"){
-      this.characterService.characterState.empowermentFactor += 0.01;
+      this.characterService.characterState.empowermentConsumed += 0.01;
     }
     this.characterService.characterState.checkOverage();
   }

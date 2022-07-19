@@ -63,6 +63,7 @@ export interface CharacterProperties {
   healthBonusFood: number,
   healthBonusBath: number,
   healthBonusMagic: number,
+  empowermentConsumed: number,
   empowermentFactor: number,
   immortal: boolean,
 }
@@ -95,6 +96,7 @@ export class Character {
   healthBonusFood: number = 0;
   healthBonusBath: number = 0;
   healthBonusMagic: number = 0;
+  empowermentConsumed: number = 0;
   empowermentFactor: number = 1;
   immortal: boolean = false;
   ascensionUnlocked: boolean = false;
@@ -352,32 +354,33 @@ export class Character {
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
   getAptitudeMultipier(aptitude: number): number {
+    let empowerMentCurve = 1 + (this.empowermentFactor - 1 ) * this.empowermentFactor / 1000;
     if (aptitude < 0){
       // should not happen, but sanity check it
       aptitude = 0;
     }
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
-      return aptitude * this.empowermentFactor;
+      return aptitude * empowerMentCurve;
     } else if (aptitude < this.attributeScalingLimit * 10){
       // from the limit to 10x the limit, change growth rate to 1/4
-      return (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * this.empowermentFactor;
+      return (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * empowerMentCurve;
     } else if (aptitude < this.attributeScalingLimit * 100){
       // from the 10x limit to 100x the limit, change growth rate to 1/20
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * this.empowermentFactor;
+        ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * empowerMentCurve;
     } else if (aptitude < this.attributeSoftCap){
       // from the 100x limit to softcap, change growth rate to 1/100
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * this.empowermentFactor;
+        ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowerMentCurve;
     } else {
       // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
       let pow = 0.6; // Power can be balanced as needed. Higher power reduces returns.
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
-        (aptitude - this.attributeSoftCap + 1) / (1 + Math.pow (aptitude - this.attributeSoftCap + 1, pow)) * this.attributeScalingLimit / 5120)  * this.empowermentFactor;
+        (aptitude - this.attributeSoftCap + 1) / (1 + Math.pow (aptitude - this.attributeSoftCap + 1, pow)) * this.attributeScalingLimit / 5120)  * empowerMentCurve;
     }
   }
 
@@ -410,6 +413,9 @@ export class Character {
   checkOverage(){
     if (this.empowermentFactor > 1000){
       this.empowermentFactor = 1000;
+    }
+    if (this.empowermentFactor + this.empowermentConsumed > 1000){
+      this.empowermentConsumed = 1000 - this.empowermentFactor;
     }
     if (this.healthBonusFood > 1900){
       this.healthBonusFood = 1900;
@@ -465,6 +471,7 @@ export class Character {
       healthBonusFood: this.healthBonusFood,
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
+      empowermentConsumed: this.empowermentConsumed,
       empowermentFactor: this.empowermentFactor,
       immortal: this.immortal
     }
@@ -497,6 +504,7 @@ export class Character {
     this.healthBonusFood = properties.healthBonusFood || 0;
     this.healthBonusBath = properties.healthBonusBath || 0;
     this.healthBonusMagic = properties.healthBonusMagic || 0;
+    this.empowermentConsumed = properties.empowermentConsumed || 0;
     this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
     this.recalculateDerivedStats();
