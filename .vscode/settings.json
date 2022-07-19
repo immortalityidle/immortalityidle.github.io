@@ -1,0 +1,11 @@
+{
+    "eslint.format.enable": true,
+    "eslint.quiet": false,
+    "eslint.run": "onType",
+    "eslint.codeActionsOnSave.mode": "all",
+    "files.eol": "\n",
+    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+}
