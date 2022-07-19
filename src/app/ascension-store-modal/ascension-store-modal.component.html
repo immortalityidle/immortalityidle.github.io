@@ -54,5 +54,7 @@
       </td>
     </tr>
   </table>
-
+  <span *ngIf="characterService.characterState.empowermentFactor > 1">
+    You have consumed {{(characterService.characterState.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.characterState.empowermentFactor  | number:'1.0-2'}}.
+  </span>
 </div>
