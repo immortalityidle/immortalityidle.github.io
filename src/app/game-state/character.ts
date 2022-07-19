@@ -354,7 +354,7 @@ export class Character {
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
   getAptitudeMultipier(aptitude: number): number {
-    let empowerMentCurve = 1 + (this.empowermentFactor - 1 ) * this.empowermentFactor / 1000;
+    let empowerMentCurve = this.empowermentFactor;
     if (aptitude < 0){
       // should not happen, but sanity check it
       aptitude = 0;
