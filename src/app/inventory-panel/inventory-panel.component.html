@@ -12,11 +12,11 @@
   <div class="overflow">
     <div class="inventoryGrid">
         <div class="itemSlot" *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;" 
-        (click)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
+        (mousedown)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
         draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
         [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem),
         'brokenItem': (itemStack !== null && !inventoryService.hasDurability(itemStack) )}"
-        tooltip="{{itemStack?.item?.description}}" placement="bottom">
+        tooltip="{{itemStack?.item?.name | titlecase}}<hr/>{{itemStack?.item?.description}}" placement="bottom">
           <div [ngClass]="{'half': ((itemStack?.quantity || 0) > 1)}" class="textOverflow">{{itemStack?.item?.name | titlecase}}</div>
           <div *ngIf="(itemStack?.quantity || 0) > 1" class="half">{{itemStack?.quantity}}</div>
         </div>
