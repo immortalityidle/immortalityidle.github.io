@@ -1097,7 +1097,7 @@ export class InventoryService {
     return itemValue;
   }
 
-  // returns false only for equipment with 0 durability
+  /** returns false only for equipment with 0 durability */
   hasDurability(itemStack: ItemStack): boolean {
     const item = itemStack.item;
 
