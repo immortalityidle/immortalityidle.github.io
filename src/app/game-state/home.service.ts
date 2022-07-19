@@ -677,14 +677,6 @@ export class HomeService {
       quantity -= this.extraFields;
       this.extraFields = 0;
     }
-    if (this.extraFields > 0 && quantity <= this.extraFields){
-      this.extraFields -= quantity;
-      this.land += quantity;
-      return;
-    } else {
-      quantity -= this.extraFields;
-      this.extraFields = 0;
-    }
     if (this.fields.length > 0){
       if (quantity > this.fields.length){
         quantity = this.fields.length;
