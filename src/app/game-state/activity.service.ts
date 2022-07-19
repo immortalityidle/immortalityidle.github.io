@@ -528,9 +528,9 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         const metalValue = this.inventoryService.consume('metal');
-        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil" && metalValue >= 150){
-          if (Math.random() > 0.01){
-            this.logService.addLogMessage("Your anvil rings with power, a new chain is forged!","STANDARD","CRAFTING");
+        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil" && metalValue >= 150){
+          if (Math.random() < 0.1){
+            this.logService.addLogMessage("Your anvil rings with power. A new chain is forged!","STANDARD","CRAFTING");
             this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
           }
         } else {
@@ -1242,6 +1242,9 @@ export class ActivityService {
               }
             }
           }
+          if (Math.random() < 0.001){
+            this.inventoryService.addItem(this.itemRepoService.items['pillMold']);
+          }
         }
       ],
       requirements: [
@@ -1528,6 +1531,9 @@ export class ActivityService {
               }
             }
           }
+          if (Math.random() < 0.001){
+            this.inventoryService.addItem(this.itemRepoService.items['pillBox']);
+          }
         }
       ],
       requirements: [
@@ -1648,6 +1654,9 @@ export class ActivityService {
                   this.inventoryService.randomArmorSlot()));
               }
             }
+          }
+          if (Math.random() < 0.001){
+            this.inventoryService.addItem(this.itemRepoService.items['pillPouch']);
           }
         }
       ],

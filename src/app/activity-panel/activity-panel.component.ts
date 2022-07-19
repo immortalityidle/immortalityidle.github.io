@@ -23,10 +23,23 @@ export class ActivityPanelComponent {
   }
 
   onClick(activity: Activity, event: MouseEvent): void {
-    this.activityService.activityLoop.push({
-      activity: activity.activityType,
-      repeatTimes: event.shiftKey ? 10 : 1
-    });
+    // Shift and Ctrl both multiply by 10x, combined does 100
+    let repeat = 1
+    repeat *= event.shiftKey ? 10 : 1
+    repeat *= event.ctrlKey ? 10 : 1
+
+    // Alt will put it at the top of the schedule, otherwise the bottom
+    if (event.altKey) {
+      this.activityService.activityLoop.unshift({
+        activity: activity.activityType,
+        repeatTimes: repeat
+      });
+    } else {
+      this.activityService.activityLoop.push({
+        activity: activity.activityType,
+        repeatTimes: repeat
+      });
+    }
   }
 
   drag(activity: Activity, event: DragEvent){

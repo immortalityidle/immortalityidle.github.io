@@ -7,7 +7,7 @@
         <button [disabled]="storeService.soulCoreRank > 8" (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
       </td>
       <td>
-        End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each reincarnation.
+        End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each Reincarnation and Ascension.
         <br>
         Current Rank: {{storeService.soulCoreRank}}
         <br>
@@ -38,21 +38,23 @@
     </tr>
     <tr>
       <td>
-        <button [disabled]="characterService.characterState.bloodlineRank >= 4" (click)="storeService.upgradeBloodline()">{{storeService.bloodlineLabel}}</button>
+        <button [disabled]="characterService.characterState.bloodlineRank >= 5" (click)="storeService.upgradeBloodline()">{{storeService.bloodlineLabel}}</button>
       </td>
       <td>
         {{storeService.bloodlineDescription}}
         <br>
         Current Rank: {{characterService.characterState.bloodlineRank}}
         <br>
-        <span *ngIf="characterService.characterState.bloodlineRank < 4">
+        <span *ngIf="characterService.characterState.bloodlineRank < 5">
           Next rank requires {{characterService.characterState.bloodlineCost | number}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
         </span>
-        <span *ngIf="characterService.characterState.bloodlineRank >= 4">
+        <span *ngIf="characterService.characterState.bloodlineRank >= 5">
           Max Rank
         </span>
       </td>
     </tr>
   </table>
-
+  <span *ngIf="characterService.characterState.empowermentFactor > 1">
+    You have consumed {{(characterService.characterState.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.characterState.empowermentFactor  | number:'1.0-2'}}.
+  </span>
 </div>

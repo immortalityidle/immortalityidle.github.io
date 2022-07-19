@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { isEmpty } from 'rxjs';
 
+const LOG_MERGE_INTERVAL_MS = 1000;
 export type LogType = 'STANDARD' | 'INJURY';
 export type LogTopic = 'COMBAT' | 'CRAFTING' | 'STORY' | 'EVENT';
 
@@ -41,29 +42,45 @@ export class LogService {
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
     let log  = this.eventLog;
-    if (topic === 'COMBAT'){
+    if (topic === 'COMBAT') {
       log = this.combatLog;
-    } else if (topic === 'STORY'){
+    } else if (topic === 'STORY') {
       log = this.storyLog;
-    } else if (topic === 'CRAFTING'){
+    } else if (topic === 'CRAFTING') {
       log = this.craftingLog;
     }
 
-    const newMessage = {
+    const newMessage: Log = {
       message: message,
       type: type,
       topic: topic,
       timestamp: Date.now()
     };
-    log.unshift(newMessage);
+
+    if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
+      // Initialization || Repeat Not Found || Repeat is not within 1 second
+      log.unshift(newMessage);
+      if (this.logTopics.includes(topic)) {
+        this.addToCurrentLog(newMessage);
+      }
+    } else {
+      // Repeat Found
+      const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message);
+      let repeatNumber = 2;
+      if(hasRepeatNumber) {
+        repeatNumber = parseInt(hasRepeatNumber[1]) + 1;
+      }
+      
+      // Update message reference
+      log[0].message = `${newMessage.message} (${repeatNumber})`;
+    }
+
     // check if we need to age off the oldest logs
     if (log.length > 100 && topic !== 'STORY'){
       log.splice(100, 1);
     }
-    if (this.logTopics.includes(topic)){
-      this.addToCurrentLog(newMessage);
-    } else {
-      if (topic === 'STORY'){
+    if (!this.logTopics.includes(topic)) {
+      if (topic == 'STORY') {
         this.newStory = " (new)";
       } else if (topic === 'EVENT'){
         this.newEvents = " (new)";
@@ -75,29 +92,13 @@ export class LogService {
     }
   }
 
-  addToCurrentLog(newMessage: Log){
-    if (this.currentLog.length !== 0 && this.currentLog[0].message.includes(newMessage.message)){
-      // the line is a repeat, increment the repeat count at the end of the line instead of adding a new line
-      const repeatCountString = this.currentLog[0].message.split(" ").pop()?.replace("(", "")?.replace(")", "");
-      let repeatCount = 0;
-      if (repeatCountString){
-        repeatCount = parseInt(repeatCountString);
-      }
-      if (repeatCount !== 0 && !isNaN(repeatCount)){
-        repeatCount++;
-        this.currentLog[0].message = newMessage.message + " (" + repeatCount + ")";
-      } else {
-        // it's the first repeat, give it a repeat count
-        this.currentLog[0].message = newMessage.message + " (2)";
-      }
-    } else {
-      this.currentLog.unshift(newMessage);
-      if (this.currentLog.length > 300){
-        // peel off the oldest
-        this.currentLog.splice(this.currentLog.length - 1, 1);
-      }
-      
+  /** Add Message To Current Log */
+  private addToCurrentLog(newMessage: Log): void {
+    // Maximum Log Length of 300
+    if (this.currentLog.length >= 300){
+      this.currentLog.pop();
     }
+    this.currentLog.unshift(newMessage);
   }
 
   getProperties(): LogProperties {

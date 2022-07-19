@@ -8,7 +8,6 @@ import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
-import { EquipmentPosition } from './character';
 
 export interface Follower {
   name: string;
@@ -86,7 +85,7 @@ export class FollowersService {
           this.characterService.characterState.equipment.leftHand.value += Math.floor(follower.power/10);
         }
       },
-      description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day."
+      description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them."
     },
     "armorer": {
       work: (follower: Follower) => {
@@ -115,7 +114,7 @@ export class FollowersService {
           this.characterService.characterState.equipment.feet.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
       },
-      description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day."
+      description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them."
     },
     "brawler": {
       work: (follower: Follower) => {

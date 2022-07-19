@@ -63,6 +63,7 @@ export interface CharacterProperties {
   healthBonusFood: number,
   healthBonusBath: number,
   healthBonusMagic: number,
+  empowermentFactor: number,
   immortal: boolean,
 }
 
@@ -94,6 +95,7 @@ export class Character {
   healthBonusFood = 0;
   healthBonusBath = 0;
   healthBonusMagic = 0;
+  empowermentFactor = 1;
   immortal = false;
   ascensionUnlocked = false;
   attributes: AttributeObject = {
@@ -246,7 +248,6 @@ export class Character {
 
     // age in days
     this.age = INITIAL_AGE;
-    this.increaseBaseLifespan(1, 70); //bonus day just for doing another reincarnation cycle, cap base at 70 years
     this.foodLifespan = 0;
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
@@ -255,7 +256,7 @@ export class Character {
     totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
       this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
-    if (this.bloodlineRank < 4){
+    if (this.bloodlineRank < 5){
       this.statLifespan *= 0.1;
     }
 
@@ -274,18 +275,18 @@ export class Character {
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
-    if (this.bloodlineRank < 3){
+    if (this.bloodlineRank < 3) {
       this.money = 0;
-    } else if (this.bloodlineRank < 4){
+    } else if (this.bloodlineRank < 4) {
       this.money = this.money / 8;
     } else {
       this.money = 4 * this.money;
     }
-    if (this.money > this.maxMoney){
+    if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
     this.recalculateDerivedStats();
-    if (this.bloodlineRank === 0){
+    if (this.bloodlineRank == 0) {
       this.equipment = {
         head: null,
         body: null,
@@ -294,7 +295,7 @@ export class Character {
         legs: null,
         feet: null
       }
-    } else if (this.bloodlineRank <= 1){
+    } else if (this.bloodlineRank <= 1) {
       this.equipment.body = null;
       this.equipment.head = null;
       this.equipment.legs = null;
@@ -324,7 +325,7 @@ export class Character {
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
-    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;
+    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;    
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
     this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
@@ -357,25 +358,26 @@ export class Character {
     }
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
-      return aptitude;
+      return aptitude * this.empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 10){
       // from the limit to 10x the limit, change growth rate to 1/4
-      return this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4);
+      return (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * this.empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 100){
       // from the 10x limit to 100x the limit, change growth rate to 1/20
-      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        ((aptitude - (this.attributeScalingLimit * 10)) / 20);
+      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+        ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * this.empowermentFactor;
     } else if (aptitude < this.attributeSoftCap){
       // from the 100x limit to softcap, change growth rate to 1/100
-      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        ((aptitude - (this.attributeScalingLimit * 100)) / 100);
+        ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * this.empowermentFactor;
     } else {
-      // increase by log2 of whatever is over the softcap
-      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+      // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
+      const pow = 0.6; // Power can be balanced as needed. Higher power reduces returns.
+      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        (this.attributeScalingLimit * (this.attributeSoftCap - 100) / 100) +
-        Math.log2(aptitude - this.attributeSoftCap + 1);
+        (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
+        (aptitude - this.attributeSoftCap + 1) / (1 + Math.pow (aptitude - this.attributeSoftCap + 1, pow)) * this.attributeScalingLimit / 5120)  * this.empowermentFactor;
     }
   }
 
@@ -406,6 +408,9 @@ export class Character {
   }
 
   checkOverage(){
+    if (this.empowermentFactor > 1000){
+      this.empowermentFactor = 1000;
+    }
     if (this.healthBonusFood > 1900){
       this.healthBonusFood = 1900;
     }
@@ -460,6 +465,7 @@ export class Character {
       healthBonusFood: this.healthBonusFood,
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
+      empowermentFactor: this.empowermentFactor,
       immortal: this.immortal
     }
   }
@@ -491,6 +497,7 @@ export class Character {
     this.healthBonusFood = properties.healthBonusFood || 0;
     this.healthBonusBath = properties.healthBonusBath || 0;
     this.healthBonusMagic = properties.healthBonusMagic || 0;
+    this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
     this.recalculateDerivedStats();
   }

@@ -22,13 +22,9 @@ export class FarmPanelComponent {
     event.preventDefault();
     event.stopPropagation();
     if (event.shiftKey){
-      for (let i = 0; i < 10; i++){
-        this.homeService.clearField();
-      }
+      this.homeService.clearField(10);
     } else if (event.ctrlKey){
-      while (this.homeService.fields.length > 0){
-        this.homeService.clearField();
-      }
+      this.homeService.clearField(-1);
     } else {
       this.homeService.clearField();
     }
@@ -51,13 +47,9 @@ export class FarmPanelComponent {
     event.preventDefault();
     event.stopPropagation();
     if (event.shiftKey){
-      for (let i = 0; i < 10; i++){
-        this.homeService.addField();
-      }
+      this.homeService.addField(10);
     } else if (event.ctrlKey){
-      while (this.homeService.land > 0){
-        this.homeService.addField();
-      }
+      this.homeService.addField(-1);
     } else {
       this.homeService.addField();
     }
