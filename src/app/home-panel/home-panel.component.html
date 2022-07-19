@@ -24,7 +24,7 @@
               add
             </mat-icon>
             <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" placement="bottom" (click)="homeService.upgradeToNextHome()" class="iconButton"
-              tooltip="Get a better house. A better home will cost {{homeService.nextHomeCost | bigNumber}} taels and take up {{homeService.nextHome.landRequired | bigNumber}} land.">
+              tooltip="{{homeService.nextHome.upgreadeDescription}}">
               add_business
             </mat-icon>
             <mat-icon class="iconButton" *ngIf="homeService.home.furnitureSlots.length"
