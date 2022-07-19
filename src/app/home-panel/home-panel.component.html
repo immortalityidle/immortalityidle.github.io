@@ -24,7 +24,7 @@
               add
             </mat-icon>
             <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" placement="bottom" (click)="homeService.upgradeToNextHome()" class="iconButton"
-              tooltip="{{homeService.nextHome.upgreadeDescription}}">
+              tooltip="{{homeService.nextHome.upgradeToTooltip}}">
               add_business
             </mat-icon>
             <mat-icon class="iconButton" *ngIf="homeService.home.furnitureSlots.length"
