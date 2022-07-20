@@ -350,13 +350,17 @@ export class Character {
     }
   }
 
+  getEmpowermentMult(): number{
+    return 200 / (1 + Math.pow(1.02, -(this.empowermentFactor / 300))) - 100;
+  }
+
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
   getAptitudeMultipier(aptitude: number): number {
     if (aptitude < 0){
       // should not happen, but sanity check it
       aptitude = 0;
     }
-    const empowermentFactor = 200 / (1 + Math.pow(1.02, -(this.empowermentFactor / 300))) - 100;
+    const empowermentFactor = this.getEmpowermentMult();
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
       return aptitude * empowermentFactor;
