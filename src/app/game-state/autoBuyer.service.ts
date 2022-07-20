@@ -22,7 +22,7 @@ type AutoBuyersMap = {[key in AutoBuyerType]: AutoBuyer}
   providedIn: 'root'
 })
 export class AutoBuyerService {
-  autoBuyerSettingsUnlocked: boolean = false;
+  autoBuyerSettingsUnlocked = false;
   
   autoBuyerSettings: AutoBuyerSetting[] = this.getDefaultSettings();
 
@@ -85,11 +85,11 @@ export class AutoBuyerService {
 
   tick() {
     // Use auto-buy reserve amount if enabled in settings, otherwise default to 10 days living expenses (food + lodging)
-    let reserveAmount = this.homeService.useAutoBuyReserve ? this.homeService.autoBuyReserveAmount : (this.homeService.home.costPerDay + 1) * 10;
+    const reserveAmount = this.homeService.useAutoBuyReserve ? this.homeService.autoBuyReserveAmount : (this.homeService.home.costPerDay + 1) * 10;
 
     // go through priorities in order
-    for (let setting of this.autoBuyerSettings) {
-      let autobuyer: AutoBuyer = this.autobuyers[setting.type];
+    for (const setting of this.autoBuyerSettings) {
+      const autobuyer: AutoBuyer = this.autobuyers[setting.type];
 
       // Skip to the next one if we're already done, or if we can't make any progress
       if (!setting.enabled || !autobuyer.shouldRun() || autobuyer.isBlocked() || autobuyer.isComplete()) {

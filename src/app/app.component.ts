@@ -82,10 +82,10 @@ export class AppComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.code == 'Space'){
+    if (event.code === 'Space'){
       this.mainLoopService.pause = !this.mainLoopService.pause;
       event.preventDefault();
-    } else if ((event.code == 'Enter' || event.code == 'NumpadEnter') && this.mainLoopService.pause){
+    } else if ((event.code === 'Enter' || event.code === 'NumpadEnter') && this.mainLoopService.pause){
       this.mainLoopService.tick();
       event.preventDefault();
     }

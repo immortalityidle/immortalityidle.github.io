@@ -61,7 +61,7 @@ export class ActivityService {
       this.reset();
     });
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.activityLoop.length == 0){
+      if (this.activityLoop.length === 0){
         this.mainLoopService.pause = true;
         return;
       }
@@ -76,19 +76,19 @@ export class ActivityService {
       if (this.currentIndex < this.activityLoop.length) {
         this.currentLoopEntry = this.activityLoop[this.currentIndex];
         // check if our current activity is zero-day
-        if (this.currentLoopEntry.repeatTimes == 0){
+        if (this.currentLoopEntry.repeatTimes === 0){
           // don't do the activity, instead see if there's a next one we can switch to
           let index = 0;
           if (this.currentIndex < this.activityLoop.length - 1){
             index = this.currentIndex + 1;
           }
-          while (index != this.currentIndex && this.activityLoop[index].repeatTimes == 0){
+          while (index !== this.currentIndex && this.activityLoop[index].repeatTimes === 0){
             index++;
             if (index >= this.activityLoop.length){
               index = 0;
             }
           }
-          if (index == this.currentIndex){
+          if (index === this.currentIndex){
             // we looped all the way around without getting any non-zero repeatTimes, pause the game and bail out
             this.mainLoopService.pause = true;
             return;
@@ -195,7 +195,7 @@ export class ActivityService {
   }
 
   meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
-    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType != this.currentApprenticeship){
+    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType !== this.currentApprenticeship){
       if (level < activity.skipApprenticeshipLevel){
         return false;
       }
@@ -210,7 +210,7 @@ export class ActivityService {
     for (const keyIndex in keys) {
       const key = keys[keyIndex];
       let requirementValue = 0;
-      if (activity.requirements[level][key] != undefined) {
+      if (activity.requirements[level][key] !== undefined) {
         requirementValue = activity.requirements[level][key]!;
       }
       if (this.characterService.characterState.attributes[key].value <= requirementValue) {
@@ -245,7 +245,7 @@ export class ActivityService {
           }
           activity.level++;
           // check to see if we got above apprenticeship skip level
-          if (activity.unlocked && activity.skipApprenticeshipLevel == activity.level){
+          if (activity.unlocked && activity.skipApprenticeshipLevel === activity.level){
             if (!this.completedApprenticeships.includes(activity.activityType)){
               this.completedApprenticeships.push(activity.activityType);
             }
@@ -269,7 +269,7 @@ export class ActivityService {
       // upgrade to anything that the starting attributes allow
       this.upgradeActivities(true);
     }
-    if (this.impossibleTaskService.activeTaskIndex != ImpossibleTaskType.Swim){
+    if (this.impossibleTaskService.activeTaskIndex !== ImpossibleTaskType.Swim){
       this.getActivityByType(ActivityType.Resting).unlocked = true;
       this.getActivityByType(ActivityType.OddJobs).unlocked = true;
     }
@@ -295,7 +295,7 @@ export class ActivityService {
   }
 
   checkApprenticeship(activityType: ActivityType){
-    if (this.openApprenticeships == 0){
+    if (this.openApprenticeships === 0){
       return;
     }
     this.openApprenticeships--;
@@ -306,7 +306,7 @@ export class ActivityService {
         activity.unlocked = false;
         // and remove any entries for them from the activity loop
         for (let i = this.activityLoop.length - 1; i >= 0; i--){
-          if (this.activityLoop[i].activity == activity.activityType){
+          if (this.activityLoop[i].activity === activity.activityType){
             this.activityLoop.splice(i, 1);
           }
         }
@@ -319,7 +319,7 @@ export class ActivityService {
     for (let i = this.activityLoop.length - 1; i >= 0; i--){
       let found = false;
       for (const activity of this.activities){
-        if (activity.activityType == this.activityLoop[i].activity){
+        if (activity.activityType === this.activityLoop[i].activity){
           found = true;
         }
       }
@@ -351,45 +351,45 @@ export class ActivityService {
 
     const newList: Activity[] = [];
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.Swim){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.Swim){
       newList.push(this.Swim);
       // don't include the rest of the activities
       return newList;
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.RaiseIsland){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.RaiseIsland){
       newList.push(this.ForgeChains);
       newList.push(this.AttachChains);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.BuildTower){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.BuildTower){
       newList.push(this.MakeBrick);
       newList.push(this.MakeMortar);
       newList.push(this.MakeScaffold);
       newList.push(this.BuildTower);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.TameWinds){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.TameWinds){
       newList.push(this.ResearchWind);
       newList.push(this.TameWinds);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.LearnToFly){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.LearnToFly){
       newList.push(this.LearnToFly);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.BefriendDragon){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.BefriendDragon){
       newList.push(this.OfferDragonFood);
       newList.push(this.OfferDragonWealth);
       newList.push(this.TalkToDragon);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.ConquerTheWorld){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.ConquerTheWorld){
       newList.push(this.GatherArmies);
       newList.push(this.ConquerTheWorld);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex == ImpossibleTaskType.RearrangeTheStars){
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.RearrangeTheStars){
       newList.push(this.MoveStars);
     }
 
@@ -528,7 +528,7 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         const metalValue = this.inventoryService.consume('metal');
-        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil" && metalValue >= 150){
+        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil" && metalValue >= 150){
           if (Math.random() < 0.1){
             this.logService.addLogMessage("Your anvil rings with power. A new chain is forged!","STANDARD","CRAFTING");
             this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
@@ -584,7 +584,7 @@ export class ActivityService {
           oreValue = this.inventoryService.consume('ore');
         }
         for (const follower of this.followerService.followers){
-          if (follower.job == "builder"){
+          if (follower.job === "builder"){
             builderPower += follower.power;
           }
         }
@@ -643,13 +643,13 @@ export class ActivityService {
         let oreValue = 0;
         let builderPower = 100; //divided by 100 later
         for (const follower of this.followerService.followers){
-          if (follower.job == "builder"){
+          if (follower.job === "builder"){
             builderPower += follower.power;
           }
         }
         builderPower = Math.floor(builderPower / 100);
         oreValue = this.inventoryService.consume('ore');
-        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron" && oreValue >= 10){
+        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "cauldron" && oreValue >= 10){
           for (let i = 0; i < builderPower; i++){
             this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
           }
@@ -675,7 +675,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 1000;
         let numBuilders = 0;
         for (const follower of this.followerService.followers){
-          if (follower.job == "builder"){
+          if (follower.job === "builder"){
             numBuilders++;
           }
         }
@@ -1157,7 +1157,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Blacksmithing).lastIncome = money;
           let blacksmithSuccessChance = 0.01;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil"){
             blacksmithSuccessChance += 0.05;
           }
           if (Math.random() < blacksmithSuccessChance) {
@@ -1177,7 +1177,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Blacksmithing).lastIncome = money;
           let blacksmithSuccessChance = 0.02;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil"){
             blacksmithSuccessChance += 0.05;
           }
           if (Math.random() < blacksmithSuccessChance) {
@@ -1204,7 +1204,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Blacksmithing).lastIncome = money;
           let blacksmithSuccessChance = 0.05;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil"){
             blacksmithSuccessChance += 0.05;
           }
           if (Math.random() < blacksmithSuccessChance) {
@@ -1231,7 +1231,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Blacksmithing).lastIncome = money;
           let blacksmithSuccessChance = 0.2;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "anvil"){
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil"){
             blacksmithSuccessChance += 0.2;
           }
           if (Math.random() < blacksmithSuccessChance) {
@@ -1289,7 +1289,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 10;
         // the grade on herbs probably needs diminishing returns
         this.inventoryService.generateHerb();
-        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == 'herbGarden'){
+        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === 'herbGarden'){
           this.inventoryService.generateHerb();
         }
         this.characterService.characterState.increaseAttribute('woodLore',0.003);
@@ -1328,7 +1328,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Alchemy).lastIncome = money;
           let alchemySuccessChance = 0.01;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "cauldron"){
             alchemySuccessChance += 0.05;
           }
           if (Math.random() < alchemySuccessChance) {
@@ -1345,7 +1345,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Alchemy).lastIncome = money;
           let alchemySuccessChance = 0.02;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "cauldron"){
             alchemySuccessChance += 0.05;
           }
           if (Math.random() < alchemySuccessChance) {
@@ -1368,7 +1368,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Alchemy).lastIncome = money;
           let alchemySuccessChance = 1 - Math.exp(0 - 0.025 * Math.log(this.characterService.characterState.attributes.waterLore.value));
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "cauldron"){
+          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "cauldron"){
             alchemySuccessChance += 0.05;
           }
           if (Math.random() < alchemySuccessChance) {
@@ -1775,7 +1775,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 50;
         this.characterService.characterState.increaseAttribute('speed', 0.1);
         let huntingSuccessChance = 0.1;
-        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id == "dogKennel"){
+        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "dogKennel"){
           huntingSuccessChance += 0.4;
         }
         if (Math.random() < huntingSuccessChance) {

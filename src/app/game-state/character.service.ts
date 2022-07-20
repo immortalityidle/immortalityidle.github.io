@@ -27,7 +27,7 @@ export class CharacterService {
   ) {
     this.characterState = new Character(logService, titleCasePipe);
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.mainLoopService.totalTicks % 3650 == 0){
+      if (this.mainLoopService.totalTicks % 3650 === 0){
         this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
       }
       if (!this.characterState.dead){
@@ -54,7 +54,7 @@ export class CharacterService {
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
         deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
       }
-      if (deathMessage != ""){
+      if (deathMessage !== ""){
         if (!this.characterState.immortal){
           this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
           if (!this.forceRebirth){

@@ -15,12 +15,12 @@ export class StoreService {
   manuals: Item[];
   furniture: Furniture[];
   selectedItem: Item | null;
-  soulCoreRank: number = 0;
-  meridianRank: number = 0;
-  bloodlineLabel: string = "";
-  bloodlineDescription: string = "";
+  soulCoreRank = 0;
+  meridianRank = 0;
+  bloodlineLabel = "";
+  bloodlineDescription = "";
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
-  storeOpened: boolean = false;
+  storeOpened = false;
   furniturePrices: { [key: string]: number; } = {};
 
   constructor(
@@ -41,8 +41,8 @@ export class StoreService {
 
   setStoreInventory(){
     this.furniture = [];
-    for (let key in this.itemRepoService.furniture){
-      let furniture = this.itemRepoService.furniture[key];
+    for (const key in this.itemRepoService.furniture){
+      const furniture = this.itemRepoService.furniture[key];
       if (this.homeService.home.furnitureSlots.includes(furniture.slot)){
         this.furniture.push(furniture);
         if (this.homeService.ownedFurniture.includes(furniture.name)){
@@ -66,7 +66,7 @@ export class StoreService {
     if (this.selectedItem){
       if (this.selectedItem.value < this.characterService.characterState.money){
         this.characterService.characterState.money -= this.selectedItem.value;
-        if (this.selectedItem.type == 'manual' && this.selectedItem.use){
+        if (this.selectedItem.type === 'manual' && this.selectedItem.use){
           // use manuals immediately
           this.selectedItem.use();
         } else {

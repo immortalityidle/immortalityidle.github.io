@@ -76,28 +76,28 @@ export class Character {
   }
 
   maxMoney = 1000000000000000000000000;
-  totalLives: number = 1;
-  dead: boolean = false;
-  attributeScalingLimit: number = 10;
-  attributeSoftCap: number = 100000;
-  aptitudeGainDivider: number = 100;
-  condenseSoulCoreCost: number = 10;
-  condenseSoulCoreOriginalCost: number = 10;
-  reinforceMeridiansCost: number = 1000;
-  reinforceMeridiansOriginalCost: number = 1000;
-  bloodlineCost: number = 100;
-  bloodlineRank: number = 0;
-  manaUnlocked: boolean = false;
-  accuracy: number = 0;
-  accuracyExponentMultiplier: number = 0.01;
-  attackPower: number = 0;
-  defense: number = 0;
-  healthBonusFood: number = 0;
-  healthBonusBath: number = 0;
-  healthBonusMagic: number = 0;
-  empowermentFactor: number = 1;
-  immortal: boolean = false;
-  ascensionUnlocked: boolean = false;
+  totalLives = 1;
+  dead = false;
+  attributeScalingLimit = 10;
+  attributeSoftCap = 100000;
+  aptitudeGainDivider = 100;
+  condenseSoulCoreCost = 10;
+  condenseSoulCoreOriginalCost = 10;
+  reinforceMeridiansCost = 1000;
+  reinforceMeridiansOriginalCost = 1000;
+  bloodlineCost = 100;
+  bloodlineRank = 0;
+  manaUnlocked = false;
+  accuracy = 0;
+  accuracyExponentMultiplier = 0.01;
+  attackPower = 0;
+  defense = 0;
+  healthBonusFood = 0;
+  healthBonusBath = 0;
+  healthBonusMagic = 0;
+  empowermentFactor = 1;
+  immortal = false;
+  ascensionUnlocked = false;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -264,7 +264,7 @@ export class Character {
     for (const key in keys){
       if (this.attributes[keys[key]].value > 0){
         // gain aptitude based on last life's value
-        let addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0 )) / this.aptitudeGainDivider;
+        const addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0 )) / this.aptitudeGainDivider;
         if (addedValue > 0){
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
@@ -286,7 +286,7 @@ export class Character {
       this.money = this.maxMoney;
     }
     this.recalculateDerivedStats();
-    if (this.bloodlineRank == 0) {
+    if (this.bloodlineRank === 0) {
       this.equipment = {
         head: null,
         body: null,
@@ -373,7 +373,7 @@ export class Character {
         ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * this.empowermentFactor;
     } else {
       // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
-      let pow = 0.6; // Power can be balanced as needed. Higher power reduces returns.
+      const pow = 0.6; // Power can be balanced as needed. Higher power reduces returns.
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
