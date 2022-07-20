@@ -3,7 +3,7 @@
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
       (dblclick)="slotDoubleClicked('head', $event)"
-      tooltip="{{character.equipment.head?.description}}" placement="left"
+      tooltip="{{(character.equipment.head !== null) ? (character.equipment.head?.name | titlecase) + '<hr/>' + (character.equipment.head?.description) : ''}}" placement="left"
     >
       {{character.equipment.head?.name | titlecase}}
     </div>
@@ -11,21 +11,21 @@
       [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('rightHand', $event)" (dragstart)="drag('rightHand', $event)"
       (dblclick)="slotDoubleClicked('rightHand', $event)"
-      tooltip="{{character.equipment.rightHand?.description}}" placement="left"
+      tooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand?.name | titlecase) + '<hr/>' + (character.equipment.rightHand?.description) : ''}}" placement="left"
     >
       {{character.equipment.rightHand?.name | titlecase}}
     </div>
     <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('body', $event)" (dragstart)="drag('body', $event)"
       (dblclick)="slotDoubleClicked('body', $event)"
-      tooltip="{{character.equipment.body?.description}}" placement="left"
+      tooltip="{{(character.equipment.body !== null) ? (character.equipment.body?.name | titlecase) + '<hr/>' + (character.equipment.body?.description) : ''}}" placement="left"
     >
       {{character.equipment.body?.name | titlecase}}
     </div>
     <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('leftHand', $event)" (dragstart)="drag('leftHand', $event)"
       (dblclick)="slotDoubleClicked('leftHand', $event)"
-      tooltip="{{character.equipment.leftHand?.description}}" placement="left"
+      tooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand?.name | titlecase) + '<hr/>' + (character.equipment.leftHand?.description) : ''}}" placement="left"
     >
       {{character.equipment.leftHand?.name | titlecase}}
     </div>
@@ -39,14 +39,14 @@
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"
       (dblclick)="slotDoubleClicked('legs', $event)"
-      tooltip="{{character.equipment.legs?.description}}" placement="left"
+      tooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs?.name | titlecase) + '<hr/>' + (character.equipment.legs?.description) : ''}}" placement="left"
     >
       {{character.equipment.legs?.name | titlecase}}
     </div>
     <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('feet', $event)" (dragstart)="drag('feet', $event)"
       (dblclick)="slotDoubleClicked('feet', $event)"
-      tooltip="{{character.equipment.feet?.description}}" placement="left"
+      tooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet?.name | titlecase) + '<hr/>' + (character.equipment.feet?.description) : ''}}" placement="left"
     >
       {{character.equipment.feet?.name | titlecase}}
   </div>

@@ -9,7 +9,7 @@
 .inventoryGrid {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 2px;
+  margin: 3px 0;
   justify-content: center;
   gap: 3px;
 }
@@ -18,22 +18,32 @@
   width: 58px;
   height: 58px;
   overflow: hidden;
-}
-
-.itemSlot .half {
-  height: fit-content;
-  max-height: 50%;
+  position: relative;
 }
 
 .selectedItem {
   background-color: var(--itemSlotHighlight);
 }
 
-.itemSlot > div {
+.itemSlot .itemName {
   width: 100%;
   display: inline-block;
   vertical-align: middle;
   line-height: 12px;
+}
+
+.itemQuantity {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  line-height: 15px;
+  padding: 0 4px;
+  width: fit-content;
+  height: fit-content;
+  background: inherit;
+  filter: brightness(80%);
+  border-radius: 3px;
+  z-index: 1;
 }
 
 .overflow {
