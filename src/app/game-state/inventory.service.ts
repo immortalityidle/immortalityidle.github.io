@@ -12,12 +12,14 @@ export interface WeaponStats {
   baseDamage: number;
   material: string;
   durability: number;
+  baseName?: string;
 }
 
 export interface ArmorStats {
   defense: number;
   material: string;
   durability: number;
+  baseName?: string;
 }
 
 export interface Item {
@@ -285,7 +287,7 @@ export class InventoryService {
   }
 
   // materials are wood or metal
-  generateWeapon(grade: number, material: string): Equipment {
+  generateWeapon(grade: number, material: string, defaultName: string | undefined = undefined): Equipment {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
       // consume a spirit gem and increase the grade
@@ -295,7 +297,11 @@ export class InventoryService {
       }
     }
 
-    const prefixIndex = grade % ItemPrefixes.length;
+    let highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
+    let prefixIndex = grade % ItemPrefixes.length;
+    if (grade >= highestGrade){
+      prefixIndex = ItemPrefixes.length - 1;
+    }
     let suffixIndex = Math.floor(grade / ItemPrefixes.length);
     const prefix = ItemPrefixes[prefixIndex];
     let suffix = "";
@@ -320,7 +326,11 @@ export class InventoryService {
       slot = 'leftHand';
       materialPrefix = "wooden";
     }
-    const name = prefix + ' ' + materialPrefix + ' ' + WeaponNames[Math.floor(Math.random() * WeaponNames.length)] + suffix;
+    let baseName = defaultName;
+    if (baseName == undefined){
+      baseName = WeaponNames[Math.floor(Math.random() * WeaponNames.length)]
+    }
+    const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'CRAFTING');
     const durability = grade * 10 + Math.floor(Math.random() * grade * 5);
     return {
@@ -332,7 +342,8 @@ export class InventoryService {
       weaponStats: {
         baseDamage: grade,
         material: material,
-        durability: durability
+        durability: durability,
+        baseName: baseName
       },
       description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " + grade + "<br/>Durability: " + durability
     };
@@ -473,8 +484,12 @@ export class InventoryService {
     };
   }
 
-  generateArmor(grade: number, material: string, slot: EquipmentPosition): Equipment{
-    const prefixIndex = grade % ItemPrefixes.length;
+  generateArmor(grade: number, material: string, slot: EquipmentPosition, defaultName: string | undefined = undefined): Equipment{
+    let highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
+    let prefixIndex = grade % ItemPrefixes.length;
+    if (grade >= highestGrade){
+      prefixIndex = ItemPrefixes.length - 1;
+    }
     let suffixIndex = Math.floor(grade / ItemPrefixes.length);
     const prefix = ItemPrefixes[prefixIndex];
     let suffix = "";
@@ -502,7 +517,11 @@ export class InventoryService {
     } else if (slot === 'feet'){
       namePicker = ShoeNames;
     }
-    const name = prefix + ' ' + materialPrefix + ' ' + namePicker[Math.floor(Math.random() * namePicker.length)] + suffix;
+    let baseName = defaultName;
+    if (baseName == undefined){
+      baseName = namePicker[Math.floor(Math.random() * namePicker.length)];
+    }
+    const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'CRAFTING');
     const durability = grade * 5 + Math.floor(Math.random() * grade * 5);
     return {
@@ -514,7 +533,8 @@ export class InventoryService {
       armorStats: {
         defense: grade,
         material: material,
-        durability: durability
+        durability: durability,
+        baseName: baseName
       },
       description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " + grade + "<br/>Durability: " + durability
     };
@@ -1175,9 +1195,9 @@ export class InventoryService {
     }
     let inventoryIndex = 0;
     if (item1.slot === 'rightHand' || item1.slot === 'leftHand'){
-      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + ""));
+      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + "", item1.weaponStats?.baseName));
     } else {
-      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot));
+      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, item1.armorStats?.baseName));
     }
     // if we can, move the new item to the desired destination index
     if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null){
@@ -1256,9 +1276,9 @@ export class InventoryService {
         return;
       }
       if (slot === 'rightHand' || slot === 'leftHand'){
-        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "");
+        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", sourceItem.weaponStats?.baseName);
       } else {
-        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot);
+        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot, sourceItem.armorStats?.baseName);
       }
       this.characterService.characterState.equipment[slot] = destinationItem;
       this.itemStacks[lastdestinationIndex] = null;
