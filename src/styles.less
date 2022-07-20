@@ -20,22 +20,22 @@
   --disabledText: #555555;
 }
 :root .darkMode{
-  --bodyText: white;
+  --bodyText: #bababa;
   --bodyBackground: #000000;
   --panelBackground: #222222;
-  --panelBorder: #aaaaaa;
+  --panelBorder: #5a5a5a;
   --tableDividerColor: #aaaaaa;
   --activeButtonColor: #004444;
-  --itemSlotColor: #555555;
+  --itemSlotColor: #373737;
   --itemSlotHighlight: #004444;
   --storeButtonColor: #777777;
-  --storeButtonDisabledColor: darkgray;
+  --storeButtonDisabledColor: #3b3b3b;
   --progressBackgroundColor: #3b3b3b;
   --healthColor: red;
   --staminaColor: lightgreen;
   --nutritionColor: yellow;
-  --manaColor: lightblue;
-  --buttonColor: #777777;
+  --manaColor: #195061;
+  --buttonColor: #373737;
   --buttonBorder: #999999;
   --dialogBackground: #333333;
   --disabledText: #999999;
@@ -91,13 +91,25 @@ button:disabled {
 .itemSlot {
   border-radius: 4px;
   border: 1px solid var(--panelBorder);
-  margin: 1px;
+  padding: 2px;
   font-size: x-small;
   text-align: center;
   border-spacing: 0px;
   cursor: pointer;
   background-color: var(--itemSlotColor);
   color: var(--bodyText);
+  box-sizing: border-box;
+}
+
+.itemSlot.brokenItem {
+  border: 2px dashed var(--panelBorder);
+  filter:brightness(85%);
+}
+
+.textOverflow {
+  // white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mat-dialog-container {
@@ -131,10 +143,10 @@ button:disabled {
   height: 100%;
   width: 100%;
   background: linear-gradient(
-        90deg, 
-        rgba(0,0,0,0)    0%, 
-        rgba(0,0,0,0.4) 40%, 
-        rgba(0,0,0,0.4) 60%, 
+        90deg,
+        rgba(0,0,0,0)    0%,
+        rgba(0,0,0,0.4) 40%,
+        rgba(0,0,0,0.4) 60%,
         rgba(0,0,0,0)  100%);
 }
 

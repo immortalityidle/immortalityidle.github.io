@@ -93,15 +93,15 @@ export class MainLoopService {
         if (this.characterService) {
           // should never be null but this keeps the compiler happy
           if (this.characterService.characterState.lifespan > 36500){
-            // add one extra tick at 100 years old
+            // add one extra tick at 100 years lifespan
             repeatTimes++;
           }
           if (this.characterService.characterState.lifespan > 365000){
-            // and an extra tick at 1000 years old
+            // and an extra tick at 1000 years lifespan
             repeatTimes++;
           }
-          for (let i = 0; i < Math.floor(this.characterService.characterState.lifespan / 1825000); i++){
-            // and one extra for every 5000 years old
+          for (let i = 0; i < Math.floor(this.totalTicks / 1825000) && i < 100; i++){
+            // and one extra for every 5000 years you've ever lived, up to 100 repeats
             repeatTimes++;
           }
         }

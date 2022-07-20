@@ -1,41 +1,57 @@
 @import (reference) "../../styles.less";
 
-.inventoryContainer{
+.inventoryContainer {
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
+.inventoryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 3px 0;
+  justify-content: center;
+  gap: 3px;
+}
+
 .itemSlot {
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+  position: relative;
 }
 
 .selectedItem {
   background-color: var(--itemSlotHighlight);
 }
 
-.itemSlot > tr {
+.itemSlot .itemName {
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
   line-height: 12px;
+}
+
+.itemQuantity {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  line-height: 15px;
+  padding: 0 4px;
+  width: fit-content;
+  height: fit-content;
+  background: inherit;
+  filter: brightness(80%);
+  border-radius: 3px;
+  z-index: 1;
 }
 
 .overflow {
   overflow: auto;
 }
 
-.inventoryGrid {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 2px;
-  margin-left: 2px;
-}
-
 .inventoryButtons {
   border-top: 1px solid var(--panelBorder)
-}
-
-table {
-  width: 100%;
 }
 
 .inventoryLabelColumn {

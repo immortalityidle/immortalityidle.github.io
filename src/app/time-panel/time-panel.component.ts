@@ -61,21 +61,24 @@ export class TimePanelComponent implements OnInit {
   onPlusClick(entry: ActivityLoopEntry, event: MouseEvent): void{
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey){
-      entry.repeatTimes += 10;
-    } else {
-      entry.repeatTimes++;
-    }
+    // Shift and Ctrl both multiply by 10x, combined does 100
+    let repeat = 1
+    repeat *= event.shiftKey ? 10 : 1
+    repeat *= event.ctrlKey ? 10 : 1
+
+    entry.repeatTimes += repeat
   }
 
   onMinusClick(entry: ActivityLoopEntry, event: MouseEvent): void{
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey){
-      entry.repeatTimes -= 10
-    } else {
-      entry.repeatTimes--;
-    }
+    // Shift and Ctrl both multiply by 10x, combined does 100
+    let repeat = 1
+    repeat *= event.shiftKey ? 10 : 1
+    repeat *= event.ctrlKey ? 10 : 1
+
+    entry.repeatTimes -= repeat
+
     if (entry.repeatTimes < 0) {
       entry.repeatTimes = 0;
     }

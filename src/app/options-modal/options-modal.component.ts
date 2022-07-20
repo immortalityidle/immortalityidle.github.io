@@ -3,7 +3,7 @@ import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.serv
 import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
-import { InventoryService, BalanceItem } from '../game-state/inventory.service';
+import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-options-modal',
@@ -19,6 +19,15 @@ export class OptionsModalComponent {
     public followerService: FollowersService,
     public autoBuyerService: AutoBuyerService
   ) { }
+
+  autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    autosellEntry.reserve = parseInt(event.target.value);
+  }
+  autoUseReserveChange(event: Event, autouseEntry: AutoItemEntry){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    autouseEntry.reserve = parseInt(event.target.value);
+  }
 
   autoBuyLandLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;

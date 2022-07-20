@@ -1,4 +1,4 @@
-<div class='darkMode'>
+<div class='darkMode optionsDiv'>
   <span>Manuals Options</span>
   <hr/>
   <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
@@ -90,10 +90,13 @@
       Automatically Sold Items:
     </span>
     <div class="scrollingDiv">
-      <div *ngFor="let itemName of inventoryService.autoSellItems">
+      <div *ngFor="let entry of inventoryService.autoSellEntries">
         <span>
-          -{{itemName | titlecase}}
-          <button (click)="inventoryService.unAutoSell(itemName)">Stop Selling</button>
+          - {{entry.name | titlecase}}
+        </span>
+        <span>
+          - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
+          <button (click)="inventoryService.unAutoSell(entry.name)">Stop Selling</button>
         </span>
       </div>
     </div>
@@ -101,10 +104,13 @@
   <div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
     <span>Automatically Used Items:</span>
     <div class="scrollingDiv">
-      <div *ngFor="let itemName of inventoryService.autoUseItems">
+      <div *ngFor="let entry of inventoryService.autoUseEntries">
         <span>
-          -{{itemName | titlecase}}
-          <button (click)="inventoryService.unAutoUse(itemName)">Stop Using</button>
+          - {{entry.name | titlecase}}
+        </span>
+        <span>
+          - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
+          <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
         </span>
       </div>
     </div>

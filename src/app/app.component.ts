@@ -119,21 +119,21 @@ export class AppComponent implements OnInit {
 
   exportClicked(): void {
     const dialogRef = this.dialog.open(ExportPanelComponent, {
-      width: '510px',
+      width: '700px',
       data: {someField: 'foo'}
     });
   }
 
   storeClicked(): void {
     const dialogRef = this.dialog.open(ManualStoreModalComponent, {
-      width: '510px',
+      width: '700px',
       data: {someField: 'foo'}
     });
   }
 
   storeOptionsClicked(): void {
     const dialogRef = this.dialog.open(OptionsModalComponent, {
-      width: '500px',
+      width: '700px',
       data: {someField: 'foo'}
     });
   }
@@ -148,7 +148,7 @@ export class AppComponent implements OnInit {
   ascensionStoreClicked(){
     this.storeService.updateAscensions();
     const dialogRef = this.dialog.open(AscensionStoreModalComponent, {
-      width: '500px',
+      width: '700px',
       data: {someField: 'foo'}
     });
   }

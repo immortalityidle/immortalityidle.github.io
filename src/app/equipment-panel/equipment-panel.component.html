@@ -1,63 +1,53 @@
 <h3 class="panelHeader">Equipment</h3>
-<table>
-  <tr>
-    <td></td>
-    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}"
+<div class="equipmentContainer">
+    <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
       (dblclick)="slotDoubleClicked('head', $event)"
-      tooltip="{{character.equipment.head?.description}}" placement="left"
+      tooltip="{{(character.equipment.head !== null) ? (character.equipment.head?.name | titlecase) + '<hr/>' + (character.equipment.head?.description) : ''}}" placement="left"
     >
       {{character.equipment.head?.name | titlecase}}
-    </td>
-    <td></td>
-  </tr>
-  <tr>
-    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
+    </div>
+    <div style="grid-area: right;" class="itemSlot textOverflow" 
+      [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('rightHand', $event)" (dragstart)="drag('rightHand', $event)"
       (dblclick)="slotDoubleClicked('rightHand', $event)"
-      tooltip="{{character.equipment.rightHand?.description}}" placement="left"
+      tooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand?.name | titlecase) + '<hr/>' + (character.equipment.rightHand?.description) : ''}}" placement="left"
     >
       {{character.equipment.rightHand?.name | titlecase}}
-    </td>
-    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}"
+    </div>
+    <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('body', $event)" (dragstart)="drag('body', $event)"
       (dblclick)="slotDoubleClicked('body', $event)"
-      tooltip="{{character.equipment.body?.description}}" placement="left"
+      tooltip="{{(character.equipment.body !== null) ? (character.equipment.body?.name | titlecase) + '<hr/>' + (character.equipment.body?.description) : ''}}" placement="left"
     >
       {{character.equipment.body?.name | titlecase}}
-    </td>
-    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
+    </div>
+    <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('leftHand', $event)" (dragstart)="drag('leftHand', $event)"
       (dblclick)="slotDoubleClicked('leftHand', $event)"
-      tooltip="{{character.equipment.leftHand?.description}}" placement="left"
+      tooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand?.name | titlecase) + '<hr/>' + (character.equipment.leftHand?.description) : ''}}" placement="left"
     >
       {{character.equipment.leftHand?.name | titlecase}}
-    </td>
-  </tr>
-  <tr>
-    <td rowspan="2">
+    </div>
+    <div style="grid-area: stats;">
       <span tooltip="Accuracy. Your chance to hit monsters when you attack them. Based on your speed."><mat-icon>manage_accounts</mat-icon>{{character.accuracy | percent}}</span>
       <br/>
       <span tooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons."><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
       <br/>
       <span tooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor."><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
-    </td>
-    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
+    </div>
+    <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"
       (dblclick)="slotDoubleClicked('legs', $event)"
-      tooltip="{{character.equipment.legs?.description}}" placement="left"
+      tooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs?.name | titlecase) + '<hr/>' + (character.equipment.legs?.description) : ''}}" placement="left"
     >
       {{character.equipment.legs?.name | titlecase}}
-    </td>
-    <td></td>
-  </tr>
-  <tr>
-    <td class="itemSlot" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
+    </div>
+    <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('feet', $event)" (dragstart)="drag('feet', $event)"
       (dblclick)="slotDoubleClicked('feet', $event)"
-      tooltip="{{character.equipment.feet?.description}}" placement="left"
+      tooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet?.name | titlecase) + '<hr/>' + (character.equipment.feet?.description) : ''}}" placement="left"
     >
       {{character.equipment.feet?.name | titlecase}}
-    </td>
-    <td></td>
-  </tr>
+  </div>
+</div>

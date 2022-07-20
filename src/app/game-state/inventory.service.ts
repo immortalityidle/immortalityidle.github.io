@@ -7,7 +7,6 @@ import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
 import { WeaponNames, ItemPrefixes, WeaponSuffixes, WeaponSuffixModifiers, ArmorSuffixes, ArmorSuffixModifiers, herbNames, herbQuality, ChestArmorNames, LegArmorNames, ShoeNames, HelmetNames } from './itemResources';
 import { FurniturePosition } from './home.service';
-import { withLatestFrom } from 'rxjs';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -66,12 +65,17 @@ export interface BalanceItem {
   name: string;
 }
 
+export interface AutoItemEntry {
+  name: string;
+  reserve: number;
+}
+
 export interface InventoryProperties {
   itemStacks: (ItemStack | null)[],
   autoSellUnlocked: boolean,
-  autoSellItems: string[],
+  autoSellEntries: AutoItemEntry[],
   autoUseUnlocked: boolean,
-  autoUseItems: string[],
+  autoUseEntries: AutoItemEntry[],
   autoBalanceUnlocked: boolean,
   autoBalanceItems: BalanceItem[],
   autoPotionUnlocked: boolean,
@@ -103,9 +107,9 @@ export class InventoryService {
   noFood: boolean;
   selectedItem: ItemStack | null = null;
   autoSellUnlocked: boolean;
-  autoSellItems: string[];
+  autoSellEntries: AutoItemEntry[];
   autoUseUnlocked: boolean;
-  autoUseItems: string[];
+  autoUseEntries: AutoItemEntry[];
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
   autoPotionUnlocked: boolean;
@@ -143,9 +147,9 @@ export class InventoryService {
   ) {
     this.noFood = false;
     this.autoSellUnlocked = false;
-    this.autoSellItems = [];
+    this.autoSellEntries = [];
     this.autoUseUnlocked = false;
-    this.autoUseItems = [];
+    this.autoUseEntries = [];
     this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
@@ -205,9 +209,9 @@ export class InventoryService {
     return {
       itemStacks: this.itemStacks,
       autoSellUnlocked: this.autoSellUnlocked,
-      autoSellItems: this.autoSellItems,
+      autoSellEntries: this.autoSellEntries,
       autoUseUnlocked: this.autoUseUnlocked,
-      autoUseItems: this.autoUseItems,
+      autoUseEntries: this.autoUseEntries,
       autoBalanceUnlocked: this.autoBalanceUnlocked,
       autoBalanceItems: this.autoBalanceItems,
       autoPotionUnlocked: this.autoPotionUnlocked,
@@ -234,9 +238,9 @@ export class InventoryService {
   setProperties(properties: InventoryProperties) {
     this.itemStacks = properties.itemStacks;
     this.autoSellUnlocked = properties.autoSellUnlocked || false;
-    this.autoSellItems = properties.autoSellItems;
+    this.autoSellEntries = properties.autoSellEntries || [];
     this.autoUseUnlocked = properties.autoUseUnlocked || false;
-    this.autoUseItems = properties.autoUseItems;
+    this.autoUseEntries = properties.autoUseEntries || [];
     this.autoBalanceUnlocked = properties.autoBalanceUnlocked || false;
     this.autoBalanceItems = properties.autoBalanceItems;
     this.autoPotionUnlocked = properties.autoPotionUnlocked || false;
@@ -679,7 +683,7 @@ export class InventoryService {
     }
   }
 
-  // find the best food in the inventory and use it
+  /** Finds the best food in the inventory and uses it. */ 
   eatFood(): void {
     if (this.fed){
       // we already ate something this tick
@@ -785,9 +789,21 @@ export class InventoryService {
       this.useItem(item, quantity);
       return -1;
     }
-    if (this.autoUseItems.includes(item.name)){
-      this.useItem(item, quantity);
-      return -1;
+    for (let entry of this.autoUseEntries){
+      if (entry.name === item.name){
+        let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
+        if (numberToUse > quantity){
+          // don't worry about using more than the incoming quantity here
+          numberToUse = quantity;
+        }
+        if (numberToUse > 0){
+          this.useItem(item, quantity);
+          quantity -= numberToUse;
+          if (quantity == 0){
+            return -1;
+          }
+        }
+      }
     }
     if (this.autoSellOldGemsEnabled && item.type === "spiritGem"){
       //clear out any old gems of lesser value
@@ -799,9 +815,21 @@ export class InventoryService {
         }
       }
     }
-    if (this.autoSellItems.includes(item.name)){
-      this.characterService.characterState.money += item.value * quantity;
-      return -1;
+    for (let entry of this.autoSellEntries){
+      if (entry.name === item.name){
+        let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
+        if (numberToSell > quantity){
+          // don't worry about selling more than the incoming quantity here
+          numberToSell = quantity;
+        }
+        if (numberToSell > 0){
+          this.characterService.characterState.money += item.value * numberToSell;
+          quantity -= numberToSell;
+          if (quantity == 0){
+            return -1;
+          }
+        }
+      }
     }
 
     let firstStack = -1;
@@ -891,15 +919,14 @@ export class InventoryService {
     if (!this.autoSellUnlocked){
       return;
     }
-    if (!this.autoSellItems.includes(item.name)){
-      this.autoSellItems.push(item.name);
+    if (!this.autoSellEntries.some(e => e.name === item.name)) {
+      this.autoSellEntries.push({name: item.name, reserve: 0});
     }
-    this.sellAll(item);
   }
 
   unAutoSell(itemName: string){
-    const index = this.autoSellItems.indexOf(itemName);
-    this.autoSellItems.splice(index, 1);
+    const index = this.autoSellEntries.findIndex(item => item.name === itemName);
+    this.autoSellEntries.splice(index, 1);
   }
 
   useItemStack(itemStack: ItemStack, quantity = 1): void {
@@ -948,32 +975,14 @@ export class InventoryService {
       // it's not usable, bail out.
       return;
     }
-    if (!this.autoUseItems.includes(item.name)){
-      this.autoUseItems.push(item.name);
-    }
-    if (item.useConsumes){
-      // use all the ones you have now
-      for (let i = 0; i < this.itemStacks.length; i++) {
-        if (this.itemStacks[i] === null){
-          continue;
-        }
-        if (this.itemStacks[i]?.item.name === item.name && item.useConsumes){
-          while (this.itemStacks[i] !== null){
-            // this code is stupid because typescript is stupid.
-            const itemStack = this.itemStacks[i];
-            if (itemStack === null){
-              continue;
-            }
-            this.useItemStack(itemStack, itemStack.quantity);
-          }
-        }
-      }
+    if (!this.autoUseEntries.some(e => e.name === item.name)) {
+      this.autoUseEntries.push({name: item.name, reserve: 0});
     }
   }
 
   unAutoUse(itemName: string){
-    const index = this.autoUseItems.indexOf(itemName);
-    this.autoUseItems.splice(index, 1);
+    const index = this.autoUseEntries.findIndex(item => item.name === itemName);
+    this.autoUseEntries.splice(index, 1);
   }
 
   autoBalance(item: Item){
@@ -1097,7 +1106,31 @@ export class InventoryService {
     return itemValue;
   }
 
-  // a special use function for generated potions
+  getQuantityByName(itemName: string): number{
+    let itemCount = 0;
+    for (let i = 0; i < this.itemStacks.length; i++){
+      let itemIterator = this.itemStacks[i];
+      if (itemIterator == null){
+        continue;
+      }
+      if (itemIterator.item.name == itemName) {
+        itemCount += itemIterator.quantity;
+      }
+    }
+    return itemCount;
+  }
+
+  
+  /** Checks for equipment durability. Returns false if equipment has 0 durability. */
+  hasDurability(itemStack: ItemStack): boolean {
+    const item = itemStack.item;
+
+    if (!instanceOfEquipment(item)) return true;
+
+    return (item.armorStats?.durability !== 0 && item.weaponStats?.durability !== 0);
+  }
+
+  /** A special use function for generated potions. */
   usePotion(potion: Potion, quantity = 1){
     if (quantity < 1){
       quantity = 1; //handle potential 0 and negatives just in case
@@ -1106,7 +1139,7 @@ export class InventoryService {
     this.characterService.characterState.attributes[potion.attribute].value += potion.increase * quantity;
   }
 
-  // a special use function for generated pills
+  /** A special use function for generated pills*/
   usePill(pill: Pill, quantity = 1){
     if (quantity < 1){
       quantity = 1; //handle potential 0 and negatives just in case
@@ -1123,7 +1156,7 @@ export class InventoryService {
     this.characterService.characterState.checkOverage();
   }
 
-  // return the number of open inventory slots
+  /** Returns the number of open inventory slots. */
   openInventorySlots(){
     let openSlots = 0;
     for (const itemIterator of this.itemStacks) {
@@ -1134,7 +1167,7 @@ export class InventoryService {
     return openSlots;
   }
 
-  // Create a new piece of equipment based on the two provided. Caller needs to do the destroying of the old items.
+  /** Create a new piece of equipment based on the two provided. Caller needs to do the destroying of the old items. */
   mergeEquipment(item1: Equipment, item2: Equipment, destinationInventoryIndex: number){
     if (item1.slot !== item2.slot){
       // not the same slot, bail out

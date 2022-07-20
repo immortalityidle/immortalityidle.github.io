@@ -1,23 +1,14 @@
 @import (reference) "../../styles.less";
 
-.inventoryContainer{
-  position: relative;
-  height: 100%;
+.furnitureModal {
+  overflow: hidden;
 }
 
 .itemSlot {
-  width: 90px;
-  height: 90px;
+  width: 75px;
+  height: 75px;
   background-color: var(--storeButtonColor);
-}
-
-.priceLabel {
-width: 60px;
-text-align: center;
-}
-
-.selectedItem {
-  background-color: var(--itemSlotHighlight);
+  line-height: 12px;
 }
 
 .ownedItem {
@@ -25,20 +16,22 @@ text-align: center;
   border: 1px solid var(--storeButtonDisabledColor) !important;
 }
 
-.itemSlot > tr {
-line-height: 12px;
-}
-
 .inventoryGrid {
-display: flex;
-flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 1em;
+  text-align: center;
+  justify-content: center;
 }
 
-table {
-width: 100%;
+hr {
+  margin-top: 2px;
 }
 
 button {
-margin-top: 2px;
+  width: 90%;
+  display: inline-block;
+  margin-top: 4px;
 }
 
