@@ -16,9 +16,9 @@
         draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
         [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem),
         'brokenItem': (itemStack !== null && !inventoryService.hasDurability(itemStack) )}"
-        tooltip="{{itemStack?.item?.name | titlecase}}<hr/>{{itemStack?.item?.description}}" placement="bottom">
-          <div [ngClass]="{'half': ((itemStack?.quantity || 0) > 1)}" class="textOverflow">{{itemStack?.item?.name | titlecase}}</div>
-          <div *ngIf="(itemStack?.quantity || 0) > 1" class="half">{{itemStack?.quantity}}</div>
+        tooltip="{{(itemStack?.item !== null) ? (itemStack?.item?.name | titlecase) + '<hr/>' + (itemStack?.item?.description) : ''}}" placement="bottom">
+          <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
+          <div *ngIf="(itemStack?.quantity || 0) > 1" class="itemQuantity">x{{itemStack?.quantity}}</div>
         </div>
     </div>
   </div>
