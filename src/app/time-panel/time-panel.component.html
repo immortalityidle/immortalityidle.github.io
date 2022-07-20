@@ -31,7 +31,7 @@
     <label *ngIf="activityService.autoRestart" for="pauseOnDeath">Pause on Death</label>
     <h6 *ngIf="mainLoopService.bankedTicks > 0">
       <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
-        [checked]="mainLoopService.useSavedTicks"/>
+        [checked]="mainLoopService.useBankedTicks"/>
       <label for="useSavedTicks">Use banked time to accelerate reality. {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</label>
     </h6>
   </h3>

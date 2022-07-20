@@ -104,7 +104,7 @@ export class TimePanelComponent implements OnInit {
 
   useSavedTicks(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.mainLoopService.useSavedTicks = event.target.checked;
+    this.mainLoopService.useBankedTicks = event.target.checked;
   }
 
   allowDrop(event: DragEvent){

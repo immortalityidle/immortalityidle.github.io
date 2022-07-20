@@ -14,6 +14,7 @@ export interface MainLoopProperties {
   pause: boolean;
   bankedTicks: number;
   totalTicks: number;
+  useBankedTicks: boolean
 }
 
 @Injectable({
@@ -36,7 +37,7 @@ export class MainLoopService {
   bankedTicks = 0;
   offlineDivider = 10;
   characterService?: CharacterService;
-  useSavedTicks = true;
+  useBankedTicks = true;
 
   constructor(
     private injector: Injector) {
@@ -51,7 +52,8 @@ export class MainLoopService {
       tickDivider: this.tickDivider,
       pause: this.pause,
       bankedTicks: this.bankedTicks,
-      totalTicks: this.totalTicks
+      totalTicks: this.totalTicks,
+      useBankedTicks: this.useBankedTicks
     }
   }
 
@@ -66,6 +68,11 @@ export class MainLoopService {
     this.bankedTicks = properties.bankedTicks + Math.floor((newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider));
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
+    if (properties.useBankedTicks === undefined){
+      this.useBankedTicks = true;
+    } else {
+      this.useBankedTicks = properties.useBankedTicks;
+    }
   }
 
   start() {
@@ -86,7 +93,7 @@ export class MainLoopService {
       if (this.pause) {
         this.bankedTicks++;
       } else {
-        if (this.bankedTicks > 0 && this.useSavedTicks){
+        if (this.bankedTicks > 0 && this.useBankedTicks){
           repeatTimes += 10 / this.tickDivider;
           this.bankedTicks -= 10 / this.tickDivider;
         }
