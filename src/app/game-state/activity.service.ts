@@ -2007,7 +2007,7 @@ export class ActivityService {
         }
       }],
       requirements: [{
-        charisma: 1000000000,
+        charisma: 50000000,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
