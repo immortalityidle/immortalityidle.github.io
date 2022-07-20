@@ -1999,6 +1999,7 @@ export class ActivityService {
         this.characterService.characterState.money -= 1000000;
         if (this.characterService.characterState.money < 0){
           this.characterService.characterState.money = 0;
+          return;
         }
         if (this.followerService.followersUnlocked && this.characterService.characterState.money > 0){
           if (Math.random() < 0.01){

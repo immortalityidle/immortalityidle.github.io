@@ -275,6 +275,10 @@ export class Character {
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
+    if (this.money < 0){
+      //sanity check that we're not persisting/growing debt at higher bloodline levels
+      this.money = 0;
+    } 
     if (this.bloodlineRank < 3) {
       this.money = 0;
     } else if (this.bloodlineRank < 4) {
