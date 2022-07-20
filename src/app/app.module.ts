@@ -31,6 +31,7 @@ import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.compo
 import { VerticalPanelSliderComponent } from './panel-slider/vertical-panel-slider/vertical-panel-slider.component';
 import { ResizableDirective } from './panel-slider/resizable.directive';
 import { HorizontalPanelSliderComponent } from './panel-slider/horizontal-panel-slider/horizontal-panel-slider.component';
+import { FollowerManagementPanelComponent } from './follower-management-panel/follower-management-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -65,6 +66,7 @@ const materialModules = [
     VerticalPanelSliderComponent,
     ResizableDirective,
     HorizontalPanelSliderComponent,
+    FollowerManagementPanelComponent,
   ],
   imports: [
     BrowserModule,

@@ -22,7 +22,12 @@ export interface FollowersProperties {
   followersUnlocked: boolean,
   followers: Follower[],
   autoDismissUnlocked: boolean,
-  autoDismissJobs: string[],
+  maxFollowerByType: { [key: string]: number; }
+}
+
+export interface FollowerReserve {
+  job: string,
+  reserve: number
 }
 
 type jobsType = {
@@ -41,7 +46,7 @@ export class FollowersService {
   followers: Follower[] = [];
   followersRecruited = 0;
   autoDismissUnlocked = false;
-  autoDismissJobs: string[] = [];
+  maxFollowerByType: { [key: string]: number; } = {};
 
   jobs: jobsType = {
     "builder": {
@@ -197,6 +202,11 @@ export class FollowersService {
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){
           // follower aged off
+          this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "STANDARD", "EVENT");
+          this.followers.splice(i,1);
+        } else if (this.characterService.characterState.money < this.followers[i].cost){
+          // quit from not being paid
+          this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "STANDARD", "EVENT");
           this.followers.splice(i,1);
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
@@ -223,7 +233,7 @@ export class FollowersService {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
-      autoDismissJobs: this.autoDismissJobs
+      maxFollowerByType: this.maxFollowerByType
     }
   }
 
@@ -231,7 +241,7 @@ export class FollowersService {
     this.followers = properties.followers || [];
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
-    this.autoDismissJobs = properties.autoDismissJobs || [];
+    this.maxFollowerByType = properties.maxFollowerByType || {};
   }
 
   generateFollower(){
@@ -243,8 +253,19 @@ export class FollowersService {
     }
 
     const job = this.generateFollowerJob();
-    if (this.autoDismissJobs.includes(job)){
-      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any of those.","STANDARD","EVENT");
+    let capNumber = 1000;
+    let currentCount = 0;
+    if (this.maxFollowerByType[job] !== undefined){
+      capNumber = this.maxFollowerByType[job];
+    }
+    for (let follower of this.followers){
+      if (follower.job == job){
+        currentCount++;
+      }
+    }
+
+    if (currentCount >= capNumber){
+      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","EVENT");
       return;
     }
 
@@ -273,26 +294,8 @@ export class FollowersService {
     this.followers.splice(index, 1);
   }
 
-  dismissFollowerJob(job: string){
-    if (!this.autoDismissJobs.includes(job)){
-      this.autoDismissJobs.push(job);
-    }
-    for (let index = this.followers.length - 1; index >= 0; index--){
-      if (this.followers[index].job === job){
-        this.followers.splice(index, 1);
-      }
-    }
-  }
-
-  unAutoDismiss(job: string){
-    if (!this.autoDismissJobs.includes(job)){
-      return;
-    }
-    for (let index = this.autoDismissJobs.length - 1; index >= 0; index--){
-      if (this.autoDismissJobs[index] === job){
-        this.autoDismissJobs.splice(index, 1);
-      }
-    }
+  setMaxFollowers(job: string, value: number){
+    this.maxFollowerByType[job] = value;
   }
 
 }

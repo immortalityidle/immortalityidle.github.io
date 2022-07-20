@@ -2022,15 +2022,21 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         if (this.followerService.followersUnlocked){
+          let allMaxed = true;
           for (const follower of this.followerService.followers){
-            if (follower.power > 100) {
+            if (follower.power >= 100) {
               follower.power = 100; // Set max level to 100
+            } else {
+              allMaxed = false;
+              if (Math.random() < (1 - follower.power / 100) / 100){ // Softcap the increase
+                follower.power++;
+                follower.cost = 100 * follower.power;
+                this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "EVENT");
+              }
             }
-            if (Math.random() < (1 - follower.power / 100) / 100){ // Softcap the increase
-              follower.power++;
-              follower.cost = 100 * follower.power;
-              this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "EVENT");
-            }
+          }
+          if (allMaxed){
+            this.logService.addLogMessage("You try to train your followers, but they are all already as powerful as they can be. You pat them each on the back and tell them they are great.", "STANDARD", "EVENT");
           }
         }
       }],
