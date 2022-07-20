@@ -351,7 +351,7 @@ export class Character {
   }
 
   getEmpowermentMult(): number{
-    return 200 / (1 + Math.pow(1.02, -(this.empowermentFactor / 300))) - 100;
+    return 1 + 200 / (1 + Math.pow(1.02, -(this.empowermentFactor / 300))) - 100;
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
