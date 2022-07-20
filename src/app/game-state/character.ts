@@ -350,34 +350,39 @@ export class Character {
     }
   }
 
+  getEmpowermentMult(): number{
+    return 1 + 2000 / (1 + Math.pow(1.02, -(this.empowermentFactor / 30))) - 1000;
+  }
+
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
   getAptitudeMultipier(aptitude: number): number {
     if (aptitude < 0){
       // should not happen, but sanity check it
       aptitude = 0;
     }
+    const empowermentFactor = this.getEmpowermentMult();
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
-      return aptitude * this.empowermentFactor;
+      return aptitude * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 10){
       // from the limit to 10x the limit, change growth rate to 1/4
-      return (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * this.empowermentFactor;
+      return (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 100){
       // from the 10x limit to 100x the limit, change growth rate to 1/20
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * this.empowermentFactor;
+        ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * empowermentFactor;
     } else if (aptitude < this.attributeSoftCap){
       // from the 100x limit to softcap, change growth rate to 1/100
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * this.empowermentFactor;
+        ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowermentFactor;
     } else {
       // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
       const pow = 0.6; // Power can be balanced as needed. Higher power reduces returns.
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
-        (aptitude - this.attributeSoftCap + 1) / (1 + Math.pow (aptitude - this.attributeSoftCap + 1, pow)) * this.attributeScalingLimit / 5120)  * this.empowermentFactor;
+        (aptitude - this.attributeSoftCap + 1) / (1 + Math.pow (aptitude - this.attributeSoftCap + 1, pow)) * this.attributeScalingLimit / 5120)  * empowermentFactor;
     }
   }
 

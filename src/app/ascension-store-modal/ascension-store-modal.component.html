@@ -55,6 +55,6 @@
     </tr>
   </table>
   <span *ngIf="characterService.characterState.empowermentFactor > 1">
-    You have consumed {{(characterService.characterState.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.characterState.empowermentFactor  | number:'1.0-2'}}. You will always keep this bonus, even after ascending.
+    You have consumed {{(characterService.characterState.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.characterState.getEmpowermentMult()  | number:'1.0-3'}}. You will always keep this bonus, even after ascending.
   </span>
 </div>
