@@ -356,7 +356,7 @@ export class Character {
       // should not happen, but sanity check it
       aptitude = 0;
     }
-    const empowermentFactor = 2000 / (1 + Math.pow(1.02, -(this.empowermentFactor / 30))) - 1000;
+    const empowermentFactor = 200 / (1 + Math.pow(1.02, -(this.empowermentFactor / 300))) - 100;
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
       return aptitude * empowermentFactor;
