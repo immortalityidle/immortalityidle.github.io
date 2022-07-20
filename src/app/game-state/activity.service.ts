@@ -730,6 +730,10 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         this.characterService.characterState.status.mana.value -= 100;
+        if (this.characterService.characterState.status.stamina.value < 0 || this.characterService.characterState.status.mana.value < 0){
+          this.logService.addLogMessage("You try to research, but you just don't have the energy.","STANDARD","EVENT");
+          return;
+        }
         if (this.characterService.characterState.status.stamina.value >= 0 && this.characterService.characterState.status.mana.value >= 0){
           if (Math.random() < 0.01){
             this.logService.addLogMessage("Research breakthrough! You produce a tome!.","STANDARD","CRAFTING");
