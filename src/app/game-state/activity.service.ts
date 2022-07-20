@@ -1955,7 +1955,7 @@ export class ActivityService {
 
     this.ExtendLife = {
       level: 0,
-      name: ['Extend Life'],
+      name: ['Extending Life'],
       activityType: ActivityType.ExtendLife,
       description: ['Direct your magical energy into extending your lifespan, making you live longer.'],
       consequenceDescription: ['Uses 20 Mana and 400 Stamina. Make sure you have enough magical power before attempting this.'],
@@ -1986,7 +1986,7 @@ export class ActivityService {
 
     this.Recruiting = {
       level: 0,
-      name: ['Recruit Followers'],
+      name: ['Recruiting Followers'],
       activityType: ActivityType.Recruiting,
       description: ['Look for followers willing to serve you.'],
       consequenceDescription: ['Uses 100 Stamina and 1M taels. Gives you a small chance of finding a follower, if you are powerful to attract any.'],

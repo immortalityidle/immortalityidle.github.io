@@ -29,14 +29,14 @@ export class MainLoopService {
   tickDivider = 10;
   tickCount = 0;
   totalTicks = 0;
-  unlockFastSpeed: boolean = false;
-  unlockFasterSpeed: boolean = false;
-  unlockFastestSpeed: boolean = false;
+  unlockFastSpeed = false;
+  unlockFasterSpeed = false;
+  unlockFastestSpeed = false;
   lastTime: number = new Date().getTime();
-  bankedTicks: number = 0;
-  offlineDivider: number = 10;
+  bankedTicks = 0;
+  offlineDivider = 10;
   characterService?: CharacterService;
-  useSavedTicks: boolean = true;
+  useSavedTicks = true;
 
   constructor(
     private injector: Injector) {
@@ -62,7 +62,7 @@ export class MainLoopService {
     this.tickDivider = properties.tickDivider;
     this.pause = properties.pause;
     this.lastTime = properties.lastTime;
-    let newTime = new Date().getTime();
+    const newTime = new Date().getTime();
     this.bankedTicks = properties.bankedTicks + Math.floor((newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider));
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
@@ -78,8 +78,8 @@ export class MainLoopService {
     }, LONG_TICK_INTERVAL_MS);
 
     window.setInterval(()=> {
-      let newTime = new Date().getTime();
-      let timeDiff = newTime - this.lastTime;
+      const newTime = new Date().getTime();
+      const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
       // do multiple tick events if chrome has been throttling the interval (cause the tab isn't active)
       let repeatTimes = Math.floor(timeDiff / TICK_INTERVAL_MS) || 1;
@@ -100,8 +100,8 @@ export class MainLoopService {
             // and an extra tick at 1000 years lifespan
             repeatTimes++;
           }
-          for (let i = 0; i < Math.floor(this.characterService.characterState.age / 1825000) && i < 50; i++){
-            // and one extra for every 5000 years old, up to 50
+          for (let i = 0; i < Math.floor(this.totalTicks / 1825000) && i < 100; i++){
+            // and one extra for every 5000 years you've ever lived, up to 100 repeats
             repeatTimes++;
           }
         }
