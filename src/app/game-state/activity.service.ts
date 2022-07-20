@@ -1989,7 +1989,7 @@ export class ActivityService {
       name: ['Recruiting Followers'],
       activityType: ActivityType.Recruiting,
       description: ['Look for followers willing to serve you.'],
-      consequenceDescription: ['Uses 100 Stamina and 1M taels. Gives you a small chance of finding a follower, if you are powerful to attract any.'],
+      consequenceDescription: ['Uses 100 Stamina and 1M taels. Gives you a small chance of finding a follower, if you are powerful enough to attract any.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         this.characterService.characterState.money -= 1000000;

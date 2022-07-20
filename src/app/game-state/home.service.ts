@@ -220,12 +220,12 @@ export class HomeService {
     {
       name: "Large House",
       type: HomeType.LargeHouse,
-      description: "A large house where you can live and work. Automatically restores 15 stamina, 2 health and a bit of mana each night.",
+      description: "A large house where you can live and work. Automatically restores 15 stamina, 2 health, and a bit of mana each night.",
       cost: 1000000,
       costPerDay: 50,
       landRequired: 50,
       maxInventory: 24,
-      upgradeToTooltip: "Get a better house. A better home will cost 1M taels and take up 50 land. The new home will restore 15 stamina and 2 health and a bit of mana each night. It has room to practice your craft.",
+      upgradeToTooltip: "Get a better house. A better home will cost 1M taels and take up 50 land. The new home will restore 15 stamina, 2 health, and a bit of mana each night. It has room to practice your craft.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.2;
         this.characterService.characterState.status.health.value += 2;
@@ -243,12 +243,12 @@ export class HomeService {
     {
       name: "Courtyard House",
       type: HomeType.CourtyardHouse,
-      description: "A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina, 3 health and a bit of mana each night.",
+      description: "A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina, 3 health, and a bit of mana each night.",
       cost: 10000000,
       costPerDay: 80,
       landRequired: 80,
       maxInventory: 28,
-      upgradeToTooltip: "Get a better house. A better home will cost 10m taels and take up 80 land. The new home will restore 20 stamina, 3 health and a bit of mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 10m taels and take up 80 land. The new home will restore 20 stamina, 3 health, and a bit of mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.3;
         this.characterService.characterState.status.health.value += 3;
@@ -266,12 +266,12 @@ export class HomeService {
     {
       name: "Manor",
       type: HomeType.Manor,
-      description: "A large manor house. You are really moving up in the world. Automatically restores 25 stamina, 4 health and a bit of mana each night.",
+      description: "A large manor house. You are really moving up in the world. Automatically restores 25 stamina, 4 health, and a bit of mana each night.",
       cost: 100000000,
       costPerDay: 100,
       landRequired: 100,
       maxInventory: 30,
-      upgradeToTooltip: "Get a better house. A better home will cost 100m taels and take up 100 land. The new home will restore 25 stamina, 4 health and a bit of mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 100m taels and take up 100 land. The new home will restore 25 stamina, 4 health, and a bit of mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.4;
         this.characterService.characterState.status.health.value += 4;
@@ -289,12 +289,12 @@ export class HomeService {
     {
       name: "Mansion",
       type: HomeType.Mansion,
-      description: "An elaborate mansion. Automatically restores 30 stamina, 5 health and a bit of mana each night.",
+      description: "An elaborate mansion. Automatically restores 30 stamina, 5 health, and a bit of mana each night.",
       cost: 1000000000,
       costPerDay: 120,
       landRequired: 120,
       maxInventory: 32,
-      upgradeToTooltip: "Get a better house. A better home will cost 1B taels and take up 120 land. The new home will restore 30 stamina, 5 health and a bit of mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 1B taels and take up 120 land. The new home will restore 30 stamina, 5 health, and a bit of mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.5;
         this.characterService.characterState.status.health.value += 5;
@@ -312,12 +312,12 @@ export class HomeService {
     {
       name: "Palace",
       type: HomeType.Palace,
-      description: "A lavish palace. Automatically restores 35 stamina, 10 health and 1 mana each night.",
+      description: "A lavish palace. Automatically restores 35 stamina, 10 health, and 1 mana each night.",
       cost: 10000000000,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 36,
-      upgradeToTooltip: "Get a better house. A better home will cost 10B taels and take up 150 land. The new home will restore 35 stamina, 10 health and 1 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 10B taels and take up 150 land. The new home will restore 35 stamina, 10 health, and 1 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 1;
         this.characterService.characterState.status.health.value += 10;
@@ -335,12 +335,12 @@ export class HomeService {
     {
       name: "Castle",
       type: HomeType.Castle,
-      description: "An imposing castle. Automatically restores 40 stamina, 15 health and 2 mana each night.",
+      description: "An imposing castle. Automatically restores 40 stamina, 15 health, and 2 mana each night.",
       cost: 10000000000,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 40,
-      upgradeToTooltip: "Get a better house. A better home will cost 100B taels and take up 150 land. The new home will restore 40 stamina, 15 health and 2 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 100B taels and take up 150 land. The new home will restore 40 stamina, 15 health, and 2 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 2;
         this.characterService.characterState.status.health.value += 15;
@@ -358,12 +358,12 @@ export class HomeService {
     {
       name: "Fortress",
       type: HomeType.Fortress,
-      description: "An indomitable fortress. Automatically restores 50 stamina, 20 health and 3 mana each night.",
+      description: "An indomitable fortress. Automatically restores 50 stamina, 20 health, and 3 mana each night.",
       cost: 100000000000,
       costPerDay: 180,
       landRequired: 180,
       maxInventory: 50,
-      upgradeToTooltip: "Get a better house. A better home will cost 1T taels and take up 180 land. The new home will restore 50 stamina, 20 health and 3 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 1T taels and take up 180 land. The new home will restore 50 stamina, 20 health, and 3 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 3;
         this.characterService.characterState.status.health.value += 20;
@@ -381,12 +381,12 @@ export class HomeService {
     {
       name: "Mountain",
       type: HomeType.Mountain,
-      description: "An entire mighty mountain. Automatically restores 100 stamina, 30 health and 4 mana each night.",
+      description: "An entire mighty mountain. Automatically restores 100 stamina, 30 health, and 4 mana each night.",
       cost: 1000000000000,
       costPerDay: 500,
       landRequired: 500,
       maxInventory: 60,
-      upgradeToTooltip: "Get a better house. A better home will cost 10T taels and take up 500 land. The new home will restore 100 stamina, 30 health and 4 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 10T taels and take up 500 land. The new home will restore 100 stamina, 30 health, and 4 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 4;
         this.characterService.characterState.status.health.value += 30;
@@ -404,12 +404,12 @@ export class HomeService {
     {
       name: "Forbidden City",
       type: HomeType.ForbiddenCity,
-      description: "A city of your very own. Automatically restores 200 stamin, 50 health and 5 mana each night.",
+      description: "A city of your very own. Automatically restores 200 stamin, 50 health, and 5 mana each night.",
       cost: 10000000000000,
       costPerDay: 1000,
       landRequired: 1000,
       maxInventory: 80,
-      upgradeToTooltip: "Get a better house. A better home will cost 100T taels and take up 1,000 land. The new home will restore 200 stamina, 50 health and 5 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 100T taels and take up 1,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 5;
         this.characterService.characterState.status.health.value += 50;
@@ -427,12 +427,12 @@ export class HomeService {
     {
       name: "Capital",
       type: HomeType.Capital,
-      description: "The entire empire is yours now. Automatically restores 300 stamina, 80 health and 10 mana each night.",
+      description: "The entire empire is yours now. Automatically restores 300 stamina, 80 health, and 10 mana each night.",
       cost: 100000000000000,
       costPerDay: 10000,
       landRequired: 10000,
       maxInventory: 100,
-      upgradeToTooltip: "Get a better house. A better home will cost 1Q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health and 10 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 1Q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 10;
         this.characterService.characterState.status.health.value += 80;
