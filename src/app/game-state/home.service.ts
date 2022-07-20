@@ -78,25 +78,25 @@ export type FurnitureSlots  = { [key in FurniturePosition]: Furniture | null};
   providedIn: 'root'
 })
 export class HomeService {
-  autoBuyLandUnlocked: boolean = false;
-  autoBuyLandLimit: number = 5;
-  autoBuyHomeUnlocked: boolean = false;
+  autoBuyLandUnlocked = false;
+  autoBuyLandLimit = 5;
+  autoBuyHomeUnlocked = false;
   autoBuyHomeLimit: HomeType = 2;
-  autoBuyFurnitureUnlocked: boolean = false;
+  autoBuyFurnitureUnlocked = false;
   autoBuyFurniture: FurnitureSlots = {
     bed: null,
     bathtub: null,
     kitchen: null,
     workbench: null
   }
-  autoFieldUnlocked: boolean = false;
-  autoFieldLimit: number = 0;
-  useAutoBuyReserve: boolean = false;
-  autoBuyReserveAmount: number = 0;
+  autoFieldUnlocked = false;
+  autoFieldLimit = 0;
+  useAutoBuyReserve = false;
+  autoBuyReserveAmount = 0;
   land: number;
   landPrice: number;
   fields: Field[] = [];
-  extraFields: number = 0;
+  extraFields = 0;
   averageYield = 0; // running average of how much food is produced
   furniture: FurnitureSlots = {
     bed: null,
@@ -106,9 +106,9 @@ export class HomeService {
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
   ownedFurniture: string[] = [];
-  grandfatherTent: boolean = false;
-  houseBuildingProgress: number = 1;
-  upgrading: boolean = false;
+  grandfatherTent = false;
+  houseBuildingProgress = 1;
+  upgrading = false;
 
   homesList: Home[] = [
     {
@@ -452,8 +452,8 @@ export class HomeService {
   homeValue!: HomeType;
   home!: Home;
   nextHome!: Home;
-  nextHomeCostReduction: number = 0;
-  nextHomeCost: number = 0;
+  nextHomeCostReduction = 0;
+  nextHomeCost = 0;
   
   constructor(
     private characterService: CharacterService,
@@ -485,8 +485,8 @@ export class HomeService {
           this.nextHomeCost = 0;
         }
         this.home.consequence();
-        for (let slot of this.furniturePositionsArray){
-          let furniturePiece = this.furniture[slot];
+        for (const slot of this.furniturePositionsArray){
+          const furniturePiece = this.furniture[slot];
           if (furniturePiece?.use){
             furniturePiece?.use();
           }
@@ -559,8 +559,8 @@ export class HomeService {
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
     this.upgrading = properties.upgrading || false;
-    for (let slot of this.furniturePositionsArray){
-      let savedFurniture = properties.furniture[slot];
+    for (const slot of this.furniturePositionsArray){
+      const savedFurniture = properties.furniture[slot];
       if (savedFurniture){
         this.furniture[slot] = this.itemRepoService.getFurnitureById(savedFurniture.id);
       }
@@ -704,7 +704,7 @@ export class HomeService {
 
   workFields(workValue: number){
     for (let i = 0; i < this.fields.length && i < 300; i++){
-      let field = this.fields[i];
+      const field = this.fields[i];
       if (field.yield < field.maxYield){
         field.yield += workValue;
       }
@@ -740,7 +740,7 @@ export class HomeService {
  * @returns count of actual purchase
  */
   buyLand(count: number): number{
-    let maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
+    const maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
     if(!maximumCount || !count){
       return 0;
     }
@@ -767,14 +767,14 @@ export class HomeService {
    * @returns count of affordable land
    */
   calculateAffordableLand(money: number): number{
-    let x = money;
-    let C = this.landPrice;
+    const x = money;
+    const C = this.landPrice;
     return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)))/10); // I know this looks nuts but I tested it on its own ^_^;;
 
   }
 
   buyFurniture(itemId: string) {
-    let item = this.itemRepoService.getFurnitureById(itemId)
+    const item = this.itemRepoService.getFurnitureById(itemId)
     if (item) {
       if (this.characterService.characterState.money >= item.value){
         this.characterService.characterState.money -= item.value;

@@ -23,10 +23,10 @@ export interface LogProperties {
 export class LogService {
 
   logTopics: LogTopic[] = ['STORY','EVENT'];
-  newStory: string = "";
-  newEvents: string = "";
-  newCombat: string = "";
-  newCrafting: string = "";
+  newStory = "";
+  newEvents = "";
+  newCombat = "";
+  newCrafting = "";
   storyLog: Log[] = [];
   eventLog: Log[] = [];
   combatLog: Log[] = [];
@@ -42,22 +42,22 @@ export class LogService {
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
     let log  = this.eventLog;
-    if (topic == 'COMBAT') {
+    if (topic === 'COMBAT') {
       log = this.combatLog;
-    } else if (topic == 'STORY') {
+    } else if (topic === 'STORY') {
       log = this.storyLog;
-    } else if (topic == 'CRAFTING') {
+    } else if (topic === 'CRAFTING') {
       log = this.craftingLog;
     }
 
-    let newMessage: Log = {
+    const newMessage: Log = {
       message: message,
       type: type,
       topic: topic,
       timestamp: Date.now()
     };
 
-    if (log.length == 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
+    if (log.length === 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
       // Initialization || Repeat Not Found || Repeat is not within 1 second
       log.unshift(newMessage);
       if (this.logTopics.includes(topic)) {
@@ -76,15 +76,15 @@ export class LogService {
     }
 
     // check if we need to age off the oldest logs
-    if (log.length > 100 && topic != 'STORY'){
+    if (log.length > 100 && topic !== 'STORY'){
       log.splice(100, 1);
     }
     if (!this.logTopics.includes(topic)) {
-      if (topic == 'STORY') {
+      if (topic === 'STORY') {
         this.newStory = " (new)";
-      } else if (topic == 'EVENT'){
+      } else if (topic === 'EVENT'){
         this.newEvents = " (new)";
-      } else if (topic == 'CRAFTING'){
+      } else if (topic === 'CRAFTING'){
         this.newCrafting = " (new)";
       } else {
         this.newCombat = " (new)";
@@ -117,7 +117,7 @@ export class LogService {
   enableLogTopic(topic: LogTopic, enabled: boolean){
     if (!enabled && this.logTopics.includes(topic)){
       for (let index = 0; index < this.logTopics.length; index++){
-        if (this.logTopics[index] == topic){
+        if (this.logTopics[index] === topic){
           this.logTopics.splice(index, 1);
         }
       }
@@ -129,7 +129,7 @@ export class LogService {
   }
 
   updateLogTopics(){
-    let logs: Log[][] = [];
+    const logs: Log[][] = [];
 
     if (this.logTopics.includes('COMBAT')){
       this.newCombat = "";
@@ -149,21 +149,21 @@ export class LogService {
     }
 
     this.currentLog = [];
-    if (logs.length == 0){
+    if (logs.length === 0){
       return;
     }
     //@ts-ignore
-    let isEmpty = a => Array.isArray(a) && a.every(isEmpty);
+    const isEmpty = a => Array.isArray(a) && a.every(isEmpty);
     while(!isEmpty(logs)){
       // figure out the oldest log entry and add it to the currentLog until everything is added
       let latestTimestamp = Number.MAX_VALUE;
       let latestLog: Log[] = logs[0];
       for (let index = 0; index < logs.length; index++){
-        let loopLog = logs[index];
-        if (loopLog.length == 0){
+        const loopLog = logs[index];
+        if (loopLog.length === 0){
           continue;
         }
-        let timestamp = loopLog[loopLog.length - 1].timestamp || 0;
+        const timestamp = loopLog[loopLog.length - 1].timestamp || 0;
         if (timestamp < latestTimestamp){
           latestTimestamp = timestamp;
           latestLog = loopLog;

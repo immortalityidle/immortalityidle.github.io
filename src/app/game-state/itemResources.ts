@@ -1,5 +1,5 @@
 // alphabetical list of weapons
-export var WeaponNames = [
+export const WeaponNames = [
     "adze",
     "ahlspiess",
     "aikuchi",
@@ -281,24 +281,24 @@ export var WeaponNames = [
     "zweihander"
 ];
 
-export var ChestArmorNames = [
+export const ChestArmorNames = [
   "jacket", "coat", "breastplate", "jerkin", "hauberk", "vest", "tunic", "chestguard"
 ]
 
-export var LegArmorNames = [
+export const LegArmorNames = [
   "pants", "greaves", "shinguards", "trousers", "shorts", "leggings", "skirt",
 ]
 
-export var HelmetNames = [
+export const HelmetNames = [
   "helmet", "helm", "mask", "faceguard", "cap", "hat", "hood",
 ]
 
-export var ShoeNames = [
+export const ShoeNames = [
   'sandals', 'boots', 'shoes', 'footwear', 'slippers'
 ]
 
 // prefixes in increasing order of goodness
-export var ItemPrefixes = [
+export const ItemPrefixes = [
   "atrocious",
   "awful",
   "dreadful",
@@ -449,7 +449,7 @@ export var ItemPrefixes = [
   "unthinkable",
 ]
 
-export var WeaponSuffixes = [
+export const WeaponSuffixes = [
   "irritation",
   "annoyance",
   "embarassment",
@@ -466,7 +466,7 @@ export var WeaponSuffixes = [
   "annihilation",
 ]
 
-export var WeaponSuffixModifiers = [
+export const WeaponSuffixModifiers = [
   "weak",
   "partial",
   "limited",
@@ -486,7 +486,7 @@ export var WeaponSuffixModifiers = [
   "perfect"
 ]
 
-export var ArmorSuffixes = [
+export const ArmorSuffixes = [
   "comfort",
   "screening",
   "safety",
@@ -505,7 +505,7 @@ export var ArmorSuffixes = [
   "invincibility"
 ]
 
-export var ArmorSuffixModifiers = [
+export const ArmorSuffixModifiers = [
   "weak",
   "limited",
   "partial",
@@ -522,7 +522,7 @@ export var ArmorSuffixModifiers = [
   "perfect"
 ]
 
-export var herbNames = [
+export const herbNames = [
   "patchouli",
   "alangium",
   "lobelia",
@@ -554,7 +554,7 @@ export var herbNames = [
   "ginseng",
 ]
 
-export var herbQuality = [
+export const herbQuality = [
   "rotten",
   "wilted",
   "poor",

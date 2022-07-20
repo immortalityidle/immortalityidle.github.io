@@ -24,17 +24,17 @@
   <table class="clashTable" *ngIf="battleService.enemies.length > 0">
     <tr>
       <td class="fixedCell"><mat-icon class="clashIcon"></mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 4 || battleService.tickCounter == 5">arrow_forward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 3 || battleService.tickCounter == 6">arrow_forward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 2 || battleService.tickCounter == 7">arrow_forward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 1 || battleService.tickCounter == 8">arrow_forward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 0 || battleService.tickCounter == 9">arrow_forward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 10">crisis_alert</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 0 || battleService.tickCounter == 9">arrow_backward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 1 || battleService.tickCounter == 8">arrow_backward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 2 || battleService.tickCounter == 7">arrow_backward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 3 || battleService.tickCounter == 6">arrow_backward</mat-icon></td>
-      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter == 4 || battleService.tickCounter == 5">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 4 || battleService.tickCounter === 5">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 3 || battleService.tickCounter === 6">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 2 || battleService.tickCounter === 7">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 1 || battleService.tickCounter === 8">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 0 || battleService.tickCounter === 9">arrow_forward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 10">crisis_alert</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 0 || battleService.tickCounter === 9">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 1 || battleService.tickCounter === 8">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 2 || battleService.tickCounter === 7">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 3 || battleService.tickCounter === 6">arrow_backward</mat-icon></td>
+      <td class="fixedCell"><mat-icon class="clashIcon" *ngIf="battleService.tickCounter === 4 || battleService.tickCounter === 5">arrow_backward</mat-icon></td>
     </tr>
   </table>
   <table>
