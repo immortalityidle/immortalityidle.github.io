@@ -297,7 +297,7 @@ export class InventoryService {
       }
     }
 
-    let highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
+    const highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
     let prefixIndex = grade % ItemPrefixes.length;
     if (grade >= highestGrade){
       prefixIndex = ItemPrefixes.length - 1;
@@ -485,7 +485,7 @@ export class InventoryService {
   }
 
   generateArmor(grade: number, material: string, slot: EquipmentPosition, defaultName: string | undefined = undefined): Equipment{
-    let highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
+    const highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
     let prefixIndex = grade % ItemPrefixes.length;
     if (grade >= highestGrade){
       prefixIndex = ItemPrefixes.length - 1;
@@ -809,7 +809,7 @@ export class InventoryService {
       this.useItem(item, quantity);
       return -1;
     }
-    for (let entry of this.autoUseEntries){
+    for (const entry of this.autoUseEntries){
       if (entry.name === item.name){
         let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
         if (numberToUse > quantity){
@@ -835,7 +835,7 @@ export class InventoryService {
         }
       }
     }
-    for (let entry of this.autoSellEntries){
+    for (const entry of this.autoSellEntries){
       if (entry.name === item.name){
         let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
         if (numberToSell > quantity){
@@ -1129,7 +1129,7 @@ export class InventoryService {
   getQuantityByName(itemName: string): number{
     let itemCount = 0;
     for (let i = 0; i < this.itemStacks.length; i++){
-      let itemIterator = this.itemStacks[i];
+      const itemIterator = this.itemStacks[i];
       if (itemIterator == null){
         continue;
       }
@@ -1285,11 +1285,11 @@ export class InventoryService {
     }
   }
 
-  mergeSpiritGem(stack: ItemStack){
-    if (stack.quantity < 10){
+  mergeSpiritGem(stack: ItemStack, power = 0){
+    if (stack.quantity < 10 - power){
       return;
     }
-    stack.quantity -= 10;
+    stack.quantity -= 10 - power;
     this.addItem(this.generateSpiritGem((stack.item.value / 10) + 1));
     if (stack.quantity === 0){
       // go find the stack and remove it
@@ -1302,14 +1302,18 @@ export class InventoryService {
     }
   }
 
-  mergeAnySpiritGem(){
+  mergeAnySpiritGem(power = 0){
+    const meridianRank = this.characterService.meridianRank();
+    if (power > meridianRank - 5){
+      power = meridianRank - 5
+    }
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
       if (itemIterator === null){
         continue;
       }
-      if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10){
-        this.mergeSpiritGem(itemIterator);
+      if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power){
+        this.mergeSpiritGem(itemIterator, power);
         return;
       }
     }

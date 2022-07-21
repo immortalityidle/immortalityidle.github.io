@@ -160,8 +160,18 @@ export class FollowersService {
     },
     "gemologist": {
       work: (follower: Follower) => {
+        let gemmerPower = 0;
+        for (const follower of this.followers){
+          if (follower.job === "gemologist"){
+            gemmerPower += follower.power;
+          }
+        }
+        gemmerPower = Math.floor(gemmerPower/50);
+        if (gemmerPower > 4){
+          gemmerPower = 4;
+        }
         for (let i = 0; i < follower.power; i++){
-          this.inventoryService.mergeAnySpiritGem();
+          this.inventoryService.mergeAnySpiritGem(gemmerPower);
         }
       },
       description: "Gemologists combine monster gems into higher grades."
@@ -258,7 +268,7 @@ export class FollowersService {
     if (this.maxFollowerByType[job] !== undefined){
       capNumber = this.maxFollowerByType[job];
     }
-    for (let follower of this.followers){
+    for (const follower of this.followers){
       if (follower.job == job){
         currentCount++;
       }
