@@ -35,6 +35,12 @@ export class AttributesPanelComponent {
   dismissFollower(event: MouseEvent, follower: Follower){
     event.preventDefault();
     event.stopPropagation();
-    this.followerService.dismissFollower(follower);
+    if (event.ctrlKey && this.followerService.autoDismissUnlocked){
+      this.followerService.limitFollower(follower);
+    } else if (event.shiftKey && this.followerService.autoDismissUnlocked){
+      this.followerService.dismissFollowerAll(follower);
+    } else {
+      this.followerService.dismissFollower(follower);
+    }
   }
 }

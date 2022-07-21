@@ -36,7 +36,10 @@
             <span class="followerName" tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}. {{followerService.jobs[follower.job].description}}<br/>{{follower.name}} has followed you for {{follower.age / 365 | number: '1.0-1'}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | number: '1.0-1'}} more years. Daily cost: {{follower.cost | number:'1.0-0'}}">
               {{follower.name | titlecase}} the {{follower.job | titlecase}}
             </span>
-            <mat-icon class="smallerIcon" (click)="dismissFollower($event, follower)" tooltip="Dismiss this follower.">
+            <mat-icon class="smallerIcon"
+            (click)="dismissFollower($event, follower)"
+            [tooltip]="followerService.autoDismissUnlocked ? 'Dismiss this follower.\n\nShift-click to automatically dismiss everyone of this job type.\n\nCtrl-click to set the current number as the limit without dismissing.': 'Dismiss this follower.'"
+            tooltipClass="tooltip-break">
               cancel
             </mat-icon>
         </div>
