@@ -303,7 +303,7 @@ export class ActivityService {
         return activity;
       }
     }
-    throw Error('Could not find activity from type');
+    return this.activities[0]; // we can't find the right activity in the activities, so just return the first one.
   }
 
   checkApprenticeship(activityType: ActivityType){
