@@ -351,7 +351,7 @@ export class Character {
   }
 
   getEmpowermentMult(): number{
-    const max = 100;
+    const max = 99;
     return 1 + 2 * max / (1 + Math.pow(1.02, (-this.empowermentFactor / 3))) - max;
   }
 
