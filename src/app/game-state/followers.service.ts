@@ -47,6 +47,7 @@ export class FollowersService {
   followersRecruited = 0;
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number; } = {};
+  followerCap = 0;
 
   jobs: jobsType = {
     "builder": {
@@ -77,13 +78,13 @@ export class FollowersService {
     },
     "weaponsmith": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.rightHand && 
+        if (this.characterService.characterState.equipment.rightHand &&
           this.characterService.characterState.equipment.rightHand.weaponStats){
           this.characterService.characterState.equipment.rightHand.weaponStats.durability += follower.power;
           this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage += Math.floor(follower.power/10);
           this.characterService.characterState.equipment.rightHand.value += Math.floor(follower.power/10);
         }
-        if (this.characterService.characterState.equipment.leftHand && 
+        if (this.characterService.characterState.equipment.leftHand &&
           this.characterService.characterState.equipment.leftHand.weaponStats){
           this.characterService.characterState.equipment.leftHand.weaponStats.durability += follower.power;
           this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage += Math.floor(follower.power/10);
@@ -94,25 +95,25 @@ export class FollowersService {
     },
     "armorer": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.head && 
+        if (this.characterService.characterState.equipment.head &&
           this.characterService.characterState.equipment.head.armorStats){
           this.characterService.characterState.equipment.head.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.head.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
           this.characterService.characterState.equipment.head.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
-        if (this.characterService.characterState.equipment.body && 
+        if (this.characterService.characterState.equipment.body &&
           this.characterService.characterState.equipment.body.armorStats){
           this.characterService.characterState.equipment.body.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.body.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
           this.characterService.characterState.equipment.body.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
-        if (this.characterService.characterState.equipment.legs && 
+        if (this.characterService.characterState.equipment.legs &&
           this.characterService.characterState.equipment.legs.armorStats){
           this.characterService.characterState.equipment.legs.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.legs.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
           this.characterService.characterState.equipment.legs.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
-        if (this.characterService.characterState.equipment.feet && 
+        if (this.characterService.characterState.equipment.feet &&
           this.characterService.characterState.equipment.feet.armorStats){
           this.characterService.characterState.equipment.feet.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.feet.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
@@ -193,6 +194,7 @@ export class FollowersService {
       if (this.characterService.characterState.dead){
         return;
       }
+      this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
       if (this.characterService.characterState.age % 18250 === 0){
         // another 50xth birthday, you get a follower
         this.generateFollower();
@@ -246,8 +248,7 @@ export class FollowersService {
 
   generateFollower(){
     this.followersRecruited++;
-    const maxFollowers = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
-    if (this.followers.length >= maxFollowers){
+    if (this.followers.length >= this.followerCap){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");
       return;
     }
@@ -258,8 +259,8 @@ export class FollowersService {
     if (this.maxFollowerByType[job] !== undefined){
       capNumber = this.maxFollowerByType[job];
     }
-    for (let follower of this.followers){
-      if (follower.job == job){
+    for (const follower of this.followers){
+      if (follower.job === job){
         currentCount++;
       }
     }
@@ -282,11 +283,11 @@ export class FollowersService {
 
   generateFollowerName(): string {
     return FirstNames[Math.floor(Math.random() * FirstNames.length)];
-    
+
   }
   generateFollowerJob(): string {
     const keys = Object.keys(this.jobs);
-    return keys[Math.floor(Math.random() * keys.length)];    
+    return keys[Math.floor(Math.random() * keys.length)];
   }
 
   dismissFollower(follower: Follower){
