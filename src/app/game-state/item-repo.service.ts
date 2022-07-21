@@ -1671,7 +1671,30 @@ export class ItemRepoService {
         }
         return this.inventoryService.autoSellOldGemsUnlocked;
       }
-    }
+    },
+    autoPauseSettingsManual: {
+      id: 'autoPauseSettingsManual',
+      name: "Manual of Customized Danger Sensing",
+      type: "manual",
+      description: "This manual teaches you to customize options for automatically pausing the game.",
+      value: 10000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock auto-pausing customization",
+      useConsumes: true,
+      use: () => {
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        this.activityService.autoPauseUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        return this.activityService.autoPauseUnlocked;
+      }
+    },
   }
 
   constructor(private characterService: CharacterService,

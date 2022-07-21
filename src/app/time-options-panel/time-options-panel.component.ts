@@ -20,7 +20,7 @@ export class TimeOptionsPanelComponent implements OnInit {
 
   pauseBeforeDeath(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.activityService.pauseOnDeath = event.target.checked;
+    this.activityService.pauseBeforeDeath = event.target.checked;
   }
 
 

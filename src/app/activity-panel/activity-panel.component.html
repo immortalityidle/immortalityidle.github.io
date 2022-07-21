@@ -30,7 +30,7 @@
           <br/>
           {{activity.consequenceDescription[activity.level]}}
           <span *ngIf="activity.lastIncome && activity.lastIncome > 0">
-            <mat-icon tooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | number:'1.0-1'}} taels.">
+            <mat-icon tooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels.">
               attach_money
             </mat-icon>
           </span>

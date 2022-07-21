@@ -47,8 +47,8 @@
         <td class="enemyName">{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(" + enemyStack.quantity +")" : ""}}</td>
         <td class="health">
           <div class="progress-bar"
-            [attr.value]="Math.floor(enemyStack.enemy.health)"
-            [attr.max]="Math.floor(enemyStack.enemy.maxHealth)">
+            [attr.value]="Math.floor(enemyStack.enemy.health) | bigNumber"
+            [attr.max]="Math.floor(enemyStack.enemy.maxHealth) | bigNumber">
             <span
               [style.width.%]="100 *
                 Math.floor(enemyStack.enemy.health) /

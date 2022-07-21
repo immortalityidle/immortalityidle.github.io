@@ -23,6 +23,7 @@ export interface ActivityProperties {
   completedApprenticeships: ActivityType[],
   currentApprenticeship: ActivityType,
   savedActivityLoop: ActivityLoopEntry[],
+  autoPauseUnlocked: boolean
 }
 
 @Injectable({
@@ -33,6 +34,7 @@ export class ActivityService {
   savedActivityLoop: ActivityLoopEntry[] = [];
   spiritActivity: ActivityType | null = null;
   autoRestart = false;
+  autoPauseUnlocked = false;
   pauseOnDeath = true;
   pauseBeforeDeath = true;
   activities: Activity[] = this.getActivityList();
@@ -160,6 +162,7 @@ export class ActivityService {
     }
     return {
       autoRestart: this.autoRestart,
+      autoPauseUnlocked: this.autoPauseUnlocked,
       pauseOnDeath: this.pauseOnDeath,
       pauseBeforeDeath: this.pauseBeforeDeath,
       activityLoop: this.activityLoop,
@@ -180,6 +183,7 @@ export class ActivityService {
         activity.unlocked = unlockedActivities.includes(activity.activityType);
     }
     this.autoRestart = properties.autoRestart;
+    this.autoPauseUnlocked = properties.autoPauseUnlocked || false;
     this.pauseOnDeath = properties.pauseOnDeath;
     this.pauseBeforeDeath = properties.pauseBeforeDeath || false;
     this.activityLoop = properties.activityLoop;

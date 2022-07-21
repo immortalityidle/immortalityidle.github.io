@@ -98,10 +98,10 @@ export class AchievementService {
     },
     {
       name: "Persitent Reincarnator",
-      description: "You lived 88 lives and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
-      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
+      description: "You lived one thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
+      hint: "The millennial.",
       check: () => {
-        return this.characterService.characterState.totalLives >= 88 && this.mainLoopService.totalTicks > 36500;
+        return this.mainLoopService.totalTicks > 365000;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fastestPlayManual']);
@@ -636,7 +636,18 @@ export class AchievementService {
       },
       unlocked: false
     },
-
+    {
+      name: "I don't want to go.",
+      description: "You have lived many lives and unlocked the " + this.itemRepoService.items['autoPauseSettingsManual'].name,
+      hint: "",
+      check: () => {
+        return this.characterService.characterState.totalLives >= 48 && this.mainLoopService.totalTicks > 18250;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['autoPauseSettingsManual']);
+      },
+      unlocked: false
+    },
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean){
