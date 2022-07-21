@@ -171,7 +171,7 @@ export class ImpossibleTaskService {
 
   reset(){
     let completeTaskIndex = -1
-    for (let taskIndex = 0; taskIndex < this.tasks.length + 1; taskIndex++){
+    for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
       if (this.taskProgress[taskIndex].complete){
         completeTaskIndex = taskIndex; // Sanity check for the latest complete task
       }
