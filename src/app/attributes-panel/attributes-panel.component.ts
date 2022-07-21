@@ -36,11 +36,11 @@ export class AttributesPanelComponent {
     event.preventDefault();
     event.stopPropagation();
     if (event.ctrlKey && this.followerService.autoDismissUnlocked){
-      this.followerService.dismissFollower(follower, -1);
+      this.followerService.limitFollower(follower);
     } else if (event.shiftKey && this.followerService.autoDismissUnlocked){
-      this.followerService.dismissFollower(follower, 0);
+      this.followerService.dismissFollowerAll(follower);
     } else {
-      this.followerService.dismissFollower(follower, 1);
+      this.followerService.dismissFollower(follower);
     }
   }
 }
