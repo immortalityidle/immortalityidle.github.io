@@ -356,7 +356,8 @@ export class Character {
 
   getEmpowermentMult(): number{
     const max = 99;
-    return 1 + 2 * max / (1 + Math.pow(1.02, (-this.empowermentFactor / 3))) - max;
+    const empowermentFactor = this.empowermentFactor - 1;
+    return 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
