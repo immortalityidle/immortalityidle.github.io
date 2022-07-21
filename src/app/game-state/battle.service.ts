@@ -359,7 +359,7 @@ export class BattleService {
     },
     death: {
       name: "Death itself",
-      health: 1000000000000000, // Make Death last 85k years when fighting with level 10 scount and a 1 billion attack weapon. That's about 3 full days of real time right now.
+      health: 1000000000000000, // Make Death last 85k years when fighting with level 10 scout and a 1 billion attack weapon. That's about 3 full days of real time right now.
       maxHealth: 1000000000000000, // but 1 billion attack takes less than a full realtime day, and they'll probably be improving the weapon during the fight too.
       accuracy: 0.99,
       attack: 100000000,
