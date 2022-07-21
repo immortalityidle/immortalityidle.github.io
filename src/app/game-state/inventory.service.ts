@@ -408,7 +408,7 @@ export class InventoryService {
     let useDescription = "Use to increase your lifespan.";
     let value = grade * 10;
     let name = effect + " Pill " + " +" + grade;
-    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0 && this.characterService.characterState.empowermentFactor < 1000){
+    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0){
       this.consume("pillBox");
       this.consume("pillMold");
       this.consume("pillPouch");
@@ -417,8 +417,10 @@ export class InventoryService {
       useDescription = "Use to permanently empower the increase of your attributes based on your aptitudes.";
       value = 1;
       name = "Empowerment Pill";
+      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.", "STANDARD","CRAFTING");
+    } else {
+      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
     }
-    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
     this.addItem( {
       name: name,
       id: "pill",
@@ -809,7 +811,7 @@ export class InventoryService {
       this.useItem(item, quantity);
       return -1;
     }
-    for (let entry of this.autoUseEntries){
+    for (const entry of this.autoUseEntries){
       if (entry.name === item.name){
         let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
         if (numberToUse > quantity){
@@ -835,7 +837,7 @@ export class InventoryService {
         }
       }
     }
-    for (let entry of this.autoSellEntries){
+    for (const entry of this.autoSellEntries){
       if (entry.name === item.name){
         let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
         if (numberToSell > quantity){
@@ -1129,7 +1131,7 @@ export class InventoryService {
   getQuantityByName(itemName: string): number{
     let itemCount = 0;
     for (let i = 0; i < this.itemStacks.length; i++){
-      let itemIterator = this.itemStacks[i];
+      const itemIterator = this.itemStacks[i];
       if (itemIterator == null){
         continue;
       }

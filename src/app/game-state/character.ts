@@ -355,7 +355,8 @@ export class Character {
   }
 
   getEmpowermentMult(): number{
-    return 1 + 2000 / (1 + Math.pow(1.02, -(this.empowermentFactor / 30))) - 1000;
+    const max = 99;
+    return 1 + 2 * max / (1 + Math.pow(1.02, (-this.empowermentFactor / 3))) - max;
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
@@ -417,9 +418,6 @@ export class Character {
   }
 
   checkOverage(){
-    if (this.empowermentFactor > 1000){
-      this.empowermentFactor = 1000;
-    }
     if (this.healthBonusFood > 1900){
       this.healthBonusFood = 1900;
     }
