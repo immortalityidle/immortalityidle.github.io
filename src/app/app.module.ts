@@ -32,6 +32,7 @@ import { VerticalPanelSliderComponent } from './panel-slider/vertical-panel-slid
 import { ResizableDirective } from './panel-slider/resizable.directive';
 import { HorizontalPanelSliderComponent } from './panel-slider/horizontal-panel-slider/horizontal-panel-slider.component';
 import { FollowerManagementPanelComponent } from './follower-management-panel/follower-management-panel.component';
+import { TimeOptionsPanelComponent } from './time-options-panel/time-options-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -67,6 +68,7 @@ const materialModules = [
     ResizableDirective,
     HorizontalPanelSliderComponent,
     FollowerManagementPanelComponent,
+    TimeOptionsPanelComponent,
   ],
   imports: [
     BrowserModule,
@@ -74,7 +76,7 @@ const materialModules = [
     BrowserAnimationsModule,
     FormsModule,
     CommonModule,
-    TooltipModule.forRoot({'show-delay': 500, 'hideDelay': 50}),
+    TooltipModule.forRoot({'show-delay': 500, 'hideDelay': 50, 'hideDelayAfterClick': 50}),
     ...materialModules
   ],
   exports: [

@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
-import { AchievementService } from '../game-state/achievement.service';
 import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
-import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
-import { LogService } from '../game-state/log.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { TimeOptionsPanelComponent } from '../time-options-panel/time-options-panel.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -23,6 +22,7 @@ export class TimePanelComponent implements OnInit {
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
     public characterService: CharacterService,
+    public dialog: MatDialog
   ) {
   }
 
@@ -56,6 +56,14 @@ export class TimePanelComponent implements OnInit {
   fastestClick(){
     this.mainLoopService.pause = false;
     this.mainLoopService.tickDivider = 1;
+  }
+
+  timeOptions(){
+    const dialogRef = this.dialog.open(TimeOptionsPanelComponent, {
+      width: '700px',
+      data: {someField: 'foo'}
+    });
+
   }
 
   onPlusClick(entry: ActivityLoopEntry, event: MouseEvent): void{
@@ -95,11 +103,6 @@ export class TimePanelComponent implements OnInit {
 
   removeSpiritActivity(){
     this.activityService.spiritActivity = null;
-  }
-
-  pauseOnDeath(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.activityService.pauseOnDeath = event.target.checked;
   }
 
   useSavedTicks(event: Event){

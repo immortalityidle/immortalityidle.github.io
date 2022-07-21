@@ -1,0 +1,13 @@
+<div class='darkMode'>
+  <span>Schedule Options</span>
+  <hr/>
+  <span>
+    <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
+      [checked]="activityService.pauseOnDeath"/>
+    <label *ngIf="activityService.autoRestart" for="pauseOnDeath">Pause on Death</label>
+    <br/>
+    <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseBeforeDeath($event)" id="pauseBeforeDeath"
+      [checked]="activityService.pauseBeforeDeath"/>
+    <label *ngIf="activityService.autoRestart" for="pauseBeforeDeath">Pause Before Death - This will pause one day before the end of your expected lifespan.</label>
+  </span>
+</div>

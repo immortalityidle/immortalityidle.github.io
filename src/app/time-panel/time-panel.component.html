@@ -26,9 +26,10 @@
       (click)="fastestClick()" tooltip="Fastest Game Speed" class="iconButton">
       bolt
     </mat-icon>
-    <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
-      [checked]="activityService.pauseOnDeath"/>
-    <label *ngIf="activityService.autoRestart" for="pauseOnDeath">Pause on Death</label>
+    <mat-icon  *ngIf="activityService.autoRestart" (click)="timeOptions()" tooltip="Options" class="iconButton">
+      settings
+    </mat-icon>
+
     <h6 *ngIf="mainLoopService.bankedTicks > 0">
       <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
         [checked]="mainLoopService.useBankedTicks"/>
@@ -92,11 +93,11 @@
         content_paste
       </mat-icon>
       <mat-icon tooltip="Load your saved schedule of actviities. Note that activities that you cannot do right now will not be loaded."
-        class="iconButton" (click)="activityService.loadActivityLoop()">
+        class="iconButton spaceLeft" (click)="activityService.loadActivityLoop()">
         content_paste_go
       </mat-icon>
       <mat-icon tooltip="Clear your current schedule."
-        class="iconButton" (click)="activityService.activityLoop = []">
+        class="iconButton spaceLeft" (click)="activityService.activityLoop = []">
         delete_sweep
       </mat-icon>
     </span>

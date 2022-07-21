@@ -38,6 +38,7 @@ export class GameStateService {
 
   lastSaved = 0;
   isDarkMode = false;
+  isExperimental = window.location.href.includes("experimental");
 
   constructor(
     private characterService: CharacterService,

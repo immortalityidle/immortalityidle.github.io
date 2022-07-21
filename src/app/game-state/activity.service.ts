@@ -15,6 +15,7 @@ import { FollowersService } from './followers.service';
 export interface ActivityProperties {
   autoRestart: boolean,
   pauseOnDeath: boolean,
+  pauseBeforeDeath: boolean,
   activityLoop: ActivityLoopEntry[],
   unlockedActivities: ActivityType[],
   openApprenticeships: number,
@@ -33,6 +34,7 @@ export class ActivityService {
   spiritActivity: ActivityType | null = null;
   autoRestart = false;
   pauseOnDeath = true;
+  pauseBeforeDeath = true;
   activities: Activity[] = this.getActivityList();
   openApprenticeships = 1;
   oddJobDays = 0;
@@ -67,6 +69,10 @@ export class ActivityService {
       }
       if (this.characterService.characterState.dead){
         return;
+      }
+      if (this.pauseBeforeDeath && this.characterService.characterState.age >= this.characterService.characterState.lifespan - 1){
+        this.logService.addLogMessage("The end of your natural life is imminent. Game paused.", "INJURY", "EVENT");
+        this.mainLoopService.pause = true;
       }
       if (this.exhaustionDays > 0){
         this.exhaustionDays--;
@@ -155,6 +161,7 @@ export class ActivityService {
     return {
       autoRestart: this.autoRestart,
       pauseOnDeath: this.pauseOnDeath,
+      pauseBeforeDeath: this.pauseBeforeDeath,
       activityLoop: this.activityLoop,
       unlockedActivities: unlockedActivities,
       openApprenticeships: this.openApprenticeships,
@@ -174,6 +181,7 @@ export class ActivityService {
     }
     this.autoRestart = properties.autoRestart;
     this.pauseOnDeath = properties.pauseOnDeath;
+    this.pauseBeforeDeath = properties.pauseBeforeDeath || false;
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
