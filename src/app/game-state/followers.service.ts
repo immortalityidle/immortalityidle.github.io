@@ -258,7 +258,7 @@ export class FollowersService {
     if (this.maxFollowerByType[job] !== undefined){
       capNumber = this.maxFollowerByType[job];
     }
-    for (let follower of this.followers){
+    for (const follower of this.followers){
       if (follower.job == job){
         currentCount++;
       }
@@ -289,9 +289,32 @@ export class FollowersService {
     return keys[Math.floor(Math.random() * keys.length)];    
   }
 
-  dismissFollower(follower: Follower){
-    const index = this.followers.indexOf(follower);
-    this.followers.splice(index, 1);
+  /**
+   * 
+   * @param follower the Follower interface of the selected follower.
+   * @param option 1 to dismiss selected follower, 0 to dismiss the job, -1 to limit number of the selected job to current amount employed.
+   */
+  dismissFollower(follower: Follower, option = 1){
+    if (option === 1){
+      const index = this.followers.indexOf(follower);
+      this.followers.splice(index, 1);
+    } else if (option === 0) {
+      for (let index = this.followers.length - 1; index >= 0; index--){
+        if (this.followers[index].job === follower.job){
+          this.followers.splice(index, 1);
+        }
+      }
+      this.maxFollowerByType[follower.job] = 0;
+    } else if (option === -1){
+      let count = 0;
+      for (let index = this.followers.length - 1; index >= 0; index--){
+        if (this.followers[index].job === follower.job){
+          count++
+        }
+      }
+      this.maxFollowerByType[follower.job] = count;
+    }
+    
   }
 
   setMaxFollowers(job: string, value: number){
