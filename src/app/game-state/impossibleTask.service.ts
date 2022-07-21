@@ -170,14 +170,16 @@ export class ImpossibleTaskService {
   }
 
   markPriorCompletions(){
+    let taskComplete = false;
+    this.nextTask = -1;
     for (let taskIndex = this.tasks.length - 1; taskIndex >= 0; taskIndex--){
-      if (this.taskProgress[taskIndex].complete){ // Sanity check for the latest complete task
-        this.nextTask = taskIndex + 1;
-        while(taskIndex >= 0){
-          this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
-          this.taskProgress[taskIndex].complete = true;
-          taskIndex--
-        }
+      if (this.taskProgress[taskIndex].complete || taskComplete){ // Sanity check for the latest complete task
+        taskComplete = true;
+        this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
+        this.taskProgress[taskIndex].complete = true;
+      }
+      if(taskComplete && this.nextTask < 0){
+        this.nextTask = taskIndex;
       } else if (taskIndex === 0){
         this.nextTask = 0;
       }
