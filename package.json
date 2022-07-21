@@ -6,7 +6,7 @@
     "start": "ng serve",
     "prebuild": "npm --no-git-tag-version version patch",
     "build": "ng build",
-    "build-experimental": "ng build --output-path docs/experimental",
+    "build-experimental": "ng build --output-path='docs/experimental' --baseHref='/experimental/'",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint --fix"
