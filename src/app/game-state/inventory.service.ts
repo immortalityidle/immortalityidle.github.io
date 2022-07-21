@@ -944,6 +944,8 @@ export class InventoryService {
     if (!this.autoSellEntries.some(e => e.name === item.name)) {
       this.autoSellEntries.push({name: item.name, reserve: 0});
     }
+    //sell all that you currently have
+    this.sellAll(item);
   }
 
   unAutoSell(itemName: string){
@@ -1000,6 +1002,18 @@ export class InventoryService {
     if (!this.autoUseEntries.some(e => e.name === item.name)) {
       this.autoUseEntries.push({name: item.name, reserve: 0});
     }
+    if (item.useConsumes){
+      // use all the ones you have now
+      for (let i = 0; i < this.itemStacks.length; i++) {
+        let itemStack = this.itemStacks[i];
+        if (itemStack == null){
+          continue;
+        }
+        if (itemStack.item.name == item.name){
+            this.useItemStack(itemStack, itemStack.quantity);
+        }
+      }
+    }    
   }
 
   unAutoUse(itemName: string){
