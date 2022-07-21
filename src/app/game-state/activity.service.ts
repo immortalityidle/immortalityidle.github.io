@@ -14,7 +14,7 @@ import { FollowersService } from './followers.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,
-  pauseOnDeath: boolean,
+  pauseOnDeath: boolean,//TODO move to autoPauserService
   activityLoop: ActivityLoopEntry[],
   unlockedActivities: ActivityType[],
   openApprenticeships: number,
@@ -32,7 +32,7 @@ export class ActivityService {
   savedActivityLoop: ActivityLoopEntry[] = [];
   spiritActivity: ActivityType | null = null;
   autoRestart = false;
-  pauseOnDeath = true;
+  pauseOnDeath = true;//TODO move to autoPauserService
   activities: Activity[] = this.getActivityList();
   openApprenticeships = 1;
   oddJobDays = 0;
@@ -154,7 +154,7 @@ export class ActivityService {
     }
     return {
       autoRestart: this.autoRestart,
-      pauseOnDeath: this.pauseOnDeath,
+      pauseOnDeath: this.pauseOnDeath,//TODO move to autoPauserService
       activityLoop: this.activityLoop,
       unlockedActivities: unlockedActivities,
       openApprenticeships: this.openApprenticeships,
@@ -173,7 +173,7 @@ export class ActivityService {
         activity.unlocked = unlockedActivities.includes(activity.activityType);
     }
     this.autoRestart = properties.autoRestart;
-    this.pauseOnDeath = properties.pauseOnDeath;
+    this.pauseOnDeath = properties.pauseOnDeath;//TODO move to autoPauserService
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity || null;
     this.openApprenticeships = properties.openApprenticeships || 0;
@@ -275,7 +275,7 @@ export class ActivityService {
     }
     if (this.autoRestart){
       this.checkRequirements(true);
-      if (this.pauseOnDeath){
+      if (this.pauseOnDeath){//TODO this check doesn't belong here, move this to autoPauserService's DeathAutoPauser
         this.mainLoopService.pause = true;
       }
     } else {

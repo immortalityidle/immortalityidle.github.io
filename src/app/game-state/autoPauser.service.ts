@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
+import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from './character.service';
 import { AutoPauser, AgeAutoPauser, LifespanAutoPauser, TimeAutoPauser, DeathAutoPauser } from './autoPauser';
 

@@ -100,6 +100,8 @@ export class TimePanelComponent implements OnInit {
   pauseOnDeath(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.activityService.pauseOnDeath = event.target.checked;
+    //TODO: move pauseOnDeath from activityService to autoPauseService 
+    //TODO: Consider if we want to leave the option in the time modal, or move or duplicate it in the options modal
   }
 
   useSavedTicks(event: Event){

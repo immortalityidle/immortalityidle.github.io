@@ -1,4 +1,5 @@
 import { AutoPauserService } from "./autoPauser.service";
+import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from "./character.service";
 
 export abstract class AutoPauser {//TODO entire abstract class needs to be redesigned
@@ -23,13 +24,18 @@ export abstract class AutoPauser {//TODO entire abstract class needs to be redes
    */
   abstract isPossible(): boolean;
 
-  /**
-   * Returns true only if the thing that prevents this autobuyer from running is time.
-   * For example, when waiting for a house to finish upgrading so you can buy the next,
-   * or a house is upgrading and will give a needed slot to furniture autobuy.
-   */
-  abstract isWaiting(): boolean;
+}
 
+export class DeathAutoPauser extends AutoPauser {
+
+  isEnabled(): boolean {
+    return this.autoPauserService.getProperties;//TODO get the relevent property
+  }
+
+  run() {
+    //TODO either run the check, or remove this method and just have this subscribe to things like  reincarnationService.reincarnateSubject.subscribe(() => { action });
+  }
+  
 }
 
 //TODO replace autobuyer with autopausers (one of each possible type)
