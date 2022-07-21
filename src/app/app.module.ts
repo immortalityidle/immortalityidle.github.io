@@ -15,6 +15,7 @@ import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.compo
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { TooltipModule } from 'ng2-tooltip-directive';
@@ -36,7 +37,8 @@ import { TimeOptionsPanelComponent } from './time-options-panel/time-options-pan
 
 const materialModules = [
   MatDialogModule,
-  MatIconModule
+  MatIconModule,
+  MatTabsModule
 ];
 
 @NgModule({

@@ -1,131 +1,159 @@
 <div class='darkMode optionsDiv'>
   <span>Manuals Options</span>
-  <hr/>
-  <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
-    <span>
-      Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
-    </span>
-  </div>
-  <div *ngIf="homeService.autoFieldUnlocked" class="optionField">
-    <span>
-      Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
-    </span>
-  </div>
-  <div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
-    <span>
-      Automatically upgrade your home up to a
-      <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
-        <option *ngFor="let home of homeService.homesList" value="{{home.type}}"
-          [selected]="homeService.autoBuyHomeLimit === home.type">
-          {{home.name}}
-        </option>
-      </select>
-    </span>
-  </div>
-  <div *ngIf="homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked" class="optionField">
-    <span>
-      <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
-        id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
-      <label for="useAutoBuyReserve">Auto-buying should always reserve </label>
-      <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
-    </span>
-  </div>
-  <div *ngIf="autoBuyerService.autoBuyerSettingsUnlocked" class="optionField">
-    <span>
-      Auto-Buyer Options:
-      <table class="priorityTable">
-        <tr>
-          <th colspan="3">Priority Order</th>
-          <th>Enabled</th>
-          <th>Wait For Finish</th>
-        </tr>
-        <tr *ngFor="let setting of autoBuyerService.autoBuyerSettings; let index = index; let first = first; let last = last;">
-          <td>
-            <button [disabled]="first" class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, true)">&#9650;</button>
-          </td>
-          <td>
-            <button [disabled]="last"  class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, false)">&#9660;</button>
-          </td>
-          <td class="priorityTableNameColumn">{{setting.label}}</td>
-          <td class="priorityTableCheckboxColumn">
-            <input type="checkbox" (change)="autoBuySettingsEnabledChange($event, setting)" [checked]="setting.enabled"/>
-          </td>
-          <td class="priorityTableCheckboxColumn">
-            <input type="checkbox" (change)="autoBuySettingsWaitForFinishChange($event, setting)" [checked]="setting.waitForFinish"/>
-          </td>
-        </tr>
-      </table>
-    </span>
-  </div>
-  <div *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon"  class="optionField">
-    <span>
-      <input type="checkbox" (change)="autoequipEnableChange($event)"
-        id="autoequipEnable"  [checked]="inventoryService.autoequipBestEnabled"/>
-      <label for="autoequipEnable">Automatically equip best equipment</label>
-    </span>
-  </div>
-  <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">
-    <span>
-      <input type="checkbox" (change)="autosellOldGems($event)"
-        id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
-      <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
-    </span>
-  </div>
-  <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
-    <span>
-      <input type="checkbox" (change)="useSpiritGemWeaponsChange($event)"
-        id="useSpiritGemWeapons"  [checked]="inventoryService.useSpiritGemWeapons"/>
-      <label for="useSpiritGemWeapons">Use spirit gem when crafting weapons</label>
-    </span>
-  </div>
-  <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
-    <span>
-      <input type="checkbox" (change)="useSpiritGemPotionsChange($event)"
-        id="useSpiritGemPotions"  [checked]="inventoryService.useSpiritGemPotions"/>
-      <label for="useSpiritGemPotions">Use spirit gem when crafting potions</label>
-    </span>
-  </div>
-  <div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
-    <span>
-      Automatically Sold Items:
-    </span>
-    <div class="scrollingDiv">
-      <div *ngFor="let entry of inventoryService.autoSellEntries">
+  <mat-tab-group>
+    <mat-tab *ngIf="homeService.autoBuyLandUnlocked || homeService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked">
+      <ng-template mat-tab-label>
+        <span class="tab-label">Home</span>
+      </ng-template>
+
+      <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
         <span>
-          - {{entry.name | titlecase}}
-        </span>
-        <span>
-          - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
-          <button (click)="inventoryService.unAutoSell(entry.name)">Stop Selling</button>
+          Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
         </span>
       </div>
-    </div>
-  </div>
-  <div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
-    <span>Automatically Used Items:</span>
-    <div class="scrollingDiv">
-      <div *ngFor="let entry of inventoryService.autoUseEntries">
+      <div *ngIf="homeService.autoFieldUnlocked" class="optionField">
         <span>
-          - {{entry.name | titlecase}}
-        </span>
-        <span>
-          - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
-          <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
+          Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
         </span>
       </div>
-    </div>
-  </div>
-  <div *ngIf="inventoryService.autoBalanceUnlocked" class="optionField">
-    <span>Automatically Balanced Items:</span>
-    <div class="scrollingDiv">
-      <div *ngFor="let balanceItem of inventoryService.autoBalanceItems">
+      <div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
         <span>
-          -{{balanceItem.name | titlecase}}
-          Use <input value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
-          then Sell <input value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
-          <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
+          Automatically upgrade your home up to a
+          <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
+            <option *ngFor="let home of homeService.homesList" value="{{home.type}}"
+              [selected]="homeService.autoBuyHomeLimit === home.type">
+              {{home.name}}
+            </option>
+          </select>
         </span>
       </div>
-    </div>
-  </div>
+    </mat-tab>
+
+    <mat-tab *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon || inventoryService.useSpiritGemUnlocked">
+      <ng-template mat-tab-label>
+        <span class="tab-label">Crafting</span>
+      </ng-template>
+
+      <div *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autoequipEnableChange($event)"
+            id="autoequipEnable"  [checked]="inventoryService.autoequipBestEnabled"/>
+          <label for="autoequipEnable">Automatically equip best equipment</label>
+        </span>
+      </div>
+      <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="useSpiritGemWeaponsChange($event)"
+            id="useSpiritGemWeapons"  [checked]="inventoryService.useSpiritGemWeapons"/>
+          <label for="useSpiritGemWeapons">Use spirit gem when crafting weapons</label>
+        </span>
+      </div>
+      <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="useSpiritGemPotionsChange($event)"
+            id="useSpiritGemPotions"  [checked]="inventoryService.useSpiritGemPotions"/>
+          <label for="useSpiritGemPotions">Use spirit gem when crafting potions</label>
+        </span>
+      </div>
+    </mat-tab>
+
+    <mat-tab *ngIf="inventoryService.autoSellOldGemsUnlocked || inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoBalanceUnlocked">
+      <ng-template mat-tab-label>
+        <span class="tab-label">Sales</span>
+      </ng-template>
+
+      <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autosellOldGems($event)"
+            id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
+          <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
+        </span>
+      </div>
+      <div *ngIf="inventoryService.autoSellUnlocked" class="optionField">
+        <span>
+          Automatically Sold Items:
+        </span>
+        <div class="scrollingDiv">
+          <div *ngFor="let entry of inventoryService.autoSellEntries">
+            <span>
+              - {{entry.name | titlecase}}
+            </span>
+            <span>
+              - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
+              <button (click)="inventoryService.unAutoSell(entry.name)">Stop Selling</button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
+        <span>Automatically Used Items:</span>
+        <div class="scrollingDiv">
+          <div *ngFor="let entry of inventoryService.autoUseEntries">
+            <span>
+              - {{entry.name | titlecase}}
+            </span>
+            <span>
+              - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
+              <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="inventoryService.autoBalanceUnlocked" class="optionField">
+        <span>Automatically Balanced Items:</span>
+        <div class="scrollingDiv">
+          <div *ngFor="let balanceItem of inventoryService.autoBalanceItems">
+            <span>
+              -{{balanceItem.name | titlecase}}
+              Use <input value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
+              then Sell <input value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
+              <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab *ngIf="homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked || autoBuyerService.autoBuyerSettingsUnlocked">
+      <ng-template mat-tab-label>
+        <span class="tab-label">Auto-buy</span>
+      </ng-template>
+
+      <div *ngIf="homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked" class="optionField">
+        <span>
+          <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
+            id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
+          <label for="useAutoBuyReserve">Auto-buying should always reserve </label>
+          <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
+        </span>
+      </div>
+      <div *ngIf="autoBuyerService.autoBuyerSettingsUnlocked" class="optionField">
+        <span>
+          Auto-Buyer Options:
+          <table class="priorityTable">
+            <tr>
+              <th colspan="3">Priority Order</th>
+              <th>Enabled</th>
+              <th>Wait For Finish</th>
+            </tr>
+            <tr *ngFor="let setting of autoBuyerService.autoBuyerSettings; let index = index; let first = first; let last = last;">
+              <td>
+                <button [disabled]="first" class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, true)">&#9650;</button>
+              </td>
+              <td>
+                <button [disabled]="last"  class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, false)">&#9660;</button>
+              </td>
+              <td class="priorityTableNameColumn">{{setting.label}}</td>
+              <td class="priorityTableCheckboxColumn">
+                <input type="checkbox" (change)="autoBuySettingsEnabledChange($event, setting)" [checked]="setting.enabled"/>
+              </td>
+              <td class="priorityTableCheckboxColumn">
+                <input type="checkbox" (change)="autoBuySettingsWaitForFinishChange($event, setting)" [checked]="setting.waitForFinish"/>
+              </td>
+            </tr>
+          </table>
+        </span>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>
