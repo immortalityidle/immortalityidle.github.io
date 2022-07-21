@@ -107,10 +107,8 @@ export class MainLoopService {
             // and an extra tick at 1000 years lifespan
             repeatTimes++;
           }
-          for (let i = 0; i < Math.floor(this.totalTicks / 1825000) && i < 100; i++){
-            // and one extra for every 5000 years you've ever lived, up to 100 repeats
-            repeatTimes++;
-          }
+          // and one extra for every 5000 years you've ever lived, up to 100 repeats
+          repeatTimes += Math.min(Math.floor(this.totalTicks / 1825000), 100);
         }
         for (let i = 0; i < repeatTimes; i++){
           this.tickCount++;

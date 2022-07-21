@@ -594,8 +594,12 @@ export class HomeService {
     }
   }
 
-  upgradeTick(){
-    this.houseBuildingProgress += 1 / this.nextHome.daysToBuild;
+  upgradeTick(quantity = 1){
+    if (quantity < 1){
+      quantity = 1; //handle potential 0 and negatives just in case
+    }
+
+    this.houseBuildingProgress += 1 / this.nextHome.daysToBuild * quantity;
     if (this.houseBuildingProgress >= 1){
       this.houseBuildingProgress = 1;
       this.upgrading = false;

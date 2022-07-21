@@ -53,20 +53,16 @@ export class FollowersService {
     "builder": {
       work: (follower: Follower) => {
         this.homeService.nextHomeCostReduction += follower.power;
-        for (let i = 0; i < follower.power; i++){
-          if (this.homeService.upgrading){
-            this.homeService.upgradeTick();
-          }
+        if (this.homeService.upgrading){
+          this.homeService.upgradeTick(follower.power);
         }
       },
       description: "Builders reduce the cost of the next home you upgrade to. They can also help you build it faster."
     },
     "hunter": {
       work: (follower: Follower) => {
-        for (let i = 0; i < follower.power; i++){
-          this.inventoryService.addItem(this.itemRepoService.items['meat']);
-          this.inventoryService.addItem(this.itemRepoService.items['hide']);
-        }
+        this.inventoryService.addItem(this.itemRepoService.items['meat'], follower.power);
+        this.inventoryService.addItem(this.itemRepoService.items['hide'], follower.power);
       },
       description: "Hunters collect meat and hides for you."
     },
@@ -179,9 +175,7 @@ export class FollowersService {
     },
     "scout": {
       work: (follower: Follower) => {
-        for (let i = 0; i < follower.power; i++){
-          this.battleService.tickCounter++;
-        }
+        this.battleService.tickCounter += follower.power;
       },
       description: "Scouts help you track down and fight monsters faster."
     }
