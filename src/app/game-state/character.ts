@@ -414,9 +414,6 @@ export class Character {
   }
 
   checkOverage(){
-    if (this.empowermentFactor > 1000){
-      this.empowermentFactor = 1000;
-    }
     if (this.healthBonusFood > 1900){
       this.healthBonusFood = 1900;
     }
