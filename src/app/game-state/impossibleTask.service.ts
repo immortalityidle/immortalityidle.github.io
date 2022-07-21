@@ -170,7 +170,16 @@ export class ImpossibleTaskService {
   }
 
   reset(){
+    let completeTaskIndex = -1
+    for (let taskIndex = 0; taskIndex < this.tasks.length + 1; taskIndex++){
+      if (this.taskProgress[taskIndex].complete){
+        completeTaskIndex = taskIndex; // Sanity check for the latest complete task
+      }
+    }
     for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
+      if (taskIndex < completeTaskIndex){
+        this.taskProgress[taskIndex].complete = true;
+      }
       if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex !== ImpossibleTaskType.BuildTower){
         if (this.taskProgress[taskIndex].complete){
           this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
