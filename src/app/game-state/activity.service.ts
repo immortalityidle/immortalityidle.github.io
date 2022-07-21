@@ -598,9 +598,7 @@ export class ActivityService {
         }
         builderPower = Math.floor(builderPower /10);
         if (oreValue >= 10){
-          for (let i = 0; i < builderPower; i++){
-            this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick']);
-          }
+          this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick'], builderPower);
           this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingBrick'].name,"STANDARD","CRAFTING");
 
         } else {
@@ -658,9 +656,7 @@ export class ActivityService {
         builderPower = Math.floor(builderPower / 100);
         oreValue = this.inventoryService.consume('ore');
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "cauldron" && oreValue >= 10){
-          for (let i = 0; i < builderPower; i++){
-            this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar']);
-          }
+          this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar'], builderPower);
           this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingMortar'].name,"STANDARD","CRAFTING");
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
