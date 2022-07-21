@@ -194,7 +194,8 @@ export class InventoryService {
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
         return;
-      }
+      }//if autoequip is unlocked, but automerge isn't, equip best
+      //automerge will merge into equipped if both are unlocked
       if (this.autoequipBestWeapon && !this.autoWeaponMergeUnlocked){
         this.autoequipWeapons();
       }
@@ -1271,7 +1272,7 @@ export class InventoryService {
         }
       }
     }
-    // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is (and corresponding autoequip is unlocked)
+    // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
     if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
       sourceItem = this.characterService.characterState.equipment[slot];
       if (sourceItem === null){
