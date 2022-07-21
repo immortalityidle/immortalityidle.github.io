@@ -11,6 +11,12 @@
       Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
     </span>
   </div>
+  <dvi *ngIf="autoPauserService.autoPauseSettingsUnlocked" class="optionField">
+    <span>
+      Auto-Pauser Options:
+      TODO add options to options modal
+    </span>
+  </dvi>
   <div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
     <span>
       Automatically upgrade your home up to a

@@ -109,6 +109,18 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Won't Live Forever",//TODO update description and requirements
+      description: "PLACEHOLDER DESCRIPTION " + this.itemRepoService.items['autoPauseSettingsManual'].name,
+      hint: "PLACEHOLDER HINT",
+      check: () => {
+        return this.characterService.characterState.totalLives >= 88 && this.mainLoopService.totalTicks > 36500;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['autoPauseSettingsManual']);
+      },
+      unlocked: false
+    },
+    {
       name: "Clang! Clang! Clang!",
       description: "You reached proficiency in blacksmithing and can now work as a Blacksmith without going through an apprenticeship (you still need the attributes for the Blacksmithing activity).",
       hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.service';
+import { AutoPauserService } from '../game-state/autoPauser.service';
 import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
@@ -17,7 +18,8 @@ export class OptionsModalComponent {
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
     public followerService: FollowersService,
-    public autoBuyerService: AutoBuyerService
+    public autoBuyerService: AutoBuyerService,
+    public autoPauserService: AutoPauserService
   ) { }
 
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
@@ -92,4 +94,10 @@ export class OptionsModalComponent {
     if (!(event.target instanceof HTMLInputElement)) return;
     setting.waitForFinish = event.target.checked;
   }
+
+  autoPauseEnableChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    //TODO make this do the thing
+  }
+  //TODO add listeners for other pauser values changing
 }

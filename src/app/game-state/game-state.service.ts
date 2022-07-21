@@ -13,6 +13,7 @@ import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
+import { AutoPauserProperties, AutoPauserService } from './autoPauser.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -26,6 +27,7 @@ interface GameState {
   followers: FollowersProperties,
   logs: LogProperties,
   autoBuy: AutoBuyerProperties,
+  autoPause: AutoPauserProperties,
   mainLoop: MainLoopProperties,
   impossibleTasks: ImpossibleTaskProperties,
   darkMode: boolean
@@ -50,6 +52,7 @@ export class GameStateService {
     private battleService: BattleService,
     private followersService: FollowersService,
     private autoBuyerService: AutoBuyerService,
+    private autoPauseerService: AutoPauserService,
     private mainLoopService: MainLoopService,
     private achievementService: AchievementService,
     private impossibleTaskService: ImpossibleTaskService
@@ -103,6 +106,7 @@ export class GameStateService {
     this.followersService.setProperties(gameState.followers);
     this.logService.setProperties(gameState.logs);
     this.autoBuyerService.setProperties(gameState.autoBuy);
+    this.autoPauserService.setProperties(gameState.autoPause);
     this.mainLoopService.setProperties(gameState.mainLoop);
     this.isDarkMode = gameState.darkMode || false;
 
@@ -120,6 +124,7 @@ export class GameStateService {
       followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
       autoBuy: this.autoBuyerService.getProperties(),
+      autoPause: this.autoPauserService.getProperties(),
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
     };
@@ -137,7 +142,7 @@ export class GameStateService {
 
   rebirth(): void {
     this.characterService.forceRebirth = true;
-    this.mainLoopService.pause = false;
+    this.mainLoopService.pause = false;//TODO possibly check in autpauser service instead
   }
 
   cheat(): void {

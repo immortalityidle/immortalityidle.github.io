@@ -1,43 +1,41 @@
 import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
-import { HomeService } from './home.service';
-import { AutoBuyer, FurnitureAutoBuyer, HomeAutoBuyer, LandAndFieldAutoBuyer } from './autoBuyer';
+import { AutoPauser, AgeAutoPauser, LifespanAutoPauser, TimeAutoPauser, DeathAutoPauser } from './autoPauser';
 
-export interface AutoBuyerProperties {
-  autoBuyerSettingsUnlocked: boolean,
-  autoBuyerSettings: AutoBuyerSetting[]
+export interface AutoPauserProperties {
+  autoPauserSettingsUnlocked: boolean,
+  autoPauserSettings: AutoPauserSetting[]
 }
 
-export type AutoBuyerType = 'home' | 'land' | 'furniture';
-export type AutoBuyerSetting = {
+export type AutoPauserType = 'age' | 'lifespan' | 'time' | 'death';// | 'newActivity' | 'items' | 'health' | 'stamina';
+export type AutoPauserSetting = {
   label: string,
-  type: AutoBuyerType,
-  enabled: boolean,
-  waitForFinish: boolean
+  type: AutoPauserType,
+  enabled: boolean
 }
-type AutoBuyersMap = {[key in AutoBuyerType]: AutoBuyer}
+type AutoPausersMap = {[key in AutoPauserType]: AutoPauser}
 
 @Injectable({
   providedIn: 'root'
 })
-export class AutoBuyerService {
-  autoBuyerSettingsUnlocked = false;
+export class AutoPauserService {
+  autoPauserSettingsUnlocked = false;
   
-  autoBuyerSettings: AutoBuyerSetting[] = this.getDefaultSettings();
+  autoPauserSettings: AutoPauserSetting[] = this.getDefaultSettings();
 
-  autobuyers: AutoBuyersMap = {
-    'home': new HomeAutoBuyer(this, this.homeService, this.characterService),
-    'land': new LandAndFieldAutoBuyer(this, this.homeService, this.characterService),
-    'furniture': new FurnitureAutoBuyer(this, this.homeService, this.characterService)
+  autopausers: AutoPausersMap = {
+    'age': new AgeAutoPauser(this, this.characterService),
+    'lifespan': new LifespanAutoPauser(this, this.characterService),
+    'time': new TimeAutoPauser(this, this.characterService),
+    'death': new DeathAutoPauser(this, this.characterService)
   }
 
   constructor(
     private characterService: CharacterService,
-    private homeService: HomeService,
-    mainLoopService: MainLoopService,
+    mainLoopService: MainLoopService,//TODO update with orioer signature when completed
   ) {
-    mainLoopService.tickSubject.subscribe(() => {
+    mainLoopService.tickSubject.subscribe(() => {//TODO do we need to tick the pausers, or do things that trigger the pauser tick?
       if (this.characterService.characterState.dead) {
         return;
       }
@@ -45,41 +43,30 @@ export class AutoBuyerService {
     });
   }
 
-  getProperties(): AutoBuyerProperties {
+  getProperties(): AutoPauserProperties {
     return {
-      autoBuyerSettingsUnlocked: this.autoBuyerSettingsUnlocked,
-      autoBuyerSettings: this.autoBuyerSettings
+      autoPauserSettingsUnlocked: this.autoPauserSettingsUnlocked,
+      autoPauserSettings: this.autoPauserSettings
     };
   }
 
-  setProperties(properties: AutoBuyerProperties) {
+  setProperties(properties: AutoPauserProperties) {
     if (properties) {
-      this.autoBuyerSettingsUnlocked = properties.autoBuyerSettingsUnlocked || false;
-      this.autoBuyerSettings = properties.autoBuyerSettings || this.getDefaultSettings();
+      this.autoPauserSettingsUnlocked = properties.autoPauserSettingsUnlocked || false;
+      this.autoPauserSettings = properties.autoPauserSettings || this.getDefaultSettings();
     } else {
-      this.autoBuyerSettingsUnlocked = false;
-      this.autoBuyerSettings = this.getDefaultSettings();
+      this.autoPauserSettingsUnlocked = false;
+      this.autoPauserSettings = this.getDefaultSettings();
     }
   }
 
-  getDefaultSettings(): AutoBuyerSetting[] {
+  getDefaultSettings(): AutoPauserSetting[] {
     return [{ 
-      label: 'Home',
-      type: 'home',
+      label: 'Death',
+      type: 'death',
       enabled: true,
       waitForFinish: true
-    },
-    {
-      label: 'Furniture',
-      type: 'furniture',
-      enabled: true,
-      waitForFinish: true
-    },
-    { 
-      label: 'Land/Field',
-      type: 'land',
-      enabled: true,
-      waitForFinish: true
+    //, TODO replace this with settings for all autoPausers
     }];
   }
 

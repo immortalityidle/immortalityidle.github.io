@@ -9,6 +9,7 @@ import { Furniture, InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { AutoBuyerService } from './autoBuyer.service';
+import { AutoPauserService } from './autoPauser.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class ItemRepoService {
   impossibleTaskService?: ImpossibleTaskService;
   followerService?: FollowersService;
   autoBuyerService?: AutoBuyerService;
+  autoPauserService?: AutoPauserService;
 
   furniture: {[key: string]: Furniture} = {
     blanket: {
@@ -1234,6 +1236,29 @@ export class ItemRepoService {
           this.autoBuyerService = this.injector.get(AutoBuyerService);
         }
         return this.autoBuyerService.autoBuyerSettingsUnlocked;
+      }
+    },
+    autoPauserSettingsManual: {//TODO settle on name, cost, description, etc
+      id: 'autoPauseSettingsManual',
+      name: "Manual of Customized Danger Sense",
+      type: "manual",
+      description: "This manual teaches you to customize what triggers an auto-pause.",
+      value: 1000000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock auto-pausing customization",
+      useConsumes: true,
+      use: () => {
+        if (!this.autoPauserService){
+          this.autoPauserService = this.injector.get(AutoPauserService);
+        }
+        this.autoPauserService.autoPauserSettingsUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (!this.autoPauserService){
+          this.autoPauserService = this.injector.get(AutoPauserService);
+        }
+        return this.autoPauserService.autoPauserSettingsUnlocked;
       }
     },
     autoFieldManual: {

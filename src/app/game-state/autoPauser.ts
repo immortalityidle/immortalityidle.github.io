@@ -1,30 +1,27 @@
-import { AutoBuyerService } from "./autoBuyer.service";
+import { AutoPauserService } from "./autoPauser.service";
 import { CharacterService } from "./character.service";
-import { HomeService } from "./home.service";
 
-export abstract class AutoBuyer {
+export abstract class AutoPauser {//TODO entire abstract class needs to be redesigned
 
   constructor(
-    protected autoBuyerService: AutoBuyerService,
-    protected homeService: HomeService,
+    protected autoPauserService: AutoPauserService,
     protected characterService: CharacterService) {}
 
   /**
-   * Checks if permissions are correct to run this autobuyer.
+   * Checks if permissions are correct to run this autoPauser
    */
-  abstract shouldRun(): boolean;
+  abstract isEnabled(): boolean;
 
   /**
-   * Performs the buying action for the autobuyer.
+   * Performs the check
    * @param reserveAmount Passed in savings amount to prevent over-buying
    */
   abstract run(reserveAmount: number): void;
 
   /**
-   * Returns true only if this autobuyer will never progress without another being run or an action being taken.
-   * For example, if a furniture piece we need to buy is in a slot the house doesn't have
+   * Checks if this autoPauser's condition is remotely reachable, for example, an immortal won't trigger a death nor lifespan autoPauser
    */
-  abstract isBlocked(): boolean;
+  abstract isPossible(): boolean;
 
   /**
    * Returns true only if the thing that prevents this autobuyer from running is time.
@@ -33,12 +30,9 @@ export abstract class AutoBuyer {
    */
   abstract isWaiting(): boolean;
 
-  /**
-   * Returns true if this autobuyer's work is complete
-   */
-  abstract isComplete(): boolean;
 }
 
+//TODO replace autobuyer with autopausers (one of each possible type)
 export class HomeAutoBuyer extends AutoBuyer {
   shouldRun(): boolean {
     return this.homeService.autoBuyHomeUnlocked;
@@ -89,136 +83,5 @@ export class HomeAutoBuyer extends AutoBuyer {
     // We're complete if we've bought the last home upgrade, even if it isn't finished building
     return this.homeService.homeValue >= this.homeService.autoBuyHomeLimit
       || this.homeService.upgrading && (this.homeService.homeValue + 1 >= this.homeService.autoBuyHomeLimit);
-  }
-}
-
-export class LandAndFieldAutoBuyer extends AutoBuyer {
-  shouldRun(): boolean {
-    return this.homeService.autoBuyLandUnlocked || this.homeService.autoFieldUnlocked;
-  }
-
-  run(reserveAmount: number) {
-    if (this.homeService.autoBuyLandUnlocked 
-      && this.characterService.characterState.money >= this.homeService.landPrice + reserveAmount) {
-      const landRequired = Math.min(
-        this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
-        this.homeService.autoBuyLandLimit - (this.homeService.land + this.homeService.fields.length + this.homeService.extraFields)
-      )
-      if (landRequired > 0) {
-        this.homeService.buyLand(landRequired);
-      }
-    }
-
-    if (this.homeService.autoFieldUnlocked) {
-      while (this.homeService.land > 0 && this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit) {
-        this.homeService.addField();
-      }
-    }
-  }
-
-  isBlocked(): boolean {
-    // This autobuyer can be blocked if it needs more fields, but we haven't unlocked buying land yet
-    if (this.homeService.autoFieldUnlocked && !this.homeService.autoBuyLandUnlocked) {
-      return this.homeService.land === 0 && this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit
-    }
-
-    return false;
-  }
-
-  isWaiting(): boolean {
-    return false;
-  }
-
-  isComplete(): boolean {
-    let landComplete = true;
-    if (this.homeService.autoBuyLandUnlocked) {
-      landComplete = this.homeService.land + this.homeService.fields.length + this.homeService.extraFields >= this.homeService.autoBuyLandLimit;
-    }
-
-    let fieldsComplete = true;
-    if (this.homeService.autoFieldUnlocked) {
-      fieldsComplete = this.homeService.fields.length + this.homeService.extraFields >= this.homeService.autoFieldLimit;
-    }
-
-    return landComplete && fieldsComplete;
-  }
-
-}
-
-export class FurnitureAutoBuyer extends AutoBuyer {
-  shouldRun(): boolean {
-    return this.homeService.autoBuyFurnitureUnlocked;
-  }
-
-  run(reserveAmount: number) {
-    for (const slot of this.homeService.furniturePositionsArray) {
-      // check if we have a previous purchase and the slot is still empty
-      if (this.homeService.home.furnitureSlots.includes(slot) && this.homeService.furniture[slot] === null) {
-        const thingToBuy = this.homeService.autoBuyFurniture[slot];
-        if (thingToBuy && this.homeService.furniture[slot]?.id !== thingToBuy.id) {
-          // check if we have the money for the furniture plus the next couple weeks' rent and food by popular demand.
-          if (this.characterService.characterState.money > thingToBuy.value + reserveAmount) {
-            this.homeService.buyFurniture(thingToBuy.id);
-          }
-        }
-      }
-    }
-
-    return true;
-  }
-
-  isBlocked(): boolean {
-    let allNeededSlotsOpen = true;
-    let allAvailableSlotsComplete = true;
-
-    for (const slot of this.homeService.furniturePositionsArray) {
-      const targetItem = this.homeService.autoBuyFurniture[slot];
-      if (targetItem) {
-        if (this.homeService.home.furnitureSlots.includes(slot)) {
-          if (this.homeService.furniture[slot]?.id !== targetItem.id) {
-            allAvailableSlotsComplete = false;
-          }
-        } else {
-          allNeededSlotsOpen = false;
-        }
-      }
-    }
-
-    // This autobuyer is blocked if we've bought everything in the open slots, but a needed slot isn't open
-    // ...and we're not just waiting for a home upgrade that's in progress
-    return !this.homeService.upgrading && allAvailableSlotsComplete && !allNeededSlotsOpen;
-  }
-
-  isWaiting(): boolean {
-    let neededSlotsIncludedInNextHome = false;
-    for (const slot of this.homeService.furniturePositionsArray) {
-      const targetItem = this.homeService.autoBuyFurniture[slot];
-      if (targetItem) {
-        // If the current home doesn't include a slot that the next one does...
-        if (!this.homeService.home.furnitureSlots.includes(slot)
-          && this.homeService.nextHome.furnitureSlots.includes(slot)) {
-            neededSlotsIncludedInNextHome = false;
-        } 
-      }
-    }
-
-    // If the next home we're currently upgrading to has a new, needed slot
-    return this.homeService.upgrading && neededSlotsIncludedInNextHome;
-  }
-
-  isComplete(): boolean {
-    for (const slot of this.homeService.furniturePositionsArray) {
-      const targetItem = this.homeService.autoBuyFurniture[slot];
-      // Automatically consider unfilled auto-buy slots complete
-      if (targetItem) {
-        // If we don't have the slot, or we don't have the last bought furniture, consider incomplete
-        if (!this.homeService.home.furnitureSlots.includes(slot)
-          || this.homeService.furniture[slot]?.id !== targetItem.id) {
-          return false;
-        }
-      }
-    }
-
-    return true;
   }
 }
