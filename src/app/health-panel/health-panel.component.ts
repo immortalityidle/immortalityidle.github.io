@@ -14,5 +14,4 @@ export class HealthPanelComponent {
     this.Math = Math;
   }
 
-
 }

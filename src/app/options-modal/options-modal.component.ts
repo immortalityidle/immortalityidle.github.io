@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.service';
 import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
-import { InventoryService, BalanceItem } from '../game-state/inventory.service';
+import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-options-modal',
@@ -15,8 +16,18 @@ export class OptionsModalComponent {
     public homeService: HomeService,
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
-    public followerService: FollowersService
+    public followerService: FollowersService,
+    public autoBuyerService: AutoBuyerService
   ) { }
+
+  autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    autosellEntry.reserve = parseInt(event.target.value);
+  }
+  autoUseReserveChange(event: Event, autouseEntry: AutoItemEntry){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    autouseEntry.reserve = parseInt(event.target.value);
+  }
 
   autoBuyLandLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
@@ -66,5 +77,19 @@ export class OptionsModalComponent {
   autosellOldGems(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoSellOldGemsEnabled = event.target.checked;
+  }
+
+  autoBuySettingsPriorityChanged(index: number, moveUp: boolean): void {
+    this.autoBuyerService.autoBuyerSettings.splice(index + (moveUp ? -1 : 1), 0, this.autoBuyerService.autoBuyerSettings.splice(index, 1)[0]);
+  }
+
+  autoBuySettingsEnabledChange(event: Event, setting: AutoBuyerSetting): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    setting.enabled = event.target.checked;
+  }
+
+  autoBuySettingsWaitForFinishChange(event: Event, setting: AutoBuyerSetting): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    setting.waitForFinish = event.target.checked;
   }
 }

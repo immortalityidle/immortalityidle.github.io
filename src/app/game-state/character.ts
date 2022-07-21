@@ -63,6 +63,7 @@ export interface CharacterProperties {
   healthBonusFood: number,
   healthBonusBath: number,
   healthBonusMagic: number,
+  empowermentFactor: number,
   immortal: boolean,
 }
 
@@ -75,27 +76,28 @@ export class Character {
   }
 
   maxMoney = 1000000000000000000000000;
-  totalLives: number = 1;
-  dead: boolean = false;
-  attributeScalingLimit: number = 10;
-  attributeSoftCap: number = 100000;
-  aptitudeGainDivider: number = 100;
-  condenseSoulCoreCost: number = 10;
-  condenseSoulCoreOriginalCost: number = 10;
-  reinforceMeridiansCost: number = 1000;
-  reinforceMeridiansOriginalCost: number = 1000;
-  bloodlineCost: number = 100;
-  bloodlineRank: number = 0;
-  manaUnlocked: boolean = false;
-  accuracy: number = 0;
-  accuracyExponentMultiplier: number = 0.01;
-  attackPower: number = 0;
-  defense: number = 0;
-  healthBonusFood: number = 0;
-  healthBonusBath: number = 0;
-  healthBonusMagic: number = 0;
-  immortal: boolean = false;
-  ascensionUnlocked: boolean = false;
+  totalLives = 1;
+  dead = false;
+  attributeScalingLimit = 10;
+  attributeSoftCap = 100000;
+  aptitudeGainDivider = 100;
+  condenseSoulCoreCost = 10;
+  condenseSoulCoreOriginalCost = 10;
+  reinforceMeridiansCost = 1000;
+  reinforceMeridiansOriginalCost = 1000;
+  bloodlineCost = 100;
+  bloodlineRank = 0;
+  manaUnlocked = false;
+  accuracy = 0;
+  accuracyExponentMultiplier = 0.01;
+  attackPower = 0;
+  defense = 0;
+  healthBonusFood = 0;
+  healthBonusBath = 0;
+  healthBonusMagic = 0;
+  empowermentFactor = 1;
+  immortal = false;
+  ascensionUnlocked = false;
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -246,7 +248,6 @@ export class Character {
 
     // age in days
     this.age = INITIAL_AGE;
-    this.increaseBaseLifespan(1, 70); //bonus day just for doing another reincarnation cycle, cap base at 70 years
     this.foodLifespan = 0;
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
@@ -263,7 +264,7 @@ export class Character {
     for (const key in keys){
       if (this.attributes[keys[key]].value > 0){
         // gain aptitude based on last life's value
-        let addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0 )) / this.aptitudeGainDivider;
+        const addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0 )) / this.aptitudeGainDivider;
         if (addedValue > 0){
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
@@ -274,6 +275,10 @@ export class Character {
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
+    if (this.money < 0){
+      //sanity check that we're not persisting/growing debt at higher bloodline levels
+      this.money = 0;
+    } 
     if (this.bloodlineRank < 3) {
       this.money = 0;
     } else if (this.bloodlineRank < 4) {
@@ -285,7 +290,7 @@ export class Character {
       this.money = this.maxMoney;
     }
     this.recalculateDerivedStats();
-    if (this.bloodlineRank == 0) {
+    if (this.bloodlineRank === 0) {
       this.equipment = {
         head: null,
         body: null,
@@ -324,7 +329,7 @@ export class Character {
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
-    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;
+    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;    
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
     this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
@@ -349,33 +354,40 @@ export class Character {
     }
   }
 
+  getEmpowermentMult(): number{
+    const max = 99;
+    return 1 + 2 * max / (1 + Math.pow(1.02, (-this.empowermentFactor / 3))) - max;
+  }
+
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
   getAptitudeMultipier(aptitude: number): number {
     if (aptitude < 0){
       // should not happen, but sanity check it
       aptitude = 0;
     }
+    const empowermentFactor = this.getEmpowermentMult();
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
-      return aptitude;
+      return aptitude * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 10){
       // from the limit to 10x the limit, change growth rate to 1/4
-      return this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4);
+      return (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 100){
       // from the 10x limit to 100x the limit, change growth rate to 1/20
-      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        ((aptitude - (this.attributeScalingLimit * 10)) / 20);
+      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+        ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * empowermentFactor;
     } else if (aptitude < this.attributeSoftCap){
       // from the 100x limit to softcap, change growth rate to 1/100
-      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        ((aptitude - (this.attributeScalingLimit * 100)) / 100);
+        ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowermentFactor;
     } else {
-      // increase by log2 of whatever is over the softcap
-      return this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+      // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
+      const pow = 0.5; // Power can be balanced as needed. Lower power reduces returns.
+      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        (this.attributeScalingLimit * (this.attributeSoftCap - 100) / 100) +
-        Math.log2(aptitude - this.attributeSoftCap + 1);
+        (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
+        (Math.pow (aptitude - this.attributeSoftCap, pow)) * this.attributeScalingLimit / 5120)  * empowermentFactor;
     }
   }
 
@@ -460,6 +472,7 @@ export class Character {
       healthBonusFood: this.healthBonusFood,
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
+      empowermentFactor: this.empowermentFactor,
       immortal: this.immortal
     }
   }
@@ -491,6 +504,7 @@ export class Character {
     this.healthBonusFood = properties.healthBonusFood || 0;
     this.healthBonusBath = properties.healthBonusBath || 0;
     this.healthBonusMagic = properties.healthBonusMagic || 0;
+    this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
     this.recalculateDerivedStats();
   }

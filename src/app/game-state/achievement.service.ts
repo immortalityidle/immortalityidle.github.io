@@ -48,7 +48,7 @@ export class AchievementService {
     private impossibleTaskService: ImpossibleTaskService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
-      for (let achievement of this.achievements) {
+      for (const achievement of this.achievements) {
         if (!this.unlockedAchievements.includes(achievement.name)){
           if (achievement.check()){
             this.unlockAchievement(achievement, true);
@@ -169,7 +169,7 @@ export class AchievementService {
       description: "You filled your entire inventory and unlocked the " + this.itemRepoService.items['autoSellManual'].name,
       hint: "So much stuff.",
       check: () => {
-        return this.inventoryService.openInventorySlots() == 0;
+        return this.inventoryService.openInventorySlots() === 0;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoSellManual']);
@@ -253,10 +253,10 @@ export class AchievementService {
       description: "You filled all your furniture slots and unlocked the " + this.itemRepoService.items['autoBuyFurnitureManual'].name,
       hint: "Immortals have discerning taste in furnishings.",
       check: () => {
-        return this.homeService.furniture.bathtub != null &&
-          this.homeService.furniture.bed != null &&
-          this.homeService.furniture.kitchen != null &&
-          this.homeService.furniture.workbench != null;
+        return this.homeService.furniture.bathtub !== null &&
+          this.homeService.furniture.bed !== null &&
+          this.homeService.furniture.kitchen !== null &&
+          this.homeService.furniture.workbench !== null;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyFurnitureManual']);
@@ -272,6 +272,21 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoFieldManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Industrial Revolution",
+      description: "You've found all the basic autobuyers and unlocked the " + this.itemRepoService.items['autoBuyerSettingsManual'].name,
+      hint: "Become really, really lazy",
+      check: () => {
+        return this.homeService.autoBuyHomeUnlocked &&
+          this.homeService.autoBuyLandUnlocked &&
+          this.homeService.autoFieldUnlocked &&
+          this.homeService.autoBuyFurnitureUnlocked
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['autoBuyerSettingsManual']);
       },
       unlocked: false
     },
@@ -509,19 +524,19 @@ export class AchievementService {
       description: "Enlightenment! You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements. Mana is now unlocked for all future lives.",
       hint: "Seek the balance of the dao.",
       check: () => {
-        let fireLore = this.characterService.characterState.attributes.fireLore.value;
-        let earthLore = this.characterService.characterState.attributes.earthLore.value;
-        let woodLore = this.characterService.characterState.attributes.woodLore.value;
-        let waterLore = this.characterService.characterState.attributes.waterLore.value;
-        let metalLore = this.characterService.characterState.attributes.metalLore.value; //Reduce the bulk
+        const fireLore = this.characterService.characterState.attributes.fireLore.value;
+        const earthLore = this.characterService.characterState.attributes.earthLore.value;
+        const woodLore = this.characterService.characterState.attributes.woodLore.value;
+        const waterLore = this.characterService.characterState.attributes.waterLore.value;
+        const metalLore = this.characterService.characterState.attributes.metalLore.value; //Reduce the bulk
 
-        let lowValue = Math.min(metalLore , waterLore, woodLore, earthLore , fireLore);
-        let highValue = Math.max(metalLore , waterLore, woodLore , earthLore , fireLore);
+        const lowValue = Math.min(metalLore , waterLore, woodLore, earthLore , fireLore);
+        const highValue = Math.max(metalLore , waterLore, woodLore , earthLore , fireLore);
         return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.characterService.characterState.manaUnlocked = true;
-        if (this.characterService.characterState.status.mana.max == 0){
+        if (this.characterService.characterState.status.mana.max === 0){
           this.characterService.characterState.status.mana.max = 1;
           this.characterService.characterState.status.mana.value = 1;
         }
@@ -561,14 +576,14 @@ export class AchievementService {
       description: "You have balanced your powerful mind and body and unlocked the ability to use your mana to strike down your enemies.",
       hint: "The dao embraces all things in perfect harmony.",
       check: () => {
-        let speed = this.characterService.characterState.attributes.speed.value;
-        let toughness = this.characterService.characterState.attributes.toughness.value;
-        let charisma = this.characterService.characterState.attributes.charisma.value;
-        let intelligence = this.characterService.characterState.attributes.intelligence.value;
-        let strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
+        const speed = this.characterService.characterState.attributes.speed.value;
+        const toughness = this.characterService.characterState.attributes.toughness.value;
+        const charisma = this.characterService.characterState.attributes.charisma.value;
+        const intelligence = this.characterService.characterState.attributes.intelligence.value;
+        const strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
 
-        let lowValue = Math.min(speed , toughness, charisma , intelligence , strength);
-        let highValue = Math.max(speed , toughness, charisma , intelligence , strength);
+        const lowValue = Math.min(speed , toughness, charisma , intelligence , strength);
+        const highValue = Math.max(speed , toughness, charisma , intelligence , strength);
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
@@ -581,15 +596,15 @@ export class AchievementService {
       description: "You have balanced your powerful spirit with your mind and body. You unlocked the ability to use your mana to protect yourself.",
       hint: "The dao embraces all things in perfect harmony.",
       check: () => {
-        let spirituality = this.characterService.characterState.attributes.spirituality.value;
-        let speed = this.characterService.characterState.attributes.speed.value;
-        let toughness = this.characterService.characterState.attributes.toughness.value;
-        let charisma = this.characterService.characterState.attributes.charisma.value;
-        let intelligence = this.characterService.characterState.attributes.intelligence.value;
-        let strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
+        const spirituality = this.characterService.characterState.attributes.spirituality.value;
+        const speed = this.characterService.characterState.attributes.speed.value;
+        const toughness = this.characterService.characterState.attributes.toughness.value;
+        const charisma = this.characterService.characterState.attributes.charisma.value;
+        const intelligence = this.characterService.characterState.attributes.intelligence.value;
+        const strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
 
-        let lowValue = Math.min(speed , toughness, charisma , intelligence , strength, spirituality);
-        let highValue = Math.max(speed , toughness, charisma , intelligence , strength, spirituality);
+        const lowValue = Math.min(speed , toughness, charisma , intelligence , strength, spirituality);
+        const highValue = Math.max(speed , toughness, charisma , intelligence , strength, spirituality);
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
@@ -646,7 +661,7 @@ export class AchievementService {
 
   setProperties(properties: AchievementProperties) {
     this.unlockedAchievements = properties.unlockedAchievements || [];
-    for (let achievement of this.achievements) {
+    for (const achievement of this.achievements) {
       if (this.unlockedAchievements.includes(achievement.name)){
         this.unlockAchievement(achievement, false);
       }

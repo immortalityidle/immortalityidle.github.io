@@ -14,7 +14,7 @@ import { GameStateService } from '../game-state/game-state.service';
 })
 export class FurnitureStoreModalComponent {
 
-  buyDisabled: boolean = true;
+  buyDisabled = true;
 
   constructor(
     public storeService: StoreService,
@@ -26,7 +26,7 @@ export class FurnitureStoreModalComponent {
   ) { }
 
   slotClicked(item: Item){
-    if (this.storeService.selectedItem == item){
+    if (this.storeService.selectedItem === item){
       this.storeService.selectedItem = null;
       this.buyDisabled = true;
     } else {

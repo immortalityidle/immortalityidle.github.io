@@ -7,7 +7,7 @@
         <button [disabled]="storeService.soulCoreRank > 8" (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
       </td>
       <td>
-        End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each reincarnation.
+        End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each Reincarnation and Ascension.
         <br>
         Current Rank: {{storeService.soulCoreRank}}
         <br>
@@ -54,5 +54,7 @@
       </td>
     </tr>
   </table>
-
+  <span *ngIf="characterService.characterState.empowermentFactor > 1">
+    You have consumed {{(characterService.characterState.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.characterState.getEmpowermentMult()  | number:'1.0-3'}}. You will always keep this bonus, even after ascending.
+  </span>
 </div>

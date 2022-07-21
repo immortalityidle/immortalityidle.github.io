@@ -13,9 +13,9 @@ import { Subscription } from "rxjs";
 export class CharacterService {
   activityService?: ActivityService;
   characterState: Character;
-  forceRebirth: boolean = false;
-  fatherGift: boolean = false;
-  lifespanTooltip: string = "";
+  forceRebirth = false;
+  fatherGift = false;
+  lifespanTooltip = "";
   deathSubscriber?: Subscription;
 
   constructor(
@@ -27,6 +27,9 @@ export class CharacterService {
   ) {
     this.characterState = new Character(logService, titleCasePipe);
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.mainLoopService.totalTicks % 3650 === 0){
+        this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
+      }
       if (!this.characterState.dead){
         this.characterState.age++;
         this.characterState.status.nourishment.value--;
@@ -51,7 +54,7 @@ export class CharacterService {
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
         deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
       }
-      if (deathMessage != ""){
+      if (deathMessage !== ""){
         if (!this.characterState.immortal){
           this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
           if (!this.forceRebirth){
@@ -101,8 +104,8 @@ export class CharacterService {
   }
 
   formatAge(): string{
-    let years = Math.floor(this.characterState.age / 365);
-    let days = this.characterState.age % 365;
+    const years = Math.floor(this.characterState.age / 365);
+    const days = this.characterState.age % 365;
     return years + " years, " + days + " days"
   }
 
@@ -144,6 +147,26 @@ export class CharacterService {
     }
   }
 
+  resetAptitudes(){
+    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
+    for (const key in keys){
+      const attribute = this.characterState.attributes[keys[key]];
+      attribute.lifeStartValue = 0;
+      attribute.aptitude = 1 + attribute.aptitude * (1 - this.characterState.aptitudeGainDivider / 100) / 10; // keep up to 9% of aptitudes after Ascension
+      if (parseInt(key) < 5){
+        attribute.value = 1;
+      } else {
+        attribute.value = 0;
+      }
+    }
+    if (!this.activityService){
+      this.activityService = this.injector.get(ActivityService);
+    }
+    this.activityService.reloadActivities();
+    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
+    this.forceRebirth = true;
+    this.mainLoopService.tick();
+  }
 
   condenseSoulCore(){
     if (this.characterState.aptitudeGainDivider <= 10){
@@ -158,24 +181,7 @@ export class CharacterService {
       'STANDARD', 'STORY');
     this.characterState.condenseSoulCoreCost *= 10;
     this.characterState.aptitudeGainDivider -= 10;
-    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
-    for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
-      attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
-      if (parseInt(key) < 5){
-        attribute.value = 1;
-      } else {
-        attribute.value = 0;
-      }
-    }
-    if (!this.activityService){
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
-    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
-    this.forceRebirth = true;
-    this.mainLoopService.tick();
+    this.resetAptitudes();
   }
 
   soulCoreRank(): number {
@@ -202,24 +208,7 @@ export class CharacterService {
 
     this.characterState.reinforceMeridiansCost *= 10;
     this.characterState.attributeScalingLimit *= 2;
-    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
-    for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
-      attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
-      if (parseInt(key) < 5){
-        attribute.value = 1;
-      } else {
-        attribute.value = 0;
-      }
-    }
-    if (!this.activityService){
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
-    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
-    this.forceRebirth = true;
-    this.mainLoopService.tick();
+    this.resetAptitudes();
   }
 
   meridianRank(): number {
@@ -245,19 +234,7 @@ export class CharacterService {
       'STANDARD', 'STORY');
     this.characterState.bloodlineCost *= 1000;
     this.characterState.bloodlineRank++;
-    const keys = Object.keys(this.characterState.attributes) as AttributeType[];
-    for (const key in keys){
-      let attribute = this.characterState.attributes[keys[key]];
-      attribute.lifeStartValue = 0;
-      attribute.aptitude = 1;
-      if (parseInt(key) < 5){
-        attribute.value = 1;
-      } else {
-        attribute.value = 0;
-      }
-    }
-    this.forceRebirth = true;
-    this.mainLoopService.tick();
+    this.resetAptitudes();
   }
 
 }

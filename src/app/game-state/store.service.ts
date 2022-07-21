@@ -15,12 +15,12 @@ export class StoreService {
   manuals: Item[];
   furniture: Furniture[];
   selectedItem: Item | null;
-  soulCoreRank: number = 0;
-  meridianRank: number = 0;
-  bloodlineLabel: string = "";
-  bloodlineDescription: string = "";
+  soulCoreRank = 0;
+  meridianRank = 0;
+  bloodlineLabel = "";
+  bloodlineDescription = "";
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
-  storeOpened: boolean = false;
+  storeOpened = false;
   furniturePrices: { [key: string]: number; } = {};
 
   constructor(
@@ -41,8 +41,8 @@ export class StoreService {
 
   setStoreInventory(){
     this.furniture = [];
-    for (let key in this.itemRepoService.furniture){
-      let furniture = this.itemRepoService.furniture[key];
+    for (const key in this.itemRepoService.furniture){
+      const furniture = this.itemRepoService.furniture[key];
       if (this.homeService.home.furnitureSlots.includes(furniture.slot)){
         this.furniture.push(furniture);
         if (this.homeService.ownedFurniture.includes(furniture.name)){
@@ -66,7 +66,7 @@ export class StoreService {
     if (this.selectedItem){
       if (this.selectedItem.value < this.characterService.characterState.money){
         this.characterService.characterState.money -= this.selectedItem.value;
-        if (this.selectedItem.type == 'manual' && this.selectedItem.use){
+        if (this.selectedItem.type === 'manual' && this.selectedItem.use){
           // use manuals immediately
           this.selectedItem.use();
         } else {
@@ -76,21 +76,29 @@ export class StoreService {
     }
   }
 
-  buyFurniture(){
-    if (this.selectedItem){
-      if (!instanceOfFurniture(this.selectedItem)) {
+  getFurnitureForSlot(slot: string | null = null) {
+    if (slot === null) return this.furniture;
+
+    return this.furniture.filter(item => item.slot === slot);
+  }
+
+  buyFurniture(item: Item | null = null){
+    if (item === null) item = this.selectedItem;
+
+    if (item){
+      if (!instanceOfFurniture(item)) {
         return;
       }
-      let slot = this.selectedItem.slot;
-      if (this.selectedItem.value < this.characterService.characterState.money || this.homeService.ownedFurniture.includes(this.selectedItem.name)){
-        if (!this.homeService.ownedFurniture.includes(this.selectedItem.name)){
+      let slot = item.slot;
+      if (item.value < this.characterService.characterState.money || this.homeService.ownedFurniture.includes(item.name)){
+        if (!this.homeService.ownedFurniture.includes(item.name)){
           // only pay for it once per lifetime
-          this.characterService.characterState.money -= this.selectedItem.value;
-          this.homeService.ownedFurniture.push(this.selectedItem.name);
-          this.furniturePrices[this.selectedItem.name] = 0;
+          this.characterService.characterState.money -= item.value;
+          this.homeService.ownedFurniture.push(item.name);
+          this.furniturePrices[item.name] = 0;
         }
-        this.homeService.furniture[slot] = this.selectedItem;
-        this.homeService.autoBuyFurniture[slot] = this.selectedItem;
+        this.homeService.furniture[slot] = item;
+        this.homeService.autoBuyFurniture[slot] = item;
       }
     }
   }

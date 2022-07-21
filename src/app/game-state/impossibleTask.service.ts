@@ -42,9 +42,9 @@ export interface ImpossibleTaskProperties {
 export class ImpossibleTaskService {
 
   activityService?: ActivityService;
-  impossibleTasksUnlocked: boolean = false;
-  activeTaskIndex: number = -1;
-  nextTask: number = 0;
+  impossibleTasksUnlocked = false;
+  activeTaskIndex = -1;
+  nextTask = 0;
 
   tasks: ImpossibleTask[] = [
     {
@@ -157,7 +157,7 @@ export class ImpossibleTaskService {
         return;
       }
       for (let i = 0; i < this.tasks.length; i++){
-        if (this.taskProgress[i].complete && this.tasks[i].taskType == this.nextTask){
+        if (this.taskProgress[i].complete && this.tasks[i].taskType === this.nextTask){
           this.nextTask++;
           return;
         }
@@ -171,7 +171,7 @@ export class ImpossibleTaskService {
 
   reset(){
     for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
-      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex != ImpossibleTaskType.BuildTower){
+      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex !== ImpossibleTaskType.BuildTower){
         if (this.taskProgress[taskIndex].complete){
           this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
         } else {
@@ -234,7 +234,7 @@ export class ImpossibleTaskService {
       },
     ];
     this.impossibleTasksUnlocked = properties.impossibleTasksUnlocked;
-    if (properties.activeTaskIndex == undefined){
+    if (properties.activeTaskIndex === undefined){
       this.activeTaskIndex = -1;
     } else {
       this.activeTaskIndex = properties.activeTaskIndex;
@@ -261,13 +261,13 @@ export class ImpossibleTaskService {
       this.activityService = this.injector.get(ActivityService);
     }
     this.activityService.reloadActivities();
-    if (this.activeTaskIndex == ImpossibleTaskType.OvercomeDeath){
+    if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath){
       this.battleService.addEnemy(this.battleService.enemyRepo.death);
     }
   }
 
   stopTask(){
-    if (this.activeTaskIndex == ImpossibleTaskType.Swim){
+    if (this.activeTaskIndex === ImpossibleTaskType.Swim){
       // back to the surface with you!
       this.taskProgress[this.activeTaskIndex].progress = 0;
     }

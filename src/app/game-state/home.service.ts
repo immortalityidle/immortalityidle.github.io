@@ -15,6 +15,7 @@ export interface Home {
   costPerDay: number;
   landRequired: number;
   maxInventory: number;
+  upgradeToTooltip: string;
   consequence: () => void;
   furnitureSlots: FurniturePosition[];
   daysToBuild: number;
@@ -77,25 +78,25 @@ export type FurnitureSlots  = { [key in FurniturePosition]: Furniture | null};
   providedIn: 'root'
 })
 export class HomeService {
-  autoBuyLandUnlocked: boolean = false;
-  autoBuyLandLimit: number = 5;
-  autoBuyHomeUnlocked: boolean = false;
+  autoBuyLandUnlocked = false;
+  autoBuyLandLimit = 5;
+  autoBuyHomeUnlocked = false;
   autoBuyHomeLimit: HomeType = 2;
-  autoBuyFurnitureUnlocked: boolean = false;
+  autoBuyFurnitureUnlocked = false;
   autoBuyFurniture: FurnitureSlots = {
     bed: null,
     bathtub: null,
     kitchen: null,
     workbench: null
   }
-  autoFieldUnlocked: boolean = false;
-  autoFieldLimit: number = 0;
-  useAutoBuyReserve: boolean = false;
-  autoBuyReserveAmount: number = 0;
+  autoFieldUnlocked = false;
+  autoFieldLimit = 0;
+  useAutoBuyReserve = false;
+  autoBuyReserveAmount = 0;
   land: number;
   landPrice: number;
   fields: Field[] = [];
-  extraFields: number = 0;
+  extraFields = 0;
   averageYield = 0; // running average of how much food is produced
   furniture: FurnitureSlots = {
     bed: null,
@@ -105,9 +106,9 @@ export class HomeService {
   }
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
   ownedFurniture: string[] = [];
-  grandfatherTent: boolean = false;
-  houseBuildingProgress: number = 1;
-  upgrading: boolean = false;
+  grandfatherTent = false;
+  houseBuildingProgress = 1;
+  upgrading = false;
 
   homesList: Home[] = [
     {
@@ -118,6 +119,7 @@ export class HomeService {
       costPerDay: 0,
       landRequired: 0,
       maxInventory: 10,
+      upgradeToTooltip: "Get a better house.",
       consequence: () => {
         if (Math.random() < 0.05){
           this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
@@ -138,6 +140,7 @@ export class HomeService {
       costPerDay: 1,
       landRequired: 1,
       maxInventory: 12,
+      upgradeToTooltip: "Get a better house. A better home will cost 100 taels and take up 1 land. The new home will restore 1 stamina and a bit of health each night.",
       consequence: () => {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
@@ -161,6 +164,7 @@ export class HomeService {
       costPerDay: 5,
       landRequired: 5,
       maxInventory: 15,
+      upgradeToTooltip: "Get a better house. A better home will cost 1,000 taels and take up 5 land. The new home will restore 3 stamina and a bit of health each night. It also has walls and space to properly sleep.",
       consequence: () => {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 3;
@@ -179,6 +183,7 @@ export class HomeService {
       costPerDay: 10,
       landRequired: 10,
       maxInventory: 18,
+      upgradeToTooltip: "Get a better house. A better home will cost 10,000 taels and take up 10 land. The new home will restore 5 stamina and a bit of health each night. It has enough room to properly bathe.",
       consequence: () => {
         this.characterService.characterState.status.health.value += .7;
         this.characterService.characterState.status.stamina.value += 5;
@@ -193,11 +198,12 @@ export class HomeService {
     {
       name: "Pleasant Cottage",
       type: HomeType.PleasantCottage,
-      description: "A nice little home where you can rest peacefully. Automatically restores 10 stamina and a bit of health each night.",
+      description: "A nice little home where you can rest peacefully. Automatically restores 10 stamina, 1 health and a bit of mana each night.",
       cost: 100000,
       costPerDay: 20,
       landRequired: 20,
       maxInventory: 20,
+      upgradeToTooltip: "Get a better house. A better home will cost 100,000 taels and take up 20 land. The new home will restore 10 stamina and 1 health and a bit of mana each night. It also has room to let you cook.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.1;
         this.characterService.characterState.status.health.value += 1;
@@ -214,11 +220,12 @@ export class HomeService {
     {
       name: "Large House",
       type: HomeType.LargeHouse,
-      description: "A large house where you can live and work. Automatically restores 15 stamina and a bit of health each night.",
+      description: "A large house where you can live and work. Automatically restores 15 stamina, 2 health, and a bit of mana each night.",
       cost: 1000000,
       costPerDay: 50,
       landRequired: 50,
       maxInventory: 24,
+      upgradeToTooltip: "Get a better house. A better home will cost 1M taels and take up 50 land. The new home will restore 15 stamina, 2 health, and a bit of mana each night. It has room to practice your craft.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.2;
         this.characterService.characterState.status.health.value += 2;
@@ -236,11 +243,12 @@ export class HomeService {
     {
       name: "Courtyard House",
       type: HomeType.CourtyardHouse,
-      description: "A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina and a bit of health each night.",
+      description: "A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina, 3 health, and a bit of mana each night.",
       cost: 10000000,
       costPerDay: 80,
       landRequired: 80,
       maxInventory: 28,
+      upgradeToTooltip: "Get a better house. A better home will cost 10m taels and take up 80 land. The new home will restore 20 stamina, 3 health, and a bit of mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.3;
         this.characterService.characterState.status.health.value += 3;
@@ -258,11 +266,12 @@ export class HomeService {
     {
       name: "Manor",
       type: HomeType.Manor,
-      description: "A large manor house. You are really moving up in the world. Automatically restores 25 stamina and a bit of health each night.",
+      description: "A large manor house. You are really moving up in the world. Automatically restores 25 stamina, 4 health, and a bit of mana each night.",
       cost: 100000000,
       costPerDay: 100,
       landRequired: 100,
       maxInventory: 30,
+      upgradeToTooltip: "Get a better house. A better home will cost 100m taels and take up 100 land. The new home will restore 25 stamina, 4 health, and a bit of mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.4;
         this.characterService.characterState.status.health.value += 4;
@@ -280,11 +289,12 @@ export class HomeService {
     {
       name: "Mansion",
       type: HomeType.Mansion,
-      description: "An elaborate mansion. Automatically restores 30 stamina and a bit of health each night.",
+      description: "An elaborate mansion. Automatically restores 30 stamina, 5 health, and a bit of mana each night.",
       cost: 1000000000,
       costPerDay: 120,
       landRequired: 120,
       maxInventory: 32,
+      upgradeToTooltip: "Get a better house. A better home will cost 1B taels and take up 120 land. The new home will restore 30 stamina, 5 health, and a bit of mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.5;
         this.characterService.characterState.status.health.value += 5;
@@ -302,11 +312,12 @@ export class HomeService {
     {
       name: "Palace",
       type: HomeType.Palace,
-      description: "A lavish palace. Automatically restores 35 stamina and a bit of health each night.",
+      description: "A lavish palace. Automatically restores 35 stamina, 10 health, and 1 mana each night.",
       cost: 10000000000,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 36,
+      upgradeToTooltip: "Get a better house. A better home will cost 10B taels and take up 150 land. The new home will restore 35 stamina, 10 health, and 1 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 1;
         this.characterService.characterState.status.health.value += 10;
@@ -324,11 +335,12 @@ export class HomeService {
     {
       name: "Castle",
       type: HomeType.Castle,
-      description: "An imposing castle. Automatically restores 40 stamina and a bit of health each night.",
+      description: "An imposing castle. Automatically restores 40 stamina, 15 health, and 2 mana each night.",
       cost: 10000000000,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 40,
+      upgradeToTooltip: "Get a better house. A better home will cost 100B taels and take up 150 land. The new home will restore 40 stamina, 15 health, and 2 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 2;
         this.characterService.characterState.status.health.value += 15;
@@ -346,11 +358,12 @@ export class HomeService {
     {
       name: "Fortress",
       type: HomeType.Fortress,
-      description: "An indomitable fortress. Automatically restores 50 stamina and a bit of health each night.",
+      description: "An indomitable fortress. Automatically restores 50 stamina, 20 health, and 3 mana each night.",
       cost: 100000000000,
       costPerDay: 180,
       landRequired: 180,
       maxInventory: 50,
+      upgradeToTooltip: "Get a better house. A better home will cost 1T taels and take up 180 land. The new home will restore 50 stamina, 20 health, and 3 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 3;
         this.characterService.characterState.status.health.value += 20;
@@ -368,11 +381,12 @@ export class HomeService {
     {
       name: "Mountain",
       type: HomeType.Mountain,
-      description: "An entire mighty mountain. Automatically restores 100 stamina and a bit of health each night.",
+      description: "An entire mighty mountain. Automatically restores 100 stamina, 30 health, and 4 mana each night.",
       cost: 1000000000000,
       costPerDay: 500,
       landRequired: 500,
       maxInventory: 60,
+      upgradeToTooltip: "Get a better house. A better home will cost 10T taels and take up 500 land. The new home will restore 100 stamina, 30 health, and 4 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 4;
         this.characterService.characterState.status.health.value += 30;
@@ -390,11 +404,12 @@ export class HomeService {
     {
       name: "Forbidden City",
       type: HomeType.ForbiddenCity,
-      description: "A city of your very own. Automatically restores 200 stamina and a bit of health each night.",
+      description: "A city of your very own. Automatically restores 200 stamina, 50 health, and 5 mana each night.",
       cost: 10000000000000,
       costPerDay: 1000,
       landRequired: 1000,
       maxInventory: 80,
+      upgradeToTooltip: "Get a better house. A better home will cost 100T taels and take up 1,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 5;
         this.characterService.characterState.status.health.value += 50;
@@ -412,11 +427,12 @@ export class HomeService {
     {
       name: "Capital",
       type: HomeType.Capital,
-      description: "The entire empire is yours now. Automatically restores 300 stamina and a bit of health each night.",
+      description: "The entire empire is yours now. Automatically restores 300 stamina, 80 health, and 10 mana each night.",
       cost: 100000000000000,
       costPerDay: 10000,
       landRequired: 10000,
       maxInventory: 100,
+      upgradeToTooltip: "Get a better house. A better home will cost 1Q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 10;
         this.characterService.characterState.status.health.value += 80;
@@ -436,8 +452,8 @@ export class HomeService {
   homeValue!: HomeType;
   home!: Home;
   nextHome!: Home;
-  nextHomeCostReduction: number = 0;
-  nextHomeCost: number = 0;
+  nextHomeCostReduction = 0;
+  nextHomeCost = 0;
 
   constructor(
     private characterService: CharacterService,
@@ -469,8 +485,8 @@ export class HomeService {
           this.nextHomeCost = 0;
         }
         this.home.consequence();
-        for (let slot of this.furniturePositionsArray){
-          let furniturePiece = this.furniture[slot];
+        for (const slot of this.furniturePositionsArray){
+          const furniturePiece = this.furniture[slot];
           if (furniturePiece?.use){
             furniturePiece?.use();
           }
@@ -483,7 +499,6 @@ export class HomeService {
         } else {
           this.characterService.characterState.money -= this.home.costPerDay;
         }
-        this.autoBuy();
       });
 
       reincarnationService.reincarnateSubject.subscribe(() => {
@@ -544,8 +559,8 @@ export class HomeService {
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
     this.upgrading = properties.upgrading || false;
-    for (let slot of this.furniturePositionsArray){
-      let savedFurniture = properties.furniture[slot];
+    for (const slot of this.furniturePositionsArray){
+      const savedFurniture = properties.furniture[slot];
       if (savedFurniture){
         this.furniture[slot] = this.itemRepoService.getFurnitureById(savedFurniture.id);
       }
@@ -641,32 +656,55 @@ export class HomeService {
     };
   }
 
-  addField(){
-    if (this.land > 0){
-      this.land--;
+  addField(quantity = 1){
+    if (quantity < 0){
+      quantity = this.land;
+    }
+    while (quantity > 0 && this.land > 0){
       if (this.fields.length >= 300){
-        this.extraFields++;
+        this.extraFields += quantity;
+        this.land -= quantity;
+        return;
       } else {
         this.fields.push(this.getCrop());
+        this.land--;
+        quantity--;
       }
     }
   }
 
-  clearField(){
-    if (this.extraFields > 0){
-      this.extraFields--;
-      this.land++;
+/**
+ *
+ * @param quantity -1 for all
+ */
+  clearField(quantity = 1){
+    if (quantity < 0){
+      this.land += this.extraFields;
+      this.extraFields = 0;
+      this.land += this.fields.length;
+      this.fields.splice(0);
       return;
     }
+    if (this.extraFields > 0 && quantity <= this.extraFields){
+      this.extraFields -= quantity;
+      this.land += quantity;
+      return;
+    } else {
+      quantity -= this.extraFields;
+      this.extraFields = 0;
+    }
     if (this.fields.length > 0){
-      this.fields.pop();
-      this.land++;
+      if (quantity > this.fields.length){
+        quantity = this.fields.length;
+      }
+      this.land += quantity;
+      this.fields.splice(this.fields.length - quantity);
     }
   }
 
   workFields(workValue: number){
     for (let i = 0; i < this.fields.length && i < 300; i++){
-      let field = this.fields[i];
+      const field = this.fields[i];
       if (field.yield < field.maxYield){
         field.yield += workValue;
       }
@@ -688,7 +726,7 @@ export class HomeService {
           fieldYield = Math.floor((this.fields.length + this.extraFields) / 300);
         }
         totalDailyYield += fieldYield;
-        this.inventoryService.addItems(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
+        this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
         this.fields[i] = this.getCrop();
       } else {
         this.fields[i].daysToHarvest--;
@@ -702,7 +740,7 @@ export class HomeService {
  * @returns count of actual purchase
  */
   buyLand(count: number): number{
-    let maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
+    const maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
     if(!maximumCount || !count){
       return 0;
     }
@@ -729,108 +767,19 @@ export class HomeService {
    * @returns count of affordable land
    */
   calculateAffordableLand(money: number): number{
-    let x = money;
-    let C = this.landPrice;
+    const x = money;
+    const C = this.landPrice;
     return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)))/10); // I know this looks nuts but I tested it on its own ^_^;;
 
   }
 
-  autoBuy(){
-    // Use auto-buy reserve amount if enabled in settings, otherwise default to 10 days living expenses (food + lodging)
-    let priceBuffer = this.useAutoBuyReserve ? this.autoBuyReserveAmount : (this.home.costPerDay + 1) * 10;
-    if (this.autoBuyHomeUnlocked && this.homeValue < this.autoBuyHomeLimit){
-      // Don't buy land while upgrading.
-      if (!this.upgrading){
-        //try to buy as much land as needed.
-        let landRequired = Math.min(
-          this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
-          this.nextHome.landRequired
-        );
-        if (landRequired > this.land){
-          this.buyLand(landRequired - this.land);
-        }
-      // ... Unless there's a home after the next home.
-      } else if (this.homeValue + 1 < this.autoBuyHomeLimit){
-        let nnHome = this.getHomeFromValue(this.nextHome.type + 1);
-        if (nnHome && nnHome.landRequired > this.land){
-          let landRequired = Math.min(
-            this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
-            nnHome.landRequired - this.land
-          )
-          if (landRequired > 0){
-            this.buyLand(landRequired);
-          }
-        }
-      }
-      if (this.land >= this.nextHome.landRequired){
-        // autoBuy is on, we have enough land, check if we have the money for the house plus food and rent
-        if ((this.characterService.characterState.money >= this.nextHomeCost + priceBuffer )){
-          this.upgradeToNextHome();
-        } else {
-          // we can't afford the next house, bail out and don't autoBuy more land
-          return;
-        }
-      }
-    }
-
-    // if there's no autohome, autohome is finished, or there's enough money to cover buying a new plot of land and the home, try buying land.
-    if ((!this.autoBuyHomeUnlocked ||
-        this.homeValue >= this.autoBuyHomeLimit ||
-        (this.characterService.characterState.money >= this.nextHome.cost + this.landPrice + priceBuffer )) &&
-        this.autoBuyLandUnlocked){
-      //check if we have the money for the land plus food and rent.
-      if ((this.characterService.characterState.money >= this.landPrice + priceBuffer) ){
-        //include next home cost if there's potentially another home
-        if (this.autoBuyHomeUnlocked &&
-           (this.upgrading || this.homeValue < this.autoBuyHomeLimit)
-           ){
-          let landRequired = Math.min(
-            this.calculateAffordableLand(this.characterService.characterState.money - this.nextHome.cost - priceBuffer),
-            this.autoBuyLandLimit - (this.land + this.fields.length + this.extraFields)
-          )
-          if (landRequired > 0){
-            this.buyLand(landRequired);
-          }
-        } else {
-          let landRequired = Math.min(
-            this.calculateAffordableLand(this.characterService.characterState.money - priceBuffer),
-            this.autoBuyLandLimit - (this.land + this.fields.length + this.extraFields)
-          )
-          if (landRequired > 0){
-            this.buyLand(landRequired);
-          }
-        }
-      }
-    }
-
-    // if there's no autohome, autohome is finished, or it has more than enough land for the next home, make a field.
-    if (!this.autoBuyHomeUnlocked || (this.homeValue >= this.autoBuyHomeLimit) || (this.upgrading && this.land > this.nextHome.landRequired)){
-      //keep making fields til either we hit goal, there's no land, or we break for home upgrade.
-      while (this.autoFieldUnlocked && (this.fields.length + this.extraFields) < this.autoFieldLimit && (this.land > 0)){
-        //break if reduced to land for home upgrade.
-        if(this.autoBuyHomeUnlocked &&
-           (this.upgrading || this.homeValue < this.autoBuyHomeLimit) &&
-           this.land <= this.nextHome.landRequired){
-          break;
-        }
-        this.addField();
-      }
-    }
-
-    if (this.autoBuyFurnitureUnlocked){
-      for (let slot of this.furniturePositionsArray){
-        // check if we have a previous purchase and the slot is still empty
-        if (this.home.furnitureSlots.includes(slot) && this.furniture[slot] == null){
-          let thingToBuy = this.autoBuyFurniture[slot];
-          if (thingToBuy && this.furniture[slot]?.id !== thingToBuy.id){
-            // check if we have the money for the furniture plus the next couple weeks' rent and food by popular demand.
-            if (this.characterService.characterState.money > thingToBuy.value + priceBuffer ){
-              this.characterService.characterState.money -= thingToBuy.value;
-              this.ownedFurniture.push(thingToBuy.name);
-              this.furniture[slot] = this.itemRepoService.getFurnitureById(thingToBuy.id);
-            }
-          }
-        }
+  buyFurniture(itemId: string) {
+    const item = this.itemRepoService.getFurnitureById(itemId)
+    if (item) {
+      if (this.characterService.characterState.money >= item.value){
+        this.characterService.characterState.money -= item.value;
+        this.ownedFurniture.push(item.name);
+        this.furniture[item.slot] = item;
       }
     }
   }

@@ -1,19 +1,17 @@
 @import (reference) "../../styles.less";
 
-.inventoryContainer{
-    position: relative;
-    height: 100%;
-  }
+.inventoryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+}
 
 .itemSlot {
   width: 90px;
   height: 90px;
   background-color: var(--storeButtonColor);
-}
-
-.priceLabel {
-  width: 60px;
-  text-align: center;
+  line-height: 12px;
 }
 
 .selectedItem {
@@ -25,20 +23,8 @@
   border: 1px solid var(--storeButtonDisabledColor) !important;
 }
 
-.itemSlot > tr {
-  line-height: 12px;
-}
-
-.inventoryGrid {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-table {
-  width: 100%;
-}
-
 button {
-  margin-top: 2px;
+  margin-top: 4px;
+  width: 100%;
 }
 

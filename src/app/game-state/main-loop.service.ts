@@ -14,6 +14,7 @@ export interface MainLoopProperties {
   pause: boolean;
   bankedTicks: number;
   totalTicks: number;
+  useBankedTicks: boolean
 }
 
 @Injectable({
@@ -29,14 +30,14 @@ export class MainLoopService {
   tickDivider = 10;
   tickCount = 0;
   totalTicks = 0;
-  unlockFastSpeed: boolean = false;
-  unlockFasterSpeed: boolean = false;
-  unlockFastestSpeed: boolean = false;
+  unlockFastSpeed = false;
+  unlockFasterSpeed = false;
+  unlockFastestSpeed = false;
   lastTime: number = new Date().getTime();
-  bankedTicks: number = 0;
-  offlineDivider: number = 10;
+  bankedTicks = 0;
+  offlineDivider = 10;
   characterService?: CharacterService;
-  useSavedTicks: boolean = true;
+  useBankedTicks = true;
 
   constructor(
     private injector: Injector) {
@@ -51,7 +52,8 @@ export class MainLoopService {
       tickDivider: this.tickDivider,
       pause: this.pause,
       bankedTicks: this.bankedTicks,
-      totalTicks: this.totalTicks
+      totalTicks: this.totalTicks,
+      useBankedTicks: this.useBankedTicks
     }
   }
 
@@ -62,10 +64,15 @@ export class MainLoopService {
     this.tickDivider = properties.tickDivider;
     this.pause = properties.pause;
     this.lastTime = properties.lastTime;
-    let newTime = new Date().getTime();
+    const newTime = new Date().getTime();
     this.bankedTicks = properties.bankedTicks + Math.floor((newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider));
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
+    if (properties.useBankedTicks === undefined){
+      this.useBankedTicks = true;
+    } else {
+      this.useBankedTicks = properties.useBankedTicks;
+    }
   }
 
   start() {
@@ -78,23 +85,32 @@ export class MainLoopService {
     }, LONG_TICK_INTERVAL_MS);
 
     window.setInterval(()=> {
-      let newTime = new Date().getTime();
-      let timeDiff = newTime - this.lastTime;
+      const newTime = new Date().getTime();
+      const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
       // do multiple tick events if chrome has been throttling the interval (cause the tab isn't active)
       let repeatTimes = Math.floor(timeDiff / TICK_INTERVAL_MS) || 1;
       if (this.pause) {
         this.bankedTicks++;
       } else {
-        if (this.bankedTicks > 0 && this.useSavedTicks){
+        if (this.bankedTicks > 0 && this.useBankedTicks){
           repeatTimes += 10 / this.tickDivider;
           this.bankedTicks -= 10 / this.tickDivider;
         }
-        if (this.characterService && this.characterService.characterState.lifespan > 36500){
-          repeatTimes++;
-        }
-        if (this.characterService && this.characterService.characterState.lifespan > 365000){
-          repeatTimes++;
+        if (this.characterService) {
+          // should never be null but this keeps the compiler happy
+          if (this.characterService.characterState.lifespan > 36500){
+            // add one extra tick at 100 years lifespan
+            repeatTimes++;
+          }
+          if (this.characterService.characterState.lifespan > 365000){
+            // and an extra tick at 1000 years lifespan
+            repeatTimes++;
+          }
+          for (let i = 0; i < Math.floor(this.totalTicks / 1825000) && i < 100; i++){
+            // and one extra for every 5000 years you've ever lived, up to 100 repeats
+            repeatTimes++;
+          }
         }
         for (let i = 0; i < repeatTimes; i++){
           this.tickCount++;

@@ -1,4 +1,4 @@
-<div class='darkMode'>
+<div class='darkMode optionsDiv'>
   <span>Manuals Options</span>
   <hr/>
   <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
@@ -30,7 +30,33 @@
       <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
     </span>
   </div>
-
+  <div *ngIf="autoBuyerService.autoBuyerSettingsUnlocked" class="optionField">
+    <span>
+      Auto-Buyer Options:
+      <table class="priorityTable">
+        <tr>
+          <th colspan="3">Priority Order</th>
+          <th>Enabled</th>
+          <th>Wait For Finish</th>
+        </tr>
+        <tr *ngFor="let setting of autoBuyerService.autoBuyerSettings; let index = index; let first = first; let last = last;">
+          <td>
+            <button [disabled]="first" class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, true)">&#9650;</button>
+          </td>
+          <td>
+            <button [disabled]="last"  class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, false)">&#9660;</button>
+          </td>
+          <td class="priorityTableNameColumn">{{setting.label}}</td>
+          <td class="priorityTableCheckboxColumn">
+            <input type="checkbox" (change)="autoBuySettingsEnabledChange($event, setting)" [checked]="setting.enabled"/>
+          </td>
+          <td class="priorityTableCheckboxColumn">
+            <input type="checkbox" (change)="autoBuySettingsWaitForFinishChange($event, setting)" [checked]="setting.waitForFinish"/>
+          </td>
+        </tr>
+      </table>
+    </span>
+  </div>
   <div *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon"  class="optionField">
     <span>
       <input type="checkbox" (change)="autoequipEnableChange($event)"
@@ -64,10 +90,13 @@
       Automatically Sold Items:
     </span>
     <div class="scrollingDiv">
-      <div *ngFor="let itemName of inventoryService.autoSellItems">
+      <div *ngFor="let entry of inventoryService.autoSellEntries">
         <span>
-          -{{itemName | titlecase}}
-          <button (click)="inventoryService.unAutoSell(itemName)">Stop Selling</button>
+          - {{entry.name | titlecase}}
+        </span>
+        <span>
+          - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
+          <button (click)="inventoryService.unAutoSell(entry.name)">Stop Selling</button>
         </span>
       </div>
     </div>
@@ -75,10 +104,13 @@
   <div *ngIf="inventoryService.autoUseUnlocked" class="optionField">
     <span>Automatically Used Items:</span>
     <div class="scrollingDiv">
-      <div *ngFor="let itemName of inventoryService.autoUseItems">
+      <div *ngFor="let entry of inventoryService.autoUseEntries">
         <span>
-          -{{itemName | titlecase}}
-          <button (click)="inventoryService.unAutoUse(itemName)">Stop Using</button>
+          - {{entry.name | titlecase}}
+        </span>
+        <span>
+          - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
+          <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
         </span>
       </div>
     </div>
@@ -92,17 +124,6 @@
           Use <input value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
           then Sell <input value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
           <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
-        </span>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="followerService.autoDismissUnlocked" class="optionField">
-    <span>Automatically Dismissed Followers (by Job):</span>
-    <div class="scrollingDiv">
-      <div *ngFor="let jobName of followerService.autoDismissJobs">
-        <span>
-          -{{jobName | titlecase}}
-          <button (click)="followerService.unAutoDismiss(jobName)">Stop Dismissing</button>
         </span>
       </div>
     </div>

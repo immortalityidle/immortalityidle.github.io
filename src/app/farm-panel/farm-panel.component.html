@@ -1,4 +1,4 @@
-<div class='darkMode'>
+<div class="darkMode">
     <h3>Your Farm</h3>
     <hr/>
     <div class="yieldText">
@@ -17,12 +17,12 @@
     </div>
     <div class="farmGrid">
         <div *ngFor="let field of homeService.fields">
-          <table class="itemSlot"
+          <div class="itemSlot"
             tooltip="You will harvest {{field.yield}} in {{field.daysToHarvest}} days">
-            <tr>{{field.cropName | titlecase}}</tr>
-            <tr>{{field.yield}}</tr>
-            <tr>{{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}</tr>
-          </table>
+            <div>{{field.cropName | titlecase}}</div>
+            <div>{{field.yield}}</div>
+            <div>{{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}</div>
+          </div>
         </div>
       </div>
 </div>

@@ -1,4 +1,4 @@
-export var FirstNames = [
+export const FirstNames = [
   "Abbas",
   "Abdel",
   "Abdo",

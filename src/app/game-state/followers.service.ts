@@ -8,7 +8,6 @@ import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
-import { EquipmentPosition } from './character';
 
 export interface Follower {
   name: string;
@@ -23,7 +22,12 @@ export interface FollowersProperties {
   followersUnlocked: boolean,
   followers: Follower[],
   autoDismissUnlocked: boolean,
-  autoDismissJobs: string[],
+  maxFollowerByType: { [key: string]: number; }
+}
+
+export interface FollowerReserve {
+  job: string,
+  reserve: number
 }
 
 type jobsType = {
@@ -38,11 +42,12 @@ type jobsType = {
 })
 export class FollowersService {
 
-  followersUnlocked: boolean = false;
+  followersUnlocked = false;
   followers: Follower[] = [];
-  followersRecruited: number = 0;
-  autoDismissUnlocked: boolean = false;
-  autoDismissJobs: string[] = [];
+  followersRecruited = 0;
+  autoDismissUnlocked = false;
+  maxFollowerByType: { [key: string]: number; } = {};
+  followerCap = 0;
 
   jobs: jobsType = {
     "builder": {
@@ -73,49 +78,49 @@ export class FollowersService {
     },
     "weaponsmith": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.rightHand && 
+        if (this.characterService.characterState.equipment.rightHand &&
           this.characterService.characterState.equipment.rightHand.weaponStats){
           this.characterService.characterState.equipment.rightHand.weaponStats.durability += follower.power;
           this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage += Math.floor(follower.power/10);
           this.characterService.characterState.equipment.rightHand.value += Math.floor(follower.power/10);
         }
-        if (this.characterService.characterState.equipment.leftHand && 
+        if (this.characterService.characterState.equipment.leftHand &&
           this.characterService.characterState.equipment.leftHand.weaponStats){
           this.characterService.characterState.equipment.leftHand.weaponStats.durability += follower.power;
           this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage += Math.floor(follower.power/10);
           this.characterService.characterState.equipment.leftHand.value += Math.floor(follower.power/10);
         }
       },
-      description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day."
+      description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them."
     },
     "armorer": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.head && 
+        if (this.characterService.characterState.equipment.head &&
           this.characterService.characterState.equipment.head.armorStats){
           this.characterService.characterState.equipment.head.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.head.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
           this.characterService.characterState.equipment.head.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
-        if (this.characterService.characterState.equipment.body && 
+        if (this.characterService.characterState.equipment.body &&
           this.characterService.characterState.equipment.body.armorStats){
           this.characterService.characterState.equipment.body.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.body.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
           this.characterService.characterState.equipment.body.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
-        if (this.characterService.characterState.equipment.legs && 
+        if (this.characterService.characterState.equipment.legs &&
           this.characterService.characterState.equipment.legs.armorStats){
           this.characterService.characterState.equipment.legs.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.legs.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
           this.characterService.characterState.equipment.legs.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
-        if (this.characterService.characterState.equipment.feet && 
+        if (this.characterService.characterState.equipment.feet &&
           this.characterService.characterState.equipment.feet.armorStats){
           this.characterService.characterState.equipment.feet.armorStats.durability += Math.ceil(follower.power/2);
           this.characterService.characterState.equipment.feet.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
           this.characterService.characterState.equipment.feet.value += Math.ceil(Math.floor(follower.power/10)/2);
         }
       },
-      description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day."
+      description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them."
     },
     "brawler": {
       work: (follower: Follower) => {
@@ -156,8 +161,18 @@ export class FollowersService {
     },
     "gemologist": {
       work: (follower: Follower) => {
+        let gemmerPower = 0;
+        for (const follower of this.followers){
+          if (follower.job === "gemologist"){
+            gemmerPower += follower.power;
+          }
+        }
+        gemmerPower = Math.floor(gemmerPower/50);
+        if (gemmerPower > 4){
+          gemmerPower = 4;
+        }
         for (let i = 0; i < follower.power; i++){
-          this.inventoryService.mergeAnySpiritGem();
+          this.inventoryService.mergeAnySpiritGem(gemmerPower);
         }
       },
       description: "Gemologists combine monster gems into higher grades."
@@ -189,7 +204,8 @@ export class FollowersService {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (this.characterService.characterState.age % 18250 == 0){
+      this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+      if (this.characterService.characterState.age % 18250 === 0){
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
@@ -198,6 +214,11 @@ export class FollowersService {
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){
           // follower aged off
+          this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "STANDARD", "EVENT");
+          this.followers.splice(i,1);
+        } else if (this.characterService.characterState.money < this.followers[i].cost){
+          // quit from not being paid
+          this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "STANDARD", "EVENT");
           this.followers.splice(i,1);
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
@@ -224,7 +245,7 @@ export class FollowersService {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
-      autoDismissJobs: this.autoDismissJobs
+      maxFollowerByType: this.maxFollowerByType
     }
   }
 
@@ -232,20 +253,30 @@ export class FollowersService {
     this.followers = properties.followers || [];
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
-    this.autoDismissJobs = properties.autoDismissJobs || [];
+    this.maxFollowerByType = properties.maxFollowerByType || {};
   }
 
   generateFollower(){
     this.followersRecruited++;
-    let maxFollowers = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
-    if (this.followers.length >= maxFollowers){
+    if (this.followers.length >= this.followerCap){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");
       return;
     }
 
-    let job = this.generateFollowerJob();
-    if (this.autoDismissJobs.includes(job)){
-      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any of those.","STANDARD","EVENT");
+    const job = this.generateFollowerJob();
+    let capNumber = 1000;
+    let currentCount = 0;
+    if (this.maxFollowerByType[job] !== undefined){
+      capNumber = this.maxFollowerByType[job];
+    }
+    for (const follower of this.followers){
+      if (follower.job === job){
+        currentCount++;
+      }
+    }
+
+    if (currentCount >= capNumber){
+      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","EVENT");
       return;
     }
 
@@ -262,38 +293,44 @@ export class FollowersService {
 
   generateFollowerName(): string {
     return FirstNames[Math.floor(Math.random() * FirstNames.length)];
-    
+
   }
   generateFollowerJob(): string {
     const keys = Object.keys(this.jobs);
-    return keys[Math.floor(Math.random() * keys.length)];    
+    return keys[Math.floor(Math.random() * keys.length)];
   }
 
+  /**
+   * 
+   * @param follower the Follower interface of the selected follower.
+   * @param option 1 to dismiss selected follower, 0 to dismiss the job, -1 to limit number of the selected job to current amount employed.
+   */
   dismissFollower(follower: Follower){
-    let index = this.followers.indexOf(follower);
+    const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
   }
 
-  dismissFollowerJob(job: string){
-    if (!this.autoDismissJobs.includes(job)){
-      this.autoDismissJobs.push(job);
-    }
+  dismissFollowerAll(follower: Follower){
     for (let index = this.followers.length - 1; index >= 0; index--){
-      if (this.followers[index].job == job){
+      if (this.followers[index].job === follower.job){
         this.followers.splice(index, 1);
       }
     }
+    this.maxFollowerByType[follower.job] = 0;
   }
 
-  unAutoDismiss(job: string){
-    if (!this.autoDismissJobs.includes(job)){
-      return;
-    }
-    for (let index = this.autoDismissJobs.length - 1; index >= 0; index--){
-      if (this.autoDismissJobs[index] == job){
-        this.autoDismissJobs.splice(index, 1);
+  limitFollower(follower: Follower){
+    let count = 0;
+      for (let index = this.followers.length - 1; index >= 0; index--){
+        if (this.followers[index].job === follower.job){
+          count++
+        }
       }
-    }
+      this.maxFollowerByType[follower.job] = count;
+  }
+
+  setMaxFollowers(job: string, value: number){
+    this.maxFollowerByType[job] = value;
   }
 
 }

@@ -1,5 +1,5 @@
 // alphabetical list of weapons
-export var WeaponNames = [
+export const WeaponNames = [
     "adze",
     "ahlspiess",
     "aikuchi",
@@ -281,24 +281,24 @@ export var WeaponNames = [
     "zweihander"
 ];
 
-export var ChestArmorNames = [
+export const ChestArmorNames = [
   "jacket", "coat", "breastplate", "jerkin", "hauberk", "vest", "tunic", "chestguard"
 ]
 
-export var LegArmorNames = [
+export const LegArmorNames = [
   "pants", "greaves", "shinguards", "trousers", "shorts", "leggings", "skirt",
 ]
 
-export var HelmetNames = [
+export const HelmetNames = [
   "helmet", "helm", "mask", "faceguard", "cap", "hat", "hood",
 ]
 
-export var ShoeNames = [
+export const ShoeNames = [
   'sandals', 'boots', 'shoes', 'footwear', 'slippers'
 ]
 
 // prefixes in increasing order of goodness
-export var ItemPrefixes = [
+export const ItemPrefixes = [
   "atrocious",
   "awful",
   "dreadful",
@@ -312,6 +312,7 @@ export var ItemPrefixes = [
   "gross",
   "stinking",
   "imperfect",
+  "flimsy",
   "shoddy",
   "inferior",
   "bad",
@@ -359,38 +360,49 @@ export var ItemPrefixes = [
   "tolerable",
   "undistinguished",
   "unexceptional",
+  "decent",
   "usual",
+  "green",
+  "blue",
+  "red",
+  "puce",
+  "mauve",
+  "scarlet",
+  "purple",
   "acceptable",
   "excellent",
   "exceptional",
   "familiar",
   "favorable",
-  "great",
-  "marvelous",
   "positive",
   "satisfactory",
   "satisfying",
+  "nice",
+  "congenial",
+  "pleasing",
+  "sneaky",
+  "agreeable",
+  "polished",
+  "commendable",
+  "great",
+  "marvelous",
   "superb",
   "valuable",
   "wonderful",
   "boss",
   "choice",
-  "nice",
-  "pleasing",
   "prime",
   "radical",
   "superior",
   "worthy",
   "admirable",
-  "agreeable",
-  "commendable",
-  "congenial",
   "deluxe",
   "first-class",
   "first-rate",
   "gnarly",
   "honorable",
   "neat",
+  "uncommon",
   "precious",
   "reputable",
   "shipshape",
@@ -420,6 +432,8 @@ export var ItemPrefixes = [
   "rare",
   "lovely",
   "extensive",
+  "feral", 
+  "howling",
   "extravagant",
   "gigantic",
   "grievous",
@@ -429,7 +443,11 @@ export var ItemPrefixes = [
   "lengthy",
   "long",
   "oversize",
+  "malignant",
+  "fantastic",
   "beautiful",
+  "magical",
+  "enchanted",
   "prodigious",
   "stupendous",
   "titanic",
@@ -442,14 +460,15 @@ export var ItemPrefixes = [
   "singular",
   "special",
   "super",
-  "uncommon",
   "unique",
   "unprecedented",
   "unimaginable",
   "unthinkable",
+  "heavenly",
+  "divine",
 ]
 
-export var WeaponSuffixes = [
+export const WeaponSuffixes = [
   "irritation",
   "annoyance",
   "embarassment",
@@ -457,24 +476,35 @@ export var WeaponSuffixes = [
   "frostbite",
   "flames",
   "wounding",
+  "crushing",
+  "draining",
+  "bloodthirst",
   "light",
   "darkness",
   "power",
+  "blasting",
   "decimation",
   "destruction",
   "supremacy",
+  "obliteration",
   "annihilation",
 ]
 
-export var WeaponSuffixModifiers = [
+export const WeaponSuffixModifiers = [
   "weak",
+  "boring",
   "partial",
   "limited",
+  "adequate",
+  "medium",
   "substantial",
   "blinding",
   "complete",
   "burning",
   "total",
+  "explosive",
+  "poisonous",
+  "ethereal",
   "overwhelming",
   "incalculable",
   "unfathomable",
@@ -486,13 +516,14 @@ export var WeaponSuffixModifiers = [
   "perfect"
 ]
 
-export var ArmorSuffixes = [
+export const ArmorSuffixes = [
   "comfort",
   "screening",
   "safety",
   "cover",
   "shelter",
   "protection",
+  "happiness",
   "security",
   "defense",
   "light",
@@ -505,10 +536,14 @@ export var ArmorSuffixes = [
   "invincibility"
 ]
 
-export var ArmorSuffixModifiers = [
+export const ArmorSuffixModifiers = [
   "weak",
+  "scant",
+  "boring",
   "limited",
   "partial",
+  "adequate",
+  "medium",
   "substantial",
   "complete",
   "total",
@@ -522,7 +557,7 @@ export var ArmorSuffixModifiers = [
   "perfect"
 ]
 
-export var herbNames = [
+export const herbNames = [
   "patchouli",
   "alangium",
   "lobelia",
@@ -554,7 +589,7 @@ export var herbNames = [
   "ginseng",
 ]
 
-export var herbQuality = [
+export const herbQuality = [
   "rotten",
   "wilted",
   "poor",
