@@ -194,11 +194,11 @@ export class InventoryService {
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
         return;
-      }//TODO: check if merge is going to superscede, so we don't have to do work
-      if (this.autoequipBestWeapon){
+      }
+      if (this.autoequipBestWeapon && !this.autoWeaponMergeUnlocked){
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor){
+      if (this.autoequipBestArmor && !this.autoArmorMergeUnlocked){
         this.autoequipArmor();
       }
     });
@@ -1271,9 +1271,8 @@ export class InventoryService {
         }
       }
     }
-    //TODO: We might want to check if auto-equip-best is enabled at this point, or remove the tickbox
-    // finally, merge the last item with that slot into the equipped item (if present and corresponding autoequip is unlocked)
-    if (destinationItem !== null && (this.autoequipBestWeapon || this.autoequipBestArmor)){
+    // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is (and corresponding autoequip is unlocked)
+    if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
       sourceItem = this.characterService.characterState.equipment[slot];
       if (sourceItem === null){
         return;
