@@ -140,7 +140,7 @@ export class HomeService {
       costPerDay: 1,
       landRequired: 1,
       maxInventory: 12,
-      upgradeToTooltip: "Get a better house. A better home will cost 100 taels and take up 5 land. The new home will restore 1 stamina and a bit of health each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 100 taels and take up 1 land. The new home will restore 1 stamina and a bit of health each night.",
       consequence: () => {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
