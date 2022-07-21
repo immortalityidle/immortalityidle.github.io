@@ -2041,7 +2041,7 @@ export class ActivityService {
               follower.power = 100; // Set max level to 100
             } else {
               allMaxed = false;
-              if (Math.random() < (1 - follower.power / 100) / 100){ // Softcap the increase
+              if (Math.random() < (1 - Math.pow(follower.power / 100, 0.5)) / (36500000 / (3650 + follower.age))){ // Softcap the increase
                 follower.power++;
                 follower.cost = 100 * follower.power;
                 this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "EVENT");

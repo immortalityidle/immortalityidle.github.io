@@ -161,8 +161,18 @@ export class FollowersService {
     },
     "gemologist": {
       work: (follower: Follower) => {
+        let gemmerPower = 0;
+        for (const follower of this.followers){
+          if (follower.job === "gemologist"){
+            gemmerPower += follower.power;
+          }
+        }
+        gemmerPower = Math.floor(gemmerPower/50);
+        if (gemmerPower > 4){
+          gemmerPower = 4;
+        }
         for (let i = 0; i < follower.power; i++){
-          this.inventoryService.mergeAnySpiritGem();
+          this.inventoryService.mergeAnySpiritGem(gemmerPower);
         }
       },
       description: "Gemologists combine monster gems into higher grades."
@@ -290,9 +300,33 @@ export class FollowersService {
     return keys[Math.floor(Math.random() * keys.length)];
   }
 
+  /**
+   * 
+   * @param follower the Follower interface of the selected follower.
+   * @param option 1 to dismiss selected follower, 0 to dismiss the job, -1 to limit number of the selected job to current amount employed.
+   */
   dismissFollower(follower: Follower){
     const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
+  }
+
+  dismissFollowerAll(follower: Follower){
+    for (let index = this.followers.length - 1; index >= 0; index--){
+      if (this.followers[index].job === follower.job){
+        this.followers.splice(index, 1);
+      }
+    }
+    this.maxFollowerByType[follower.job] = 0;
+  }
+
+  limitFollower(follower: Follower){
+    let count = 0;
+      for (let index = this.followers.length - 1; index >= 0; index--){
+        if (this.followers[index].job === follower.job){
+          count++
+        }
+      }
+      this.maxFollowerByType[follower.job] = count;
   }
 
   setMaxFollowers(job: string, value: number){
