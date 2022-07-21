@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
-import { CharacterService } from './character.service';
+import { Character } from './character';
 import { AutoPauser, AgeAutoPauser, LifespanAutoPauser, TimeAutoPauser, DeathAutoPauser } from './autoPauser';
 
 export interface AutoPauserProperties {
@@ -13,7 +13,9 @@ export type AutoPauserType = 'age' | 'lifespan' | 'time' | 'death';// | 'newActi
 export type AutoPauserSetting = {
   label: string,
   type: AutoPauserType,
-  enabled: boolean
+  enabled: boolean,
+  value: number,
+  years: boolean
 }
 type AutoPausersMap = {[key in AutoPauserType]: AutoPauser}
 
@@ -26,21 +28,26 @@ export class AutoPauserService {
   autoPauserSettings: AutoPauserSetting[] = this.getDefaultSettings();
 
   autopausers: AutoPausersMap = {
-    'age': new AgeAutoPauser(this, this.characterService),
-    'lifespan': new LifespanAutoPauser(this, this.characterService),
-    'time': new TimeAutoPauser(this, this.characterService),
-    'death': new DeathAutoPauser(this, this.characterService)
+    'age': new AgeAutoPauser(this, this.character, this.mainLoopService),
+    'lifespan': new LifespanAutoPauser(this, this.character, this.mainLoopService),
+    'time': new TimeAutoPauser(this, this.character, this.mainLoopService),
+    'death': new DeathAutoPauser(this, this.character, this.mainLoopService)
   }
 
   constructor(
     private characterService: CharacterService,
-    mainLoopService: MainLoopService,//TODO update with orioer signature when completed
+    mainLoopService: MainLoopService,
+    character: Character
   ) {
-    mainLoopService.tickSubject.subscribe(() => {//TODO do we need to tick the pausers, or do things that trigger the pauser tick?
+    mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead) {
         return;
       }
       this.tick();
+    });
+    
+    reincarnationService.reincarnateSubject.subscribe(() => {
+        this.autopausers.death.run();
     });
   }
 
@@ -63,42 +70,48 @@ export class AutoPauserService {
 
   getDefaultSettings(): AutoPauserSetting[] {
     return [{ 
+      label: 'Age',
+      type: 'age',
+      enabled: false,
+      value: 18,
+      years: true
+    },
+    {
+      label: 'Lifespan',
+      type: 'lifespan',
+      enabled: false,
+      value: 1,
+      years: true
+    },
+    {
+      label: 'Time',
+      type: 'time',
+      enabled: false,
+      value: 1,
+      years: true
+    },
+    {
       label: 'Death',
       type: 'death',
       enabled: true,
-      waitForFinish: true
-    //, TODO replace this with settings for all autoPausers
+      value: 0,
+      years: false
     }];
   }
 
   tick() {
-    // Use auto-buy reserve amount if enabled in settings, otherwise default to 10 days living expenses (food + lodging)
-    const reserveAmount = this.homeService.useAutoBuyReserve ? this.homeService.autoBuyReserveAmount : (this.homeService.home.costPerDay + 1) * 10;
+    // Set any constants
 
-    // go through priorities in order
-    for (const setting of this.autoBuyerSettings) {
-      const autobuyer: AutoBuyer = this.autobuyers[setting.type];
+    // go through pausers
+    for (const setting of this.autoPauserSettings) {
+      const autopauser: AutoPauser = this.autopausers[setting.type];
 
-      // Skip to the next one if we're already done, or if we can't make any progress
-      if (!setting.enabled || !autobuyer.shouldRun() || autobuyer.isBlocked() || autobuyer.isComplete()) {
+      // Make any checks we want
+      if (!autopauser.enabled || !autopauser.isPossible()) {
         continue;
       }
 
-      // If we're set to wait for each priority, don't continue if we're just waiting for something to complete
-      // (Ex. waiting for house to finish upgrade)
-      if (autobuyer.isWaiting() && setting.waitForFinish) {
-        break;
-      } else if (autobuyer.isWaiting()) {
-        continue;
-      }
-
-      // Autobuy, initiate!
-      autobuyer.run(reserveAmount);
-
-      // If we're set to wait for each priority, don't continue if we're not complete
-      if (!autobuyer.isComplete() && setting.waitForFinish) {
-        break;
-      }
+      autopauser.run(autopauser.value, autopauser.years);
     }
   }
 }

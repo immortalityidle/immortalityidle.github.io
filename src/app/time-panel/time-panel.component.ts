@@ -4,6 +4,7 @@ import { AchievementService } from '../game-state/achievement.service';
 import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
+import { AutoPauserService } from '../game-state/autoPauser.service';
 import { LogService } from '../game-state/log.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 
@@ -23,6 +24,7 @@ export class TimePanelComponent implements OnInit {
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
     public characterService: CharacterService,
+    public autoPauserService: AutoPauserService,
   ) {
   }
 
@@ -99,8 +101,8 @@ export class TimePanelComponent implements OnInit {
 
   pauseOnDeath(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.activityService.pauseOnDeath = event.target.checked;
-    //TODO: move pauseOnDeath from activityService to autoPauseService 
+    //this.activityService.pauseOnDeath = event.target.checked;
+    this.autoPauserService.autoPauserSettings.find('death').enabled = event.target.checked;
     //TODO: Consider if we want to leave the option in the time modal, or move or duplicate it in the options modal
   }
 

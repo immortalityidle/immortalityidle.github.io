@@ -275,9 +275,6 @@ export class ActivityService {
     }
     if (this.autoRestart){
       this.checkRequirements(true);
-      if (this.pauseOnDeath){//TODO this check doesn't belong here, move this to autoPauserService's DeathAutoPauser
-        this.mainLoopService.pause = true;
-      }
     } else {
       this.activityLoop = [];
     }

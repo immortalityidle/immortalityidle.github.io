@@ -1,12 +1,13 @@
-import { AutoPauserService } from "./autoPauser.service";
-import { ReincarnationService } from './reincarnation.service';
-import { CharacterService } from "./character.service";
+import { AutoPauserService } from './autoPauser.service';
+import { MainLoopService } from './main-loop.service';
+import{ Character } from './character';
 
-export abstract class AutoPauser {//TODO entire abstract class needs to be redesigned
+export abstract class AutoPauser {
 
   constructor(
     protected autoPauserService: AutoPauserService,
-    protected characterService: CharacterService) {}
+    protected character: character,
+    protected mainLoopService: MainLoopService ) {}
 
   /**
    * Checks if permissions are correct to run this autoPauser
@@ -17,7 +18,7 @@ export abstract class AutoPauser {//TODO entire abstract class needs to be redes
    * Performs the check
    * @param reserveAmount Passed in savings amount to prevent over-buying
    */
-  abstract run(reserveAmount: number): void;
+  abstract run(value?: number, years?: boolean): void;
 
   /**
    * Checks if this autoPauser's condition is remotely reachable, for example, an immortal won't trigger a death nor lifespan autoPauser
@@ -29,65 +30,95 @@ export abstract class AutoPauser {//TODO entire abstract class needs to be redes
 export class DeathAutoPauser extends AutoPauser {
 
   isEnabled(): boolean {
-    return this.autoPauserService.getProperties;//TODO get the relevent property
+    return this.autoPauserService.autoPauserSettings.find('death').enabled;
   }
 
   run() {
-    //TODO either run the check, or remove this method and just have this subscribe to things like  reincarnationService.reincarnateSubject.subscribe(() => { action });
+    if (this.isEnabled) {
+      this.mainLoopService.pause = true;
+    }
   }
-  
+
+  isPossible(): boolean {
+    return !this.character.immortal;
+  }
+
 }
 
-//TODO replace autobuyer with autopausers (one of each possible type)
-export class HomeAutoBuyer extends AutoBuyer {
-  shouldRun(): boolean {
-    return this.homeService.autoBuyHomeUnlocked;
+
+export class AgeAutoPauser extends AutoPauser {
+
+  isEnabled(): boolean {
+    return this.autoPauserService.autoPauserSettings.find('age').enabled;
   }
 
-  run(reserveAmount: number) {
-    // Don't buy land while upgrading.
-    if (!this.homeService.upgrading) {
-      //try to buy as much land as needed.
-      const landRequired = Math.min(
-        this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
-        this.homeService.nextHome.landRequired - this.homeService.land
-      )
-      if (landRequired > 0) {
-        this.homeService.buyLand(landRequired);
+  run(value: 18, years: true) {//TODO this one might not work well, who knows
+    if (this.isEnabled) {
+      const isAge = this.character.age;
+      let pauseAge = value;
+      if (years) {
+        pauseAge *= 365;
       }
-      // ... Unless there's a home after the next home.
-    } else if (this.homeService.homeValue + 1 < this.homeService.autoBuyHomeLimit) {
-      const nnHome = this.homeService.getHomeFromValue(this.homeService.nextHome.type + 1);
-      if (nnHome && nnHome.landRequired > this.homeService.land) {
-        const landRequired = Math.min(
-          this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
-          nnHome.landRequired - this.homeService.land
-        )
-        if (landRequired > 0) {
-          this.homeService.buyLand(landRequired);
-        }
-      }
-    }
-
-    if (!this.homeService.upgrading && this.homeService.land >= this.homeService.nextHome.landRequired) {
-      if (this.characterService.characterState.money >= this.homeService.nextHomeCost + reserveAmount) {
-        this.homeService.upgradeToNextHome();
+      if (isAge == pauseAge){
+        this.mainLoopService.pause = true;
       }
     }
   }
 
-  isBlocked(): boolean {
-    return false;
+  isPossible(): boolean {
+    return true;
   }
 
-  isWaiting(): boolean {
-    // This autobuyer is waiting if the house is being upgraded and we already have the required land for the next home
-    return this.homeService.upgrading && this.homeService.land >= this.homeService.nextHome.landRequired;
+}
+
+export class LifespanAutoPauser extends AutoPauser {
+
+  isEnabled(): boolean {
+    return this.autoPauserService.autoPauserSettings.find('lifespan').enabled;
   }
 
-  isComplete(): boolean {
-    // We're complete if we've bought the last home upgrade, even if it isn't finished building
-    return this.homeService.homeValue >= this.homeService.autoBuyHomeLimit
-      || this.homeService.upgrading && (this.homeService.homeValue + 1 >= this.homeService.autoBuyHomeLimit);
+  run(value: 1, years: false) {
+    if (this.isEnabled) {
+      const timeUntilPassing = this.character.lifespan - this.character.age;
+      let pauseIfTimeLeft = value;
+      if (years) {
+        pauseIfTimeLeft *= 365;
+      }
+      if (timeUntilPassing <= pauseIfTimeLeft){
+        this.mainLoopService.pause = true;
+      }
+    }
   }
+
+  isPossible(): boolean {
+    return !this.character.immortal;
+  }
+
+}
+
+export class TimeAutoPauser extends AutoPauser {
+  ticksSincePause = 0;
+
+  isEnabled(): boolean {
+    return this.autoPauserService.autoPauserSettings.find('time').enabled;
+  }
+
+  run(value: 1, years: true) {
+    if (this.isEnabled) {
+      let timeToWait = 1;
+      if (years) {
+        timeToWait *= 365
+      }
+      if (timeToWait <= this.ticksSincePause) {
+        this.ticksSincePause = 0;
+        this.mainLoopService.pause = true;
+      }
+    }
+  }
+
+  isPossible(): boolean {
+    this.ticksSincePause++;
+    return true;
+  }
+
 }

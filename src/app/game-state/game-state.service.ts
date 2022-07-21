@@ -142,7 +142,7 @@ export class GameStateService {
 
   rebirth(): void {
     this.characterService.forceRebirth = true;
-    this.mainLoopService.pause = false;//TODO possibly check in autpauser service instead
+    this.mainLoopService.pause = false;
   }
 
   cheat(): void {
