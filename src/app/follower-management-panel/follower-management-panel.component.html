@@ -1,6 +1,8 @@
 <div class="darkMode">
   <h3>Manage Followers</h3>
   <hr />
+  <span>You can support up to {{followerService.followerCap}} total followers.</span>
+  <hr />
   <div class="scrollingDiv">
     <table>
       <tr  *ngFor="let job of followerService.jobs | keyvalue">
@@ -9,4 +11,4 @@
         <td tooltip="This value will only apply to new followers who seek to join you. You'll have to dismiss current followers yourself.">Keep up to <input value="{{followerService.maxFollowerByType[job.key] === undefined ? 1000 : followerService.maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
       </tr>
     </table>
-</div>>
+</div>

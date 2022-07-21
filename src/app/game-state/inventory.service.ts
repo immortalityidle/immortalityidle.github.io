@@ -408,7 +408,7 @@ export class InventoryService {
     let useDescription = "Use to increase your lifespan.";
     let value = grade * 10;
     let name = effect + " Pill " + " +" + grade;
-    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0 && this.characterService.characterState.empowermentFactor < 1000){
+    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0){
       this.consume("pillBox");
       this.consume("pillMold");
       this.consume("pillPouch");
@@ -417,8 +417,10 @@ export class InventoryService {
       useDescription = "Use to permanently empower the increase of your attributes based on your aptitudes.";
       value = 1;
       name = "Empowerment Pill";
+      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.", "STANDARD","CRAFTING");
+    } else {
+      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
     }
-    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
     this.addItem( {
       name: name,
       id: "pill",
