@@ -404,7 +404,7 @@ export class HomeService {
     {
       name: "Forbidden City",
       type: HomeType.ForbiddenCity,
-      description: "A city of your very own. Automatically restores 200 stamin, 50 health, and 5 mana each night.",
+      description: "A city of your very own. Automatically restores 200 stamina, 50 health, and 5 mana each night.",
       cost: 10000000000000,
       costPerDay: 1000,
       landRequired: 1000,
@@ -454,7 +454,7 @@ export class HomeService {
   nextHome!: Home;
   nextHomeCostReduction = 0;
   nextHomeCost = 0;
-  
+
   constructor(
     private characterService: CharacterService,
     private inventoryService: InventoryService,
@@ -672,9 +672,9 @@ export class HomeService {
       }
     }
   }
-  
+
 /**
- * 
+ *
  * @param quantity -1 for all
  */
   clearField(quantity = 1){
