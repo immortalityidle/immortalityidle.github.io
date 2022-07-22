@@ -129,7 +129,7 @@ export class StoreService {
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Fortress];
     } else if (this.characterService.characterState.bloodlineRank === 4){
       // Basic Stat Lifespan
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes & spirituality extend your lifespan to a much greater degree.";
+      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mountain];
     } else if (this.characterService.characterState.bloodlineRank === 5){
       this.bloodlineDescription = "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";
