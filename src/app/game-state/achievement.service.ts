@@ -153,6 +153,17 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Drug Addicted",
+      description: "You are too addicted to the bonus provided by the empowerment pill and decided to produce more of it.",
+      hint: "Once you reached proficiency in all four jobs you will gain access to something that you love it so much!",
+      check: () => {
+        return this.characterService.characterState.empowermentFactor > 1;
+      },
+      effect: () => {
+      },
+      unlocked: false
+    },
+    {
       name: "This Sparks Joy",
       description: "You used 888 items and unlocked the " + this.itemRepoService.items['autoUseManual'].name,
       hint: "Immortals should know the potential of the things they use.",
