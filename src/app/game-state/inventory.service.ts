@@ -1005,7 +1005,7 @@ export class InventoryService {
     if (item.useConsumes){
       // use all the ones you have now
       for (let i = 0; i < this.itemStacks.length; i++) {
-        let itemStack = this.itemStacks[i];
+        const itemStack = this.itemStacks[i];
         if (itemStack == null){
           continue;
         }
@@ -1322,6 +1322,9 @@ export class InventoryService {
     const meridianRank = this.characterService.meridianRank();
     if (power > meridianRank - 5){
       power = meridianRank - 5
+    }
+    if (power < 0){
+      power = 0;
     }
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
