@@ -446,15 +446,15 @@ export class AchievementService {
       description: "You have unlocked bloodline 4 and now you have unlimited money to spent",
       hint: "Rumour said that some people are too rich.",
       check: () => {
-        return this.characterState.bloodlineRank >= 4;
+        return this.characterService.characterState.bloodlineRank >= 4;
       },
       effect: () => {
-        if (this.characterState.bloodlineRank == 4) {
-          this.characterState.bloodlineCost = 10000000000000
+        if (this.characterService.characterState.bloodlineRank == 4) {
+          this.characterService.characterState.bloodlineCost = 10000000000000
         }
         
-        if (this.characterState.bloodlineRank == 5) {
-          this.characterState.bloodlineCost = 1000000000000000
+        if (this.characterService.characterState.bloodlineRank == 5) {
+          this.characterService.characterState.bloodlineCost = 1000000000000000
         }
       },
       unlocked: false
