@@ -991,7 +991,7 @@ export class ActivityService {
       description:
         ['Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.'],
       consequenceDescription:
-        ['Uses 5 Stamina. Increases a random attribute and provides a little money.'],
+        ['Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.'],
       consequence: [() => {
         this.characterService.characterState.increaseAttribute('strength', 0.02);
         this.characterService.characterState.increaseAttribute('toughness', 0.02);
