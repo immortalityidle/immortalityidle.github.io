@@ -377,22 +377,18 @@ export class Character {
       // from the 10x limit to 100x the limit, change growth rate to 1/20
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * empowermentFactor;
-    } else if (aptitude <= this.attributeSoftCap){
+    } else if (aptitude < this.attributeSoftCap){
       // from the 100x limit to softcap, change growth rate to 1/100
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowermentFactor;
     } else {
-      // from 100k onwards, become graph of "y = m * x^0.1 * log(x) + c"
-      const extraAttribute = attribute - this.attributeSoftCap;
-      const m = this.attributeScalingLimit / 100 * empowermentFactor;
-      const c =
-        this.attributeScalingLimit +
-        (this.attributeScalingLimit * 9) / 4 +
-        (this.attributeScalingLimit * 90) / 20 +
-        (this.attributeSoftCap - this.attributeScalingLimit * 100) / 10;
-
-      return m * Math.pow(extraAttribute, 0.1) * Math.log(extraAttribute) + c;
+      // increase by aptitude / (1 + aptitude ^ pow) of whatever is over the softcap. 
+      const pow = 0.5; // Power can be balanced as needed. Lower power reduces returns.
+      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+        (this.attributeScalingLimit * 90 / 20) +
+        (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
+        (Math.pow (aptitude - this.attributeSoftCap, pow)) * Math.pow(this.attributeScalingLimit / 500000, 0.3))  * empowermentFactor;
     }
   }
 
