@@ -993,11 +993,11 @@ export class ActivityService {
       consequenceDescription:
         ['Uses 5 Stamina. Increases a random attribute and provides a little money.'],
       consequence: [() => {
-        const keys = Object.keys(
-          this.characterService.characterState.attributes
-        ) as AttributeType[];
-        // raise all first five stats
-        keys.forEach(key => this.characterService.characterState.increaseAttribute(key, 0.02));
+        this.characterService.characterState.increaseAttribute('strength', 0.02);
+        this.characterService.characterState.increaseAttribute('toughness', 0.02);
+        this.characterService.characterState.increaseAttribute('speed', 0.02);
+        this.characterService.characterState.increaseAttribute('intelligence', 0.02);
+        this.characterService.characterState.increaseAttribute('charisma', 0.02);
         this.characterService.characterState.status.stamina.value -= 5;
         this.characterService.characterState.money += 3;
         this.getActivityByType(ActivityType.OddJobs).lastIncome = 3;
