@@ -1,0 +1,15 @@
+<div class="darkMode">
+  <h3>Log Filters</h3>
+  <span class="filters">
+    <input type="checkbox" (change)="topicFilter($event, 'STORY')" id="filterStory" [checked]="logService.logTopics.includes('STORY')"/>
+    <label for="filterStory">Show Story <span class="highlightText">{{logService.newStory}}</span></label>
+    <input type="checkbox" (change)="topicFilter($event, 'EVENT')" id="filterEvent" [checked]="logService.logTopics.includes('EVENT')"/>
+    <label for="filterEvent">Show Events {{logService.newEvents}}</label>
+    <input type="checkbox" (change)="topicFilter($event, 'CRAFTING')" id="filterCrafting" [checked]="logService.logTopics.includes('CRAFTING')"/>
+    <label for="filterCrafting">Show Crafting {{logService.newCrafting}}</label>
+    <input type="checkbox" (change)="topicFilter($event, 'COMBAT')" id="filterCombat" [checked]="logService.logTopics.includes('COMBAT')"/>
+    <label for="filterCombat">Show Combat {{logService.newCombat}}</label>
+    <input type="checkbox" (change)="topicFilter($event, 'FOLLOWER')" id="filterFollower" [checked]="logService.logTopics.includes('FOLLOWER')"/>
+    <label for="filterFollower">Show Followers {{logService.newFollower}}</label>
+  </span>
+</div>
