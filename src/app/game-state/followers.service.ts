@@ -253,7 +253,7 @@ export class FollowersService {
   generateFollower(){
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
-      this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");
+      this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","FOLLOWER");
       return;
     }
 
