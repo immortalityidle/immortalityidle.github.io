@@ -234,6 +234,9 @@ export class CharacterService {
       'STANDARD', 'STORY');
     this.characterState.bloodlineCost *= 1000;
     this.characterState.bloodlineRank++;
+    if (this.characterState.bloodlineRank >= 4) {
+      this.characterState.bloodlineCost /= 10;
+    }
     this.resetAptitudes();
   }
 

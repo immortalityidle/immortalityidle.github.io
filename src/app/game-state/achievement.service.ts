@@ -442,6 +442,24 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Unlimited Taels",
+      description: "You have unlocked bloodline 4 and now you have unlimited money to spent",
+      hint: "Rumour said that some people are too rich.",
+      check: () => {
+        return this.characterService.characterState.bloodlineRank >= 4;
+      },
+      effect: () => {
+        if (this.characterService.characterState.bloodlineRank == 4) {
+          this.characterService.characterState.bloodlineCost = 10000000000000
+        }
+        
+        if (this.characterService.characterState.bloodlineRank == 5) {
+          this.characterService.characterState.bloodlineCost = 1000000000000000
+        }
+      },
+      unlocked: false
+    },
+    {
       name: "Grandpa's Old Tent",
       description: "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
