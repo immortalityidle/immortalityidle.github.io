@@ -2039,7 +2039,7 @@ export class ActivityService {
         }
       }],
       requirements: [{
-        charisma: 10000000000,
+        charisma: 500000000,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
