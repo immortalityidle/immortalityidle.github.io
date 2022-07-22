@@ -278,7 +278,7 @@ export class FollowersService {
     this.followers.push({
       name: this.generateFollowerName(),
       age: 0,
-      lifespan: this.characterService.characterState.lifespan / 10,
+      lifespan: this.characterService.characterState.lifespan,
       job: job,
       power: 1,
       cost: 100
