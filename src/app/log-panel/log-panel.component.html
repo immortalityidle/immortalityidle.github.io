@@ -11,6 +11,8 @@
       <label for="filterCrafting">Show Crafting Messages {{logService.newCrafting}}</label>
       <input type="checkbox" (change)="topicFilter($event, 'COMBAT')" id="filterCombat" [checked]="logService.logTopics.includes('COMBAT')"/>
       <label for="filterCombat">Show Combat Messages {{logService.newCombat}}</label>
+      <input type="checkbox" (change)="topicFilter($event, 'FOLLOWER')" id="filterFollower" [checked]="logService.logTopics.includes('FOLLOWER')"/>
+      <label for="filterCombat">Show Combat Messages {{logService.newFollower}}</label>
     </span>
   </h3>
   <div class="logBox">
