@@ -23,19 +23,31 @@ export class OptionsModalComponent {
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
     if (!(event.target instanceof HTMLInputElement)) return;
     autosellEntry.reserve = parseInt(event.target.value);
+    if (!autosellEntry.reserve){
+      autosellEntry.reserve = 0;
+    }
   }
   autoUseReserveChange(event: Event, autouseEntry: AutoItemEntry){
     if (!(event.target instanceof HTMLInputElement)) return;
     autouseEntry.reserve = parseInt(event.target.value);
+    if (!autouseEntry.reserve){
+      autouseEntry.reserve = 0;
+    }
   }
 
   autoBuyLandLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoBuyLandLimit = parseInt(event.target.value);
+    if (!this.homeService.autoBuyLandLimit){
+      this.homeService.autoBuyLandLimit = 0;
+    }
   }
   autoFieldLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoFieldLimit = parseInt(event.target.value);
+    if (!this.homeService.autoFieldLimit){
+      this.homeService.autoFieldLimit = 0;
+    }
   }
   autoBuyHomeLimitChanged(event: Event){
     if (!(event.target instanceof HTMLSelectElement)) return;
@@ -48,15 +60,24 @@ export class OptionsModalComponent {
   autoBuyReserveAmountChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoBuyReserveAmount = parseInt(event.target.value);
+    if (!this.homeService.autoBuyReserveAmount){
+      this.homeService.autoBuyReserveAmount = 0;
+    }
   }
   autoBalanceUseChanged(event: Event, balanceItem: BalanceItem){
     if (!(event.target instanceof HTMLInputElement)) return;
     balanceItem.useNumber = parseInt(event.target.value);
+    if (!balanceItem.useNumber){
+      balanceItem.useNumber = 0;
+    }
   }
 
   autoBalanceSellChanged(event: Event, balanceItem: BalanceItem){
     if (!(event.target instanceof HTMLInputElement)) return;
     balanceItem.sellNumber = parseInt(event.target.value);
+    if (!balanceItem.sellNumber){
+      balanceItem.sellNumber = 0;
+    }
   }
 
   useSpiritGemWeaponsChange(event: Event): void {
