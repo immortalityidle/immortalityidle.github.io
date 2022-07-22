@@ -232,7 +232,12 @@ export class CharacterService {
     this.logService.addLogMessage(
       "You will be reborn into your own family line and reap greater benefits from your previous lives.",
       'STANDARD', 'STORY');
-    this.characterState.bloodlineCost *= 1000;
+    // Bloodline 1 Cost: base cost
+    // Bloodline 2 Cost: 1,000 x base cost
+    // Bloodline 3 Cost: 750,000 x base cost
+    // Bloodline 4 Cost: 375,000,000 x base cost
+    // Bloodline 5 Cost: 93,750,000,000 x base cost
+    this.characterState.bloodlineCost *= 1000 - 250 * this.characterState.bloodlineRank;
     this.characterState.bloodlineRank++;
     this.resetAptitudes();
   }
