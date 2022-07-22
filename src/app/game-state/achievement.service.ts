@@ -153,9 +153,9 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Drug Addicted",
-      description: "You are too addicted to the bonus provided by the empowerment pill and decided to produce more of it.",
-      hint: "Once you reached proficiency in all four jobs you will gain access to something that you love it so much!",
+      name: "Addict",
+      description: "You got a taste of those sweet, sweet empowerment pills and want more.",
+      hint: "Master of all.",
       check: () => {
         return this.characterService.characterState.empowermentFactor > 1;
       },
