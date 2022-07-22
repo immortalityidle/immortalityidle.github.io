@@ -387,7 +387,7 @@ export class Character {
       return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100 +
-        (Math.pow (aptitude - this.attributeSoftCap, pow)) * this.attributeScalingLimit / 5120)  * empowermentFactor;
+        (Math.pow (aptitude - this.attributeSoftCap, pow)) * Math.pow(this.attributeScalingLimit / 500000, 0.3))  * empowermentFactor;
     }
   }
 
