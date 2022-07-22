@@ -208,11 +208,11 @@ export class FollowersService {
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){
           // follower aged off
-          this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "FOLLOWER", "EVENT");
+          this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
-          this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "FOLLOWER", "EVENT");
+          this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
@@ -270,11 +270,11 @@ export class FollowersService {
     }
 
     if (currentCount >= capNumber){
-      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","FOLLOWER","EVENT");
+      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
       return;
     }
 
-    this.logService.addLogMessage("A new follower has come to learn at your feet.","FOLLOWER","EVENT");
+    this.logService.addLogMessage("A new follower has come to learn at your feet.","STANDARD","FOLLOWER");
     this.followers.push({
       name: this.generateFollowerName(),
       age: 0,
