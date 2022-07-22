@@ -329,11 +329,7 @@ export class Character {
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
-    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;
-    if (this.bloodlineRank >= 5){
-      this.spiritualityLifespan *= 5;
-    }
-    
+    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;    
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
     this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
