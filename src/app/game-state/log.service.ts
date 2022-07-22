@@ -3,7 +3,7 @@ import { isEmpty } from 'rxjs';
 
 const LOG_MERGE_INTERVAL_MS = 1000;
 export type LogType = 'STANDARD' | 'INJURY';
-export type LogTopic = 'COMBAT' | 'CRAFTING' | 'STORY' | 'EVENT';
+export type LogTopic = 'COMBAT' | 'CRAFTING' | 'FOLLOWER' | 'STORY' | 'EVENT';
 
 export interface Log {
   message: string,
@@ -27,10 +27,12 @@ export class LogService {
   newEvents = "";
   newCombat = "";
   newCrafting = "";
+  newFollower = "";
   storyLog: Log[] = [];
   eventLog: Log[] = [];
   combatLog: Log[] = [];
   craftingLog: Log[] = [];
+  followerLog: Log[] = [];
   currentLog: Log[] = [];
 
   constructor() {
@@ -48,6 +50,8 @@ export class LogService {
       log = this.storyLog;
     } else if (topic === 'CRAFTING') {
       log = this.craftingLog;
+    } else if (topic === 'FOLLOWER') {
+      log = this.followerLog;
     }
 
     const newMessage: Log = {
@@ -86,8 +90,10 @@ export class LogService {
         this.newEvents = " (new)";
       } else if (topic === 'CRAFTING'){
         this.newCrafting = " (new)";
-      } else {
+      } else if (topic === 'COMBAT') {
         this.newCombat = " (new)";
+      } else if (topic === 'FOLLOWER') {
+        this.newFollower = " (new)";
       }
     }
   }
@@ -146,6 +152,10 @@ export class LogService {
     if (this.logTopics.includes('CRAFTING')){
       this.newCrafting = "";
       logs.push([...this.craftingLog]);
+    }
+    if (this.logTopics.includes('FOLLOWER')){
+      this.newFollower = "";
+      logs.push([...this.followerLog]);
     }
 
     this.currentLog = [];
