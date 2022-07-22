@@ -169,12 +169,31 @@ export class ImpossibleTaskService {
     });
   }
 
+  markPriorCompletions(){
+    let taskComplete = false;
+    this.nextTask = -1;
+    for (let taskIndex = this.tasks.length - 1; taskIndex >= 0; taskIndex--){
+      if (this.taskProgress[taskIndex].complete || taskComplete){ // Sanity check for the latest complete task
+        taskComplete = true;
+        this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
+        this.taskProgress[taskIndex].complete = true;
+      }
+      if(taskComplete && this.nextTask < 0){
+        this.nextTask = taskIndex;
+      } else if (taskIndex === 0){
+        this.nextTask = 0;
+      }
+    }
+  }
+
+
   reset(){
-    for (let taskIndex = 0; taskIndex < this.tasks.length; taskIndex++){
-      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired && taskIndex !== ImpossibleTaskType.BuildTower){
+    this.markPriorCompletions();
+    for (let taskIndex = this.tasks.length - 1; taskIndex >= 0; taskIndex--){
+      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired){
         if (this.taskProgress[taskIndex].complete){
           this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
-        } else {
+        } else if (taskIndex !== ImpossibleTaskType.BuildTower){
           this.taskProgress[taskIndex].progress = 0;
         }
       }
@@ -239,6 +258,7 @@ export class ImpossibleTaskService {
     } else {
       this.activeTaskIndex = properties.activeTaskIndex;
     }
+    this.markPriorCompletions();
     if (!this.activityService){
       this.activityService = this.injector.get(ActivityService);
     }
