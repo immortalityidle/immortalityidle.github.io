@@ -1098,7 +1098,11 @@ export class InventoryService {
     }
   }
 
-  consume(consumeType: string): number{
+  consume(consumeType: string, quantity = 1): number{
+    if (quantity < 1){
+      quantity = 1; //handle potential 0 and negatives just in case
+    }
+    
     let itemValue = -1;
     let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
@@ -1116,13 +1120,20 @@ export class InventoryService {
     if (itemIndex >= 0){
       const itemIterator = this.itemStacks[itemIndex];
       if (itemIterator !== null){
-        itemIterator.quantity --;
+        const minQuantity = Math.min(itemIterator.quantity, quantity);
+        itemIterator.quantity -= minQuantity;
+        quantity -= minQuantity
         if (itemIterator.quantity <= 0){
           //remove the stack if empty
           this.itemStacks[itemIndex] = null;
         }
       }
     }
+
+    if (quantity > 0 && itemValue !== -1) {
+      itemValue = this.consume(consumeType, quantity)
+    }
+
     return itemValue;
   }
 
