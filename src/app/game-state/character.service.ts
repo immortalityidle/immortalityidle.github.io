@@ -180,7 +180,7 @@ export class CharacterService {
       "You now gain additional aptitude each time you reincarnate.",
       'STANDARD', 'STORY');
     this.characterState.condenseSoulCoreCost *= 10;
-    this.characterState.aptitudeGainDivider -= 10;
+    this.characterState.aptitudeGainDivider /= 1.5;
     this.resetAptitudes();
   }
 
