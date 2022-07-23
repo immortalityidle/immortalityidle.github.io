@@ -231,11 +231,17 @@ export class Character {
     this.status.health.value = 100;
     this.status.health.max = 100;
     this.status.stamina.value = 100;
-    this.status.stamina.max = 100;
+    
+    if (this.bloodlineRank < 4) {
+      this.status.stamina.max = 100;
+    }
+    
     this.status.nourishment.value = 7;
     this.status.nourishment.max = 14;
     if (this.manaUnlocked){
-      this.status.mana.max = 1;
+      if (this.bloodlineRank < 4) {
+        this.status.mana.max = 1;
+      }
       this.status.mana.value = 1;
     } else {
       this.status.mana.max = 0;
@@ -248,10 +254,17 @@ export class Character {
 
     // age in days
     this.age = INITIAL_AGE;
-    this.foodLifespan = 0;
-    this.alchemyLifespan = 0;
+    
+    if (this.bloodlineRank < 3) {
+      this.foodLifespan = 0;
+      this.alchemyLifespan = 0;
+    }
+    
+    if (this.bloodlineRank < 5) {
+      this.magicLifespan = 0;
+    }
+    
     this.spiritualityLifespan = 0;
-    this.magicLifespan = 0;
     let totalAptitude = 0;
     totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
       this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
