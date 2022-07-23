@@ -152,7 +152,7 @@ export class CharacterService {
     for (const key in keys){
       const attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
-      attribute.aptitude = 1 + attribute.aptitude / this.characterState.aptitudeGainDivider; // keep up to 10% of aptitudes after Ascension
+      attribute.aptitude = 1 + attribute.aptitude / this.characterState.aptitudeGainDivider; // keep up to 20% of aptitudes after Ascension
       if (parseInt(key) < 5){
         attribute.value = 1;
       } else {
