@@ -22,7 +22,8 @@ export interface FollowersProperties {
   followersUnlocked: boolean,
   followers: Follower[],
   autoDismissUnlocked: boolean,
-  maxFollowerByType: { [key: string]: number; }
+  maxFollowerByType: { [key: string]: number; },
+  followerLifespanDoubled: boolean
 }
 
 export interface FollowerReserve {
@@ -43,6 +44,7 @@ type jobsType = {
 export class FollowersService {
 
   followersUnlocked = false;
+  followerLifespanDoubled = false;
   followers: Follower[] = [];
   followersRecruited = 0;
   autoDismissUnlocked = false;
@@ -239,7 +241,8 @@ export class FollowersService {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
-      maxFollowerByType: this.maxFollowerByType
+      maxFollowerByType: this.maxFollowerByType,
+      followerLifespanDoubled: this.followerLifespanDoubled
     }
   }
 
@@ -248,12 +251,13 @@ export class FollowersService {
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
+    this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
   }
 
   generateFollower(){
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
-      this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","FOLLOWER");
+      this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","EVENT");
       return;
     }
 
@@ -273,12 +277,13 @@ export class FollowersService {
       this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
       return;
     }
-
-    this.logService.addLogMessage("A new follower has come to learn at your feet.","STANDARD","FOLLOWER");
+    
+    const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
+    this.logService.addLogMessage("A new " + job + " has come to learn at your feet.","STANDARD","EVENT");
     this.followers.push({
       name: this.generateFollowerName(),
       age: 0,
-      lifespan: this.characterService.characterState.lifespan / 10,
+      lifespan: this.characterService.characterState.lifespan / lifespanDivider,
       job: job,
       power: 1,
       cost: 100

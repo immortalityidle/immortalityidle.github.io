@@ -80,12 +80,12 @@ export class Character {
   dead = false;
   attributeScalingLimit = 10;
   attributeSoftCap = 100000;
-  aptitudeGainDivider = 100;
+  aptitudeGainDivider = 5 * Math.pow(1.5, 9); // Exponential Soul Core ranks, up to 20%
   condenseSoulCoreCost = 10;
   condenseSoulCoreOriginalCost = 10;
   reinforceMeridiansCost = 1000;
   reinforceMeridiansOriginalCost = 1000;
-  bloodlineCost = 100;
+  bloodlineCost = 1000;
   bloodlineRank = 0;
   manaUnlocked = false;
   accuracy = 0;
@@ -258,6 +258,8 @@ export class Character {
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
     if (this.bloodlineRank < 5){
       this.statLifespan *= 0.1;
+    } else {
+      this.statLifespan *= 5;
     }
 
     const keys = Object.keys(this.attributes) as AttributeType[];
@@ -329,7 +331,7 @@ export class Character {
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
-    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value) * 5;    
+    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
     this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
@@ -361,12 +363,12 @@ export class Character {
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
-  getAptitudeMultipier(aptitude: number): number {
+  getAptitudeMultipier(aptitude: number, noEmpowerment = false): number {
     if (aptitude < 0){
       // should not happen, but sanity check it
       aptitude = 0;
     }
-    const empowermentFactor = this.getEmpowermentMult();
+    const empowermentFactor = noEmpowerment? 1 : this.getEmpowermentMult();
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
       return aptitude * empowermentFactor;
@@ -383,13 +385,13 @@ export class Character {
         (this.attributeScalingLimit * 90 / 20) +
         ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowermentFactor;
     } else {
-      // graph of y = x ^ 0.1 * log(x) + c
-      const c = this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+      // graph of y = x ^ 0.5 * log(x) + c
+      const d = this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
-        (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100;
-      const x = (aptitude - this.attributeSoftCap) * this.attributeScalingLimit / 10;
-
-      return (Math.pow(x, 0.1) * Math.log(x) + c) * empowermentFactor;
+        (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
+        const x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 10000000000000, 0.15), 0.5) + d) * empowermentFactor; // Softcap
+        const c = 365 * 1000; // Hardcap
+      return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
     }
   }
 
@@ -494,13 +496,14 @@ export class Character {
     this.statLifespan = properties.statLifespan || 0;
     this.spiritualityLifespan = properties.spiritualityLifespan || 0;
     this.magicLifespan = properties.magicLifespan || 0;
+    this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
+    // This is derived to avoid save issues. Calculate rank and subtract from power to reduce the exponential aptitude divider.
+    this.aptitudeGainDivider = 5 * Math.pow(1.5, 9 - Math.log10(this.condenseSoulCoreCost / this.condenseSoulCoreOriginalCost)); 
+    this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     this.attributeScalingLimit = properties.attributeScalingLimit;
     this.attributeSoftCap = properties.attributeSoftCap;
-    this.aptitudeGainDivider = properties.aptitudeGainDivider;
-    this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
-    this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
-    this.bloodlineCost = properties.bloodlineCost;
     this.bloodlineRank = properties.bloodlineRank;
+    this.bloodlineCost = 1000 * Math.pow(100, this.bloodlineRank); // This is derived to avoid save issues.
     this.manaUnlocked = properties.manaUnlocked || false;
     this.totalLives = properties.totalLives || 1;
     this.healthBonusFood = properties.healthBonusFood || 0;

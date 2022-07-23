@@ -522,7 +522,7 @@ export class ActivityService {
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress++;
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].complete){
-          this.logService.addLogMessage("You have acheived the impossible and dived all the way to the bottom of the ocean.","STANDARD","STORY");
+          this.logService.addLogMessage("Your preparations were worthwhile! You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found a mythical island.","STANDARD","STORY");
         }
       }],
       requirements: [{
@@ -2016,7 +2016,7 @@ export class ActivityService {
       name: ['Training Followers'],
       activityType: ActivityType.TrainingFollowers,
       description: ['Train your followers to make them more powerful.'],
-      consequenceDescription: ['Uses 1000 Stamina. Gives you a small chance for each follower of increasing their power. You probably should not try this if you have no followers.'],
+      consequenceDescription: ['Uses 1000 Stamina. Gives you a small chance for each follower of increasing their power. Maybe they\'d learn more if you were a better leader...'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         if (this.followerService.followersUnlocked){
@@ -2026,7 +2026,7 @@ export class ActivityService {
               follower.power = 100; // Set max level to 100
             } else {
               allMaxed = false;
-              if (Math.random() < (1 - Math.pow(follower.power / 100, 0.5)) / (36500000 / (3650 + follower.age))){ // Softcap the increase
+              if (Math.random() < (1 - Math.pow(follower.power / 100, 0.55)) / (36500000 / (3650 + follower.age * Math.log2(this.characterService.characterState.attributes.charisma.value/10000000000 + 1)))){ // Softcap the increase
                 follower.power++;
                 follower.cost = 100 * follower.power;
                 this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "FOLLOWER");
@@ -2039,7 +2039,7 @@ export class ActivityService {
         }
       }],
       requirements: [{
-        charisma: 500000000,
+        charisma: 10000000000,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
