@@ -385,7 +385,6 @@ export class Character {
         (this.attributeScalingLimit * 90 / 20) +
         ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowermentFactor;
     } else {
-      // graph of y = x ^ 0.5 * log(x) + c
       const d = this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
