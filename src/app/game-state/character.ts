@@ -239,7 +239,7 @@ export class Character {
     this.status.nourishment.value = 7;
     this.status.nourishment.max = 14;
     if (this.manaUnlocked){
-      if (this.bloodlineRank < 4) {
+      if (this.bloodlineRank < 5) {
         this.status.mana.max = 1;
       }
       this.status.mana.value = 1;
