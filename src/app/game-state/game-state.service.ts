@@ -106,7 +106,8 @@ export class GameStateService {
     this.autoBuyerService.setProperties(gameState.autoBuy);
     this.mainLoopService.setProperties(gameState.mainLoop);
     this.isDarkMode = gameState.darkMode || false;
-
+    // Covers the case of folowerCap showing 0 when loading in
+    this.followersService.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
   }
 
   getGameExport(): string{

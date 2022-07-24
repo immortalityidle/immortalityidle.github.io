@@ -9,6 +9,8 @@ import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 
+export type FollowerColor = 'UNMAXED' | 'MAXED';
+
 export interface Follower {
   name: string;
   age: number;
@@ -48,6 +50,7 @@ export class FollowersService {
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number; } = {};
   followerCap = 0;
+  followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
 
   jobs: jobsType = {
     "builder": {
@@ -210,10 +213,12 @@ export class FollowersService {
           // follower aged off
           this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
+          this.followersMaxed = 'UNMAXED';
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
+          this.followersMaxed = 'UNMAXED';
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
         }
@@ -232,6 +237,7 @@ export class FollowersService {
   reset() {
     this.followers.splice(0, this.followers.length);
     this.followersRecruited = 0;
+    this.followersMaxed = 'UNMAXED';
   }
 
   getProperties(): FollowersProperties {
@@ -254,6 +260,7 @@ export class FollowersService {
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","FOLLOWER");
+      this.followersMaxed = 'MAXED'; // Sanity check, true check below.
       return;
     }
 
@@ -283,6 +290,9 @@ export class FollowersService {
       power: 1,
       cost: 100
     });
+    if (this.followers.length >= this.followerCap){
+      this.followersMaxed = 'MAXED';
+    }
   }
 
   generateFollowerName(): string {
@@ -297,11 +307,12 @@ export class FollowersService {
   /**
    * 
    * @param follower the Follower interface of the selected follower.
-   * @param option 1 to dismiss selected follower, 0 to dismiss the job, -1 to limit number of the selected job to current amount employed.
+   * 
    */
   dismissFollower(follower: Follower){
     const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
+    this.followersMaxed = 'UNMAXED';
   }
 
   dismissFollowerAll(follower: Follower){
@@ -311,6 +322,7 @@ export class FollowersService {
       }
     }
     this.maxFollowerByType[follower.job] = 0;
+    this.followersMaxed = 'UNMAXED';
   }
 
   limitFollower(follower: Follower){
@@ -320,11 +332,14 @@ export class FollowersService {
           count++
         }
       }
-      this.maxFollowerByType[follower.job] = count;
+    this.maxFollowerByType[follower.job] = count;
   }
 
   setMaxFollowers(job: string, value: number){
-    this.maxFollowerByType[job] = value;
+    if(!value || value < 0){
+      this.maxFollowerByType[job] = 0; // In case of negatives, NaN or undefined.
+    } else {
+     this.maxFollowerByType[job] = value;
+    }
   }
-
 }
