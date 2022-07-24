@@ -110,8 +110,10 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
     }
 
     if (this.homeService.autoFieldUnlocked) {
-      while (this.homeService.land > 0 && this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit) {
-        this.homeService.addField();
+      const minFields = Math.min(this.homeService.land, this.homeService.autoFieldLimit - (this.homeService.fields.length + this.homeService.extraFields));
+
+      if (minFields > 0) {
+        this.homeService.addField(minFields);
       }
     }
   }

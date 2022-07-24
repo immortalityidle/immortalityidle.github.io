@@ -16,10 +16,12 @@
                   </span>
                 </td>
                 <td>
-                  <div class="progress-bar">
-                    <span 
-                      [style.width.%]="100 * 
-                        impossibleTaskService.taskProgress[task.taskType].progress / 
+                  <div *ngIf="impossibleTaskService.nextTask >= task.taskType" class="progress-bar" style="height:20px;"
+                    [attr.value]="Math.floor(impossibleTaskService.taskProgress[task.taskType].progress)"
+                    [attr.max]="Math.floor(task.progressRequired)">
+                    <span
+                      [style.width.%]="100 *
+                        impossibleTaskService.taskProgress[task.taskType].progress /
                         task.progressRequired">
                     </span>
                   </div>
