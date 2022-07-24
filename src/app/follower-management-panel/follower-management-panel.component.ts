@@ -8,10 +8,22 @@ import { FollowersService } from '../game-state/followers.service';
 })
 export class FollowerManagementPanelComponent implements OnInit {
 
+  changeAll = 0;
   constructor(public followerService: FollowersService) { }
 
   ngOnInit(): void {
     let a;
+  }
+  
+  changeAllChanged(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.changeAll = parseInt(event.target.value);
+  }
+
+  changeAllClicked(){
+    for(const key in this.followerService.jobs){
+      this.followerService.setMaxFollowers(key, this.changeAll);
+    }
   }
 
   keepValueChanged(event: Event, job: string){
