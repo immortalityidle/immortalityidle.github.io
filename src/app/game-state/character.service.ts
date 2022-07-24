@@ -53,6 +53,8 @@ export class CharacterService {
         }
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
         deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
+      } else if (this.characterState.immortal && this.characterState.status.health.value < 0) {
+        this.characterState.status.health.value = 0;
       }
       if (deathMessage !== ""){
         if (!this.characterState.immortal){
@@ -131,7 +133,7 @@ export class CharacterService {
     if (this.characterState.spiritualityLifespan > 0){
       tooltip += "<br>Spirituality: " + this.yearify(this.characterState.spiritualityLifespan);
     }
-    if (this.characterState.spiritualityLifespan > 0){
+    if (this.characterState.magicLifespan > 0){
       tooltip += "<br>Magic: " + this.yearify(this.characterState.magicLifespan);
     }
     this.lifespanTooltip = tooltip;

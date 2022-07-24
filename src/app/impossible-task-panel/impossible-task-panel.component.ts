@@ -9,11 +9,12 @@ import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 })
 export class ImpossibleTaskPanelComponent implements OnInit {
 
+  Math: Math;
   constructor(
     public impossibleTaskService: ImpossibleTaskService,
     public gameStateService: GameStateService
     ) {
-
+      this.Math = Math;
   }
 
   ngOnInit(): void {
