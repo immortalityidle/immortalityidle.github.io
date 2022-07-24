@@ -443,8 +443,8 @@ export class AchievementService {
     },
     {
       name: "Unlimited Taels",
-      description: "Your family has unlocked the secrets of exploiting capital. You probably never have to worry about money again.",
-      hint: "You don't want to stop the exploitation, you want to become the exploiter.",
+      description: "Your family has unlocked the secrets of compound interest. You probably never have to worry about money again.",
+      hint: "Family first. Especially in matters of money.",
       check: () => {
         return this.characterService.characterState.bloodlineRank >= 4;
       },
@@ -582,7 +582,7 @@ export class AchievementService {
     {
       name: "Impossible",
       description: "You have achieved incredible power and are ready to begin taking on impossible tasks.",
-      hint: "No one can reach the limits of humanity. It can't be done.",
+      hint: "No one can exceed the limits of humanity. It can't be done.",
       check: () => {
         return (this.characterService.soulCoreRank() >= 9) &&
           (this.characterService.meridianRank() >= 9) &&

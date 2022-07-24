@@ -522,7 +522,7 @@ export class ActivityService {
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress++;
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].complete){
-          this.logService.addLogMessage("Your preparations were worthwhile! You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found a mythical island.","STANDARD","STORY");
+          this.logService.addLogMessage("Your preparations were worthwhile! You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found a mythical sunken island.","STANDARD","STORY");
         }
       }],
       requirements: [{
@@ -2002,7 +2002,7 @@ export class ActivityService {
       name: ['Training Followers'],
       activityType: ActivityType.TrainingFollowers,
       description: ['Train your followers to make them more powerful.'],
-      consequenceDescription: ['Uses 1000 Stamina. Gives you a small chance for each follower of increasing their power. Maybe they\'d learn more if you were a better leader...'],
+      consequenceDescription: ['Uses 1000 Stamina. Gives you a small chance for each follower of increasing their power. They might learn more if you are a better leader.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         if (this.followerService.followersUnlocked){

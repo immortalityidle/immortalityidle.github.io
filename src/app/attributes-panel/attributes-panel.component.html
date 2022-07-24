@@ -25,9 +25,9 @@
           tooltip="Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.">
           person
         </mat-icon>
-        Followers 
-        <span [ngClass]="this.followerService.followersMaxed">
-          &nbsp;[{{this.followerService.followers.length}} / {{this.followerService.followerCap}}]
+        Followers
+        <span [ngClass]="followerService.followersMaxed" *ngIf="followerService.followersUnlocked">
+          &nbsp;({{this.followerService.followers.length}} / {{this.followerService.followerCap}})
         </span>
         <mat-icon *ngIf="followerService.followersUnlocked && followerService.autoDismissUnlocked" class="iconButton optionsIcon" (click)="followerOptionsClicked()"
           tooltip="Manage your followers.">
