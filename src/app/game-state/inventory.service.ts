@@ -233,7 +233,7 @@ export class InventoryService {
       thrownAwayItems: this.thrownAwayItems,
       autoSellOldGemsUnlocked: this.autoSellOldGemsUnlocked,
       autoSellOldGemsEnabled: this.autoSellOldGemsEnabled,
-    
+
     }
   }
 
@@ -358,6 +358,39 @@ export class InventoryService {
   updateArmorDescription(armor: Equipment){
     armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material +
       "<br/>Defense: " + armor.armorStats?.defense + "<br/>Durability: " + armor.armorStats?.durability
+  }
+
+  upgradeEquipment(value: number){
+
+    const upgradables = [];
+    if (this.characterService.characterState.equipment.leftHand){
+      upgradables.push(this.characterService.characterState.equipment.leftHand);
+    }
+    if (this.characterService.characterState.equipment.rightHand){
+      upgradables.push(this.characterService.characterState.equipment.rightHand);
+    }
+    if (this.characterService.characterState.equipment.head){
+      upgradables.push(this.characterService.characterState.equipment.head);
+    }
+    if (this.characterService.characterState.equipment.body){
+      upgradables.push(this.characterService.characterState.equipment.body);
+    }
+    if (this.characterService.characterState.equipment.legs){
+      upgradables.push(this.characterService.characterState.equipment.legs);
+    }
+    if (this.characterService.characterState.equipment.feet){
+      upgradables.push(this.characterService.characterState.equipment.feet);
+    }
+    const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
+    if (equipment.armorStats){
+      equipment.armorStats.durability += value;
+      equipment.armorStats.defense += value;
+    } else if (equipment.weaponStats){
+      equipment.weaponStats.durability += value;
+      equipment.weaponStats.baseDamage += value;
+    }
+    equipment.value += value;
+    this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
@@ -589,7 +622,7 @@ export class InventoryService {
   getBar(oreValue: number): Item{
     // metal bars should always be 10x the value of the associated ore
     const barValue = oreValue * 10;
-    
+
     let lastMetal =  this.itemRepoService.items['copperBar'];
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
@@ -612,7 +645,7 @@ export class InventoryService {
         }
       }
     }
-    
+
     return lastMetal;
   }
 
@@ -705,7 +738,7 @@ export class InventoryService {
     }
   }
 
-  /** Finds the best food in the inventory and uses it. */ 
+  /** Finds the best food in the inventory and uses it. */
   eatFood(): void {
     if (this.fed){
       // we already ate something this tick
@@ -738,7 +771,7 @@ export class InventoryService {
   }
 
 /**
- * 
+ *
  * @param item the Item to add
  * @param quantity the quantity the Item to stack. Ignores for unstackables. Default 1
  * @returns first itemStack position, -1 if not applicable
@@ -762,8 +795,8 @@ export class InventoryService {
           return -1;
         }
         let modulo = quantity % (balanceItem.useNumber + balanceItem.sellNumber);
-        quantity -= modulo; 
-        while (modulo > 0){ // Use the modulo first 
+        quantity -= modulo;
+        while (modulo > 0){ // Use the modulo first
           if (balanceItem.index < balanceItem.useNumber){
             if (modulo + balanceItem.index <= balanceItem.useNumber){
               this.useItem(item, modulo);
@@ -774,7 +807,7 @@ export class InventoryService {
               modulo -= balanceItem.useNumber - balanceItem.index;
               balanceItem.index = balanceItem.useNumber;
             }
-          } 
+          }
           if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber){
             if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber){
               this.characterService.characterState.money += item.value * modulo;
@@ -790,12 +823,12 @@ export class InventoryService {
             balanceItem.index -= balanceItem.useNumber + balanceItem.sellNumber;
           }
         }
-        if (quantity){ 
+        if (quantity){
           quantity /= (balanceItem.useNumber + balanceItem.sellNumber);
           this.useItem(item, quantity * balanceItem.useNumber)
           this.characterService.characterState.money += item.value * quantity;
           quantity = 0;
-        } 
+        }
         if(quantity < 1){ // Sanity check, spill out what should be impossible excess to inventory as though balance were disabled.
           return -1;
         }
@@ -1013,7 +1046,7 @@ export class InventoryService {
             this.useItemStack(itemStack, itemStack.quantity);
         }
       }
-    }    
+    }
   }
 
   unAutoUse(itemName: string){
@@ -1102,7 +1135,7 @@ export class InventoryService {
     if (quantity < 1){
       quantity = 1; //handle potential 0 and negatives just in case
     }
-    
+
     let itemValue = -1;
     let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
@@ -1167,7 +1200,7 @@ export class InventoryService {
     return itemCount;
   }
 
-  
+
   /** Checks for equipment durability. Returns false if equipment has 0 durability. */
   hasDurability(itemStack: ItemStack): boolean {
     const item = itemStack.item;

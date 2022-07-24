@@ -166,7 +166,6 @@ export class GameStateService {
 
   getDeploymentFlavor(){
     let href = window.location.href;
-    console.log(href);
     if (href === "http://localhost:4200/"){
       // development, use the standard save
       return "";
