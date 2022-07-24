@@ -592,9 +592,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 100;
         let oreValue = 0;
         let builderPower = 10; //divided by 10 later
-        for (let i = 0; i < 200; i++){
-          oreValue = this.inventoryService.consume('ore');
-        }
+        oreValue = this.inventoryService.consume('ore', 200);
         for (const follower of this.followerService.followers){
           if (follower.job === "builder"){
             builderPower += follower.power;
@@ -625,9 +623,7 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         let woodValue = 0;
-         for (let i = 0; i < 200; i++){
-          woodValue = this.inventoryService.consume('wood');
-        }
+        woodValue = this.inventoryService.consume('wood', 200);
         if (woodValue >= 11){
           this.inventoryService.addItem(this.itemRepoService.items['scaffolding']);
           this.logService.addLogMessage("You made " + this.itemRepoService.items['scaffolding'].name,"STANDARD","CRAFTING");
@@ -700,18 +696,14 @@ export class ActivityService {
           return;
         }
         value = 0;
-        for (let i = 0; i < 100; i++){
-          value = this.inventoryService.consume('mortar');
-        }
+        value = this.inventoryService.consume('mortar', 100);
         if (value < 1){
           this.logService.addLogMessage("You try building without enough mortar, but it ends in a disaster and you are badly hurt.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
           return;
         }
         value = 0;
-        for (let i = 0; i < 1000; i++){
-          value = this.inventoryService.consume('brick');
-        }
+        value = this.inventoryService.consume('brick', 1000);
         if (value < 1){
           this.logService.addLogMessage("You try building without enough bricks, but it ends in a disaster and you are badly hurt.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
@@ -822,9 +814,7 @@ export class ActivityService {
       consequenceDescription: ['You will need at least 1000 food for this to work.'],
       consequence: [() => {
         let value = 0;
-        for (let i = 0; i < 1000; i++){
-          value = this.inventoryService.consume('food');
-        }
+        value = this.inventoryService.consume('food', 1000);
         if (value < 1){
           this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
@@ -910,9 +900,7 @@ export class ActivityService {
           return;
         }
         let value = 0;
-        for (let i = 0; i < 10000; i++){
-          value = this.inventoryService.consume('food');
-        }
+        value = this.inventoryService.consume('food', 10000);
         if (value < 1){
           this.logService.addLogMessage("You don't have enough food to feed your army, so they revolt and fight you instead.","INJURY","EVENT");
           this.battleService.addEnemy(this.battleService.enemyRepo.army);
@@ -940,9 +928,7 @@ export class ActivityService {
       consequenceDescription: ["I'm sure you have plenty of armies for this. You wouldn't try this without enough armies, that would end badly."],
       consequence: [() => {
         let value = 0;
-        for (let i = 0; i < this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress + 1; i++){
-          value = this.inventoryService.consume('army');
-        }
+        value = this.inventoryService.consume('army', this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress + 1);
         if (value < 1){
           for (let i = 0; i < 5; i++){
             this.battleService.addEnemy(this.battleService.enemyRepo.army);

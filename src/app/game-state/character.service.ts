@@ -131,7 +131,7 @@ export class CharacterService {
     if (this.characterState.spiritualityLifespan > 0){
       tooltip += "<br>Spirituality: " + this.yearify(this.characterState.spiritualityLifespan);
     }
-    if (this.characterState.spiritualityLifespan > 0){
+    if (this.characterState.magicLifespan > 0){
       tooltip += "<br>Magic: " + this.yearify(this.characterState.magicLifespan);
     }
     this.lifespanTooltip = tooltip;
