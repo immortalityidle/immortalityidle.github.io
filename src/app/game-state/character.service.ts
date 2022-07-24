@@ -154,7 +154,7 @@ export class CharacterService {
     for (const key in keys){
       const attribute = this.characterState.attributes[keys[key]];
       attribute.lifeStartValue = 0;
-      attribute.aptitude = 1 + attribute.aptitude * (1 - this.characterState.aptitudeGainDivider / 100) / 10; // keep up to 9% of aptitudes after Ascension
+      attribute.aptitude = 1 + attribute.aptitude / this.characterState.aptitudeGainDivider; // keep up to 20% of aptitudes after Ascension
       if (parseInt(key) < 5){
         attribute.value = 1;
       } else {
@@ -182,18 +182,12 @@ export class CharacterService {
       "You now gain additional aptitude each time you reincarnate.",
       'STANDARD', 'STORY');
     this.characterState.condenseSoulCoreCost *= 10;
-    this.characterState.aptitudeGainDivider -= 10;
+    this.characterState.aptitudeGainDivider /= 1.5;
     this.resetAptitudes();
   }
 
   soulCoreRank(): number {
-    let rank = 0;
-    let cost = this.characterState.condenseSoulCoreOriginalCost;
-    while (cost < this.characterState.condenseSoulCoreCost){
-      cost *= 10;
-      rank++;
-    }
-    return rank;
+    return Math.log10(this.characterState.condenseSoulCoreCost / this.characterState.condenseSoulCoreOriginalCost); // Log base 10 because the cost is multiplied by 10 per rank.
   }
 
   reinforceMeridians(){
@@ -234,11 +228,8 @@ export class CharacterService {
     this.logService.addLogMessage(
       "You will be reborn into your own family line and reap greater benefits from your previous lives.",
       'STANDARD', 'STORY');
-    this.characterState.bloodlineCost *= 1000;
+    this.characterState.bloodlineCost *= 100;
     this.characterState.bloodlineRank++;
-    if (this.characterState.bloodlineRank >= 4) {
-      this.characterState.bloodlineCost /= 10;
-    }
     this.resetAptitudes();
   }
 

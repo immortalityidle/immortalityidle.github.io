@@ -62,12 +62,12 @@ export class GameStateService {
   }
 
   savetoLocalStorage(): void {
-    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY, this.getGameExport());
+    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(), this.getGameExport());
     this.lastSaved = new Date().getTime();
   }
 
   loadFromLocalStorage(): void {
-    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY);
+    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
     if (!gameStateSerialized) {
       return;
     }
@@ -132,7 +132,7 @@ export class GameStateService {
   }
 
   hardReset(): void {
-    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY);
+    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
     // eslint-disable-next-line no-self-assign
     window.location.href = window.location.href;
   }
@@ -162,5 +162,21 @@ export class GameStateService {
     while (this.homeService.upgrading){
       this.homeService.upgradeTick();
     }
+  }
+
+  getDeploymentFlavor(){
+    let href = window.location.href;
+    console.log(href);
+    if (href === "http://localhost:4200/"){
+      // development, use the standard save
+      return "";
+    } else if (href === "https://immortalityidle.github.io/" || href === "https://immortalityidle.github.io/old/") {
+      // main game branch or old branch, use the standard save
+      return "";
+    } else if (href.includes("https://immortalityidle.github.io/")) {
+      href = href.substring(0, href.length - 1); // trim the trailing slash
+      return href.substring(href.lastIndexOf("/") + 1); //return the deployed branch so that the saves can be different for each branch
+    }
+    throw new Error("Hey, someone stole this game!"); // mess with whoever is hosting the game somewhere else and doesn't know enough javascript to fix this.
   }
 }

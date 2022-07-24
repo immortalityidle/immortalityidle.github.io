@@ -25,6 +25,7 @@ export interface FollowersProperties {
   followers: Follower[],
   autoDismissUnlocked: boolean,
   maxFollowerByType: { [key: string]: number; },
+  followerLifespanDoubled: boolean,
   followerSortOrder: string
 }
 
@@ -46,6 +47,7 @@ type jobsType = {
 export class FollowersService {
 
   followersUnlocked = false;
+  followerLifespanDoubled = false;
   followers: Follower[] = [];
   followersRecruited = 0;
   autoDismissUnlocked = false;
@@ -249,6 +251,7 @@ export class FollowersService {
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
+      followerLifespanDoubled: this.followerLifespanDoubled,
       followerSortOrder: this.followerSortOrder
     }
   }
@@ -258,6 +261,7 @@ export class FollowersService {
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
+    this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
     this.followerSortOrder = properties.followerSortOrder || 'age';
   }
 
@@ -285,12 +289,13 @@ export class FollowersService {
       this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
       return;
     }
-
-    this.logService.addLogMessage("A new follower has come to learn at your feet.","STANDARD","FOLLOWER");
+    
+    const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
+    this.logService.addLogMessage("A new " + job + " has come to learn at your feet.","STANDARD","FOLLOWER");
     this.followers.push({
       name: this.generateFollowerName(),
       age: 0,
-      lifespan: this.characterService.characterState.lifespan,
+      lifespan: this.characterService.characterState.lifespan / lifespanDivider,
       job: job,
       power: 1,
       cost: 100

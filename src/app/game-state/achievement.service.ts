@@ -159,7 +159,7 @@ export class AchievementService {
       check: () => {
         return this.characterService.characterState.empowermentFactor > 1;
       },
-      effect: () => {
+      effect: () => { //TODO: Create a downside to taking empowerment pills, maybe post-Death
       },
       unlocked: false
     },
@@ -443,19 +443,12 @@ export class AchievementService {
     },
     {
       name: "Unlimited Taels",
-      description: "You have unlocked bloodline 4 and now you have unlimited money to spent",
-      hint: "Rumour said that some people are too rich.",
+      description: "Your family has unlocked the secrets of compound interest. You probably never have to worry about money again.",
+      hint: "Family first. Especially in matters of money.",
       check: () => {
         return this.characterService.characterState.bloodlineRank >= 4;
       },
       effect: () => {
-        if (this.characterService.characterState.bloodlineRank == 4) {
-          this.characterService.characterState.bloodlineCost = 10000000000000
-        }
-        
-        if (this.characterService.characterState.bloodlineRank == 5) {
-          this.characterService.characterState.bloodlineCost = 1000000000000000
-        }
       },
       unlocked: false
     },
@@ -589,10 +582,10 @@ export class AchievementService {
     {
       name: "Impossible",
       description: "You have achieved incredible power and are ready to begin taking on impossible tasks.",
-      hint: "No one can achieve this. It can't be done.",
+      hint: "No one can exceed the limits of humanity. It can't be done.",
       check: () => {
-        return (this.characterService.soulCoreRank() >= 4) &&
-          (this.characterService.meridianRank() >= 4) &&
+        return (this.characterService.soulCoreRank() >= 9) &&
+          (this.characterService.meridianRank() >= 9) &&
           this.characterService.characterState.bloodlineRank >= 5;
       },
       effect: () => {
@@ -650,6 +643,23 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['followerAutoDismissManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Loyal Followers",
+      description: "One of your followers has trained under you so long they have nothing else to learn. In an epiphany you realized how to double your new followers' lifespan.",
+      hint: "Endless training.",
+      check: () => {
+        for (const follower of this.followerService.followers){
+          if (follower.power === 100){
+            return true;
+          }
+        }
+        return false;
+      },
+      effect: () => {
+        this.followerService.followerLifespanDoubled = true;
       },
       unlocked: false
     },
