@@ -422,7 +422,7 @@ export class ActivityService {
     newList.push(this.BodyCultivation);
     newList.push(this.MindCultivation);
     newList.push(this.CoreCultivation);
-    newList.push(this.CombatCultivation);
+    newList.push(this.InfuseEquipment);
     newList.push(this.InfuseBody);
     newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
@@ -469,7 +469,7 @@ export class ActivityService {
   // @ts-ignore
   CoreCultivation: Activity;
   // @ts-ignore
-  CombatCultivation: Activity;
+  InfuseEquipment: Activity;
   // @ts-ignore
   InfuseBody: Activity;
   // @ts-ignore
@@ -1909,59 +1909,26 @@ export class ActivityService {
       unlocked: false,
       skipApprenticeshipLevel: 0
     };
-    
-    this.CombatCultivation = {
+
+    this.InfuseEquipment = {
       level: 0,
-      name: ['Combat Cultivation'],
-      activityType: ActivityType.CombatCultivtion,
-      description: ['Focus on the development of your combat skill.'],
-      consequenceDescription: ['Uses 200 Stamina. A very advanced cultivation technique. Make sure you have killed some monsters before attempt this, teaches you how to do combat more effectively.']
+      name: ['Infuse Equipment'],
+      activityType: ActivityType.InfuseEquipment,
+      description: ['Infuse the power of a gem into your equipment.'],
+      consequenceDescription: ['Uses 200 Stamina and 10 mana. An advanced magical technique.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 200;
+        if (!this.characterService.characterState.manaUnlocked){
+          const damage = this.characterService.characterState.status.health.max * 0.1;
+          this.characterService.characterState.status.health.value -= damage;
+          this.logService.addLogMessage("You fail miserably attempting to infuse your equipment and hurt yourself badly.","INJURY","EVENT");
+          return;
+        }
+        this.characterService.characterState.status.stamina.value -= 200;
         this.characterService.characterState.status.mana.value -= 10;
-        
-        const gemGrade = this.inventoryService.consume('spiritGem') / 10;
-        
-        if (gemGrade > 0) {
-          if (this.characterService.characterState.equipment.rightHand &&
-            this.characterService.characterState.equipment.rightHand.weaponStats){
-            this.characterService.characterState.equipment.rightHand.weaponStats.durability += gemGrade * 10;
-            this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage += Math.floor(gemGrade);
-            this.characterService.characterState.equipment.rightHand.value += Math.floor(gemGrade);
-          }
-          if (this.characterService.characterState.equipment.leftHand &&
-            this.characterService.characterState.equipment.leftHand.weaponStats){
-            this.characterService.characterState.equipment.leftHand.weaponStats.durability += gemGrade * 10;
-            this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage += Math.floor(gemGrade);
-            this.characterService.characterState.equipment.leftHand.value += Math.floor(gemGrade);
-          }
-          
-          if (Math.random() < 0.5) {
-            if (this.characterService.characterState.equipment.head &&
-              this.characterService.characterState.equipment.head.armorStats){
-              this.characterService.characterState.equipment.head.armorStats.durability += gemGrade * 10;
-              this.characterService.characterState.equipment.head.armorStats.defense += Math.floor(gemGrade);
-              this.characterService.characterState.equipment.head.value += Math.floor(gemGrade);
-            }
-            if (this.characterService.characterState.equipment.body &&
-              this.characterService.characterState.equipment.body.armorStats){
-              this.characterService.characterState.equipment.body.armorStats.durability += gemGrade * 10;
-              this.characterService.characterState.equipment.body.armorStats.defense += Math.floor(gemGrade);
-              this.characterService.characterState.equipment.body.value += Math.floor(gemGrade);
-            }
-            if (this.characterService.characterState.equipment.legs &&
-              this.characterService.characterState.equipment.legs.armorStats){
-              this.characterService.characterState.equipment.legs.armorStats.durability += gemGrade * 10;
-              this.characterService.characterState.equipment.legs.armorStats.defense += Math.floor(gemGrade);
-              this.characterService.characterState.equipment.legs.value += Math.floor(gemGrade);
-            }
-            if (this.characterService.characterState.equipment.feet &&
-              this.characterService.characterState.equipment.feet.armorStats){
-              this.characterService.characterState.equipment.feet.armorStats.durability += gemGrade * 10;
-              this.characterService.characterState.equipment.feet.armorStats.defense += Math.floor(gemGrade);
-              this.characterService.characterState.equipment.feet.value += Math.floor(gemGrade);
-            }
-          }
+        const gemValue = this.inventoryService.consume('spiritGem');
+        if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
+          this.inventoryService.upgradeEquipment(gemValue);
         }
       }],
       requirements: [{
