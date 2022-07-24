@@ -1929,15 +1929,14 @@ export class ActivityService {
       name: ['Combat Cultivation'],
       activityType: ActivityType.CombatCultivtion,
       description: ['Focus on the development of your combat skill.'],
-      consequenceDescription: ['Uses 200 Stamina. A very advanced cultivation technique. Make sure you have killed some monster before attempt this, teaches you how to do combat more effectively.'],
+      consequenceDescription: ['Uses 200 Stamina. A very advanced cultivation technique. Make sure you have killed some monsters before attempt this, teaches you how to do combat more effectively.']
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 200;
+        this.characterService.characterState.status.mana.value -= 10;
         
         const gemGrade = this.inventoryService.consume('spiritGem') / 10;
-
+        
         if (gemGrade > 0) {
-          this.battleService.tickCounter += 10;
-
           if (this.characterService.characterState.equipment.rightHand &&
             this.characterService.characterState.equipment.rightHand.weaponStats){
             this.characterService.characterState.equipment.rightHand.weaponStats.durability += gemGrade * 10;
