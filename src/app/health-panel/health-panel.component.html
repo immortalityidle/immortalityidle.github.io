@@ -22,11 +22,11 @@
     <td tooltip="{{characterService.characterState.status.health.description}}" placement="right">Health</td>
     <td class="health">
       <div class="progress-bar" 
-        [attr.value]="Math.floor(characterService.characterState.status.health.value)"
+        [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value)"
         [attr.max]="Math.floor(characterService.characterState.status.health.max)">
         <span 
           [style.width.%]="100 * 
-            Math.floor(characterService.characterState.status.health.value) / 
+            Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) / 
             Math.floor(characterService.characterState.status.health.max)">
         </span>
       </div>

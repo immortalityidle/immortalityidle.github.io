@@ -53,6 +53,8 @@ export class CharacterService {
         }
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
         deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
+      } else if (this.characterState.immortal && this.characterState.status.health.value < 0) {
+        this.characterState.status.health.value = 0;
       }
       if (deathMessage !== ""){
         if (!this.characterState.immortal){
