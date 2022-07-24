@@ -26,6 +26,12 @@ export class FollowerManagementPanelComponent implements OnInit {
     }
   }
 
+  sortOrderChanged(event: Event){
+    if (!(event.target instanceof HTMLSelectElement)) return;
+    this.followerService.followerSortOrder = event.target.value;
+    this.followerService.sortFollowers();
+  }
+
   keepValueChanged(event: Event, job: string){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.followerService.setMaxFollowers(job, parseInt(event.target.value));

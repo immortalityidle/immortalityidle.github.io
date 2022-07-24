@@ -24,7 +24,8 @@ export interface FollowersProperties {
   followersUnlocked: boolean,
   followers: Follower[],
   autoDismissUnlocked: boolean,
-  maxFollowerByType: { [key: string]: number; }
+  maxFollowerByType: { [key: string]: number; },
+  followerSortOrder: string
 }
 
 export interface FollowerReserve {
@@ -50,6 +51,8 @@ export class FollowersService {
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number; } = {};
   followerCap = 0;
+  followerSortOrder = 'age';
+  followerSortList = ['name', 'age', 'lifespan', 'job', 'power', 'cost'];
   followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
 
   jobs: jobsType = {
@@ -245,7 +248,8 @@ export class FollowersService {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
-      maxFollowerByType: this.maxFollowerByType
+      maxFollowerByType: this.maxFollowerByType,
+      followerSortOrder: this.followerSortOrder
     }
   }
 
@@ -254,6 +258,7 @@ export class FollowersService {
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
+    this.followerSortOrder = properties.followerSortOrder || 'age';
   }
 
   generateFollower(){
@@ -302,6 +307,15 @@ export class FollowersService {
   generateFollowerJob(): string {
     const keys = Object.keys(this.jobs);
     return keys[Math.floor(Math.random() * keys.length)];
+  }
+
+  sortFollowers() {
+    for (const key in this.followerSortList) {
+      if(this.followerSortOrder === this.followerSortList[key]){
+        this.followers[key]
+        // Sortthem
+      }
+    }
   }
 
   /**

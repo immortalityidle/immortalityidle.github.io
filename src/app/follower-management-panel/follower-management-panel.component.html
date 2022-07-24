@@ -3,6 +3,14 @@
   <hr />
     <span>You are supporting {{followerService.followers.length}} followers and can support up to {{followerService.followerCap}} total followers.</span>
     <span tooltip="Set a number to change all of the class limits to."><br>Change all Class limits to: &nbsp;<input value="0" type="number" class="inputBox" (change)="changeAllChanged($event)">&nbsp;<button (click)="changeAllClicked()">Change All</button></span>
+    <span><br>Sort by: &nbsp;
+      <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
+        <option *ngFor="let followerStat of followerService.followerSortList" value="{{followerStat}}"
+          [selected]="followerService.followerSortOrder === followerStat">
+          {{followerStat}}
+        </option>
+      </select>
+    </span>
   <hr />
   <div class="scrollingDiv">
     <table>
