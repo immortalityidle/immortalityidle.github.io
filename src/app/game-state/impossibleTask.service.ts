@@ -51,7 +51,7 @@ export class ImpossibleTaskService {
       name: "Swim to the bottom of the ocean",
       description: "You find a scrap in an ancient text that leads you to believe that the secret of immortality lies buried deep beneath the ocean's currents.",
       taskType: ImpossibleTaskType.Swim,
-      progressRequired: 100000,
+      progressRequired: 400000,
     },
     {
       name: "Raise an island from the sea",
