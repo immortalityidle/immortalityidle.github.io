@@ -1,10 +1,10 @@
 <div class="darkMode">
   <h3>Manage Followers</h3>
   <hr />
-  <br />
-<span>You are currently supporting {{followerService.followers.length}} follower. You can support up to {{followerService.followerCap}}.</span>
-<span tooltip="Set a number to change all of the follower job limits to."><br>Set limit on all jobs to <input value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> followers. <button (click)="changeAllClicked()">Change All</button></span>  
-  <span><br>Sort by: &nbsp;
+  <span>You are currently supporting {{followerService.followers.length}} follower. You can support up to {{followerService.followerCap}}.</span>
+  <br/>
+  <span tooltip="Set a number to change all of the follower job limits to."><br>Set limit on all jobs to <input value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> followers. <button (click)="changeAllClicked()">Change All</button></span>  
+    <span><br>Sort by: &nbsp;
       <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
         <option *ngFor="let followerStat of followerService.followerSortList" value="{{followerStat}}"
           [selected]="followerService.followerSortOrder === followerStat">
