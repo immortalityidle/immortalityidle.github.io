@@ -315,13 +315,21 @@ export class FollowersService {
   }
 
   sortFollowers() {
-    for (const key in this.followerSortList) {
-      if(this.followerSortOrder === this.followerSortList[key]){
-        this.followers[key]
-        // Sortthem
+      if(this.followerSortOrder === 'name'){
+        this.followers = this.followers.sort((a, b) => (a.name < b.name ? -1 : 1));
+      } else if (this.followerSortOrder === 'age'){
+        this.followers = this.followers.sort((a, b) => (a.age > b.age ? -1 : 1));
+      } else if (this.followerSortOrder === 'lifespan'){
+        this.followers = this.followers.sort((a, b) => (a.lifespan > b.lifespan ? -1 : 1));
+      } else if (this.followerSortOrder === 'job'){
+        this.followers = this.followers.sort((a, b) => (a.job < b.job ? -1 : 1));
+      } else if (this.followerSortOrder === 'power'){
+        this.followers = this.followers.sort((a, b) => (a.power > b.power ? -1 : 1));
+      } else if (this.followerSortOrder === 'cost'){
+        this.followers = this.followers.sort((a, b) => (a.cost > b.cost ? -1 : 1));
       }
     }
-  }
+  
 
   /**
    * 

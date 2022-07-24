@@ -1913,9 +1913,9 @@ export class ActivityService {
     this.CombatCultivation = {
       level: 0,
       name: ['Combat Cultivation'],
-      activityType: ActivityType.CombatCultivtion,
+      activityType: ActivityType.CombatCultivation,
       description: ['Focus on the development of your combat skill.'],
-      consequenceDescription: ['Uses 200 Stamina. A very advanced cultivation technique. Make sure you have killed some monsters before attempt this, teaches you how to do combat more effectively.']
+      consequenceDescription: ['Uses 200 Stamina. A very advanced cultivation technique. Make sure you have killed some monsters before attempt this, teaches you how to do combat more effectively.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 200;
         this.characterService.characterState.status.mana.value -= 10;
@@ -1936,7 +1936,7 @@ export class ActivityService {
             this.characterService.characterState.equipment.leftHand.value += Math.floor(gemGrade);
           }
           
-          if (Math.random() < 0.5) {
+          if (Math.random() < (1/3)) {
             if (this.characterService.characterState.equipment.head &&
               this.characterService.characterState.equipment.head.armorStats){
               this.characterService.characterState.equipment.head.armorStats.durability += gemGrade * 10;
