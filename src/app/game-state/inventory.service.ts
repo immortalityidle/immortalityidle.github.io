@@ -196,10 +196,10 @@ export class InventoryService {
         return;
       }//if autoequip is unlocked, but automerge isn't, equip best
       //automerge will merge into equipped if both are unlocked
-      if (this.autoequipBestWeapon && !this.autoWeaponMergeUnlocked){
+      if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked){
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor && !this.autoArmorMergeUnlocked){
+      if (this.autoequipBestArmor && this.autoArmorMergeUnlocked){
         this.autoequipArmor();
       }
     });
@@ -1340,7 +1340,7 @@ export class InventoryService {
       }
       if ((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) {
         destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", sourceItem.weaponStats?.baseName);
-      } else if (this.autoequipBestArmor) {
+      } else if (slot !== 'rightHand' && slot !== 'leftHand' &&this.autoequipBestArmor) {
         destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot, sourceItem.armorStats?.baseName);
       } else {//slot doesn't match the auto-equip owned.
         return;
