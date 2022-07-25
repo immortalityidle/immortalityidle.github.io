@@ -1625,7 +1625,7 @@ export class ItemRepoService {
       id: 'followerAutoDismissManual',
       name: "Manual of Judicious Disciple Selection",
       type: "manual",
-      description: "This manual teaches you automatically dismiss followers based on their jobs.",
+      description: "This manual teaches you to automatically dismiss followers based on their jobs.",
       value: 100000000000,
       useLabel: "Read",
       useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
@@ -1650,7 +1650,7 @@ export class ItemRepoService {
       id: 'bestGemsManual',
       name: "Manual of Gemological Purity",
       type: "manual",
-      description: "This manual teaches you automatically sell gems that are below the value of the gems your current monster drops.",
+      description: "This manual teaches you to automatically sell gems that are below the value of the gems your current monster drops.",
       value: 1000000000,
       useLabel: "Read",
       useDescription: "Permanently unlock gem autoselling for lower level gems.",
@@ -1693,6 +1693,57 @@ export class ItemRepoService {
           this.activityService = this.injector.get(ActivityService);
         }
         return this.activityService.autoPauseUnlocked;
+      }
+    },
+    bankedTicksEfficiencyManual: {
+      id: 'bankedTicksEfficiencyManual',
+      name: "Manual of Efficient Time Banking",
+      type: "manual",
+      description: "This manual teaches you to more efficiently bank ticks when paused or offline.",
+      value: 2.5e9,
+      useLabel: "Read",
+      useDescription: "Permanently increase banked tick efficiency to 50%.",
+      useConsumes: true,
+      use: () => {
+        this.mainLoopService.offlineDivider = 2;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        return this.mainLoopService.offlineDivider <= 2;
+      }
+    },
+    ageSpeedManual: {
+      id: 'ageSpeedManual',
+      name: "Manual of Aged Time Perception",
+      type: "manual",
+      description: "This manual teaches you to percieve time faster the older you are.",
+      value: 7.5e9,
+      useLabel: "Read",
+      useDescription: "Permanently increase time passage based on your age.",
+      useConsumes: true,
+      use: () => {
+        this.mainLoopService.unlockAgeSpeed = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        return this.mainLoopService.unlockAgeSpeed;
+      }
+    },
+    totalPlaytimeManual: {
+      id: 'totalPlaytimeManual',
+      name: "Manual of Lifetime Time Perception",
+      type: "manual",
+      description: "This manual teaches you to percieve time faster the longer you've lived across all your lives.",
+      value: 5e10,
+      useLabel: "Read",
+      useDescription: "Permanently increase time passage based on your total time lived.",
+      useConsumes: true,
+      use: () => {
+        this.mainLoopService.unlockPlaytimeSpeed = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        return this.mainLoopService.unlockPlaytimeSpeed;
       }
     },
   }
