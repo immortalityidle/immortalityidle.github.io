@@ -25,7 +25,8 @@ export interface FollowersProperties {
   followers: Follower[],
   autoDismissUnlocked: boolean,
   maxFollowerByType: { [key: string]: number; },
-  followerLifespanDoubled: boolean
+  followerLifespanDoubled: boolean,
+  sortField: string,
 }
 
 export interface FollowerReserve {
@@ -53,6 +54,7 @@ export class FollowersService {
   maxFollowerByType: { [key: string]: number; } = {};
   followerCap = 0;
   followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
+  sortField: string = "Job";
 
   jobs: jobsType = {
     "builder": {
@@ -226,10 +228,24 @@ export class FollowersService {
         }
       }
     });
+
+    mainLoopService.longTickSubject.subscribe(() => {
+      this.sortFollowers();
+    });
+
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
 
+  }
+
+  sortFollowers(){
+    if (this.sortField == "Remaining Life"){
+      this.followers.sort((a, b) => (a.lifespan - a.age >= b.lifespan - b.age) ? 1 : -1);
+    } else {
+      //@ts-ignore
+      this.followers.sort((a, b) => (a[this.sortField.toLowerCase()] >= b[this.sortField.toLowerCase()]) ? 1 : -1);
+    }
   }
 
   followerWorks(follower: Follower){
@@ -248,7 +264,8 @@ export class FollowersService {
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
-      followerLifespanDoubled: this.followerLifespanDoubled
+      followerLifespanDoubled: this.followerLifespanDoubled,
+      sortField: this.sortField
     }
   }
 
@@ -258,6 +275,7 @@ export class FollowersService {
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
     this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
+    this.sortField = properties.sortField || "Job";
   }
 
   generateFollower(){
@@ -295,6 +313,7 @@ export class FollowersService {
       power: 1,
       cost: 100
     });
+    this.sortFollowers();
     if (this.followers.length >= this.followerCap){
       this.followersMaxed = 'MAXED';
     }
