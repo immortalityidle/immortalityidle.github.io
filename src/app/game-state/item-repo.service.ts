@@ -957,7 +957,7 @@ export class ItemRepoService {
       id: 'immortality',
       name: 'Essence of Immortality',
       type: 'immortality',
-      value: 1,
+      value: Infinity,
       description: 'The object of your obsession. Using this will make you immortal.',
       useLabel: 'Become Immortal',
       useDescription: 'Become immortal and win the game.',

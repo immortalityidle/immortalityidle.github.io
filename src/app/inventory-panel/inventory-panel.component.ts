@@ -14,8 +14,13 @@ export class InventoryPanelComponent {
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService) {
       this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
+
   }
 
+  isFinite(value: number){
+    return Number.isFinite(value);
+  }
+  
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
     event.stopPropagation();
     if (event.shiftKey) {
