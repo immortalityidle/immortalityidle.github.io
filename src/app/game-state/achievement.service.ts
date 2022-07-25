@@ -111,7 +111,7 @@ export class AchievementService {
     {
       name: "Veteran Cultivator",
       description: "You lived ten thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['totalPlaytimeManual'].name,
-      hint: "It's only about three years of base lifespan.",
+      hint: "A long life. Myriad years.",
       check: () => {
         return this.mainLoopService.totalTicks > 3650000;
       },
@@ -701,7 +701,7 @@ export class AchievementService {
     },
     {
       name: "Breaks are Good",
-      description: "You have collected 2 hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
+      description: "You have collected two hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
       hint: "Take a day off from cultivating.", //it takes 20h to get
       check: () => {
         return this.mainLoopService.bankedTicks > 2*60*60*40; //there are 40 ticks a second
@@ -712,7 +712,7 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Becoming Quite Old",
+      name: "Still Spry",
       description: "You have lived to be 300 years old and unlocked the " + this.itemRepoService.items['ageSpeedManual'].name,
       hint: "One step to becoming immortal is to live longer.",
       check: () => {
