@@ -830,6 +830,7 @@ export class ActivityService {
         }
       }],
       requirements: [{
+        animalHandling: 100000000
       }],
       unlocked: true,
       skipApprenticeshipLevel: 0
@@ -855,6 +856,7 @@ export class ActivityService {
         }
       }],
       requirements: [{
+        animalHandling: 500000000
       }],
       unlocked: true,
       skipApprenticeshipLevel: 0
@@ -883,6 +885,7 @@ export class ActivityService {
         }
       }],
       requirements: [{
+        animalHandling: 1000000000
       }],
       unlocked: true,
       skipApprenticeshipLevel: 0
