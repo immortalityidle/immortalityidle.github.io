@@ -1,4 +1,4 @@
-import { CharacterAttribute } from '../game-state/character';
+import { CharacterAttribute, CharacterStatus } from '../game-state/character';
 
 export enum ActivityType {
   OddJobs,
@@ -49,6 +49,7 @@ export interface Activity {
   activityType: ActivityType;
   description: string[];
   consequenceDescription: string[];
+  resourceUse: CharacterStatus[],
   requirements: CharacterAttribute[];
   landRequirements?: number;
   consequence: (() => void)[];

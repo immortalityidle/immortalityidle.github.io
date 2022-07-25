@@ -916,7 +916,7 @@ export class ItemRepoService {
       name: 'unbreakable chain',
       type: 'chain',
       value: 1,
-      description: 'This chain is specially forged to be incredibly strong.',
+      description: 'This chain is specially forged to be incredibly strong. It\'s REALLY heavy though.',
     },
     everlastingBrick: {
       id: 'everlastingBrick',

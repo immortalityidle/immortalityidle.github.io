@@ -1132,8 +1132,8 @@ export class InventoryService {
   }
 
   consume(consumeType: string, quantity = 1): number{
-    if (quantity < 1){
-      quantity = 1; //handle potential 0 and negatives just in case
+    if (quantity < 0){
+      quantity = 0; //handle potential negatives just in case, 0s are allowed later for item searching
     }
 
     let itemValue = -1;
@@ -1164,7 +1164,7 @@ export class InventoryService {
     }
 
     if (quantity > 0 && itemValue !== -1) {
-      itemValue = this.consume(consumeType, quantity)
+      itemValue = this.consume(consumeType, quantity) // Why is this recursive instead of looped?
     }
 
     return itemValue;
