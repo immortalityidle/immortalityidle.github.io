@@ -381,16 +381,18 @@ export class InventoryService {
     if (this.characterService.characterState.equipment.feet){
       upgradables.push(this.characterService.characterState.equipment.feet);
     }
-    const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
-    if (equipment.armorStats){
-      equipment.armorStats.durability += 10 * value;
-      equipment.armorStats.defense += value;
-    } else if (equipment.weaponStats){
-      equipment.weaponStats.durability += 10 * value;
-      equipment.weaponStats.baseDamage += value;
+    if (upgradables.length > 0){
+      const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
+      if (equipment.armorStats){
+        equipment.armorStats.durability += value * 10;
+        equipment.armorStats.defense += value;
+      } else if (equipment.weaponStats){
+        equipment.weaponStats.durability += value * 10;
+        equipment.weaponStats.baseDamage += value;
+      }
+      equipment.value += value;
+      this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
     }
-    equipment.value += value;
-    this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
