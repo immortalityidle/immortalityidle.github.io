@@ -65,6 +65,7 @@ export interface CharacterProperties {
   healthBonusMagic: number,
   empowermentFactor: number,
   immortal: boolean,
+  easyMode: boolean
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -97,6 +98,7 @@ export class Character {
   healthBonusMagic = 0;
   empowermentFactor = 1;
   immortal = false;
+  easyMode = false;
   ascensionUnlocked = false;
   attributes: AttributeObject = {
     strength: {
@@ -359,7 +361,11 @@ export class Character {
   getEmpowermentMult(): number{
     const max = 99;
     const empowermentFactor = this.empowermentFactor - 1;
-    return 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
+    let returnValue = 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
+    if (this.easyMode){
+      returnValue *= 10;
+    }
+    return returnValue;
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
@@ -476,7 +482,9 @@ export class Character {
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
       empowermentFactor: this.empowermentFactor,
-      immortal: this.immortal
+      immortal: this.immortal,
+      easyMode: this.easyMode
+
     }
   }
 
@@ -510,6 +518,7 @@ export class Character {
     this.healthBonusMagic = properties.healthBonusMagic || 0;
     this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
+    this.easyMode = properties.easyMode || false;
     this.recalculateDerivedStats();
   }
 }

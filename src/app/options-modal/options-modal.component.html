@@ -1,6 +1,18 @@
 <div class='darkMode optionsDiv'>
   <span>Manuals Options</span>
   <mat-tab-group>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">Game</span>
+      </ng-template>
+      <div class="optionField">
+        <span>
+          <input type="checkbox" (change)="easyModeChange($event)"
+            id="easyMode"  [checked]="characterService.characterState.easyMode">
+          <label for="easyMode">This game is much too hard and takes much too long. Check this to make it easier.</label>
+        </span>
+      </div>
+    </mat-tab>
     <mat-tab *ngIf="homeService.autoBuyLandUnlocked || homeService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked">
       <ng-template mat-tab-label>
         <span class="tab-label">Home</span>

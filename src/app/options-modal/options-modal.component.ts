@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.service';
+import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
@@ -14,6 +15,7 @@ export class OptionsModalComponent {
 
   constructor(
     public homeService: HomeService,
+    public characterService: CharacterService,
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
     public followerService: FollowersService,
@@ -112,5 +114,11 @@ export class OptionsModalComponent {
   autoBuySettingsWaitForFinishChange(event: Event, setting: AutoBuyerSetting): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     setting.waitForFinish = event.target.checked;
+  }
+
+  easyModeChange(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.gameStateService.easyModeEver = true;
+    this.characterService.characterState.easyMode = event.target.checked;
   }
 }

@@ -205,7 +205,7 @@ export class FollowersService {
       if (this.characterService.characterState.dead){
         return;
       }
-      this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+      this.updateFollowerCap();
       if (this.characterService.characterState.age % 18250 === 0){
         // another 50xth birthday, you get a follower
         this.generateFollower();
@@ -237,6 +237,10 @@ export class FollowersService {
       this.reset();
     });
 
+  }
+
+  updateFollowerCap(){
+    this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
   }
 
   sortFollowers(){
