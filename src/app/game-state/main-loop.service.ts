@@ -1,5 +1,7 @@
+
 import { Injectable,Injector } from '@angular/core';
 import { Subject } from 'rxjs';
+//import { threadId } from 'worker_threads';
 import { CharacterService } from './character.service';
 
 const TICK_INTERVAL_MS = 25;
@@ -9,8 +11,11 @@ export interface MainLoopProperties {
   unlockFastSpeed: boolean,
   unlockFasterSpeed: boolean,
   unlockFastestSpeed: boolean,
+  unlockAgeSpeed: boolean,
+  unlockPlaytimeSpeed: boolean,
   lastTime: number;
   tickDivider: number;
+  offlineDivider: number;
   pause: boolean;
   bankedTicks: number;
   totalTicks: number;
@@ -33,6 +38,8 @@ export class MainLoopService {
   unlockFastSpeed = false;
   unlockFasterSpeed = false;
   unlockFastestSpeed = false;
+  unlockAgeSpeed = false;
+  unlockPlaytimeSpeed = false;
   lastTime: number = new Date().getTime();
   bankedTicks = 0;
   offlineDivider = 10;
@@ -48,6 +55,9 @@ export class MainLoopService {
       unlockFastSpeed: this.unlockFastSpeed,
       unlockFasterSpeed: this.unlockFasterSpeed,
       unlockFastestSpeed: this.unlockFastestSpeed,
+      unlockAgeSpeed: this.unlockAgeSpeed,
+      unlockPlaytimeSpeed: this.unlockPlaytimeSpeed,
+      offlineDivider: this.offlineDivider,
       lastTime: this.lastTime,
       tickDivider: this.tickDivider,
       pause: this.pause,
@@ -61,18 +71,22 @@ export class MainLoopService {
     this.unlockFastSpeed = properties.unlockFastSpeed;
     this.unlockFasterSpeed = properties.unlockFasterSpeed;
     this.unlockFastestSpeed = properties.unlockFastestSpeed;
+    this.unlockAgeSpeed = properties.unlockAgeSpeed;
+    this.unlockPlaytimeSpeed = properties.unlockPlaytimeSpeed;
     this.tickDivider = properties.tickDivider;
+    this.offlineDivider = properties.offlineDivider || 10;
     this.pause = properties.pause;
     this.lastTime = properties.lastTime;
     const newTime = new Date().getTime();
-    this.bankedTicks = properties.bankedTicks + Math.floor((newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider));
+    if (newTime - this.lastTime > 168*60*60*1000) {
+      //to diminish effects of forgetting about the game for a year and coming back with basically infinite ticks
+      this.bankedTicks = properties.bankedTicks + (3*168*60*60*1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
+    } else {
+      this.bankedTicks = properties.bankedTicks + (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
+    }
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
-    if (properties.useBankedTicks === undefined){
-      this.useBankedTicks = true;
-    } else {
-      this.useBankedTicks = properties.useBankedTicks;
-    }
+    this.useBankedTicks = properties.useBankedTicks ?? true;
   }
 
   start() {
@@ -88,43 +102,51 @@ export class MainLoopService {
       const newTime = new Date().getTime();
       const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
-      // do multiple tick events if chrome has been throttling the interval (cause the tab isn't active)
-      let repeatTimes = Math.floor(timeDiff / TICK_INTERVAL_MS) || 1;
+      //this should be around 1, but may vary based on browser throttling
+      let ticksPassed = timeDiff / TICK_INTERVAL_MS; 
       if (this.pause) {
-        this.bankedTicks++;
+        this.bankedTicks += ticksPassed/this.offlineDivider;
       } else {
+        ticksPassed *= this.getTPS(this.tickDivider)/1000*TICK_INTERVAL_MS;
         if (this.bankedTicks > 0 && this.useBankedTicks){
-          repeatTimes += 10 / this.tickDivider;
-          this.bankedTicks -= 10 / this.tickDivider;
+          //using banked ticks makes time happen 10 times faster
+          ticksPassed *= 10;
+          this.bankedTicks -= timeDiff / TICK_INTERVAL_MS * 10;
         }
-        if (this.characterService) {
-          // should never be null but this keeps the compiler happy
-          if (this.characterService.characterState.lifespan > 36500){
-            // add one extra tick at 100 years lifespan
-            repeatTimes++;
-          }
-          if (this.characterService.characterState.lifespan > 365000){
-            // and an extra tick at 1000 years lifespan
-            repeatTimes++;
-          }
-          // and one extra for every 5000 years you've ever lived, up to 100 repeats
-          repeatTimes += Math.min(Math.floor(this.totalTicks / 1825000), 100);
+
+        this.tickCount += ticksPassed;
+        if (this.tickCount > 36500) {
+          //emergency lag prevention; this should never activate normally
+          this.tickCount = 36500;
         }
-        for (let i = 0; i < repeatTimes; i++){
-          this.tickCount++;
-          if (this.tickCount >= this.tickDivider){
-            this.tickCount = 0;
-            if (this.pause) {
-              this.bankedTicks++;
-            } else {
-              this.tick();
-            }
-          }
+        while (!this.pause && this.tickCount > 0) {
+          this.tick();
+          this.tickCount--;
         }
       }
     }, TICK_INTERVAL_MS);
   }
 
+  getTPS(div:number) {
+    let ticksPassed = 1000/TICK_INTERVAL_MS;
+    if (this.characterService && this.unlockAgeSpeed) {
+      ticksPassed *= Math.sqrt(1+this.characterService.characterState.age/73000);
+    }
+    if (this.unlockPlaytimeSpeed) {
+      ticksPassed *= Math.pow(1+this.totalTicks/(2000*365),0.3);
+    }
+    ticksPassed /= div;
+    //make non-max speeds a bit more potent at high speeds
+    const TICKSPEED_CAP = 40;
+    if (div > 1 && ticksPassed > TICKSPEED_CAP) {
+      if (div >= 10) {
+        ticksPassed = TICKSPEED_CAP;
+      } else {
+        ticksPassed = TICKSPEED_CAP+(ticksPassed-TICKSPEED_CAP)/div;
+      }
+    }
+    return ticksPassed;
+  }
   tick(){
     this.totalTicks++;
     this.tickSubject.next(true);

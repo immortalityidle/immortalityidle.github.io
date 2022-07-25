@@ -97,7 +97,7 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Persitent Reincarnator",
+      name: "Peristent Reincarnator",
       description: "You lived one thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
       hint: "The millennial.",
       check: () => {
@@ -105,6 +105,18 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fastestPlayManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Veteran Cultivator",
+      description: "You lived ten thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['totalPlaytimeManual'].name,
+      hint: "It's only about three years of base lifespan.",
+      check: () => {
+        return this.mainLoopService.totalTicks > 3650000;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['totalPlaytimeManual']);
       },
       unlocked: false
     },
@@ -678,12 +690,36 @@ export class AchievementService {
     {
       name: "I don't want to go.",
       description: "You have lived many lives and unlocked the " + this.itemRepoService.items['autoPauseSettingsManual'].name,
-      hint: "",
+      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.characterService.characterState.totalLives >= 48 && this.mainLoopService.totalTicks > 18250;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoPauseSettingsManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Breaks are Good",
+      description: "You have collected 2 hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
+      hint: "Take a day off from cultivating.", //it takes 20h to get
+      check: () => {
+        return this.mainLoopService.bankedTicks > 2*60*60*40; //there are 40 ticks a second
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bankedTicksEfficiencyManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Becoming Quite Old",
+      description: "You have lived to be 300 years old and unlocked the " + this.itemRepoService.items['ageSpeedManual'].name,
+      hint: "One step to becoming immortal is to live longer.",
+      check: () => {
+        return this.characterService.characterState.age > 300*365;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['ageSpeedManual']);
       },
       unlocked: false
     },
