@@ -15,6 +15,7 @@ export interface MainLoopProperties {
   unlockPlaytimeSpeed: boolean,
   lastTime: number;
   tickDivider: number;
+  offlineDivider: number;
   pause: boolean;
   bankedTicks: number;
   totalTicks: number;
@@ -56,6 +57,7 @@ export class MainLoopService {
       unlockFastestSpeed: this.unlockFastestSpeed,
       unlockAgeSpeed: this.unlockAgeSpeed,
       unlockPlaytimeSpeed: this.unlockPlaytimeSpeed,
+      offlineDivider: this.offlineDivider,
       lastTime: this.lastTime,
       tickDivider: this.tickDivider,
       pause: this.pause,
@@ -72,17 +74,19 @@ export class MainLoopService {
     this.unlockAgeSpeed = properties.unlockAgeSpeed;
     this.unlockPlaytimeSpeed = properties.unlockPlaytimeSpeed;
     this.tickDivider = properties.tickDivider;
+    this.offlineDivider = properties.offlineDivider || 10;
     this.pause = properties.pause;
     this.lastTime = properties.lastTime;
     const newTime = new Date().getTime();
-    this.bankedTicks = properties.bankedTicks + (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
+    if (newTime - this.lastTime > 168*60*60*1000) {
+      //to diminish effects of forgetting about the game for a year and coming back with basically infinite ticks
+      this.bankedTicks = properties.bankedTicks + (3*168*60*60*1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
+    } else {
+      this.bankedTicks = properties.bankedTicks + (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
+    }
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
-    if (properties.useBankedTicks === undefined){
-      this.useBankedTicks = true;
-    } else {
-      this.useBankedTicks = properties.useBankedTicks;
-    }
+    this.useBankedTicks = properties.useBankedTicks ?? true;
   }
 
   start() {
@@ -103,36 +107,7 @@ export class MainLoopService {
       if (this.pause) {
         this.bankedTicks += ticksPassed/this.offlineDivider;
       } else {
-        /*if (this.characterService) {
-          // should never be null but this keeps the compiler happy
-          if (this.characterService.characterState.lifespan > 36500){
-            // add one extra tick at 100 years lifespan
-            repeatTimes++;
-          }
-          if (this.characterService.characterState.lifespan > 365000){
-            // and an extra tick at 1000 years lifespan
-            repeatTimes++;
-          }
-          // and one extra for every 5000 years you've ever lived, up to 100 repeats
-          repeatTimes += Math.min(Math.floor(this.totalTicks / 1825000), 100);
-        }*/
-
-        if (this.characterService && this.unlockAgeSpeed) {
-          ticksPassed *= Math.sqrt(1+this.characterService.characterState.age/73000);
-        }
-        if (this.unlockPlaytimeSpeed) {
-          ticksPassed *= Math.pow(1+this.totalTicks/365000,0.3);
-        }
-
-        ticksPassed /= this.tickDivider;
-        if (this.tickDivider > 1 && ticksPassed > 1) {
-          //make non-max speeds a bit more potent at high speeds
-          if (this.tickDivider == 10) {
-            ticksPassed = 1;
-          } else {
-            ticksPassed = Math.max(1,0.66+ticksPassed/this.tickDivider);
-          }
-        }
+        ticksPassed *= this.getTPS(this.tickDivider)/1000*TICK_INTERVAL_MS;
         if (this.bankedTicks > 0 && this.useBankedTicks){
           //using banked ticks makes time happen 10 times faster
           ticksPassed *= 10;
@@ -152,6 +127,26 @@ export class MainLoopService {
     }, TICK_INTERVAL_MS);
   }
 
+  getTPS(div:number) {
+    let ticksPassed = 1000/TICK_INTERVAL_MS;
+    if (this.characterService && this.unlockAgeSpeed) {
+      ticksPassed *= Math.sqrt(1+this.characterService.characterState.age/73000);
+    }
+    if (this.unlockPlaytimeSpeed) {
+      ticksPassed *= Math.pow(1+this.totalTicks/(2000*365),0.3);
+    }
+    ticksPassed /= div;
+    //make non-max speeds a bit more potent at high speeds
+    const TICKSPEED_CAP = 40;
+    if (div > 1 && ticksPassed > TICKSPEED_CAP) {
+      if (div >= 10) {
+        ticksPassed = TICKSPEED_CAP;
+      } else {
+        ticksPassed = TICKSPEED_CAP+(ticksPassed-TICKSPEED_CAP)/div;
+      }
+    }
+    return ticksPassed;
+  }
   tick(){
     this.totalTicks++;
     this.tickSubject.next(true);
