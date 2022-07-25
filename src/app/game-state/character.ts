@@ -363,7 +363,7 @@ export class Character {
     const empowermentFactor = this.empowermentFactor - 1;
     let returnValue = 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
     if (this.easyMode){
-      returnValue *= 10;
+      returnValue *= 100;
     }
     return returnValue;
   }

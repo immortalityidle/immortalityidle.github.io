@@ -9,6 +9,7 @@ import { Furniture, InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { AutoBuyerService } from './autoBuyer.service';
+import { GameStateService } from './game-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class ItemRepoService {
   impossibleTaskService?: ImpossibleTaskService;
   followerService?: FollowersService;
   autoBuyerService?: AutoBuyerService;
+  gameStateService?: GameStateService;
 
   furniture: {[key: string]: Furniture} = {
     blanket: {
@@ -971,6 +973,12 @@ export class ItemRepoService {
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete){
           this.logService.addLogMessage("YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!", "INJURY", 'STORY');
+          if (!this.gameStateService){
+            this.gameStateService = this.injector.get(GameStateService);
+          }
+          if (this.gameStateService.easyModeEver){
+            this.logService.addLogMessage("Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.", "STANDARD", 'STORY');
+          }
           this.logService.addLogMessage("You won this game in " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes. I wonder if other immortals have ever done it faster?", "STANDARD", 'STORY');
           this.characterService.characterState.immortal = true;
         }
