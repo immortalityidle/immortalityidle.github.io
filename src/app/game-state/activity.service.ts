@@ -108,7 +108,14 @@ export class ActivityService {
           }
         }
         const activity = this.getActivityByType(this.currentLoopEntry.activity);
-        activity.consequence[activity.level]();
+
+        // put some logic here checking if they have the unlock for this feature
+        if (this.checkResourceUse(activity)){
+          activity.consequence[activity.level]();
+        } else {
+          // put some logic here for when resting is unavailable
+          const activity = this.getActivityByType(ActivityType.Resting);
+        }
 
         // check for exhaustion
         if (this.characterService.characterState.status.stamina.value < 0) {
@@ -151,6 +158,19 @@ export class ActivityService {
       this.checkRequirements(false);
     });
 
+  }
+
+  checkResourceUse(activity: Activity): boolean {
+    if (!activity.resourceUse || !activity.resourceUse[activity.level]){
+      return true;
+    }
+    for (const key in activity.resourceUse[activity.level]) {
+      //@ts-ignore
+      if (this.characterService.characterState.status[key].value < activity.resourceUse[activity.level][key]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   getProperties(): ActivityProperties{
@@ -1270,6 +1290,20 @@ export class ActivityService {
           metalLore: 100,
           fireLore: 10
         }
+      ],
+      resourceUse: [
+        {
+          stamina: 25
+        },
+        {
+          stamina: 25
+        },      
+        {
+          stamina: 25
+        },
+        {
+          stamina: 50
+        },                
       ],
       unlocked: false,
       skipApprenticeshipLevel: 2
