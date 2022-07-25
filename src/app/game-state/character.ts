@@ -36,8 +36,15 @@ export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' |
 
 export type EquipmentSlots  = { [key in EquipmentPosition]: Equipment | null };
 
+export interface CharacterKeychain {
+  health?: number, 
+  stamina?: number, 
+  mana?: number, 
+  nourishment?: number;
+}
+
 type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
-type CharacterStatus = {[key in StatusType]: {description: string, value: number, max: number}}
+type CharacterStatus  = {[key in StatusType]: {description: string, value: number, max: number}}
 
 export interface CharacterProperties {
   attributes: AttributeObject,
