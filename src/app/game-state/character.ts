@@ -1,4 +1,4 @@
-import { Equipment } from './inventory.service'
+import { Equipment, Item } from './inventory.service'
 import { LogService } from './log.service';
 import { formatNumber, TitleCasePipe } from '@angular/common';
 
@@ -36,7 +36,7 @@ export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' |
 
 export type EquipmentSlots  = { [key in EquipmentPosition]: Equipment | null };
 
-export interface CharacterStatus {
+export interface CharacterKeychain {
   health?: number, 
   stamina?: number, 
   mana?: number, 
@@ -44,14 +44,14 @@ export interface CharacterStatus {
 }
 
 type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
-type StatusObject = {[key in StatusType]: {description: string, value: number, max: number}}
+type CharacterStatus  = {[key in StatusType]: {description: string, value: number, max: number}}
 
 export interface CharacterProperties {
   attributes: AttributeObject,
   money: number,
   equipment: EquipmentSlots,
   age: number,
-  status: StatusObject,
+  status: CharacterStatus,
   baseLifespan: number,
   foodLifespan: number,
   alchemyLifespan: number,
@@ -191,7 +191,7 @@ export class Character {
       icon: "pets"
     },
   };
-  status: StatusObject = {
+  status: CharacterStatus = {
     health: {
       description: "Physical well-being. Take too much damage and you will die.",
       value: 100,

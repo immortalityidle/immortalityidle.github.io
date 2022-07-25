@@ -57,7 +57,7 @@ export class ImpossibleTaskService {
       name: "Raise an island from the sea",
       description: "At the bottom of the ocean you find a sunken island full of mystical wonders. Some of them will certainly help you in your quest for immortality, but they look too fragile to move by themselves. You'll need to pull the entire island to the surface.",
       taskType: ImpossibleTaskType.RaiseIsland,
-      progressRequired: 777,
+      progressRequired: 10000,
     },
     {
       name: "Build a tower past the heavens",

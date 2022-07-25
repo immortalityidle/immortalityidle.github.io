@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BattleService } from './battle.service';
 import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
-import { CharacterAttribute, CharacterStatus } from '../game-state/character';
+import { CharacterAttribute, CharacterKeychain } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService, HomeType } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
@@ -253,9 +253,9 @@ export class ActivityService {
 
   checkResourceUse(activity: Activity): boolean {
     const level = activity.level;
-    const keys: (keyof CharacterStatus)[] = Object.keys(
+    const keys: (keyof CharacterKeychain)[] = Object.keys(
       activity.resourceUse[level]
-    ) as (keyof CharacterStatus)[];
+    ) as (keyof CharacterKeychain)[];
 
     for (const keyIndex in keys) {
       const key = keys[keyIndex];
@@ -570,7 +570,7 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 100;
         const metalValue = this.inventoryService.consume('metal');
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil" && metalValue >= 150){
-          if (Math.random() < 0.05){
+          if (Math.random() < 0.1){
             this.logService.addLogMessage("Your anvil rings with power. A new chain is forged!","STANDARD","CRAFTING");
             this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
           }
@@ -594,25 +594,24 @@ export class ActivityService {
       level: 0,
       name: ['Attach Chains to the Island'],
       activityType: ActivityType.AttachChains,
-      description: ['Swim deep and attach one of your chains to the island, then pull.'],
-      consequenceDescription: ['Uses 1000000 Stamina when carrying something REALLY heavy to try hauling something really REALLY heavy. You\'re going to need an Unbreakable Chain and a long time to rest.'],
+      description: ['Swim deep and attach one of your chains to the island.'],
+      consequenceDescription: ['Uses 1000 Stamina. Requires an unbreakable chain.'],
       consequence: [() => {
-        if (this.inventoryService.consume("chain") > 0 ){
-          this.characterService.characterState.status.stamina.value -= 1000000;
-          this.logService.addLogMessage("You attach a chain to the island, and give your chains a tug.","STANDARD","EVENT");
+        this.characterService.characterState.status.stamina.value -= 1000;
+        if (this.inventoryService.consume("chain") > 0){
+          this.logService.addLogMessage("You attach a chain to the island. and give your chains a tug.","STANDARD","EVENT");
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].progress++;
           this.impossibleTaskService.checkCompletion();
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete){
-            this.logService.addLogMessage("With a mighty pull of 777 chains, the island comes loose. You haul it to the surface.","STANDARD","STORY");
+            this.logService.addLogMessage("With a mighty pull, the island comes loose. You haul it to the surface.","STANDARD","STORY");
           }
         } else {
-          this.logService.addLogMessage("You pass time exploring the hidden tunnels without a chain until you get bored.","INJURY","EVENT");
-          this.mainLoopService.pause = true;
-          
+          this.logService.addLogMessage("You fumble around in the depths without a chain until a shark comes by and takes a bite.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
         }
       }],
       resourceUse: [{
-        stamina: 1000000
+        stamina: 1000
       }],
       requirements: [{
       }],
