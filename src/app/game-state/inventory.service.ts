@@ -384,10 +384,10 @@ export class InventoryService {
     if (upgradables.length > 0){
       const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
       if (equipment.armorStats){
-        equipment.armorStats.durability += value;
+        equipment.armorStats.durability += value * 10;
         equipment.armorStats.defense += value;
       } else if (equipment.weaponStats){
-        equipment.weaponStats.durability += value;
+        equipment.weaponStats.durability += value * 10;
         equipment.weaponStats.baseDamage += value;
       }
       equipment.value += value;

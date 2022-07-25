@@ -25,7 +25,8 @@ export interface FollowersProperties {
   followers: Follower[],
   autoDismissUnlocked: boolean,
   maxFollowerByType: { [key: string]: number; },
-  followerLifespanDoubled: boolean
+  followerLifespanDoubled: boolean,
+  followerSortOrder: string
 }
 
 export interface FollowerReserve {
@@ -52,6 +53,8 @@ export class FollowersService {
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number; } = {};
   followerCap = 0;
+  followerSortOrder = 'age';
+  followerSortList = ['name', 'age', 'lifespan', 'job', 'power', 'cost'];
   followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
 
   jobs: jobsType = {
@@ -248,7 +251,8 @@ export class FollowersService {
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
-      followerLifespanDoubled: this.followerLifespanDoubled
+      followerLifespanDoubled: this.followerLifespanDoubled,
+      followerSortOrder: this.followerSortOrder
     }
   }
 
@@ -258,6 +262,7 @@ export class FollowersService {
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
     this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
+    this.followerSortOrder = properties.followerSortOrder || 'age';
   }
 
   generateFollower(){
@@ -308,6 +313,23 @@ export class FollowersService {
     const keys = Object.keys(this.jobs);
     return keys[Math.floor(Math.random() * keys.length)];
   }
+
+  sortFollowers() {
+      if(this.followerSortOrder === 'name'){
+        this.followers = this.followers.sort((a, b) => (a.name < b.name ? -1 : 1));
+      } else if (this.followerSortOrder === 'age'){
+        this.followers = this.followers.sort((a, b) => (a.age > b.age ? -1 : 1));
+      } else if (this.followerSortOrder === 'lifespan'){
+        this.followers = this.followers.sort((a, b) => (a.lifespan > b.lifespan ? -1 : 1));
+      } else if (this.followerSortOrder === 'job'){
+        this.followers = this.followers.sort((a, b) => (a.job < b.job ? -1 : 1));
+      } else if (this.followerSortOrder === 'power'){
+        this.followers = this.followers.sort((a, b) => (a.power > b.power ? -1 : 1));
+      } else if (this.followerSortOrder === 'cost'){
+        this.followers = this.followers.sort((a, b) => (a.cost > b.cost ? -1 : 1));
+      }
+    }
+  
 
   /**
    * 
