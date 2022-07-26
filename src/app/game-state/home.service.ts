@@ -68,7 +68,13 @@ export interface HomeProperties {
   nextHomeCostReduction: number,
   houseBuildingProgress: number,
   upgrading: boolean,
-  ownedFurniture: string[]
+  ownedFurniture: string[],
+  highestLand: number,
+  highestLandPrice: number,
+  mostFields: number,
+  highestAverageYield: number,
+  bestHome: HomeType;
+
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -454,6 +460,11 @@ export class HomeService {
   nextHome!: Home;
   nextHomeCostReduction = 0;
   nextHomeCost = 0;
+  highestLand = 0;
+  highestLandPrice = 100;
+  mostFields = 0;
+  highestAverageYield = 0;
+  bestHome = 0;
 
   constructor(
     private characterService: CharacterService,
@@ -501,6 +512,25 @@ export class HomeService {
         }
       });
 
+      mainLoopService.longTickSubject.subscribe(() => {
+        if (this.land > this.highestLand){
+          this.highestLand = this.land;
+        }
+        if (this.landPrice > this.highestLandPrice){
+          this.highestLandPrice = this.landPrice;
+        }
+        if (this.fields.length + this.extraFields > this.mostFields){
+          this.mostFields = this.fields.length + this.extraFields;
+        }
+        if (this.averageYield > this.highestAverageYield){
+          this.highestAverageYield = this.averageYield;
+        }
+        if (this.homeValue > this.bestHome){
+          this.bestHome = this.homeValue;
+        }
+  
+      });
+
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
         if (this.grandfatherTent){
@@ -535,7 +565,12 @@ export class HomeService {
       houseBuildingProgress: this.houseBuildingProgress,
       upgrading: this.upgrading,
       ownedFurniture: this.ownedFurniture,
-
+      highestLand: this.highestLand,
+      highestLandPrice: this.highestLandPrice,
+      mostFields: this.mostFields,
+      highestAverageYield: this.highestAverageYield,
+      bestHome: this.bestHome
+    
     }
   }
 
@@ -566,6 +601,11 @@ export class HomeService {
       }
     }
     this.ownedFurniture = properties.ownedFurniture || [];
+    this.highestLand = properties.highestLand || 0;
+    this.highestLandPrice = properties.highestLandPrice || 100;
+    this.mostFields = properties.mostFields || 0;
+    this.highestAverageYield = properties.highestAverageYield || 0;
+    this.bestHome = properties.bestHome || 0;
   }
 
   // gets the specs of the next home, doesn't actually upgrade

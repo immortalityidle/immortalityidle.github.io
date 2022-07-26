@@ -188,7 +188,53 @@
                 {{achievementService.unlockedAchievements.length}}
             </td>
         </tr>
+        <tr>
+            <td>
+                Most land owned:
+            </td>
+            <td>
+                {{homeService.highestLand | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest land price:
+            </td>
+            <td>
+                {{homeService.highestLandPrice | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Most fields owned:
+            </td>
+            <td>
+                {{homeService.mostFields | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest average farm yield:
+            </td>
+            <td>
+                {{homeService.highestAverageYield | number:'1.0-2'}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Best home owned:
+            </td>
+            <td>
+                {{homeService.homesList[homeService.bestHome].name}}
+            </td>
+        </tr>
 
+        
+        
+        
+        
+        
+    
         
     </table>
   </div>
