@@ -9,7 +9,6 @@ import { FollowersService } from '../game-state/followers.service';
 export class FollowerManagementPanelComponent implements OnInit {
 
   changeAll = 0;
-  Ascending = true;
   constructor(public followerService: FollowersService) { }
 
   ngOnInit(): void {
