@@ -95,6 +95,23 @@ export class CharacterService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
+
+      if (this.characterState.highestMoney < this.characterState.money){
+        this.characterState.highestMoney = this.characterState.money;
+      }
+      if (this.characterState.highestAge < this.characterState.age){
+        this.characterState.highestAge = this.characterState.age;
+      }
+      if (this.characterState.highestHealth < this.characterState.status.health.value){
+        this.characterState.highestHealth = this.characterState.status.health.value;
+      }
+      if (this.characterState.highestStamina < this.characterState.status.stamina.value){
+        this.characterState.highestStamina = this.characterState.status.stamina.value;
+      }
+      if (this.characterState.highestMana < this.characterState.status.mana.value){
+        this.characterState.highestMana = this.characterState.status.mana.value;
+      }
+    
       if (this.characterState.dead){
         return;
       }

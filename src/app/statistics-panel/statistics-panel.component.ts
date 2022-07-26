@@ -51,16 +51,6 @@ export class StatisticsPanelComponent implements OnInit {
   }
 
 /*
-homeService:
-  land: number; - add most
-  landPrice: number; - add highest
-  fields: Field[] = []; - add most
-  averageYield = 0; - add highest
-  add highest home owned
-followerService:
-  add total ever recruited, died, dismissed, highest level,
-character:
-  add highest money, best attack, best defense, accuracy, highest age, lifespan, health, stamina, mana
 battleService:
   add most damage taken, most damage dealt, damage blocked, 
 activityService:

@@ -663,12 +663,7 @@ export class AchievementService {
       description: "One of your followers has trained under you so long they have nothing else to learn. In an epiphany you realized how to double your new followers' lifespan.",
       hint: "Endless training.",
       check: () => {
-        for (const follower of this.followerService.followers){
-          if (follower.power === 100){
-            return true;
-          }
-        }
-        return false;
+        return this.followerService.highestLevel >= 100;
       },
       effect: () => {
         this.followerService.followerLifespanDoubled = true;

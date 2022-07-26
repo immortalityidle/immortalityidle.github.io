@@ -2295,6 +2295,9 @@ export class ActivityService {
               allMaxed = false;
               if (Math.random() < (1 - Math.pow(follower.power / 100, 0.55)) / (36500000 / (3650 + follower.age * Math.log2(this.characterService.characterState.attributes.charisma.value/10000000000 + 1)))){ // Softcap the increase
                 follower.power++;
+                if (follower.power > this.followerService.highestLevel){
+                  this.followerService.highestLevel = follower.power;
+                }
                 follower.cost = 100 * follower.power;
                 this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "FOLLOWER");
               }

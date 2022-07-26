@@ -66,6 +66,11 @@ export interface CharacterProperties {
   empowermentFactor: number,
   immortal: boolean,
   easyMode: boolean
+  highestMoney: number,
+  highestAge: number,
+  highestHealth: number,
+  highestStamina: number,
+  highestMana: number,
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -226,6 +231,12 @@ export class Character {
     legs: null,
     feet: null
   }
+  highestMoney = 0;
+  highestAge = 0;
+  highestHealth = 0;
+  highestStamina = 0;
+  highestMana = 0;
+
 
   // reset everything but increase aptitudes
   reincarnate(): void {
@@ -483,8 +494,13 @@ export class Character {
       healthBonusMagic: this.healthBonusMagic,
       empowermentFactor: this.empowermentFactor,
       immortal: this.immortal,
-      easyMode: this.easyMode
-
+      easyMode: this.easyMode,
+      highestMoney: this.highestMoney,
+      highestAge: this.highestAge,
+      highestHealth: this.highestHealth,
+      highestStamina: this.highestStamina,
+      highestMana: this.highestMana
+    
     }
   }
 
@@ -520,6 +536,12 @@ export class Character {
     this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
     this.easyMode = properties.easyMode || false;
+    this.highestMoney = properties.highestMoney || 0;
+    this.highestAge = properties.highestAge || 0;
+    this.highestHealth = properties.highestHealth || 0;
+    this.highestStamina = properties.highestStamina || 0;
+    this.highestMana = properties.highestMana || 0;
+
     this.recalculateDerivedStats();
   }
 }
