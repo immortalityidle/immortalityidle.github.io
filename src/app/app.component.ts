@@ -16,6 +16,7 @@ import {environment} from '../environments/environment';
 import { ExportPanelComponent } from './export-panel/export-panel.component';
 import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.component';
+import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -155,6 +156,13 @@ export class AppComponent implements OnInit {
 
   tutorialClicked(){
     const dialogRef = this.dialog.open(TutorialPanelComponent, {
+      width: '700px',
+      data: {someField: 'foo'}
+    });
+  }
+
+  statisticsClicked(){
+    const dialogRef = this.dialog.open(StatisticsPanelComponent, {
       width: '700px',
       data: {someField: 'foo'}
     });

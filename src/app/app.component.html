@@ -5,9 +5,11 @@
         Immortality Idle - {{characterService.characterState.immortal ? "You are Immortal!" : "Can you become an immortal?"}}
         <span class="versionNumber" (click)="changelogClicked()">{{gameStateService.isExperimental ? "Experimental" : "v" + applicationVersion}}</span>
       </span>
-      <mat-icon tooltip="Confused? Click here." class="iconButton"
-        (click)="tutorialClicked()">
+      <mat-icon tooltip="Confused? Click here." class="iconButton" (click)="tutorialClicked()">
         help
+      </mat-icon>
+      <mat-icon tooltip="Statistics!" class="iconButton" (click)="statisticsClicked()">
+        format_list_numbered_rtl
       </mat-icon>
       <span>
         <mat-icon tooltip="A store that sells special manuals for aspiring immortals." class="iconButton"
