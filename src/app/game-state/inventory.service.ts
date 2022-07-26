@@ -258,7 +258,11 @@ export class InventoryService {
     this.autoSellOldOre = properties.autoSellOldOre || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
-    this.autoequipBestEnabled = properties.autoequipBestEnabled || true;
+    if(properties.autoequipBestEnabled === undefined){
+      this.autoequipBestEnabled = true;
+    } else{
+      this.autoequipBestEnabled = properties.autoequipBestEnabled;
+    }
     this.maxStackSize = properties.maxStackSize || 100;
     this.thrownAwayItems = properties.thrownAwayItems || 0;
     this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;

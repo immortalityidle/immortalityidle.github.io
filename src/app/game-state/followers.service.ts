@@ -27,7 +27,7 @@ export interface FollowersProperties {
   maxFollowerByType: { [key: string]: number; },
   followerLifespanDoubled: boolean,
   sortField: string,
-  sortAscending: boolean,
+  sortAscending: boolean
 }
 
 export interface FollowerReserve {
@@ -219,16 +219,15 @@ export class FollowersService {
           // follower aged off
           this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
-          this.followersMaxed = 'UNMAXED';
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
-          this.followersMaxed = 'UNMAXED';
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
         }
       }
+      this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -243,6 +242,7 @@ export class FollowersService {
 
   updateFollowerCap(){
     this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+    this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
   }
 
   sortFollowers(ascending: boolean){
@@ -278,7 +278,7 @@ export class FollowersService {
       maxFollowerByType: this.maxFollowerByType,
       followerLifespanDoubled: this.followerLifespanDoubled,
       sortField: this.sortField,
-      sortAscending: this.sortAscending,
+      sortAscending: this.sortAscending
     }
   }
 
@@ -289,7 +289,11 @@ export class FollowersService {
     this.maxFollowerByType = properties.maxFollowerByType || {};
     this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
     this.sortField = properties.sortField || "Job";
-    this.sortAscending = properties.sortAscending || true;
+    if (properties.sortAscending === undefined){
+      this.sortAscending = true;
+    } else {
+      this.sortAscending = properties.sortAscending;
+    }
   }
 
   generateFollower(){
