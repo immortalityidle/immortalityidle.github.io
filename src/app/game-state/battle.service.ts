@@ -56,7 +56,6 @@ export class BattleService {
   manaAttackUnlocked = false;
   tickCounter: number;
   ticksPerFight = 10;
-  highestGem = 0;
 
   constructor(
     private logService: LogService,

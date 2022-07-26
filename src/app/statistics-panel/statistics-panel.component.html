@@ -6,12 +6,190 @@
     <table>
         <tr>
             <td>
+                Game days per real second:
+            </td>
+            <td>
+                {{daysPerSecond | number:'1.0-2'}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Game years per real minute:
+            </td>
+            <td>
+                {{daysPerSecond * 60 / 365 | number:'1.0-2'}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Game years per real hour:
+            </td>
+            <td>
+                {{daysPerSecond * 60 * 60 / 365 | number:'1.0-2'}}
+            </td>
+        </tr>
+        <tr>
+            <td>
                 Total days lived:
             </td>
             <td>
-                {{mainLoopService.totalTicks}}
+                {{mainLoopService.totalTicks | bigNumber}}
             </td>
         </tr>
+        <tr>
+            <td>
+                Total lives lived:
+            </td>
+            <td>
+                {{characterService.characterState.totalLives}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Total enemies killed:
+            </td>
+            <td>
+                {{battleService.kills}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Troubling monsters encountered:
+            </td>
+            <td>
+                {{battleService.troubleKills}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Manuals discovered:
+            </td>
+            <td>
+                {{storeService.manuals.length}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Inventory Capacity:
+            </td>
+            <td>
+                {{inventoryService.maxItems}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Automatically sold items:
+            </td>
+            <td>
+                {{inventoryService.autoSellEntries.length}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Automatically used items:
+            </td>
+            <td>
+                {{inventoryService.autoUseEntries.length}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Automatically balanced items:
+            </td>
+            <td>
+                {{inventoryService.autoBalanceItems.length}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Items used:
+            </td>
+            <td>
+                {{inventoryService.lifetimeUsedItems}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Items sold:
+            </td>
+            <td>
+                {{inventoryService.lifetimeSoldItems}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Potions used:
+            </td>
+            <td>
+                {{inventoryService.lifetimePotionsUsed}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Pills used:
+            </td>
+            <td>
+                {{inventoryService.lifetimePillsUsed}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Gems sold:
+            </td>
+            <td>
+                {{inventoryService.lifetimeGemsSold}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Items overflowed:
+            </td>
+            <td>
+                {{inventoryService.thrownAwayItems}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Followers recruited:
+            </td>
+            <td>
+                {{followerService.followersRecruited}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Open apprenticeships:
+            </td>
+            <td>
+                {{activityService.openApprenticeships}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spend doing odd jobs:
+            </td>
+            <td>
+                {{activityService.oddJobDays}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spent begging:
+            </td>
+            <td>
+                {{activityService.beggingDays}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unlocked Achievements:
+            </td>
+            <td>
+                {{achievementService.unlockedAchievements.length}}
+            </td>
+        </tr>
+
+        
     </table>
   </div>
 </div>

@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { AchievementService } from '../game-state/achievement.service';
+import { ActivityService } from '../game-state/activity.service';
+import { BattleService } from '../game-state/battle.service';
+import { CharacterService } from '../game-state/character.service';
+import { FollowersService } from '../game-state/followers.service';
+import { HomeService } from '../game-state/home.service';
+import { InventoryService } from '../game-state/inventory.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { StoreService } from '../game-state/store.service';
 
 @Component({
   selector: 'app-statistics-panel',
@@ -8,25 +16,41 @@ import { MainLoopService } from '../game-state/main-loop.service';
 })
 export class StatisticsPanelComponent implements OnInit {
 
+  lastTimestamp = new Date().getTime();
+  daysPerSecond = 0;
+  lastTickTotal = 0;
+  skipCount = 9;
   constructor(
-    public mainLoopService: MainLoopService
-  ) { }
+    public mainLoopService: MainLoopService,
+    public storeService: StoreService,
+    public inventoryService: InventoryService,
+    public homeService: HomeService,
+    public followerService: FollowersService,
+    public characterService: CharacterService,
+    public battleService: BattleService,
+    public activityService: ActivityService,
+    public achievementService: AchievementService
+  ) { 
+    this.lastTickTotal = mainLoopService.totalTicks;
+    this.mainLoopService.longTickSubject.subscribe(() => {
+      if (this.skipCount >= 10){
+        this.skipCount = 0;
+      } else {
+        this.skipCount++;
+        return;
+      }
+      let currentTimestamp = new Date().getTime();
+      let timeDiff = (currentTimestamp - this.lastTimestamp) / 1000;
+      let tickDiff = this.mainLoopService.totalTicks - this.lastTickTotal;
+      if (timeDiff != 0){
+        this.daysPerSecond = tickDiff / timeDiff;
+      }
+      this.lastTickTotal = this.mainLoopService.totalTicks;
+      this.lastTimestamp = currentTimestamp;
+    });    
+  }
 
 /*
-storeService: 
-  manuals - manuals discovered
-inventoryService: 
-  maxItems = 10;
-  autoSellEntries: AutoItemEntry[];
-  autoUseEntries: AutoItemEntry[];
-  autoBalanceItems: BalanceItem[];
-  lifetimeUsedItems = 0;
-  lifetimeSoldItems = 0;
-  lifetimePotionsUsed = 0;
-  lifetimePillsUsed = 0;
-  lifetimeGemsSold = 0;
-  thrownAwayItems = 0;
-  mergeCounter = 0;
 homeService:
   land: number; - add most
   landPrice: number; - add highest
@@ -34,27 +58,15 @@ homeService:
   averageYield = 0; - add highest
   add highest home owned
 followerService:
-  followers: Follower[] = [];
-  followersRecruited = 0;
-  followerCap = 0;
   add total ever recruited, died, dismissed, highest level,
 character:
-  totalLives = 1;
   add highest money, best attack, best defense, accuracy, highest age, lifespan, health, stamina, mana
 battleService:
-  kills: number;
-  troubleKills: number;
-  highestGem = 0;
   add most damage taken, most damage dealt, damage blocked, 
 activityService:
-  openApprenticeships = 1;
-  oddJobDays = 0;
-  beggingDays = 0;
   add total exhaustionDays
   add jobs mastered
   add day counts for all jobs
-achievementService:
-  unlockedAchievements
 */
 
   ngOnInit(): void {
