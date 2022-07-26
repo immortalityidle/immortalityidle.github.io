@@ -23,7 +23,9 @@ export interface ActivityProperties {
   completedApprenticeships: ActivityType[],
   currentApprenticeship: ActivityType,
   savedActivityLoop: ActivityLoopEntry[],
-  autoPauseUnlocked: boolean
+  autoPauseUnlocked: boolean,
+  autoRestUnlocked: boolean,
+  pauseOnImpossibleFail: boolean
 }
 
 @Injectable({
@@ -35,6 +37,7 @@ export class ActivityService {
   spiritActivity: ActivityType | null = null;
   autoRestart = false;
   autoPauseUnlocked = false;
+  pauseOnImpossibleFail = true;
   pauseOnDeath = true;
   pauseBeforeDeath = true;
   activities: Activity[] = this.getActivityList();
@@ -47,6 +50,8 @@ export class ActivityService {
   exhaustionDays = 0;
   currentLoopEntry?: ActivityLoopEntry = undefined;
   currentApprenticeship: ActivityType = ActivityType.Resting;
+  activityDeath = false; // Simpler to just check a flag for the achievement.
+  autoRestUnlocked = false;
 
 
   constructor(
@@ -81,6 +86,7 @@ export class ActivityService {
         return;
       }
 
+      
       if (this.currentIndex < this.activityLoop.length) {
         this.currentLoopEntry = this.activityLoop[this.currentIndex];
         // check if our current activity is zero-day
@@ -107,7 +113,11 @@ export class ActivityService {
             this.currentTickCount = 0;
           }
         }
-        const activity = this.getActivityByType(this.currentLoopEntry.activity);
+        let activity = this.getActivityByType(this.currentLoopEntry.activity);
+        const rest = this.getActivityByType(ActivityType.Resting);
+        if (!this.checkResourceUse(activity) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
+          activity = rest;
+        }
         activity.consequence[activity.level]();
 
         // check for exhaustion
@@ -116,6 +126,7 @@ export class ActivityService {
           this.logService.addLogMessage('You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.', 'INJURY', 'EVENT');
           this.exhaustionDays = 5;
           this.characterService.characterState.status.stamina.value = 100;
+          this.characterService.characterState.status.health.value -= 0.01 * this.characterService.characterState.status.health.max;
         }
         // check for mana overuse
         if (this.characterService.characterState.status.mana.value < 0) {
@@ -124,6 +135,12 @@ export class ActivityService {
             this.characterService.characterState.status.mana.max -= 1;
           }
           this.exhaustionDays = 10;
+          this.characterService.characterState.status.health.value -= 0.01 * this.characterService.characterState.status.health.max;
+        }
+        // check for activity death
+        this.activityDeath = false;
+        if (this.characterService.characterState.status.health.value <= 0){
+          this.activityDeath = true;
         }
 
         this.currentTickCount++;
@@ -141,7 +158,11 @@ export class ActivityService {
       }
       // do the spirit activity if we can
       if (this.spiritActivity && this.characterService.characterState.status.mana.value >= 5){
-        const activity = this.getActivityByType(this.spiritActivity);
+        let activity = this.getActivityByType(this.spiritActivity);
+        const rest = this.getActivityByType(ActivityType.Resting);
+        if (!this.checkResourceUse(activity, true) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
+          activity = rest;
+        }
         activity.consequence[activity.level]();
         this.characterService.characterState.status.mana.value -= 5;
       }
@@ -151,6 +172,28 @@ export class ActivityService {
       this.checkRequirements(false);
     });
 
+  }
+
+  checkResourceUse(activity: Activity, spirit = false): boolean {
+    if (!activity.resourceUse || !activity.resourceUse[activity.level]){
+      return true;
+    }
+    if (spirit){
+      if (!activity.resourceUse[activity.level]["mana"]){
+        activity.resourceUse[activity.level]["mana"] = 0;
+      }
+      //@ts-ignore
+      if (this.characterService.characterState.status["mana"].value < activity.resourceUse[activity.level]["mana"] + 5) {
+        return false;
+      } 
+    }
+    for (const key in activity.resourceUse[activity.level]) {
+      //@ts-ignore
+      if (this.characterService.characterState.status[key].value < activity.resourceUse[activity.level][key]) {
+        return false;
+      } 
+    }
+    return true;
   }
 
   getProperties(): ActivityProperties{
@@ -172,6 +215,8 @@ export class ActivityService {
       completedApprenticeships: this.completedApprenticeships,
       currentApprenticeship: this.currentApprenticeship,
       savedActivityLoop: this.savedActivityLoop,
+      autoRestUnlocked: this.autoRestUnlocked,
+      pauseOnImpossibleFail: this.pauseOnImpossibleFail
     }
   }
 
@@ -191,6 +236,8 @@ export class ActivityService {
     this.openApprenticeships = properties.openApprenticeships || 0;
     this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
     this.savedActivityLoop = properties.savedActivityLoop || [];
+    this.autoRestUnlocked = properties.autoRestUnlocked || false;
+    this.pauseOnImpossibleFail = properties.pauseOnImpossibleFail || true;
     for (let i = 0; i < 5; i++){
       // upgrade to anything that the loaded attributes allow
       this.upgradeActivities(true);
@@ -528,6 +575,9 @@ export class ActivityService {
           this.logService.addLogMessage("Your preparations were worthwhile! You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found a mythical sunken island.","STANDARD","STORY");
         }
       }],
+      resourceUse: [{
+        stamina: 20
+      }],
       requirements: [{
       }],
       unlocked: true,
@@ -551,7 +601,13 @@ export class ActivityService {
         } else {
           this.logService.addLogMessage("You fumble with the wrong tools and materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
         }
+      }],
+      resourceUse: [{
+        stamina: 100
       }],
       requirements: [{
       }],
@@ -568,16 +624,22 @@ export class ActivityService {
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
         if (this.inventoryService.consume("chain") > 0){
-            this.logService.addLogMessage("You attach a chain to the island. and give your chains a tug.","STANDARD","EVENT");
-            this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].progress++;
-            this.impossibleTaskService.checkCompletion();
-            if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete){
-              this.logService.addLogMessage("With a mighty pull, the island comes loose. You haul it to the surface.","STANDARD","STORY");
-            }
+          this.logService.addLogMessage("You attach a chain to the island. and give your chains a tug.","STANDARD","EVENT");
+          this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].progress++;
+          this.impossibleTaskService.checkCompletion();
+          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete){
+            this.logService.addLogMessage("With a mighty pull, the island comes loose. You haul it to the surface.","STANDARD","STORY");
+          }
         } else {
           this.logService.addLogMessage("You fumble around in the depths without a chain until a shark comes by and takes a bite.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
         }
+      }],
+      resourceUse: [{
+        stamina: 1000
       }],
       requirements: [{
       }],
@@ -609,7 +671,13 @@ export class ActivityService {
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
         }
+      }],
+      resourceUse: [{
+        stamina: 100
       }],
       requirements: [{
       }],
@@ -633,7 +701,13 @@ export class ActivityService {
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials, hurt yourself, and break your weak attempt at scaffolding.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
         }
+      }],
+      resourceUse: [{
+        stamina: 1000
       }],
       requirements: [{
       }],
@@ -664,7 +738,13 @@ export class ActivityService {
         } else {
           this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
         }
+      }],
+      resourceUse: [{
+        stamina: 100
       }],
       requirements: [{
       }],
@@ -689,6 +769,9 @@ export class ActivityService {
         if (numBuilders < 10){
           this.logService.addLogMessage("You fumble without the proper help and hurt yourself.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         let value = 0;
@@ -696,6 +779,9 @@ export class ActivityService {
         if (value < 1){
           this.logService.addLogMessage("You try building without a scaffolding, but it ends in a disaster and you are badly hurt.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         value = 0;
@@ -703,6 +789,9 @@ export class ActivityService {
         if (value < 1){
           this.logService.addLogMessage("You try building without enough mortar, but it ends in a disaster and you are badly hurt.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         value = 0;
@@ -710,6 +799,9 @@ export class ActivityService {
         if (value < 1){
           this.logService.addLogMessage("You try building without enough bricks, but it ends in a disaster and you are badly hurt.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].progress++;
@@ -717,6 +809,9 @@ export class ActivityService {
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].complete){
           this.logService.addLogMessage("You have acheived the impossible and built a tower beyond the heavens.","STANDARD","STORY");
         }
+      }],
+      resourceUse: [{
+        stamina: 1000
       }],
       requirements: [{
       }],
@@ -744,6 +839,10 @@ export class ActivityService {
           }
         }
       }],
+      resourceUse: [{
+        stamina: 100,
+        mana: 100
+      }],
       requirements: [{
       }],
       unlocked: true,
@@ -769,7 +868,13 @@ export class ActivityService {
         } else {
           this.logService.addLogMessage("You try to tame the winds, but without the proper preparation you are blown off the top of the tower.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.5;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
         }
+      }],
+      resourceUse: [{
+        stamina: 100
       }],
       requirements: [{
       }],
@@ -803,6 +908,9 @@ export class ActivityService {
           this.logService.addLogMessage("You mastered flight! You can go anywhere in the world now, even where the ancient dragons live.","STANDARD","STORY");
         }
       }],
+      resourceUse: [{
+        health: 1001
+      }],
       requirements: [{
       }],
       unlocked: true,
@@ -821,6 +929,9 @@ export class ActivityService {
         if (value < 1){
           this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 2000){
@@ -829,8 +940,9 @@ export class ActivityService {
           this.logService.addLogMessage("The dragon doesn't seem interested in any more food.","STANDARD","EVENT");
         }
       }],
+      resourceUse: [{
+      }],
       requirements: [{
-        animalHandling: 100000000
       }],
       unlocked: true,
       skipApprenticeshipLevel: 0
@@ -846,6 +958,9 @@ export class ActivityService {
         if (this.characterService.characterState.money < 1000000000){
           this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         this.characterService.characterState.money -= 1000000000;
@@ -855,8 +970,9 @@ export class ActivityService {
           this.logService.addLogMessage("The dragon doesn't seem interested in any more money.","STANDARD","EVENT");
         }
       }],
+      resourceUse: [{
+      }],
       requirements: [{
-        animalHandling: 500000000
       }],
       unlocked: true,
       skipApprenticeshipLevel: 0
@@ -872,6 +988,9 @@ export class ActivityService {
         if (this.characterService.characterState.attributes.charisma.value < 10000000000){
           this.logService.addLogMessage("The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 3500){
@@ -884,8 +1003,9 @@ export class ActivityService {
           this.logService.addLogMessage("You did the impossible and made friends with a dragon!","STANDARD","STORY");
         }
       }],
+      resourceUse: [{
+      }],
       requirements: [{
-        animalHandling: 1000000000
       }],
       unlocked: true,
       skipApprenticeshipLevel: 0
@@ -910,15 +1030,23 @@ export class ActivityService {
         if (value < 1){
           this.logService.addLogMessage("You don't have enough food to feed your army, so they revolt and fight you instead.","INJURY","EVENT");
           this.battleService.addEnemy(this.battleService.enemyRepo.army);
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         if (this.characterService.characterState.money < 10000000000){
           this.logService.addLogMessage("You don't have enough money to pay your army, so they revolt and fight you instead.","INJURY","EVENT");
           this.battleService.addEnemy(this.battleService.enemyRepo.army);
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         this.characterService.characterState.money -= 10000000000;
         this.inventoryService.addItem(this.itemRepoService.items['army']);
+      }],
+      resourceUse: [{
       }],
       requirements: [{
       }],
@@ -939,6 +1067,10 @@ export class ActivityService {
           for (let i = 0; i < 5; i++){
             this.battleService.addEnemy(this.battleService.enemyRepo.army);
           }
+          this.logService.addLogMessage("Your armies failed you and you are forced to fight the enemy armies to a standstill.","STANDARD","EVENT");
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
+          }
           return;
         }
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress++;
@@ -946,6 +1078,8 @@ export class ActivityService {
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].complete){
           this.logService.addLogMessage("You did the impossible and conquered the world! Under your wise rule all human suffering ceases.","STANDARD","STORY");
         }
+      }],
+      resourceUse: [{
       }],
       requirements: [{
       }],
@@ -969,6 +1103,10 @@ export class ActivityService {
             this.logService.addLogMessage("You did the impossible and rearranged the stars themselves. You are so near to achieving immortality you can almost taste it. It tastes like peaches.","STANDARD","STORY");
           }
         }
+      }],
+      resourceUse: [{
+        stamina: 1000,
+        mana: 1000
       }],
       requirements: [{
       }],
@@ -994,6 +1132,9 @@ export class ActivityService {
         this.characterService.characterState.money += 3;
         this.getActivityByType(ActivityType.OddJobs).lastIncome = 3;
         this.oddJobDays++;
+      }],
+      resourceUse: [{
+        stamina: 5
       }],
       requirements: [{}],
       unlocked: true,
@@ -1032,6 +1173,11 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('spirituality', 0.5);
           this.characterService.characterState.checkOverage();
         }
+      ],
+      resourceUse: [
+        {},
+        {},
+        {}
       ],
       requirements: [
         {},
@@ -1074,7 +1220,7 @@ export class ActivityService {
         'Uses 5 Stamina. Increases charisma and provides a little money.',
         'Uses 5 Stamina. Increases charisma and provides some money.',
         'Uses 5 Stamina. Increases charisma and provides money.',
-        'Uses 5 Stamina. Increases charisma, provides money, and makes you wonder what any of this means for your immortal progression.'
+        'Uses 5 Stamina. Increases charisma, provides money, and makes you wonder what more you can gain from immersing yourself in mortal practices.'
       ],
       consequence: [
         () => {
@@ -1110,9 +1256,23 @@ export class ActivityService {
           this.beggingDays++;
           }
       ],
+      resourceUse: [
+        {
+          stamina: 5
+        },
+        {
+          stamina: 5
+        },
+        {
+          stamina: 5
+        },
+        {
+          stamina: 5
+        }
+      ],
       requirements: [
         {
-          charisma: 3,
+          charisma: 3
         },
         {
           charisma: 100
@@ -1251,6 +1411,20 @@ export class ActivityService {
           }
         }
       ],
+      resourceUse: [
+        { 
+          stamina: 25
+        },
+        { 
+          stamina: 25
+        },
+        { 
+          stamina: 25
+        },
+        { 
+          stamina: 50
+        }
+      ],
       requirements: [
         {
           strength: 50,
@@ -1294,6 +1468,9 @@ export class ActivityService {
           this.inventoryService.generateHerb();
         }
         this.characterService.characterState.increaseAttribute('woodLore',0.003);
+      }],
+      resourceUse: [{
+        stamina: 10
       }],
       requirements: [{
         speed: 20,
@@ -1400,6 +1577,20 @@ export class ActivityService {
           }
         }
       ],
+      resourceUse: [
+        {
+          stamina: 10
+        },
+        {
+          stamina: 10
+        },
+        {
+          stamina: 10
+        },
+        {
+          stamina: 20
+        }
+      ],
       requirements: [
         {
           intelligence: 200,
@@ -1434,6 +1625,9 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 10;
         this.inventoryService.addItem(this.inventoryService.getWood());
         this.characterService.characterState.increaseAttribute('woodLore',0.01);
+      }],
+      resourceUse: [{
+        stamina: 10
       }],
       requirements: [{
         strength: 100,
@@ -1534,6 +1728,20 @@ export class ActivityService {
           if (Math.random() < 0.001){
             this.inventoryService.addItem(this.itemRepoService.items['pillBox']);
           }
+        }
+      ],
+      resourceUse: [
+        {
+          stamina: 20
+        },
+        {
+          stamina: 20
+        },
+        {
+          stamina: 20
+        },
+        {
+          stamina: 40
         }
       ],
       requirements: [
@@ -1658,6 +1866,20 @@ export class ActivityService {
           }
         }
       ],
+      resourceUse: [
+        {
+          stamina: 20
+        },
+        {
+          stamina: 20
+        },
+        {
+          stamina: 20
+        },
+        {
+          stamina: 40
+        }
+      ],
       requirements: [
         {
           speed: 100,
@@ -1703,6 +1925,9 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute('woodLore', 0.001);
         this.characterService.characterState.increaseAttribute('earthLore', 0.001);
     }],
+      resourceUse: [{
+        stamina: 20
+      }],
       requirements: [{
         strength: 10,
         speed: 10
@@ -1724,6 +1949,9 @@ export class ActivityService {
         if (Math.random() < 0.5) {
           this.inventoryService.addItem(this.inventoryService.getOre());
         }
+      }],
+      resourceUse: [{
+        stamina: 20
       }],
       requirements: [{
         strength: 70
@@ -1749,6 +1977,9 @@ export class ActivityService {
             this.inventoryService.addItem(this.inventoryService.getBar(grade));
           }
         }
+      }],
+      resourceUse: [{
+        stamina: 20
       }],
       requirements: [{
         toughness: 100,
@@ -1780,6 +2011,9 @@ export class ActivityService {
           this.battleService.addEnemy(this.battleService.enemyRepo.wolf);
         }
       }],
+      resourceUse: [{
+        stamina: 50
+      }],
       requirements: [{
         speed: 200
       }],
@@ -1804,6 +2038,9 @@ export class ActivityService {
           this.inventoryService.addItem(this.itemRepoService.items['carp']);
         }
       }],
+      resourceUse: [{
+        stamina: 30
+      }],
       requirements: [{
         strength: 15,
         intelligence: 15
@@ -1825,6 +2062,9 @@ export class ActivityService {
         if (this.characterService.characterState.money < 0){
           this.characterService.characterState.money = 0;
         }
+      }],
+      resourceUse: [{
+        stamina: 5
       }],
       requirements: [{
         intelligence: 10
@@ -1848,6 +2088,9 @@ export class ActivityService {
         this.characterService.characterState.attributes.speed.aptitude += 0.1;
         this.characterService.characterState.attributes.toughness.aptitude += 0.1;
         this.characterService.characterState.increaseAttribute('spirituality', 0.001);
+      }],
+      resourceUse: [{
+        stamina: 100
       }],
       requirements: [{
         strength: 5000,
@@ -1873,6 +2116,9 @@ export class ActivityService {
         this.characterService.characterState.attributes.charisma.aptitude += 0.1;
         this.characterService.characterState.increaseAttribute('spirituality', 0.001);
       }],
+      resourceUse: [{
+        stamina: 100
+      }],
       requirements: [{
         charisma: 5000,
         intelligence: 5000,
@@ -1895,11 +2141,10 @@ export class ActivityService {
             this.characterService.characterState.status.mana.max++;
             this.characterService.characterState.status.mana.value++;
           }
-        } else {
-          const damage = this.characterService.characterState.status.health.max * 0.1;
-          this.characterService.characterState.status.health.value -= damage;
-          this.logService.addLogMessage("You fail miserably at cultivating your core and hurt yourself badly.","INJURY","EVENT");
-        }
+        } 
+      }],
+      resourceUse: [{
+        stamina: 200
       }],
       requirements: [{
         woodLore: 1000,
@@ -1920,11 +2165,7 @@ export class ActivityService {
       description: ['Infuse the power of a gem into your equipment.'],
       consequenceDescription: ['Uses 200 Stamina and 10 mana. An advanced magical technique.'],
       consequence: [() => {
-        this.characterService.characterState.status.stamina.value -= 200;
         if (!this.characterService.characterState.manaUnlocked){
-          const damage = this.characterService.characterState.status.health.max * 0.1;
-          this.characterService.characterState.status.health.value -= damage;
-          this.logService.addLogMessage("You fail miserably attempting to infuse your equipment and hurt yourself badly.","INJURY","EVENT");
           return;
         }
         this.characterService.characterState.status.stamina.value -= 200;
@@ -1933,6 +2174,10 @@ export class ActivityService {
         if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
           this.inventoryService.upgradeEquipment(gemValue);
         }
+      }],
+      resourceUse: [{
+        stamina: 200,
+        mana: 10
       }],
       requirements: [{
         strength: 500000000,    //50m
@@ -1955,11 +2200,11 @@ export class ActivityService {
         if (this.characterService.characterState.manaUnlocked && this.characterService.characterState.status.mana.value >= 10){
           this.characterService.characterState.status.mana.value -= 10;
           this.characterService.characterState.healthBonusMagic++;
-        } else {
-          const damage = this.characterService.characterState.status.health.max * 0.1;
-          this.characterService.characterState.status.health.value -= damage;
-          this.logService.addLogMessage("Your magic is too weak to infuse your body. You fail miserably and hurt yourself badly.","INJURY","EVENT");
-        }
+        } 
+      }],
+      resourceUse: [{
+        stamina: 200,
+        mana: 10
       }],
       requirements: [{
         woodLore: 1000,
@@ -1986,11 +2231,11 @@ export class ActivityService {
           if (this.characterService.characterState.magicLifespan < 36500){
             this.characterService.characterState.magicLifespan += 10;
           }
-        } else {
-          const damage = this.characterService.characterState.status.health.max * 0.1;
-          this.characterService.characterState.status.health.value -= damage;
-          this.logService.addLogMessage("Your magic is too weak to extend your life. You fail miserably and hurt yourself badly.","INJURY","EVENT");
         }
+      }],
+      resourceUse: [{
+        stamina: 400,
+        mana: 20
       }],
       requirements: [{
         woodLore: 10000,
@@ -2021,11 +2266,10 @@ export class ActivityService {
           if (Math.random() < 0.01){
             this.followerService.generateFollower();
           }
-        } else {
-          const damage = this.characterService.characterState.status.health.max * 0.1;
-          this.characterService.characterState.status.health.value -= damage;
-          this.logService.addLogMessage("You fail miserably at your attempt to recruit followers. An angry mob chases you down and gives you a beating for your arrogance.","INJURY","EVENT");
-        }
+        } 
+      }],
+      resourceUse: [{
+        stamina: 100
       }],
       requirements: [{
         charisma: 50000000,
@@ -2060,6 +2304,9 @@ export class ActivityService {
             this.logService.addLogMessage("You try to train your followers, but they are all already as powerful as they can be. You pat them each on the back and tell them they are great.", "STANDARD", "FOLLOWER");
           }
         }
+      }],
+      resourceUse: [{
+        stamina: 1000
       }],
       requirements: [{
         charisma: 10000000000,

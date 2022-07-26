@@ -12,6 +12,9 @@
       <option [selected]="followerService.sortField === 'Power'">Power</option>
       <option [selected]="followerService.sortField === 'Remaining'">Remaining Life</option>
     </select>
+    <input type="checkbox" [checked]="this.Ascending" (change)="sortAscSwitch()">
+    <span *ngIf="this.followerService.sortAscending">Ascending</span>
+    <span *ngIf="!this.followerService.sortAscending">Descending</span>
   </span></div>
   <div class="scrollingDiv">
     <table>

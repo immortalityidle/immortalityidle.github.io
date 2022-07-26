@@ -1720,6 +1720,29 @@ export class ItemRepoService {
         return this.mainLoopService.offlineDivider <= 2;
       }
     },
+    autoRestManual: {
+      id: 'autoRestManual',
+      name: "Manual of Timely Rest",
+      type: "manual",
+      description: "This manual teaches you to avoid overwork by resting just in time.",
+      value: 4e10,
+      useLabel: "Read",
+      useDescription: "Permanently unlock automatic resting.",
+      useConsumes: true,
+      use: () => {
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        this.activityService.autoRestUnlocked = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        return this.activityService.autoRestUnlocked;
+      }
+    },
     ageSpeedManual: {
       id: 'ageSpeedManual',
       name: "Manual of Aged Time Perception",

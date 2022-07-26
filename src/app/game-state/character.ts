@@ -507,7 +507,8 @@ export class Character {
     // This is derived to avoid save issues. Calculate rank and subtract from power to reduce the exponential aptitude divider.
     this.aptitudeGainDivider = 5 * Math.pow(1.5, 9 - Math.log10(this.condenseSoulCoreCost / this.condenseSoulCoreOriginalCost)); 
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
-    this.attributeScalingLimit = properties.attributeScalingLimit;
+    // Similarly here, 10 * 2 ^ rank.
+    this.attributeScalingLimit = 10 * Math.pow(2, Math.log10(this.reinforceMeridiansCost / this.reinforceMeridiansOriginalCost));
     this.attributeSoftCap = properties.attributeSoftCap;
     this.bloodlineRank = properties.bloodlineRank;
     this.bloodlineCost = 1000 * Math.pow(100, this.bloodlineRank); // This is derived to avoid save issues.

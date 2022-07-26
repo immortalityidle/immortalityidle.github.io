@@ -97,7 +97,7 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Peristent Reincarnator",
+      name: "Persistent Reincarnator",
       description: "You lived one thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
       hint: "The millennial.",
       check: () => {
@@ -708,6 +708,18 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bankedTicksEfficiencyManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Breaks are Bad",
+      description: "You died from overwork performing an activity without necessary rest and unlocked the " + this.itemRepoService.items['autoRestManual'].name,
+      hint: "There's no time to rest, cultivating is life.", 
+      check: () => {
+        return this.activityService.activityDeath;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['autoRestManual']);
       },
       unlocked: false
     },
