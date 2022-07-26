@@ -31,9 +31,13 @@ export class FollowerManagementPanelComponent implements OnInit {
     this.followerService.setMaxFollowers(job, parseInt(event.target.value));
   }
 
+  sortAscSwitch(){
+    this.followerService.sortAscending = !this.followerService.sortAscending;
+  }
+
   sortOrderChanged(event: Event){
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.followerService.sortField = event.target.value;
-    this.followerService.sortFollowers();
+    this.followerService.sortFollowers(this.followerService.sortAscending);
   }
 }

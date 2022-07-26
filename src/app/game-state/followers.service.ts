@@ -27,6 +27,7 @@ export interface FollowersProperties {
   maxFollowerByType: { [key: string]: number; },
   followerLifespanDoubled: boolean,
   sortField: string,
+  sortAscending: boolean,
 }
 
 export interface FollowerReserve {
@@ -54,7 +55,8 @@ export class FollowersService {
   maxFollowerByType: { [key: string]: number; } = {};
   followerCap = 0;
   followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
-  sortField: string = "Job";
+  sortField = "Job";
+  sortAscending = true;
 
   jobs: jobsType = {
     "builder": {
@@ -230,7 +232,7 @@ export class FollowersService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
-      this.sortFollowers();
+      this.sortFollowers(this.sortAscending);
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
@@ -243,12 +245,18 @@ export class FollowersService {
     this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
   }
 
-  sortFollowers(){
+  sortFollowers(ascending: boolean){
+    let left = 1;
+    let right = -1;
+    if(!ascending){
+      left = -1;
+      right = 1;
+    }
     if (this.sortField == "Remaining Life"){
-      this.followers.sort((a, b) => (a.lifespan - a.age >= b.lifespan - b.age) ? 1 : -1);
+      this.followers.sort((a, b) => (a.lifespan - a.age > b.lifespan - b.age) ? left : (a.lifespan - a.age === b.lifespan - b.age) ? 0 : right);
     } else {
       //@ts-ignore
-      this.followers.sort((a, b) => (a[this.sortField.toLowerCase()] >= b[this.sortField.toLowerCase()]) ? 1 : -1);
+      this.followers.sort((a, b) => (a[this.sortField.toLowerCase()] > b[this.sortField.toLowerCase()]) ? left : (a[this.sortField.toLowerCase()] === b[this.sortField.toLowerCase()]) ? 0 : right);
     }
   }
 
@@ -269,7 +277,8 @@ export class FollowersService {
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
       followerLifespanDoubled: this.followerLifespanDoubled,
-      sortField: this.sortField
+      sortField: this.sortField,
+      sortAscending: this.sortAscending,
     }
   }
 
@@ -280,6 +289,7 @@ export class FollowersService {
     this.maxFollowerByType = properties.maxFollowerByType || {};
     this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
     this.sortField = properties.sortField || "Job";
+    this.sortAscending = properties.sortAscending || true;
   }
 
   generateFollower(){
@@ -317,7 +327,7 @@ export class FollowersService {
       power: 1,
       cost: 100
     });
-    this.sortFollowers();
+    this.sortFollowers(this.sortAscending);
     if (this.followers.length >= this.followerCap){
       this.followersMaxed = 'MAXED';
     }

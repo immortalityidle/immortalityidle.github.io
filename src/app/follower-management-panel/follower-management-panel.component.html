@@ -12,6 +12,8 @@
       <option [selected]="followerService.sortField === 'Power'">Power</option>
       <option [selected]="followerService.sortField === 'Remaining'">Remaining Life</option>
     </select>
+    <input type="checkbox" [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
+    <span>sort Ascending</span>
   </span></div>
   <div class="scrollingDiv">
     <table>
