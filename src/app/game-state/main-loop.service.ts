@@ -130,6 +130,7 @@ export class MainLoopService {
   getTPS(div:number) {
     let ticksPassed = 1000/TICK_INTERVAL_MS;
     if (this.characterService && this.unlockAgeSpeed) {
+      //73000 is 200 years. reaches 2x at 600 years, 3x at 1600, 4x at 3000.
       ticksPassed *= Math.sqrt(1+this.characterService.characterState.age/73000);
     }
     if (this.unlockPlaytimeSpeed) {
