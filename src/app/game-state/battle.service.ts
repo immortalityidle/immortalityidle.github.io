@@ -34,7 +34,9 @@ export interface BattleProperties {
   manaShieldUnlocked: boolean,
   manaAttackUnlocked: boolean,
   enableManaShield: boolean,
-  enableManaAttack: boolean
+  enableManaAttack: boolean,
+  highestDamageTaken: number,
+  highestDamageDealt: number
 }
 
 
@@ -56,6 +58,8 @@ export class BattleService {
   manaAttackUnlocked = false;
   tickCounter: number;
   ticksPerFight = 10;
+  highestDamageTaken = 0;
+  highestDamageDealt = 0;
 
   constructor(
     private logService: LogService,
@@ -123,6 +127,8 @@ export class BattleService {
       manaAttackUnlocked: this.manaAttackUnlocked,
       enableManaShield: this.enableManaShield,
       enableManaAttack: this.enableManaAttack,
+      highestDamageDealt: this.highestDamageDealt,
+      highestDamageTaken: this.highestDamageTaken
     }
   }
 
@@ -136,7 +142,9 @@ export class BattleService {
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
     this.enableManaShield = properties.enableManaShield;
     this.enableManaAttack = properties.enableManaAttack;
-  }
+    this.highestDamageDealt = properties.highestDamageDealt || 0;
+    this.highestDamageTaken = properties.highestDamageTaken || 0;
+}
 
   enemiesAttack(){
     for (const enemyStack of this.enemies){
@@ -157,6 +165,9 @@ export class BattleService {
             this.characterService.characterState.status.mana.value -= 10;
           }
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + formatNumber(damage,"en-US", "1.0-2") + " damage", 'INJURY', 'COMBAT');
+          if (damage > this.highestDamageTaken){
+            this.highestDamageTaken = damage;
+          }
           this.characterService.characterState.status.health.value -= damage;
           this.characterService.characterState.increaseAttribute('toughness', 0.01);
 
@@ -216,6 +227,9 @@ export class BattleService {
       if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10){
         damage *= 2;
         this.characterService.characterState.status.mana.value -= 10;
+      }
+      if (damage > this.highestDamageDealt){
+        this.highestDamageDealt = damage;
       }
       this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
       // degrade weapon

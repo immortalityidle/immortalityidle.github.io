@@ -50,15 +50,6 @@ export class StatisticsPanelComponent implements OnInit {
     });    
   }
 
-/*
-battleService:
-  add most damage taken, most damage dealt, damage blocked, 
-activityService:
-  add total exhaustionDays
-  add jobs mastered
-  add day counts for all jobs
-*/
-
   ngOnInit(): void {
   }
 

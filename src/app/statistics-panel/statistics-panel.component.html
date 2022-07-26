@@ -150,30 +150,6 @@
         </tr>
         <tr>
             <td>
-                Open apprenticeships:
-            </td>
-            <td>
-                {{activityService.openApprenticeships}}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Days spend doing odd jobs:
-            </td>
-            <td>
-                {{activityService.oddJobDays}}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Days spent begging:
-            </td>
-            <td>
-                {{activityService.beggingDays}}
-            </td>
-        </tr>
-        <tr>
-            <td>
                 Unlocked Achievements:
             </td>
             <td>
@@ -300,24 +276,62 @@
                 {{characterService.characterState.highestMana}}
             </td>
         </tr>
-
-        
-        
-        
-        
-        
-      
-        
-        
-        
-        
-  
-        
-        
-        
-        
-    
-        
+        <tr>
+            <td>
+                Highest damage dealt:
+            </td>
+            <td>
+                {{battleService.highestDamageDealt | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest damage taken:
+            </td>
+            <td>
+                {{battleService.highestDamageTaken | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spent exhausted
+            </td>
+            <td>
+                {{activityService.totalExhaustedDays | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Completed Apprenticeships
+            </td>
+            <td>
+                {{activityService.completedApprenticeships.length}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Open apprenticeships:
+            </td>
+            <td>
+                {{activityService.openApprenticeships}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spend doing odd jobs:
+            </td>
+            <td>
+                {{activityService.oddJobDays}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spent begging:
+            </td>
+            <td>
+                {{activityService.beggingDays}}
+            </td>
+        </tr>
     </table>
   </div>
 </div>

@@ -25,7 +25,8 @@ export interface ActivityProperties {
   savedActivityLoop: ActivityLoopEntry[],
   autoPauseUnlocked: boolean,
   autoRestUnlocked: boolean,
-  pauseOnImpossibleFail: boolean
+  pauseOnImpossibleFail: boolean,
+  totalExhaustedDays: number,
 }
 
 @Injectable({
@@ -52,7 +53,7 @@ export class ActivityService {
   currentApprenticeship: ActivityType = ActivityType.Resting;
   activityDeath = false; // Simpler to just check a flag for the achievement.
   autoRestUnlocked = false;
-
+  totalExhaustedDays = 0;
 
   constructor(
     private characterService: CharacterService,
@@ -82,6 +83,7 @@ export class ActivityService {
         this.mainLoopService.pause = true;
       }
       if (this.exhaustionDays > 0){
+        this.totalExhaustedDays++;
         this.exhaustionDays--;
         return;
       }
@@ -216,7 +218,8 @@ export class ActivityService {
       currentApprenticeship: this.currentApprenticeship,
       savedActivityLoop: this.savedActivityLoop,
       autoRestUnlocked: this.autoRestUnlocked,
-      pauseOnImpossibleFail: this.pauseOnImpossibleFail
+      pauseOnImpossibleFail: this.pauseOnImpossibleFail,
+      totalExhaustedDays: this.totalExhaustedDays
     }
   }
 
@@ -238,6 +241,7 @@ export class ActivityService {
     this.savedActivityLoop = properties.savedActivityLoop || [];
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
     this.pauseOnImpossibleFail = properties.pauseOnImpossibleFail || true;
+    this.totalExhaustedDays = properties.totalExhaustedDays || 0;
     for (let i = 0; i < 5; i++){
       // upgrade to anything that the loaded attributes allow
       this.upgradeActivities(true);
