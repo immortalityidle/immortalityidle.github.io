@@ -289,7 +289,11 @@ export class FollowersService {
     this.maxFollowerByType = properties.maxFollowerByType || {};
     this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
     this.sortField = properties.sortField || "Job";
-    this.sortAscending = properties.sortAscending || true;
+    if (properties.sortAscending == undefined){
+      this.sortAscending = true;
+    } else {
+      this.sortAscending = properties.sortAscending;
+    }
   }
 
   generateFollower(){
