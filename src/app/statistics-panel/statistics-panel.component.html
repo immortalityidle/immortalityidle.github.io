@@ -150,38 +150,6 @@
         </tr>
         <tr>
             <td>
-                Followers recruited:
-            </td>
-            <td>
-                {{followerService.followersRecruited}}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Open apprenticeships:
-            </td>
-            <td>
-                {{activityService.openApprenticeships}}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Days spend doing odd jobs:
-            </td>
-            <td>
-                {{activityService.oddJobDays}}
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Days spent begging:
-            </td>
-            <td>
-                {{activityService.beggingDays}}
-            </td>
-        </tr>
-        <tr>
-            <td>
                 Unlocked Achievements:
             </td>
             <td>
@@ -228,14 +196,142 @@
                 {{homeService.homesList[homeService.bestHome].name}}
             </td>
         </tr>
-
-        
-        
-        
-        
-        
-    
-        
+        <tr>
+            <td>
+                Follower recruited:
+            </td>
+            <td>
+                {{followerService.totalRecruited}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Followers recruited lately:
+            </td>
+            <td>
+                {{followerService.followersRecruited}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Followers died:
+            </td>
+            <td>
+                {{followerService.totalDied}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Followers dismissed:
+            </td>
+            <td>
+                {{followerService.totalDismissed}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest follower level:
+            </td>
+            <td>
+                {{followerService.highestLevel}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Most money:
+            </td>
+            <td>
+                {{characterService.characterState.highestMoney | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Oldest age:
+            </td>
+            <td>
+                {{characterService.yearify(characterService.characterState.highestAge)}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest health:
+            </td>
+            <td>
+                {{characterService.characterState.highestHealth}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest stamina:
+            </td>
+            <td>
+                {{characterService.characterState.highestStamina}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest mana:
+            </td>
+            <td>
+                {{characterService.characterState.highestMana}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest damage dealt:
+            </td>
+            <td>
+                {{battleService.highestDamageDealt | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Highest damage taken:
+            </td>
+            <td>
+                {{battleService.highestDamageTaken | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spent exhausted
+            </td>
+            <td>
+                {{activityService.totalExhaustedDays | bigNumber}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Completed Apprenticeships
+            </td>
+            <td>
+                {{activityService.completedApprenticeships.length}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Open apprenticeships:
+            </td>
+            <td>
+                {{activityService.openApprenticeships}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spend doing odd jobs:
+            </td>
+            <td>
+                {{activityService.oddJobDays}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Days spent begging:
+            </td>
+            <td>
+                {{activityService.beggingDays}}
+            </td>
+        </tr>
     </table>
   </div>
 </div>

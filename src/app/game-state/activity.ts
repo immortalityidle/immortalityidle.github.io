@@ -39,14 +39,15 @@ export enum ActivityType {
   TalkToDragon,
   GatherArmies,
   ConquerTheWorld,
-  MoveStars
+  MoveStars,
+  Hell
 
 }
 
 export interface ActivityResource {
-  health?: number, 
-  stamina?: number, 
-  mana?: number, 
+  health?: number,
+  stamina?: number,
+  mana?: number,
   nourishment?: number;
 }
 

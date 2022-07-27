@@ -27,7 +27,11 @@ export interface FollowersProperties {
   maxFollowerByType: { [key: string]: number; },
   followerLifespanDoubled: boolean,
   sortField: string,
-  sortAscending: boolean
+  sortAscending: boolean,
+  totalRecruited: number,
+  totalDied: number,
+  totalDismissed: number,
+  highestLevel: number,
 }
 
 export interface FollowerReserve {
@@ -57,6 +61,10 @@ export class FollowersService {
   followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
   sortField = "Job";
   sortAscending = true;
+  totalRecruited = 0;
+  totalDied = 0;
+  totalDismissed = 0;
+  highestLevel = 0;
 
   jobs: jobsType = {
     "builder": {
@@ -217,10 +225,12 @@ export class FollowersService {
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){
           // follower aged off
+          this.totalDied++;
           this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
+          this.totalDismissed++;
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
         } else {
@@ -278,7 +288,11 @@ export class FollowersService {
       maxFollowerByType: this.maxFollowerByType,
       followerLifespanDoubled: this.followerLifespanDoubled,
       sortField: this.sortField,
-      sortAscending: this.sortAscending
+      sortAscending: this.sortAscending,
+      totalRecruited: this.totalRecruited,
+      totalDied: this.totalDied,
+      totalDismissed: this.totalDismissed,
+      highestLevel: this.highestLevel
     }
   }
 
@@ -294,9 +308,14 @@ export class FollowersService {
     } else {
       this.sortAscending = properties.sortAscending;
     }
+    this.totalRecruited = properties.totalRecruited || 0;
+    this.totalDied = properties.totalDied || 0;
+    this.totalDismissed = properties.totalDismissed || 0;
+    this.highestLevel = properties.highestLevel || 0;
   }
 
   generateFollower(){
+    this.totalRecruited++;
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","FOLLOWER");
@@ -318,6 +337,7 @@ export class FollowersService {
 
     if (currentCount >= capNumber){
       this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
+      this.totalDismissed++;
       return;
     }
     
@@ -352,12 +372,14 @@ export class FollowersService {
    * 
    */
   dismissFollower(follower: Follower){
+    this.totalDismissed++;
     const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
     this.followersMaxed = 'UNMAXED';
   }
 
   dismissFollowerAll(follower: Follower){
+    this.totalDismissed += this.followers.length;
     for (let index = this.followers.length - 1; index >= 0; index--){
       if (this.followers[index].job === follower.job){
         this.followers.splice(index, 1);

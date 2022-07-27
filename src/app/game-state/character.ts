@@ -66,6 +66,11 @@ export interface CharacterProperties {
   empowermentFactor: number,
   immortal: boolean,
   easyMode: boolean
+  highestMoney: number,
+  highestAge: number,
+  highestHealth: number,
+  highestStamina: number,
+  highestMana: number,
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -76,7 +81,7 @@ export class Character {
     private titlecasePipe: TitleCasePipe){
   }
 
-  maxMoney = 1000000000000000000000000;
+  maxMoney = 1e24;
   totalLives = 1;
   dead = false;
   attributeScalingLimit = 10;
@@ -226,6 +231,12 @@ export class Character {
     legs: null,
     feet: null
   }
+  highestMoney = 0;
+  highestAge = 0;
+  highestHealth = 0;
+  highestStamina = 0;
+  highestMana = 0;
+
 
   // reset everything but increase aptitudes
   reincarnate(): void {
@@ -394,7 +405,7 @@ export class Character {
       const d = this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
-        const x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 10000000000000, 0.15), 0.5) + d) * empowermentFactor; // Softcap
+        const x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) * empowermentFactor; // Softcap
         const c = 365 * 1000; // Hardcap
       return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
     }
@@ -483,8 +494,13 @@ export class Character {
       healthBonusMagic: this.healthBonusMagic,
       empowermentFactor: this.empowermentFactor,
       immortal: this.immortal,
-      easyMode: this.easyMode
-
+      easyMode: this.easyMode,
+      highestMoney: this.highestMoney,
+      highestAge: this.highestAge,
+      highestHealth: this.highestHealth,
+      highestStamina: this.highestStamina,
+      highestMana: this.highestMana
+    
     }
   }
 
@@ -520,6 +536,12 @@ export class Character {
     this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
     this.easyMode = properties.easyMode || false;
+    this.highestMoney = properties.highestMoney || 0;
+    this.highestAge = properties.highestAge || 0;
+    this.highestHealth = properties.highestHealth || 0;
+    this.highestStamina = properties.highestStamina || 0;
+    this.highestMana = properties.highestMana || 0;
+
     this.recalculateDerivedStats();
   }
 }

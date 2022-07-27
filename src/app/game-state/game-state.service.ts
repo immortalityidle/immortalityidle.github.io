@@ -13,6 +13,7 @@ import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
+import { HellProperties, HellService } from './hell.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -28,6 +29,7 @@ interface GameState {
   autoBuy: AutoBuyerProperties,
   mainLoop: MainLoopProperties,
   impossibleTasks: ImpossibleTaskProperties,
+  hell: HellProperties,
   darkMode: boolean,
   gameStartTimestamp: number,
   easyModeEver: boolean,
@@ -57,7 +59,8 @@ export class GameStateService {
     private autoBuyerService: AutoBuyerService,
     private mainLoopService: MainLoopService,
     private achievementService: AchievementService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
+    private hellService: HellService
 
   ) {
     // @ts-ignore
@@ -90,6 +93,7 @@ export class GameStateService {
     const gameState = JSON.parse(gameStateSerialized) as GameState;
     this.achievementService.setProperties(gameState.achievements);
     this.impossibleTaskService.setProperties(gameState.impossibleTasks);
+    this.hellService.setProperties(gameState.hell || {});
     this.characterService.characterState.setProperties(gameState.character);
     this.homeService.setProperties(gameState.home);
     this.inventoryService.setProperties(gameState.inventory);
@@ -120,6 +124,7 @@ export class GameStateService {
     const gameState: GameState = {
       achievements: this.achievementService.getProperties(),
       impossibleTasks: this.impossibleTaskService.getProperties(),
+      hell: this.hellService.getProperties(),
       character: this.characterService.characterState.getProperties(),
       inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),
@@ -152,7 +157,7 @@ export class GameStateService {
 
   cheat(): void {
     this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","EVENT");
-    this.characterService.characterState.money += 10000000000;
+    this.characterService.characterState.money += 1e10;
     for (const key in this.itemRepoService.items){
       const item = this.itemRepoService.items[key];
       if (item.type === 'manual' && item.use) {
@@ -162,8 +167,8 @@ export class GameStateService {
     const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
     for (const key in keys){
       const attribute = this.characterService.characterState.attributes[keys[key]];
-      attribute.aptitude += 10000000;
-      attribute.value += 10000000;
+      attribute.aptitude += 1e7;
+      attribute.value += 1e7;
     }
     this.inventoryService.addItem(this.inventoryService.generateSpiritGem(25));
     this.homeService.upgradeToNextHome();
