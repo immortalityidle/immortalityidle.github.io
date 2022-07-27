@@ -97,7 +97,7 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Peristent Reincarnator",
+      name: "Persistent Reincarnator",
       description: "You lived one thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
       hint: "The millennial.",
       check: () => {
@@ -111,7 +111,7 @@ export class AchievementService {
     {
       name: "Veteran Cultivator",
       description: "You lived ten thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['totalPlaytimeManual'].name,
-      hint: "It's only about three years of base lifespan.",
+      hint: "A long life. Myriad years.",
       check: () => {
         return this.mainLoopService.totalTicks > 3650000;
       },
@@ -663,12 +663,7 @@ export class AchievementService {
       description: "One of your followers has trained under you so long they have nothing else to learn. In an epiphany you realized how to double your new followers' lifespan.",
       hint: "Endless training.",
       check: () => {
-        for (const follower of this.followerService.followers){
-          if (follower.power === 100){
-            return true;
-          }
-        }
-        return false;
+        return this.followerService.highestLevel >= 100;
       },
       effect: () => {
         this.followerService.followerLifespanDoubled = true;
@@ -701,7 +696,7 @@ export class AchievementService {
     },
     {
       name: "Breaks are Good",
-      description: "You have collected 2 hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
+      description: "You have collected two hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
       hint: "Take a day off from cultivating.", //it takes 20h to get
       check: () => {
         return this.mainLoopService.bankedTicks > 2*60*60*40; //there are 40 ticks a second
@@ -712,7 +707,19 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Becoming Quite Old",
+      name: "Breaks are Bad",
+      description: "You died from overwork performing an activity without necessary rest and unlocked the " + this.itemRepoService.items['autoRestManual'].name,
+      hint: "There's no time to rest, cultivating is life.", 
+      check: () => {
+        return this.activityService.activityDeath;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['autoRestManual']);
+      },
+      unlocked: false
+    },
+    {
+      name: "Still Spry",
       description: "You have lived to be 300 years old and unlocked the " + this.itemRepoService.items['ageSpeedManual'].name,
       hint: "One step to becoming immortal is to live longer.",
       check: () => {

@@ -43,6 +43,13 @@ export enum ActivityType {
 
 }
 
+export interface ActivityResource {
+  health?: number, 
+  stamina?: number, 
+  mana?: number, 
+  nourishment?: number;
+}
+
 export interface Activity {
   name: string[];
   level: number;
@@ -55,6 +62,7 @@ export interface Activity {
   unlocked: boolean;
   skipApprenticeshipLevel: number;
   lastIncome?: number;
+  resourceUse?: ActivityResource[]
 }
 
 export interface ActivityLoopEntry {

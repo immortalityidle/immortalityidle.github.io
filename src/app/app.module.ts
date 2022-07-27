@@ -35,6 +35,7 @@ import { HorizontalPanelSliderComponent } from './panel-slider/horizontal-panel-
 import { FollowerManagementPanelComponent } from './follower-management-panel/follower-management-panel.component';
 import { TimeOptionsPanelComponent } from './time-options-panel/time-options-panel.component';
 import { LogFilterPanelComponent } from './log-filter-panel/log-filter-panel.component';
+import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -73,6 +74,7 @@ const materialModules = [
     FollowerManagementPanelComponent,
     TimeOptionsPanelComponent,
     LogFilterPanelComponent,
+    StatisticsPanelComponent,
   ],
   imports: [
     BrowserModule,

@@ -52,7 +52,14 @@ export class CharacterService {
           deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
         }
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
-        deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        if (this.activityService.activityDeath){
+          deathMessage = "You die from overwork at the age of " + this.formatAge() + ".";
+        } else {
+          deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
+        }
       } else if (this.characterState.immortal && this.characterState.status.health.value < 0) {
         this.characterState.status.health.value = 0;
       }
@@ -88,6 +95,23 @@ export class CharacterService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
+
+      if (this.characterState.highestMoney < this.characterState.money){
+        this.characterState.highestMoney = this.characterState.money;
+      }
+      if (this.characterState.highestAge < this.characterState.age){
+        this.characterState.highestAge = this.characterState.age;
+      }
+      if (this.characterState.highestHealth < this.characterState.status.health.value){
+        this.characterState.highestHealth = this.characterState.status.health.value;
+      }
+      if (this.characterState.highestStamina < this.characterState.status.stamina.value){
+        this.characterState.highestStamina = this.characterState.status.stamina.value;
+      }
+      if (this.characterState.highestMana < this.characterState.status.mana.value){
+        this.characterState.highestMana = this.characterState.status.mana.value;
+      }
+    
       if (this.characterState.dead){
         return;
       }
@@ -171,7 +195,7 @@ export class CharacterService {
   }
 
   condenseSoulCore(){
-    if (this.characterState.aptitudeGainDivider <= 10){
+    if (this.characterState.aptitudeGainDivider <= 5){
       // double check we're not going over the max rank
       return;
     }
@@ -208,13 +232,7 @@ export class CharacterService {
   }
 
   meridianRank(): number {
-    let rank = 0;
-    let cost = this.characterState.reinforceMeridiansOriginalCost;
-    while (cost < this.characterState.reinforceMeridiansCost){
-      cost *= 10;
-      rank++;
-    }
-    return rank;
+    return Math.log10(this.characterState.reinforceMeridiansCost / this.characterState.reinforceMeridiansOriginalCost); // Log base 10 because the cost is multiplied by 10 per rank.
   }
 
   upgradeBloodline() {

@@ -64,6 +64,12 @@ export interface CharacterProperties {
   healthBonusMagic: number,
   empowermentFactor: number,
   immortal: boolean,
+  easyMode: boolean
+  highestMoney: number,
+  highestAge: number,
+  highestHealth: number,
+  highestStamina: number,
+  highestMana: number,
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -96,6 +102,7 @@ export class Character {
   healthBonusMagic = 0;
   empowermentFactor = 1;
   immortal = false;
+  easyMode = false;
   ascensionUnlocked = false;
   attributes: AttributeObject = {
     strength: {
@@ -223,6 +230,12 @@ export class Character {
     legs: null,
     feet: null
   }
+  highestMoney = 0;
+  highestAge = 0;
+  highestHealth = 0;
+  highestStamina = 0;
+  highestMana = 0;
+
 
   // reset everything but increase aptitudes
   reincarnate(): void {
@@ -358,7 +371,11 @@ export class Character {
   getEmpowermentMult(): number{
     const max = 99;
     const empowermentFactor = this.empowermentFactor - 1;
-    return 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
+    let returnValue = 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
+    if (this.easyMode){
+      returnValue *= 100;
+    }
+    return returnValue;
   }
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
@@ -474,7 +491,14 @@ export class Character {
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
       empowermentFactor: this.empowermentFactor,
-      immortal: this.immortal
+      immortal: this.immortal,
+      easyMode: this.easyMode,
+      highestMoney: this.highestMoney,
+      highestAge: this.highestAge,
+      highestHealth: this.highestHealth,
+      highestStamina: this.highestStamina,
+      highestMana: this.highestMana
+    
     }
   }
 
@@ -497,7 +521,8 @@ export class Character {
     // This is derived to avoid save issues. Calculate rank and subtract from power to reduce the exponential aptitude divider.
     this.aptitudeGainDivider = 5 * Math.pow(1.5, 9 - Math.log10(this.condenseSoulCoreCost / this.condenseSoulCoreOriginalCost)); 
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
-    this.attributeScalingLimit = properties.attributeScalingLimit;
+    // Similarly here, 10 * 2 ^ rank.
+    this.attributeScalingLimit = 10 * Math.pow(2, Math.log10(this.reinforceMeridiansCost / this.reinforceMeridiansOriginalCost));
     this.attributeSoftCap = properties.attributeSoftCap;
     this.bloodlineRank = properties.bloodlineRank;
     this.bloodlineCost = 1000 * Math.pow(100, this.bloodlineRank); // This is derived to avoid save issues.
@@ -508,6 +533,13 @@ export class Character {
     this.healthBonusMagic = properties.healthBonusMagic || 0;
     this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
+    this.easyMode = properties.easyMode || false;
+    this.highestMoney = properties.highestMoney || 0;
+    this.highestAge = properties.highestAge || 0;
+    this.highestHealth = properties.highestHealth || 0;
+    this.highestStamina = properties.highestStamina || 0;
+    this.highestMana = properties.highestMana || 0;
+
     this.recalculateDerivedStats();
   }
 }

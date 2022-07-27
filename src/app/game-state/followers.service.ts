@@ -25,7 +25,13 @@ export interface FollowersProperties {
   followers: Follower[],
   autoDismissUnlocked: boolean,
   maxFollowerByType: { [key: string]: number; },
-  followerLifespanDoubled: boolean
+  followerLifespanDoubled: boolean,
+  sortField: string,
+  sortAscending: boolean,
+  totalRecruited: number,
+  totalDied: number,
+  totalDismissed: number,
+  highestLevel: number,
 }
 
 export interface FollowerReserve {
@@ -53,6 +59,12 @@ export class FollowersService {
   maxFollowerByType: { [key: string]: number; } = {};
   followerCap = 0;
   followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
+  sortField = "Job";
+  sortAscending = true;
+  totalRecruited = 0;
+  totalDied = 0;
+  totalDismissed = 0;
+  highestLevel = 0;
 
   jobs: jobsType = {
     "builder": {
@@ -203,7 +215,7 @@ export class FollowersService {
       if (this.characterService.characterState.dead){
         return;
       }
-      this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+      this.updateFollowerCap();
       if (this.characterService.characterState.age % 18250 === 0){
         // another 50xth birthday, you get a follower
         this.generateFollower();
@@ -213,11 +225,13 @@ export class FollowersService {
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){
           // follower aged off
+          this.totalDied++;
           this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
           this.followersMaxed = 'UNMAXED';
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
+          this.totalDismissed++;
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
           this.followersMaxed = 'UNMAXED';
@@ -226,10 +240,34 @@ export class FollowersService {
         }
       }
     });
+
+    mainLoopService.longTickSubject.subscribe(() => {
+      this.sortFollowers(this.sortAscending);
+    });
+
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
 
+  }
+
+  updateFollowerCap(){
+    this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+  }
+
+  sortFollowers(ascending: boolean){
+    let left = 1;
+    let right = -1;
+    if(!ascending){
+      left = -1;
+      right = 1;
+    }
+    if (this.sortField == "Remaining Life"){
+      this.followers.sort((a, b) => (a.lifespan - a.age > b.lifespan - b.age) ? left : (a.lifespan - a.age === b.lifespan - b.age) ? 0 : right);
+    } else {
+      //@ts-ignore
+      this.followers.sort((a, b) => (a[this.sortField.toLowerCase()] > b[this.sortField.toLowerCase()]) ? left : (a[this.sortField.toLowerCase()] === b[this.sortField.toLowerCase()]) ? 0 : right);
+    }
   }
 
   followerWorks(follower: Follower){
@@ -248,7 +286,13 @@ export class FollowersService {
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
-      followerLifespanDoubled: this.followerLifespanDoubled
+      followerLifespanDoubled: this.followerLifespanDoubled,
+      sortField: this.sortField,
+      sortAscending: this.sortAscending,
+      totalRecruited: this.totalRecruited,
+      totalDied: this.totalDied,
+      totalDismissed: this.totalDismissed,
+      highestLevel: this.highestLevel
     }
   }
 
@@ -258,9 +302,20 @@ export class FollowersService {
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
     this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
+    this.sortField = properties.sortField || "Job";
+    if (properties.sortAscending == undefined){
+      this.sortAscending = true;
+    } else {
+      this.sortAscending = properties.sortAscending;
+    }
+    this.totalRecruited = properties.totalRecruited || 0;
+    this.totalDied = properties.totalDied || 0;
+    this.totalDismissed = properties.totalDismissed || 0;
+    this.highestLevel = properties.highestLevel || 0;
   }
 
   generateFollower(){
+    this.totalRecruited++;
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","FOLLOWER");
@@ -282,6 +337,7 @@ export class FollowersService {
 
     if (currentCount >= capNumber){
       this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
+      this.totalDismissed++;
       return;
     }
     
@@ -295,6 +351,7 @@ export class FollowersService {
       power: 1,
       cost: 100
     });
+    this.sortFollowers(this.sortAscending);
     if (this.followers.length >= this.followerCap){
       this.followersMaxed = 'MAXED';
     }
@@ -315,12 +372,14 @@ export class FollowersService {
    * 
    */
   dismissFollower(follower: Follower){
+    this.totalDismissed++;
     const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
     this.followersMaxed = 'UNMAXED';
   }
 
   dismissFollowerAll(follower: Follower){
+    this.totalDismissed += this.followers.length;
     for (let index = this.followers.length - 1; index >= 0; index--){
       if (this.followers[index].job === follower.job){
         this.followers.splice(index, 1);
