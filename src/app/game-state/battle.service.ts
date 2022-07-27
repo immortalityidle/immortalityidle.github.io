@@ -372,11 +372,11 @@ export class BattleService {
     },
     death: {
       name: "Death itself",
-      health: 1e15, // Make Death last 85k years when fighting with level 10 scout and a 1 billion attack weapon. That's about 3 full days of real time right now.
-      maxHealth: 1e15, // but 1 billion attack takes less than a full realtime day, and they'll probably be improving the weapon during the fight too.
+      health: 1e14, 
+      maxHealth: 1e14, 
       accuracy: 0.99,
-      attack: 1e8,
-      defense: 1e8,
+      attack: 3e8,
+      defense: 3e8,
       loot: [
         this.itemRepoService.items['immortality']
       ],
