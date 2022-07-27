@@ -83,7 +83,7 @@ export class ActivityService {
       if (this.characterService.characterState.dead){
         return;
       }
-      if (this.pauseBeforeDeath && this.characterService.characterState.age >= this.characterService.characterState.lifespan - 1){
+      if (this.pauseBeforeDeath && this.characterService.characterState.age >= this.characterService.characterState.lifespan - 1 && !this.characterService.characterState.immortal){
         this.logService.addLogMessage("The end of your natural life is imminent. Game paused.", "INJURY", "EVENT");
         this.mainLoopService.pause = true;
       }
@@ -347,7 +347,7 @@ export class ActivityService {
     }
     if (this.autoRestart){
       this.checkRequirements(true);
-      if (this.pauseOnDeath){
+      if (this.pauseOnDeath && !this.characterService.characterState.immortal){
         this.mainLoopService.pause = true;
       }
     } else {
