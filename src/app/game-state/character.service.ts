@@ -120,7 +120,7 @@ export class CharacterService {
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
-      if (this.fatherGift){
+      if (this.fatherGift && !this.characterState.imperial){ // Skip the family gifts if you have an Eternal Empire
         this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
           'STANDARD', 'EVENT');
         this.characterState.money += 200;

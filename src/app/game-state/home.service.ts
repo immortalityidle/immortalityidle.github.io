@@ -73,7 +73,7 @@ export interface HomeProperties {
   highestLandPrice: number,
   mostFields: number,
   highestAverageYield: number,
-  bestHome: HomeType;
+  bestHome: HomeType,
 
 }
 
@@ -533,8 +533,13 @@ export class HomeService {
 
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
-        if (this.grandfatherTent){
-          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on  it.", "STANDARD", 'EVENT');
+        if (this.characterService.characterState.imperial){
+          this.logService.addLogMessage("You reincarnate as one of your descendants and your family recognizes you as you age.", "STANDARD", 'EVENT');
+          this.logService.addLogMessage("Your family steps aside and assists your takeover of the Empire.", "STANDARD", 'EVENT');
+          this.setCurrentHome(this.getHomeFromValue(HomeType.Capital));
+          this.characterService.characterState.money = this.characterService.characterState.maxMoney;
+        } else if (this.grandfatherTent){
+          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on it.", "STANDARD", 'EVENT');
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
           this.characterService.characterState.money += 50;
           this.setCurrentHome(this.nextHome);
@@ -569,8 +574,7 @@ export class HomeService {
       highestLandPrice: this.highestLandPrice,
       mostFields: this.mostFields,
       highestAverageYield: this.highestAverageYield,
-      bestHome: this.bestHome
-    
+      bestHome: this.bestHome,
     }
   }
 

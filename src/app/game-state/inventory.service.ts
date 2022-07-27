@@ -328,7 +328,7 @@ export class InventoryService {
       materialPrefix = "wooden";
     }
     let baseName = defaultName;
-    if (baseName == undefined){
+    if (baseName === undefined){
       baseName = WeaponNames[Math.floor(Math.random() * WeaponNames.length)]
     }
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
@@ -556,7 +556,7 @@ export class InventoryService {
       namePicker = ShoeNames;
     }
     let baseName = defaultName;
-    if (baseName == undefined){
+    if (baseName === undefined){
       baseName = namePicker[Math.floor(Math.random() * namePicker.length)];
     }
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
@@ -716,7 +716,9 @@ export class InventoryService {
     for (let i = 0; i < this.maxItems; i++){
       this.itemStacks.push(null);
     }
-
+    if (this.characterService.characterState.imperial) {
+      return; // Skip the family gifts if you have an Eternal Empire
+    }
     if (this.motherGift) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
@@ -857,7 +859,7 @@ export class InventoryService {
         if (numberToUse > 0){
           this.useItem(item, quantity);
           quantity -= numberToUse;
-          if (quantity == 0){
+          if (quantity === 0){
             return -1;
           }
         }
@@ -883,7 +885,7 @@ export class InventoryService {
         if (numberToSell > 0){
           this.characterService.characterState.money += item.value * numberToSell;
           quantity -= numberToSell;
-          if (quantity == 0){
+          if (quantity === 0){
             return -1;
           }
         }
@@ -936,7 +938,7 @@ export class InventoryService {
     // if we're here we didn't find a slot for anything/everything.
     if (this.autoSellUnlocked){
       this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
-      this.characterService.characterState.money += item.value;
+      this.characterService.characterState.money += item.value * quantity;
     } else {
       this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you threw it away.`, 'STANDARD', 'EVENT');
     }
@@ -1042,10 +1044,10 @@ export class InventoryService {
       // use all the ones you have now
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack == null){
+        if (itemStack === null){
           continue;
         }
-        if (itemStack.item.name == item.name){
+        if (itemStack.item.name === item.name){
             this.useItemStack(itemStack, itemStack.quantity);
         }
       }
@@ -1193,10 +1195,10 @@ export class InventoryService {
     let itemCount = 0;
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
-      if (itemIterator == null){
+      if (itemIterator === null){
         continue;
       }
-      if (itemIterator.item.name == itemName) {
+      if (itemIterator.item.name === itemName) {
         itemCount += itemIterator.quantity;
       }
     }
