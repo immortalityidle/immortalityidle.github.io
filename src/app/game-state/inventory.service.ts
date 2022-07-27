@@ -192,13 +192,14 @@ export class InventoryService {
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead){
+      if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
         return;
-      }
-      if (this.autoequipBestWeapon && this.autoequipBestEnabled){
+      }//if autoequip is unlocked, but automerge isn't, equip best
+      //automerge will merge into equipped if both are unlocked
+      if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked){
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor && this.autoequipBestEnabled){
+      if (this.autoequipBestArmor && this.autoArmorMergeUnlocked){
         this.autoequipArmor();
       }
     });
@@ -1331,16 +1332,18 @@ export class InventoryService {
         }
       }
     }
-    // finally, merge the last item with that slot into the equipped item (if present and both weapon and armor autoequips are unlocked)
-    if (destinationItem !== null && this.autoequipBestWeapon && this.autoequipBestArmor){
+    // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
+    if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
       sourceItem = this.characterService.characterState.equipment[slot];
       if (sourceItem === null){
         return;
       }
-      if (slot === 'rightHand' || slot === 'leftHand'){
+      if ((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) {
         destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", sourceItem.weaponStats?.baseName);
-      } else {
+      } else if (slot !== 'rightHand' && slot !== 'leftHand' &&this.autoequipBestArmor) {
         destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot, sourceItem.armorStats?.baseName);
+      } else {//slot doesn't match the auto-equip owned.
+        return;
       }
       this.characterService.characterState.equipment[slot] = destinationItem;
       this.itemStacks[lastdestinationIndex] = null;

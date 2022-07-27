@@ -1,5 +1,10 @@
 <div class='darkMode'>
-    <h3>Impossible Tasks</h3>
+    <h3>Impossible Tasks</h3> 
+    <span>
+      <input type="checkbox" (change)="pauseOnImpossibleFailChange($event)"
+        id="pauseOnImpossibleFail" [checked]="activityService.pauseOnImpossibleFail"/>
+      <label for="pauseOnImpossibleFail">Automatically pause if task related activity fails</label>
+    </span>
     <hr/>
     <div>
         <table>
