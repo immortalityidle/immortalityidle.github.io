@@ -634,13 +634,19 @@ export class ActivityService {
       description: ['Swim deep and attach one of your chains to the island, then pull.'],
       consequenceDescription: ['Uses 1000000 Stamina when carrying something REALLY heavy to try hauling something really REALLY heavy. You\'re going to need an Unbreakable Chain and a long time to rest.'],
       consequence: [() => {
-        if (this.inventoryService.consume("chain") > 0 ){
+        if (this.characterService.characterState.status.stamina.value >= 1000000 && this.inventoryService.consume("chain") > 0 ){
           this.characterService.characterState.status.stamina.value -= 1000000;
           this.logService.addLogMessage("You attach a chain to the island, and give your chains a long, strenuous tug.","STANDARD","EVENT");
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].progress++;
           this.impossibleTaskService.checkCompletion();
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete){
             this.logService.addLogMessage("With a mighty pull of 777 chains, the island comes loose. You haul it to the surface.","STANDARD","STORY");
+          }
+        } else if (this.inventoryService.consume("chain", 0)){
+          this.logService.addLogMessage("You strain yourself trying to lug the chain to an anchor point and collapse.","INJURY","EVENT");
+          this.characterService.characterState.status.stamina.value -= 1000000;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
           }
         } else {
           this.logService.addLogMessage("You pass time exploring the hidden tunnels without a chain until a horror of the depths takes a nibble.","INJURY","EVENT");
