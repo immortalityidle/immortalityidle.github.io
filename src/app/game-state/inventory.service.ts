@@ -97,6 +97,7 @@ export interface InventoryProperties {
   thrownAwayItems: number,
   autoSellOldGemsUnlocked: boolean,
   autoSellOldGemsEnabled: boolean,
+  autoBuyFood: boolean
 }
 
 @Injectable({
@@ -139,6 +140,7 @@ export class InventoryService {
   mergeCounter = 0;
   autoSellOldGemsUnlocked: boolean;
   autoSellOldGemsEnabled: boolean;
+  autoBuyFood = true;
 
   constructor(
     private logService: LogService,
@@ -234,7 +236,7 @@ export class InventoryService {
       thrownAwayItems: this.thrownAwayItems,
       autoSellOldGemsUnlocked: this.autoSellOldGemsUnlocked,
       autoSellOldGemsEnabled: this.autoSellOldGemsEnabled,
-
+      autoBuyFood: this.autoBuyFood
     }
   }
 
@@ -267,7 +269,7 @@ export class InventoryService {
     this.thrownAwayItems = properties.thrownAwayItems || 0;
     this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;
     this.autoSellOldGemsEnabled = properties.autoSellOldGemsEnabled || false;
-
+    this.autoBuyFood = properties.autoBuyFood ?? true;
   }
 
   farmFoodList = [
@@ -765,7 +767,7 @@ export class InventoryService {
     } else {
       // no food found, buy a bowl of rice automatically
       this.noFood = true;
-      if (this.characterService.characterState.money > 0) {
+      if (this.characterService.characterState.money > 0 && this.autoBuyFood) {
         this.characterService.characterState.money--;
         this.characterService.characterState.status.nourishment.value++;
       }

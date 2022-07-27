@@ -12,6 +12,13 @@
           <label for="easyMode">This game is much too hard and takes much too long. Check this to make it easier. Be warned: you will forever be known as a cultivator who took the easy path to immortality.</label>
         </span>
       </div>
+      <div class="optionField">
+        <span>
+          <input type="checkbox" (change)="autBuyFoodChange($event)"
+            id="autoBuyFood"  [checked]="inventoryService.autoBuyFood">
+          <label for="autoBuyFood">Automatically buy rice each day if you have no food to avoid starvation.</label>
+        </span>
+      </div>
     </mat-tab>
     <mat-tab *ngIf="homeService.autoBuyLandUnlocked || homeService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked">
       <ng-template mat-tab-label>

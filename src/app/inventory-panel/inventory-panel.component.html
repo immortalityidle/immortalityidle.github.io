@@ -3,8 +3,8 @@
       <div class="inventoryLabelColumn">Inventory</div>
       <div class="moneyLabelColumn">Money: </div>
       <div class="moneyColumn">{{characterService.characterState.money | bigNumber}} Taels</div>
-      <div><mat-icon *ngIf="inventoryService.noFood" class="noFood"
-        placement="left" tooltip="You have no food in your inventory. You will spend money on food each day to avoid starvation.">
+      <div><mat-icon *ngIf="inventoryService.noFood" class="noFood" placement="left" 
+        tooltip="{{inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
         soup_kitchen
       </mat-icon></div>
   </h3>

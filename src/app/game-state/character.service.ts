@@ -40,15 +40,17 @@ export class CharacterService {
         deathMessage = "You release your soul from your body at the age of " + this.formatAge() + ".";
       } else if (this.characterState.age >= this.characterState.lifespan && !this.characterState.immortal) {
         deathMessage = "You reach the end of your natural life and pass away from natural causes at the age of " + this.formatAge() + ".";
-      } else if (this.characterState.status.nourishment.value <= 0 && !this.characterState.immortal) {
+      } else if (this.characterState.status.nourishment.value <= 0) {
+        this.characterState.status.nourishment.value = 0;
         if (this.characterState.attributes.spirituality.value > 0){
           // you're spritual now, you can fast!
-          this.characterState.status.health.value -= 20;
+          console.log("hit for hunger");
+          this.characterState.status.health.value -= Math.max(this.characterState.status.health.value * 0.2, 20);
           this.characterState.increaseAttribute('spirituality', 0.1);
-          if (this.characterState.status.health.value <= 0) {
+          if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
             deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
           }
-        } else {
+        } else if (!this.characterState.immortal) {
           deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
         }
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {

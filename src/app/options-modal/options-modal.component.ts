@@ -121,4 +121,9 @@ export class OptionsModalComponent {
     this.gameStateService.easyModeEver = true;
     this.characterService.characterState.easyMode = event.target.checked;
   }
+
+  autBuyFoodChange(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoBuyFood = event.target.checked;
+  }
 }
