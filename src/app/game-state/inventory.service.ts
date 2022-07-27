@@ -403,13 +403,13 @@ export class InventoryService {
       const value = this.consume("spiritGem");
       if (value > 0){
         grade += value;
-      }
-      if (Math.random() < 0.1){
-        this.generatePill(grade);
-        return;
+        if (Math.random() < 0.1){
+          //non-master alch can generate pills, if using a spirit gem
+          this.generatePill(grade);
+          return;
+        }
       }
     } else if (masterLevel){
-      // master level can make pills even without gems
       if (Math.random() < 0.1){
         this.generatePill(grade);
         return;
@@ -555,10 +555,7 @@ export class InventoryService {
     } else if (slot === 'feet'){
       namePicker = ShoeNames;
     }
-    let baseName = defaultName;
-    if (baseName == undefined){
-      baseName = namePicker[Math.floor(Math.random() * namePicker.length)];
-    }
+    const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'CRAFTING');
     const durability = grade * 5 + Math.floor(Math.random() * grade * 5);
@@ -936,7 +933,7 @@ export class InventoryService {
     // if we're here we didn't find a slot for anything/everything.
     if (this.autoSellUnlocked){
       this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
-      this.characterService.characterState.money += item.value;
+      this.characterService.characterState.money += item.value * quantity;
     } else {
       this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you threw it away.`, 'STANDARD', 'EVENT');
     }
