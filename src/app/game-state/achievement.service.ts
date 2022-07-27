@@ -742,6 +742,16 @@ export class AchievementService {
       },
       unlocked: false
     },
+    {
+      name: "Immortality",
+      description: "Congratulations! You are now immortal.",
+      hint: "Name of the game.",
+      check: () => {
+        return this.characterService.characterState.immortal;
+      },
+      effect: () => {},
+      unlocked: false
+    },
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean){

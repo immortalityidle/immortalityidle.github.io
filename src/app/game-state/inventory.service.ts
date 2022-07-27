@@ -258,7 +258,11 @@ export class InventoryService {
     this.autoSellOldOre = properties.autoSellOldOre || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
-    this.autoequipBestEnabled = properties.autoequipBestEnabled || true;
+    if(properties.autoequipBestEnabled === undefined){
+      this.autoequipBestEnabled = true;
+    } else{
+      this.autoequipBestEnabled = properties.autoequipBestEnabled;
+    }
     this.maxStackSize = properties.maxStackSize || 100;
     this.thrownAwayItems = properties.thrownAwayItems || 0;
     this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;
@@ -403,13 +407,13 @@ export class InventoryService {
       const value = this.consume("spiritGem");
       if (value > 0){
         grade += value;
-      }
-      if (Math.random() < 0.1){
-        this.generatePill(grade);
-        return;
+        if (Math.random() < 0.1){
+          //non-master alch can generate pills, if using a spirit gem
+          this.generatePill(grade);
+          return;
+        }
       }
     } else if (masterLevel){
-      // master level can make pills even without gems
       if (Math.random() < 0.1){
         this.generatePill(grade);
         return;
@@ -555,10 +559,7 @@ export class InventoryService {
     } else if (slot === 'feet'){
       namePicker = ShoeNames;
     }
-    let baseName = defaultName;
-    if (baseName === undefined){
-      baseName = namePicker[Math.floor(Math.random() * namePicker.length)];
-    }
+    const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'CRAFTING');
     const durability = grade * 5 + Math.floor(Math.random() * grade * 5);
@@ -1145,8 +1146,8 @@ export class InventoryService {
   }
 
   consume(consumeType: string, quantity = 1): number{
-    if (quantity < 1){
-      quantity = 1; //handle potential 0 and negatives just in case
+    if (quantity < 0){
+      quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
     }
 
     let itemValue = -1;

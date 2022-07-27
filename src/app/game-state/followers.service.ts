@@ -228,17 +228,16 @@ export class FollowersService {
           this.totalDied++;
           this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
-          this.followersMaxed = 'UNMAXED';
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
           this.totalDismissed++;
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
-          this.followersMaxed = 'UNMAXED';
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
         }
       }
+      this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -253,6 +252,7 @@ export class FollowersService {
 
   updateFollowerCap(){
     this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+    this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
   }
 
   sortFollowers(ascending: boolean){

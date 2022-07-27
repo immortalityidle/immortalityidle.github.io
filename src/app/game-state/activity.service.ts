@@ -244,7 +244,11 @@ export class ActivityService {
     this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
     this.savedActivityLoop = properties.savedActivityLoop || [];
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
-    this.pauseOnImpossibleFail = properties.pauseOnImpossibleFail || true;
+    if (properties.pauseOnImpossibleFail === undefined){
+      this.pauseOnImpossibleFail = true;
+    } else {
+      this.pauseOnImpossibleFail = properties.pauseOnImpossibleFail;
+    }
     this.totalExhaustedDays = properties.totalExhaustedDays || 0;
     for (let i = 0; i < 5; i++){
       // upgrade to anything that the loaded attributes allow
@@ -609,14 +613,22 @@ export class ActivityService {
       name: ['Forge Unbreakable Chain'],
       activityType: ActivityType.ForgeChains,
       description: ['Forge a chain strong enough to pull the island from the depths.'],
-      consequenceDescription: ['Uses 100 Stamina. If you have the right facilities and materials you might be able to create an unbreakable chain.'],
+      consequenceDescription: ['Uses 100 Stamina. If you have the right facilities, materials, and knowledge you might be able to create an unbreakable chain.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
         const metalValue = this.inventoryService.consume('metal');
-        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil" && metalValue >= 150){
+        if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil" && metalValue >= 150 && this.characterService.characterState.attributes.metalLore.value >= 1e9){
           if (Math.random() < 0.1){
-            this.logService.addLogMessage("Your anvil rings with power. A new chain is forged!","STANDARD","CRAFTING");
+            this.logService.addLogMessage("Your anvil gives off an ear-splitting ringing and echoes endlessly into the depths. The new chain glows with power!","STANDARD","CRAFTING");
             this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
+          } else {
+            this.logService.addLogMessage("Your anvil rings and weakly echoes into the depths. You throw aside the useless dull chain.","STANDARD","CRAFTING");
+          }
+        } else if (this.characterService.characterState.attributes.metalLore.value < 1e9){
+          this.logService.addLogMessage("You lack the necessary knowledge and cause a deadly explosion.","INJURY","EVENT");
+          this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.6;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
           }
         } else {
           this.logService.addLogMessage("You fumble with the wrong tools and materials and hurt yourself.","INJURY","EVENT");
@@ -639,19 +651,25 @@ export class ActivityService {
       level: 0,
       name: ['Attach Chains to the Island'],
       activityType: ActivityType.AttachChains,
-      description: ['Swim deep and attach one of your chains to the island.'],
-      consequenceDescription: ['Uses 1000 Stamina. Requires an unbreakable chain.'],
+      description: ['Swim deep and attach one of your chains to the island, then pull.'],
+      consequenceDescription: ['Uses 1000000 Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.'],
       consequence: [() => {
-        this.characterService.characterState.status.stamina.value -= 1000;
-        if (this.inventoryService.consume("chain") > 0){
-          this.logService.addLogMessage("You attach a chain to the island. and give your chains a tug.","STANDARD","EVENT");
+        if (this.characterService.characterState.status.stamina.value >= 1000000 && this.inventoryService.consume("chain") > 0 ){
+          this.characterService.characterState.status.stamina.value -= 1000000;
+          this.logService.addLogMessage("You attach a chain to the island, and give your chains a long, strenuous tug.","STANDARD","EVENT");
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].progress++;
           this.impossibleTaskService.checkCompletion();
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete){
-            this.logService.addLogMessage("With a mighty pull, the island comes loose. You haul it to the surface.","STANDARD","STORY");
+            this.logService.addLogMessage("With a mighty pull of 777 chains, the island comes loose. You haul it to the surface.","STANDARD","STORY");
+          }
+        } else if (this.inventoryService.consume("chain", 0)){
+          this.logService.addLogMessage("You strain yourself trying to lug the chain to an anchor point and collapse.","INJURY","EVENT");
+          this.characterService.characterState.status.stamina.value -= 1000000;
+          if (this.pauseOnImpossibleFail){
+            this.mainLoopService.pause = true;
           }
         } else {
-          this.logService.addLogMessage("You fumble around in the depths without a chain until a shark comes by and takes a bite.","INJURY","EVENT");
+          this.logService.addLogMessage("You pass time exploring the hidden tunnels without a chain until a horror of the depths takes a nibble.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
           if (this.pauseOnImpossibleFail){
             this.mainLoopService.pause = true;
@@ -659,7 +677,7 @@ export class ActivityService {
         }
       }],
       resourceUse: [{
-        stamina: 1000
+        stamina: 1000000
       }],
       requirements: [{
       }],
@@ -2192,7 +2210,7 @@ export class ActivityService {
         this.characterService.characterState.status.mana.value -= 10;
         const gemValue = this.inventoryService.consume('spiritGem');
         if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
-          this.inventoryService.upgradeEquipment(gemValue);
+          this.inventoryService.upgradeEquipment(Math.floor(Math.pow(gemValue/10,2.4)));
         }
       }],
       resourceUse: [{
@@ -2200,9 +2218,9 @@ export class ActivityService {
         mana: 10
       }],
       requirements: [{
-        strength: 500000000,    //50m
-        toughness: 500000000,   //50m
-        speed: 500000000,       //50m
+        strength: 2e7,
+        toughness: 2e7,
+        speed: 2e7,
         spirituality: 10000
       }],
       unlocked: false,
