@@ -331,10 +331,7 @@ export class InventoryService {
       slot = 'leftHand';
       materialPrefix = "wooden";
     }
-    let baseName = defaultName;
-    if (baseName === undefined){
-      baseName = WeaponNames[Math.floor(Math.random() * WeaponNames.length)]
-    }
+    const baseName = defaultName ?? WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'CRAFTING');
     const durability = grade * 10 + Math.floor(Math.random() * grade * 5);
