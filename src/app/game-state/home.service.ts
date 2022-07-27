@@ -727,7 +727,7 @@ export class HomeService {
       if (this.fields[i].daysToHarvest <= 0){
         let fieldYield = this.fields[i].yield;
         if (this.fields.length + this.extraFields > 300){
-          fieldYield = Math.floor((this.fields.length + this.extraFields) / 300);
+          fieldYield = Math.floor(fieldYield * (this.fields.length + this.extraFields) / 300);
         }
         totalDailyYield += fieldYield;
         this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);

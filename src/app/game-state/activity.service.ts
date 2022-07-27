@@ -1928,13 +1928,13 @@ export class ActivityService {
         this.characterService.characterState.status.mana.value -= 10;
         const gemValue = this.inventoryService.consume('spiritGem');
         if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
-          this.inventoryService.upgradeEquipment(gemValue);
+          this.inventoryService.upgradeEquipment(Math.floor(Math.pow(gemValue/10,2.4)));
         }
       }],
       requirements: [{
-        strength: 500000000,    //50m
-        toughness: 500000000,   //50m
-        speed: 500000000,       //50m
+        strength: 2e7,
+        toughness: 2e7,
+        speed: 2e7,
         spirituality: 10000
       }],
       unlocked: false,
