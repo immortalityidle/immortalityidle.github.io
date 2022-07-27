@@ -713,11 +713,10 @@ export class InventoryService {
     this.lifetimePillsUsed = 0;
     this.lifetimeGemsSold = 0;
     this.itemStacks = [];
-    this.maxItems = 10;
-    for (let i = 0; i < this.maxItems; i++){
-      this.itemStacks.push(null);
+    this.changeMaxItems(10);
+    if (this.characterService.characterState.bloodlineRank >= 6) {
+      return; // Skip the family gifts, thematically inappropriate
     }
-
     if (this.motherGift) {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',

@@ -606,6 +606,18 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Eternal Nation",
+      description: "You have established an empire that will never fall, and a bloodline that will always inherit it.",
+      hint: "Bloodline Empire.",
+      check: () => {
+        return (this.homeService.home.type === HomeType.Capital && this.characterService.characterState.bloodlineRank >= 7);
+      },
+      effect: () => {
+        this.characterService.characterState.imperial = true;
+      },
+      unlocked: false
+    },
+    {
       name: "Harmony of Mind and Body",
       description: "You have balanced your powerful mind and body and unlocked the ability to use your mana to strike down your enemies.",
       hint: "The dao embraces all things in perfect harmony.",

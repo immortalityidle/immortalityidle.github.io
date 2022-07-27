@@ -69,7 +69,7 @@ export interface CharacterProperties {
   highestAge: number,
   highestHealth: number,
   highestStamina: number,
-  highestMana: number,
+  highestMana: number
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -101,6 +101,7 @@ export class Character {
   healthBonusBath = 0;
   healthBonusMagic = 0;
   empowermentFactor = 1;
+  imperial = false;
   immortal = false;
   easyMode = false;
   ascensionUnlocked = false;
@@ -498,7 +499,7 @@ export class Character {
       highestHealth: this.highestHealth,
       highestStamina: this.highestStamina,
       highestMana: this.highestMana
-    
+
     }
   }
 

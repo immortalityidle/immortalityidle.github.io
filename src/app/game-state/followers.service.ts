@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable } from '@angular/core';
 import { LogService } from './log.service';
 import { MainLoopService } from './main-loop.service';
@@ -25,7 +26,6 @@ export interface FollowersProperties {
   followers: Follower[],
   autoDismissUnlocked: boolean,
   maxFollowerByType: { [key: string]: number; },
-  followerLifespanDoubled: boolean,
   sortField: string,
   sortAscending: boolean,
   totalRecruited: number,
@@ -52,7 +52,7 @@ type jobsType = {
 export class FollowersService {
 
   followersUnlocked = false;
-  followerLifespanDoubled = false;
+  followerLifespanDoubled = false; // achievement
   followers: Follower[] = [];
   followersRecruited = 0;
   autoDismissUnlocked = false;
@@ -262,7 +262,7 @@ export class FollowersService {
       left = -1;
       right = 1;
     }
-    if (this.sortField == "Remaining Life"){
+    if (this.sortField === "Remaining Life"){
       this.followers.sort((a, b) => (a.lifespan - a.age > b.lifespan - b.age) ? left : (a.lifespan - a.age === b.lifespan - b.age) ? 0 : right);
     } else {
       //@ts-ignore
@@ -275,9 +275,13 @@ export class FollowersService {
   }
 
   reset() {
-    this.followers.splice(0, this.followers.length);
+    if (this.characterService.characterState.bloodlineRank >= 7) {
+      this.logService.addLogMessage("Your imperial entourage rejoins you as you set out.", "STANDARD", 'EVENT');
+    } else {
+      this.followers.splice(0, this.followers.length);
+      this.followersMaxed = 'UNMAXED';
+    }
     this.followersRecruited = 0;
-    this.followersMaxed = 'UNMAXED';
   }
 
   getProperties(): FollowersProperties {
@@ -286,7 +290,6 @@ export class FollowersService {
       followers: this.followers,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
-      followerLifespanDoubled: this.followerLifespanDoubled,
       sortField: this.sortField,
       sortAscending: this.sortAscending,
       totalRecruited: this.totalRecruited,
@@ -301,7 +304,6 @@ export class FollowersService {
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
-    this.followerLifespanDoubled = properties.followerLifespanDoubled || false;
     this.sortField = properties.sortField || "Job";
     if (properties.sortAscending === undefined){
       this.sortAscending = true;
@@ -314,7 +316,7 @@ export class FollowersService {
     this.highestLevel = properties.highestLevel || 0;
   }
 
-  generateFollower(){
+  generateFollower(job?: Follower["job"]){
     this.totalRecruited++;
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
@@ -323,7 +325,7 @@ export class FollowersService {
       return;
     }
 
-    const job = this.generateFollowerJob();
+    job = job ? job : this.generateFollowerJob();
     let capNumber = 1000;
     let currentCount = 0;
     if (this.maxFollowerByType[job] !== undefined){

@@ -120,7 +120,7 @@ export class CharacterService {
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
-      if (this.fatherGift){
+      if (this.fatherGift && this.characterState.bloodlineRank < 6){ // Skip the family gifts, it's not thematic.
         this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
           'STANDARD', 'EVENT');
         this.characterState.money += 200;
@@ -236,7 +236,7 @@ export class CharacterService {
   }
 
   upgradeBloodline() {
-    if (this.characterState.bloodlineRank >= 5){
+    if (this.characterState.bloodlineRank >= 7){
       // double check we're not going over the max rank
       return;
     }
