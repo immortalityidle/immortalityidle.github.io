@@ -36,6 +36,7 @@ import { FollowerManagementPanelComponent } from './follower-management-panel/fo
 import { TimeOptionsPanelComponent } from './time-options-panel/time-options-panel.component';
 import { LogFilterPanelComponent } from './log-filter-panel/log-filter-panel.component';
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
+import { TextPanelComponent } from './text-panel/text-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -75,6 +76,7 @@ const materialModules = [
     TimeOptionsPanelComponent,
     LogFilterPanelComponent,
     StatisticsPanelComponent,
+    TextPanelComponent,
   ],
   imports: [
     BrowserModule,

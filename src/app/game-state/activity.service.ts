@@ -57,6 +57,7 @@ export class ActivityService {
   totalExhaustedDays = 0;
   activityHeader = "";
   activityHeaderDescription = "";
+  hellEnabled = false; // flip this true to enable new postmortal content
 
   constructor(
     private characterService: CharacterService,

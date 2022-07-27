@@ -4,6 +4,10 @@ import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { Activity } from '../game-state/activity';
 import { Character } from '../game-state/character';
+import { HellService } from '../game-state/hell.service';
+import { TextPanelComponent } from '../text-panel/text-panel.component';
+import { MatDialog } from '@angular/material/dialog';
+import { JoinTheGodsText } from '../game-state/textResources';
 
 @Component({
   selector: 'app-activity-panel',
@@ -17,9 +21,22 @@ export class ActivityPanelComponent {
   constructor(
     public gameStateService: GameStateService,
     public activityService: ActivityService,
-    characterService: CharacterService
+    public characterService: CharacterService,
+    public hellService: HellService,
+    public dialog: MatDialog
   ) {
     this.character = characterService.characterState;
+  }
+
+  JoinTheGodsClick(){
+    const dialogRef = this.dialog.open(TextPanelComponent, {
+      width: '700px',
+      data: {titleText: "Joining the Gods", bodyText: JoinTheGodsText}
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.hellService.inHell = true;
+      this.activityService.reloadActivities();
+    });
   }
 
   onClick(activity: Activity, event: MouseEvent): void {

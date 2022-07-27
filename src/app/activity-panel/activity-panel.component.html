@@ -5,7 +5,12 @@
     </mat-icon>
     Activities
   </div>
-  <div class="customHeader" tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}}</div>
+  <div class="customHeader">
+    <span *ngIf="characterService.characterState.immortal && !hellService.inHell && activityService.hellEnabled">
+      <button (click)="JoinTheGodsClick()">Join the Gods</button>
+    </span>
+    <span tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}}</span>
+  </div>
 </h3>
 <div class="activitiesContainer">
   <table>

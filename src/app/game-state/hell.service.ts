@@ -6,6 +6,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 import { Activity, ActivityType } from './activity';
+import { MatTabGroup } from '@angular/material/tabs';
 
 export enum HellLevel {
   TongueRipping,
@@ -93,16 +94,38 @@ export class HellService {
     if (!this.activityService){
       this.activityService = this.injector.get(ActivityService);
     }
-
     const newList: Activity[] = [];
     if (this.currentHell === -1){
       // between hells now, choose which one to enter
       this.activityService.activityHeader = "Choose your Hell";
       this.activityService.activityHeaderDescription = "The heavens have cast you down to the depths of hell. You'll need to defeat every level to escape.";
       this.setEnterHellsArray(newList);
+    } else {
+      this.activityService.activityHeader = this.hells[this.currentHell].name;
+      this.activityService.activityHeaderDescription = this.hells[this.currentHell].description;
+
+      newList.push(this.flee());
     }
 
     return newList;
+  }
+
+  flee(): Activity{
+    return {
+      level: 0,
+      name: ["Escape from this hell"],
+      activityType: ActivityType.EscapeHell,
+      description: ["Return to the gates of Lord Yama's realm."],
+      consequenceDescription: [""],
+      consequence: [() => {
+        this.currentHell = -1;
+        this.activityService?.reloadActivities();
+      }],
+      requirements: [{
+      }],
+      unlocked: true,
+      skipApprenticeshipLevel: 0
+    }
   }
 
   setEnterHellsArray(newList: Activity[]) {
@@ -110,7 +133,7 @@ export class HellService {
       newList.push({
           level: 0,
           name: [hell.name],
-          activityType: ActivityType.Hell,
+          activityType: ActivityType.Hell + hell.index,
           description: [hell.description],
           consequenceDescription: [""],
           consequence: [() => {
@@ -124,8 +147,6 @@ export class HellService {
       })
     }
   }
-
-
 
   hells: Hell[] = [
     {
@@ -173,7 +194,7 @@ export class HellService {
     },
     {
       name: "Hell of Steamers",
-      description: "Torment for hypocrites and troublemakers. The steam baskets inside are just the right size for you.",
+      description: "Torment for hypocrites and troublemakers. The steam baskets here are just the right size for you.",
       index: HellLevel.Steamers,
       effect: () => {
         /*
@@ -274,7 +295,7 @@ export class HellService {
     },
     {
       name: "Hell of the Wrongful Dead",
-      description: "Torment for those who gave up their lives too early. Fortunately you've probably never done that. Even from the gate you can feel the pounding Rains of Pain and the blowing Winds of Sorrow.",
+      description: "Torment for those who gave up their lives too early. Fortunately you've probably never done that. The pounding Rains of Pain and the blowing Winds of Sorrow give unrelenting misery to everyone here.",
       index: HellLevel.WrongfulDead,
       effect: () => {
         /*
@@ -320,7 +341,7 @@ export class HellService {
     },
     {
       name: "Hell of Saws",
-      description: "Torment for swindlers and business cheats. You can see the demons inside sharpening their saws and grinning at you. You wish now that you'd stayed out of politics.",
+      description: "Torment for swindlers and business cheats. The demons sharpen their saws and grin at you. You wish now that you'd stayed out of politics.",
       index: 0,
       effect: () => {
         /*

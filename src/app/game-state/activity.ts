@@ -40,7 +40,8 @@ export enum ActivityType {
   GatherArmies,
   ConquerTheWorld,
   MoveStars,
-  Hell
+  EscapeHell,
+  Hell // hell needs to be last for indexing purposes
 
 }
 
