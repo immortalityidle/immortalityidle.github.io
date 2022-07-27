@@ -363,20 +363,20 @@ export class BattleService {
     },
     army: {
       name: "an angry army",
-      health: 20000000,
-      maxHealth: 20000000, 
+      health: 2e7,
+      maxHealth: 2e7, 
       accuracy: 0.9,
-      attack: 10000000,
-      defense: 10000000, 
+      attack: 1e7,
+      defense: 1e7, 
       loot: []
     },
     death: {
       name: "Death itself",
-      health: 1000000000000000, // Make Death last 85k years when fighting with level 10 scout and a 1 billion attack weapon. That's about 3 full days of real time right now.
-      maxHealth: 1000000000000000, // but 1 billion attack takes less than a full realtime day, and they'll probably be improving the weapon during the fight too.
+      health: 1e14, 
+      maxHealth: 1e14, 
       accuracy: 0.99,
-      attack: 100000000,
-      defense: 100000000,
+      attack: 3e8,
+      defense: 3e8,
       loot: [
         this.itemRepoService.items['immortality']
       ],

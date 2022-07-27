@@ -654,10 +654,10 @@ export class InventoryService {
 
   getWood(): Item{
     let wood: Item;
-    if (this.characterService.characterState.attributes.woodLore.value > 500000000 &&
-      this.characterService.characterState.attributes.spirituality.value > 50000000){
+    if (this.characterService.characterState.attributes.woodLore.value > 5e8 &&
+      this.characterService.characterState.attributes.spirituality.value > 5e7){
         wood = this.itemRepoService.items['divinewoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 10000000 &&
+    } else if (this.characterService.characterState.attributes.woodLore.value > 1e7 &&
       this.characterService.characterState.attributes.spirituality.value > 1000000){
         wood = this.itemRepoService.items['devilwoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 200000 &&
@@ -947,6 +947,10 @@ export class InventoryService {
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
+    if (itemStack.item.value === Infinity){
+      // don't sell infinitely valuable things.
+      return;
+    }
     this.lifetimeSoldItems += quantity;
     if (itemStack.item.type === "spiritGem"){
       this.lifetimeGemsSold += quantity;
@@ -976,6 +980,10 @@ export class InventoryService {
   }
 
   autoSell(item: Item){
+    if (item.value === Infinity){
+      // don't sell infinitely valuable things.
+      return;
+    }
     if (!this.autoSellUnlocked){
       return;
     }

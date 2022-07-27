@@ -11,6 +11,7 @@ import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
+import { HellService } from './hell.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,
@@ -54,6 +55,8 @@ export class ActivityService {
   activityDeath = false; // Simpler to just check a flag for the achievement.
   autoRestUnlocked = false;
   totalExhaustedDays = 0;
+  activityHeader = "";
+  activityHeaderDescription = "";
 
   constructor(
     private characterService: CharacterService,
@@ -65,7 +68,8 @@ export class ActivityService {
     private battleService: BattleService,
     private logService: LogService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
+    private hellService: HellService
   ) {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -88,7 +92,7 @@ export class ActivityService {
         return;
       }
 
-      
+
       if (this.currentIndex < this.activityLoop.length) {
         this.currentLoopEntry = this.activityLoop[this.currentIndex];
         // check if our current activity is zero-day
@@ -187,13 +191,13 @@ export class ActivityService {
       //@ts-ignore
       if (this.characterService.characterState.status["mana"].value < activity.resourceUse[activity.level]["mana"] + 5) {
         return false;
-      } 
+      }
     }
     for (const key in activity.resourceUse[activity.level]) {
       //@ts-ignore
       if (this.characterService.characterState.status[key].value < activity.resourceUse[activity.level][key]) {
         return false;
-      } 
+      }
     }
     return true;
   }
@@ -413,8 +417,20 @@ export class ActivityService {
     this.defineActivities();
 
     const newList: Activity[] = [];
+    this.activityHeader = "";
+    this.activityHeaderDescription = "";
+    if (this.impossibleTaskService.activeTaskIndex >= 0){
+      this.activityHeader = "Do the impossible: " + this.impossibleTaskService.tasks[this.impossibleTaskService.activeTaskIndex].name;
+      this.activityHeaderDescription = this.impossibleTaskService.tasks[this.impossibleTaskService.activeTaskIndex].description;
+    }
+
+    if (this.hellService.inHell){
+      return this.hellService.getActivityList();
+    }
+
 
     if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.Swim){
+
       newList.push(this.Swim);
       // don't include the rest of the activities
       return newList;
@@ -959,7 +975,7 @@ export class ActivityService {
       description: ['You have heard that dragons like treasure. Bring the dragon a bunch and he may be more friendly.'],
       consequenceDescription: ['You will need at least a billion taels for this to work.'],
       consequence: [() => {
-        if (this.characterService.characterState.money < 1000000000){
+        if (this.characterService.characterState.money < 1e9){
           this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
           if (this.pauseOnImpossibleFail){
@@ -967,7 +983,7 @@ export class ActivityService {
           }
           return;
         }
-        this.characterService.characterState.money -= 1000000000;
+        this.characterService.characterState.money -= 1e9;
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 4000){
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         } else {
@@ -989,7 +1005,7 @@ export class ActivityService {
       description: ['Try to strike up a conversation with the dragon.'],
       consequenceDescription: ['The dragon probably likes you enough to talk to you now, right?'],
       consequence: [() => {
-        if (this.characterService.characterState.attributes.charisma.value < 10000000000){
+        if (this.characterService.characterState.attributes.charisma.value < 1e10){
           this.logService.addLogMessage("The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
           if (this.pauseOnImpossibleFail){
@@ -1039,7 +1055,7 @@ export class ActivityService {
           }
           return;
         }
-        if (this.characterService.characterState.money < 10000000000){
+        if (this.characterService.characterState.money < 1e10){
           this.logService.addLogMessage("You don't have enough money to pay your army, so they revolt and fight you instead.","INJURY","EVENT");
           this.battleService.addEnemy(this.battleService.enemyRepo.army);
           if (this.pauseOnImpossibleFail){
@@ -1047,7 +1063,7 @@ export class ActivityService {
           }
           return;
         }
-        this.characterService.characterState.money -= 10000000000;
+        this.characterService.characterState.money -= 1e10;
         this.inventoryService.addItem(this.itemRepoService.items['army']);
       }],
       resourceUse: [{
@@ -1416,16 +1432,16 @@ export class ActivityService {
         }
       ],
       resourceUse: [
-        { 
+        {
           stamina: 25
         },
-        { 
+        {
           stamina: 25
         },
-        { 
+        {
           stamina: 25
         },
-        { 
+        {
           stamina: 50
         }
       ],
@@ -2145,7 +2161,7 @@ export class ActivityService {
             this.characterService.characterState.status.mana.max++;
             this.characterService.characterState.status.mana.value++;
           }
-        } 
+        }
       }],
       resourceUse: [{
         stamina: 200
@@ -2204,7 +2220,7 @@ export class ActivityService {
         if (this.characterService.characterState.manaUnlocked && this.characterService.characterState.status.mana.value >= 10){
           this.characterService.characterState.status.mana.value -= 10;
           this.characterService.characterState.healthBonusMagic++;
-        } 
+        }
       }],
       resourceUse: [{
         stamina: 200,
@@ -2270,13 +2286,13 @@ export class ActivityService {
           if (Math.random() < 0.01){
             this.followerService.generateFollower();
           }
-        } 
+        }
       }],
       resourceUse: [{
         stamina: 100
       }],
       requirements: [{
-        charisma: 50000000,
+        charisma: 5e7,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
@@ -2297,7 +2313,7 @@ export class ActivityService {
               follower.power = 100; // Set max level to 100
             } else {
               allMaxed = false;
-              if (Math.random() < (1 - Math.pow(follower.power / 100, 0.55)) / (36500000 / (3650 + follower.age * Math.log2(this.characterService.characterState.attributes.charisma.value/10000000000 + 1)))){ // Softcap the increase
+              if (Math.random() < (1 - Math.pow(follower.power / 100, 0.55)) / (36500000 / (3650 + follower.age * Math.log2(this.characterService.characterState.attributes.charisma.value/1e10 + 1)))){ // Softcap the increase
                 follower.power++;
                 if (follower.power > this.followerService.highestLevel){
                   this.followerService.highestLevel = follower.power;
@@ -2316,7 +2332,7 @@ export class ActivityService {
         stamina: 1000
       }],
       requirements: [{
-        charisma: 10000000000,
+        charisma: 1e10,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0

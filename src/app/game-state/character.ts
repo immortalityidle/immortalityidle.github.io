@@ -81,7 +81,7 @@ export class Character {
     private titlecasePipe: TitleCasePipe){
   }
 
-  maxMoney = 1000000000000000000000000;
+  maxMoney = 1e24;
   totalLives = 1;
   dead = false;
   attributeScalingLimit = 10;
@@ -406,7 +406,7 @@ export class Character {
       const d = this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
-        const x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 10000000000000, 0.15), 0.5) + d) * empowermentFactor; // Softcap
+        const x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) * empowermentFactor; // Softcap
         const c = 365 * 1000; // Hardcap
       return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
     }

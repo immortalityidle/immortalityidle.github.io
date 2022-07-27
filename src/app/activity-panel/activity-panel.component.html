@@ -1,8 +1,11 @@
 <h3 class="panelHeader">
-  <mat-icon tooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available. Click the button or drag and drop the activity you want to put on your schedule.">
-    help
-  </mat-icon>
-  Activities
+  <div class="standardHeader">
+    <mat-icon tooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available. Click the button or drag and drop the activity you want to put on your schedule.">
+      help
+    </mat-icon>
+    Activities
+  </div>
+  <div class="customHeader" tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}}</div>
 </h3>
 <div class="activitiesContainer">
   <table>
