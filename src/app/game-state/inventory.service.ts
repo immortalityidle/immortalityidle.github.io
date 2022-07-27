@@ -945,6 +945,10 @@ export class InventoryService {
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
+    if (itemStack.item.value === Infinity){
+      // don't sell infinitely valuable things.
+      return;
+    }
     this.lifetimeSoldItems += quantity;
     if (itemStack.item.type === "spiritGem"){
       this.lifetimeGemsSold += quantity;
@@ -974,6 +978,10 @@ export class InventoryService {
   }
 
   autoSell(item: Item){
+    if (item.value === Infinity){
+      // don't sell infinitely valuable things.
+      return;
+    }
     if (!this.autoSellUnlocked){
       return;
     }
