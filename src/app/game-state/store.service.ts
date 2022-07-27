@@ -132,12 +132,12 @@ export class StoreService {
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mountain];
     } else if (this.characterService.characterState.bloodlineRank === 5){
-      // Basic Stat Lifespan
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. You will keep your Home, your Empire...";
+      // Home
+      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. You will keep your ancestral Home.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.ForbiddenCity];
     } else if (this.characterService.characterState.bloodlineRank === 6){
-      // Basic Stat Lifespan
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Home, your Empire...";
+      // Entourage
+      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Home and your Empire.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Capital];
     } else if (this.characterService.characterState.bloodlineRank === 7){
       this.bloodlineDescription = "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";

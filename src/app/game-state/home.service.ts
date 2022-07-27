@@ -535,7 +535,11 @@ export class HomeService {
         this.reset();
         if (this.characterService.characterState.bloodlineRank >= 6){
           this.logService.addLogMessage("You reincarnate as one of your descendants and your family recognizes you as you age.", "STANDARD", 'EVENT');
-          this.logService.addLogMessage("Your family steps aside and assists your takeover of your Empire.", "STANDARD", 'EVENT');
+          if (this.characterService.characterState.bloodlineRank >= 7){
+            this.logService.addLogMessage("Your family steps aside and assists your takeover of your Empire.", "STANDARD", 'EVENT');
+          } else {
+            this.logService.addLogMessage("Your family escorts you to your ancestral home and helps you get settled in.", "STANDARD", 'EVENT');
+          }
         } else if (this.grandfatherTent){
           this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on it.", "STANDARD", 'EVENT');
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
