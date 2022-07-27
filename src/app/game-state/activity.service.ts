@@ -246,7 +246,7 @@ export class ActivityService {
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
     if (properties.pauseOnImpossibleFail === undefined){
       this.pauseOnImpossibleFail = true;
-    } else { 
+    } else {
       this.pauseOnImpossibleFail = properties.pauseOnImpossibleFail;
     }
     this.totalExhaustedDays = properties.totalExhaustedDays || 0;
@@ -652,7 +652,7 @@ export class ActivityService {
       name: ['Attach Chains to the Island'],
       activityType: ActivityType.AttachChains,
       description: ['Swim deep and attach one of your chains to the island, then pull.'],
-      consequenceDescription: ['Uses 1000000 Stamina when carrying something REALLY heavy to try hauling something really REALLY heavy. You\'re going to need an Unbreakable Chain and a long time to rest.'],
+      consequenceDescription: ['Uses 1000000 Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.'],
       consequence: [() => {
         if (this.characterService.characterState.status.stamina.value >= 1000000 && this.inventoryService.consume("chain") > 0 ){
           this.characterService.characterState.status.stamina.value -= 1000000;
