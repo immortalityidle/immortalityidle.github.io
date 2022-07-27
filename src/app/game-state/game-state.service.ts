@@ -13,6 +13,7 @@ import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
+import { HellProperties, HellService } from './hell.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -28,6 +29,7 @@ interface GameState {
   autoBuy: AutoBuyerProperties,
   mainLoop: MainLoopProperties,
   impossibleTasks: ImpossibleTaskProperties,
+  hell: HellProperties,
   darkMode: boolean,
   gameStartTimestamp: number,
   easyModeEver: boolean,
@@ -57,7 +59,8 @@ export class GameStateService {
     private autoBuyerService: AutoBuyerService,
     private mainLoopService: MainLoopService,
     private achievementService: AchievementService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
+    private hellService: HellService
 
   ) {
     // @ts-ignore
@@ -90,6 +93,7 @@ export class GameStateService {
     const gameState = JSON.parse(gameStateSerialized) as GameState;
     this.achievementService.setProperties(gameState.achievements);
     this.impossibleTaskService.setProperties(gameState.impossibleTasks);
+    this.hellService.setProperties(gameState.hell || {});
     this.characterService.characterState.setProperties(gameState.character);
     this.homeService.setProperties(gameState.home);
     this.inventoryService.setProperties(gameState.inventory);
@@ -120,6 +124,7 @@ export class GameStateService {
     const gameState: GameState = {
       achievements: this.achievementService.getProperties(),
       impossibleTasks: this.impossibleTaskService.getProperties(),
+      hell: this.hellService.getProperties(),
       character: this.characterService.characterState.getProperties(),
       inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),

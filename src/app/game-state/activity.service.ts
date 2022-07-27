@@ -11,6 +11,7 @@ import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
+import { HellService } from './hell.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,
@@ -54,6 +55,8 @@ export class ActivityService {
   activityDeath = false; // Simpler to just check a flag for the achievement.
   autoRestUnlocked = false;
   totalExhaustedDays = 0;
+  activityHeader = "";
+  activityHeaderDescription = "";
 
   constructor(
     private characterService: CharacterService,
@@ -65,7 +68,8 @@ export class ActivityService {
     private battleService: BattleService,
     private logService: LogService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
+    private hellService: HellService
   ) {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -88,7 +92,7 @@ export class ActivityService {
         return;
       }
 
-      
+
       if (this.currentIndex < this.activityLoop.length) {
         this.currentLoopEntry = this.activityLoop[this.currentIndex];
         // check if our current activity is zero-day
@@ -187,13 +191,13 @@ export class ActivityService {
       //@ts-ignore
       if (this.characterService.characterState.status["mana"].value < activity.resourceUse[activity.level]["mana"] + 5) {
         return false;
-      } 
+      }
     }
     for (const key in activity.resourceUse[activity.level]) {
       //@ts-ignore
       if (this.characterService.characterState.status[key].value < activity.resourceUse[activity.level][key]) {
         return false;
-      } 
+      }
     }
     return true;
   }
@@ -413,8 +417,20 @@ export class ActivityService {
     this.defineActivities();
 
     const newList: Activity[] = [];
+    this.activityHeader = "";
+    this.activityHeaderDescription = "";
+    if (this.impossibleTaskService.activeTaskIndex >= 0){
+      this.activityHeader = "Do the impossible: " + this.impossibleTaskService.tasks[this.impossibleTaskService.activeTaskIndex].name;
+      this.activityHeaderDescription = this.impossibleTaskService.tasks[this.impossibleTaskService.activeTaskIndex].description;
+    }
+
+    if (this.hellService.inHell){
+      return this.hellService.getActivityList();
+    }
+
 
     if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.Swim){
+
       newList.push(this.Swim);
       // don't include the rest of the activities
       return newList;
@@ -1416,16 +1432,16 @@ export class ActivityService {
         }
       ],
       resourceUse: [
-        { 
+        {
           stamina: 25
         },
-        { 
+        {
           stamina: 25
         },
-        { 
+        {
           stamina: 25
         },
-        { 
+        {
           stamina: 50
         }
       ],
@@ -2145,7 +2161,7 @@ export class ActivityService {
             this.characterService.characterState.status.mana.max++;
             this.characterService.characterState.status.mana.value++;
           }
-        } 
+        }
       }],
       resourceUse: [{
         stamina: 200
@@ -2204,7 +2220,7 @@ export class ActivityService {
         if (this.characterService.characterState.manaUnlocked && this.characterService.characterState.status.mana.value >= 10){
           this.characterService.characterState.status.mana.value -= 10;
           this.characterService.characterState.healthBonusMagic++;
-        } 
+        }
       }],
       resourceUse: [{
         stamina: 200,
@@ -2270,7 +2286,7 @@ export class ActivityService {
           if (Math.random() < 0.01){
             this.followerService.generateFollower();
           }
-        } 
+        }
       }],
       resourceUse: [{
         stamina: 100
