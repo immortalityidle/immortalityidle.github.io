@@ -275,15 +275,13 @@ export class FollowersService {
   }
 
   reset() {
-    this.followers.splice(0, this.followers.length);
-    this.followersRecruited = 0;
-    this.followersMaxed = 'UNMAXED';
-    if (this.characterService.characterState.imperial) {
-      this.logService.addLogMessage("Your imperial entourage joins you as you set out.", "STANDARD", 'EVENT');
-      this.generateFollower("mediator");
-      this.generateFollower();
-      this.generateFollower();
+    if (this.characterService.characterState.bloodlineRank >= 7) {
+      this.logService.addLogMessage("Your imperial entourage rejoins you as you set out.", "STANDARD", 'EVENT');
+    } else {
+      this.followers.splice(0, this.followers.length);
+      this.followersMaxed = 'UNMAXED';
     }
+    this.followersRecruited = 0;
   }
 
   getProperties(): FollowersProperties {

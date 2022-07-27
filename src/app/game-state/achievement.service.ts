@@ -610,7 +610,7 @@ export class AchievementService {
       description: "You have established an empire that will never fall, and a bloodline that will always inherit it.",
       hint: "Bloodline Empire.",
       check: () => {
-        return (this.homeService.home.type === HomeType.Capital && this.characterService.characterState.bloodlineRank >= 5);
+        return (this.homeService.home.type === HomeType.Capital && this.characterService.characterState.bloodlineRank >= 7);
       },
       effect: () => {
         this.characterService.characterState.imperial = true;

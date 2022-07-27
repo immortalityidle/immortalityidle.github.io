@@ -533,11 +533,9 @@ export class HomeService {
 
       reincarnationService.reincarnateSubject.subscribe(() => {
         this.reset();
-        if (this.characterService.characterState.imperial){
+        if (this.characterService.characterState.bloodlineRank >= 6){
           this.logService.addLogMessage("You reincarnate as one of your descendants and your family recognizes you as you age.", "STANDARD", 'EVENT');
-          this.logService.addLogMessage("Your family steps aside and assists your takeover of the Empire.", "STANDARD", 'EVENT');
-          this.setCurrentHome(this.getHomeFromValue(HomeType.Capital));
-          this.characterService.characterState.money = this.characterService.characterState.maxMoney;
+          this.logService.addLogMessage("Your family steps aside and assists your takeover of your Empire.", "STANDARD", 'EVENT');
         } else if (this.grandfatherTent){
           this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on it.", "STANDARD", 'EVENT');
           //and a few coins so you don't immediately get beat up for not having upkeep money for your house
@@ -653,20 +651,26 @@ export class HomeService {
   }
 
   reset() {
+    if (this.characterService.characterState.bloodlineRank < 6){
+      this.setCurrentHome(this.homesList[0]);
+      this.furniture.bed = null;
+      this.furniture.bathtub = null;
+      this.furniture.kitchen = null;
+      this.furniture.workbench = null;
+      this.ownedFurniture = [];
+    }
+    if (this.characterService.characterState.bloodlineRank < 7){
+      this.upgrading = false;
+      this.houseBuildingProgress = 1;
+    }
+    this.inventoryService.changeMaxItems(this.home.maxInventory);
     this.nextHomeCostReduction = 0;
-    this.setCurrentHome(this.homesList[0]);
     this.land = 0;
     this.landPrice = 100;
     this.fields = [];
     this.extraFields = 0;
     this.averageYield = 0;
-    this.furniture.bed = null;
-    this.furniture.bathtub = null;
-    this.furniture.kitchen = null;
-    this.furniture.workbench = null;
-    this.upgrading = false;
-    this.houseBuildingProgress = 1;
-    this.ownedFurniture = [];
+    
   }
 
   setCurrentHome(home: Home) {
