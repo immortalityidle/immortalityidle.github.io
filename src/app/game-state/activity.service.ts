@@ -975,7 +975,7 @@ export class ActivityService {
       description: ['You have heard that dragons like treasure. Bring the dragon a bunch and he may be more friendly.'],
       consequenceDescription: ['You will need at least a billion taels for this to work.'],
       consequence: [() => {
-        if (this.characterService.characterState.money < 1000000000){
+        if (this.characterService.characterState.money < 1e9){
           this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
           if (this.pauseOnImpossibleFail){
@@ -983,7 +983,7 @@ export class ActivityService {
           }
           return;
         }
-        this.characterService.characterState.money -= 1000000000;
+        this.characterService.characterState.money -= 1e9;
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 4000){
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         } else {
@@ -1005,7 +1005,7 @@ export class ActivityService {
       description: ['Try to strike up a conversation with the dragon.'],
       consequenceDescription: ['The dragon probably likes you enough to talk to you now, right?'],
       consequence: [() => {
-        if (this.characterService.characterState.attributes.charisma.value < 10000000000){
+        if (this.characterService.characterState.attributes.charisma.value < 1e10){
           this.logService.addLogMessage("The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first.","INJURY","EVENT");
           this.characterService.characterState.status.health.value -= 1000;
           if (this.pauseOnImpossibleFail){
@@ -1055,7 +1055,7 @@ export class ActivityService {
           }
           return;
         }
-        if (this.characterService.characterState.money < 10000000000){
+        if (this.characterService.characterState.money < 1e10){
           this.logService.addLogMessage("You don't have enough money to pay your army, so they revolt and fight you instead.","INJURY","EVENT");
           this.battleService.addEnemy(this.battleService.enemyRepo.army);
           if (this.pauseOnImpossibleFail){
@@ -1063,7 +1063,7 @@ export class ActivityService {
           }
           return;
         }
-        this.characterService.characterState.money -= 10000000000;
+        this.characterService.characterState.money -= 1e10;
         this.inventoryService.addItem(this.itemRepoService.items['army']);
       }],
       resourceUse: [{
@@ -2292,7 +2292,7 @@ export class ActivityService {
         stamina: 100
       }],
       requirements: [{
-        charisma: 50000000,
+        charisma: 5e7,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
@@ -2313,7 +2313,7 @@ export class ActivityService {
               follower.power = 100; // Set max level to 100
             } else {
               allMaxed = false;
-              if (Math.random() < (1 - Math.pow(follower.power / 100, 0.55)) / (36500000 / (3650 + follower.age * Math.log2(this.characterService.characterState.attributes.charisma.value/10000000000 + 1)))){ // Softcap the increase
+              if (Math.random() < (1 - Math.pow(follower.power / 100, 0.55)) / (36500000 / (3650 + follower.age * Math.log2(this.characterService.characterState.attributes.charisma.value/1e10 + 1)))){ // Softcap the increase
                 follower.power++;
                 if (follower.power > this.followerService.highestLevel){
                   this.followerService.highestLevel = follower.power;
@@ -2332,7 +2332,7 @@ export class ActivityService {
         stamina: 1000
       }],
       requirements: [{
-        charisma: 10000000000,
+        charisma: 1e10,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0

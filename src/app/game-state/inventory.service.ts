@@ -328,7 +328,7 @@ export class InventoryService {
       materialPrefix = "wooden";
     }
     let baseName = defaultName;
-    if (baseName == undefined){
+    if (baseName === undefined){
       baseName = WeaponNames[Math.floor(Math.random() * WeaponNames.length)]
     }
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
@@ -654,10 +654,10 @@ export class InventoryService {
 
   getWood(): Item{
     let wood: Item;
-    if (this.characterService.characterState.attributes.woodLore.value > 500000000 &&
-      this.characterService.characterState.attributes.spirituality.value > 50000000){
+    if (this.characterService.characterState.attributes.woodLore.value > 5e8 &&
+      this.characterService.characterState.attributes.spirituality.value > 5e7){
         wood = this.itemRepoService.items['divinewoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 10000000 &&
+    } else if (this.characterService.characterState.attributes.woodLore.value > 1e7 &&
       this.characterService.characterState.attributes.spirituality.value > 1000000){
         wood = this.itemRepoService.items['devilwoodLog'];
     } else if (this.characterService.characterState.attributes.woodLore.value > 200000 &&
@@ -857,7 +857,7 @@ export class InventoryService {
         if (numberToUse > 0){
           this.useItem(item, quantity);
           quantity -= numberToUse;
-          if (quantity == 0){
+          if (quantity === 0){
             return -1;
           }
         }
@@ -883,7 +883,7 @@ export class InventoryService {
         if (numberToSell > 0){
           this.characterService.characterState.money += item.value * numberToSell;
           quantity -= numberToSell;
-          if (quantity == 0){
+          if (quantity === 0){
             return -1;
           }
         }
@@ -1042,10 +1042,10 @@ export class InventoryService {
       // use all the ones you have now
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack == null){
+        if (itemStack === null){
           continue;
         }
-        if (itemStack.item.name == item.name){
+        if (itemStack.item.name === item.name){
             this.useItemStack(itemStack, itemStack.quantity);
         }
       }
@@ -1193,10 +1193,10 @@ export class InventoryService {
     let itemCount = 0;
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
-      if (itemIterator == null){
+      if (itemIterator === null){
         continue;
       }
-      if (itemIterator.item.name == itemName) {
+      if (itemIterator.item.name === itemName) {
         itemCount += itemIterator.quantity;
       }
     }
