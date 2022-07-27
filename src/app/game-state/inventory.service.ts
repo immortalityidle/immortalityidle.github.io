@@ -258,7 +258,11 @@ export class InventoryService {
     this.autoSellOldOre = properties.autoSellOldOre || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
-    this.autoequipBestEnabled = properties.autoequipBestEnabled || true;
+    if(properties.autoequipBestEnabled === undefined){
+      this.autoequipBestEnabled = true;
+    } else{
+      this.autoequipBestEnabled = properties.autoequipBestEnabled;
+    }
     this.maxStackSize = properties.maxStackSize || 100;
     this.thrownAwayItems = properties.thrownAwayItems || 0;
     this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;
@@ -1140,8 +1144,8 @@ export class InventoryService {
   }
 
   consume(consumeType: string, quantity = 1): number{
-    if (quantity < 1){
-      quantity = 1; //handle potential 0 and negatives just in case
+    if (quantity < 0){
+      quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
     }
 
     let itemValue = -1;
