@@ -70,7 +70,6 @@ export class BigNumberPipe implements PipeTransform {
       } else if (value < 1e24){
         return formatNumber(value / 1e21,"en-US", "1.0-2") + "s";
       } else {
-        value = value < 1e303 ? value : 1e303; // limit it to 1 Centillion for those Centillionaires
         return formatNumber(value,"en-US", "1.0-2"); // At this point everything is in e notation. Goes up to 1.8e308 (infinity)
       }
   }
