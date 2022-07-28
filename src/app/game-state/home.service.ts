@@ -36,7 +36,9 @@ export enum HomeType {
   Fortress,
   Mountain,
   ForbiddenCity,
-  Capital
+  Capital,
+  ImperialSeat,
+  Godthrone
 }
 
 export interface Field {
@@ -342,7 +344,7 @@ export class HomeService {
       name: "Castle",
       type: HomeType.Castle,
       description: "An imposing castle. Automatically restores 40 stamina, 15 health, and 2 mana each night.",
-      cost: 1e10,
+      cost: 1e11,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 40,
@@ -365,7 +367,7 @@ export class HomeService {
       name: "Fortress",
       type: HomeType.Fortress,
       description: "An indomitable fortress. Automatically restores 50 stamina, 20 health, and 3 mana each night.",
-      cost: 1e11,
+      cost: 1e12,
       costPerDay: 180,
       landRequired: 180,
       maxInventory: 50,
@@ -388,7 +390,7 @@ export class HomeService {
       name: "Mountain",
       type: HomeType.Mountain,
       description: "An entire mighty mountain. Automatically restores 100 stamina, 30 health, and 4 mana each night.",
-      cost: 1e12,
+      cost: 1e13,
       costPerDay: 500,
       landRequired: 500,
       maxInventory: 60,
@@ -405,13 +407,13 @@ export class HomeService {
         'kitchen',
         'workbench'
       ],
-      daysToBuild: 36500000
+      daysToBuild: 365e5
     },
     {
       name: "Forbidden City",
       type: HomeType.ForbiddenCity,
       description: "A city of your very own. Automatically restores 200 stamina, 50 health, and 5 mana each night.",
-      cost: 1e13,
+      cost: 1e14,
       costPerDay: 1000,
       landRequired: 1000,
       maxInventory: 80,
@@ -428,17 +430,17 @@ export class HomeService {
         'kitchen',
         'workbench'
       ],
-      daysToBuild: 365000000
+      daysToBuild: 365e6
     },
     {
       name: "Capital",
       type: HomeType.Capital,
-      description: "The entire empire is yours now. Automatically restores 300 stamina, 80 health, and 10 mana each night.",
-      cost: 1e14,
+      description: "The entire province is yours now. Automatically restores 300 stamina, 80 health, and 10 mana each night.",
+      cost: 1e15,
       costPerDay: 10000,
       landRequired: 10000,
       maxInventory: 100,
-      upgradeToTooltip: "Get a better house. A better home will cost 1Q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 1q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 10;
         this.characterService.characterState.status.health.value += 80;
@@ -452,6 +454,55 @@ export class HomeService {
         'workbench'
       ],
       daysToBuild: 365e7
+    }
+  ];
+
+  imperialHomesList: Home[] = [
+    {
+      name: "Seat of the Empire",
+      type: HomeType.ImperialSeat,
+      description: "You've built quite an empire. Automatically restores 500 stamina, 100 health, and 20 mana each night.",
+      cost: 1e16,
+      costPerDay: 1e6,
+      landRequired: 1e6,
+      maxInventory: 80,
+      upgradeToTooltip: "Get a better house. A better home will cost 10q taels and take up 100,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
+      consequence: () => {
+        this.characterService.characterState.status.mana.value += 5;
+        this.characterService.characterState.status.health.value += 50;
+        this.characterService.characterState.status.stamina.value += 200;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ],
+      daysToBuild: 365e8
+    },
+    {
+      name: "Godthrone",
+      type: HomeType.Godthrone,
+      description: "The entire world kneels far beneath you. Automatically restores 1000 stamina, 150 health, and 30 mana each night.",
+      cost: 1e17,
+      costPerDay: 1e6,
+      landRequired: 1e6,
+      maxInventory: 100,
+      upgradeToTooltip: "Get a better house. A better home will cost 100q taels and take up 1,000,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
+      consequence: () => {
+        this.characterService.characterState.status.mana.value += 10;
+        this.characterService.characterState.status.health.value += 80;
+        this.characterService.characterState.status.stamina.value += 300;
+        this.characterService.characterState.checkOverage();
+      },
+      furnitureSlots: [
+        'bed',
+        'bathtub',
+        'kitchen',
+        'workbench'
+      ],
+      daysToBuild: 365e9
     }
   ];
 
