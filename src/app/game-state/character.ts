@@ -426,6 +426,16 @@ export class Character {
     return increaseAmount;
   }
 
+  decreaseAttribute(attribute: AttributeType, amount: number): number {
+    let decreaseAmount = (amount * this.getAptitudeMultipier(this.attributes[attribute].aptitude));
+    // sanity check that loss is never less than base loss
+    if (decreaseAmount < amount){
+      decreaseAmount = amount;
+    }
+    this.attributes[attribute].value -= decreaseAmount;
+    return decreaseAmount;
+  }
+
   increaseAptitudeDaily() {
     const keys = Object.keys(this.attributes) as AttributeType[];
     for(const key in keys) {

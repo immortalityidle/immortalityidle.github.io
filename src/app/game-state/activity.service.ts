@@ -486,29 +486,32 @@ export class ActivityService {
       newList.push(this.MoveStars);
     }
 
-    newList.push(this.OddJobs);
     newList.push(this.Resting);
+    newList.push(this.OddJobs);
     newList.push(this.Begging);
+    newList.push(this.Burning);
     newList.push(this.Farming);
-    newList.push(this.GatherHerbs);
-    newList.push(this.ChopWood);
     newList.push(this.Mining);
     newList.push(this.Smelting);
     newList.push(this.Blacksmithing);
+    newList.push(this.ChopWood);
     newList.push(this.Woodworking);
-    newList.push(this.Leatherworking);
-    newList.push(this.Alchemy);
     newList.push(this.Hunting);
+    newList.push(this.Leatherworking);
     newList.push(this.Fishing);
+    newList.push(this.GatherHerbs);
+    newList.push(this.Alchemy);
     newList.push(this.BodyCultivation);
     newList.push(this.MindCultivation);
-    newList.push(this.CoreCultivation);
-    newList.push(this.InfuseEquipment);
-    newList.push(this.InfuseBody);
-    newList.push(this.ExtendLife);
+    if(this.characterService.characterState.manaUnlocked || this.characterService.characterState.easyMode){
+      newList.push(this.ManaControl);
+      newList.push(this.CoreCultivation);
+      newList.push(this.InfuseEquipment);
+      newList.push(this.InfuseBody);
+      newList.push(this.ExtendLife);
+    }
     newList.push(this.Recruiting);
     newList.push(this.TrainingFollowers);
-    newList.push(this.Burning);
     return newList;
   }
 
@@ -543,6 +546,8 @@ export class ActivityService {
   Alchemy: Activity;
   // @ts-ignore
   Burning: Activity;
+  // @ts-ignore
+  ManaControl: Activity;
   // @ts-ignore
   BodyCultivation: Activity;
   // @ts-ignore
@@ -2116,6 +2121,43 @@ export class ActivityService {
       }],
       requirements: [{
         intelligence: 10
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    };
+
+    this.ManaControl = {
+      level: 0,
+      name: ['Balance Your Chi'],
+      activityType: ActivityType.ManaControl,
+      description: ['Balance the flow of your chi and widen your meridians.'],
+      consequenceDescription: ['Uses 100 Stamina. Increases your weakest lore.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 100;
+        let lowStat = "earthLore" as AttributeType;
+        for (const attribute of ["metalLore","woodLore","waterLore","fireLore"] as AttributeType[]){
+          if (this.characterService.characterState.attributes[attribute].value < this.characterService.characterState.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+        }
+        this.characterService.characterState.increaseAttribute(lowStat, 0.1);
+        this.characterService.characterState.increaseAttribute('spirituality', 0.001);
+      }],
+      resourceUse: [{
+        stamina: 100
+      }],
+      requirements: [{
+        strength: 1000,
+        speed: 1000,
+        toughness: 1000,
+        charisma: 1000,
+        intelligence: 1000,
+        earthLore: 1000,
+        metalLore: 1000,
+        woodLore: 1000,
+        waterLore: 1000,
+        fireLore: 1000,
+        spirituality: 1
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
