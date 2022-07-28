@@ -53,22 +53,10 @@ export class BigNumberPipe implements PipeTransform {
      * @returns {string}
      */
      transform(value: number): string {
-      if (value < 10000){
-        return formatNumber(value,"en-US", "1.0-0");
-      } else if (value < 1000000){
-        return formatNumber(value / 1000,"en-US", "1.0-2") + "K";
-      } else if (value < 1e9){
-        return formatNumber(value / 1000000,"en-US", "1.0-2") + "M";
-      } else if (value < 1e12){
-        return formatNumber(value / 1e9,"en-US", "1.0-2") + "B";
-      } else if (value < 1e15){
-        return formatNumber(value / 1e12,"en-US", "1.0-2") + "T";
-      } else if (value < 1e18){
-        return formatNumber(value / 1e15,"en-US", "1.0-2") + "q";
-      } else if (value < 1e21){
-        return formatNumber(value / 1e18,"en-US", "1.0-2") + "Q";
-      } else if (value < 1e24){
-        return formatNumber(value / 1e21,"en-US", "1.0-2") + "s";
+      const suffixArray = ["", "k", "M", "B", "T", "q", "Q", "s"];
+      if (value >= 10000 && value < Math.pow(10, (suffixArray.length)  * 3)){
+        const numberPower = Math.floor(Math.log10(value));
+        return formatNumber(value / Math.pow(10, numberPower - (numberPower % 3)), "en-US", "1.0-2") + suffixArray[Math.floor(numberPower / 3)];
       } else {
         return formatNumber(value,"en-US", "1.0-2"); // At this point everything is in e notation. Goes up to 1.8e308 (infinity)
       }
