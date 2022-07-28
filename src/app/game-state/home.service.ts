@@ -466,7 +466,7 @@ export class HomeService {
       costPerDay: 1e6,
       landRequired: 1e6,
       maxInventory: 125,
-      upgradeToTooltip: "Get a better house. A better home will cost 10q taels and take up 100,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 10q taels and take up 1,000,000 land. The new home will restore 500 stamina, 100 health, and 20 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 20;
         this.characterService.characterState.status.health.value += 100;
@@ -489,7 +489,7 @@ export class HomeService {
       costPerDay: 1e7,
       landRequired: 1e7,
       maxInventory: 150,
-      upgradeToTooltip: "Get a better house. A better home will cost 100q taels and take up 1,000,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
+      upgradeToTooltip: "Get a better house. A better home will cost 100q taels and take up 10,000,000 land. The new home will restore 1000 stamina, 150 health, and 30 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 30;
         this.characterService.characterState.status.health.value += 150;
