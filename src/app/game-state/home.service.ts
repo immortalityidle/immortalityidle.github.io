@@ -465,7 +465,7 @@ export class HomeService {
       cost: 1e16,
       costPerDay: 1e6,
       landRequired: 1e6,
-      maxInventory: 80,
+      maxInventory: 125,
       upgradeToTooltip: "Get a better house. A better home will cost 10q taels and take up 100,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 20;
@@ -486,9 +486,9 @@ export class HomeService {
       type: HomeType.Godthrone,
       description: "The entire world kneels far beneath you. Automatically restores 1000 stamina, 150 health, and 30 mana each night.",
       cost: 1e17,
-      costPerDay: 1e6,
-      landRequired: 1e6,
-      maxInventory: 100,
+      costPerDay: 1e7,
+      landRequired: 1e7,
+      maxInventory: 150,
       upgradeToTooltip: "Get a better house. A better home will cost 100q taels and take up 1,000,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
       consequence: () => {
         this.characterService.characterState.status.mana.value += 30;
