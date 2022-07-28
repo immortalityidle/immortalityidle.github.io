@@ -1377,7 +1377,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Blacksmithing).lastIncome = money;
           let blacksmithSuccessChance = 0.02;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil"){
+          if (this.homeService.furniture.workbench?.id === "anvil"){
             blacksmithSuccessChance += 0.05;
           }
           this.characterService.characterState.increaseAttribute('metalLore', 0.2 * blacksmithSuccessChance);
@@ -1404,7 +1404,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Blacksmithing).lastIncome = money;
           let blacksmithSuccessChance = 0.05;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil"){
+          if (this.homeService.furniture.workbench?.id === "anvil"){
             blacksmithSuccessChance += 0.05;
           }
           this.characterService.characterState.increaseAttribute('metalLore',0.3 * blacksmithSuccessChance);
@@ -1431,7 +1431,7 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Blacksmithing).lastIncome = money;
           let blacksmithSuccessChance = 0.2;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil"){
+          if (this.homeService.furniture.workbench?.id === "anvil"){
             blacksmithSuccessChance += 0.2;
           }
           this.characterService.characterState.increaseAttribute('metalLore',0.5 * blacksmithSuccessChance);

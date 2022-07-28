@@ -454,11 +454,11 @@ export class AchievementService {
       unlocked: false
     },
     {
-      name: "Unlimited Taels",
-      description: "Your family has unlocked the secrets of compound interest. You probably never have to worry about money again.",
-      hint: "Family first. Especially in matters of money.",
+      name: "Not Unlimited Taels",
+      description: "You got all of the money, and as such can't get any more.",
+      hint: "How rich can you get?",
       check: () => {
-        return this.characterService.characterState.bloodlineRank >= 4;
+        return this.characterService.characterState.money >= this.characterService.characterState.maxMoney - 1e21; //not exactly max in case this gets checked at a bad time
       },
       effect: () => {
       },
