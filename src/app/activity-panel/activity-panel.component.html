@@ -15,7 +15,7 @@
 <div class="activitiesContainer">
   <table>
     <ng-container *ngFor="let activity of activityService.activities">
-      <tr *ngIf="(activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
+      <tr [ngClass]="{'projectionOnly': activity.projectionOnly}" *ngIf="(activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
         <td>
           <span class="noWrap">
             <button (click)="onClick(activity, $event)"
@@ -37,6 +37,7 @@
           {{activity.description[activity.level]}}
           <br/>
           {{activity.consequenceDescription[activity.level]}}
+          {{activity.projectionOnly ? "This activity can only be performed by a spiritual projection of yourself back in the mortal realm." : ""}}
           <span *ngIf="activity.lastIncome && activity.lastIncome > 0">
             <mat-icon tooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels.">
               attach_money

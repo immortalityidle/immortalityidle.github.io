@@ -42,6 +42,7 @@ type CharacterStatus = {[key in StatusType]: {description: string, value: number
 export interface CharacterProperties {
   attributes: AttributeObject,
   money: number,
+  hellMoney: number,
   equipment: EquipmentSlots,
   age: number,
   status: CharacterStatus,
@@ -214,6 +215,7 @@ export class Character {
     }
   };
   money = 300;
+  hellMoney = 0;
   // age in days
   age = INITIAL_AGE;
   baseLifespan = 30 * 365;
@@ -481,6 +483,7 @@ export class Character {
     return {
       attributes: this.attributes,
       money: this.money,
+      hellMoney: this.hellMoney,
       equipment: this.equipment,
       age: this.age,
       status: this.status,
@@ -516,6 +519,7 @@ export class Character {
   setProperties(properties: CharacterProperties): void {
     this.attributes = properties.attributes;
     this.money = properties.money;
+    this.hellMoney = properties.hellMoney || 0;
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }

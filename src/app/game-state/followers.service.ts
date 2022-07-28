@@ -32,6 +32,7 @@ export interface FollowersProperties {
   totalDied: number,
   totalDismissed: number,
   highestLevel: number,
+  stashedFollowers: Follower[],
 }
 
 export interface FollowerReserve {
@@ -54,6 +55,7 @@ export class FollowersService {
   followersUnlocked = false;
   followerLifespanDoubled = false; // achievement
   followers: Follower[] = [];
+  stashedFollowers: Follower[] = [];
   followersRecruited = 0;
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number; } = {};
@@ -288,6 +290,7 @@ export class FollowersService {
     return {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
+      stashedFollowers: this.stashedFollowers,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
       sortField: this.sortField,
@@ -301,6 +304,7 @@ export class FollowersService {
 
   setProperties(properties: FollowersProperties) {
     this.followers = properties.followers || [];
+    this.stashedFollowers = properties.stashedFollowers || [];
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
@@ -407,5 +411,15 @@ export class FollowersService {
     } else {
      this.maxFollowerByType[job] = value;
     }
+  }
+
+  stashFollowers(){
+    this.stashedFollowers = this.followers;
+    this.followers = [];
+  }
+
+  restoreFollowers(){
+    this.followers = this.stashedFollowers;
+    this.stashedFollowers = [];
   }
 }

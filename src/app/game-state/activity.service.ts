@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { BattleService } from './battle.service';
 import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { AttributeType, CharacterAttribute } from '../game-state/character';
@@ -42,7 +42,7 @@ export class ActivityService {
   pauseOnImpossibleFail = true;
   pauseOnDeath = true;
   pauseBeforeDeath = true;
-  activities: Activity[] = this.getActivityList();
+  activities: Activity[];
   openApprenticeships = 1;
   oddJobDays = 0;
   beggingDays = 0;
@@ -58,8 +58,10 @@ export class ActivityService {
   activityHeader = "";
   activityHeaderDescription = "";
   hellEnabled = false; // flip this true to enable new postmortal content
+  hellService?: HellService;
 
   constructor(
+    private injector: Injector,
     private characterService: CharacterService,
     private inventoryService: InventoryService,
     public homeService: HomeService,
@@ -69,9 +71,12 @@ export class ActivityService {
     private battleService: BattleService,
     private logService: LogService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService,
-    private hellService: HellService
+    private impossibleTaskService: ImpossibleTaskService
   ) {
+    this.defineActivities();
+    this.activities = [];
+    setTimeout(() => this.activities = this.getActivityList());
+    
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
@@ -422,8 +427,6 @@ export class ActivityService {
 
 
   getActivityList(): Activity[] {
-    this.defineActivities();
-
     const newList: Activity[] = [];
     this.activityHeader = "";
     this.activityHeaderDescription = "";
@@ -432,6 +435,9 @@ export class ActivityService {
       this.activityHeaderDescription = this.impossibleTaskService.tasks[this.impossibleTaskService.activeTaskIndex].description;
     }
 
+    if (!this.hellService){
+      this.hellService = this.injector.get(HellService);
+    }
     if (this.hellService.inHell){
       return this.hellService.getActivityList();
     }

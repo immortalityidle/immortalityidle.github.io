@@ -40,6 +40,12 @@ export class ActivityPanelComponent {
   }
 
   onClick(activity: Activity, event: MouseEvent): void {
+
+    if (activity.projectionOnly){
+      this.activityService.spiritActivity = activity.activityType;
+      return;
+    }
+
     // Shift and Ctrl both multiply by 10x, combined does 100
     let repeat = 1
     repeat *= event.shiftKey ? 10 : 1
@@ -60,6 +66,10 @@ export class ActivityPanelComponent {
   }
 
   drag(activity: Activity, event: DragEvent){
+    if (activity.projectionOnly){
+      // don't allow projection only activities to drag and drop
+      return;
+    }
     event.dataTransfer?.setData("activity", "" + activity.activityType);
   }
 }

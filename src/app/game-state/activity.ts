@@ -41,6 +41,8 @@ export enum ActivityType {
   ConquerTheWorld,
   MoveStars,
   EscapeHell,
+  HellRecruiting,
+  BurnMoney,
   Hell // hell needs to be last for indexing purposes
 
 }
@@ -65,6 +67,7 @@ export interface Activity {
   skipApprenticeshipLevel: number;
   lastIncome?: number;
   resourceUse?: ActivityResource[]
+  projectionOnly?: boolean
 }
 
 export interface ActivityLoopEntry {

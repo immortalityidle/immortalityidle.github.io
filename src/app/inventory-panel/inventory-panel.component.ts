@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character'
 import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-state/inventory.service';
+import { HellService } from '../game-state/hell.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -12,7 +13,9 @@ import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-
 export class InventoryPanelComponent {
   equipmentSlots: string[];
   constructor(public inventoryService: InventoryService,
-    public characterService: CharacterService) {
+    public characterService: CharacterService,
+    public hellService: HellService
+    ) {
       this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
 
   }
@@ -22,6 +25,7 @@ export class InventoryPanelComponent {
   }
   
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
+    console.log(this.hellService.inHell);
     event.stopPropagation();
     if (event.shiftKey) {
       let oldSelected = null;
