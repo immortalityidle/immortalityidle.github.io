@@ -238,7 +238,7 @@ export class CharacterService {
   }
 
   upgradeBloodline() {
-    if (this.characterState.bloodlineRank >= 7){
+    if (this.characterState.bloodlineRank >= 9){
       // double check we're not going over the max rank
       return;
     }

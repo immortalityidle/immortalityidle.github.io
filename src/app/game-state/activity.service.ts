@@ -92,6 +92,9 @@ export class ActivityService {
         this.exhaustionDays--;
         return;
       }
+      if (this.characterService.characterState.bloodlineRank >= 9){
+        this.characterService.characterState.increaseAptitudeDaily();
+      }
 
 
       if (this.currentIndex < this.activityLoop.length) {

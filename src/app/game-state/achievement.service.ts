@@ -625,6 +625,21 @@ export class AchievementService {
       },
       effect: () => {
         this.characterService.characterState.imperial = true;
+        for (const home of this.homeService.imperialHomesList) {
+          this.homeService.homesList.push(home);
+        }
+        this.homeService.getNextHome();
+      },
+      unlocked: false
+    },
+    {
+      name: "Limit Breaker",
+      description: "You have broken past human limits and improve constantly! What new fate awaits you?",
+      hint: "999",
+      check: () => {
+        return (this.characterService.characterState.bloodlineRank >= 9);
+      },
+      effect: () => {
       },
       unlocked: false
     },
@@ -734,7 +749,7 @@ export class AchievementService {
       description: "You died from overwork performing an activity without necessary rest and unlocked the " + this.itemRepoService.items['autoRestManual'].name,
       hint: "There's no time to rest, cultivating is life.", 
       check: () => {
-        return this.activityService.activityDeath;
+        return this.activityService.activityDeath || this.characterService.characterState.immortal;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoRestManual']);

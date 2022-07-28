@@ -80,7 +80,7 @@ export class Character {
     private titlecasePipe: TitleCasePipe){
   }
 
-  maxMoney = 1e24;
+  maxMoney = 9.9999e23;
   totalLives = 1;
   dead = false;
   attributeScalingLimit = 10;
@@ -406,6 +406,9 @@ export class Character {
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
         const x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) * empowermentFactor; // Softcap
+        if (this.bloodlineRank >= 8){
+          return x;
+        }
         const c = 365 * 1000; // Hardcap
       return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
     }
@@ -419,6 +422,13 @@ export class Character {
     }
     this.attributes[attribute].value += increaseAmount;
     return increaseAmount;
+  }
+
+  increaseAptitudeDaily() {
+    const keys = Object.keys(this.attributes) as AttributeType[];
+    for(const key in keys) {
+      this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e7;
+    }
   }
 
   /**increase in days
