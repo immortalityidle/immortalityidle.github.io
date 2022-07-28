@@ -468,9 +468,9 @@ export class HomeService {
       maxInventory: 80,
       upgradeToTooltip: "Get a better house. A better home will cost 10q taels and take up 100,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 5;
-        this.characterService.characterState.status.health.value += 50;
-        this.characterService.characterState.status.stamina.value += 200;
+        this.characterService.characterState.status.mana.value += 20;
+        this.characterService.characterState.status.health.value += 100;
+        this.characterService.characterState.status.stamina.value += 500;
         this.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
@@ -491,9 +491,9 @@ export class HomeService {
       maxInventory: 100,
       upgradeToTooltip: "Get a better house. A better home will cost 100q taels and take up 1,000,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 10;
-        this.characterService.characterState.status.health.value += 80;
-        this.characterService.characterState.status.stamina.value += 300;
+        this.characterService.characterState.status.mana.value += 30;
+        this.characterService.characterState.status.health.value += 150;
+        this.characterService.characterState.status.stamina.value += 1000;
         this.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
