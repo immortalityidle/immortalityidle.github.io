@@ -59,6 +59,7 @@ export class ActivityService {
   activityHeaderDescription = "";
   hellEnabled = false; // flip this true to enable new postmortal content
   hellService?: HellService;
+  spiritActivityProgress = false;
 
   constructor(
     private injector: Injector,
@@ -173,6 +174,7 @@ export class ActivityService {
       }
       // do the spirit activity if we can
       if (this.spiritActivity && this.characterService.characterState.status.mana.value >= 5){
+        this.spiritActivityProgress = true;
         let activity = this.getActivityByType(this.spiritActivity);
         const rest = this.getActivityByType(ActivityType.Resting);
         if (!this.checkResourceUse(activity, true) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
@@ -180,6 +182,8 @@ export class ActivityService {
         }
         activity.consequence[activity.level]();
         this.characterService.characterState.status.mana.value -= 5;
+      } else {
+        this.spiritActivityProgress = false;
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {

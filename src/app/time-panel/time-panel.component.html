@@ -76,7 +76,7 @@
       <tr *ngIf="activityService.spiritActivity">
         <td>{{activityService.getActivityByType(activityService.spiritActivity).name[activityService.getActivityByType(activityService.spiritActivity).level]}}</td>
         <td>
-          <div class="progress-bar indeterminate">
+          <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">
             <span></span>
           </div>
         </td>
