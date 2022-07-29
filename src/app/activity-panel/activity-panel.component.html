@@ -18,7 +18,7 @@
       <tr [ngClass]="{'projectionOnly': activity.projectionOnly}" *ngIf="(activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
         <td>
           <span class="noWrap">
-            <button (click)="onClick(activity, $event)"
+            <button class="activityButton" (click)="onClick(activity, $event)"
                     tooltip="Add this to your schedule
 
                     Shift- or Ctrl-click to repeat it 10x

@@ -6,7 +6,6 @@ import { ReincarnationService } from './reincarnation.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 import { Activity, ActivityType } from './activity';
-import { MatTabGroup } from '@angular/material/tabs';
 import { FollowersService } from './followers.service';
 
 export enum HellLevel {
@@ -37,6 +36,7 @@ export interface Hell {
   entryEffect?: () => void;
   dailyEffect?: () => void;
   exitEffect?: () => void;
+  completeEffect: () => void;
   activities: (Activity | undefined)[],
   projectionActivities: (Activity | undefined)[]
   hint: string,
@@ -64,7 +64,7 @@ export class HellService {
     name: ['Burn Money'],
     activityType: ActivityType.BurnMoney,
     description: ['Burn mortal realm money to receive hell money.'],
-    consequenceDescription: ['Uses 10 Stamina and 1q mortal money. Gives you 1 hell money.'],
+    consequenceDescription: ['Uses 10 Stamina and a huge pile of mortal money. Gives you 1 hell money.'],
     consequence: [() => {
       if (this.characterService.characterState.money < 1e15){
         return;
@@ -99,7 +99,7 @@ export class HellService {
       this.characterService.characterState.status.stamina.value -= 100;
       this.characterService.characterState.hellMoney -= 1000;
       if (Math.random() < 0.01){
-        this.followerService.generateFollower();
+        this.followerService.generateFollower("damned");
       }
     }],
     resourceUse: [{
@@ -124,17 +124,24 @@ export class HellService {
   ) {
 
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.currentHell >= 0){
-        let hell = this.hells[this.currentHell];
-        if (hell.dailyEffect){
-          hell.dailyEffect();
-        }
+      if (this.currentHell < 0){
+        // not currently in a hell, bail out
+        return;
+      }
+      let hell = this.hells[this.currentHell];
+      if (hell.dailyEffect){
+        hell.dailyEffect();
       }
       if (this.beaten){
         this.beaten = false;
         this.logService.addLogMessage("You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm.", "INJURY", "EVENT");
         this.currentHell = -1;
         this.activityService.reloadActivities();
+      }
+      if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()){
+        hell.completeEffect();
+        this.completedHellTasks.push(this.currentHell);
+          
       }
     });
 
@@ -146,6 +153,12 @@ export class HellService {
   reset(){
     // reincarnation gets you out and back to the mortal realm
     if (this.inHell){
+      if (this.currentHell > 0){
+        let leavingHell = this.hells[this.currentHell];
+        if (leavingHell.exitEffect){
+          leavingHell.exitEffect();
+        }
+      }
       this.inHell = false;
       this.currentHell = -1;
       this.activityService.reloadActivities();
@@ -163,7 +176,7 @@ export class HellService {
   setProperties(properties: HellProperties) {
     this.inHell = properties.inHell;
     this.currentHell = properties.currentHell;
-    this.completedHellTasks = properties.completedHellTasks;
+    this.completedHellTasks = properties.completedHellTasks || [];
     this.activityService.reloadActivities();
   }
 
@@ -223,7 +236,7 @@ export class HellService {
     for (const hell of this.hells){
       newList.push({
           level: 0,
-          name: [hell.name],
+          name: ["Enter the " + hell.name],
           activityType: ActivityType.Hell + hell.index,
           description: [hell.description],
           consequenceDescription: [""],
@@ -252,16 +265,28 @@ export class HellService {
         this.followerService.stashFollowers();
       },
       dailyEffect: () => {
-        this.characterService.characterState.attributes.charisma.value -= this.characterService.characterState.attributes.charisma.value * 0.9;
+        let totalPower = 0;
+        for (let follower of this.followerService.followers){
+          totalPower += follower.power;
+        }
+        let reducer = Math.pow(0.8, totalPower);
+        this.characterService.characterState.attributes.charisma.value -= this.characterService.characterState.attributes.charisma.value * reducer;
       },
       exitEffect: () => {
         this.followerService.restoreFollowers();
       },
-      activities: [this.activityService.Resting, this.hellRecruiting],
+      completeEffect: () => {
+        this.logService.addLogMessage("Together with your new followers, you have seized control of the Hell of Tongue-ripping. Now all that remains is to defeat its lord.", "STANDARD", "STORY")
+      },
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.hellRecruiting, this.activityService.TrainingFollowers],
       projectionActivities: [this.burnMoney],
       hint: "It's hard to talk with all these demons going for your mouth, but maybe if you can get some help from the other prisoners here you could take control of this place.",
       successCheck: () => {
-        return this.followerService.followers.length > 50;
+        let totalPower = 0;
+        for (let follower of this.followerService.followers){
+          totalPower += follower.power;
+        }
+        return totalPower > 5000;
       }
     },
     {
@@ -273,6 +298,9 @@ export class HellService {
         Task: defeat X enemies
         During the level: Weapons unusable
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],
@@ -291,6 +319,9 @@ export class HellService {
       During the level: Bloodline effects nerfed
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -306,6 +337,9 @@ export class HellService {
           /*
         Task: Fight mirror battles vs yourself
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],
@@ -324,6 +358,9 @@ export class HellService {
         During the level: Constantly robbed and beaten by troublemakers
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -340,6 +377,9 @@ export class HellService {
         Task: Forge special hammers to break the chains
         During the level: Blacksmithing/mining/smelting nerfed to only allow copper
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],
@@ -358,6 +398,9 @@ export class HellService {
         During the level: Increase damage taken based on total kills that life
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -374,6 +417,9 @@ export class HellService {
         Task: melt the mountain with fire magic
         During the level: Fire lore nerfed, fire lore activities (including blacksmithing) unavailable
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],
@@ -393,6 +439,9 @@ export class HellService {
         During the level: Slippery hands - accuracy reduced, weapon falls back into inventory
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -411,6 +460,9 @@ export class HellService {
         During the level: Extra tough mad cow monsters, lots of them
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -427,6 +479,9 @@ export class HellService {
         Task: Roll a boulder (strength check)
         During the level:only magical attacks are usable (your hands are busy with the boulder)
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],
@@ -445,6 +500,9 @@ export class HellService {
       During the level: using, selling, or throwing away food resets the timer
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -461,6 +519,9 @@ export class HellService {
         Task: Swim to the bottom of the pool, break through to drain it
         During the level: Underwater, most activities unavailable
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],
@@ -479,6 +540,9 @@ export class HellService {
         During the level: Frequent random damage from winds and rain
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -495,6 +559,9 @@ export class HellService {
         Task: Raid the tomb (speed check), put the treasures back (money)
         During the level: Traps
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],
@@ -514,6 +581,9 @@ export class HellService {
         During the level: no water-based activities
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -532,6 +602,9 @@ export class HellService {
         During the level: Constant heavy damage
         */
       },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+      },
       activities: [],
       projectionActivities: [],
       hint: "",
@@ -548,6 +621,9 @@ export class HellService {
         Task: Find the final loophole (charisma and intelligence check)
         During the level: Extra tough enemies
         */
+      },
+      completeEffect: () => {
+        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
       },
       activities: [],
       projectionActivities: [],

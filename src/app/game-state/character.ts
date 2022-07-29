@@ -63,6 +63,7 @@ export interface CharacterProperties {
   healthBonusFood: number,
   healthBonusBath: number,
   healthBonusMagic: number,
+  healthBonusSoul: number,
   empowermentFactor: number,
   immortal: boolean,
   easyMode: boolean
@@ -101,6 +102,7 @@ export class Character {
   healthBonusFood = 0;
   healthBonusBath = 0;
   healthBonusMagic = 0;
+  healthBonusSoul = 0;
   empowermentFactor = 1;
   imperial = false;
   immortal = false;
@@ -341,7 +343,7 @@ export class Character {
   }
 
   recalculateDerivedStats(): void{
-    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic +
+    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul + 
       Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5);
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
@@ -459,8 +461,14 @@ export class Character {
     if (this.healthBonusMagic > 10000){
       this.healthBonusMagic = 10000;
     }
+    if (this.healthBonusSoul > 20000){
+      this.healthBonusSoul = 20000;
+    }
     if (this.status.stamina.max > 1000000){
       this.status.stamina.max = 1000000;
+    }
+    if (this.status.mana.max > 1000000){
+      this.status.mana.max = 1000000;
     }
     if (this.status.health.value > this.status.health.max){
       this.status.health.value = this.status.health.max;
@@ -504,6 +512,7 @@ export class Character {
       healthBonusFood: this.healthBonusFood,
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
+      healthBonusSoul: this.healthBonusSoul,
       empowermentFactor: this.empowermentFactor,
       immortal: this.immortal,
       easyMode: this.easyMode,
@@ -546,6 +555,7 @@ export class Character {
     this.healthBonusFood = properties.healthBonusFood || 0;
     this.healthBonusBath = properties.healthBonusBath || 0;
     this.healthBonusMagic = properties.healthBonusMagic || 0;
+    this.healthBonusSoul = properties.healthBonusSoul || 0;
     this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
     this.easyMode = properties.easyMode || false;

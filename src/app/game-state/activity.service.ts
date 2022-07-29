@@ -511,6 +511,9 @@ export class ActivityService {
       newList.push(this.ManaControl);
     }
     newList.push(this.CoreCultivation);
+    if (this.characterService.characterState.immortal){
+      newList.push(this.SoulCultivation);
+    }
     newList.push(this.InfuseEquipment);
     newList.push(this.InfuseBody);
     newList.push(this.ExtendLife);
@@ -558,6 +561,8 @@ export class ActivityService {
   MindCultivation: Activity;
   // @ts-ignore
   CoreCultivation: Activity;
+  // @ts-ignore
+  SoulCultivation: Activity;
   // @ts-ignore
   InfuseEquipment: Activity;
   // @ts-ignore
@@ -2247,6 +2252,47 @@ export class ActivityService {
         metalLore: 1000,
         earthLore: 1000,
         spirituality: 1000
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    };
+
+    this.SoulCultivation = {
+      level: 0,
+      name: ['Soul Cultivation'],
+      activityType: ActivityType.SoulCultivation,
+      description: ['Focus on the development of your immortal soul.'],
+      consequenceDescription: ["Uses 1000 health. An immortal's cultivation technique. Balance your attributes and your lore, and improve yourself in every way."],
+      consequence: [() => {
+        this.characterService.characterState.status.health.value -= 1000;
+        let lowStat = "earthLore" as AttributeType;
+        for (const attribute of ["metalLore","woodLore","waterLore","fireLore"] as AttributeType[]){
+          if (this.characterService.characterState.attributes[attribute].value < this.characterService.characterState.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+        }
+        this.characterService.characterState.increaseAttribute(lowStat, 1);
+
+        lowStat = "strength" as AttributeType;
+        for (const attribute of ["speed","toughness","intelligence","charisma"] as AttributeType[]){
+          if (this.characterService.characterState.attributes[attribute].value < this.characterService.characterState.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+        }
+        this.characterService.characterState.increaseAttribute(lowStat, 1);
+        this.characterService.characterState.increaseAttribute('spirituality', 0.01);
+
+        this.characterService.characterState.healthBonusSoul++;
+        this.characterService.characterState.status.stamina.max++;
+        this.characterService.characterState.status.mana.max++;
+        this.characterService.characterState.checkOverage()
+      }],
+      resourceUse: [{
+        health: 1000
+      }],
+      requirements: [{
+        spirituality: 1e15
+        // also requires immortality in getActivityList
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
@@ -9,6 +9,7 @@ import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
+import { HellService } from './hell.service';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -67,6 +68,8 @@ export class FollowersService {
   totalDied = 0;
   totalDismissed = 0;
   highestLevel = 0;
+  nonRandomJobs = 1;
+  hellService?: HellService;
 
   jobs: jobsType = {
     "builder": {
@@ -197,10 +200,18 @@ export class FollowersService {
         this.battleService.tickCounter += follower.power;
       },
       description: "Scouts help you track down and fight monsters faster."
-    }
+    },
+    //Jobs after this will not be randomly selected. If you add jobs to this section, add one to this.nonRandomJobs
+    "damned": {
+      work: (follower: Follower) => {
+        this.battleService.tickCounter += follower.power;
+      },
+      description: "A soul working off karmic debt in hell that has decided to join you"
+    },
   };
 
   constructor(
+    private injector: Injector,
     private logService: LogService,
     private characterService: CharacterService,
     private homeService: HomeService,
@@ -208,7 +219,8 @@ export class FollowersService {
     private itemRepoService: ItemRepoService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
-    private battleService: BattleService
+    private battleService: BattleService,
+    
   ) {
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.followersUnlocked){
@@ -218,7 +230,10 @@ export class FollowersService {
         return;
       }
       this.updateFollowerCap();
-      if (this.characterService.characterState.age % 18250 === 0){
+      if (!this.hellService){
+        this.hellService = this.injector.get(HellService);
+      }
+      if (this.characterService.characterState.age % 18250 === 0 && !this.hellService.inHell){
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
@@ -369,7 +384,7 @@ export class FollowersService {
   }
   generateFollowerJob(): string {
     const keys = Object.keys(this.jobs);
-    return keys[Math.floor(Math.random() * keys.length)];
+    return keys[Math.floor(Math.random() * (keys.length - this.nonRandomJobs))];
   }
 
   /**
