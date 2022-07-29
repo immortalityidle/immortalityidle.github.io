@@ -406,6 +406,8 @@ export class InventoryService {
       const value = this.consume("spiritGem");
       if (value > 0){
         grade += value;
+      }
+      if (value > 0 || masterLevel){
         if (Math.random() < 0.1){
           //non-master alch can generate pills, if using a spirit gem
           this.generatePill(grade);
