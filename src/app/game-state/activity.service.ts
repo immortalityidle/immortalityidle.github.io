@@ -154,7 +154,6 @@ export class ActivityService {
           this.characterService.characterState.status.health.value -= 0.01 * this.characterService.characterState.status.health.max;
         }
         // check for activity death
-        this.activityDeath = false;
         if (this.characterService.characterState.status.health.value <= 0){
           this.activityDeath = true;
         }
