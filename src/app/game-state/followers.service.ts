@@ -70,6 +70,7 @@ export class FollowersService {
   highestLevel = 0;
   nonRandomJobs = 1;
   hellService?: HellService;
+  gemsMerged = false;
 
   jobs: jobsType = {
     "builder": {
@@ -189,9 +190,8 @@ export class FollowersService {
         if (gemmerPower > 4){
           gemmerPower = 4;
         }
-        for (let i = 0; i < follower.power; i++){
-          this.inventoryService.mergeAnySpiritGem(gemmerPower);
-        }
+        this.inventoryService.mergeAnySpiritGem(gemmerPower);
+        this.gemsMerged = true;
       },
       description: "Gemologists combine monster gems into higher grades."
     },
@@ -237,7 +237,12 @@ export class FollowersService {
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
+      this.gemsMerged = false;
       for (let i = this.followers.length - 1; i >= 0; i--){
+        if (this.followers[i].job == "gemologist" && this.gemsMerged){
+          // gemologists should only act once per tick
+          continue;
+        }
         this.followerWorks(this.followers[i]);
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){

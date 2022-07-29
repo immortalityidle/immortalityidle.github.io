@@ -5,7 +5,6 @@ import { Furniture, InventoryService, Item, instanceOfFurniture } from '../game-
 import { HomeService, HomeType, Home } from '../game-state/home.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivityService } from './activity.service';
 
 @Injectable({
   providedIn: 'root'
