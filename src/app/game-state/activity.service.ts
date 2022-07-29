@@ -505,11 +505,11 @@ export class ActivityService {
     newList.push(this.MindCultivation);
     if(this.characterService.characterState.manaUnlocked || this.characterService.characterState.easyMode){
       newList.push(this.ManaControl);
-      newList.push(this.CoreCultivation);
-      newList.push(this.InfuseEquipment);
-      newList.push(this.InfuseBody);
-      newList.push(this.ExtendLife);
     }
+    newList.push(this.CoreCultivation);
+    newList.push(this.InfuseEquipment);
+    newList.push(this.InfuseBody);
+    newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
     newList.push(this.TrainingFollowers);
     return newList;
