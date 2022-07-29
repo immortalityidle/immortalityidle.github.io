@@ -133,6 +133,10 @@ export class ActivityService {
         const rest = this.getActivityByType(ActivityType.Resting);
         if (!this.checkResourceUse(activity) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
           activity = rest;
+          if (this.checkMaxResourceUse(activity)) {
+            //don't skip the current activity unless you don't have enough max resources to fit it
+            this.currentTickCount--;
+          }
         }
         activity.consequence[activity.level]();
 
@@ -210,6 +214,16 @@ export class ActivityService {
       if (this.characterService.characterState.status[key].value < activity.resourceUse[activity.level][key]) {
         return false;
       }
+    }
+    return true;
+  }
+  checkMaxResourceUse(activity: Activity): boolean {
+    if (!activity.resourceUse || !activity.resourceUse[activity.level]){
+      return true;
+    }
+    for (const key in activity.resourceUse[activity.level]) {
+      //@ts-ignore
+      if (this.characterService.characterState.status[key].max < activity.resourceUse[activity.level][key]) return false;
     }
     return true;
   }
