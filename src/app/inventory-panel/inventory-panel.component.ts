@@ -25,7 +25,6 @@ export class InventoryPanelComponent {
   }
   
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
-    console.log(this.hellService.inHell);
     event.stopPropagation();
     if (event.shiftKey) {
       let oldSelected = null;
