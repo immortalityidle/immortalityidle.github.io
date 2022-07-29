@@ -174,8 +174,8 @@ export class HellService {
   }
 
   setProperties(properties: HellProperties) {
-    this.inHell = properties.inHell;
-    this.currentHell = properties.currentHell;
+    this.inHell = properties.inHell || false;
+    this.currentHell = properties.currentHell || -1;
     this.completedHellTasks = properties.completedHellTasks || [];
     this.activityService.reloadActivities();
   }
