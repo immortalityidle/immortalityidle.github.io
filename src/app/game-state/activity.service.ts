@@ -1592,7 +1592,7 @@ export class ActivityService {
             if (this.inventoryService.openInventorySlots() > 0){
               let grade = this.inventoryService.consume('ingredient');
               if (grade >= 1){ // if the ingredient was found
-                grade += Math.floor(Math.log2(this.characterService.characterState.attributes.waterLore.value));
+                grade = Math.floor(grade * Math.log10(this.characterService.characterState.attributes.waterLore.value + 10));
                 this.inventoryService.generatePotion(grade, false);
               }
             }
@@ -1615,7 +1615,7 @@ export class ActivityService {
             if (this.inventoryService.openInventorySlots() > 0){
               let grade = this.inventoryService.consume('ingredient');
               if (grade >= 1){ // if the ingredient was found
-                grade += Math.floor(Math.log2(this.characterService.characterState.attributes.waterLore.value));
+                grade = Math.floor(grade * Math.log10(this.characterService.characterState.attributes.waterLore.value + 10));
                 this.inventoryService.generatePotion(grade + 1, false);
               }
             }
@@ -1633,7 +1633,7 @@ export class ActivityService {
           if (this.inventoryService.openInventorySlots() > 0){
             let grade = this.inventoryService.consume('ingredient');
             if (grade >= 1){ // if the ingredient was found
-              grade += Math.floor(Math.log2(this.characterService.characterState.attributes.waterLore.value));
+              grade = Math.floor(grade * Math.log10(this.characterService.characterState.attributes.waterLore.value + 10));
               this.inventoryService.generatePotion(grade + 1, true);
             }
           }
