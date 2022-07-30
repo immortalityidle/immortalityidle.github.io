@@ -749,7 +749,7 @@ export class AchievementService {
       description: "You died from overwork performing an activity without necessary rest and unlocked the " + this.itemRepoService.items['autoRestManual'].name,
       hint: "There's no time to rest, cultivating is life.", 
       check: () => {
-        return this.activityService.activityDeath || this.characterService.characterState.immortal;
+        return this.activityService.activityDeathEver || this.characterService.characterState.immortal;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoRestManual']);

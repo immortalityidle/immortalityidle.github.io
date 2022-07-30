@@ -52,7 +52,8 @@ export class ActivityService {
   exhaustionDays = 0;
   currentLoopEntry?: ActivityLoopEntry = undefined;
   currentApprenticeship: ActivityType = ActivityType.Resting;
-  activityDeath = false; // Simpler to just check a flag for the achievement.
+  activityDeath = false;
+  activityDeathEver = false; //if pause on death isn't on when getting an activity death, the achievement wouldn't get awarded
   autoRestUnlocked = false;
   totalExhaustedDays = 0;
   activityHeader = "";
@@ -132,11 +133,11 @@ export class ActivityService {
         let activity = this.getActivityByType(this.currentLoopEntry.activity);
         const rest = this.getActivityByType(ActivityType.Resting);
         if (!this.checkResourceUse(activity) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
-          activity = rest;
           if (this.checkMaxResourceUse(activity)) {
             //don't skip the current activity unless you don't have enough max resources to fit it
             this.currentTickCount--;
           }
+          activity = rest;
         }
         activity.consequence[activity.level]();
 
@@ -158,8 +159,10 @@ export class ActivityService {
           this.characterService.characterState.status.health.value -= 0.01 * this.characterService.characterState.status.health.max;
         }
         // check for activity death
+        this.activityDeath = false;
         if (this.characterService.characterState.status.health.value <= 0){
           this.activityDeath = true;
+          this.activityDeathEver = true;
         }
 
         this.currentTickCount++;
