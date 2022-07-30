@@ -10,7 +10,7 @@
       <option [selected]="followerService.sortField === 'Job'">Job</option>
       <option [selected]="followerService.sortField === 'Age'">Age</option>
       <option [selected]="followerService.sortField === 'Power'">Power</option>
-      <option [selected]="followerService.sortField === 'Remaining'">Remaining Life</option>
+      <option [selected]="followerService.sortField === 'Remaining Life'">Remaining Life</option>
     </select>
     <span>
       <input type="checkbox" id="followerSort"  [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
