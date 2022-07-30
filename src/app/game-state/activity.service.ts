@@ -41,7 +41,7 @@ export class ActivityService {
   autoPauseUnlocked = false;
   pauseOnImpossibleFail = true;
   pauseOnDeath = true;
-  pauseBeforeDeath = true;
+  pauseBeforeDeath = false;
   activities: Activity[];
   openApprenticeships = 1;
   oddJobDays = 0;

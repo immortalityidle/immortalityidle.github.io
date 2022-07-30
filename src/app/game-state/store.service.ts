@@ -139,11 +139,11 @@ export class StoreService {
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Your followers will have enhanced bloodlines and will follow you between incarnations. You will keep your weapons, armor, money with interest, your home and your Empire.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Capital];
     } else if (this.characterService.characterState.bloodlineRank === 7){
-      // Entourage
+      // Limit Break
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline. Break through the limits of humanity. You will keep your weapons, armor, money with interest, your home, and your Empire.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.ImperialSeat];
     } else if (this.characterService.characterState.bloodlineRank === 8){
-      // Entourage
+      // Daily Aptitude Increase
       this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes, and enhance your bloodline one last time. Finally, you will gain aptitudes every day from your current Attributes, improving constantly. You will keep your weapons, armor, money with interest, your home, and your Empire.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Godthrone];
     } else if (this.characterService.characterState.bloodlineRank === 9){
