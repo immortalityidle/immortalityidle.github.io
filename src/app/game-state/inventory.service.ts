@@ -478,15 +478,12 @@ export class InventoryService {
 
   generateHerb(): void {
     let grade = 0;
+    const maxGrade = herbNames.length * herbQuality.length;
     const woodLore = this.characterService.characterState.attributes.woodLore.value;
-    if (woodLore < 10000){
-      grade = Math.floor(Math.sqrt(woodLore));
-    } else {
-      grade = 100 + Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value - 10000));
-    }
+    grade = Math.floor(Math.pow(woodLore/1e9, 0.26) * maxGrade); // 1e9 woodlore is maximum grade, adjust if necessary
     let name: string;
     let quality: string;
-    if (grade >= herbNames.length * herbQuality.length){
+    if (grade >= maxGrade){
       // maxed out
       name = herbNames[herbNames.length - 1];
       quality = herbQuality[herbQuality.length - 1];
