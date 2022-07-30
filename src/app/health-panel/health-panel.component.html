@@ -2,8 +2,8 @@
   <table>
     <tr>
       <td class="headerCell">
-        You are {{characterService.characterState.age / 365 | floor }} years,
-        {{characterService.characterState.age % 365 | number: '1.0-0'}} days old.
+        You are {{characterService.characterState.age / 365 | floor }} years<span *ngIf="characterService.characterState.age < 10000 * 365">,
+        {{characterService.characterState.age % 365 | number: '1.0-0'}} days</span> old.
       </td>
       <td class="headerCell" *ngIf="characterService.characterState.immortal">
         You expect to live forever.
