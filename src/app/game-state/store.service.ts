@@ -75,6 +75,15 @@ export class StoreService {
     }
   }
 
+  isManualAvailable(): boolean {
+    for (const manual of this.manuals) {
+      if (manual.owned && !manual.owned()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   getFurnitureForSlot(slot: string | null = null) {
     if (slot === null) return this.furniture;
 
