@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { makeStateKey } from '@angular/platform-browser';
 import { FollowersService } from '../game-state/followers.service';
 
 @Component({
@@ -14,7 +15,19 @@ export class FollowerManagementPanelComponent implements OnInit {
   ngOnInit(): void {
     let a;
   }
-  
+
+  getTotalAssingments(){
+    let max = 0;
+    for (const followerType in this.followerService.jobs){
+      if (this.followerService.maxFollowerByType[followerType]){
+        max += this.followerService.maxFollowerByType[followerType];
+      } else {
+        max += 1000;
+      }
+    }
+    return max;
+  }
+
   changeAllChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.changeAll = parseInt(event.target.value);

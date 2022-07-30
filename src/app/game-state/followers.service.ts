@@ -44,7 +44,8 @@ export interface FollowerReserve {
 type jobsType = {
   [key: string]: {
     work: (follower: Follower) => void,
-    description: string
+    description: string,
+    hidden?: boolean
   }
 };
 
@@ -206,7 +207,8 @@ export class FollowersService {
       work: (follower: Follower) => {
         this.battleService.tickCounter += follower.power;
       },
-      description: "A soul working off karmic debt in hell that has decided to join you"
+      description: "A soul working off karmic debt in hell that has decided to join you",
+      hidden: true
     },
   };
 
@@ -220,7 +222,7 @@ export class FollowersService {
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
     private battleService: BattleService,
-    
+
   ) {
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.followersUnlocked){
@@ -239,7 +241,7 @@ export class FollowersService {
       }
       this.gemsMerged = false;
       for (let i = this.followers.length - 1; i >= 0; i--){
-        if (this.followers[i].job == "gemologist" && this.gemsMerged){
+        if (this.followers[i].job === "gemologist" && this.gemsMerged){
           // gemologists should only act once per tick
           continue;
         }
@@ -366,7 +368,7 @@ export class FollowersService {
       this.totalDismissed++;
       return;
     }
-    
+
     const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
     this.logService.addLogMessage("A new " + job + " has come to learn at your feet.","STANDARD","FOLLOWER");
     this.followers.push({
@@ -393,9 +395,9 @@ export class FollowersService {
   }
 
   /**
-   * 
+   *
    * @param follower the Follower interface of the selected follower.
-   * 
+   *
    */
   dismissFollower(follower: Follower){
     this.totalDismissed++;

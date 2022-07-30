@@ -4,7 +4,7 @@
   <div class="topInfo"><span>You are currently supporting {{followerService.followers.length}} follower. You can support up to {{followerService.followerCap}}.</span></div>
   <div class="topInfo"><span tooltip="Set a number to change all of the follower job limits to.">Set limit on all jobs to <input value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> followers. <button (click)="changeAllClicked()">Change All</button></span></div>
   <div class="topInfo"><span>
-    Sort followers by 
+    Sort followers by
     <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
       <option [selected]="followerService.sortField === 'Name'">Name</option>
       <option [selected]="followerService.sortField === 'Job'">Job</option>
@@ -12,15 +12,22 @@
       <option [selected]="followerService.sortField === 'Power'">Power</option>
       <option [selected]="followerService.sortField === 'Remaining'">Remaining Life</option>
     </select>
-    <input type="checkbox" [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
-    <span>sort Ascending</span>
+    <span>
+      <input type="checkbox" id="followerSort"  [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
+      <label for="followerSort">Sort Ascending</label>
+    </span>
   </span></div>
   <div class="scrollingDiv">
     <table>
-      <tr  *ngFor="let job of followerService.jobs | keyvalue">
-        <td>{{job.key | titlecase}}</td>
-        <td>{{job.value.description}}</td>
-        <td tooltip="This value will only apply to new followers who seek to join you. You'll have to dismiss current followers yourself.">Keep up to <input value="{{followerService.maxFollowerByType[job.key] === undefined ? 1000 : followerService.maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
-      </tr>
+      <ng-container *ngFor="let job of followerService.jobs | keyvalue">
+        <tr *ngIf="!job.value.hidden" >
+          <td>{{job.key | titlecase}}</td>
+          <td>{{job.value.description}}</td>
+          <td tooltip="This value will only apply to new followers who seek to join you. You'll have to dismiss current followers yourself.">Keep up to <input value="{{followerService.maxFollowerByType[job.key] === undefined ? 1000 : followerService.maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
+        </tr>
+      </ng-container>
     </table>
+  </div>
+  <br/>
+  <span>Total assignments: {{getTotalAssingments()}}</span>
 </div>
