@@ -1191,12 +1191,18 @@ export class ActivityService {
 
     this.OddJobs = {
       level: 0,
-      name: ['Odd Jobs'],
+      name: ['Odd Jobs', 'Expert Jobs', 'Impossible Jobs', 'Immortal Jobs'],
       activityType: ActivityType.OddJobs,
       description:
-        ['Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.'],
+        ['Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.',
+        'Put your name out as someone who can do anything. You get a lot of requests from high places.',
+        'Put your name out as someone who can do the impossible. It works as good training.',
+        'Perform mundane tasks so difficult they can only be handled by an immortal. It\'s good to stay grounded sometimes.'],
       consequenceDescription:
-        ['Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.'],
+        ['Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.',
+        'Uses 40 Stamina. Increases and unbalances all your basic attributes by a large amount and provides money.',
+        'Uses 250 Stamina. Increases and unbalances all your basic attributes by a very large amount and provides money.',
+        'Uses 1000 Stamina. Increases and unbalances all your basic attributes by a tremendous amount and provides money.'],
       consequence: [() => {
         this.characterService.characterState.increaseAttribute('strength', 0.02);
         this.characterService.characterState.increaseAttribute('toughness', 0.02);
@@ -1207,11 +1213,111 @@ export class ActivityService {
         this.characterService.characterState.money += 3;
         this.getActivityByType(ActivityType.OddJobs).lastIncome = 3;
         this.oddJobDays++;
+      },
+      () => {
+        this.characterService.characterState.status.stamina.value -= 40;
+        let lowStat = "strength" as AttributeType;
+        let highStat = "strength" as AttributeType;
+        for (const attribute of ["toughness","speed","intelligence","charisma"] as AttributeType[]){
+          if (this.characterService.characterState.attributes[attribute].value < this.characterService.characterState.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+          if (this.characterService.characterState.attributes[attribute].value > this.characterService.characterState.attributes[highStat].value) {
+            highStat = attribute;
+          }
+        }
+        let statSum = 0;
+        for (const attribute of ["strength","toughness","speed","intelligence","charisma"] as AttributeType[]){
+          if (attribute === lowStat) this.characterService.characterState.increaseAttribute(attribute, 2);
+          else if (attribute === highStat) this.characterService.characterState.increaseAttribute(attribute, 3);
+          else this.characterService.characterState.increaseAttribute(attribute, 2.5);
+          statSum += this.characterService.characterState.attributes[attribute].value;
+        }
+        this.characterService.characterState.money += Math.sqrt(statSum);
+        this.getActivityByType(ActivityType.OddJobs).lastIncome = Math.sqrt(statSum);
+        this.oddJobDays++;
+      },
+      () => {
+        this.characterService.characterState.status.stamina.value -= 250;
+        let lowStat = "strength" as AttributeType;
+        let highStat = "strength" as AttributeType;
+        for (const attribute of ["toughness","speed","intelligence","charisma"] as AttributeType[]){
+          if (this.characterService.characterState.attributes[attribute].value < this.characterService.characterState.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+          if (this.characterService.characterState.attributes[attribute].value > this.characterService.characterState.attributes[highStat].value) {
+            highStat = attribute;
+          }
+        }
+        let statSum = 0;
+        for (const attribute of ["strength","toughness","speed","intelligence","charisma"] as AttributeType[]){
+          if (attribute === lowStat) this.characterService.characterState.increaseAttribute(attribute, 50);
+          else if (attribute === highStat) this.characterService.characterState.increaseAttribute(attribute, 100);
+          else this.characterService.characterState.increaseAttribute(attribute, 75);
+          statSum += this.characterService.characterState.attributes[attribute].value;
+        }
+        this.characterService.characterState.money += Math.sqrt(statSum) * 5;
+        this.getActivityByType(ActivityType.OddJobs).lastIncome = Math.sqrt(statSum) * 5;
+        this.oddJobDays++;
+      },
+      () => {
+        this.characterService.characterState.status.stamina.value -= 1000;
+        //it still succeeds if you don't have enough stamina - expected to have a good home by now
+        let lowStat = "strength" as AttributeType;
+        let highStat = "strength" as AttributeType;
+        for (const attribute of ["toughness","speed","intelligence","charisma"] as AttributeType[]){
+          if (this.characterService.characterState.attributes[attribute].value < this.characterService.characterState.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+          if (this.characterService.characterState.attributes[attribute].value > this.characterService.characterState.attributes[highStat].value) {
+            highStat = attribute;
+          }
+        }
+        let statSum = 0;
+        for (const attribute of ["strength","toughness","speed","intelligence","charisma"] as AttributeType[]){
+          if (attribute === lowStat) this.characterService.characterState.increaseAttribute(attribute, 300);
+          else if (attribute === highStat) this.characterService.characterState.increaseAttribute(attribute, 500);
+          else this.characterService.characterState.increaseAttribute(attribute, 400);
+          statSum += this.characterService.characterState.attributes[attribute].value;
+        }
+        this.characterService.characterState.money += statSum; //this payout is absurdly massive but you already have bl4
+        this.getActivityByType(ActivityType.OddJobs).lastIncome = statSum;
+        this.oddJobDays++;
       }],
       resourceUse: [{
         stamina: 5
+      },
+      {
+        stamina: 40
+      },
+      {
+        stamina: 250
+      },
+      {
+        stamina: 1000
       }],
-      requirements: [{}],
+      requirements: [{},
+      {
+        strength: 2e7,
+        speed: 2e7,
+        charisma: 2e7,
+        intelligence: 2e7,
+        toughness: 2e7
+      },
+      {
+        strength: 1e11,
+        speed: 1e11,
+        charisma: 1e11,
+        intelligence: 1e11,
+        toughness: 1e11
+      },
+      {
+        strength: 5e15,
+        speed: 5e15,
+        charisma: 5e15,
+        intelligence: 5e15,
+        toughness: 5e15
+      }],
       unlocked: true,
       skipApprenticeshipLevel: 0
     };
