@@ -734,10 +734,10 @@ export class AchievementService {
     },
     {
       name: "Breaks are Good",
-      description: "You have collected two hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
-      hint: "Take a day off from cultivating.", //it takes 20h to get
+      description: "You have saved up many offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
+      hint: "Take a day off from cultivating.",
       check: () => {
-        return this.mainLoopService.bankedTicks > 2*60*60*40; //there are 40 ticks a second
+        return this.mainLoopService.bankedTicks > 2*60*60*40; //there are 40 ticks a second (and you get ticks at 10% efficiency)
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bankedTicksEfficiencyManual']);
