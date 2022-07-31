@@ -22,7 +22,6 @@ export enum ActivityType {
   CoreCultivation,
   SoulCultivation,
   InfuseBody,
-  InfuseEquipment,
   ExtendLife,
   Recruiting,
   TrainingFollowers,

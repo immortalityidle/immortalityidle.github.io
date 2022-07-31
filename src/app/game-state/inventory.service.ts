@@ -300,7 +300,7 @@ export class InventoryService {
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem");
       if (value > 0){
-        grade *= 1 + (value / 5);
+        grade = Math.floor(Math.pow(grade, 1.2 + (value / 20)));
       }
     }
     const highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
@@ -362,41 +362,6 @@ export class InventoryService {
   updateArmorDescription(armor: Equipment){
     armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material +
       "<br/>Defense: " + armor.armorStats?.defense + "<br/>Durability: " + armor.armorStats?.durability
-  }
-
-  upgradeEquipment(value: number){
-
-    const upgradables = [];
-    if (this.characterService.characterState.equipment.leftHand){
-      upgradables.push(this.characterService.characterState.equipment.leftHand);
-    }
-    if (this.characterService.characterState.equipment.rightHand){
-      upgradables.push(this.characterService.characterState.equipment.rightHand);
-    }
-    if (this.characterService.characterState.equipment.head){
-      upgradables.push(this.characterService.characterState.equipment.head);
-    }
-    if (this.characterService.characterState.equipment.body){
-      upgradables.push(this.characterService.characterState.equipment.body);
-    }
-    if (this.characterService.characterState.equipment.legs){
-      upgradables.push(this.characterService.characterState.equipment.legs);
-    }
-    if (this.characterService.characterState.equipment.feet){
-      upgradables.push(this.characterService.characterState.equipment.feet);
-    }
-    if (upgradables.length > 0){
-      const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
-      if (equipment.armorStats){
-        equipment.armorStats.durability += value;
-        equipment.armorStats.defense += value;
-      } else if (equipment.weaponStats){
-        equipment.weaponStats.durability += value;
-        equipment.weaponStats.baseDamage += value;
-      }
-      equipment.value += value;
-      this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
-    }
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
@@ -525,6 +490,14 @@ export class InventoryService {
   }
 
   generateArmor(grade: number, material: string, slot: EquipmentPosition, defaultName: string | undefined = undefined): Equipment{
+    
+    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
+      // consume a spirit gem and increase the grade
+      const value = this.consume("spiritGem");
+      if (value > 0){
+        grade = Math.floor(Math.pow(grade, 1.2 + (value / 20)));
+      }
+    }
     const highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
     const nameGrade = Math.ceil(Math.sqrt(grade / 1e10) * highestGrade); // Name spreads up to 10B Value (coincides with defense)
     let prefixIndex = nameGrade % ItemPrefixes.length;

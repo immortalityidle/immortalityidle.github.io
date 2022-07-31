@@ -514,7 +514,6 @@ export class ActivityService {
     if (this.characterService.characterState.immortal){
       newList.push(this.SoulCultivation);
     }
-    newList.push(this.InfuseEquipment);
     newList.push(this.InfuseBody);
     newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
@@ -563,8 +562,6 @@ export class ActivityService {
   CoreCultivation: Activity;
   // @ts-ignore
   SoulCultivation: Activity;
-  // @ts-ignore
-  InfuseEquipment: Activity;
   // @ts-ignore
   InfuseBody: Activity;
   // @ts-ignore
@@ -1410,7 +1407,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 320 * 2.4)), 'metal'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 320)), 'metal'));
               }
             }
           }
@@ -1437,7 +1434,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 320 * 2.4)), 'metal'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 320)), 'metal'));
               }
             }
           }
@@ -1464,7 +1461,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 320 * 2.4)), 'metal'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 320)), 'metal'));
               }
             }
           }
@@ -1743,7 +1740,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 32 * 2.4)), 'wood'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 32)), 'wood'));
               }
             }
           }
@@ -1763,7 +1760,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 32 * 2.4)), 'wood'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 32)), 'wood'));
               }
             }
           }
@@ -1783,7 +1780,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 32 * 2.4)), 'wood'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 32)), 'wood'));
               }
             }
           }
@@ -1877,7 +1874,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15) / 2 * 2.4)), 'leather',                  
+                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15) / 2)), 'leather',                  
                   this.inventoryService.randomArmorSlot()));
               }
             }
@@ -1899,7 +1896,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15) / 2 * 2.4)), 'leather', 
+                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15) / 2)), 'leather', 
                   this.inventoryService.randomArmorSlot()));
               }
             }
@@ -1921,7 +1918,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15) / 2 * 2.4)), 'leather', 
+                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15) / 2)), 'leather', 
                   this.inventoryService.randomArmorSlot()));
               }
             }
@@ -2296,37 +2293,6 @@ export class ActivityService {
       requirements: [{
         spirituality: 1e15
         // also requires immortality in getActivityList
-      }],
-      unlocked: false,
-      skipApprenticeshipLevel: 0
-    };
-
-    this.InfuseEquipment = {
-      level: 0,
-      name: ['Infuse Equipment'],
-      activityType: ActivityType.InfuseEquipment,
-      description: ['Infuse the power of a gem into your equipment.'],
-      consequenceDescription: ['Uses 200 Stamina and 10 mana. An advanced magical technique.'],
-      consequence: [() => {
-        if (!this.characterService.characterState.manaUnlocked){
-          return;
-        }
-        this.characterService.characterState.status.stamina.value -= 200;
-        this.characterService.characterState.status.mana.value -= 10;
-        const gemValue = this.inventoryService.consume('spiritGem');
-        if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
-          this.inventoryService.upgradeEquipment(Math.floor(Math.pow(gemValue/10,2.4)));
-        }
-      }],
-      resourceUse: [{
-        stamina: 200,
-        mana: 10
-      }],
-      requirements: [{
-        strength: 1e10,
-        toughness: 1e10,
-        speed: 1e10,
-        spirituality: 1e9
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
