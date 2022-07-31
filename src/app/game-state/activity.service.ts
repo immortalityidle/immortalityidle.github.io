@@ -1743,7 +1743,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/32)), 'wood'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.woodLore.value, grade/32)), 'wood'));
               }
             }
           }
@@ -1763,7 +1763,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/32)), 'wood'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.woodLore.value, grade/32)), 'wood'));
               }
             }
           }
@@ -1783,7 +1783,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/32)), 'wood'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.woodLore.value, grade/32)), 'wood'));
               }
             }
           }
