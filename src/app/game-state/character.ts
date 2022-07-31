@@ -95,8 +95,7 @@ export class Character {
   bloodlineCost = 1000;
   bloodlineRank = 0;
   manaUnlocked = false;
-  accuracy = 0;
-  accuracyExponentMultiplier = 0.01;
+  accuracy = 1;
   attackPower = 0;
   defense = 0;
   healthBonusFood = 0;
@@ -326,7 +325,7 @@ export class Character {
     }
   }
 
-  getAttributeStartingValue(value: number, aptitude: number): number{
+  getAttributeStartingValue(value: number, aptitude: number): number {
     if (value < 0){
       value = 0;
     }
@@ -342,7 +341,7 @@ export class Character {
     return (this.attributeSoftCap / 10) + Math.log2(aptitude - (this.attributeSoftCap - 1));
   }
 
-  recalculateDerivedStats(): void{
+  recalculateDerivedStats(): void {
     this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul + 
       Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5);
     if (this.money > this.maxMoney){
@@ -350,30 +349,37 @@ export class Character {
     }
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
-    this.accuracy = 1 - Math.exp(0 - this.getAptitudeMultipier(this.attributes.speed.value) * this.accuracyExponentMultiplier);
-    this.defense = Math.floor(Math.log10(this.attributes.toughness.value));
-    this.attackPower = Math.floor(Math.log10(this.attributes.strength.value)) || 1;
+    this.defense = Math.sqrt(this.attributes.toughness.value);
+    this.attackPower = Math.sqrt(this.attributes.strength.value) || 1;
+    let leftHand = 1;
+    let rightHand = 1;
+    let head = 1;
+    let body = 1;
+    let legs = 1;
+    let feet = 1;
     if (this.equipment.leftHand){
-      this.attackPower += (this.equipment.leftHand.weaponStats?.baseDamage || 0);
+      leftHand = (this.equipment.leftHand.weaponStats?.baseDamage || 1);
     }
     if (this.equipment.rightHand){
-      this.attackPower += (this.equipment.rightHand.weaponStats?.baseDamage || 0);
+      rightHand = (this.equipment.rightHand.weaponStats?.baseDamage || 1);
     }
     if (this.equipment.head){
-      this.defense += (this.equipment.head.armorStats?.defense || 0);
+      head = (this.equipment.head.armorStats?.defense || 1);
     }
     if (this.equipment.body){
-      this.defense += (this.equipment.body.armorStats?.defense || 0);
+      body = (this.equipment.body.armorStats?.defense || 1);
     }
     if (this.equipment.legs){
-      this.defense += (this.equipment.legs.armorStats?.defense || 0);
+      legs = (this.equipment.legs.armorStats?.defense || 1);
     }
     if (this.equipment.feet){
-      this.defense += (this.equipment.feet.armorStats?.defense || 0);
+      feet = (this.equipment.feet.armorStats?.defense || 1);
     }
+    this.attackPower *= Math.sqrt(Math.floor(this.attackPower * 2 * Math.sqrt(rightHand * leftHand))); // root averaged.
+    this.defense *= Math.sqrt(Math.floor(this.defense * 4 * Math.sqrt(Math.sqrt(head * body * legs * feet)))) || 1; // root averaged.
   }
 
-  getEmpowermentMult(): number{
+  getEmpowermentMult(): number {
     const max = 99;
     const empowermentFactor = this.empowermentFactor - 1;
     let returnValue = 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;

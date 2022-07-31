@@ -302,16 +302,16 @@ export class InventoryService {
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem");
       if (value > 0){
-        grade += value;
+        grade = Math.pow(grade, 1.1 + (value / 40));
       }
     }
-
     const highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
-    let prefixIndex = grade % ItemPrefixes.length;
-    if (grade >= highestGrade){
+    const nameGrade = Math.ceil(Math.sqrt(grade / 1e10) * highestGrade); // Name spreads up to 10B Value (coincides with damage)
+    let prefixIndex = nameGrade % ItemPrefixes.length;
+    if (nameGrade >= highestGrade){
       prefixIndex = ItemPrefixes.length - 1;
     }
-    let suffixIndex = Math.floor(grade / ItemPrefixes.length);
+    let suffixIndex = Math.floor(nameGrade / ItemPrefixes.length);
     const prefix = ItemPrefixes[prefixIndex];
     let suffix = "";
     if (suffixIndex > 0){
@@ -533,12 +533,21 @@ export class InventoryService {
   }
 
   generateArmor(grade: number, material: string, slot: EquipmentPosition, defaultName: string | undefined = undefined): Equipment{
+    
+    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
+      // consume a spirit gem and increase the grade
+      const value = this.consume("spiritGem");
+      if (value > 0){
+        grade = Math.pow(grade, 1.1 + (value / 40));
+      }
+    }
     const highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
-    let prefixIndex = grade % ItemPrefixes.length;
-    if (grade >= highestGrade){
+    const nameGrade = Math.ceil(Math.sqrt(grade / 1e10) * highestGrade); // Name spreads up to 10B Value (coincides with defense)
+    let prefixIndex = nameGrade % ItemPrefixes.length;
+    if (nameGrade >= highestGrade){
       prefixIndex = ItemPrefixes.length - 1;
     }
-    let suffixIndex = Math.floor(grade / ItemPrefixes.length);
+    let suffixIndex = Math.floor(nameGrade / ItemPrefixes.length);
     const prefix = ItemPrefixes[prefixIndex];
     let suffix = "";
     if (suffixIndex > 0){
@@ -600,14 +609,8 @@ export class InventoryService {
   }
 
   getOre(): Item {
-    let oreValue;
-    if (this.characterService.characterState.attributes.earthLore.value < 20){
-      oreValue = 1 + Math.floor(this.characterService.characterState.attributes.earthLore.value / 5);
-    } else if (this.characterService.characterState.attributes.earthLore.value < 70){
-      oreValue = 5 + Math.floor((this.characterService.characterState.attributes.earthLore.value - 20) / 10);
-    } else {
-      oreValue = 9 + Math.floor(Math.log10(this.characterService.characterState.attributes.earthLore.value - 60));
-    }
+    const earthLore = this.characterService.characterState.attributes.earthLore.value;
+    const oreValue = Math.floor(Math.pow(earthLore/1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
     let lastOre =  this.itemRepoService.items['copperOre'];
     for (const key in this.itemRepoService.items){
       const item = this.itemRepoService.items[key];
@@ -660,55 +663,29 @@ export class InventoryService {
   }
 
   getWood(): Item{
-    let wood: Item;
-    if (this.characterService.characterState.attributes.woodLore.value > 5e8 &&
-      this.characterService.characterState.attributes.spirituality.value > 5e7){
-        wood = this.itemRepoService.items['divinewoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 1e7 &&
-      this.characterService.characterState.attributes.spirituality.value > 1000000){
-        wood = this.itemRepoService.items['devilwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 200000 &&
-      this.characterService.characterState.attributes.spirituality.value > 20000){
-        wood = this.itemRepoService.items['dragonwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 10000 &&
-      this.characterService.characterState.attributes.spirituality.value > 1000){
-        wood = this.itemRepoService.items['titanwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 1000 &&
-      this.characterService.characterState.attributes.spirituality.value > 100){
-        wood = this.itemRepoService.items['diamondwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 300 &&
-      this.characterService.characterState.attributes.spirituality.value > 10){
-        wood = this.itemRepoService.items['peachwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 200 &&
-      this.characterService.characterState.attributes.spirituality.value > 1){
-        wood =   this.itemRepoService.items['blackwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 100){
-      wood = this.itemRepoService.items['zitanLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 50){
-      wood = this.itemRepoService.items['rosewoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 40){
-      wood = this.itemRepoService.items['pearwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 30){
-      wood = this.itemRepoService.items['laurelwoodLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 20){
-      wood = this.itemRepoService.items['walnutLog'];
-    } else if (this.characterService.characterState.attributes.woodLore.value > 10){
-      wood = this.itemRepoService.items['cypressLog'];
-    } else {
-      wood = this.itemRepoService.items['elmLog'];
+    const woodLore = this.characterService.characterState.attributes.woodLore.value;
+    const woodvalue = Math.floor(Math.pow(woodLore/1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
+    let lastWood = this.itemRepoService.items['balsaLog'];
+
+    for (const key in this.itemRepoService.items){
+      const item = this.itemRepoService.items[key];
+      if (item.type === 'wood' && item.value > lastWood.value && item.value <= woodvalue){
+        lastWood = item;
+      }
     }
+
     if (this.autoSellOldWood){
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
         if (itemStack && itemStack.item.type === "wood" ){
-          if (itemStack.item.value < wood.value ){
+          if (itemStack.item.value < lastWood.value ){
             this.sell(itemStack, itemStack.quantity);
           }
         }
       }
     }
-    return wood;
+    return lastWood;
   }
 
   reset(): void {

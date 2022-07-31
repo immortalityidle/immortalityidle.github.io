@@ -10,6 +10,7 @@ import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
+import { EquipmentPosition } from './character';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -98,46 +99,31 @@ export class FollowersService {
     },
     "weaponsmith": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.rightHand &&
-          this.characterService.characterState.equipment.rightHand.weaponStats){
-          this.characterService.characterState.equipment.rightHand.weaponStats.durability += follower.power;
-          this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.rightHand.value += Math.floor(follower.power/10);
+        const rightHand = this.characterService.characterState.equipment.rightHand;
+        const leftHand = this.characterService.characterState.equipment.leftHand;
+        if (rightHand && rightHand.weaponStats){ 
+          rightHand.weaponStats.durability += Math.ceil(Math.pow((follower.power / 10), 2) * 100);
+          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
+          rightHand.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
         }
-        if (this.characterService.characterState.equipment.leftHand &&
-          this.characterService.characterState.equipment.leftHand.weaponStats){
-          this.characterService.characterState.equipment.leftHand.weaponStats.durability += follower.power;
-          this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.leftHand.value += Math.floor(follower.power/10);
+        if (leftHand && leftHand.weaponStats){ 
+          leftHand.weaponStats.durability += follower.power;
+          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
+          leftHand.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
         }
+        
       },
       description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them."
     },
     "armorer": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.head &&
-          this.characterService.characterState.equipment.head.armorStats){
-          this.characterService.characterState.equipment.head.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.head.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.head.value += Math.ceil(Math.floor(follower.power/10)/2);
-        }
-        if (this.characterService.characterState.equipment.body &&
-          this.characterService.characterState.equipment.body.armorStats){
-          this.characterService.characterState.equipment.body.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.body.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.body.value += Math.ceil(Math.floor(follower.power/10)/2);
-        }
-        if (this.characterService.characterState.equipment.legs &&
-          this.characterService.characterState.equipment.legs.armorStats){
-          this.characterService.characterState.equipment.legs.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.legs.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.legs.value += Math.ceil(Math.floor(follower.power/10)/2);
-        }
-        if (this.characterService.characterState.equipment.feet &&
-          this.characterService.characterState.equipment.feet.armorStats){
-          this.characterService.characterState.equipment.feet.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.feet.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.feet.value += Math.ceil(Math.floor(follower.power/10)/2);
+        const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
+        for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
+          if (equipment[key] && equipment[key]!.armorStats){
+            equipment[key]!.armorStats!.durability += Math.ceil(Math.pow((follower.power / 10), 2) * 50);
+            equipment[key]!.armorStats!.defense += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2) / 2);
+            equipment[key]!.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2) / 2);
+          }
         }
       },
       description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them."
@@ -180,7 +166,7 @@ export class FollowersService {
       description: "Priests help you get closer to the divine, increasing your sprituality."
     },
     "gemologist": {
-      work: (follower: Follower) => {
+      work: () => {
         let gemmerPower = 0;
         for (const follower of this.followers){
           if (follower.job === "gemologist"){
