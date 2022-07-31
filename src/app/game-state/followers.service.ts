@@ -10,6 +10,7 @@ import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
+import { EquipmentPosition } from './character';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -116,29 +117,13 @@ export class FollowersService {
     },
     "armorer": {
       work: (follower: Follower) => {
-        const head = this.characterService.characterState.equipment.head; // Too many long names, reduced and referenced
-        const body = this.characterService.characterState.equipment.body;
-        const legs = this.characterService.characterState.equipment.legs;
-        const feet = this.characterService.characterState.equipment.feet;
-        if (head && head.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
-          head.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(head.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
-          head.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(head.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-          head.value = Math.ceil(Math.sqrt(Math.pow(head.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-        }
-        if (body && body.armorStats){
-          body.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(body.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
-          body.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(body.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-          body.value = Math.ceil(Math.sqrt(Math.pow(body.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-        }
-        if (legs && legs.armorStats){
-          legs.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(legs.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
-          legs.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(legs.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-          legs.value = Math.ceil(Math.sqrt(Math.pow(legs.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-        }
-        if (feet && feet.armorStats){
-          feet.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(feet.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
-          feet.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(feet.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-          feet.value = Math.ceil(Math.sqrt(Math.pow(feet.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+        const gear = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
+        for (const equipment of ["head","body","legs","feet"] as EquipmentPosition[]){
+          if (gear[equipment] && gear[equipment]!.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
+            gear[equipment]!.armorStats!.durability = Math.ceil(Math.sqrt(Math.pow(gear[equipment]!.armorStats!.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
+            gear[equipment]!.armorStats!.defense = Math.ceil(Math.sqrt(Math.pow(gear[equipment]!.armorStats!.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+            gear[equipment]!.value = Math.ceil(Math.sqrt(Math.pow(gear[equipment]!.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+          }
         }
       },
       description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them."
@@ -181,7 +166,7 @@ export class FollowersService {
       description: "Priests help you get closer to the divine, increasing your sprituality."
     },
     "gemologist": {
-      work: (follower: Follower) => {
+      work: () => {
         let gemmerPower = 0;
         for (const follower of this.followers){
           if (follower.job === "gemologist"){
@@ -241,7 +226,7 @@ export class FollowersService {
       }
       this.gemsMerged = false;
       for (let i = this.followers.length - 1; i >= 0; i--){
-        if (this.followers[i].job == "gemologist" && this.gemsMerged){
+        if (this.followers[i].job === "gemologist" && this.gemsMerged){
           // gemologists should only act once per tick
           continue;
         }
