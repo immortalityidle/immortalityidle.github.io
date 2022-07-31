@@ -118,10 +118,10 @@ export class FollowersService {
       work: (follower: Follower) => {
         const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
         for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
-          if (equipment[key] && equipment[key]!.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
-            equipment[key]!.armorStats!.durability += follower.power;
-            equipment[key]!.armorStats!.defense += Math.floor(follower.power / 10);
-            equipment[key]!.value += Math.floor(follower.power / 10);
+          if (equipment[key] && equipment[key]!.armorStats){
+            equipment[key]!.armorStats!.durability += Math.ceil(follower.power / 2);
+            equipment[key]!.armorStats!.defense += Math.ceil(Math.floor(follower.power / 10) / 2);
+            equipment[key]!.value += Math.ceil(Math.floor(follower.power / 10) / 2);
           }
         }
       },
