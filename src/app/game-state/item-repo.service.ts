@@ -569,9 +569,9 @@ export class ItemRepoService {
       value: 1,
       description: 'A really soft log.',
     },
-    redwoodLog: {
-      id: 'redwoodLog',
-      name: 'redwood log',
+    elmLog: {
+      id: 'elmLog',
+      name: 'elm log',
       type: 'wood',
       value: 2,
       description: 'A soft log.',
@@ -630,14 +630,14 @@ export class ItemRepoService {
       name: 'lignum vitae log',
       type: 'wood',
       value: 10,
-      description: 'A spiritual quality log.',
+      description: 'a log with the highest mortal quality.',
     },
-    rubywoodLog: {
-      id: 'rubywoodLog',
-      name: 'rubywood log',
+    peachwoodlog: {
+      id: 'peachwoodlog',
+      name: 'peachwood log',
       type: 'wood',
       value: 11,
-      description: 'A log as hard as ruby.',
+      description: 'A log brimming with spiritual energy.',
     },
     diamondwoodLog: {
       id: 'diamondwoodLog',
