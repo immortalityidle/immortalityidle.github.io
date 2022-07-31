@@ -101,12 +101,12 @@ export class FollowersService {
         const rightHand = this.characterService.characterState.equipment.rightHand;
         const leftHand = this.characterService.characterState.equipment.leftHand;
         if (rightHand && rightHand.weaponStats){ 
-          rightHand.weaponStats.durability += Math.floor(follower.power);
+          rightHand.weaponStats.durability += follower.power;
           rightHand.weaponStats.baseDamage += Math.floor(follower.power / 10);
           rightHand.value += Math.floor(follower.power / 10);
         }
         if (leftHand && leftHand.weaponStats){ 
-          leftHand.weaponStats.durability += Math.floor(follower.power);
+          leftHand.weaponStats.durability += follower.power;
           leftHand.weaponStats.baseDamage += Math.floor(follower.power / 10);
           leftHand.value += Math.floor(follower.power / 10);
         }
@@ -119,7 +119,7 @@ export class FollowersService {
         const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
         for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
           if (equipment[key] && equipment[key]!.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
-            equipment[key]!.armorStats!.durability += Math.floor(follower.power);
+            equipment[key]!.armorStats!.durability += follower.power;
             equipment[key]!.armorStats!.defense += Math.floor(follower.power / 10);
             equipment[key]!.value += Math.floor(follower.power / 10);
           }
