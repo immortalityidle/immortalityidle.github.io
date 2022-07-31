@@ -29,6 +29,7 @@ export class OptionsModalComponent {
       autosellEntry.reserve = 0;
     }
   }
+
   autoUseReserveChange(event: Event, autouseEntry: AutoItemEntry){
     if (!(event.target instanceof HTMLInputElement)) return;
     autouseEntry.reserve = parseInt(event.target.value);
@@ -44,6 +45,7 @@ export class OptionsModalComponent {
       this.homeService.autoBuyLandLimit = 0;
     }
   }
+
   autoFieldLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoFieldLimit = parseInt(event.target.value);
@@ -51,14 +53,22 @@ export class OptionsModalComponent {
       this.homeService.autoFieldLimit = 0;
     }
   }
+
   autoBuyHomeLimitChanged(event: Event){
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.homeService.autoBuyHomeLimit = parseInt(event.target.value);
   }
+
+  autoPauseThugs(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.homeService.thugPause = !this.homeService.thugPause;
+  }
+
   useAutoBuyReserveChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.useAutoBuyReserve = event.target.checked;
   }
+
   autoBuyReserveAmountChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoBuyReserveAmount = parseInt(event.target.value);
@@ -66,6 +76,7 @@ export class OptionsModalComponent {
       this.homeService.autoBuyReserveAmount = 0;
     }
   }
+
   autoBalanceUseChanged(event: Event, balanceItem: BalanceItem){
     if (!(event.target instanceof HTMLInputElement)) return;
     balanceItem.useNumber = parseInt(event.target.value);

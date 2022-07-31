@@ -97,46 +97,48 @@ export class FollowersService {
     },
     "weaponsmith": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.rightHand &&
-          this.characterService.characterState.equipment.rightHand.weaponStats){
-          this.characterService.characterState.equipment.rightHand.weaponStats.durability += follower.power;
-          this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.rightHand.value += Math.floor(follower.power/10);
+
+        const rightHand = this.characterService.characterState.equipment.rightHand;
+        const leftHand = this.characterService.characterState.equipment.leftHand;
+        if (rightHand && rightHand.weaponStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
+          rightHand.weaponStats.durability = Math.ceil(Math.sqrt(Math.pow(rightHand.weaponStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2)), 2))); 
+          rightHand.weaponStats.baseDamage = Math.ceil(Math.sqrt(Math.pow(rightHand.weaponStats.baseDamage, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
+          rightHand.value = Math.ceil(Math.sqrt(Math.pow(rightHand.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
         }
-        if (this.characterService.characterState.equipment.leftHand &&
-          this.characterService.characterState.equipment.leftHand.weaponStats){
-          this.characterService.characterState.equipment.leftHand.weaponStats.durability += follower.power;
-          this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage += Math.floor(follower.power/10);
-          this.characterService.characterState.equipment.leftHand.value += Math.floor(follower.power/10);
+        if (leftHand && leftHand.weaponStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
+          leftHand.weaponStats.durability = Math.ceil(Math.sqrt(Math.pow(leftHand.weaponStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2)), 2))); 
+          leftHand.weaponStats.baseDamage = Math.ceil(Math.sqrt(Math.pow(leftHand.weaponStats.baseDamage, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
+          leftHand.value = Math.ceil(Math.sqrt(Math.pow(leftHand.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
         }
+        
       },
       description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them."
     },
     "armorer": {
       work: (follower: Follower) => {
-        if (this.characterService.characterState.equipment.head &&
-          this.characterService.characterState.equipment.head.armorStats){
-          this.characterService.characterState.equipment.head.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.head.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.head.value += Math.ceil(Math.floor(follower.power/10)/2);
+        const head = this.characterService.characterState.equipment.head; // Too many long names, reduced and referenced
+        const body = this.characterService.characterState.equipment.body;
+        const legs = this.characterService.characterState.equipment.legs;
+        const feet = this.characterService.characterState.equipment.feet;
+        if (head && head.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
+          head.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(head.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
+          head.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(head.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+          head.value = Math.ceil(Math.sqrt(Math.pow(head.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
         }
-        if (this.characterService.characterState.equipment.body &&
-          this.characterService.characterState.equipment.body.armorStats){
-          this.characterService.characterState.equipment.body.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.body.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.body.value += Math.ceil(Math.floor(follower.power/10)/2);
+        if (body && body.armorStats){
+          body.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(body.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
+          body.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(body.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+          body.value = Math.ceil(Math.sqrt(Math.pow(body.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
         }
-        if (this.characterService.characterState.equipment.legs &&
-          this.characterService.characterState.equipment.legs.armorStats){
-          this.characterService.characterState.equipment.legs.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.legs.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.legs.value += Math.ceil(Math.floor(follower.power/10)/2);
+        if (legs && legs.armorStats){
+          legs.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(legs.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
+          legs.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(legs.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+          legs.value = Math.ceil(Math.sqrt(Math.pow(legs.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
         }
-        if (this.characterService.characterState.equipment.feet &&
-          this.characterService.characterState.equipment.feet.armorStats){
-          this.characterService.characterState.equipment.feet.armorStats.durability += Math.ceil(follower.power/2);
-          this.characterService.characterState.equipment.feet.armorStats.defense += Math.ceil(Math.floor(follower.power/10)/2);
-          this.characterService.characterState.equipment.feet.value += Math.ceil(Math.floor(follower.power/10)/2);
+        if (feet && feet.armorStats){
+          feet.armorStats.durability = Math.ceil(Math.sqrt(Math.pow(feet.armorStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
+          feet.armorStats.defense = Math.ceil(Math.sqrt(Math.pow(feet.armorStats.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+          feet.value = Math.ceil(Math.sqrt(Math.pow(feet.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
         }
       },
       description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them."

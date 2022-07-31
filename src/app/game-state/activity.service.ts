@@ -130,7 +130,7 @@ export class ActivityService {
           }
         }
         let activity = this.getActivityByType(this.currentLoopEntry.activity);
-        const rest = this.getActivityByType(ActivityType.Resting);
+        const rest = this.Resting;
         if (!this.checkResourceUse(activity) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
           activity = rest;
         }
@@ -1410,7 +1410,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                    (grade / 10) + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/320)), 'metal'));
               }
             }
           }
@@ -1437,7 +1437,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  (grade / 10) + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/320)), 'metal'));
               }
             }
           }
@@ -1464,7 +1464,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  (grade / 5) + Math.floor(Math.log2(this.characterService.characterState.attributes.metalLore.value)), 'metal'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/320)), 'metal'));
               }
             }
           }
@@ -1743,7 +1743,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  grade + Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value)), 'wood'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/32)), 'wood'));
               }
             }
           }
@@ -1763,7 +1763,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  (grade * 2) + Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value)), 'wood'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/32)), 'wood'));
               }
             }
           }
@@ -1783,7 +1783,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  (grade * 5) + Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value)), 'wood'));
+                  Math.floor(Math.pow(this.characterService.characterState.attributes.metalLore.value, grade/32)), 'wood'));
               }
             }
           }
@@ -1871,12 +1871,13 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Leatherworking).lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling',0.002);
+          const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
           if (Math.random() < 0.01) {
             if (this.inventoryService.openInventorySlots() > 0){
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  grade + Math.floor(Math.log2(this.characterService.characterState.attributes.animalHandling.value)), 'leather',
+                  Math.floor(Math.pow(animalHandling, Math.pow(animalHandling / 1e9, 0.15) / 2)), 'leather',
                   this.inventoryService.randomArmorSlot()));
               }
             }
@@ -1892,12 +1893,13 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Leatherworking).lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling',0.003);
+          const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
           if (Math.random() < 0.01) {
             if (this.inventoryService.openInventorySlots() > 0){
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  (grade * 2) + Math.floor(Math.log2(this.characterService.characterState.attributes.animalHandling.value)), 'leather',
+                  Math.floor(Math.pow(animalHandling, Math.pow(animalHandling / 1e9, 0.15) / 2)), 'leather',
                   this.inventoryService.randomArmorSlot()));
               }
             }
@@ -1913,12 +1915,13 @@ export class ActivityService {
           this.characterService.characterState.money += money;
           this.getActivityByType(ActivityType.Leatherworking).lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling',0.1);
+          const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
           if (Math.random() < 0.2) {
             if (this.inventoryService.openInventorySlots() > 0){
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  (grade * 5) + Math.floor(Math.log2(this.characterService.characterState.attributes.animalHandling.value)), 'leather',
+                  Math.floor(Math.pow(animalHandling, Math.pow(animalHandling / 1e9, 0.15) / 2)), 'leather',
                   this.inventoryService.randomArmorSlot()));
               }
             }
@@ -2397,15 +2400,16 @@ export class ActivityService {
       consequenceDescription: ['Uses 100 Stamina and 1M taels. Gives you a small chance of finding a follower, if you are powerful enough to attract any.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
-        this.characterService.characterState.money -= 1000000;
-        if (this.characterService.characterState.money < 0){
-          this.characterService.characterState.money = 0;
+        if (this.characterService.characterState.money <= 1000000){
           return;
         }
+        this.characterService.characterState.money -= 1000000;
         if (this.followerService.followersUnlocked && this.characterService.characterState.money > 0){
           if (Math.random() < 0.01){
             this.followerService.generateFollower();
           }
+        } else {
+          this.logService.addLogMessage("All of your potential followers ignore your recruiting efforts after sensing your low cultivation.", "INJURY", "EVENT");
         }
       }],
       resourceUse: [{

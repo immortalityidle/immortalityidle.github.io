@@ -76,6 +76,7 @@ export interface HomeProperties {
   mostFields: number,
   highestAverageYield: number,
   bestHome: HomeType,
+  thugPause: boolean
 
 }
 
@@ -117,6 +118,7 @@ export class HomeService {
   grandfatherTent = false;
   houseBuildingProgress = 1;
   upgrading = false;
+  thugPause = false;
 
   homesList: Home[] = [
     {
@@ -556,6 +558,9 @@ export class HomeService {
         this.ageFields();
         if (this.home.costPerDay > this.characterService.characterState.money){
           this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
+          if(this.thugPause){
+            mainLoopService.pause = true;
+          }
           this.characterService.characterState.status.health.value -= 20;
           this.characterService.characterState.money = 0;
         } else {
@@ -628,6 +633,7 @@ export class HomeService {
       mostFields: this.mostFields,
       highestAverageYield: this.highestAverageYield,
       bestHome: this.bestHome,
+      thugPause: this.thugPause
     }
   }
 
@@ -663,6 +669,7 @@ export class HomeService {
     this.mostFields = properties.mostFields || 0;
     this.highestAverageYield = properties.highestAverageYield || 0;
     this.bestHome = properties.bestHome || 0;
+    this.thugPause = properties.thugPause || false;
   }
 
   // gets the specs of the next home, doesn't actually upgrade

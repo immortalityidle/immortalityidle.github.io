@@ -46,6 +46,13 @@
           </select>
         </span>
       </div>
+      <div>
+        <span>
+          <input type="checkbox" (change)="autoPauseThugs($event)"
+            id="autoBuyFood"  [checked]="homeService.thugPause">
+          <label for="autoBuyFood">Automatically pause if thugs rough you up.</label> 
+        </span>
+      </div>
     </mat-tab>
 
     <mat-tab *ngIf="inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon || inventoryService.useSpiritGemUnlocked">

@@ -208,8 +208,8 @@ export class BattleService {
   }
 
   youAttack(){
+    this.characterService.characterState.accuracy = Math.min((this.troubleKills + Math.sqrt(this.characterService.characterState.attributes.speed.value)) / this.troubleKills / 2, 1)
     if (this.currentEnemy){
-
       if (Math.random() > this.characterService.characterState.accuracy){
         this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " but miss.", 'STANDARD', 'COMBAT');
         return;
