@@ -1232,11 +1232,10 @@ export class InventoryService {
       return;
     }
     let inventoryIndex = 0;
-    const value = Math.ceil(Math.sqrt(Math.pow(item1.value, 2) + Math.pow(item2.value, 2))); // Pythagorean merge balancing. Higher difference gets less growth.
     if (item1.slot === 'rightHand' || item1.slot === 'leftHand'){
-      inventoryIndex = this.addItem(this.generateWeapon(value, item1.weaponStats?.material + "", item1.weaponStats?.baseName));
+      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + "", item1.weaponStats?.baseName));
     } else {
-      inventoryIndex = this.addItem(this.generateArmor(value, item1.armorStats?.material + "", item1.slot, item1.armorStats?.baseName));
+      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, item1.armorStats?.baseName));
     }
     // if we can, move the new item to the desired destination index
     if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null){

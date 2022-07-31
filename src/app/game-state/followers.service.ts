@@ -98,18 +98,17 @@ export class FollowersService {
     },
     "weaponsmith": {
       work: (follower: Follower) => {
-
         const rightHand = this.characterService.characterState.equipment.rightHand;
         const leftHand = this.characterService.characterState.equipment.leftHand;
-        if (rightHand && rightHand.weaponStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
-          rightHand.weaponStats.durability = Math.ceil(Math.sqrt(Math.pow(rightHand.weaponStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2)), 2))); 
-          rightHand.weaponStats.baseDamage = Math.ceil(Math.sqrt(Math.pow(rightHand.weaponStats.baseDamage, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
-          rightHand.value = Math.ceil(Math.sqrt(Math.pow(rightHand.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
+        if (rightHand && rightHand.weaponStats){ 
+          rightHand.weaponStats.durability += Math.floor(follower.power);
+          rightHand.weaponStats.baseDamage += Math.floor(follower.power / 10);
+          rightHand.value += Math.floor(follower.power / 10);
         }
-        if (leftHand && leftHand.weaponStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
-          leftHand.weaponStats.durability = Math.ceil(Math.sqrt(Math.pow(leftHand.weaponStats.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2)), 2))); 
-          leftHand.weaponStats.baseDamage = Math.ceil(Math.sqrt(Math.pow(leftHand.weaponStats.baseDamage, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
-          leftHand.value = Math.ceil(Math.sqrt(Math.pow(leftHand.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2)), 2)));
+        if (leftHand && leftHand.weaponStats){ 
+          leftHand.weaponStats.durability += Math.floor(follower.power);
+          leftHand.weaponStats.baseDamage += Math.floor(follower.power / 10);
+          leftHand.value += Math.floor(follower.power / 10);
         }
         
       },
@@ -120,9 +119,9 @@ export class FollowersService {
         const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
         for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
           if (equipment[key] && equipment[key]!.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
-            equipment[key]!.armorStats!.durability = Math.ceil(Math.sqrt(Math.pow(equipment[key]!.armorStats!.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
-            equipment[key]!.armorStats!.defense = Math.ceil(Math.sqrt(Math.pow(equipment[key]!.armorStats!.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-            equipment[key]!.value = Math.ceil(Math.sqrt(Math.pow(equipment[key]!.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+            equipment[key]!.armorStats!.durability += Math.floor(follower.power);
+            equipment[key]!.armorStats!.defense += Math.floor(follower.power / 10);
+            equipment[key]!.value += Math.floor(follower.power / 10);
           }
         }
       },
