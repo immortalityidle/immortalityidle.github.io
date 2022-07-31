@@ -118,10 +118,10 @@ export class OptionsModalComponent {
 
   easyModeChange(event: Event){
     event.preventDefault();
-    if (!this.characterService.characterState.easyMode && confirm("This will enable easy mode and mark your save permanently. Are you sure?")){
+    if (!this.gameStateService.easyModeEver && confirm("This will enable easy mode and mark your save permanently. Are you sure?")){
       this.gameStateService.easyModeEver = true;
       this.characterService.characterState.easyMode = !this.characterService.characterState.easyMode;
-    } else if (confirm("Turning off easy mode won't take off the mark on your save. Are you sure? Wouldn't you rather Hard Reset?")){
+    } else {
       this.characterService.characterState.easyMode = !this.characterService.characterState.easyMode;
     }
   }
