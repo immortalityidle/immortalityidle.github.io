@@ -117,12 +117,12 @@ export class FollowersService {
     },
     "armorer": {
       work: (follower: Follower) => {
-        const gear = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
-        for (const equipment of ["head","body","legs","feet"] as EquipmentPosition[]){
-          if (gear[equipment] && gear[equipment]!.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
-            gear[equipment]!.armorStats!.durability = Math.ceil(Math.sqrt(Math.pow(gear[equipment]!.armorStats!.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
-            gear[equipment]!.armorStats!.defense = Math.ceil(Math.sqrt(Math.pow(gear[equipment]!.armorStats!.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
-            gear[equipment]!.value = Math.ceil(Math.sqrt(Math.pow(gear[equipment]!.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+        const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
+        for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
+          if (equipment[key] && equipment[key]!.armorStats){ // c = sqrt(a^2 + b^2) Pythagorean merging
+            equipment[key]!.armorStats!.durability = Math.ceil(Math.sqrt(Math.pow(equipment[key]!.armorStats!.durability, 2) + Math.pow(Math.ceil(Math.pow(follower.power, 2) / 2), 2))); 
+            equipment[key]!.armorStats!.defense = Math.ceil(Math.sqrt(Math.pow(equipment[key]!.armorStats!.defense, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
+            equipment[key]!.value = Math.ceil(Math.sqrt(Math.pow(equipment[key]!.value, 2) + Math.pow(Math.ceil(Math.pow((Math.floor(follower.power / 10)), 2) / 2), 2)));
           }
         }
       },
