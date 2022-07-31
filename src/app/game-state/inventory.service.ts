@@ -649,7 +649,7 @@ export class InventoryService {
   getWood(): Item{
     const woodLore = this.characterService.characterState.attributes.woodLore.value;
     const woodvalue = Math.floor(Math.pow(woodLore/1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
-    let lastWood = this.itemRepoService.items['elmLog'];
+    let lastWood = this.itemRepoService.items['balsaLog'];
 
     for (const key in this.itemRepoService.items){
       const item = this.itemRepoService.items[key];
