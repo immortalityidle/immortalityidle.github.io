@@ -325,7 +325,7 @@ export class Character {
     }
   }
 
-  getAttributeStartingValue(value: number, aptitude: number): number{
+  getAttributeStartingValue(value: number, aptitude: number): number {
     if (value < 0){
       value = 0;
     }
@@ -341,7 +341,7 @@ export class Character {
     return (this.attributeSoftCap / 10) + Math.log2(aptitude - (this.attributeSoftCap - 1));
   }
 
-  recalculateDerivedStats(): void{
+  recalculateDerivedStats(): void {
     this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul + 
       Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5);
     if (this.money > this.maxMoney){
@@ -349,8 +349,8 @@ export class Character {
     }
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
-    this.defense = Math.log10(this.attributes.toughness.value);
-    this.attackPower = Math.log10(this.attributes.strength.value) || 1;
+    this.defense = Math.sqrt(this.attributes.toughness.value);
+    this.attackPower = Math.sqrt(this.attributes.strength.value) || 1;
     let leftHand = 1;
     let rightHand = 1;
     let head = 1;
@@ -375,11 +375,11 @@ export class Character {
     if (this.equipment.feet){
       feet = (this.equipment.feet.armorStats?.defense || 1);
     }
-    this.attackPower = Math.floor(this.attackPower * 2 * Math.sqrt(rightHand * leftHand)); // root averaged and multiplied by the base strength attack (9 at 1 billion).
-    this.defense = Math.floor(this.defense * 4 * Math.sqrt(Math.sqrt(head * body * legs * feet))); // root averaged and multiplied by the base toughness defense (9 at 1 billion).
+    this.attackPower *= Math.sqrt(Math.floor(this.attackPower * 2 * Math.sqrt(rightHand * leftHand))); // root averaged.
+    this.defense *= Math.sqrt(Math.floor(this.defense * 4 * Math.sqrt(Math.sqrt(head * body * legs * feet)))) || 1; // root averaged.
   }
 
-  getEmpowermentMult(): number{
+  getEmpowermentMult(): number {
     const max = 99;
     const empowermentFactor = this.empowermentFactor - 1;
     let returnValue = 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;

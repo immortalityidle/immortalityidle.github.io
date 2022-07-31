@@ -101,14 +101,14 @@ export class FollowersService {
         const rightHand = this.characterService.characterState.equipment.rightHand;
         const leftHand = this.characterService.characterState.equipment.leftHand;
         if (rightHand && rightHand.weaponStats){ 
-          rightHand.weaponStats.durability += follower.power;
-          rightHand.weaponStats.baseDamage += Math.floor(follower.power / 10);
-          rightHand.value += Math.floor(follower.power / 10);
+          rightHand.weaponStats.durability += Math.ceil(Math.pow((follower.power / 10), 2) * 100);
+          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
+          rightHand.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
         }
         if (leftHand && leftHand.weaponStats){ 
           leftHand.weaponStats.durability += follower.power;
-          leftHand.weaponStats.baseDamage += Math.floor(follower.power / 10);
-          leftHand.value += Math.floor(follower.power / 10);
+          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
+          leftHand.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
         }
         
       },
@@ -119,9 +119,9 @@ export class FollowersService {
         const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
         for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
           if (equipment[key] && equipment[key]!.armorStats){
-            equipment[key]!.armorStats!.durability += Math.ceil(follower.power / 2);
-            equipment[key]!.armorStats!.defense += Math.ceil(Math.floor(follower.power / 10) / 2);
-            equipment[key]!.value += Math.ceil(Math.floor(follower.power / 10) / 2);
+            equipment[key]!.armorStats!.durability += Math.ceil(Math.pow((follower.power / 10), 2) * 50);
+            equipment[key]!.armorStats!.defense += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2) / 2);
+            equipment[key]!.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2) / 2);
           }
         }
       },
