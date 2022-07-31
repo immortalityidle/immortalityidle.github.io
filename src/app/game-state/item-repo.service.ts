@@ -630,7 +630,7 @@ export class ItemRepoService {
       name: 'lignum vitae log',
       type: 'wood',
       value: 10,
-      description: 'a log with the highest mortal quality.',
+      description: 'a log of the highest mortal quality.',
     },
     peachwoodlog: {
       id: 'peachwoodlog',
