@@ -329,7 +329,7 @@ export class ActivityService {
           }
           activity.level++;
           // check to see if we got above apprenticeship skip level
-          if (activity.unlocked && activity.skipApprenticeshipLevel === activity.level){
+          if (activity.unlocked && activity.skipApprenticeshipLevel <= activity.level){
             if (!this.completedApprenticeships.includes(activity.activityType)){
               this.completedApprenticeships.push(activity.activityType);
             }
@@ -1153,7 +1153,7 @@ export class ActivityService {
       level: 0,
       name: ['Move Stars'],
       activityType: ActivityType.MoveStars,
-      description: ['Extend your vast magical powers into the heavens and force the starts into alignment.'],
+      description: ['Extend your vast magical powers into the heavens and force the stars into alignment.'],
       consequenceDescription: ["Uses 1000 Stamina and Mana."],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 1000;
