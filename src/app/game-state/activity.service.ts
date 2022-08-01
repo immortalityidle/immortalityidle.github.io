@@ -2313,7 +2313,7 @@ export class ActivityService {
         }
         this.characterService.characterState.status.stamina.value -= 200;
         this.characterService.characterState.status.mana.value -= 10;
-        const gemValue = this.inventoryService.consume('spiritGem');
+        const gemValue = this.inventoryService.consume('spiritGem', 1, this.inventoryService.useCheapestSpiritGem);
         if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
           this.inventoryService.upgradeEquipment(Math.floor(Math.pow(gemValue/10,2.4)));
         }

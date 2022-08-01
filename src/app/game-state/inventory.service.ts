@@ -88,6 +88,7 @@ export interface InventoryProperties {
   useSpiritGemUnlocked: boolean,
   useSpiritGemWeapons: boolean,
   useSpiritGemPotions: boolean,
+  useCheapestSpiritGem: boolean,
   autoSellOldHerbs: boolean,
   autoSellOldWood: boolean,
   autoSellOldOre: boolean,
@@ -127,6 +128,7 @@ export class InventoryService {
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useSpiritGemPotions: boolean;
+  useCheapestSpiritGem: boolean;
   autoSellOldHerbs: boolean;
   autoSellOldWood: boolean;
   autoSellOldOre: boolean;
@@ -164,10 +166,10 @@ export class InventoryService {
     this.autoArmorMergeUnlocked = false;
     this.autoequipBestWeapon = false;
     this.autoequipBestArmor = false;
-
     this.useSpiritGemUnlocked = false;
     this.useSpiritGemWeapons = false;
     this.useSpiritGemPotions = false;
+    this.useCheapestSpiritGem = false;
     this.autoSellOldHerbs = false;
     this.autoSellOldWood = false;
     this.autoSellOldOre = false;
@@ -228,6 +230,7 @@ export class InventoryService {
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
       useSpiritGemWeapons: this.useSpiritGemWeapons,
       useSpiritGemPotions: this.useSpiritGemPotions,
+      useCheapestSpiritGem: this.useCheapestSpiritGem,
       autoSellOldHerbs: this.autoSellOldHerbs,
       autoSellOldWood: this.autoSellOldWood,
       autoSellOldOre: this.autoSellOldOre,
@@ -257,6 +260,7 @@ export class InventoryService {
     this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked || false;
     this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
     this.useSpiritGemPotions = properties.useSpiritGemPotions;
+    this.useCheapestSpiritGem = properties.useCheapestSpiritGem || false;
     this.autoSellOldHerbs = properties.autoSellOldHerbs || false;
     this.autoSellOldWood = properties.autoSellOldWood || false;
     this.autoSellOldOre = properties.autoSellOldOre || false;
@@ -300,7 +304,7 @@ export class InventoryService {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
-      const value = this.consume("spiritGem");
+      const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
       if (value > 0){
         grade = Math.floor(Math.pow(grade, 1 + (value / 400)));
       }
@@ -411,7 +415,7 @@ export class InventoryService {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemPotions){
       // consume a spirit gem and increase the grade
-      const value = this.consume("spiritGem");
+      const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
       if (value > 0){
         grade += value;
       }
@@ -536,7 +540,7 @@ export class InventoryService {
     
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
-      const value = this.consume("spiritGem");
+      const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
       if (value > 0){
         grade = Math.floor(Math.pow(grade, 1 + (value / 400)));
       }
@@ -1125,12 +1129,15 @@ export class InventoryService {
     }
   }
 
-  consume(consumeType: string, quantity = 1): number{
+  consume(consumeType: string, quantity = 1, cheapest: boolean = false): number{
     if (quantity < 0){
       quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
     }
-
     let itemValue = -1;
+    if (cheapest){
+      itemValue = Infinity;
+    }
+    
     let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
@@ -1138,9 +1145,16 @@ export class InventoryService {
         continue;
       }
       if (itemIterator.item.type === consumeType) {
-        if (itemValue < itemIterator.item.value){
-          itemValue = itemIterator.item.value;
-          itemIndex = i;
+        if (cheapest){
+          if (itemValue > itemIterator.item.value){
+            itemValue = itemIterator.item.value;
+            itemIndex = i;
+          }
+        } else {
+          if (itemValue < itemIterator.item.value){
+            itemValue = itemIterator.item.value;
+            itemIndex = i;
+          }
         }
       }
     }
@@ -1156,9 +1170,13 @@ export class InventoryService {
         }
       }
     }
-
-    if (quantity > 0 && itemValue !== -1) {
+    if (quantity > 0 && itemIndex >= 0) {
+      // we didn't have enough in the stack we consumed to meet the quantity, consume another
       itemValue = this.consume(consumeType, quantity)
+    }
+    if (cheapest && itemValue == Infinity){
+      // return -1 for not found
+      itemValue = -1;
     }
 
     return itemValue;

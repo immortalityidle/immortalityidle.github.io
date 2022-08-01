@@ -84,6 +84,13 @@
           <label for="useSpiritGemPotions">Use spirit gem when crafting potions</label>
         </span>
       </div>
+      <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="useCheapestSpiritGemChange($event)"
+            id="useCheapestSpiritGem"  [checked]="inventoryService.useCheapestSpiritGem"/>
+          <label for="useCheapestSpiritGem">Use your lowest grade spirit gem instead of your highest</label>
+        </span>
+      </div>
     </mat-tab>
 
     <mat-tab *ngIf="inventoryService.autoSellOldGemsUnlocked || inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoBalanceUnlocked">
