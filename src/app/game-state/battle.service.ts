@@ -363,8 +363,8 @@ export class BattleService {
     },
     army: {
       name: "an angry army",
-      health: 2e7,
-      maxHealth: 2e7, 
+      health: 2e11,
+      maxHealth: 2e11, 
       accuracy: 0.9,
       attack: 1e7,
       defense: 1e7, 
@@ -372,8 +372,8 @@ export class BattleService {
     },
     death: {
       name: "Death itself",
-      health: 1e14, 
-      maxHealth: 1e14, 
+      health: 1e20, 
+      maxHealth: 1e20, 
       accuracy: 0.99,
       attack: 3e8,
       defense: 3e8,
