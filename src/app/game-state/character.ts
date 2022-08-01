@@ -351,7 +351,7 @@ export class Character {
     }
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
-    this.defense = Math.sqrt(this.attributes.toughness.value);
+    this.defense = Math.sqrt(this.attributes.toughness.value) || 1;
     this.attackPower = Math.sqrt(this.attributes.strength.value) || 1;
     let leftHand = 1;
     let rightHand = 1;
@@ -377,8 +377,8 @@ export class Character {
     if (this.equipment.feet){
       feet = (this.equipment.feet.armorStats?.defense || 1);
     }
-    this.attackPower *= Math.sqrt(Math.floor(this.attackPower * 2 * Math.sqrt(rightHand * leftHand))); // root averaged.
-    this.defense *= Math.sqrt(Math.floor(this.defense * 4 * Math.sqrt(Math.sqrt(head * body * legs * feet)))) || 1; // root averaged.
+    this.attackPower *= Math.floor(Math.sqrt(this.attackPower) * Math.sqrt(2 * Math.sqrt(rightHand) * Math.sqrt(leftHand))) || 1; // root averaged.
+    this.defense *= Math.floor(Math.sqrt(this.defense) * Math.sqrt(4 * Math.pow(head, 0.25) * Math.pow(body, 0.25) * Math.pow(legs, 0.25) * Math.pow(feet, 0.25))) || 1; // root averaged.
   }
 
   getEmpowermentMult(): number {
