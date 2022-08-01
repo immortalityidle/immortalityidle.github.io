@@ -53,7 +53,7 @@
         <span>
           <input type="checkbox" (change)="autoPauseThugs($event)"
             id="autoBuyFood"  [checked]="homeService.thugPause">
-          <label for="autoBuyFood">Automatically pause if thugs rough you up.</label> 
+          <label for="autoBuyFood">Automatically pause if thugs rough you up.</label>
         </span>
       </div>
     </mat-tab>
@@ -152,8 +152,8 @@
         <span>
           <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
             id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
-          <label for="useAutoBuyReserve">Auto-buying should always reserve </label>
-          <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels
+          <label for="useAutoBuyReserve">Auto-buying should reserve </label>
+          <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels instead of 10 days worth of expenses
         </span>
       </div>
       <div *ngIf="autoBuyerService.autoBuyerSettingsUnlocked" class="optionField">

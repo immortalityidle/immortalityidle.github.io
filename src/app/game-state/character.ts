@@ -71,7 +71,8 @@ export interface CharacterProperties {
   highestAge: number,
   highestHealth: number,
   highestStamina: number,
-  highestMana: number
+  highestMana: number,
+  highestAttributes: { [key: string]: number; }
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -239,6 +240,7 @@ export class Character {
   highestHealth = 0;
   highestStamina = 0;
   highestMana = 0;
+  highestAttributes: { [key: string]: number; } = {};
 
 
   // reset everything but increase aptitudes
@@ -296,7 +298,7 @@ export class Character {
     if (this.money < 0){
       //sanity check that we're not persisting/growing debt at higher bloodline levels
       this.money = 0;
-    } 
+    }
     if (this.bloodlineRank < 3) {
       this.money = 0;
     } else if (this.bloodlineRank < 4) {
@@ -342,7 +344,7 @@ export class Character {
   }
 
   recalculateDerivedStats(): void {
-    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul + 
+    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul +
       Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5);
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
@@ -423,7 +425,7 @@ export class Character {
     }
     const c = 365 * 1000; // Hardcap
       return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
-    
+
   }
 
   increaseAttribute(attribute: AttributeType, amount: number): number {
@@ -433,6 +435,9 @@ export class Character {
       increaseAmount = amount;
     }
     this.attributes[attribute].value += increaseAmount;
+    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] > this.attributes[attribute].value){
+      this.highestAttributes[attribute] = this.attributes[attribute].value;
+    }
     return increaseAmount;
   }
 
@@ -528,8 +533,8 @@ export class Character {
       highestAge: this.highestAge,
       highestHealth: this.highestHealth,
       highestStamina: this.highestStamina,
-      highestMana: this.highestMana
-
+      highestMana: this.highestMana,
+      highestAttributes: this.highestAttributes
     }
   }
 
@@ -551,7 +556,7 @@ export class Character {
     this.magicLifespan = properties.magicLifespan || 0;
     this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
     // This is derived to avoid save issues. Calculate rank and subtract from power to reduce the exponential aptitude divider.
-    this.aptitudeGainDivider = 5 * Math.pow(1.5, 9 - Math.log10(this.condenseSoulCoreCost / this.condenseSoulCoreOriginalCost)); 
+    this.aptitudeGainDivider = 5 * Math.pow(1.5, 9 - Math.log10(this.condenseSoulCoreCost / this.condenseSoulCoreOriginalCost));
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     // Similarly here, 10 * 2 ^ rank.
     this.attributeScalingLimit = 10 * Math.pow(2, Math.log10(this.reinforceMeridiansCost / this.reinforceMeridiansOriginalCost));
@@ -572,6 +577,7 @@ export class Character {
     this.highestHealth = properties.highestHealth || 0;
     this.highestStamina = properties.highestStamina || 0;
     this.highestMana = properties.highestMana || 0;
+    this.highestAttributes = properties.highestAttributes || {};
 
     this.recalculateDerivedStats();
   }

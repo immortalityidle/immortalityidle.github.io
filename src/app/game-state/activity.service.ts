@@ -77,7 +77,7 @@ export class ActivityService {
     this.defineActivities();
     this.activities = [];
     setTimeout(() => this.activities = this.getActivityList());
-    
+
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
@@ -1282,7 +1282,7 @@ export class ActivityService {
         'Uses 5 Stamina. Increases charisma and provides a little money.',
         'Uses 5 Stamina. Increases charisma and provides some money.',
         'Uses 5 Stamina. Increases charisma and provides money.',
-        'Uses 5 Stamina. Increases charisma, provides money, and makes you wonder what more you can gain from immersing yourself in mortal practices.'
+        'Uses 5 Stamina. Increases charisma, provides money, and makes you wonder if there is more to life than just money and fame.'
       ],
       consequence: [
         () => {
@@ -1877,7 +1877,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',                  
+                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',
                   this.inventoryService.randomArmorSlot(), true));
               }
             }
@@ -1899,7 +1899,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather', 
+                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',
                   this.inventoryService.randomArmorSlot(), true));
               }
             }
@@ -1921,7 +1921,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather', 
+                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',
                   this.inventoryService.randomArmorSlot(), true));
               }
             }

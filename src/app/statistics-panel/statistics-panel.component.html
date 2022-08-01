@@ -252,6 +252,15 @@
                 {{characterService.yearify(characterService.characterState.highestAge)}}
             </td>
         </tr>
+        <tr  *ngFor="let highest of characterService.characterState.highestAttributes | keyvalue">
+          <td>
+            Highest {{highest.key | camelToTitle }}
+          </td>
+          <td>
+              {{ highest.value | bigNumber }}
+          </td>
+
+        </tr>
         <tr>
             <td>
                 Highest health:
