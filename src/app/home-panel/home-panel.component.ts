@@ -46,7 +46,7 @@ export class HomePanelComponent {
     event.stopPropagation();
     if (event.shiftKey){
       this.homeService.buyLand(10);
-    } else if (event.ctrlKey){
+    } else if (event.ctrlKey || event.metaKey){
       this.homeService.buyLand(-1);
     } else {
       this.homeService.buyLand(1);
@@ -58,7 +58,7 @@ export class HomePanelComponent {
     event.stopPropagation();
     if (event.shiftKey){
       this.homeService.addField(10);
-    } else if (event.ctrlKey){
+    } else if (event.ctrlKey || event.metaKey){
       this.homeService.addField(-1);
     } else {
       this.homeService.addField();

@@ -34,7 +34,7 @@ export class InventoryPanelComponent {
       this.inventoryService.selectedItem = item;
       this.use();
       this.inventoryService.selectedItem = oldSelected;
-    } else if (event.ctrlKey) {
+    } else if (event.ctrlKey || event.metaKey) {
       this.inventoryService.selectedItem = item;
       this.autoUse();
     } else {
@@ -60,7 +60,7 @@ export class InventoryPanelComponent {
     event.preventDefault();
     event.stopPropagation();
     this.inventoryService.selectedItem = item;
-    if (event.ctrlKey) {
+    if (event.ctrlKey || event.metaKey) {
       this.autoSell();
     } else if (event.shiftKey) {
       this.sellStack();
