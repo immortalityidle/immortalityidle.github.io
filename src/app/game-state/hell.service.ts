@@ -118,9 +118,9 @@ export class HellService {
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
-    private battleService: BattleService,
     private activityService: ActivityService,
-    private followerService: FollowersService
+    private followerService: FollowersService,
+    private battleService: BattleService,
   ) {
 
     mainLoopService.tickSubject.subscribe(() => {
@@ -162,6 +162,25 @@ export class HellService {
       this.inHell = false;
       this.currentHell = -1;
       this.activityService.reloadActivities();
+    }
+  }
+
+  trouble(){
+    if (this.currentHell === HellLevel.TongueRipping){
+      let totalPower = 0;
+      for (let follower of this.followerService.followers){
+        totalPower += follower.power;
+      }
+      // monsters get stronger the more you've recruited/trained
+      this.battleService.addEnemy({
+        name: "Tongue Ripper",
+        health: 1e20 + (1e19 * totalPower),
+        maxHealth: 1e20 + (1e19 * totalPower),
+        accuracy: 0.50,
+        attack: 1e8 + (1e7 * totalPower),
+        defense: 1e8 + (1e7 * totalPower),        
+        loot: []
+      });      
     }
   }
 

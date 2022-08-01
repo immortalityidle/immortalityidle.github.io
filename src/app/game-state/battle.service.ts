@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { Equipment, InventoryService, Item } from '../game-state/inventory.service';
@@ -6,6 +6,7 @@ import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { formatNumber } from '@angular/common';
+import { HellService } from './hell.service';
 
 export interface Enemy {
   name: string,
@@ -45,6 +46,7 @@ export interface BattleProperties {
 })
 export class BattleService {
 
+  hellService?: HellService;
   enemies: EnemyStack[];
   currentEnemy: EnemyStack | null;
   kills: number;
@@ -62,13 +64,16 @@ export class BattleService {
   highestDamageDealt = 0;
 
   constructor(
+    private injector: Injector,
     private logService: LogService,
     private characterService: CharacterService,
     private itemRepoService: ItemRepoService,
     private inventoryService: InventoryService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService
+    reincarnationService: ReincarnationService,
+    
   ) {
+    setTimeout(() => this.hellService = this.injector.get(HellService));
     this.enemies = [];
     this.currentEnemy = null;
     this.kills = 0;
@@ -198,6 +203,10 @@ export class BattleService {
             if (!this.characterService.characterState.immortal){
               this.characterService.characterState.dead = true;
             }
+            if (this.hellService?.inHell){
+              this.hellService.beaten = true;
+              this.enemies = [];
+            }
             return;
           }
         } else {
@@ -302,6 +311,11 @@ export class BattleService {
   // generate a monster based on current troubleKills
   trouble(){
     if (this.enemies.length !== 0){
+      return;
+    }
+    if (this.hellService && this.hellService.inHell){
+      // let hellService handle the trouble while we're in hell
+      this.hellService.trouble();
       return;
     }
     const rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
