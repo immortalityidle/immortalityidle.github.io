@@ -128,9 +128,13 @@ export class OptionsModalComponent {
   }
 
   easyModeChange(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.gameStateService.easyModeEver = true;
-    this.characterService.characterState.easyMode = event.target.checked;
+    event.preventDefault();
+    if (!this.gameStateService.easyModeEver && confirm("This will enable easy mode and mark your save permanently. Are you sure?")){
+      this.gameStateService.easyModeEver = true;
+      this.characterService.characterState.easyMode = !this.characterService.characterState.easyMode;
+    } else {
+      this.characterService.characterState.easyMode = !this.characterService.characterState.easyMode;
+    }
   }
 
   autBuyFoodChange(event: Event){

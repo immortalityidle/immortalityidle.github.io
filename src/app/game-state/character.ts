@@ -396,32 +396,34 @@ export class Character {
       aptitude = 0;
     }
     const empowermentFactor = noEmpowerment? 1 : this.getEmpowermentMult();
+    let x = 1;
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
-      return aptitude * empowermentFactor;
+      x = aptitude * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 10){
       // from the limit to 10x the limit, change growth rate to 1/4
-      return (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * empowermentFactor;
+      x = (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 100){
       // from the 10x limit to 100x the limit, change growth rate to 1/20
-      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+      x = (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * empowermentFactor;
     } else if (aptitude <= this.attributeSoftCap){
       // from the 100x limit to softcap, change growth rate to 1/100
-      return (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
+      x = (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowermentFactor;
     } else {
       const d = this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
-        const x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) * empowermentFactor; // Softcap
-        if (this.bloodlineRank >= 8){
-          return x;
-        }
-        const c = 365 * 1000; // Hardcap
-      return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
+      x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) * empowermentFactor; // Softcap
     }
+    if (this.bloodlineRank >= 8){
+      return x;
+    }
+    const c = 365 * 1000; // Hardcap
+      return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
+    
   }
 
   increaseAttribute(attribute: AttributeType, amount: number): number {

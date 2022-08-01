@@ -88,7 +88,7 @@ export class AppComponent implements OnInit {
   constructor(
     private mainLoopService: MainLoopService,
     public gameStateService: GameStateService,
-    private storeService: StoreService,
+    public storeService: StoreService,
     public characterService: CharacterService,
     public impossibleTaskService: ImpossibleTaskService,
     public hellService: HellService,

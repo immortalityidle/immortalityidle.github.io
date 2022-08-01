@@ -774,7 +774,7 @@ export class HomeService {
     if (quantity < 0){
       quantity = this.land;
     }
-    while (quantity > 0 && this.land > 0){
+    while (quantity > 0 && this.land >= quantity){
       if (this.fields.length >= 300){
         this.extraFields += quantity;
         this.land -= quantity;

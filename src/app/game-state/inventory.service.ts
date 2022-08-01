@@ -7,6 +7,7 @@ import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
 import { WeaponNames, ItemPrefixes, WeaponSuffixes, WeaponSuffixModifiers, ArmorSuffixes, ArmorSuffixModifiers, herbNames, herbQuality, ChestArmorNames, LegArmorNames, ShoeNames, HelmetNames } from './itemResources';
 import { FurniturePosition } from './home.service';
+import { BigNumberPipe } from '../app.component';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -104,6 +105,7 @@ export interface InventoryProperties {
   providedIn: 'root',
 })
 export class InventoryService {
+  bigNumberPipe = new BigNumberPipe;
   itemStacks: (ItemStack | null)[] = [];
   maxItems = 10;
   maxStackSize = 100;
@@ -349,19 +351,25 @@ export class InventoryService {
         durability: durability,
         baseName: baseName
       },
-      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " + grade + "<br/>Durability: " + durability
+      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " + 
+        this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
     };
   }
 
   updateWeaponDescription(weapon: Equipment){
-    weapon.description = 'A unique weapon made of ' +
-      weapon.weaponStats?.material + ".<br/>Base Damage: " +
-      weapon.weaponStats?.baseDamage + "<br/>Durability: " + weapon.weaponStats?.durability;
+    if(!weapon.weaponStats) {
+      return;
+    }
+    weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + ".<br/>Base Damage: " +
+    this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) + "<br/>Durability: " + this.bigNumberPipe.transform(weapon.weaponStats.durability);
   }
 
   updateArmorDescription(armor: Equipment){
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats?.material +
-      "<br/>Defense: " + armor.armorStats?.defense + "<br/>Durability: " + armor.armorStats?.durability
+    if(!armor.armorStats) {
+      return;
+    }
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + ".<br/>Defense: " + 
+      this.bigNumberPipe.transform(armor.armorStats.defense) + "<br/>Durability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
   upgradeEquipment(value: number){
