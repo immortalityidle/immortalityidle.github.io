@@ -7,9 +7,9 @@
       </ng-template>
       <div class="optionField">
         <span>
-          <input type="checkbox" (click)="false;"
-            id="easyMode"  [checked]="characterService.characterState.easyMode">
-          <a href="" tooltip="This game is much too hard and takes much too long. Click this to make it easier. Be warned: you will forever be known as a cultivator who took the easy path to immortality." placement="left" (click)="easyModeChange($event)">Easy Mode</a>
+          <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)" 
+            tooltip="This game is much too hard and takes much too long to play to the end. Click this to make it easier. Be warned: you will forever be known as a cultivator who took the easy path to immortality.">
+          <label for="easyMode" >Easy Mode</label>
         </span>
         <span *ngIf="this.gameStateService.easyModeEver">
           &nbsp;&nbsp;Only starting your journey to immortality from the beginning again (Hard Reset) will prove you never took the easy path.
