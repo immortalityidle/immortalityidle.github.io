@@ -35,6 +35,7 @@ export interface FollowersProperties {
   totalDismissed: number,
   highestLevel: number,
   stashedFollowers: Follower[],
+  stashedFollowersMaxes: { [key: string]: number; },
 }
 
 export interface FollowerReserve {
@@ -62,6 +63,7 @@ export class FollowersService {
   followersRecruited = 0;
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number; } = {};
+  stashedFollowersMaxes: { [key: string]: number; } = {};
   followerCap = 0;
   followersMaxed : FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
   sortField = "Job";
@@ -301,6 +303,7 @@ export class FollowersService {
       stashedFollowers: this.stashedFollowers,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
+      stashedFollowersMaxes: this.maxFollowerByType,
       sortField: this.sortField,
       sortAscending: this.sortAscending,
       totalRecruited: this.totalRecruited,
@@ -316,6 +319,7 @@ export class FollowersService {
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
+    this.stashedFollowersMaxes = properties.stashedFollowersMaxes || {};
     this.sortField = properties.sortField || "Job";
     if (properties.sortAscending === undefined){
       this.sortAscending = true;
@@ -424,10 +428,14 @@ export class FollowersService {
   stashFollowers(){
     this.stashedFollowers = this.followers;
     this.followers = [];
+    this.stashedFollowersMaxes = this.maxFollowerByType;
+    this.maxFollowerByType = {};
   }
 
   restoreFollowers(){
     this.followers = this.stashedFollowers;
     this.stashedFollowers = [];
+    this.maxFollowerByType = this.stashedFollowersMaxes;
+    this.stashedFollowersMaxes = {};
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { BattleService } from './battle.service';
 import { LogService } from './log.service';
 import { MainLoopService } from './main-loop.service';
@@ -6,6 +6,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from './character.service';
 import { Furniture, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
+import { HellService } from './hell.service';
 
 export interface Home {
   name: string;
@@ -87,6 +88,7 @@ export type FurnitureSlots  = { [key in FurniturePosition]: Furniture | null};
   providedIn: 'root'
 })
 export class HomeService {
+  hellService?: HellService
   autoBuyLandUnlocked = false;
   autoBuyLandLimit = 5;
   autoBuyHomeUnlocked = false;
@@ -520,14 +522,17 @@ export class HomeService {
   bestHome = 0;
 
   constructor(
+    private injector: Injector,
     private characterService: CharacterService,
     private inventoryService: InventoryService,
     private logService: LogService,
     private battleService: BattleService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
-    private itemRepoService: ItemRepoService
+    private itemRepoService: ItemRepoService,
+    
   ) {
+      setTimeout(() => this.hellService = this.injector.get(HellService));
       this.land = 0;
       this.landPrice = 100;
       this.setCurrentHome(this.homesList[0]);
@@ -547,6 +552,9 @@ export class HomeService {
         this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
         if (this.nextHomeCost < 0){
           this.nextHomeCost = 0;
+        }
+        if (this.hellService?.inHell){
+          return;
         }
         this.home.consequence();
         for (const slot of this.furniturePositionsArray){

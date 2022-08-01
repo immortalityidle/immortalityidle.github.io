@@ -10,6 +10,9 @@
       <button (click)="JoinTheGodsClick()">Join the Gods</button>
     </span>
     <span tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}}</span>
+    <span *ngIf="hellService.inHell && activityService.hellEnabled && hellService.completedHellTasks.includes(hellService.currentHell)">
+      <button (click)="hellBoss()">Challenge the Hell Lord</button>
+    </span>
   </div>
 </h3>
 <div class="activitiesContainer">

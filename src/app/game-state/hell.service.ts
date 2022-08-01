@@ -7,6 +7,7 @@ import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 import { Activity, ActivityType } from './activity';
 import { FollowersService } from './followers.service';
+import { InventoryService } from './inventory.service';
 
 export enum HellLevel {
   TongueRipping,
@@ -100,6 +101,7 @@ export class HellService {
       this.characterService.characterState.hellMoney -= 1000;
       if (Math.random() < 0.01){
         this.followerService.generateFollower("damned");
+        this.logService.addLogMessage("Your recruiting efforts seem to infuriate the demons here.", "STANDARD", "EVENT");
       }
     }],
     resourceUse: [{
@@ -121,6 +123,7 @@ export class HellService {
     private activityService: ActivityService,
     private followerService: FollowersService,
     private battleService: BattleService,
+    private inventoryService: InventoryService
   ) {
 
     mainLoopService.tickSubject.subscribe(() => {
@@ -135,6 +138,9 @@ export class HellService {
       if (this.beaten){
         this.beaten = false;
         this.logService.addLogMessage("You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm.", "INJURY", "EVENT");
+        if (hell.exitEffect){
+          hell.exitEffect();
+        }
         this.currentHell = -1;
         this.activityService.reloadActivities();
       }
@@ -172,16 +178,29 @@ export class HellService {
         totalPower += follower.power;
       }
       // monsters get stronger the more you've recruited/trained
+      // tinker with stats/growth
       this.battleService.addEnemy({
         name: "Tongue Ripper",
         health: 1e20 + (1e19 * totalPower),
         maxHealth: 1e20 + (1e19 * totalPower),
         accuracy: 0.50,
-        attack: 1e8 + (1e7 * totalPower),
+        attack: 1e6 + (1e4 * totalPower),
         defense: 1e8 + (1e7 * totalPower),        
-        loot: []
+        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(totalPower + 2)), "corrupted") ]
       });      
     }
+  }
+
+  fightHellBoss(){
+    this.battleService.addEnemy({
+      name: "Boss Of A Generic Level",
+      health: 1,
+      maxHealth: 1,
+      accuracy: 0.8,
+      attack: 1,
+      defense: 1,        
+      loot: [  ]
+    });
   }
 
   getProperties(): HellProperties {
@@ -194,7 +213,7 @@ export class HellService {
 
   setProperties(properties: HellProperties) {
     this.inHell = properties.inHell || false;
-    this.currentHell = properties.currentHell || -1;
+    this.currentHell = properties.currentHell ?? -1;
     this.completedHellTasks = properties.completedHellTasks || [];
     this.activityService.reloadActivities();
   }
@@ -252,6 +271,7 @@ export class HellService {
 
   setEnterHellsArray(newList: Activity[]) {
     newList.push(this.activityService.Resting);
+    newList.push(this.activityService.SoulCultivation);
     for (const hell of this.hells){
       newList.push({
           level: 0,
@@ -284,12 +304,9 @@ export class HellService {
         this.followerService.stashFollowers();
       },
       dailyEffect: () => {
-        let totalPower = 0;
-        for (let follower of this.followerService.followers){
-          totalPower += follower.power;
-        }
-        let reducer = Math.pow(0.8, totalPower);
-        this.characterService.characterState.attributes.charisma.value -= this.characterService.characterState.attributes.charisma.value * reducer;
+        let totalPower = 1;
+        let reducer = .9;
+        this.characterService.characterState.attributes.charisma.value *= reducer;
       },
       exitEffect: () => {
         this.followerService.restoreFollowers();

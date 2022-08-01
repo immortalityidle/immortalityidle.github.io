@@ -526,10 +526,10 @@ export class InventoryService {
     }
   }
 
-  generateSpiritGem(grade: number): Item {
+  generateSpiritGem(grade: number, flavor: string = "monster"): Item {
     return {
       id: 'spiritGemGrade' + grade,
-      name: 'monster gem grade ' + grade,
+      name: flavor + ' gem grade ' + grade,
       type: 'spiritGem',
       value: grade * 10,
       description: 'A spirit gem dropped by a monster.'

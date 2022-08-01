@@ -72,4 +72,8 @@ export class ActivityPanelComponent {
     }
     event.dataTransfer?.setData("activity", "" + activity.activityType);
   }
+
+  hellBoss(){
+    this.hellService.fightHellBoss();
+  }
 }
