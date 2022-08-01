@@ -49,7 +49,7 @@ export class ActivityPanelComponent {
     // Shift and Ctrl both multiply by 10x, combined does 100
     let repeat = 1
     repeat *= event.shiftKey ? 10 : 1
-    repeat *= event.ctrlKey ? 10 : 1
+    repeat *= event.ctrlKey || event.metaKey ? 10 : 1
 
     // Alt will put it at the top of the schedule, otherwise the bottom
     if (event.altKey) {
