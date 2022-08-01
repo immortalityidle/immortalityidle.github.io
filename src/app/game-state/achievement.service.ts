@@ -628,7 +628,7 @@ export class AchievementService {
         for (const home of this.homeService.imperialHomesList) {
           this.homeService.homesList.push(home);
         }
-        this.homeService.getNextHome();
+        this.homeService.setCurrentHome(this.homeService.home);
       },
       unlocked: false
     },
