@@ -21,7 +21,7 @@ export class FollowerManagementPanelComponent implements OnInit {
     for (const followerType in this.followerService.jobs){
       if (this.followerService.maxFollowerByType[followerType]){
         max += this.followerService.maxFollowerByType[followerType];
-      } else {
+      } else if (!this.followerService.jobs[followerType].hidden){
         max += 1000;
       }
     }
