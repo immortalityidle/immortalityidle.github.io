@@ -72,7 +72,7 @@ export class TimePanelComponent implements OnInit {
     // Shift and Ctrl both multiply by 10x, combined does 100
     let repeat = 1
     repeat *= event.shiftKey ? 10 : 1
-    repeat *= event.ctrlKey ? 10 : 1
+    repeat *= event.ctrlKey || event.metaKey ? 10 : 1
 
     entry.repeatTimes += repeat
   }
@@ -83,7 +83,7 @@ export class TimePanelComponent implements OnInit {
     // Shift and Ctrl both multiply by 10x, combined does 100
     let repeat = 1
     repeat *= event.shiftKey ? 10 : 1
-    repeat *= event.ctrlKey ? 10 : 1
+    repeat *= event.ctrlKey || event.metaKey ? 10 : 1
 
     entry.repeatTimes -= repeat
 
