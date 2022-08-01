@@ -294,13 +294,13 @@ export class InventoryService {
   }
 
   // materials are wood or metal
-  generateWeapon(grade: number, material: string, defaultName: string | undefined = undefined): Equipment {
+  generateWeapon(grade: number, material: string, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment {
 
-    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
+    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem");
       if (value > 0){
-        grade = Math.pow(grade, 1.1 + (value / 40));
+        grade = Math.floor(Math.pow(grade, 1 + (value / 400)));
       }
     }
     const highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
@@ -524,13 +524,13 @@ export class InventoryService {
     };
   }
 
-  generateArmor(grade: number, material: string, slot: EquipmentPosition, defaultName: string | undefined = undefined): Equipment{
+  generateArmor(grade: number, material: string, slot: EquipmentPosition, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment{
     
-    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons){
+    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem");
       if (value > 0){
-        grade = Math.pow(grade, 1.1 + (value / 40));
+        grade = Math.floor(Math.pow(grade, 1 + (value / 400)));
       }
     }
     const highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
@@ -1241,9 +1241,9 @@ export class InventoryService {
     }
     let inventoryIndex = 0;
     if (item1.slot === 'rightHand' || item1.slot === 'leftHand'){
-      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + "", item1.weaponStats?.baseName));
+      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + "", false, item1.weaponStats?.baseName));
     } else {
-      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, item1.armorStats?.baseName));
+      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, false, item1.armorStats?.baseName));
     }
     // if we can, move the new item to the desired destination index
     if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null){
@@ -1322,9 +1322,9 @@ export class InventoryService {
         return;
       }
       if ((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) {
-        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", sourceItem.weaponStats?.baseName);
+        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", false, sourceItem.weaponStats?.baseName);
       } else if (slot !== 'rightHand' && slot !== 'leftHand' &&this.autoequipBestArmor) {
-        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot, sourceItem.armorStats?.baseName);
+        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot, false, sourceItem.armorStats?.baseName);
       } else {//slot doesn't match the auto-equip owned.
         return;
       }

@@ -1410,7 +1410,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 160)), 'metal'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 160)), 'metal', true));
               }
             }
           }
@@ -1437,7 +1437,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 160)), 'metal'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 160)), 'metal', true));
               }
             }
           }
@@ -1464,7 +1464,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('metal');
               if (grade >= 1){ // if the metal was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 160)), 'metal'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.metalLore.value), grade / 160)), 'metal', true));
               }
             }
           }
@@ -1743,7 +1743,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 16)), 'wood'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 16)), 'wood', true));
               }
             }
           }
@@ -1763,7 +1763,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 16)), 'wood'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 16)), 'wood', true));
               }
             }
           }
@@ -1783,7 +1783,7 @@ export class ActivityService {
               const grade = this.inventoryService.consume('wood');
               if (grade >= 1){ // if the wood was found
                 this.inventoryService.addItem(this.inventoryService.generateWeapon(
-                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 16)), 'wood'));
+                  Math.floor(Math.pow(Math.log2(this.characterService.characterState.attributes.woodLore.value), grade / 16)), 'wood', true));
               }
             }
           }
@@ -1878,7 +1878,7 @@ export class ActivityService {
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
                   Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',                  
-                  this.inventoryService.randomArmorSlot()));
+                  this.inventoryService.randomArmorSlot(), true));
               }
             }
           }
@@ -1900,7 +1900,7 @@ export class ActivityService {
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
                   Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather', 
-                  this.inventoryService.randomArmorSlot()));
+                  this.inventoryService.randomArmorSlot(), true));
               }
             }
           }
@@ -1922,7 +1922,7 @@ export class ActivityService {
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
                   Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather', 
-                  this.inventoryService.randomArmorSlot()));
+                  this.inventoryService.randomArmorSlot(), true));
               }
             }
           }
