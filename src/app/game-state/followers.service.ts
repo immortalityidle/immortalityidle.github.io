@@ -349,6 +349,7 @@ export class FollowersService {
     this.totalDied = properties.totalDied || 0;
     this.totalDismissed = properties.totalDismissed || 0;
     this.highestLevel = properties.highestLevel || 0;
+    this.updateFollowerTotalPower();
   }
 
   generateFollower(job?: Follower["job"]){
