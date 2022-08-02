@@ -116,10 +116,10 @@ export class MainLoopService {
       if (this.pause) {
         this.bankedTicks += ticksPassed / this.offlineDivider; // offlineDivider currently either 10 or 2.
       } else {
-        const bankedRate = this.topDivider / this.tickDivider;
-        let bankedCounter = 0;
         if (this.bankedTicks > 0 && this.useBankedTicks){
-          bankedCounter = 11; // set to 10 + 1 for true / false
+          //using banked ticks makes time happen 10 times faster
+          ticksPassed *= 10;
+          this.bankedTicks -= timeDiff / TICK_INTERVAL_MS * 10 * (this.topDivider / this.tickDivider);
         }
 
         ticksPassed *= this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
@@ -129,24 +129,10 @@ export class MainLoopService {
           this.tickCount = 36500;
         }
         let tickTime = new Date().getTime();
-        if (bankedCounter) {
-          while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
-            this.tick();
-            if (this.bankedTicks >= 1 && bankedCounter > 1){ // Used here to avoid overusing earned bankedticks.
-              bankedCounter--
-              this.bankedTicks -= bankedRate;
-            } else {
-              this.tickCount--;
-              bankedCounter = 11;
-            }
-            tickTime = new Date().getTime();
-          }
-        } else {
-          while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
-            this.tick();
-            this.tickCount--;
-            tickTime = new Date().getTime();
-          }
+        while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
+          this.tick();
+          this.tickCount--;
+          tickTime = new Date().getTime();
         }
       }
     }, TICK_INTERVAL_MS);
