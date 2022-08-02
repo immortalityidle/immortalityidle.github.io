@@ -592,6 +592,11 @@ export class HomeService {
         if (this.homeValue > this.bestHome){
           this.bestHome = this.homeValue;
         }
+        if (this.upgrading && this.nextHome === this.home){
+          this.houseBuildingProgress = 1;
+          this.upgrading = false;
+          this.setCurrentHome(this.home);
+        }
   
       });
 
