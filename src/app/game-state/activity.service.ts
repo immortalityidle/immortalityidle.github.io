@@ -676,7 +676,7 @@ export class ActivityService {
       name: ['Attach Chains to the Island'],
       activityType: ActivityType.AttachChains,
       description: ['Swim deep and attach one of your chains to the island, then pull.'],
-      consequenceDescription: ['Uses 1000000 Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.'],
+      consequenceDescription: ['Uses 1,000,000 Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.'],
       consequence: [() => {
         if (this.characterService.characterState.status.stamina.value >= 1000000 && this.inventoryService.consume("chain") > 0 ){
           this.characterService.characterState.status.stamina.value -= 1000000;
