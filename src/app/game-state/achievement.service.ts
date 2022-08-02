@@ -626,7 +626,9 @@ export class AchievementService {
       effect: () => {
         this.characterService.characterState.imperial = true;
         for (const home of this.homeService.imperialHomesList) {
-          this.homeService.homesList.push(home);
+          if (!this.homeService.homesList.includes(home)){
+            this.homeService.homesList.push(home);
+          }
         }
         this.homeService.setCurrentHome(this.homeService.home);
       },
