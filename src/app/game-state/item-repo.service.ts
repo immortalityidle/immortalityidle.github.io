@@ -10,6 +10,7 @@ import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.serv
 import { FollowersService } from './followers.service';
 import { AutoBuyerService } from './autoBuyer.service';
 import { GameStateService } from './game-state.service';
+import { HellLevel, HellService } from './hell.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class ItemRepoService {
   followerService?: FollowersService;
   autoBuyerService?: AutoBuyerService;
   gameStateService?: GameStateService;
+  hellService?: HellService;
 
   furniture: {[key: string]: Furniture} = {
     blanket: {
@@ -996,6 +998,60 @@ export class ItemRepoService {
           this.logService.addLogMessage("You won this game in " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes. I wonder if other immortals have ever done it faster?", "STANDARD", 'STORY');
           this.characterService.characterState.immortal = true;
         }
+      },
+    },
+    fingers: {
+      id: 'fingers',
+      name: 'fingers',
+      type: 'fingers',
+      value: 1,
+      description: 'A handful of bloody fingers. The demons carry them as grisly trophies. Now, it seems, you do too.',
+    },
+    hellCrownTongueRippers: {
+      id: 'hellCrownTongueRippers',
+      name: 'Crown of the Tongue Rippers',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown proving your mastery over the Hell of Tongue Rippers. Using this will unlock a new type of follower.',
+      useLabel: 'Accept the Crown',
+      useDescription: 'Accept the Crown.',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.TongueRipping)){
+          this.hellService.completedHellBosses.push(HellLevel.TongueRipping);
+        }
+        this.logService.addLogMessage("The crown of the Hell of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.", "STANDARD", 'STORY');
+        this.followerService.unlockJob("prophet");
+      },
+    },
+    hellCrownScissors: {
+      id: 'hellCrownScissors',
+      name: 'Crown of Scissors',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown proving your mastery over the Hell of Scissors. Using this will unlock a new ability for your followers.',
+      useLabel: 'Accept the Crown',
+      useDescription: 'Accept the Crown.',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.Scissors)){
+          this.hellService.completedHellBosses.push(HellLevel.Scissors);
+        }
+        this.logService.addLogMessage("The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.", "STANDARD", 'STORY');
+        this.logService.addLogMessage("From now on, each follower will train a child to replace themselves in your service when they pass away.", "STANDARD", 'STORY');
+        this.followerService.autoReplaceUnlocked = true;
       },
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing

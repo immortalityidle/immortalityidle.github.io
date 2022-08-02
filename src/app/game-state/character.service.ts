@@ -3,14 +3,16 @@ import { LogService } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
-import { formatNumber, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { ActivityService } from './activity.service';
 import { Subscription } from "rxjs";
+import { BigNumberPipe } from '../app.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
+  bigNumberPipe = new BigNumberPipe;
   activityService?: ActivityService;
   characterState: Character;
   forceRebirth = false;
@@ -137,15 +139,14 @@ export class CharacterService {
   }
 
   setLifespanTooltip(){
-    if (this.characterState.immortal){
-      this.lifespanTooltip = "You are immortal.";
-      return;
-    }
     if (this.characterState.foodLifespan + this.characterState.alchemyLifespan + this.characterState.statLifespan + this.characterState.spiritualityLifespan + this.characterState.magicLifespan <= 0){
       this.lifespanTooltip = "You have done nothing to extend your lifespan.";
       return;
     }
     let tooltip = "Your base lifespan of " + this.yearify(this.characterState.baseLifespan) + " is extended by"
+    if (this.characterState.immortal){
+      tooltip = "You are immortal. If you had remained mortal, your base lifespan of " + this.yearify(this.characterState.baseLifespan) + " would be extended by"
+    }
     if (this.characterState.foodLifespan > 0){
       tooltip += "<br>Healthy Food: " + this.yearify(this.characterState.foodLifespan);
     }
@@ -170,7 +171,7 @@ export class CharacterService {
     } else if (value < 730){
       return "1 year";
     } else {
-      return Math.floor(value / 365) + " years";
+      return this.bigNumberPipe.transform(Math.floor(value / 365)) + " years";
     }
   }
 
@@ -250,6 +251,20 @@ export class CharacterService {
     this.characterState.bloodlineCost *= 100;
     this.characterState.bloodlineRank++;
     this.resetAptitudes();
+  }
+
+  stashWeapons(){
+    this.characterState.stashedEquipment.rightHand = this.characterState.equipment.rightHand;
+    this.characterState.stashedEquipment.leftHand = this.characterState.equipment.leftHand;
+    this.characterState.equipment.rightHand = null;
+    this.characterState.equipment.leftHand = null;
+  }
+
+  restoreWeapons(){
+    this.characterState.equipment.rightHand = this.characterState.stashedEquipment.rightHand;
+    this.characterState.equipment.leftHand = this.characterState.stashedEquipment.leftHand;
+    this.characterState.stashedEquipment.rightHand = null;
+    this.characterState.stashedEquipment.leftHand = null;
   }
 
 }

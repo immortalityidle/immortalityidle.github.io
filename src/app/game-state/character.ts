@@ -45,6 +45,7 @@ export interface CharacterProperties {
   money: number,
   hellMoney: number,
   equipment: EquipmentSlots,
+  stashedEquipment: EquipmentSlots,
   age: number,
   status: CharacterStatus,
   baseLifespan: number,
@@ -252,6 +253,14 @@ export class Character {
   magicLifespan = 0;
   lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
   equipment: EquipmentSlots = {
+    head: null,
+    body: null,
+    leftHand: null,
+    rightHand: null,
+    legs: null,
+    feet: null
+  }
+  stashedEquipment: EquipmentSlots = {
     head: null,
     body: null,
     leftHand: null,
@@ -534,6 +543,7 @@ export class Character {
       money: this.money,
       hellMoney: this.hellMoney,
       equipment: this.equipment,
+      stashedEquipment: this.stashedEquipment,
       age: this.age,
       status: this.status,
       baseLifespan: this.baseLifespan,
@@ -574,6 +584,14 @@ export class Character {
       this.money = this.maxMoney;
     }
     this.equipment = properties.equipment;
+    this.stashedEquipment = properties.stashedEquipment || {
+      head: null,
+      body: null,
+      leftHand: null,
+      rightHand: null,
+      legs: null,
+      feet: null
+    };
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
     this.baseLifespan = properties.baseLifespan;

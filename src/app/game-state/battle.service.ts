@@ -5,8 +5,8 @@ import { Equipment, InventoryService, Item } from '../game-state/inventory.servi
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
-import { formatNumber } from '@angular/common';
 import { HellService } from './hell.service';
+import { BigNumberPipe } from '../app.component';
 
 export interface Enemy {
   name: string,
@@ -45,7 +45,7 @@ export interface BattleProperties {
   providedIn: 'root'
 })
 export class BattleService {
-  
+  bigNumberPipe = new BigNumberPipe;
   hellService?: HellService;
   enemies: EnemyStack[];
   currentEnemy: EnemyStack | null;
@@ -169,7 +169,7 @@ export class BattleService {
             damage /= 2;
             this.characterService.characterState.status.mana.value -= 10;
           }
-          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + formatNumber(damage,"en-US", "1.0-2") + " damage", 'INJURY', 'COMBAT');
+          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
           if (damage > this.highestDamageTaken){
             this.highestDamageTaken = damage;
           }
@@ -218,7 +218,7 @@ export class BattleService {
 
   youAttack(){
     this.characterService.characterState.accuracy = Math.min((this.troubleKills + Math.sqrt(this.characterService.characterState.attributes.speed.value)) / this.troubleKills / 2, 1)
-    if (this.currentEnemy){
+    if (this.currentEnemy && this.characterService.characterState.status.health.value > 0){ // Check health for immortals
       if (Math.random() > this.characterService.characterState.accuracy){
         this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " but miss.", 'STANDARD', 'COMBAT');
         return;
@@ -278,7 +278,7 @@ export class BattleService {
           this.currentEnemy.enemy.health = this.currentEnemy.enemy.maxHealth;
         }
       } else {
-        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + damage + " damage", 'STANDARD', 'COMBAT');
+        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage", 'STANDARD', 'COMBAT');
       }
     }
   }

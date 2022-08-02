@@ -592,6 +592,11 @@ export class HomeService {
         if (this.homeValue > this.bestHome){
           this.bestHome = this.homeValue;
         }
+        if (this.upgrading && this.nextHome === this.home){
+          this.houseBuildingProgress = 1;
+          this.upgrading = false;
+          this.setCurrentHome(this.home);
+        }
   
       });
 
@@ -827,8 +832,10 @@ export class HomeService {
   workFields(workValue: number){
     for (let i = 0; i < this.fields.length && i < 300; i++){
       const field = this.fields[i];
-      if (field.yield < field.maxYield){
+      if (field.yield + workValue < field.maxYield){
         field.yield += workValue;
+      } else {
+        field.yield = field.maxYield;
       }
     }
   }

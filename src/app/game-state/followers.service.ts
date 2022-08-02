@@ -11,6 +11,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { EquipmentPosition } from './character';
+import { ThisReceiver } from '@angular/compiler';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -36,6 +37,8 @@ export interface FollowersProperties {
   highestLevel: number,
   stashedFollowers: Follower[],
   stashedFollowersMaxes: { [key: string]: number; },
+  unlockedHiddenJobs: string[],
+  autoReplaceUnlocked: boolean
 }
 
 export interface FollowerReserve {
@@ -45,9 +48,10 @@ export interface FollowerReserve {
 
 type jobsType = {
   [key: string]: {
-    work: (follower: Follower) => void,
+    work: () => void,
     description: string,
-    hidden?: boolean
+    hidden?: boolean,
+    totalPower: number
   }
 };
 
@@ -72,131 +76,147 @@ export class FollowersService {
   totalDied = 0;
   totalDismissed = 0;
   highestLevel = 0;
-  nonRandomJobs = 1;
   hellService?: HellService;
-  gemsMerged = false;
+  unlockedHiddenJobs: string[] = [];
+  autoReplaceUnlocked = false;
 
   jobs: jobsType = {
     "builder": {
-      work: (follower: Follower) => {
-        this.homeService.nextHomeCostReduction += follower.power;
+      work: () => {
+        this.homeService.nextHomeCostReduction += this.jobs["builder"].totalPower;
         if (this.homeService.upgrading){
-          this.homeService.upgradeTick(follower.power);
+          this.homeService.upgradeTick(this.jobs["builder"].totalPower);
         }
       },
-      description: "Builders reduce the cost of the next home you upgrade to. They can also help you build it faster."
+      description: "Builders reduce the cost of the next home you upgrade to. They can also help you build it faster.",
+      totalPower: 0
     },
     "hunter": {
-      work: (follower: Follower) => {
-        this.inventoryService.addItem(this.itemRepoService.items['meat'], follower.power);
-        this.inventoryService.addItem(this.itemRepoService.items['hide'], follower.power);
+      work: () => {
+        this.inventoryService.addItem(this.itemRepoService.items['meat'], this.jobs["hunter"].totalPower);
+        this.inventoryService.addItem(this.itemRepoService.items['hide'], this.jobs["hunter"].totalPower);
       },
-      description: "Hunters collect meat and hides for you."
+      description: "Hunters collect meat and hides for you.",
+      totalPower: 0
     },
     "farmer": {
-      work: (follower: Follower) => {
-        this.homeService.workFields(follower.power);
+      work: () => {
+        this.homeService.workFields(this.jobs["farmer"].totalPower);
       },
-    description: "Farmers work your fields, helping your crops to grow."
+      description: "Farmers work your fields, helping your crops to grow.",
+      totalPower: 0
     },
     "weaponsmith": {
-      work: (follower: Follower) => {
+      work: () => {
         const rightHand = this.characterService.characterState.equipment.rightHand;
         const leftHand = this.characterService.characterState.equipment.leftHand;
         if (rightHand && rightHand.weaponStats){ 
-          rightHand.weaponStats.durability += Math.ceil(Math.pow((follower.power / 10), 2) * 100);
-          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
-          rightHand.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
+          rightHand.weaponStats.durability += Math.ceil(Math.pow((this.jobs["weaponsmith"].totalPower / 10), 2) * 100);
+          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
+          rightHand.value += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
         }
         if (leftHand && leftHand.weaponStats){ 
-          leftHand.weaponStats.durability += follower.power;
-          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
-          leftHand.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2));
+          leftHand.weaponStats.durability += this.jobs["weaponsmith"].totalPower;
+          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
+          leftHand.value += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
         }
         
       },
-      description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them."
+      description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them.",
+      totalPower: 0
     },
     "armorer": {
-      work: (follower: Follower) => {
+      work: () => {
         const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
         for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
           if (equipment[key] && equipment[key]!.armorStats){
-            equipment[key]!.armorStats!.durability += Math.ceil(Math.pow((follower.power / 10), 2) * 50);
-            equipment[key]!.armorStats!.defense += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2) / 2);
-            equipment[key]!.value += Math.ceil(Math.pow(Math.floor(follower.power / 10), 2) / 2);
+            equipment[key]!.armorStats!.durability += Math.ceil(Math.pow((this.jobs["armorer"].totalPower / 10), 2) * 50);
+            equipment[key]!.armorStats!.defense += Math.ceil(Math.pow(Math.floor(this.jobs["armorer"].totalPower / 10), 2) / 2);
+            equipment[key]!.value += Math.ceil(Math.pow(Math.floor(this.jobs["armorer"].totalPower / 10), 2) / 2);
           }
         }
       },
-      description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them."
+      description: "Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them.",
+      totalPower: 0
     },
     "brawler": {
-      work: (follower: Follower) => {
-        this.characterService.characterState.increaseAttribute("strength", follower.power);
+      work: () => {
+        this.characterService.characterState.increaseAttribute("strength", this.jobs["brawler"].totalPower);
       },
-      description: "Brawlers will spar with you in wrestling and boxing matches, increasing your strength."
+      description: "Brawlers will spar with you in wrestling and boxing matches, increasing your strength.",
+      totalPower: 0
     },
     "sprinter": {
-      work: (follower: Follower) => {
-        this.characterService.characterState.increaseAttribute("speed", follower.power);
+      work: () => {
+        this.characterService.characterState.increaseAttribute("speed", this.jobs["sprinter"].totalPower);
       },
-      description: "Sprinters challenge you to footraces and help you increase your speed."
+      description: "Sprinters challenge you to footraces and help you increase your speed.",
+      totalPower: 0
     },
     "trainer": {
-      work: (follower: Follower) => {
-
-        this.characterService.characterState.increaseAttribute("toughness", follower.power);
+      work: () => {
+        this.characterService.characterState.increaseAttribute("toughness", this.jobs["trainer"].totalPower);
       },
-      description: "Trainers make sure you follow their strict fitness and diet rules, increasing your toughness."
+      description: "Trainers make sure you follow their strict fitness and diet rules, increasing your toughness.",
+      totalPower: 0
     },
     "tutor": {
-      work: (follower: Follower) => {
-        this.characterService.characterState.increaseAttribute("intelligence", follower.power);
+      work: () => {
+        this.characterService.characterState.increaseAttribute("intelligence", this.jobs["tutor"].totalPower);
       },
-      description: "Tutors teach you all about the wonders of the universe, increasing your intelligence."
+      description: "Tutors teach you all about the wonders of the universe, increasing your intelligence.",
+      totalPower: 0
     },
     "mediator": {
-      work: (follower: Follower) => {
-        this.characterService.characterState.increaseAttribute("charisma", follower.power);
+      work: () => {
+        this.characterService.characterState.increaseAttribute("charisma", this.jobs["mediator"].totalPower);
       },
-      description: "Mediators teach you how to persuade others, increasing your charisma."
+      description: "Mediators teach you how to persuade others, increasing your charisma.",
+      totalPower: 0
     },
     "priest": {
-      work: (follower: Follower) => {
-        this.characterService.characterState.increaseAttribute("spirituality", follower.power);
+      work: () => {
+        this.characterService.characterState.increaseAttribute("spirituality", this.jobs["priest"].totalPower);
       },
-      description: "Priests help you get closer to the divine, increasing your sprituality."
+      description: "Priests help you get closer to the divine, increasing your sprituality.",
+      totalPower: 0
     },
     "gemologist": {
       work: () => {
-        let gemmerPower = 0;
-        for (const follower of this.followers){
-          if (follower.job === "gemologist"){
-            gemmerPower += follower.power;
-          }
-        }
+        let gemmerPower = this.jobs["gemologist"].totalPower;
         gemmerPower = Math.floor(gemmerPower/50);
         if (gemmerPower > 4){
           gemmerPower = 4;
         }
         this.inventoryService.mergeAnySpiritGem(gemmerPower);
-        this.gemsMerged = true;
       },
-      description: "Gemologists combine monster gems into higher grades."
+      description: "Gemologists combine monster gems into higher grades.",
+      totalPower: 0
     },
     "scout": {
-      work: (follower: Follower) => {
-        this.battleService.tickCounter += follower.power;
+      work: () => {
+        this.battleService.tickCounter += this.jobs["scout"].totalPower;
       },
-      description: "Scouts help you track down and fight monsters faster."
+      description: "Scouts help you track down and fight monsters faster.",
+      totalPower: 0
     },
-    //Jobs after this will not be randomly selected. If you add jobs to this section, add one to this.nonRandomJobs
     "damned": {
-      work: (follower: Follower) => {
-        this.battleService.tickCounter += follower.power;
+      work: () => {
+        this.battleService.tickCounter += this.jobs["damned"].totalPower;
       },
-      description: "A soul working off karmic debt in hell that has decided to join you",
-      hidden: true
+      description: "A soul working off karmic debt in hell that has decided to join you. Having this follower seems to enrage the demons around you.",
+      hidden: true,
+      totalPower: 0
+    },
+    "prophet": {
+      work: () => {
+        if (Math.random() < (this.jobs["prophet"].totalPower * .00001)){
+          this.generateFollower();
+        }
+      },
+      description: "A follower dedicated to spreading the word of your greatness. Prophets can even find other followers for you if you are out of the mortal realm.",
+      hidden: true,
+      totalPower: 0
     },
   };
 
@@ -227,28 +247,36 @@ export class FollowersService {
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
-      this.gemsMerged = false;
       for (let i = this.followers.length - 1; i >= 0; i--){
-        if (this.followers[i].job === "gemologist" && this.gemsMerged){
-          // gemologists should only act once per tick
-          continue;
-        }
-        this.followerWorks(this.followers[i]);
-        this.followers[i].age++;
-        if (this.followers[i].age >= this.followers[i].lifespan){
+        let follower = this.followers[i]
+        follower.age++;
+        if (follower.age >= this.followers[i].lifespan){
           // follower aged off
           this.totalDied++;
-          this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
+          if (this.autoReplaceUnlocked){
+            let newFollower = this.generateFollower(follower.job);
+            if (newFollower){
+              newFollower.power = Math.round(follower.power / 2);
+              newFollower.cost = 100 * newFollower.power;
+              this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age but was replaced by their child " + newFollower?.name + ".", "STANDARD", "FOLLOWER");
+            }
+            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age and was not replaced because of your choices in follower jobs.", "STANDARD", "FOLLOWER");
+          } else {
+            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age.", "INJURY", "FOLLOWER");
+          }
+          this.updateFollowerTotalPower();
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
           this.totalDismissed++;
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
+          this.updateFollowerTotalPower();
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
         }
       }
+      this.followersWorks();
       this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
     });
 
@@ -267,6 +295,16 @@ export class FollowersService {
     this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
   }
 
+  updateFollowerTotalPower(){
+    // before calculating total set it to zero for all
+    for (const job of Object.keys(this.jobs)) {
+      this.jobs[job].totalPower = 0;
+    }
+    for (let i = this.followers.length - 1; i >= 0; i--){
+      this.jobs[this.followers[i].job].totalPower += this.followers[i].power;
+    }
+  }
+
   sortFollowers(ascending: boolean){
     let left = 1;
     let right = -1;
@@ -282,8 +320,12 @@ export class FollowersService {
     }
   }
 
-  followerWorks(follower: Follower){
-    this.jobs[follower.job].work(follower);
+  followersWorks(){
+    for (const job of Object.keys(this.jobs)) {
+      if (this.jobs[job].totalPower > 0) {
+        this.jobs[job].work();
+      }
+    }
   }
 
   reset() {
@@ -294,6 +336,7 @@ export class FollowersService {
       this.followersMaxed = 'UNMAXED';
     }
     this.followersRecruited = 0;
+    this.updateFollowerTotalPower();
   }
 
   getProperties(): FollowersProperties {
@@ -309,7 +352,9 @@ export class FollowersService {
       totalRecruited: this.totalRecruited,
       totalDied: this.totalDied,
       totalDismissed: this.totalDismissed,
-      highestLevel: this.highestLevel
+      highestLevel: this.highestLevel,
+      unlockedHiddenJobs: this.unlockedHiddenJobs,
+      autoReplaceUnlocked: this.autoReplaceUnlocked
     }
   }
 
@@ -330,15 +375,32 @@ export class FollowersService {
     this.totalDied = properties.totalDied || 0;
     this.totalDismissed = properties.totalDismissed || 0;
     this.highestLevel = properties.highestLevel || 0;
+    this.unlockedHiddenJobs = properties.unlockedHiddenJobs || [];
+    this.autoReplaceUnlocked = properties.autoReplaceUnlocked || false;
+    this.unhideUnlockedJobs();
+    this.updateFollowerTotalPower();
   }
 
-  generateFollower(job?: Follower["job"]){
+  unlockJob(job: string){
+    if (!this.unlockedHiddenJobs.includes(job)){
+      this.unlockedHiddenJobs.push(job);
+    }
+    this.unhideUnlockedJobs();
+  }
+
+  unhideUnlockedJobs(){
+    for (let job of this.unlockedHiddenJobs ){
+      this.jobs[job].hidden = false;
+    }
+  }
+
+  generateFollower(job?: Follower["job"]): Follower | null{
     this.totalRecruited++;
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","FOLLOWER");
       this.followersMaxed = 'MAXED'; // Sanity check, true check below.
-      return;
+      return null;
     }
 
     job = job ? job : this.generateFollowerJob();
@@ -356,23 +418,26 @@ export class FollowersService {
     if (currentCount >= capNumber){
       this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
       this.totalDismissed++;
-      return;
+      return null;
     }
 
     const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
     this.logService.addLogMessage("A new " + job + " has come to learn at your feet.","STANDARD","FOLLOWER");
-    this.followers.push({
+    let follower = {
       name: this.generateFollowerName(),
       age: 0,
       lifespan: this.characterService.characterState.lifespan / lifespanDivider,
       job: job,
       power: 1,
       cost: 100
-    });
+    }
+    this.followers.push(follower);
     this.sortFollowers(this.sortAscending);
     if (this.followers.length >= this.followerCap){
       this.followersMaxed = 'MAXED';
     }
+    this.updateFollowerTotalPower();
+    return follower;
   }
 
   generateFollowerName(): string {
@@ -381,7 +446,13 @@ export class FollowersService {
   }
   generateFollowerJob(): string {
     const keys = Object.keys(this.jobs);
-    return keys[Math.floor(Math.random() * (keys.length - this.nonRandomJobs))];
+    let possibleJobs = [];
+    for (let key of keys){
+      if (!this.jobs[key].hidden){
+        possibleJobs.push(key);
+      }
+    }
+    return possibleJobs[Math.floor(Math.random() * (possibleJobs.length ))];
   }
 
   /**
@@ -394,6 +465,7 @@ export class FollowersService {
     const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
     this.followersMaxed = 'UNMAXED';
+    this.updateFollowerTotalPower();
   }
 
   dismissFollowerAll(follower: Follower){
@@ -405,6 +477,7 @@ export class FollowersService {
     }
     this.maxFollowerByType[follower.job] = 0;
     this.followersMaxed = 'UNMAXED';
+    this.updateFollowerTotalPower();
   }
 
   limitFollower(follower: Follower){
