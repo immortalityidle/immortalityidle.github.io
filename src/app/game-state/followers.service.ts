@@ -234,23 +234,20 @@ export class FollowersService {
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
-      // before calculating total set it to zero for all
-      for (const job of Object.keys(this.jobs)) {
-        this.jobs[job].totalPower = 0;
-      }
       for (let i = this.followers.length - 1; i >= 0; i--){
-        this.jobs[this.followers[i].job].totalPower += this.followers[i].power;
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){
           // follower aged off
           this.totalDied++;
           this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
+          this.updateFollowerTotalPower();
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
           this.totalDismissed++;
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
+          this.updateFollowerTotalPower();
         } else {
           this.characterService.characterState.money -= this.followers[i].cost;
         }
@@ -272,6 +269,16 @@ export class FollowersService {
   updateFollowerCap(){
     this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
     this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
+  }
+
+  updateFollowerTotalPower(){
+    // before calculating total set it to zero for all
+    for (const job of Object.keys(this.jobs)) {
+      this.jobs[job].totalPower = 0;
+    }
+    for (let i = this.followers.length - 1; i >= 0; i--){
+      this.jobs[this.followers[i].job].totalPower += this.followers[i].power;
+    }
   }
 
   sortFollowers(ascending: boolean){
@@ -305,6 +312,7 @@ export class FollowersService {
       this.followersMaxed = 'UNMAXED';
     }
     this.followersRecruited = 0;
+    this.updateFollowerTotalPower();
   }
 
   getProperties(): FollowersProperties {
@@ -384,6 +392,7 @@ export class FollowersService {
     if (this.followers.length >= this.followerCap){
       this.followersMaxed = 'MAXED';
     }
+    this.updateFollowerTotalPower();
   }
 
   generateFollowerName(): string {
@@ -405,6 +414,7 @@ export class FollowersService {
     const index = this.followers.indexOf(follower);
     this.followers.splice(index, 1);
     this.followersMaxed = 'UNMAXED';
+    this.updateFollowerTotalPower();
   }
 
   dismissFollowerAll(follower: Follower){
@@ -416,6 +426,7 @@ export class FollowersService {
     }
     this.maxFollowerByType[follower.job] = 0;
     this.followersMaxed = 'UNMAXED';
+    this.updateFollowerTotalPower();
   }
 
   limitFollower(follower: Follower){
