@@ -373,6 +373,10 @@ export class Character {
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
+    const keys = Object.keys(this.attributes) as AttributeType[];
+    for (const key in keys) {
+      this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
+    }
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
     this.defense = Math.sqrt(this.attributes.toughness.value) || 1;

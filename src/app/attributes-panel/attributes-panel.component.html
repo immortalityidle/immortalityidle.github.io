@@ -12,7 +12,7 @@
         <span *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" placement="right" tooltip="{{attribute.value.description}} Your aptitude of
         {{attribute.value.aptitude > 1e7 ? (attribute.value.aptitude | bigNumber) : (attribute.value.aptitude | number: '1.0-2')}}
         multiplies your gains by
-        {{characterService.characterState.getAptitudeMultipier(attribute.value.aptitude) > 1e5 ? (characterService.characterState.getAptitudeMultipier(attribute.value.aptitude) | bigNumber) : (characterService.characterState.getAptitudeMultipier(attribute.value.aptitude) | number: '1.0-2')}}.">
+        {{attribute.value.aptitudeMult > 1e5 ? (attribute.value.aptitudeMult | bigNumber) : (attribute.value.aptitudeMult | number: '1.0-2')}}.">
           <mat-icon>{{attribute.value.icon}}</mat-icon>
           {{attribute.key | camelToTitle}}:
           {{attribute.value.value > 1e7 ? (attribute.value.value | bigNumber) : attribute.value.value > 1000 ? (attribute.value.value | number:'1.0-0') : (attribute.value.value | number: '1.0-1')}}

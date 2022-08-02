@@ -131,7 +131,7 @@ export class HellService {
         // not currently in a hell, bail out
         return;
       }
-      let hell = this.hells[this.currentHell];
+      const hell = this.hells[this.currentHell];
       if (hell.dailyEffect){
         hell.dailyEffect();
       }
@@ -160,7 +160,7 @@ export class HellService {
     // reincarnation gets you out and back to the mortal realm
     if (this.inHell){
       if (this.currentHell > 0){
-        let leavingHell = this.hells[this.currentHell];
+        const leavingHell = this.hells[this.currentHell];
         if (leavingHell.exitEffect){
           leavingHell.exitEffect();
         }
@@ -174,7 +174,7 @@ export class HellService {
   trouble(){
     if (this.currentHell === HellLevel.TongueRipping){
       let totalPower = 0;
-      for (let follower of this.followerService.followers){
+      for (const follower of this.followerService.followers){
         totalPower += follower.power;
       }
       // monsters get stronger the more you've recruited/trained
@@ -187,7 +187,7 @@ export class HellService {
         attack: 1e6 + (1e4 * totalPower),
         defense: 1e8 + (1e7 * totalPower),        
         loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(totalPower + 2)), "corrupted") ]
-      });      
+      }, false);      
     }
   }
 
@@ -200,7 +200,7 @@ export class HellService {
       attack: 1,
       defense: 1,        
       loot: [  ]
-    });
+    }, false);
   }
 
   getProperties(): HellProperties {
@@ -228,14 +228,14 @@ export class HellService {
     } else {
       this.activityService.activityHeader = this.hells[this.currentHell].name;
       this.activityService.activityHeaderDescription = this.hells[this.currentHell].description;
-      let hell = this.hells[this.currentHell];
-      for (let activity of hell.activities){
+      const hell = this.hells[this.currentHell];
+      for (const activity of hell.activities){
         if (activity){
           activity.projectionOnly = false;
           newList.push(activity);
         }
       }
-      for (let activity of hell.projectionActivities){
+      for (const activity of hell.projectionActivities){
         if (activity){
           activity.projectionOnly = true;
           newList.push(activity);
@@ -255,7 +255,7 @@ export class HellService {
       description: ["Return to the gates of Lord Yama's realm."],
       consequenceDescription: [""],
       consequence: [() => {
-        let leavingHell = this.hells[this.currentHell];
+        const leavingHell = this.hells[this.currentHell];
         if (leavingHell.exitEffect){
           leavingHell.exitEffect();
         }
@@ -281,7 +281,7 @@ export class HellService {
           consequenceDescription: [""],
           consequence: [() => {
             this.currentHell = hell.index;
-            let newHell = this.hells[hell.index];
+            const newHell = this.hells[hell.index];
             if (newHell.entryEffect){
               newHell.entryEffect();
             }
@@ -304,8 +304,8 @@ export class HellService {
         this.followerService.stashFollowers();
       },
       dailyEffect: () => {
-        let totalPower = 1;
-        let reducer = .9;
+        const totalPower = 1;
+        const reducer = .9;
         this.characterService.characterState.attributes.charisma.value *= reducer;
       },
       exitEffect: () => {
@@ -319,7 +319,7 @@ export class HellService {
       hint: "It's hard to talk with all these demons going for your mouth, but maybe if you can get some help from the other prisoners here you could take control of this place.",
       successCheck: () => {
         let totalPower = 0;
-        for (let follower of this.followerService.followers){
+        for (const follower of this.followerService.followers){
           totalPower += follower.power;
         }
         return totalPower > 5000;

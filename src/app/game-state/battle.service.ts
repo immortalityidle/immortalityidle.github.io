@@ -287,7 +287,7 @@ export class BattleService {
     this.currentEnemy = enemyStack;
   }
 
-  addEnemy(enemy: Enemy){
+  addEnemy(enemy: Enemy, repoEnemy = true){
     this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name === enemy.name) {
@@ -299,7 +299,11 @@ export class BattleService {
       }
     }
     // it didn't match any, create a new enemyStack
-    this.enemies.push({enemy: enemy, quantity: 1});
+    if(repoEnemy){
+      this.enemies.push({enemy: JSON.parse(JSON.stringify(enemy)), quantity: 1});
+    } else {
+      this.enemies.push({enemy: enemy, quantity: 1});
+    }
     if (this.currentEnemy === null){
       this.currentEnemy = this.enemies[0];
     }
@@ -335,7 +339,7 @@ export class BattleService {
       attack: this.troubleKills / 5,
       defense: this.troubleKills / 5,
       loot: [gem]
-    });
+    }, false);
     this.troubleKills++;
   }
 
