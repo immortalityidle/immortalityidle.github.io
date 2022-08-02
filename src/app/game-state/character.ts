@@ -1,6 +1,7 @@
 import { Equipment, Item } from './inventory.service'
 import { LogService } from './log.service';
 import { formatNumber, TitleCasePipe } from '@angular/common';
+import { MainLoopService } from './main-loop.service';
 
 export interface CharacterAttribute {
   strength?: number,
@@ -30,7 +31,7 @@ export type AttributeType = 'strength' |
   'fireLore' |
   'animalHandling';
 
-type AttributeObject = {[key in AttributeType]: {description: string, value: number, lifeStartValue: number, aptitude: number, icon: string}};
+type AttributeObject = {[key in AttributeType]: {description: string, value: number, lifeStartValue: number, aptitude: number, aptitudeMult: number, icon: string }};
 
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
 
@@ -79,9 +80,19 @@ const INITIAL_AGE = 18 * 365;
 
 export class Character {
 
-  constructor(private logService: LogService,
-    private titlecasePipe: TitleCasePipe){
-  }
+  constructor(
+    private logService: LogService,
+    private titlecasePipe: TitleCasePipe,
+    public mainLoopService: MainLoopService
+    ){
+      mainLoopService.frameSubject.subscribe(() => {
+        this.empowermentMult = this.getEmpowermentMult();
+        const keys = Object.keys(this.attributes) as AttributeType[];
+        for (const key in keys) {
+          this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
+        }
+      });
+    }
 
   maxMoney = 9.9999e23;
   totalLives = 1;
@@ -104,6 +115,7 @@ export class Character {
   healthBonusMagic = 0;
   healthBonusSoul = 0;
   empowermentFactor = 1;
+  empowermentMult = 1;
   imperial = false;
   immortal = false;
   easyMode = false;
@@ -114,6 +126,7 @@ export class Character {
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "fitness_center"
     },
     toughness: {
@@ -121,6 +134,7 @@ export class Character {
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "castle"
     },
     speed: {
@@ -128,6 +142,7 @@ export class Character {
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "directions_run"
     },
     intelligence: {
@@ -135,6 +150,7 @@ export class Character {
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "local_library"
     },
     charisma: {
@@ -142,6 +158,7 @@ export class Character {
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "forum"
     },
     spirituality: {
@@ -149,6 +166,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "auto_awesome"
     },
     earthLore: {
@@ -156,6 +174,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "landslide"
     },
     metalLore: {
@@ -163,6 +182,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "hardware"
     },
     woodLore: {
@@ -170,6 +190,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "forest"
     },
     waterLore: {
@@ -177,6 +198,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "emoji_food_beverage"
     },
     fireLore: {
@@ -184,6 +206,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "local_fire_department"
     },
     animalHandling: {
@@ -191,6 +214,7 @@ export class Character {
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
+      aptitudeMult: 1,
       icon: "pets"
     },
   };
@@ -397,7 +421,7 @@ export class Character {
       // should not happen, but sanity check it
       aptitude = 0;
     }
-    const empowermentFactor = noEmpowerment? 1 : this.getEmpowermentMult();
+    const empowermentFactor = noEmpowerment? 1 : this.empowermentMult;
     let x = 1;
     if (aptitude < this.attributeScalingLimit){
       // linear up to the scaling limit
@@ -429,7 +453,7 @@ export class Character {
   }
 
   increaseAttribute(attribute: AttributeType, amount: number): number {
-    let increaseAmount = (amount * this.getAptitudeMultipier(this.attributes[attribute].aptitude));
+    let increaseAmount = amount * this.attributes[attribute].aptitudeMult;
     // sanity check that gain is never less than base gain
     if (increaseAmount < amount){
       increaseAmount = amount;

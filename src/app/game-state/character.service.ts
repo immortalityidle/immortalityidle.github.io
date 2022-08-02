@@ -25,7 +25,7 @@ export class CharacterService {
     private reincarnationService: ReincarnationService,
     titleCasePipe: TitleCasePipe
   ) {
-    this.characterState = new Character(logService, titleCasePipe);
+    this.characterState = new Character(logService, titleCasePipe, mainLoopService);
     mainLoopService.tickSubject.subscribe(() => {
       if (this.mainLoopService.totalTicks % 3650 === 0){
         this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years

@@ -45,7 +45,7 @@ export interface BattleProperties {
   providedIn: 'root'
 })
 export class BattleService {
-
+  
   hellService?: HellService;
   enemies: EnemyStack[];
   currentEnemy: EnemyStack | null;
@@ -244,7 +244,6 @@ export class BattleService {
       // degrade weapon
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats){
         this.characterService.characterState.equipment.leftHand.weaponStats.durability--;
-        this.inventoryService.updateWeaponDescription(this.characterService.characterState.equipment.leftHand);
         if (this.characterService.characterState.equipment.leftHand.weaponStats.durability <= 0){
           this.inventoryService.addItem(this.characterService.characterState.equipment.leftHand);
           this.characterService.characterState.equipment.leftHand = null;
@@ -252,7 +251,6 @@ export class BattleService {
       }
       if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats){
         this.characterService.characterState.equipment.rightHand.weaponStats.durability--;
-        this.inventoryService.updateWeaponDescription(this.characterService.characterState.equipment.rightHand);
         if (this.characterService.characterState.equipment.rightHand.weaponStats.durability <= 0){
           this.inventoryService.addItem(this.characterService.characterState.equipment.rightHand);
           this.characterService.characterState.equipment.rightHand = null;
@@ -301,7 +299,7 @@ export class BattleService {
       }
     }
     // it didn't match any, create a new enemyStack
-    this.enemies.push({enemy: JSON.parse(JSON.stringify(enemy)), quantity: 1});
+    this.enemies.push({enemy: enemy, quantity: 1});
     if (this.currentEnemy === null){
       this.currentEnemy = this.enemies[0];
     }
@@ -344,7 +342,6 @@ export class BattleService {
   degradeArmor(armor: Equipment){
     if (armor.armorStats){
       armor.armorStats.durability--;
-      this.inventoryService.updateArmorDescription(armor);
       if (armor.armorStats.durability <= 0){
         // it broke, unequip it
         this.inventoryService.addItem(armor);

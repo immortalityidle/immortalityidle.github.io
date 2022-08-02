@@ -30,6 +30,7 @@ export class MainLoopService {
    * Sends true on new day
    */
   tickSubject = new Subject<boolean>();
+  frameSubject = new Subject<boolean>();
   longTickSubject = new Subject<boolean>();
   pause = true;
   tickDivider = 10;
@@ -97,6 +98,10 @@ export class MainLoopService {
     window.setInterval(()=> {
       this.longTickSubject.next(true);
     }, LONG_TICK_INTERVAL_MS);
+
+    window.setInterval(()=> {
+      this.frameSubject.next(true);
+    }, TICK_INTERVAL_MS);
 
     window.setInterval(()=> {
       const newTime = new Date().getTime();
