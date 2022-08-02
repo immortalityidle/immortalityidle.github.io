@@ -32,7 +32,7 @@
               shopping_cart
             </mat-icon>
             <div *ngIf="homeService.upgrading" class="progress-bar" style="height:20px;" tooltip="Upgrading your home." [attr.value]=buildTimeYears()>
-              <span [style.width.%]="195 * homeService.houseBuildingProgress"></span>
+              <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
             </div>
             <span *ngIf="homeService.upgrading" style="margin-left: 4px;"></span>
         </div>
