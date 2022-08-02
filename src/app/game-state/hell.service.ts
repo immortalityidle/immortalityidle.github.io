@@ -192,7 +192,7 @@ export class HellService {
         attack: 1e6 + (1e4 * extraPower),
         defense: 1e8 + (1e7 * extraPower),        
         loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted") ]
-      }, false);      
+      });      
     } else if (this.currentHell === HellLevel.Scissors){
       const extraPower = this.inventoryService.getQuantityByName("fingers");
       this.battleService.addEnemy({
@@ -203,7 +203,7 @@ export class HellService {
         attack: 1e6 + (1e4 * extraPower),
         defense: 1e8 + (1e7 * extraPower),        
         loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted"), this.itemRepoService.items['fingers'] ]
-      }, false);
+      });
 
     }
   }
@@ -219,7 +219,7 @@ export class HellService {
         attack: 1,
         defense: 1,        
         loot: [ this.itemRepoService.items['hellCrownTongueRippers'] ]
-      }, false);
+      });
     } else if (this.currentHell == HellLevel.Scissors){
       this.battleService.addEnemy({
         name: "Malgorath the Marriage Masher",
@@ -230,7 +230,7 @@ export class HellService {
         attack: 1,
         defense: 1,        
         loot: [ this.itemRepoService.items['hellCrownScissors'] ]
-      }, false);
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -240,7 +240,7 @@ export class HellService {
         attack: 1,
         defense: 1,        
         loot: [  ]
-      }, false);
+      });
     }
   }
 

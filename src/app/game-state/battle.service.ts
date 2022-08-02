@@ -287,7 +287,7 @@ export class BattleService {
     this.currentEnemy = enemyStack;
   }
 
-  addEnemy(enemy: Enemy, repoEnemy = true){
+  addEnemy(enemy: Enemy, repoEnemy = false){
     this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name === enemy.name) {
@@ -339,7 +339,7 @@ export class BattleService {
       attack: this.troubleKills / 5,
       defense: this.troubleKills / 5,
       loot: [gem]
-    }, false);
+    });
     this.troubleKills++;
   }
 
