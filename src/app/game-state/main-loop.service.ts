@@ -33,6 +33,7 @@ export class MainLoopService {
   longTickSubject = new Subject<boolean>();
   pause = true;
   tickDivider = 10;
+  tickCount = 0;
   totalTicks = 0;
   unlockFastSpeed = false;
   unlockFasterSpeed = false;
@@ -88,9 +89,9 @@ export class MainLoopService {
     const newTime = new Date().getTime();
     if (newTime - this.lastTime > 168*60*60*1000) {
       // to diminish effects of forgetting about the game for a year and coming back with basically infinite ticks
-      this.bankedTicks = properties.bankedTicks + (3*168*60*60*1000 + newTime - this.lastTime) * this.getTPS(this.topDivider) / (1000 * this.offlineDivider * 4);
+      this.bankedTicks = properties.bankedTicks + (3*168*60*60*1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
     } else {
-      this.bankedTicks = properties.bankedTicks + (newTime - this.lastTime) * this.getTPS(this.topDivider) / (1000 * this.offlineDivider);
+      this.bankedTicks = properties.bankedTicks + (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
     }
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
@@ -112,35 +113,37 @@ export class MainLoopService {
       this.lastTime = newTime;
       // this should be around 1, but may vary based on browser throttling
       let ticksPassed = timeDiff / TICK_INTERVAL_MS; 
-      const setTPS = this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
-      const topTPS = this.getTPS(this.topDivider) / 1000 * TICK_INTERVAL_MS;
       if (this.pause) {
-        this.bankedTicks += ticksPassed * topTPS / this.offlineDivider; // offlineDivider currently either 10 or 2.
+        this.bankedTicks += ticksPassed / this.offlineDivider; // offlineDivider currently either 10 or 2.
       } else {
         let bankedCounter = 0;
         if (this.bankedTicks > 0 && this.useBankedTicks){
           bankedCounter = 11; // set to 10 + 1 for true / false
         }
-        this.bankedTicks += ticksPassed * (topTPS - setTPS) / this.offlineDivider; // Gain bankedticks for going slower than max speed.
 
-        ticksPassed *= setTPS;
+        ticksPassed *= this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
+        this.tickCount += ticksPassed;
+        if (this.tickCount > 36500) {
+          //emergency lag prevention; this should never activate normally
+          this.tickCount = 36500;
+        }
         let tickTime = new Date().getTime();
         if (bankedCounter) {
-          while (!this.pause && ticksPassed >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
+          while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
             this.tick();
             if (this.bankedTicks >= 1 && bankedCounter > 1){ // Used here to avoid overusing earned bankedticks.
               bankedCounter--
-              this.bankedTicks--
+              this.bankedTicks -= this.tickDivider/this.topDivider;
             } else {
-              ticksPassed--;
+              this.tickCount--;
               bankedCounter = 11;
             }
             tickTime = new Date().getTime();
           }
         } else {
-          while (!this.pause && ticksPassed >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
+          while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
             this.tick();
-            ticksPassed--;
+            this.tickCount--;
             tickTime = new Date().getTime();
           }
         }
