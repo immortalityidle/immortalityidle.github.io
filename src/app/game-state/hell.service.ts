@@ -8,6 +8,7 @@ import { BattleService } from './battle.service';
 import { Activity, ActivityType } from './activity';
 import { FollowersService } from './followers.service';
 import { InventoryService } from './inventory.service';
+import { ItemRepoService } from './item-repo.service';
 
 export enum HellLevel {
   TongueRipping,
@@ -47,7 +48,8 @@ export interface Hell {
 export interface HellProperties {
   inHell: boolean,
   currentHell: number,
-  completedHellTasks: number[]
+  completedHellTasks: number[],
+  completedHellBosses: number[]
 }
 
 @Injectable({
@@ -58,6 +60,7 @@ export class HellService {
   inHell = false;
   currentHell = -1;
   completedHellTasks: number[] = [];
+  completedHellBosses: number[] = [];
   beaten = false;
 
   burnMoney = {
@@ -123,7 +126,8 @@ export class HellService {
     private activityService: ActivityService,
     private followerService: FollowersService,
     private battleService: BattleService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private itemRepoService: ItemRepoService
   ) {
 
     mainLoopService.tickSubject.subscribe(() => {
@@ -172,42 +176,80 @@ export class HellService {
   }
 
   trouble(){
+    // TODO: tune all of these values
     if (this.currentHell === HellLevel.TongueRipping){
-      let totalPower = 0;
+      let extraPower = 0;
       for (let follower of this.followerService.followers){
-        totalPower += follower.power;
+        extraPower += follower.power;
       }
       // monsters get stronger the more you've recruited/trained
       // tinker with stats/growth
       this.battleService.addEnemy({
         name: "Tongue Ripper",
-        health: 1e20 + (1e19 * totalPower),
-        maxHealth: 1e20 + (1e19 * totalPower),
+        health: 1e20 + (1e19 * extraPower),
+        maxHealth: 1e20 + (1e19 * extraPower),
         accuracy: 0.50,
-        attack: 1e6 + (1e4 * totalPower),
-        defense: 1e8 + (1e7 * totalPower),        
-        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(totalPower + 2)), "corrupted") ]
+        attack: 1e6 + (1e4 * extraPower),
+        defense: 1e8 + (1e7 * extraPower),        
+        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted") ]
       });      
+    } else if (this.currentHell === HellLevel.Scissors){
+      let extraPower = this.inventoryService.getQuantityByName("fingers");
+      this.battleService.addEnemy({
+        name: "Scissors Demon",
+        health: 1e15 + (1e14 * extraPower),
+        maxHealth: 1e15 + (1e14 * extraPower),
+        accuracy: 0.50,
+        attack: 1e6 + (1e4 * extraPower),
+        defense: 1e8 + (1e7 * extraPower),        
+        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted"), this.itemRepoService.items['fingers'] ]
+      });
+
     }
   }
 
   fightHellBoss(){
-    this.battleService.addEnemy({
-      name: "Boss Of A Generic Level",
-      health: 1,
-      maxHealth: 1,
-      accuracy: 0.8,
-      attack: 1,
-      defense: 1,        
-      loot: [  ]
-    });
+    if (this.currentHell == HellLevel.TongueRipping){
+      this.battleService.addEnemy({
+        name: "Gorbolash the Gossip Gasher",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,        
+        loot: [ this.itemRepoService.items['hellCrownTongueRippers'] ]
+      });
+    } else if (this.currentHell == HellLevel.Scissors){
+      this.battleService.addEnemy({
+        name: "Malgorath the Marriage Masher",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,        
+        loot: [ this.itemRepoService.items['hellCrownScissors'] ]
+      });
+    } else {
+      this.battleService.addEnemy({
+        name: "Boss Of A Generic Level",
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,        
+        loot: [  ]
+      });
+    }
   }
 
   getProperties(): HellProperties {
     return {
       inHell: this.inHell,
       currentHell: this.currentHell,
-      completedHellTasks: this.completedHellTasks
+      completedHellTasks: this.completedHellTasks,
+      completedHellBosses: this.completedHellBosses,
     }
   }
 
@@ -215,6 +257,7 @@ export class HellService {
     this.inHell = properties.inHell || false;
     this.currentHell = properties.currentHell ?? -1;
     this.completedHellTasks = properties.completedHellTasks || [];
+    this.completedHellBosses = properties.completedHellBosses || [];
     this.activityService.reloadActivities();
   }
 
@@ -255,6 +298,8 @@ export class HellService {
       description: ["Return to the gates of Lord Yama's realm."],
       consequenceDescription: [""],
       consequence: [() => {
+        this.battleService.enemies = [];
+        this.battleService.currentEnemy = null;
         let leavingHell = this.hells[this.currentHell];
         if (leavingHell.exitEffect){
           leavingHell.exitEffect();
@@ -273,12 +318,18 @@ export class HellService {
     newList.push(this.activityService.Resting);
     newList.push(this.activityService.SoulCultivation);
     for (const hell of this.hells){
+      let consequenceDescription = "";
+      if (this.completedHellBosses.includes(hell.index)){
+        consequenceDescription = "You have proven your mastery over this hell."
+      } else if (this.completedHellTasks.includes(hell.index)){
+        consequenceDescription = "The Lord of this Hell is available to challenge."
+      }
       newList.push({
           level: 0,
           name: ["Enter the " + hell.name],
           activityType: ActivityType.Hell + hell.index,
           description: [hell.description],
-          consequenceDescription: [""],
+          consequenceDescription: [consequenceDescription],
           consequence: [() => {
             this.currentHell = hell.index;
             let newHell = this.hells[hell.index];
@@ -330,19 +381,19 @@ export class HellService {
       description: "Torment for those who ruin marriages. The demons here will cut your fingers right off.",
       index: HellLevel.Scissors,
       entryEffect: () => {
-        /*
-        Task: defeat X enemies
-        During the level: Weapons unusable
-        */
+        this.characterService.stashWeapons();
+      },
+      exitEffect: () => {
+        this.characterService.restoreWeapons();
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("Using nothing but the strength of your body and mind, you have seized control of the Hell of Scissors. Now all that remains is to defeat its lord.", "STANDARD", "STORY")
       },
-      activities: [],
-      projectionActivities: [],
-      hint: "",
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting],
+      projectionActivities: [this.burnMoney],
+      hint: "These demons don't seem content to just take your fingers. You'd better get ready to defend yourself.",
       successCheck: () => {
-        return false;
+        return this.inventoryService.getQuantityByName("fingers") >= 100;
       }
     },
     {

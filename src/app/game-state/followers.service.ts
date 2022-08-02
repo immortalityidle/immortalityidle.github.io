@@ -11,6 +11,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { EquipmentPosition } from './character';
+import { ThisReceiver } from '@angular/compiler';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -36,6 +37,8 @@ export interface FollowersProperties {
   highestLevel: number,
   stashedFollowers: Follower[],
   stashedFollowersMaxes: { [key: string]: number; },
+  unlockedHiddenJobs: string[],
+  autoReplaceUnlocked: boolean
 }
 
 export interface FollowerReserve {
@@ -73,8 +76,9 @@ export class FollowersService {
   totalDied = 0;
   totalDismissed = 0;
   highestLevel = 0;
-  nonRandomJobs = 1;
   hellService?: HellService;
+  unlockedHiddenJobs: string[] = [];
+  autoReplaceUnlocked = false;
 
   jobs: jobsType = {
     "builder": {
@@ -196,12 +200,21 @@ export class FollowersService {
       description: "Scouts help you track down and fight monsters faster.",
       totalPower: 0
     },
-    //Jobs after this will not be randomly selected. If you add jobs to this section, add one to this.nonRandomJobs
     "damned": {
       work: () => {
         this.battleService.tickCounter += this.jobs["damned"].totalPower;
       },
-      description: "A soul working off karmic debt in hell that has decided to join you",
+      description: "A soul working off karmic debt in hell that has decided to join you. Having this follower seems to enrage the demons around you.",
+      hidden: true,
+      totalPower: 0
+    },
+    "prophet": {
+      work: () => {
+        if (Math.random() < (this.jobs["prophet"].totalPower * .00001)){
+          this.generateFollower();
+        }
+      },
+      description: "A follower dedicated to spreading the word of your greatness. Prophets can even find other followers for you if you are out of the mortal realm.",
       hidden: true,
       totalPower: 0
     },
@@ -235,12 +248,23 @@ export class FollowersService {
         this.generateFollower();
       }
       for (let i = this.followers.length - 1; i >= 0; i--){
-        this.followers[i].age++;
-        if (this.followers[i].age >= this.followers[i].lifespan){
+        let follower = this.followers[i]
+        follower.age++;
+        if (follower.age >= this.followers[i].lifespan){
           // follower aged off
           this.totalDied++;
-          this.logService.addLogMessage("Your follower " + this.followers[i].name + " passed away from old age.", "INJURY", "FOLLOWER");
           this.followers.splice(i,1);
+          if (this.autoReplaceUnlocked){
+            let newFollower = this.generateFollower(follower.job);
+            if (newFollower){
+              newFollower.power = Math.round(follower.power / 2);
+              newFollower.cost = 100 * newFollower.power;
+              this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age but was replaced by their child " + newFollower?.name + ".", "STANDARD", "FOLLOWER");
+            }
+            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age and was not replaced because of your choices in follower jobs.", "STANDARD", "FOLLOWER");
+          } else {
+            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age.", "INJURY", "FOLLOWER");
+          }
           this.updateFollowerTotalPower();
         } else if (this.characterService.characterState.money < this.followers[i].cost){
           // quit from not being paid
@@ -328,7 +352,9 @@ export class FollowersService {
       totalRecruited: this.totalRecruited,
       totalDied: this.totalDied,
       totalDismissed: this.totalDismissed,
-      highestLevel: this.highestLevel
+      highestLevel: this.highestLevel,
+      unlockedHiddenJobs: this.unlockedHiddenJobs,
+      autoReplaceUnlocked: this.autoReplaceUnlocked
     }
   }
 
@@ -349,16 +375,32 @@ export class FollowersService {
     this.totalDied = properties.totalDied || 0;
     this.totalDismissed = properties.totalDismissed || 0;
     this.highestLevel = properties.highestLevel || 0;
+    this.unlockedHiddenJobs = properties.unlockedHiddenJobs || [];
+    this.autoReplaceUnlocked = properties.autoReplaceUnlocked || false;
+    this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }
 
-  generateFollower(job?: Follower["job"]){
+  unlockJob(job: string){
+    if (!this.unlockedHiddenJobs.includes(job)){
+      this.unlockedHiddenJobs.push(job);
+    }
+    this.unhideUnlockedJobs();
+  }
+
+  unhideUnlockedJobs(){
+    for (let job of this.unlockedHiddenJobs ){
+      this.jobs[job].hidden = false;
+    }
+  }
+
+  generateFollower(job?: Follower["job"]): Follower | null{
     this.totalRecruited++;
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
       this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.","INJURY","FOLLOWER");
       this.followersMaxed = 'MAXED'; // Sanity check, true check below.
-      return;
+      return null;
     }
 
     job = job ? job : this.generateFollowerJob();
@@ -376,24 +418,26 @@ export class FollowersService {
     if (currentCount >= capNumber){
       this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
       this.totalDismissed++;
-      return;
+      return null;
     }
 
     const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
     this.logService.addLogMessage("A new " + job + " has come to learn at your feet.","STANDARD","FOLLOWER");
-    this.followers.push({
+    let follower = {
       name: this.generateFollowerName(),
       age: 0,
       lifespan: this.characterService.characterState.lifespan / lifespanDivider,
       job: job,
       power: 1,
       cost: 100
-    });
+    }
+    this.followers.push(follower);
     this.sortFollowers(this.sortAscending);
     if (this.followers.length >= this.followerCap){
       this.followersMaxed = 'MAXED';
     }
     this.updateFollowerTotalPower();
+    return follower;
   }
 
   generateFollowerName(): string {
@@ -402,7 +446,13 @@ export class FollowersService {
   }
   generateFollowerJob(): string {
     const keys = Object.keys(this.jobs);
-    return keys[Math.floor(Math.random() * (keys.length - this.nonRandomJobs))];
+    let possibleJobs = [];
+    for (let key of keys){
+      if (!this.jobs[key].hidden){
+        possibleJobs.push(key);
+      }
+    }
+    return possibleJobs[Math.floor(Math.random() * (possibleJobs.length ))];
   }
 
   /**

@@ -42,6 +42,7 @@ export enum ActivityType {
   GatherArmies,
   ConquerTheWorld,
   MoveStars,
+  Taunting,
   EscapeHell,
   HellRecruiting,
   BurnMoney,

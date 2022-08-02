@@ -605,6 +605,9 @@ export class ActivityService {
   MoveStars: Activity;
   // @ts-ignore
   TrainingFollowers: Activity;
+  // @ts-ignore
+  Taunting: Activity;
+
 
 
   defineActivities(){
@@ -2461,6 +2464,25 @@ export class ActivityService {
       }],
       requirements: [{
         charisma: 1e10,
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.Taunting = {
+      level: 0,
+      name: ['Taunting Enemies'],
+      activityType: ActivityType.Taunting,
+      description: ['Rudely point at your enemies and call them out to battle.'],
+      consequenceDescription: ['Incite a fight with your current enemy this very night.'],
+      consequence: [() => {
+        this.battleService.tickCounter = this.battleService.ticksPerFight;
+      }],
+      resourceUse: [{
+      }],
+      requirements: [{
+        strength: 1000,
+        toughness: 1000,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
