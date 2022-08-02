@@ -123,6 +123,7 @@ export class MainLoopService {
 
         ticksPassed *= this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
         this.tickCount += ticksPassed;
+        const bankedRate = this.tickDivider/this.topDivider;
         if (this.tickCount > 36500) {
           //emergency lag prevention; this should never activate normally
           this.tickCount = 36500;
@@ -133,7 +134,7 @@ export class MainLoopService {
             this.tick();
             if (this.bankedTicks >= 1 && bankedCounter > 1){ // Used here to avoid overusing earned bankedticks.
               bankedCounter--
-              this.bankedTicks -= this.tickDivider/this.topDivider;
+              this.bankedTicks -= bankedRate;
             } else {
               this.tickCount--;
               bankedCounter = 11;
