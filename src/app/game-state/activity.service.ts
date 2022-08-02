@@ -2447,6 +2447,7 @@ export class ActivityService {
                 }
                 follower.cost = 100 * follower.power;
                 this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "FOLLOWER");
+                this.followerService.updateFollowerTotalPower();
               }
             }
           }

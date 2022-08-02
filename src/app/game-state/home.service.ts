@@ -827,8 +827,10 @@ export class HomeService {
   workFields(workValue: number){
     for (let i = 0; i < this.fields.length && i < 300; i++){
       const field = this.fields[i];
-      if (field.yield < field.maxYield){
+      if (field.yield + workValue < field.maxYield){
         field.yield += workValue;
+      } else {
+        field.yield = field.maxYield;
       }
     }
   }
