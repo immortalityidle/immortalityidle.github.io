@@ -103,6 +103,11 @@ export class OptionsModalComponent {
     this.inventoryService.useSpiritGemPotions = event.target.checked;
   }
 
+  useCheapestSpiritGemChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.useCheapestSpiritGem = event.target.checked;
+  }
+
   autoequipEnableChange(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoequipBestEnabled = event.target.checked;
@@ -128,12 +133,22 @@ export class OptionsModalComponent {
   }
 
   easyModeChange(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
     event.preventDefault();
-    if (!this.gameStateService.easyModeEver && confirm("This will enable easy mode and mark your save permanently. Are you sure?")){
-      this.gameStateService.easyModeEver = true;
-      this.characterService.characterState.easyMode = !this.characterService.characterState.easyMode;
+    event.stopPropagation();
+    if (this.characterService.characterState.easyMode){
+      //coming back from easy mode
+      this.characterService.characterState.easyMode = false;
     } else {
-      this.characterService.characterState.easyMode = !this.characterService.characterState.easyMode;
+      if (!this.gameStateService.easyModeEver){
+        if (confirm("This will enable easy mode and mark your save permanently. Are you sure?")){
+          this.gameStateService.easyModeEver = true;
+        } else {
+          event.target.checked = false;
+          return;
+        }
+      } 
+      this.characterService.characterState.easyMode = true;
     }
   }
 

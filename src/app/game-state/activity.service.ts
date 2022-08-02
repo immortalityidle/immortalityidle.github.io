@@ -1872,12 +1872,13 @@ export class ActivityService {
           this.getActivityByType(ActivityType.Leatherworking).lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling',0.002);
           const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
+          const hideQuality = Math.min(Math.pow(animalHandling / 1e9, 0.15), 1);
           if (Math.random() < 0.01) {
             if (this.inventoryService.openInventorySlots() > 0){
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',
+                  Math.floor(Math.pow(Math.log2(animalHandling), hideQuality)), 'leather',
                   this.inventoryService.randomArmorSlot(), true));
               }
             }
@@ -1894,12 +1895,13 @@ export class ActivityService {
           this.getActivityByType(ActivityType.Leatherworking).lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling',0.003);
           const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
+          const hideQuality = Math.min(Math.pow(animalHandling / 1e9, 0.15), 1);
           if (Math.random() < 0.01) {
             if (this.inventoryService.openInventorySlots() > 0){
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',
+                  Math.floor(Math.pow(Math.log2(animalHandling), hideQuality)), 'leather',
                   this.inventoryService.randomArmorSlot(), true));
               }
             }
@@ -1916,12 +1918,13 @@ export class ActivityService {
           this.getActivityByType(ActivityType.Leatherworking).lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling',0.1);
           const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
+          const hideQuality = Math.min(Math.pow(animalHandling / 1e9, 0.15), 1);
           if (Math.random() < 0.2) {
             if (this.inventoryService.openInventorySlots() > 0){
               const grade = this.inventoryService.consume('hide');
               if (grade >= 1){ // if the hide was found
                 this.inventoryService.addItem(this.inventoryService.generateArmor(
-                  Math.floor(Math.pow(Math.log2(animalHandling), Math.pow(animalHandling / 1e9, 0.15))), 'leather',
+                  Math.floor(Math.pow(Math.log2(animalHandling), hideQuality)), 'leather',
                   this.inventoryService.randomArmorSlot(), true));
               }
             }
@@ -2313,7 +2316,7 @@ export class ActivityService {
         }
         this.characterService.characterState.status.stamina.value -= 200;
         this.characterService.characterState.status.mana.value -= 10;
-        const gemValue = this.inventoryService.consume('spiritGem');
+        const gemValue = this.inventoryService.consume('spiritGem', 1, this.inventoryService.useCheapestSpiritGem);
         if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
           this.inventoryService.upgradeEquipment(Math.floor(Math.pow(gemValue/10,2.4)));
         }

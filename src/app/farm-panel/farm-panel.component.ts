@@ -23,7 +23,7 @@ export class FarmPanelComponent {
     event.stopPropagation();
     if (event.shiftKey){
       this.homeService.clearField(10);
-    } else if (event.ctrlKey){
+    } else if (event.ctrlKey || event.metaKey){
       this.homeService.clearField(-1);
     } else {
       this.homeService.clearField();
@@ -36,7 +36,7 @@ export class FarmPanelComponent {
     event.stopPropagation();
     if (event.shiftKey){
       this.homeService.buyLand(10);
-    } else if (event.ctrlKey){
+    } else if (event.ctrlKey || event.metaKey){
       this.homeService.buyLand(-1);
     } else {
       this.homeService.buyLand(1);
@@ -48,7 +48,7 @@ export class FarmPanelComponent {
     event.stopPropagation();
     if (event.shiftKey){
       this.homeService.addField(10);
-    } else if (event.ctrlKey){
+    } else if (event.ctrlKey || event.metaKey){
       this.homeService.addField(-1);
     } else {
       this.homeService.addField();
