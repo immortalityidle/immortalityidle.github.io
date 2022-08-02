@@ -38,7 +38,7 @@ export class MainLoopService {
   unlockFastSpeed = false;
   unlockFasterSpeed = false;
   unlockFastestSpeed = false;
-  topDivider = 1;
+  topDivider = 10;
   unlockAgeSpeed = false;
   unlockPlaytimeSpeed = false;
   lastTime: number = new Date().getTime();
@@ -118,7 +118,7 @@ export class MainLoopService {
       } else {
         if (this.bankedTicks > 0 && this.useBankedTicks){
           //using banked ticks makes time happen 10 times faster
-          ticksPassed *= 10;
+          ticksPassed *= 11; // Include the normal tick
           this.bankedTicks -= timeDiff / TICK_INTERVAL_MS * 10 * (this.topDivider / this.tickDivider);
         }
 
