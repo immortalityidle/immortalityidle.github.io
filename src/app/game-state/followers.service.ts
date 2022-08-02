@@ -75,7 +75,6 @@ export class FollowersService {
   highestLevel = 0;
   nonRandomJobs = 1;
   hellService?: HellService;
-  gemsMerged = false;
 
   jobs: jobsType = {
     "builder": {
@@ -186,7 +185,6 @@ export class FollowersService {
           gemmerPower = 4;
         }
         this.inventoryService.mergeAnySpiritGem(gemmerPower);
-        this.gemsMerged = true;
       },
       description: "Gemologists combine monster gems into higher grades.",
       totalPower: 0
@@ -236,16 +234,11 @@ export class FollowersService {
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
-      this.gemsMerged = false;
       // before calculating total set it to zero for all
       for (const job of Object.keys(this.jobs)) {
         this.jobs[job].totalPower = 0;
       }
       for (let i = this.followers.length - 1; i >= 0; i--){
-        if (this.followers[i].job === "gemologist" && this.gemsMerged){
-          // gemologists should only act once per tick
-          continue;
-        }
         this.jobs[this.followers[i].job].totalPower += this.followers[i].power;
         this.followers[i].age++;
         if (this.followers[i].age >= this.followers[i].lifespan){
