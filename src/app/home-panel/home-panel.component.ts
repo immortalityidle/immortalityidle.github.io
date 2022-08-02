@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { StoreService } from '../game-state/store.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
 import { FarmPanelComponent } from '../farm-panel/farm-panel.component';
+import { FollowersService } from '../game-state/followers.service';
+import { BigNumberPipe } from '../app.component';
 
 
 @Component({
@@ -17,12 +19,27 @@ import { FarmPanelComponent } from '../farm-panel/farm-panel.component';
 export class HomePanelComponent {
 
   character: Character;
-
+  Math: Math;
+  bignumber = new BigNumberPipe;
+  
   constructor(public characterService: CharacterService,
     public homeService: HomeService,
+    public followerService: FollowersService,
     public dialog: MatDialog,
     private storeService: StoreService) {
     this.character = characterService.characterState;
+    this.Math = Math;
+  }
+
+
+  buildTimeYears(): string {
+    let builderPower = 1; //divided by 100 later
+        for (const follower of this.followerService.followers){
+          if (follower.job === "builder"){
+            builderPower += follower.power;
+          }
+        }
+    return "~" + this.bignumber.transform((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild / builderPower / 365) + " years";
   }
 
   storeClicked(): void {
