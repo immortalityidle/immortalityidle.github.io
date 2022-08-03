@@ -1066,6 +1066,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFastSpeed = true;
+        this.mainLoopService.topDivider = this.mainLoopService.topDivider > 5 ? 5: this.mainLoopService.topDivider;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
@@ -1087,6 +1088,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFasterSpeed = true;
+        this.mainLoopService.topDivider = this.mainLoopService.topDivider > 2 ? 2: this.mainLoopService.topDivider;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
@@ -1108,6 +1110,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFastestSpeed = true;
+        this.mainLoopService.topDivider = 1;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
