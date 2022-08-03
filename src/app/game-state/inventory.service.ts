@@ -212,7 +212,19 @@ export class InventoryService {
       if (this.autoequipBestArmor && this.autoArmorMergeUnlocked){
         this.autoequipArmor();
       }
+      for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
+        if(this.characterService.characterState.equipment[key]){
+          this.updateArmorDescription(this.characterService.characterState.equipment[key]!);
+        }
+      }
+      for (const key of ["leftHand","rightHand"] as EquipmentPosition[]){
+        if(this.characterService.characterState.equipment[key]){
+          this.updateWeaponDescription(this.characterService.characterState.equipment[key]!);
+        }
+      }
+
     });
+
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
@@ -530,7 +542,7 @@ export class InventoryService {
     }
   }
 
-  generateSpiritGem(grade: number, flavor: string = "monster"): Item {
+  generateSpiritGem(grade: number, flavor = "monster"): Item {
     return {
       id: 'spiritGemGrade' + grade,
       name: flavor + ' gem grade ' + grade,
@@ -1137,7 +1149,7 @@ export class InventoryService {
     }
   }
 
-  consume(consumeType: string, quantity = 1, cheapest: boolean = false): number{
+  consume(consumeType: string, quantity = 1, cheapest = false): number{
     if (quantity < 0){
       quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
     }

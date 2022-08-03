@@ -282,7 +282,7 @@ export class ImpossibleTaskService {
     }
     this.activityService.reloadActivities();
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath){
-      this.battleService.addEnemy(this.battleService.enemyRepo.death);
+      this.battleService.addEnemy(this.battleService.enemyRepo.death, true);
     }
   }
 
