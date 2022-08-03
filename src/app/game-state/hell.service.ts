@@ -68,12 +68,12 @@ export class HellService {
     name: ['Burn Money'],
     activityType: ActivityType.BurnMoney,
     description: ['Burn mortal realm money to receive hell money.'],
-    consequenceDescription: ['Uses 10 Stamina and a huge pile of mortal money. Gives you 1 hell money.'],
+    consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you 1 hell money.'],
     consequence: [() => {
-      if (this.characterService.characterState.money < 1e15){
+      if (this.characterService.characterState.money < 1e6){
         return;
       }
-      this.characterService.characterState.money -= 1e15;
+      this.characterService.characterState.money -= 1e6;
       this.characterService.characterState.hellMoney++;
     }],
     resourceUse: [{
@@ -116,6 +116,28 @@ export class HellService {
     unlocked: false,
     skipApprenticeshipLevel: 0
   }  
+
+  honorAncestors = {
+    level: 0,
+    name: ['Honor Ancestors'],
+    activityType: ActivityType.HonorAncestors,
+    description: ['You look around and realize that you have many family members and ancestors here. You should probably give them some credit for what they have done for you. And some money.'],
+    consequenceDescription: ['Uses 1 hell money.'],
+    consequence: [() => {
+      if (this.characterService.characterState.hellMoney < 1){
+        return;
+      }
+      this.characterService.characterState.hellMoney--;
+      this.inventoryService.addItem(this.itemRepoService.items['tokenOfGratitude']);
+    }],
+    resourceUse: [{
+      stamina: 10
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
 
   constructor(
     private injector: Injector,
@@ -204,6 +226,16 @@ export class HellService {
         defense: 1e8 + (1e7 * extraPower),        
         loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted"), this.itemRepoService.items['fingers'] ]
       });
+    } else if (this.currentHell === HellLevel.TreesOfKnives){
+      this.battleService.addEnemy({
+        name: "Hungry Crow",
+        health: 1e6,
+        maxHealth: 1e6,
+        accuracy: 1,
+        attack: 1e6,
+        defense: 1e6,
+        loot: [ ]
+      });
 
     }
   }
@@ -228,8 +260,19 @@ export class HellService {
         maxHealth: 1,
         accuracy: 0.8,
         attack: 1,
-        defense: 1,        
+        defense: 1,
         loot: [ this.itemRepoService.items['hellCrownScissors'] ]
+      });
+    } else if (this.currentHell == HellLevel.TreesOfKnives){
+      this.battleService.addEnemy({
+        name: "Flamgolus the Family Flayer",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownTreesOfKnives'] ]
       });
     } else {
       this.battleService.addEnemy({
@@ -298,6 +341,7 @@ export class HellService {
       description: ["Return to the gates of Lord Yama's realm."],
       consequenceDescription: [""],
       consequence: [() => {
+        this.characterService.characterState.hellMoney = 0;
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
         let leavingHell = this.hells[this.currentHell];
@@ -331,6 +375,7 @@ export class HellService {
           description: [hell.description],
           consequenceDescription: [consequenceDescription],
           consequence: [() => {
+            this.characterService.characterState.hellMoney = 0;
             this.currentHell = hell.index;
             let newHell = this.hells[hell.index];
             if (newHell.entryEffect){
@@ -355,6 +400,7 @@ export class HellService {
         this.followerService.stashFollowers();
       },
       dailyEffect: () => {
+        // This might be a stupid way to nerf charisma. Consider other alternatives.
         let totalPower = 1;
         let reducer = .9;
         this.characterService.characterState.attributes.charisma.value *= reducer;
@@ -401,19 +447,23 @@ export class HellService {
       description: "Torment for those who cause trouble between family members. The demons here will tie you to a tree made of sharp knives",
       index: HellLevel.TreesOfKnives,
       entryEffect: () => {
-        /*
-      Task: honor your ancestors with expensive gifts
-      During the level: Bloodline effects nerfed
-        */
+        this.characterService.stashMoney();
+      },
+      dailyEffect: () => {
+        // lose 10% of your health every day
+        this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.1);
+      },
+      exitEffect: () => {
+        this.characterService.restoreMoney();
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You have reconciled yourself with all of your family members and satisfied the demands of this hell. Now all that remains is to defeat its lord (while still tied to this tree).", "STANDARD", "STORY")
       },
-      activities: [],
-      projectionActivities: [],
-      hint: "",
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.honorAncestors],
+      projectionActivities: [this.burnMoney, this.activityService.OddJobs],
+      hint: "Heal your family bonds.",
       successCheck: () => {
-        return false;
+        return this.inventoryService.getQuantityByName("token of gratitude") >= 10000;
       }
     },
     {

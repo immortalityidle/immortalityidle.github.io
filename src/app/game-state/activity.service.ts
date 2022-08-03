@@ -11,7 +11,7 @@ import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
-import { HellService } from './hell.service';
+import { HellLevel, HellService } from './hell.service';
 
 export interface ActivityProperties {
   autoRestart: boolean,
@@ -98,7 +98,7 @@ export class ActivityService {
         this.exhaustionDays--;
         return;
       }
-      if (this.characterService.characterState.bloodlineRank >= 9){
+      if (this.characterService.characterState.bloodlineRank >= 9 && !(this.hellService?.inHell && this.hellService.currentHell == HellLevel.TreesOfKnives)){
         this.characterService.characterState.increaseAptitudeDaily();
       }
 
@@ -173,7 +173,7 @@ export class ActivityService {
         this.currentIndex = 0;
       }
       // do the spirit activity if we can
-      if (this.spiritActivity && this.characterService.characterState.status.mana.value >= 5){
+      if (this.spiritActivity != null && this.characterService.characterState.status.mana.value >= 5){
         this.spiritActivityProgress = true;
         let activity = this.getActivityByType(this.spiritActivity);
         const rest = this.getActivityByType(ActivityType.Resting);
@@ -252,7 +252,7 @@ export class ActivityService {
     this.pauseOnDeath = properties.pauseOnDeath;
     this.pauseBeforeDeath = properties.pauseBeforeDeath || false;
     this.activityLoop = properties.activityLoop;
-    this.spiritActivity = properties.spiritActivity || null;
+    this.spiritActivity = properties.spiritActivity ?? null;
     this.openApprenticeships = properties.openApprenticeships || 0;
     this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
     this.savedActivityLoop = properties.savedActivityLoop || [];
@@ -446,9 +446,7 @@ export class ActivityService {
       return this.hellService.getActivityList();
     }
 
-
     if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.Swim){
-
       newList.push(this.Swim);
       // don't include the rest of the activities
       return newList;
@@ -519,6 +517,12 @@ export class ActivityService {
     newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
     newList.push(this.TrainingFollowers);
+
+    for (let activity of newList){
+      // make sure we have no projectionOnly actvities if list is loaded from here
+      activity.projectionOnly = false;
+    }
+
     return newList;
   }
 
@@ -1208,14 +1212,18 @@ export class ActivityService {
 
     this.Resting = {
       level: 0,
-      name: ['Resting', 'Meditation', 'Communing With Divinity'],
+      name: ['Resting', 'Meditation', 'Communing With Divinity', 'Finding True Inner Peace'],
       activityType: ActivityType.Resting,
       description:['Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
         'Enter a meditative state and begin your journey toward spritual enlightenment.',
-        'Extend your senses beyond the mortal realm and connect to deeper realities.'],
+        'Extend your senses beyond the mortal realm and connect to deeper realities.',
+        'Turn your senses inward and find pure stillness within.'
+      ],
       consequenceDescription: ['Restores 50 Stamina and 2 Health.',
         'Restores 100 Stamina, 10 Health, and 1 Mana (if unlocked).',
-        'Restores 200 Stamina, 20 Health, and 10 Mana (if unlocked).'],
+        'Restores 200 Stamina, 20 Health, and 10 Mana (if unlocked).',
+        'Restores 300 Stamina, 30 Health, and 20 Mana (if unlocked).',
+      ],
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value += 50;
@@ -1237,9 +1245,17 @@ export class ActivityService {
           this.characterService.characterState.status.mana.value += 10
           this.characterService.characterState.increaseAttribute('spirituality', 0.5);
           this.characterService.characterState.checkOverage();
+        },
+        () => {
+          this.characterService.characterState.status.stamina.value += 300;
+          this.characterService.characterState.status.health.value += 30;
+          this.characterService.characterState.status.mana.value += 20
+          this.characterService.characterState.increaseAttribute('spirituality', 1);
+          this.characterService.characterState.checkOverage();
         }
       ],
       resourceUse: [
+        {},
         {},
         {},
         {}
@@ -1265,6 +1281,19 @@ export class ActivityService {
           earthLore: 10000,
           metalLore: 10000,
           woodLore: 10000,
+        },
+        {
+          strength: 1e21,
+          speed: 1e21,
+          charisma: 1e21,
+          intelligence: 1e21,
+          toughness: 1e21,
+          spirituality: 1e21,
+          fireLore: 1e18,
+          waterLore: 1e18,
+          earthLore: 1e18,
+          metalLore: 1e18,
+          woodLore: 1e18,
         }
       ],
       unlocked: true,

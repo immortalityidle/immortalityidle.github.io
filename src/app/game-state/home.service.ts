@@ -546,15 +546,15 @@ export class HomeService {
         if (this.characterService.characterState.dead){
           return;
         }
+        if (this.hellService?.inHell){
+          return;
+        }
         if (this.upgrading){
           this.upgradeTick();
         }
         this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
         if (this.nextHomeCost < 0){
           this.nextHomeCost = 0;
-        }
-        if (this.hellService?.inHell){
-          return;
         }
         this.home.consequence();
         for (const slot of this.furniturePositionsArray){

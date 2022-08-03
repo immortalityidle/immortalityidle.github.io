@@ -1007,6 +1007,13 @@ export class ItemRepoService {
       value: 1,
       description: 'A handful of bloody fingers. The demons carry them as grisly trophies. Now, it seems, you do too.',
     },
+    tokenOfGratitude: {
+      id: 'tokenOfGratitude',
+      name: 'token of gratitude',
+      type: 'tokenOfGratitude',
+      value: 1,
+      description: 'A small keepsake from your family member.',
+    },
     hellCrownTongueRippers: {
       id: 'hellCrownTongueRippers',
       name: 'Crown of the Tongue Rippers',
@@ -1052,6 +1059,29 @@ export class ItemRepoService {
         this.logService.addLogMessage("The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.", "STANDARD", 'STORY');
         this.logService.addLogMessage("From now on, each follower will train a child to replace themselves in your service when they pass away.", "STANDARD", 'STORY');
         this.followerService.autoReplaceUnlocked = true;
+      },
+    },
+    hellCrownTreesOfKnives: {
+      id: 'hellCrownTreesOfKnives',
+      name: 'Crown of Knives',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown proving your mastery over the Hell of Trees of Knives. Using this will unlock a new follower.',
+      useLabel: 'Accept the Crown',
+      useDescription: 'Accept the Crown.',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)){
+          this.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
+        }
+        this.logService.addLogMessage("The crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
+        this.followerService.unlockJob("moneyBurner");
       },
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing

@@ -73,7 +73,7 @@
           Spiritual Projection
         </td>
       </tr>
-      <tr *ngIf="activityService.spiritActivity">
+      <tr *ngIf="activityService.spiritActivity != null">
         <td>{{activityService.getActivityByType(activityService.spiritActivity).name[activityService.getActivityByType(activityService.spiritActivity).level]}}</td>
         <td>
           <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">

@@ -46,6 +46,7 @@ export enum ActivityType {
   EscapeHell,
   HellRecruiting,
   BurnMoney,
+  HonorAncestors,
   Hell // hell needs to be last for indexing purposes
 
 }
