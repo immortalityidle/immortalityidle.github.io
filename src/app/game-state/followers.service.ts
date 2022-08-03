@@ -11,7 +11,8 @@ import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { EquipmentPosition } from './character';
-import { ThisReceiver } from '@angular/compiler';
+import { CamelToTitlePipe } from '../app.component';
+
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -59,7 +60,7 @@ type jobsType = {
   providedIn: 'root'
 })
 export class FollowersService {
-
+  camelToTitle = new CamelToTitlePipe();
   followersUnlocked = false;
   followerLifespanDoubled = false; // achievement
   followers: Follower[] = [];
@@ -218,6 +219,25 @@ export class FollowersService {
       hidden: true,
       totalPower: 0
     },
+    "moneyBurner": {
+      work: () => {
+        let burnerPower = this.jobs["moneyBurner"].totalPower;
+        burnerPower = Math.floor(burnerPower/50);
+        if (burnerPower > 10){
+          burnerPower = 10;
+        } else if (burnerPower < 1){
+          burnerPower = 1;
+        }
+        if (this.characterService.characterState.money < (1e6 / burnerPower)){
+          return;
+        }
+        this.characterService.characterState.money -= (1e6 / burnerPower);
+        this.characterService.characterState.hellMoney++;
+      },
+      description: "A follower dedicated to burning mortal money to produce hell money.",
+      hidden: true,
+      totalPower: 0
+    }
   };
 
   constructor(
@@ -416,13 +436,13 @@ export class FollowersService {
     }
 
     if (currentCount >= capNumber){
-      this.logService.addLogMessage("A new follower shows up, but they were a " + job + " and you don't want any more of those.","STANDARD","FOLLOWER");
+      this.logService.addLogMessage("A new follower shows up, but they were a " + this.camelToTitle.transform(job) + " and you don't want any more of those.","STANDARD","FOLLOWER");
       this.totalDismissed++;
       return null;
     }
 
     const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
-    this.logService.addLogMessage("A new " + job + " has come to learn at your feet.","STANDARD","FOLLOWER");
+    this.logService.addLogMessage("A new " + this.camelToTitle.transform(job) + " has come to learn at your feet.","STANDARD","FOLLOWER");
     let follower = {
       name: this.generateFollowerName(),
       age: 0,

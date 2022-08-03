@@ -40,7 +40,6 @@ export class ActivityPanelComponent {
   }
 
   onClick(activity: Activity, event: MouseEvent): void {
-
     if (activity.projectionOnly){
       this.activityService.spiritActivity = activity.activityType;
       return;

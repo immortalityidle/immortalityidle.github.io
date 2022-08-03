@@ -1007,6 +1007,13 @@ export class ItemRepoService {
       value: 1,
       description: 'A handful of bloody fingers. The demons carry them as grisly trophies. Now, it seems, you do too.',
     },
+    tokenOfGratitude: {
+      id: 'tokenOfGratitude',
+      name: 'token of gratitude',
+      type: 'tokenOfGratitude',
+      value: 1,
+      description: 'A small keepsake from your family member.',
+    },
     hellCrownTongueRippers: {
       id: 'hellCrownTongueRippers',
       name: 'Crown of the Tongue Rippers',
@@ -1054,6 +1061,29 @@ export class ItemRepoService {
         this.followerService.autoReplaceUnlocked = true;
       },
     },
+    hellCrownTreesOfKnives: {
+      id: 'hellCrownTreesOfKnives',
+      name: 'Crown of Knives',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown proving your mastery over the Hell of Trees of Knives. Using this will unlock a new follower.',
+      useLabel: 'Accept the Crown',
+      useDescription: 'Accept the Crown.',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)){
+          this.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
+        }
+        this.logService.addLogMessage("The crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
+        this.followerService.unlockJob("moneyBurner");
+      },
+    },
     //TODO: tune prices on all manuals, currently silly cheap for testing
     fastPlayManual: {
       id: 'fastPlayManual',
@@ -1066,6 +1096,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFastSpeed = true;
+        this.mainLoopService.topDivider = this.mainLoopService.topDivider > 5 ? 5: this.mainLoopService.topDivider;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
@@ -1087,6 +1118,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFasterSpeed = true;
+        this.mainLoopService.topDivider = this.mainLoopService.topDivider > 2 ? 2: this.mainLoopService.topDivider;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
@@ -1108,6 +1140,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFastestSpeed = true;
+        this.mainLoopService.topDivider = 1;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
@@ -8,6 +8,7 @@ import { ItemRepoService } from './item-repo.service';
 import { WeaponNames, ItemPrefixes, WeaponSuffixes, WeaponSuffixModifiers, ArmorSuffixes, ArmorSuffixModifiers, herbNames, herbQuality, ChestArmorNames, LegArmorNames, ShoeNames, HelmetNames } from './itemResources';
 import { FurniturePosition } from './home.service';
 import { BigNumberPipe } from '../app.component';
+import { HellService } from './hell.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -106,6 +107,7 @@ export interface InventoryProperties {
   providedIn: 'root',
 })
 export class InventoryService {
+  hellService?: HellService
   bigNumberPipe = new BigNumberPipe;
   itemStacks: (ItemStack | null)[] = [];
   maxItems = 10;
@@ -147,12 +149,14 @@ export class InventoryService {
   autoBuyFood = true;
 
   constructor(
+    private injector: Injector,
     private logService: LogService,
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
-    private itemRepoService: ItemRepoService
+    private itemRepoService: ItemRepoService,
   ) {
+    setTimeout(() => this.hellService = this.injector.get(HellService));
     this.noFood = false;
     this.autoSellUnlocked = false;
     this.autoSellEntries = [];
@@ -634,7 +638,7 @@ export class InventoryService {
         lastOre = item;
       }
     }
-    if (this.autoSellOldOre){
+    if (this.autoSellOldOre && !this.hellService?.inHell){
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -663,7 +667,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldOre){
+    if (this.autoSellOldOre && !this.hellService?.inHell){
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -862,7 +866,7 @@ export class InventoryService {
         }
       }
     }
-    if (this.autoSellOldGemsEnabled && item.type === "spiritGem"){
+    if (this.autoSellOldGemsEnabled && item.type === "spiritGem" && !this.hellService?.inHell){
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
@@ -873,7 +877,7 @@ export class InventoryService {
       }
     }
     for (const entry of this.autoSellEntries){
-      if (entry.name === item.name){
+      if (entry.name === item.name && !this.hellService?.inHell){
         let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
         if (numberToSell > quantity){
           // don't worry about selling more than the incoming quantity here
@@ -933,7 +937,7 @@ export class InventoryService {
     }
 
     // if we're here we didn't find a slot for anything/everything.
-    if (this.autoSellUnlocked){
+    if (this.autoSellUnlocked && !this.hellService?.inHell){
       this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
       this.characterService.characterState.money += item.value * quantity;
     } else {
@@ -946,6 +950,10 @@ export class InventoryService {
   sell(itemStack: ItemStack, quantity: number): void {
     if (itemStack.item.value === Infinity){
       // don't sell infinitely valuable things.
+      return;
+    }
+    // can't sell in hell
+    if (this.hellService?.inHell){
       return;
     }
     this.lifetimeSoldItems += quantity;

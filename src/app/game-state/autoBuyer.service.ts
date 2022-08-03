@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { AutoBuyer, FurnitureAutoBuyer, HomeAutoBuyer, LandAndFieldAutoBuyer } from './autoBuyer';
+import { HellService } from './hell.service';
 
 export interface AutoBuyerProperties {
   autoBuyerSettingsUnlocked: boolean,
@@ -22,6 +23,7 @@ type AutoBuyersMap = {[key in AutoBuyerType]: AutoBuyer}
   providedIn: 'root'
 })
 export class AutoBuyerService {
+  hellService?: HellService;
   autoBuyerSettingsUnlocked = false;
   
   autoBuyerSettings: AutoBuyerSetting[] = this.getDefaultSettings();
@@ -33,10 +35,12 @@ export class AutoBuyerService {
   }
 
   constructor(
+    private injector: Injector,
     private characterService: CharacterService,
     private homeService: HomeService,
     mainLoopService: MainLoopService,
   ) {
+    setTimeout(() => this.hellService = this.injector.get(HellService));
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead) {
         return;
@@ -84,6 +88,9 @@ export class AutoBuyerService {
   }
 
   tick() {
+    if (this.hellService?.inHell){
+      return;
+    }
     // Use auto-buy reserve amount if enabled in settings, otherwise default to 10 days living expenses (food + lodging)
     const reserveAmount = this.homeService.useAutoBuyReserve ? this.homeService.autoBuyReserveAmount : (this.homeService.home.costPerDay + 1) * 10;
 
