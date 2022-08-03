@@ -112,7 +112,7 @@ export class MainLoopService {
       const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
       // this should be around 1, but may vary based on browser throttling
-      let ticksPassed = timeDiff / TICK_INTERVAL_MS; 
+      let ticksPassed = timeDiff / TICK_INTERVAL_MS;
       if (this.pause) {
         this.bankedTicks += ticksPassed / this.offlineDivider; // offlineDivider currently either 10 or 2.
       } else {
@@ -142,6 +142,11 @@ export class MainLoopService {
             this.bankedTicks += this.tickCount / (currentTPS * 11) * (10 * (currentTPS / topTPS));  
           }
           this.tickCount = 0;
+        }
+        // if the game is inactive for longer periods of time the banked ticks might go negative.
+        if (this.bankedTicks < 0) {
+          this.bankedTicks = 0;
+          this.useBankedTicks = false;
         }
       }
     }, TICK_INTERVAL_MS);
