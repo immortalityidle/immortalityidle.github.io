@@ -138,7 +138,15 @@ export class HomeService {
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.4){
-          this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
+          this.battleService.addEnemy({
+              name: "a pesky mouse",
+              health: 2,
+              maxHealth: 2,
+              accuracy: 0.15,
+              attack: 0.3,
+              defense: 0,
+              loot: []
+            });
         }
       },
       furnitureSlots: [],
@@ -161,7 +169,15 @@ export class HomeService {
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.2){
-          this.battleService.addEnemy(this.battleService.enemyRepo.mouse);
+          this.battleService.addEnemy({
+              name: "a pesky mouse",
+              health: 2,
+              maxHealth: 2,
+              accuracy: 0.15,
+              attack: 0.3,
+              defense: 0,
+              loot: []
+            });
         }
         this.characterService.characterState.checkOverage();
       },

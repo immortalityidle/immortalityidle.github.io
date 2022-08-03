@@ -1,6 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { CharacterService } from '../game-state/character.service';
+import { ItemRepoService } from '../game-state/item-repo.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ActivityService } from './activity.service';
@@ -146,6 +147,7 @@ export class ImpossibleTaskService {
     private injector: Injector,
     private logService: LogService,
     private characterService: CharacterService,
+    private itemRepoService: ItemRepoService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
     private battleService: BattleService
@@ -282,7 +284,18 @@ export class ImpossibleTaskService {
     }
     this.activityService.reloadActivities();
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath){
-      this.battleService.addEnemy(this.battleService.enemyRepo.death);
+      this.battleService.addEnemy({
+        name: "Death itself",
+        health: 1e20, 
+        maxHealth: 1e20, 
+        accuracy: 0.99,
+        attack: 3e8,
+        defense: 3e8,
+        loot: [
+          this.itemRepoService.items['immortality']
+        ],
+        unique: true
+      });
     }
   }
 

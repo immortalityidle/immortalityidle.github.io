@@ -15,6 +15,7 @@ export interface Enemy {
   accuracy: number,
   attack: number,
   defense: number,
+  /**Don't put items with use() functions in the loot (like food). They don't get persisted. */
   loot: Item[],
   unique?: boolean
 }
@@ -162,8 +163,8 @@ export class BattleService {
             damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
           }
           //Keep mice scary
-          if (damage < this.enemyRepo.mouse.attack) {
-            damage = this.enemyRepo.mouse.attack;
+          if (damage < 0.3) {
+            damage = 0.3;
           }
           if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10){
             damage /= 2;
@@ -301,7 +302,7 @@ export class BattleService {
       }
     }
     // it didn't match any, create a new enemyStack
-    this.enemies.push({enemy: JSON.parse(JSON.stringify(enemy)), quantity: 1});
+    this.enemies.push({enemy: enemy, quantity: 1});
     if (this.currentEnemy === null){
       this.currentEnemy = this.enemies[0];
     }
@@ -350,51 +351,6 @@ export class BattleService {
         this.inventoryService.addItem(armor);
         this.characterService.characterState.equipment[armor.slot] = null;
       }
-    }
-  }
-
-  // Don't put items with use() functions in the loot (like food). They don't get persisted.
-  enemyRepo = {
-    mouse: {
-      name: "a pesky mouse",
-      health: 2,
-      maxHealth: 2,
-      accuracy: 0.15,
-      attack: 0.3,
-      defense: 0,
-      loot: []
-    },
-    wolf: {
-      name: "a hungry wolf",
-      health: 20,
-      maxHealth: 20,
-      accuracy: 0.5,
-      attack: 5,
-      defense: 5,
-      loot: [
-        this.itemRepoService.items['hide']
-      ]
-    },
-    army: {
-      name: "an angry army",
-      health: 2e11,
-      maxHealth: 2e11, 
-      accuracy: 0.9,
-      attack: 1e7,
-      defense: 1e7, 
-      loot: []
-    },
-    death: {
-      name: "Death itself",
-      health: 1e20, 
-      maxHealth: 1e20, 
-      accuracy: 0.99,
-      attack: 3e8,
-      defense: 3e8,
-      loot: [
-        this.itemRepoService.items['immortality']
-      ],
-      unique: true
     }
   }
 
