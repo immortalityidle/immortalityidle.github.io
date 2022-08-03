@@ -116,23 +116,32 @@ export class MainLoopService {
       if (this.pause) {
         this.bankedTicks += ticksPassed / this.offlineDivider; // offlineDivider currently either 10 or 2.
       } else {
+        const currentTPS = this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
+        const topTPS = this.getTPS(this.topDivider) / 1000 * TICK_INTERVAL_MS;
         if (this.bankedTicks > 0 && this.useBankedTicks){
           //using banked ticks makes time happen 10 times faster
+          this.bankedTicks -= ticksPassed * 10 * (currentTPS / topTPS); // reduce usage rate if going slower than max
           ticksPassed *= 11; // Include the normal tick
-          this.bankedTicks -= timeDiff / TICK_INTERVAL_MS * 10 * (this.topDivider / this.tickDivider);
         }
+        ticksPassed *= currentTPS;
 
-        ticksPassed *= this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
         this.tickCount += ticksPassed;
         if (this.tickCount > 36500) {
           //emergency lag prevention; this should never activate normally
           this.tickCount = 36500;
         }
         let tickTime = new Date().getTime();
+        //let tickTime = TICK_INTERVAL_MS + newTime;
         while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
           this.tick();
           this.tickCount--;
           tickTime = new Date().getTime();
+        }
+        if (this.tickCount >= 1){
+          if (this.useBankedTicks){
+            this.bankedTicks += this.tickCount / (currentTPS * 11) * (10 * (currentTPS / topTPS));  
+          }
+          this.tickCount = 0;
         }
       }
     }, TICK_INTERVAL_MS);
