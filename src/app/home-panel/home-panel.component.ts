@@ -21,7 +21,7 @@ export class HomePanelComponent {
   character: Character;
   Math: Math;
   bignumber = new BigNumberPipe;
-  
+
   constructor(public characterService: CharacterService,
     public homeService: HomeService,
     public followerService: FollowersService,
@@ -39,7 +39,7 @@ export class HomePanelComponent {
             builderPower += follower.power;
           }
         }
-    return "~" + this.bignumber.transform((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild / builderPower / 365) + " years";
+    return this.bignumber.transform((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild / builderPower / 365) + " years";
   }
 
   storeClicked(): void {
