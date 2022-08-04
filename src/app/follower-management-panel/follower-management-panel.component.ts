@@ -19,10 +19,12 @@ export class FollowerManagementPanelComponent implements OnInit {
   getTotalAssingments(){
     let max = 0;
     for (const followerType in this.followerService.jobs){
-      if (this.followerService.maxFollowerByType[followerType]){
-        max += this.followerService.maxFollowerByType[followerType];
-      } else if (!this.followerService.jobs[followerType].hidden && this.followerService.maxFollowerByType[followerType] != 0){
-        max += 1000;
+      if (!this.followerService.jobs[followerType].hidden) {
+        if (this.followerService.maxFollowerByType[followerType]){
+          max += this.followerService.maxFollowerByType[followerType];
+        } else if (this.followerService.maxFollowerByType[followerType] !== 0){
+          max += 1000;
+        }
       }
     }
     return max;
