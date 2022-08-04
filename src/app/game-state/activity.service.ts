@@ -518,7 +518,7 @@ export class ActivityService {
     newList.push(this.Recruiting);
     newList.push(this.TrainingFollowers);
 
-    for (let activity of newList){
+    for (const activity of newList){
       // make sure we have no projectionOnly actvities if list is loaded from here
       activity.projectionOnly = false;
     }
@@ -1090,7 +1090,15 @@ export class ActivityService {
         if (this.homeService.homeValue < HomeType.Capital){
           this.logService.addLogMessage("You don't even have your own kingdom? What were you thinking? The nearby rulers send their forces against you.","INJURY","EVENT");
           for (let i = 0; i < 3; i++){
-            this.battleService.addEnemy(this.battleService.enemyRepo.army, true);
+            this.battleService.addEnemy({
+              name: "an angry army",
+              health: 2e11,
+              maxHealth: 2e11, 
+              accuracy: 0.9,
+              attack: 1e7,
+              defense: 1e7, 
+              loot: []
+            });
           }
           return;
         }
@@ -1098,7 +1106,15 @@ export class ActivityService {
         value = this.inventoryService.consume('food', 10000);
         if (value < 1){
           this.logService.addLogMessage("You don't have enough food to feed your army, so they revolt and fight you instead.","INJURY","EVENT");
-          this.battleService.addEnemy(this.battleService.enemyRepo.army, true);
+          this.battleService.addEnemy({
+            name: "an angry army",
+            health: 2e11,
+            maxHealth: 2e11, 
+            accuracy: 0.9,
+            attack: 1e7,
+            defense: 1e7, 
+            loot: []
+          });
           if (this.pauseOnImpossibleFail){
             this.mainLoopService.pause = true;
           }
@@ -1106,7 +1122,15 @@ export class ActivityService {
         }
         if (this.characterService.characterState.money < 1e10){
           this.logService.addLogMessage("You don't have enough money to pay your army, so they revolt and fight you instead.","INJURY","EVENT");
-          this.battleService.addEnemy(this.battleService.enemyRepo.army, true);
+          this.battleService.addEnemy({
+            name: "an angry army",
+            health: 2e11,
+            maxHealth: 2e11, 
+            accuracy: 0.9,
+            attack: 1e7,
+            defense: 1e7, 
+            loot: []
+          });
           if (this.pauseOnImpossibleFail){
             this.mainLoopService.pause = true;
           }
@@ -1134,7 +1158,15 @@ export class ActivityService {
         value = this.inventoryService.consume('army', this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress + 1);
         if (value < 1){
           for (let i = 0; i < 5; i++){
-            this.battleService.addEnemy(this.battleService.enemyRepo.army, true);
+            this.battleService.addEnemy({
+              name: "an angry army",
+              health: 2e11,
+              maxHealth: 2e11, 
+              accuracy: 0.9,
+              attack: 1e7,
+              defense: 1e7, 
+              loot: []
+            });
           }
           this.logService.addLogMessage("Your armies failed you and you are forced to fight the enemy armies to a standstill.","STANDARD","EVENT");
           if (this.pauseOnImpossibleFail){
@@ -2108,7 +2140,17 @@ export class ActivityService {
           this.inventoryService.addItem(this.itemRepoService.items['hide']);
         }
         if (Math.random() < 0.01) {
-          this.battleService.addEnemy(this.battleService.enemyRepo.wolf, true);
+          this.battleService.addEnemy({
+            name: "a hungry wolf",
+            health: 20,
+            maxHealth: 20,
+            accuracy: 0.5,
+            attack: 5,
+            defense: 5,
+            loot: [
+              this.itemRepoService.items['hide']
+            ]
+          });
         }
       }],
       resourceUse: [{
