@@ -56,8 +56,10 @@ export class BigNumberPipe implements PipeTransform {
       const numberPower = Math.floor(Math.log10(value));
       const numStr = Math.floor(value / Math.pow(10,(numberPower - 4))) / 100;
       const suffixArray = ["", "k", "M", "B", "T", "q", "Q", "s"];
-      if (value < 10000){
-        return value + '';
+      if (value < 100 && !Number.isInteger(value) ){
+        return value.toFixed(2) + '';
+      } else if (value < 10000){
+        return Math.round(value) + '';
       } else if (value >= Math.pow(10, (suffixArray.length)  * 3)){
         return Math.floor(numStr)/100 + 'e+' + numberPower;// At this point everything is in e notation. Goes up to 1.8e308 (infinity)
       } else {
