@@ -129,28 +129,30 @@ export class LogService {
   updateLogTopics(){
     const logs: Log[] = [];
 
+    // limit logs to last 300 messages
+    this.eventLog = this.eventLog.slice(-300);
+    this.combatLog = this.combatLog.slice(-300);
+    this.craftingLog = this.craftingLog.slice(-300);
+    this.followerLog = this.followerLog.slice(-300);
+
     if (this.logTopics.includes('STORY')){
       this.newStory = "";
       logs.push(...this.storyLog);
     }
     if (this.logTopics.includes('EVENT')){
       this.newEvents = "";
-      this.eventLog = this.eventLog.slice(-300)
       logs.push(...this.eventLog);
     }
     if (this.logTopics.includes('COMBAT')){
       this.newCombat = "";
-      this.combatLog = this.combatLog.slice(-300)
       logs.push(...this.combatLog);
     }
     if (this.logTopics.includes('CRAFTING')){
       this.newCrafting = "";
-      this.craftingLog = this.craftingLog.slice(-300)
       logs.push(...this.craftingLog);
     }
     if (this.logTopics.includes('FOLLOWER')){
       this.newFollower = "";
-      this.followerLog = this.followerLog.slice(-300)
       logs.push(...this.followerLog);
     }
 
