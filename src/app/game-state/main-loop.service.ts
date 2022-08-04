@@ -123,18 +123,22 @@ export class MainLoopService {
       } else {
         const currentTPS = this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
         const topTPS = this.getTPS(this.topDivider) / 1000 * TICK_INTERVAL_MS;
+        let inactiveTickHolder = 0;
         if (this.bankedTicks > 0 && this.useBankedTicks){
           //using banked ticks makes time happen 10 times faster
-          this.bankedTicks -= ticksPassed * 10 * (currentTPS / topTPS); // reduce usage rate if going slower than max
+          let bankedPassed = ticksPassed * 10 * (currentTPS / topTPS); // reduce usage rate if going slower than max
+          if (bankedPassed > this.bankedTicks) // Check for not enough bankedTicks, usually for large timeDiff.
+          {
+            bankedPassed = this.bankedTicks;
+            inactiveTickHolder = bankedPassed / (10 * (currentTPS / topTPS));
+            ticksPassed -= inactiveTickHolder; // Pass the extra down to the next cycle
+          }
+          this.bankedTicks -= bankedPassed 
           ticksPassed *= 11; // Include the normal tick
         }
         ticksPassed *= currentTPS;
 
         this.tickCount += ticksPassed;
-        if (this.tickCount > 36500) {
-          //emergency lag prevention; this should never activate normally
-          this.tickCount = 36500;
-        }
         let tickTime = new Date().getTime();
         //let tickTime = TICK_INTERVAL_MS + newTime;
         while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
@@ -148,11 +152,7 @@ export class MainLoopService {
           }
           this.tickCount = 0;
         }
-        // if the game is inactive for longer periods of time the banked ticks might go negative.
-        if (this.bankedTicks < 0) {
-          this.bankedTicks = 0;
-          this.useBankedTicks = false;
-        }
+        this.tickCount += inactiveTickHolder;
       }
     }, TICK_INTERVAL_MS);
   }
