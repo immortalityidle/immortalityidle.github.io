@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { isEmpty } from 'rxjs';
+import { MainLoopService } from './main-loop.service';
 
 const LOG_MERGE_INTERVAL_MS = 1000;
 export type LogType = 'STANDARD' | 'INJURY';
@@ -35,7 +36,13 @@ export class LogService {
   followerLog: Log[] = [];
   currentLog: Log[] = [];
 
-  constructor() {
+  constructor(
+    
+    mainLoopService: MainLoopService
+  ) {
+    mainLoopService.frameSubject.subscribe(() => {
+      this.updateLogTopics();
+    });
     this.addLogMessage("Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.", 'STANDARD', 'STORY');
     this.addLogMessage("Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.", 'STANDARD', 'STORY');
     this.addLogMessage("It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.", 'STANDARD', 'STORY');
@@ -63,10 +70,7 @@ export class LogService {
 
     if (log.length === 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
       // Initialization || Repeat Not Found || Repeat is not within 1 second
-      log.unshift(newMessage);
-      if (this.logTopics.includes(topic)) {
-        this.addToCurrentLog(newMessage);
-      }
+      log.push(newMessage);
     } else {
       // Repeat Found
       const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message);
@@ -80,9 +84,6 @@ export class LogService {
     }
 
     // check if we need to age off the oldest logs
-    if (log.length > 100 && topic !== 'STORY'){
-      log.splice(100, 1);
-    }
     if (!this.logTopics.includes(topic)) {
       if (topic === 'STORY') {
         this.newStory = " (new)";
@@ -96,15 +97,6 @@ export class LogService {
         this.newFollower = " (new)";
       }
     }
-  }
-
-  /** Add Message To Current Log */
-  private addToCurrentLog(newMessage: Log): void {
-    // Maximum Log Length of 300
-    if (this.currentLog.length >= 300){
-      this.currentLog.pop();
-    }
-    this.currentLog.unshift(newMessage);
   }
 
   getProperties(): LogProperties {
@@ -135,53 +127,38 @@ export class LogService {
   }
 
   updateLogTopics(){
-    const logs: Log[][] = [];
+    const logs: Log[] = [];
 
-    if (this.logTopics.includes('COMBAT')){
-      this.newCombat = "";
-      logs.push([...this.combatLog]);
-    }
     if (this.logTopics.includes('STORY')){
       this.newStory = "";
-      logs.push([...this.storyLog]);
-      }
+      logs.push(...this.storyLog);
+    }
     if (this.logTopics.includes('EVENT')){
       this.newEvents = "";
-      logs.push([...this.eventLog]);
+      this.eventLog = this.eventLog.slice(-300)
+      logs.push(...this.eventLog);
+    }
+    if (this.logTopics.includes('COMBAT')){
+      this.newCombat = "";
+      this.combatLog = this.combatLog.slice(-300)
+      logs.push(...this.combatLog);
     }
     if (this.logTopics.includes('CRAFTING')){
       this.newCrafting = "";
-      logs.push([...this.craftingLog]);
+      this.craftingLog = this.craftingLog.slice(-300)
+      logs.push(...this.craftingLog);
     }
     if (this.logTopics.includes('FOLLOWER')){
       this.newFollower = "";
-      logs.push([...this.followerLog]);
+      this.followerLog = this.followerLog.slice(-300)
+      logs.push(...this.followerLog);
     }
 
-    this.currentLog = [];
     if (logs.length === 0){
       return;
     }
-    //@ts-ignore
-    const isEmpty = a => Array.isArray(a) && a.every(isEmpty);
-    while(!isEmpty(logs)){
-      // figure out the oldest log entry and add it to the currentLog until everything is added
-      let latestTimestamp = Number.MAX_VALUE;
-      let latestLog: Log[] = logs[0];
-      for (let index = 0; index < logs.length; index++){
-        const loopLog = logs[index];
-        if (loopLog.length === 0){
-          continue;
-        }
-        const timestamp = loopLog[loopLog.length - 1].timestamp || 0;
-        if (timestamp < latestTimestamp){
-          latestTimestamp = timestamp;
-          latestLog = loopLog;
-        }
-      }
-      this.addToCurrentLog(latestLog[latestLog.length - 1]);
-      latestLog.splice(latestLog.length - 1, 1);
-    }
+    logs.sort((a,b) => b.timestamp - a.timestamp);
+    this.currentLog = logs.slice(0,299);
   }
 
 }
