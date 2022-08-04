@@ -94,6 +94,11 @@ export class FollowersService {
     },
     "hunter": {
       work: () => {
+        if (this.hellService?.inHell){
+          if (this.jobs["hunter"].totalPower > 1000)
+          this.inventoryService.addItem(this.itemRepoService.items['spiritMeat'], Math.floor(this.jobs["hunter"].totalPower / 1000));
+          return;
+        }
         this.inventoryService.addItem(this.itemRepoService.items['meat'], this.jobs["hunter"].totalPower);
         this.inventoryService.addItem(this.itemRepoService.items['hide'], this.jobs["hunter"].totalPower);
       },
@@ -252,6 +257,7 @@ export class FollowersService {
     private battleService: BattleService,
 
   ) {
+    setTimeout(() => this.hellService = this.injector.get(HellService));
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.followersUnlocked){
         return;
@@ -260,10 +266,7 @@ export class FollowersService {
         return;
       }
       this.updateFollowerCap();
-      if (!this.hellService){
-        this.hellService = this.injector.get(HellService);
-      }
-      if (this.characterService.characterState.age % 18250 === 0 && !this.hellService.inHell){
+      if (this.characterService.characterState.age % 18250 === 0 && !this.hellService?.inHell){
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }

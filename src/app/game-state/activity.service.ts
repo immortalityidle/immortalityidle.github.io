@@ -517,7 +517,8 @@ export class ActivityService {
     newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
     newList.push(this.TrainingFollowers);
-
+    newList.push(this.CombatTraining);
+    
     for (const activity of newList){
       // make sure we have no projectionOnly actvities if list is loaded from here
       activity.projectionOnly = false;
@@ -611,6 +612,8 @@ export class ActivityService {
   TrainingFollowers: Activity;
   // @ts-ignore
   Taunting: Activity;
+  // @ts-ignore
+  CombatTraining: Activity
 
 
 
@@ -2554,6 +2557,26 @@ export class ActivityService {
       requirements: [{
         strength: 1000,
         toughness: 1000,
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.CombatTraining = {
+      level: 0,
+      name: ['Combat Training'],
+      activityType: ActivityType.Taunting,
+      description: ['Hone every fiber of your being to martial sepremacy. Your experience in the Hell of Mirrors allowed you to examine your own combat form and understand how to improve it. Now all you need is practice.'],
+      consequenceDescription: ['Uses 10000 stamina. Trains your Combat Mastery.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 10000;
+        this.characterService.characterState.increaseAttribute('combatMastery', 0.01);
+      }],
+      resourceUse: [{
+        stamina: 10000
+      }],
+      requirements: [{
+        combatMastery: 1,
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0

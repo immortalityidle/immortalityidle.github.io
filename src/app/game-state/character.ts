@@ -15,7 +15,9 @@ export interface CharacterAttribute {
   woodLore?: number,
   waterLore?: number,
   fireLore?: number,
-  animalHandling?: number
+  animalHandling?: number,
+  combatMastery?: number,
+  magicMastery?: number,
 }
 
 export type AttributeType = 'strength' |
@@ -29,7 +31,9 @@ export type AttributeType = 'strength' |
   'woodLore' |
   'waterLore' |
   'fireLore' |
-  'animalHandling';
+  'animalHandling' |
+  'combatMastery' | 
+  'magicMastery';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, lifeStartValue: number, aptitude: number, aptitudeMult: number, icon: string }};
 
@@ -219,6 +223,22 @@ export class Character {
       aptitudeMult: 1,
       icon: "pets"
     },
+    combatMastery: {
+      description: "Mastery of combat skills.",
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: "sports_martial_arts"
+    },
+    magicMastery: {
+      description: "Mastery of magical skills.",
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: "self_improvement"
+    }
   };
   status: CharacterStatus = {
     health: {
@@ -417,6 +437,10 @@ export class Character {
       feet = (this.equipment.feet.armorStats?.defense || 1);
     }
     this.attackPower *= Math.floor(Math.sqrt(this.attackPower) * Math.sqrt(2 * Math.sqrt(rightHand) * Math.sqrt(leftHand))) || 1; // root averaged.
+    if (this.attributes.combatMastery.value > 1){
+      // multiply by log base 100 of combatMastery
+      this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / Math.log(100);
+    }
     this.defense *= Math.floor(Math.sqrt(this.defense) * Math.sqrt(4 * Math.pow(head, 0.25) * Math.pow(body, 0.25) * Math.pow(legs, 0.25) * Math.pow(feet, 0.25))) || 1; // root averaged.
   }
 
@@ -482,8 +506,13 @@ export class Character {
 
   increaseAptitudeDaily() {
     const keys = Object.keys(this.attributes) as AttributeType[];
+    let slowGrowers = ['combatMastery', 'magicMastery'];
     for(const key in keys) {
-      this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e7;
+      if (slowGrowers.includes(key)){
+        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e14;
+      } else {
+        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e7;
+      }
     }
   }
 
@@ -629,6 +658,27 @@ export class Character {
     this.highestMana = properties.highestMana || 0;
     this.highestAttributes = properties.highestAttributes || {};
 
+    // add attributes that were added after release if needed
+    if (!this.attributes.combatMastery){
+      this.attributes.combatMastery = {
+        description: "Mastery of combat skills.",
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 1,
+        aptitudeMult: 1,
+        icon: "sports_martial_arts"
+      }
+    }
+    if (!this.attributes.magicMastery){
+      this.attributes.magicMastery = {
+        description: "Mastery of magical skills.",
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 1,
+        aptitudeMult: 1,
+        icon: "self_improvement"
+      }
+    }
     this.recalculateDerivedStats();
   }
 }

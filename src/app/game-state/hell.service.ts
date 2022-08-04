@@ -236,7 +236,16 @@ export class HellService {
         defense: 1e6,
         loot: [ ]
       });
-
+    } else if (this.currentHell === HellLevel.Mirrors){
+      this.battleService.addEnemy({
+        name: "Your Reflection",
+        health: this.characterService.characterState.status.health.value,
+        maxHealth: this.characterService.characterState.status.health.value,
+        accuracy: this.characterService.characterState.accuracy,
+        attack: this.characterService.characterState.attackPower,
+        defense: this.characterService.characterState.defense,
+        loot: [ this.itemRepoService.items['mirrorShard'] ]
+      });
     }
   }
 
@@ -273,6 +282,17 @@ export class HellService {
         attack: 1,
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownTreesOfKnives'] ]
+      });
+    } else if (this.currentHell == HellLevel.Mirrors){
+      this.battleService.addEnemy({
+        name: "Myorshuggath the Mirror Master",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownMirrors'] ]
       });
     } else {
       this.battleService.addEnemy({
@@ -360,6 +380,7 @@ export class HellService {
 
   setEnterHellsArray(newList: Activity[]) {
     newList.push(this.activityService.Resting);
+    newList.push(this.activityService.CombatTraining);
     newList.push(this.activityService.SoulCultivation);
     for (const hell of this.hells){
       let consequenceDescription = "";
@@ -471,18 +492,20 @@ export class HellService {
       description: "Torment for those who escaped punishment for their crimes. The mirrors here shine with a terrifying glow.",
       index: HellLevel.Mirrors,
       entryEffect: () => {
-          /*
-        Task: Fight mirror battles vs yourself
-        */
+        this.followerService.stashFollowers();
+      },
+      exitEffect: () => {
+        this.followerService.restoreFollowers();
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.inventoryService.consume("mirrorShard", 1000);
+        this.logService.addLogMessage("You piece together the shards of mirror that you have collected to form a new mirror. A dark shape looms beyond it.", "STANDARD", "STORY")
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.CombatTraining, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting],
       projectionActivities: [],
-      hint: "",
+      hint: "Master yourself. All by yourself.",
       successCheck: () => {
-        return false;
+        return this.inventoryService.getQuantityByName("mirror shard") >= 1000;
       }
     },
     {

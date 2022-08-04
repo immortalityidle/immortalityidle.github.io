@@ -539,6 +539,23 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
+    spiritMeat: {
+      id: 'spiritMeat',
+      name: 'spirit meat',
+      type: 'food',
+      value: 1000,
+      description: 'Your hunters have performed a ritual burned offering of meat to send you this spiritual feast.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly. Can also improve your health and stamina.',
+      useConsumes: true,
+      use: (quantity = 1) => {
+        this.characterService.characterState.status.nourishment.value += quantity * 2;
+        this.characterService.characterState.healthBonusFood += quantity;
+        this.characterService.characterState.status.health.value += quantity * 20;
+        this.characterService.characterState.status.stamina.max += quantity;
+        this.characterService.characterState.checkOverage();
+      },
+    },
     carp: {
       id: 'carp',
       name: 'carp',
@@ -1014,6 +1031,13 @@ export class ItemRepoService {
       value: 1,
       description: 'A small keepsake from your family member.',
     },
+    mirrorShard: {
+      id: 'mirrorShard',
+      name: 'mirror shard',
+      type: 'mirrorShard',
+      value: 1,
+      description: 'A shard of broken glass. You carefully turn the reflective side away from you.',
+    },
     hellCrownTongueRippers: {
       id: 'hellCrownTongueRippers',
       name: 'Crown of the Tongue Rippers',
@@ -1082,6 +1106,33 @@ export class ItemRepoService {
         }
         this.logService.addLogMessage("The crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
         this.followerService.unlockJob("moneyBurner");
+      },
+    },
+    hellCrownMirrors: {
+      id: 'hellCrownMirrors',
+      name: 'Crown of Mirrors',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown proving your mastery over the Hell of Mirrors. Using this will unlock a new understanding of combat.',
+      useLabel: 'Accept the Crown',
+      useDescription: 'Accept the Crown.',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.Mirrors)){
+          this.hellService.completedHellBosses.push(HellLevel.Mirrors);
+        }
+        this.logService.addLogMessage("The crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.", "STANDARD", 'STORY');
+        this.characterService.characterState.attributes.combatMastery.value += 1;
+        this.activityService.CombatTraining.unlocked = true;
       },
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing
