@@ -315,6 +315,26 @@ export class InventoryService {
     }
   }
 
+  sortInventory(){
+    const tempStacks: ItemStack[] = [];
+    for (let key = 0; key < this.itemStacks.length; key++){
+      if(!this.itemStacks[key]){
+        continue;
+      }
+      tempStacks.push(this.itemStacks[key]!);
+    }
+    tempStacks.sort((a,b) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
+    tempStacks.sort((a,b) => b.quantity - a.quantity);
+    tempStacks.sort((a,b) => b.item.value - a.item.value);
+    tempStacks.sort((a,b) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
+    const emptySlots = this.itemStacks.length - tempStacks.length;
+    this.itemStacks = tempStacks;
+    for (let i = 0; i < emptySlots; i++){
+      this.itemStacks.push(null);
+    }
+    
+  }
+
   // materials are wood or metal
   generateWeapon(grade: number, material: string, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment {
 
