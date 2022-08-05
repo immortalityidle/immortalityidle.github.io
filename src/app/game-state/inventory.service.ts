@@ -610,7 +610,8 @@ export class InventoryService {
         durability: durability,
         baseName: baseName
       },
-      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " + grade + "<br/>Durability: " + durability
+      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " + 
+        this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
     };
 
   }
