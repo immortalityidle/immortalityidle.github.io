@@ -101,7 +101,8 @@ export interface InventoryProperties {
   thrownAwayItems: number,
   autoSellOldGemsUnlocked: boolean,
   autoSellOldGemsEnabled: boolean,
-  autoBuyFood: boolean
+  autoBuyFood: boolean,
+  automergeEquipped: boolean
 }
 
 @Injectable({
@@ -149,6 +150,7 @@ export class InventoryService {
   autoSellOldGemsUnlocked: boolean;
   autoSellOldGemsEnabled: boolean;
   autoBuyFood = true;
+  automergeEquipped = false;
 
   constructor(
     private injector: Injector,
@@ -215,13 +217,15 @@ export class InventoryService {
         this.autoequipArmor();
       }
       for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
-        if(this.characterService.characterState.equipment[key]){
-          this.updateArmorDescription(this.characterService.characterState.equipment[key]!);
+        const item = this.characterService.characterState.equipment[key]
+        if(item){
+          this.updateArmorDescription(item);
         }
       }
       for (const key of ["leftHand","rightHand"] as EquipmentPosition[]){
-        if(this.characterService.characterState.equipment[key]){
-          this.updateWeaponDescription(this.characterService.characterState.equipment[key]!);
+        const item = this.characterService.characterState.equipment[key]
+        if(item){
+          this.updateWeaponDescription(item);
         }
       }
 
@@ -260,7 +264,8 @@ export class InventoryService {
       thrownAwayItems: this.thrownAwayItems,
       autoSellOldGemsUnlocked: this.autoSellOldGemsUnlocked,
       autoSellOldGemsEnabled: this.autoSellOldGemsEnabled,
-      autoBuyFood: this.autoBuyFood
+      autoBuyFood: this.autoBuyFood,
+      automergeEquipped: this.automergeEquipped
     }
   }
 
@@ -296,6 +301,7 @@ export class InventoryService {
     this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;
     this.autoSellOldGemsEnabled = properties.autoSellOldGemsEnabled || false;
     this.autoBuyFood = properties.autoBuyFood ?? true;
+    this.automergeEquipped = properties.automergeEquipped || false;
   }
 
   farmFoodList = [
@@ -324,14 +330,15 @@ export class InventoryService {
     const gemStacks: ItemStack[] = [];
     const equipStacks: ItemStack[] = [];
     for (let key = 0; key < this.itemStacks.length; key++){
-      if(!this.itemStacks[key]){
+      const itemStack = this.itemStacks[key];
+      if(!itemStack){
         continue;
       } else if (this.itemStacks[key]?.item.type === "spiritGem"){
-        gemStacks.push(this.itemStacks[key]!);
+        gemStacks.push(itemStack);
       } else if (this.itemStacks[key]?.item.type === "equipment"){
-        equipStacks.push(this.itemStacks[key]!);
+        equipStacks.push(itemStack);
       } else {
-        tempStacks.push(this.itemStacks[key]!);
+        tempStacks.push(itemStack);
       }
     }
     tempStacks.sort((a,b) => b.quantity - a.quantity);
@@ -348,7 +355,7 @@ export class InventoryService {
     for (let i = 0; i < emptySlots; i++){
       this.itemStacks.push(null);
     }
-    
+
   }
 
   // materials are wood or metal
@@ -407,7 +414,7 @@ export class InventoryService {
         durability: durability,
         baseName: baseName
       },
-      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " + 
+      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " +
         this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
     };
   }
@@ -424,7 +431,7 @@ export class InventoryService {
     if(!armor.armorStats) {
       return;
     }
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + ".<br/>Defense: " + 
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + ".<br/>Defense: " +
       this.bigNumberPipe.transform(armor.armorStats.defense) + "<br/>Durability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
@@ -589,7 +596,7 @@ export class InventoryService {
   }
 
   generateArmor(grade: number, material: string, slot: EquipmentPosition, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment{
-    
+
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
@@ -646,7 +653,7 @@ export class InventoryService {
         durability: durability,
         baseName: baseName
       },
-      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " + 
+      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " +
         this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
     };
 
@@ -1195,7 +1202,7 @@ export class InventoryService {
     if (cheapest){
       itemValue = Infinity;
     }
-    
+
     let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
@@ -1232,7 +1239,7 @@ export class InventoryService {
       // we didn't have enough in the stack we consumed to meet the quantity, consume another
       itemValue = this.consume(consumeType, quantity)
     }
-    if (cheapest && itemValue == Infinity){
+    if (cheapest && itemValue === Infinity){
       // return -1 for not found
       itemValue = -1;
     }
@@ -1399,22 +1406,37 @@ export class InventoryService {
         }
       }
     }
-    // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
-    if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
-      sourceItem = this.characterService.characterState.equipment[slot];
-      if (sourceItem === null){
-        return;
+    if (this.automergeEquipped){
+      // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
+      if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
+        if (((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) ||
+          (slot !== 'rightHand' && slot !== 'leftHand' && this.autoequipBestArmor)) {
+          this.mergeEquippedSlot(slot, destinationItem, lastdestinationIndex);
+        } else {//slot doesn't match the auto-equip owned.
+          return;
+        }
       }
-      if ((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) {
-        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", false, sourceItem.weaponStats?.baseName);
-      } else if (slot !== 'rightHand' && slot !== 'leftHand' &&this.autoequipBestArmor) {
-        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot, false, sourceItem.armorStats?.baseName);
-      } else {//slot doesn't match the auto-equip owned.
-        return;
-      }
-      this.characterService.characterState.equipment[slot] = destinationItem;
-      this.itemStacks[lastdestinationIndex] = null;
     }
+  }
+
+  mergeEquippedSlot(slot: EquipmentPosition, itemToMerge: Item, sourceItemIndex: number){
+    if (!instanceOfEquipment(itemToMerge)){
+      return;
+    }
+    let newItem;
+    const equippedItem = this.characterService.characterState.equipment[slot];
+    if (equippedItem === null){
+      this.characterService.characterState.equipment[slot] = itemToMerge;
+      this.itemStacks[sourceItemIndex] = null;
+      return;
+    }
+    if ((slot === 'rightHand' || slot === 'leftHand')) {
+      newItem = this.generateWeapon(equippedItem.value + itemToMerge.value, itemToMerge.weaponStats?.material + "", false, equippedItem.weaponStats?.baseName);
+    } else {
+      newItem = this.generateArmor(equippedItem.value + itemToMerge.value, itemToMerge.armorStats?.material + "", slot, false, equippedItem.armorStats?.baseName);
+    }
+    this.characterService.characterState.equipment[slot] = newItem;
+    this.itemStacks[sourceItemIndex] = null;
   }
 
   mergeSpiritGem(stack: ItemStack, power = 0){

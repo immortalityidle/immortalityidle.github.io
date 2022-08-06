@@ -57,7 +57,7 @@ export class ActivityService {
   totalExhaustedDays = 0;
   activityHeader = "";
   activityHeaderDescription = "";
-  hellEnabled = true; // flip this true to enable new postmortal content
+  hellEnabled = false; // flip this true to enable new postmortal content
   hellService?: HellService;
   spiritActivityProgress = false;
 
@@ -98,7 +98,7 @@ export class ActivityService {
         this.exhaustionDays--;
         return;
       }
-      if (this.characterService.characterState.bloodlineRank >= 9 && !(this.hellService?.inHell && this.hellService.currentHell == HellLevel.TreesOfKnives)){
+      if (this.characterService.characterState.bloodlineRank >= 9 && !(this.hellService?.inHell && this.hellService.currentHell === HellLevel.TreesOfKnives)){
         this.characterService.characterState.increaseAptitudeDaily();
       }
 
@@ -173,7 +173,7 @@ export class ActivityService {
         this.currentIndex = 0;
       }
       // do the spirit activity if we can
-      if (this.spiritActivity != null && this.characterService.characterState.status.mana.value >= 5){
+      if (this.spiritActivity !== null && this.characterService.characterState.status.mana.value >= 5){
         this.spiritActivityProgress = true;
         let activity = this.getActivityByType(this.spiritActivity);
         const rest = this.getActivityByType(ActivityType.Resting);
@@ -521,7 +521,7 @@ export class ActivityService {
     newList.push(this.Recruiting);
     newList.push(this.TrainingFollowers);
     newList.push(this.CombatTraining);
-    
+
     for (const activity of newList){
       // make sure we have no projectionOnly actvities if list is loaded from here
       activity.projectionOnly = false;
@@ -1099,10 +1099,10 @@ export class ActivityService {
             this.battleService.addEnemy({
               name: "an angry army",
               health: 2e11,
-              maxHealth: 2e11, 
+              maxHealth: 2e11,
               accuracy: 0.9,
               attack: 1e7,
-              defense: 1e7, 
+              defense: 1e7,
               loot: []
             });
           }
@@ -1115,10 +1115,10 @@ export class ActivityService {
           this.battleService.addEnemy({
             name: "an angry army",
             health: 2e11,
-            maxHealth: 2e11, 
+            maxHealth: 2e11,
             accuracy: 0.9,
             attack: 1e7,
-            defense: 1e7, 
+            defense: 1e7,
             loot: []
           });
           if (this.pauseOnImpossibleFail){
@@ -1131,10 +1131,10 @@ export class ActivityService {
           this.battleService.addEnemy({
             name: "an angry army",
             health: 2e11,
-            maxHealth: 2e11, 
+            maxHealth: 2e11,
             accuracy: 0.9,
             attack: 1e7,
-            defense: 1e7, 
+            defense: 1e7,
             loot: []
           });
           if (this.pauseOnImpossibleFail){
@@ -1167,10 +1167,10 @@ export class ActivityService {
             this.battleService.addEnemy({
               name: "an angry army",
               health: 2e11,
-              maxHealth: 2e11, 
+              maxHealth: 2e11,
               accuracy: 0.9,
               attack: 1e7,
-              defense: 1e7, 
+              defense: 1e7,
               loot: []
             });
           }

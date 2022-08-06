@@ -37,9 +37,11 @@ export interface BattleProperties {
   manaShieldUnlocked: boolean,
   manaAttackUnlocked: boolean,
   pyroclasmUnlocked: boolean,
+  fireShieldUnlocked: boolean,
   enableManaShield: boolean,
   enableManaAttack: boolean,
   enablePyroclasm: boolean,
+  enableFireShield: boolean,
   highestDamageTaken: number,
   highestDamageDealt: number
 }
@@ -61,9 +63,11 @@ export class BattleService {
   enableManaShield = false;
   enableManaAttack = false;
   enablePyroclasm = false;
+  enableFireShield = false;
   manaShieldUnlocked = false;
   manaAttackUnlocked = false;
   pyroclasmUnlocked = false;
+  fireShieldUnlocked = false;
   tickCounter: number;
   ticksPerFight = 10;
   highestDamageTaken = 0;
@@ -77,7 +81,7 @@ export class BattleService {
     private inventoryService: InventoryService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
-    
+
   ) {
     setTimeout(() => this.hellService = this.injector.get(HellService));
     this.enemies = [];
@@ -136,9 +140,11 @@ export class BattleService {
       manaShieldUnlocked: this.manaShieldUnlocked,
       manaAttackUnlocked: this.manaAttackUnlocked,
       pyroclasmUnlocked: this.pyroclasmUnlocked,
+      fireShieldUnlocked: this.fireShieldUnlocked,
       enableManaShield: this.enableManaShield,
       enableManaAttack: this.enableManaAttack,
       enablePyroclasm: this.enablePyroclasm,
+      enableFireShield: this.enableFireShield,
       highestDamageDealt: this.highestDamageDealt,
       highestDamageTaken: this.highestDamageTaken
     }
@@ -155,9 +161,11 @@ export class BattleService {
     this.enableManaShield = properties.enableManaShield;
     this.enableManaAttack = properties.enableManaAttack;
     this.enablePyroclasm = properties.enablePyroclasm || false;
+    this.enableFireShield = properties.enableFireShield || false;
     this.manaShieldUnlocked = properties.manaShieldUnlocked || false;
     this.manaAttackUnlocked = properties.manaAttackUnlocked || false;
     this.pyroclasmUnlocked = properties.pyroclasmUnlocked || false;
+    this.fireShieldUnlocked = properties.fireShieldUnlocked || false;
     this.highestDamageDealt = properties.highestDamageDealt || 0;
     this.highestDamageTaken = properties.highestDamageTaken || 0;
 }
@@ -180,7 +188,16 @@ export class BattleService {
             damage /= 2;
             this.characterService.characterState.status.mana.value -= 10;
           }
+          let damageBack = false;
+          if (this.enableFireShield && this.characterService.characterState.status.mana.value > 10000){
+            damage /= 10;
+            this.characterService.characterState.status.mana.value -= 10000;
+            damageBack = true;
+          }
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
+          if (damageBack){
+            this.damageEnemy(damage, "The flames of your shield strike back, damaging the enemy for " + damage + " damage.");
+          }
           if (damage > this.highestDamageTaken){
             this.highestDamageTaken = damage;
           }
@@ -283,11 +300,11 @@ export class BattleService {
     }
   }
 
-  damageEnemy(damage: number): number{
+  damageEnemy(damage: number, customMessage = ""): number{
     if (!this.currentEnemy){
       return 0;
     }
-    let enemyHealth = this.currentEnemy.enemy.health;
+    const enemyHealth = this.currentEnemy.enemy.health;
     this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
     damage -= enemyHealth;
     if (this.currentEnemy.enemy.health <= 0){
@@ -313,7 +330,11 @@ export class BattleService {
       }
       return (damage - enemyHealth) / 2; // return half the damage left over
     } else {
-      this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage", 'STANDARD', 'COMBAT');
+      if (customMessage === ""){
+        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage", 'STANDARD', 'COMBAT');
+      } else {
+        this.logService.addLogMessage(customMessage, 'STANDARD', 'COMBAT');
+      }
       return 0;
     }
   }
@@ -322,7 +343,7 @@ export class BattleService {
     this.currentEnemy = enemyStack;
   }
 
-  addEnemy(enemy: Enemy, repoEnemy = false){
+  addEnemy(enemy: Enemy){
     this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name === enemy.name) {
@@ -394,7 +415,7 @@ export class BattleService {
     if (!enemy.defeatEffect){
       return;
     }
-    if (enemy.defeatEffect == "respawnDouble"){
+    if (enemy.defeatEffect === "respawnDouble"){
       // add two more of the same enemy
       this.logService.addLogMessage("They just keep coming! Two more " + enemy.name + " appear!", "STANDARD", "COMBAT");
       this.addEnemy({

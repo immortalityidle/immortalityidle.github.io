@@ -7,7 +7,7 @@ import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 import { Activity, ActivityType } from './activity';
 import { FollowersService } from './followers.service';
-import { InventoryService } from './inventory.service';
+import { Equipment, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 
 export enum HellLevel {
@@ -115,7 +115,7 @@ export class HellService {
     }],
     unlocked: false,
     skipApprenticeshipLevel: 0
-  }  
+  }
 
   rehabilitation = {
     level: 0,
@@ -134,7 +134,7 @@ export class HellService {
         defense: 10,
         defeatEffect: "respawnDouble",
         loot: [ ]
-      });      
+      });
     }],
     resourceUse: [{
       stamina: 100
@@ -143,7 +143,7 @@ export class HellService {
     }],
     unlocked: false,
     skipApprenticeshipLevel: 0
-  }  
+  }
 
   honorAncestors = {
     level: 0,
@@ -166,6 +166,63 @@ export class HellService {
     unlocked: true,
     skipApprenticeshipLevel: 0
   }
+
+  copperMining = {
+    level: 0,
+    name: ['Copper Mining'],
+    activityType: ActivityType.CopperMining,
+    description: ["The copper pillars here look like they're made of a decent grade of copper. It looks like you have enough slack in your chains to turn and break off some pieces."],
+    consequenceDescription: ['Costs 100,000 stamina and produces one copper bar.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 100000;
+      this.inventoryService.addItem(this.itemRepoService.items['copperBar']);
+    }],
+    resourceUse: [{
+      stamina: 100000
+    }],
+    requirements: [{
+      strength: 1e24
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  forgeHammer = {
+    level: 0,
+    name: ['Forge Hammer'],
+    activityType: ActivityType.ForgeHammer,
+    description: ["Shape a bar of copper into a hammer using your bare hands. This would be so much easier with an anvil and tools."],
+    consequenceDescription: ['Costs 100,000 stamina and produces the worst hammer in the world.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 100000;
+      if (this.inventoryService.consume("metal", 1) > 0){
+        const newHammer: Equipment = {
+          id: 'weapon',
+          name: "Copper Hammer",
+          type: "equipment",
+          slot: "rightHand",
+          value: 1,
+          weaponStats: {
+            baseDamage: 1,
+            material: "metal",
+            durability: 1,
+            baseName: "hammer"
+          },
+          description: 'A crude copper hammer.'
+        };
+        this.inventoryService.addItem(newHammer);
+      }
+    }],
+    resourceUse: [{
+      stamina: 100000
+    }],
+    requirements: [{
+      strength: 1e24
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
 
   constructor(
     private injector: Injector,
@@ -201,7 +258,7 @@ export class HellService {
       if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()){
         hell.completeEffect();
         this.completedHellTasks.push(this.currentHell);
-          
+
       }
     });
 
@@ -240,9 +297,9 @@ export class HellService {
         maxHealth: 1e20 + (1e19 * extraPower),
         accuracy: 0.50,
         attack: 1e6 + (1e4 * extraPower),
-        defense: 1e8 + (1e7 * extraPower),        
+        defense: 1e8 + (1e7 * extraPower),
         loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted") ]
-      });      
+      });
     } else if (this.currentHell === HellLevel.Scissors){
       const extraPower = this.inventoryService.getQuantityByName("fingers");
       this.battleService.addEnemy({
@@ -251,7 +308,7 @@ export class HellService {
         maxHealth: 1e15 + (1e14 * extraPower),
         accuracy: 0.50,
         attack: 1e6 + (1e4 * extraPower),
-        defense: 1e8 + (1e7 * extraPower),        
+        defense: 1e8 + (1e7 * extraPower),
         loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted"), this.itemRepoService.items['fingers'] ]
       });
     } else if (this.currentHell === HellLevel.TreesOfKnives){
@@ -278,7 +335,7 @@ export class HellService {
   }
 
   fightHellBoss(){
-    if (this.currentHell == HellLevel.TongueRipping){
+    if (this.currentHell === HellLevel.TongueRipping){
       this.battleService.addEnemy({
         name: "Gorbolash the Gossip Gasher",
         // TODO: figure out stats
@@ -286,10 +343,10 @@ export class HellService {
         maxHealth: 1,
         accuracy: 0.8,
         attack: 1,
-        defense: 1,        
+        defense: 1,
         loot: [ this.itemRepoService.items['hellCrownTongueRippers'] ]
       });
-    } else if (this.currentHell == HellLevel.Scissors){
+    } else if (this.currentHell === HellLevel.Scissors){
       this.battleService.addEnemy({
         name: "Malgorath the Marriage Masher",
         // TODO: figure out stats
@@ -300,7 +357,7 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownScissors'] ]
       });
-    } else if (this.currentHell == HellLevel.TreesOfKnives){
+    } else if (this.currentHell === HellLevel.TreesOfKnives){
       this.battleService.addEnemy({
         name: "Flamgolus the Family Flayer",
         // TODO: figure out stats
@@ -311,7 +368,7 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownTreesOfKnives'] ]
       });
-    } else if (this.currentHell == HellLevel.Mirrors){
+    } else if (this.currentHell === HellLevel.Mirrors){
       this.battleService.addEnemy({
         name: "Myorshuggath the Mirror Master",
         // TODO: figure out stats
@@ -322,7 +379,7 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownMirrors'] ]
       });
-    } else if (this.currentHell == HellLevel.Steamers){
+    } else if (this.currentHell === HellLevel.Steamers){
       this.battleService.addEnemy({
         name: "Stactolus the Steamer",
         // TODO: figure out stats
@@ -333,6 +390,17 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownSteamers'] ]
       });
+    } else if (this.currentHell === HellLevel.CopperPillars){
+      this.battleService.addEnemy({
+        name: "Ignificor the Forever Burning",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownPillars'] ]
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -340,7 +408,7 @@ export class HellService {
         maxHealth: 1,
         accuracy: 0.8,
         attack: 1,
-        defense: 1,        
+        defense: 1,
         loot: [  ]
       });
     }
@@ -461,8 +529,7 @@ export class HellService {
       },
       dailyEffect: () => {
         // This might be a stupid way to nerf charisma. Consider other alternatives.
-        let totalPower = 1;
-        let reducer = .9;
+        const reducer = .9;
         this.characterService.characterState.attributes.charisma.value *= reducer;
       },
       exitEffect: () => {
@@ -562,7 +629,7 @@ export class HellService {
       dailyEffect: () => {
         // take damage from the steam and get robbed by troublemakers
         this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.05);
-        if (Math.random() < 0.1){
+        if (Math.random() < 0.2){
           this.logService.addLogMessage("As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?", "STANDARD", "EVENT")
           this.characterService.characterState.hellMoney -= this.characterService.characterState.hellMoney * 0.1;
         }
@@ -576,7 +643,7 @@ export class HellService {
       hint: "There so many troublemakers here that owe you some payback. I wonder if you can take them all on.",
       successCheck: () => {
         let totalEnemies = 0;
-        for (let enemyStack of this.battleService.enemies){
+        for (const enemyStack of this.battleService.enemies){
           totalEnemies += enemyStack.quantity;
         }
         return totalEnemies > 100; // tune this
@@ -584,22 +651,26 @@ export class HellService {
     },
     {
       name: "Hell of Copper Pillars",
-      description: "Torment for arsonists. The red-hot copper pillars remind you of all those times you played with fire.",
+      description: "Torment for arsonists. The red-hot copper pillars you will be bound to remind you of all those times you played with fire.",
       index: HellLevel.CopperPillars,
       entryEffect: () => {
-        /*
-        Task: Forge special hammers to break the chains
-        During the level: Blacksmithing/mining/smelting nerfed to only allow copper
-        */
+        this.characterService.stashWeapons();
+      },
+      exitEffect: () => {
+        this.characterService.restoreWeapons();
+      },
+      dailyEffect: () => {
+        // take damage from the pillar
+        this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You finally forge a hammer powerful enough to break through the chains that bind you to the pillar. The Lord of this Hell comes to investigate all the commotion as the chains fall to the ground.", "STANDARD", "STORY")
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.copperMining, this.forgeHammer ],
       projectionActivities: [],
-      hint: "",
+      hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       successCheck: () => {
-        return false;
+        return ((this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0)  > 100); // tune this
       }
     },
     {

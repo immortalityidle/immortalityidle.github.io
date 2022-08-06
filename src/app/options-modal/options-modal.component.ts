@@ -113,6 +113,12 @@ export class OptionsModalComponent {
     this.inventoryService.autoequipBestEnabled = event.target.checked;
   }
 
+  automergeEquippedChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.automergeEquipped = event.target.checked;
+  }
+
+
   autosellOldGems(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoSellOldGemsEnabled = event.target.checked;
@@ -147,7 +153,7 @@ export class OptionsModalComponent {
           event.target.checked = false;
           return;
         }
-      } 
+      }
       this.characterService.characterState.easyMode = true;
     }
   }

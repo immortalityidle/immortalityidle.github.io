@@ -7,7 +7,7 @@
       </ng-template>
       <div class="optionField">
         <span>
-          <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)" 
+          <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)"
             tooltip="This game is much too hard and takes much too long to play to the end. Click this to make it easier. Be warned: you will forever be known as a cultivator who took the easy path to immortality.">
           <label for="easyMode" >Easy Mode</label>
         </span>
@@ -70,6 +70,14 @@
           <label for="autoequipEnable">Automatically equip best equipment</label>
         </span>
       </div>
+      <div *ngIf="(inventoryService.autoequipBestArmor && inventoryService.autoArmorMergeUnlocked) || (inventoryService.autoequipBestWeapon && inventoryService.autoArmorMergeUnlocked)"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="automergeEquippedChange($event)"
+            id="automergeEquipped"  [checked]="inventoryService.automergeEquipped"/>
+          <label for="automergeEquipped">Automatically merge onto equipped equipment</label>
+        </span>
+      </div>
+
       <div *ngIf="inventoryService.useSpiritGemUnlocked"  class="optionField">
         <span>
           <input type="checkbox" (change)="useSpiritGemWeaponsChange($event)"

@@ -37,6 +37,7 @@ import { TimeOptionsPanelComponent } from './time-options-panel/time-options-pan
 import { LogFilterPanelComponent } from './log-filter-panel/log-filter-panel.component';
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { TextPanelComponent } from './text-panel/text-panel.component';
+import { BattleOptionsPanelComponent } from './battle-options-panel/battle-options-panel.component';
 
 const materialModules = [
   MatDialogModule,
@@ -77,6 +78,7 @@ const materialModules = [
     LogFilterPanelComponent,
     StatisticsPanelComponent,
     TextPanelComponent,
+    BattleOptionsPanelComponent,
   ],
   imports: [
     BrowserModule,

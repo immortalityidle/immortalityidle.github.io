@@ -636,7 +636,7 @@ export class ItemRepoService {
       type: 'wood',
       value: 8,
       description:  'An excellent quality log.',
-    }, 
+    },
     zitanLog: {
       id: 'zitanLog',
       name: 'zitan log',
@@ -1157,7 +1157,29 @@ export class ItemRepoService {
         this.logService.addLogMessage("The crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.", "STANDARD", 'STORY');
         this.battleService.pyroclasmUnlocked = true;
       },
-
+    },
+    hellCrownPillars: {
+      id: 'hellCrownPillars',
+      name: 'Crown of Pillars',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown topped with tiny copper pillar proving your mastery over the hell for arsonists. Using this will unlock a new spell.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.battleService){
+          this.battleService = this.injector.get(BattleService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)){
+          this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
+        }
+        this.logService.addLogMessage("The crown of Pillars settles onto your head, then sinks in to become a part of your very soul. Your inner fire stretches toward your skin, forming a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
+        this.battleService.fireShieldUnlocked = true;
+      },
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing
     fastPlayManual: {
