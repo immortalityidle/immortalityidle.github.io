@@ -57,7 +57,7 @@ export class ActivityService {
   totalExhaustedDays = 0;
   activityHeader = "";
   activityHeaderDescription = "";
-  hellEnabled = false; // flip this true to enable new postmortal content
+  hellEnabled = true; // flip this true to enable new postmortal content
   hellService?: HellService;
   spiritActivityProgress = false;
 
@@ -2565,7 +2565,7 @@ export class ActivityService {
     this.CombatTraining = {
       level: 0,
       name: ['Combat Training'],
-      activityType: ActivityType.Taunting,
+      activityType: ActivityType.CombatTraining,
       description: ['Hone every fiber of your being to martial sepremacy. Your experience in the Hell of Mirrors allowed you to examine your own combat form and understand how to improve it. Now all you need is practice.'],
       consequenceDescription: ['Uses 10000 stamina. Trains your Combat Mastery.'],
       consequence: [() => {

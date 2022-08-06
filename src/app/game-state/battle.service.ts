@@ -17,7 +17,8 @@ export interface Enemy {
   defense: number,
   /**Don't put items with use() functions in the loot (like food). They don't get persisted. */
   loot: Item[],
-  unique?: boolean
+  unique?: boolean,
+  defeatEffect?: string
 }
 
 export interface EnemyStack {
@@ -35,8 +36,10 @@ export interface BattleProperties {
   monthlyMonsterDay: number,
   manaShieldUnlocked: boolean,
   manaAttackUnlocked: boolean,
+  pyroclasmUnlocked: boolean,
   enableManaShield: boolean,
   enableManaAttack: boolean,
+  enablePyroclasm: boolean,
   highestDamageTaken: number,
   highestDamageDealt: number
 }
@@ -57,8 +60,10 @@ export class BattleService {
   yearlyMonsterDay: number;
   enableManaShield = false;
   enableManaAttack = false;
+  enablePyroclasm = false;
   manaShieldUnlocked = false;
   manaAttackUnlocked = false;
+  pyroclasmUnlocked = false;
   tickCounter: number;
   ticksPerFight = 10;
   highestDamageTaken = 0;
@@ -113,8 +118,7 @@ export class BattleService {
   }
 
   reset(){
-    this.enemies = [];
-    this.currentEnemy = null;
+    this.clearEnemies();
     this.kills = 0;
     this.troubleKills = 0;
     this.yearlyMonsterDay = 0;
@@ -131,8 +135,10 @@ export class BattleService {
       monthlyMonsterDay: this.yearlyMonsterDay,
       manaShieldUnlocked: this.manaShieldUnlocked,
       manaAttackUnlocked: this.manaAttackUnlocked,
+      pyroclasmUnlocked: this.pyroclasmUnlocked,
       enableManaShield: this.enableManaShield,
       enableManaAttack: this.enableManaAttack,
+      enablePyroclasm: this.enablePyroclasm,
       highestDamageDealt: this.highestDamageDealt,
       highestDamageTaken: this.highestDamageTaken
     }
@@ -148,6 +154,10 @@ export class BattleService {
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
     this.enableManaShield = properties.enableManaShield;
     this.enableManaAttack = properties.enableManaAttack;
+    this.enablePyroclasm = properties.enablePyroclasm || false;
+    this.manaShieldUnlocked = properties.manaShieldUnlocked || false;
+    this.manaAttackUnlocked = properties.manaAttackUnlocked || false;
+    this.pyroclasmUnlocked = properties.pyroclasmUnlocked || false;
     this.highestDamageDealt = properties.highestDamageDealt || 0;
     this.highestDamageTaken = properties.highestDamageTaken || 0;
 }
@@ -206,7 +216,7 @@ export class BattleService {
             }
             if (this.hellService?.inHell){
               this.hellService.beaten = true;
-              this.enemies = [];
+              this.clearEnemies();
             }
             return;
           }
@@ -238,10 +248,15 @@ export class BattleService {
         damage *= 2;
         this.characterService.characterState.status.mana.value -= 10;
       }
+      let blowthrough = false;
+      if (this.enablePyroclasm && this.characterService.characterState.status.mana.value > 10000){
+        damage *= 10;
+        this.characterService.characterState.status.mana.value -= 10000;
+        blowthrough = true;
+      }
       if (damage > this.highestDamageDealt){
         this.highestDamageDealt = damage;
       }
-      this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
       // degrade weapon
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats){
         this.characterService.characterState.equipment.leftHand.weaponStats.durability--;
@@ -257,30 +272,49 @@ export class BattleService {
           this.characterService.characterState.equipment.rightHand = null;
         }
       }
-
-      if (this.currentEnemy.enemy.health <= 0){
-        this.kills++;
-        this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
-        for (const item of this.currentEnemy.enemy.loot){
-          const lootItem = this.itemRepoService.getItemById(item.id);
-          if (lootItem){
-            this.inventoryService.addItem(lootItem);
-          } else {
-            // the item was generated, not part of the repo, so just add it instead of using the lookup
-            this.inventoryService.addItem(item);
-          }
+      let overage = this.damageEnemy(damage);
+      if (blowthrough){
+        while (overage > 0 && this.enemies.length > 0){
+          // keep using extra damage until it's gone or the enemies are
+          this.currentEnemy = this.enemies[0];
+          overage = this.damageEnemy(overage);
         }
-        this.currentEnemy.quantity--;
-        if (this.currentEnemy.quantity <= 0){
-          const index = this.enemies.indexOf(this.currentEnemy);
-          this.enemies.splice(index, 1);
-          this.currentEnemy = null;
-        } else {
-          this.currentEnemy.enemy.health = this.currentEnemy.enemy.maxHealth;
-        }
-      } else {
-        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage", 'STANDARD', 'COMBAT');
       }
+    }
+  }
+
+  damageEnemy(damage: number): number{
+    if (!this.currentEnemy){
+      return 0;
+    }
+    let enemyHealth = this.currentEnemy.enemy.health;
+    this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
+    damage -= enemyHealth;
+    if (this.currentEnemy.enemy.health <= 0){
+      this.kills++;
+      this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
+      for (const item of this.currentEnemy.enemy.loot){
+        const lootItem = this.itemRepoService.getItemById(item.id);
+        if (lootItem){
+          this.inventoryService.addItem(lootItem);
+        } else {
+          // the item was generated, not part of the repo, so just add it instead of using the lookup
+          this.inventoryService.addItem(item);
+        }
+      }
+      this.currentEnemy.quantity--;
+      this.defeatEffect(this.currentEnemy.enemy);
+      if (this.currentEnemy.quantity <= 0){
+        const index = this.enemies.indexOf(this.currentEnemy);
+        this.enemies.splice(index, 1);
+        this.currentEnemy = null;
+      } else {
+        this.currentEnemy.enemy.health = this.currentEnemy.enemy.maxHealth;
+      }
+      return (damage - enemyHealth) / 2; // return half the damage left over
+    } else {
+      this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage", 'STANDARD', 'COMBAT');
+      return 0;
     }
   }
 
@@ -305,6 +339,11 @@ export class BattleService {
       this.currentEnemy = this.enemies[0];
     }
 
+  }
+
+  clearEnemies(){
+    this.enemies = [];
+    this.currentEnemy = null;
   }
 
   // generate a monster based on current troubleKills
@@ -348,6 +387,36 @@ export class BattleService {
         this.inventoryService.addItem(armor);
         this.characterService.characterState.equipment[armor.slot] = null;
       }
+    }
+  }
+
+  defeatEffect(enemy: Enemy){
+    if (!enemy.defeatEffect){
+      return;
+    }
+    if (enemy.defeatEffect == "respawnDouble"){
+      // add two more of the same enemy
+      this.logService.addLogMessage("They just keep coming! Two more " + enemy.name + " appear!", "STANDARD", "COMBAT");
+      this.addEnemy({
+        name: enemy.name,
+        health: enemy.maxHealth,
+        maxHealth: enemy.maxHealth,
+        accuracy: enemy.accuracy,
+        attack: enemy.attack,
+        defense: enemy.defense,
+        defeatEffect: enemy.defeatEffect,
+        loot: enemy.loot
+      });
+      this.addEnemy({
+        name: enemy.name,
+        health: enemy.maxHealth,
+        maxHealth: enemy.maxHealth,
+        accuracy: enemy.accuracy,
+        attack: enemy.attack,
+        defense: enemy.defense,
+        defeatEffect: enemy.defeatEffect,
+        loot: enemy.loot
+      });
     }
   }
 

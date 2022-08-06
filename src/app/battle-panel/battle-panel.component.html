@@ -12,6 +12,11 @@
         <input type="checkbox" (change)="manaAttackToggle($event)" id="manaStrike" [checked]="battleService.enableManaAttack"/>
         <label for="manaStrike">Activate Mana Strike</label>
       </span>
+      <span class="battleOption" *ngIf="battleService.pyroclasmUnlocked"
+        tooltip="Focus your mana and blast your enemies with heat so intense their children's children will get burned. Each use of this ability requires 10,000 mana.">
+        <input type="checkbox" (change)="pyroclasmToggle($event)" id="pyroclasm" [checked]="battleService.enablePyroclasm"/>
+        <label for="pyroclasm">Activate Pyroclasm</label>
+      </span>
     </span>
     <span class="rightAligned" tooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
       <button *ngIf="!battleService.autoTroubleUnlocked" (click)="battleService.trouble()">Look for Trouble</button>

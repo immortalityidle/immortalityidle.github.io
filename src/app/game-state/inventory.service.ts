@@ -76,6 +76,7 @@ export interface AutoItemEntry {
 
 export interface InventoryProperties {
   itemStacks: (ItemStack | null)[],
+  stashedItemStacks: (ItemStack | null)[],
   autoSellUnlocked: boolean,
   autoSellEntries: AutoItemEntry[],
   autoUseUnlocked: boolean,
@@ -110,6 +111,7 @@ export class InventoryService {
   hellService?: HellService
   bigNumberPipe = new BigNumberPipe;
   itemStacks: (ItemStack | null)[] = [];
+  stashedItemStacks: (ItemStack | null)[] = [];
   maxItems = 10;
   maxStackSize = 100;
   noFood: boolean;
@@ -233,6 +235,7 @@ export class InventoryService {
   getProperties(): InventoryProperties {
     return {
       itemStacks: this.itemStacks,
+      stashedItemStacks: this.stashedItemStacks,
       autoSellUnlocked: this.autoSellUnlocked,
       autoSellEntries: this.autoSellEntries,
       autoUseUnlocked: this.autoUseUnlocked,
@@ -263,6 +266,7 @@ export class InventoryService {
 
   setProperties(properties: InventoryProperties) {
     this.itemStacks = properties.itemStacks;
+    this.stashedItemStacks = properties.stashedItemStacks || [];
     this.autoSellUnlocked = properties.autoSellUnlocked || false;
     this.autoSellEntries = properties.autoSellEntries || [];
     this.autoUseUnlocked = properties.autoUseUnlocked || false;
@@ -717,6 +721,7 @@ export class InventoryService {
     this.lifetimePillsUsed = 0;
     this.lifetimeGemsSold = 0;
     this.itemStacks = [];
+    this.stashedItemStacks = [];
     this.changeMaxItems(10);
     if (this.characterService.characterState.bloodlineRank >= 6) {
       return; // Skip the family gifts, thematically inappropriate
@@ -1413,6 +1418,26 @@ export class InventoryService {
       if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power){
         this.mergeSpiritGem(itemIterator, power);
         return;
+      }
+    }
+  }
+
+  stashInventory() {
+    this.stashedItemStacks = [];
+    for (let i = 0; i < this.itemStacks.length; i++){
+      if (this.itemStacks[i]){
+        this.stashedItemStacks.push(this.itemStacks[i]);
+        this.itemStacks[i] = null;
+      }
+    }
+  }
+
+  restoreInventory() {
+    this.itemStacks = [];
+    for (let i = 0; i < this.stashedItemStacks.length; i++){
+      if (this.stashedItemStacks[i]){
+        this.itemStacks.push(this.stashedItemStacks[i]);
+        this.stashedItemStacks[i] = null;
       }
     }
   }

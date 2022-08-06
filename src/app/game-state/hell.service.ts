@@ -117,6 +117,34 @@ export class HellService {
     skipApprenticeshipLevel: 0
   }  
 
+  rehabilitation = {
+    level: 0,
+    name: ['Rehabilitate Troublemakers'],
+    activityType: ActivityType.Rehabilitation,
+    description: ['You recognize a bunch of the troublemakers here as people who used to beat and rob you in your past lives. Perhaps you can give them some some friendly rehabilitation. With your fists.'],
+    consequenceDescription: ['Uses 100 Stamina and 10 hell money as bait. Breaks a troublemaker out of their basket and picks a fight with them.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 100;
+      this.battleService.addEnemy({
+        name: "Troublemaker",
+        health: 100,
+        maxHealth: 100,
+        accuracy: 0.50,
+        attack: 10,
+        defense: 10,
+        defeatEffect: "respawnDouble",
+        loot: [ ]
+      });      
+    }],
+    resourceUse: [{
+      stamina: 100
+    }],
+    requirements: [{
+    }],
+    unlocked: false,
+    skipApprenticeshipLevel: 0
+  }  
+
   honorAncestors = {
     level: 0,
     name: ['Honor Ancestors'],
@@ -293,6 +321,17 @@ export class HellService {
         attack: 1,
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownMirrors'] ]
+      });
+    } else if (this.currentHell == HellLevel.Steamers){
+      this.battleService.addEnemy({
+        name: "Stactolus the Steamer",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownSteamers'] ]
       });
     } else {
       this.battleService.addEnemy({
@@ -513,19 +552,34 @@ export class HellService {
       description: "Torment for hypocrites and troublemakers. The steam baskets here are just the right size for you.",
       index: HellLevel.Steamers,
       entryEffect: () => {
-        /*
-        Task: Rehabilitate some troublemakers
-        During the level: Constantly robbed and beaten by troublemakers
-        */
+        this.characterService.stashWeapons();
+        this.characterService.stashArmor();
+      },
+      exitEffect: () => {
+        this.characterService.restoreWeapons();
+        this.characterService.restoreArmor();
+      },
+      dailyEffect: () => {
+        // take damage from the steam and get robbed by troublemakers
+        this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.05);
+        if (Math.random() < 0.1){
+          this.logService.addLogMessage("As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?", "STANDARD", "EVENT")
+          this.characterService.characterState.hellMoney -= this.characterService.characterState.hellMoney * 0.1;
+        }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.battleService.clearEnemies();
+        this.logService.addLogMessage("You defeat so many troublemakers that the rest all beg to return to their baskets for their regular torment.", "STANDARD", "STORY")
       },
-      activities: [],
-      projectionActivities: [],
-      hint: "",
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.rehabilitation],
+      projectionActivities: [this.burnMoney],
+      hint: "There so many troublemakers here that owe you some payback. I wonder if you can take them all on.",
       successCheck: () => {
-        return false;
+        let totalEnemies = 0;
+        for (let enemyStack of this.battleService.enemies){
+          totalEnemies += enemyStack.quantity;
+        }
+        return totalEnemies > 100; // tune this
       }
     },
     {

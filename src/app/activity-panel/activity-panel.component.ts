@@ -8,6 +8,7 @@ import { HellService } from '../game-state/hell.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { JoinTheGodsText } from '../game-state/textResources';
+import { InventoryService } from '../game-state/inventory.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -23,6 +24,7 @@ export class ActivityPanelComponent {
     public activityService: ActivityService,
     public characterService: CharacterService,
     public hellService: HellService,
+    private inventoryService: InventoryService,
     public dialog: MatDialog
   ) {
     this.character = characterService.characterState;
@@ -35,6 +37,7 @@ export class ActivityPanelComponent {
     });
     dialogRef.afterClosed().subscribe(() => {
       this.hellService.inHell = true;
+      this.inventoryService.stashInventory();
       this.activityService.reloadActivities();
     });
   }

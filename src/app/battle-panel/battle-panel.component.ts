@@ -29,15 +29,23 @@ export class BattlePanelComponent implements OnInit {
 
   manaShieldToggle(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    if (this.characterService.characterState.manaUnlocked){
+    if (this.battleService.manaShieldUnlocked){
       this.battleService.enableManaShield = event.target.checked;
     }
   }
 
   manaAttackToggle(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;  
-    if (this.characterService.characterState.manaUnlocked){
+    if (this.battleService.manaAttackUnlocked){
       this.battleService.enableManaAttack = event.target.checked;
     }
   }
+
+  pyroclasmToggle(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;  
+    if (this.battleService.pyroclasmUnlocked){
+      this.battleService.enablePyroclasm = event.target.checked;
+    }
+  }
+
 }
