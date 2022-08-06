@@ -315,6 +315,38 @@ export class InventoryService {
     }
   }
 
+  sortInventory(){
+    const tempStacks: ItemStack[] = [];
+    const gemStacks: ItemStack[] = [];
+    const equipStacks: ItemStack[] = [];
+    for (let key = 0; key < this.itemStacks.length; key++){
+      if(!this.itemStacks[key]){
+        continue;
+      } else if (this.itemStacks[key]?.item.type === "spiritGem"){
+        gemStacks.push(this.itemStacks[key]!);
+      } else if (this.itemStacks[key]?.item.type === "equipment"){
+        equipStacks.push(this.itemStacks[key]!);
+      } else {
+        tempStacks.push(this.itemStacks[key]!);
+      }
+    }
+    tempStacks.sort((a,b) => b.quantity - a.quantity);
+    tempStacks.sort((a,b) => b.item.value - a.item.value);
+    tempStacks.sort((a,b) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
+    equipStacks.sort((a,b) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
+    equipStacks.sort((a,b) => b.item.value - a.item.value);
+    gemStacks.sort((a,b) => b.quantity - a.quantity);
+    gemStacks.sort((a,b) => b.item.value - a.item.value);
+    const emptySlots = this.itemStacks.length - tempStacks.length - gemStacks.length - equipStacks.length;
+    this.itemStacks = tempStacks;
+    this.itemStacks.push(...equipStacks);
+    this.itemStacks.push(...gemStacks);
+    for (let i = 0; i < emptySlots; i++){
+      this.itemStacks.push(null);
+    }
+    
+  }
+
   // materials are wood or metal
   generateWeapon(grade: number, material: string, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment {
 
