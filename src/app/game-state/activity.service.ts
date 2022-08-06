@@ -185,6 +185,9 @@ export class ActivityService {
       } else {
         this.spiritActivityProgress = false;
       }
+      if (this.characterService.characterState.money > this.characterService.characterState.maxMoney) {
+        this.characterService.characterState.money = this.characterService.characterState.maxMoney;
+      }
     });
     mainLoopService.longTickSubject.subscribe(() => {
       this.upgradeActivities(false);

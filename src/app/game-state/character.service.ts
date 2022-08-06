@@ -46,7 +46,7 @@ export class CharacterService {
         this.characterState.status.nourishment.value = 0;
         if (this.characterState.attributes.spirituality.value > 0){
           // you're spritual now, you can fast!
-          let starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
+          const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
           logService.addLogMessage("You take " + starvationDamage + " damage from starvation.", "INJURY", "COMBAT"); // it's not really a combat message, but I didn't want to spam the event log
           this.characterState.status.health.value -= starvationDamage;
           this.characterState.increaseAttribute('spirituality', 0.1);
