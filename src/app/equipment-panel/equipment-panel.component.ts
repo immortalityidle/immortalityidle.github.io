@@ -53,8 +53,9 @@ export class EquipmentPanelComponent {
     const sourceIndex = parseInt(sourceIndexString);
     if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
       const itemToEquip = this.inventoryService.itemStacks[sourceIndex];
+      const equipmentSlot: EquipmentPosition = slot as EquipmentPosition;
       if (itemToEquip){
-        this.inventoryService.equip(itemToEquip);
+        this.inventoryService.mergeEquippedSlot(equipmentSlot, itemToEquip.item, sourceIndex);
         this.inventoryService.selectedItem = null;
       }
     }

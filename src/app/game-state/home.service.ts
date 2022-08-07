@@ -896,7 +896,7 @@ export class HomeService {
     } else {
       count = Math.floor(maximumCount / 2);
     }
-    increase = 10 * (count * (count + 1) / 2); //mathmatically increase by linear sum n (n + 1) / 2
+    increase = 10 * (count * (count - 1) / 2); //mathmatically increase by linear sum n (n + 1) / 2
     price = this.landPrice * count + increase;
     if (this.characterService.characterState.money >= price){
       this.characterService.characterState.money -= price;

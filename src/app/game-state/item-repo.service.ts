@@ -636,7 +636,7 @@ export class ItemRepoService {
       type: 'wood',
       value: 8,
       description:  'An excellent quality log.',
-    }, 
+    },
     zitanLog: {
       id: 'zitanLog',
       name: 'zitan log',
@@ -1045,7 +1045,7 @@ export class ItemRepoService {
       value: Infinity,
       description: 'A crown proving your mastery over the Hell of Tongue Rippers. Using this will unlock a new type of follower.',
       useLabel: 'Accept the Crown',
-      useDescription: 'Accept the Crown.',
+      useDescription: '',
       useConsumes: true,
       use: () => {
         if (!this.hellService){
@@ -1068,7 +1068,7 @@ export class ItemRepoService {
       value: Infinity,
       description: 'A crown proving your mastery over the Hell of Scissors. Using this will unlock a new ability for your followers.',
       useLabel: 'Accept the Crown',
-      useDescription: 'Accept the Crown.',
+      useDescription: '',
       useConsumes: true,
       use: () => {
         if (!this.hellService){
@@ -1092,7 +1092,7 @@ export class ItemRepoService {
       value: Infinity,
       description: 'A crown proving your mastery over the Hell of Trees of Knives. Using this will unlock a new follower.',
       useLabel: 'Accept the Crown',
-      useDescription: 'Accept the Crown.',
+      useDescription: '',
       useConsumes: true,
       use: () => {
         if (!this.hellService){
@@ -1115,7 +1115,7 @@ export class ItemRepoService {
       value: Infinity,
       description: 'A crown proving your mastery over the Hell of Mirrors. Using this will unlock a new understanding of combat.',
       useLabel: 'Accept the Crown',
-      useDescription: 'Accept the Crown.',
+      useDescription: '',
       useConsumes: true,
       use: () => {
         if (!this.hellService){
@@ -1133,6 +1133,52 @@ export class ItemRepoService {
         this.logService.addLogMessage("The crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.", "STANDARD", 'STORY');
         this.characterService.characterState.attributes.combatMastery.value += 1;
         this.activityService.CombatTraining.unlocked = true;
+      },
+    },
+    hellCrownSteamers: {
+      id: 'hellCrownSteamers',
+      name: 'Crown of Steam',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A misty crown proving your mastery over the Hell of Steamers. Using this will unlock a new spell.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.battleService){
+          this.battleService = this.injector.get(BattleService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.Steamers)){
+          this.hellService.completedHellBosses.push(HellLevel.Steamers);
+        }
+        this.logService.addLogMessage("The crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.", "STANDARD", 'STORY');
+        this.battleService.pyroclasmUnlocked = true;
+      },
+    },
+    hellCrownPillars: {
+      id: 'hellCrownPillars',
+      name: 'Crown of Pillars',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown topped with tiny copper pillar proving your mastery over the hell for arsonists. Using this will unlock a new spell.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.battleService){
+          this.battleService = this.injector.get(BattleService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)){
+          this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
+        }
+        this.logService.addLogMessage("The crown of Pillars settles onto your head, then sinks in to become a part of your very soul. Your inner fire stretches toward your skin, forming a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
+        this.battleService.fireShieldUnlocked = true;
       },
     },
     //TODO: tune prices on all manuals, currently silly cheap for testing

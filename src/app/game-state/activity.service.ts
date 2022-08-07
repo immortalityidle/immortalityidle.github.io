@@ -98,7 +98,7 @@ export class ActivityService {
         this.exhaustionDays--;
         return;
       }
-      if (this.characterService.characterState.bloodlineRank >= 9 && !(this.hellService?.inHell && this.hellService.currentHell == HellLevel.TreesOfKnives)){
+      if (this.characterService.characterState.bloodlineRank >= 9 && !(this.hellService?.inHell && this.hellService.currentHell === HellLevel.TreesOfKnives)){
         this.characterService.characterState.increaseAptitudeDaily();
       }
 
@@ -173,7 +173,7 @@ export class ActivityService {
         this.currentIndex = 0;
       }
       // do the spirit activity if we can
-      if (this.spiritActivity != null && this.characterService.characterState.status.mana.value >= 5){
+      if (this.spiritActivity !== null && this.characterService.characterState.status.mana.value >= 5){
         this.spiritActivityProgress = true;
         let activity = this.getActivityByType(this.spiritActivity);
         const rest = this.getActivityByType(ActivityType.Resting);
@@ -184,6 +184,9 @@ export class ActivityService {
         this.characterService.characterState.status.mana.value -= 5;
       } else {
         this.spiritActivityProgress = false;
+      }
+      if (this.characterService.characterState.money > this.characterService.characterState.maxMoney) {
+        this.characterService.characterState.money = this.characterService.characterState.maxMoney;
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {
@@ -518,7 +521,7 @@ export class ActivityService {
     newList.push(this.Recruiting);
     newList.push(this.TrainingFollowers);
     newList.push(this.CombatTraining);
-    
+
     for (const activity of newList){
       // make sure we have no projectionOnly actvities if list is loaded from here
       activity.projectionOnly = false;
@@ -1096,10 +1099,10 @@ export class ActivityService {
             this.battleService.addEnemy({
               name: "an angry army",
               health: 2e11,
-              maxHealth: 2e11, 
+              maxHealth: 2e11,
               accuracy: 0.9,
               attack: 1e7,
-              defense: 1e7, 
+              defense: 1e7,
               loot: []
             });
           }
@@ -1112,10 +1115,10 @@ export class ActivityService {
           this.battleService.addEnemy({
             name: "an angry army",
             health: 2e11,
-            maxHealth: 2e11, 
+            maxHealth: 2e11,
             accuracy: 0.9,
             attack: 1e7,
-            defense: 1e7, 
+            defense: 1e7,
             loot: []
           });
           if (this.pauseOnImpossibleFail){
@@ -1128,10 +1131,10 @@ export class ActivityService {
           this.battleService.addEnemy({
             name: "an angry army",
             health: 2e11,
-            maxHealth: 2e11, 
+            maxHealth: 2e11,
             accuracy: 0.9,
             attack: 1e7,
-            defense: 1e7, 
+            defense: 1e7,
             loot: []
           });
           if (this.pauseOnImpossibleFail){
@@ -1164,10 +1167,10 @@ export class ActivityService {
             this.battleService.addEnemy({
               name: "an angry army",
               health: 2e11,
-              maxHealth: 2e11, 
+              maxHealth: 2e11,
               accuracy: 0.9,
               attack: 1e7,
-              defense: 1e7, 
+              defense: 1e7,
               loot: []
             });
           }
@@ -2565,7 +2568,7 @@ export class ActivityService {
     this.CombatTraining = {
       level: 0,
       name: ['Combat Training'],
-      activityType: ActivityType.Taunting,
+      activityType: ActivityType.CombatTraining,
       description: ['Hone every fiber of your being to martial sepremacy. Your experience in the Hell of Mirrors allowed you to examine your own combat form and understand how to improve it. Now all you need is practice.'],
       consequenceDescription: ['Uses 10000 stamina. Trains your Combat Mastery.'],
       consequence: [() => {

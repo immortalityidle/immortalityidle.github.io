@@ -46,8 +46,8 @@ export class CharacterService {
         this.characterState.status.nourishment.value = 0;
         if (this.characterState.attributes.spirituality.value > 0){
           // you're spritual now, you can fast!
-          let starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
-          logService.addLogMessage("You take " + starvationDamage + " damage from starvation.", "INJURY", "EVENT");
+          const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
+          logService.addLogMessage("You take " + starvationDamage + " damage from starvation.", "INJURY", "COMBAT"); // it's not really a combat message, but I didn't want to spam the event log
           this.characterState.status.health.value -= starvationDamage;
           this.characterState.increaseAttribute('spirituality', 0.1);
           if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
@@ -267,6 +267,28 @@ export class CharacterService {
     this.characterState.equipment.leftHand = this.characterState.stashedEquipment.leftHand;
     this.characterState.stashedEquipment.rightHand = null;
     this.characterState.stashedEquipment.leftHand = null;
+  }
+
+  stashArmor(){
+    this.characterState.stashedEquipment.head = this.characterState.equipment.head;
+    this.characterState.stashedEquipment.body = this.characterState.equipment.body;
+    this.characterState.stashedEquipment.legs = this.characterState.equipment.legs;
+    this.characterState.stashedEquipment.feet = this.characterState.equipment.feet;
+    this.characterState.equipment.head = null;
+    this.characterState.equipment.body = null;
+    this.characterState.equipment.legs = null;
+    this.characterState.equipment.feet = null;
+  }
+
+  restoreArmor(){
+    this.characterState.equipment.head = this.characterState.stashedEquipment.head;
+    this.characterState.equipment.body = this.characterState.stashedEquipment.body;
+    this.characterState.equipment.legs = this.characterState.stashedEquipment.legs;
+    this.characterState.equipment.feet = this.characterState.stashedEquipment.feet;
+    this.characterState.stashedEquipment.head = null;
+    this.characterState.stashedEquipment.body = null;
+    this.characterState.stashedEquipment.legs = null;
+    this.characterState.stashedEquipment.feet = null;
   }
 
   stashMoney(){

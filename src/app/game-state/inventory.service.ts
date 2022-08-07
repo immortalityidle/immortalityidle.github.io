@@ -77,6 +77,7 @@ export interface AutoItemEntry {
 
 export interface InventoryProperties {
   itemStacks: (ItemStack | null)[],
+  stashedItemStacks: (ItemStack | null)[],
   autoSellUnlocked: boolean,
   autoSellEntries: AutoItemEntry[],
   autoUseUnlocked: boolean,
@@ -104,7 +105,8 @@ export interface InventoryProperties {
   thrownAwayItems: number,
   autoSellOldGemsUnlocked: boolean,
   autoSellOldGemsEnabled: boolean,
-  autoBuyFood: boolean
+  autoBuyFood: boolean,
+  automergeEquipped: boolean
 }
 
 @Injectable({
@@ -114,6 +116,7 @@ export class InventoryService {
   hellService?: HellService
   bigNumberPipe = new BigNumberPipe;
   itemStacks: (ItemStack | null)[] = [];
+  stashedItemStacks: (ItemStack | null)[] = [];
   maxItems = 10;
   maxStackSize = 100;
   noFood: boolean;
@@ -154,6 +157,7 @@ export class InventoryService {
   autoSellOldGemsUnlocked: boolean;
   autoSellOldGemsEnabled: boolean;
   autoBuyFood = true;
+  automergeEquipped = false;
 
   constructor(
     private injector: Injector,
@@ -223,13 +227,15 @@ export class InventoryService {
         this.autoequipArmor();
       }
       for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
-        if(this.characterService.characterState.equipment[key]){
-          this.updateArmorDescription(this.characterService.characterState.equipment[key]!);
+        const item = this.characterService.characterState.equipment[key]
+        if(item){
+          this.updateArmorDescription(item);
         }
       }
       for (const key of ["leftHand","rightHand"] as EquipmentPosition[]){
-        if(this.characterService.characterState.equipment[key]){
-          this.updateWeaponDescription(this.characterService.characterState.equipment[key]!);
+        const item = this.characterService.characterState.equipment[key]
+        if(item){
+          this.updateWeaponDescription(item);
         }
       }
 
@@ -243,6 +249,7 @@ export class InventoryService {
   getProperties(): InventoryProperties {
     return {
       itemStacks: this.itemStacks,
+      stashedItemStacks: this.stashedItemStacks,
       autoSellUnlocked: this.autoSellUnlocked,
       autoSellEntries: this.autoSellEntries,
       autoUseUnlocked: this.autoUseUnlocked,
@@ -270,12 +277,14 @@ export class InventoryService {
       thrownAwayItems: this.thrownAwayItems,
       autoSellOldGemsUnlocked: this.autoSellOldGemsUnlocked,
       autoSellOldGemsEnabled: this.autoSellOldGemsEnabled,
-      autoBuyFood: this.autoBuyFood
+      autoBuyFood: this.autoBuyFood,
+      automergeEquipped: this.automergeEquipped
     }
   }
 
   setProperties(properties: InventoryProperties) {
     this.itemStacks = properties.itemStacks;
+    this.stashedItemStacks = properties.stashedItemStacks || [];
     this.autoSellUnlocked = properties.autoSellUnlocked || false;
     this.autoSellEntries = properties.autoSellEntries || [];
     this.autoUseUnlocked = properties.autoUseUnlocked || false;
@@ -308,6 +317,7 @@ export class InventoryService {
     this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;
     this.autoSellOldGemsEnabled = properties.autoSellOldGemsEnabled || false;
     this.autoBuyFood = properties.autoBuyFood ?? true;
+    this.automergeEquipped = properties.automergeEquipped || false;
   }
 
   farmFoodList = [
@@ -329,6 +339,39 @@ export class InventoryService {
     while (this.itemStacks.length < newValue){
       this.itemStacks.push(null);
     }
+  }
+
+  sortInventory(){
+    const tempStacks: ItemStack[] = [];
+    const gemStacks: ItemStack[] = [];
+    const equipStacks: ItemStack[] = [];
+    for (let key = 0; key < this.itemStacks.length; key++){
+      const itemStack = this.itemStacks[key];
+      if(!itemStack){
+        continue;
+      } else if (this.itemStacks[key]?.item.type === "spiritGem"){
+        gemStacks.push(itemStack);
+      } else if (this.itemStacks[key]?.item.type === "equipment"){
+        equipStacks.push(itemStack);
+      } else {
+        tempStacks.push(itemStack);
+      }
+    }
+    tempStacks.sort((a,b) => b.quantity - a.quantity);
+    tempStacks.sort((a,b) => b.item.value - a.item.value);
+    tempStacks.sort((a,b) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
+    equipStacks.sort((a,b) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
+    equipStacks.sort((a,b) => b.item.value - a.item.value);
+    gemStacks.sort((a,b) => b.quantity - a.quantity);
+    gemStacks.sort((a,b) => b.item.value - a.item.value);
+    const emptySlots = this.itemStacks.length - tempStacks.length - gemStacks.length - equipStacks.length;
+    this.itemStacks = tempStacks;
+    this.itemStacks.push(...equipStacks);
+    this.itemStacks.push(...gemStacks);
+    for (let i = 0; i < emptySlots; i++){
+      this.itemStacks.push(null);
+    }
+
   }
 
   // materials are wood or metal
@@ -387,7 +430,7 @@ export class InventoryService {
         durability: durability,
         baseName: baseName
       },
-      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " + 
+      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " +
         this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
     };
   }
@@ -404,7 +447,7 @@ export class InventoryService {
     if(!armor.armorStats) {
       return;
     }
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + ".<br/>Defense: " + 
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + ".<br/>Defense: " +
       this.bigNumberPipe.transform(armor.armorStats.defense) + "<br/>Durability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
@@ -569,7 +612,7 @@ export class InventoryService {
   }
 
   generateArmor(grade: number, material: string, slot: EquipmentPosition, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment{
-    
+
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
@@ -626,7 +669,7 @@ export class InventoryService {
         durability: durability,
         baseName: baseName
       },
-      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " + 
+      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " +
         this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
     };
 
@@ -733,6 +776,7 @@ export class InventoryService {
     this.lifetimePillsUsed = 0;
     this.lifetimeGemsSold = 0;
     this.itemStacks = [];
+    this.stashedItemStacks = [];
     this.changeMaxItems(10);
     if (this.characterService.characterState.bloodlineRank >= 6) {
       return; // Skip the family gifts, thematically inappropriate
@@ -1174,7 +1218,7 @@ export class InventoryService {
     if (cheapest){
       itemValue = Infinity;
     }
-    
+
     let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++){
       const itemIterator = this.itemStacks[i];
@@ -1378,22 +1422,37 @@ export class InventoryService {
         }
       }
     }
-    // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
-    if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
-      sourceItem = this.characterService.characterState.equipment[slot];
-      if (sourceItem === null){
-        return;
+    if (this.automergeEquipped){
+      // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
+      if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
+        if (((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) ||
+          (slot !== 'rightHand' && slot !== 'leftHand' && this.autoequipBestArmor)) {
+          this.mergeEquippedSlot(slot, destinationItem, lastdestinationIndex);
+        } else {//slot doesn't match the auto-equip owned.
+          return;
+        }
       }
-      if ((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) {
-        destinationItem = this.generateWeapon(sourceItem.value + destinationItem.value, sourceItem.weaponStats?.material + "", false, sourceItem.weaponStats?.baseName);
-      } else if (slot !== 'rightHand' && slot !== 'leftHand' &&this.autoequipBestArmor) {
-        destinationItem = this.generateArmor(sourceItem.value + destinationItem.value, sourceItem.armorStats?.material + "", slot, false, sourceItem.armorStats?.baseName);
-      } else {//slot doesn't match the auto-equip owned.
-        return;
-      }
-      this.characterService.characterState.equipment[slot] = destinationItem;
-      this.itemStacks[lastdestinationIndex] = null;
     }
+  }
+
+  mergeEquippedSlot(slot: EquipmentPosition, itemToMerge: Item, sourceItemIndex: number){
+    if (!instanceOfEquipment(itemToMerge)){
+      return;
+    }
+    let newItem;
+    const equippedItem = this.characterService.characterState.equipment[slot];
+    if (equippedItem === null){
+      this.characterService.characterState.equipment[slot] = itemToMerge;
+      this.itemStacks[sourceItemIndex] = null;
+      return;
+    }
+    if ((slot === 'rightHand' || slot === 'leftHand')) {
+      newItem = this.generateWeapon(equippedItem.value + itemToMerge.value, itemToMerge.weaponStats?.material + "", false, equippedItem.weaponStats?.baseName);
+    } else {
+      newItem = this.generateArmor(equippedItem.value + itemToMerge.value, itemToMerge.armorStats?.material + "", slot, false, equippedItem.armorStats?.baseName);
+    }
+    this.characterService.characterState.equipment[slot] = newItem;
+    this.itemStacks[sourceItemIndex] = null;
   }
 
   mergeSpiritGem(stack: ItemStack, power = 0){
@@ -1429,6 +1488,26 @@ export class InventoryService {
       if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power){
         this.mergeSpiritGem(itemIterator, power);
         return;
+      }
+    }
+  }
+
+  stashInventory() {
+    this.stashedItemStacks = [];
+    for (let i = 0; i < this.itemStacks.length; i++){
+      if (this.itemStacks[i]){
+        this.stashedItemStacks.push(this.itemStacks[i]);
+        this.itemStacks[i] = null;
+      }
+    }
+  }
+
+  restoreInventory() {
+    this.itemStacks = [];
+    for (let i = 0; i < this.stashedItemStacks.length; i++){
+      if (this.stashedItemStacks[i]){
+        this.itemStacks.push(this.stashedItemStacks[i]);
+        this.stashedItemStacks[i] = null;
       }
     }
   }

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BattleService, Enemy } from '../game-state/battle.service';
+import { MatDialog } from '@angular/material/dialog';
+import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
+import { BattleService } from '../game-state/battle.service';
 import { CharacterService } from '../game-state/character.service';
 
 @Component({
@@ -12,8 +14,10 @@ export class BattlePanelComponent implements OnInit {
   Math: Math;
   constructor(
     public battleService: BattleService,
-    public characterService: CharacterService
-  ){ 
+    public characterService: CharacterService,
+    public dialog: MatDialog
+
+  ){
     this.Math = Math;
   }
 
@@ -27,17 +31,11 @@ export class BattlePanelComponent implements OnInit {
     this.battleService.autoTroubleEnabled = event.target.checked;
   }
 
-  manaShieldToggle(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;
-    if (this.characterService.characterState.manaUnlocked){
-      this.battleService.enableManaShield = event.target.checked;
-    }
-  }
+  battleOptions(){
+    const dialogRef = this.dialog.open(BattleOptionsPanelComponent, {
+      width: '700px',
+      data: {someField: 'foo'}
+    });
 
-  manaAttackToggle(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;  
-    if (this.characterService.characterState.manaUnlocked){
-      this.battleService.enableManaAttack = event.target.checked;
-    }
   }
 }
