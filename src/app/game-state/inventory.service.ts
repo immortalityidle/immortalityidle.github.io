@@ -34,7 +34,8 @@ export interface Item {
   useDescription?: string;
   useConsumes?: boolean;
   use?: (quantity?: number) => void;
-  owned?: () => boolean; // used for single-use permanent upgrades so we can see if they need to be bought again
+  /** Used for single-use permanent upgrades so we can see if they need to be bought again */
+  owned?: () => boolean; 
 }
 
 export interface Equipment extends Item {
@@ -93,6 +94,9 @@ export interface InventoryProperties {
   autoSellOldHerbs: boolean,
   autoSellOldWood: boolean,
   autoSellOldOre: boolean,
+  autoSellOldHerbsEnabled: boolean,
+  autoSellOldWoodEnabled: boolean,
+  autoSellOldOreEnabled: boolean,
   autoequipBestWeapon: boolean,
   autoequipBestArmor: boolean,
   autoequipBestEnabled: boolean,
@@ -134,6 +138,9 @@ export class InventoryService {
   autoSellOldHerbs: boolean;
   autoSellOldWood: boolean;
   autoSellOldOre: boolean;
+  autoSellOldHerbsEnabled: boolean;
+  autoSellOldWoodEnabled: boolean;
+  autoSellOldOreEnabled: boolean;
   fed = false;
   lifetimeUsedItems = 0;
   lifetimeSoldItems = 0;
@@ -177,6 +184,9 @@ export class InventoryService {
     this.autoSellOldHerbs = false;
     this.autoSellOldWood = false;
     this.autoSellOldOre = false;
+    this.autoSellOldHerbsEnabled = false;
+    this.autoSellOldWoodEnabled = false;
+    this.autoSellOldOreEnabled = false;
     this.autoSellOldGemsUnlocked = false;
     this.autoSellOldGemsEnabled = false;
 
@@ -250,6 +260,9 @@ export class InventoryService {
       autoSellOldHerbs: this.autoSellOldHerbs,
       autoSellOldWood: this.autoSellOldWood,
       autoSellOldOre: this.autoSellOldOre,
+      autoSellOldHerbsEnabled: this.autoSellOldHerbsEnabled,
+      autoSellOldWoodEnabled: this.autoSellOldWoodEnabled,
+      autoSellOldOreEnabled: this.autoSellOldOreEnabled,
       autoequipBestWeapon: this.autoequipBestWeapon,
       autoequipBestArmor: this.autoequipBestArmor,
       autoequipBestEnabled: this.autoequipBestEnabled,
@@ -280,6 +293,9 @@ export class InventoryService {
     this.autoSellOldHerbs = properties.autoSellOldHerbs || false;
     this.autoSellOldWood = properties.autoSellOldWood || false;
     this.autoSellOldOre = properties.autoSellOldOre || false;
+    this.autoSellOldHerbsEnabled = properties.autoSellOldHerbsEnabled || false;
+    this.autoSellOldWoodEnabled = properties.autoSellOldWoodEnabled || false;
+    this.autoSellOldOreEnabled = properties.autoSellOldOreEnabled || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
     if(properties.autoequipBestEnabled === undefined){
@@ -529,7 +545,7 @@ export class InventoryService {
       value: value,
       description: 'Useful herbs. Can be used in creating pills or potions.'
     });
-    if (this.autoSellOldHerbs){
+    if (this.autoSellOldHerbsEnabled){
       // sell any herb cheaper than what we just picked
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
@@ -639,7 +655,7 @@ export class InventoryService {
         lastOre = item;
       }
     }
-    if (this.autoSellOldOre && !this.hellService?.inHell){
+    if (this.autoSellOldOreEnabled && !this.hellService?.inHell){
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -668,7 +684,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldOre && !this.hellService?.inHell){
+    if (this.autoSellOldOreEnabled && !this.hellService?.inHell){
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -695,7 +711,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldWood){
+    if (this.autoSellOldWoodEnabled){
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
@@ -1195,7 +1211,7 @@ export class InventoryService {
       // we didn't have enough in the stack we consumed to meet the quantity, consume another
       itemValue = this.consume(consumeType, quantity)
     }
-    if (cheapest && itemValue == Infinity){
+    if (cheapest && itemValue === Infinity){
       // return -1 for not found
       itemValue = -1;
     }

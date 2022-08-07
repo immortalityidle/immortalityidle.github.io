@@ -113,7 +113,22 @@ export class OptionsModalComponent {
     this.inventoryService.autoequipBestEnabled = event.target.checked;
   }
 
-  autosellOldGems(event: Event): void {
+  autoSellOldHerbs(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldHerbsEnabled = event.target.checked;
+  }
+
+  autoSellOldWood(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldWoodEnabled = event.target.checked;
+  }
+
+  autoSellOldOre(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldOreEnabled = event.target.checked;
+  }
+
+  autoSellOldGems(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoSellOldGemsEnabled = event.target.checked;
   }
