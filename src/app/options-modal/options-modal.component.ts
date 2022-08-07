@@ -133,6 +133,11 @@ export class OptionsModalComponent {
     this.inventoryService.autoSellOldOreEnabled = event.target.checked;
   }
 
+  autoSellOldBars(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldBarsEnabled = event.target.checked;
+  }
+
   autoSellOldGems(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoSellOldGemsEnabled = event.target.checked;

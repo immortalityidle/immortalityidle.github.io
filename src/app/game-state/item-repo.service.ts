@@ -1681,6 +1681,7 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldOre = true;
         this.inventoryService.autoSellOldOreEnabled = true;
+        this.inventoryService.autoSellOldBarsEnabled = true;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {

@@ -128,6 +128,13 @@
           <label for="autosellOldOre">Automatically sell lower grade ore than what current activities produce</label>
         </span>
       </div>
+      <div *ngIf="inventoryService.autoSellOldOre"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autoSellOldBars($event)"
+            id="autoSellOldBars"  [checked]="inventoryService.autoSellOldBarsEnabled"/>
+          <label for="autoSellOldBars">Automatically sell lower grade bars than what current activities produce</label>
+        </span>
+      </div>
       <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">
         <span>
           <input type="checkbox" (change)="autoSellOldGems($event)"

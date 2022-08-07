@@ -98,6 +98,7 @@ export interface InventoryProperties {
   autoSellOldHerbsEnabled: boolean,
   autoSellOldWoodEnabled: boolean,
   autoSellOldOreEnabled: boolean,
+  autoSellOldBarsEnabled: boolean,
   autoequipBestWeapon: boolean,
   autoequipBestArmor: boolean,
   autoequipBestEnabled: boolean,
@@ -144,6 +145,7 @@ export class InventoryService {
   autoSellOldHerbsEnabled: boolean;
   autoSellOldWoodEnabled: boolean;
   autoSellOldOreEnabled: boolean;
+  autoSellOldBarsEnabled: boolean;
   fed = false;
   lifetimeUsedItems = 0;
   lifetimeSoldItems = 0;
@@ -191,6 +193,7 @@ export class InventoryService {
     this.autoSellOldHerbsEnabled = false;
     this.autoSellOldWoodEnabled = false;
     this.autoSellOldOreEnabled = false;
+    this.autoSellOldBarsEnabled = false;
     this.autoSellOldGemsUnlocked = false;
     this.autoSellOldGemsEnabled = false;
 
@@ -270,6 +273,7 @@ export class InventoryService {
       autoSellOldHerbsEnabled: this.autoSellOldHerbsEnabled,
       autoSellOldWoodEnabled: this.autoSellOldWoodEnabled,
       autoSellOldOreEnabled: this.autoSellOldOreEnabled,
+      autoSellOldBarsEnabled: this.autoSellOldBarsEnabled,
       autoequipBestWeapon: this.autoequipBestWeapon,
       autoequipBestArmor: this.autoequipBestArmor,
       autoequipBestEnabled: this.autoequipBestEnabled,
@@ -305,6 +309,7 @@ export class InventoryService {
     this.autoSellOldHerbsEnabled = properties.autoSellOldHerbsEnabled || false;
     this.autoSellOldWoodEnabled = properties.autoSellOldWoodEnabled || false;
     this.autoSellOldOreEnabled = properties.autoSellOldOreEnabled || false;
+    this.autoSellOldBarsEnabled = properties.autoSellOldBarsEnabled || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
     if(properties.autoequipBestEnabled === undefined){
@@ -691,21 +696,20 @@ export class InventoryService {
   getOre(): Item {
     const earthLore = this.characterService.characterState.attributes.earthLore.value;
     const oreValue = Math.floor(Math.pow(earthLore/1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
-    let lastOre =  this.itemRepoService.items['copperOre'];
+    let lastOre = this.itemRepoService.items['copperOre'];
     for (const key in this.itemRepoService.items){
       const item = this.itemRepoService.items[key];
       if (item.type === 'ore' && item.value > lastOre.value && item.value <= oreValue){
         lastOre = item;
       }
     }
+
     if (this.autoSellOldOreEnabled && !this.hellService?.inHell){
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === "ore" ){
-          if (itemStack.item.value < lastOre.value ){
-            this.sell(itemStack, itemStack.quantity);
-          }
+        if (itemStack && itemStack.item.type === "ore" && itemStack.item.value < lastOre.value){
+          this.sell(itemStack, itemStack.quantity);
         }
       }
     }
@@ -716,29 +720,24 @@ export class InventoryService {
     // metal bars should always be 10x the value of the associated ore
     const barValue = oreValue * 10;
 
-    let lastMetal =  this.itemRepoService.items['copperBar'];
+    let lastMetal = this.itemRepoService.items['copperBar'];
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
-      if (item.type === 'metal'){
-        if (item.value === barValue){
-          lastMetal = item;
-          break;
-        }
+      if (item.type === 'metal' && item.value === barValue){
+        lastMetal = item;
+        break;
       }
     }
 
-    if (this.autoSellOldOreEnabled && !this.hellService?.inHell){
+    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell){
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack){
-          if (itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value ){
-            this.sell(itemStack, itemStack.quantity);
-          }
+        if (itemStack && itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value){
+          this.sell(itemStack, itemStack.quantity);
         }
       }
     }
-
     return lastMetal;
   }
 
@@ -758,10 +757,8 @@ export class InventoryService {
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === "wood" ){
-          if (itemStack.item.value < lastWood.value ){
-            this.sell(itemStack, itemStack.quantity);
-          }
+        if (itemStack && itemStack.item.type === "wood" && itemStack.item.value < lastWood.value){
+          this.sell(itemStack, itemStack.quantity);
         }
       }
     }
