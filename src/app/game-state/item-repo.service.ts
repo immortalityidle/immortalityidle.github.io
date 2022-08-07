@@ -1197,11 +1197,7 @@ export class ItemRepoService {
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (this.mainLoopService.unlockFastSpeed){
-          return true;
-        } else {
-          return false;
-        }
+        return this.mainLoopService.unlockFastSpeed;
       }
     },
     fasterPlayManual: {
@@ -1219,11 +1215,7 @@ export class ItemRepoService {
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (this.mainLoopService.unlockFasterSpeed){
-          return true;
-        } else {
-          return false;
-        }
+        return this.mainLoopService.unlockFasterSpeed;
       }
     },
     fastestPlayManual: {
@@ -1241,11 +1233,7 @@ export class ItemRepoService {
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (this.mainLoopService.unlockFastestSpeed){
-          return true;
-        } else {
-          return false;
-        }
+        return this.mainLoopService.unlockFastestSpeed;
       }
     },
     restartActivityManual: {
@@ -1270,11 +1258,7 @@ export class ItemRepoService {
         if (!this.activityService){
           this.activityService = this.injector.get(ActivityService);
         }
-        if (this.activityService?.autoRestart){
-          return true;
-        } else {
-          return false;
-        }
+        return this.activityService?.autoRestart;
       }
     },
     autoSellManual: {
@@ -1644,6 +1628,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoSellOldHerbs = true;
+        this.inventoryService.autoSellOldHerbsEnabled = true;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
@@ -1669,6 +1654,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoSellOldWood = true;
+        this.inventoryService.autoSellOldWoodEnabled = true;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
@@ -1694,6 +1680,8 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoSellOldOre = true;
+        this.inventoryService.autoSellOldOreEnabled = true;
+        this.inventoryService.autoSellOldBarsEnabled = true;
         this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {

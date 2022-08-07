@@ -5,7 +5,8 @@
       <div *ngFor="let achievement of achievementService.achievements">
         <div class="itemSlot" *ngIf="achievement.unlocked"
           tooltip="{{achievement.description}}">
-          {{achievement.name}}
+          <div *ngIf="achievement.displayName">{{achievement.displayName}}</div>
+          <div *ngIf="!achievement.displayName">{{achievement.name}}</div>
         </div>
         <div class="itemSlot" *ngIf="!achievement.unlocked" tooltip="{{achievement.hint}}">
           ?

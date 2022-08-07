@@ -118,8 +118,27 @@ export class OptionsModalComponent {
     this.inventoryService.automergeEquipped = event.target.checked;
   }
 
+  autoSellOldHerbs(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldHerbsEnabled = event.target.checked;
+  }
 
-  autosellOldGems(event: Event): void {
+  autoSellOldWood(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldWoodEnabled = event.target.checked;
+  }
+
+  autoSellOldOre(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldOreEnabled = event.target.checked;
+  }
+
+  autoSellOldBars(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldBarsEnabled = event.target.checked;
+  }
+
+  autoSellOldGems(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoSellOldGemsEnabled = event.target.checked;
   }

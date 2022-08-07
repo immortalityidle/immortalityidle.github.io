@@ -15,6 +15,8 @@ import { FollowersService } from './followers.service';
 
 export interface Achievement {
   name: string;
+  /**Necessary for name changes due to save structure using name (above) instead of ids */
+  displayName?: string;
   description: string;
   hint: string;
   check: () => boolean;
@@ -430,7 +432,8 @@ export class AchievementService {
     },
     {
       name: "Ore Snob",
-      description: "You achieved a deep understanding of metal ore and unlocked the " + this.itemRepoService.items['bestOreManual'].name,
+      displayName: "Smelting Snob",
+      description: "You achieved a deep understanding of digging and smelting metal and unlocked the " + this.itemRepoService.items['bestOreManual'].name,
       hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
       check: () => {
         return this.characterService.characterState.attributes.metalLore.value > 1024 &&

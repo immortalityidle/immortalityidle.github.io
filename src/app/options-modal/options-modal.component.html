@@ -101,14 +101,43 @@
       </div>
     </mat-tab>
 
-    <mat-tab *ngIf="inventoryService.autoSellOldGemsUnlocked || inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoBalanceUnlocked">
+    <mat-tab *ngIf="inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldGemsUnlocked || 
+      inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoBalanceUnlocked">
       <ng-template mat-tab-label>
         <span class="tab-label">Sales</span>
       </ng-template>
 
+      <div *ngIf="inventoryService.autoSellOldHerbs"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autoSellOldHerbs($event)"
+            id="autosellOldHerbs"  [checked]="inventoryService.autoSellOldHerbsEnabled"/>
+          <label for="autosellOldHerbs">Automatically sell lower grade herbs than what current activities produce</label>
+        </span>
+      </div>
+      <div *ngIf="inventoryService.autoSellOldWood"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autoSellOldWood($event)"
+            id="autosellOldWood"  [checked]="inventoryService.autoSellOldWoodEnabled"/>
+          <label for="autosellOldWood">Automatically sell lower grade wood than what current activities produce</label>
+        </span>
+      </div>
+      <div *ngIf="inventoryService.autoSellOldOre"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autoSellOldOre($event)"
+            id="autosellOldOre"  [checked]="inventoryService.autoSellOldOreEnabled"/>
+          <label for="autosellOldOre">Automatically sell lower grade ore than what current activities produce</label>
+        </span>
+      </div>
+      <div *ngIf="inventoryService.autoSellOldOre"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autoSellOldBars($event)"
+            id="autoSellOldBars"  [checked]="inventoryService.autoSellOldBarsEnabled"/>
+          <label for="autoSellOldBars">Automatically sell lower grade bars than what current activities produce</label>
+        </span>
+      </div>
       <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">
         <span>
-          <input type="checkbox" (change)="autosellOldGems($event)"
+          <input type="checkbox" (change)="autoSellOldGems($event)"
             id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
           <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
         </span>
