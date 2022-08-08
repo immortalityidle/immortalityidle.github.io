@@ -48,7 +48,7 @@ export class CamelToTitlePipe implements PipeTransform {
 @Pipe({name: 'bigNumber'})
 export class BigNumberPipe implements PipeTransform {
   public scientificNotation: boolean;
-  constructor(){
+  constructor(public mainLoopService: MainLoopService){
     this.scientificNotation = false;
   }
 
@@ -58,7 +58,7 @@ export class BigNumberPipe implements PipeTransform {
   * @returns {string}
   */
   transform(value: number): string {
-    if(!this.scientificNotation){
+    if(!this.mainLoopService.scientificNotation){
       const suffixArray = ["", "k", "M", "B", "T", "q", "Q", "s"];
       if (value < 100 && !Number.isInteger(value) ){
         return value.toFixed(2) + '';

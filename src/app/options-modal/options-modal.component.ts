@@ -5,6 +5,7 @@ import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
+import { MainLoopService } from '../game-state/main-loop.service';
 
 @Component({
   selector: 'app-options-modal',
@@ -19,7 +20,8 @@ export class OptionsModalComponent {
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
     public followerService: FollowersService,
-    public autoBuyerService: AutoBuyerService
+    public autoBuyerService: AutoBuyerService,
+    public mainLoopService: MainLoopService
   ) { }
 
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
@@ -165,6 +167,6 @@ export class OptionsModalComponent {
 
   scientificNotationChange(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.gameStateService.scientificNotation = event.target.checked;
+    this.mainLoopService.scientificNotation = event.target.checked;
   }
 }
