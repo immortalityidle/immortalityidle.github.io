@@ -168,5 +168,7 @@ export class OptionsModalComponent {
   scientificNotationChange(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.scientificNotation = event.target.checked;
+    this.gameStateService.savetoLocalStorage();
+    this.gameStateService.loadFromLocalStorage();
   }
 }
