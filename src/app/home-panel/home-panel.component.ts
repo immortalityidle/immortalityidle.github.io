@@ -33,12 +33,7 @@ export class HomePanelComponent {
 
 
   buildTimeYears(): string {
-    let builderPower = 1; //divided by 100 later
-        for (const follower of this.followerService.followers){
-          if (follower.job === "builder"){
-            builderPower += follower.power;
-          }
-        }
+    const builderPower = 1 + this.followerService.jobs["builder"].totalPower;
     return this.bignumber.transform((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild / builderPower / 365) + " years";
   }
 

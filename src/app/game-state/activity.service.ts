@@ -730,15 +730,9 @@ export class ActivityService {
       consequenceDescription: ['Uses 100 Stamina. If you have the right followers and materials you will create some everlasting bricks.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
-        let oreValue = 0;
-        let builderPower = 10; //divided by 10 later
-        oreValue = this.inventoryService.consume('ore', 200);
-        for (const follower of this.followerService.followers){
-          if (follower.job === "builder"){
-            builderPower += follower.power;
-          }
-        }
-        builderPower = Math.floor(builderPower /10);
+        const oreValue = this.inventoryService.consume('ore', 200);
+        const builderPower = Math.floor((this.followerService.jobs["builder"].totalPower + 10) / 10);
+        console.log("builderPower: " + builderPower);
         if (oreValue >= 10){
           this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick'], builderPower);
           this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingBrick'].name,"STANDARD","CRAFTING");
@@ -798,15 +792,8 @@ export class ActivityService {
       consequenceDescription: ['Uses 100 Stamina. If you have the right followers, facilities, and materials you might succeed in mixing some proper mortar.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100;
-        let oreValue = 0;
-        let builderPower = 100; //divided by 100 later
-        for (const follower of this.followerService.followers){
-          if (follower.job === "builder"){
-            builderPower += follower.power;
-          }
-        }
-        builderPower = Math.floor(builderPower / 100);
-        oreValue = this.inventoryService.consume('ore');
+        const oreValue = this.inventoryService.consume('ore');
+        const builderPower = Math.floor((this.followerService.jobs["builder"].totalPower + 100) / 100);
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "cauldron" && oreValue >= 10){
           this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar'], builderPower);
           this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingMortar'].name,"STANDARD","CRAFTING");
