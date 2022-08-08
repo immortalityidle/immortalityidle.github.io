@@ -15,7 +15,6 @@ export interface Enemy {
   accuracy: number,
   attack: number,
   defense: number,
-  /**Don't put items with use() functions in the loot (like food). They don't get persisted. */
   loot: Item[],
   unique?: boolean,
   defeatEffect?: string
@@ -31,6 +30,7 @@ export interface BattleProperties {
   currentEnemy: EnemyStack | null,
   kills: number,
   troubleKills: number,
+  totalKills: number,
   autoTroubleUnlocked: boolean,
   autoTroubleEnabled: boolean,
   monthlyMonsterDay: number,
@@ -72,6 +72,7 @@ export class BattleService {
   ticksPerFight = 10;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
+  totalKills = 0;
 
   constructor(
     private injector: Injector,
@@ -135,6 +136,7 @@ export class BattleService {
       currentEnemy: this.currentEnemy,
       kills: this.kills,
       troubleKills: this.troubleKills,
+      totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
       autoTroubleEnabled: this.autoTroubleEnabled,
       monthlyMonsterDay: this.yearlyMonsterDay,
@@ -156,6 +158,7 @@ export class BattleService {
     this.currentEnemy = properties.currentEnemy;
     this.kills = properties.kills;
     this.troubleKills = properties.troubleKills;
+    this.totalKills = properties.totalKills || 0;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.autoTroubleEnabled = properties.autoTroubleEnabled;
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
@@ -310,6 +313,7 @@ export class BattleService {
     damage -= enemyHealth;
     if (this.currentEnemy.enemy.health <= 0){
       this.kills++;
+      this.totalKills++;
       this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
       for (const item of this.currentEnemy.enemy.loot){
         const lootItem = this.itemRepoService.getItemById(item.id);

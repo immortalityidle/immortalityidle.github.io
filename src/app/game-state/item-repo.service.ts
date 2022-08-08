@@ -1057,7 +1057,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.TongueRipping)){
           this.hellService.completedHellBosses.push(HellLevel.TongueRipping);
         }
-        this.logService.addLogMessage("The crown of the Hell of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.", "STANDARD", 'STORY');
+        this.logService.addLogMessage("The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.", "STANDARD", 'STORY');
         this.followerService.unlockJob("prophet");
       },
     },
@@ -1104,7 +1104,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)){
           this.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
         }
-        this.logService.addLogMessage("The crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
+        this.logService.addLogMessage("The Crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
         this.followerService.unlockJob("moneyBurner");
       },
     },
@@ -1130,7 +1130,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Mirrors)){
           this.hellService.completedHellBosses.push(HellLevel.Mirrors);
         }
-        this.logService.addLogMessage("The crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.", "STANDARD", 'STORY');
+        this.logService.addLogMessage("The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.", "STANDARD", 'STORY');
         this.characterService.characterState.attributes.combatMastery.value += 1;
         this.activityService.CombatTraining.unlocked = true;
       },
@@ -1154,7 +1154,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Steamers)){
           this.hellService.completedHellBosses.push(HellLevel.Steamers);
         }
-        this.logService.addLogMessage("The crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.", "STANDARD", 'STORY');
+        this.logService.addLogMessage("The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.", "STANDARD", 'STORY');
         this.battleService.pyroclasmUnlocked = true;
       },
     },
@@ -1177,11 +1177,30 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)){
           this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
         }
-        this.logService.addLogMessage("The crown of Pillars settles onto your head, then sinks in to become a part of your very soul. Your inner fire stretches toward your skin, forming a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
+        this.logService.addLogMessage("The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. Your inner fire stretches toward your skin, forming a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
         this.battleService.fireShieldUnlocked = true;
       },
     },
-    //TODO: tune prices on all manuals, currently silly cheap for testing
+    hellCrownMountainOfKnives: {
+      id: 'hellCrownMountainOfKnives',
+      name: 'Crown of the Knife Mountain',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown shaped like a mountain covered in tiny blades. Using this will unlock a new understanding of the world.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfKnives)){
+          this.hellService.completedHellBosses.push(HellLevel.MountainOfKnives);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.", "STANDARD", 'STORY');
+        this.characterService.characterState.yinYangUnlocked = true;
+      },
+    },
     fastPlayManual: {
       id: 'fastPlayManual',
       name: "Manual of Expeditious Time Perception",

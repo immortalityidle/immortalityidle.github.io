@@ -80,6 +80,9 @@ export interface CharacterProperties {
   highestStamina: number,
   highestMana: number,
   highestAttributes: { [key: string]: number; }
+  yinYangUnlocked: boolean;
+  yin: number;
+  yang: number;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -126,6 +129,10 @@ export class Character {
   immortal = false;
   easyMode = false;
   ascensionUnlocked = false;
+  yinYangUnlocked = false;
+  yin = 0;
+  yang = 0;
+
   attributes: AttributeObject = {
     strength: {
       description: "An immortal must have raw physical power.",
@@ -604,7 +611,10 @@ export class Character {
       highestHealth: this.highestHealth,
       highestStamina: this.highestStamina,
       highestMana: this.highestMana,
-      highestAttributes: this.highestAttributes
+      highestAttributes: this.highestAttributes,
+      yinYangUnlocked: this.yinYangUnlocked,
+      yin: this.yin,
+      yang: this.yang
     }
   }
 
@@ -657,6 +667,9 @@ export class Character {
     this.highestStamina = properties.highestStamina || 0;
     this.highestMana = properties.highestMana || 0;
     this.highestAttributes = properties.highestAttributes || {};
+    this.yinYangUnlocked = properties.yinYangUnlocked || false;
+    this.yin = properties.yin || 0;
+    this.yang = properties.yang || 0;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery){
