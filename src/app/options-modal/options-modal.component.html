@@ -17,9 +17,16 @@
       </div>
       <div class="optionField">
         <span>
-          <input type="checkbox" (change)="autBuyFoodChange($event)"
+          <input type="checkbox" (change)="autoBuyFoodChange($event)"
             id="autoBuyFood"  [checked]="inventoryService.autoBuyFood">
           <label for="autoBuyFood">Automatically buy rice each day if you have no food to avoid starvation.</label>
+        </span>
+      </div>
+      <div class="optionField">
+        <span>
+          <input type="checkbox" (change)="scientificNotationChange($event)"
+            id="scientificNotation"  [checked]="gameStateService.scientificNotation">
+          <label for="scientificNotation">Turn on numbers with scientific notation.</label>
         </span>
       </div>
     </mat-tab>

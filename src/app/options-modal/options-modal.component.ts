@@ -158,8 +158,13 @@ export class OptionsModalComponent {
     }
   }
 
-  autBuyFoodChange(event: Event){
+  autoBuyFoodChange(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoBuyFood = event.target.checked;
+  }
+
+  scientificNotationChange(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.gameStateService.scientificNotation = event.target.checked;
   }
 }

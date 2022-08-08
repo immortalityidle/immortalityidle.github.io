@@ -1,4 +1,4 @@
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, Injector, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
@@ -47,12 +47,18 @@ export class CamelToTitlePipe implements PipeTransform {
 
 @Pipe({name: 'bigNumber'})
 export class BigNumberPipe implements PipeTransform {
-    /**
-     *
-     * @param value
-     * @returns {string}
-     */
-     transform(value: number): string {
+  public scientificNotation: boolean;
+  constructor(){
+    this.scientificNotation = false;
+  }
+
+  /**
+  *
+  * @param value
+  * @returns {string}
+  */
+  transform(value: number): string {
+    if(!this.scientificNotation){
       const suffixArray = ["", "k", "M", "B", "T", "q", "Q", "s"];
       if (value < 100 && !Number.isInteger(value) ){
         return value.toFixed(2) + '';
@@ -65,6 +71,9 @@ export class BigNumberPipe implements PipeTransform {
         const numStr = Math.floor(value / Math.pow(10,numberPower - (numberPower % 3) - 2)) / 100;
         return numStr + suffixArray[Math.floor(numberPower / 3)];
       }
+    } else {
+      return value.toPrecision(3);
+    }
   }
 }
 
