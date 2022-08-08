@@ -19,7 +19,8 @@ export interface MainLoopProperties {
   pause: boolean;
   bankedTicks: number;
   totalTicks: number;
-  useBankedTicks: boolean
+  useBankedTicks: boolean,
+  scientificNotation: boolean
 }
 
 @Injectable({
@@ -47,6 +48,7 @@ export class MainLoopService {
   offlineDivider = 10;
   characterService?: CharacterService;
   useBankedTicks = true;
+  scientificNotation = false;
 
   constructor(
     private injector: Injector) {
@@ -65,7 +67,8 @@ export class MainLoopService {
       pause: this.pause,
       bankedTicks: this.bankedTicks,
       totalTicks: this.totalTicks,
-      useBankedTicks: this.useBankedTicks
+      useBankedTicks: this.useBankedTicks,
+      scientificNotation: this.scientificNotation
     }
   }
 
@@ -97,6 +100,7 @@ export class MainLoopService {
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
     this.useBankedTicks = properties.useBankedTicks ?? true;
+    this.scientificNotation = properties.scientificNotation || false;
   }
 
   start() {

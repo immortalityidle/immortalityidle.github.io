@@ -12,7 +12,7 @@ import { BigNumberPipe } from '../app.component';
   providedIn: 'root'
 })
 export class CharacterService {
-  bigNumberPipe = new BigNumberPipe;
+  bigNumberPipe: BigNumberPipe;
   activityService?: ActivityService;
   characterState: Character;
   forceRebirth = false;
@@ -28,6 +28,7 @@ export class CharacterService {
     titleCasePipe: TitleCasePipe
   ) {
     this.characterState = new Character(logService, titleCasePipe, mainLoopService);
+    this.bigNumberPipe = this.injector.get(BigNumberPipe);
     mainLoopService.tickSubject.subscribe(() => {
       if (this.mainLoopService.totalTicks % 3650 === 0){
         this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
