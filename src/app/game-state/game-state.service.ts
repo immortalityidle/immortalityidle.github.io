@@ -13,6 +13,7 @@ import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
+import { AutoSaveProperties, AutoSaveService, AutoSaveSettings } from './autosave.service';
 import { HellProperties, HellService } from './hell.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
@@ -29,6 +30,7 @@ interface GameState {
   autoBuy: AutoBuyerProperties,
   mainLoop: MainLoopProperties,
   impossibleTasks: ImpossibleTaskProperties,
+  autoSave: AutoSaveProperties
   hell: HellProperties,
   darkMode: boolean,
   gameStartTimestamp: number,
@@ -45,7 +47,7 @@ export class GameStateService {
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
-  autoSaveInterval = 10000;
+  autoSaveSettings = this.autoSaveService.autoSaveSettings || this.autoSaveService.getDefaultSettings();
 
   constructor(
     private characterService: CharacterService,
@@ -61,12 +63,24 @@ export class GameStateService {
     private mainLoopService: MainLoopService,
     private achievementService: AchievementService,
     private impossibleTaskService: ImpossibleTaskService,
+    private autoSaveService: AutoSaveService,
     private hellService: HellService
-
   ) {
     // @ts-ignore
     window['GameStateService'] = this;
-    window.setInterval(this.savetoLocalStorage.bind(this), this.autoSaveInterval);
+  }
+
+  autoSave(): void{
+    window.setInterval(this.savetoLocalStorage.bind(this), this.autoSaveSettings.map(e => e.interval)[0]); //Extract the autosave interval from autoSaveSettings array 
+  }
+
+  changeAutoSaveInterval(interval: number): void{
+    if(interval == null || interval < 1 || interval > 900) return; 
+    interval = interval*1000; //Convert to milliseconds.
+    //Hacky but it works as the autoSaveSettings array is unique. Couldn't figure out how to touch the value directly, so I destroyed the container and made a new one.
+    this.autoSaveService.autoSaveSettings.pop();
+    this.autoSaveService.autoSaveSettings.push({interval} as AutoSaveSettings);
+    this.savetoLocalStorage();
   }
 
   savetoLocalStorage(): void {
@@ -114,6 +128,7 @@ export class GameStateService {
     this.logService.setProperties(gameState.logs);
     this.autoBuyerService.setProperties(gameState.autoBuy);
     this.mainLoopService.setProperties(gameState.mainLoop);
+    this.autoSaveService.setProperties(gameState.autoSave);
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
@@ -134,6 +149,7 @@ export class GameStateService {
       followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
       autoBuy: this.autoBuyerService.getProperties(),
+      autoSave: this.autoSaveService.getProperties(),
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
