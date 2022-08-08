@@ -107,7 +107,9 @@ export interface InventoryProperties {
   autoSellOldGemsUnlocked: boolean,
   autoSellOldGemsEnabled: boolean,
   autoBuyFood: boolean,
-  automergeEquipped: boolean
+  automergeEquipped: boolean,
+  autoSort: boolean,
+  descendingSort: boolean
 }
 
 @Injectable({
@@ -160,6 +162,8 @@ export class InventoryService {
   autoSellOldGemsEnabled: boolean;
   autoBuyFood = true;
   automergeEquipped = false;
+  autoSort = false;
+  descendingSort = false;
 
   constructor(
     private injector: Injector,
@@ -242,6 +246,9 @@ export class InventoryService {
           this.updateWeaponDescription(item);
         }
       }
+      if (this.autoSort){
+        this.sortInventory();
+      }
 
     });
 
@@ -283,7 +290,9 @@ export class InventoryService {
       autoSellOldGemsUnlocked: this.autoSellOldGemsUnlocked,
       autoSellOldGemsEnabled: this.autoSellOldGemsEnabled,
       autoBuyFood: this.autoBuyFood,
-      automergeEquipped: this.automergeEquipped
+      automergeEquipped: this.automergeEquipped,
+      autoSort: this.autoSort,
+      descendingSort: this.descendingSort
     }
   }
 
@@ -324,6 +333,8 @@ export class InventoryService {
     this.autoSellOldGemsEnabled = properties.autoSellOldGemsEnabled || false;
     this.autoBuyFood = properties.autoBuyFood ?? true;
     this.automergeEquipped = properties.automergeEquipped || false;
+    this.autoSort = properties.autoSort || false;
+    this.descendingSort = properties.descendingSort || false;
   }
 
   farmFoodList = [
@@ -363,13 +374,23 @@ export class InventoryService {
         tempStacks.push(itemStack);
       }
     }
-    tempStacks.sort((a,b) => b.quantity - a.quantity);
-    tempStacks.sort((a,b) => b.item.value - a.item.value);
-    tempStacks.sort((a,b) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
-    equipStacks.sort((a,b) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
-    equipStacks.sort((a,b) => b.item.value - a.item.value);
-    gemStacks.sort((a,b) => b.quantity - a.quantity);
-    gemStacks.sort((a,b) => b.item.value - a.item.value);
+    if(!this.descendingSort){
+      tempStacks.sort((a,b) => b.quantity - a.quantity);
+      tempStacks.sort((a,b) => b.item.value - a.item.value);
+      tempStacks.sort((a,b) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
+      equipStacks.sort((a,b) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
+      equipStacks.sort((a,b) => b.item.value - a.item.value);
+      gemStacks.sort((a,b) => b.quantity - a.quantity);
+      gemStacks.sort((a,b) => b.item.value - a.item.value);
+    } else {
+      tempStacks.sort((b,a) => b.quantity - a.quantity);
+      tempStacks.sort((b,a) => b.item.value - a.item.value);
+      tempStacks.sort((b,a) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
+      equipStacks.sort((b,a) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
+      equipStacks.sort((b,a) => b.item.value - a.item.value);
+      gemStacks.sort((b,a) => b.quantity - a.quantity);
+      gemStacks.sort((b,a) => b.item.value - a.item.value);
+    }
     const emptySlots = this.itemStacks.length - tempStacks.length - gemStacks.length - equipStacks.length;
     this.itemStacks = tempStacks;
     this.itemStacks.push(...equipStacks);
