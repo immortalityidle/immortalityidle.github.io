@@ -32,8 +32,7 @@ interface GameState {
   hell: HellProperties,
   darkMode: boolean,
   gameStartTimestamp: number,
-  easyModeEver: boolean,
-  scientificNotation: boolean
+  easyModeEver: boolean
 }
 
 @Injectable({
@@ -46,7 +45,6 @@ export class GameStateService {
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
-  scientificNotation = false;
 
   constructor(
     private characterService: CharacterService,
@@ -118,7 +116,6 @@ export class GameStateService {
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
-    this.scientificNotation = gameState.scientificNotation || false;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
   }
@@ -139,8 +136,7 @@ export class GameStateService {
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
-      easyModeEver: this.easyModeEver,
-      scientificNotation: this.scientificNotation
+      easyModeEver: this.easyModeEver
     };
     let gameStateString = JSON.stringify(gameState);
     //gameStateString = "iig" + btoa(gameStateString);
