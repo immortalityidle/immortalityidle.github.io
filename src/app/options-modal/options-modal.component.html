@@ -24,8 +24,8 @@
       </div>
       <div class="optionField">
         <span>
-          <label for="autoSaveInterval">Change how often the game autosaves (milliseconds) </label>
-          <input value="{{gameStateService.autoSaveInterval}}" type="number" (change)="autoSaveInterval($event)"
+          <label for="autoSaveInterval">Change how often the game autosaves (in seconds) </label>
+          <input value="{{autoSaveService.autoSaveSettings}}" type="number" (change)="autoSaveInterval($event)"
           id="autoSaveInterval">
         </span>
       </div>

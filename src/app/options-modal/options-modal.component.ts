@@ -5,6 +5,7 @@ import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
+import { AutoSaveService, AutoSaveSettings } from '../game-state/autosave.service';
 
 @Component({
   selector: 'app-options-modal',
@@ -19,12 +20,13 @@ export class OptionsModalComponent {
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
     public followerService: FollowersService,
-    public autoBuyerService: AutoBuyerService
+    public autoBuyerService: AutoBuyerService,
+    public autoSaveService: AutoSaveService
   ) { }
 
   autoSaveInterval(event:Event){
     if(!(event.target instanceof HTMLInputElement)) return;
-    this.gameStateService.autoSaveInterval = parseInt(event.target.value);
+    this.gameStateService.changeAutoSaveInterval(parseInt(event.target.value));
   }
 
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
