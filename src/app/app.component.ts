@@ -47,10 +47,7 @@ export class CamelToTitlePipe implements PipeTransform {
 
 @Pipe({name: 'bigNumber'})
 export class BigNumberPipe implements PipeTransform {
-  public scientificNotation: boolean;
-  constructor(public mainLoopService: MainLoopService){
-    this.scientificNotation = false;
-  }
+  constructor(public mainLoopService: MainLoopService){}
 
   /**
   *

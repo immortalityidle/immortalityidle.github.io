@@ -93,7 +93,6 @@ export class BattleService {
     this.tickCounter = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
-      this.bigNumberPipe.scientificNotation = true;
       if (this.characterService.characterState.dead){
         return;
       }
