@@ -94,6 +94,7 @@ const materialModules = [
   ],
   providers: [
     TitleCasePipe,
+    BigNumberPipe
   ],
   bootstrap: [AppComponent]
 })

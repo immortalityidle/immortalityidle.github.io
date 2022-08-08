@@ -32,7 +32,7 @@ interface GameState {
   hell: HellProperties,
   darkMode: boolean,
   gameStartTimestamp: number,
-  easyModeEver: boolean,
+  easyModeEver: boolean
 }
 
 @Injectable({

@@ -51,7 +51,7 @@ export interface BattleProperties {
   providedIn: 'root'
 })
 export class BattleService {
-  bigNumberPipe = new BigNumberPipe;
+  bigNumberPipe: BigNumberPipe;
   hellService?: HellService;
   enemies: EnemyStack[];
   currentEnemy: EnemyStack | null;
@@ -84,6 +84,7 @@ export class BattleService {
 
   ) {
     setTimeout(() => this.hellService = this.injector.get(HellService));
+    this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.enemies = [];
     this.currentEnemy = null;
     this.kills = 0;

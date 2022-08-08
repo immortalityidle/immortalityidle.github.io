@@ -20,13 +20,13 @@ export class HomePanelComponent {
 
   character: Character;
   Math: Math;
-  bignumber = new BigNumberPipe;
 
   constructor(public characterService: CharacterService,
     public homeService: HomeService,
     public followerService: FollowersService,
     public dialog: MatDialog,
-    private storeService: StoreService) {
+    private storeService: StoreService,
+    private bignumber: BigNumberPipe) {
     this.character = characterService.characterState;
     this.Math = Math;
   }

@@ -115,7 +115,7 @@ export interface InventoryProperties {
 })
 export class InventoryService {
   hellService?: HellService
-  bigNumberPipe = new BigNumberPipe;
+  bigNumberPipe: BigNumberPipe;
   itemStacks: (ItemStack | null)[] = [];
   stashedItemStacks: (ItemStack | null)[] = [];
   maxItems = 10;
@@ -170,6 +170,7 @@ export class InventoryService {
     private itemRepoService: ItemRepoService,
   ) {
     setTimeout(() => this.hellService = this.injector.get(HellService));
+    this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.noFood = false;
     this.autoSellUnlocked = false;
     this.autoSellEntries = [];
