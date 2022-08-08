@@ -441,21 +441,25 @@ export class BattleService {
     }
   }
 
-  monsterNames = ["spider", "rat", "lizard", "snake", "imp", "ooze", "jackalope", "goblin", "monkey", "redcap",
-    "skeleton", "zombie", "hobgoblin", "kobold", "chupacabra", "incubus", "succubus", "jackal",
-    "basilisk", "mogwai", "ghoul", "gremlin", "orc", "tiger", "ghost", "troll", "manticore", "merlion", "landshark",
-    "bugbear", "yeti", "dreameater", "unicorn", "ogre", "banshee", "harpy", "werewolf", "golem", "leshy",
-    "hellhound", "chimaera", "undine", "minotaur", "bunyip", "cyclops", "rakshasa", "oni", "nyuk", "cavebear",
-    "wendigo", "dinosaur", "wyvern", "doomworm", "thunderbird", "vampire", "beholder", "hydra",
-    "roc", "giant", "kraken", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"];
+  monsterNames = ["spider", "rat", "lizard", "snake", "jack-o-lantern", "gnome", "imp", "ooze", "jackalope",
+    "pixie", "goblin", "monkey", "redcap", "boar", "skeleton", "zombie", "hobgoblin", "kobold",
+    "chupacabra", "siren", "incubus", "succubus", "jackal", "basilisk", "mogwai", "ghoul", "gremlin", "orc",
+    "tiger", "ghost", "centaur", "troll", "manticore", "merlion", "mummy", "landshark", "bugbear", "yeti",
+    "dreameater", "kelpie", "unicorn", "ogre", "banshee", "harpy", "sphinx", "werewolf", "boogeyman", "golem",
+    "leshy", "hellhound", "chimaera", "undine", "minotaur", "bunyip", "cyclops", "rakshasa", "oni", "nyuk",
+    "cavebear", "wendigo", "dinosaur", "wyvern", "doomworm", "lich", "thunderbird", "vampire", "beholder",
+    "hydra", "roc", "giant", "kraken", "behemonth", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"
+  ];
 
   monsterQualities = [
-    "an infant", "a puny", "a pathetic", "a sickly", "a starving", "a wimpy", "a weak", "a badly wounded",
-    "a tired", "a poor", "a small", "a despondent", "a frightened", "a skinny", "a sad", "a stinking", "a typical",
-    "an average", "a healthy", "a big", "a tough", "a strong", "a fearsome", "a gutsy", "a quick",
-    "a hefty", "a brawny", "an athletic", "a muscular", "a rugged", "a resilient", "an angry",
-    "a clever", "a fierce", "a devious", "a mighty", "a powerful", "a noble", "a magical",
-    "a dangerous", "a terrifying", "a flame-shrouded", "an abominable", "a monstrous",
-    "a dominating", "a demonic", "a diabolical", "an infernal"
+    "an infant", "a puny", "a tiny", "a pathetic", "a sickly", "a starving", "a wimpy", "a frail",
+    "an ill", "a weak", "a badly wounded", "a tired", "a poor", "a small", "a despondent", "a frightened",
+    "a skinny", "a sad", "a stinking", "a scatterbrained", "a mediocre", "a typical", "an average",
+    "a healthy", "a big", "a tough", "a crazy", "a strong", "a fearsome", "a gutsy", "a quick",
+    "a hefty", "a grotesque", "a large", "a brawny", "an athletic", "a muscular", "a rugged",
+    "a resilient", "an angry", "a clever", "a fierce", "a brutal", "a devious", "a mighty",
+    "a frightening", "a massive", "a powerful", "a noble", "a magical", "a dangerous", "a murderous",
+    "a terrifying", "a gargantuan", "a flame-shrouded", "an abominable", "a monstrous", "a dominating",
+    "a demonic", "a diabolical", "an infernal"
   ];
 }
