@@ -732,7 +732,6 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 100;
         const oreValue = this.inventoryService.consume('ore', 200);
         const builderPower = Math.floor((this.followerService.jobs["builder"].totalPower + 10) / 10);
-        console.log("builderPower: " + builderPower);
         if (oreValue >= 10){
           this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick'], builderPower);
           this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingBrick'].name,"STANDARD","CRAFTING");
