@@ -22,6 +22,13 @@
           <label for="autoBuyFood">Automatically buy rice each day if you have no food to avoid starvation.</label>
         </span>
       </div>
+      <div class="optionField">
+        <span>
+          <label for="autoSaveInterval">Change how often the game autosaves (milliseconds) </label>
+          <input value="{{gameStateService.autoSaveInterval}}" type="number" (change)="autoSaveInterval($event)"
+          id="autoSaveInterval">
+        </span>
+      </div>
     </mat-tab>
     <mat-tab *ngIf="homeService.autoBuyLandUnlocked || homeService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked">
       <ng-template mat-tab-label>

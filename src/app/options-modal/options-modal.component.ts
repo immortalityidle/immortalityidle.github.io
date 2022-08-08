@@ -22,6 +22,11 @@ export class OptionsModalComponent {
     public autoBuyerService: AutoBuyerService
   ) { }
 
+  autoSaveInterval(event:Event){
+    if(!(event.target instanceof HTMLInputElement)) return;
+    this.gameStateService.autoSaveInterval = parseInt(event.target.value);
+  }
+
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
     if (!(event.target instanceof HTMLInputElement)) return;
     autosellEntry.reserve = parseInt(event.target.value);

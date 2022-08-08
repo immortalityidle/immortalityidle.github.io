@@ -45,6 +45,7 @@ export class GameStateService {
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
+  autoSaveInterval = 10000;
 
   constructor(
     private characterService: CharacterService,
@@ -65,7 +66,7 @@ export class GameStateService {
   ) {
     // @ts-ignore
     window['GameStateService'] = this;
-    window.setInterval(this.savetoLocalStorage.bind(this), 10000);
+    window.setInterval(this.savetoLocalStorage.bind(this), this.autoSaveInterval);
   }
 
   savetoLocalStorage(): void {
