@@ -37,12 +37,12 @@
 
       <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
         <span>
-          Automatically buy up to <input value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
+          Automatically buy up to <input min="0" value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
         </span>
       </div>
       <div *ngIf="homeService.autoFieldUnlocked" class="optionField">
         <span>
-          Automatically plow up to <input value="{{homeService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
+          Automatically plow up to <input min="0" value="{{homeService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
         </span>
       </div>
       <div *ngIf="homeService.autoBuyHomeUnlocked" class="optionField">
@@ -159,7 +159,7 @@
               - {{entry.name | titlecase}}
             </span>
             <span>
-              - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
+              - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
               <button (click)="inventoryService.unAutoSell(entry.name)">Stop Selling</button>
             </span>
           </div>
@@ -173,7 +173,7 @@
               - {{entry.name | titlecase}}
             </span>
             <span>
-              - Reserve &nbsp;<input value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
+              - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
               <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
             </span>
           </div>
@@ -185,8 +185,8 @@
           <div *ngFor="let balanceItem of inventoryService.autoBalanceItems">
             <span>
               -{{balanceItem.name | titlecase}}
-              Use <input value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
-              then Sell <input value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
+              Use <input min="0" value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
+              then Sell <input min="0" value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
               <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
             </span>
           </div>
@@ -204,7 +204,7 @@
           <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
             id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
           <label for="useAutoBuyReserve">Auto-buying should reserve </label>
-          <input value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels instead of 10 days worth of expenses
+          <input min="0" value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels instead of 10 days worth of expenses
         </span>
       </div>
       <div *ngIf="autoBuyerService.autoBuyerSettingsUnlocked" class="optionField">
