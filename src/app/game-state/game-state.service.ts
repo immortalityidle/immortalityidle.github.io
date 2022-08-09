@@ -14,7 +14,6 @@ import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
 import { HellProperties, HellService } from './hell.service';
-import { interval } from 'rxjs';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -69,7 +68,6 @@ export class GameStateService {
 
   ) {
     // @ts-ignore
-    //Can't use window['GameStateService'] outside of here otherwise. This is needed because intervalID has to be saved, otherwise autosave setting won't remain on reset.
     window['GameStateService'] = this;
     this.intervalID = window.setInterval(this.savetoLocalStorage.bind(this), this.saveInterval*1000);
   }
@@ -133,7 +131,7 @@ export class GameStateService {
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
     this.saveInterval = gameState.saveInterval || 10;
-    this.intervalID = this.intervalID;
+    this.intervalID = this.intervalID || 0;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
   }
