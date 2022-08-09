@@ -51,6 +51,8 @@ export enum ActivityType {
   Rehabilitation,
   CopperMining,
   ForgeHammer,
+  ClimbMountain,
+  AttackClimbers,
   Hell // hell needs to be last for indexing purposes
 
 }

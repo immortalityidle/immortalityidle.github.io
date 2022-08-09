@@ -69,6 +69,18 @@ export class InventoryPanelComponent {
     }
   }
 
+  sortClicked(event: MouseEvent){
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.ctrlKey || event.metaKey) {
+      this.inventoryService.descendingSort = !this.inventoryService.descendingSort;
+    } else if (event.shiftKey) {
+      this.inventoryService.autoSort = !this.inventoryService.autoSort;
+    } else {
+      this.inventoryService.sortInventory();
+    }
+  }
+
   sellAll(): void {
     if (this.inventoryService.selectedItem) {
       this.inventoryService.sellAll(this.inventoryService.selectedItem.item);

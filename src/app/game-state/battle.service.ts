@@ -15,7 +15,6 @@ export interface Enemy {
   accuracy: number,
   attack: number,
   defense: number,
-  /**Don't put items with use() functions in the loot (like food). They don't get persisted. */
   loot: Item[],
   unique?: boolean,
   defeatEffect?: string
@@ -31,6 +30,7 @@ export interface BattleProperties {
   currentEnemy: EnemyStack | null,
   kills: number,
   troubleKills: number,
+  totalKills: number,
   autoTroubleUnlocked: boolean,
   autoTroubleEnabled: boolean,
   monthlyMonsterDay: number,
@@ -72,6 +72,7 @@ export class BattleService {
   ticksPerFight = 10;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
+  totalKills = 0;
 
   constructor(
     private injector: Injector,
@@ -135,6 +136,7 @@ export class BattleService {
       currentEnemy: this.currentEnemy,
       kills: this.kills,
       troubleKills: this.troubleKills,
+      totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
       autoTroubleEnabled: this.autoTroubleEnabled,
       monthlyMonsterDay: this.yearlyMonsterDay,
@@ -156,6 +158,7 @@ export class BattleService {
     this.currentEnemy = properties.currentEnemy;
     this.kills = properties.kills;
     this.troubleKills = properties.troubleKills;
+    this.totalKills = properties.totalKills || 0;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.autoTroubleEnabled = properties.autoTroubleEnabled;
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
@@ -194,6 +197,14 @@ export class BattleService {
             damage /= 10;
             this.characterService.characterState.status.mana.value -= 10000;
             damageBack = true;
+          }
+          if (this.characterService.characterState.yinYangUnlocked){
+            // calculate balance bonus, 1 for perfect balance, 0 at worst
+            const yinYangBalance = Math.max(1 - Math.abs(this.characterService.characterState.yang - this.characterService.characterState.yin) /
+              ((this.characterService.characterState.yang + this.characterService.characterState.yin) / 2), 0);
+            // reduce damage by up to half
+            // TODO: tune this
+            damage -= damage * (yinYangBalance / 2);
           }
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
           if (damageBack){
@@ -272,6 +283,14 @@ export class BattleService {
         this.characterService.characterState.status.mana.value -= 10000;
         blowthrough = true;
       }
+      if (this.characterService.characterState.yinYangUnlocked){
+        // calculate balance bonus, 1 for perfect balance, 0 at worst
+        const yinYangBalance = Math.max(1 - Math.abs(this.characterService.characterState.yang - this.characterService.characterState.yin) /
+          ((this.characterService.characterState.yang + this.characterService.characterState.yin) / 2), 0);
+        // increase damage by up to double
+        // TODO: tune this
+        damage += damage * yinYangBalance;
+      }
       if (damage > this.highestDamageDealt){
         this.highestDamageDealt = damage;
       }
@@ -310,6 +329,7 @@ export class BattleService {
     damage -= enemyHealth;
     if (this.currentEnemy.enemy.health <= 0){
       this.kills++;
+      this.totalKills++;
       this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
       for (const item of this.currentEnemy.enemy.loot){
         const lootItem = this.itemRepoService.getItemById(item.id);
