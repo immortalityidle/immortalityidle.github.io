@@ -18,6 +18,7 @@ import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.componen
 import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.component';
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { HellService } from './game-state/hell.service';
+import { SaveModalComponent } from './save-modal/save-modal.component';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -118,9 +119,17 @@ export class AppComponent implements OnInit {
     }
   }
 
-  saveClicked(event: Event): void {
+  saveClicked(event: MouseEvent): void {
     event.preventDefault();
-    this.gameStateService.savetoLocalStorage();
+    event.stopPropagation();
+    if(event.shiftKey){
+      this.gameStateService.savetoLocalStorage();
+    } else {
+      const dialogRef = this.dialog.open(SaveModalComponent, {
+        width: '700px',
+        data: {someField: 'foo'}
+      });
+    }
   }
 
   exportClicked(): void {

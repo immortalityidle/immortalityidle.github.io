@@ -35,6 +35,11 @@ interface GameState {
   easyModeEver: boolean
 }
 
+interface SaveSlots {
+  slot: string,
+  list: string[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,6 +50,7 @@ export class GameStateService {
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
+  saveSlots: SaveSlots = {slot: "", list: []};
 
   constructor(
     private characterService: CharacterService,
@@ -69,12 +75,17 @@ export class GameStateService {
   }
 
   savetoLocalStorage(): void {
-    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(), this.getGameExport());
+    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlots.slot, this.getGameExport());
     this.lastSaved = new Date().getTime();
   }
 
   loadFromLocalStorage(): void {
-    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
+    this.getSaveFileList();
+    let saveFile = ""; // Legacy save list
+    if (this.saveSlots && this.saveSlots.slot){
+      saveFile = this.saveSlots.slot;
+    }
+    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + saveFile);
     if (!gameStateSerialized) {
       return;
     }
@@ -145,7 +156,7 @@ export class GameStateService {
   }
 
   hardReset(): void {
-    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
+    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlots.slot);
     // eslint-disable-next-line no-self-assign
     window.location.href = window.location.href;
   }
@@ -175,6 +186,74 @@ export class GameStateService {
     while (this.homeService.upgrading){
       this.homeService.upgradeTick();
     }
+  }
+
+  transferLegacySave(){
+    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
+    if(!gameStateSerialized){
+      return;
+    }
+    this.saveSlots.list.push("LegacySave");
+    this.setSaveFileList();
+    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + "LegacySave", gameStateSerialized);
+    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
+  }
+
+  validateSaveFiles() {
+    const baseStr = LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor();
+    const count = window.localStorage.length;
+    const strArray: (string)[] = [];
+    for (let i = 0; i < count; i++) {
+      let string = window.localStorage.key(i)
+      if (!string) {
+        break;
+      }
+      if (string.startsWith(baseStr)) {
+        string = string.slice(baseStr.length);
+      } else {
+        continue;
+      }
+      strArray.push(string);
+    }
+    this.saveSlots.list = strArray;
+    if (this.saveSlots.list.length === 0) {
+      this.saveSlots.slot = "";
+    } else if (!this.saveSlots.list.includes(this.saveSlots.slot)) {
+      this.saveSlots.slot = this.saveSlots.list[0];
+    }
+    this.setSaveFileList();
+  }
+
+  clearSaveFile(slot: string){
+    const index = this.saveSlots.list.indexOf(slot);
+    if(index >= 0){
+      this.saveSlots.list.splice(index, 1);
+      window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + slot);
+    }
+    if (this.saveSlots.list.indexOf(this.saveSlots.slot) < 0){
+      if (this.saveSlots.list.length === 0){
+        this.saveSlots.slot = ""
+      } else {
+        this.saveSlots.slot = this.saveSlots.list[0];
+      }
+      this.setSaveFileList();
+      this.loadFromLocalStorage();
+      return;
+    }
+    this.setSaveFileList();
+  }
+
+  setSaveFileList() {
+    window.localStorage.setItem("saveListFor" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(), JSON.stringify(this.saveSlots));
+  }
+
+  getSaveFileList() {
+    const saveString = window.localStorage.getItem("saveListFor" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor())
+    if(!saveString)
+    {
+      return;
+    }
+    this.saveSlots = JSON.parse(saveString);
   }
 
   getDeploymentFlavor(){

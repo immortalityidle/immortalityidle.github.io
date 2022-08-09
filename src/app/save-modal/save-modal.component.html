@@ -1,0 +1,35 @@
+<div class='darkMode'>
+    <span>Save Menu</span>
+    <hr />
+    <div>
+        <span>Select Save File &nbsp;</span>
+        <select name="saveList" id="saveList" (change)="saveSlotChanged($event)">
+            <option *ngFor="let save of gameStateService.saveSlots.list" value="{{save}}"
+                [selected]="gameStateService.saveSlots.slot === save">
+                {{save}}
+            </option>
+        </select>
+    </div>
+    <div>
+        <button (click)="gameStateService.savetoLocalStorage()">
+            Save
+        </button>
+        <button (click)="gameStateService.loadFromLocalStorage()">
+            Load
+        </button>
+        <button (click)="gameStateService.clearSaveFile(gameStateService.saveSlots.slot)">
+            Delete
+        </button>
+        <button (click)="gameStateService.validateSaveFiles()">
+            Validate Files
+        </button>        
+    </div><br>
+    <div>
+        <span>Add a new file</span>&nbsp;
+        <input type="text" (change)="newSaveSlot($event)">&nbsp;
+        <button (click)="addToSaveList()">
+            Add & Save
+        </button> &nbsp;
+        <span class="red">{{errorMsg}}</span>
+    </div>
+</div>

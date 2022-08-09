@@ -38,6 +38,7 @@ import { LogFilterPanelComponent } from './log-filter-panel/log-filter-panel.com
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { TextPanelComponent } from './text-panel/text-panel.component';
 import { BattleOptionsPanelComponent } from './battle-options-panel/battle-options-panel.component';
+import { SaveModalComponent } from './save-modal/save-modal.component';
 
 const materialModules = [
   MatDialogModule,
@@ -79,6 +80,7 @@ const materialModules = [
     StatisticsPanelComponent,
     TextPanelComponent,
     BattleOptionsPanelComponent,
+    SaveModalComponent,
   ],
   imports: [
     BrowserModule,
