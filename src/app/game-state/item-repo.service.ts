@@ -574,12 +574,117 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    hide: {
-      id: 'hide',
-      name: 'hide',
+    shreddedHide: {
+      id: 'shreddedHide',
+      name: 'shredded hide',
       type: 'hide',
       value: 1,
-      description: 'A basic animal hide.'
+      description: 'A shredded animal hide.'
+    },
+    thinPelt: {
+      id: 'thinPelt',
+      name: 'thin pelt',
+      type: 'hide',
+      value: 2,
+      description: 'A thin fur pelt.'
+    },
+    plainLeather: {
+      id: 'plainLeather',
+      name: 'plain leather',
+      type: 'hide',
+      value: 3,
+      description: 'A basic leather hide.'
+    },
+    scaleSkin: {
+      id: 'scaleSkin',
+      name: 'scale skin',
+      type: 'hide',
+      value: 4,
+      description: 'A scaly reptile skin.'
+    },
+    thickFur: {
+      id: 'thickFur',
+      name: 'thick fur',
+      type: 'hide',
+      value: 5,
+      description: 'A thick animal fur.'
+    },
+    armoredHide: {
+      id: 'armoredHide',
+      name: 'armored hide',
+      type: 'hide',
+      value: 6,
+      description: 'An armored animal hide.'
+    },
+    frozenScales: {
+      id: 'frozenScales',
+      name: 'frozen scales',
+      type: 'hide',
+      value: 7,
+      description: 'A frozen scaly hide.'
+    },
+    mysticalLeather: {
+      id: 'mysticalLeather',
+      name: 'mystical leather',
+      type: 'hide',
+      value: 8,
+      description: 'A mystical animal hide.'
+    },
+    infernalFur: {
+      id: 'infernalFur',
+      name: 'infernal fur',
+      type: 'hide',
+      value: 9,
+      description: 'A fiery pelt.'
+    },
+    orichalcumHide: {
+      id: 'orichalcumHide',
+      name: 'orichalcum hide',
+      type: 'hide',
+      value: 10,
+      description: 'A strong magic-infused hide.'
+    },
+    tempestScales: {
+      id: 'tempestScales',
+      name: 'tempest scales',
+      type: 'hide',
+      value: 11,
+      description: 'A hide bristling with electricity.'
+    },
+    evergreenVeil: {
+      id: 'evergreenVeil',
+      name: 'evergreen veil',
+      type: 'hide',
+      value: 12,
+      description: 'An extremely durable hide .'
+    },
+    sovereignLeather: {
+      id: 'sovereignLeather',
+      name: 'sovereign leather',
+      type: 'hide',
+      value: 13,
+      description: 'A powerful hide of a noble animal.'
+    },
+    abyssalFur: {
+      id: 'abyssalFur',
+      name: 'abyssal fur',
+      type: 'hide',
+      value: 14,
+      description: 'A fur brimming with unholy power.'
+    },
+    umbralHide: {
+      id: 'umbralHide',
+      name: 'umbral hide',
+      type: 'hide',
+      value: 15,
+      description: 'A hide made of shadows themselves.'
+    },
+    divineVeil: {
+      id: 'divineVeil',
+      name: 'divine veil',
+      type: 'hide',
+      value: 16,
+      description: 'A hide consecrated with divine protection.'
     },
     balsaLog: {
       id: 'balsaLog',
@@ -1287,7 +1392,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically sell items.",
       value: 80000,
       useLabel: "Read",
-      useDescription: "Permanently unlock Autosell button in the inventory panel.",
+      useDescription: "Permanently unlock auto-sell button in the inventory panel.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1312,7 +1417,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically use items.",
       value: 1000000,
       useLabel: "Read",
-      useDescription: "Permanently unlock Autouse button in the inventory panel.",
+      useDescription: "Permanently unlock auto-use button in the inventory panel.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1337,7 +1442,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically balance between using and selling items.",
       value: 5e7,
       useLabel: "Read",
-      useDescription: "Permanently unlock Autobalance button in the inventory panel.",
+      useDescription: "Permanently unlock auto-balance button in the inventory panel.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1477,7 +1582,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically use all potions.",
       value: 2e8,
       useLabel: "Read",
-      useDescription: "Permanently unlock autodrinking all potions.",
+      useDescription: "Permanently unlock auto-drinking all potions.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1507,7 +1612,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically use all pills.",
       value: 1e10,
       useLabel: "Read",
-      useDescription: "Permanently unlock autoswallowing all pills.",
+      useDescription: "Permanently unlock auto-swallowing all pills.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1639,7 +1744,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically sell any herbs below your current ability to gather.",
       value: 5000000,
       useLabel: "Read",
-      useDescription: "Permanently unlock autoselling lower grade herbs.",
+      useDescription: "Permanently unlock auto-selling lower grade herbs.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1665,7 +1770,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically sell any logs below your current ability to gather.",
       value: 5000000,
       useLabel: "Read",
-      useDescription: "Permanently unlock autoselling lower grade logs.",
+      useDescription: "Permanently unlock auto-selling lower grade logs.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1691,7 +1796,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically sell any ores and bars below your current ability to gather.",
       value: 5000000,
       useLabel: "Read",
-      useDescription: "Permanently unlock autoselling lower grade ores and bars.",
+      useDescription: "Permanently unlock auto-selling lower grade ores and bars.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1711,6 +1816,32 @@ export class ItemRepoService {
         return this.inventoryService.autoSellOldOre;
       }
     },
+    bestHidesManual: {
+      id: 'bestHidesManual',
+      name: "Manual of Pelt Perception",
+      type: "manual",
+      description: "This manual teaches you to automatically sell any hides below your current ability to gather.",
+      value: 5000000,
+      useLabel: "Read",
+      useDescription: "Permanently unlock auto-selling lower grade hides.",
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoSellOldHides = true;
+        this.inventoryService.autoSellOldHidesEnabled = true;
+        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoSellOldHides;
+      }
+    },
     bestWeaponManual: {
       id: 'bestWeaponManual',
       name: "Manual of Wise Weapon Selection",
@@ -1718,7 +1849,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically equip the best weapons that you have.",
       value: 1e10,
       useLabel: "Read",
-      useDescription: "Permanently unlock autoequipping the best weapons in your inventory.",
+      useDescription: "Permanently unlock auto-equipping the best weapons in your inventory.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1743,7 +1874,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically equip the best armor that you have.",
       value: 1e10,
       useLabel: "Read",
-      useDescription: "Permanently unlock autoequipping the best armor in your inventory.",
+      useDescription: "Permanently unlock auto-equipping the best armor in your inventory.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1868,7 +1999,7 @@ export class ItemRepoService {
       description: "This manual teaches you to automatically sell gems that are below the value of the gems your current monster drops.",
       value: 1e9,
       useLabel: "Read",
-      useDescription: "Permanently unlock gem autoselling for lower level gems.",
+      useDescription: "Permanently unlock gem auto-selling for lower level gems.",
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1954,7 +2085,7 @@ export class ItemRepoService {
       id: 'ageSpeedManual',
       name: "Manual of Aged Time Perception",
       type: "manual",
-      description: "This manual teaches you to percieve time faster the older you are.",
+      description: "This manual teaches you to perceive time faster the older you are.",
       value: 7.5e9,
       useLabel: "Read",
       useDescription: "Permanently increase time passage based on your age.",
@@ -1971,7 +2102,7 @@ export class ItemRepoService {
       id: 'totalPlaytimeManual',
       name: "Manual of Lifetime Time Perception",
       type: "manual",
-      description: "This manual teaches you to percieve time faster the longer you've lived across all your lives.",
+      description: "This manual teaches you to perceive time faster the longer you've lived across all your lives.",
       value: 5e10,
       useLabel: "Read",
       useDescription: "Permanently increase time passage based on your total time lived.",
