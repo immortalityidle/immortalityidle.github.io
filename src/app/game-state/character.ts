@@ -32,7 +32,7 @@ export type AttributeType = 'strength' |
   'waterLore' |
   'fireLore' |
   'animalHandling' |
-  'combatMastery' | 
+  'combatMastery' |
   'magicMastery';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, lifeStartValue: number, aptitude: number, aptitudeMult: number, icon: string }};
@@ -130,8 +130,8 @@ export class Character {
   easyMode = false;
   ascensionUnlocked = false;
   yinYangUnlocked = false;
-  yin = 0;
-  yang = 0;
+  yin = 1;
+  yang = 1;
 
   attributes: AttributeObject = {
     strength: {
@@ -493,8 +493,15 @@ export class Character {
     if (this.bloodlineRank >= 8){
       return x;
     }
-    const c = 365 * 1000; // Hardcap
-      return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
+    let c = 365000; // Hardcap
+    if (this.yinYangUnlocked){
+      // calculate balance bonus, 1 for perfect balance, 0 at worst
+      const yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
+      // apply bonus to hardcap value
+      // TODO: tune this
+      c += (yinYangBalance * c);
+    }
+    return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
 
   }
 
@@ -513,7 +520,7 @@ export class Character {
 
   increaseAptitudeDaily() {
     const keys = Object.keys(this.attributes) as AttributeType[];
-    let slowGrowers = ['combatMastery', 'magicMastery'];
+    const slowGrowers = ['combatMastery', 'magicMastery'];
     for(const key in keys) {
       if (slowGrowers.includes(key)){
         this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e14;
@@ -668,8 +675,8 @@ export class Character {
     this.highestMana = properties.highestMana || 0;
     this.highestAttributes = properties.highestAttributes || {};
     this.yinYangUnlocked = properties.yinYangUnlocked || false;
-    this.yin = properties.yin || 0;
-    this.yang = properties.yang || 0;
+    this.yin = properties.yin || 1;
+    this.yang = properties.yang || 1;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery){
