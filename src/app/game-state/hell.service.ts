@@ -49,7 +49,8 @@ export interface HellProperties {
   inHell: boolean,
   currentHell: number,
   completedHellTasks: number[],
-  completedHellBosses: number[]
+  completedHellBosses: number[],
+  mountainSteps: number
 }
 
 @Injectable({
@@ -62,6 +63,7 @@ export class HellService {
   completedHellTasks: number[] = [];
   completedHellBosses: number[] = [];
   beaten = false;
+  mountainSteps = 0;
 
   burnMoney = {
     level: 0,
@@ -218,6 +220,44 @@ export class HellService {
     }],
     requirements: [{
       strength: 1e24
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  climbMountain = {
+    level: 0,
+    name: ['Climb the Mountain'],
+    activityType: ActivityType.ClimbMountain,
+    description: ["Take another step up the mountain. The path before you seems exceptionally jagged. Maybe you shouldn't have killed so very many little spiders."],
+    consequenceDescription: ['Costs 1000 stamina and produces the worst hammer in the world.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 1000;
+      this.mountainSteps++;
+    }],
+    resourceUse: [{
+      stamina: 1000
+    }],
+    requirements: [{
+      strength: 1e24,
+      toughness: 1e24
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  attackClimbers = {
+    level: 0,
+    name: ['Attack Climbers'],
+    activityType: ActivityType.AttackClimbers,
+    description: ["The murderers on this mountain look pretty distracted. It wouldn't be hard to knock them down to the bottom."],
+    consequenceDescription: ['Knock a climber off the mountain.'],
+    consequence: [() => {
+      this.mountainSteps = 0;
+    }],
+    resourceUse: [{
+    }],
+    requirements: [{
     }],
     unlocked: true,
     skipApprenticeshipLevel: 0
@@ -401,6 +441,17 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownPillars'] ]
       });
+    } else if (this.currentHell === HellLevel.MountainOfKnives){
+      this.battleService.addEnemy({
+        name: "Malignus the Murderer Muncher",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownMountainOfKnives'] ]
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -420,6 +471,7 @@ export class HellService {
       currentHell: this.currentHell,
       completedHellTasks: this.completedHellTasks,
       completedHellBosses: this.completedHellBosses,
+      mountainSteps: this.mountainSteps
     }
   }
 
@@ -428,6 +480,7 @@ export class HellService {
     this.currentHell = properties.currentHell ?? -1;
     this.completedHellTasks = properties.completedHellTasks || [];
     this.completedHellBosses = properties.completedHellBosses || [];
+    this.mountainSteps = properties.mountainSteps || 0;
     this.activityService.reloadActivities();
   }
 
@@ -640,7 +693,7 @@ export class HellService {
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.rehabilitation],
       projectionActivities: [this.burnMoney],
-      hint: "There so many troublemakers here that owe you some payback. I wonder if you can take them all on.",
+      hint: "There so many troublemakers here that deserve some payback from you. I wonder if you can take them all on.",
       successCheck: () => {
         let totalEnemies = 0;
         for (const enemyStack of this.battleService.enemies){
@@ -677,20 +730,26 @@ export class HellService {
       name: "Hell of the Mountain of Knives",
       description: "Torment for those who killed for pleasure. The mountain of sharp blades looks like it might be rough on footwear.",
       index: HellLevel.MountainOfKnives,
-      entryEffect: () => {
-        /*
-        Task: climb the mountain, taking damage at every step
-        During the level: Increase damage taken based on total kills that life
-        */
+      dailyEffect: () => {
+        // TODO: tune this
+        let damage = (this.battleService.totalKills / 10) - (this.mountainSteps * 10);
+        if (damage < 0){
+          damage = 0;
+        }
+        this.characterService.characterState.status.health.value -= damage;
+        if (damage > 0){
+          this.logService.addLogMessage("The mountain's blades shred you for " + damage + " damage.", "INJURY", "COMBAT");
+        }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You finally reach the peak. The karmic weight of all the killing you've ever done drops from your shoulders. Now to defeat this hell's lord without taking any pleasure in the act.", "STANDARD", "STORY");
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.climbMountain],
       projectionActivities: [],
-      hint: "",
+      hint: "It seems you've accrued a lot of karma from all the killing you've done over your many lives. The bill is due.",
       successCheck: () => {
-        return false;
+        // let's just say that 90% of our kills were justified and we didn't enjoy them one bit. Still gotta pay for the other 10%.
+        return this.mountainSteps >= this.battleService.totalKills / 10;
       }
     },
     {

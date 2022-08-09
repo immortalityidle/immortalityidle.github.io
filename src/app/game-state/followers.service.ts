@@ -534,4 +534,13 @@ export class FollowersService {
     this.maxFollowerByType = this.stashedFollowersMaxes;
     this.stashedFollowersMaxes = {};
   }
+
+  hellPurge(){
+    const allowedJobs = ["prophet", "moneyBurner", "damned"];
+    for (let index = this.followers.length - 1; index >= 0; index--){
+      if (!allowedJobs.includes(this.followers[index].job)){
+        this.followers.splice(index, 1);
+      }
+    }
+  }
 }
