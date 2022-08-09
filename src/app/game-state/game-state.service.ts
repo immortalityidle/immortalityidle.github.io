@@ -33,7 +33,6 @@ interface GameState {
   darkMode: boolean,
   gameStartTimestamp: number,
   saveInterval: number,
-  intervalID: number;
   easyModeEver: boolean,
 }
 
@@ -47,7 +46,6 @@ export class GameStateService {
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
-  intervalID = 0;
   saveInterval = 10; //In seconds
 
   constructor(
@@ -69,7 +67,11 @@ export class GameStateService {
   ) {
     // @ts-ignore
     window['GameStateService'] = this;
-    this.intervalID = window.setInterval(this.savetoLocalStorage.bind(this), this.saveInterval*1000);
+    mainLoopService.longTickSubject.subscribe(e => {
+      let d = new Date();
+      if (d.valueOf() - this.lastSaved < this.saveInterval*1000) return;
+      this.savetoLocalStorage();
+    });
   }
 
   changeAutoSaveInterval(interval: number): void{
@@ -77,8 +79,6 @@ export class GameStateService {
     if(interval < 1) interval = 1; 
     else if (interval > 900) interval = 900;
     this.saveInterval = interval;
-    window.clearInterval(this.intervalID);
-    this.intervalID = window.setInterval(this.savetoLocalStorage.bind(this), this.saveInterval*1000);
     this.savetoLocalStorage();
   }
   
@@ -131,7 +131,6 @@ export class GameStateService {
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
     this.saveInterval = gameState.saveInterval || 10;
-    this.intervalID = this.intervalID || 0;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
   }
@@ -153,7 +152,6 @@ export class GameStateService {
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
       saveInterval: this.saveInterval || 10,
-      intervalID: this.intervalID || 0,
       easyModeEver: this.easyModeEver
     };
     let gameStateString = JSON.stringify(gameState);
