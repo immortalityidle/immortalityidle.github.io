@@ -798,7 +798,7 @@ export class InventoryService {
   }
 
   getHide(): Item{
-    const animalHandling = this.characterService.characterState.attributes.woodLore.value;
+    const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
     const hideValue = Math.floor(Math.pow(animalHandling/1e9, 0.15) * 16);
     
     let lastHide = this.itemRepoService.items['shreddedHide'];
