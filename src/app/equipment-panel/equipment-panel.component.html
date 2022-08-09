@@ -32,9 +32,9 @@
     <div style="grid-area: stats;">
       <span tooltip="Accuracy. Your chance to hit monsters when you attack them. Based on your speed."><mat-icon>manage_accounts</mat-icon>{{character.accuracy | percent}}</span>
       <br/>
-      <span tooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons."><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
+      <span [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
       <br/>
-      <span tooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor."><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
+      <span [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
     </div>
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"

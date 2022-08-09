@@ -83,6 +83,7 @@ export interface CharacterProperties {
   yinYangUnlocked: boolean;
   yin: number;
   yang: number;
+  righteousWrathUnlocked: boolean;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -132,6 +133,8 @@ export class Character {
   yinYangUnlocked = false;
   yin = 1;
   yang = 1;
+  yinYangBalance = 0;
+  righteousWrathUnlocked = false;
 
   attributes: AttributeObject = {
     strength: {
@@ -448,7 +451,18 @@ export class Character {
       // multiply by log base 100 of combatMastery
       this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / Math.log(100);
     }
+    if (this.righteousWrathUnlocked){
+      this.attackPower *= 2;
+    }
     this.defense *= Math.floor(Math.sqrt(this.defense) * Math.sqrt(4 * Math.pow(head, 0.25) * Math.pow(body, 0.25) * Math.pow(legs, 0.25) * Math.pow(feet, 0.25))) || 1; // root averaged.
+    if (this.righteousWrathUnlocked){
+      this.defense *= 2;
+    }
+    if (this.yinYangUnlocked){
+      // calculate yin/yang balance bonus, 1 for perfect balance, 0 at worst
+      this.yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
+    }
+
   }
 
   getEmpowermentMult(): number {
@@ -547,17 +561,24 @@ export class Character {
   }
 
   checkOverage(){
+
     if (this.healthBonusFood > 1900){
       this.healthBonusFood = 1900;
     }
     if (this.healthBonusBath > 8000){
       this.healthBonusBath = 8000;
     }
-    if (this.healthBonusMagic > 10000){
-      this.healthBonusMagic = 10000;
+    let healthBonusMagicCap = 10000;
+    let healthBonusSoulCap = 20000;
+    if (this.yinYangUnlocked){
+      healthBonusMagicCap += (2 * this.yinYangBalance * healthBonusMagicCap);
+      healthBonusSoulCap += (2 * this.yinYangBalance * healthBonusSoulCap);
     }
-    if (this.healthBonusSoul > 20000){
-      this.healthBonusSoul = 20000;
+    if (this.healthBonusMagic > healthBonusMagicCap){
+      this.healthBonusMagic = healthBonusMagicCap;
+    }
+    if (this.healthBonusSoul > healthBonusSoulCap){
+      this.healthBonusSoul = healthBonusSoulCap;
     }
     if (this.status.stamina.max > 1000000){
       this.status.stamina.max = 1000000;
@@ -621,7 +642,8 @@ export class Character {
       highestAttributes: this.highestAttributes,
       yinYangUnlocked: this.yinYangUnlocked,
       yin: this.yin,
-      yang: this.yang
+      yang: this.yang,
+      righteousWrathUnlocked: this.righteousWrathUnlocked
     }
   }
 
@@ -677,6 +699,7 @@ export class Character {
     this.yinYangUnlocked = properties.yinYangUnlocked || false;
     this.yin = properties.yin || 1;
     this.yang = properties.yang || 1;
+    this.righteousWrathUnlocked = properties.righteousWrathUnlocked || false;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery){

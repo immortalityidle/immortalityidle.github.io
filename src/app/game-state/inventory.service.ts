@@ -226,7 +226,8 @@ export class InventoryService {
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
         return;
-      }//if autoequip is unlocked, but automerge isn't, equip best
+      }
+      //if autoequip is unlocked, but automerge isn't, equip best
       //automerge will merge into equipped if both are unlocked
       if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked){
         this.autoequipWeapons();

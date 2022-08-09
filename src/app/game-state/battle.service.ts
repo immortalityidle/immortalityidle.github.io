@@ -218,12 +218,9 @@ export class BattleService {
             this.skipEnemyAttack++;
           }
           if (this.characterService.characterState.yinYangUnlocked){
-            // calculate balance bonus, 1 for perfect balance, 0 at worst
-            const yinYangBalance = Math.max(1 - Math.abs(this.characterService.characterState.yang - this.characterService.characterState.yin) /
-              ((this.characterService.characterState.yang + this.characterService.characterState.yin) / 2), 0);
             // reduce damage by up to half
             // TODO: tune this
-            damage -= damage * (yinYangBalance / 2);
+            damage -= damage * ( this.characterService.characterState.yinYangBalance / 2);
           }
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
           if (damageBack){
@@ -303,12 +300,8 @@ export class BattleService {
         blowthrough = true;
       }
       if (this.characterService.characterState.yinYangUnlocked){
-        // calculate balance bonus, 1 for perfect balance, 0 at worst
-        const yinYangBalance = Math.max(1 - Math.abs(this.characterService.characterState.yang - this.characterService.characterState.yin) /
-          ((this.characterService.characterState.yang + this.characterService.characterState.yin) / 2), 0);
-        // increase damage by up to double
         // TODO: tune this
-        damage += damage * yinYangBalance;
+        damage += damage * this.characterService.characterState.yinYangBalance;
       }
       if (damage > this.highestDamageDealt){
         this.highestDamageDealt = damage;

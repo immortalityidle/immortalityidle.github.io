@@ -1231,6 +1231,26 @@ export class ItemRepoService {
         this.battleService.iceShieldUnlocked = true;
       },
     },
+    hellCrownCauldronsOfOil: {
+      id: 'hellCrownCauldronsOfOil',
+      name: 'Cauldron Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'An ugly pot you can wear on your head. Using this will unlock a new respect for the sanctity and dignity of human life.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.CauldronsOfOil)){
+          this.hellService.completedHellBosses.push(HellLevel.CauldronsOfOil);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.", "STANDARD", 'STORY');
+        this.characterService.characterState.righteousWrathUnlocked = true;
+      },
+    },
     fastPlayManual: {
       id: 'fastPlayManual',
       name: "Manual of Expeditious Time Perception",
