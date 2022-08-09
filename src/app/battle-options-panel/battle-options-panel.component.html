@@ -1,25 +1,39 @@
 <div class='darkMode'>
   <span>Battle Options</span>
   <hr/>
-  <div *ngIf="battleService.manaShieldUnlocked"
-    tooltip="Your mana can form a protective shroud around your body, protecting you and decreasing the damage that you take. It requires 10 mana each time the mana shield protects you.">
-    <input type="checkbox" (change)="manaShieldToggle($event)" id="manaShield" [checked]="battleService.enableManaShield"/>
-    <label for="manaShield"><span>Activate Mana Shield</span></label>
+  <div>
+    <input type="radio" (change)="noAttackToggle()" name="attack" id="attackNone" [checked]="!battleService.enableManaAttack && !battleService.enablePyroclasm"/>
+    <label for="attackNone"><span>No Special Attack</span></label>
   </div>
   <div *ngIf="battleService.manaAttackUnlocked"
     tooltip="You can focus your mana around your weapon or fist to project greater power into your attacks. Doing this will double the damage that you inflict. Each use of this ability requires 10 mana.">
-    <input type="checkbox" (change)="manaAttackToggle($event)" id="manaStrike" [checked]="battleService.enableManaAttack"/>
+    <input type="radio" (change)="manaAttackToggle()" name="attack" id="manaStrike" [checked]="battleService.enableManaAttack"/>
     <label for="manaStrike"><span>Activate Mana Strike</span></label>
   </div>
   <div *ngIf="battleService.pyroclasmUnlocked"
     tooltip="Focus your mana and blast your enemies with heat so intense their children's children will get burned. Each use of this ability requires 10,000 mana.">
-    <input type="checkbox" (change)="pyroclasmToggle($event)" id="pyroclasm" [checked]="battleService.enablePyroclasm"/>
+    <input type="radio" (change)="pyroclasmToggle()" name="attack" id="pyroclasm" [checked]="battleService.enablePyroclasm"/>
     <label for="pyroclasm"><span>Activate Pyroclasm</span></label>
+  </div>
+  <hr/>
+  <div>
+    <input type="radio" (change)="noShieldToggle()" name="shield" id="shieldNone" [checked]="!battleService.enableManaShield && !battleService.enableFireShield && !battleService.enableIceShield"/>
+    <label for="shieldNone"><span>No Shield</span></label>
+  </div>
+  <div *ngIf="battleService.manaShieldUnlocked"
+    tooltip="Your mana can form a protective shroud around your body, protecting you and decreasing the damage that you take. It requires 10 mana each time the mana shield protects you.">
+    <input type="radio" (change)="manaShieldToggle()" name="shield" id="manaShield" [checked]="battleService.enableManaShield"/>
+    <label for="manaShield"><span>Activate Mana Shield</span></label>
   </div>
   <div *ngIf="battleService.fireShieldUnlocked"
     tooltip="Bring forth your inner fire to form a blistering barrier around you. Each use of this ability requires 10,000 mana.">
-    <input type="checkbox" (change)="fireShieldToggle($event)" id="fireShield" [checked]="battleService.enableFireShield"/>
+    <input type="radio" (change)="fireShieldToggle()" name="shield" id="fireShield" [checked]="battleService.enableFireShield"/>
     <label for="fireShield"><span>Activate Fire Shield</span></label>
+  </div>
+  <div *ngIf="battleService.iceShieldUnlocked"
+    tooltip="Bring forth the ice inside you to form a freezing barrier around you that will stop your enemy's next attack. Each use of this ability requires 10,000 mana.">
+    <input type="radio" (change)="iceShieldToggle()" name="shield" id="iceShield" [checked]="battleService.enableIceShield"/>
+    <label for="iceShield"><span>Activate Ice Shield</span></label>
   </div>
 
 </div>

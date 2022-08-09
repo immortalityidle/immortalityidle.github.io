@@ -17,31 +17,53 @@ export class BattleOptionsPanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  manaShieldToggle(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;
-    if (this.battleService.manaShieldUnlocked){
-      this.battleService.enableManaShield = event.target.checked;
-    }
+  noAttackToggle(){
+    this.battleService.enableManaAttack = false;
+    this.battleService.enablePyroclasm = false;
   }
 
-  manaAttackToggle(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;
+  manaAttackToggle(){
+    this.battleService.enablePyroclasm = false;
     if (this.battleService.manaAttackUnlocked){
-      this.battleService.enableManaAttack = event.target.checked;
+      this.battleService.enableManaAttack = true;
     }
   }
 
-  pyroclasmToggle(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;
+  pyroclasmToggle(){
+    this.battleService.enableManaAttack = false;
     if (this.battleService.pyroclasmUnlocked){
-      this.battleService.enablePyroclasm = event.target.checked;
+      this.battleService.enablePyroclasm = true;
     }
   }
 
-  fireShieldToggle(event: Event){
-    if (!(event.target instanceof HTMLInputElement)) return;
+  noShieldToggle(){
+    this.battleService.enableManaShield = false;
+    this.battleService.enableFireShield = false;
+    this.battleService.enableIceShield = false;
+  }
+
+  manaShieldToggle(){
+    this.battleService.enableFireShield = false;
+    this.battleService.enableIceShield = false;
+    if (this.battleService.manaShieldUnlocked){
+      this.battleService.enableManaShield = true;
+    }
+  }
+
+
+  fireShieldToggle(){
+    this.battleService.enableManaAttack = false;
+    this.battleService.enableIceShield = false;
     if (this.battleService.fireShieldUnlocked){
-      this.battleService.enableFireShield = event.target.checked;
+      this.battleService.enableFireShield = true;
+    }
+  }
+
+  iceShieldToggle(){
+    this.battleService.enableManaAttack = false;
+    this.battleService.enableFireShield = false;
+    if (this.battleService.iceShieldUnlocked){
+      this.battleService.enableIceShield = true;
     }
   }
 

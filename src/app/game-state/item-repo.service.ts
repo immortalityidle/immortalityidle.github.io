@@ -1038,6 +1038,13 @@ export class ItemRepoService {
       value: 1,
       description: 'A shard of broken glass. You carefully turn the reflective side away from you.',
     },
+    iceCore: {
+      id: 'iceCore',
+      name: 'ice core',
+      type: 'iceCore',
+      value: 1,
+      description: 'A small sphere containing the essence of pure cold.',
+    },
     hellCrownTongueRippers: {
       id: 'hellCrownTongueRippers',
       name: 'Crown of the Tongue Rippers',
@@ -1199,6 +1206,29 @@ export class ItemRepoService {
         }
         this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.", "STANDARD", 'STORY');
         this.characterService.characterState.yinYangUnlocked = true;
+      },
+    },
+    hellCrownMountainOfIce: {
+      id: 'hellCrownMountainOfIce',
+      name: 'Crown of Ice',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A frozen crown. Using this will unlock a new spell.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfIce)){
+          this.hellService.completedHellBosses.push(HellLevel.MountainOfIce);
+        }
+        if (!this.battleService){
+          this.battleService = this.injector.get(BattleService);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.", "STANDARD", 'STORY');
+        this.battleService.iceShieldUnlocked = true;
       },
     },
     fastPlayManual: {

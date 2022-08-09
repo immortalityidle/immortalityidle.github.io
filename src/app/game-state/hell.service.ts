@@ -263,6 +263,34 @@ export class HellService {
     skipApprenticeshipLevel: 0
   }
 
+  meltMountain = {
+    level: 0,
+    name: ['Melt the Mountain'],
+    activityType: ActivityType.MeltMountain,
+    description: ["The mountain is far to slippery climb. The only way you're getting to the top is to bring the top down to you."],
+    consequenceDescription: ['Focus your connection to fire and melt that sucker down.'],
+    consequence: [() => {
+      let numberSpawned = Math.log10(this.characterService.characterState.attributes.fireLore.value);
+      for (let i = 0; i < numberSpawned; i++){
+        this.battleService.addEnemy({
+          name: "Ice Golem",
+          health: 1e15,
+          maxHealth: 1e15,
+          accuracy: 0.7,
+          attack: 1e6,
+          defense: 1e6,
+          loot: [ this.itemRepoService.items['iceCore'] ]
+        });
+      }
+    }],
+    resourceUse: [{
+    }],
+    requirements: [{
+      fireLore: 1000 // TODO: tune this
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
 
   constructor(
     private injector: Injector,
@@ -451,6 +479,17 @@ export class HellService {
         attack: 1,
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownMountainOfKnives'] ]
+      });
+    } else if (this.currentHell === HellLevel.MountainOfIce){
+      this.battleService.addEnemy({
+        name: "The Cheat",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownMountainOfIce'] ]
       });
     } else {
       this.battleService.addEnemy({
@@ -681,7 +720,9 @@ export class HellService {
       },
       dailyEffect: () => {
         // take damage from the steam and get robbed by troublemakers
-        this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.05);
+        if (this.inventoryService.consume("iceCore") < 0){
+          this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.05);
+        }
         if (Math.random() < 0.2){
           this.logService.addLogMessage("As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?", "STANDARD", "EVENT")
           this.characterService.characterState.hellMoney -= this.characterService.characterState.hellMoney * 0.1;
@@ -714,7 +755,9 @@ export class HellService {
       },
       dailyEffect: () => {
         // take damage from the pillar
-        this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+        if (this.inventoryService.consume("iceCore") < 0){
+          this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+        }
       },
       completeEffect: () => {
         this.logService.addLogMessage("You finally forge a hammer powerful enough to break through the chains that bind you to the pillar. The Lord of this Hell comes to investigate all the commotion as the chains fall to the ground.", "STANDARD", "STORY")
@@ -756,24 +799,26 @@ export class HellService {
       name: "Hell of the Mountain of Ice",
       description: "Torment for adulterers and schemers. The chill wind blowing through the gate is so cold it burns.",
       index: HellLevel.MountainOfIce,
-      entryEffect: () => {
-        /*
-        Task: melt the mountain with fire magic
-        During the level: Fire lore nerfed, fire lore activities (including blacksmithing) unavailable
-        */
-      },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You realize that the power of the ice cores is all that prevents the heat from the neighboring hells from turning the mountain into slush. With enough of these tucked away in your pack, the mountain dwindles down to a managable size. Now to see who's in charge around here.", "STANDARD", "STORY");
       },
-      activities: [],
+      dailyEffect: () => {
+        // TODO: tune this
+        let damage = 1000;
+        this.characterService.characterState.status.health.value -= damage;
+        this.logService.addLogMessage("The mountain's ice freezes you for " + damage + " damage.", "INJURY", "COMBAT");
+        // This might be a stupid way to nerf fireLore. Consider other alternatives.
+        const reducer = .9;
+        this.characterService.characterState.attributes.fireLore.value *= reducer;
+      },
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.meltMountain],
       projectionActivities: [],
-      hint: "",
+      hint: "Burn it down!",
       successCheck: () => {
-        return false;
+        return this.inventoryService.getQuantityByName("ice core") >= 10000; // TODO: tune this
       }
     },
     {
-
       name: "Hell of the Cauldrons of Oil",
       description: "Torment for rapists and abusers. Next on the menu: deep fried immortal.",
       index: HellLevel.CauldronsOfOil,
