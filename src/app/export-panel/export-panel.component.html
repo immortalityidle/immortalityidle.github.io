@@ -6,5 +6,8 @@
   </div>
   <button (click)="importClick(saveFileTextArea.value)">Import</button>
   <button (click)="exportClick()">Export</button>
+  <input type="file" id="importFile" #importFile (change)="importFileClick($event)" />
+  <button (click)="importFile.click()">Import file</button>
+  <button (click)="exportFileClick()">Export file</button>
 </div>
 
