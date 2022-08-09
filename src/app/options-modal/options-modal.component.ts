@@ -6,7 +6,6 @@ import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
 import { MainLoopService } from '../game-state/main-loop.service';
-//import { AutoSaveService, AutoSaveSettings } from '../game-state/autosave.service';
 
 @Component({
   selector: 'app-options-modal',
@@ -22,7 +21,6 @@ export class OptionsModalComponent {
     public gameStateService: GameStateService,
     public followerService: FollowersService,
     public autoBuyerService: AutoBuyerService,
-    //public autoSaveService: AutoSaveService,
     public mainLoopService: MainLoopService
   ) { }
 
