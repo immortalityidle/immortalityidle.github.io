@@ -2,6 +2,7 @@ import { Equipment, Item } from './inventory.service'
 import { LogService } from './log.service';
 import { formatNumber, TitleCasePipe } from '@angular/common';
 import { MainLoopService } from './main-loop.service';
+import { BigNumberPipe } from '../app.component';
 
 export interface CharacterAttribute {
   strength?: number,
@@ -93,6 +94,7 @@ export class Character {
   constructor(
     private logService: LogService,
     private titlecasePipe: TitleCasePipe,
+    private bigNumberPipe: BigNumberPipe,
     public mainLoopService: MainLoopService
     ){
       mainLoopService.frameSubject.subscribe(() => {
@@ -353,7 +355,7 @@ export class Character {
         if (addedValue > 0){
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
-          this.logService.addLogMessage("Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
+          this.logService.addLogMessage("Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue), "STANDARD", "EVENT");
         }
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
