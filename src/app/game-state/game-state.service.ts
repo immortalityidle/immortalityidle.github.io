@@ -13,8 +13,8 @@ import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
-import { AutoSaveProperties, AutoSaveService, AutoSaveSettings } from './autosave.service';
 import { HellProperties, HellService } from './hell.service';
+import { interval } from 'rxjs';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -30,10 +30,11 @@ interface GameState {
   autoBuy: AutoBuyerProperties,
   mainLoop: MainLoopProperties,
   impossibleTasks: ImpossibleTaskProperties,
-  autoSave: AutoSaveProperties,
   hell: HellProperties,
   darkMode: boolean,
   gameStartTimestamp: number,
+  saveInterval: number,
+  intervalID: number;
   easyModeEver: boolean,
 }
 
@@ -47,7 +48,8 @@ export class GameStateService {
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
-  autoSaveSettings = this.autoSaveService.autoSaveSettings || this.autoSaveService.getDefaultSettings();
+  intervalID = 0;
+  saveInterval = 10; //In seconds
 
   constructor(
     private characterService: CharacterService,
@@ -67,19 +69,18 @@ export class GameStateService {
 
   ) {
     // @ts-ignore
+    //Can't use window['GameStateService'] outside of here otherwise. This is needed because intervalID has to be saved, otherwise autosave setting won't remain on reset.
     window['GameStateService'] = this;
-  }
-
-  autoSave(): void{
-    window.setInterval(this.savetoLocalStorage.bind(this), this.autoSaveSettings.map(e => e.interval)[0]); //Extract the autosave interval from autoSaveSettings array 
+    this.intervalID = window.setInterval(this.savetoLocalStorage.bind(this), this.saveInterval*1000);
   }
 
   changeAutoSaveInterval(interval: number): void{
-    if(interval == null || interval < 1 || interval > 900) return; 
-    interval = interval*1000; //Convert to milliseconds.
-    //Hacky but it works as the autoSaveSettings array is unique. Couldn't figure out how to touch the value directly, so I destroyed the container and made a new one.
-    this.autoSaveService.autoSaveSettings.pop();
-    this.autoSaveService.autoSaveSettings.push({interval} as AutoSaveSettings);
+    if(interval == null) return; 
+    if(interval < 1) interval = 1; 
+    else if (interval > 900) interval = 900;
+    this.saveInterval = interval;
+    window.clearInterval(this.intervalID);
+    this.intervalID = window.setInterval(this.savetoLocalStorage.bind(this), this.saveInterval*1000);
     this.savetoLocalStorage();
   }
   
@@ -128,10 +129,11 @@ export class GameStateService {
     this.logService.setProperties(gameState.logs);
     this.autoBuyerService.setProperties(gameState.autoBuy);
     this.mainLoopService.setProperties(gameState.mainLoop);
-    this.autoSaveService.setProperties(gameState.autoSave);
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
+    this.saveInterval = gameState.saveInterval || 10;
+    this.intervalID = this.intervalID;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
   }
@@ -149,10 +151,11 @@ export class GameStateService {
       followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
       autoBuy: this.autoBuyerService.getProperties(),
-      autoSave: this.autoSaveService.getProperties(),
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
+      saveInterval: this.saveInterval || 10,
+      intervalID: this.intervalID || 0,
       easyModeEver: this.easyModeEver
     };
     let gameStateString = JSON.stringify(gameState);
