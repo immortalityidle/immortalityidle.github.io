@@ -104,7 +104,7 @@ export class FollowersService {
         }
         this.inventoryService.addItem(this.itemRepoService.items['meat'], this.jobs["hunter"].totalPower);
       },
-      description: "Hunters collect meat help you hunt for hides.",
+      description: "Hunters collect meat and help you hunt for hides.",
       totalPower: 0
     },
     "farmer": {
@@ -118,17 +118,17 @@ export class FollowersService {
       work: () => {
         const rightHand = this.characterService.characterState.equipment.rightHand;
         const leftHand = this.characterService.characterState.equipment.leftHand;
-        if (rightHand && rightHand.weaponStats){ 
+        if (rightHand && rightHand.weaponStats){
           rightHand.weaponStats.durability += Math.ceil(Math.pow((this.jobs["weaponsmith"].totalPower / 10), 2) * 100);
           rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
           rightHand.value += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
         }
-        if (leftHand && leftHand.weaponStats){ 
+        if (leftHand && leftHand.weaponStats){
           leftHand.weaponStats.durability += this.jobs["weaponsmith"].totalPower;
           leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
           leftHand.value += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
         }
-        
+
       },
       description: "Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them.",
       totalPower: 0
