@@ -19,4 +19,9 @@ export class SaveModalComponent {
     const success = this.gameStateService.loadFromLocalStorage();
     this.error = success ? "Loaded Save Successfully" : "Empty Save Selected"
   }
+
+  autoSaveInterval(event:Event){
+    if(!(event.target instanceof HTMLInputElement)) return;
+    this.gameStateService.changeAutoSaveInterval(parseInt(event.target.value));
+  }
 }

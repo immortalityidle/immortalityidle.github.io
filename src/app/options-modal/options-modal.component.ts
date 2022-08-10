@@ -24,11 +24,6 @@ export class OptionsModalComponent {
     public mainLoopService: MainLoopService
   ) { }
 
-  autoSaveInterval(event:Event){
-    if(!(event.target instanceof HTMLInputElement)) return;
-    this.gameStateService.changeAutoSaveInterval(parseInt(event.target.value));
-  }
-
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
     if (!(event.target instanceof HTMLInputElement)) return;
     autosellEntry.reserve = Math.floor(parseFloat(event.target.value));

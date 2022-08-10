@@ -68,10 +68,11 @@ export class GameStateService {
   ) {
     // @ts-ignore
     window['GameStateService'] = this;
-    mainLoopService.longTickSubject.subscribe(e => {
-      const d = new Date();
-      if (d.valueOf() - this.lastSaved < this.saveInterval*1000) return;
-      this.savetoLocalStorage();
+    mainLoopService.longTickSubject.subscribe(() => {
+      const currentTime = new Date();
+      if (currentTime.valueOf() - this.lastSaved >= this.saveInterval*1000) {
+        this.savetoLocalStorage();
+      }
     });
   }
 

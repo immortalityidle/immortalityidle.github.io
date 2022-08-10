@@ -5,14 +5,22 @@
         <span>Select Save File </span>
     </div>
     <div>
-        <button [ngClass]="{highlighted: gameStateService.saveSlot === ''}" (click)="fileClicked('')">
+        <button class="spaced" [ngClass]="{highlighted: gameStateService.saveSlot === ''}" (click)="fileClicked('')">
             Slot 0
-        </button>&nbsp;
-        <button [ngClass]="{highlighted: gameStateService.saveSlot === '1'}" (click)="fileClicked('1')">
+        </button>
+        <button class="spaced" [ngClass]="{highlighted: gameStateService.saveSlot === '1'}" (click)="fileClicked('1')">
             Slot 1
-        </button>&nbsp;
-        <button [ngClass]="{highlighted: gameStateService.saveSlot === '2'}" (click)="fileClicked('2')">
+        </button>
+        <button class="spaced" [ngClass]="{highlighted: gameStateService.saveSlot === '2'}" (click)="fileClicked('2')">
             Slot 2
-        </button>&nbsp;
+        </button>
         <span class="green">{{error}}</span>
     </div>
+    <div class="spaced">
+        <span>
+            <label for="autoSaveInterval">Change how often the game autosaves (in seconds) </label>
+            <input value="{{gameStateService.saveInterval}}" type="number" min="1" max="900" step="1"
+                (change)="autoSaveInterval($event)" id="autoSaveInterval">
+        </span>
+    </div>
+</div>
