@@ -54,6 +54,7 @@ export enum ActivityType {
   ClimbMountain,
   AttackClimbers,
   MeltMountain,
+  HealAnimals,
   Hell // hell needs to be last for indexing purposes
 
 }

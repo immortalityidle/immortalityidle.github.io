@@ -13,7 +13,6 @@ import { HellService } from './hell.service';
 import { EquipmentPosition } from './character';
 import { CamelToTitlePipe } from '../app.component';
 
-
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
 export interface Follower {
@@ -52,6 +51,7 @@ type jobsType = {
     work: () => void,
     description: string,
     hidden?: boolean,
+    pet?: boolean,
     totalPower: number
   }
 };
@@ -210,7 +210,7 @@ export class FollowersService {
       work: () => {
         this.battleService.tickCounter += this.jobs["damned"].totalPower;
       },
-      description: "A soul working off karmic debt in hell that has decided to join you. Having this follower seems to enrage the demons around you.",
+      description: "Damned are souls working off karmic debt in hell that hav decided to join you. Having this follower seems to enrage the demons around you.",
       hidden: true,
       totalPower: 0
     },
@@ -220,7 +220,7 @@ export class FollowersService {
           this.generateFollower();
         }
       },
-      description: "A follower dedicated to spreading the word of your greatness. Prophets can even find other followers for you if you are out of the mortal realm.",
+      description: "Prophets are dedicated to spreading the word of your greatness. Prophets can even find other followers for you if you are out of the mortal realm.",
       hidden: true,
       totalPower: 0
     },
@@ -239,10 +239,55 @@ export class FollowersService {
         this.characterService.characterState.money -= (1e6 / burnerPower);
         this.characterService.characterState.hellMoney++;
       },
-      description: "A follower dedicated to burning mortal money to produce hell money.",
+      description: "Money Burners dedicate themselves to burning mortal money to produce hell money.",
       hidden: true,
       totalPower: 0
-    }
+    },
+    "snake": {
+      work: () => {
+        this.characterService.characterState.increaseAttribute("fireLore", this.jobs["snake"].totalPower);
+      },
+      description: "A fiery serpent. Snakes understand fire and can teach you the hidden secrets of the flames.",
+      hidden: true,
+      pet: true,
+      totalPower: 0
+    },
+    "tiger": {
+      work: () => {
+        this.characterService.characterState.increaseAttribute("woodLore", this.jobs["tiger"].totalPower);
+      },
+      description: "Tigers know the secrets of the jungle and can teach you the deepest mysteries of Wood Lore.",
+      hidden: true,
+      pet: true,
+      totalPower: 0
+    },
+    "ox": {
+      work: () => {
+        this.characterService.characterState.increaseAttribute("earthLore", this.jobs["ox"].totalPower);
+      },
+      description: "Oxen connect deeply to the earth and can teach you their secret understanding.",
+      hidden: true,
+      pet: true,
+      totalPower: 0
+    },
+    "monkey": {
+      work: () => {
+        this.characterService.characterState.increaseAttribute("metalLore", this.jobs["monkey"].totalPower);
+      },
+      description: "Monkeys know more about metal than the greatest of human blacksmiths.",
+      hidden: true,
+      pet: true,
+      totalPower: 0
+    },
+    "pig": {
+      work: () => {
+        this.characterService.characterState.increaseAttribute("waterLore", this.jobs["pig"].totalPower);
+      },
+      description: "Pigs understand the secrets of water and can teach them to you.",
+      hidden: true,
+      pet: true,
+      totalPower: 0
+    },
   };
 
   constructor(
@@ -542,5 +587,13 @@ export class FollowersService {
         this.followers.splice(index, 1);
       }
     }
+  }
+
+  unlockElememntalPets(){
+    this.unlockJob("snake");
+    this.unlockJob("tiger");
+    this.unlockJob("ox");
+    this.unlockJob("monkey");
+    this.unlockJob("pig");
   }
 }
