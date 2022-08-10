@@ -29,7 +29,7 @@ export class HealthPanelComponent {
     if (!this.characterService.characterState.yinYangUnlocked){
       return;
     }
-    let yang = this.characterService.characterState.yang; 
+    let yang = this.characterService.characterState.yang;
     let yin = this.characterService.characterState.yin;
     if (yin < 1){
       yin = 1;
@@ -51,7 +51,7 @@ export class HealthPanelComponent {
     }
     const balanceValues = ["perfect", "exceptional", "excellent", "good", "fair", "poor", "terrible", "abysmal", "non-existent"];
     const difference = Math.max((Math.abs(yang - yin) / ((yang + yin) / 2) * 10000), 1);
-    let differenceIndex = Math.min(Math.floor(Math.log(difference) / Math.log(5)), balanceValues.length - 1);
+    const differenceIndex = Math.min(Math.floor(Math.log(difference) / Math.log(5)), balanceValues.length - 1);
     this.balanceString = balanceValues[differenceIndex];
   }
 }

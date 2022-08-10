@@ -38,10 +38,12 @@ export interface BattleProperties {
   manaAttackUnlocked: boolean,
   pyroclasmUnlocked: boolean,
   fireShieldUnlocked: boolean,
+  iceShieldUnlocked: boolean,
   enableManaShield: boolean,
   enableManaAttack: boolean,
   enablePyroclasm: boolean,
   enableFireShield: boolean,
+  enableIceShield: boolean,
   highestDamageTaken: number,
   highestDamageDealt: number
 }
@@ -64,15 +66,18 @@ export class BattleService {
   enableManaAttack = false;
   enablePyroclasm = false;
   enableFireShield = false;
+  enableIceShield = false;
   manaShieldUnlocked = false;
   manaAttackUnlocked = false;
   pyroclasmUnlocked = false;
   fireShieldUnlocked = false;
+  iceShieldUnlocked = false;
   tickCounter: number;
   ticksPerFight = 10;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
   totalKills = 0;
+  skipEnemyAttack = 0;
 
   constructor(
     private injector: Injector,
@@ -144,10 +149,12 @@ export class BattleService {
       manaAttackUnlocked: this.manaAttackUnlocked,
       pyroclasmUnlocked: this.pyroclasmUnlocked,
       fireShieldUnlocked: this.fireShieldUnlocked,
+      iceShieldUnlocked: this.iceShieldUnlocked,
       enableManaShield: this.enableManaShield,
       enableManaAttack: this.enableManaAttack,
       enablePyroclasm: this.enablePyroclasm,
       enableFireShield: this.enableFireShield,
+      enableIceShield: this.enableIceShield,
       highestDamageDealt: this.highestDamageDealt,
       highestDamageTaken: this.highestDamageTaken
     }
@@ -166,15 +173,22 @@ export class BattleService {
     this.enableManaAttack = properties.enableManaAttack;
     this.enablePyroclasm = properties.enablePyroclasm || false;
     this.enableFireShield = properties.enableFireShield || false;
+    this.enableIceShield = properties.enableIceShield || false;
     this.manaShieldUnlocked = properties.manaShieldUnlocked || false;
     this.manaAttackUnlocked = properties.manaAttackUnlocked || false;
     this.pyroclasmUnlocked = properties.pyroclasmUnlocked || false;
     this.fireShieldUnlocked = properties.fireShieldUnlocked || false;
+    this.iceShieldUnlocked = properties.iceShieldUnlocked || false;
     this.highestDamageDealt = properties.highestDamageDealt || 0;
     this.highestDamageTaken = properties.highestDamageTaken || 0;
 }
 
   enemiesAttack(){
+    if (this.skipEnemyAttack > 0){
+      this.skipEnemyAttack--;
+      return;
+    }
+
     for (const enemyStack of this.enemies){
       for (let i = 0; i < enemyStack.quantity; i++){
         if (Math.random() < enemyStack.enemy.accuracy){
@@ -197,6 +211,16 @@ export class BattleService {
             damage /= 10;
             this.characterService.characterState.status.mana.value -= 10000;
             damageBack = true;
+          }
+          if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000){
+            damage /= 10;
+            this.characterService.characterState.status.mana.value -= 10000;
+            this.skipEnemyAttack++;
+          }
+          if (this.characterService.characterState.yinYangUnlocked){
+            // reduce damage by up to half
+            // TODO: tune this
+            damage -= damage * ( this.characterService.characterState.yinYangBalance / 2);
           }
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
           if (damageBack){
@@ -274,6 +298,10 @@ export class BattleService {
         damage *= 10;
         this.characterService.characterState.status.mana.value -= 10000;
         blowthrough = true;
+      }
+      if (this.characterService.characterState.yinYangUnlocked){
+        // TODO: tune this
+        damage += damage * this.characterService.characterState.yinYangBalance;
       }
       if (damage > this.highestDamageDealt){
         this.highestDamageDealt = damage;

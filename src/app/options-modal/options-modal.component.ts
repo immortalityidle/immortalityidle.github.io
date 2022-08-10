@@ -24,9 +24,14 @@ export class OptionsModalComponent {
     public mainLoopService: MainLoopService
   ) { }
 
+  autoSaveInterval(event:Event){
+    if(!(event.target instanceof HTMLInputElement)) return;
+    this.gameStateService.changeAutoSaveInterval(parseInt(event.target.value));
+  }
+
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
     if (!(event.target instanceof HTMLInputElement)) return;
-    autosellEntry.reserve = parseInt(event.target.value);
+    autosellEntry.reserve = Math.floor(parseFloat(event.target.value));
     if (!autosellEntry.reserve){
       autosellEntry.reserve = 0;
     }
@@ -34,7 +39,7 @@ export class OptionsModalComponent {
 
   autoUseReserveChange(event: Event, autouseEntry: AutoItemEntry){
     if (!(event.target instanceof HTMLInputElement)) return;
-    autouseEntry.reserve = parseInt(event.target.value);
+    autouseEntry.reserve = Math.floor(parseFloat(event.target.value));
     if (!autouseEntry.reserve){
       autouseEntry.reserve = 0;
     }
@@ -42,7 +47,7 @@ export class OptionsModalComponent {
 
   autoBuyLandLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.homeService.autoBuyLandLimit = parseInt(event.target.value);
+    this.homeService.autoBuyLandLimit = Math.floor(parseFloat(event.target.value));
     if (!this.homeService.autoBuyLandLimit){
       this.homeService.autoBuyLandLimit = 0;
     }
@@ -50,7 +55,7 @@ export class OptionsModalComponent {
 
   autoFieldLimitChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.homeService.autoFieldLimit = parseInt(event.target.value);
+    this.homeService.autoFieldLimit = Math.floor(parseFloat(event.target.value));
     if (!this.homeService.autoFieldLimit){
       this.homeService.autoFieldLimit = 0;
     }
@@ -73,7 +78,7 @@ export class OptionsModalComponent {
 
   autoBuyReserveAmountChanged(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.homeService.autoBuyReserveAmount = parseInt(event.target.value);
+    this.homeService.autoBuyReserveAmount = parseFloat(event.target.value);
     if (!this.homeService.autoBuyReserveAmount){
       this.homeService.autoBuyReserveAmount = 0;
     }
@@ -81,7 +86,7 @@ export class OptionsModalComponent {
 
   autoBalanceUseChanged(event: Event, balanceItem: BalanceItem){
     if (!(event.target instanceof HTMLInputElement)) return;
-    balanceItem.useNumber = parseInt(event.target.value);
+    balanceItem.useNumber = Math.floor(parseFloat(event.target.value));
     if (!balanceItem.useNumber){
       balanceItem.useNumber = 0;
     }
@@ -89,7 +94,7 @@ export class OptionsModalComponent {
 
   autoBalanceSellChanged(event: Event, balanceItem: BalanceItem){
     if (!(event.target instanceof HTMLInputElement)) return;
-    balanceItem.sellNumber = parseInt(event.target.value);
+    balanceItem.sellNumber = Math.floor(parseFloat(event.target.value));
     if (!balanceItem.sellNumber){
       balanceItem.sellNumber = 0;
     }
@@ -138,6 +143,11 @@ export class OptionsModalComponent {
   autoSellOldBars(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoSellOldBarsEnabled = event.target.checked;
+  }
+
+  autoSellOldHides(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoSellOldHidesEnabled = event.target.checked;
   }
 
   autoSellOldGems(event: Event): void {
@@ -190,4 +200,4 @@ export class OptionsModalComponent {
     this.gameStateService.savetoLocalStorage();
     this.gameStateService.loadFromLocalStorage();
   }
-}
+} 

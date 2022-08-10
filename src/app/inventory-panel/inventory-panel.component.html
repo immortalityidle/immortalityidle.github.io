@@ -10,7 +10,8 @@
         tooltip="{{inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
         soup_kitchen
       </mat-icon></div>
-      <div><mat-icon placement="right" tooltip="Sort your inventory." (click)="inventoryService.sortInventory()" class="iconButton">
+      <div><mat-icon placement="right" tooltip="Click to sort your inventory. Shift-click to toggle autosort. Ctrl-click to toggle descending." 
+        (click)="sortClicked($event)" class="iconButton" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">
         sort
       </mat-icon></div>
   </h3>

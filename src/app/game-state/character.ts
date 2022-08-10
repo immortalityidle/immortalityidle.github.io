@@ -2,6 +2,7 @@ import { Equipment, Item } from './inventory.service'
 import { LogService } from './log.service';
 import { formatNumber, TitleCasePipe } from '@angular/common';
 import { MainLoopService } from './main-loop.service';
+import { BigNumberPipe } from '../app.component';
 
 export interface CharacterAttribute {
   strength?: number,
@@ -32,7 +33,7 @@ export type AttributeType = 'strength' |
   'waterLore' |
   'fireLore' |
   'animalHandling' |
-  'combatMastery' | 
+  'combatMastery' |
   'magicMastery';
 
 type AttributeObject = {[key in AttributeType]: {description: string, value: number, lifeStartValue: number, aptitude: number, aptitudeMult: number, icon: string }};
@@ -83,6 +84,7 @@ export interface CharacterProperties {
   yinYangUnlocked: boolean;
   yin: number;
   yang: number;
+  righteousWrathUnlocked: boolean;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -92,6 +94,7 @@ export class Character {
   constructor(
     private logService: LogService,
     private titlecasePipe: TitleCasePipe,
+    private bigNumberPipe: BigNumberPipe,
     public mainLoopService: MainLoopService
     ){
       mainLoopService.frameSubject.subscribe(() => {
@@ -130,8 +133,10 @@ export class Character {
   easyMode = false;
   ascensionUnlocked = false;
   yinYangUnlocked = false;
-  yin = 0;
-  yang = 0;
+  yin = 1;
+  yang = 1;
+  yinYangBalance = 0;
+  righteousWrathUnlocked = false;
 
   attributes: AttributeObject = {
     strength: {
@@ -350,7 +355,7 @@ export class Character {
         if (addedValue > 0){
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
-          this.logService.addLogMessage("Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + formatNumber(addedValue,"en-US", "1.0-3"), "STANDARD", "EVENT");
+          this.logService.addLogMessage("Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue), "STANDARD", "EVENT");
         }
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
@@ -448,7 +453,18 @@ export class Character {
       // multiply by log base 100 of combatMastery
       this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / Math.log(100);
     }
+    if (this.righteousWrathUnlocked){
+      this.attackPower *= 2;
+    }
     this.defense *= Math.floor(Math.sqrt(this.defense) * Math.sqrt(4 * Math.pow(head, 0.25) * Math.pow(body, 0.25) * Math.pow(legs, 0.25) * Math.pow(feet, 0.25))) || 1; // root averaged.
+    if (this.righteousWrathUnlocked){
+      this.defense *= 2;
+    }
+    if (this.yinYangUnlocked){
+      // calculate yin/yang balance bonus, 1 for perfect balance, 0 at worst
+      this.yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
+    }
+
   }
 
   getEmpowermentMult(): number {
@@ -493,8 +509,15 @@ export class Character {
     if (this.bloodlineRank >= 8){
       return x;
     }
-    const c = 365 * 1000; // Hardcap
-      return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
+    let c = 365000; // Hardcap
+    if (this.yinYangUnlocked){
+      // calculate balance bonus, 1 for perfect balance, 0 at worst
+      const yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
+      // apply bonus to hardcap value
+      // TODO: tune this
+      c += (yinYangBalance * c);
+    }
+    return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
 
   }
 
@@ -513,7 +536,7 @@ export class Character {
 
   increaseAptitudeDaily() {
     const keys = Object.keys(this.attributes) as AttributeType[];
-    let slowGrowers = ['combatMastery', 'magicMastery'];
+    const slowGrowers = ['combatMastery', 'magicMastery'];
     for(const key in keys) {
       if (slowGrowers.includes(key)){
         this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e14;
@@ -540,17 +563,24 @@ export class Character {
   }
 
   checkOverage(){
+
     if (this.healthBonusFood > 1900){
       this.healthBonusFood = 1900;
     }
     if (this.healthBonusBath > 8000){
       this.healthBonusBath = 8000;
     }
-    if (this.healthBonusMagic > 10000){
-      this.healthBonusMagic = 10000;
+    let healthBonusMagicCap = 10000;
+    let healthBonusSoulCap = 20000;
+    if (this.yinYangUnlocked){
+      healthBonusMagicCap += (2 * this.yinYangBalance * healthBonusMagicCap);
+      healthBonusSoulCap += (2 * this.yinYangBalance * healthBonusSoulCap);
     }
-    if (this.healthBonusSoul > 20000){
-      this.healthBonusSoul = 20000;
+    if (this.healthBonusMagic > healthBonusMagicCap){
+      this.healthBonusMagic = healthBonusMagicCap;
+    }
+    if (this.healthBonusSoul > healthBonusSoulCap){
+      this.healthBonusSoul = healthBonusSoulCap;
     }
     if (this.status.stamina.max > 1000000){
       this.status.stamina.max = 1000000;
@@ -614,7 +644,8 @@ export class Character {
       highestAttributes: this.highestAttributes,
       yinYangUnlocked: this.yinYangUnlocked,
       yin: this.yin,
-      yang: this.yang
+      yang: this.yang,
+      righteousWrathUnlocked: this.righteousWrathUnlocked
     }
   }
 
@@ -668,8 +699,9 @@ export class Character {
     this.highestMana = properties.highestMana || 0;
     this.highestAttributes = properties.highestAttributes || {};
     this.yinYangUnlocked = properties.yinYangUnlocked || false;
-    this.yin = properties.yin || 0;
-    this.yang = properties.yang || 0;
+    this.yin = properties.yin || 1;
+    this.yang = properties.yang || 1;
+    this.righteousWrathUnlocked = properties.righteousWrathUnlocked || false;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery){

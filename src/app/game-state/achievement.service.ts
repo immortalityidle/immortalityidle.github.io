@@ -445,6 +445,21 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Hide Snob",
+      displayName: "Hunting Snob",
+      description: "You achieved a deep understanding of hunting and gathering hides and unlocked the " + this.itemRepoService.items['bestHidesManual'].name,
+      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      check: () => {
+        return this.characterService.characterState.attributes.animalHandling.value > 1024 &&
+          this.characterService.characterState.attributes.speed.value > 1024;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['bestHidesManual']);
+      },
+      unlocked: false
+
+    }, 
+    {
       name: "Gem Snob",
       description: "You have sold 888 gems and unlocked the " +  this.itemRepoService.items['bestGemsManual'].name,
       hint: "I hear the market for fine jewelry is so hot right now.",

@@ -32,7 +32,8 @@ interface GameState {
   hell: HellProperties,
   darkMode: boolean,
   gameStartTimestamp: number,
-  easyModeEver: boolean
+  saveInterval: number,
+  easyModeEver: boolean,
 }
 
 @Injectable({
@@ -45,6 +46,7 @@ export class GameStateService {
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
+  saveInterval = 10; //In seconds
   saveSlot = "";
 
   constructor(
@@ -66,9 +68,21 @@ export class GameStateService {
   ) {
     // @ts-ignore
     window['GameStateService'] = this;
-    window.setInterval(this.savetoLocalStorage.bind(this), 10000);
+    mainLoopService.longTickSubject.subscribe(e => {
+      const d = new Date();
+      if (d.valueOf() - this.lastSaved < this.saveInterval*1000) return;
+      this.savetoLocalStorage();
+    });
   }
 
+  changeAutoSaveInterval(interval: number): void{
+    if(interval === null) return; 
+    if(interval < 1) interval = 1; 
+    else if (interval > 900) interval = 900;
+    this.saveInterval = interval;
+    this.savetoLocalStorage();
+  }
+  
   savetoLocalStorage(): void {
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot, this.getGameExport());
     this.lastSaved = new Date().getTime();
@@ -119,6 +133,7 @@ export class GameStateService {
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
+    this.saveInterval = gameState.saveInterval || 10;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
   }
@@ -139,6 +154,7 @@ export class GameStateService {
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
+      saveInterval: this.saveInterval || 10,
       easyModeEver: this.easyModeEver
     };
     let gameStateString = JSON.stringify(gameState);
