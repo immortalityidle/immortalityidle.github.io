@@ -521,6 +521,7 @@ export class ActivityService {
     newList.push(this.Recruiting);
     if (this.followerService.petsEnabled){
       newList.push(this.PetRecruiting);
+      newList.push(this.PetTraining);
     }
     newList.push(this.TrainingFollowers);
     newList.push(this.CombatTraining);
