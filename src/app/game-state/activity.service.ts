@@ -2239,7 +2239,7 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute('animalHandling', 0.1 * huntingSuccessChance);
         if (Math.random() < huntingSuccessChance) {
           this.inventoryService.addItem(this.itemRepoService.items['meat']);
-          this.inventoryService.addItem(this.inventoryService.getHide());
+          this.inventoryService.addItem(this.inventoryService.getHide(), Math.floor(this.followerService.jobs['hunter'].totalPower / 20));
         }
         if (Math.random() < 0.01) {
           this.battleService.addEnemy({
@@ -2250,7 +2250,7 @@ export class ActivityService {
             attack: 5,
             defense: 5,
             loot: [
-              this.itemRepoService.items['hide']
+              this.inventoryService.getHide()
             ]
           });
         }
