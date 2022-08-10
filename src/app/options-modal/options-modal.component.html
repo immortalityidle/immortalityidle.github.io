@@ -115,7 +115,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab *ngIf="inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldGemsUnlocked || 
+    <mat-tab *ngIf="inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked || 
       inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoBalanceUnlocked">
       <ng-template mat-tab-label>
         <span class="tab-label">Sales</span>
@@ -147,6 +147,13 @@
           <input type="checkbox" (change)="autoSellOldBars($event)"
             id="autoSellOldBars"  [checked]="inventoryService.autoSellOldBarsEnabled"/>
           <label for="autoSellOldBars">Automatically sell lower grade bars than what current activities produce</label>
+        </span>
+      </div>
+      <div *ngIf="inventoryService.autoSellOldHides"  class="optionField">
+        <span>
+          <input type="checkbox" (change)="autoSellOldHides($event)"
+            id="autosellOldHides"  [checked]="inventoryService.autoSellOldHidesEnabled"/>
+          <label for="autosellOldHides">Automatically sell lower grade hides than what current activities produce</label>
         </span>
       </div>
       <div *ngIf="inventoryService.autoSellOldGemsUnlocked"  class="optionField">

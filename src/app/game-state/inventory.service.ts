@@ -95,10 +95,12 @@ export interface InventoryProperties {
   autoSellOldHerbs: boolean,
   autoSellOldWood: boolean,
   autoSellOldOre: boolean,
+  autoSellOldHides: boolean,
   autoSellOldHerbsEnabled: boolean,
   autoSellOldWoodEnabled: boolean,
   autoSellOldOreEnabled: boolean,
   autoSellOldBarsEnabled: boolean,
+  autoSellOldHidesEnabled: boolean,
   autoequipBestWeapon: boolean,
   autoequipBestArmor: boolean,
   autoequipBestEnabled: boolean,
@@ -144,10 +146,12 @@ export class InventoryService {
   autoSellOldHerbs: boolean;
   autoSellOldWood: boolean;
   autoSellOldOre: boolean;
+  autoSellOldHides: boolean
   autoSellOldHerbsEnabled: boolean;
   autoSellOldWoodEnabled: boolean;
   autoSellOldOreEnabled: boolean;
   autoSellOldBarsEnabled: boolean;
+  autoSellOldHidesEnabled: boolean;
   fed = false;
   lifetimeUsedItems = 0;
   lifetimeSoldItems = 0;
@@ -195,10 +199,12 @@ export class InventoryService {
     this.autoSellOldHerbs = false;
     this.autoSellOldWood = false;
     this.autoSellOldOre = false;
+    this.autoSellOldHides = false;
     this.autoSellOldHerbsEnabled = false;
     this.autoSellOldWoodEnabled = false;
     this.autoSellOldOreEnabled = false;
     this.autoSellOldBarsEnabled = false;
+    this.autoSellOldHidesEnabled = false;
     this.autoSellOldGemsUnlocked = false;
     this.autoSellOldGemsEnabled = false;
 
@@ -279,10 +285,12 @@ export class InventoryService {
       autoSellOldHerbs: this.autoSellOldHerbs,
       autoSellOldWood: this.autoSellOldWood,
       autoSellOldOre: this.autoSellOldOre,
+      autoSellOldHides: this.autoSellOldHides,
       autoSellOldHerbsEnabled: this.autoSellOldHerbsEnabled,
       autoSellOldWoodEnabled: this.autoSellOldWoodEnabled,
       autoSellOldOreEnabled: this.autoSellOldOreEnabled,
       autoSellOldBarsEnabled: this.autoSellOldBarsEnabled,
+      autoSellOldHidesEnabled: this.autoSellOldHidesEnabled,
       autoequipBestWeapon: this.autoequipBestWeapon,
       autoequipBestArmor: this.autoequipBestArmor,
       autoequipBestEnabled: this.autoequipBestEnabled,
@@ -317,10 +325,12 @@ export class InventoryService {
     this.autoSellOldHerbs = properties.autoSellOldHerbs || false;
     this.autoSellOldWood = properties.autoSellOldWood || false;
     this.autoSellOldOre = properties.autoSellOldOre || false;
+    this.autoSellOldHides = properties.autoSellOldHides || false;
     this.autoSellOldHerbsEnabled = properties.autoSellOldHerbsEnabled || false;
     this.autoSellOldWoodEnabled = properties.autoSellOldWoodEnabled || false;
     this.autoSellOldOreEnabled = properties.autoSellOldOreEnabled || false;
     this.autoSellOldBarsEnabled = properties.autoSellOldBarsEnabled || false;
+    this.autoSellOldHidesEnabled = properties.autoSellOldHidesEnabled || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
     if(properties.autoequipBestEnabled === undefined){
@@ -776,7 +786,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldWoodEnabled){
+    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell){
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
@@ -786,6 +796,32 @@ export class InventoryService {
       }
     }
     return lastWood;
+  }
+
+  getHide(): Item{
+    const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
+    const hideValue = Math.floor(Math.pow(animalHandling/1e9, 0.15) * 16);
+    
+    let lastHide = this.itemRepoService.items['hide'];
+
+    for (const key in this.itemRepoService.items){
+      const item = this.itemRepoService.items[key];
+      if (item.type === 'hide' && item.value > lastHide.value && item.value <= hideValue){
+        lastHide = item;
+      }
+    }
+
+    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell){
+      // sell any hides cheaper than what we just got
+      for (let i = 0; i < this.itemStacks.length; i++){
+        const itemStack = this.itemStacks[i];
+        if (itemStack && itemStack.item.type === "hide" && itemStack.item.value < lastHide.value){
+          this.sell(itemStack, itemStack.quantity);
+        }
+      }
+    }
+
+    return lastHide;
   }
 
   reset(): void {
