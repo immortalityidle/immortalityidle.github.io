@@ -2,34 +2,17 @@
     <span>Save Menu</span>
     <hr />
     <div>
-        <span>Select Save File &nbsp;</span>
-        <select name="saveList" id="saveList" (change)="saveSlotChanged($event)">
-            <option *ngFor="let save of gameStateService.saveSlots.list" value="{{save}}"
-                [selected]="gameStateService.saveSlots.slot === save">
-                {{save}}
-            </option>
-        </select>
+        <span>Select Save File </span>
     </div>
     <div>
-        <button (click)="gameStateService.savetoLocalStorage()">
-            Save
-        </button>
-        <button (click)="gameStateService.loadFromLocalStorage()">
-            Load
-        </button>
-        <button (click)="gameStateService.clearSaveFile(gameStateService.saveSlots.slot)">
-            Delete
-        </button>
-        <button (click)="gameStateService.validateSaveFiles()">
-            Validate Files
-        </button>        
-    </div><br>
-    <div>
-        <span>Add a new file</span>&nbsp;
-        <input type="text" (change)="newSaveSlot($event)">&nbsp;
-        <button (click)="addToSaveList()">
-            Add & Save
-        </button> &nbsp;
-        <span class="red">{{errorMsg}}</span>
+        <button [ngClass]="{highlighted: gameStateService.saveSlot === ''}" (click)="fileClicked('')">
+            Slot 0
+        </button>&nbsp;
+        <button [ngClass]="{highlighted: gameStateService.saveSlot === '1'}" (click)="fileClicked('1')">
+            Slot 1
+        </button>&nbsp;
+        <button [ngClass]="{highlighted: gameStateService.saveSlot === '2'}" (click)="fileClicked('2')">
+            Slot 2
+        </button>&nbsp;
+        <span class="green">{{error}}</span>
     </div>
-</div>
