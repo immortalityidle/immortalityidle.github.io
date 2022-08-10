@@ -107,7 +107,7 @@ export class HellService {
       this.characterService.characterState.status.stamina.value -= 100;
       this.characterService.characterState.hellMoney -= 1000;
       if (Math.random() < 0.01){
-        this.followerService.generateFollower("damned");
+        this.followerService.generateFollower(false, "damned");
         this.logService.addLogMessage("Your recruiting efforts seem to infuriate the demons here.", "STANDARD", "EVENT");
       }
     }],

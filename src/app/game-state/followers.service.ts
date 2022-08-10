@@ -22,6 +22,7 @@ export interface Follower {
   job: string;
   power: number;
   cost: number;
+  pet?: boolean;
 }
 
 export interface FollowersProperties {
@@ -38,7 +39,8 @@ export interface FollowersProperties {
   stashedFollowers: Follower[],
   stashedFollowersMaxes: { [key: string]: number; },
   unlockedHiddenJobs: string[],
-  autoReplaceUnlocked: boolean
+  autoReplaceUnlocked: boolean,
+  petsEnabled: boolean
 }
 
 export interface FollowerReserve {
@@ -80,6 +82,7 @@ export class FollowersService {
   hellService?: HellService;
   unlockedHiddenJobs: string[] = [];
   autoReplaceUnlocked = false;
+  petsEnabled = false;
 
   jobs: jobsType = {
     "builder": {
@@ -323,7 +326,7 @@ export class FollowersService {
           this.totalDied++;
           this.followers.splice(i,1);
           if (this.autoReplaceUnlocked){
-            let newFollower = this.generateFollower(follower.job);
+            let newFollower = this.generateFollower(follower.pet, follower.job);
             if (newFollower){
               newFollower.power = Math.round(follower.power / 2);
               newFollower.cost = 100 * newFollower.power;
@@ -422,7 +425,8 @@ export class FollowersService {
       totalDismissed: this.totalDismissed,
       highestLevel: this.highestLevel,
       unlockedHiddenJobs: this.unlockedHiddenJobs,
-      autoReplaceUnlocked: this.autoReplaceUnlocked
+      autoReplaceUnlocked: this.autoReplaceUnlocked,
+      petsEnabled: this.petsEnabled
     }
   }
 
@@ -445,6 +449,7 @@ export class FollowersService {
     this.highestLevel = properties.highestLevel || 0;
     this.unlockedHiddenJobs = properties.unlockedHiddenJobs || [];
     this.autoReplaceUnlocked = properties.autoReplaceUnlocked || false;
+    this.petsEnabled = properties.petsEnabled || false;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }
@@ -462,7 +467,7 @@ export class FollowersService {
     }
   }
 
-  generateFollower(job?: Follower["job"]): Follower | null{
+  generateFollower(pet = false, job?: Follower["job"]): Follower | null{
     this.totalRecruited++;
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap){
@@ -471,7 +476,7 @@ export class FollowersService {
       return null;
     }
 
-    job = job ? job : this.generateFollowerJob();
+    job = job ? job : this.generateFollowerJob(pet);
     let capNumber = 1000;
     let currentCount = 0;
     if (this.maxFollowerByType[job] !== undefined){
@@ -497,7 +502,8 @@ export class FollowersService {
       lifespan: this.characterService.characterState.lifespan / lifespanDivider,
       job: job,
       power: 1,
-      cost: 100
+      cost: 100,
+      pet: pet
     }
     this.followers.push(follower);
     this.sortFollowers(this.sortAscending);
@@ -512,12 +518,15 @@ export class FollowersService {
     return FirstNames[Math.floor(Math.random() * FirstNames.length)];
 
   }
-  generateFollowerJob(): string {
+
+  generateFollowerJob(pet = false): string {
     const keys = Object.keys(this.jobs);
     let possibleJobs = [];
     for (let key of keys){
       if (!this.jobs[key].hidden){
-        possibleJobs.push(key);
+        if ((pet && this.jobs[key].pet) || (!pet && !this.jobs[key].pet)){
+          possibleJobs.push(key);
+        }
       }
     }
     return possibleJobs[Math.floor(Math.random() * (possibleJobs.length ))];
@@ -589,7 +598,8 @@ export class FollowersService {
     }
   }
 
-  unlockElememntalPets(){
+  unlockElementalPets(){
+    this.petsEnabled = true;
     this.unlockJob("snake");
     this.unlockJob("tiger");
     this.unlockJob("ox");

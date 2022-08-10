@@ -1376,7 +1376,7 @@ export class ItemRepoService {
           this.followerService = this.injector.get(FollowersService);
         }
         this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before.", "STANDARD", 'STORY');
-        this.followerService.unlockElememntalPets();
+        this.followerService.unlockElementalPets();
       },
     },
     fastPlayManual: {
