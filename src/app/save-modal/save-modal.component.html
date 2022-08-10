@@ -20,7 +20,8 @@
         <span>
             <label for="autoSaveInterval">Change how often the game autosaves (in seconds) </label>
             <input value="{{gameStateService.saveInterval}}" type="number" min="1" max="900" step="1"
-                (change)="autoSaveInterval($event)" id="autoSaveInterval">
+                (change)="autoSaveInterval($event)" id="autoSaveInterval">&nbsp;
+                <span class="spaced warning">Changing this will save immediately.</span>
         </span>
     </div>
 </div>
