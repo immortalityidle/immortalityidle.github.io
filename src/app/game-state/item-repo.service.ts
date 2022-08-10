@@ -576,10 +576,10 @@ export class ItemRepoService {
     },
     hide: {
       id: 'hide',
-      name: 'hide',
+      name: 'tattered hide',
       type: 'hide',
       value: 1,
-      description: 'A basic animal hide.'
+      description: 'A tattered animal hide.'
     },
     thinPelt: {
       id: 'thinPelt',
