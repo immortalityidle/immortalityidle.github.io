@@ -801,7 +801,7 @@ export class InventoryService {
     const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
     const hideValue = Math.floor(Math.pow(animalHandling/1e9, 0.15) * 16);
     
-    let lastHide = this.itemRepoService.items['shreddedHide'];
+    let lastHide = this.itemRepoService.items['hide'];
 
     for (const key in this.itemRepoService.items){
       const item = this.itemRepoService.items[key];
@@ -811,7 +811,7 @@ export class InventoryService {
     }
 
     if (this.autoSellOldHidesEnabled && !this.hellService?.inHell){
-      // sell any wood cheaper than what we just got
+      // sell any hides cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++){
         const itemStack = this.itemStacks[i];
         if (itemStack && itemStack.item.type === "hide" && itemStack.item.value < lastHide.value){

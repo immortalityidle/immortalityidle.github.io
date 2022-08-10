@@ -574,12 +574,12 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    shreddedHide: {
-      id: 'shreddedHide',
-      name: 'shredded hide',
+    hide: {
+      id: 'hide',
+      name: 'hide',
       type: 'hide',
       value: 1,
-      description: 'A shredded animal hide.'
+      description: 'A basic animal hide.'
     },
     thinPelt: {
       id: 'thinPelt',
