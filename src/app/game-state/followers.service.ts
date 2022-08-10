@@ -103,9 +103,8 @@ export class FollowersService {
           return;
         }
         this.inventoryService.addItem(this.itemRepoService.items['meat'], this.jobs["hunter"].totalPower);
-        this.inventoryService.addItem(this.itemRepoService.items['hide'], this.jobs["hunter"].totalPower);
       },
-      description: "Hunters collect meat and hides for you.",
+      description: "Hunters collect meat help you hunt for hides.",
       totalPower: 0
     },
     "farmer": {
@@ -319,14 +318,14 @@ export class FollowersService {
         this.generateFollower();
       }
       for (let i = this.followers.length - 1; i >= 0; i--){
-        let follower = this.followers[i]
+        const follower = this.followers[i]
         follower.age++;
         if (follower.age >= this.followers[i].lifespan){
           // follower aged off
           this.totalDied++;
           this.followers.splice(i,1);
           if (this.autoReplaceUnlocked){
-            let newFollower = this.generateFollower(follower.pet, follower.job);
+            const newFollower = this.generateFollower(follower.pet, follower.job);
             if (newFollower){
               newFollower.power = Math.round(follower.power / 2);
               newFollower.cost = 100 * newFollower.power;
@@ -462,7 +461,7 @@ export class FollowersService {
   }
 
   unhideUnlockedJobs(){
-    for (let job of this.unlockedHiddenJobs ){
+    for (const job of this.unlockedHiddenJobs ){
       this.jobs[job].hidden = false;
     }
   }
@@ -496,7 +495,7 @@ export class FollowersService {
 
     const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
     this.logService.addLogMessage("A new " + this.camelToTitle.transform(job) + " has come to learn at your feet.","STANDARD","FOLLOWER");
-    let follower = {
+    const follower = {
       name: this.generateFollowerName(),
       age: 0,
       lifespan: this.characterService.characterState.lifespan / lifespanDivider,
@@ -521,8 +520,8 @@ export class FollowersService {
 
   generateFollowerJob(pet = false): string {
     const keys = Object.keys(this.jobs);
-    let possibleJobs = [];
-    for (let key of keys){
+    const possibleJobs = [];
+    for (const key of keys){
       if (!this.jobs[key].hidden){
         if ((pet && this.jobs[key].pet) || (!pet && !this.jobs[key].pet)){
           possibleJobs.push(key);
