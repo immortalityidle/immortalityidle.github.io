@@ -208,12 +208,26 @@ export class BattleService {
           }
           let damageBack = false;
           if (this.enableFireShield && this.characterService.characterState.status.mana.value > 10000){
-            damage /= 10;
+            let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
+            if (fireDivisor < 1){
+              fireDivisor = 1;
+            }
+            if (fireDivisor > 10){
+              fireDivisor = 10;
+            }
+            damage /= fireDivisor;
             this.characterService.characterState.status.mana.value -= 10000;
             damageBack = true;
           }
           if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000){
-            damage /= 10;
+            let waterDivisor = Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
+            if (waterDivisor < 1){
+              waterDivisor = 1;
+            }
+            if (waterDivisor > 10){
+              waterDivisor = 10;
+            }
+            damage /= waterDivisor;
             this.characterService.characterState.status.mana.value -= 10000;
             this.skipEnemyAttack++;
           }
@@ -295,7 +309,14 @@ export class BattleService {
       }
       let blowthrough = false;
       if (this.enablePyroclasm && this.characterService.characterState.status.mana.value > 10000){
-        damage *= 10;
+        let fireMultiplier = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
+        if (fireMultiplier < 1){
+          fireMultiplier = 1;
+        }
+        if (fireMultiplier > 10){
+          fireMultiplier = 10;
+        }
+        damage *= fireMultiplier;
         this.characterService.characterState.status.mana.value -= 10000;
         blowthrough = true;
       }

@@ -7,6 +7,7 @@ import { TitleCasePipe } from '@angular/common';
 import { ActivityService } from './activity.service';
 import { Subscription } from "rxjs";
 import { BigNumberPipe } from '../app.component';
+import { HellLevel, HellService } from './hell.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class CharacterService {
   fatherGift = false;
   lifespanTooltip = "";
   deathSubscriber?: Subscription;
+  hellService?: HellService;
 
   constructor(
     private injector: Injector,
@@ -27,6 +29,7 @@ export class CharacterService {
     private reincarnationService: ReincarnationService,
     titleCasePipe: TitleCasePipe
   ) {
+    setTimeout(() => this.hellService = this.injector.get(HellService));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.characterState = new Character(logService, titleCasePipe, this.bigNumberPipe, mainLoopService);
     mainLoopService.tickSubject.subscribe(() => {
@@ -122,6 +125,9 @@ export class CharacterService {
         return;
       }
       this.characterState.recalculateDerivedStats();
+      if (this.hellService?.inHell && this.hellService.currentHell == HellLevel.CrushingBoulder && !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)){
+        this.characterState.attackPower = 1;
+      }
       this.setLifespanTooltip();
     });
 

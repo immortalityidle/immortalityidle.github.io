@@ -51,7 +51,8 @@ export interface HellProperties {
   completedHellTasks: number[],
   completedHellBosses: number[],
   mountainSteps: number,
-  animalsHealed: number
+  animalsHealed: number,
+  boulderHeight: number
 }
 
 @Injectable({
@@ -66,6 +67,7 @@ export class HellService {
   beaten = false;
   mountainSteps = 0;
   animalsHealed = 0;
+  boulderHeight = 0;
 
   burnMoney = {
     level: 0,
@@ -315,6 +317,26 @@ export class HellService {
     skipApprenticeshipLevel: 0
   }
 
+  liftBoulder = {
+    level: 0,
+    name: ['Lift the Boulder Higher'],
+    activityType: ActivityType.LiftBoulder,
+    description: ["The boulder is heavy, but you are strong. See how high you can lift it."],
+    consequenceDescription: ['Uses 100,000 stamina. Heals an animal.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 100000;
+      this.boulderHeight++;
+    }],
+    resourceUse: [{
+      stamina: 10000,
+      mana: 10000
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
   constructor(
     private injector: Injector,
     private logService: LogService,
@@ -349,7 +371,6 @@ export class HellService {
       if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()){
         hell.completeEffect();
         this.completedHellTasks.push(this.currentHell);
-
       }
     });
 
@@ -560,6 +581,17 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownCattlePit'] ]
       });
+    } else if (this.currentHell === HellLevel.CrushingBoulder){
+      this.battleService.addEnemy({
+        name: "The Crusher",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownCrushingBoulder'] ]
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -580,7 +612,8 @@ export class HellService {
       completedHellTasks: this.completedHellTasks,
       completedHellBosses: this.completedHellBosses,
       mountainSteps: this.mountainSteps,
-      animalsHealed: this.animalsHealed
+      animalsHealed: this.animalsHealed,
+      boulderHeight: this.boulderHeight
     }
   }
 
@@ -591,6 +624,7 @@ export class HellService {
     this.completedHellBosses = properties.completedHellBosses || [];
     this.mountainSteps = properties.mountainSteps || 0;
     this.animalsHealed = properties.animalsHealed || 0;
+    this.boulderHeight = properties.boulderHeight || 0;
     this.activityService.reloadActivities();
   }
 
@@ -651,6 +685,7 @@ export class HellService {
   setEnterHellsArray(newList: Activity[]) {
     newList.push(this.activityService.Resting);
     newList.push(this.activityService.CombatTraining);
+    newList.push(this.activityService.CoreCultivation);
     newList.push(this.activityService.SoulCultivation);
     newList.push(this.activityService.InfuseBody);
     for (const hell of this.hells){
@@ -950,20 +985,37 @@ export class HellService {
       name: "Hell of the Crushing Boulder",
       description: "Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them. Atlas had it easy compared to these people.",
       index: HellLevel.CrushingBoulder,
+      dailyEffect: () => {
+        if (this.boulderHeight > 100){
+          return;
+        }
+        // TODO: tune this
+        let damage = 500;
+        this.characterService.characterState.status.health.value -= damage;
+        this.logService.addLogMessage("The boulder crushes you for " + damage + " damage.", "INJURY", "COMBAT");
+        if (Math.random() < 0.1){
+          this.battleService.addEnemy({
+            name: "An Annoying Imp",
+            health: 10,
+            maxHealth: 10,
+            accuracy: 1,
+            attack: 100,
+            defense: 100,
+            loot: [ ]
+          });
+        }
+      },
       entryEffect: () => {
-        /*
-        Task: Roll a boulder (strength check)
-        During the level:only magical attacks are usable (your hands are busy with the boulder)
-        */
+        this.boulderHeight = 0;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You hoist the boulder high over your head, then throw it high into the air. It lands with a satisfying thud. Unfortunately, it grows arms and legs and walks back to you, and this time it looks angry.", "STANDARD", "STORY");
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.liftBoulder],
       projectionActivities: [],
-      hint: "",
+      hint: "It's leg day. No, it's arm day. Must be both! Lift!",
       successCheck: () => {
-        return false;
+        return this.boulderHeight > 100;
       }
     },
     {
