@@ -8,6 +8,7 @@ import { ActivityService } from './activity.service';
 import { Subscription } from "rxjs";
 import { BigNumberPipe } from '../app.component';
 import { HellLevel, HellService } from './hell.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,8 @@ export class CharacterService {
   lifespanTooltip = "";
   deathSubscriber?: Subscription;
   hellService?: HellService;
+  private snackBar: MatSnackBar;
+  private snackBarObservable?: Subscription;
 
   constructor(
     private injector: Injector,
@@ -30,6 +33,7 @@ export class CharacterService {
     titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => this.hellService = this.injector.get(HellService));
+    this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.characterState = new Character(logService, titleCasePipe, this.bigNumberPipe, mainLoopService);
     mainLoopService.tickSubject.subscribe(() => {
@@ -120,12 +124,12 @@ export class CharacterService {
       if (this.characterState.highestMana < this.characterState.status.mana.value){
         this.characterState.highestMana = this.characterState.status.mana.value;
       }
-    
+
       if (this.characterState.dead){
         return;
       }
       this.characterState.recalculateDerivedStats();
-      if (this.hellService?.inHell && this.hellService.currentHell == HellLevel.CrushingBoulder && !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)){
+      if (this.hellService?.inHell && this.hellService.currentHell === HellLevel.CrushingBoulder && !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)){
         this.characterState.attackPower = 1;
       }
       this.setLifespanTooltip();
@@ -306,5 +310,13 @@ export class CharacterService {
   restoreMoney(){
     this.characterState.money = this.characterState.stashedMoney;
     this.characterState.stashedMoney = 0
+  }
+
+  // this doesn't really belong here, but nearly everything accesses this service and I didn't want to make a whole service for one function, so here it will live for now
+  toast(message: string){
+    const snackBar = this.snackBar.open(message, "Close", {duration: 5000, horizontalPosition: 'right', verticalPosition: 'bottom', panelClass: ['snackBar', 'darkMode']});
+    this.snackBarObservable = snackBar.onAction().subscribe(() => {
+      this.snackBarObservable?.unsubscribe();
+    })
   }
 }
