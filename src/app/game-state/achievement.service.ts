@@ -12,6 +12,8 @@ import { ActivityService } from './activity.service';
 import { ActivityType } from './activity';
 import { ImpossibleTaskService } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 export interface Achievement {
   name: string;
@@ -34,6 +36,9 @@ export interface AchievementProperties {
 export class AchievementService {
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
+  achievementRollNames = '';
+  private snackBar: MatSnackBar;
+  private snackBarObservable?: Subscription;
 
   constructor(
     private mainLoopService: MainLoopService,
@@ -47,8 +52,9 @@ export class AchievementService {
     private homeService: HomeService,
     private activityService: ActivityService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
   ) {
+    this.snackBar = this.injector.get(MatSnackBar);
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (const achievement of this.achievements) {
         if (!this.unlockedAchievements.includes(achievement.name)){
@@ -804,14 +810,24 @@ export class AchievementService {
     if (newAchievement){
       this.unlockedAchievements.push(achievement.name);
       this.logService.addLogMessage(achievement.description, 'STANDARD', 'STORY');
-      // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+      // check if gameStateService is injected yet, if not, inject it (circular dependency issues)
       if (!this.gameStateService){
         this.gameStateService = this.injector.get(GameStateService);
       }
       this.gameStateService.savetoLocalStorage();
+      this.achievementRollNames += 'Achievement Unlocked: ' + achievement.name + '\n';
+      this.achievementRoll();
     }
     achievement.effect();
     achievement.unlocked = true;
+  }
+
+  achievementRoll(){
+    const snackBar = this.snackBar.open(this.achievementRollNames, 'Dismiss', {horizontalPosition: 'right', verticalPosition: 'bottom', panelClass: ['snackBar', 'darkMode']});
+    this.snackBarObservable = snackBar.onAction().subscribe(() => {
+      this.achievementRollNames = ''
+      this.snackBarObservable?.unsubscribe();
+    })
   }
 
   getProperties(): AchievementProperties {
