@@ -1,8 +1,8 @@
-import { Injectable, Injector, OnInit } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { CharacterService } from './character.service';
-import { Furniture, InventoryService, Item, instanceOfFurniture } from './inventory.service';
-import { HomeService, HomeType, Home } from './home.service';
+import { InventoryService } from './inventory.service';
+import { HomeService, HomeType } from './home.service';
 import { ItemRepoService } from './item-repo.service';
 import { StoreService } from './store.service';
 import { MainLoopService } from './main-loop.service';
@@ -12,7 +12,7 @@ import { ActivityService } from './activity.service';
 import { ActivityType } from './activity';
 import { ImpossibleTaskService } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 
 export interface Achievement {
@@ -36,9 +36,7 @@ export interface AchievementProperties {
 export class AchievementService {
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
-  achievementRollNames = '';
-  private snackBar: MatSnackBar;
-  private snackBarObservable?: Subscription;
+
 
   constructor(
     private mainLoopService: MainLoopService,
@@ -54,7 +52,6 @@ export class AchievementService {
     private followerService: FollowersService,
     private impossibleTaskService: ImpossibleTaskService,
   ) {
-    this.snackBar = this.injector.get(MatSnackBar);
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (const achievement of this.achievements) {
         if (!this.unlockedAchievements.includes(achievement.name)){
@@ -464,7 +461,7 @@ export class AchievementService {
       },
       unlocked: false
 
-    }, 
+    },
     {
       name: "Gem Snob",
       description: "You have sold 888 gems and unlocked the " +  this.itemRepoService.items['bestGemsManual'].name,
@@ -773,7 +770,7 @@ export class AchievementService {
     {
       name: "Breaks are Bad",
       description: "You died from overwork performing an activity without necessary rest and unlocked the " + this.itemRepoService.items['autoRestManual'].name,
-      hint: "There's no time to rest, cultivating is life.", 
+      hint: "There's no time to rest, cultivating is life.",
       check: () => {
         return this.activityService.activityDeath || this.characterService.characterState.immortal;
       },
@@ -815,19 +812,10 @@ export class AchievementService {
         this.gameStateService = this.injector.get(GameStateService);
       }
       this.gameStateService.savetoLocalStorage();
-      this.achievementRollNames += 'Achievement Unlocked: ' + achievement.name + '\n';
-      this.achievementRoll();
+      this.characterService.toast('Achievement Unlocked: ' + achievement.name);
     }
     achievement.effect();
     achievement.unlocked = true;
-  }
-
-  achievementRoll(){
-    const snackBar = this.snackBar.open(this.achievementRollNames, 'Dismiss', {horizontalPosition: 'right', verticalPosition: 'bottom', panelClass: ['snackBar', 'darkMode']});
-    this.snackBarObservable = snackBar.onAction().subscribe(() => {
-      this.achievementRollNames = ''
-      this.snackBarObservable?.unsubscribe();
-    })
   }
 
   getProperties(): AchievementProperties {
