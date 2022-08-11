@@ -495,6 +495,7 @@ export class ActivityService {
     newList.push(this.OddJobs);
     newList.push(this.Begging);
     newList.push(this.Burning);
+    newList.push(this.Taunting);
     newList.push(this.Farming);
     newList.push(this.Mining);
     newList.push(this.Smelting);
@@ -2701,7 +2702,7 @@ export class ActivityService {
       name: ['Taunting Enemies'],
       activityType: ActivityType.Taunting,
       description: ['Rudely point at your enemies and call them out to battle.'],
-      consequenceDescription: ['Incite a fight with your current enemy this very night.'],
+      consequenceDescription: ['Incites a fight with your current enemy this very night.'],
       consequence: [() => {
         this.battleService.tickCounter = this.battleService.ticksPerFight;
         if (this.characterService.characterState.yinYangUnlocked){
