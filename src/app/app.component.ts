@@ -12,7 +12,7 @@ import { formatNumber } from '@angular/common';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { ImpossibleTaskService } from './game-state/impossibleTask.service';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
-import {environment} from '../environments/environment';
+import { environment } from '../environments/environment';
 import { ExportPanelComponent } from './export-panel/export-panel.component';
 import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.component';
