@@ -80,11 +80,13 @@ export interface CharacterProperties {
   highestHealth: number,
   highestStamina: number,
   highestMana: number,
-  highestAttributes: { [key: string]: number; }
-  yinYangUnlocked: boolean;
-  yin: number;
-  yang: number;
-  righteousWrathUnlocked: boolean;
+  highestAttributes: { [key: string]: number; },
+  yinYangUnlocked: boolean,
+  yin: number,
+  yang: number,
+  righteousWrathUnlocked: boolean,
+  bonusMuscles: boolean,
+  bonusBrains: boolean,
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -102,6 +104,12 @@ export class Character {
         const keys = Object.keys(this.attributes) as AttributeType[];
         for (const key in keys) {
           this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
+          if ((keys[key] == "strength" || keys[key] == "speed" || keys[key] == "toughness") && this.bonusMuscles){
+            this.attributes[keys[key]].aptitudeMult *= 1000;  
+          }
+          if ((keys[key] == "intelligence" || keys[key] == "charisma") && this.bonusBrains){
+            this.attributes[keys[key]].aptitudeMult *= 1000;  
+          }
         }
       });
     }
@@ -137,6 +145,8 @@ export class Character {
   yang = 1;
   yinYangBalance = 0;
   righteousWrathUnlocked = false;
+  bonusMuscles = false;
+  bonusBrains = false;
 
   attributes: AttributeObject = {
     strength: {
@@ -645,7 +655,10 @@ export class Character {
       yinYangUnlocked: this.yinYangUnlocked,
       yin: this.yin,
       yang: this.yang,
-      righteousWrathUnlocked: this.righteousWrathUnlocked
+      righteousWrathUnlocked: this.righteousWrathUnlocked,
+      bonusMuscles: this.bonusMuscles,
+      bonusBrains: this.bonusBrains
+
     }
   }
 
@@ -702,6 +715,8 @@ export class Character {
     this.yin = properties.yin || 1;
     this.yang = properties.yang || 1;
     this.righteousWrathUnlocked = properties.righteousWrathUnlocked || false;
+    this.bonusMuscles = properties.bonusMuscles || false;
+    this.bonusBrains = properties.bonusBrains || false;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery){

@@ -50,7 +50,9 @@ export interface HellProperties {
   currentHell: number,
   completedHellTasks: number[],
   completedHellBosses: number[],
-  mountainSteps: number
+  mountainSteps: number,
+  animalsHealed: number,
+  boulderHeight: number
 }
 
 @Injectable({
@@ -64,6 +66,8 @@ export class HellService {
   completedHellBosses: number[] = [];
   beaten = false;
   mountainSteps = 0;
+  animalsHealed = 0;
+  boulderHeight = 0;
 
   burnMoney = {
     level: 0,
@@ -105,7 +109,7 @@ export class HellService {
       this.characterService.characterState.status.stamina.value -= 100;
       this.characterService.characterState.hellMoney -= 1000;
       if (Math.random() < 0.01){
-        this.followerService.generateFollower("damned");
+        this.followerService.generateFollower(false, "damned");
         this.logService.addLogMessage("Your recruiting efforts seem to infuriate the demons here.", "STANDARD", "EVENT");
       }
     }],
@@ -174,7 +178,7 @@ export class HellService {
     name: ['Copper Mining'],
     activityType: ActivityType.CopperMining,
     description: ["The copper pillars here look like they're made of a decent grade of copper. It looks like you have enough slack in your chains to turn and break off some pieces."],
-    consequenceDescription: ['Costs 100,000 stamina and produces one copper bar.'],
+    consequenceDescription: ['Uses 100,000 stamina and produces one copper bar.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 100000;
       this.inventoryService.addItem(this.itemRepoService.items['copperBar']);
@@ -194,7 +198,7 @@ export class HellService {
     name: ['Forge Hammer'],
     activityType: ActivityType.ForgeHammer,
     description: ["Shape a bar of copper into a hammer using your bare hands. This would be so much easier with an anvil and tools."],
-    consequenceDescription: ['Costs 100,000 stamina and produces the worst hammer in the world.'],
+    consequenceDescription: ['Uses 100,000 stamina and produces the worst hammer in the world.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 100000;
       if (this.inventoryService.consume("metal", 1) > 0){
@@ -230,7 +234,7 @@ export class HellService {
     name: ['Climb the Mountain'],
     activityType: ActivityType.ClimbMountain,
     description: ["Take another step up the mountain. The path before you seems exceptionally jagged. Maybe you shouldn't have killed so very many little spiders."],
-    consequenceDescription: ['Costs 1000 stamina and produces the worst hammer in the world.'],
+    consequenceDescription: ['Uses 1000 stamina and produces the worst hammer in the world.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       this.mountainSteps++;
@@ -292,6 +296,47 @@ export class HellService {
     skipApprenticeshipLevel: 0
   }
 
+  healAnimals = {
+    level: 0,
+    name: ['Heal Animals'],
+    activityType: ActivityType.HealAnimals,
+    description: ["You notice that not all the animals here are frenzied killers. Some of them are sick, wounded, and miserable. You resolve to do what good you can here."],
+    consequenceDescription: ['Uses 10,000 mana and 10,000 stamina. Heals an animal.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 10000;
+      this.characterService.characterState.status.mana.value -= 10000;
+      this.animalsHealed++;
+    }],
+    resourceUse: [{
+      stamina: 10000,
+      mana: 10000
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  liftBoulder = {
+    level: 0,
+    name: ['Lift the Boulder Higher'],
+    activityType: ActivityType.LiftBoulder,
+    description: ["The boulder is heavy, but you are strong. See how high you can lift it."],
+    consequenceDescription: ['Uses 100,000 stamina. Heals an animal.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 100000;
+      this.boulderHeight++;
+    }],
+    resourceUse: [{
+      stamina: 10000,
+      mana: 10000
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
   constructor(
     private injector: Injector,
     private logService: LogService,
@@ -326,7 +371,6 @@ export class HellService {
       if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()){
         hell.completeEffect();
         this.completedHellTasks.push(this.currentHell);
-
       }
     });
 
@@ -409,9 +453,21 @@ export class HellService {
         defense: 1e6,
         loot: [ ]
       });
+    } else if (this.currentHell === HellLevel.CattlePit){
+      if (this.animalsHealed <= 1000000){
+        for (let i = 0; i < 10; i++){
+          this.battleService.addEnemy({
+            name: "Demonic Cow",
+            health: 1e6,
+            maxHealth: 1e6,
+            accuracy: 1,
+            attack: 1e6,
+            defense: 1e6,
+            loot: [ ]
+          });
+        }
+      }
     }
-
-    
   }
 
   fightHellBoss(){
@@ -514,6 +570,28 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownCauldronsOfOil'] ]
       });
+    } else if (this.currentHell === HellLevel.CattlePit){
+      this.battleService.addEnemy({
+        name: "The Cow Emperor",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownCattlePit'] ]
+      });
+    } else if (this.currentHell === HellLevel.CrushingBoulder){
+      this.battleService.addEnemy({
+        name: "The Crusher",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownCrushingBoulder'] ]
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -533,7 +611,9 @@ export class HellService {
       currentHell: this.currentHell,
       completedHellTasks: this.completedHellTasks,
       completedHellBosses: this.completedHellBosses,
-      mountainSteps: this.mountainSteps
+      mountainSteps: this.mountainSteps,
+      animalsHealed: this.animalsHealed,
+      boulderHeight: this.boulderHeight
     }
   }
 
@@ -543,6 +623,8 @@ export class HellService {
     this.completedHellTasks = properties.completedHellTasks || [];
     this.completedHellBosses = properties.completedHellBosses || [];
     this.mountainSteps = properties.mountainSteps || 0;
+    this.animalsHealed = properties.animalsHealed || 0;
+    this.boulderHeight = properties.boulderHeight || 0;
     this.activityService.reloadActivities();
   }
 
@@ -603,6 +685,7 @@ export class HellService {
   setEnterHellsArray(newList: Activity[]) {
     newList.push(this.activityService.Resting);
     newList.push(this.activityService.CombatTraining);
+    newList.push(this.activityService.CoreCultivation);
     newList.push(this.activityService.SoulCultivation);
     newList.push(this.activityService.InfuseBody);
     for (const hell of this.hells){
@@ -879,7 +962,7 @@ export class HellService {
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation,],
       projectionActivities: [],
-      hint: "",
+      hint: "You'd need to be incredibly resilient to survive this place.",
       successCheck: () => {
         return this.inventoryService.getQuantityByName("ice core") >= 1000 && this.characterService.characterState.status.health.value > 100000;
       }
@@ -888,40 +971,51 @@ export class HellService {
       name: "Hell of the Cattle Pit",
       description: "Torment for animal abusers. The cows are looking a little restless.",
       index: HellLevel.CattlePit,
-      entryEffect: () => {
-        /*
-        Task: Heal animals
-        During the level: Extra tough mad cow monsters, lots of them
-        */
-      },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("The horde of rampaging cattle finally seems to understand that you're not there to hurt them. They back off and leave you alone. All except for that really big cow over there.", "STANDARD", "STORY");
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.healAnimals],
       projectionActivities: [],
-      hint: "",
+      hint: "Look at those poor sick cows. And those other cows that for some reason are standing up on two legs and charging you with weapons.",
       successCheck: () => {
-        return false;
+        return this.animalsHealed > 1000000;
       }
     },
     {
       name: "Hell of the Crushing Boulder",
-      description: "Torment for child-killer and abondoners. Atlas had it easy compared to these things.",
+      description: "Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them. Atlas had it easy compared to these people.",
       index: HellLevel.CrushingBoulder,
+      dailyEffect: () => {
+        if (this.boulderHeight > 100){
+          return;
+        }
+        // TODO: tune this
+        let damage = 500;
+        this.characterService.characterState.status.health.value -= damage;
+        this.logService.addLogMessage("The boulder crushes you for " + damage + " damage.", "INJURY", "COMBAT");
+        if (Math.random() < 0.1){
+          this.battleService.addEnemy({
+            name: "An Annoying Imp",
+            health: 10,
+            maxHealth: 10,
+            accuracy: 1,
+            attack: 100,
+            defense: 100,
+            loot: [ ]
+          });
+        }
+      },
       entryEffect: () => {
-        /*
-        Task: Roll a boulder (strength check)
-        During the level:only magical attacks are usable (your hands are busy with the boulder)
-        */
+        this.boulderHeight = 0;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You hoist the boulder high over your head, then throw it high into the air. It lands with a satisfying thud. Unfortunately, it grows arms and legs and walks back to you, and this time it looks angry.", "STANDARD", "STORY");
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.liftBoulder],
       projectionActivities: [],
-      hint: "",
+      hint: "It's leg day. No, it's arm day. Must be both! Lift!",
       successCheck: () => {
-        return false;
+        return this.boulderHeight > 100;
       }
     },
     {

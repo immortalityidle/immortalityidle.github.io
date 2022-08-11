@@ -519,6 +519,10 @@ export class ActivityService {
     newList.push(this.InfuseBody);
     newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
+    if (this.followerService.petsEnabled){
+      newList.push(this.PetRecruiting);
+      newList.push(this.PetTraining);
+    }
     newList.push(this.TrainingFollowers);
     newList.push(this.CombatTraining);
 
@@ -616,8 +620,11 @@ export class ActivityService {
   // @ts-ignore
   Taunting: Activity;
   // @ts-ignore
-  CombatTraining: Activity
-
+  CombatTraining: Activity;
+  // @ts-ignore
+  PetRecruiting: Activity;
+  // @ts-ignore
+  PetTraining: Activity;
 
 
   defineActivities(){
@@ -2232,7 +2239,7 @@ export class ActivityService {
         this.characterService.characterState.increaseAttribute('animalHandling', 0.1 * huntingSuccessChance);
         if (Math.random() < huntingSuccessChance) {
           this.inventoryService.addItem(this.itemRepoService.items['meat']);
-          this.inventoryService.addItem(this.inventoryService.getHide());
+          this.inventoryService.addItem(this.inventoryService.getHide(), Math.floor(this.followerService.jobs['hunter'].totalPower / 20));
         }
         if (Math.random() < 0.01) {
           this.battleService.addEnemy({
@@ -2243,7 +2250,7 @@ export class ActivityService {
             attack: 5,
             defense: 5,
             loot: [
-              this.itemRepoService.items['hide']
+              this.inventoryService.getHide()
             ]
           });
         }
@@ -2653,6 +2660,9 @@ export class ActivityService {
         if (this.followerService.followersUnlocked){
           let allMaxed = true;
           for (const follower of this.followerService.followers){
+            if (follower.pet){
+              continue;
+            }
             if (follower.power >= 100) {
               follower.power = 100; // Set max level to 100
             } else {
@@ -2732,5 +2742,84 @@ export class ActivityService {
       skipApprenticeshipLevel: 0
     }
 
+    this.PetRecruiting = {
+      level: 0,
+      name: ['Finding Pets'],
+      activityType: ActivityType.PetRecruiting,
+      description: ['Look for animals that want to be your pets.'],
+      consequenceDescription: ['Uses 100 Stamina and 100,000 food. Gives you a small chance of finding a pet.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 100;
+        if (this.inventoryService.consume("food", 100000,true) <= 0){
+          return;
+        }
+        this.characterService.characterState.increaseAttribute('animalHandling', 1);
+        if (this.followerService.followersUnlocked && this.followerService.petsEnabled){
+          if (Math.random() < 0.01){
+            this.followerService.generateFollower(true);
+          }
+        }
+        if (this.characterService.characterState.yinYangUnlocked){
+          this.characterService.characterState.yang++;
+        }
+      }],
+      resourceUse: [{
+        stamina: 100
+      }],
+      requirements: [{
+        animalHandling: 1e15,
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }
+
+    this.PetTraining= {
+      level: 0,
+      name: ['Training Pets'],
+      activityType: ActivityType.PetTraining,
+      description: ['Train your pets to make them more powerful.'],
+      consequenceDescription: ['Uses 1000 Stamina and 1M food. Gives you a small chance for each pet of increasing their power. They might learn more if you are a better with animals.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 1000;
+        if (this.inventoryService.consume("food", 100000,true) <= 0){
+          return;
+        }
+        this.characterService.characterState.increaseAttribute('animalHandling', 1);
+        let allMaxed = true;
+        for (const follower of this.followerService.followers){
+          if (!follower.pet){
+            continue;
+          }
+          if (follower.power >= 100) {
+            follower.power = 100; // Set max level to 100
+          } else {
+            allMaxed = false;
+            if (Math.random() < (1 - Math.pow(follower.power / 100, 0.55)) / (36500000 / (3650 + follower.age * Math.log2(this.characterService.characterState.attributes.animalHandling.value/1e10 + 1)))){ // Softcap the increase
+              follower.power++;
+              if (follower.power > this.followerService.highestLevel){
+                this.followerService.highestLevel = follower.power;
+              }
+              follower.cost = 100 * follower.power;
+              this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "FOLLOWER");
+              this.followerService.updateFollowerTotalPower();
+            }
+          }
+        }
+        if (allMaxed){
+          this.logService.addLogMessage("You try to train your pets, but they are all already as powerful as they can be. You give them all belly rubs and tell them they are great.", "STANDARD", "FOLLOWER");
+        }
+        if (this.characterService.characterState.yinYangUnlocked){
+          this.characterService.characterState.yang++;
+        }
+      }],
+      resourceUse: [{
+        stamina: 1000
+      }],
+      requirements: [{
+        animalHandling: 1e18,
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }    
   }
 }

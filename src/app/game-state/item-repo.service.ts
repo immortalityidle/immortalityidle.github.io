@@ -1356,6 +1356,49 @@ export class ItemRepoService {
         this.characterService.characterState.righteousWrathUnlocked = true;
       },
     },
+    hellCrownCattlePit: {
+      id: 'hellCrownCattlePit',
+      name: 'Cow Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'Now you are the Cow Emperor. Using this will let you understand animals.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.CattlePit)){
+          this.hellService.completedHellBosses.push(HellLevel.CattlePit);
+        }
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before.", "STANDARD", 'STORY');
+        this.followerService.unlockElementalPets();
+      },
+    },
+    hellCrownCrushingBoulder: {
+      id: 'hellCrownCrushingBoulder',
+      name: 'Boulder Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A stone crown Using this will greatly improve your physical characteristics.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.CrushingBoulder)){
+          this.hellService.completedHellBosses.push(HellLevel.CrushingBoulder);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.", "STANDARD", 'STORY');
+        this.characterService.characterState.bonusMuscles = true;
+      },
+    },
     fastPlayManual: {
       id: 'fastPlayManual',
       name: "Manual of Expeditious Time Perception",

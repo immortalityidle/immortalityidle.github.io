@@ -882,7 +882,7 @@ export class InventoryService {
     if (foodStack) {
       this.useItemStack(foodStack);
       this.noFood = false;
-    } else {
+    } else if (!this.hellService?.inHell) {
       // no food found, buy a bowl of rice automatically
       this.noFood = true;
       if (this.characterService.characterState.money > 0 && this.autoBuyFood) {
