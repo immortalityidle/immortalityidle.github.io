@@ -1,8 +1,8 @@
-import { Injectable, Injector, OnInit } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { LogService } from './log.service';
 import { CharacterService } from './character.service';
-import { Furniture, InventoryService, Item, instanceOfFurniture } from './inventory.service';
-import { HomeService, HomeType, Home } from './home.service';
+import { InventoryService } from './inventory.service';
+import { HomeService, HomeType } from './home.service';
 import { ItemRepoService } from './item-repo.service';
 import { StoreService } from './store.service';
 import { MainLoopService } from './main-loop.service';
@@ -12,6 +12,8 @@ import { ActivityService } from './activity.service';
 import { ActivityType } from './activity';
 import { ImpossibleTaskService } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 export interface Achievement {
   name: string;
@@ -35,6 +37,7 @@ export class AchievementService {
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
 
+
   constructor(
     private mainLoopService: MainLoopService,
     private injector: Injector,
@@ -47,7 +50,7 @@ export class AchievementService {
     private homeService: HomeService,
     private activityService: ActivityService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (const achievement of this.achievements) {
@@ -458,7 +461,7 @@ export class AchievementService {
       },
       unlocked: false
 
-    }, 
+    },
     {
       name: "Gem Snob",
       description: "You have sold 888 gems and unlocked the " +  this.itemRepoService.items['bestGemsManual'].name,
@@ -767,7 +770,7 @@ export class AchievementService {
     {
       name: "Breaks are Bad",
       description: "You died from overwork performing an activity without necessary rest and unlocked the " + this.itemRepoService.items['autoRestManual'].name,
-      hint: "There's no time to rest, cultivating is life.", 
+      hint: "There's no time to rest, cultivating is life.",
       check: () => {
         return this.activityService.activityDeath || this.characterService.characterState.immortal;
       },
@@ -804,11 +807,12 @@ export class AchievementService {
     if (newAchievement){
       this.unlockedAchievements.push(achievement.name);
       this.logService.addLogMessage(achievement.description, 'STANDARD', 'STORY');
-      // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+      // check if gameStateService is injected yet, if not, inject it (circular dependency issues)
       if (!this.gameStateService){
         this.gameStateService = this.injector.get(GameStateService);
       }
       this.gameStateService.savetoLocalStorage();
+      this.characterService.toast('Achievement Unlocked: ' + achievement.name);
     }
     achievement.effect();
     achievement.unlocked = true;

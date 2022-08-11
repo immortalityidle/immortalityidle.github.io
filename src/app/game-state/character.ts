@@ -104,11 +104,11 @@ export class Character {
         const keys = Object.keys(this.attributes) as AttributeType[];
         for (const key in keys) {
           this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
-          if ((keys[key] == "strength" || keys[key] == "speed" || keys[key] == "toughness") && this.bonusMuscles){
-            this.attributes[keys[key]].aptitudeMult *= 1000;  
+          if ((keys[key] === "strength" || keys[key] === "speed" || keys[key] === "toughness") && this.bonusMuscles){
+            this.attributes[keys[key]].aptitudeMult *= 1000;
           }
-          if ((keys[key] == "intelligence" || keys[key] == "charisma") && this.bonusBrains){
-            this.attributes[keys[key]].aptitudeMult *= 1000;  
+          if ((keys[key] === "intelligence" || keys[key] === "charisma") && this.bonusBrains){
+            this.attributes[keys[key]].aptitudeMult *= 1000;
           }
         }
       });
