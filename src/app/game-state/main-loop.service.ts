@@ -128,7 +128,7 @@ export class MainLoopService {
         const currentTPS = this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
         const topTPS = this.getTPS(this.topDivider) / 1000 * TICK_INTERVAL_MS;
         let inactiveTickHolder = 0;
-        if (this.bankedTicks > 0 && this.useBankedTicks){
+        if (this.bankedTicks > 0 && this.useBankedTicks && this.tickDivider < 40){ // don't use banked ticks on slow speed
           //using banked ticks makes time happen 10 times faster
           let bankedPassed = ticksPassed * 10 * (currentTPS / topTPS); // reduce usage rate if going slower than max
           if (bankedPassed > this.bankedTicks) // Check for not enough bankedTicks, usually for large timeDiff.
@@ -163,11 +163,11 @@ export class MainLoopService {
 
   getTPS(div:number) {
     let ticksPassed = 1000/TICK_INTERVAL_MS;
-    if (this.characterService && this.unlockAgeSpeed) {
+    if (this.characterService && this.unlockAgeSpeed && this.tickDivider < 40) { // don't do this on slow speed
       // 73000 is 200 years. reaches 2x at 600 years, 3x at 1600, 4x at 3000. Caps at 12600
       ticksPassed *= Math.min(8,Math.sqrt(1+this.characterService.characterState.age/73000));
     }
-    if (this.unlockPlaytimeSpeed) {
+    if (this.unlockPlaytimeSpeed && this.tickDivider < 40) { // don't do this on slow speed
       ticksPassed *= Math.pow(1+this.totalTicks/(2000*365),0.3);
     }
     ticksPassed /= div;

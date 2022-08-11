@@ -77,8 +77,9 @@ export interface HomeProperties {
   mostFields: number,
   highestAverageYield: number,
   bestHome: HomeType,
-  thugPause: boolean
-
+  thugPause: boolean,
+  hellFood: boolean,
+  hellHome: boolean,
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -121,6 +122,8 @@ export class HomeService {
   houseBuildingProgress = 1;
   upgrading = false;
   thugPause = false;
+  hellFood = false;
+  hellHome = false;
 
   homesList: Home[] = [
     {
@@ -562,9 +565,6 @@ export class HomeService {
         if (this.characterService.characterState.dead){
           return;
         }
-        if (this.hellService?.inHell){
-          return;
-        }
         if (this.upgrading){
           this.upgradeTick();
         }
@@ -572,14 +572,18 @@ export class HomeService {
         if (this.nextHomeCost < 0){
           this.nextHomeCost = 0;
         }
-        this.home.consequence();
+        if (!this.hellService?.inHell || this.hellHome){
+          this.home.consequence();
+        }
         for (const slot of this.furniturePositionsArray){
           const furniturePiece = this.furniture[slot];
           if (furniturePiece?.use){
             furniturePiece?.use();
           }
         }
-        this.ageFields();
+        if (!this.hellService?.inHell || this.hellFood){
+          this.ageFields();
+        }
         if (this.home.costPerDay > this.characterService.characterState.money){
           this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
           if(this.thugPause){
@@ -662,7 +666,9 @@ export class HomeService {
       mostFields: this.mostFields,
       highestAverageYield: this.highestAverageYield,
       bestHome: this.bestHome,
-      thugPause: this.thugPause
+      thugPause: this.thugPause,
+      hellFood: this.hellFood,
+      hellHome: this.hellHome
     }
   }
 
@@ -699,6 +705,8 @@ export class HomeService {
     this.highestAverageYield = properties.highestAverageYield || 0;
     this.bestHome = properties.bestHome || 0;
     this.thugPause = properties.thugPause || false;
+    this.hellFood = properties.hellFood || false;
+    this.hellHome = properties.hellHome || false;
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -871,6 +879,9 @@ export class HomeService {
           fieldYield = Math.floor(fieldYield * (this.fields.length + this.extraFields) / 300);
         }
         totalDailyYield += fieldYield;
+        if (this.hellService?.inHell && fieldYield > 0){
+          fieldYield = Math.max(fieldYield / 1000, 1);
+        }
         this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
         this.fields[i] = this.getCrop();
       } else {

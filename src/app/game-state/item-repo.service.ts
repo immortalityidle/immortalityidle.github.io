@@ -522,6 +522,31 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
+    divinePeach: {
+      id: 'divinePeach',
+      name: 'divine peach',
+      type: 'food',
+      value: 100,
+      description: 'A divinely prized and delicious fruit.',
+      useLabel: 'Eat',
+      useDescription: 'Sates your immortal hunger.',
+      useConsumes: true,
+      use: (quantity = 1) => {
+        this.characterService.characterState.status.nourishment.max += quantity;
+        this.characterService.characterState.status.nourishment.value += quantity;
+        this.characterService.characterState.healthBonusFood += quantity * 2;
+        this.characterService.characterState.status.health.value += quantity * 20;
+        this.characterService.characterState.status.stamina.value += quantity * 2;
+        this.characterService.characterState.status.stamina.max += quantity * 2;
+        this.characterService.characterState.status.mana.value += quantity;
+        if (this.characterService.characterState.foodLifespan + quantity <= (365 * 720)){
+          this.characterService.characterState.foodLifespan += quantity;
+        } else if (this.characterService.characterState.foodLifespan < (365 * 720)){
+          this.characterService.characterState.foodLifespan = 365 * 720;
+        }
+        this.characterService.characterState.checkOverage();
+      },
+    },
     meat: {
       id: 'meat',
       name: 'meat',
@@ -1384,7 +1409,7 @@ export class ItemRepoService {
       name: 'Boulder Crown',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A stone crown Using this will greatly improve your physical characteristics.',
+      description: 'A heavy stone crown. Using this will greatly improve your physical characteristics.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1397,6 +1422,36 @@ export class ItemRepoService {
         }
         this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.", "STANDARD", 'STORY');
         this.characterService.characterState.bonusMuscles = true;
+      },
+    },
+    hellCrownMortarsAndPestles: {
+      id: 'hellCrownMortarsAndPestles',
+      name: 'Gluttonous Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown topped with mortars full of hellfire. Using this will lead you to a new enlightenment about food.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.MortarsAndPestles)){
+          this.hellService.completedHellBosses.push(HellLevel.MortarsAndPestles);
+        }
+        if (!this.homeService){
+          this.homeService = this.injector.get(HomeService);
+        }
+        if (!this.inventoryService){
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.", "STANDARD", 'STORY');
+        this.homeService.hellFood = true;
+        this.inventoryService.divinePeachesUnlocked = true;
+        this.inventoryService.updateFarmFoodList();
+
       },
     },
     fastPlayManual: {
