@@ -126,12 +126,12 @@ export class AppComponent implements OnInit {
     if((event.ctrlKey || event.metaKey) && event.shiftKey){
       this.gameStateService.loadFromLocalStorage(true);
     }else if(event.shiftKey){
-      this.gameStateService.savetoLocalStorage();
-    } else {
       const dialogRef = this.dialog.open(SaveModalComponent, {
         width: '400px',
         data: {someField: 'foo'}
       });
+    } else {
+      this.gameStateService.savetoLocalStorage();
     }
   }
 
