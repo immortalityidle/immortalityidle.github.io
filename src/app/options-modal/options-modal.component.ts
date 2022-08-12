@@ -193,6 +193,7 @@ export class OptionsModalComponent {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.scientificNotation = event.target.checked;
     this.gameStateService.savetoLocalStorage();
-    this.gameStateService.loadFromLocalStorage();
+    // eslint-disable-next-line no-self-assign
+    window.location.href = window.location.href;
   }
 } 

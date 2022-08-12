@@ -132,6 +132,7 @@ export class AppComponent implements OnInit {
       });
     } else {
       this.gameStateService.savetoLocalStorage();
+      this.characterService.toast("Manual Save Complete");
     }
   }
 
