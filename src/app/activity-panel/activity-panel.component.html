@@ -18,15 +18,15 @@
 <div class="activitiesContainer">
   <table>
     <ng-container *ngFor="let activity of activityService.activities">
-      <tr [ngClass]="{'projectionOnly': activity.projectionOnly}" *ngIf="(activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
+      <tr [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" *ngIf="(activity.discovered)" draggable="true" (dragstart)="drag(activity, $event)">
         <td>
           <span class="noWrap">
             <button class="activityButton" (click)="onClick(activity, $event)"
-                    tooltip="Add this to your schedule
+                    tooltip="{{activity.unlocked ? 'Add this to your schedule
 
                     Shift- or Ctrl-click to repeat it 10x
                     Shift-Ctrl-click to repeat it 100x
-                    Alt-click to add it to the top"
+                    Alt-click to add it to the top' : 'This activity is locked until you have the attributes required for it'}}"
                     tooltipClass="tooltip-break">
               {{activity.name[activity.level]}}
             </button>

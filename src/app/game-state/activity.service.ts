@@ -19,6 +19,7 @@ export interface ActivityProperties {
   pauseBeforeDeath: boolean,
   activityLoop: ActivityLoopEntry[],
   unlockedActivities: ActivityType[],
+  discoveredActivities: ActivityType[],
   openApprenticeships: number,
   spiritActivity: ActivityType | null,
   completedApprenticeships: ActivityType[],
@@ -132,9 +133,9 @@ export class ActivityService {
         }
         if (activity){
           // this should always be true at this point
-          const rest = this.Resting;
-          if (!this.checkResourceUse(activity) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
-            activity = rest;
+          if (this.autoRestUnlocked && !this.checkResourceUse(activity)){
+            // we can't do the activity because of resources, so rest instead
+            activity = this.Resting;
           }
           activity.consequence[activity.level]();
         } else {
@@ -188,12 +189,9 @@ export class ActivityService {
       // do the spirit activity if we can
       if (this.spiritActivity !== null && this.characterService.characterState.status.mana.value >= 5){
         this.spiritActivityProgress = true;
-        let activity = this.getActivityByType(this.spiritActivity);
-        const rest = this.Resting;
-        if (activity != null){
-          if (!this.checkResourceUse(activity, true) && rest.unlocked && this.autoRestUnlocked){ // check for resources, rest activity is available, and autopause unlocked.
-            activity = rest;
-          }
+        const activity = this.getActivityByType(this.spiritActivity);
+        // if we don't have the resources for spirit activities, just don't do them
+        if (activity !== null && this.checkResourceUse(activity, true)){
           activity.consequence[activity.level]();
           this.characterService.characterState.status.mana.value -= 5;
         }
@@ -235,11 +233,16 @@ export class ActivityService {
 
   getProperties(): ActivityProperties{
     const unlockedActivities: ActivityType[] = [];
+    const discoveredActivities: ActivityType[] = [];
     for (const activity of this.activities){
       if (activity.unlocked){
         unlockedActivities.push(activity.activityType);
       }
+      if (activity.discovered){
+        discoveredActivities.push(activity.activityType);
+      }
     }
+
     return {
       autoRestart: this.autoRestart,
       autoPauseUnlocked: this.autoPauseUnlocked,
@@ -247,6 +250,7 @@ export class ActivityService {
       pauseBeforeDeath: this.pauseBeforeDeath,
       activityLoop: this.activityLoop,
       unlockedActivities: unlockedActivities,
+      discoveredActivities: discoveredActivities,
       openApprenticeships: this.openApprenticeships,
       spiritActivity: this.spiritActivity,
       completedApprenticeships: this.completedApprenticeships,
@@ -262,8 +266,10 @@ export class ActivityService {
     this.reloadActivities();
     this.completedApprenticeships = properties.completedApprenticeships || [];
     const unlockedActivities = properties.unlockedActivities || [ActivityType.OddJobs, ActivityType.Resting];
+    const discoveredActivities = properties.discoveredActivities || [ActivityType.OddJobs, ActivityType.Resting];
     for (const activity of this.activities){
         activity.unlocked = unlockedActivities.includes(activity.activityType);
+        activity.discovered = discoveredActivities.includes(activity.activityType);
     }
     this.autoRestart = properties.autoRestart;
     this.autoPauseUnlocked = properties.autoPauseUnlocked || false;
@@ -291,6 +297,17 @@ export class ActivityService {
   meetsRequirements(activity: Activity): boolean {
     if (this.meetsRequirementsByLevel(activity, activity.level, true)){
       activity.unlocked = true;
+      if (activity.discovered){
+        // re-unlocking loop entries for an already discovered, newly unlocked activity
+        for (const entry of this.activityLoop){
+          if (entry.activity === activity.activityType && entry.disabled){
+            entry.disabled = false;
+          }
+        }
+      } else {
+        activity.discovered = true;
+      }
+
       return true;
     }
     return false;
@@ -325,7 +342,6 @@ export class ActivityService {
   checkRequirements(squelchLogs: boolean): void {
     for (const activity of this.activities){
       if (!activity.unlocked && this.meetsRequirements(activity)){
-        activity.unlocked = true;
         if (!squelchLogs){
           this.logService.addLogMessage("A new activity is available. Maybe you should try " + activity.name[activity.level] + ".", "STANDARD", "EVENT");
         }
@@ -1255,6 +1271,7 @@ export class ActivityService {
       }],
       requirements: [{}],
       unlocked: true,
+      discovered: true,
       skipApprenticeshipLevel: 0
     };
 
@@ -1361,6 +1378,7 @@ export class ActivityService {
         }
       ],
       unlocked: true,
+      discovered: true,
       skipApprenticeshipLevel: 0
     };
 
@@ -2837,6 +2855,6 @@ export class ActivityService {
       }],
       unlocked: false,
       skipApprenticeshipLevel: 0
-    }    
+    }
   }
 }

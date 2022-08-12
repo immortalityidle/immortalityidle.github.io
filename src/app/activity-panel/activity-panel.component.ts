@@ -46,6 +46,9 @@ export class ActivityPanelComponent {
   }
 
   onClick(activity: Activity, event: MouseEvent): void {
+    if (!activity.unlocked){
+      return;
+    }
     if (activity.projectionOnly){
       this.activityService.spiritActivity = activity.activityType;
       return;
@@ -71,7 +74,7 @@ export class ActivityPanelComponent {
   }
 
   drag(activity: Activity, event: DragEvent){
-    if (activity.projectionOnly){
+    if (activity.projectionOnly || !activity.unlocked){
       // don't allow projection only activities to drag and drop
       return;
     }

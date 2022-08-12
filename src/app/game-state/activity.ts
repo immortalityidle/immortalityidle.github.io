@@ -79,6 +79,7 @@ export interface Activity {
   landRequirements?: number;
   consequence: (() => void)[];
   unlocked: boolean;
+  discovered?: boolean;
   skipApprenticeshipLevel: number;
   lastIncome?: number;
   resourceUse?: ActivityResource[]
