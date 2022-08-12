@@ -269,7 +269,9 @@ export class ActivityService {
     const discoveredActivities = properties.discoveredActivities || [ActivityType.OddJobs, ActivityType.Resting];
     for (const activity of this.activities){
         activity.unlocked = unlockedActivities.includes(activity.activityType);
-        activity.discovered = discoveredActivities.includes(activity.activityType);
+        if (!activity.discovered) {
+          activity.discovered = discoveredActivities.includes(activity.activityType);
+        }
     }
     this.autoRestart = properties.autoRestart;
     this.autoPauseUnlocked = properties.autoPauseUnlocked || false;
@@ -439,6 +441,9 @@ export class ActivityService {
       for (const activity of this.activities){
         if (activity.activityType === this.activityLoop[i].activity){
           found = true;
+        }
+        if (!activity.discovered) {
+          this.meetsRequirements(activity);
         }
       }
       if (!found){
