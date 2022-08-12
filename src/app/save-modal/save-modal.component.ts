@@ -17,7 +17,12 @@ export class SaveModalComponent {
     this.gameStateService.saveSlot = fileNum;
     this.gameStateService.setSaveFile();
     const success = this.gameStateService.loadFromLocalStorage();
-    this.error = success ? "Loaded Save Successfully" : "Empty Save Selected"
+    this.error = success ? "" : "Empty Save Selected"
+    if(success){
+      this.gameStateService.updateImportFlagKey(true);
+      // eslint-disable-next-line no-self-assign
+      window.location.href = window.location.href;
+    }
   }
 
   autoSaveInterval(event:Event){

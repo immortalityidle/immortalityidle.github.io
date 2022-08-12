@@ -41,12 +41,13 @@ interface GameState {
 })
 export class GameStateService {
 
-  lastSaved = 0;
+  lastSaved = new Date().getTime();
   isDarkMode = false;
+  isImport = false;
   isExperimental = window.location.href.includes("experimental");
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
-  saveInterval = 10; //In seconds
+  saveInterval = 300; //In seconds
   saveSlot = "";
 
   constructor(
@@ -69,33 +70,61 @@ export class GameStateService {
     // @ts-ignore
     window['GameStateService'] = this;
     mainLoopService.longTickSubject.subscribe(() => {
-      const currentTime = new Date();
-      if (currentTime.valueOf() - this.lastSaved >= this.saveInterval*1000) {
+      const currentTime = new Date().getTime();
+      if (currentTime - this.lastSaved >= this.saveInterval * 1000) {
         this.savetoLocalStorage();
       }
     });
   }
 
   changeAutoSaveInterval(interval: number): void{
-    if(interval === null) return; 
-    if(interval < 1) interval = 1; 
-    else if (interval > 900) interval = 900;
+    if(!interval || interval < 1) {
+      interval = 1;
+    } else if (interval > 900) {
+      interval = 900;
+    }
     this.saveInterval = interval;
     this.savetoLocalStorage();
   }
-  
+
+  /**
+   * 
+   * @param isImport Leave undefined to load flag, boolean to change save to that boolean. 
+   */
+  updateImportFlagKey(isImport?: boolean) { // A new key to avoid saving backups over mains, and mains over backups. 
+    if (isImport) {
+      this.isImport = isImport;
+      const data = JSON.stringify(this.isImport);
+      window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + 'isImport', data);
+    } else {
+      const data = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + 'isImport');
+      if (data) {
+        this.isImport = JSON.parse(data);
+      }
+    }
+  }
+
   savetoLocalStorage(): void {
+    const saveCopy = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot)
+    if (saveCopy){
+      window.localStorage.setItem("BACKUP" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot, saveCopy);
+    }
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot, this.getGameExport());
     this.lastSaved = new Date().getTime();
   }
 
-  loadFromLocalStorage(): boolean {
+  loadFromLocalStorage(backup = false): boolean {
     this.getSaveFile();
-    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot);
+    const backupStr = backup ? "BACKUP" : "";
+    const gameStateSerialized = window.localStorage.getItem(backupStr + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot);
     if (!gameStateSerialized) {
       return false;
     }
     this.importGame(gameStateSerialized);
+    if(this.isImport){
+      this.characterService.toast("Load Successful")
+      this.updateImportFlagKey(false);
+    }
     return true;
   }
 
@@ -137,6 +166,7 @@ export class GameStateService {
     this.saveInterval = gameState.saveInterval || 10;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
+    this.updateImportFlagKey();
   }
 
   getGameExport(): string{
@@ -155,7 +185,7 @@ export class GameStateService {
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
-      saveInterval: this.saveInterval || 10,
+      saveInterval: this.saveInterval || 300,
       easyModeEver: this.easyModeEver
     };
     let gameStateString = JSON.stringify(gameState);

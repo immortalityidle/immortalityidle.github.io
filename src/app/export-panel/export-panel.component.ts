@@ -15,6 +15,9 @@ export class ExportPanelComponent {
 
   importClick(value: string){
     this.gameStateService.importGame(value);
+    this.gameStateService.updateImportFlagKey(true);
+    // eslint-disable-next-line no-self-assign
+    window.location.href = window.location.href;
   }
 
   exportClick(){

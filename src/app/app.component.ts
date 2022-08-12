@@ -122,7 +122,10 @@ export class AppComponent implements OnInit {
   saveClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if(event.shiftKey){
+
+    if((event.ctrlKey || event.metaKey) && event.shiftKey){
+      this.gameStateService.loadFromLocalStorage(true);
+    }else if(event.shiftKey){
       this.gameStateService.savetoLocalStorage();
     } else {
       const dialogRef = this.dialog.open(SaveModalComponent, {
