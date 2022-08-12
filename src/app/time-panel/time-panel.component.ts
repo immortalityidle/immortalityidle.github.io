@@ -38,6 +38,11 @@ export class TimePanelComponent implements OnInit {
     }
   }
 
+  slowClick(){
+    this.mainLoopService.pause = false;
+    this.mainLoopService.tickDivider = 40;
+  }
+
   standardClick(){
     this.mainLoopService.pause = false;
     this.mainLoopService.tickDivider = 10;
@@ -99,6 +104,14 @@ export class TimePanelComponent implements OnInit {
       this.activityService.currentIndex = 0;
     }
     this.activityService.activityLoop.splice(index,1);
+  }
+
+  onDisableClick(entry: ActivityLoopEntry): void{
+    entry.disabled = !entry.disabled;
+    if (!entry.disabled){
+      // make sure nothing that can't be enabled gets enabled
+      this.activityService.checkRequirements(true);
+    }
   }
 
   removeSpiritActivity(){
@@ -172,6 +185,14 @@ export class TimePanelComponent implements OnInit {
         this.activityService.spiritActivity = activity;
       }
     }
+  }
+
+  getActivityName(activityType: ActivityType){
+    let activity = this.activityService.getActivityByType(activityType);
+    if (activity){
+      return activity.name[activity.level];
+    }
+    return "";
   }
 
 }

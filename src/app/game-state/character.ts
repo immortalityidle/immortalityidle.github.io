@@ -598,6 +598,9 @@ export class Character {
     if (this.status.mana.max > 1000000){
       this.status.mana.max = 1000000;
     }
+    if (this.status.nourishment.max > 1000){
+      this.status.nourishment.max = 1000;
+    }
     if (this.status.health.value > this.status.health.max){
       this.status.health.value = this.status.health.max;
     }

@@ -10,6 +10,11 @@
       tooltip="Pause the game (spacebar). Clicking this again while paused will step time forward a single day. When paused, you can also advance one day by pressing the Enter key." class="iconButton">
       pause
     </mat-icon>
+    
+    <mat-icon (click)="slowClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider == 40 && !this.mainLoopService.pause)}"
+      tooltip="Slow Game Speed (1 day/sec)" class="iconButton">
+      slow_motion_video
+    </mat-icon>
     <mat-icon (click)="standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"
       tooltip="Standard Game Speed ({{mainLoopService.getTPS(10) | number: '1.0-2'}} days/sec)" class="iconButton">
       play_arrow
@@ -40,17 +45,15 @@
     <table>
       <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;"
         draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
-        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">{{activityService.getActivityByType(entry.activity).name[activityService.getActivityByType(entry.activity).level]}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
-        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">
+        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">{{getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
+        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
           <div class="progress-bar">
             <span
-              [style.width.%]="100 *
-                (indexOfelement !== activityService.currentIndex ? entry.repeatTimes : activityService.currentTickCount) /
-                entry.repeatTimes">
+              [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
             </span>
           </div>
         </td>
-        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex}">
+        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
           <mat-icon tooltip="Spend fewer days on this.
 
           Shift- or Ctrl-click to remove 10x
@@ -61,7 +64,9 @@
           Shift- or Ctrl-click to add 10x
           Shift-Ctrl-click to add 100x"
           tooltipClass="tooltip-break" (click)="onPlusClick(entry, $event)" class="iconButton">add</mat-icon>
+          <mat-icon tooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton">cancel</mat-icon>
           <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>
+          
         </td>
       </tr>
     </table>
@@ -74,7 +79,7 @@
         </td>
       </tr>
       <tr *ngIf="activityService.spiritActivity != null">
-        <td>{{activityService.getActivityByType(activityService.spiritActivity).name[activityService.getActivityByType(activityService.spiritActivity).level]}}</td>
+        <td>{{getActivityName(activityService.spiritActivity)}}</td>
         <td>
           <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">
             <span></span>

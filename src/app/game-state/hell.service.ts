@@ -52,7 +52,8 @@ export interface HellProperties {
   completedHellBosses: number[],
   mountainSteps: number,
   animalsHealed: number,
-  boulderHeight: number
+  boulderHeight: number,
+  daysFasted: number
 }
 
 @Injectable({
@@ -68,6 +69,7 @@ export class HellService {
   mountainSteps = 0;
   animalsHealed = 0;
   boulderHeight = 0;
+  daysFasted = 0;
 
   burnMoney = {
     level: 0,
@@ -467,6 +469,18 @@ export class HellService {
           });
         }
       }
+    } else if (this.currentHell === HellLevel.MortarsAndPestles){
+      this.battleService.addEnemy({
+        name: "Force Feeder",
+        health: 1e6,
+        maxHealth: 1e6,
+        accuracy: 1,
+        attack: 1e6,
+        defense: 1e6,
+        attackEffect: "feeder",
+        hitTracker: 0,
+        loot: [ ]
+      });
     }
   }
 
@@ -592,6 +606,17 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownCrushingBoulder'] ]
       });
+    } else if (this.currentHell === HellLevel.MortarsAndPestles){
+      this.battleService.addEnemy({
+        name: "Glorbulskath the Gluttonous",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownMortarsAndPestles'] ]
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -613,7 +638,8 @@ export class HellService {
       completedHellBosses: this.completedHellBosses,
       mountainSteps: this.mountainSteps,
       animalsHealed: this.animalsHealed,
-      boulderHeight: this.boulderHeight
+      boulderHeight: this.boulderHeight,
+      daysFasted: this.daysFasted
     }
   }
 
@@ -625,6 +651,7 @@ export class HellService {
     this.mountainSteps = properties.mountainSteps || 0;
     this.animalsHealed = properties.animalsHealed || 0;
     this.boulderHeight = properties.boulderHeight || 0;
+    this.daysFasted = properties.daysFasted || 0;
     this.activityService.reloadActivities();
   }
 
@@ -1022,20 +1049,17 @@ export class HellService {
       name: "Hell of Mortars and Pestles",
       description: "Torment for food wasters. You didn't really need to eat all those peaches, did you? The diet here is pure hellfire.",
       index: HellLevel.MortarsAndPestles,
-      entryEffect: () => {
-        /*
-      Task: Fast a long time
-      During the level: using, selling, or throwing away food resets the timer
-        */
+      dailyEffect: () => {
+        this.daysFasted++;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("Your righteous asceticism have served you well. The lord of this hell has arrived to deal with you personally.", "STANDARD", "STORY")
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation],
       projectionActivities: [],
-      hint: "",
+      hint: "You begin to feel remorse for your gluttony across your many lives. Perhaps a nice, long fast would help you feel better. Hopefully you can keep the demons from spoonfeeding you their fiery concoction.",
       successCheck: () => {
-        return false;
+        return this.daysFasted > 1000;
       }
     },
     {

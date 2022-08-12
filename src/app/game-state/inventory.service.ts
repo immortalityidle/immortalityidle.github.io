@@ -111,7 +111,8 @@ export interface InventoryProperties {
   autoBuyFood: boolean,
   automergeEquipped: boolean,
   autoSort: boolean,
-  descendingSort: boolean
+  descendingSort: boolean,
+  divinePeachesUnlocked: boolean
 }
 
 @Injectable({
@@ -168,6 +169,7 @@ export class InventoryService {
   automergeEquipped = false;
   autoSort = false;
   descendingSort = false;
+  divinePeachesUnlocked = false;
 
   constructor(
     private injector: Injector,
@@ -301,7 +303,8 @@ export class InventoryService {
       autoBuyFood: this.autoBuyFood,
       automergeEquipped: this.automergeEquipped,
       autoSort: this.autoSort,
-      descendingSort: this.descendingSort
+      descendingSort: this.descendingSort,
+      divinePeachesUnlocked: this.divinePeachesUnlocked
     }
   }
 
@@ -346,6 +349,8 @@ export class InventoryService {
     this.automergeEquipped = properties.automergeEquipped || false;
     this.autoSort = properties.autoSort || false;
     this.descendingSort = properties.descendingSort || false;
+    this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
+    this.updateFarmFoodList()
   }
 
   farmFoodList = [
@@ -361,6 +366,12 @@ export class InventoryService {
     this.itemRepoService.items['apricot'],
     this.itemRepoService.items['peach']
   ]
+
+  updateFarmFoodList(){
+    if (this.divinePeachesUnlocked){
+      this.farmFoodList.push(this.itemRepoService.items['divinePeach']);
+    }
+  }
 
   changeMaxItems(newValue: number){
     this.maxItems = newValue;
@@ -1155,6 +1166,9 @@ export class InventoryService {
       item.use(quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
       if (item.type === "food"){
         this.fed = true;
+        if (this.hellService){
+          this.hellService.daysFasted = 0;
+        }
       }
     }
   }

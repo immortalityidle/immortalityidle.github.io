@@ -17,7 +17,9 @@ export interface Enemy {
   defense: number,
   loot: Item[],
   unique?: boolean,
-  defeatEffect?: string
+  defeatEffect?: string,
+  attackEffect?: string,
+  hitTracker?: number
 }
 
 export interface EnemyStack {
@@ -245,7 +247,7 @@ export class BattleService {
           }
           this.characterService.characterState.status.health.value -= damage;
           this.characterService.characterState.increaseAttribute('toughness', 0.01);
-
+          this.attackEffect(enemyStack.enemy);
           // degrade armor
           const degradables = [];
           if (this.characterService.characterState.equipment.head){
@@ -492,6 +494,23 @@ export class BattleService {
         defeatEffect: enemy.defeatEffect,
         loot: enemy.loot
       });
+    }
+  }
+
+  attackEffect(enemy: Enemy){
+    if (!enemy.attackEffect){
+      return;
+    }
+    if (enemy.attackEffect === "feeder" && this.hellService){
+      if (enemy.hitTracker && enemy.hitTracker < 1){
+        enemy.hitTracker++;
+      } else {
+        // force feed on second hit
+        this.hellService.daysFasted = 0;
+        let damage = this.characterService.characterState.status.health.value / 4;
+        this.logService.addLogMessage("The hellfire burns as it goes down, damaging you for " + damage + " extra damage.", 'INJURY', 'COMBAT');
+        this.characterService.characterState.status.health.value -= damage;
+      }
     }
   }
 
