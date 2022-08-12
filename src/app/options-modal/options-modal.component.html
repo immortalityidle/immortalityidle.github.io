@@ -26,14 +26,8 @@
         <span>
           <input type="checkbox" (change)="scientificNotationChange($event)"
             id="scientificNotation"  [checked]="mainLoopService.scientificNotation">
-          <label for="scientificNotation">Turn on numbers with scientific notation.</label>
-        </span>
-      </div>
-      <div class="optionField">
-        <span>
-          <label for="autoSaveInterval">Change how often the game autosaves (in seconds) </label>
-          <input value="{{gameStateService.saveInterval}}" type="number" (change)="autoSaveInterval($event)"
-          id="autoSaveInterval">
+          <label for="scientificNotation">Turn on numbers with scientific notation.</label>&nbsp;
+          <span class="spaced warning">Changing this will save immediately.</span>
         </span>
       </div>
     </mat-tab>
@@ -41,7 +35,6 @@
       <ng-template mat-tab-label>
         <span class="tab-label">Home</span>
       </ng-template>
-
       <div *ngIf="homeService.autoBuyLandUnlocked" class="optionField">
         <span>
           Automatically buy up to <input min="0" value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
