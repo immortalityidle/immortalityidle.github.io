@@ -53,7 +53,10 @@ export interface HellProperties {
   mountainSteps: number,
   animalsHealed: number,
   boulderHeight: number,
-  daysFasted: number
+  daysFasted: number,
+  swimDepth: number,
+  exitFound: boolean,
+  soulsEscaped: number
 }
 
 @Injectable({
@@ -70,6 +73,9 @@ export class HellService {
   animalsHealed = 0;
   boulderHeight = 0;
   daysFasted = 0;
+  swimDepth = 0;
+  exitFound = false;
+  soulsEscaped = 0;
 
   burnMoney = {
     level: 0,
@@ -332,6 +338,79 @@ export class HellService {
     resourceUse: [{
       stamina: 10000,
       mana: 10000
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  swim = {
+    level: 0,
+    name: ['Swim Deeper into the Blood'],
+    activityType: ActivityType.Swim,
+    description: ['Swim down further into the crimson depths.'],
+    consequenceDescription: ['Uses 2000 Stamina. Reduce health by 1000.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 2000;
+      this.characterService.characterState.status.health.value -= 1000;
+      this.swimDepth++;
+    }],
+    resourceUse: [{
+      stamina: 2000,
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  searchForExit = {
+    level: 0,
+    name: ['Search for the Exit'],
+    activityType: ActivityType.SearchForExit,
+    description: ["The lost souls here are searching for a way out, and they can't seem to see the portal you came in on. You could help them search for the exit they're seeking."],
+    consequenceDescription: ['Uses 200,000 Stamina.'],
+    consequence: [() => {
+      // TODO: tune this
+      if (this.characterService.characterState.attributes.intelligence.value <= 1e24){
+        return;
+      }
+      let threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
+      if (Math.random() < threshold) {
+        this.exitFound = true;
+        if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)){
+          this.hells[HellLevel.WrongfulDead].activities.push(this.teachTheWay);
+          this.activityService.reloadActivities();
+        }
+      }
+      this.characterService.characterState.status.stamina.value -= 200000;
+    }],
+    resourceUse: [{
+      stamina: 200000,
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  teachTheWay = {
+    level: 0,
+    name: ['Teach the Way to the Exit'],
+    activityType: ActivityType.TeachTheWay,
+    description: ["Teach the other damned souls here the way out."],
+    consequenceDescription: ['Uses 200,000 Stamina.'],
+    consequence: [() => {
+      // TODO: tune this
+      if (this.characterService.characterState.attributes.charisma.value <= 1e24){
+        return;
+      }
+      let numberTaught = Math.floor(Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24));
+      this.soulsEscaped += numberTaught;
+    }],
+    resourceUse: [{
+      stamina: 200000,
     }],
     requirements: [{
     }],
@@ -617,6 +696,28 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownMortarsAndPestles'] ]
       });
+    } else if (this.currentHell === HellLevel.BloodPool){
+      this.battleService.addEnemy({
+        name: "Gnarlyathor the Ever-Bleeding",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownBloodPool'] ]
+      });
+    } else if (this.currentHell === HellLevel.WrongfulDead){
+      this.battleService.addEnemy({
+        name: "Azoth-Raketh the Storm Master",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownWrongfulDead'] ]
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -639,7 +740,10 @@ export class HellService {
       mountainSteps: this.mountainSteps,
       animalsHealed: this.animalsHealed,
       boulderHeight: this.boulderHeight,
-      daysFasted: this.daysFasted
+      daysFasted: this.daysFasted,
+      swimDepth: this.swimDepth,
+      exitFound: this.exitFound,
+      soulsEscaped: this.soulsEscaped
     }
   }
 
@@ -652,6 +756,9 @@ export class HellService {
     this.animalsHealed = properties.animalsHealed || 0;
     this.boulderHeight = properties.boulderHeight || 0;
     this.daysFasted = properties.daysFasted || 0;
+    this.swimDepth = properties.swimDepth || 0;
+    this.exitFound = properties.exitFound || false;
+    this.soulsEscaped = properties.soulsEscaped || 0;
     this.activityService.reloadActivities();
   }
 
@@ -1067,19 +1174,16 @@ export class HellService {
       description: "Torment for those who disrespect others. The pool looks deep, but it's hard to tell with all that blood.",
       index: HellLevel.BloodPool,
       entryEffect: () => {
-        /*
-        Task: Swim to the bottom of the pool, break through to drain it
-        During the level: Underwater, most activities unavailable
-        */
+        this.swimDepth = 0;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You finally reach the bottom of the pool where you find a massive plug. When you pull it, the pool begins to drain, revealing the source of all this blood.", "STANDARD", "STORY")
       },
-      activities: [],
+      activities: [this.swim],
       projectionActivities: [],
-      hint: "",
+      hint: "Not this again!",
       successCheck: () => {
-        return false;
+        return this.swimDepth > 1000;
       }
     },
     {
@@ -1087,19 +1191,24 @@ export class HellService {
       description: "Torment for those who gave up their lives too early. Fortunately you've probably never done that. The pounding Rains of Pain and the blowing Winds of Sorrow give unrelenting misery to everyone here.",
       index: HellLevel.WrongfulDead,
       entryEffect: () => {
-        /*
-        Task: Find the escape (intelligence check), teach everyone the exit (charisma check)
-        During the level: Frequent random damage from winds and rain
-        */
+        if (this.exitFound){
+          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)){
+            this.hells[HellLevel.WrongfulDead].activities.push(this.teachTheWay);
+          }
+        }
+      },
+      dailyEffect: () => {
+        this.characterService.characterState.status.health.value -= 500;
+        this.characterService.characterState.status.stamina.value -= 100;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You sigh in relief as you usher the last of the damned out. The hell is finally empty. Well, empty except for the monstrous Hell Lord coming toward you.", "STANDARD", "STORY")
       },
-      activities: [],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.searchForExit],
       projectionActivities: [],
-      hint: "",
+      hint: "These people don't belong here. Get them out.",
       successCheck: () => {
-        return false;
+        return this.soulsEscaped > 1000000;
       }
     },
     {

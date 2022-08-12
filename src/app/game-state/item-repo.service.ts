@@ -1454,6 +1454,49 @@ export class ItemRepoService {
 
       },
     },
+    hellCrownBloodPool: {
+      id: 'hellCrownBloodPool',
+      name: 'Blood Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A liquid crown made of blood. Using this will empower your bloodline.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.BloodPool)){
+          this.hellService.completedHellBosses.push(HellLevel.BloodPool);
+        }
+        if (!this.homeService){
+          this.homeService = this.injector.get(HomeService);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.", "STANDARD", 'STORY');
+        this.homeService.hellHome = true;
+      },
+    },
+    hellCrownWrongfulDead: {
+      id: 'hellCrownWrongfulDead',
+      name: 'Hollow Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown so light you can barely feel it. Using this will greatly improve your mental characteristics.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.WrongfulDead)){
+          this.hellService.completedHellBosses.push(HellLevel.WrongfulDead);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.", "STANDARD", 'STORY');
+        this.characterService.characterState.bonusBrains = true;
+      },
+    },
     fastPlayManual: {
       id: 'fastPlayManual',
       name: "Manual of Expeditious Time Perception",
