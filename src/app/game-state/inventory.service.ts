@@ -232,15 +232,15 @@ export class InventoryService {
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead || !this.autoequipBestEnabled){
+      if (this.characterService.characterState.dead){
         return;
       }
       //if autoequip is unlocked, but automerge isn't, equip best
       //automerge will merge into equipped if both are unlocked
-      if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked){
+      if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked && this.autoequipBestEnabled){
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor && this.autoArmorMergeUnlocked){
+      if (this.autoequipBestArmor && this.autoArmorMergeUnlocked && this.autoequipBestEnabled){
         this.autoequipArmor();
       }
       for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){

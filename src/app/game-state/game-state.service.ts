@@ -92,7 +92,7 @@ export class GameStateService {
    * @param isImport Leave undefined to load flag, boolean to change save to that boolean. 
    */
   updateImportFlagKey(isImport?: boolean) { // A new key to avoid saving backups over mains, and mains over backups. 
-    if (isImport) {
+    if (isImport !== undefined) {
       this.isImport = isImport;
       const data = JSON.stringify(this.isImport);
       window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + 'isImport', data);
