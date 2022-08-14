@@ -270,7 +270,7 @@ export class ActivityService {
     for (const activity of this.activities){
         activity.unlocked = unlockedActivities.includes(activity.activityType);
         if (!activity.discovered) {
-          activity.discovered = discoveredActivities.includes(activity.activityType);
+          activity.discovered = discoveredActivities.includes(activity.activityType) || unlockedActivities.includes(activity.activityType);
         }
     }
     this.autoRestart = properties.autoRestart;
