@@ -23,7 +23,7 @@ export class InventoryPanelComponent {
   isFinite(value: number){
     return Number.isFinite(value);
   }
-  
+
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
     event.stopPropagation();
     if (event.shiftKey) {
@@ -174,6 +174,9 @@ export class InventoryPanelComponent {
               this.inventoryService.mergeEquipment(sourceItem, destItem, destIndex);
               return;
             }
+          } else if (sourceItem.type.includes("Gem") && instanceOfEquipment(destItem)){
+            this.inventoryService.gemifyEquipment(sourceIndex, destItem);
+            return;
           }
         }
         // it wasn't a merge, just swap their positions

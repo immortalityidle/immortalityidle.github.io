@@ -29,6 +29,7 @@ export interface ActivityProperties {
   autoRestUnlocked: boolean,
   pauseOnImpossibleFail: boolean,
   totalExhaustedDays: number,
+  purifyGemsUnlocked: boolean
 }
 
 @Injectable({
@@ -61,6 +62,7 @@ export class ActivityService {
   hellEnabled = false; // flip this true to enable new postmortal content
   hellService?: HellService;
   spiritActivityProgress = false;
+  purifyGemsUnlocked = false;
 
   constructor(
     private injector: Injector,
@@ -113,7 +115,7 @@ export class ActivityService {
           if (this.currentIndex < this.activityLoop.length - 1){
             index = this.currentIndex + 1;
           }
-          while (index !== this.currentIndex && (this.activityLoop[index].repeatTimes === 0 || this.activityLoop[index].disabled || this.getActivityByType(this.activityLoop[index].activity) == null)){
+          while (index !== this.currentIndex && (this.activityLoop[index].repeatTimes === 0 || this.activityLoop[index].disabled || this.getActivityByType(this.activityLoop[index].activity) === null)){
             index++;
             if (index >= this.activityLoop.length){
               index = 0;
@@ -175,7 +177,7 @@ export class ActivityService {
           }
           // skip to the next real available activity
           // this should be safe from infinite looping because if no activities were allowed we would have already bailed out
-          while (this.activityLoop[this.currentIndex].repeatTimes === 0 || this.activityLoop[this.currentIndex].disabled || this.getActivityByType(this.activityLoop[this.currentIndex].activity) == null){
+          while (this.activityLoop[this.currentIndex].repeatTimes === 0 || this.activityLoop[this.currentIndex].disabled || this.getActivityByType(this.activityLoop[this.currentIndex].activity) === null){
             this.currentIndex++;
             if (this.currentIndex >= this.activityLoop.length){
               this.currentIndex = 0;
@@ -258,7 +260,8 @@ export class ActivityService {
       savedActivityLoop: this.savedActivityLoop,
       autoRestUnlocked: this.autoRestUnlocked,
       pauseOnImpossibleFail: this.pauseOnImpossibleFail,
-      totalExhaustedDays: this.totalExhaustedDays
+      totalExhaustedDays: this.totalExhaustedDays,
+      purifyGemsUnlocked: this.purifyGemsUnlocked
     }
   }
 
@@ -283,6 +286,7 @@ export class ActivityService {
     this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
     this.savedActivityLoop = properties.savedActivityLoop || [];
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
+    this.purifyGemsUnlocked = properties.purifyGemsUnlocked || false;
     if (properties.pauseOnImpossibleFail === undefined){
       this.pauseOnImpossibleFail = true;
     } else {
@@ -663,7 +667,8 @@ export class ActivityService {
   PetRecruiting: Activity;
   // @ts-ignore
   PetTraining: Activity;
-
+  // @ts-ignore
+  PurifyGems: Activity;
 
   defineActivities(){
     this.Swim = {
@@ -2567,7 +2572,7 @@ export class ActivityService {
         this.characterService.characterState.status.mana.value -= 10;
         const gemValue = this.inventoryService.consume('spiritGem', 1, this.inventoryService.useCheapestSpiritGem);
         if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0){
-          this.inventoryService.upgradeEquipment(Math.floor(Math.pow(gemValue/10,2.4)));
+          this.inventoryService.upgradeEquppedEquipment(Math.floor(Math.pow(gemValue/10,2.4)));
         }
         if (this.characterService.characterState.yinYangUnlocked){
           this.characterService.characterState.yang++;
@@ -2813,7 +2818,7 @@ export class ActivityService {
       skipApprenticeshipLevel: 0
     }
 
-    this.PetTraining= {
+    this.PetTraining = {
       level: 0,
       name: ['Training Pets'],
       activityType: ActivityType.PetTraining,
@@ -2861,5 +2866,31 @@ export class ActivityService {
       unlocked: false,
       skipApprenticeshipLevel: 0
     }
+
+    this.PurifyGems = {
+      level: 0,
+      name: ['Purifying Gems'],
+      activityType: ActivityType.PurifyGems,
+      description: ['Purify corrupted spirit gems into something more useful.'],
+      consequenceDescription: ['Uses 100000 Stamina and a corrupted spirit gem.'],
+      consequence: [() => {
+        this.characterService.characterState.status.stamina.value -= 100000;
+        const value = this.inventoryService.consume("corruptedGem");
+        if (value > 0){
+          // TODO: add more flavors of gems
+          this.inventoryService.addItem(this.inventoryService.generateSpiritGem(value / 10, "life"));
+        }
+      }],
+      resourceUse: [{
+        stamina: 100000
+      }],
+      requirements: [{
+        //TODO: tune this
+        spirituality: 1e24
+      }],
+      unlocked: false,
+      skipApprenticeshipLevel: 0
+    }
+
   }
 }

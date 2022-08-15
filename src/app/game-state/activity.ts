@@ -60,6 +60,10 @@ export enum ActivityType {
   LiftBoulder,
   SearchForExit,
   TeachTheWay,
+  Interrogate,
+  RecoverTreasure,
+  ReplaceTreasure,
+  PurifyGems,
   Hell // hell needs to be last for indexing purposes
 
 }

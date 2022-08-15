@@ -1175,6 +1175,20 @@ export class ItemRepoService {
       value: 1,
       description: 'A small sphere containing the essence of pure cold.',
     },
+    treasureMap: {
+      id: 'treasureMap',
+      name: 'treasure map',
+      type: 'treasureMap',
+      value: 1,
+      description: 'A treasure map with the location of a stolen relic.',
+    },
+    stolenRelic: {
+      id: 'stolenRelic',
+      name: 'stolen relic',
+      type: 'stolenRelic',
+      value: 1,
+      description: 'A treasure pilfered from a tomb.',
+    },
     hellCrownTongueRippers: {
       id: 'hellCrownTongueRippers',
       name: 'Crown of the Tongue Rippers',
@@ -1446,7 +1460,6 @@ export class ItemRepoService {
         if (!this.inventoryService){
           this.inventoryService = this.injector.get(InventoryService);
         }
-
         this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.", "STANDARD", 'STORY');
         this.homeService.hellFood = true;
         this.inventoryService.divinePeachesUnlocked = true;
@@ -1495,6 +1508,29 @@ export class ItemRepoService {
         }
         this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.", "STANDARD", 'STORY');
         this.characterService.characterState.bonusBrains = true;
+      },
+    },
+    hellCrownDismemberment: {
+      id: 'hellCrownDismemberment',
+      name: 'Crown of Limbs',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown topped with dismembered limbs. Using this will open up a new understanding of spirit gems.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.Dismemberment)){
+          this.hellService.completedHellBosses.push(HellLevel.Dismemberment);
+        }
+        if (!this.activityService){
+          this.activityService = this.injector.get(ActivityService);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You can now infuse new effects into your weapons.", "STANDARD", 'STORY');
+        this.activityService.purifyGemsUnlocked = true;
       },
     },
     fastPlayManual: {

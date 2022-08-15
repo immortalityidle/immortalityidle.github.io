@@ -35,7 +35,7 @@ export interface Item {
   useConsumes?: boolean;
   use?: (quantity?: number) => void;
   /** Used for single-use permanent upgrades so we can see if they need to be bought again */
-  owned?: () => boolean; 
+  owned?: () => boolean;
 }
 
 export interface Equipment extends Item {
@@ -500,7 +500,7 @@ export class InventoryService {
       this.bigNumberPipe.transform(armor.armorStats.defense) + "<br/>Durability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
-  upgradeEquipment(value: number){
+  upgradeEquppedEquipment(value: number){
 
     const upgradables = [];
     if (this.characterService.characterState.equipment.leftHand){
@@ -523,16 +523,20 @@ export class InventoryService {
     }
     if (upgradables.length > 0){
       const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
-      if (equipment.armorStats){
-        equipment.armorStats.durability += value;
-        equipment.armorStats.defense += value;
-      } else if (equipment.weaponStats){
-        equipment.weaponStats.durability += value;
-        equipment.weaponStats.baseDamage += value;
-      }
-      equipment.value += value;
-      this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
+      this.upgradeEquipment(equipment, value);
     }
+  }
+
+  upgradeEquipment(equipment: Equipment, value: number){
+    if (equipment.armorStats){
+      equipment.armorStats.durability += value;
+      equipment.armorStats.defense += value;
+    } else if (equipment.weaponStats){
+      equipment.weaponStats.durability += value;
+      equipment.weaponStats.baseDamage += value;
+    }
+    equipment.value += value;
+    this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
@@ -650,11 +654,11 @@ export class InventoryService {
     }
   }
 
-  generateSpiritGem(grade: number, flavor = "monster"): Item {
+  generateSpiritGem(grade: number, flavor = "spirit"): Item {
     return {
       id: 'spiritGemGrade' + grade,
       name: flavor + ' gem grade ' + grade,
-      type: 'spiritGem',
+      type: flavor + 'Gem',
       value: grade * 10,
       description: 'A spirit gem dropped by a monster.'
     };
@@ -812,7 +816,7 @@ export class InventoryService {
   getHide(): Item{
     const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
     const hideValue = Math.floor(Math.pow(animalHandling/1e9, 0.15) * 16);
-    
+
     let lastHide = this.itemRepoService.items['hide'];
 
     for (const key in this.itemRepoService.items){
@@ -1506,11 +1510,15 @@ export class InventoryService {
   }
 
   mergeEquippedSlot(slot: EquipmentPosition, itemToMerge: Item, sourceItemIndex: number){
+    const equippedItem = this.characterService.characterState.equipment[slot];
+    if (itemToMerge.type.includes("Gem") && equippedItem){
+      this.gemifyEquipment(sourceItemIndex, equippedItem);
+      return;
+    }
     if (!instanceOfEquipment(itemToMerge)){
       return;
     }
     let newItem;
-    const equippedItem = this.characterService.characterState.equipment[slot];
     if (equippedItem === null){
       this.characterService.characterState.equipment[slot] = itemToMerge;
       this.itemStacks[sourceItemIndex] = null;
@@ -1578,6 +1586,26 @@ export class InventoryService {
       if (this.stashedItemStacks[i]){
         this.itemStacks.push(this.stashedItemStacks[i]);
         this.stashedItemStacks[i] = null;
+      }
+    }
+  }
+
+  gemifyEquipment(gemIndex: number, equipment: Equipment){
+    const gemStack = this.itemStacks[gemIndex];
+    const gem = this.itemStacks[gemIndex]?.item;
+    if (gemStack && gem && gem.type.includes("Gem")){
+      const gemFlavor = gem.type.substring(0, gem.type.length - 3);
+      // TODO: add gemFlavor effects
+      this.upgradeEquipment(equipment, Math.floor(Math.pow(gem.value/10,2.4)));
+      this.updateArmorDescription(equipment);
+      if (gemStack.quantity > 1){
+        gemStack.quantity--;
+      } else {
+        this.itemStacks[gemIndex] = null;
+      }
+      if (this.characterService.characterState.yinYangUnlocked){
+        this.characterService.characterState.yang++;
+        this.characterService.characterState.yin++;
       }
     }
   }
