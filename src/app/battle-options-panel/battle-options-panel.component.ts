@@ -20,10 +20,12 @@ export class BattleOptionsPanelComponent implements OnInit {
   noAttackToggle(){
     this.battleService.enableManaAttack = false;
     this.battleService.enablePyroclasm = false;
+    this.battleService.enableMetalFist = false;
   }
 
   manaAttackToggle(){
     this.battleService.enablePyroclasm = false;
+    this.battleService.enableMetalFist = false;
     if (this.battleService.manaAttackUnlocked){
       this.battleService.enableManaAttack = true;
     }
@@ -31,8 +33,17 @@ export class BattleOptionsPanelComponent implements OnInit {
 
   pyroclasmToggle(){
     this.battleService.enableManaAttack = false;
+    this.battleService.enableMetalFist = false;
     if (this.battleService.pyroclasmUnlocked){
       this.battleService.enablePyroclasm = true;
+    }
+  }
+
+  metalFistToggle(){
+    this.battleService.enableManaAttack = false;
+    this.battleService.enablePyroclasm = false;
+    if (this.battleService.metalFistUnlocked){
+      this.battleService.enableMetalFist = true;
     }
   }
 

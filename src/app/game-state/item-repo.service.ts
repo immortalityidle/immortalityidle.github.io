@@ -1175,6 +1175,13 @@ export class ItemRepoService {
       value: 1,
       description: 'A small sphere containing the essence of pure cold.',
     },
+    fireCore: {
+      id: 'fireCore',
+      name: 'fire core',
+      type: 'fireCore',
+      value: 1,
+      description: 'A small sphere containing the essence of pure heat.',
+    },
     treasureMap: {
       id: 'treasureMap',
       name: 'treasure map',
@@ -1314,7 +1321,7 @@ export class ItemRepoService {
       name: 'Crown of Pillars',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown topped with tiny copper pillar proving your mastery over the hell for arsonists. Using this will unlock a new spell.',
+      description: 'A crown topped with tiny copper pillars. Using this will unlock a new spell.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1328,8 +1335,8 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)){
           this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
         }
-        this.logService.addLogMessage("The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. Your inner fire stretches toward your skin, forming a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
-        this.battleService.fireShieldUnlocked = true;
+        this.logService.addLogMessage("The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.", "STANDARD", 'STORY');
+        this.battleService.metalFistUnlocked = true;
       },
     },
     hellCrownMountainOfKnives: {
@@ -1531,6 +1538,29 @@ export class ItemRepoService {
         }
         this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You can now infuse new effects into your weapons.", "STANDARD", 'STORY');
         this.activityService.purifyGemsUnlocked = true;
+      },
+    },
+    hellCrownFireMountain: {
+      id: 'hellCrownFireMountain',
+      name: 'Lava Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A crown made of pure lava. Using this will unlock a new spell.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfFire)){
+          this.hellService.completedHellBosses.push(HellLevel.MountainOfFire);
+        }
+        if (!this.battleService){
+          this.battleService = this.injector.get(BattleService);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
+        this.battleService.fireShieldUnlocked = true;
       },
     },
     fastPlayManual: {

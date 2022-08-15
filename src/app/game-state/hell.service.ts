@@ -306,6 +306,35 @@ export class HellService {
     skipApprenticeshipLevel: 0
   }
 
+  freezeMountain = {
+    level: 0,
+    name: ['Rock the Lava'],
+    activityType: ActivityType.MeltMountain,
+    description: ["Swimming in lava is less fun that it seemed like it would be."],
+    consequenceDescription: ['Focus your connection to water and turn that lava back to stone.'],
+    consequence: [() => {
+      const numberSpawned = Math.log10(this.characterService.characterState.attributes.waterLore.value);
+      for (let i = 0; i < numberSpawned; i++){
+        this.battleService.addEnemy({
+          name: "Lava Golem",
+          health: 1e15,
+          maxHealth: 1e15,
+          accuracy: 0.7,
+          attack: 1e6,
+          defense: 1e6,
+          loot: [ this.itemRepoService.items['fireCore'] ]
+        });
+      }
+    }],
+    resourceUse: [{
+    }],
+    requirements: [{
+      fireLore: 1000 // TODO: tune this
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
   healAnimals = {
     level: 0,
     name: ['Heal Animals'],
@@ -426,7 +455,7 @@ export class HellService {
     level: 0,
     name: ['Interrogate the Damned'],
     activityType: ActivityType.Interrogate,
-    description: ["Find out where the thieves here hid their stolen treasures. You might be able to reverse some of the damage they have done."],
+    description: ["Find out where the tomb looters here hid their stolen treasures. You might be able to reverse some of the damage they have done."],
     consequenceDescription: ['Uses 1000 Stamina.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
@@ -822,6 +851,17 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownDismemberment'] ]
       });
+    } else if (this.currentHell === HellLevel.MountainOfFire){
+      this.battleService.addEnemy({
+        name: "Magmar the Lava King",
+        // TODO: figure out stats
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownFireMountain'] ]
+      });
     } else {
       this.battleService.addEnemy({
         name: "Boss Of A Generic Level",
@@ -1156,8 +1196,10 @@ export class HellService {
       dailyEffect: () => {
         // TODO: tune this
         const damage = 1000;
-        this.characterService.characterState.status.health.value -= damage;
-        this.logService.addLogMessage("The mountain's ice freezes you for " + damage + " damage.", "INJURY", "COMBAT");
+        if (this.inventoryService.consume("fireCore") < 0){
+          this.characterService.characterState.status.health.value -= damage;
+          this.logService.addLogMessage("The mountain's ice freezes you for " + damage + " damage.", "INJURY", "COMBAT");
+        }
         // This might be a stupid way to nerf fireLore. Consider other alternatives.
         const reducer = .9;
         this.characterService.characterState.attributes.fireLore.value *= reducer;
@@ -1330,31 +1372,30 @@ export class HellService {
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.interrogate],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney, this.recoverTreasure, this.replaceTreasure],
-      hint: "",
+      hint: "Unloot those tombs.",
       successCheck: () => {
         // TODO: tune this
         return this.relicsReturned > 10000;
       }
     },
     {
-
       name: "Hell of the Mountain of Fire",
       description: "Torment for thieves. The volcano where the poor souls are thrown looks a little toasty for comfort.",
       index: HellLevel.MountainOfFire,
-      entryEffect: () => {
-        /*
-        Task: Plug the volcano, ride the explosion out
-        During the level: no water-based activities
-        */
+      dailyEffect: () => {
+        // take damage from the volcano
+        if (this.inventoryService.consume("iceCore") < 0){
+          this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+        }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You realize that the power of the fire cores is essential to keeping the lava in the volcano liquid. With enough of these tucked away in your pack, the the surface finally cools enough to turn back to stone. Someone is not happy with this change.", "STANDARD", "STORY");
       },
-      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.freezeMountain],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
-      hint: "",
+      hint: "How does this volcano stay so hot?",
       successCheck: () => {
-        return false;
+        return this.inventoryService.getQuantityByName("fire core") >= 10000; // TODO: tune this
       }
     },
     {

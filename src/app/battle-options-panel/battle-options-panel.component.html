@@ -2,7 +2,7 @@
   <span>Battle Options</span>
   <hr/>
   <div>
-    <input type="radio" (change)="noAttackToggle()" name="attack" id="attackNone" [checked]="!battleService.enableManaAttack && !battleService.enablePyroclasm"/>
+    <input type="radio" (change)="noAttackToggle()" name="attack" id="attackNone" [checked]="!battleService.enableManaAttack && !battleService.enablePyroclasm && !battleService.enableMetalFist"/>
     <label for="attackNone"><span>No Special Attack</span></label>
   </div>
   <div *ngIf="battleService.manaAttackUnlocked"
@@ -14,6 +14,11 @@
     tooltip="Focus your mana and blast your enemies with heat so intense their children's children will get burned. Each use of this ability requires 10,000 mana.">
     <input type="radio" (change)="pyroclasmToggle()" name="attack" id="pyroclasm" [checked]="battleService.enablePyroclasm"/>
     <label for="pyroclasm"><span>Activate Pyroclasm</span></label>
+  </div>
+  <div *ngIf="battleService.metalFistUnlocked"
+    tooltip="Focus your mana and summon a massive metal fist to crush your enemy. Each use of this ability requires 10,000 mana.">
+    <input type="radio" (change)="metalFistToggle()" name="attack" id="metalFist" [checked]="battleService.enableMetalFist"/>
+    <label for="metalFist"><span>Activate Metal Fist</span></label>
   </div>
   <hr/>
   <div>

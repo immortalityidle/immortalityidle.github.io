@@ -39,11 +39,13 @@ export interface BattleProperties {
   manaShieldUnlocked: boolean,
   manaAttackUnlocked: boolean,
   pyroclasmUnlocked: boolean,
+  metalFistUnlocked: boolean,
   fireShieldUnlocked: boolean,
   iceShieldUnlocked: boolean,
   enableManaShield: boolean,
   enableManaAttack: boolean,
   enablePyroclasm: boolean,
+  enableMetalFist: boolean,
   enableFireShield: boolean,
   enableIceShield: boolean,
   highestDamageTaken: number,
@@ -67,11 +69,13 @@ export class BattleService {
   enableManaShield = false;
   enableManaAttack = false;
   enablePyroclasm = false;
+  enableMetalFist = false;
   enableFireShield = false;
   enableIceShield = false;
   manaShieldUnlocked = false;
   manaAttackUnlocked = false;
   pyroclasmUnlocked = false;
+  metalFistUnlocked = false;
   fireShieldUnlocked = false;
   iceShieldUnlocked = false;
   tickCounter: number;
@@ -150,11 +154,13 @@ export class BattleService {
       manaShieldUnlocked: this.manaShieldUnlocked,
       manaAttackUnlocked: this.manaAttackUnlocked,
       pyroclasmUnlocked: this.pyroclasmUnlocked,
+      metalFistUnlocked: this.metalFistUnlocked,
       fireShieldUnlocked: this.fireShieldUnlocked,
       iceShieldUnlocked: this.iceShieldUnlocked,
       enableManaShield: this.enableManaShield,
       enableManaAttack: this.enableManaAttack,
       enablePyroclasm: this.enablePyroclasm,
+      enableMetalFist: this.enableMetalFist,
       enableFireShield: this.enableFireShield,
       enableIceShield: this.enableIceShield,
       highestDamageDealt: this.highestDamageDealt,
@@ -174,11 +180,13 @@ export class BattleService {
     this.enableManaShield = properties.enableManaShield;
     this.enableManaAttack = properties.enableManaAttack;
     this.enablePyroclasm = properties.enablePyroclasm || false;
+    this.enableMetalFist = properties.enableMetalFist || false;
     this.enableFireShield = properties.enableFireShield || false;
     this.enableIceShield = properties.enableIceShield || false;
     this.manaShieldUnlocked = properties.manaShieldUnlocked || false;
     this.manaAttackUnlocked = properties.manaAttackUnlocked || false;
     this.pyroclasmUnlocked = properties.pyroclasmUnlocked || false;
+    this.metalFistUnlocked = properties.metalFistUnlocked || false;
     this.fireShieldUnlocked = properties.fireShieldUnlocked || false;
     this.iceShieldUnlocked = properties.iceShieldUnlocked || false;
     this.highestDamageDealt = properties.highestDamageDealt || 0;
@@ -310,6 +318,17 @@ export class BattleService {
         this.characterService.characterState.status.mana.value -= 10;
       }
       let blowthrough = false;
+      if (this.enableMetalFist && this.characterService.characterState.status.mana.value > 10000){
+        let metalMultiplier = Math.log(this.characterService.characterState.attributes.metalLore.value) / Math.log(50);
+        if (metalMultiplier < 1){
+          metalMultiplier = 1;
+        }
+        if (metalMultiplier > 100){
+          metalMultiplier = 100;
+        }
+        damage *= metalMultiplier;
+        this.characterService.characterState.status.mana.value -= 10000;
+      }
       if (this.enablePyroclasm && this.characterService.characterState.status.mana.value > 10000){
         let fireMultiplier = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
         if (fireMultiplier < 1){
