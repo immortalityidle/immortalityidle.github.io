@@ -15,6 +15,7 @@ export interface WeaponStats {
   material: string;
   durability: number;
   baseName?: string;
+  effect?: string;
 }
 
 export interface ArmorStats {
@@ -22,6 +23,7 @@ export interface ArmorStats {
   material: string;
   durability: number;
   baseName?: string;
+  effect?: string;
 }
 
 export interface Item {
@@ -424,7 +426,7 @@ export class InventoryService {
   }
 
   // materials are wood or metal
-  generateWeapon(grade: number, material: string, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment {
+  generateWeapon(grade: number, material: string, useGemOkay: boolean, defaultName: string | undefined = undefined, effect: string | undefined = undefined): Equipment {
 
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
@@ -477,7 +479,8 @@ export class InventoryService {
         baseDamage: grade,
         material: material,
         durability: durability,
-        baseName: baseName
+        baseName: baseName,
+        effect: effect
       },
       description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " +
         this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
@@ -488,7 +491,11 @@ export class InventoryService {
     if(!weapon.weaponStats) {
       return;
     }
-    weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + ".<br/>Base Damage: " +
+    let effectString = "";
+    if (weapon.weaponStats.effect){
+      effectString = " and imbued with the power of " + weapon.weaponStats.effect;
+    }
+    weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + effectString + ".<br/>Base Damage: " +
     this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) + "<br/>Durability: " + this.bigNumberPipe.transform(weapon.weaponStats.durability);
   }
 
@@ -496,7 +503,11 @@ export class InventoryService {
     if(!armor.armorStats) {
       return;
     }
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + ".<br/>Defense: " +
+    let effectString = "";
+    if (armor.armorStats.effect){
+      effectString = " and imbued with the power of " + armor.armorStats.effect;
+    }
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + effectString + ".<br/>Defense: " +
       this.bigNumberPipe.transform(armor.armorStats.defense) + "<br/>Durability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
@@ -527,13 +538,19 @@ export class InventoryService {
     }
   }
 
-  upgradeEquipment(equipment: Equipment, value: number){
+  upgradeEquipment(equipment: Equipment, value: number, newEffect: string = "spirit"){
     if (equipment.armorStats){
       equipment.armorStats.durability += value;
       equipment.armorStats.defense += value;
+      if (newEffect != "spirit"){
+        equipment.armorStats.effect = newEffect;
+      }
     } else if (equipment.weaponStats){
       equipment.weaponStats.durability += value;
       equipment.weaponStats.baseDamage += value;
+      if (newEffect != "spirit"){
+        equipment.weaponStats.effect = newEffect;
+      }
     }
     equipment.value += value;
     this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
@@ -655,17 +672,20 @@ export class InventoryService {
   }
 
   generateSpiritGem(grade: number, flavor = "spirit"): Item {
+    let description = 'A spirit gem dropped by a monster.';
+    if (flavor != "spirit"){
+      description = 'A spirit gem full of the power of ' + flavor + ".";
+    }
     return {
       id: 'spiritGemGrade' + grade,
       name: flavor + ' gem grade ' + grade,
       type: flavor + 'Gem',
       value: grade * 10,
-      description: 'A spirit gem dropped by a monster.'
+      description: description
     };
   }
 
-  generateArmor(grade: number, material: string, slot: EquipmentPosition, useGemOkay: boolean, defaultName: string | undefined = undefined): Equipment{
-
+  generateArmor(grade: number, material: string, slot: EquipmentPosition, useGemOkay: boolean, defaultName: string | undefined = undefined, effect: string | undefined = undefined): Equipment{
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
@@ -720,7 +740,8 @@ export class InventoryService {
         defense: grade,
         material: material,
         durability: durability,
-        baseName: baseName
+        baseName: baseName,
+        effect: effect
       },
       description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " +
         this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
@@ -1422,9 +1443,9 @@ export class InventoryService {
     }
     let inventoryIndex = 0;
     if (item1.slot === 'rightHand' || item1.slot === 'leftHand'){
-      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + "", false, item1.weaponStats?.baseName));
+      inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + "", false, item1.weaponStats?.baseName, item1.weaponStats?.effect));
     } else {
-      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, false, item1.armorStats?.baseName));
+      inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, false, item1.armorStats?.baseName, item1.armorStats?.effect));
     }
     // if we can, move the new item to the desired destination index
     if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null){
@@ -1525,9 +1546,9 @@ export class InventoryService {
       return;
     }
     if ((slot === 'rightHand' || slot === 'leftHand')) {
-      newItem = this.generateWeapon(equippedItem.value + itemToMerge.value, itemToMerge.weaponStats?.material + "", false, equippedItem.weaponStats?.baseName);
+      newItem = this.generateWeapon(equippedItem.value + itemToMerge.value, itemToMerge.weaponStats?.material + "", false, equippedItem.weaponStats?.baseName, equippedItem.weaponStats?.effect);
     } else {
-      newItem = this.generateArmor(equippedItem.value + itemToMerge.value, itemToMerge.armorStats?.material + "", slot, false, equippedItem.armorStats?.baseName);
+      newItem = this.generateArmor(equippedItem.value + itemToMerge.value, itemToMerge.armorStats?.material + "", slot, false, equippedItem.armorStats?.baseName, equippedItem.armorStats?.effect);
     }
     this.characterService.characterState.equipment[slot] = newItem;
     this.itemStacks[sourceItemIndex] = null;
@@ -1596,7 +1617,7 @@ export class InventoryService {
     if (gemStack && gem && gem.type.includes("Gem")){
       const gemFlavor = gem.type.substring(0, gem.type.length - 3);
       // TODO: add gemFlavor effects
-      this.upgradeEquipment(equipment, Math.floor(Math.pow(gem.value/10,2.4)));
+      this.upgradeEquipment(equipment, Math.floor(Math.pow(gem.value/10,2.4)), gemFlavor);
       this.updateArmorDescription(equipment);
       if (gemStack.quantity > 1){
         gemStack.quantity--;

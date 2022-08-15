@@ -557,6 +557,9 @@ export class ActivityService {
     if (this.characterService.characterState.immortal){
       newList.push(this.SoulCultivation);
     }
+    if (this.purifyGemsUnlocked){
+      newList.push(this.PurifyGems);  
+    }
     newList.push(this.InfuseEquipment);
     newList.push(this.InfuseBody);
     newList.push(this.ExtendLife);
@@ -2875,7 +2878,7 @@ export class ActivityService {
       consequenceDescription: ['Uses 100000 Stamina and a corrupted spirit gem.'],
       consequence: [() => {
         this.characterService.characterState.status.stamina.value -= 100000;
-        const value = this.inventoryService.consume("corruptedGem");
+        const value = this.inventoryService.consume("corruptionGem");
         if (value > 0){
           // TODO: add more flavors of gems
           this.inventoryService.addItem(this.inventoryService.generateSpiritGem(value / 10, "life"));

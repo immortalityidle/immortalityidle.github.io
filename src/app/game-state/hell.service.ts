@@ -574,7 +574,7 @@ export class HellService {
         accuracy: 0.50,
         attack: 1e6 + (1e4 * extraPower),
         defense: 1e8 + (1e7 * extraPower),
-        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted") ]
+        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption") ]
       });
     } else if (this.currentHell === HellLevel.Scissors){
       const extraPower = this.inventoryService.getQuantityByName("fingers");
@@ -585,7 +585,7 @@ export class HellService {
         accuracy: 0.50,
         attack: 1e6 + (1e4 * extraPower),
         defense: 1e8 + (1e7 * extraPower),
-        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corrupted"), this.itemRepoService.items['fingers'] ]
+        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption"), this.itemRepoService.items['fingers'] ]
       });
     } else if (this.currentHell === HellLevel.TreesOfKnives){
       this.battleService.addEnemy({
@@ -595,7 +595,7 @@ export class HellService {
         accuracy: 1,
         attack: 1e6,
         defense: 1e6,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corrupted") ]
+        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
       });
     } else if (this.currentHell === HellLevel.Mirrors){
       this.battleService.addEnemy({
@@ -615,7 +615,7 @@ export class HellService {
         accuracy: 1,
         attack: 1e6,
         defense: 1e6,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corrupted") ]
+        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
       });
     } else if (this.currentHell === HellLevel.CattlePit){
       if (this.animalsHealed <= 1000000){
@@ -627,7 +627,7 @@ export class HellService {
             accuracy: 1,
             attack: 1e6,
             defense: 1e6,
-            loot: [ this.inventoryService.generateSpiritGem(25, "corrupted") ]
+            loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
           });
         }
       }
@@ -641,7 +641,7 @@ export class HellService {
         defense: 1e6,
         attackEffect: "feeder",
         hitTracker: 0,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corrupted") ]
+        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
       });
     } else if (this.currentHell === HellLevel.Dismemberment){
       this.battleService.addEnemy({
@@ -651,7 +651,7 @@ export class HellService {
         accuracy: 1,
         attack: 1e6,
         defense: 1e6,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corrupted") ]
+        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
       });
     }
   }
@@ -928,6 +928,10 @@ export class HellService {
     newList.push(this.activityService.CoreCultivation);
     newList.push(this.activityService.SoulCultivation);
     newList.push(this.activityService.InfuseBody);
+    if (this.activityService.purifyGemsUnlocked){
+      newList.push(this.activityService.PurifyGems);
+    }
+    newList.push(this.activityService.InfuseEquipment);
     for (const hell of this.hells){
       let consequenceDescription = "";
       if (this.completedHellBosses.includes(hell.index)){

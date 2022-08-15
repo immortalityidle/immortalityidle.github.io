@@ -263,7 +263,7 @@ export class BattleService {
             degradables.push(this.characterService.characterState.equipment.feet);
           }
           if (degradables.length > 0){
-            this.degradeArmor(degradables[Math.floor(Math.random() * degradables.length)]);
+            this.degradeArmor(degradables[Math.floor(Math.random() * degradables.length)], damage);
           }
 
           if (this.characterService.characterState.status.health.value <= 0){
@@ -329,16 +329,32 @@ export class BattleService {
       if (damage > this.highestDamageDealt){
         this.highestDamageDealt = damage;
       }
-      // degrade weapon
+
+      let durabilityDamage = 1;
+      if (defense > 20000){
+        // TODO: tune this
+        durabilityDamage += Math.sqrt(defense - 20000);
+      }
+      // degrade weapons
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats){
-        this.characterService.characterState.equipment.leftHand.weaponStats.durability--;
+        this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage;
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect == "life"){
+          this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.leftHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
+          this.characterService.characterState.status.health.value += durabilityDamage;
+          this.characterService.characterState.checkOverage();
+        }
         if (this.characterService.characterState.equipment.leftHand.weaponStats.durability <= 0){
           this.inventoryService.addItem(this.characterService.characterState.equipment.leftHand);
           this.characterService.characterState.equipment.leftHand = null;
         }
       }
       if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats){
-        this.characterService.characterState.equipment.rightHand.weaponStats.durability--;
+        this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage;
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect == "life"){
+          this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.rightHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
+          this.characterService.characterState.status.health.value += durabilityDamage;
+          this.characterService.characterState.checkOverage();
+        }
         if (this.characterService.characterState.equipment.rightHand.weaponStats.durability <= 0){
           this.inventoryService.addItem(this.characterService.characterState.equipment.rightHand);
           this.characterService.characterState.equipment.rightHand = null;
@@ -456,9 +472,19 @@ export class BattleService {
     this.troubleKills++;
   }
 
-  degradeArmor(armor: Equipment){
+  degradeArmor(armor: Equipment, damage: number){
+    let durabilityDamage = 1;
+    if (damage > 20000){
+      // TODO: tune this
+      durabilityDamage += Math.sqrt(damage - 20000);
+    }
     if (armor.armorStats){
-      armor.armorStats.durability--;
+      armor.armorStats.durability -= durabilityDamage;
+      if (armor.armorStats.effect == "life"){
+        this.logService.addLogMessage("Your " + armor.name + " healed you for " + durabilityDamage + " as the enemy struck it.", "STANDARD", "COMBAT");
+        this.characterService.characterState.status.health.value += durabilityDamage;
+        this.characterService.characterState.checkOverage();
+      }
       if (armor.armorStats.durability <= 0){
         // it broke, unequip it
         this.inventoryService.addItem(armor);

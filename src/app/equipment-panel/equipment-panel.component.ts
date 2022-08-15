@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Character, EquipmentPosition } from '../game-state/character';
+import { Character, EquipmentPosition, EquipmentSlots } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 
@@ -59,5 +59,18 @@ export class EquipmentPanelComponent {
         this.inventoryService.selectedItem = null;
       }
     }
+  }
+
+  getEffectClass(slot: string): string{
+    let effect;
+    if (slot === "leftHand" || slot === "rightHand"){
+      effect = this.character.equipment[slot]?.weaponStats?.effect;
+    } else if (slot === "head" || slot === "body" || slot === "legs" || slot === "feet"){
+      effect = this.character.equipment[slot]?.armorStats?.effect;
+    }
+    if (effect){
+      return "effect" + effect;
+    }
+    return "";
   }
 }
