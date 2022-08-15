@@ -398,6 +398,9 @@ export class BattleService {
     }
     const enemyHealth = this.currentEnemy.enemy.health;
     this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
+    if (customMessage === "") {
+      customMessage = "You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage";
+    }
     damage -= enemyHealth;
     if (this.currentEnemy.enemy.health <= 0){
       this.kills++;
@@ -423,11 +426,7 @@ export class BattleService {
       }
       return (damage - enemyHealth) / 2; // return half the damage left over
     } else {
-      if (customMessage === ""){
-        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage", 'STANDARD', 'COMBAT');
-      } else {
-        this.logService.addLogMessage(customMessage, 'STANDARD', 'COMBAT');
-      }
+      this.logService.addLogMessage(customMessage, 'STANDARD', 'COMBAT');
       return 0;
     }
   }
@@ -555,7 +554,7 @@ export class BattleService {
       } else {
         // force feed on second hit
         this.hellService.daysFasted = 0;
-        let damage = this.characterService.characterState.status.health.value / 4;
+        const damage = this.characterService.characterState.status.health.value / 4;
         this.logService.addLogMessage("The hellfire burns as it goes down, damaging you for " + damage + " extra damage.", 'INJURY', 'COMBAT');
         this.characterService.characterState.status.health.value -= damage;
       }
