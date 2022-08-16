@@ -64,6 +64,9 @@ export enum ActivityType {
   RecoverTreasure,
   ReplaceTreasure,
   PurifyGems,
+  Endure,
+  FreezeMountain,
+  ExamineContracts,
   Hell // hell needs to be last for indexing purposes
 
 }

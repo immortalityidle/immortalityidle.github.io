@@ -1,6 +1,6 @@
 import { Equipment, Item } from './inventory.service'
 import { LogService } from './log.service';
-import { formatNumber, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { MainLoopService } from './main-loop.service';
 import { BigNumberPipe } from '../app.component';
 
@@ -87,6 +87,7 @@ export interface CharacterProperties {
   righteousWrathUnlocked: boolean,
   bonusMuscles: boolean,
   bonusBrains: boolean,
+  bonusHealth: boolean
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -147,6 +148,7 @@ export class Character {
   righteousWrathUnlocked = false;
   bonusMuscles = false;
   bonusBrains = false;
+  bonusHealth = false;
 
   attributes: AttributeObject = {
     strength: {
@@ -421,8 +423,12 @@ export class Character {
   }
 
   recalculateDerivedStats(): void {
-    this.status.health.max = 100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul +
-      Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5);
+    let bonusFactor = 1;
+    if (this.bonusHealth){
+      bonusFactor = 5;
+    }
+    this.status.health.max = (100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul +
+      Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) * bonusFactor;
     if (this.money > this.maxMoney){
       this.money = this.maxMoney;
     }
@@ -660,7 +666,8 @@ export class Character {
       yang: this.yang,
       righteousWrathUnlocked: this.righteousWrathUnlocked,
       bonusMuscles: this.bonusMuscles,
-      bonusBrains: this.bonusBrains
+      bonusBrains: this.bonusBrains,
+      bonusHealth: this.bonusHealth
 
     }
   }
@@ -720,6 +727,7 @@ export class Character {
     this.righteousWrathUnlocked = properties.righteousWrathUnlocked || false;
     this.bonusMuscles = properties.bonusMuscles || false;
     this.bonusBrains = properties.bonusBrains || false;
+    this.bonusHealth = properties.bonusHealth || false;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery){

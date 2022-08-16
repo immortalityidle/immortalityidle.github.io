@@ -116,17 +116,21 @@ export class FollowersService {
     },
     "weaponsmith": {
       work: () => {
+        let totalPower = this.jobs["weaponsmith"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
         const rightHand = this.characterService.characterState.equipment.rightHand;
         const leftHand = this.characterService.characterState.equipment.leftHand;
         if (rightHand && rightHand.weaponStats){
-          rightHand.weaponStats.durability += Math.ceil(Math.pow((this.jobs["weaponsmith"].totalPower / 10), 2) * 100);
-          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
-          rightHand.value += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
+          rightHand.weaponStats.durability += Math.ceil(Math.pow((totalPower / 10), 2) * 100);
+          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
+          rightHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
         }
         if (leftHand && leftHand.weaponStats){
-          leftHand.weaponStats.durability += this.jobs["weaponsmith"].totalPower;
-          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
-          leftHand.value += Math.ceil(Math.pow(Math.floor(this.jobs["weaponsmith"].totalPower / 10), 2));
+          leftHand.weaponStats.durability += totalPower;
+          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
+          leftHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
         }
 
       },
@@ -135,12 +139,16 @@ export class FollowersService {
     },
     "armorer": {
       work: () => {
+        let totalPower = this.jobs["armorer"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
         const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
         for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
           if (equipment[key] && equipment[key]!.armorStats){
-            equipment[key]!.armorStats!.durability += Math.ceil(Math.pow((this.jobs["armorer"].totalPower / 10), 2) * 50);
-            equipment[key]!.armorStats!.defense += Math.ceil(Math.pow(Math.floor(this.jobs["armorer"].totalPower / 10), 2) / 2);
-            equipment[key]!.value += Math.ceil(Math.pow(Math.floor(this.jobs["armorer"].totalPower / 10), 2) / 2);
+            equipment[key]!.armorStats!.durability += Math.ceil(Math.pow((totalPower / 10), 2) * 50);
+            equipment[key]!.armorStats!.defense += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2);
+            equipment[key]!.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2);
           }
         }
       },
@@ -149,42 +157,66 @@ export class FollowersService {
     },
     "brawler": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("strength", this.jobs["brawler"].totalPower);
+        let totalPower = this.jobs["brawler"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.characterService.characterState.increaseAttribute("strength", totalPower);
       },
       description: "Brawlers will spar with you in wrestling and boxing matches, increasing your strength.",
       totalPower: 0
     },
     "sprinter": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("speed", this.jobs["sprinter"].totalPower);
+        let totalPower = this.jobs["sprinter"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.characterService.characterState.increaseAttribute("speed", totalPower);
       },
       description: "Sprinters challenge you to footraces and help you increase your speed.",
       totalPower: 0
     },
     "trainer": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("toughness", this.jobs["trainer"].totalPower);
+        let totalPower = this.jobs["trainer"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.characterService.characterState.increaseAttribute("toughness", totalPower);
       },
       description: "Trainers make sure you follow their strict fitness and diet rules, increasing your toughness.",
       totalPower: 0
     },
     "tutor": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("intelligence", this.jobs["tutor"].totalPower);
+        let totalPower = this.jobs["tutor"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.characterService.characterState.increaseAttribute("intelligence", totalPower);
       },
       description: "Tutors teach you all about the wonders of the universe, increasing your intelligence.",
       totalPower: 0
     },
     "mediator": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("charisma", this.jobs["mediator"].totalPower);
+        let totalPower = this.jobs["mediator"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.characterService.characterState.increaseAttribute("charisma", totalPower);
       },
       description: "Mediators teach you how to persuade others, increasing your charisma.",
       totalPower: 0
     },
     "priest": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("spirituality", this.jobs["priest"].totalPower);
+        let totalPower = this.jobs["priest"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.characterService.characterState.increaseAttribute("spirituality", totalPower);
       },
       description: "Priests help you get closer to the divine, increasing your sprituality.",
       totalPower: 0
@@ -192,6 +224,9 @@ export class FollowersService {
     "gemologist": {
       work: () => {
         let gemmerPower = this.jobs["gemologist"].totalPower;
+        if (this.hellService?.inHell){
+          gemmerPower /= 10;
+        }
         gemmerPower = Math.floor(gemmerPower/50);
         if (gemmerPower > 4){
           gemmerPower = 4;
@@ -203,7 +238,11 @@ export class FollowersService {
     },
     "scout": {
       work: () => {
-        this.battleService.tickCounter += this.jobs["scout"].totalPower;
+        let totalPower = this.jobs["scout"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.battleService.tickCounter += totalPower;
       },
       description: "Scouts help you track down and fight monsters faster.",
       totalPower: 0
@@ -242,6 +281,19 @@ export class FollowersService {
         this.characterService.characterState.hellMoney++;
       },
       description: "Money Burners dedicate themselves to burning mortal money to produce hell money.",
+      hidden: true,
+      totalPower: 0
+    },
+    "banker": {
+      work: () => {
+        let totalPower = this.jobs["banker"].totalPower;
+        if (this.hellService?.inHell){
+          totalPower /= 10;
+        }
+        this.characterService.characterState.money += this.characterService.characterState.money * 0.000000273 * totalPower;
+        this.characterService.characterState.hellMoney += this.characterService.characterState.hellMoney * 0.000000273 * totalPower;
+      },
+      description: "Bankers put your money to use, earning interest on what you have. Surprisingly, this works for hell money too.",
       hidden: true,
       totalPower: 0
     },

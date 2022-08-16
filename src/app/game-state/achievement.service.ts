@@ -12,8 +12,6 @@ import { ActivityService } from './activity.service';
 import { ActivityType } from './activity';
 import { ImpossibleTaskService } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
 
 export interface Achievement {
   name: string;

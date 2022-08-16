@@ -57,7 +57,9 @@ export interface HellProperties {
   swimDepth: number,
   exitFound: boolean,
   soulsEscaped: number,
-  relicsReturned: number
+  relicsReturned: number,
+  timesCrushed: number,
+  contractsExamined: number
 }
 
 @Injectable({
@@ -78,6 +80,8 @@ export class HellService {
   exitFound = false;
   soulsEscaped = 0;
   relicsReturned = 0;
+  timesCrushed = 0;
+  contractsExamined = 0;
 
   burnMoney = {
     level: 0,
@@ -309,7 +313,7 @@ export class HellService {
   freezeMountain = {
     level: 0,
     name: ['Rock the Lava'],
-    activityType: ActivityType.MeltMountain,
+    activityType: ActivityType.FreezeMountain,
     description: ["Swimming in lava is less fun that it seemed like it would be."],
     consequenceDescription: ['Focus your connection to water and turn that lava back to stone.'],
     consequence: [() => {
@@ -530,6 +534,57 @@ export class HellService {
     skipApprenticeshipLevel: 0
   }
 
+  endureTheMill = {
+    level: 0,
+    name: ['Endure the Mill'],
+    activityType: ActivityType.Endure,
+    description: ["Trapped under the millstone like this, there's not much you can do but endure the punishment. Fortunately, you probably never went out looking for tiny spiders to squash, right?"],
+    consequenceDescription: ['Try not to give up. You can do this!'],
+    consequence: [() => {
+      // TODO: tune this
+      const damage = Math.max(1000 - (this.characterService.characterState.attributes.toughness.value / 1e24), 100);
+      this.characterService.characterState.status.health.value -= damage;
+      if (this.characterService.characterState.status.health.value <= 0){
+        this.beaten = true;
+      } else {
+        this.timesCrushed++;
+      }
+    }],
+    resourceUse: [{
+      stamina: 1000,
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
+  examineContracts = {
+    level: 0,
+    name: ['Examine Contracts'],
+    activityType: ActivityType.ExamineContracts,
+    description: ["As if the saw-weilding demons weren't bad enough, this place is a haven for fiendish bureaucrats. Huge piles of paper containing the contracts, covenants, bylaws, stipulations, regulations, and heretofor unspecified legal nonsense for this hell. Maybe if you go through them carefully, you can find a loophole to get yourself an audience with the boss."],
+    consequenceDescription: ['Uses 500,000 stamina because hellish legalize is so incredibly boring.'],
+    consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 500000;
+      if (this.characterService.characterState.attributes.intelligence.value <= 1e24){
+        return;
+      }
+      const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
+      if (Math.random() < threshold) {
+        this.contractsExamined++;
+      }
+
+    }],
+    resourceUse: [{
+      stamina: 500000,
+    }],
+    requirements: [{
+    }],
+    unlocked: true,
+    skipApprenticeshipLevel: 0
+  }
+
   constructor(
     private injector: Injector,
     private logService: LogService,
@@ -588,7 +643,7 @@ export class HellService {
   }
 
   trouble(){
-    // TODO: tune all of these values
+    // TODO: tune all of these values, and they should all scale up the longer you stay in/closer you get to finishing the hell
     if (this.currentHell === HellLevel.TongueRipping){
       let extraPower = 0;
       for (const follower of this.followerService.followers){
@@ -675,6 +730,16 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Dismemberment){
       this.battleService.addEnemy({
         name: "Axe Demon",
+        health: 1e6,
+        maxHealth: 1e6,
+        accuracy: 1,
+        attack: 1e6,
+        defense: 1e6,
+        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
+      });
+    } else if (this.currentHell === HellLevel.Saws){
+      this.battleService.addEnemy({
+        name: "Saw Demon",
         health: 1e6,
         maxHealth: 1e6,
         accuracy: 1,
@@ -862,15 +927,26 @@ export class HellService {
         defense: 1,
         loot: [ this.itemRepoService.items['hellCrownFireMountain'] ]
       });
-    } else {
+    } else if (this.currentHell === HellLevel.Mills){
       this.battleService.addEnemy({
-        name: "Boss Of A Generic Level",
+        name: "Grimstone The Human Grinder",
+        // TODO: figure out stats
         health: 1,
         maxHealth: 1,
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [  ]
+        loot: [ this.itemRepoService.items['hellCrownMills'] ]
+      });
+    } else if (this.currentHell === HellLevel.Saws){
+      this.battleService.addEnemy({
+        name: "Crognaslark the Corrupter",
+        health: 1,
+        maxHealth: 1,
+        accuracy: 0.8,
+        attack: 1,
+        defense: 1,
+        loot: [ this.itemRepoService.items['hellCrownSaws'] ]
       });
     }
   }
@@ -888,7 +964,9 @@ export class HellService {
       swimDepth: this.swimDepth,
       exitFound: this.exitFound,
       soulsEscaped: this.soulsEscaped,
-      relicsReturned: this.relicsReturned
+      relicsReturned: this.relicsReturned,
+      timesCrushed: this.timesCrushed,
+      contractsExamined: this.contractsExamined
     }
   }
 
@@ -905,6 +983,8 @@ export class HellService {
     this.exitFound = properties.exitFound || false;
     this.soulsEscaped = properties.soulsEscaped || 0;
     this.relicsReturned = properties.relicsReturned || 0;
+    this.timesCrushed = properties.timesCrushed || 0;
+    this.contractsExamined = properties.contractsExamined || 0;
     this.activityService.reloadActivities();
   }
 
@@ -1403,40 +1483,35 @@ export class HellService {
       name: "Hell of Mills",
       description: "Torment for any who abused their power to oppress the weak. You don't look forward to being ground into immortal flour.",
       index: HellLevel.Mills,
-      entryEffect: () => {
-        /*
-        Task: Endure the mill (toughness check)
-        During the level: Constant heavy damage
-        */
-      },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("Your karmic debt for all the oppression you've ever inflicted is paid off. Now you just need to show the strongest demon here not to pick on the weak.", "STANDARD", "STORY")
       },
-      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
-      hint: "",
+      activities: [this.endureTheMill],
+      projectionActivities: [],
+      hint: "Just endure.",
       successCheck: () => {
-        return false;
+        return this.timesCrushed > this.characterService.characterState.totalLives * 100;
       }
     },
     {
       name: "Hell of Saws",
       description: "Torment for swindlers and business cheats. The demons sharpen their saws and grin at you. You wish now that you'd stayed out of politics.",
       index: 0,
-      entryEffect: () => {
-        /*
-        Task: Find the final loophole (charisma and intelligence check)
-        During the level: Extra tough enemies
-        */
+      dailyEffect: () => {
+        if (this.contractsExamined <= 100000){
+          // saw damage
+          this.characterService.characterState.status.health.value -= 100;
+        }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You win!.", "STANDARD", "STORY")
+        this.logService.addLogMessage("You finally find article 131 of bylaw 8888 subsection 42(b)6.42 where paragraph fourty-eight clearly states that you have the right to confront the Hell Lord. Time to party!", "STANDARD", "STORY")
       },
-      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.examineContracts,],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
-      hint: "",
+      hint: "You read legalese, right?",
       successCheck: () => {
-        return false;
+        // TODO: tune this
+        return this.contractsExamined > 100000;
       }
     }
   ]

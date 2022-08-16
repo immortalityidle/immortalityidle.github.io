@@ -1563,6 +1563,50 @@ export class ItemRepoService {
         this.battleService.fireShieldUnlocked = true;
       },
     },
+    hellCrownMills: {
+      id: 'hellCrownMills',
+      name: 'Millstone Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A heavy crown with the weight of a millstone. Using this will increase the limits of your health.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.Mills)){
+          this.hellService.completedHellBosses.push(HellLevel.Mills);
+        }
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.", "STANDARD", 'STORY');
+        this.characterService.characterState.bonusHealth = true;
+      },
+    },
+    hellCrownSaws: {
+      id: 'hellCrownSaws',
+      name: 'Saw Crown',
+      type: 'hellcrown',
+      value: Infinity,
+      description: 'A toothy crown with sawblades pointing in all directions. Using this will unlock a new follower.',
+      useLabel: 'Accept the Crown',
+      useDescription: '',
+      useConsumes: true,
+      use: () => {
+        if (!this.hellService){
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService.completedHellBosses.includes(HellLevel.Saws)){
+          this.hellService.completedHellBosses.push(HellLevel.Saws);
+        }
+        if (!this.followerService){
+          this.followerService = this.injector.get(FollowersService);
+        }
+
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.", "STANDARD", 'STORY');
+        this.followerService.unlockJob("banker");
+      },
+    },
     fastPlayManual: {
       id: 'fastPlayManual',
       name: "Manual of Expeditious Time Perception",
