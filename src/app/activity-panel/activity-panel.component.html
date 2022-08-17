@@ -10,6 +10,29 @@
       <button (click)="JoinTheGodsClick()">Join the Gods</button>
     </span>
     <span tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
+    <span *ngIf="impossibleTaskService.activeTaskIndex >= 0">
+      <div  class="progress-bar"
+        [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
+        [attr.max]="Math.floor(impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired)">
+        <span
+          [style.width.%]="100 *
+            impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress /
+            impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired">
+        </span>
+      </div>
+    </span>
+    <span *ngIf="hellService.inHell && hellService.currentHell >= 0 && !hellService.completedHellTasks.includes(hellService.currentHell)">
+      <div  class="progress-bar"
+        [attr.value]="Math.floor(hellService.hells[hellService.currentHell].progress())"
+        [attr.max]="Math.floor(hellService.hells[hellService.currentHell].progressMax())">
+        <span
+          [style.width.%]="100 *
+            hellService.hells[hellService.currentHell].progress() /
+            hellService.hells[hellService.currentHell].progressMax()">
+        </span>
+      </div>
+    </span>
+
     <span *ngIf="hellService.inHell && activityService.hellEnabled && hellService.completedHellTasks.includes(hellService.currentHell)">
       <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(hellService.currentHell) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
     </span>

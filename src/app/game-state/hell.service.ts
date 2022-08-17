@@ -39,6 +39,8 @@ export interface Hell {
   dailyEffect?: () => void;
   exitEffect?: () => void;
   completeEffect: () => void;
+  progress: () => number;
+  progressMax: () => number;
   activities: (Activity | undefined)[],
   projectionActivities: (Activity | undefined)[]
   hint: string,
@@ -102,6 +104,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -134,6 +137,7 @@ export class HellService {
       charisma: 1e6,
     }],
     unlocked: false,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -162,6 +166,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: false,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -184,6 +189,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -204,6 +210,7 @@ export class HellService {
       strength: 1e24
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -240,6 +247,7 @@ export class HellService {
       strength: 1e24
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -261,6 +269,7 @@ export class HellService {
       toughness: 1e24
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -278,6 +287,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -307,6 +317,7 @@ export class HellService {
       fireLore: 1000 // TODO: tune this
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -336,6 +347,7 @@ export class HellService {
       fireLore: 1000 // TODO: tune this
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -357,6 +369,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -377,6 +390,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -397,6 +411,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -428,6 +443,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -452,6 +468,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -477,6 +494,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -504,6 +522,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -531,6 +550,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -539,10 +559,11 @@ export class HellService {
     name: ['Endure the Mill'],
     activityType: ActivityType.Endure,
     description: ["Trapped under the millstone like this, there's not much you can do but endure the punishment. Fortunately, you probably never went out looking for tiny spiders to squash, right?"],
-    consequenceDescription: ['Try not to give up. You can do this!'],
+    consequenceDescription: ['Uses 1000 stamina. Try not to give up. You can do this!'],
     consequence: [() => {
+      this.characterService.characterState.status.stamina.value -= 1000;
       // TODO: tune this
-      const damage = Math.max(1000 - (this.characterService.characterState.attributes.toughness.value / 1e24), 100);
+      const damage = Math.max(100000 - (this.characterService.characterState.attributes.toughness.value / 1e24), 100);
       this.characterService.characterState.status.health.value -= damage;
       if (this.characterService.characterState.status.health.value <= 0){
         this.beaten = true;
@@ -556,6 +577,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -574,7 +596,6 @@ export class HellService {
       if (Math.random() < threshold) {
         this.contractsExamined++;
       }
-
     }],
     resourceUse: [{
       stamina: 500000,
@@ -582,6 +603,7 @@ export class HellService {
     requirements: [{
     }],
     unlocked: true,
+    discovered: true,
     skipApprenticeshipLevel: 0
   }
 
@@ -1013,7 +1035,6 @@ export class HellService {
       }
       newList.push(this.flee());
     }
-
     return newList;
   }
 
@@ -1038,6 +1059,7 @@ export class HellService {
       requirements: [{
       }],
       unlocked: true,
+      discovered: true,
       skipApprenticeshipLevel: 0
     }
   }
@@ -1104,6 +1126,16 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.hellRecruiting, this.activityService.TrainingFollowers],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "It's hard to talk with all these demons going for your mouth, but maybe if you can get some help from the other prisoners here you could take control of this place.",
+      progress: () => {
+        let totalPower = 0;
+        for (const follower of this.followerService.followers){
+          totalPower += follower.power;
+        }
+        return totalPower;
+      },
+      progressMax: () => {
+        return 5000;
+      },
       successCheck: () => {
         let totalPower = 0;
         for (const follower of this.followerService.followers){
@@ -1128,6 +1160,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "These demons don't seem content to just take your fingers. You'd better get ready to defend yourself.",
+      progress: () => {
+        return this.inventoryService.getQuantityByName("fingers");
+      },
+      progressMax: () => {
+        return 100;
+      },
       successCheck: () => {
         return this.inventoryService.getQuantityByName("fingers") >= 100;
       }
@@ -1152,6 +1190,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.honorAncestors],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "Heal your family bonds.",
+      progress: () => {
+        return this.inventoryService.getQuantityByName("token of gratitude");
+      },
+      progressMax: () => {
+        return 10000;
+      },
       successCheck: () => {
         return this.inventoryService.getQuantityByName("token of gratitude") >= 10000;
       }
@@ -1173,6 +1217,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.CombatTraining, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "Master yourself. All by yourself.",
+      progress: () => {
+        return this.inventoryService.getQuantityByName("mirror shard");
+      },
+      progressMax: () => {
+        return 1000;
+      },
       successCheck: () => {
         return this.inventoryService.getQuantityByName("mirror shard") >= 1000;
       }
@@ -1206,6 +1256,16 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.rehabilitation],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "There so many troublemakers here that deserve some payback from you. I wonder if you can take them all on.",
+      progress: () => {
+        let totalEnemies = 0;
+        for (const enemyStack of this.battleService.enemies){
+          totalEnemies += enemyStack.quantity;
+        }
+        return totalEnemies;
+      },
+      progressMax: () => {
+        return 100;
+      },
       successCheck: () => {
         let totalEnemies = 0;
         for (const enemyStack of this.battleService.enemies){
@@ -1236,6 +1296,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.copperMining, this.forgeHammer ],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
+      progress: () => {
+        return (this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0);
+      },
+      progressMax: () => {
+        return 100;
+      },
       successCheck: () => {
         return ((this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0)  > 100); // tune this
       }
@@ -1261,6 +1327,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.climbMountain],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "It seems you've accrued a lot of karma from all the killing you've done over your many lives. The bill is due.",
+      progress: () => {
+        return this.mountainSteps;
+      },
+      progressMax: () => {
+        return this.battleService.totalKills / 10;
+      },
       successCheck: () => {
         // let's just say that 90% of our kills were justified and we didn't enjoy them one bit. Still gotta pay for the other 10%.
         return this.mountainSteps >= this.battleService.totalKills / 10;
@@ -1287,6 +1359,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.meltMountain],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "Burn it down!",
+      progress: () => {
+        return this.inventoryService.getQuantityByName("ice core");
+      },
+      progressMax: () => {
+        return 10000;
+      },
       successCheck: () => {
         return this.inventoryService.getQuantityByName("ice core") >= 10000; // TODO: tune this
       }
@@ -1329,6 +1407,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation,],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "You'd need to be incredibly resilient to survive this place.",
+      progress: () => {
+        return this.inventoryService.getQuantityByName("ice core");
+      },
+      progressMax: () => {
+        return 1000;
+      },
       successCheck: () => {
         return this.inventoryService.getQuantityByName("ice core") >= 1000 && this.characterService.characterState.status.health.value > 100000;
       }
@@ -1343,6 +1427,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.healAnimals],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "Look at those poor sick cows. And those other cows that for some reason are standing up on two legs and charging you with weapons.",
+      progress: () => {
+        return this.animalsHealed;
+      },
+      progressMax: () => {
+        return 1000000;
+      },
       successCheck: () => {
         return this.animalsHealed > 1000000;
       }
@@ -1380,6 +1470,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.liftBoulder],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "It's leg day. No, it's arm day. Must be both! Lift!",
+      progress: () => {
+        return this.boulderHeight;
+      },
+      progressMax: () => {
+        return 100;
+      },
       successCheck: () => {
         return this.boulderHeight > 100;
       }
@@ -1397,6 +1493,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "You begin to feel remorse for your gluttony across your many lives. Perhaps a nice, long fast would help you feel better. Hopefully you can keep the demons from spoonfeeding you their fiery concoction.",
+      progress: () => {
+        return this.daysFasted;
+      },
+      progressMax: () => {
+        return 1000;
+      },
       successCheck: () => {
         return this.daysFasted > 1000;
       }
@@ -1414,6 +1516,12 @@ export class HellService {
       activities: [this.swim],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "Not this again!",
+      progress: () => {
+        return this.swimDepth;
+      },
+      progressMax: () => {
+        return 1000;
+      },
       successCheck: () => {
         return this.swimDepth > 1000;
       }
@@ -1439,6 +1547,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.searchForExit],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "These people don't belong here. Get them out.",
+      progress: () => {
+        return this.soulsEscaped;
+      },
+      progressMax: () => {
+        return 1000000;
+      },
       successCheck: () => {
         return this.soulsEscaped > 1000000;
       }
@@ -1453,6 +1567,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.interrogate],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney, this.recoverTreasure, this.replaceTreasure],
       hint: "Unloot those tombs.",
+      progress: () => {
+        return this.relicsReturned;
+      },
+      progressMax: () => {
+        return 10000;
+      },
       successCheck: () => {
         // TODO: tune this
         return this.relicsReturned > 10000;
@@ -1474,6 +1594,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.freezeMountain],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "How does this volcano stay so hot?",
+      progress: () => {
+        return this.inventoryService.getQuantityByName("fire core");
+      },
+      progressMax: () => {
+        return 10000;
+      },
       successCheck: () => {
         return this.inventoryService.getQuantityByName("fire core") >= 10000; // TODO: tune this
       }
@@ -1489,6 +1615,12 @@ export class HellService {
       activities: [this.endureTheMill],
       projectionActivities: [],
       hint: "Just endure.",
+      progress: () => {
+        return this.timesCrushed;
+      },
+      progressMax: () => {
+        return this.characterService.characterState.totalLives * 100;
+      },
       successCheck: () => {
         return this.timesCrushed > this.characterService.characterState.totalLives * 100;
       }
@@ -1509,6 +1641,12 @@ export class HellService {
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.examineContracts,],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "You read legalese, right?",
+      progress: () => {
+        return this.contractsExamined;
+      },
+      progressMax: () => {
+        return 100000;
+      },
       successCheck: () => {
         // TODO: tune this
         return this.contractsExamined > 100000;

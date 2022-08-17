@@ -43,32 +43,33 @@
   </h3>
   <div class="overflow">
     <table>
-      <tr *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;"
-        draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
-        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">{{getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
-        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
-          <div class="progress-bar">
-            <span
-              [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
-            </span>
-          </div>
-        </td>
-        <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
-          <mat-icon tooltip="Spend fewer days on this.
+      <ng-container *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;">
+        <tr *ngIf="getActivityName(entry.activity) != ''" draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
+          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">{{getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
+          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
+            <div class="progress-bar">
+              <span
+                [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
+              </span>
+            </div>
+          </td>
+          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
+            <mat-icon tooltip="Spend fewer days on this.
 
-          Shift- or Ctrl-click to remove 10x
-          Shift-Ctrl-click to remove 100x"
-          tooltipClass="tooltip-break" (click)="onMinusClick(entry, $event)" class="iconButton">remove</mat-icon>
-          <mat-icon tooltip="Spend more days on this.
+            Shift- or Ctrl-click to remove 10x
+            Shift-Ctrl-click to remove 100x"
+            tooltipClass="tooltip-break" (click)="onMinusClick(entry, $event)" class="iconButton">remove</mat-icon>
+            <mat-icon tooltip="Spend more days on this.
 
-          Shift- or Ctrl-click to add 10x
-          Shift-Ctrl-click to add 100x"
-          tooltipClass="tooltip-break" (click)="onPlusClick(entry, $event)" class="iconButton">add</mat-icon>
-          <mat-icon tooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton">cancel</mat-icon>
-          <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>
-          
-        </td>
-      </tr>
+            Shift- or Ctrl-click to add 10x
+            Shift-Ctrl-click to add 100x"
+            tooltipClass="tooltip-break" (click)="onPlusClick(entry, $event)" class="iconButton">add</mat-icon>
+            <mat-icon tooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton">cancel</mat-icon>
+            <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton">clear</mat-icon>
+            
+          </td>
+        </tr>
+      </ng-container>
     </table>
 
     <table *ngIf="characterService.characterState.manaUnlocked" class="spiritActivityPanel"

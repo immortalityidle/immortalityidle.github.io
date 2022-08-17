@@ -176,12 +176,17 @@ export class ActivityService {
             this.currentIndex = 0;
           }
           // skip to the next real available activity
-          // this should be safe from infinite looping because if no activities were allowed we would have already bailed out
+          let startingIndex = this.currentIndex;
           while (this.activityLoop[this.currentIndex].repeatTimes === 0 || this.activityLoop[this.currentIndex].disabled || this.getActivityByType(this.activityLoop[this.currentIndex].activity) === null){
             this.currentIndex++;
             if (this.currentIndex >= this.activityLoop.length){
               this.currentIndex = 0;
             }
+            if (this.currentIndex === startingIndex && (this.activityLoop[this.currentIndex].repeatTimes === 0 || this.activityLoop[this.currentIndex].disabled || this.getActivityByType(this.activityLoop[this.currentIndex].activity) === null)){
+              // we looped all the way around without getting any valid activities, pause the game and bail out
+              this.mainLoopService.pause = true;
+              return;
+            }            
           }
         }
       } else {
@@ -451,8 +456,7 @@ export class ActivityService {
         }
       }
       if (!found){
-        // the activity isn't available now, remove it
-        this.activityLoop.splice(i, 1);
+        // the activity isn't available now, disable it
         this.activityLoop[i].disabled = true;
       }
     }

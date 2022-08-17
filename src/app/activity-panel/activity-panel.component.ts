@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { JoinTheGodsText } from '../game-state/textResources';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
+import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -19,6 +20,7 @@ import { FollowersService } from '../game-state/followers.service';
 export class ActivityPanelComponent {
 
   character: Character;
+  Math: Math;
 
   constructor(
     public gameStateService: GameStateService,
@@ -27,8 +29,10 @@ export class ActivityPanelComponent {
     public hellService: HellService,
     private inventoryService: InventoryService,
     private followerService: FollowersService,
+    public impossibleTaskService: ImpossibleTaskService,
     public dialog: MatDialog
   ) {
+    this.Math = Math;
     this.character = characterService.characterState;
   }
 

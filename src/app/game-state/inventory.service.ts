@@ -1594,7 +1594,8 @@ export class InventoryService {
   stashInventory() {
     this.stashedItemStacks = [];
     for (let i = 0; i < this.itemStacks.length; i++){
-      if (this.itemStacks[i]){
+      let item = this.itemStacks[i]?.item;
+      if (item && item.type != "food" && !item.type.includes("Gem")){
         this.stashedItemStacks.push(this.itemStacks[i]);
         this.itemStacks[i] = null;
       }
