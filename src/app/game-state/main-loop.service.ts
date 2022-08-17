@@ -151,7 +151,7 @@ export class MainLoopService {
           tickTime = new Date().getTime();
         }
         if (this.tickCount >= 1){
-          if (this.useBankedTicks){
+          if (this.useBankedTicks && this.tickDivider < 40){
             this.bankedTicks += this.tickCount / (currentTPS * 11) * (10 * (currentTPS / topTPS));  
           }
           this.tickCount = 0;
