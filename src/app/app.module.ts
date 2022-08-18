@@ -41,6 +41,7 @@ import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.co
 import { TextPanelComponent } from './text-panel/text-panel.component';
 import { BattleOptionsPanelComponent } from './battle-options-panel/battle-options-panel.component';
 import { SaveModalComponent } from './save-modal/save-modal.component';
+import { OfflineModalComponent } from './offline-modal/offline-modal.component';
 
 const materialModules = [
   MatDialogModule,
@@ -84,6 +85,7 @@ const materialModules = [
     TextPanelComponent,
     BattleOptionsPanelComponent,
     SaveModalComponent,
+    OfflineModalComponent,
   ],
   imports: [
     BrowserModule,

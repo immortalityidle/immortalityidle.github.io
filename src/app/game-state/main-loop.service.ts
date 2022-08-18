@@ -1,8 +1,10 @@
 
-import { Injectable,Injector } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Subject } from 'rxjs';
 //import { threadId } from 'worker_threads';
 import { CharacterService } from './character.service';
+import { MatDialog } from '@angular/material/dialog';
+import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
@@ -51,7 +53,8 @@ export class MainLoopService {
   scientificNotation = false;
 
   constructor(
-    private injector: Injector) {
+    private injector: Injector,
+    public dialog: MatDialog) {
   }
 
   getProperties(): MainLoopProperties {
@@ -91,12 +94,17 @@ export class MainLoopService {
     this.pause = properties.pause;
     this.lastTime = properties.lastTime;
     const newTime = new Date().getTime();
-    if (newTime - this.lastTime > 168*60*60*1000) {
+    let earnedTicks = 0;
+    if (newTime - this.lastTime > 168 * 60 * 60 * 1000) {
       // to diminish effects of forgetting about the game for a year and coming back with basically infinite ticks
-      this.bankedTicks = properties.bankedTicks + (3*168*60*60*1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
+      earnedTicks = (3 * 168 * 60 * 60 * 1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
     } else {
-      this.bankedTicks = properties.bankedTicks + (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
+      earnedTicks = (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
     }
+    this.bankedTicks = properties.bankedTicks + earnedTicks;
+    this.dialog.open(OfflineModalComponent, {
+      data: { earnedTicks: earnedTicks }
+    });
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
     this.useBankedTicks = properties.useBankedTicks ?? true;
@@ -104,19 +112,19 @@ export class MainLoopService {
   }
 
   start() {
-    if (!this.characterService){
+    if (!this.characterService) {
       this.characterService = this.injector.get(CharacterService);
     }
 
-    window.setInterval(()=> {
+    window.setInterval(() => {
       this.longTickSubject.next(true);
     }, LONG_TICK_INTERVAL_MS);
 
-    window.setInterval(()=> {
+    window.setInterval(() => {
       this.frameSubject.next(true);
     }, TICK_INTERVAL_MS);
 
-    window.setInterval(()=> {
+    window.setInterval(() => {
       const newTime = new Date().getTime();
       const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
@@ -124,51 +132,54 @@ export class MainLoopService {
       let ticksPassed = timeDiff / TICK_INTERVAL_MS;
       if (this.pause) {
         this.bankedTicks += ticksPassed / this.offlineDivider; // offlineDivider currently either 10 or 2.
+      } else if (timeDiff > 900 * 1000) { // away for over 15 mins, push to offline ticks and display gains.
+        const earnedTicks = ticksPassed / this.offlineDivider;
+        this.bankedTicks += earnedTicks;
+        this.dialog.open(OfflineModalComponent, {
+          data: { earnedTicks: earnedTicks }
+        });
       } else {
         const currentTPS = this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
         const topTPS = this.getTPS(this.topDivider) / 1000 * TICK_INTERVAL_MS;
-        let inactiveTickHolder = 0;
-        if (this.bankedTicks > 0 && this.useBankedTicks && this.tickDivider < 40){ // don't use banked ticks on slow speed
+        let usedBanked = false;
+        if (this.bankedTicks > 0 && this.useBankedTicks && this.tickDivider < 40) { // don't use banked ticks on slow speed
           //using banked ticks makes time happen 10 times faster
           let bankedPassed = ticksPassed * 10 * (currentTPS / topTPS); // reduce usage rate if going slower than max
           if (bankedPassed > this.bankedTicks) // Check for not enough bankedTicks, usually for large timeDiff.
           {
             bankedPassed = this.bankedTicks;
-            inactiveTickHolder = bankedPassed / (10 * (currentTPS / topTPS));
-            ticksPassed -= inactiveTickHolder; // Pass the extra down to the next cycle
           }
-          this.bankedTicks -= bankedPassed 
+          this.bankedTicks -= bankedPassed;
           ticksPassed *= 11; // Include the normal tick
+          usedBanked = true;
         }
         ticksPassed *= currentTPS;
 
         this.tickCount += ticksPassed;
         let tickTime = new Date().getTime();
-        //let tickTime = TICK_INTERVAL_MS + newTime;
         while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
           this.tick();
           this.tickCount--;
           tickTime = new Date().getTime();
         }
-        if (this.tickCount >= 1){
-          if (this.useBankedTicks && this.tickDivider < 40){
-            this.bankedTicks += this.tickCount / (currentTPS * 11) * (10 * (currentTPS / topTPS));  
+        if (this.tickCount >= 1) {
+          if (usedBanked) {
+            this.bankedTicks += this.tickCount / (currentTPS * 11) * (10 * (currentTPS / topTPS));
           }
           this.tickCount = 0;
         }
-        this.tickCount += inactiveTickHolder;
       }
     }, TICK_INTERVAL_MS);
   }
 
-  getTPS(div:number) {
-    let ticksPassed = 1000/TICK_INTERVAL_MS;
+  getTPS(div: number) {
+    let ticksPassed = 1000 / TICK_INTERVAL_MS;
     if (this.characterService && this.unlockAgeSpeed && this.tickDivider < 40) { // don't do this on slow speed
       // 73000 is 200 years. reaches 2x at 600 years, 3x at 1600, 4x at 3000. Caps at 12600
-      ticksPassed *= Math.min(8,Math.sqrt(1+this.characterService.characterState.age/73000));
+      ticksPassed *= Math.min(8, Math.sqrt(1 + this.characterService.characterState.age / 73000));
     }
     if (this.unlockPlaytimeSpeed && this.tickDivider < 40) { // don't do this on slow speed
-      ticksPassed *= Math.pow(1+this.totalTicks/(2000*365),0.3);
+      ticksPassed *= Math.pow(1 + this.totalTicks / (2000 * 365), 0.3);
     }
     ticksPassed /= div;
     // make non-max speeds a bit more potent at high speeds
@@ -177,13 +188,13 @@ export class MainLoopService {
       if (div >= 10) {
         ticksPassed = TICKSPEED_CAP;
       } else {
-        ticksPassed = TICKSPEED_CAP+(ticksPassed-TICKSPEED_CAP)/div;
+        ticksPassed = TICKSPEED_CAP + (ticksPassed - TICKSPEED_CAP) / div;
       }
     }
     return ticksPassed;
   }
 
-  tick(){
+  tick() {
     this.totalTicks++;
     this.tickSubject.next(true);
   }
