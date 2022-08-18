@@ -4,13 +4,13 @@
       <div class="moneyLabelColumn">Money: </div>
       <div class="moneyContainer">
         <div class="moneyColumn">{{characterService.characterState.money | bigNumber}} Taels</div>
-        <div *ngIf="hellService.inHell" tooltip="Money usable only in hell. Note that this is not transferrable between hells." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
+        <div *ngIf="hellService.inHell" matTooltip="Money usable only in hell. Note that this is not transferrable between hells." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
       </div>
-      <div><mat-icon *ngIf="inventoryService.noFood" class="noFood" placement="left" 
-        tooltip="{{inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
+      <div><mat-icon *ngIf="inventoryService.noFood" class="noFood" placement="left"
+        matTooltip="{{inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
         soup_kitchen
       </mat-icon></div>
-      <div><mat-icon placement="right" tooltip="Click to sort your inventory. Shift-click to toggle autosort. Ctrl-click to toggle descending." 
+      <div><mat-icon placement="right" matTooltip="Click to sort your inventory. Shift-click to toggle autosort. Ctrl-click to toggle descending."
         (click)="sortClicked($event)" class="iconButton" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">
         sort
       </mat-icon></div>
@@ -18,12 +18,14 @@
 
   <div class="overflow">
     <div class="inventoryGrid">
-        <div class="itemSlot" *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;" 
+        <div class="itemSlot" *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;"
         (mousedown)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
         draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
         [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem),
         'brokenItem': (itemStack !== null && !inventoryService.hasDurability(itemStack) )}"
-        tooltip="{{(itemStack?.item !== null) ? (itemStack?.item?.name | titlecase) + '<hr/>' + (itemStack?.item?.description) : ''}}" placement="bottom">
+        matTooltip="{{(itemStack?.item !== null) ? (itemStack?.item?.name | titlecase) + '
+
+        ' + (itemStack?.item?.description) : ''}}" placement="bottom">
           <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
           <div *ngIf="(itemStack?.quantity || 0) > 1" class="itemQuantity">x{{itemStack?.quantity}}</div>
         </div>
@@ -32,40 +34,40 @@
 
   <div class="inventoryButtons" *ngIf="inventoryService.selectedItem">
     <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sell(1)" placement="left" class="iconButton"
-      tooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">
+      matTooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">
       attach_money
     </mat-icon>
     <mat-icon  *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sellStack()" placement="left" class="iconButton"
-      tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
+      matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
       paid
     </mat-icon>
     <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sellAll()" class="iconButton" placement="left"
-      tooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
+      matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
       shopping_basket
     </mat-icon>
     <mat-icon *ngIf="inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item.value)" class="iconButton" (click)="autoSell()" placement="left"
-      tooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell.">
+      matTooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell.">
       currency_exchange
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" class="iconButton"
-      placement="left" tooltip="{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
+      placement="left" matTooltip="{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
       auto_awesome
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
       (click)="autoUse()" placement="left" class="iconButton"
-      tooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Ctrl-click items to auto-use.">
+      matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Ctrl-click items to auto-use.">
       auto_mode
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item.value))"
-      class="iconButton" (click)="autoBalance()" placement="left" tooltip="Balance between automatically using and selling this item.">
+      class="iconButton" (click)="autoBalance()" placement="left" matTooltip="Balance between automatically using and selling this item.">
       balance
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()"  class="iconButton"
-      placement="left" tooltip="Equip this. Double-click weapons or armor to equip.">
+      placement="left" matTooltip="Equip this. Double-click weapons or armor to equip.">
       shield
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'spiritGem')" (click)="mergeSpiritGem()"  class="iconButton"
-      placement="left" tooltip="Merge 10 of these into a higher grade gem.">
+      placement="left" matTooltip="Merge 10 of these into a higher grade gem.">
       diamond
     </mat-icon>
   </div>

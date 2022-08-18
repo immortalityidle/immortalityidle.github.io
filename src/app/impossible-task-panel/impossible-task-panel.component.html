@@ -1,5 +1,5 @@
 <div class='darkMode'>
-    <h3>Impossible Tasks</h3> 
+    <h3>Impossible Tasks</h3>
     <span>
       <input type="checkbox" (change)="pauseOnImpossibleFailChange($event)"
         id="pauseOnImpossibleFail" [checked]="activityService.pauseOnImpossibleFail"/>
@@ -11,7 +11,7 @@
             <tr *ngFor="let task of impossibleTaskService.tasks">
                 <td>
                   <span *ngIf="impossibleTaskService.nextTask >= task.taskType">
-                    <mat-icon tooltip="{{task.description}}">
+                    <mat-icon matTooltip="{{task.description}}">
                       help
                     </mat-icon>
                     {{task.name}}
