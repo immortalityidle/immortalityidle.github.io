@@ -102,7 +102,7 @@ const materialModules = [
     TitleCasePipe,
     BigNumberPipe,
     MatSnackBar,
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { disableTooltipInteractivity:true } }
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { disableTooltipInteractivity: true, showDelay: 500 } }
   ],
   bootstrap: [AppComponent]
 })

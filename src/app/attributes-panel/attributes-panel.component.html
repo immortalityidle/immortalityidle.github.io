@@ -2,14 +2,13 @@
   <tr>
     <td>
       <h3 class="panelHeader">
-        <mat-icon placement="right"
-          matTooltip="Your attributes define your growing immortal characteristics. You can grow your attributes through the activities that you choose. Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.">
+        <mat-icon matTooltip="Your attributes define your growing immortal characteristics. You can grow your attributes through the activities that you choose. Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.">
           bar_chart
         </mat-icon>
         Attributes
       </h3>
       <div *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
-        <span *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" placement="right" matTooltip="{{attribute.value.description}} Your aptitude of
+        <span *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" matTooltip="{{attribute.value.description}} Your aptitude of
         {{attribute.value.aptitude > 1e7 ? (attribute.value.aptitude | bigNumber) : (attribute.value.aptitude | number: '1.0-2')}}
         multiplies your gains by
         {{attribute.value.aptitudeMult > 1e5 ? (attribute.value.aptitudeMult | bigNumber) : (attribute.value.aptitudeMult | number: '1.0-2')}}.">
@@ -21,8 +20,7 @@
     </td>
     <td>
       <h3 class="panelHeader">
-        <mat-icon placement="right"
-          matTooltip="Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.">
+        <mat-icon matTooltip="Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.">
           person
         </mat-icon>
         Followers

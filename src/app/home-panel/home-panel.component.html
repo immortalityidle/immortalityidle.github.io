@@ -20,10 +20,10 @@
     </div>
     <div class="buttons">
         <div class="button-group">
-            <mat-icon  (click)="buyClicked($event)" placement="bottom" matTooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
+            <mat-icon  (click)="buyClicked($event)" matTooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
               add
             </mat-icon>
-            <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" placement="bottom" (click)="homeService.upgradeToNextHome()" class="iconButton"
+            <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" (click)="homeService.upgradeToNextHome()" class="iconButton"
               matTooltip="{{homeService.nextHome.upgradeToTooltip}}">
               add_business
             </mat-icon>
@@ -39,7 +39,7 @@
         </div>
         <div class="button-group">
             <mat-icon matTooltip="View your farm." class="iconButton" (click)="farmClicked()">grass</mat-icon>
-            <mat-icon  (click)="plowClicked($event)" placement="bottom" class="iconButton"
+            <mat-icon  (click)="plowClicked($event)" class="iconButton"
               matTooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
               waves
             </mat-icon>

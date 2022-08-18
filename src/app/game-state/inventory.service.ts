@@ -1262,7 +1262,7 @@ export class InventoryService {
     if (!instanceOfEquipment(item)) {
       throw Error('Tried to equip an item that was not equipable');
     }
-    if (item.armorStats?.durability === 0 || item.weaponStats?.durability === 0){
+    if ((item.armorStats?.durability || 0) <= 0 || (item.weaponStats?.durability || 0) <= 0){
       //it's broken, bail out
       this.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.","STANDARD","EVENT")
       return;
@@ -1395,7 +1395,7 @@ export class InventoryService {
 
     if (!instanceOfEquipment(item)) return true;
 
-    return (item.armorStats?.durability !== 0 && item.weaponStats?.durability !== 0);
+    return ((item.armorStats?.durability || 0) > 0 && (item.weaponStats?.durability || 0) > 0);
   }
 
   /** A special use function for generated potions. */

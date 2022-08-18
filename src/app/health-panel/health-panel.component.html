@@ -20,7 +20,7 @@
 <div class="healthPanelContents">
   <table>
     <tr>
-      <td matTooltip="{{characterService.characterState.status.health.description}}" placement="right">Health</td>
+      <td matTooltip="{{characterService.characterState.status.health.description}}" >Health</td>
       <td class="health">
         <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) | bigNumber"
@@ -32,7 +32,7 @@
           </span>
         </div>
       </td>
-      <td matTooltip="{{characterService.characterState.status.stamina.description}}" placement="right">Stamina</td>
+      <td matTooltip="{{characterService.characterState.status.stamina.description}}" >Stamina</td>
       <td class="stamina">
         <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.status.stamina.value) | bigNumber"
@@ -46,7 +46,7 @@
       </td>
     </tr>
     <tr>
-      <td matTooltip="{{characterService.characterState.status.nourishment.description}}" placement="right">Nutrition</td>
+      <td matTooltip="{{characterService.characterState.status.nourishment.description}}" >Nutrition</td>
       <td class="nourishment">
         <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.status.nourishment.value) | bigNumber"
@@ -58,7 +58,7 @@
           </span>
         </div>
       </td>
-      <td matTooltip="{{characterService.characterState.status.mana.description}}" placement="right">Mana</td>
+      <td matTooltip="{{characterService.characterState.status.mana.description}}" >Mana</td>
       <td class="mana">
         <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.status.mana.value) | bigNumber"

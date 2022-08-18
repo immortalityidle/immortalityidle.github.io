@@ -3,14 +3,14 @@
     <hr/>
     <div class="yieldText">
       <span>Your {{homeService.fields.length + homeService.extraFields | bigNumber}} fields produced an average of {{homeService.averageYield | bigNumber}} food per day over the last year.</span>
-      <mat-icon  (click)="buyClicked($event)" placement="bottom" matTooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
+      <mat-icon  (click)="buyClicked($event)" matTooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton">
         add
       </mat-icon>
-      <mat-icon  (click)="plowClicked($event)" placement="bottom" class="iconButton rightFloat"
+      <mat-icon  (click)="plowClicked($event)" class="iconButton rightFloat"
         matTooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
         waves
       </mat-icon>
-      <mat-icon class="iconButton" (click)="clearClicked($event)" placement="bottom" class="iconButton rightFloat"
+      <mat-icon class="iconButton" (click)="clearClicked($event)" class="iconButton rightFloat"
         matTooltip="Clear a field. Converts a the field back into an open plot of land. Shift-click to clear 10 fields, Ctrl-click to clear all your fields.">
         delete_sweep
       </mat-icon>

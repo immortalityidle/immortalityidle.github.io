@@ -3,6 +3,7 @@ import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character'
 import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-state/inventory.service';
 import { HellService } from '../game-state/hell.service';
+import { MainLoopService } from '../game-state/main-loop.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -14,7 +15,8 @@ export class InventoryPanelComponent {
   equipmentSlots: string[];
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService,
-    public hellService: HellService
+    public hellService: HellService,
+    public mainLoopService: MainLoopService
     ) {
       this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
 
@@ -26,7 +28,7 @@ export class InventoryPanelComponent {
 
   slotClicked(item: ItemStack | null, event: MouseEvent): void {
     event.stopPropagation();
-    if (event.shiftKey) {
+    if (event.shiftKey || event.altKey) {
       let oldSelected = null;
       if (oldSelected !== item){
         oldSelected = this.inventoryService.selectedItem;
@@ -62,7 +64,7 @@ export class InventoryPanelComponent {
     this.inventoryService.selectedItem = item;
     if (event.ctrlKey || event.metaKey) {
       this.autoSell();
-    } else if (event.shiftKey) {
+    } else if (event.shiftKey || event.altKey) {
       this.sellStack();
     } else {
       this.sell(1);
@@ -74,7 +76,7 @@ export class InventoryPanelComponent {
     event.stopPropagation();
     if (event.ctrlKey || event.metaKey) {
       this.inventoryService.descendingSort = !this.inventoryService.descendingSort;
-    } else if (event.shiftKey) {
+    } else if (event.shiftKey || event.altKey) {
       this.inventoryService.autoSort = !this.inventoryService.autoSort;
     } else {
       this.inventoryService.sortInventory();

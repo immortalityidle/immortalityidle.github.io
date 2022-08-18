@@ -9,7 +9,7 @@
       <div *ngFor="let item of storeService.getFurnitureForSlot('bed')">
         <div class="itemSlot"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-        placement="left" matTooltip="{{item.description}}">
+        matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>
           <div>{{item.name | titlecase}}</div>
           <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
@@ -27,7 +27,7 @@
       <div *ngFor="let item of storeService.getFurnitureForSlot('bathtub')">
         <div class="itemSlot"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-        placement="left" matTooltip="{{item.description}}">
+        matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>
           <div>{{item.name | titlecase}}</div>
           <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
@@ -45,7 +45,7 @@
       <div *ngFor="let item of storeService.getFurnitureForSlot('kitchen')">
         <div class="itemSlot"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-        placement="left" matTooltip="{{item.description}}">
+        matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>
           <div>{{item.name | titlecase}}</div>
           <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
@@ -63,7 +63,7 @@
       <div *ngFor="let item of storeService.getFurnitureForSlot('workbench')">
         <div class="itemSlot"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-        placement="left" matTooltip="{{item.description}}">
+        matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>
           <div>{{item.name | titlecase}}</div>
           <div *ngIf="(storeService.furniturePrices[item.name] || 0 > 0)">$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>

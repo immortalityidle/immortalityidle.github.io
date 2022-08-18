@@ -5,8 +5,7 @@
       (dblclick)="slotDoubleClicked('head', $event)"
       matTooltip="{{(character.equipment.head !== null) ? (character.equipment.head?.name | titlecase) + '
 
-      ' + (character.equipment.head?.description) : ''}}" placement="left"
-    >
+      ' + (character.equipment.head?.description) : ''}}">
       {{character.equipment.head?.name | titlecase}}
     </div>
     <div style="grid-area: right;" class="itemSlot textOverflow"
@@ -15,8 +14,7 @@
       (dblclick)="slotDoubleClicked('rightHand', $event)"
       matTooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand?.name | titlecase) + '
 
-      ' + (character.equipment.rightHand?.description) : ''}}" placement="left"
-    >
+      ' + (character.equipment.rightHand?.description) : ''}}">
       {{character.equipment.rightHand?.name | titlecase}}
     </div>
     <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}" [ngClass]="getEffectClass('body')"
@@ -24,8 +22,7 @@
       (dblclick)="slotDoubleClicked('body', $event)"
       matTooltip="{{(character.equipment.body !== null) ? (character.equipment.body?.name | titlecase) + '
 
-      ' + (character.equipment.body?.description) : ''}}" placement="left"
-    >
+      ' + (character.equipment.body?.description) : ''}}">
       {{character.equipment.body?.name | titlecase}}
     </div>
     <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}" [ngClass]="getEffectClass('leftHand')"
@@ -33,8 +30,7 @@
       (dblclick)="slotDoubleClicked('leftHand', $event)"
       matTooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand?.name | titlecase) + '
 
-      ' + (character.equipment.leftHand?.description) : ''}}" placement="left"
-    >
+      ' + (character.equipment.leftHand?.description) : ''}}">
       {{character.equipment.leftHand?.name | titlecase}}
     </div>
     <div style="grid-area: stats;">
@@ -49,8 +45,7 @@
       (dblclick)="slotDoubleClicked('legs', $event)"
       matTooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs?.name | titlecase) + '
 
-      ' + (character.equipment.legs?.description) : ''}}" placement="left"
-    >
+      ' + (character.equipment.legs?.description) : ''}}">
       {{character.equipment.legs?.name | titlecase}}
     </div>
     <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}" [ngClass]="getEffectClass('feet')"
@@ -58,8 +53,7 @@
       (dblclick)="slotDoubleClicked('feet', $event)"
       matTooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet?.name | titlecase) + '
 
-      ' + (character.equipment.feet?.description) : ''}}" placement="left"
-    >
+      ' + (character.equipment.feet?.description) : ''}}">
       {{character.equipment.feet?.name | titlecase}}
   </div>
 </div>
