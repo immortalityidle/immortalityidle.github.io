@@ -176,7 +176,7 @@ export class ActivityService {
             this.currentIndex = 0;
           }
           // skip to the next real available activity
-          let startingIndex = this.currentIndex;
+          const startingIndex = this.currentIndex;
           while (this.activityLoop[this.currentIndex].repeatTimes === 0 || this.activityLoop[this.currentIndex].disabled || this.getActivityByType(this.activityLoop[this.currentIndex].activity) === null){
             this.currentIndex++;
             if (this.currentIndex >= this.activityLoop.length){
@@ -186,7 +186,7 @@ export class ActivityService {
               // we looped all the way around without getting any valid activities, pause the game and bail out
               this.mainLoopService.pause = true;
               return;
-            }            
+            }
           }
         }
       } else {
@@ -562,7 +562,7 @@ export class ActivityService {
       newList.push(this.SoulCultivation);
     }
     if (this.purifyGemsUnlocked){
-      newList.push(this.PurifyGems);  
+      newList.push(this.PurifyGems);
     }
     newList.push(this.InfuseEquipment);
     newList.push(this.InfuseBody);
@@ -1264,12 +1264,18 @@ export class ActivityService {
       skipApprenticeshipLevel: 0
     }
 
+    let oddJobsDescription = 'Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.';
+    if (this.hellService?.inHell){
+      oddJobsDescription = "Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for an aspiring god, but you can't manage anything more profitable when you're projecting your spirit this far.";
+    } else if (this.characterService.characterState.immortal){
+      oddJobsDescription = 'Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Why would you stoop to jobs like this now that you are immortal?';
+    }
     this.OddJobs = {
       level: 0,
       name: ['Odd Jobs'],
       activityType: ActivityType.OddJobs,
       description:
-        ['Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.'],
+        [oddJobsDescription],
       consequenceDescription:
         ['Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.'],
       consequence: [() => {
