@@ -51,6 +51,7 @@ export class MainLoopService {
   characterService?: CharacterService;
   useBankedTicks = true;
   scientificNotation = false;
+  earnedTicks = 0;
 
   constructor(
     private injector: Injector,
@@ -94,14 +95,13 @@ export class MainLoopService {
     this.pause = properties.pause;
     this.lastTime = properties.lastTime;
     const newTime = new Date().getTime();
-    let earnedTicks = 0;
     if (newTime - this.lastTime > 168 * 60 * 60 * 1000) {
       // to diminish effects of forgetting about the game for a year and coming back with basically infinite ticks
-      earnedTicks = (3 * 168 * 60 * 60 * 1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
+      this.earnedTicks = (3 * 168 * 60 * 60 * 1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
     } else {
-      earnedTicks = (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
+      this.earnedTicks = (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
     }
-    this.bankedTicks = properties.bankedTicks + earnedTicks;
+    this.bankedTicks = properties.bankedTicks + this.earnedTicks;
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
     this.useBankedTicks = properties.useBankedTicks ?? true;
