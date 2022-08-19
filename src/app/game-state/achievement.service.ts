@@ -179,6 +179,18 @@ export class AchievementService {
       unlocked: false
     },
     {
+      name: "Habitual User",
+      displayName: "Dope",
+      description: "You got every last drop you could out of those pills and now you feel nothing from them. At least they didn't kill you or do lasting harm, right?",
+      hint: "D.A.R.E.",
+      check: () => {
+        return this.characterService.characterState.empowermentFactor >= 1953.65;
+      },
+      effect: () => { //TODO: Create a downside to taking HUGE NUMBERS of empowerment pills, maybe in Hell?
+      },
+      unlocked: false
+    },
+    {
       name: "This Sparks Joy",
       description: "You used 888 items and unlocked the " + this.itemRepoService.items['autoUseManual'].name,
       hint: "Immortals should know the potential of the things they use.",
