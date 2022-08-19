@@ -7,7 +7,7 @@
         <button [disabled]="storeService.soulCoreRank > 8" (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
       </td>
       <td>
-        End your current life, sacrifice all attributes and aptitudes, and permanently increase the amount of aptitude gained on each Reincarnation and Ascension.
+        End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and permanently increase the amount of aptitude gained on each Reincarnation and Ascension.
         <br>
         Current Rank: {{storeService.soulCoreRank}}
         <br>
@@ -24,7 +24,7 @@
         <button [disabled]="storeService.meridianRank > 8" (click)="storeService.reinforceMeridians()">Reinforce Meridians</button>
       </td>
       <td>
-        End your current life, sacrifice all attributes and aptitudes, and permanently increase the power of your aptitudes when gaining attributes.
+        End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and permanently increase the power of your aptitudes when gaining attributes.
         <br>
         Current Rank: {{storeService.meridianRank}}
         <br>

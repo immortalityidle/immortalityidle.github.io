@@ -76,7 +76,7 @@ export class TimePanelComponent implements OnInit {
     event.stopPropagation();
     // Shift and Ctrl both multiply by 10x, combined does 100
     let repeat = 1
-    repeat *= event.shiftKey ? 10 : 1
+    repeat *= event.shiftKey || event.altKey ? 10 : 1
     repeat *= event.ctrlKey || event.metaKey ? 10 : 1
 
     entry.repeatTimes += repeat
@@ -87,7 +87,7 @@ export class TimePanelComponent implements OnInit {
     event.stopPropagation();
     // Shift and Ctrl both multiply by 10x, combined does 100
     let repeat = 1
-    repeat *= event.shiftKey ? 10 : 1
+    repeat *= event.shiftKey || event.altKey ? 10 : 1
     repeat *= event.ctrlKey || event.metaKey ? 10 : 1
 
     entry.repeatTimes -= repeat
@@ -188,7 +188,7 @@ export class TimePanelComponent implements OnInit {
   }
 
   getActivityName(activityType: ActivityType){
-    let activity = this.activityService.getActivityByType(activityType);
+    const activity = this.activityService.getActivityByType(activityType);
     if (activity){
       return activity.name[activity.level];
     }

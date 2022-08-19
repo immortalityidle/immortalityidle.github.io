@@ -17,9 +17,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
-import { TooltipModule } from 'ng2-tooltip-directive';
 import { BattlePanelComponent } from './battle-panel/battle-panel.component';
 import { FurnitureStoreModalComponent } from './furniture-store-modal/furniture-store-modal.component';
 import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';
@@ -40,11 +41,13 @@ import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.co
 import { TextPanelComponent } from './text-panel/text-panel.component';
 import { BattleOptionsPanelComponent } from './battle-options-panel/battle-options-panel.component';
 import { SaveModalComponent } from './save-modal/save-modal.component';
+import { OfflineModalComponent } from './offline-modal/offline-modal.component';
 
 const materialModules = [
   MatDialogModule,
   MatIconModule,
-  MatTabsModule
+  MatTabsModule,
+  MatTooltipModule
 ];
 
 @NgModule({
@@ -82,6 +85,7 @@ const materialModules = [
     TextPanelComponent,
     BattleOptionsPanelComponent,
     SaveModalComponent,
+    OfflineModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -89,7 +93,6 @@ const materialModules = [
     BrowserAnimationsModule,
     FormsModule,
     CommonModule,
-    TooltipModule.forRoot({'show-delay': 500, 'hideDelay': 50, 'hideDelayAfterClick': 50}),
     ...materialModules
   ],
   exports: [
@@ -98,7 +101,8 @@ const materialModules = [
   providers: [
     TitleCasePipe,
     BigNumberPipe,
-    MatSnackBar
+    MatSnackBar,
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { disableTooltipInteractivity: true, showDelay: 500 } }
   ],
   bootstrap: [AppComponent]
 })

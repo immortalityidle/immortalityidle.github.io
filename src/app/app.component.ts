@@ -94,6 +94,23 @@ export class AppComponent implements OnInit {
     } else if ((event.code === 'Enter' || event.code === 'NumpadEnter') && this.mainLoopService.pause){
       this.mainLoopService.tick();
       event.preventDefault();
+    } else if (event.code === 'Digit0' || event.code === 'Numpad0'){
+      this.mainLoopService.pause = true;
+    } else if (event.code === 'Digit1' || event.code === 'Numpad1'){
+      this.mainLoopService.pause = false;
+      this.mainLoopService.tickDivider = 40;
+    } else if (event.code === 'Digit2' || event.code === 'Numpad2'){
+      this.mainLoopService.pause = false;
+      this.mainLoopService.tickDivider = 10;
+    } else if ((event.code === 'Digit3' || event.code === 'Numpad3') && this.mainLoopService.unlockFastSpeed){
+      this.mainLoopService.pause = false;
+      this.mainLoopService.tickDivider = 5;
+    } else if ((event.code === 'Digit4' || event.code === 'Numpad4') && this.mainLoopService.unlockFasterSpeed){
+      this.mainLoopService.pause = false;
+      this.mainLoopService.tickDivider = 2;
+    } else if ((event.code === 'Digit5' || event.code === 'Numpad5') && this.mainLoopService.unlockFastestSpeed){
+      this.mainLoopService.pause = false;
+      this.mainLoopService.tickDivider = 1;
     }
   }
 
@@ -123,9 +140,9 @@ export class AppComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    if((event.ctrlKey || event.metaKey) && event.shiftKey){
+    if((event.ctrlKey || event.metaKey) && (event.shiftKey || event.altKey)){
       this.gameStateService.loadFromLocalStorage(true);
-    }else if(event.shiftKey){
+    }else if(event.shiftKey || event.altKey){
       const dialogRef = this.dialog.open(SaveModalComponent, {
         width: '400px',
         data: {someField: 'foo'}

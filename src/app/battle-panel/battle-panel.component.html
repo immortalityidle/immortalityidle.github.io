@@ -1,14 +1,14 @@
 <h3>
-    <mat-icon tooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">fort</mat-icon>
+    <mat-icon matTooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">fort</mat-icon>
     Battles
     <span *ngIf="battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
       battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked">
-      <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton">
+      <mat-icon  (click)="battleOptions()" matTooltip="Options" class="iconButton">
         settings
       </mat-icon>
 
     </span>
-    <span class="rightAligned" tooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
+    <span class="rightAligned" matTooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
       <button *ngIf="!battleService.autoTroubleUnlocked" (click)="battleService.trouble()">Look for Trouble</button>
       <input *ngIf="battleService.autoTroubleUnlocked"  type="checkbox" (change)="autoTroubleChange($event)"
         id="autoTroubleCheckbox"  [checked]="battleService.autoTroubleEnabled"/>
@@ -51,9 +51,9 @@
             </span>
           </div>
         </td>
-        <td tooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
-        <td tooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack | bigNumber}}</td>
-        <td tooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense | bigNumber}}</td>
+        <td matTooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
+        <td matTooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack | bigNumber}}</td>
+        <td matTooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense | bigNumber}}</td>
       </tr>
     </ng-container>
   </table>

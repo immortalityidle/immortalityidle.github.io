@@ -161,19 +161,19 @@ export class CharacterService {
       tooltip = "You are immortal. If you had remained mortal, your base lifespan of " + this.yearify(this.characterState.baseLifespan) + " would be extended by"
     }
     if (this.characterState.foodLifespan > 0){
-      tooltip += "<br>Healthy Food: " + this.yearify(this.characterState.foodLifespan);
+      tooltip += "\nHealthy Food: " + this.yearify(this.characterState.foodLifespan);
     }
     if (this.characterState.alchemyLifespan > 0){
-      tooltip += "<br>Alchemy: " + this.yearify(this.characterState.alchemyLifespan);
+      tooltip += "\nAlchemy: " + this.yearify(this.characterState.alchemyLifespan);
     }
     if (this.characterState.statLifespan > 0){
-      tooltip += "<br>Basic Attributes: " + this.yearify(this.characterState.statLifespan);
+      tooltip += "\nBasic Attributes: " + this.yearify(this.characterState.statLifespan);
     }
     if (this.characterState.spiritualityLifespan > 0){
-      tooltip += "<br>Spirituality: " + this.yearify(this.characterState.spiritualityLifespan);
+      tooltip += "\nSpirituality: " + this.yearify(this.characterState.spiritualityLifespan);
     }
     if (this.characterState.magicLifespan > 0){
-      tooltip += "<br>Magic: " + this.yearify(this.characterState.magicLifespan);
+      tooltip += "\nMagic: " + this.yearify(this.characterState.magicLifespan);
     }
     this.lifespanTooltip = tooltip;
   }

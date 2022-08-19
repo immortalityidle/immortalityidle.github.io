@@ -56,7 +56,7 @@ export class HomePanelComponent {
   buyClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey){
+    if (event.shiftKey || event.altKey){
       this.homeService.buyLand(10);
     } else if (event.ctrlKey || event.metaKey){
       this.homeService.buyLand(-1);
@@ -68,7 +68,7 @@ export class HomePanelComponent {
   plowClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey){
+    if (event.shiftKey || event.altKey){
       this.homeService.addField(10);
     } else if (event.ctrlKey || event.metaKey){
       this.homeService.addField(-1);

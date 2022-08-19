@@ -21,7 +21,7 @@ export class FarmPanelComponent {
   clearClicked(event: MouseEvent){
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey){
+    if (event.shiftKey || event.altKey){
       this.homeService.clearField(10);
     } else if (event.ctrlKey || event.metaKey){
       this.homeService.clearField(-1);
@@ -34,7 +34,7 @@ export class FarmPanelComponent {
   buyClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey){
+    if (event.shiftKey || event.altKey){
       this.homeService.buyLand(10);
     } else if (event.ctrlKey || event.metaKey){
       this.homeService.buyLand(-1);
@@ -46,7 +46,7 @@ export class FarmPanelComponent {
   plowClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey){
+    if (event.shiftKey || event.altKey){
       this.homeService.addField(10);
     } else if (event.ctrlKey || event.metaKey){
       this.homeService.addField(-1);
