@@ -102,9 +102,6 @@ export class MainLoopService {
       earnedTicks = (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
     }
     this.bankedTicks = properties.bankedTicks + earnedTicks;
-    this.dialog.open(OfflineModalComponent, {
-      data: { earnedTicks: earnedTicks }
-    });
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks || 0;
     this.useBankedTicks = properties.useBankedTicks ?? true;
