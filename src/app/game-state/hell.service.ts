@@ -177,6 +177,7 @@ export class HellService {
     description: ['You look around and realize that you have many family members and ancestors here. You should probably give them some credit for what they have done for you. And some money.'],
     consequenceDescription: ['Uses 1 hell money.'],
     consequence: [() => {
+      //TODO: tune this
       if (this.characterService.characterState.hellMoney < 1){
         return;
       }
@@ -1046,7 +1047,6 @@ export class HellService {
       description: ["Return to the gates of Lord Yama's realm."],
       consequenceDescription: [""],
       consequence: [() => {
-        this.characterService.characterState.hellMoney = 0;
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
         const leavingHell = this.hells[this.currentHell];
@@ -1088,7 +1088,6 @@ export class HellService {
           description: [hell.description],
           consequenceDescription: [consequenceDescription],
           consequence: [() => {
-            this.characterService.characterState.hellMoney = 0;
             this.currentHell = hell.index;
             const newHell = this.hells[hell.index];
             if (newHell.entryEffect){

@@ -37,12 +37,16 @@ export class ActivityPanelComponent {
   }
 
   JoinTheGodsClick(){
+    if (!confirm("Are you sure you are ready for this? You will need to leave all your money and most of your followers and possessions behind as you leave this mortal realm.")){
+      return;
+    }
     const dialogRef = this.dialog.open(TextPanelComponent, {
       width: '700px',
       data: {titleText: "Joining the Gods", bodyText: JoinTheGodsText}
     });
     dialogRef.afterClosed().subscribe(() => {
       this.hellService.inHell = true;
+      this.characterService.characterState.money = 0;
       this.inventoryService.stashInventory();
       this.followerService.hellPurge();
       this.activityService.reloadActivities();
@@ -60,7 +64,7 @@ export class ActivityPanelComponent {
 
     // Shift and Ctrl both multiply by 10x, combined does 100
     let repeat = 1
-    repeat *= event.shiftKey ? 10 : 1
+    repeat *= event.shiftKey || event.altKey ? 10 : 1
     repeat *= event.ctrlKey || event.metaKey ? 10 : 1
 
     // Alt will put it at the top of the schedule, otherwise the bottom

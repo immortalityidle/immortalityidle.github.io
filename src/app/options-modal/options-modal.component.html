@@ -8,7 +8,7 @@
       <div class="optionField">
         <span>
           <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)"
-            tooltip="This game is much too hard and takes much too long to play to the end. Click this to make it easier. Be warned: you will forever be known as a cultivator who took the easy path to immortality.">
+            matTooltip="This game is much too hard and takes much too long to play to the end. Click this to make it easier. Be warned: you will forever be known as a cultivator who took the easy path to immortality.">
           <label for="easyMode" >Easy Mode</label>
         </span>
         <span *ngIf="this.gameStateService.easyModeEver">
@@ -108,7 +108,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab *ngIf="inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked || 
+    <mat-tab *ngIf="inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked ||
       inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoBalanceUnlocked">
       <ng-template mat-tab-label>
         <span class="tab-label">Sales</span>

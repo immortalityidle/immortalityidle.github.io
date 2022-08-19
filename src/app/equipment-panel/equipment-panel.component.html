@@ -3,51 +3,57 @@
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
       (dblclick)="slotDoubleClicked('head', $event)"
-      tooltip="{{(character.equipment.head !== null) ? (character.equipment.head?.name | titlecase) + '<hr/>' + (character.equipment.head?.description) : ''}}" placement="left"
-    >
+      matTooltip="{{(character.equipment.head !== null) ? (character.equipment.head?.name | titlecase) + '
+
+      ' + (character.equipment.head?.description) : ''}}">
       {{character.equipment.head?.name | titlecase}}
     </div>
-    <div style="grid-area: right;" class="itemSlot textOverflow" 
+    <div style="grid-area: right;" class="itemSlot textOverflow"
       [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"  [ngClass]="getEffectClass('rightHand')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('rightHand', $event)" (dragstart)="drag('rightHand', $event)"
       (dblclick)="slotDoubleClicked('rightHand', $event)"
-      tooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand?.name | titlecase) + '<hr/>' + (character.equipment.rightHand?.description) : ''}}" placement="left"
-    >
+      matTooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand?.name | titlecase) + '
+
+      ' + (character.equipment.rightHand?.description) : ''}}">
       {{character.equipment.rightHand?.name | titlecase}}
     </div>
     <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}" [ngClass]="getEffectClass('body')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('body', $event)" (dragstart)="drag('body', $event)"
       (dblclick)="slotDoubleClicked('body', $event)"
-      tooltip="{{(character.equipment.body !== null) ? (character.equipment.body?.name | titlecase) + '<hr/>' + (character.equipment.body?.description) : ''}}" placement="left"
-    >
+      matTooltip="{{(character.equipment.body !== null) ? (character.equipment.body?.name | titlecase) + '
+
+      ' + (character.equipment.body?.description) : ''}}">
       {{character.equipment.body?.name | titlecase}}
     </div>
     <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}" [ngClass]="getEffectClass('leftHand')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('leftHand', $event)" (dragstart)="drag('leftHand', $event)"
       (dblclick)="slotDoubleClicked('leftHand', $event)"
-      tooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand?.name | titlecase) + '<hr/>' + (character.equipment.leftHand?.description) : ''}}" placement="left"
-    >
+      matTooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand?.name | titlecase) + '
+
+      ' + (character.equipment.leftHand?.description) : ''}}">
       {{character.equipment.leftHand?.name | titlecase}}
     </div>
     <div style="grid-area: stats;">
-      <span tooltip="Accuracy. Your chance to hit monsters when you attack them. Based on your speed."><mat-icon>manage_accounts</mat-icon>{{character.accuracy | percent}}</span>
+      <span matTooltip="Accuracy. Your chance to hit monsters when you attack them. Based on your speed."><mat-icon>manage_accounts</mat-icon>{{character.accuracy | percent}}</span>
       <br/>
-      <span [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
+      <span [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
       <br/>
-      <span [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
+      <span [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
     </div>
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}" [ngClass]="getEffectClass('legs')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"
       (dblclick)="slotDoubleClicked('legs', $event)"
-      tooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs?.name | titlecase) + '<hr/>' + (character.equipment.legs?.description) : ''}}" placement="left"
-    >
+      matTooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs?.name | titlecase) + '
+
+      ' + (character.equipment.legs?.description) : ''}}">
       {{character.equipment.legs?.name | titlecase}}
     </div>
     <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}" [ngClass]="getEffectClass('feet')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('feet', $event)" (dragstart)="drag('feet', $event)"
       (dblclick)="slotDoubleClicked('feet', $event)"
-      tooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet?.name | titlecase) + '<hr/>' + (character.equipment.feet?.description) : ''}}" placement="left"
-    >
+      matTooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet?.name | titlecase) + '
+
+      ' + (character.equipment.feet?.description) : ''}}">
       {{character.equipment.feet?.name | titlecase}}
   </div>
 </div>

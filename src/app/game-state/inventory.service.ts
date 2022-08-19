@@ -482,8 +482,8 @@ export class InventoryService {
         baseName: baseName,
         effect: effect
       },
-      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: " +
-        this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
+      description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.\nBase Damage: " +
+        this.bigNumberPipe.transform(grade) + "\nDurability: " + this.bigNumberPipe.transform(durability)
     };
   }
 
@@ -495,8 +495,8 @@ export class InventoryService {
     if (weapon.weaponStats.effect){
       effectString = " and imbued with the power of " + weapon.weaponStats.effect;
     }
-    weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + effectString + ".<br/>Base Damage: " +
-    this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) + "<br/>Durability: " + this.bigNumberPipe.transform(weapon.weaponStats.durability);
+    weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + effectString + ".\nBase Damage: " +
+    this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) + "\nDurability: " + this.bigNumberPipe.transform(weapon.weaponStats.durability);
   }
 
   updateArmorDescription(armor: Equipment){
@@ -507,8 +507,8 @@ export class InventoryService {
     if (armor.armorStats.effect){
       effectString = " and imbued with the power of " + armor.armorStats.effect;
     }
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + effectString + ".<br/>Defense: " +
-      this.bigNumberPipe.transform(armor.armorStats.defense) + "<br/>Durability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + effectString + ".\nDefense: " +
+      this.bigNumberPipe.transform(armor.armorStats.defense) + "\nDurability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
   upgradeEquppedEquipment(value: number){
@@ -538,7 +538,7 @@ export class InventoryService {
     }
   }
 
-  upgradeEquipment(equipment: Equipment, value: number, newEffect: string = "spirit"){
+  upgradeEquipment(equipment: Equipment, value: number, newEffect = "spirit"){
     if (equipment.armorStats){
       equipment.armorStats.durability += value;
       equipment.armorStats.defense += value;
@@ -743,8 +743,8 @@ export class InventoryService {
         baseName: baseName,
         effect: effect
       },
-      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.<br/>Defense: " +
-        this.bigNumberPipe.transform(grade) + "<br/>Durability: " + this.bigNumberPipe.transform(durability)
+      description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.\nDefense: " +
+        this.bigNumberPipe.transform(grade) + "\nDurability: " + this.bigNumberPipe.transform(durability)
     };
 
   }
@@ -891,7 +891,7 @@ export class InventoryService {
           material: "wood",
           durability: 100
         },
-        description: "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.<br/>Base Damage: 10<br/>Durability: 100"
+        description: "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.\nBase Damage: 10\nDurability: 100"
       };
       this.addItem(stick);
     }
@@ -1262,7 +1262,7 @@ export class InventoryService {
     if (!instanceOfEquipment(item)) {
       throw Error('Tried to equip an item that was not equipable');
     }
-    if (item.armorStats?.durability === 0 || item.weaponStats?.durability === 0){
+    if ((item.armorStats?.durability || 0) <= 0 || (item.weaponStats?.durability || 0) <= 0){
       //it's broken, bail out
       this.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.","STANDARD","EVENT")
       return;
@@ -1395,7 +1395,7 @@ export class InventoryService {
 
     if (!instanceOfEquipment(item)) return true;
 
-    return (item.armorStats?.durability !== 0 && item.weaponStats?.durability !== 0);
+    return ((item.armorStats?.durability || 0) > 0 && (item.weaponStats?.durability || 0) > 0);
   }
 
   /** A special use function for generated potions. */
@@ -1594,7 +1594,7 @@ export class InventoryService {
   stashInventory() {
     this.stashedItemStacks = [];
     for (let i = 0; i < this.itemStacks.length; i++){
-      let item = this.itemStacks[i]?.item;
+      const item = this.itemStacks[i]?.item;
       if (item && item.type != "food" && !item.type.includes("Gem")){
         this.stashedItemStacks.push(this.itemStacks[i]);
         this.itemStacks[i] = null;

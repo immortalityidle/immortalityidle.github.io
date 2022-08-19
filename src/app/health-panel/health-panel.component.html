@@ -12,7 +12,7 @@
         You expect to live {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.
       </td>
       <td>
-        <mat-icon tooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
+        <mat-icon matTooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
       </td>
     </tr>
   </table>
@@ -20,52 +20,52 @@
 <div class="healthPanelContents">
   <table>
     <tr>
-      <td tooltip="{{characterService.characterState.status.health.description}}" placement="right">Health</td>
+      <td matTooltip="{{characterService.characterState.status.health.description}}" >Health</td>
       <td class="health">
-        <div class="progress-bar" 
+        <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.health.max) | bigNumber">
-          <span 
-            [style.width.%]="100 * 
-              Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) / 
+          <span
+            [style.width.%]="100 *
+              Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) /
               Math.floor(characterService.characterState.status.health.max)">
           </span>
         </div>
       </td>
-      <td tooltip="{{characterService.characterState.status.stamina.description}}" placement="right">Stamina</td>
+      <td matTooltip="{{characterService.characterState.status.stamina.description}}" >Stamina</td>
       <td class="stamina">
-        <div class="progress-bar" 
+        <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.status.stamina.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.stamina.max) | bigNumber">
-          <span 
-            [style.width.%]="100 * 
-              Math.floor(characterService.characterState.status.stamina.value) / 
+          <span
+            [style.width.%]="100 *
+              Math.floor(characterService.characterState.status.stamina.value) /
               Math.floor(characterService.characterState.status.stamina.max)">
           </span>
         </div>
       </td>
     </tr>
     <tr>
-      <td tooltip="{{characterService.characterState.status.nourishment.description}}" placement="right">Nutrition</td>
+      <td matTooltip="{{characterService.characterState.status.nourishment.description}}" >Nutrition</td>
       <td class="nourishment">
         <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.status.nourishment.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.nourishment.max) | bigNumber">
-          <span 
-            [style.width.%]="100 * 
-              Math.floor(characterService.characterState.status.nourishment.value) / 
+          <span
+            [style.width.%]="100 *
+              Math.floor(characterService.characterState.status.nourishment.value) /
               Math.floor(characterService.characterState.status.nourishment.max)">
           </span>
         </div>
       </td>
-      <td tooltip="{{characterService.characterState.status.mana.description}}" placement="right">Mana</td>
+      <td matTooltip="{{characterService.characterState.status.mana.description}}" >Mana</td>
       <td class="mana">
         <div class="progress-bar"
           [attr.value]="Math.floor(characterService.characterState.status.mana.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.mana.max) | bigNumber">
-          <span 
-            [style.width.%]="100 * 
-            Math.floor(characterService.characterState.status.mana.value) / 
+          <span
+            [style.width.%]="100 *
+            Math.floor(characterService.characterState.status.mana.value) /
             Math.floor(characterService.characterState.status.mana.max)">
           </span>
         </div>
@@ -73,7 +73,9 @@
     </tr>
   </table>
   <div class="yinYang" *ngIf="this.characterService.characterState.yinYangUnlocked"
-    tooltip="Yang: {{characterService.characterState.yang | bigNumber}}<br/>Yin: {{characterService.characterState.yin | bigNumber}}<br/>Your balance is {{balanceString}}.">
+    matTooltip="Yang: {{characterService.characterState.yang | bigNumber}}
+    Yin: {{characterService.characterState.yin | bigNumber}}
+    Your balance is {{balanceString}}.">
     <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 1250 1250" [style.fill]="yinColor">
       <defs>
         <filter id="f">
