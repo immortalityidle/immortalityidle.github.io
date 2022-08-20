@@ -7,7 +7,7 @@ export abstract class AutoBuyer {
   constructor(
     protected autoBuyerService: AutoBuyerService,
     protected homeService: HomeService,
-    protected characterService: CharacterService) {}
+    protected characterService: CharacterService) { }
 
   /**
    * Checks if permissions are correct to run this autobuyer.
@@ -98,7 +98,7 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
   }
 
   run(reserveAmount: number) {
-    if (this.homeService.autoBuyLandUnlocked 
+    if (this.homeService.autoBuyLandUnlocked
       && this.characterService.characterState.money >= this.homeService.landPrice + reserveAmount) {
       const landRequired = Math.min(
         this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
@@ -199,8 +199,8 @@ export class FurnitureAutoBuyer extends AutoBuyer {
         // If the current home doesn't include a slot that the next one does...
         if (!this.homeService.home.furnitureSlots.includes(slot)
           && this.homeService.nextHome.furnitureSlots.includes(slot)) {
-            neededSlotsIncludedInNextHome = false;
-        } 
+          neededSlotsIncludedInNextHome = false;
+        }
       }
     }
 
