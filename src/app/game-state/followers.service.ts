@@ -128,7 +128,7 @@ export class FollowersService {
           rightHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
         }
         if (leftHand && leftHand.weaponStats){
-          leftHand.weaponStats.durability += totalPower;
+          leftHand.weaponStats.durability += Math.ceil(Math.pow((totalPower / 10), 2) * 100);
           leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
           leftHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
         }
