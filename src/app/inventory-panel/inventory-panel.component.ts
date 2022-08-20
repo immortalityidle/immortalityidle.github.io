@@ -179,11 +179,18 @@ export class InventoryPanelComponent {
           } else if (sourceItem.type.includes("Gem") && instanceOfEquipment(destItem)){
             this.inventoryService.gemifyEquipment(sourceIndex, destItem);
             return;
+          } else if (sourceItem.name === destItem.name){
+            this.inventoryService.mergeItemStacks(sourceItemStack, destItemStack, sourceIndex);
+          } else {
+            // it wasn't a merge, just swap their positions
+            this.inventoryService.itemStacks[destIndex] = sourceItemStack;
+            this.inventoryService.itemStacks[sourceIndex] = destItemStack;
           }
+        } else {
+            // it wasn't a merge, just swap their positions
+            this.inventoryService.itemStacks[destIndex] = sourceItemStack;
+            this.inventoryService.itemStacks[sourceIndex] = destItemStack;
         }
-        // it wasn't a merge, just swap their positions
-        this.inventoryService.itemStacks[destIndex] = sourceItemStack;
-        this.inventoryService.itemStacks[sourceIndex] = destItemStack;
       }
     } else if (event.dataTransfer?.types[0] === "equipment"){
       //unequiping something

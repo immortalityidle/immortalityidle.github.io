@@ -233,7 +233,7 @@ export class FollowersService {
         }
         this.inventoryService.mergeAnySpiritGem(gemmerPower);
       },
-      description: "Gemologists combine monster gems into higher grades.",
+      description: "Gemologists combine spirit gems into higher grades.",
       totalPower: 0
     },
     "scout": {

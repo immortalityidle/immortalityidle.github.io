@@ -352,7 +352,12 @@ export class InventoryService {
     this.autoSort = properties.autoSort || false;
     this.descendingSort = properties.descendingSort || false;
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
-    this.updateFarmFoodList()
+    this.updateFarmFoodList();
+    for (const itemStack of this.itemStacks ){
+      if (itemStack && itemStack.item.name.includes("monster gem")){
+        itemStack.item.name = itemStack.item.name.replace("monster gem", "spirit gem");
+      }
+    }
   }
 
   farmFoodList = [
@@ -542,13 +547,13 @@ export class InventoryService {
     if (equipment.armorStats) {
       equipment.armorStats.durability += value;
       equipment.armorStats.defense += value;
-      if (newEffect != "spirit") {
+      if (newEffect !== "spirit") {
         equipment.armorStats.effect = newEffect;
       }
     } else if (equipment.weaponStats) {
       equipment.weaponStats.durability += value;
       equipment.weaponStats.baseDamage += value;
-      if (newEffect != "spirit") {
+      if (newEffect !== "spirit") {
         equipment.weaponStats.effect = newEffect;
       }
     }
@@ -673,7 +678,7 @@ export class InventoryService {
 
   generateSpiritGem(grade: number, flavor = "spirit"): Item {
     let description = 'A spirit gem dropped by a monster.';
-    if (flavor != "spirit") {
+    if (flavor !== "spirit") {
       description = 'A spirit gem full of the power of ' + flavor + ".";
     }
     return {
@@ -1456,6 +1461,13 @@ export class InventoryService {
     }
   }
 
+  mergeItemStacks(sourceStack: ItemStack, destStack: ItemStack, sourceInventoryIndex: number){
+    if (sourceStack && destStack && sourceStack.item.name === destStack.item.name && sourceStack.quantity + destStack.quantity < this.maxStackSize){
+      destStack.quantity += sourceStack.quantity;
+      this.itemStacks[sourceInventoryIndex] = null;
+    }
+  }
+
   autoWeaponMerge() {
     this.autoMerge('leftHand');
     this.autoMerge('rightHand');
@@ -1597,7 +1609,7 @@ export class InventoryService {
     this.stashedItemStacks = [];
     for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
-      if (item && item.type != "food" && !item.type.includes("Gem")) {
+      if (item && item.type !== "food" && !item.type.includes("Gem")) {
         this.stashedItemStacks.push(this.itemStacks[i]);
         this.itemStacks[i] = null;
       }
