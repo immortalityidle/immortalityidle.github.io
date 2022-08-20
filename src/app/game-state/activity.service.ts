@@ -561,6 +561,7 @@ export class ActivityService {
     if (this.characterService.characterState.immortal) {
       newList.push(this.SoulCultivation);
     }
+
     if (this.purifyGemsUnlocked) {
       newList.push(this.PurifyGems);
     }
@@ -1264,12 +1265,18 @@ export class ActivityService {
       skipApprenticeshipLevel: 0
     }
 
+    let oddJobsDescription = 'Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.';
+    if (this.hellService?.inHell) {
+      oddJobsDescription = "Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for an aspiring god, but you can't manage anything more profitable when you're projecting your spirit this far.";
+    } else if (this.characterService.characterState.immortal) {
+      oddJobsDescription = 'Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Why would you stoop to jobs like this now that you are immortal?';
+    }
     this.OddJobs = {
       level: 0,
       name: ['Odd Jobs'],
       activityType: ActivityType.OddJobs,
       description:
-        ['Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.'],
+        [oddJobsDescription],
       consequenceDescription:
         ['Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.'],
       consequence: [() => {

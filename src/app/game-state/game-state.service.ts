@@ -14,6 +14,8 @@ import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
 import { HellProperties, HellService } from './hell.service';
+import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -62,6 +64,7 @@ export class GameStateService {
     private followersService: FollowersService,
     private autoBuyerService: AutoBuyerService,
     private mainLoopService: MainLoopService,
+    private dialog: MatDialog,
     private achievementService: AchievementService,
     private impossibleTaskService: ImpossibleTaskService,
     private hellService: HellService
@@ -124,6 +127,10 @@ export class GameStateService {
     if (this.isImport) {
       this.characterService.toast("Load Successful")
       this.updateImportFlagKey(false);
+    } else {
+      this.dialog.open(OfflineModalComponent, {
+        data: { earnedTicks: this.mainLoopService.earnedTicks }
+      });
     }
     return true;
   }
