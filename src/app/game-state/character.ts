@@ -36,14 +36,14 @@ export type AttributeType = 'strength' |
   'combatMastery' |
   'magicMastery';
 
-type AttributeObject = {[key in AttributeType]: {description: string, value: number, lifeStartValue: number, aptitude: number, aptitudeMult: number, icon: string }};
+type AttributeObject = { [key in AttributeType]: { description: string, value: number, lifeStartValue: number, aptitude: number, aptitudeMult: number, icon: string } };
 
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
 
-export type EquipmentSlots  = { [key in EquipmentPosition]: Equipment | null };
+export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
 type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
-type CharacterStatus = {[key in StatusType]: {description: string, value: number, max: number}}
+type CharacterStatus = { [key in StatusType]: { description: string, value: number, max: number } }
 
 export interface CharacterProperties {
   attributes: AttributeObject,
@@ -99,21 +99,21 @@ export class Character {
     private titlecasePipe: TitleCasePipe,
     private bigNumberPipe: BigNumberPipe,
     public mainLoopService: MainLoopService
-    ){
-      mainLoopService.frameSubject.subscribe(() => {
-        this.empowermentMult = this.getEmpowermentMult();
-        const keys = Object.keys(this.attributes) as AttributeType[];
-        for (const key in keys) {
-          this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
-          if ((keys[key] === "strength" || keys[key] === "speed" || keys[key] === "toughness") && this.bonusMuscles){
-            this.attributes[keys[key]].aptitudeMult *= 1000;
-          }
-          if ((keys[key] === "intelligence" || keys[key] === "charisma") && this.bonusBrains){
-            this.attributes[keys[key]].aptitudeMult *= 1000;
-          }
+  ) {
+    mainLoopService.frameSubject.subscribe(() => {
+      this.empowermentMult = this.getEmpowermentMult();
+      const keys = Object.keys(this.attributes) as AttributeType[];
+      for (const key in keys) {
+        this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
+        if ((keys[key] === "strength" || keys[key] === "speed" || keys[key] === "toughness") && this.bonusMuscles) {
+          this.attributes[keys[key]].aptitudeMult *= 1000;
         }
-      });
-    }
+        if ((keys[key] === "intelligence" || keys[key] === "charisma") && this.bonusBrains) {
+          this.attributes[keys[key]].aptitudeMult *= 1000;
+        }
+      }
+    });
+  }
 
   maxMoney = 9.9999e23;
   totalLives = 1;
@@ -331,7 +331,7 @@ export class Character {
     this.status.stamina.max = 100;
     this.status.nourishment.value = 7;
     this.status.nourishment.max = 14;
-    if (this.manaUnlocked){
+    if (this.manaUnlocked) {
       this.status.mana.max = 1;
       this.status.mana.value = 1;
     } else {
@@ -353,18 +353,18 @@ export class Character {
     totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
       this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
-    if (this.bloodlineRank < 5){
+    if (this.bloodlineRank < 5) {
       this.statLifespan *= 0.1;
     } else {
       this.statLifespan *= 5;
     }
 
     const keys = Object.keys(this.attributes) as AttributeType[];
-    for (const key in keys){
-      if (this.attributes[keys[key]].value > 0){
+    for (const key in keys) {
+      if (this.attributes[keys[key]].value > 0) {
         // gain aptitude based on last life's value
-        const addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0 )) / this.aptitudeGainDivider;
-        if (addedValue > 0){
+        const addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) / this.aptitudeGainDivider;
+        if (addedValue > 0) {
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
           this.logService.addLogMessage("Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue), "STANDARD", "EVENT");
@@ -374,7 +374,7 @@ export class Character {
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
-    if (this.money < 0){
+    if (this.money < 0) {
       //sanity check that we're not persisting/growing debt at higher bloodline levels
       this.money = 0;
     }
@@ -407,16 +407,16 @@ export class Character {
   }
 
   getAttributeStartingValue(value: number, aptitude: number): number {
-    if (value < 0){
+    if (value < 0) {
       value = 0;
     }
-    if (aptitude < 0){
+    if (aptitude < 0) {
       aptitude = 0;
     }
-    if (value < 1){
+    if (value < 1) {
       return value / 10;
     }
-    if (aptitude < this.attributeSoftCap){
+    if (aptitude < this.attributeSoftCap) {
       return aptitude / 10;
     }
     return (this.attributeSoftCap / 10) + Math.log2(aptitude - (this.attributeSoftCap - 1));
@@ -424,12 +424,12 @@ export class Character {
 
   recalculateDerivedStats(): void {
     let bonusFactor = 1;
-    if (this.bonusHealth){
+    if (this.bonusHealth) {
       bonusFactor = 5;
     }
     this.status.health.max = (100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul +
       Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) * bonusFactor;
-    if (this.money > this.maxMoney){
+    if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
     const keys = Object.keys(this.attributes) as AttributeType[];
@@ -446,37 +446,37 @@ export class Character {
     let body = 1;
     let legs = 1;
     let feet = 1;
-    if (this.equipment.leftHand){
+    if (this.equipment.leftHand) {
       leftHand = (this.equipment.leftHand.weaponStats?.baseDamage || 1);
     }
-    if (this.equipment.rightHand){
+    if (this.equipment.rightHand) {
       rightHand = (this.equipment.rightHand.weaponStats?.baseDamage || 1);
     }
-    if (this.equipment.head){
+    if (this.equipment.head) {
       head = (this.equipment.head.armorStats?.defense || 1);
     }
-    if (this.equipment.body){
+    if (this.equipment.body) {
       body = (this.equipment.body.armorStats?.defense || 1);
     }
-    if (this.equipment.legs){
+    if (this.equipment.legs) {
       legs = (this.equipment.legs.armorStats?.defense || 1);
     }
-    if (this.equipment.feet){
+    if (this.equipment.feet) {
       feet = (this.equipment.feet.armorStats?.defense || 1);
     }
     this.attackPower *= Math.floor(Math.sqrt(this.attackPower) * Math.sqrt(2 * Math.sqrt(rightHand) * Math.sqrt(leftHand))) || 1; // root averaged.
-    if (this.attributes.combatMastery.value > 1){
+    if (this.attributes.combatMastery.value > 1) {
       // multiply by log base 100 of combatMastery
       this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / Math.log(100);
     }
-    if (this.righteousWrathUnlocked){
+    if (this.righteousWrathUnlocked) {
       this.attackPower *= 2;
     }
     this.defense *= Math.floor(Math.sqrt(this.defense) * Math.sqrt(4 * Math.pow(head, 0.25) * Math.pow(body, 0.25) * Math.pow(legs, 0.25) * Math.pow(feet, 0.25))) || 1; // root averaged.
-    if (this.righteousWrathUnlocked){
+    if (this.righteousWrathUnlocked) {
       this.defense *= 2;
     }
-    if (this.yinYangUnlocked){
+    if (this.yinYangUnlocked) {
       // calculate yin/yang balance bonus, 1 for perfect balance, 0 at worst
       this.yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
     }
@@ -487,7 +487,7 @@ export class Character {
     const max = 99;
     const empowermentFactor = this.empowermentFactor - 1;
     let returnValue = 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
-    if (this.easyMode){
+    if (this.easyMode) {
       returnValue *= 100;
     }
     return returnValue;
@@ -495,23 +495,23 @@ export class Character {
 
   //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
   getAptitudeMultipier(aptitude: number, noEmpowerment = false): number {
-    if (aptitude < 0){
+    if (aptitude < 0) {
       // should not happen, but sanity check it
       aptitude = 0;
     }
-    const empowermentFactor = noEmpowerment? 1 : this.empowermentMult;
+    const empowermentFactor = noEmpowerment ? 1 : this.empowermentMult;
     let x = 1;
-    if (aptitude < this.attributeScalingLimit){
+    if (aptitude < this.attributeScalingLimit) {
       // linear up to the scaling limit
       x = aptitude * empowermentFactor;
-    } else if (aptitude < this.attributeScalingLimit * 10){
+    } else if (aptitude < this.attributeScalingLimit * 10) {
       // from the limit to 10x the limit, change growth rate to 1/4
       x = (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * empowermentFactor;
-    } else if (aptitude < this.attributeScalingLimit * 100){
+    } else if (aptitude < this.attributeScalingLimit * 100) {
       // from the 10x limit to 100x the limit, change growth rate to 1/20
       x = (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        ((aptitude - (this.attributeScalingLimit * 10)) / 20))  * empowermentFactor;
-    } else if (aptitude <= this.attributeSoftCap){
+        ((aptitude - (this.attributeScalingLimit * 10)) / 20)) * empowermentFactor;
+    } else if (aptitude <= this.attributeSoftCap) {
       // from the 100x limit to softcap, change growth rate to 1/100
       x = (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
         (this.attributeScalingLimit * 90 / 20) +
@@ -522,11 +522,11 @@ export class Character {
         (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
       x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) * empowermentFactor; // Softcap
     }
-    if (this.bloodlineRank >= 8){
+    if (this.bloodlineRank >= 8) {
       return x;
     }
     let c = 365000; // Hardcap
-    if (this.yinYangUnlocked){
+    if (this.yinYangUnlocked) {
       // calculate balance bonus, 1 for perfect balance, 0 at worst
       const yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
       // apply bonus to hardcap value
@@ -540,11 +540,11 @@ export class Character {
   increaseAttribute(attribute: AttributeType, amount: number): number {
     let increaseAmount = amount * this.attributes[attribute].aptitudeMult;
     // sanity check that gain is never less than base gain
-    if (increaseAmount < amount){
+    if (increaseAmount < amount) {
       increaseAmount = amount;
     }
     this.attributes[attribute].value += increaseAmount;
-    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] > this.attributes[attribute].value){
+    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] > this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;
     }
     return increaseAmount;
@@ -553,8 +553,8 @@ export class Character {
   increaseAptitudeDaily() {
     const keys = Object.keys(this.attributes) as AttributeType[];
     const slowGrowers = ['combatMastery', 'magicMastery'];
-    for(const key in keys) {
-      if (slowGrowers.includes(key)){
+    for (const key in keys) {
+      if (slowGrowers.includes(key)) {
         this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e14;
       } else {
         this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e7;
@@ -569,7 +569,7 @@ export class Character {
    * returns false if limit is reached.
   */
   increaseBaseLifespan(increase: number, limit: number): boolean {
-    if (this.baseLifespan + increase < limit * 365){
+    if (this.baseLifespan + increase < limit * 365) {
       this.baseLifespan += increase;
       return true;
     } else if (this.baseLifespan < limit * 365) {
@@ -578,48 +578,48 @@ export class Character {
     return false;
   }
 
-  checkOverage(){
+  checkOverage() {
 
-    if (this.healthBonusFood > 1900){
+    if (this.healthBonusFood > 1900) {
       this.healthBonusFood = 1900;
     }
-    if (this.healthBonusBath > 8000){
+    if (this.healthBonusBath > 8000) {
       this.healthBonusBath = 8000;
     }
     let healthBonusMagicCap = 10000;
     let healthBonusSoulCap = 20000;
-    if (this.yinYangUnlocked){
+    if (this.yinYangUnlocked) {
       healthBonusMagicCap += (2 * this.yinYangBalance * healthBonusMagicCap);
       healthBonusSoulCap += (2 * this.yinYangBalance * healthBonusSoulCap);
     }
-    if (this.healthBonusMagic > healthBonusMagicCap){
+    if (this.healthBonusMagic > healthBonusMagicCap) {
       this.healthBonusMagic = healthBonusMagicCap;
     }
-    if (this.healthBonusSoul > healthBonusSoulCap){
+    if (this.healthBonusSoul > healthBonusSoulCap) {
       this.healthBonusSoul = healthBonusSoulCap;
     }
-    if (this.status.stamina.max > 1000000){
+    if (this.status.stamina.max > 1000000) {
       this.status.stamina.max = 1000000;
     }
-    if (this.status.mana.max > 1000000){
+    if (this.status.mana.max > 1000000) {
       this.status.mana.max = 1000000;
     }
-    if (this.status.nourishment.max > 1000){
+    if (this.status.nourishment.max > 1000) {
       this.status.nourishment.max = 1000;
     }
-    if (this.status.health.value > this.status.health.max){
+    if (this.status.health.value > this.status.health.max) {
       this.status.health.value = this.status.health.max;
     }
-    if (this.status.stamina.value > this.status.stamina.max){
+    if (this.status.stamina.value > this.status.stamina.max) {
       this.status.stamina.value = this.status.stamina.max;
     }
-    if (this.status.nourishment.value > this.status.nourishment.max){
+    if (this.status.nourishment.value > this.status.nourishment.max) {
       this.status.nourishment.value = this.status.nourishment.max;
     }
-    if (this.status.mana.value > this.status.mana.max){
+    if (this.status.mana.value > this.status.mana.max) {
       this.status.mana.value = this.status.mana.max;
     }
-    if (this.money > this.maxMoney){
+    if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
   }
@@ -677,7 +677,7 @@ export class Character {
     this.money = properties.money;
     this.stashedMoney = properties.stashedMoney || 0;
     this.hellMoney = properties.hellMoney || 0;
-    if (this.money > this.maxMoney){
+    if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
     this.equipment = properties.equipment;
@@ -730,7 +730,7 @@ export class Character {
     this.bonusHealth = properties.bonusHealth || false;
 
     // add attributes that were added after release if needed
-    if (!this.attributes.combatMastery){
+    if (!this.attributes.combatMastery) {
       this.attributes.combatMastery = {
         description: "Mastery of combat skills.",
         value: 0,
@@ -740,7 +740,7 @@ export class Character {
         icon: "sports_martial_arts"
       }
     }
-    if (!this.attributes.magicMastery){
+    if (!this.attributes.magicMastery) {
       this.attributes.magicMastery = {
         description: "Mastery of magical skills.",
         value: 0,

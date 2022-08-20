@@ -52,8 +52,8 @@ export class AchievementService {
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (const achievement of this.achievements) {
-        if (!this.unlockedAchievements.includes(achievement.name)){
-          if (achievement.check()){
+        if (!this.unlockedAchievements.includes(achievement.name)) {
+          if (achievement.check()) {
             this.unlockAchievement(achievement, true);
           }
         }
@@ -373,7 +373,7 @@ export class AchievementService {
           this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 131 &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 131
-          ){
+        ) {
           return true;
         }
         return false;
@@ -395,7 +395,7 @@ export class AchievementService {
           this.characterService.characterState.equipment?.legs?.armorStats &&
           this.characterService.characterState.equipment?.legs?.armorStats.defense >= 131 &&
           this.characterService.characterState.equipment?.feet?.armorStats &&
-          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 131){
+          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 131) {
           return true;
         }
         return false;
@@ -474,7 +474,7 @@ export class AchievementService {
     },
     {
       name: "Gem Snob",
-      description: "You have sold 888 gems and unlocked the " +  this.itemRepoService.items['bestGemsManual'].name,
+      description: "You have sold 888 gems and unlocked the " + this.itemRepoService.items['bestGemsManual'].name,
       hint: "I hear the market for fine jewelry is so hot right now.",
       check: () => {
         return this.inventoryService.lifetimeGemsSold >= 888;
@@ -563,7 +563,7 @@ export class AchievementService {
           this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 8888 &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 8888
-          ){
+        ) {
           return true;
         }
         return false;
@@ -585,7 +585,7 @@ export class AchievementService {
           this.characterService.characterState.equipment?.legs?.armorStats &&
           this.characterService.characterState.equipment?.legs?.armorStats.defense >= 8888 &&
           this.characterService.characterState.equipment?.feet?.armorStats &&
-          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 8888){
+          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 8888) {
           return true;
         }
         return false;
@@ -606,13 +606,13 @@ export class AchievementService {
         const waterLore = this.characterService.characterState.attributes.waterLore.value;
         const metalLore = this.characterService.characterState.attributes.metalLore.value; //Reduce the bulk
 
-        const lowValue = Math.min(metalLore , waterLore, woodLore, earthLore , fireLore);
-        const highValue = Math.max(metalLore , waterLore, woodLore , earthLore , fireLore);
+        const lowValue = Math.min(metalLore, waterLore, woodLore, earthLore, fireLore);
+        const highValue = Math.max(metalLore, waterLore, woodLore, earthLore, fireLore);
         return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
         this.characterService.characterState.manaUnlocked = true;
-        if (this.characterService.characterState.status.mana.max === 0){
+        if (this.characterService.characterState.status.mana.max === 0) {
           this.characterService.characterState.status.mana.max = 1;
           this.characterService.characterState.status.mana.value = 1;
         }
@@ -657,7 +657,7 @@ export class AchievementService {
       effect: () => {
         this.characterService.characterState.imperial = true;
         for (const home of this.homeService.imperialHomesList) {
-          if (!this.homeService.homesList.includes(home)){
+          if (!this.homeService.homesList.includes(home)) {
             this.homeService.homesList.push(home);
           }
         }
@@ -687,8 +687,8 @@ export class AchievementService {
         const intelligence = this.characterService.characterState.attributes.intelligence.value;
         const strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
 
-        const lowValue = Math.min(speed , toughness, charisma , intelligence , strength);
-        const highValue = Math.max(speed , toughness, charisma , intelligence , strength);
+        const lowValue = Math.min(speed, toughness, charisma, intelligence, strength);
+        const highValue = Math.max(speed, toughness, charisma, intelligence, strength);
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
@@ -708,8 +708,8 @@ export class AchievementService {
         const intelligence = this.characterService.characterState.attributes.intelligence.value;
         const strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
 
-        const lowValue = Math.min(speed , toughness, charisma , intelligence , strength, spirituality);
-        const highValue = Math.max(speed , toughness, charisma , intelligence , strength, spirituality);
+        const lowValue = Math.min(speed, toughness, charisma, intelligence, strength, spirituality);
+        const highValue = Math.max(speed, toughness, charisma, intelligence, strength, spirituality);
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
@@ -719,7 +719,7 @@ export class AchievementService {
     },
     {
       name: "Disposable Followers",
-      description: "You have recruited so many people you can now freely dismiss followers using the " +  this.itemRepoService.items['followerAutoDismissManual'].name,
+      description: "You have recruited so many people you can now freely dismiss followers using the " + this.itemRepoService.items['followerAutoDismissManual'].name,
       hint: "The One Hundred Companions.",
       check: () => {
         return this.followerService.followersRecruited >= 100;
@@ -770,7 +770,7 @@ export class AchievementService {
       description: "You have collected two hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
       hint: "Take a day off from cultivating.", //it takes 20h to get
       check: () => {
-        return this.mainLoopService.bankedTicks > 2*60*60*40; //there are 40 ticks a second
+        return this.mainLoopService.bankedTicks > 2 * 60 * 60 * 40; //there are 40 ticks a second
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bankedTicksEfficiencyManual']);
@@ -794,7 +794,7 @@ export class AchievementService {
       description: "You have lived to be 300 years old and unlocked the " + this.itemRepoService.items['ageSpeedManual'].name,
       hint: "One step to becoming immortal is to live longer.",
       check: () => {
-        return this.characterService.characterState.age > 300*365;
+        return this.characterService.characterState.age > 300 * 365;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['ageSpeedManual']);
@@ -808,17 +808,17 @@ export class AchievementService {
       check: () => {
         return this.characterService.characterState.immortal;
       },
-      effect: () => {},
+      effect: () => { },
       unlocked: false
     },
   ];
 
-  unlockAchievement(achievement: Achievement, newAchievement: boolean){
-    if (newAchievement){
+  unlockAchievement(achievement: Achievement, newAchievement: boolean) {
+    if (newAchievement) {
       this.unlockedAchievements.push(achievement.name);
       this.logService.addLogMessage(achievement.description, 'STANDARD', 'STORY');
       // check if gameStateService is injected yet, if not, inject it (circular dependency issues)
-      if (!this.gameStateService){
+      if (!this.gameStateService) {
         this.gameStateService = this.injector.get(GameStateService);
       }
       this.gameStateService.savetoLocalStorage();
@@ -837,7 +837,7 @@ export class AchievementService {
   setProperties(properties: AchievementProperties) {
     this.unlockedAchievements = properties.unlockedAchievements || [];
     for (const achievement of this.achievements) {
-      if (this.unlockedAchievements.includes(achievement.name)){
+      if (this.unlockedAchievements.includes(achievement.name)) {
         this.unlockAchievement(achievement, false);
       }
     }
