@@ -83,7 +83,7 @@ export interface HomeProperties {
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
-export type FurnitureSlots  = { [key in FurniturePosition]: Furniture | null};
+export type FurnitureSlots = { [key in FurniturePosition]: Furniture | null };
 
 @Injectable({
   providedIn: 'root'
@@ -136,20 +136,20 @@ export class HomeService {
       maxInventory: 10,
       upgradeToTooltip: "Get a better house.",
       consequence: () => {
-        if (Math.random() < 0.05){
+        if (Math.random() < 0.05) {
           this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
-        if (Math.random() < 0.4){
+        if (Math.random() < 0.4) {
           this.battleService.addEnemy({
-              name: "a pesky mouse",
-              health: 2,
-              maxHealth: 2,
-              accuracy: 0.15,
-              attack: 0.3,
-              defense: 0,
-              loot: []
-            });
+            name: "a pesky mouse",
+            health: 2,
+            maxHealth: 2,
+            accuracy: 0.15,
+            attack: 0.3,
+            defense: 0,
+            loot: []
+          });
         }
       },
       furnitureSlots: [],
@@ -167,20 +167,20 @@ export class HomeService {
       consequence: () => {
         this.characterService.characterState.status.health.value += .5;
         this.characterService.characterState.status.stamina.value += 1;
-        if (Math.random() < 0.03){
+        if (Math.random() < 0.03) {
           this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
           this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
         }
-        if (Math.random() < 0.2){
+        if (Math.random() < 0.2) {
           this.battleService.addEnemy({
-              name: "a pesky mouse",
-              health: 2,
-              maxHealth: 2,
-              accuracy: 0.15,
-              attack: 0.3,
-              defense: 0,
-              loot: []
-            });
+            name: "a pesky mouse",
+            health: 2,
+            maxHealth: 2,
+            accuracy: 0.15,
+            attack: 0.3,
+            defense: 0,
+            loot: []
+          });
         }
         this.characterService.characterState.checkOverage();
       },
@@ -549,93 +549,93 @@ export class HomeService {
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
     private itemRepoService: ItemRepoService,
-    
+
   ) {
-      setTimeout(() => this.hellService = this.injector.get(HellService));
-      this.land = 0;
-      this.landPrice = 100;
-      this.setCurrentHome(this.homesList[0]);
-      if (this.home === undefined ||
-        this.homeValue === undefined ||
-        this.nextHome === undefined) {
-        throw Error('Home service not initialized correctly.');
+    setTimeout(() => this.hellService = this.injector.get(HellService));
+    this.land = 0;
+    this.landPrice = 100;
+    this.setCurrentHome(this.homesList[0]);
+    if (this.home === undefined ||
+      this.homeValue === undefined ||
+      this.nextHome === undefined) {
+      throw Error('Home service not initialized correctly.');
+    }
+
+    mainLoopService.tickSubject.subscribe(() => {
+      if (this.characterService.characterState.dead) {
+        return;
+      }
+      if (this.upgrading) {
+        this.upgradeTick();
+      }
+      this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
+      if (this.nextHomeCost < 0) {
+        this.nextHomeCost = 0;
+      }
+      if (!this.hellService?.inHell || this.hellHome) {
+        this.home.consequence();
+      }
+      for (const slot of this.furniturePositionsArray) {
+        const furniturePiece = this.furniture[slot];
+        if (furniturePiece?.use) {
+          furniturePiece?.use();
+        }
+      }
+      if (!this.hellService?.inHell || this.hellFood) {
+        this.ageFields();
+      }
+      if (this.home.costPerDay > this.characterService.characterState.money) {
+        this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
+        if (this.thugPause) {
+          mainLoopService.pause = true;
+        }
+        this.characterService.characterState.status.health.value -= 20;
+        this.characterService.characterState.money = 0;
+      } else {
+        this.characterService.characterState.money -= this.home.costPerDay;
+      }
+    });
+
+    mainLoopService.longTickSubject.subscribe(() => {
+      if (this.land > this.highestLand) {
+        this.highestLand = this.land;
+      }
+      if (this.landPrice > this.highestLandPrice) {
+        this.highestLandPrice = this.landPrice;
+      }
+      if (this.fields.length + this.extraFields > this.mostFields) {
+        this.mostFields = this.fields.length + this.extraFields;
+      }
+      if (this.averageYield > this.highestAverageYield) {
+        this.highestAverageYield = this.averageYield;
+      }
+      if (this.homeValue > this.bestHome) {
+        this.bestHome = this.homeValue;
+      }
+      if (this.upgrading && this.nextHome === this.home) {
+        this.houseBuildingProgress = 1;
+        this.upgrading = false;
+        this.setCurrentHome(this.home);
       }
 
-      mainLoopService.tickSubject.subscribe(() => {
-        if (this.characterService.characterState.dead){
-          return;
-        }
-        if (this.upgrading){
-          this.upgradeTick();
-        }
-        this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
-        if (this.nextHomeCost < 0){
-          this.nextHomeCost = 0;
-        }
-        if (!this.hellService?.inHell || this.hellHome){
-          this.home.consequence();
-        }
-        for (const slot of this.furniturePositionsArray){
-          const furniturePiece = this.furniture[slot];
-          if (furniturePiece?.use){
-            furniturePiece?.use();
-          }
-        }
-        if (!this.hellService?.inHell || this.hellFood){
-          this.ageFields();
-        }
-        if (this.home.costPerDay > this.characterService.characterState.money){
-          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
-          if(this.thugPause){
-            mainLoopService.pause = true;
-          }
-          this.characterService.characterState.status.health.value -= 20;
-          this.characterService.characterState.money = 0;
+    });
+
+    reincarnationService.reincarnateSubject.subscribe(() => {
+      this.reset();
+      if (this.characterService.characterState.bloodlineRank >= 6) {
+        this.logService.addLogMessage("You reincarnate as one of your descendants and your family recognizes you as you age.", "STANDARD", 'EVENT');
+        if (this.characterService.characterState.bloodlineRank >= 7) {
+          this.logService.addLogMessage("Your family steps aside and assists your takeover of your Empire.", "STANDARD", 'EVENT');
         } else {
-          this.characterService.characterState.money -= this.home.costPerDay;
+          this.logService.addLogMessage("Your family escorts you to your ancestral home and helps you get settled in.", "STANDARD", 'EVENT');
         }
-      });
-
-      mainLoopService.longTickSubject.subscribe(() => {
-        if (this.land > this.highestLand){
-          this.highestLand = this.land;
-        }
-        if (this.landPrice > this.highestLandPrice){
-          this.highestLandPrice = this.landPrice;
-        }
-        if (this.fields.length + this.extraFields > this.mostFields){
-          this.mostFields = this.fields.length + this.extraFields;
-        }
-        if (this.averageYield > this.highestAverageYield){
-          this.highestAverageYield = this.averageYield;
-        }
-        if (this.homeValue > this.bestHome){
-          this.bestHome = this.homeValue;
-        }
-        if (this.upgrading && this.nextHome === this.home){
-          this.houseBuildingProgress = 1;
-          this.upgrading = false;
-          this.setCurrentHome(this.home);
-        }
-  
-      });
-
-      reincarnationService.reincarnateSubject.subscribe(() => {
-        this.reset();
-        if (this.characterService.characterState.bloodlineRank >= 6){
-          this.logService.addLogMessage("You reincarnate as one of your descendants and your family recognizes you as you age.", "STANDARD", 'EVENT');
-          if (this.characterService.characterState.bloodlineRank >= 7){
-            this.logService.addLogMessage("Your family steps aside and assists your takeover of your Empire.", "STANDARD", 'EVENT');
-          } else {
-            this.logService.addLogMessage("Your family escorts you to your ancestral home and helps you get settled in.", "STANDARD", 'EVENT');
-          }
-        } else if (this.grandfatherTent){
-          this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on it.", "STANDARD", 'EVENT');
-          //and a few coins so you don't immediately get beat up for not having upkeep money for your house
-          this.characterService.characterState.money += 50;
-          this.setCurrentHome(this.nextHome);
-        }
-      });
+      } else if (this.grandfatherTent) {
+        this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on it.", "STANDARD", 'EVENT');
+        //and a few coins so you don't immediately get beat up for not having upkeep money for your house
+        this.characterService.characterState.money += 50;
+        this.setCurrentHome(this.nextHome);
+      }
+    });
   }
 
   getProperties(): HomeProperties {
@@ -692,9 +692,9 @@ export class HomeService {
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
     this.upgrading = properties.upgrading || false;
-    for (const slot of this.furniturePositionsArray){
+    for (const slot of this.furniturePositionsArray) {
       const savedFurniture = properties.furniture[slot];
-      if (savedFurniture){
+      if (savedFurniture) {
         this.furniture[slot] = this.itemRepoService.getFurnitureById(savedFurniture.id);
       }
     }
@@ -710,9 +710,9 @@ export class HomeService {
   }
 
   // gets the specs of the next home, doesn't actually upgrade
-  getNextHome(){
-    for (let i = this.homeValue; i < this.homesList.length - 1; i++){
-      if (this.homeValue === this.homesList[i].type){
+  getNextHome() {
+    for (let i = this.homeValue; i < this.homesList.length - 1; i++) {
+      if (this.homeValue === this.homesList[i].type) {
         return this.homesList[i + 1];
       }
     }
@@ -720,12 +720,12 @@ export class HomeService {
     return this.homesList[this.homesList.length - 1];
   }
 
-  upgradeToNextHome(){
-    if (this.upgrading){
+  upgradeToNextHome() {
+    if (this.upgrading) {
       // currently upgrading, bail out
       return;
     }
-    if (this.characterService.characterState.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired){
+    if (this.characterService.characterState.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired) {
       this.characterService.characterState.money -= this.nextHomeCost;
       this.land -= this.nextHome.landRequired;
       this.nextHomeCostReduction = 0;
@@ -735,13 +735,13 @@ export class HomeService {
     }
   }
 
-  upgradeTick(quantity = 1){
-    if (quantity < 1){
+  upgradeTick(quantity = 1) {
+    if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
 
     this.houseBuildingProgress += 1 / this.nextHome.daysToBuild * quantity;
-    if (this.houseBuildingProgress >= 1){
+    if (this.houseBuildingProgress >= 1) {
       this.houseBuildingProgress = 1;
       this.upgrading = false;
       this.setCurrentHome(this.nextHome);
@@ -750,7 +750,7 @@ export class HomeService {
   }
 
   reset() {
-    if (this.characterService.characterState.bloodlineRank < 6){
+    if (this.characterService.characterState.bloodlineRank < 6) {
       this.setCurrentHome(this.homesList[0]);
       this.furniture.bed = null;
       this.furniture.bathtub = null;
@@ -758,7 +758,7 @@ export class HomeService {
       this.furniture.workbench = null;
       this.ownedFurniture = [];
     }
-    if (this.characterService.characterState.bloodlineRank < 7){
+    if (this.characterService.characterState.bloodlineRank < 7) {
       this.upgrading = false;
       this.houseBuildingProgress = 1;
     }
@@ -769,7 +769,7 @@ export class HomeService {
     this.fields = [];
     this.extraFields = 0;
     this.averageYield = 0;
-    
+
   }
 
   setCurrentHome(home: Home) {
@@ -789,17 +789,18 @@ export class HomeService {
     throw Error('Home was not found with the given value');
   }
 
-  getCrop(): Field{
+  getCrop(): Field {
     let cropIndex = 0;
-    if (this.characterService.characterState.attributes.woodLore.value > 1){
+    if (this.characterService.characterState.attributes.woodLore.value > 1) {
       cropIndex = Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value));
     }
-    if (cropIndex >= this.inventoryService.farmFoodList.length){
+    if (cropIndex >= this.inventoryService.farmFoodList.length) {
       cropIndex = this.inventoryService.farmFoodList.length - 1;
     }
     const cropItem = this.inventoryService.farmFoodList[cropIndex];
     // more valuable crops yield less per field and take longer to harvest, tune this later
-    return {cropName: cropItem.id,
+    return {
+      cropName: cropItem.id,
       yield: 1,
       maxYield: Math.floor(200 / cropItem.value),
       daysToHarvest: 180 + cropItem.value,
@@ -807,12 +808,12 @@ export class HomeService {
     };
   }
 
-  addField(quantity = 1){
-    if (quantity < 0){
+  addField(quantity = 1) {
+    if (quantity < 0) {
       quantity = this.land;
     }
-    while (quantity > 0 && this.land >= quantity){
-      if (this.fields.length >= 300){
+    while (quantity > 0 && this.land >= quantity) {
+      if (this.fields.length >= 300) {
         this.extraFields += quantity;
         this.land -= quantity;
         return;
@@ -824,19 +825,19 @@ export class HomeService {
     }
   }
 
-/**
- *
- * @param quantity -1 for all
- */
-  clearField(quantity = 1){
-    if (quantity < 0){
+  /**
+   *
+   * @param quantity -1 for all
+   */
+  clearField(quantity = 1) {
+    if (quantity < 0) {
       this.land += this.extraFields;
       this.extraFields = 0;
       this.land += this.fields.length;
       this.fields.splice(0);
       return;
     }
-    if (this.extraFields > 0 && quantity <= this.extraFields){
+    if (this.extraFields > 0 && quantity <= this.extraFields) {
       this.extraFields -= quantity;
       this.land += quantity;
       return;
@@ -844,8 +845,8 @@ export class HomeService {
       quantity -= this.extraFields;
       this.extraFields = 0;
     }
-    if (this.fields.length > 0){
-      if (quantity > this.fields.length){
+    if (this.fields.length > 0) {
+      if (quantity > this.fields.length) {
         quantity = this.fields.length;
       }
       this.land += quantity;
@@ -853,10 +854,10 @@ export class HomeService {
     }
   }
 
-  workFields(workValue: number){
-    for (let i = 0; i < this.fields.length && i < 300; i++){
+  workFields(workValue: number) {
+    for (let i = 0; i < this.fields.length && i < 300; i++) {
       const field = this.fields[i];
-      if (field.yield + workValue < field.maxYield){
+      if (field.yield + workValue < field.maxYield) {
         field.yield += workValue;
       } else {
         field.yield = field.maxYield;
@@ -866,20 +867,20 @@ export class HomeService {
 
   // only ever really work the first 300 fields that we show.
   // After that prorate yields by the amount of fields over 300.
-  ageFields(){
+  ageFields() {
     let startIndex = this.fields.length - 1;
-    if (startIndex > 299){
+    if (startIndex > 299) {
       startIndex = 299;
     }
     let totalDailyYield = 0;
-    for (let i = startIndex; i >= 0; i--){
-      if (this.fields[i].daysToHarvest <= 0){
+    for (let i = startIndex; i >= 0; i--) {
+      if (this.fields[i].daysToHarvest <= 0) {
         let fieldYield = this.fields[i].yield;
-        if (this.fields.length + this.extraFields > 300){
+        if (this.fields.length + this.extraFields > 300) {
           fieldYield = Math.floor(fieldYield * (this.fields.length + this.extraFields) / 300);
         }
         totalDailyYield += fieldYield;
-        if (this.hellService?.inHell && fieldYield > 0){
+        if (this.hellService?.inHell && fieldYield > 0) {
           fieldYield = Math.max(fieldYield / 1000, 1);
         }
         this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
@@ -891,25 +892,25 @@ export class HomeService {
     this.averageYield = ((this.averageYield * 364) + totalDailyYield) / 365;
   }
 
-/**
- * Set count to -1 for half max
- * @returns count of actual purchase
- */
-  buyLand(count: number): number{
+  /**
+   * Set count to -1 for half max
+   * @returns count of actual purchase
+   */
+  buyLand(count: number): number {
     const maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
-    if(!maximumCount || !count){
+    if (!maximumCount || !count) {
       return 0;
     }
     let increase = 0;
     let price = 0;
-    if (count > 0){
-      count = Math.min(count,maximumCount);
+    if (count > 0) {
+      count = Math.min(count, maximumCount);
     } else {
       count = Math.floor(maximumCount / 2);
     }
     increase = 10 * (count * (count - 1) / 2); //mathmatically increase by linear sum n (n + 1) / 2
     price = this.landPrice * count + increase;
-    if (this.characterService.characterState.money >= price){
+    if (this.characterService.characterState.money >= price) {
       this.characterService.characterState.money -= price;
       this.land += count;
       this.landPrice += 10 * count;
@@ -922,17 +923,17 @@ export class HomeService {
    * @param money the money available for use
    * @returns count of affordable land
    */
-  calculateAffordableLand(money: number): number{
+  calculateAffordableLand(money: number): number {
     const x = money;
     const C = this.landPrice;
-    return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)))/10); // I know this looks nuts but I tested it on its own ^_^;;
+    return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25))) / 10); // I know this looks nuts but I tested it on its own ^_^;;
 
   }
 
   buyFurniture(itemId: string) {
     const item = this.itemRepoService.getFurnitureById(itemId)
     if (item) {
-      if (this.characterService.characterState.money >= item.value){
+      if (this.characterService.characterState.money >= item.value) {
         this.characterService.characterState.money -= item.value;
         this.ownedFurniture.push(item.name);
         this.furniture[item.slot] = item;

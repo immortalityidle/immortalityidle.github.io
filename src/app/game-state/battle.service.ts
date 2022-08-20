@@ -105,25 +105,25 @@ export class BattleService {
     this.tickCounter = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead){
+      if (this.characterService.characterState.dead) {
         return;
       }
-      if (this.tickCounter < this.ticksPerFight){
+      if (this.tickCounter < this.ticksPerFight) {
         this.tickCounter++;
         return;
       }
       this.tickCounter = 0;
-      if (this.currentEnemy === null && this.enemies.length > 0){
+      if (this.currentEnemy === null && this.enemies.length > 0) {
         this.currentEnemy = this.enemies[0];
       }
       this.enemiesAttack();
       this.youAttack();
       this.yearlyMonsterDay++;
-      if (this.yearlyMonsterDay >= 365){
+      if (this.yearlyMonsterDay >= 365) {
         this.yearlyMonsterDay = 0;
         this.trouble();
       }
-      if (this.autoTroubleEnabled){
+      if (this.autoTroubleEnabled) {
         this.trouble();
       }
     });
@@ -134,7 +134,7 @@ export class BattleService {
 
   }
 
-  reset(){
+  reset() {
     this.clearEnemies();
     this.kills = 0;
     this.troubleKills = 0;
@@ -191,66 +191,66 @@ export class BattleService {
     this.iceShieldUnlocked = properties.iceShieldUnlocked || false;
     this.highestDamageDealt = properties.highestDamageDealt || 0;
     this.highestDamageTaken = properties.highestDamageTaken || 0;
-}
+  }
 
-  enemiesAttack(){
-    if (this.skipEnemyAttack > 0){
+  enemiesAttack() {
+    if (this.skipEnemyAttack > 0) {
       this.skipEnemyAttack--;
       return;
     }
 
-    for (const enemyStack of this.enemies){
-      for (let i = 0; i < enemyStack.quantity; i++){
-        if (Math.random() < enemyStack.enemy.accuracy){
+    for (const enemyStack of this.enemies) {
+      for (let i = 0; i < enemyStack.quantity; i++) {
+        if (Math.random() < enemyStack.enemy.accuracy) {
           let damage = enemyStack.enemy.attack;
           const defense = this.characterService.characterState.defense;
           // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
           if (defense >= 1) {
-            damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
+            damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
           }
           //Keep mice scary
           if (damage < 0.3) {
             damage = 0.3;
           }
-          if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10){
+          if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10) {
             damage /= 2;
             this.characterService.characterState.status.mana.value -= 10;
           }
           let damageBack = false;
-          if (this.enableFireShield && this.characterService.characterState.status.mana.value > 10000){
+          if (this.enableFireShield && this.characterService.characterState.status.mana.value > 10000) {
             let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
-            if (fireDivisor < 1){
+            if (fireDivisor < 1) {
               fireDivisor = 1;
             }
-            if (fireDivisor > 10){
+            if (fireDivisor > 10) {
               fireDivisor = 10;
             }
             damage /= fireDivisor;
             this.characterService.characterState.status.mana.value -= 10000;
             damageBack = true;
           }
-          if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000){
+          if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000) {
             let waterDivisor = Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
-            if (waterDivisor < 1){
+            if (waterDivisor < 1) {
               waterDivisor = 1;
             }
-            if (waterDivisor > 10){
+            if (waterDivisor > 10) {
               waterDivisor = 10;
             }
             damage /= waterDivisor;
             this.characterService.characterState.status.mana.value -= 10000;
             this.skipEnemyAttack++;
           }
-          if (this.characterService.characterState.yinYangUnlocked){
+          if (this.characterService.characterState.yinYangUnlocked) {
             // reduce damage by up to half
             // TODO: tune this
-            damage -= damage * ( this.characterService.characterState.yinYangBalance / 2);
+            damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
           }
           this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
-          if (damageBack){
+          if (damageBack) {
             this.damageEnemy(damage, "The flames of your shield strike back, damaging the enemy for " + damage + " damage.");
           }
-          if (damage > this.highestDamageTaken){
+          if (damage > this.highestDamageTaken) {
             this.highestDamageTaken = damage;
           }
           this.characterService.characterState.status.health.value -= damage;
@@ -258,32 +258,32 @@ export class BattleService {
           this.attackEffect(enemyStack.enemy);
           // degrade armor
           const degradables = [];
-          if (this.characterService.characterState.equipment.head){
+          if (this.characterService.characterState.equipment.head) {
             degradables.push(this.characterService.characterState.equipment.head);
           }
-          if (this.characterService.characterState.equipment.body){
+          if (this.characterService.characterState.equipment.body) {
             degradables.push(this.characterService.characterState.equipment.body);
           }
-          if (this.characterService.characterState.equipment.legs){
+          if (this.characterService.characterState.equipment.legs) {
             degradables.push(this.characterService.characterState.equipment.legs);
           }
-          if (this.characterService.characterState.equipment.feet){
+          if (this.characterService.characterState.equipment.feet) {
             degradables.push(this.characterService.characterState.equipment.feet);
           }
-          if (degradables.length > 0){
+          if (degradables.length > 0) {
             this.degradeArmor(degradables[Math.floor(Math.random() * degradables.length)], damage);
           }
 
-          if (this.characterService.characterState.status.health.value <= 0){
-            if(enemyStack.enemy.name === "Death itself"){
+          if (this.characterService.characterState.status.health.value <= 0) {
+            if (enemyStack.enemy.name === "Death itself") {
               this.logService.addLogMessage(enemyStack.enemy.name + " overkilled you by " + Math.floor(-this.characterService.characterState.status.health.value) + " damage. You were defeated.", 'INJURY', 'EVENT');
             } else {
               this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
             }
-            if (!this.characterService.characterState.immortal){
+            if (!this.characterService.characterState.immortal) {
               this.characterService.characterState.dead = true;
             }
-            if (this.hellService?.inHell){
+            if (this.hellService?.inHell) {
               this.hellService.beaten = true;
               this.clearEnemies();
             }
@@ -296,10 +296,10 @@ export class BattleService {
     }
   }
 
-  youAttack(){
+  youAttack() {
     this.characterService.characterState.accuracy = Math.min((this.troubleKills + Math.sqrt(this.characterService.characterState.attributes.speed.value)) / this.troubleKills / 2, 1)
-    if (this.currentEnemy && this.characterService.characterState.status.health.value > 0){ // Check health for immortals
-      if (Math.random() > this.characterService.characterState.accuracy){
+    if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) { // Check health for immortals
+      if (Math.random() > this.characterService.characterState.accuracy) {
         this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " but miss.", 'STANDARD', 'COMBAT');
         return;
       }
@@ -307,83 +307,83 @@ export class BattleService {
       let damage = this.characterService.characterState.attackPower;
       const defense = this.currentEnemy.enemy.defense;
       if (defense >= 1) {
-        damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000 , (-damage + defense) / defense) );
+        damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
       }
       // pity damage
       if (damage < 1) {
         damage = 1;
       }
-      if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10){
+      if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10) {
         damage *= 2;
         this.characterService.characterState.status.mana.value -= 10;
       }
       let blowthrough = false;
-      if (this.enableMetalFist && this.characterService.characterState.status.mana.value > 10000){
+      if (this.enableMetalFist && this.characterService.characterState.status.mana.value > 10000) {
         let metalMultiplier = Math.log(this.characterService.characterState.attributes.metalLore.value) / Math.log(50);
-        if (metalMultiplier < 1){
+        if (metalMultiplier < 1) {
           metalMultiplier = 1;
         }
-        if (metalMultiplier > 100){
+        if (metalMultiplier > 100) {
           metalMultiplier = 100;
         }
         damage *= metalMultiplier;
         this.characterService.characterState.status.mana.value -= 10000;
       }
-      if (this.enablePyroclasm && this.characterService.characterState.status.mana.value > 10000){
+      if (this.enablePyroclasm && this.characterService.characterState.status.mana.value > 10000) {
         let fireMultiplier = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
-        if (fireMultiplier < 1){
+        if (fireMultiplier < 1) {
           fireMultiplier = 1;
         }
-        if (fireMultiplier > 10){
+        if (fireMultiplier > 10) {
           fireMultiplier = 10;
         }
         damage *= fireMultiplier;
         this.characterService.characterState.status.mana.value -= 10000;
         blowthrough = true;
       }
-      if (this.characterService.characterState.yinYangUnlocked){
+      if (this.characterService.characterState.yinYangUnlocked) {
         // TODO: tune this
         damage += damage * this.characterService.characterState.yinYangBalance;
       }
-      if (damage > this.highestDamageDealt){
+      if (damage > this.highestDamageDealt) {
         this.highestDamageDealt = damage;
       }
 
       let durabilityDamage = 1;
-      if (defense > 20000){
+      if (defense > 20000) {
         // TODO: tune this
         durabilityDamage += Math.sqrt(defense - 20000);
       }
       // degrade weapons
-      if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats){
+      if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats) {
         this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage;
         this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * 0.0001);
-        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect == "life"){
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect == "life") {
           this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.leftHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
         }
-        if (this.characterService.characterState.equipment.leftHand.weaponStats.durability <= 0){
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.durability <= 0) {
           this.inventoryService.addItem(this.characterService.characterState.equipment.leftHand);
           this.characterService.characterState.equipment.leftHand = null;
         }
       }
-      if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats){
+      if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats) {
         this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage;
         this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * 0.0001);
-        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect == "life"){
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect == "life") {
           this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.rightHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
         }
-        if (this.characterService.characterState.equipment.rightHand.weaponStats.durability <= 0){
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.durability <= 0) {
           this.inventoryService.addItem(this.characterService.characterState.equipment.rightHand);
           this.characterService.characterState.equipment.rightHand = null;
         }
       }
       let overage = this.damageEnemy(damage);
-      if (blowthrough){
-        while (overage > 0 && this.enemies.length > 0){
+      if (blowthrough) {
+        while (overage > 0 && this.enemies.length > 0) {
           // keep using extra damage until it's gone or the enemies are
           this.currentEnemy = this.enemies[0];
           overage = this.damageEnemy(overage);
@@ -392,8 +392,8 @@ export class BattleService {
     }
   }
 
-  damageEnemy(damage: number, customMessage = ""): number{
-    if (!this.currentEnemy){
+  damageEnemy(damage: number, customMessage = ""): number {
+    if (!this.currentEnemy) {
       return 0;
     }
     const enemyHealth = this.currentEnemy.enemy.health;
@@ -402,13 +402,13 @@ export class BattleService {
       customMessage = "You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage";
     }
     damage -= enemyHealth;
-    if (this.currentEnemy.enemy.health <= 0){
+    if (this.currentEnemy.enemy.health <= 0) {
       this.kills++;
       this.totalKills++;
       this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
-      for (const item of this.currentEnemy.enemy.loot){
+      for (const item of this.currentEnemy.enemy.loot) {
         const lootItem = this.itemRepoService.getItemById(item.id);
-        if (lootItem){
+        if (lootItem) {
           this.inventoryService.addItem(lootItem);
         } else {
           // the item was generated, not part of the repo, so just add it instead of using the lookup
@@ -417,7 +417,7 @@ export class BattleService {
       }
       this.currentEnemy.quantity--;
       this.defeatEffect(this.currentEnemy.enemy);
-      if (this.currentEnemy.quantity <= 0){
+      if (this.currentEnemy.quantity <= 0) {
         const index = this.enemies.indexOf(this.currentEnemy);
         this.enemies.splice(index, 1);
         this.currentEnemy = null;
@@ -431,40 +431,40 @@ export class BattleService {
     }
   }
 
-  fight(enemyStack: EnemyStack){
+  fight(enemyStack: EnemyStack) {
     this.currentEnemy = enemyStack;
   }
 
-  addEnemy(enemy: Enemy){
+  addEnemy(enemy: Enemy) {
     this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name === enemy.name) {
         // it matches an existing enemy, add it to the stack and bail out
-        if (!enemy.unique){
+        if (!enemy.unique) {
           enemyIterator.quantity++;
         }
         return;
       }
     }
     // it didn't match any, create a new enemyStack
-    this.enemies.push({enemy: enemy, quantity: 1});
-    if (this.currentEnemy === null){
+    this.enemies.push({ enemy: enemy, quantity: 1 });
+    if (this.currentEnemy === null) {
       this.currentEnemy = this.enemies[0];
     }
 
   }
 
-  clearEnemies(){
+  clearEnemies() {
     this.enemies = [];
     this.currentEnemy = null;
   }
 
   // generate a monster based on current troubleKills
-  trouble(){
-    if (this.enemies.length !== 0){
+  trouble() {
+    if (this.enemies.length !== 0) {
       return;
     }
-    if (this.hellService && this.hellService.inHell){
+    if (this.hellService && this.hellService.inHell) {
       // let hellService handle the trouble while we're in hell
       this.hellService.trouble();
       return;
@@ -475,7 +475,7 @@ export class BattleService {
     const qualityIndex = index % this.monsterQualities.length;
 
     let monsterName = this.monsterQualities[qualityIndex] + " " + this.monsterNames[nameIndex];
-    if (rank > 0){
+    if (rank > 0) {
       monsterName += " " + (rank + 1);
     }
 
@@ -492,21 +492,21 @@ export class BattleService {
     this.troubleKills++;
   }
 
-  degradeArmor(armor: Equipment, damage: number){
+  degradeArmor(armor: Equipment, damage: number) {
     let durabilityDamage = 1;
-    if (damage > 20000){
+    if (damage > 20000) {
       // TODO: tune this
       durabilityDamage += Math.sqrt(damage - 20000);
     }
-    if (armor.armorStats){
+    if (armor.armorStats) {
       armor.armorStats.durability -= durabilityDamage;
       armor.value -= 1 + Math.floor(armor.value * 0.0001);
-      if (armor.armorStats.effect == "life"){
+      if (armor.armorStats.effect == "life") {
         this.logService.addLogMessage("Your " + armor.name + " healed you for " + durabilityDamage + " as the enemy struck it.", "STANDARD", "COMBAT");
         this.characterService.characterState.status.health.value += durabilityDamage;
         this.characterService.characterState.checkOverage();
       }
-      if (armor.armorStats.durability <= 0){
+      if (armor.armorStats.durability <= 0) {
         // it broke, unequip it
         this.inventoryService.addItem(armor);
         this.characterService.characterState.equipment[armor.slot] = null;
@@ -514,11 +514,11 @@ export class BattleService {
     }
   }
 
-  defeatEffect(enemy: Enemy){
-    if (!enemy.defeatEffect){
+  defeatEffect(enemy: Enemy) {
+    if (!enemy.defeatEffect) {
       return;
     }
-    if (enemy.defeatEffect === "respawnDouble"){
+    if (enemy.defeatEffect === "respawnDouble") {
       // add two more of the same enemy
       this.logService.addLogMessage("They just keep coming! Two more " + enemy.name + " appear!", "STANDARD", "COMBAT");
       this.addEnemy({
@@ -544,12 +544,12 @@ export class BattleService {
     }
   }
 
-  attackEffect(enemy: Enemy){
-    if (!enemy.attackEffect){
+  attackEffect(enemy: Enemy) {
+    if (!enemy.attackEffect) {
       return;
     }
-    if (enemy.attackEffect === "feeder" && this.hellService){
-      if (enemy.hitTracker && enemy.hitTracker < 1){
+    if (enemy.attackEffect === "feeder" && this.hellService) {
+      if (enemy.hitTracker && enemy.hitTracker < 1) {
         enemy.hitTracker++;
       } else {
         // force feed on second hit

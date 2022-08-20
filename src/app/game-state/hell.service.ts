@@ -92,7 +92,7 @@ export class HellService {
     description: ['Burn mortal realm money to receive hell money.'],
     consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you 1 hell money.'],
     consequence: [() => {
-      if (this.characterService.characterState.money < 1e6){
+      if (this.characterService.characterState.money < 1e6) {
         return;
       }
       this.characterService.characterState.money -= 1e6;
@@ -115,17 +115,17 @@ export class HellService {
     description: ['Look for followers willing to help you.'],
     consequenceDescription: ['Uses 100 Stamina and 1000 hell money. Gives you a small chance of finding a follower.'],
     consequence: [() => {
-      if (this.characterService.characterState.hellMoney < 1000){
+      if (this.characterService.characterState.hellMoney < 1000) {
         this.logService.addLogMessage("You don't have enough hell money. The damned souls around you team up with the demons to give you a beating.", "INJURY", "EVENT");
         this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
-        if (this.characterService.characterState.status.health.value <= 0){
+        if (this.characterService.characterState.status.health.value <= 0) {
           this.beaten = true;
         }
         return;
       }
       this.characterService.characterState.status.stamina.value -= 100;
       this.characterService.characterState.hellMoney -= 1000;
-      if (Math.random() < 0.01){
+      if (Math.random() < 0.01) {
         this.followerService.generateFollower(false, "damned");
         this.logService.addLogMessage("Your recruiting efforts seem to infuriate the demons here.", "STANDARD", "EVENT");
       }
@@ -157,7 +157,7 @@ export class HellService {
         attack: 10,
         defense: 10,
         defeatEffect: "respawnDouble",
-        loot: [ ]
+        loot: []
       });
     }],
     resourceUse: [{
@@ -178,7 +178,7 @@ export class HellService {
     consequenceDescription: ['Uses 1 hell money.'],
     consequence: [() => {
       //TODO: tune this
-      if (this.characterService.characterState.hellMoney < 1){
+      if (this.characterService.characterState.hellMoney < 1) {
         return;
       }
       this.characterService.characterState.hellMoney--;
@@ -223,7 +223,7 @@ export class HellService {
     consequenceDescription: ['Uses 100,000 stamina and produces the worst hammer in the world.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 100000;
-      if (this.inventoryService.consume("metal", 1) > 0){
+      if (this.inventoryService.consume("metal", 1) > 0) {
         const newHammer: Equipment = {
           id: 'weapon',
           name: "Copper Hammer",
@@ -300,7 +300,7 @@ export class HellService {
     consequenceDescription: ['Focus your connection to fire and melt that sucker down.'],
     consequence: [() => {
       const numberSpawned = Math.log10(this.characterService.characterState.attributes.fireLore.value);
-      for (let i = 0; i < numberSpawned; i++){
+      for (let i = 0; i < numberSpawned; i++) {
         this.battleService.addEnemy({
           name: "Ice Golem",
           health: 1e15,
@@ -308,7 +308,7 @@ export class HellService {
           accuracy: 0.7,
           attack: 1e6,
           defense: 1e6,
-          loot: [ this.itemRepoService.items['iceCore'] ]
+          loot: [this.itemRepoService.items['iceCore']]
         });
       }
     }],
@@ -330,7 +330,7 @@ export class HellService {
     consequenceDescription: ['Focus your connection to water and turn that lava back to stone.'],
     consequence: [() => {
       const numberSpawned = Math.log10(this.characterService.characterState.attributes.waterLore.value);
-      for (let i = 0; i < numberSpawned; i++){
+      for (let i = 0; i < numberSpawned; i++) {
         this.battleService.addEnemy({
           name: "Lava Golem",
           health: 1e15,
@@ -338,7 +338,7 @@ export class HellService {
           accuracy: 0.7,
           attack: 1e6,
           defense: 1e6,
-          loot: [ this.itemRepoService.items['fireCore'] ]
+          loot: [this.itemRepoService.items['fireCore']]
         });
       }
     }],
@@ -425,13 +425,13 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 200000;
       // TODO: tune this
-      if (this.characterService.characterState.attributes.intelligence.value <= 1e24){
+      if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
       if (Math.random() < threshold) {
         this.exitFound = true;
-        if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)){
+        if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)) {
           this.hells[HellLevel.WrongfulDead].activities.push(this.teachTheWay);
           this.activityService.reloadActivities();
         }
@@ -457,7 +457,7 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 200000;
       // TODO: tune this
-      if (this.characterService.characterState.attributes.charisma.value <= 1e24){
+      if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
         return;
       }
       const numberTaught = Math.floor(Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24));
@@ -481,7 +481,7 @@ export class HellService {
     consequenceDescription: ['Uses 1000 Stamina.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
-      if (this.characterService.characterState.attributes.charisma.value <= 1e24){
+      if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24) * 0.000001);
@@ -507,12 +507,12 @@ export class HellService {
     consequenceDescription: ['Uses 1000 Stamina.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
-      if (this.characterService.characterState.attributes.intelligence.value <= 1e24){
+      if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
       if (Math.random() < threshold) {
-        if (this.inventoryService.consume("treasureMap") > 0){
+        if (this.inventoryService.consume("treasureMap") > 0) {
           this.inventoryService.addItem(this.itemRepoService.items["stolenRelic"]);
         }
       }
@@ -535,12 +535,12 @@ export class HellService {
     consequenceDescription: ['Uses 1000 Stamina.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
-      if (this.characterService.characterState.attributes.speed.value <= 1e24){
+      if (this.characterService.characterState.attributes.speed.value <= 1e24) {
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.speed.value - 1e24) * 0.000001);
       if (Math.random() < threshold) {
-        if (this.inventoryService.consume("stolenRelic") > 0){
+        if (this.inventoryService.consume("stolenRelic") > 0) {
           this.relicsReturned++;
         }
       }
@@ -566,7 +566,7 @@ export class HellService {
       // TODO: tune this
       const damage = Math.max(100000 - (this.characterService.characterState.attributes.toughness.value / 1e24), 100);
       this.characterService.characterState.status.health.value -= damage;
-      if (this.characterService.characterState.status.health.value <= 0){
+      if (this.characterService.characterState.status.health.value <= 0) {
         this.beaten = true;
       } else {
         this.timesCrushed++;
@@ -590,7 +590,7 @@ export class HellService {
     consequenceDescription: ['Uses 500,000 stamina because hellish legalize is so incredibly boring.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 500000;
-      if (this.characterService.characterState.attributes.intelligence.value <= 1e24){
+      if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
@@ -622,24 +622,24 @@ export class HellService {
   ) {
 
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.currentHell < 0){
+      if (this.currentHell < 0) {
         // not currently in a hell, bail out
         return;
       }
       const hell = this.hells[this.currentHell];
-      if (hell.dailyEffect){
+      if (hell.dailyEffect) {
         hell.dailyEffect();
       }
-      if (this.beaten){
+      if (this.beaten) {
         this.beaten = false;
         this.logService.addLogMessage("You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm.", "INJURY", "EVENT");
-        if (hell.exitEffect){
+        if (hell.exitEffect) {
           hell.exitEffect();
         }
         this.currentHell = -1;
         this.activityService.reloadActivities();
       }
-      if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()){
+      if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()) {
         hell.completeEffect();
         this.completedHellTasks.push(this.currentHell);
       }
@@ -650,12 +650,12 @@ export class HellService {
     });
   }
 
-  reset(){
+  reset() {
     // reincarnation gets you out and back to the mortal realm
-    if (this.inHell){
-      if (this.currentHell > 0){
+    if (this.inHell) {
+      if (this.currentHell > 0) {
         const leavingHell = this.hells[this.currentHell];
-        if (leavingHell.exitEffect){
+        if (leavingHell.exitEffect) {
           leavingHell.exitEffect();
         }
       }
@@ -665,11 +665,11 @@ export class HellService {
     }
   }
 
-  trouble(){
+  trouble() {
     // TODO: tune all of these values, and they should all scale up the longer you stay in/closer you get to finishing the hell
-    if (this.currentHell === HellLevel.TongueRipping){
+    if (this.currentHell === HellLevel.TongueRipping) {
       let extraPower = 0;
-      for (const follower of this.followerService.followers){
+      for (const follower of this.followerService.followers) {
         extraPower += follower.power;
       }
       // monsters get stronger the more you've recruited/trained
@@ -681,9 +681,9 @@ export class HellService {
         accuracy: 0.50,
         attack: 1e6 + (1e4 * extraPower),
         defense: 1e8 + (1e7 * extraPower),
-        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption") ]
+        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption")]
       });
-    } else if (this.currentHell === HellLevel.Scissors){
+    } else if (this.currentHell === HellLevel.Scissors) {
       const extraPower = this.inventoryService.getQuantityByName("fingers");
       this.battleService.addEnemy({
         name: "Scissors Demon",
@@ -692,9 +692,9 @@ export class HellService {
         accuracy: 0.50,
         attack: 1e6 + (1e4 * extraPower),
         defense: 1e8 + (1e7 * extraPower),
-        loot: [ this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption"), this.itemRepoService.items['fingers'] ]
+        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption"), this.itemRepoService.items['fingers']]
       });
-    } else if (this.currentHell === HellLevel.TreesOfKnives){
+    } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
         name: "Hungry Crow",
         health: 1e6,
@@ -702,9 +702,9 @@ export class HellService {
         accuracy: 1,
         attack: 1e6,
         defense: 1e6,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
+        loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
-    } else if (this.currentHell === HellLevel.Mirrors){
+    } else if (this.currentHell === HellLevel.Mirrors) {
       this.battleService.addEnemy({
         name: "Your Reflection",
         health: this.characterService.characterState.status.health.value,
@@ -712,9 +712,9 @@ export class HellService {
         accuracy: this.characterService.characterState.accuracy,
         attack: this.characterService.characterState.attackPower,
         defense: this.characterService.characterState.defense,
-        loot: [ this.itemRepoService.items['mirrorShard'] ]
+        loot: [this.itemRepoService.items['mirrorShard']]
       });
-    } else if (this.currentHell === HellLevel.CauldronsOfOil){
+    } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: "Oiled Demon",
         health: 1e6,
@@ -722,11 +722,11 @@ export class HellService {
         accuracy: 1,
         attack: 1e6,
         defense: 1e6,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
+        loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
-    } else if (this.currentHell === HellLevel.CattlePit){
-      if (this.animalsHealed <= 1000000){
-        for (let i = 0; i < 10; i++){
+    } else if (this.currentHell === HellLevel.CattlePit) {
+      if (this.animalsHealed <= 1000000) {
+        for (let i = 0; i < 10; i++) {
           this.battleService.addEnemy({
             name: "Demonic Cow",
             health: 1e6,
@@ -734,11 +734,11 @@ export class HellService {
             accuracy: 1,
             attack: 1e6,
             defense: 1e6,
-            loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
+            loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
           });
         }
       }
-    } else if (this.currentHell === HellLevel.MortarsAndPestles){
+    } else if (this.currentHell === HellLevel.MortarsAndPestles) {
       this.battleService.addEnemy({
         name: "Force Feeder",
         health: 1e6,
@@ -748,9 +748,9 @@ export class HellService {
         defense: 1e6,
         attackEffect: "feeder",
         hitTracker: 0,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
+        loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
-    } else if (this.currentHell === HellLevel.Dismemberment){
+    } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
         name: "Axe Demon",
         health: 1e6,
@@ -758,9 +758,9 @@ export class HellService {
         accuracy: 1,
         attack: 1e6,
         defense: 1e6,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
+        loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
-    } else if (this.currentHell === HellLevel.Saws){
+    } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
         name: "Saw Demon",
         health: 1e6,
@@ -768,13 +768,13 @@ export class HellService {
         accuracy: 1,
         attack: 1e6,
         defense: 1e6,
-        loot: [ this.inventoryService.generateSpiritGem(25, "corruption") ]
+        loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
     }
   }
 
-  fightHellBoss(){
-    if (this.currentHell === HellLevel.TongueRipping){
+  fightHellBoss() {
+    if (this.currentHell === HellLevel.TongueRipping) {
       this.battleService.addEnemy({
         name: "Gorbolash the Gossip Gasher",
         // TODO: figure out stats
@@ -783,9 +783,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownTongueRippers'] ]
+        loot: [this.itemRepoService.items['hellCrownTongueRippers']]
       });
-    } else if (this.currentHell === HellLevel.Scissors){
+    } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
         name: "Malgorath the Marriage Masher",
         // TODO: figure out stats
@@ -794,9 +794,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownScissors'] ]
+        loot: [this.itemRepoService.items['hellCrownScissors']]
       });
-    } else if (this.currentHell === HellLevel.TreesOfKnives){
+    } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
         name: "Flamgolus the Family Flayer",
         // TODO: figure out stats
@@ -805,9 +805,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownTreesOfKnives'] ]
+        loot: [this.itemRepoService.items['hellCrownTreesOfKnives']]
       });
-    } else if (this.currentHell === HellLevel.Mirrors){
+    } else if (this.currentHell === HellLevel.Mirrors) {
       this.battleService.addEnemy({
         name: "Myorshuggath the Mirror Master",
         // TODO: figure out stats
@@ -816,9 +816,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownMirrors'] ]
+        loot: [this.itemRepoService.items['hellCrownMirrors']]
       });
-    } else if (this.currentHell === HellLevel.Steamers){
+    } else if (this.currentHell === HellLevel.Steamers) {
       this.battleService.addEnemy({
         name: "Stactolus the Steamer",
         // TODO: figure out stats
@@ -827,9 +827,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownSteamers'] ]
+        loot: [this.itemRepoService.items['hellCrownSteamers']]
       });
-    } else if (this.currentHell === HellLevel.CopperPillars){
+    } else if (this.currentHell === HellLevel.CopperPillars) {
       this.battleService.addEnemy({
         name: "Ignificor the Forever Burning",
         // TODO: figure out stats
@@ -838,9 +838,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownPillars'] ]
+        loot: [this.itemRepoService.items['hellCrownPillars']]
       });
-    } else if (this.currentHell === HellLevel.MountainOfKnives){
+    } else if (this.currentHell === HellLevel.MountainOfKnives) {
       this.battleService.addEnemy({
         name: "Malignus the Murderer Muncher",
         // TODO: figure out stats
@@ -849,9 +849,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownMountainOfKnives'] ]
+        loot: [this.itemRepoService.items['hellCrownMountainOfKnives']]
       });
-    } else if (this.currentHell === HellLevel.MountainOfIce){
+    } else if (this.currentHell === HellLevel.MountainOfIce) {
       this.battleService.addEnemy({
         name: "The Cheat",
         // TODO: figure out stats
@@ -860,9 +860,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownMountainOfIce'] ]
+        loot: [this.itemRepoService.items['hellCrownMountainOfIce']]
       });
-    } else if (this.currentHell === HellLevel.CauldronsOfOil){
+    } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: "Nestor the Molestor",
         // TODO: figure out stats
@@ -871,9 +871,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownCauldronsOfOil'] ]
+        loot: [this.itemRepoService.items['hellCrownCauldronsOfOil']]
       });
-    } else if (this.currentHell === HellLevel.CattlePit){
+    } else if (this.currentHell === HellLevel.CattlePit) {
       this.battleService.addEnemy({
         name: "The Cow Emperor",
         // TODO: figure out stats
@@ -882,9 +882,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownCattlePit'] ]
+        loot: [this.itemRepoService.items['hellCrownCattlePit']]
       });
-    } else if (this.currentHell === HellLevel.CrushingBoulder){
+    } else if (this.currentHell === HellLevel.CrushingBoulder) {
       this.battleService.addEnemy({
         name: "The Crusher",
         // TODO: figure out stats
@@ -893,9 +893,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownCrushingBoulder'] ]
+        loot: [this.itemRepoService.items['hellCrownCrushingBoulder']]
       });
-    } else if (this.currentHell === HellLevel.MortarsAndPestles){
+    } else if (this.currentHell === HellLevel.MortarsAndPestles) {
       this.battleService.addEnemy({
         name: "Glorbulskath the Gluttonous",
         // TODO: figure out stats
@@ -904,9 +904,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownMortarsAndPestles'] ]
+        loot: [this.itemRepoService.items['hellCrownMortarsAndPestles']]
       });
-    } else if (this.currentHell === HellLevel.BloodPool){
+    } else if (this.currentHell === HellLevel.BloodPool) {
       this.battleService.addEnemy({
         name: "Gnarlyathor the Ever-Bleeding",
         // TODO: figure out stats
@@ -915,9 +915,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownBloodPool'] ]
+        loot: [this.itemRepoService.items['hellCrownBloodPool']]
       });
-    } else if (this.currentHell === HellLevel.WrongfulDead){
+    } else if (this.currentHell === HellLevel.WrongfulDead) {
       this.battleService.addEnemy({
         name: "Azoth-Raketh the Storm Master",
         // TODO: figure out stats
@@ -926,9 +926,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownWrongfulDead'] ]
+        loot: [this.itemRepoService.items['hellCrownWrongfulDead']]
       });
-    } else if (this.currentHell === HellLevel.Dismemberment){
+    } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
         name: "Druskall the Dismemberer",
         // TODO: figure out stats
@@ -937,9 +937,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownDismemberment'] ]
+        loot: [this.itemRepoService.items['hellCrownDismemberment']]
       });
-    } else if (this.currentHell === HellLevel.MountainOfFire){
+    } else if (this.currentHell === HellLevel.MountainOfFire) {
       this.battleService.addEnemy({
         name: "Magmar the Lava King",
         // TODO: figure out stats
@@ -948,9 +948,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownFireMountain'] ]
+        loot: [this.itemRepoService.items['hellCrownFireMountain']]
       });
-    } else if (this.currentHell === HellLevel.Mills){
+    } else if (this.currentHell === HellLevel.Mills) {
       this.battleService.addEnemy({
         name: "Grimstone The Human Grinder",
         // TODO: figure out stats
@@ -959,9 +959,9 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownMills'] ]
+        loot: [this.itemRepoService.items['hellCrownMills']]
       });
-    } else if (this.currentHell === HellLevel.Saws){
+    } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
         name: "Crognaslark the Corrupter",
         health: 1,
@@ -969,7 +969,7 @@ export class HellService {
         accuracy: 0.8,
         attack: 1,
         defense: 1,
-        loot: [ this.itemRepoService.items['hellCrownSaws'] ]
+        loot: [this.itemRepoService.items['hellCrownSaws']]
       });
     }
   }
@@ -1011,9 +1011,9 @@ export class HellService {
     this.activityService.reloadActivities();
   }
 
-  getActivityList(){
+  getActivityList() {
     const newList: Activity[] = [];
-    if (this.currentHell === -1){
+    if (this.currentHell === -1) {
       // between hells now, choose which one to enter
       this.activityService.activityHeader = "Choose your Hell";
       this.activityService.activityHeaderDescription = "The heavens have cast you down to the depths of hell. You'll need to defeat every level to escape.";
@@ -1022,14 +1022,14 @@ export class HellService {
       this.activityService.activityHeader = this.hells[this.currentHell].name;
       this.activityService.activityHeaderDescription = this.hells[this.currentHell].description;
       const hell = this.hells[this.currentHell];
-      for (const activity of hell.activities){
-        if (activity){
+      for (const activity of hell.activities) {
+        if (activity) {
           activity.projectionOnly = false;
           newList.push(activity);
         }
       }
-      for (const activity of hell.projectionActivities){
-        if (activity){
+      for (const activity of hell.projectionActivities) {
+        if (activity) {
           activity.projectionOnly = true;
           newList.push(activity);
         }
@@ -1039,7 +1039,7 @@ export class HellService {
     return newList;
   }
 
-  flee(): Activity{
+  flee(): Activity {
     return {
       level: 0,
       name: ["Escape from this hell"],
@@ -1050,7 +1050,7 @@ export class HellService {
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
         const leavingHell = this.hells[this.currentHell];
-        if (leavingHell.exitEffect){
+        if (leavingHell.exitEffect) {
           leavingHell.exitEffect();
         }
         this.currentHell = -1;
@@ -1070,35 +1070,35 @@ export class HellService {
     newList.push(this.activityService.CoreCultivation);
     newList.push(this.activityService.SoulCultivation);
     newList.push(this.activityService.InfuseBody);
-    if (this.activityService.purifyGemsUnlocked){
+    if (this.activityService.purifyGemsUnlocked) {
       newList.push(this.activityService.PurifyGems);
     }
     newList.push(this.activityService.InfuseEquipment);
-    for (const hell of this.hells){
+    for (const hell of this.hells) {
       let consequenceDescription = "";
-      if (this.completedHellBosses.includes(hell.index)){
+      if (this.completedHellBosses.includes(hell.index)) {
         consequenceDescription = "You have proven your mastery over this hell."
-      } else if (this.completedHellTasks.includes(hell.index)){
+      } else if (this.completedHellTasks.includes(hell.index)) {
         consequenceDescription = "The Lord of this Hell is available to challenge."
       }
       newList.push({
-          level: 0,
-          name: ["Enter the " + hell.name],
-          activityType: ActivityType.Hell + hell.index,
-          description: [hell.description],
-          consequenceDescription: [consequenceDescription],
-          consequence: [() => {
-            this.currentHell = hell.index;
-            const newHell = this.hells[hell.index];
-            if (newHell.entryEffect){
-              newHell.entryEffect();
-            }
-            this.activityService.reloadActivities();
-          }],
-          requirements: [{
-          }],
-          unlocked: true,
-          skipApprenticeshipLevel: 0
+        level: 0,
+        name: ["Enter the " + hell.name],
+        activityType: ActivityType.Hell + hell.index,
+        description: [hell.description],
+        consequenceDescription: [consequenceDescription],
+        consequence: [() => {
+          this.currentHell = hell.index;
+          const newHell = this.hells[hell.index];
+          if (newHell.entryEffect) {
+            newHell.entryEffect();
+          }
+          this.activityService.reloadActivities();
+        }],
+        requirements: [{
+        }],
+        unlocked: true,
+        skipApprenticeshipLevel: 0
       })
     }
   }
@@ -1127,7 +1127,7 @@ export class HellService {
       hint: "It's hard to talk with all these demons going for your mouth, but maybe if you can get some help from the other prisoners here you could take control of this place.",
       progress: () => {
         let totalPower = 0;
-        for (const follower of this.followerService.followers){
+        for (const follower of this.followerService.followers) {
           totalPower += follower.power;
         }
         return totalPower;
@@ -1137,7 +1137,7 @@ export class HellService {
       },
       successCheck: () => {
         let totalPower = 0;
-        for (const follower of this.followerService.followers){
+        for (const follower of this.followerService.followers) {
           totalPower += follower.power;
         }
         return totalPower > 5000;
@@ -1240,10 +1240,10 @@ export class HellService {
       },
       dailyEffect: () => {
         // take damage from the steam and get robbed by troublemakers
-        if (this.inventoryService.consume("iceCore") < 0){
+        if (this.inventoryService.consume("iceCore") < 0) {
           this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.05);
         }
-        if (Math.random() < 0.2){
+        if (Math.random() < 0.2) {
           this.logService.addLogMessage("As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?", "STANDARD", "EVENT")
           this.characterService.characterState.hellMoney -= this.characterService.characterState.hellMoney * 0.1;
         }
@@ -1257,7 +1257,7 @@ export class HellService {
       hint: "There so many troublemakers here that deserve some payback from you. I wonder if you can take them all on.",
       progress: () => {
         let totalEnemies = 0;
-        for (const enemyStack of this.battleService.enemies){
+        for (const enemyStack of this.battleService.enemies) {
           totalEnemies += enemyStack.quantity;
         }
         return totalEnemies;
@@ -1267,7 +1267,7 @@ export class HellService {
       },
       successCheck: () => {
         let totalEnemies = 0;
-        for (const enemyStack of this.battleService.enemies){
+        for (const enemyStack of this.battleService.enemies) {
           totalEnemies += enemyStack.quantity;
         }
         return totalEnemies > 100; // tune this
@@ -1285,14 +1285,14 @@ export class HellService {
       },
       dailyEffect: () => {
         // take damage from the pillar
-        if (this.inventoryService.consume("iceCore") < 0){
+        if (this.inventoryService.consume("iceCore") < 0) {
           this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
         }
       },
       completeEffect: () => {
         this.logService.addLogMessage("You finally forge a hammer powerful enough to break through the chains that bind you to the pillar. The Lord of this Hell comes to investigate all the commotion as the chains fall to the ground.", "STANDARD", "STORY")
       },
-      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.copperMining, this.forgeHammer ],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.copperMining, this.forgeHammer],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       progress: () => {
@@ -1302,7 +1302,7 @@ export class HellService {
         return 100;
       },
       successCheck: () => {
-        return ((this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0)  > 100); // tune this
+        return ((this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0) > 100); // tune this
       }
     },
     {
@@ -1312,11 +1312,11 @@ export class HellService {
       dailyEffect: () => {
         // TODO: tune this
         let damage = (this.battleService.totalKills / 10) - (this.mountainSteps * 10);
-        if (damage < 0){
+        if (damage < 0) {
           damage = 0;
         }
         this.characterService.characterState.status.health.value -= damage;
-        if (damage > 0){
+        if (damage > 0) {
           this.logService.addLogMessage("The mountain's blades shred you for " + damage + " damage.", "INJURY", "COMBAT");
         }
       },
@@ -1347,7 +1347,7 @@ export class HellService {
       dailyEffect: () => {
         // TODO: tune this
         const damage = 1000;
-        if (this.inventoryService.consume("fireCore") < 0){
+        if (this.inventoryService.consume("fireCore") < 0) {
           this.characterService.characterState.status.health.value -= damage;
           this.logService.addLogMessage("The mountain's ice freezes you for " + damage + " damage.", "INJURY", "COMBAT");
         }
@@ -1373,8 +1373,8 @@ export class HellService {
       description: "Torment for rapists and abusers. Next on the menu: deep fried immortal.",
       index: HellLevel.CauldronsOfOil,
       dailyEffect: () => {
-        if (!this.completedHellTasks.includes(HellLevel.CauldronsOfOil)){
-          if (this.inventoryService.consume("iceCore") < 0){
+        if (!this.completedHellTasks.includes(HellLevel.CauldronsOfOil)) {
+          if (this.inventoryService.consume("iceCore") < 0) {
             this.logService.addLogMessage("The ice cores you brought in with you make the oil sputter and pop, baking you in a cloud of superheated steam.", "INJURY", "EVENT");
             this.characterService.characterState.status.health.value -= 100000;
             return;
@@ -1383,18 +1383,18 @@ export class HellService {
           this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
         }
         // chance to drop weapon
-        if (Math.random() < 0.1){
+        if (Math.random() < 0.1) {
           this.logService.addLogMessage("Your weapons slip from your oily hands.", "INJURY", "COMBAT");
           this.inventoryService.autoequipBestEnabled = false;
           let item = this.characterService.characterState.equipment.rightHand;
           // check for existence and make sure there's an empty slot for it
-          if (item){
+          if (item) {
             this.inventoryService.addItem(item as Item);
             this.characterService.characterState.equipment.rightHand = null;
           }
           item = this.characterService.characterState.equipment.leftHand;
           // check for existence and make sure there's an empty slot for it
-          if (item){
+          if (item) {
             this.inventoryService.addItem(item as Item);
             this.characterService.characterState.equipment.leftHand = null;
           }
@@ -1441,14 +1441,14 @@ export class HellService {
       description: "Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them. Atlas had it easy compared to these people.",
       index: HellLevel.CrushingBoulder,
       dailyEffect: () => {
-        if (this.boulderHeight > 100){
+        if (this.boulderHeight > 100) {
           return;
         }
         // TODO: tune this
         const damage = 500;
         this.characterService.characterState.status.health.value -= damage;
         this.logService.addLogMessage("The boulder crushes you for " + damage + " damage.", "INJURY", "COMBAT");
-        if (Math.random() < 0.1){
+        if (Math.random() < 0.1) {
           this.battleService.addEnemy({
             name: "An Annoying Imp",
             health: 10,
@@ -1456,7 +1456,7 @@ export class HellService {
             accuracy: 1,
             attack: 100,
             defense: 100,
-            loot: [ ]
+            loot: []
           });
         }
       },
@@ -1530,8 +1530,8 @@ export class HellService {
       description: "Torment for those who gave up their lives too early. Fortunately you've probably never done that. The pounding Rains of Pain and the blowing Winds of Sorrow give unrelenting misery to everyone here.",
       index: HellLevel.WrongfulDead,
       entryEffect: () => {
-        if (this.exitFound){
-          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)){
+        if (this.exitFound) {
+          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)) {
             this.hells[HellLevel.WrongfulDead].activities.push(this.teachTheWay);
           }
         }
@@ -1583,7 +1583,7 @@ export class HellService {
       index: HellLevel.MountainOfFire,
       dailyEffect: () => {
         // take damage from the volcano
-        if (this.inventoryService.consume("iceCore") < 0){
+        if (this.inventoryService.consume("iceCore") < 0) {
           this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
         }
       },
@@ -1629,7 +1629,7 @@ export class HellService {
       description: "Torment for swindlers and business cheats. The demons sharpen their saws and grin at you. You wish now that you'd stayed out of politics.",
       index: 0,
       dailyEffect: () => {
-        if (this.contractsExamined <= 100000){
+        if (this.contractsExamined <= 100000) {
           // saw damage
           this.characterService.characterState.status.health.value -= 100;
         }

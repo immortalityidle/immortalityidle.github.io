@@ -154,12 +154,12 @@ export class ImpossibleTaskService {
   ) {
 
     mainLoopService.longTickSubject.subscribe(() => {
-      if (this.nextTask >= this.tasks.length){
+      if (this.nextTask >= this.tasks.length) {
         // all tasks done
         return;
       }
-      for (let i = 0; i < this.tasks.length; i++){
-        if (this.taskProgress[i].complete && this.tasks[i].taskType === this.nextTask){
+      for (let i = 0; i < this.tasks.length; i++) {
+        if (this.taskProgress[i].complete && this.tasks[i].taskType === this.nextTask) {
           this.nextTask++;
           return;
         }
@@ -171,37 +171,37 @@ export class ImpossibleTaskService {
     });
   }
 
-  markPriorCompletions(){
+  markPriorCompletions() {
     let taskComplete = false;
     this.nextTask = -1;
-    for (let taskIndex = this.tasks.length - 1; taskIndex >= 0; taskIndex--){
-      if (this.taskProgress[taskIndex].complete || taskComplete){ // Sanity check for the latest complete task
+    for (let taskIndex = this.tasks.length - 1; taskIndex >= 0; taskIndex--) {
+      if (this.taskProgress[taskIndex].complete || taskComplete) { // Sanity check for the latest complete task
         taskComplete = true;
         this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
         this.taskProgress[taskIndex].complete = true;
       }
-      if(taskComplete && this.nextTask < 0){
+      if (taskComplete && this.nextTask < 0) {
         this.nextTask = taskIndex;
-      } else if (taskIndex === 0){
+      } else if (taskIndex === 0) {
         this.nextTask = 0;
       }
     }
   }
 
 
-  reset(){
+  reset() {
     this.markPriorCompletions();
-    for (let taskIndex = this.tasks.length - 1; taskIndex >= 0; taskIndex--){
-      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired){
-        if (this.taskProgress[taskIndex].complete){
+    for (let taskIndex = this.tasks.length - 1; taskIndex >= 0; taskIndex--) {
+      if (this.taskProgress[taskIndex].progress < this.tasks[taskIndex].progressRequired) {
+        if (this.taskProgress[taskIndex].complete) {
           this.taskProgress[taskIndex].progress = this.tasks[taskIndex].progressRequired;
-        } else if (taskIndex !== ImpossibleTaskType.BuildTower){
+        } else if (taskIndex !== ImpossibleTaskType.BuildTower) {
           this.taskProgress[taskIndex].progress = 0;
         }
       }
     }
     this.activeTaskIndex = -1;
-    if (!this.activityService){
+    if (!this.activityService) {
       this.activityService = this.injector.get(ActivityService);
     }
     this.activityService.reloadActivities();
@@ -255,39 +255,39 @@ export class ImpossibleTaskService {
       },
     ];
     this.impossibleTasksUnlocked = properties.impossibleTasksUnlocked;
-    if (properties.activeTaskIndex === undefined){
+    if (properties.activeTaskIndex === undefined) {
       this.activeTaskIndex = -1;
     } else {
       this.activeTaskIndex = properties.activeTaskIndex;
     }
     this.markPriorCompletions();
-    if (!this.activityService){
+    if (!this.activityService) {
       this.activityService = this.injector.get(ActivityService);
     }
     this.activityService.reloadActivities();
   }
 
-  checkCompletion(){
-    if (this.activeTaskIndex < 0){
+  checkCompletion() {
+    if (this.activeTaskIndex < 0) {
       return;
     }
-    if (this.taskProgress[this.activeTaskIndex].progress >= this.tasks[this.activeTaskIndex].progressRequired){
+    if (this.taskProgress[this.activeTaskIndex].progress >= this.tasks[this.activeTaskIndex].progressRequired) {
       this.taskProgress[this.activeTaskIndex].complete = true;
       this.stopTask();
     }
   }
 
-  startTask(){
+  startTask() {
     this.activeTaskIndex = this.nextTask;
-    if (!this.activityService){
+    if (!this.activityService) {
       this.activityService = this.injector.get(ActivityService);
     }
     this.activityService.reloadActivities();
-    if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath){
+    if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
       this.battleService.addEnemy({
         name: "Death itself",
-        health: 1e20, 
-        maxHealth: 1e20, 
+        health: 1e20,
+        maxHealth: 1e20,
         accuracy: 0.99,
         attack: 3e8,
         defense: 3e8,
@@ -299,13 +299,13 @@ export class ImpossibleTaskService {
     }
   }
 
-  stopTask(){
-    if (this.activeTaskIndex === ImpossibleTaskType.Swim){
+  stopTask() {
+    if (this.activeTaskIndex === ImpossibleTaskType.Swim) {
       // back to the surface with you!
       this.taskProgress[this.activeTaskIndex].progress = 0;
     }
     this.activeTaskIndex = -1;
-    if (!this.activityService){
+    if (!this.activityService) {
       this.activityService = this.injector.get(ActivityService);
     }
     this.activityService.reloadActivities();

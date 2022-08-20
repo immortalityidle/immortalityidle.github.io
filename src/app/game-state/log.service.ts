@@ -23,7 +23,7 @@ export interface LogProperties {
 })
 export class LogService {
 
-  logTopics: LogTopic[] = ['STORY','EVENT'];
+  logTopics: LogTopic[] = ['STORY', 'EVENT'];
   newStory = "";
   newEvents = "";
   newCombat = "";
@@ -37,7 +37,7 @@ export class LogService {
   currentLog: Log[] = [];
 
   constructor(
-    
+
     mainLoopService: MainLoopService
   ) {
     mainLoopService.frameSubject.subscribe(() => {
@@ -50,7 +50,7 @@ export class LogService {
   }
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
-    let log  = this.eventLog;
+    let log = this.eventLog;
     if (topic === 'COMBAT') {
       log = this.combatLog;
     } else if (topic === 'STORY') {
@@ -75,10 +75,10 @@ export class LogService {
       // Repeat Found
       const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message);
       let repeatNumber = 2;
-      if(hasRepeatNumber) {
+      if (hasRepeatNumber) {
         repeatNumber = parseInt(hasRepeatNumber[1]) + 1;
       }
-      
+
       // Update message reference
       log[0].message = `${newMessage.message} (${repeatNumber})`;
     }
@@ -87,9 +87,9 @@ export class LogService {
     if (!this.logTopics.includes(topic)) {
       if (topic === 'STORY') {
         this.newStory = " (new)";
-      } else if (topic === 'EVENT'){
+      } else if (topic === 'EVENT') {
         this.newEvents = " (new)";
-      } else if (topic === 'CRAFTING'){
+      } else if (topic === 'CRAFTING') {
         this.newCrafting = " (new)";
       } else if (topic === 'COMBAT') {
         this.newCombat = " (new)";
@@ -108,25 +108,25 @@ export class LogService {
 
   setProperties(properties: LogProperties) {
     this.storyLog = properties.storyLog || [];
-    this.logTopics = properties.logTopics || ['STORY','EVENT'];
+    this.logTopics = properties.logTopics || ['STORY', 'EVENT'];
     this.updateLogTopics();
   }
 
-  enableLogTopic(topic: LogTopic, enabled: boolean){
-    if (!enabled && this.logTopics.includes(topic)){
-      for (let index = 0; index < this.logTopics.length; index++){
-        if (this.logTopics[index] === topic){
+  enableLogTopic(topic: LogTopic, enabled: boolean) {
+    if (!enabled && this.logTopics.includes(topic)) {
+      for (let index = 0; index < this.logTopics.length; index++) {
+        if (this.logTopics[index] === topic) {
           this.logTopics.splice(index, 1);
         }
       }
       this.updateLogTopics();
-    } else if (enabled && !this.logTopics.includes(topic)){
+    } else if (enabled && !this.logTopics.includes(topic)) {
       this.logTopics.push(topic);
       this.updateLogTopics();
     }
   }
 
-  updateLogTopics(){
+  updateLogTopics() {
     const logs: Log[] = [];
 
     // limit logs to last 300 messages
@@ -135,32 +135,32 @@ export class LogService {
     this.craftingLog = this.craftingLog.slice(-300);
     this.followerLog = this.followerLog.slice(-300);
 
-    if (this.logTopics.includes('STORY')){
+    if (this.logTopics.includes('STORY')) {
       this.newStory = "";
       logs.push(...this.storyLog);
     }
-    if (this.logTopics.includes('EVENT')){
+    if (this.logTopics.includes('EVENT')) {
       this.newEvents = "";
       logs.push(...this.eventLog);
     }
-    if (this.logTopics.includes('COMBAT')){
+    if (this.logTopics.includes('COMBAT')) {
       this.newCombat = "";
       logs.push(...this.combatLog);
     }
-    if (this.logTopics.includes('CRAFTING')){
+    if (this.logTopics.includes('CRAFTING')) {
       this.newCrafting = "";
       logs.push(...this.craftingLog);
     }
-    if (this.logTopics.includes('FOLLOWER')){
+    if (this.logTopics.includes('FOLLOWER')) {
       this.newFollower = "";
       logs.push(...this.followerLog);
     }
 
-    if (logs.length === 0){
+    if (logs.length === 0) {
       return;
     }
-    logs.sort((a,b) => b.timestamp - a.timestamp);
-    this.currentLog = logs.slice(0,299);
+    logs.sort((a, b) => b.timestamp - a.timestamp);
+    this.currentLog = logs.slice(0, 299);
   }
 
 }

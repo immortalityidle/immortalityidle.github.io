@@ -212,20 +212,20 @@ export class InventoryService {
     this.autoSellOldGemsUnlocked = false;
     this.autoSellOldGemsEnabled = false;
 
-    for (let i = 0; i < this.maxItems; i++){
+    for (let i = 0; i < this.maxItems; i++) {
       this.itemStacks.push(null);
     }
 
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead){
+      if (this.characterService.characterState.dead) {
         return;
       }
       this.eatFood();
-      if (this.mergeCounter >= 20){
-        if (this.autoWeaponMergeUnlocked){
+      if (this.mergeCounter >= 20) {
+        if (this.autoWeaponMergeUnlocked) {
           this.autoWeaponMerge();
         }
-        if (this.autoArmorMergeUnlocked){
+        if (this.autoArmorMergeUnlocked) {
           this.autoArmorMerge();
         }
         this.mergeCounter = 0;
@@ -234,30 +234,30 @@ export class InventoryService {
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead){
+      if (this.characterService.characterState.dead) {
         return;
       }
       //if autoequip is unlocked, but automerge isn't, equip best
       //automerge will merge into equipped if both are unlocked
-      if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked && this.autoequipBestEnabled){
+      if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked && this.autoequipBestEnabled) {
         this.autoequipWeapons();
       }
-      if (this.autoequipBestArmor && this.autoArmorMergeUnlocked && this.autoequipBestEnabled){
+      if (this.autoequipBestArmor && this.autoArmorMergeUnlocked && this.autoequipBestEnabled) {
         this.autoequipArmor();
       }
-      for (const key of ["head","body","legs","feet"] as EquipmentPosition[]){
+      for (const key of ["head", "body", "legs", "feet"] as EquipmentPosition[]) {
         const item = this.characterService.characterState.equipment[key]
-        if(item){
+        if (item) {
           this.updateArmorDescription(item);
         }
       }
-      for (const key of ["leftHand","rightHand"] as EquipmentPosition[]){
+      for (const key of ["leftHand", "rightHand"] as EquipmentPosition[]) {
         const item = this.characterService.characterState.equipment[key]
-        if(item){
+        if (item) {
           this.updateWeaponDescription(item);
         }
       }
-      if (this.autoSort){
+      if (this.autoSort) {
         this.sortInventory();
       }
 
@@ -338,21 +338,26 @@ export class InventoryService {
     this.autoSellOldHidesEnabled = properties.autoSellOldHidesEnabled || false;
     this.autoequipBestWeapon = properties.autoequipBestWeapon || false;
     this.autoequipBestArmor = properties.autoequipBestArmor || false;
-    if(properties.autoequipBestEnabled === undefined){
+    if (properties.autoequipBestEnabled === undefined) {
       this.autoequipBestEnabled = true;
-    } else{
+    } else {
       this.autoequipBestEnabled = properties.autoequipBestEnabled;
     }
     this.maxStackSize = properties.maxStackSize || 100;
     this.thrownAwayItems = properties.thrownAwayItems || 0;
-    this.autoSellOldGemsUnlocked =  properties.autoSellOldGemsUnlocked || false;
+    this.autoSellOldGemsUnlocked = properties.autoSellOldGemsUnlocked || false;
     this.autoSellOldGemsEnabled = properties.autoSellOldGemsEnabled || false;
     this.autoBuyFood = properties.autoBuyFood ?? true;
     this.automergeEquipped = properties.automergeEquipped || false;
     this.autoSort = properties.autoSort || false;
     this.descendingSort = properties.descendingSort || false;
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
-    this.updateFarmFoodList()
+    this.updateFarmFoodList();
+    for (const itemStack of this.itemStacks ){
+      if (itemStack && itemStack.item.name.includes("monster gem")){
+        itemStack.item.name = itemStack.item.name.replace("monster gem", "spirit gem");
+      }
+    }
   }
 
   farmFoodList = [
@@ -369,57 +374,57 @@ export class InventoryService {
     this.itemRepoService.items['peach']
   ]
 
-  updateFarmFoodList(){
-    if (this.divinePeachesUnlocked){
+  updateFarmFoodList() {
+    if (this.divinePeachesUnlocked) {
       this.farmFoodList.push(this.itemRepoService.items['divinePeach']);
     }
   }
 
-  changeMaxItems(newValue: number){
+  changeMaxItems(newValue: number) {
     this.maxItems = newValue;
-    while (this.itemStacks.length < newValue){
+    while (this.itemStacks.length < newValue) {
       this.itemStacks.push(null);
     }
   }
 
-  sortInventory(){
+  sortInventory() {
     const tempStacks: ItemStack[] = [];
     const gemStacks: ItemStack[] = [];
     const equipStacks: ItemStack[] = [];
-    for (let key = 0; key < this.itemStacks.length; key++){
+    for (let key = 0; key < this.itemStacks.length; key++) {
       const itemStack = this.itemStacks[key];
-      if(!itemStack){
+      if (!itemStack) {
         continue;
-      } else if (this.itemStacks[key]?.item.type === "spiritGem"){
+      } else if (this.itemStacks[key]?.item.type === "spiritGem") {
         gemStacks.push(itemStack);
-      } else if (this.itemStacks[key]?.item.type === "equipment"){
+      } else if (this.itemStacks[key]?.item.type === "equipment") {
         equipStacks.push(itemStack);
       } else {
         tempStacks.push(itemStack);
       }
     }
-    if(!this.descendingSort){
-      tempStacks.sort((a,b) => b.quantity - a.quantity);
-      tempStacks.sort((a,b) => b.item.value - a.item.value);
-      tempStacks.sort((a,b) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
-      equipStacks.sort((a,b) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
-      equipStacks.sort((a,b) => b.item.value - a.item.value);
-      gemStacks.sort((a,b) => b.quantity - a.quantity);
-      gemStacks.sort((a,b) => b.item.value - a.item.value);
+    if (!this.descendingSort) {
+      tempStacks.sort((a, b) => b.quantity - a.quantity);
+      tempStacks.sort((a, b) => b.item.value - a.item.value);
+      tempStacks.sort((a, b) => b.item.type > a.item.type ? -1 : b.item.type === a.item.type ? 0 : 1);
+      equipStacks.sort((a, b) => b.item.name > a.item.name ? -1 : b.item.name === a.item.name ? 0 : 1);
+      equipStacks.sort((a, b) => b.item.value - a.item.value);
+      gemStacks.sort((a, b) => b.quantity - a.quantity);
+      gemStacks.sort((a, b) => b.item.value - a.item.value);
     } else {
-      tempStacks.sort((b,a) => b.quantity - a.quantity);
-      tempStacks.sort((b,a) => b.item.value - a.item.value);
-      tempStacks.sort((b,a) => b.item.type > a.item.type ? -1: b.item.type === a.item.type ? 0 : 1);
-      equipStacks.sort((b,a) => b.item.name > a.item.name ? -1: b.item.name === a.item.name ? 0 : 1);
-      equipStacks.sort((b,a) => b.item.value - a.item.value);
-      gemStacks.sort((b,a) => b.quantity - a.quantity);
-      gemStacks.sort((b,a) => b.item.value - a.item.value);
+      tempStacks.sort((b, a) => b.quantity - a.quantity);
+      tempStacks.sort((b, a) => b.item.value - a.item.value);
+      tempStacks.sort((b, a) => b.item.type > a.item.type ? -1 : b.item.type === a.item.type ? 0 : 1);
+      equipStacks.sort((b, a) => b.item.name > a.item.name ? -1 : b.item.name === a.item.name ? 0 : 1);
+      equipStacks.sort((b, a) => b.item.value - a.item.value);
+      gemStacks.sort((b, a) => b.quantity - a.quantity);
+      gemStacks.sort((b, a) => b.item.value - a.item.value);
     }
     const emptySlots = this.itemStacks.length - tempStacks.length - gemStacks.length - equipStacks.length;
     this.itemStacks = tempStacks;
     this.itemStacks.push(...equipStacks);
     this.itemStacks.push(...gemStacks);
-    for (let i = 0; i < emptySlots; i++){
+    for (let i = 0; i < emptySlots; i++) {
       this.itemStacks.push(null);
     }
 
@@ -428,26 +433,26 @@ export class InventoryService {
   // materials are wood or metal
   generateWeapon(grade: number, material: string, useGemOkay: boolean, defaultName: string | undefined = undefined, effect: string | undefined = undefined): Equipment {
 
-    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
+    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
-      if (value > 0){
+      if (value > 0) {
         grade = Math.floor(Math.pow(grade, 1 + (value / 400)));
       }
     }
     const highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
     const nameGrade = Math.ceil(Math.sqrt(grade / 1e10) * highestGrade); // Name spreads up to 10B Value (coincides with damage)
     let prefixIndex = nameGrade % ItemPrefixes.length;
-    if (nameGrade >= highestGrade){
+    if (nameGrade >= highestGrade) {
       prefixIndex = ItemPrefixes.length - 1;
     }
     let suffixIndex = Math.floor(nameGrade / ItemPrefixes.length);
     const prefix = ItemPrefixes[prefixIndex];
     let suffix = "";
-    if (suffixIndex > 0){
+    if (suffixIndex > 0) {
       let suffixModifierIndex = Math.floor(suffixIndex / WeaponSuffixes.length);
-      if (suffixModifierIndex > 0){
-        if (suffixModifierIndex > WeaponSuffixModifiers.length){
+      if (suffixModifierIndex > 0) {
+        if (suffixModifierIndex > WeaponSuffixModifiers.length) {
           suffixModifierIndex = WeaponSuffixModifiers.length;
           suffixIndex = WeaponSuffixes.length - 1;
         } else {
@@ -467,7 +472,7 @@ export class InventoryService {
     }
     const baseName = defaultName ?? WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
-    this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!','STANDARD', 'CRAFTING');
+    this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!', 'STANDARD', 'CRAFTING');
     const durability = grade * 10 + Math.floor(Math.random() * grade * 5);
     return {
       id: 'weapon',
@@ -487,68 +492,68 @@ export class InventoryService {
     };
   }
 
-  updateWeaponDescription(weapon: Equipment){
-    if(!weapon.weaponStats) {
+  updateWeaponDescription(weapon: Equipment) {
+    if (!weapon.weaponStats) {
       return;
     }
     let effectString = "";
-    if (weapon.weaponStats.effect){
+    if (weapon.weaponStats.effect) {
       effectString = " and imbued with the power of " + weapon.weaponStats.effect;
     }
     weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + effectString + ".\nBase Damage: " +
-    this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) + "\nDurability: " + this.bigNumberPipe.transform(weapon.weaponStats.durability);
+      this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) + "\nDurability: " + this.bigNumberPipe.transform(weapon.weaponStats.durability);
   }
 
-  updateArmorDescription(armor: Equipment){
-    if(!armor.armorStats) {
+  updateArmorDescription(armor: Equipment) {
+    if (!armor.armorStats) {
       return;
     }
     let effectString = "";
-    if (armor.armorStats.effect){
+    if (armor.armorStats.effect) {
       effectString = " and imbued with the power of " + armor.armorStats.effect;
     }
     armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + effectString + ".\nDefense: " +
       this.bigNumberPipe.transform(armor.armorStats.defense) + "\nDurability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
-  upgradeEquppedEquipment(value: number){
+  upgradeEquppedEquipment(value: number) {
 
     const upgradables = [];
-    if (this.characterService.characterState.equipment.leftHand){
+    if (this.characterService.characterState.equipment.leftHand) {
       upgradables.push(this.characterService.characterState.equipment.leftHand);
     }
-    if (this.characterService.characterState.equipment.rightHand){
+    if (this.characterService.characterState.equipment.rightHand) {
       upgradables.push(this.characterService.characterState.equipment.rightHand);
     }
-    if (this.characterService.characterState.equipment.head){
+    if (this.characterService.characterState.equipment.head) {
       upgradables.push(this.characterService.characterState.equipment.head);
     }
-    if (this.characterService.characterState.equipment.body){
+    if (this.characterService.characterState.equipment.body) {
       upgradables.push(this.characterService.characterState.equipment.body);
     }
-    if (this.characterService.characterState.equipment.legs){
+    if (this.characterService.characterState.equipment.legs) {
       upgradables.push(this.characterService.characterState.equipment.legs);
     }
-    if (this.characterService.characterState.equipment.feet){
+    if (this.characterService.characterState.equipment.feet) {
       upgradables.push(this.characterService.characterState.equipment.feet);
     }
-    if (upgradables.length > 0){
+    if (upgradables.length > 0) {
       const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
       this.upgradeEquipment(equipment, value);
     }
   }
 
-  upgradeEquipment(equipment: Equipment, value: number, newEffect = "spirit"){
-    if (equipment.armorStats){
+  upgradeEquipment(equipment: Equipment, value: number, newEffect = "spirit") {
+    if (equipment.armorStats) {
       equipment.armorStats.durability += value;
       equipment.armorStats.defense += value;
-      if (newEffect != "spirit"){
+      if (newEffect !== "spirit") {
         equipment.armorStats.effect = newEffect;
       }
-    } else if (equipment.weaponStats){
+    } else if (equipment.weaponStats) {
       equipment.weaponStats.durability += value;
       equipment.weaponStats.baseDamage += value;
-      if (newEffect != "spirit"){
+      if (newEffect !== "spirit") {
         equipment.weaponStats.effect = newEffect;
       }
     }
@@ -558,21 +563,21 @@ export class InventoryService {
 
   generatePotion(grade: number, masterLevel: boolean): void {
 
-    if (this.useSpiritGemUnlocked && this.useSpiritGemPotions){
+    if (this.useSpiritGemUnlocked && this.useSpiritGemPotions) {
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
-      if (value > 0){
+      if (value > 0) {
         grade += value;
       }
-      if (value > 0 || masterLevel){
-        if (Math.random() < 0.1){
+      if (value > 0 || masterLevel) {
+        if (Math.random() < 0.1) {
           //non-master alch can generate pills, if using a spirit gem
           this.generatePill(grade);
           return;
         }
       }
-    } else if (masterLevel){
-      if (Math.random() < 0.1){
+    } else if (masterLevel) {
+      if (Math.random() < 0.1) {
         this.generatePill(grade);
         return;
       }
@@ -584,9 +589,9 @@ export class InventoryService {
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
     const name = "Potion of " + key + " +" + grade;
-    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
+    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
 
-    this.addItem( {
+    this.addItem({
       name: name,
       id: "potion",
       type: "potion",
@@ -606,7 +611,7 @@ export class InventoryService {
     let useDescription = "Use to increase your lifespan.";
     let value = grade * 10;
     let name = effect + " Pill " + " +" + grade;
-    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0){
+    if (this.checkFor("pillBox") > 0 && this.checkFor("pillMold") > 0 && this.checkFor("pillPouch") > 0) {
       this.consume("pillBox");
       this.consume("pillMold");
       this.consume("pillPouch");
@@ -615,11 +620,11 @@ export class InventoryService {
       useDescription = "Use to permanently empower the increase of your attributes based on your aptitudes.";
       value = 1;
       name = "Empowerment Pill";
-      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.", "STANDARD","CRAFTING");
+      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.", "STANDARD", "CRAFTING");
     } else {
-      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD","CRAFTING");
+      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
     }
-    this.addItem( {
+    this.addItem({
       name: name,
       id: "pill",
       type: "pill",
@@ -637,10 +642,10 @@ export class InventoryService {
     let grade = 0;
     const maxGrade = herbNames.length * herbQuality.length;
     const woodLore = this.characterService.characterState.attributes.woodLore.value;
-    grade = Math.floor(Math.pow(woodLore/1e9, 0.26) * maxGrade); // 1e9 woodlore is maximum grade, adjust if necessary
+    grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * maxGrade); // 1e9 woodlore is maximum grade, adjust if necessary
     let name: string;
     let quality: string;
-    if (grade >= maxGrade){
+    if (grade >= maxGrade) {
       // maxed out
       name = herbNames[herbNames.length - 1];
       quality = herbQuality[herbQuality.length - 1];
@@ -658,12 +663,12 @@ export class InventoryService {
       value: value,
       description: 'Useful herbs. Can be used in creating pills or potions.'
     });
-    if (this.autoSellOldHerbsEnabled){
+    if (this.autoSellOldHerbsEnabled) {
       // sell any herb cheaper than what we just picked
-      for (let i = 0; i < this.itemStacks.length; i++){
+      for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.id === "herb" ){
-          if (itemStack.item.value < value ){
+        if (itemStack && itemStack.item.id === "herb") {
+          if (itemStack.item.value < value) {
             this.sell(itemStack, itemStack.quantity);
           }
         }
@@ -673,7 +678,7 @@ export class InventoryService {
 
   generateSpiritGem(grade: number, flavor = "spirit"): Item {
     let description = 'A spirit gem dropped by a monster.';
-    if (flavor != "spirit"){
+    if (flavor !== "spirit") {
       description = 'A spirit gem full of the power of ' + flavor + ".";
     }
     return {
@@ -685,27 +690,27 @@ export class InventoryService {
     };
   }
 
-  generateArmor(grade: number, material: string, slot: EquipmentPosition, useGemOkay: boolean, defaultName: string | undefined = undefined, effect: string | undefined = undefined): Equipment{
-    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay){
+  generateArmor(grade: number, material: string, slot: EquipmentPosition, useGemOkay: boolean, defaultName: string | undefined = undefined, effect: string | undefined = undefined): Equipment {
+    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
-      if (value > 0){
+      if (value > 0) {
         grade = Math.floor(Math.pow(grade, 1 + (value / 400)));
       }
     }
     const highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
     const nameGrade = Math.ceil(Math.sqrt(grade / 1e10) * highestGrade); // Name spreads up to 10B Value (coincides with defense)
     let prefixIndex = nameGrade % ItemPrefixes.length;
-    if (nameGrade >= highestGrade){
+    if (nameGrade >= highestGrade) {
       prefixIndex = ItemPrefixes.length - 1;
     }
     let suffixIndex = Math.floor(nameGrade / ItemPrefixes.length);
     const prefix = ItemPrefixes[prefixIndex];
     let suffix = "";
-    if (suffixIndex > 0){
+    if (suffixIndex > 0) {
       let suffixModifierIndex = Math.floor(suffixIndex / ArmorSuffixes.length);
-      if (suffixModifierIndex > 0){
-        if (suffixModifierIndex > ArmorSuffixModifiers.length){
+      if (suffixModifierIndex > 0) {
+        if (suffixModifierIndex > ArmorSuffixModifiers.length) {
           suffixModifierIndex = ArmorSuffixModifiers.length;
           suffixIndex = ArmorSuffixes.length - 1;
         } else {
@@ -719,16 +724,16 @@ export class InventoryService {
     }
     const materialPrefix = material;
     let namePicker = ChestArmorNames;
-    if (slot === 'legs'){
+    if (slot === 'legs') {
       namePicker = LegArmorNames;
-    } else if (slot === 'head'){
+    } else if (slot === 'head') {
       namePicker = HelmetNames;
-    } else if (slot === 'feet'){
+    } else if (slot === 'feet') {
       namePicker = ShoeNames;
     }
     const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
-    this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!','STANDARD', 'CRAFTING');
+    this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!', 'STANDARD', 'CRAFTING');
     const durability = grade * 5 + Math.floor(Math.random() * grade * 5);
     return {
       id: 'armor',
@@ -749,13 +754,13 @@ export class InventoryService {
 
   }
 
-  randomArmorSlot(): EquipmentPosition{
+  randomArmorSlot(): EquipmentPosition {
     const randomNumber = Math.random();
-    if (randomNumber < 0.25){
+    if (randomNumber < 0.25) {
       return 'body';
-    } else if (randomNumber < 0.5){
+    } else if (randomNumber < 0.5) {
       return 'head';
-    } else if (randomNumber < 0.75){
+    } else if (randomNumber < 0.75) {
       return 'feet';
     } else {
       return 'legs';
@@ -764,20 +769,20 @@ export class InventoryService {
 
   getOre(): Item {
     const earthLore = this.characterService.characterState.attributes.earthLore.value;
-    const oreValue = Math.floor(Math.pow(earthLore/1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
+    const oreValue = Math.floor(Math.pow(earthLore / 1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
     let lastOre = this.itemRepoService.items['copperOre'];
-    for (const key in this.itemRepoService.items){
+    for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
-      if (item.type === 'ore' && item.value > lastOre.value && item.value <= oreValue){
+      if (item.type === 'ore' && item.value > lastOre.value && item.value <= oreValue) {
         lastOre = item;
       }
     }
 
-    if (this.autoSellOldOreEnabled && !this.hellService?.inHell){
+    if (this.autoSellOldOreEnabled && !this.hellService?.inHell) {
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === "ore" && itemStack.item.value < lastOre.value){
+        if (itemStack && itemStack.item.type === "ore" && itemStack.item.value < lastOre.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -785,24 +790,24 @@ export class InventoryService {
     return lastOre;
   }
 
-  getBar(oreValue: number): Item{
+  getBar(oreValue: number): Item {
     // metal bars should always be 10x the value of the associated ore
     const barValue = oreValue * 10;
 
     let lastMetal = this.itemRepoService.items['copperBar'];
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
-      if (item.type === 'metal' && item.value === barValue){
+      if (item.type === 'metal' && item.value === barValue) {
         lastMetal = item;
         break;
       }
     }
 
-    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell){
+    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell) {
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value){
+        if (itemStack && itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -810,23 +815,23 @@ export class InventoryService {
     return lastMetal;
   }
 
-  getWood(): Item{
+  getWood(): Item {
     const woodLore = this.characterService.characterState.attributes.woodLore.value;
-    const woodvalue = Math.floor(Math.pow(woodLore/1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
+    const woodvalue = Math.floor(Math.pow(woodLore / 1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
     let lastWood = this.itemRepoService.items['balsaLog'];
 
-    for (const key in this.itemRepoService.items){
+    for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
-      if (item.type === 'wood' && item.value > lastWood.value && item.value <= woodvalue){
+      if (item.type === 'wood' && item.value > lastWood.value && item.value <= woodvalue) {
         lastWood = item;
       }
     }
 
-    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell){
+    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell) {
       // sell any wood cheaper than what we just got
-      for (let i = 0; i < this.itemStacks.length; i++){
+      for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === "wood" && itemStack.item.value < lastWood.value){
+        if (itemStack && itemStack.item.type === "wood" && itemStack.item.value < lastWood.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -834,24 +839,24 @@ export class InventoryService {
     return lastWood;
   }
 
-  getHide(): Item{
+  getHide(): Item {
     const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
-    const hideValue = Math.floor(Math.pow(animalHandling/1e9, 0.15) * 16);
+    const hideValue = Math.floor(Math.pow(animalHandling / 1e9, 0.15) * 16);
 
     let lastHide = this.itemRepoService.items['hide'];
 
-    for (const key in this.itemRepoService.items){
+    for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
-      if (item.type === 'hide' && item.value > lastHide.value && item.value <= hideValue){
+      if (item.type === 'hide' && item.value > lastHide.value && item.value <= hideValue) {
         lastHide = item;
       }
     }
 
-    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell){
+    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell) {
       // sell any hides cheaper than what we just got
-      for (let i = 0; i < this.itemStacks.length; i++){
+      for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === "hide" && itemStack.item.value < lastHide.value){
+        if (itemStack && itemStack.item.type === "hide" && itemStack.item.value < lastHide.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -899,7 +904,7 @@ export class InventoryService {
 
   /** Finds the best food in the inventory and uses it. */
   eatFood(): void {
-    if (this.fed){
+    if (this.fed) {
       // we already ate something this tick
       this.noFood = false;
       this.fed = false;
@@ -908,7 +913,7 @@ export class InventoryService {
     let foodStack = null;
     const foodValue = 0;
     for (const itemIterator of this.itemStacks) {
-      if (itemIterator === null){
+      if (itemIterator === null) {
         continue;
       }
       if (itemIterator.item.type === 'food' && itemIterator.item.value > foodValue) {
@@ -929,35 +934,35 @@ export class InventoryService {
     this.fed = false;
   }
 
-/**
- *
- * @param item the Item to add
- * @param quantity the quantity the Item to stack. Ignores for unstackables. Default 1
- * @returns first itemStack position, -1 if not applicable
- */
+  /**
+   *
+   * @param item the Item to add
+   * @param quantity the quantity the Item to stack. Ignores for unstackables. Default 1
+   * @returns first itemStack position, -1 if not applicable
+   */
   addItem(item: Item, quantity = 1): number {
-    if (quantity < 1){
+    if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
 
-    for (const balanceItem of this.autoBalanceItems){
-      if (balanceItem.name === item.name){
-        if (balanceItem.useNumber < 1){
-          if (balanceItem.sellNumber < 1){
+    for (const balanceItem of this.autoBalanceItems) {
+      if (balanceItem.name === item.name) {
+        if (balanceItem.useNumber < 1) {
+          if (balanceItem.sellNumber < 1) {
             break; // dump to inventory if user enters balance numbers under 1
           } else {
             this.characterService.characterState.money += item.value * quantity; // Sell it all
             return -1;
           }
-        } else if (balanceItem.sellNumber < 1){
+        } else if (balanceItem.sellNumber < 1) {
           this.useItem(item, quantity * balanceItem.useNumber) // Use it all
           return -1;
         }
         let modulo = quantity % (balanceItem.useNumber + balanceItem.sellNumber);
         quantity -= modulo;
-        while (modulo > 0){ // Use the modulo first
-          if (balanceItem.index < balanceItem.useNumber){
-            if (modulo + balanceItem.index <= balanceItem.useNumber){
+        while (modulo > 0) { // Use the modulo first
+          if (balanceItem.index < balanceItem.useNumber) {
+            if (modulo + balanceItem.index <= balanceItem.useNumber) {
               this.useItem(item, modulo);
               balanceItem.index += modulo;
               break;
@@ -967,8 +972,8 @@ export class InventoryService {
               balanceItem.index = balanceItem.useNumber;
             }
           }
-          if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber){
-            if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber){
+          if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
+            if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
               this.characterService.characterState.money += item.value * modulo;
               balanceItem.index += modulo;
               break;
@@ -978,68 +983,68 @@ export class InventoryService {
               balanceItem.index = 0;
             }
           }
-          if (balanceItem.index >= balanceItem.useNumber + balanceItem.sellNumber){
+          if (balanceItem.index >= balanceItem.useNumber + balanceItem.sellNumber) {
             balanceItem.index -= balanceItem.useNumber + balanceItem.sellNumber;
           }
         }
-        if (quantity){
+        if (quantity) {
           quantity /= (balanceItem.useNumber + balanceItem.sellNumber);
           this.useItem(item, quantity * balanceItem.useNumber)
           this.characterService.characterState.money += item.value * quantity;
           quantity = 0;
         }
-        if(quantity < 1){ // Sanity check, spill out what should be impossible excess to inventory as though balance were disabled.
+        if (quantity < 1) { // Sanity check, spill out what should be impossible excess to inventory as though balance were disabled.
           return -1;
         }
         break;
       }
     }
 
-    if (this.autoPotionUnlocked && item.type === "potion"){
+    if (this.autoPotionUnlocked && item.type === "potion") {
       this.useItem(item, quantity);
       return -1;
     }
-    if (this.autoPillUnlocked && item.type === "pill"){
+    if (this.autoPillUnlocked && item.type === "pill") {
       this.useItem(item, quantity);
       return -1;
     }
-    for (const entry of this.autoUseEntries){
-      if (entry.name === item.name){
+    for (const entry of this.autoUseEntries) {
+      if (entry.name === item.name) {
         let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
-        if (numberToUse > quantity){
+        if (numberToUse > quantity) {
           // don't worry about using more than the incoming quantity here
           numberToUse = quantity;
         }
-        if (numberToUse > 0){
+        if (numberToUse > 0) {
           this.useItem(item, quantity);
           quantity -= numberToUse;
-          if (quantity === 0){
+          if (quantity === 0) {
             return -1;
           }
         }
       }
     }
-    if (this.autoSellOldGemsEnabled && item.type === "spiritGem" && !this.hellService?.inHell){
+    if (this.autoSellOldGemsEnabled && item.type === "spiritGem" && !this.hellService?.inHell) {
       //clear out any old gems of lesser value
-      for (let i = 0; i < this.itemStacks.length; i++){
+      for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack !== null && itemStack.item.type === "spiritGem" && itemStack.item.value < item.value){
+        if (itemStack !== null && itemStack.item.type === "spiritGem" && itemStack.item.value < item.value) {
           this.characterService.characterState.money += itemStack.item.value * itemStack.quantity;
           this.itemStacks[i] = null;
         }
       }
     }
-    for (const entry of this.autoSellEntries){
-      if (entry.name === item.name && !this.hellService?.inHell){
+    for (const entry of this.autoSellEntries) {
+      if (entry.name === item.name && !this.hellService?.inHell) {
         let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
-        if (numberToSell > quantity){
+        if (numberToSell > quantity) {
           // don't worry about selling more than the incoming quantity here
           numberToSell = quantity;
         }
-        if (numberToSell > 0){
+        if (numberToSell > 0) {
           this.characterService.characterState.money += item.value * numberToSell;
           quantity -= numberToSell;
-          if (quantity === 0){
+          if (quantity === 0) {
             return -1;
           }
         }
@@ -1047,7 +1052,7 @@ export class InventoryService {
     }
 
     let firstStack = -1;
-    if (item.type !== "equipment"){
+    if (item.type !== "equipment") {
       // try to stack the new item with existing items
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemIterator = this.itemStacks[i];
@@ -1058,12 +1063,12 @@ export class InventoryService {
           if (itemIterator.quantity + quantity <= this.maxStackSize) {
             // it matches an existing item and there's room in the stack for everything, add it to the stack and bail out
             itemIterator.quantity += quantity;
-            if (firstStack === -1){
+            if (firstStack === -1) {
               firstStack = i;
             }
             return firstStack;
           } else {
-            if (firstStack === -1){
+            if (firstStack === -1) {
               firstStack = i;
             }
             quantity -= this.maxStackSize - itemIterator.quantity
@@ -1075,11 +1080,11 @@ export class InventoryService {
 
     // couldn't stack it all, make a new stack
     for (let i = 0; i < this.itemStacks.length; i++) {
-      if (this.itemStacks[i] === null){
-        if (firstStack === -1){
+      if (this.itemStacks[i] === null) {
+        if (firstStack === -1) {
           firstStack = i;
         }
-        if (quantity <= this.maxStackSize){
+        if (quantity <= this.maxStackSize) {
           this.itemStacks[i] = { item: item, quantity: quantity };
           return firstStack;
         } else {
@@ -1090,7 +1095,7 @@ export class InventoryService {
     }
 
     // if we're here we didn't find a slot for anything/everything.
-    if (this.autoSellUnlocked && !this.hellService?.inHell){
+    if (this.autoSellUnlocked && !this.hellService?.inHell) {
       this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
       this.characterService.characterState.money += item.value * quantity;
     } else {
@@ -1101,23 +1106,23 @@ export class InventoryService {
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
-    if (itemStack.item.value === Infinity){
+    if (itemStack.item.value === Infinity) {
       // don't sell infinitely valuable things.
       return;
     }
     // can't sell in hell
-    if (this.hellService?.inHell){
+    if (this.hellService?.inHell) {
       return;
     }
     this.lifetimeSoldItems += quantity;
-    if (itemStack.item.type === "spiritGem"){
+    if (itemStack.item.type === "spiritGem") {
       this.lifetimeGemsSold += quantity;
     }
     const index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks[index] = null;
       this.characterService.characterState.money += itemStack.quantity * itemStack.item.value;
-      if (itemStack === this.selectedItem){
+      if (itemStack === this.selectedItem) {
         this.selectedItem = null;
       }
     } else {
@@ -1126,39 +1131,39 @@ export class InventoryService {
     }
   }
 
-  sellAll(item: Item){
+  sellAll(item: Item) {
     for (const itemIterator of this.itemStacks) {
-      if (itemIterator ===  null){
+      if (itemIterator === null) {
         continue;
       }
-      if (itemIterator.item.name === item.name){
+      if (itemIterator.item.name === item.name) {
         this.sell(itemIterator, itemIterator.quantity);
       }
     }
   }
 
-  autoSell(item: Item){
-    if (item.value === Infinity){
+  autoSell(item: Item) {
+    if (item.value === Infinity) {
       // don't sell infinitely valuable things.
       return;
     }
-    if (!this.autoSellUnlocked){
+    if (!this.autoSellUnlocked) {
       return;
     }
     if (!this.autoSellEntries.some(e => e.name === item.name)) {
-      this.autoSellEntries.push({name: item.name, reserve: 0});
+      this.autoSellEntries.push({ name: item.name, reserve: 0 });
     }
     //sell all that you currently have
     this.sellAll(item);
   }
 
-  unAutoSell(itemName: string){
+  unAutoSell(itemName: string) {
     const index = this.autoSellEntries.findIndex(item => item.name === itemName);
     this.autoSellEntries.splice(index, 1);
   }
 
   useItemStack(itemStack: ItemStack, quantity = 1): void {
-    if (quantity < 1){
+    if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     if (quantity > itemStack.quantity) {
@@ -1170,7 +1175,7 @@ export class InventoryService {
       if (itemStack.quantity <= 0) {
         const index = this.itemStacks.indexOf(itemStack);
         this.itemStacks[index] = null;
-        if (itemStack === this.selectedItem){
+        if (itemStack === this.selectedItem) {
           this.selectedItem = null;
         }
       }
@@ -1178,59 +1183,59 @@ export class InventoryService {
   }
 
   useItem(item: Item, quantity = 1): void {
-    if (quantity < 1){
+    if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.lifetimeUsedItems++;
-    if (item.type === "potion" && instanceOfPotion(item)){
+    if (item.type === "potion" && instanceOfPotion(item)) {
       this.usePotion(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
-    } else if (item.type === "pill" && instanceOfPill(item)){
+    } else if (item.type === "pill" && instanceOfPill(item)) {
 
       this.usePill(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
     } else if (item.use) {
       item.use(quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
-      if (item.type === "food"){
+      if (item.type === "food") {
         this.fed = true;
-        if (this.hellService){
+        if (this.hellService) {
           this.hellService.daysFasted = 0;
         }
       }
     }
   }
 
-  autoUse(item: Item){
-    if (!this.autoUseUnlocked){
+  autoUse(item: Item) {
+    if (!this.autoUseUnlocked) {
       return;
     }
-    if (item.type !== "potion" && item.type !== "pill" && !item.use){
+    if (item.type !== "potion" && item.type !== "pill" && !item.use) {
       // it's not usable, bail out.
       return;
     }
     if (!this.autoUseEntries.some(e => e.name === item.name)) {
-      this.autoUseEntries.push({name: item.name, reserve: 0});
+      this.autoUseEntries.push({ name: item.name, reserve: 0 });
     }
-    if (item.useConsumes){
+    if (item.useConsumes) {
       // use all the ones you have now
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack === null){
+        if (itemStack === null) {
           continue;
         }
-        if (itemStack.item.name === item.name){
-            this.useItemStack(itemStack, itemStack.quantity);
+        if (itemStack.item.name === item.name) {
+          this.useItemStack(itemStack, itemStack.quantity);
         }
       }
     }
   }
 
-  unAutoUse(itemName: string){
+  unAutoUse(itemName: string) {
     const index = this.autoUseEntries.findIndex(item => item.name === itemName);
     this.autoUseEntries.splice(index, 1);
   }
 
-  autoBalance(item: Item){
-    for (const balanceItem of this.autoBalanceItems){
-      if (balanceItem.name === item.name){
+  autoBalance(item: Item) {
+    for (const balanceItem of this.autoBalanceItems) {
+      if (balanceItem.name === item.name) {
         // it's already in the list, bail out
         return;
       }
@@ -1245,10 +1250,10 @@ export class InventoryService {
     this.sellAll(item);
   }
 
-  unAutoBalance(itemName: string){
-    for (let index = 0; index < this.autoBalanceItems.length; index++){
+  unAutoBalance(itemName: string) {
+    for (let index = 0; index < this.autoBalanceItems.length; index++) {
 
-      if (this.autoBalanceItems[index].name === itemName){
+      if (this.autoBalanceItems[index].name === itemName) {
         this.autoBalanceItems.splice(index, 1);
         return;
       }
@@ -1262,9 +1267,11 @@ export class InventoryService {
     if (!instanceOfEquipment(item)) {
       throw Error('Tried to equip an item that was not equipable');
     }
-    if ((item.armorStats?.durability || 0) <= 0 && (item.weaponStats?.durability || 0) <= 0){
+
+    if ((item.armorStats?.durability || 0) <= 0 && (item.weaponStats?.durability || 0) <= 0) {
+
       //it's broken, bail out
-      this.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.","STANDARD","EVENT")
+      this.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.", "STANDARD", "EVENT")
       return;
     }
 
@@ -1277,27 +1284,27 @@ export class InventoryService {
     this.itemStacks[index] = null;
   }
 
-  equipBest(slot: EquipmentPosition){
+  equipBest(slot: EquipmentPosition) {
     let equippedPower = 0;
     let weapon = true;
-    if (slot === 'leftHand' || slot === 'rightHand'){
+    if (slot === 'leftHand' || slot === 'rightHand') {
       equippedPower = this.characterService.characterState.equipment[slot]?.weaponStats?.baseDamage || 0;
     } else {
       weapon = false;
       equippedPower = this.characterService.characterState.equipment[slot]?.armorStats?.defense || 0;
     }
-    for (let i = 0; i < this.itemStacks.length; i++){
+    for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator !== null){
+      if (itemIterator !== null) {
         const item = itemIterator.item;
         if (instanceOfEquipment(item) && item.slot === slot) {
           let itemPower = 0
-          if (weapon && item.weaponStats && item.weaponStats?.durability > 0){
+          if (weapon && item.weaponStats && item.weaponStats?.durability > 0) {
             itemPower = item.weaponStats?.baseDamage;
-          } else if (!weapon && item.armorStats && item.armorStats?.durability > 0){
+          } else if (!weapon && item.armorStats && item.armorStats?.durability > 0) {
             itemPower = item.armorStats?.defense;
           }
-          if (itemPower > equippedPower){
+          if (itemPower > equippedPower) {
             this.equip(itemIterator);
           }
         }
@@ -1305,42 +1312,42 @@ export class InventoryService {
     }
   }
 
-  consume(consumeType: string, quantity = 1, cheapest = false): number{
-    if (quantity < 0){
+  consume(consumeType: string, quantity = 1, cheapest = false): number {
+    if (quantity < 0) {
       quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
     }
     let itemValue = -1;
-    if (cheapest){
+    if (cheapest) {
       itemValue = Infinity;
     }
 
     let itemIndex = -1;
-    for (let i = 0; i < this.itemStacks.length; i++){
+    for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null){
+      if (itemIterator === null) {
         continue;
       }
       if (itemIterator.item.type === consumeType) {
-        if (cheapest){
-          if (itemValue > itemIterator.item.value){
+        if (cheapest) {
+          if (itemValue > itemIterator.item.value) {
             itemValue = itemIterator.item.value;
             itemIndex = i;
           }
         } else {
-          if (itemValue < itemIterator.item.value){
+          if (itemValue < itemIterator.item.value) {
             itemValue = itemIterator.item.value;
             itemIndex = i;
           }
         }
       }
     }
-    if (itemIndex >= 0){
+    if (itemIndex >= 0) {
       const itemIterator = this.itemStacks[itemIndex];
-      if (itemIterator !== null){
+      if (itemIterator !== null) {
         const minQuantity = Math.min(itemIterator.quantity, quantity);
         itemIterator.quantity -= minQuantity;
         quantity -= minQuantity
-        if (itemIterator.quantity <= 0){
+        if (itemIterator.quantity <= 0) {
           //remove the stack if empty
           this.itemStacks[itemIndex] = null;
         }
@@ -1350,7 +1357,7 @@ export class InventoryService {
       // we didn't have enough in the stack we consumed to meet the quantity, consume another
       itemValue = this.consume(consumeType, quantity)
     }
-    if (cheapest && itemValue === Infinity){
+    if (cheapest && itemValue === Infinity) {
       // return -1 for not found
       itemValue = -1;
     }
@@ -1358,15 +1365,15 @@ export class InventoryService {
     return itemValue;
   }
 
-  checkFor(itemType: string): number{
+  checkFor(itemType: string): number {
     let itemValue = -1;
-    for (let i = 0; i < this.itemStacks.length; i++){
+    for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null){
+      if (itemIterator === null) {
         continue;
       }
       if (itemIterator.item.type === itemType) {
-        if (itemValue < itemIterator.item.value){
+        if (itemValue < itemIterator.item.value) {
           itemValue = itemIterator.item.value;
         }
       }
@@ -1374,11 +1381,11 @@ export class InventoryService {
     return itemValue;
   }
 
-  getQuantityByName(itemName: string): number{
+  getQuantityByName(itemName: string): number {
     let itemCount = 0;
-    for (let i = 0; i < this.itemStacks.length; i++){
+    for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null){
+      if (itemIterator === null) {
         continue;
       }
       if (itemIterator.item.name === itemName) {
@@ -1399,8 +1406,8 @@ export class InventoryService {
   }
 
   /** A special use function for generated potions. */
-  usePotion(potion: Potion, quantity = 1){
-    if (quantity < 1){
+  usePotion(potion: Potion, quantity = 1) {
+    if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.lifetimePotionsUsed += quantity;
@@ -1408,27 +1415,27 @@ export class InventoryService {
   }
 
   /** A special use function for generated pills*/
-  usePill(pill: Pill, quantity = 1){
-    if (quantity < 1){
+  usePill(pill: Pill, quantity = 1) {
+    if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.lifetimePillsUsed += quantity;
-    if (pill.effect === "Longevity"){
+    if (pill.effect === "Longevity") {
       this.characterService.characterState.alchemyLifespan += pill.power * quantity;
-      if (this.characterService.characterState.alchemyLifespan > 36500){
+      if (this.characterService.characterState.alchemyLifespan > 36500) {
         this.characterService.characterState.alchemyLifespan = 36500;
       }
-    } else if (pill.effect === "Empowerment"){
+    } else if (pill.effect === "Empowerment") {
       this.characterService.characterState.empowermentFactor += 0.01;
     }
     this.characterService.characterState.checkOverage();
   }
 
   /** Returns the number of open inventory slots. */
-  openInventorySlots(){
+  openInventorySlots() {
     let openSlots = 0;
     for (const itemIterator of this.itemStacks) {
-      if (itemIterator === null){
+      if (itemIterator === null) {
         openSlots++;
       }
     }
@@ -1436,76 +1443,83 @@ export class InventoryService {
   }
 
   /** Create a new piece of equipment based on the two provided. Caller needs to do the destroying of the old items. */
-  mergeEquipment(item1: Equipment, item2: Equipment, destinationInventoryIndex: number){
-    if (item1.slot !== item2.slot){
+  mergeEquipment(item1: Equipment, item2: Equipment, destinationInventoryIndex: number) {
+    if (item1.slot !== item2.slot) {
       // not the same slot, bail out
       return;
     }
     let inventoryIndex = 0;
-    if (item1.slot === 'rightHand' || item1.slot === 'leftHand'){
+    if (item1.slot === 'rightHand' || item1.slot === 'leftHand') {
       inventoryIndex = this.addItem(this.generateWeapon(item1.value + item2.value, item1.weaponStats?.material + "", false, item1.weaponStats?.baseName, item1.weaponStats?.effect));
     } else {
       inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, false, item1.armorStats?.baseName, item1.armorStats?.effect));
     }
     // if we can, move the new item to the desired destination index
-    if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null){
+    if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null) {
       this.itemStacks[destinationInventoryIndex] = this.itemStacks[inventoryIndex];
       this.itemStacks[inventoryIndex] = null;
     }
   }
 
-  autoWeaponMerge(){
+  mergeItemStacks(sourceStack: ItemStack, destStack: ItemStack, sourceInventoryIndex: number){
+    if (sourceStack && destStack && sourceStack.item.name === destStack.item.name && sourceStack.quantity + destStack.quantity < this.maxStackSize){
+      destStack.quantity += sourceStack.quantity;
+      this.itemStacks[sourceInventoryIndex] = null;
+    }
+  }
+
+  autoWeaponMerge() {
     this.autoMerge('leftHand');
     this.autoMerge('rightHand');
   }
 
-  autoArmorMerge(){
+  autoArmorMerge() {
     this.autoMerge('head');
     this.autoMerge('body');
     this.autoMerge('legs');
     this.autoMerge('feet');
   }
 
-  autoequipWeapons(){
+  autoequipWeapons() {
     this.equipBest('leftHand');
     this.equipBest('rightHand');
   }
 
-  autoequipArmor(){
+  autoequipArmor() {
     this.equipBest('head');
     this.equipBest('body');
     this.equipBest('legs');
     this.equipBest('feet');
   }
 
-  autoMerge(slot: EquipmentPosition){
+  autoMerge(slot: EquipmentPosition) {
     let mergeDestinationIndex = -1;
     let destinationItem: Equipment | null = null;
-    let sourceItem: Equipment  | null = null;
+    let sourceItem: Equipment | null = null;
     let lastdestinationIndex = -1;
-    for (let i = 0; i < this.itemStacks.length; i++){
+    for (let i = 0; i < this.itemStacks.length; i++) {
       let item = this.itemStacks[i]?.item;
-      if (item){
-        if (instanceOfEquipment(item)){
-          if (item.slot === slot){
-            if (mergeDestinationIndex === -1){
+      if (item) {
+        if (instanceOfEquipment(item)) {
+          if (item.slot === slot) {
+            if (mergeDestinationIndex === -1) {
               mergeDestinationIndex = i;
               lastdestinationIndex = i;
               destinationItem = item;
             } else {
               sourceItem = item;
-              if (destinationItem){
-                if (this.selectedItem === this.itemStacks[mergeDestinationIndex] || this.selectedItem === this.itemStacks[i]){
+              if (destinationItem) {
+                if (this.selectedItem === this.itemStacks[mergeDestinationIndex] || this.selectedItem === this.itemStacks[i]) {
                   this.selectedItem = null;
                 }
                 this.itemStacks[mergeDestinationIndex] = null;
                 this.itemStacks[i] = null;
                 this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex);
                 item = this.itemStacks[mergeDestinationIndex]?.item;
-                if (item){
-                  if (instanceOfEquipment(item)){
-                    if (item.slot === slot){
-                        destinationItem = item;
+                if (item) {
+                  if (instanceOfEquipment(item)) {
+                    if (item.slot === slot) {
+                      destinationItem = item;
                     }
                   }
                 } else {
@@ -1517,9 +1531,9 @@ export class InventoryService {
         }
       }
     }
-    if (this.automergeEquipped){
+    if (this.automergeEquipped) {
       // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
-      if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)){
+      if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)) {
         if (((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) ||
           (slot !== 'rightHand' && slot !== 'leftHand' && this.autoequipBestArmor)) {
           this.mergeEquippedSlot(slot, destinationItem, lastdestinationIndex);
@@ -1530,17 +1544,17 @@ export class InventoryService {
     }
   }
 
-  mergeEquippedSlot(slot: EquipmentPosition, itemToMerge: Item, sourceItemIndex: number){
+  mergeEquippedSlot(slot: EquipmentPosition, itemToMerge: Item, sourceItemIndex: number) {
     const equippedItem = this.characterService.characterState.equipment[slot];
-    if (itemToMerge.type.includes("Gem") && equippedItem){
+    if (itemToMerge.type.includes("Gem") && equippedItem) {
       this.gemifyEquipment(sourceItemIndex, equippedItem);
       return;
     }
-    if (!instanceOfEquipment(itemToMerge)){
+    if (!instanceOfEquipment(itemToMerge)) {
       return;
     }
     let newItem;
-    if (equippedItem === null){
+    if (equippedItem === null) {
       this.characterService.characterState.equipment[slot] = itemToMerge;
       this.itemStacks[sourceItemIndex] = null;
       return;
@@ -1554,16 +1568,16 @@ export class InventoryService {
     this.itemStacks[sourceItemIndex] = null;
   }
 
-  mergeSpiritGem(stack: ItemStack, power = 0){
-    if (stack.quantity < 10 - power){
+  mergeSpiritGem(stack: ItemStack, power = 0) {
+    if (stack.quantity < 10 - power) {
       return;
     }
     stack.quantity -= 10 - power;
     this.addItem(this.generateSpiritGem((stack.item.value / 10) + 1));
-    if (stack.quantity === 0){
+    if (stack.quantity === 0) {
       // go find the stack and remove it
-      for (let i = 0; i < this.itemStacks.length; i++){
-        if (this.itemStacks[i] === stack){
+      for (let i = 0; i < this.itemStacks.length; i++) {
+        if (this.itemStacks[i] === stack) {
           this.itemStacks[i] = null;
           return;
         }
@@ -1571,20 +1585,20 @@ export class InventoryService {
     }
   }
 
-  mergeAnySpiritGem(power = 0){
+  mergeAnySpiritGem(power = 0) {
     const meridianRank = this.characterService.meridianRank();
-    if (power > meridianRank - 5){
+    if (power > meridianRank - 5) {
       power = meridianRank - 5
     }
-    if (power < 0){
+    if (power < 0) {
       power = 0;
     }
-    for (let i = 0; i < this.itemStacks.length; i++){
+    for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null){
+      if (itemIterator === null) {
         continue;
       }
-      if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power){
+      if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power) {
         this.mergeSpiritGem(itemIterator, power);
         return;
       }
@@ -1593,9 +1607,9 @@ export class InventoryService {
 
   stashInventory() {
     this.stashedItemStacks = [];
-    for (let i = 0; i < this.itemStacks.length; i++){
+    for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
-      if (item && item.type != "food" && !item.type.includes("Gem")){
+      if (item && item.type !== "food" && !item.type.includes("Gem")) {
         this.stashedItemStacks.push(this.itemStacks[i]);
         this.itemStacks[i] = null;
       }
@@ -1604,28 +1618,28 @@ export class InventoryService {
 
   restoreInventory() {
     this.itemStacks = [];
-    for (let i = 0; i < this.stashedItemStacks.length; i++){
-      if (this.stashedItemStacks[i]){
+    for (let i = 0; i < this.stashedItemStacks.length; i++) {
+      if (this.stashedItemStacks[i]) {
         this.itemStacks.push(this.stashedItemStacks[i]);
         this.stashedItemStacks[i] = null;
       }
     }
   }
 
-  gemifyEquipment(gemIndex: number, equipment: Equipment){
+  gemifyEquipment(gemIndex: number, equipment: Equipment) {
     const gemStack = this.itemStacks[gemIndex];
     const gem = this.itemStacks[gemIndex]?.item;
-    if (gemStack && gem && gem.type.includes("Gem")){
+    if (gemStack && gem && gem.type.includes("Gem")) {
       const gemFlavor = gem.type.substring(0, gem.type.length - 3);
       // TODO: add gemFlavor effects
-      this.upgradeEquipment(equipment, Math.floor(Math.pow(gem.value/10,2.4)), gemFlavor);
+      this.upgradeEquipment(equipment, Math.floor(Math.pow(gem.value / 10, 2.4)), gemFlavor);
       this.updateArmorDescription(equipment);
-      if (gemStack.quantity > 1){
+      if (gemStack.quantity > 1) {
         gemStack.quantity--;
       } else {
         this.itemStacks[gemIndex] = null;
       }
-      if (this.characterService.characterState.yinYangUnlocked){
+      if (this.characterService.characterState.yinYangUnlocked) {
         this.characterService.characterState.yang++;
         this.characterService.characterState.yin++;
       }
