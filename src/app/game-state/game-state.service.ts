@@ -77,8 +77,8 @@ export class GameStateService {
     });
   }
 
-  changeAutoSaveInterval(interval: number): void{
-    if(!interval || interval < 1) {
+  changeAutoSaveInterval(interval: number): void {
+    if (!interval || interval < 1) {
       interval = 1;
     } else if (interval > 900) {
       interval = 900;
@@ -106,7 +106,7 @@ export class GameStateService {
 
   savetoLocalStorage(): void {
     const saveCopy = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot)
-    if (saveCopy){
+    if (saveCopy) {
       window.localStorage.setItem("BACKUP" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot, saveCopy);
     }
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot, this.getGameExport());
@@ -121,16 +121,16 @@ export class GameStateService {
       return false;
     }
     this.importGame(gameStateSerialized);
-    if(this.isImport){
+    if (this.isImport) {
       this.characterService.toast("Load Successful")
       this.updateImportFlagKey(false);
     }
     return true;
   }
 
-  importGame(value: string){
+  importGame(value: string) {
     let gameStateSerialized: string;
-    if (value.substring(0, 3) === "iig"){
+    if (value.substring(0, 3) === "iig") {
       // it's a new save file
       gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
@@ -145,8 +145,8 @@ export class GameStateService {
     this.homeService.setProperties(gameState.home);
     this.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
-    for (const itemStack of this.inventoryService.itemStacks){
-      if (itemStack === null){
+    for (const itemStack of this.inventoryService.itemStacks) {
+      if (itemStack === null) {
         continue;
       }
       const item = this.itemRepoService.getItemById(itemStack.item.id);
@@ -169,7 +169,7 @@ export class GameStateService {
     this.updateImportFlagKey();
   }
 
-  getGameExport(): string{
+  getGameExport(): string {
     const gameState: GameState = {
       achievements: this.achievementService.getProperties(),
       impossibleTasks: this.impossibleTaskService.getProperties(),
@@ -206,23 +206,23 @@ export class GameStateService {
   }
 
   cheat(): void {
-    this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!","STANDARD","EVENT");
+    this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!", "STANDARD", "EVENT");
     this.characterService.characterState.money += 1e10;
-    for (const key in this.itemRepoService.items){
+    for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
       if (item.type === 'manual' && item.use) {
         item.use();
       }
     }
     const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
-    for (const key in keys){
+    for (const key in keys) {
       const attribute = this.characterService.characterState.attributes[keys[key]];
       attribute.aptitude += 1e7;
       attribute.value += 1e7;
     }
     this.inventoryService.addItem(this.inventoryService.generateSpiritGem(25));
     this.homeService.upgradeToNextHome();
-    while (this.homeService.upgrading){
+    while (this.homeService.upgrading) {
       this.homeService.upgradeTick();
     }
   }
@@ -233,16 +233,15 @@ export class GameStateService {
 
   getSaveFile() {
     const saveString = window.localStorage.getItem("saveSlotFor" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor())
-    if(!saveString)
-    {
+    if (!saveString) {
       return;
     }
     this.saveSlot = saveString;
   }
 
-  getDeploymentFlavor(){
+  getDeploymentFlavor() {
     let href = window.location.href;
-    if (href === "http://localhost:4200/"){
+    if (href === "http://localhost:4200/") {
       // development, use the standard save
       return "";
     } else if (href === "https://immortalityidle.github.io/" || href === "https://immortalityidle.github.io/old/") {
