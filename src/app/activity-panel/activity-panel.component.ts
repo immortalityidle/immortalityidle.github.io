@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
-import { Activity } from '../game-state/activity';
+import { Activity, ActivityType } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { HellService } from '../game-state/hell.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
@@ -57,6 +57,13 @@ export class ActivityPanelComponent {
     if (!activity.unlocked){
       return;
     }
+
+    if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell){
+      // Hell transition activities fire immediately instead of adding to activityLoop
+      activity.consequence[activity.level]();
+      return;
+    }
+
     if (activity.projectionOnly){
       this.activityService.spiritActivity = activity.activityType;
       return;
@@ -92,4 +99,15 @@ export class ActivityPanelComponent {
   hellBoss(){
     this.hellService.fightHellBoss();
   }
+
+  getActivityTooltip(activity: Activity){
+    if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell){
+      return "";
+    } else if (activity.unlocked){
+       return 'Add this to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top';
+    } else {
+      return 'This activity is locked until you have the attributes required for it';
+    }
+  }
+
 }

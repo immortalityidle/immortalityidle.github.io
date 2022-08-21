@@ -59,7 +59,7 @@ export class ActivityService {
   totalExhaustedDays = 0;
   activityHeader = "";
   activityHeaderDescription = "";
-  hellEnabled = false; // flip this true to enable new postmortal content
+  hellEnabled = true; // flip this true to enable new postmortal content
   hellService?: HellService;
   spiritActivityProgress = false;
   purifyGemsUnlocked = false;
@@ -109,7 +109,7 @@ export class ActivityService {
         this.currentLoopEntry = this.activityLoop[this.currentIndex];
         let activity = this.getActivityByType(this.currentLoopEntry.activity);
         // check if our current activity is zero-day
-        if (activity == null || this.currentLoopEntry.disabled || this.currentLoopEntry.repeatTimes === 0) {
+        if (activity === null || this.currentLoopEntry.disabled || this.currentLoopEntry.repeatTimes === 0) {
           // don't do the activity, instead see if there's a next one we can switch to
           let index = 0;
           if (this.currentIndex < this.activityLoop.length - 1) {
