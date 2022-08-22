@@ -473,6 +473,7 @@ export class InventoryService {
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!', 'STANDARD', 'CRAFTING');
     const durability = grade * 10 + Math.floor(Math.random() * grade * 5);
+    const damage = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'weapon',
       name: name,
@@ -480,7 +481,7 @@ export class InventoryService {
       slot: slot,
       value: grade,
       weaponStats: {
-        baseDamage: grade,
+        baseDamage: damage,
         material: material,
         durability: durability,
         baseName: baseName,
@@ -545,13 +546,13 @@ export class InventoryService {
   upgradeEquipment(equipment: Equipment, value: number, newEffect = "spirit") {
     if (equipment.armorStats) {
       equipment.armorStats.durability += value;
-      equipment.armorStats.defense += value;
+      equipment.armorStats.defense += Math.max(Math.sqrt(value), 1000) * value;
       if (newEffect !== "spirit") {
         equipment.armorStats.effect = newEffect;
       }
     } else if (equipment.weaponStats) {
       equipment.weaponStats.durability += value;
-      equipment.weaponStats.baseDamage += value;
+      equipment.weaponStats.baseDamage += Math.max(Math.sqrt(value), 1000) * value;;
       if (newEffect !== "spirit") {
         equipment.weaponStats.effect = newEffect;
       }
@@ -734,6 +735,7 @@ export class InventoryService {
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!', 'STANDARD', 'CRAFTING');
     const durability = grade * 5 + Math.floor(Math.random() * grade * 5);
+    const defense = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'armor',
       name: name,
@@ -741,7 +743,7 @@ export class InventoryService {
       slot: slot,
       value: grade,
       armorStats: {
-        defense: grade,
+        defense: defense,
         material: material,
         durability: durability,
         baseName: baseName,

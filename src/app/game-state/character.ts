@@ -438,8 +438,6 @@ export class Character {
     }
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
     this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
-    this.defense = Math.sqrt(this.attributes.toughness.value) || 1;
-    this.attackPower = Math.sqrt(this.attributes.strength.value) || 1;
     let leftHand = 1;
     let rightHand = 1;
     let head = 1;
@@ -464,7 +462,8 @@ export class Character {
     if (this.equipment.feet) {
       feet = (this.equipment.feet.armorStats?.defense || 1);
     }
-    this.attackPower *= Math.floor(Math.sqrt(this.attackPower) * Math.sqrt(2 * Math.sqrt(rightHand) * Math.sqrt(leftHand))) || 1; // root averaged.
+    const strengthPower = Math.sqrt(this.attributes.strength.value) || 1;
+    this.attackPower = Math.floor(strengthPower * Math.sqrt(rightHand * leftHand)) || 1;
     if (this.attributes.combatMastery.value > 1) {
       // multiply by log base 100 of combatMastery
       this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / Math.log(100);
@@ -472,7 +471,8 @@ export class Character {
     if (this.righteousWrathUnlocked) {
       this.attackPower *= 2;
     }
-    this.defense *= Math.floor(Math.sqrt(this.defense) * Math.sqrt(4 * Math.pow(head, 0.25) * Math.pow(body, 0.25) * Math.pow(legs, 0.25) * Math.pow(feet, 0.25))) || 1; // root averaged.
+    const toughnessDefense = Math.sqrt(this.attributes.toughness.value) || 1;
+    this.defense = Math.floor(toughnessDefense * (head + body + legs + feet)) || 1;
     if (this.righteousWrathUnlocked) {
       this.defense *= 2;
     }
