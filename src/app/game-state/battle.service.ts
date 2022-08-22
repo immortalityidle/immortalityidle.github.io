@@ -84,6 +84,7 @@ export class BattleService {
   highestDamageDealt = 0;
   totalKills = 0;
   skipEnemyAttack = 0;
+  degradeFactor = 0.0000001;
 
   constructor(
     private injector: Injector,
@@ -119,11 +120,8 @@ export class BattleService {
       this.enemiesAttack();
       this.youAttack();
       this.yearlyMonsterDay++;
-      if (this.yearlyMonsterDay >= 365) {
+      if (this.yearlyMonsterDay >= 365 || this.autoTroubleEnabled) {
         this.yearlyMonsterDay = 0;
-        this.trouble();
-      }
-      if (this.autoTroubleEnabled) {
         this.trouble();
       }
     });
@@ -357,8 +355,9 @@ export class BattleService {
       // degrade weapons
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats) {
         this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage;
-        this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * 0.0001);
-        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect == "life") {
+        this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * this.degradeFactor);
+        this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage * this.degradeFactor);
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === "life") {
           this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.leftHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
@@ -370,8 +369,9 @@ export class BattleService {
       }
       if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats) {
         this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage;
-        this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * 0.0001);
-        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect == "life") {
+        this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * this.degradeFactor);
+        this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage * this.degradeFactor);
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === "life") {
           this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.rightHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
@@ -500,8 +500,9 @@ export class BattleService {
     }
     if (armor.armorStats) {
       armor.armorStats.durability -= durabilityDamage;
-      armor.value -= 1 + Math.floor(armor.value * 0.0001);
-      if (armor.armorStats.effect == "life") {
+      armor.value -= 1 + Math.floor(armor.value * this.degradeFactor);
+      armor.armorStats.defense -= 1 + Math.floor(armor.armorStats.defense * this.degradeFactor);
+      if (armor.armorStats.effect === "life") {
         this.logService.addLogMessage("Your " + armor.name + " healed you for " + durabilityDamage + " as the enemy struck it.", "STANDARD", "COMBAT");
         this.characterService.characterState.status.health.value += durabilityDamage;
         this.characterService.characterState.checkOverage();

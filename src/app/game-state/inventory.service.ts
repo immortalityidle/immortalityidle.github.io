@@ -432,7 +432,6 @@ export class InventoryService {
 
   // materials are wood or metal
   generateWeapon(grade: number, material: string, useGemOkay: boolean, defaultName: string | undefined = undefined, effect: string | undefined = undefined): Equipment {
-
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
       // consume a spirit gem and increase the grade
       const value = this.consume("spiritGem", 1, this.useCheapestSpiritGem);
