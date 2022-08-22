@@ -356,7 +356,13 @@ export class BattleService {
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats) {
         this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage;
         this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * this.degradeFactor);
+        if (this.characterService.characterState.equipment.leftHand.value < 1){
+          this.characterService.characterState.equipment.leftHand.value = 1;
+        }
         this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage * this.degradeFactor);
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage < 1){
+          this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage = 1;
+        }
         if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === "life") {
           this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.leftHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
           this.characterService.characterState.status.health.value += durabilityDamage;
@@ -370,7 +376,13 @@ export class BattleService {
       if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats) {
         this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage;
         this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * this.degradeFactor);
+        if (this.characterService.characterState.equipment.rightHand.value < 1){
+          this.characterService.characterState.equipment.rightHand.value = 1;
+        }
         this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage * this.degradeFactor);
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage < 1){
+          this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage = 1;
+        }
         if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === "life") {
           this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.rightHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
           this.characterService.characterState.status.health.value += durabilityDamage;
@@ -501,7 +513,13 @@ export class BattleService {
     if (armor.armorStats) {
       armor.armorStats.durability -= durabilityDamage;
       armor.value -= 1 + Math.floor(armor.value * this.degradeFactor);
+      if (armor.value < 1){
+        armor.value = 1;
+      }
       armor.armorStats.defense -= 1 + Math.floor(armor.armorStats.defense * this.degradeFactor);
+      if (armor.armorStats.defense < 1){
+        armor.armorStats.defense = 1;
+      }
       if (armor.armorStats.effect === "life") {
         this.logService.addLogMessage("Your " + armor.name + " healed you for " + durabilityDamage + " as the enemy struck it.", "STANDARD", "COMBAT");
         this.characterService.characterState.status.health.value += durabilityDamage;
