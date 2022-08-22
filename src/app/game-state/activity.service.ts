@@ -59,7 +59,7 @@ export class ActivityService {
   totalExhaustedDays = 0;
   activityHeader = "";
   activityHeaderDescription = "";
-  hellEnabled = true; // flip this true to enable new postmortal content
+  hellEnabled = false; // flip this true to enable new postmortal content
   hellService?: HellService;
   spiritActivityProgress = false;
   purifyGemsUnlocked = false;
