@@ -4,7 +4,7 @@ import { TitleCasePipe } from '@angular/common';
 import { MainLoopService } from './main-loop.service';
 import { BigNumberPipe } from '../app.component';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 export interface CharacterAttribute {
   strength?: number,
@@ -154,6 +154,7 @@ export class Character {
   bonusBrains = false;
   bonusHealth = false;
   showLifeSummary = true;
+  dialogRef: MatDialogRef<LifeSummaryComponent, any> | null = null;
 
   attributes: AttributeObject = {
     strength: {
@@ -415,7 +416,10 @@ export class Character {
     }
 
     if (this.showLifeSummary){
-      const dialogRef = this.dialog.open(LifeSummaryComponent, {
+      if (this.dialogRef){
+        this.dialogRef.close()
+      }
+      this.dialogRef = this.dialog.open(LifeSummaryComponent, {
         width: '600px',
         data: {causeOfDeath: causeOfDeath, attributeGains: attributeGains}
       });

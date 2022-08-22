@@ -4,11 +4,11 @@
         <mat-icon matTooltip="The items that you gain during your quest for immortality will appear here. Pause the game and hover your cursor over an item to learn more about it.">
           help
         </mat-icon>
-        Inventory
+        Inventory -&nbsp;
       </div>
       <div class="moneyLabelColumn">Money: </div>
       <div class="moneyContainer">
-        <div class="moneyColumn">{{characterService.characterState.money | bigNumber}} Taels</div>
+        <div class="moneyColumn"><span>{{characterService.characterState.money | bigNumber}} Taels</span></div>
         <div *ngIf="hellService.inHell" matTooltip="Money usable only in hell. Note that this is not transferrable between hells." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
       </div>
       <div><mat-icon *ngIf="inventoryService.noFood" class="noFood"

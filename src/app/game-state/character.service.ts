@@ -89,6 +89,9 @@ export class CharacterService {
           }
         }
         this.characterState.dead = true;
+        if (!this.characterState.showLifeSummary){
+          this.toast("A new life begins.");
+        }
         this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
         // Revive the character in the next tick update for making sure that everything is stopped.
@@ -316,8 +319,8 @@ export class CharacterService {
   }
 
   // this doesn't really belong here, but nearly everything accesses this service and I didn't want to make a whole service for one function, so here it will live for now
-  toast(message: string) {
-    const snackBar = this.snackBar.open(message, "Close", { duration: 5000, horizontalPosition: 'right', verticalPosition: 'bottom', panelClass: ['snackBar', 'darkMode'] });
+  toast(message: string, duration: number = 5000) {
+    const snackBar = this.snackBar.open(message, "Close", { duration: duration, horizontalPosition: 'right', verticalPosition: 'bottom', panelClass: ['snackBar', 'darkMode'] });
     this.snackBarObservable = snackBar.onAction().subscribe(() => {
       this.snackBarObservable?.unsubscribe();
     })

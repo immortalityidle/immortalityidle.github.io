@@ -370,9 +370,9 @@ export class AchievementService {
       hint: "Left and right.",
       check: () => {
         if (this.characterService.characterState.equipment?.rightHand?.weaponStats &&
-          this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 131 &&
+          this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 60 &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats &&
-          this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 131
+          this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 60
         ) {
           return true;
         }
@@ -389,13 +389,13 @@ export class AchievementService {
       hint: "Suit up.",
       check: () => {
         if (this.characterService.characterState.equipment?.head?.armorStats &&
-          this.characterService.characterState.equipment?.head?.armorStats.defense >= 131 &&
+          this.characterService.characterState.equipment?.head?.armorStats.defense >= 60 &&
           this.characterService.characterState.equipment?.body?.armorStats &&
-          this.characterService.characterState.equipment?.body?.armorStats.defense >= 131 &&
+          this.characterService.characterState.equipment?.body?.armorStats.defense >= 60 &&
           this.characterService.characterState.equipment?.legs?.armorStats &&
-          this.characterService.characterState.equipment?.legs?.armorStats.defense >= 131 &&
+          this.characterService.characterState.equipment?.legs?.armorStats.defense >= 60 &&
           this.characterService.characterState.equipment?.feet?.armorStats &&
-          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 131) {
+          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 60) {
           return true;
         }
         return false;

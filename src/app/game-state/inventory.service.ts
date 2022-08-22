@@ -1266,7 +1266,8 @@ export class InventoryService {
     const item = itemStack.item;
 
     if (!instanceOfEquipment(item)) {
-      throw Error('Tried to equip an item that was not equipable');
+      // it's not equipable, bail out
+      return;
     }
 
     if ((item.armorStats?.durability || 0) <= 0 && (item.weaponStats?.durability || 0) <= 0) {

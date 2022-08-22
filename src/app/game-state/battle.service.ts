@@ -353,13 +353,14 @@ export class BattleService {
         durabilityDamage += Math.sqrt(defense - 20000);
       }
       // degrade weapons
+      const degradeFactor = this.degradeFactor / 4; // degrade weapons more slowly since they take the hit every time
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats) {
         this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage;
-        this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * this.degradeFactor);
+        this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * degradeFactor);
         if (this.characterService.characterState.equipment.leftHand.value < 1){
           this.characterService.characterState.equipment.leftHand.value = 1;
         }
-        this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage * this.degradeFactor);
+        this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage * degradeFactor);
         if (this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage < 1){
           this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage = 1;
         }
@@ -375,11 +376,11 @@ export class BattleService {
       }
       if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats) {
         this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage;
-        this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * this.degradeFactor);
+        this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * degradeFactor);
         if (this.characterService.characterState.equipment.rightHand.value < 1){
           this.characterService.characterState.equipment.rightHand.value = 1;
         }
-        this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage * this.degradeFactor);
+        this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage * degradeFactor);
         if (this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage < 1){
           this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage = 1;
         }
@@ -418,6 +419,9 @@ export class BattleService {
       this.kills++;
       this.totalKills++;
       this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
+      if (this.currentEnemy.enemy.name === "Death itself") {
+        this.characterService.toast("HURRAY! Check your inventory. You just got something special!", 0);
+      }      
       for (const item of this.currentEnemy.enemy.loot) {
         const lootItem = this.itemRepoService.getItemById(item.id);
         if (lootItem) {
