@@ -11,6 +11,7 @@ import { JoinTheGodsText } from '../game-state/textResources';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
+import { CamelToTitlePipe } from '../app.component';
 
 @Component({
   selector: 'app-activity-panel',
@@ -19,6 +20,7 @@ import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 })
 export class ActivityPanelComponent {
 
+  camelToTitle = new CamelToTitlePipe();
   character: Character;
   Math: Math;
 
@@ -106,7 +108,13 @@ export class ActivityPanelComponent {
     } else if (activity.unlocked){
        return 'Add this to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top';
     } else {
-      return 'This activity is locked until you have the attributes required for it';
+      let requirementString = 'This activity is locked until you have the attributes required for it. You will need:\n\n';
+      const requirements = activity.requirements[0];
+      for (const prop in requirements){
+        //@ts-ignore
+        requirementString += this.camelToTitle.transform(prop) + ": " + requirements[prop] + "\n";
+      }
+      return requirementString;
     }
   }
 

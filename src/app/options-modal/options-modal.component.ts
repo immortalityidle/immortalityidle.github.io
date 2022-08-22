@@ -189,6 +189,11 @@ export class OptionsModalComponent {
     this.inventoryService.autoBuyFood = event.target.checked;
   }
 
+  showLifeSummaryChange(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.characterService.characterState.showLifeSummary = event.target.checked;
+  }
+
   scientificNotationChange(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.scientificNotation = event.target.checked;

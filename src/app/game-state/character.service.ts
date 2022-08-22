@@ -9,6 +9,8 @@ import { Subscription } from "rxjs";
 import { BigNumberPipe } from '../app.component';
 import { HellLevel, HellService } from './hell.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +32,13 @@ export class CharacterService {
     private mainLoopService: MainLoopService,
     private logService: LogService,
     private reincarnationService: ReincarnationService,
-    titleCasePipe: TitleCasePipe
+    titleCasePipe: TitleCasePipe,
+    public dialog: MatDialog
   ) {
     setTimeout(() => this.hellService = this.injector.get(HellService));
     this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
-    this.characterState = new Character(logService, titleCasePipe, this.bigNumberPipe, mainLoopService);
+    this.characterState = new Character(logService, titleCasePipe, this.bigNumberPipe, mainLoopService, dialog);
     mainLoopService.tickSubject.subscribe(() => {
       if (this.mainLoopService.totalTicks % 3650 === 0) {
         this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
@@ -86,7 +89,7 @@ export class CharacterService {
           }
         }
         this.characterState.dead = true;
-        this.characterState.reincarnate(); // make sure character reincarnation fires before other things reset
+        this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
         // Revive the character in the next tick update for making sure that everything is stopped.
         this.deathSubscriber = this.mainLoopService.tickSubject.subscribe(() => {

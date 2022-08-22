@@ -24,6 +24,13 @@
       </div>
       <div class="optionField">
         <span>
+          <input type="checkbox" (change)="showLifeSummaryChange($event)"
+            id="showLifeSummary" [checked]="characterService.characterState.showLifeSummary">
+          <label for="showLifeSummary">Show a previous life summary at the start of each life</label>
+        </span>
+      </div>
+      <div class="optionField">
+        <span>
           <input type="checkbox" (change)="scientificNotationChange($event)"
             id="scientificNotation"  [checked]="mainLoopService.scientificNotation">
           <label for="scientificNotation">Turn on numbers with scientific notation.</label>&nbsp;

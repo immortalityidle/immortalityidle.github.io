@@ -3,6 +3,8 @@ import { LogService } from './log.service';
 import { TitleCasePipe } from '@angular/common';
 import { MainLoopService } from './main-loop.service';
 import { BigNumberPipe } from '../app.component';
+import { LifeSummaryComponent } from '../life-summary/life-summary.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface CharacterAttribute {
   strength?: number,
@@ -87,7 +89,8 @@ export interface CharacterProperties {
   righteousWrathUnlocked: boolean,
   bonusMuscles: boolean,
   bonusBrains: boolean,
-  bonusHealth: boolean
+  bonusHealth: boolean,
+  showLifeSummary: boolean
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -98,7 +101,8 @@ export class Character {
     private logService: LogService,
     private titlecasePipe: TitleCasePipe,
     private bigNumberPipe: BigNumberPipe,
-    public mainLoopService: MainLoopService
+    public mainLoopService: MainLoopService,
+    private dialog: MatDialog
   ) {
     mainLoopService.frameSubject.subscribe(() => {
       this.empowermentMult = this.getEmpowermentMult();
@@ -149,6 +153,7 @@ export class Character {
   bonusMuscles = false;
   bonusBrains = false;
   bonusHealth = false;
+  showLifeSummary = true;
 
   attributes: AttributeObject = {
     strength: {
@@ -323,7 +328,7 @@ export class Character {
 
 
   // reset everything but increase aptitudes
-  reincarnate(): void {
+  reincarnate(causeOfDeath: string): void {
     this.totalLives++;
     this.status.health.value = 100;
     this.status.health.max = 100;
@@ -359,6 +364,8 @@ export class Character {
       this.statLifespan *= 5;
     }
 
+    let attributeGains = "";
+
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
       if (this.attributes[keys[key]].value > 0) {
@@ -367,7 +374,9 @@ export class Character {
         if (addedValue > 0) {
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
-          this.logService.addLogMessage("Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue), "STANDARD", "EVENT");
+          const message = "Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue) + " to a new aptitude of " + this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
+          this.logService.addLogMessage(message, "STANDARD", "EVENT");
+          attributeGains += message + "\n";
         }
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
@@ -404,6 +413,14 @@ export class Character {
       this.equipment.legs = null;
       this.equipment.feet = null;
     }
+
+    if (this.showLifeSummary){
+      const dialogRef = this.dialog.open(LifeSummaryComponent, {
+        width: '600px',
+        data: {causeOfDeath: causeOfDeath, attributeGains: attributeGains}
+      });
+    }
+
   }
 
   getAttributeStartingValue(value: number, aptitude: number): number {
@@ -667,7 +684,8 @@ export class Character {
       righteousWrathUnlocked: this.righteousWrathUnlocked,
       bonusMuscles: this.bonusMuscles,
       bonusBrains: this.bonusBrains,
-      bonusHealth: this.bonusHealth
+      bonusHealth: this.bonusHealth,
+      showLifeSummary: this.showLifeSummary
 
     }
   }
@@ -728,6 +746,7 @@ export class Character {
     this.bonusMuscles = properties.bonusMuscles || false;
     this.bonusBrains = properties.bonusBrains || false;
     this.bonusHealth = properties.bonusHealth || false;
+    this.showLifeSummary = properties.showLifeSummary ?? true;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery) {
