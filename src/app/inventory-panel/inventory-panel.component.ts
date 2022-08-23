@@ -13,6 +13,8 @@ import { MainLoopService } from '../game-state/main-loop.service';
 
 export class InventoryPanelComponent {
   equipmentSlots: string[];
+  instanceOfEquipment =  instanceOfEquipment;
+
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService,
     public hellService: HellService,

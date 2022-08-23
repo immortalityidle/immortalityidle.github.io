@@ -257,6 +257,19 @@ export class InventoryService {
           this.updateWeaponDescription(item);
         }
       }
+      for (const itemStack of this.itemStacks ){
+        if (itemStack){
+          const item = itemStack.item;
+          if (instanceOfEquipment(item)){
+            if (item.weaponStats) { 
+              this.updateWeaponDescription(item);
+            } else if (item.armorStats){
+              this.updateArmorDescription(item);
+            }
+          }
+        }
+      }
+  
       if (this.autoSort) {
         this.sortInventory();
       }
@@ -472,7 +485,7 @@ export class InventoryService {
     const baseName = defaultName ?? WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!', 'STANDARD', 'CRAFTING');
-    const durability = grade * 10 + Math.floor(Math.random() * grade * 5);
+    const durability = grade * 15;
     const damage = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'weapon',
@@ -488,7 +501,7 @@ export class InventoryService {
         effect: effect
       },
       description: 'A unique weapon made of ' + material + ". Drag and drop onto similar weapons to merge them into something better.\nBase Damage: " +
-        this.bigNumberPipe.transform(grade) + "\nDurability: " + this.bigNumberPipe.transform(durability)
+        this.bigNumberPipe.transform(damage) + "\nDurability: " + this.bigNumberPipe.transform(durability)
     };
   }
 
@@ -500,7 +513,7 @@ export class InventoryService {
     if (weapon.weaponStats.effect) {
       effectString = " and imbued with the power of " + weapon.weaponStats.effect;
     }
-    weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + effectString + ".\nBase Damage: " +
+    weapon.description = 'A unique weapon made of ' + weapon.weaponStats.material + effectString + ". Drag and drop onto similar weapons to merge them into something better.\nBase Damage: " +
       this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) + "\nDurability: " + this.bigNumberPipe.transform(weapon.weaponStats.durability);
   }
 
@@ -512,7 +525,7 @@ export class InventoryService {
     if (armor.armorStats.effect) {
       effectString = " and imbued with the power of " + armor.armorStats.effect;
     }
-    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + effectString + ".\nDefense: " +
+    armor.description = 'A unique piece of armor made of ' + armor.armorStats.material + effectString + ". Drag and drop onto similar armor to merge them into something better.\nDefense: " +
       this.bigNumberPipe.transform(armor.armorStats.defense) + "\nDurability: " + this.bigNumberPipe.transform(armor.armorStats.durability);
   }
 
@@ -734,7 +747,7 @@ export class InventoryService {
     const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!', 'STANDARD', 'CRAFTING');
-    const durability = grade * 5 + Math.floor(Math.random() * grade * 5);
+    const durability = grade * 10;
     const defense = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'armor',
@@ -750,7 +763,7 @@ export class InventoryService {
         effect: effect
       },
       description: 'A unique piece of armor made of ' + material + ". Drag and drop onto similar armor to merge them into something better.\nDefense: " +
-        this.bigNumberPipe.transform(grade) + "\nDurability: " + this.bigNumberPipe.transform(durability)
+        this.bigNumberPipe.transform(defense) + "\nDurability: " + this.bigNumberPipe.transform(durability)
     };
 
   }
@@ -1149,6 +1162,10 @@ export class InventoryService {
       return;
     }
     if (!this.autoSellUnlocked) {
+      return;
+    }
+    if (instanceOfEquipment(item)){
+      // don't autosell equipment
       return;
     }
     if (!this.autoSellEntries.some(e => e.name === item.name)) {

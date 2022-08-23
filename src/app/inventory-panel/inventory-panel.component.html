@@ -50,7 +50,7 @@
       matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
       shopping_basket
     </mat-icon>
-    <mat-icon *ngIf="inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item.value)" class="iconButton" (click)="autoSell()"
+    <mat-icon *ngIf="inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item.value) && !instanceOfEquipment(inventoryService.selectedItem.item)" class="iconButton" (click)="autoSell()"
       matTooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell.">
       currency_exchange
     </mat-icon>

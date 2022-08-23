@@ -355,7 +355,7 @@ export class BattleService {
       // degrade weapons
       const degradeFactor = this.degradeFactor / 4; // degrade weapons more slowly since they take the hit every time
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats) {
-        this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage;
+        this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor);
         this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * degradeFactor);
         if (this.characterService.characterState.equipment.leftHand.value < 1){
           this.characterService.characterState.equipment.leftHand.value = 1;
@@ -375,7 +375,7 @@ export class BattleService {
         }
       }
       if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats) {
-        this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage;
+        this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor);
         this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * degradeFactor);
         if (this.characterService.characterState.equipment.rightHand.value < 1){
           this.characterService.characterState.equipment.rightHand.value = 1;
@@ -515,7 +515,7 @@ export class BattleService {
       durabilityDamage += Math.sqrt(damage - 20000);
     }
     if (armor.armorStats) {
-      armor.armorStats.durability -= durabilityDamage;
+      armor.armorStats.durability -= durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor);
       armor.value -= 1 + Math.floor(armor.value * this.degradeFactor);
       if (armor.value < 1){
         armor.value = 1;
@@ -526,7 +526,7 @@ export class BattleService {
       }
       if (armor.armorStats.effect === "life") {
         this.logService.addLogMessage("Your " + armor.name + " healed you for " + durabilityDamage + " as the enemy struck it.", "STANDARD", "COMBAT");
-        this.characterService.characterState.status.health.value += durabilityDamage;
+        this.characterService.characterState.status.health.value += durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor);
         this.characterService.characterState.checkOverage();
       }
       if (armor.armorStats.durability <= 0) {
