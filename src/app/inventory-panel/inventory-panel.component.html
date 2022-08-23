@@ -26,8 +26,8 @@
         <div class="itemSlot" *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;"
         (mousedown)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
         draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
-        [ngClass]="{'selectedItem': (itemStack !== null && itemStack === inventoryService.selectedItem),
-        'brokenItem': (itemStack !== null && !inventoryService.hasDurability(itemStack) )}"
+        [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
+        'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
         matTooltip="{{(itemStack?.item !== null && mainLoopService.pause) ? (itemStack?.item?.name | titlecase) + '
 
         ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>

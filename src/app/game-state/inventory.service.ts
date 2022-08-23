@@ -552,7 +552,7 @@ export class InventoryService {
       }
     } else if (equipment.weaponStats) {
       equipment.weaponStats.durability += value;
-      equipment.weaponStats.baseDamage += Math.max(Math.sqrt(value), 1000) * value;;
+      equipment.weaponStats.baseDamage += Math.max(Math.sqrt(value), 1000) * value;
       if (newEffect !== "spirit") {
         equipment.weaponStats.effect = newEffect;
       }
@@ -1029,7 +1029,7 @@ export class InventoryService {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack !== null && itemStack.item.type === "spiritGem" && itemStack.item.value < item.value) {
+        if (itemStack && itemStack.item.type === "spiritGem" && itemStack.item.value < item.value) {
           this.characterService.characterState.money += itemStack.item.value * itemStack.quantity;
           this.itemStacks[i] = null;
         }
@@ -1219,7 +1219,7 @@ export class InventoryService {
       // use all the ones you have now
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack === null) {
+        if (!itemStack) {
           continue;
         }
         if (itemStack.item.name === item.name) {
@@ -1297,7 +1297,7 @@ export class InventoryService {
     }
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator !== null) {
+      if (itemIterator) {
         const item = itemIterator.item;
         if (instanceOfEquipment(item) && item.slot === slot) {
           let itemPower = 0
@@ -1326,7 +1326,7 @@ export class InventoryService {
     let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null) {
+      if (!itemIterator) {
         continue;
       }
       if (itemIterator.item.type === consumeType) {

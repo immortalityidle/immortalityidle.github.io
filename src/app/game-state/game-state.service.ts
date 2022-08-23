@@ -91,10 +91,10 @@ export class GameStateService {
   }
 
   /**
-   * 
-   * @param isImport Leave undefined to load flag, boolean to change save to that boolean. 
+   *
+   * @param isImport Leave undefined to load flag, boolean to change save to that boolean.
    */
-  updateImportFlagKey(isImport?: boolean) { // A new key to avoid saving backups over mains, and mains over backups. 
+  updateImportFlagKey(isImport?: boolean) { // A new key to avoid saving backups over mains, and mains over backups.
     if (isImport !== undefined) {
       this.isImport = isImport;
       const data = JSON.stringify(this.isImport);
@@ -153,7 +153,7 @@ export class GameStateService {
     this.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks) {
-      if (itemStack === null) {
+      if (!itemStack) {
         continue;
       }
       const item = this.itemRepoService.getItemById(itemStack.item.id);
