@@ -1057,7 +1057,7 @@ export class InventoryService {
       // try to stack the new item with existing items
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemIterator = this.itemStacks[i];
-        if (itemIterator === null) {
+        if (!itemIterator) {
           continue;
         }
         if (itemIterator.item.name === item.name) {
@@ -1371,7 +1371,7 @@ export class InventoryService {
     let itemValue = -1;
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null) {
+      if (!itemIterator) {
         continue;
       }
       if (itemIterator.item.type === itemType) {
@@ -1387,7 +1387,7 @@ export class InventoryService {
     let itemCount = 0;
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null) {
+      if (!itemIterator) {
         continue;
       }
       if (itemIterator.item.name === itemName) {
@@ -1437,7 +1437,7 @@ export class InventoryService {
   openInventorySlots() {
     let openSlots = 0;
     for (const itemIterator of this.itemStacks) {
-      if (itemIterator === null) {
+      if (!itemIterator) {
         openSlots++;
       }
     }
@@ -1457,7 +1457,7 @@ export class InventoryService {
       inventoryIndex = this.addItem(this.generateArmor(item1.value + item2.value, item1.armorStats?.material + "", item1.slot, false, item1.armorStats?.baseName, item1.armorStats?.effect));
     }
     // if we can, move the new item to the desired destination index
-    if (inventoryIndex !== destinationInventoryIndex && this.itemStacks[destinationInventoryIndex] === null) {
+    if (inventoryIndex !== destinationInventoryIndex && !this.itemStacks[destinationInventoryIndex]) {
       this.itemStacks[destinationInventoryIndex] = this.itemStacks[inventoryIndex];
       this.itemStacks[inventoryIndex] = null;
     }
@@ -1535,7 +1535,7 @@ export class InventoryService {
     }
     if (this.automergeEquipped) {
       // finally, merge the last item with that slot into the equipped item if present and autoEquipBest is enabled(and corresponding autoequip is unlocked)
-      if (destinationItem !== null && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)) {
+      if (destinationItem && this.autoequipBestEnabled && (this.autoequipBestWeapon || this.autoequipBestArmor)) {
         if (((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) ||
           (slot !== 'rightHand' && slot !== 'leftHand' && this.autoequipBestArmor)) {
           this.mergeEquippedSlot(slot, destinationItem, lastdestinationIndex);
@@ -1556,7 +1556,7 @@ export class InventoryService {
       return;
     }
     let newItem;
-    if (equippedItem === null) {
+    if (!equippedItem) {
       this.characterService.characterState.equipment[slot] = itemToMerge;
       this.itemStacks[sourceItemIndex] = null;
       return;
@@ -1597,7 +1597,7 @@ export class InventoryService {
     }
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator === null) {
+      if (!itemIterator) {
         continue;
       }
       if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power) {
