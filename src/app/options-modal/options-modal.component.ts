@@ -194,6 +194,11 @@ export class OptionsModalComponent {
     this.characterService.characterState.showLifeSummary = event.target.checked;
   }
 
+  showTipsChange(event: Event){
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.characterService.characterState.showTips = event.target.checked;
+  }
+
   scientificNotationChange(event: Event){
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.scientificNotation = event.target.checked;
@@ -201,4 +206,4 @@ export class OptionsModalComponent {
     // eslint-disable-next-line no-self-assign
     window.location.href = window.location.href;
   }
-} 
+}

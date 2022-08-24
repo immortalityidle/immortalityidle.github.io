@@ -3,19 +3,19 @@ import { LogService } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
-import { TitleCasePipe } from '@angular/common';
 import { ActivityService } from './activity.service';
 import { Subscription } from "rxjs";
 import { BigNumberPipe } from '../app.component';
 import { HellLevel, HellService } from './hell.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { LifeSummaryComponent } from '../life-summary/life-summary.component';
+import { CamelToTitlePipe } from '../app.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
+  camelToTitlePipe = new CamelToTitlePipe();
   bigNumberPipe: BigNumberPipe;
   activityService?: ActivityService;
   characterState: Character;
@@ -32,13 +32,12 @@ export class CharacterService {
     private mainLoopService: MainLoopService,
     private logService: LogService,
     private reincarnationService: ReincarnationService,
-    titleCasePipe: TitleCasePipe,
     public dialog: MatDialog
   ) {
     setTimeout(() => this.hellService = this.injector.get(HellService));
     this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
-    this.characterState = new Character(logService, titleCasePipe, this.bigNumberPipe, mainLoopService, dialog);
+    this.characterState = new Character(logService, this.camelToTitlePipe, this.bigNumberPipe, mainLoopService, dialog);
     mainLoopService.tickSubject.subscribe(() => {
       if (this.mainLoopService.totalTicks % 3650 === 0) {
         this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
@@ -319,7 +318,7 @@ export class CharacterService {
   }
 
   // this doesn't really belong here, but nearly everything accesses this service and I didn't want to make a whole service for one function, so here it will live for now
-  toast(message: string, duration: number = 5000) {
+  toast(message: string, duration = 5000) {
     const snackBar = this.snackBar.open(message, "Close", { duration: duration, horizontalPosition: 'right', verticalPosition: 'bottom', panelClass: ['snackBar', 'darkMode'] });
     this.snackBarObservable = snackBar.onAction().subscribe(() => {
       this.snackBarObservable?.unsubscribe();

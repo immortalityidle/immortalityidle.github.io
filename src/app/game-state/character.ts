@@ -1,8 +1,7 @@
-import { Equipment, Item } from './inventory.service'
+import { Equipment } from './inventory.service'
 import { LogService } from './log.service';
-import { TitleCasePipe } from '@angular/common';
 import { MainLoopService } from './main-loop.service';
-import { BigNumberPipe } from '../app.component';
+import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -90,7 +89,8 @@ export interface CharacterProperties {
   bonusMuscles: boolean,
   bonusBrains: boolean,
   bonusHealth: boolean,
-  showLifeSummary: boolean
+  showLifeSummary: boolean,
+  showTips: boolean
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -99,7 +99,7 @@ export class Character {
 
   constructor(
     private logService: LogService,
-    private titlecasePipe: TitleCasePipe,
+    private camelToTitlePipe: CamelToTitlePipe,
     private bigNumberPipe: BigNumberPipe,
     public mainLoopService: MainLoopService,
     private dialog: MatDialog
@@ -154,6 +154,7 @@ export class Character {
   bonusBrains = false;
   bonusHealth = false;
   showLifeSummary = true;
+  showTips = false;
   dialogRef: MatDialogRef<LifeSummaryComponent, any> | null = null;
 
   attributes: AttributeObject = {
@@ -331,6 +332,37 @@ export class Character {
   // reset everything but increase aptitudes
   reincarnate(causeOfDeath: string): void {
     this.totalLives++;
+
+    let attributeGains = "";
+
+    const keys = Object.keys(this.attributes) as AttributeType[];
+    for (const key in keys) {
+      if (this.attributes[keys[key]].value > 0) {
+        // gain aptitude based on last life's value
+        const addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) / this.aptitudeGainDivider;
+        if (addedValue > 0) {
+          // never reduce aptitudes during reincarnation
+          this.attributes[keys[key]].aptitude += addedValue;
+          const message = "Your aptitude for " + this.camelToTitlePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue) + "\n    New aptitude: " + this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
+          this.logService.addLogMessage(message, "STANDARD", "EVENT");
+          attributeGains += message + "\n    New starting value: " + this.bigNumberPipe.transform(this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude)) + "\n";
+        }
+        // start at the aptitude value
+        this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
+        this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
+      }
+    }
+
+    if (this.showLifeSummary){
+      if (this.dialogRef){
+        this.dialogRef.close()
+      }
+      this.dialogRef = this.dialog.open(LifeSummaryComponent, {
+        width: '600px',
+        data: {causeOfDeath: causeOfDeath, attributeGains: attributeGains}
+      });
+    }
+
     this.status.health.value = 100;
     this.status.health.max = 100;
     this.status.stamina.value = 100;
@@ -365,25 +397,6 @@ export class Character {
       this.statLifespan *= 5;
     }
 
-    let attributeGains = "";
-
-    const keys = Object.keys(this.attributes) as AttributeType[];
-    for (const key in keys) {
-      if (this.attributes[keys[key]].value > 0) {
-        // gain aptitude based on last life's value
-        const addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) / this.aptitudeGainDivider;
-        if (addedValue > 0) {
-          // never reduce aptitudes during reincarnation
-          this.attributes[keys[key]].aptitude += addedValue;
-          const message = "Your aptitude for " + this.titlecasePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue) + " to a new aptitude of " + this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
-          this.logService.addLogMessage(message, "STANDARD", "EVENT");
-          attributeGains += message + "\n";
-        }
-        // start at the aptitude value
-        this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
-        this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
-      }
-    }
     if (this.money < 0) {
       //sanity check that we're not persisting/growing debt at higher bloodline levels
       this.money = 0;
@@ -415,21 +428,12 @@ export class Character {
       this.equipment.feet = null;
     }
 
-    if (this.showLifeSummary){
-      if (this.dialogRef){
-        this.dialogRef.close()
-      }
-      this.dialogRef = this.dialog.open(LifeSummaryComponent, {
-        width: '600px',
-        data: {causeOfDeath: causeOfDeath, attributeGains: attributeGains}
-      });
-    }
 
   }
 
   getAttributeStartingValue(value: number, aptitude: number): number {
-    if (value < 0) {
-      value = 0;
+    if (value <= 0) {
+      return 0;
     }
     if (aptitude < 0) {
       aptitude = 0;
@@ -438,7 +442,7 @@ export class Character {
       return value / 10;
     }
     if (aptitude < this.attributeSoftCap) {
-      return aptitude / 10;
+      return 1 + aptitude / 10;
     }
     return (this.attributeSoftCap / 10) + Math.log2(aptitude - (this.attributeSoftCap - 1));
   }
@@ -689,8 +693,8 @@ export class Character {
       bonusMuscles: this.bonusMuscles,
       bonusBrains: this.bonusBrains,
       bonusHealth: this.bonusHealth,
-      showLifeSummary: this.showLifeSummary
-
+      showLifeSummary: this.showLifeSummary,
+      showTips: this.showTips
     }
   }
 
@@ -751,6 +755,7 @@ export class Character {
     this.bonusBrains = properties.bonusBrains || false;
     this.bonusHealth = properties.bonusHealth || false;
     this.showLifeSummary = properties.showLifeSummary ?? true;
+    this.showTips = properties.showTips || false;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery) {
