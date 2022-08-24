@@ -286,8 +286,8 @@ export class ImpossibleTaskService {
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
       this.battleService.addEnemy({
         name: "Death itself",
-        health: 1e20,
-        maxHealth: 1e20,
+        health: 1e24,
+        maxHealth: 1e23,
         accuracy: 0.99,
         attack: 3e8,
         defense: 3e8,

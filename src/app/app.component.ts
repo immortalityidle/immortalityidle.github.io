@@ -94,21 +94,21 @@ export class AppComponent implements OnInit {
     } else if ((event.code === 'Enter' || event.code === 'NumpadEnter') && this.mainLoopService.pause){
       this.mainLoopService.tick();
       event.preventDefault();
-    } else if (event.code === 'Digit0' || event.code === 'Numpad0'){
+    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit0' || event.code === 'Numpad0')){
       this.mainLoopService.pause = true;
-    } else if (event.code === 'Digit1' || event.code === 'Numpad1'){
+    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit1' || event.code === 'Numpad1')){
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 40;
-    } else if (event.code === 'Digit2' || event.code === 'Numpad2'){
+    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit2' || event.code === 'Numpad2')){
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 10;
-    } else if ((event.code === 'Digit3' || event.code === 'Numpad3') && this.mainLoopService.unlockFastSpeed){
+    } else if (((event.altKey || event.metaKey) && (event.code === 'Digit3' || event.code === 'Numpad3')) && this.mainLoopService.unlockFastSpeed){
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 5;
-    } else if ((event.code === 'Digit4' || event.code === 'Numpad4') && this.mainLoopService.unlockFasterSpeed){
+    } else if (((event.altKey || event.metaKey) && (event.code === 'Digit4' || event.code === 'Numpad4')) && this.mainLoopService.unlockFasterSpeed){
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 2;
-    } else if ((event.code === 'Digit5' || event.code === 'Numpad5') && this.mainLoopService.unlockFastestSpeed){
+    } else if (((event.altKey || event.metaKey) && (event.code === 'Digit5' || event.code === 'Numpad5')) && this.mainLoopService.unlockFastestSpeed){
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 1;
     }

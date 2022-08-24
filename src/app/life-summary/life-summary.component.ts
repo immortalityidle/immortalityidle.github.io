@@ -34,7 +34,7 @@ export class LifeSummaryComponent {
       this.tip = "Life for an aspiring immortal can be frustratingly short. Perhaps increasing your intelligence might open up new avenues for extending your life.";
     } else if ( this.characterService.characterState.age < 140 * 365 ){
       this.tip = "Life for an aspiring immortal can be frustratingly short. Farming some healthy food might give you just what you need.";
-    } else if ( this.activityService.completedApprenticeships.length < 4 ){
+    } else if ( this.activityService.completedApprenticeships.length < 4 && this.characterService.characterState.attributes.spirituality.value <= 0 ){
       this.tip = "Blacksmithing, alchemy, woodworking, and leatherworking are all essential trades for an aspiring immortal. You should master them all.";
     } else if ( this.characterService.characterState.attributes.spirituality.value <= 0 ){
       this.tip = "Balance is important to aspiring immortals. You'll need to develop all of your attributes if you want to progress in your journey.";

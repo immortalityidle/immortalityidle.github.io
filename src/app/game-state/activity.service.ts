@@ -25,6 +25,8 @@ export interface ActivityProperties {
   completedApprenticeships: ActivityType[],
   currentApprenticeship: ActivityType,
   savedActivityLoop: ActivityLoopEntry[],
+  savedActivityLoop2: ActivityLoopEntry[],
+  savedActivityLoop3: ActivityLoopEntry[],
   autoPauseUnlocked: boolean,
   autoRestUnlocked: boolean,
   pauseOnImpossibleFail: boolean,
@@ -38,6 +40,8 @@ export interface ActivityProperties {
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
   savedActivityLoop: ActivityLoopEntry[] = [];
+  savedActivityLoop2: ActivityLoopEntry[] = [];
+  savedActivityLoop3: ActivityLoopEntry[] = [];
   spiritActivity: ActivityType | null = null;
   autoRestart = false;
   autoPauseUnlocked = false;
@@ -263,6 +267,8 @@ export class ActivityService {
       completedApprenticeships: this.completedApprenticeships,
       currentApprenticeship: this.currentApprenticeship,
       savedActivityLoop: this.savedActivityLoop,
+      savedActivityLoop2: this.savedActivityLoop2,
+      savedActivityLoop3: this.savedActivityLoop3,
       autoRestUnlocked: this.autoRestUnlocked,
       pauseOnImpossibleFail: this.pauseOnImpossibleFail,
       totalExhaustedDays: this.totalExhaustedDays,
@@ -290,6 +296,8 @@ export class ActivityService {
     this.openApprenticeships = properties.openApprenticeships || 0;
     this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
     this.savedActivityLoop = properties.savedActivityLoop || [];
+    this.savedActivityLoop2 = properties.savedActivityLoop2 || [];
+    this.savedActivityLoop3 = properties.savedActivityLoop3 || [];
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
     this.purifyGemsUnlocked = properties.purifyGemsUnlocked || false;
     if (properties.pauseOnImpossibleFail === undefined) {
@@ -468,12 +476,24 @@ export class ActivityService {
     this.checkRequirements(true);
   }
 
-  saveActivityLoop() {
-    this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop));
+  saveActivityLoop(index = 1) {
+    if (index == 1){
+      this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop));
+    } else if (index == 2){
+      this.savedActivityLoop2 = JSON.parse(JSON.stringify(this.activityLoop));
+    } else if (index == 3){
+      this.savedActivityLoop3 = JSON.parse(JSON.stringify(this.activityLoop));
+    }
   }
 
-  loadActivityLoop() {
-    this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop));
+  loadActivityLoop(index = 1) {
+    if (index == 1){
+      this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop));
+    } else if (index == 2){
+      this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop2));
+    } else if (index == 3){
+      this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop3));
+    }
     this.checkRequirements(true);
   }
 
