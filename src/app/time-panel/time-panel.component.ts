@@ -130,6 +130,10 @@ export class TimePanelComponent implements OnInit {
   }
 
   drag(sourceIndex: number, event: DragEvent){
+    if (this.activityService.activityLoop[sourceIndex].disabled){
+      // don't allow drag and drop of disabled activities
+      return;
+    }
     event.dataTransfer?.setData("activityloop", "" + sourceIndex);
   }
 
