@@ -114,7 +114,8 @@ export interface InventoryProperties {
   automergeEquipped: boolean,
   autoSort: boolean,
   descendingSort: boolean,
-  divinePeachesUnlocked: boolean
+  divinePeachesUnlocked: boolean,
+  hideEquipment: boolean
 }
 
 @Injectable({
@@ -172,6 +173,7 @@ export class InventoryService {
   autoSort = false;
   descendingSort = false;
   divinePeachesUnlocked = false;
+  hideEquipment = false;
 
   constructor(
     private injector: Injector,
@@ -261,7 +263,7 @@ export class InventoryService {
         if (itemStack){
           const item = itemStack.item;
           if (instanceOfEquipment(item)){
-            if (item.weaponStats) { 
+            if (item.weaponStats) {
               this.updateWeaponDescription(item);
             } else if (item.armorStats){
               this.updateArmorDescription(item);
@@ -269,7 +271,7 @@ export class InventoryService {
           }
         }
       }
-  
+
       if (this.autoSort) {
         this.sortInventory();
       }
@@ -319,7 +321,8 @@ export class InventoryService {
       automergeEquipped: this.automergeEquipped,
       autoSort: this.autoSort,
       descendingSort: this.descendingSort,
-      divinePeachesUnlocked: this.divinePeachesUnlocked
+      divinePeachesUnlocked: this.divinePeachesUnlocked,
+      hideEquipment: this.hideEquipment
     }
   }
 
@@ -365,6 +368,7 @@ export class InventoryService {
     this.autoSort = properties.autoSort || false;
     this.descendingSort = properties.descendingSort || false;
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
+    this.hideEquipment = properties.hideEquipment || false;
     this.updateFarmFoodList();
     for (const itemStack of this.itemStacks ){
       if (itemStack && itemStack.item.name.includes("monster gem")){

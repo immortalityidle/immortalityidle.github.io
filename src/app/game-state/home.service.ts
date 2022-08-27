@@ -80,6 +80,7 @@ export interface HomeProperties {
   thugPause: boolean,
   hellFood: boolean,
   hellHome: boolean,
+  hideHome: boolean
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -124,6 +125,7 @@ export class HomeService {
   thugPause = false;
   hellFood = false;
   hellHome = false;
+  hideHome = false;
 
   homesList: Home[] = [
     {
@@ -668,7 +670,8 @@ export class HomeService {
       bestHome: this.bestHome,
       thugPause: this.thugPause,
       hellFood: this.hellFood,
-      hellHome: this.hellHome
+      hellHome: this.hellHome,
+      hideHome: this.hideHome
     }
   }
 
@@ -707,6 +710,7 @@ export class HomeService {
     this.thugPause = properties.thugPause || false;
     this.hellFood = properties.hellFood || false;
     this.hellHome = properties.hellHome || false;
+    this.hideHome = properties.hideHome || false;
   }
 
   // gets the specs of the next home, doesn't actually upgrade

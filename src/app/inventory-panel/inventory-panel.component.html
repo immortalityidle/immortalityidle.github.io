@@ -23,16 +23,17 @@
 
   <div class="overflow">
     <div class="inventoryGrid">
-        <div class="itemSlot" *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;"
-        (mousedown)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
-        draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)"
-        [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
-        'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
-        matTooltip="{{(itemStack?.item !== null && mainLoopService.pause) ? (itemStack?.item?.name | titlecase) + '
+        <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;"
+          draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
+          <diV class="itemSlot" (mousedown)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
+            [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
+            'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
+            matTooltip="{{(itemStack?.item !== null && mainLoopService.pause) ? (itemStack?.item?.name | titlecase) + '
 
-        ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
-          <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
-          <div *ngIf="(itemStack?.quantity || 0) > 1" class="itemQuantity">x{{itemStack?.quantity}}</div>
+            ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
+            <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
+            <div *ngIf="(itemStack?.quantity || 0) > 1" class="itemQuantity">x{{itemStack?.quantity}}</div>
+          </diV>
         </div>
     </div>
   </div>

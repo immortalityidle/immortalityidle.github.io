@@ -468,7 +468,16 @@ export class ActivityService {
         this.activityLoop[i].disabled = true;
       }
     }
-    this.spiritActivity = null;
+    if (this.spiritActivity){
+      let found = false;
+      for (const activity of this.activities) {
+        activity.activityType === this.spiritActivity;
+        found = true;
+      }
+      if (!found){
+        this.spiritActivity = null;
+      }
+    }
     for (let i = 0; i < 5; i++) {
       // upgrade to anything that the current attributes allow
       this.upgradeActivities(true);

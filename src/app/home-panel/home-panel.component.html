@@ -1,10 +1,12 @@
 <div class="homeContainer">
-    <h3 class="panelHeader">
-      <mat-icon matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">home</mat-icon>
-      <div matTooltip="{{homeService.home.description}}">
-        You live in a {{homeService.home.name}}
-      </div>
-    </h3>
+  <h3 class="panelHeader">
+    <mat-icon matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">home</mat-icon>
+    <div matTooltip="{{homeService.home.description}}">
+      You live in a {{homeService.home.name}}
+    </div>
+    <button (click)="homeService.hideHome = !homeService.hideHome">{{homeService.hideHome ? 'Show' : 'Hide'}}</button>
+  </h3>
+  <div class="homeContainer" *ngIf="!homeService.hideHome">
     <div class="overflow">
       <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
       <div class="homeInfo"><span>You own {{homeService.land | bigNumber}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length + homeService.extraFields | bigNumber}} fields</span></div>
@@ -45,4 +47,5 @@
             </mat-icon>
         </div>
     </div>
+  </div>
 </div>

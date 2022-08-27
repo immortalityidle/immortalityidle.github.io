@@ -1,5 +1,5 @@
-<h3 class="panelHeader">Equipment</h3>
-<div class="equipmentContainer">
+<h3 class="panelHeader">Equipment <button (click)="inventoryService.hideEquipment = !inventoryService.hideEquipment">{{inventoryService.hideEquipment ? 'Show' : 'Hide'}}</button></h3>
+<div class="equipmentContainer" *ngIf="!inventoryService.hideEquipment">
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
       (dblclick)="slotDoubleClicked('head', $event)"
