@@ -471,8 +471,9 @@ export class ActivityService {
     if (this.spiritActivity){
       let found = false;
       for (const activity of this.activities) {
-        activity.activityType === this.spiritActivity;
-        found = true;
+        if (activity.activityType === this.spiritActivity) {
+          found = true;
+        }
       }
       if (!found){
         this.spiritActivity = null;
