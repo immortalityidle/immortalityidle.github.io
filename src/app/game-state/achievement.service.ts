@@ -822,7 +822,7 @@ export class AchievementService {
         this.gameStateService = this.injector.get(GameStateService);
       }
       this.gameStateService.savetoLocalStorage();
-      this.characterService.toast('Achievement Unlocked: ' + achievement.name);
+      this.characterService.toast('Achievement Unlocked: ' + achievement.displayName);
     }
     achievement.effect();
     achievement.unlocked = true;

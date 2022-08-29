@@ -343,6 +343,25 @@ export class BattleService {
         // TODO: tune this
         damage += damage * this.characterService.characterState.yinYangBalance;
       }
+      if (this.characterService.characterState.equipment?.leftHand?.weaponStats?.effect === "corruption") {
+        damage *= 10;
+      }
+      if (this.characterService.characterState.equipment?.rightHand?.weaponStats?.effect === "corruption") {
+        damage *= 10;
+      }
+      if (this.characterService.characterState.equipment?.head?.armorStats?.effect === "corruption") {
+        damage *= 2;
+      }
+      if (this.characterService.characterState.equipment?.body?.armorStats?.effect === "corruption") {
+        damage *= 2;
+      }
+      if (this.characterService.characterState.equipment?.legs?.armorStats?.effect === "corruption") {
+        damage *= 2;
+      }
+      if (this.characterService.characterState.equipment?.feet?.armorStats?.effect === "corruption") {
+        damage *= 2;
+      }
+
       if (damage > this.highestDamageDealt) {
         this.highestDamageDealt = damage;
       }
@@ -355,7 +374,11 @@ export class BattleService {
       // degrade weapons
       const degradeFactor = this.degradeFactor / 4; // degrade weapons more slowly since they take the hit every time
       if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats) {
-        this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor);
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === "corruption") {
+          this.characterService.characterState.equipment.leftHand.weaponStats.durability -= 100 * (durabilityDamage + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor));
+        } else {
+          this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor);
+        }
         this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * degradeFactor);
         if (this.characterService.characterState.equipment.leftHand.value < 1){
           this.characterService.characterState.equipment.leftHand.value = 1;
@@ -375,7 +398,11 @@ export class BattleService {
         }
       }
       if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats) {
-        this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor);
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === "corruption") {
+          this.characterService.characterState.equipment.rightHand.weaponStats.durability -= 100 * (durabilityDamage + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor));
+        } else {
+          this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor);
+        }
         this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * degradeFactor);
         if (this.characterService.characterState.equipment.rightHand.value < 1){
           this.characterService.characterState.equipment.rightHand.value = 1;
@@ -515,7 +542,11 @@ export class BattleService {
       durabilityDamage += Math.sqrt(damage - 20000);
     }
     if (armor.armorStats) {
-      armor.armorStats.durability -= durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor);
+      if (armor.armorStats.effect === "corruption") {
+        armor.armorStats.durability -= 100 * (durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor));
+      } else {
+        armor.armorStats.durability -= durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor);
+      }
       armor.value -= 1 + Math.floor(armor.value * this.degradeFactor);
       if (armor.value < 1){
         armor.value = 1;
