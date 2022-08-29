@@ -666,33 +666,32 @@ export class HellService {
   }
 
   trouble() {
+    if (this.currentHell < 0){
+      return;
+    }
     // TODO: tune all of these values, and they should all scale up the longer you stay in/closer you get to finishing the hell
+    const hellProgress = this.hells[this.currentHell].progress();
     if (this.currentHell === HellLevel.TongueRipping) {
-      let extraPower = 0;
-      for (const follower of this.followerService.followers) {
-        extraPower += follower.power;
-      }
       // monsters get stronger the more you've recruited/trained
       // tinker with stats/growth
       this.battleService.addEnemy({
         name: "Tongue Ripper",
-        health: 1e20 + (1e19 * extraPower),
-        maxHealth: 1e20 + (1e19 * extraPower),
+        health: 1e20 + (1e19 * hellProgress),
+        maxHealth: 1e20 + (1e19 * hellProgress),
         accuracy: 0.50,
-        attack: 1e6 + (1e4 * extraPower),
-        defense: 1e8 + (1e7 * extraPower),
-        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption")]
+        attack: 1e6 + (1e4 * hellProgress),
+        defense: 1e8 + (1e7 * hellProgress),
+        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), "corruption")]
       });
     } else if (this.currentHell === HellLevel.Scissors) {
-      const extraPower = this.inventoryService.getQuantityByName("fingers");
       this.battleService.addEnemy({
         name: "Scissors Demon",
-        health: 1e15 + (1e14 * extraPower),
-        maxHealth: 1e15 + (1e14 * extraPower),
+        health: 1e15 + (1e14 * hellProgress),
+        maxHealth: 1e15 + (1e14 * hellProgress),
         accuracy: 0.50,
-        attack: 1e6 + (1e4 * extraPower),
-        defense: 1e8 + (1e7 * extraPower),
-        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(extraPower + 2)), "corruption"), this.itemRepoService.items['fingers']]
+        attack: 1e6 + (1e4 * hellProgress),
+        defense: 1e8 + (1e7 * hellProgress),
+        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), "corruption"), this.itemRepoService.items['fingers']]
       });
     } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
@@ -717,11 +716,11 @@ export class HellService {
     } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: "Oiled Demon",
-        health: 1e6,
-        maxHealth: 1e6,
+        health: 1e20 + (1e19 * hellProgress),
+        maxHealth: 1e20 + (1e19 * hellProgress),
         accuracy: 1,
         attack: 1e6,
-        defense: 1e6,
+        defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
     } else if (this.currentHell === HellLevel.CattlePit) {
@@ -729,11 +728,11 @@ export class HellService {
         for (let i = 0; i < 10; i++) {
           this.battleService.addEnemy({
             name: "Demonic Cow",
-            health: 1e6,
-            maxHealth: 1e6,
+            health: 1e20 + (1e19 * hellProgress),
+            maxHealth: 1e20 + (1e19 * hellProgress),
             accuracy: 1,
             attack: 1e6,
-            defense: 1e6,
+            defense: 1e8,
             loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
           });
         }
@@ -753,222 +752,206 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
         name: "Axe Demon",
-        health: 1e6,
-        maxHealth: 1e6,
+        health: 1e20 + (1e19 * hellProgress),
+        maxHealth: 1e20 + (1e19 * hellProgress),
         accuracy: 1,
         attack: 1e6,
-        defense: 1e6,
+        defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
     } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
         name: "Saw Demon",
-        health: 1e6,
-        maxHealth: 1e6,
+        health: 1e20 + (1e19 * hellProgress),
+        maxHealth: 1e20 + (1e19 * hellProgress),
         accuracy: 1,
         attack: 1e6,
-        defense: 1e6,
+        defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, "corruption")]
       });
     }
   }
 
   fightHellBoss() {
-    if (this.currentHell === HellLevel.TongueRipping) {
+      // TODO: tune stats
+      if (this.currentHell === HellLevel.TongueRipping) {
       this.battleService.addEnemy({
         name: "Gorbolash the Gossip Gasher",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTongueRippers']]
       });
     } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
         name: "Malgorath the Marriage Masher",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownScissors']]
       });
     } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
         name: "Flamgolus the Family Flayer",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTreesOfKnives']]
       });
     } else if (this.currentHell === HellLevel.Mirrors) {
       this.battleService.addEnemy({
         name: "Myorshuggath the Mirror Master",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMirrors']]
       });
     } else if (this.currentHell === HellLevel.Steamers) {
       this.battleService.addEnemy({
         name: "Stactolus the Steamer",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSteamers']]
       });
     } else if (this.currentHell === HellLevel.CopperPillars) {
       this.battleService.addEnemy({
         name: "Ignificor the Forever Burning",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownPillars']]
       });
     } else if (this.currentHell === HellLevel.MountainOfKnives) {
       this.battleService.addEnemy({
         name: "Malignus the Murderer Muncher",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfKnives']]
       });
     } else if (this.currentHell === HellLevel.MountainOfIce) {
       this.battleService.addEnemy({
         name: "The Cheat",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfIce']]
       });
     } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: "Nestor the Molestor",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCauldronsOfOil']]
       });
     } else if (this.currentHell === HellLevel.CattlePit) {
       this.battleService.addEnemy({
         name: "The Cow Emperor",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCattlePit']]
       });
     } else if (this.currentHell === HellLevel.CrushingBoulder) {
       this.battleService.addEnemy({
         name: "The Crusher",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCrushingBoulder']]
       });
     } else if (this.currentHell === HellLevel.MortarsAndPestles) {
       this.battleService.addEnemy({
         name: "Glorbulskath the Gluttonous",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMortarsAndPestles']]
       });
     } else if (this.currentHell === HellLevel.BloodPool) {
       this.battleService.addEnemy({
         name: "Gnarlyathor the Ever-Bleeding",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownBloodPool']]
       });
     } else if (this.currentHell === HellLevel.WrongfulDead) {
       this.battleService.addEnemy({
         name: "Azoth-Raketh the Storm Master",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownWrongfulDead']]
       });
     } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
         name: "Druskall the Dismemberer",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownDismemberment']]
       });
     } else if (this.currentHell === HellLevel.MountainOfFire) {
       this.battleService.addEnemy({
         name: "Magmar the Lava King",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownFireMountain']]
       });
     } else if (this.currentHell === HellLevel.Mills) {
       this.battleService.addEnemy({
         name: "Grimstone The Human Grinder",
-        // TODO: figure out stats
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMills']]
       });
     } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
         name: "Crognaslark the Corrupter",
-        health: 1,
-        maxHealth: 1,
+        health: 1e30,
+        maxHealth: 1e30,
         accuracy: 0.8,
-        attack: 1,
-        defense: 1,
+        attack: 1e10,
+        defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSaws']]
       });
     }

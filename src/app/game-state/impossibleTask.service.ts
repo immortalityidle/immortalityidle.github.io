@@ -287,7 +287,7 @@ export class ImpossibleTaskService {
       this.battleService.addEnemy({
         name: "Death itself",
         health: 1e24,
-        maxHealth: 1e23,
+        maxHealth: 1e24,
         accuracy: 0.99,
         attack: 3e8,
         defense: 3e8,
