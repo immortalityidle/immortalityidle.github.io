@@ -1,7 +1,7 @@
 <div class="inventoryContainer">
   <h3 class="panelHeader">
       <div class="inventoryLabelColumn">
-        <mat-icon matTooltip="The items that you gain during your quest for immortality will appear here. Pause the game and hover your cursor over an item to learn more about it.">
+        <mat-icon matTooltip="The items that you gain during your quest for immortality will appear here. Hover your cursor over an item to learn more about it.">
           help
         </mat-icon>
         Inventory -&nbsp;
@@ -28,7 +28,7 @@
           <diV class="itemSlot" (mousedown)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
             [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
             'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
-            matTooltip="{{(itemStack?.item !== null && mainLoopService.pause) ? (itemStack?.item?.name | titlecase) + '
+            matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '
 
             ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
             <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
