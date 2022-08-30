@@ -23,7 +23,7 @@ export interface ActivityProperties {
   openApprenticeships: number,
   spiritActivity: ActivityType | null,
   completedApprenticeships: ActivityType[],
-  currentApprenticeship: ActivityType,
+  currentApprenticeship: ActivityType | undefined,
   savedActivityLoop: ActivityLoopEntry[],
   savedActivityLoop2: ActivityLoopEntry[],
   savedActivityLoop3: ActivityLoopEntry[],
@@ -57,7 +57,7 @@ export class ActivityService {
   currentTickCount = 0;
   exhaustionDays = 0;
   currentLoopEntry?: ActivityLoopEntry = undefined;
-  currentApprenticeship: ActivityType = ActivityType.Resting;
+  currentApprenticeship: ActivityType | undefined = undefined;
   activityDeath = false; // Simpler to just check a flag for the achievement.
   autoRestUnlocked = false;
   totalExhaustedDays = 0;
@@ -294,7 +294,7 @@ export class ActivityService {
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity ?? null;
     this.openApprenticeships = properties.openApprenticeships || 0;
-    this.currentApprenticeship = properties.currentApprenticeship || ActivityType.Resting;
+    this.currentApprenticeship = properties.currentApprenticeship;
     this.savedActivityLoop = properties.savedActivityLoop || [];
     this.savedActivityLoop2 = properties.savedActivityLoop2 || [];
     this.savedActivityLoop3 = properties.savedActivityLoop3 || [];
@@ -314,7 +314,7 @@ export class ActivityService {
   }
 
   meetsRequirements(activity: Activity): boolean {
-    if (this.meetsRequirementsByLevel(activity, activity.level, true)) {
+    if (this.meetsRequirementsByLevel(activity, activity.level)) {
       activity.unlocked = true;
       if (activity.discovered) {
         // re-unlocking loop entries for an already discovered, newly unlocked activity
@@ -332,15 +332,12 @@ export class ActivityService {
     return false;
   }
 
-  meetsRequirementsByLevel(activity: Activity, level: number, apprenticeCheck: boolean): boolean {
-    if (apprenticeCheck && !activity.unlocked && this.openApprenticeships <= 0 && activity.activityType !== this.currentApprenticeship) {
-      if (level < activity.skipApprenticeshipLevel) {
-        return false;
-      }
-      if (activity.skipApprenticeshipLevel > 0 && !this.completedApprenticeships.includes(activity.activityType)) {
+  meetsRequirementsByLevel(activity: Activity, level: number): boolean {
+    if (activity.skipApprenticeshipLevel > 0 && this.openApprenticeships <= 0 && 
+      activity.activityType !== this.currentApprenticeship &&
+      !this.completedApprenticeships.includes(activity.activityType)) {
         // we've never completed an apprenticeship in this job and it needs one
         return false;
-      }
     }
     const keys: (keyof CharacterAttribute)[] = Object.keys(
       activity.requirements[level]
@@ -376,17 +373,11 @@ export class ActivityService {
   upgradeActivities(squelchLogs: boolean): void {
     for (const activity of this.activities) {
       if (activity.level < (activity.description.length - 1)) {
-        if (this.meetsRequirementsByLevel(activity, (activity.level + 1), false)) {
+        if (this.meetsRequirementsByLevel(activity, (activity.level + 1))) {
           if (!squelchLogs && activity.unlocked) {
             this.logService.addLogMessage("Congratulations on your promotion! " + activity.name[activity.level] + " upgraded to " + activity.name[activity.level + 1], "STANDARD", "EVENT");
           }
           activity.level++;
-          // check to see if we got above apprenticeship skip level
-          if (activity.unlocked && activity.skipApprenticeshipLevel <= activity.level) {
-            if (!this.completedApprenticeships.includes(activity.activityType)) {
-              this.completedApprenticeships.push(activity.activityType);
-            }
-          }
         }
       }
     }
@@ -395,17 +386,19 @@ export class ActivityService {
   reset(): void {
     // downgrade all activities to base level
     this.openApprenticeships = 1;
-    this.currentApprenticeship = ActivityType.Resting;
+    this.currentApprenticeship = undefined;
     this.oddJobDays = 0;
     this.beggingDays = 0;
     for (const activity of this.activities) {
       activity.level = 0;
       activity.unlocked = false;
     }
+
     for (let i = 0; i < 5; i++) {
       // upgrade to anything that the starting attributes allow
       this.upgradeActivities(true);
     }
+    
     if (this.impossibleTaskService.activeTaskIndex !== ImpossibleTaskType.Swim) {
       this.Resting.unlocked = true;
       this.OddJobs.unlocked = true;
@@ -420,6 +413,7 @@ export class ActivityService {
     }
     this.currentTickCount = 0;
     this.currentIndex = 0;
+
   }
 
   getActivityByType(activityType: ActivityType): Activity | null {
@@ -432,22 +426,27 @@ export class ActivityService {
   }
 
   checkApprenticeship(activityType: ActivityType) {
-    if (this.openApprenticeships === 0) {
+    if (this.completedApprenticeships.includes(activityType)){
       return;
     }
-    this.openApprenticeships--;
-    this.currentApprenticeship = activityType;
-    for (const activity of this.activities) {
-      if (activity.activityType !== activityType && activity.level < activity.skipApprenticeshipLevel) {
-        // relock all other apprentice activities
-        activity.unlocked = false;
-        // and remove any entries for them from the activity loop
-        for (let i = this.activityLoop.length - 1; i >= 0; i--) {
-          if (this.activityLoop[i].activity === activity.activityType) {
-            this.activityLoop[i].disabled = true;
-          }
+    if (this.currentApprenticeship === activityType){
+      // check for completed apprenticeship
+      let activity = this.getActivityByType(activityType);
+      if (activity){
+        if (activity.level >= activity.skipApprenticeshipLevel){
+          this.completedApprenticeships.push(activityType);
         }
       }
+    } else if (this.openApprenticeships > 0){
+      // start an apprenticeship
+      this.openApprenticeships--;
+      this.currentApprenticeship = activityType;
+      for (let activity of this.activities){
+        if (activity.skipApprenticeshipLevel > 0){
+          activity.unlocked = false;
+        }
+      }
+      this.checkRequirements(true);
     }
   }
 
@@ -1606,6 +1605,7 @@ export class ActivityService {
         },
         // grade 2
         () => {
+          this.checkApprenticeship(ActivityType.Blacksmithing);
           this.characterService.characterState.increaseAttribute('strength', 0.5);
           this.characterService.characterState.increaseAttribute('toughness', 0.5);
           this.characterService.characterState.status.stamina.value -= 25;
@@ -1638,6 +1638,7 @@ export class ActivityService {
         },
         // grade 3
         () => {
+          this.checkApprenticeship(ActivityType.Blacksmithing);
           this.characterService.characterState.increaseAttribute('strength', 1);
           this.characterService.characterState.increaseAttribute('toughness', 1);
           this.characterService.characterState.status.stamina.value -= 50;
@@ -1807,6 +1808,7 @@ export class ActivityService {
           }
         },
         () => {
+          this.checkApprenticeship(ActivityType.Alchemy);
           this.characterService.characterState.increaseAttribute('intelligence', 0.5);
           this.characterService.characterState.status.stamina.value -= 10;
           const money = Math.log2(this.characterService.characterState.attributes.intelligence.value) +
@@ -1833,6 +1835,7 @@ export class ActivityService {
           }
         },
         () => {
+          this.checkApprenticeship(ActivityType.Alchemy);
           this.characterService.characterState.increaseAttribute('intelligence', 1);
           this.characterService.characterState.status.stamina.value -= 20;
           const money = Math.log2(this.characterService.characterState.attributes.intelligence.value) +
@@ -1973,6 +1976,7 @@ export class ActivityService {
           }
         },
         () => {
+          this.checkApprenticeship(ActivityType.Woodworking);
           this.characterService.characterState.increaseAttribute('strength', 0.5);
           this.characterService.characterState.increaseAttribute('intelligence', 0.5);
           this.characterService.characterState.status.stamina.value -= 20;
@@ -1997,6 +2001,7 @@ export class ActivityService {
           }
         },
         () => {
+          this.checkApprenticeship(ActivityType.Woodworking);
           this.characterService.characterState.increaseAttribute('strength', 1);
           this.characterService.characterState.increaseAttribute('intelligence', 1);
           this.characterService.characterState.status.stamina.value -= 40;
@@ -2124,6 +2129,7 @@ export class ActivityService {
           }
         },
         () => {
+          this.checkApprenticeship(ActivityType.Leatherworking);
           this.characterService.characterState.increaseAttribute('speed', 0.5);
           this.characterService.characterState.increaseAttribute('toughness', 0.5);
           this.characterService.characterState.status.stamina.value -= 20;
@@ -2150,6 +2156,7 @@ export class ActivityService {
           }
         },
         () => {
+          this.checkApprenticeship(ActivityType.Leatherworking);
           this.characterService.characterState.increaseAttribute('speed', 1);
           this.characterService.characterState.increaseAttribute('toughness', 1);
           this.characterService.characterState.status.stamina.value -= 40;

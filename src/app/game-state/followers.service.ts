@@ -40,7 +40,8 @@ export interface FollowersProperties {
   stashedFollowersMaxes: { [key: string]: number; },
   unlockedHiddenJobs: string[],
   autoReplaceUnlocked: boolean,
-  petsEnabled: boolean
+  petsEnabled: boolean,
+  onlyWantedFollowers: boolean
 }
 
 export interface FollowerReserve {
@@ -83,6 +84,7 @@ export class FollowersService {
   unlockedHiddenJobs: string[] = [];
   autoReplaceUnlocked = false;
   petsEnabled = false;
+  onlyWantedFollowers = false;
 
   jobs: jobsType = {
     "builder": {
@@ -477,7 +479,8 @@ export class FollowersService {
       highestLevel: this.highestLevel,
       unlockedHiddenJobs: this.unlockedHiddenJobs,
       autoReplaceUnlocked: this.autoReplaceUnlocked,
-      petsEnabled: this.petsEnabled
+      petsEnabled: this.petsEnabled,
+      onlyWantedFollowers: this.onlyWantedFollowers
     }
   }
 
@@ -501,6 +504,7 @@ export class FollowersService {
     this.unlockedHiddenJobs = properties.unlockedHiddenJobs || [];
     this.autoReplaceUnlocked = properties.autoReplaceUnlocked || false;
     this.petsEnabled = properties.petsEnabled || false;
+    this.onlyWantedFollowers = properties.onlyWantedFollowers || false;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }
@@ -522,24 +526,49 @@ export class FollowersService {
     this.totalRecruited++;
     this.followersRecruited++;
     if (this.followers.length >= this.followerCap) {
-      this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.", "INJURY", "FOLLOWER");
-      this.followersMaxed = 'MAXED'; // Sanity check, true check below.
-      return null;
-    }
-
-    job = job ? job : this.generateFollowerJob(pet);
-    let capNumber = 1000;
-    let currentCount = 0;
-    if (this.maxFollowerByType[job] !== undefined) {
-      capNumber = this.maxFollowerByType[job];
-    }
-    for (const follower of this.followers) {
-      if (follower.job === job) {
-        currentCount++;
+      if (this.onlyWantedFollowers){
+        // check to see if we have any unwanted jobs
+        const keys = Object.keys(this.jobs);
+        let removedOne = false;
+        for (const key of keys) {
+          if (this.jobs[key].hidden) {
+            continue;
+          }
+          let capNumber = this.maxFollowerByType[key] ? this.maxFollowerByType[key] : 1000;
+          let count = 0;
+          for (const follower of this.followers) {
+            if (follower.job === key){
+              count++;
+            }
+            if (count > capNumber) {
+              removedOne = true;
+              this.dismissFollower(follower);
+              break;
+            }
+          }
+          if (removedOne){
+            break;
+          }
+        }
+        if (!removedOne){
+          this.logService.addLogMessage("A new follower shows up, but you already have all the followers you want.", "INJURY", "FOLLOWER");
+          this.followersMaxed = 'MAXED'; // Sanity check, true check below.
+          return null;
+        }
+      } else {
+        this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.", "INJURY", "FOLLOWER");
+        this.followersMaxed = 'MAXED'; // Sanity check, true check below.
+        return null;
       }
     }
 
-    if (currentCount >= capNumber) {
+    job = job ? job : this.generateFollowerJob(pet);
+    if (job === ""){
+      // couldn't find a job that we want
+      return null;
+    }
+    let capNumber = this.maxFollowerByType[job] ? this.maxFollowerByType[job] : 1000;
+    if (this.numFollowersOnJob(job) >= capNumber) {
       this.logService.addLogMessage("A new follower shows up, but they were a " + this.camelToTitle.transform(job) + " and you don't want any more of those.", "STANDARD", "FOLLOWER");
       this.totalDismissed++;
       return null;
@@ -565,9 +594,18 @@ export class FollowersService {
     return follower;
   }
 
+  numFollowersOnJob(job: string): number {
+    let count = 0;
+    for (const follower of this.followers) {
+      if (follower.job === job) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   generateFollowerName(): string {
     return FirstNames[Math.floor(Math.random() * FirstNames.length)];
-
   }
 
   generateFollowerJob(pet = false): string {
@@ -576,9 +614,19 @@ export class FollowersService {
     for (const key of keys) {
       if (!this.jobs[key].hidden) {
         if ((pet && this.jobs[key].pet) || (!pet && !this.jobs[key].pet)) {
-          possibleJobs.push(key);
+          if (this.onlyWantedFollowers){
+            let capNumber = this.maxFollowerByType[key] ? this.maxFollowerByType[key] : 1000;
+            if (this.numFollowersOnJob(key) < capNumber){
+              possibleJobs.push(key);
+            }
+          } else {
+            possibleJobs.push(key);
+          }
         }
       }
+    }
+    if (possibleJobs.length === 0){
+      return "";
     }
     return possibleJobs[Math.floor(Math.random() * (possibleJobs.length))];
   }

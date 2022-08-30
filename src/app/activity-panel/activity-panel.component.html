@@ -47,7 +47,7 @@
             <button class="activityButton" (click)="onClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}">
               {{activity.name[activity.level]}}
             </button>
-            <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0"
+            <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)"
               matTooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life.">
               model_training
             </mat-icon>

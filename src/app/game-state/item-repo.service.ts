@@ -266,6 +266,18 @@ export class ItemRepoService {
         this.characterService.characterState.increaseAttribute('waterLore', 0.01);
       }
     },
+    bookshelf: {
+      id: 'bookshelf',
+      name: "bookshelf",
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1000000,
+      description: "An bookshelf to read and expand your mind.",
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('intelligence', 0.1);
+      }
+    },
     prayerShrine: {
       id: 'prayerShrine',
       name: "prayer shrine",

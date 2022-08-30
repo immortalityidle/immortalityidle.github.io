@@ -811,6 +811,18 @@ export class AchievementService {
       effect: () => { },
       unlocked: false
     },
+    {
+      name: "Headhunter",
+      description: "You've sorted through so many applicants, you can now always find followers that you want.",
+      hint: "You didn't really want one thousand scouts, did you?",
+      check: () => {
+        return this.followerService.totalDismissed > 888;
+      },
+      effect: () => { 
+        this.followerService.onlyWantedFollowers = true;
+      },
+      unlocked: false
+    },
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {
@@ -822,7 +834,7 @@ export class AchievementService {
         this.gameStateService = this.injector.get(GameStateService);
       }
       this.gameStateService.savetoLocalStorage();
-      this.characterService.toast('Achievement Unlocked: ' + achievement.displayName);
+      this.characterService.toast('Achievement Unlocked: ' + (achievement.displayName ? achievement.displayName : achievement.name));
     }
     achievement.effect();
     achievement.unlocked = true;

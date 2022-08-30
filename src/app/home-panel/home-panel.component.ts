@@ -40,7 +40,7 @@ export class HomePanelComponent {
   storeClicked(): void {
     this.storeService.setStoreInventory();
     const dialogRef = this.dialog.open(FurnitureStoreModalComponent, {
-      width: '510px',
+      width: '600px',
       data: {someField: 'foo'}
     });
   }
