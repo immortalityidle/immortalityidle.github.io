@@ -1154,7 +1154,8 @@ export class ItemRepoService {
           if (this.gameStateService.easyModeEver) {
             this.logService.addLogMessage("Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.", "STANDARD", 'STORY');
           }
-          this.logService.addLogMessage("You won this game in " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes. I wonder if other immortals have ever done it faster?", "STANDARD", 'STORY');
+          this.logService.addLogMessage("You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and succeeded in your quest on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + ".", "STANDARD", 'STORY');
+          this.logService.addLogMessage("You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to overcome death.", "STANDARD", 'STORY');
           this.characterService.characterState.immortal = true;
         }
       },

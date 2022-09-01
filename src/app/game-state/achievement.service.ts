@@ -813,7 +813,7 @@ export class AchievementService {
     },
     {
       name: "Headhunter",
-      description: "You've sorted through so many applicants, you can now always find followers that you want.",
+      description: "You've sorted through so many applicants that you can now always find followers you want.",
       hint: "You didn't really want one thousand scouts, did you?",
       check: () => {
         return this.followerService.totalDismissed > 888;
