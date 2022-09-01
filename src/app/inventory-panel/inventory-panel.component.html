@@ -16,7 +16,7 @@
         soup_kitchen
       </mat-icon></div>
       <div><mat-icon matTooltip="Click to sort your inventory. Shift-click to toggle autosort. Ctrl-click to toggle descending."
-        (click)="sortClicked($event)" class="iconButton" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">
+        (click)="sortClicked($event)" class="iconButton" aria-label="Sort Inventory" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">
         sort
       </mat-icon></div>
   </h3>
@@ -39,15 +39,15 @@
   </div>
 
   <div class="inventoryButtons" *ngIf="inventoryService.selectedItem">
-    <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sell(1)" class="iconButton"
+    <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sell(1)" class="iconButton" aria-label="Sell"
       matTooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">
       attach_money
     </mat-icon>
-    <mat-icon  *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sellStack()" class="iconButton"
+    <mat-icon  *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sellStack()" class="iconButton" aria-label="Sell Stack"
       matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
       paid
     </mat-icon>
-    <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sellAll()" class="iconButton"
+    <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="sellAll()" class="iconButton" aria-label="Sell All"
       matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
       shopping_basket
     </mat-icon>
@@ -55,24 +55,24 @@
       matTooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell.">
       currency_exchange
     </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" class="iconButton"
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" class="iconButton" aria-label="Use"
       matTooltip="{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
       auto_awesome
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
-      (click)="autoUse()" class="iconButton"
+      (click)="autoUse()" class="iconButton" aria-label="Auto Use"
       matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Ctrl-click items to auto-use.">
       auto_mode
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item.value))"
-      class="iconButton" (click)="autoBalance()" matTooltip="Balance between automatically using and selling this item.">
+      class="iconButton" aria-label="Balance" (click)="autoBalance()" matTooltip="Balance between automatically using and selling this item.">
       balance
     </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()"  class="iconButton"
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()" class="iconButton" aria-label="Equip"
       matTooltip="Equip this. Double-click weapons or armor to equip.">
       shield
     </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'spiritGem')" (click)="mergeSpiritGem()"  class="iconButton"
+    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'spiritGem')" (click)="mergeSpiritGem()"  class="iconButton" aria-label="Merge Gem"
       matTooltip="Merge 10 of these into a higher grade gem.">
       diamond
     </mat-icon>

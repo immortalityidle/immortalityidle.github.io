@@ -3,7 +3,7 @@
     Battles
     <span *ngIf="battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
       battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked">
-      <mat-icon  (click)="battleOptions()" matTooltip="Options" class="iconButton">
+      <mat-icon  (click)="battleOptions()" matTooltip="Options" class="iconButton" aria-label="Battle Settings">
         settings
       </mat-icon>
 
