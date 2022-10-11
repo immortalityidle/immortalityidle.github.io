@@ -1160,6 +1160,29 @@ export class ItemRepoService {
         }
       },
     },
+    portalKey: {
+      id: 'portalKey',
+      name: 'Portal Key',
+      type: 'portalKey',
+      value: Infinity,
+      description: "The key to Lord Yama's kingdom. With this key, you can use his portals to instantly travel anywhere.",
+      useLabel: 'Create a portal back to the palace of the gods on Mount Penglai and claim your throne.',
+      useDescription: 'Become a god and win the game (again).',
+      useConsumes: true,
+      use: () => {
+        this.logService.addLogMessage("YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!", "INJURY", 'STORY');
+        if (!this.hellService) {
+          this.hellService = this.injector.get(HellService);
+        }
+        this.hellService.inHell = false;
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.logService.addLogMessage("You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and achieved godhood on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
+        this.logService.addLogMessage("You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to claim your throne on Mount Penglai.", "STANDARD", 'STORY');
+        this.characterService.characterState.god = true;
+      },
+    },
     fingers: {
       id: 'fingers',
       name: 'fingers',

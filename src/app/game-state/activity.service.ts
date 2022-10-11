@@ -586,7 +586,9 @@ export class ActivityService {
     if (this.characterService.characterState.manaUnlocked || this.characterService.characterState.easyMode) {
       newList.push(this.ManaControl);
     }
-    newList.push(this.CoreCultivation);
+    if (this.characterService.characterState.manaUnlocked) {
+      newList.push(this.CoreCultivation);
+    }
     if (this.characterService.characterState.immortal) {
       newList.push(this.SoulCultivation);
     }

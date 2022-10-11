@@ -75,6 +75,7 @@ export interface CharacterProperties {
   healthBonusSoul: number,
   empowermentFactor: number,
   immortal: boolean,
+  god: boolean,
   easyMode: boolean
   highestMoney: number,
   highestAge: number,
@@ -143,6 +144,7 @@ export class Character {
   empowermentMult = 1;
   imperial = false;
   immortal = false;
+  god = false;
   easyMode = false;
   ascensionUnlocked = false;
   yinYangUnlocked = false;
@@ -679,6 +681,7 @@ export class Character {
       healthBonusSoul: this.healthBonusSoul,
       empowermentFactor: this.empowermentFactor,
       immortal: this.immortal,
+      god: this.god,
       easyMode: this.easyMode,
       highestMoney: this.highestMoney,
       highestAge: this.highestAge,
@@ -740,6 +743,7 @@ export class Character {
     this.healthBonusSoul = properties.healthBonusSoul || 0;
     this.empowermentFactor = properties.empowermentFactor || 1;
     this.immortal = properties.immortal || false;
+    this.god = properties.god || false;
     this.easyMode = properties.easyMode || false;
     this.highestMoney = properties.highestMoney || 0;
     this.highestAge = properties.highestAge || 0;

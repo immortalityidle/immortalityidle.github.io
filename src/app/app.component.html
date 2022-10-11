@@ -2,7 +2,7 @@
   <div class="mainContainer">
     <div class="top-line">
       <span class="gameTitle">
-        Immortality Idle - {{hellService.inHell ? "Escape from The Eighteen Hells" : characterService.characterState.immortal ? "You are Immortal!" : "Can you become an immortal?"}}
+        Immortality Idle - {{characterService.characterState.god ? "The Divine Cultivator" : hellService.inHell ? "Escape from The Eighteen Hells" : characterService.characterState.immortal ? "You are Immortal!" : "Can you become an immortal?"}}
         <span class="versionNumber" (click)="changelogClicked()">{{gameStateService.isExperimental ? "Experimental" : "v" + applicationVersion}}</span>
       </span>
       <mat-icon matTooltip="Confused? Click here." class="iconButton" (click)="tutorialClicked()" aria-label="Tutorial">

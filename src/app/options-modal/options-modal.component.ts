@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivityService } from '../game-state/activity.service';
 import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.service';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
@@ -21,7 +22,8 @@ export class OptionsModalComponent {
     public gameStateService: GameStateService,
     public followerService: FollowersService,
     public autoBuyerService: AutoBuyerService,
-    public mainLoopService: MainLoopService
+    public mainLoopService: MainLoopService,
+    private activityService: ActivityService,
   ) { }
 
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
@@ -181,6 +183,7 @@ export class OptionsModalComponent {
         }
       }
       this.characterService.characterState.easyMode = true;
+      this.activityService.reloadActivities();
     }
   }
 

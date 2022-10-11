@@ -616,6 +616,7 @@ export class AchievementService {
           this.characterService.characterState.status.mana.max = 1;
           this.characterService.characterState.status.mana.value = 1;
         }
+        this.activityService.reloadActivities();
       },
       unlocked: false
     },
@@ -808,7 +809,9 @@ export class AchievementService {
       check: () => {
         return this.characterService.characterState.immortal;
       },
-      effect: () => { },
+      effect: () => { 
+        this.activityService.reloadActivities();
+      },
       unlocked: false
     },
     {

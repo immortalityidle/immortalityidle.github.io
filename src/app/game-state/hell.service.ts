@@ -1057,12 +1057,16 @@ export class HellService {
       newList.push(this.activityService.PurifyGems);
     }
     newList.push(this.activityService.InfuseEquipment);
+    let allComplete = true;
     for (const hell of this.hells) {
       let consequenceDescription = "";
       if (this.completedHellBosses.includes(hell.index)) {
         consequenceDescription = "You have proven your mastery over this hell."
       } else if (this.completedHellTasks.includes(hell.index)) {
         consequenceDescription = "The Lord of this Hell is available to challenge."
+        allComplete = false;
+      } else {
+        allComplete = false;
       }
       newList.push({
         level: 0,
@@ -1083,6 +1087,51 @@ export class HellService {
         unlocked: true,
         skipApprenticeshipLevel: 0
       })
+    }
+    if (allComplete){
+      newList.push({
+        level: 0,
+        name: ["Challenge Lord Yama"],
+        activityType: ActivityType.FinishHell,
+        description: ["You've had enough of this place and learned everything these hells can teach you. Challenge Lord Yama to prove you deserve your rightful place in the heavens."],
+        consequenceDescription: [""],
+        consequence: [() => {
+          if (this.battleService.enemies.length == 0){
+            this.battleService.addEnemy({
+              name: "Lord Yama",
+              health: 1e39,
+              maxHealth: 1e39,
+              accuracy: 0.8,
+              attack: 1e15,
+              defense: 1e18,
+              loot: [this.itemRepoService.items['portalKey']]
+            });
+            this.battleService.addEnemy({
+              name: "Horse Face",
+              health: 1e30,
+              maxHealth: 1e30,
+              accuracy: 0.8,
+              attack: 1e10,
+              defense: 1e12,
+              loot: []
+            });
+            this.battleService.addEnemy({
+              name: "Ox Head",
+              health: 1e30,
+              maxHealth: 1e30,
+              accuracy: 0.8,
+              attack: 1e10,
+              defense: 1e12,
+              loot: []
+            });
+          }
+        }],
+        requirements: [{
+        }],
+        unlocked: true,
+        skipApprenticeshipLevel: 0
+      })
+
     }
   }
 

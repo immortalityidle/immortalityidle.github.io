@@ -67,6 +67,7 @@ export enum ActivityType {
   Endure,
   FreezeMountain,
   ExamineContracts,
+  FinishHell,
   Hell // hell needs to be last for indexing purposes
 
 }

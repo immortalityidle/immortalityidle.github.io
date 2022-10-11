@@ -226,4 +226,5 @@ export class AppComponent implements OnInit {
   darkModeToggle(){
     this.gameStateService.isDarkMode = !this.gameStateService.isDarkMode;
   }
+  
 }
