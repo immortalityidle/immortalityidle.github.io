@@ -145,7 +145,6 @@ export class GameStateService {
       gameStateSerialized = value;
     }
     const gameState = JSON.parse(gameStateSerialized) as GameState;
-    this.achievementService.setProperties(gameState.achievements);
     this.impossibleTaskService.setProperties(gameState.impossibleTasks);
     this.hellService.setProperties(gameState.hell || {});
     this.characterService.characterState.setProperties(gameState.character);
@@ -167,6 +166,7 @@ export class GameStateService {
     this.logService.setProperties(gameState.logs);
     this.autoBuyerService.setProperties(gameState.autoBuy);
     this.mainLoopService.setProperties(gameState.mainLoop);
+    this.achievementService.setProperties(gameState.achievements);
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;

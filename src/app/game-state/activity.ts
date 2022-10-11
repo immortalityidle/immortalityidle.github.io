@@ -16,7 +16,7 @@ export enum ActivityType {
   Fishing,
   Alchemy,
   Burning,
-  ManaControl,
+  BalanceChi,
   BodyCultivation,
   MindCultivation,
   CoreCultivation,

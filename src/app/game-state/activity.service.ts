@@ -583,22 +583,19 @@ export class ActivityService {
     newList.push(this.Alchemy);
     newList.push(this.BodyCultivation);
     newList.push(this.MindCultivation);
-    if (this.characterService.characterState.manaUnlocked || this.characterService.characterState.easyMode) {
-      newList.push(this.ManaControl);
-    }
+    newList.push(this.BalanceChi);
     if (this.characterService.characterState.manaUnlocked) {
       newList.push(this.CoreCultivation);
+      newList.push(this.InfuseEquipment);
+      newList.push(this.InfuseBody);
+      newList.push(this.ExtendLife);
     }
     if (this.characterService.characterState.immortal) {
       newList.push(this.SoulCultivation);
     }
-
     if (this.purifyGemsUnlocked) {
       newList.push(this.PurifyGems);
     }
-    newList.push(this.InfuseEquipment);
-    newList.push(this.InfuseBody);
-    newList.push(this.ExtendLife);
     newList.push(this.Recruiting);
     if (this.followerService.petsEnabled) {
       newList.push(this.PetRecruiting);
@@ -647,7 +644,7 @@ export class ActivityService {
   // @ts-ignore
   Burning: Activity;
   // @ts-ignore
-  ManaControl: Activity;
+  BalanceChi: Activity;
   // @ts-ignore
   BodyCultivation: Activity;
   // @ts-ignore
@@ -2339,7 +2336,7 @@ export class ActivityService {
           this.inventoryService.addItem(this.itemRepoService.items['meat']);
           this.inventoryService.addItem(this.inventoryService.getHide(), Math.floor(this.followerService.jobs['hunter'].totalPower / 20));
         }
-        if (Math.random() < 0.01) {
+        if (Math.random() < 0.01 && this.battleService.enemies.length == 0) {
           this.battleService.addEnemy({
             name: "a hungry wolf",
             health: 20,
@@ -2424,10 +2421,10 @@ export class ActivityService {
       skipApprenticeshipLevel: 0
     };
 
-    this.ManaControl = {
+    this.BalanceChi = {
       level: 0,
       name: ['Balance Your Chi'],
-      activityType: ActivityType.ManaControl,
+      activityType: ActivityType.BalanceChi,
       description: ['Balance the flow of your chi and widen your meridians.'],
       consequenceDescription: ['Uses 100 Stamina. Increases your weakest lore.'],
       consequence: [() => {
@@ -2438,7 +2435,11 @@ export class ActivityService {
             lowStat = attribute;
           }
         }
-        this.characterService.characterState.increaseAttribute(lowStat, 0.1);
+        let value = 0.01;
+        if (this.characterService.characterState.manaUnlocked || this.characterService.characterState.easyMode){
+          value = 0.1;
+        }
+        this.characterService.characterState.increaseAttribute(lowStat, value);
         this.characterService.characterState.increaseAttribute('spirituality', 0.001);
         if (this.characterService.characterState.yinYangUnlocked) {
           if (this.characterService.characterState.yin > this.characterService.characterState.yang) {
