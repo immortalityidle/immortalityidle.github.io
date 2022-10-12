@@ -615,14 +615,14 @@ export class BattleService {
     }
   }
 
-  monsterNames = ["spider", "rat", "lizard", "snake", "jack-o-lantern", "gnome", "imp", "ooze", "jackalope",
+  monsterNames = ["spider", "rat", "scorpion", "lizard", "snake", "jack-o-lantern", "gnome", "imp", "ooze", "jackalope",
     "pixie", "goblin", "monkey", "redcap", "boar", "skeleton", "zombie", "hobgoblin", "kobold",
-    "chupacabra", "siren", "incubus", "succubus", "jackal", "basilisk", "mogwai", "ghoul", "gremlin", "orc",
+    "chupacabra", "siren", "crocodile", "incubus", "succubus", "jackal", "basilisk", "mogwai", "ghoul", "gremlin", "orc",
     "tiger", "ghost", "centaur", "troll", "manticore", "merlion", "mummy", "landshark", "bugbear", "yeti",
-    "dreameater", "kelpie", "unicorn", "ogre", "banshee", "harpy", "sphinx", "werewolf", "boogeyman", "golem",
+    "dreameater", "kelpie", "unicorn", "hippo", "ogre", "banshee", "harpy", "sphinx", "werewolf", "boogeyman", "golem",
     "leshy", "hellhound", "chimaera", "undine", "minotaur", "bunyip", "cyclops", "rakshasa", "oni", "nyuk",
     "cavebear", "wendigo", "dinosaur", "wyvern", "doomworm", "lich", "thunderbird", "vampire", "beholder",
-    "hydra", "roc", "giant", "kraken", "behemonth", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"
+    "hydra", "roc", "wyrm", "giant", "kraken", "behemonth", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"
   ];
 
   monsterQualities = [

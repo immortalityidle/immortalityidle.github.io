@@ -10,36 +10,36 @@
       matTooltip="Pause the game. 
       Hotkey: Alt-0 to pause or spacebar to toggle. 
       Clicking this again while paused will step time forward a single day. 
-      When paused, you can also advance one day by pressing the Enter key." class="iconButton" aria-label="Pause">
+      When paused, you can also advance one day by pressing the Enter key." class="iconButton" aria-label="Pause" aria-hidden="false">
       pause
     </mat-icon>
 
     <mat-icon (click)="slowClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 40 && !this.mainLoopService.pause)}"
       matTooltip="Slow Game Speed (1 day/sec).
-      Hotkey: Alt-1" class="iconButton" aria-label="Slow Speed">
+      Hotkey: Alt-1" class="iconButton" aria-label="Slow Speed" aria-hidden="false">
       slow_motion_video
     </mat-icon>
     <mat-icon (click)="standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"
       matTooltip="Standard Game Speed ({{mainLoopService.getTPS(10) | number: '1.0-2'}} days/sec).
-      Hotkey: Alt-2" class="iconButton" aria-label="Standard Speed">
+      Hotkey: Alt-2" class="iconButton" aria-label="Standard Speed" aria-hidden="false">
       play_arrow
     </mat-icon>
     <mat-icon *ngIf="mainLoopService.unlockFastSpeed" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 5 && !this.mainLoopService.pause)}"
       (click)="fastClick()" matTooltip="Fast Game Speed ({{mainLoopService.getTPS(5) | number: '1.0-2'}} days/sec).
-      Hotkey: Alt-3" class="iconButton" aria-label="Fast Speed">
+      Hotkey: Alt-3" class="iconButton" aria-label="Fast Speed" aria-hidden="false">
       fast_forward
     </mat-icon>
     <mat-icon *ngIf="mainLoopService.unlockFasterSpeed" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 2 && !this.mainLoopService.pause)}"
       (click)="fasterClick()" matTooltip="Faster Game Speed ({{mainLoopService.getTPS(2) | number: '1.0-2'}} days/sec).
-      Hotkey: Alt-4" class="iconButton" aria-label="Faster Speed">
+      Hotkey: Alt-4" class="iconButton" aria-label="Faster Speed" aria-hidden="false">
       skip_next
     </mat-icon>
     <mat-icon *ngIf="mainLoopService.unlockFastestSpeed" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 1 && !this.mainLoopService.pause)}"
       (click)="fastestClick()" matTooltip="Fastest Game Speed ({{mainLoopService.getTPS(1) | number: '1.0-2'}} days/sec).
-      Hotkey: Alt-5" class="iconButton" aria-label="Fastest Speed">
+      Hotkey: Alt-5" class="iconButton" aria-label="Fastest Speed" aria-hidden="false">
       bolt
     </mat-icon>
-    <mat-icon  *ngIf="activityService.autoRestart" (click)="timeOptions()" matTooltip="Options" class="iconButton" aria-label="Time Options">
+    <mat-icon  *ngIf="activityService.autoRestart" (click)="timeOptions()" matTooltip="Options" class="iconButton" aria-label="Time Options" aria-hidden="false">
       settings
     </mat-icon>
 
@@ -66,14 +66,14 @@
 
             Shift- or Ctrl-click to remove 10x
             Shift-Ctrl-click to remove 100x"
-            (click)="onMinusClick(entry, $event)" class="iconButton" aria-label="Remove Days">remove</mat-icon>
+            (click)="onMinusClick(entry, $event)" class="iconButton" aria-label="Remove Days" aria-hidden="false">remove</mat-icon>
             <mat-icon matTooltip="Spend more days on this.
 
             Shift- or Ctrl-click to add 10x
             Shift-Ctrl-click to add 100x"
-            (click)="onPlusClick(entry, $event)" class="iconButton" aria-label="Add Days">add</mat-icon>
-            <mat-icon matTooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton" aria-label="Disable Activity">cancel</mat-icon>
-            <mat-icon matTooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton" aria-label="Remove Activity">clear</mat-icon>
+            (click)="onPlusClick(entry, $event)" class="iconButton" aria-label="Add Days" aria-hidden="false">add</mat-icon>
+            <mat-icon matTooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton" aria-label="Disable Activity" aria-hidden="false">cancel</mat-icon>
+            <mat-icon matTooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
 
           </td>
         </tr>
@@ -95,7 +95,7 @@
           </div>
         </td>
         <td>
-          <mat-icon matTooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton" aria-label="Remove Activity">clear</mat-icon>
+          <mat-icon matTooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
         </td>
       </tr>
     </table>
@@ -104,19 +104,19 @@
   <div class="saveButtonBar">
     <div class="saveButtonGroup">
       <div class="saveButton" matTooltip="Save your current schedule of actviities (Schedule #1)." (click)="activityService.saveActivityLoop()">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 1">
+        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 1" aria-hidden="false">
           content_paste
         </mat-icon>
         <div class="saveSlot">1</div>
       </div>
       <div class="saveButton" matTooltip="Save your current schedule of actviities (Schedule #2)." (click)="activityService.saveActivityLoop(2)">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 2">
+        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 2" aria-hidden="false">
           content_paste
         </mat-icon>
         <div class="saveSlot">2</div>
       </div>
       <div class="saveButton" matTooltip="Save your current schedule of actviities (Schedule #3)." (click)="activityService.saveActivityLoop(3)">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 3">
+        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 3" aria-hidden="false">
           content_paste
         </mat-icon>
         <div class="saveSlot">3</div>
@@ -124,26 +124,26 @@
     </div>
     <div class="saveButtonGroup">
       <div class="saveButton" matTooltip="Load your saved schedule of actviities (Schedule #1). Note that activities that you cannot do right now will not be loaded."  (click)="activityService.loadActivityLoop()">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 1">
+        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 1" aria-hidden="false">
           content_paste_go
         </mat-icon>
         <div class="saveSlot">1</div>
       </div>
       <div class="saveButton" matTooltip="Load your saved schedule of actviities (Schedule #2). Note that activities that you cannot do right now will not be loaded." (click)="activityService.loadActivityLoop(2)">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 2">
+        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 2" aria-hidden="false">
           content_paste_go
         </mat-icon>
         <div class="saveSlot">2</div>
       </div>
       <div class="saveButton" matTooltip="Load your saved schedule of actviities (Schedule #3). Note that activities that you cannot do right now will not be loaded." (click)="activityService.loadActivityLoop(3)">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 3">
+        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 3" aria-hidden="false">
           content_paste_go
         </mat-icon>
         <div class="saveSlot">3</div>
       </div>
     </div>
     <mat-icon matTooltip="Clear your current schedule."
-      class="iconButton saveIcon" aria-label="Clear Schedule" (click)="activityService.activityLoop = []">
+      class="iconButton saveIcon" aria-label="Clear Schedule" aria-hidden="false" (click)="activityService.activityLoop = []">
       delete_sweep
     </mat-icon>
   </div>

@@ -487,7 +487,13 @@ export class InventoryService {
       materialPrefix = "wooden";
     }
     const baseName = defaultName ?? WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
-    const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
+    let name: string;
+    if (baseName === "Grandmother's Walking Stick"){
+      // don't rename grandma's stick!
+      name = baseName;
+    } else {
+      name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
+    }
     this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!', 'STANDARD', 'CRAFTING');
     const durability = grade * 15;
     const damage = Math.max(Math.sqrt(grade), 1000) * grade;
@@ -912,7 +918,8 @@ export class InventoryService {
         weaponStats: {
           baseDamage: 10,
           material: "wood",
-          durability: 100
+          durability: 100,
+          baseName: "Grandmother's Walking Stick"
         },
         description: "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.\nBase Damage: 10\nDurability: 100"
       };

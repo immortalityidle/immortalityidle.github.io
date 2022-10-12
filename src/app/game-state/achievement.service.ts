@@ -826,6 +826,41 @@ export class AchievementService {
       },
       unlocked: false
     },
+    {
+      name: "Yes We Can!",
+      description: "You found him.",
+      hint: "Can we fix it?",
+      check: () => {
+        for (const follower of this.followerService.followers){
+          if ((follower.name === "Robert" || follower.name === "Bob") && follower.job === "builder"){
+            return true;
+          }
+        }
+        return false;
+      },
+      effect: () => { 
+        // no effect, it's just for fun
+      },
+      unlocked: false
+    },
+    {
+      name: "Don't mess with Grandma",
+      description: "You have crafted the mightiest stick. Grandmother would be so proud.",
+      hint: "The best stick.",
+      check: () => {
+        if (this.characterService.characterState.equipment.leftHand?.name === "Grandmother's Walking Stick"){
+          if ((this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 0) > 1e9){
+            return true;
+          }
+        }
+        return false;
+      },
+      effect: () => { 
+        // no effect, it's just for fun
+      },
+      unlocked: false
+    },
+    
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {

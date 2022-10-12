@@ -120,6 +120,7 @@ export const FirstNames = [
   "Bin",
   "Blanca",
   "Blessing",
+  "Bob",
   "Brenda",
   "Brian",
   "Brigitte",

@@ -24,7 +24,7 @@
         <span [ngClass]="followerService.followersMaxed" *ngIf="followerService.followersUnlocked">
           &nbsp;({{this.followerService.followers.length}} / {{this.followerService.followerCap}})
         </span>
-        <mat-icon *ngIf="followerService.followersUnlocked && followerService.autoDismissUnlocked" class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Followers"
+        <mat-icon *ngIf="followerService.followersUnlocked && followerService.autoDismissUnlocked" class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Followers" aria-hidden="false"
           matTooltip="Manage your followers.">
           settings
         </mat-icon>
