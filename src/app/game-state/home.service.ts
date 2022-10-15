@@ -479,10 +479,7 @@ export class HomeService {
         'workbench'
       ],
       daysToBuild: 365e7
-    }
-  ];
-
-  imperialHomesList: Home[] = [
+    },
     {
       name: "Seat of the Empire",
       type: HomeType.ImperialSeat,
