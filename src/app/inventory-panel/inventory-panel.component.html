@@ -60,7 +60,7 @@
       auto_awesome
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
-      (click)="autoUse()" class="iconButton" aria-label="Auto Use"
+      (click)="autoUse()" class="iconButton" aria-label="Auto Use" aria-hidden="false"
       matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Ctrl-click items to auto-use.">
       auto_mode
     </mat-icon>

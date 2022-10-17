@@ -90,6 +90,12 @@ export class ActivityPanelComponent {
     }
   }
 
+  rightClick(activity: Activity, event: MouseEvent){
+    event.preventDefault();
+    event.stopPropagation();
+    this.activityService.spiritActivity = activity.activityType;
+  }
+
   drag(activity: Activity, event: DragEvent){
     if (activity.projectionOnly || !activity.unlocked){
       // don't allow projection only activities to drag and drop
@@ -106,7 +112,11 @@ export class ActivityPanelComponent {
     if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell){
       return "";
     } else if (activity.unlocked){
-       return 'Add this to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top';
+      let projectionString = "";
+      if (this.characterService.characterState.manaUnlocked){
+        projectionString = "\n\Right-click to set this as your spriritual projection activity";
+      }
+       return 'Add this to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top' + projectionString;
     } else {
       let requirementString = 'This activity is locked until you have the attributes required for it. You will need:\n\n';
       const requirements = activity.requirements[0];
