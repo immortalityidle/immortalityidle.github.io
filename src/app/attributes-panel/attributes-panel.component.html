@@ -36,6 +36,7 @@
               {{follower.name | titlecase}} (lv.{{follower.power}} {{follower.job | camelToTitle}})
             </span>
             <mat-icon class="smallerIcon"
+            aria-label="Dismiss Follower" aria-hidden="false"
             (click)="dismissFollower($event, follower)"
             [matTooltip]="followerService.autoDismissUnlocked ? 'Dismiss this follower.
             Shift-click to automatically dismiss everyone of this job type.
