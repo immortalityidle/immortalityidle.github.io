@@ -52,10 +52,15 @@ export class EquipmentPanelComponent {
     const sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
     const sourceIndex = parseInt(sourceIndexString);
     if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
-      const itemToEquip = this.inventoryService.itemStacks[sourceIndex];
+      const itemToEquip = this.inventoryService.itemStacks[sourceIndex]?.item;
       const equipmentSlot: EquipmentPosition = slot as EquipmentPosition;
       if (itemToEquip){
-        this.inventoryService.mergeEquippedSlot(equipmentSlot, itemToEquip.item, sourceIndex);
+        if (instanceOfEquipment(itemToEquip)){
+          if (itemToEquip.slot != slot){
+            return;
+          }
+        }
+        this.inventoryService.mergeEquippedSlot(equipmentSlot, itemToEquip, sourceIndex);
         this.inventoryService.selectedItem = null;
       }
     }
