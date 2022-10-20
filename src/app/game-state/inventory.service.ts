@@ -899,15 +899,7 @@ export class InventoryService {
     this.itemStacks = [];
     this.stashedItemStacks = [];
     this.changeMaxItems(10);
-    if (this.characterService.characterState.bloodlineRank >= 6) {
-      return; // Skip the family gifts, thematically inappropriate
-    }
-    if (this.motherGift) {
-      this.logService.addLogMessage(
-        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
-        'STANDARD', 'EVENT');
-      this.itemStacks[0] = { item: this.itemRepoService.items['rice'], quantity: 300 };
-    }
+
     if (this.grandmotherGift) {
       const stick: Equipment = {
         id: 'weapon',
@@ -924,6 +916,16 @@ export class InventoryService {
         description: "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.\nBase Damage: 10\nDurability: 100"
       };
       this.addItem(stick);
+    }
+
+    if (this.characterService.characterState.bloodlineRank >= 6) {
+      return; // Skip the rice gift, thematically inappropriate
+    }
+    if (this.motherGift) {
+      this.logService.addLogMessage(
+        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
+        'STANDARD', 'EVENT');
+      this.itemStacks[0] = { item: this.itemRepoService.items['rice'], quantity: 300 };
     }
   }
 

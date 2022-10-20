@@ -175,7 +175,7 @@ export class InventoryPanelComponent {
               this.inventoryService.itemStacks[destIndex] = null;
               this.inventoryService.itemStacks[sourceIndex] = null
               this.inventoryService.selectedItem = null;
-              this.inventoryService.mergeEquipment(sourceItem, destItem, destIndex);
+              this.inventoryService.mergeEquipment(destItem, sourceItem, destIndex);
               return;
             }
           } else if (sourceItem.type.includes("Gem") && instanceOfEquipment(destItem)){
