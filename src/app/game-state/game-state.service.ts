@@ -129,7 +129,8 @@ export class GameStateService {
       this.updateImportFlagKey(false);
     } else {
       this.dialog.open(OfflineModalComponent, {
-        data: { earnedTicks: this.mainLoopService.earnedTicks }
+        data: { earnedTicks: this.mainLoopService.earnedTicks },
+        autoFocus: false
       });
     }
     return true;

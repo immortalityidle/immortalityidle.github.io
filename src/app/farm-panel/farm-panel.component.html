@@ -17,7 +17,7 @@
     </div>
     <div class="farmGrid">
         <div *ngFor="let field of homeService.fields">
-          <div class="itemSlot"
+          <div class="itemSlot" tabindex="0"
             matTooltip="You will harvest {{field.yield}} in {{field.daysToHarvest}} days">
             <div>{{field.cropName | titlecase}}</div>
             <div>{{field.yield}}</div>

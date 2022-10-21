@@ -25,7 +25,8 @@
     <div class="inventoryGrid">
         <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;"
           draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
-          <diV class="itemSlot" (mousedown)="slotClicked(itemStack, $event)" (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
+          <diV class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)" 
+            (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
             [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
             'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
             matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '

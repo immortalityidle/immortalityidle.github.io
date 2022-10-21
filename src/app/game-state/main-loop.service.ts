@@ -133,7 +133,8 @@ export class MainLoopService {
         const earnedTicks = ticksPassed / this.offlineDivider;
         this.bankedTicks += earnedTicks;
         this.dialog.open(OfflineModalComponent, {
-          data: { earnedTicks: earnedTicks }
+          data: { earnedTicks: earnedTicks },
+          autoFocus: false
         });
       } else {
         const currentTPS = this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;

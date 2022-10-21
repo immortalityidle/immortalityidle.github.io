@@ -66,7 +66,8 @@ export class TimePanelComponent implements OnInit {
   timeOptions(){
     const dialogRef = this.dialog.open(TimeOptionsPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
 
   }

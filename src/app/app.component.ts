@@ -145,7 +145,8 @@ export class AppComponent implements OnInit {
     }else if(event.shiftKey || event.altKey){
       const dialogRef = this.dialog.open(SaveModalComponent, {
         width: '400px',
-        data: {someField: 'foo'}
+        data: {someField: 'foo'},
+        autoFocus: false
       });
     } else {
       this.gameStateService.savetoLocalStorage();
@@ -156,21 +157,24 @@ export class AppComponent implements OnInit {
   exportClicked(): void {
     const dialogRef = this.dialog.open(ExportPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
   storeClicked(): void {
     const dialogRef = this.dialog.open(ManualStoreModalComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
   storeOptionsClicked(): void {
     const dialogRef = this.dialog.open(OptionsModalComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
@@ -185,42 +189,48 @@ export class AppComponent implements OnInit {
     this.storeService.updateAscensions();
     const dialogRef = this.dialog.open(AscensionStoreModalComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
   tutorialClicked(){
     const dialogRef = this.dialog.open(TutorialPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
   statisticsClicked(){
     const dialogRef = this.dialog.open(StatisticsPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
   changelogClicked(){
     const dialogRef = this.dialog.open(ChangelogPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
   achievementsClicked(){
     const dialogRef = this.dialog.open(AchievementPanelComponent, {
       width: '750px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
 
   impossibleTasksClicked(){
     const dialogRef = this.dialog.open(ImpossibleTaskPanelComponent, {
       width: '500px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
   }
   darkModeToggle(){

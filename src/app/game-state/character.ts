@@ -361,7 +361,8 @@ export class Character {
       }
       this.dialogRef = this.dialog.open(LifeSummaryComponent, {
         width: '600px',
-        data: {causeOfDeath: causeOfDeath, attributeGains: attributeGains}
+        data: {causeOfDeath: causeOfDeath, attributeGains: attributeGains},
+        autoFocus: false
       });
     }
 

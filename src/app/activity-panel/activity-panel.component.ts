@@ -44,7 +44,8 @@ export class ActivityPanelComponent {
     }
     const dialogRef = this.dialog.open(TextPanelComponent, {
       width: '700px',
-      data: {titleText: "Joining the Gods", bodyText: JoinTheGodsText}
+      data: {titleText: "Joining the Gods", bodyText: JoinTheGodsText},
+      autoFocus: false
     });
     dialogRef.afterClosed().subscribe(() => {
       this.hellService.inHell = true;

@@ -7,7 +7,7 @@
     <hr/>
     <div class="inventoryGrid">
       <div *ngFor="let item of storeService.getFurnitureForSlot('bed')">
-        <div class="itemSlot"
+        <div class="itemSlot" tabindex="0"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
         matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>
@@ -25,7 +25,7 @@
     <hr/>
     <div class="inventoryGrid">
       <div *ngFor="let item of storeService.getFurnitureForSlot('bathtub')">
-        <div class="itemSlot"
+        <div class="itemSlot" tabindex="0"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
         matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>
@@ -43,7 +43,7 @@
     <hr/>
     <div class="inventoryGrid">
       <div *ngFor="let item of storeService.getFurnitureForSlot('kitchen')">
-        <div class="itemSlot"
+        <div class="itemSlot" tabindex="0"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
         matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>
@@ -61,7 +61,7 @@
     <hr/>
     <div class="inventoryGrid">
       <div *ngFor="let item of storeService.getFurnitureForSlot('workbench')">
-        <div class="itemSlot"
+        <div class="itemSlot" tabindex="0"
         [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
         matTooltip="{{item.description}}">
           <div><mat-icon>{{item.slot}}</mat-icon></div>

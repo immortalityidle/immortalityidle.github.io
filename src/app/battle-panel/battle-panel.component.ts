@@ -34,7 +34,8 @@ export class BattlePanelComponent implements OnInit {
   battleOptions(){
     const dialogRef = this.dialog.open(BattleOptionsPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'}
+      data: {someField: 'foo'},
+      autoFocus: false
     });
 
   }
