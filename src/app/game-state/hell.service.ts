@@ -436,7 +436,6 @@ export class HellService {
           this.activityService.reloadActivities();
         }
       }
-      this.characterService.characterState.status.stamina.value -= 200000;
     }],
     resourceUse: [{
       stamina: 200000,
@@ -564,7 +563,7 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       // TODO: tune this
-      const damage = Math.max(100000 - (this.characterService.characterState.attributes.toughness.value / 1e24), 100);
+      const damage = Math.max(100000 - (this.characterService.characterState.attributes.toughness.value / 1e23), 100);
       this.characterService.characterState.status.health.value -= damage;
       if (this.characterService.characterState.status.health.value <= 0) {
         this.beaten = true;
@@ -1362,11 +1361,11 @@ export class HellService {
         return this.mountainSteps;
       },
       progressMax: () => {
-        return this.battleService.totalKills / 10;
+        return this.battleService.totalKills / 100;
       },
       successCheck: () => {
         // let's just say that 90% of our kills were justified and we didn't enjoy them one bit. Still gotta pay for the other 10%.
-        return this.mountainSteps >= this.battleService.totalKills / 10;
+        return this.mountainSteps >= this.battleService.totalKills / 100;
       }
     },
     {
@@ -1659,7 +1658,7 @@ export class HellService {
     {
       name: "Hell of Saws",
       description: "Torment for swindlers and business cheats. The demons sharpen their saws and grin at you. You wish now that you'd stayed out of politics.",
-      index: 0,
+      index: HellLevel.Saws,
       dailyEffect: () => {
         if (this.contractsExamined <= 100000) {
           // saw damage

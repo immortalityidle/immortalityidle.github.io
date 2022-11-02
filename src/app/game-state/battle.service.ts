@@ -603,10 +603,10 @@ export class BattleService {
       return;
     }
     if (enemy.attackEffect === "feeder" && this.hellService) {
-      if (enemy.hitTracker && enemy.hitTracker < 1) {
+      if (enemy.hitTracker !== undefined && enemy.hitTracker < 2) {
         enemy.hitTracker++;
       } else {
-        // force feed on second hit
+        // force feed on third hit
         this.hellService.daysFasted = 0;
         const damage = this.characterService.characterState.status.health.value / 4;
         this.logService.addLogMessage("The hellfire burns as it goes down, damaging you for " + damage + " extra damage.", 'INJURY', 'COMBAT');
