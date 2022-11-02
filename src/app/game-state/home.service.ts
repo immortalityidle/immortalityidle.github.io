@@ -583,15 +583,17 @@ export class HomeService {
       if (!this.hellService?.inHell || this.hellFood) {
         this.ageFields();
       }
-      if (this.home.costPerDay > this.characterService.characterState.money) {
-        this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
-        if (this.thugPause) {
-          mainLoopService.pause = true;
+      if (!this.hellService?.inHell){
+        if (this.home.costPerDay > this.characterService.characterState.money ) {
+          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
+          if (this.thugPause) {
+            mainLoopService.pause = true;
+          }
+          this.characterService.characterState.status.health.value -= 20;
+          this.characterService.characterState.money = 0;
+        } else {
+          this.characterService.characterState.money -= this.home.costPerDay;
         }
-        this.characterService.characterState.status.health.value -= 20;
-        this.characterService.characterState.money = 0;
-      } else {
-        this.characterService.characterState.money -= this.home.costPerDay;
       }
     });
 
