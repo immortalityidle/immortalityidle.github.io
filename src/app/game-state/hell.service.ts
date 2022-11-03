@@ -1386,7 +1386,7 @@ export class HellService {
         const reducer = .9;
         this.characterService.characterState.attributes.fireLore.value *= reducer;
       },
-      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.meltMountain],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting, this.meltMountain],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "Burn it down!",
       progress: () => {
@@ -1405,7 +1405,7 @@ export class HellService {
       index: HellLevel.CauldronsOfOil,
       dailyEffect: () => {
         if (!this.completedHellTasks.includes(HellLevel.CauldronsOfOil)) {
-          if (this.inventoryService.consume("iceCore") < 0) {
+          if (this.inventoryService.consume("iceCore") > 0) {
             this.logService.addLogMessage("The ice cores you brought in with you make the oil sputter and pop, baking you in a cloud of superheated steam.", "INJURY", "EVENT");
             this.characterService.characterState.status.health.value -= 100000;
             return;
@@ -1504,10 +1504,10 @@ export class HellService {
         return this.boulderHeight;
       },
       progressMax: () => {
-        return 100;
+        return 1000;
       },
       successCheck: () => {
-        return this.boulderHeight > 100;
+        return this.boulderHeight > 1000;
       }
     },
     {
@@ -1550,10 +1550,10 @@ export class HellService {
         return this.swimDepth;
       },
       progressMax: () => {
-        return 1000;
+        return 10000;
       },
       successCheck: () => {
-        return this.swimDepth > 1000;
+        return this.swimDepth > 10000;
       }
     },
     {
@@ -1660,7 +1660,7 @@ export class HellService {
       description: "Torment for swindlers and business cheats. The demons sharpen their saws and grin at you. You wish now that you'd stayed out of politics.",
       index: HellLevel.Saws,
       dailyEffect: () => {
-        if (this.contractsExamined <= 100000) {
+        if (this.contractsExamined <= 20000) {
           // saw damage
           this.characterService.characterState.status.health.value -= 100;
         }
@@ -1675,11 +1675,11 @@ export class HellService {
         return this.contractsExamined;
       },
       progressMax: () => {
-        return 100000;
+        return 20000;
       },
       successCheck: () => {
         // TODO: tune this
-        return this.contractsExamined > 100000;
+        return this.contractsExamined > 20000;
       }
     }
   ]
