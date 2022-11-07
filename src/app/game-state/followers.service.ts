@@ -390,13 +390,13 @@ export class FollowersService {
             this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age.", "INJURY", "FOLLOWER");
           }
           this.updateFollowerTotalPower();
-        } else if (this.characterService.characterState.money < this.followers[i].cost) {
+        } else if (this.characterService.characterState.money < this.followers[i].cost && !this.hellService?.inHell) {
           // quit from not being paid
           this.totalDismissed++;
           this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i, 1);
           this.updateFollowerTotalPower();
-        } else {
+        } else if (!this.hellService?.inHell){
           this.characterService.characterState.money -= this.followers[i].cost;
         }
       }
@@ -579,7 +579,7 @@ export class FollowersService {
     const follower = {
       name: this.generateFollowerName(),
       age: 0,
-      lifespan: this.characterService.characterState.lifespan / lifespanDivider,
+      lifespan: Math.min(this.characterService.characterState.lifespan / lifespanDivider, 365000), // cap follower lifespan at 1000 years
       job: job,
       power: 1,
       cost: 100,

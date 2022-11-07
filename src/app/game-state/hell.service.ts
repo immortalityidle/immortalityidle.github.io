@@ -1179,10 +1179,10 @@ export class HellService {
       description: "Torment for those who ruin marriages. The demons here will cut your fingers right off.",
       index: HellLevel.Scissors,
       entryEffect: () => {
-        this.characterService.stashWeapons();
+        this.inventoryService.stashWeapons();
       },
       exitEffect: () => {
-        this.characterService.restoreWeapons();
+        this.inventoryService.restoreWeapons();
       },
       completeEffect: () => {
         this.logService.addLogMessage("Using nothing but the strength of your body and mind, you have seized control of the Hell of Scissors. Now all that remains is to defeat its lord.", "STANDARD", "STORY")
@@ -1262,12 +1262,12 @@ export class HellService {
       description: "Torment for hypocrites and troublemakers. The steam baskets here are just the right size for you.",
       index: HellLevel.Steamers,
       entryEffect: () => {
-        this.characterService.stashWeapons();
-        this.characterService.stashArmor();
+        this.inventoryService.stashWeapons();
+        this.inventoryService.stashArmor();
       },
       exitEffect: () => {
-        this.characterService.restoreWeapons();
-        this.characterService.restoreArmor();
+        this.inventoryService.restoreWeapons();
+        this.inventoryService.restoreArmor();
       },
       dailyEffect: () => {
         // take damage from the steam and get robbed by troublemakers
@@ -1309,10 +1309,10 @@ export class HellService {
       description: "Torment for arsonists. The red-hot copper pillars you will be bound to remind you of all those times you played with fire.",
       index: HellLevel.CopperPillars,
       entryEffect: () => {
-        this.characterService.stashWeapons();
+        this.inventoryService.stashWeapons();
       },
       exitEffect: () => {
-        this.characterService.restoreWeapons();
+        this.inventoryService.restoreWeapons();
       },
       dailyEffect: () => {
         // take damage from the pillar

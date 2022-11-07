@@ -1637,6 +1637,51 @@ export class InventoryService {
     }
   }
 
+  stashWeapons() {
+    this.characterService.stashWeapons();
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      const item = this.itemStacks[i]?.item;
+      if (item && instanceOfEquipment(item) && item.weaponStats) {
+        this.stashedItemStacks.push(this.itemStacks[i]);
+        this.itemStacks[i] = null;
+      }
+    }
+
+  }
+
+  restoreWeapons() {
+    this.characterService.restoreWeapons();
+    for (let i = 0; i < this.stashedItemStacks.length; i++) {
+      const item = this.itemStacks[i]?.item;
+      if (item && instanceOfEquipment(item) && item.weaponStats) {
+        this.itemStacks.push(this.stashedItemStacks[i]);
+        this.stashedItemStacks[i] = null;
+      }
+    }
+  }
+
+  stashArmor() {
+    this.characterService.stashArmor();
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      const item = this.itemStacks[i]?.item;
+      if (item && instanceOfEquipment(item) && item.armorStats) {
+        this.stashedItemStacks.push(this.itemStacks[i]);
+        this.itemStacks[i] = null;
+      }
+    }
+  }
+
+  restoreArmor() {
+    this.characterService.restoreArmor();
+    for (let i = 0; i < this.stashedItemStacks.length; i++) {
+      const item = this.itemStacks[i]?.item;
+      if (item && instanceOfEquipment(item) && item.armorStats) {
+        this.itemStacks.push(this.stashedItemStacks[i]);
+        this.stashedItemStacks[i] = null;
+      }
+    }
+  }
+
   stashInventory() {
     this.stashedItemStacks = [];
     for (let i = 0; i < this.itemStacks.length; i++) {
