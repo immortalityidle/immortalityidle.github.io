@@ -1651,11 +1651,11 @@ export class InventoryService {
 
   restoreWeapons() {
     this.characterService.restoreWeapons();
-    for (let i = 0; i < this.stashedItemStacks.length; i++) {
-      const item = this.itemStacks[i]?.item;
-      if (item && instanceOfEquipment(item) && item.weaponStats) {
-        this.itemStacks.push(this.stashedItemStacks[i]);
-        this.stashedItemStacks[i] = null;
+    for (let i = this.stashedItemStacks.length - 1; i >= 0 ; i--) {
+      const itemStack = this.stashedItemStacks[i];
+      if (itemStack && itemStack.item && instanceOfEquipment(itemStack.item) && itemStack.item.weaponStats) {
+        this.addItem(itemStack.item, itemStack.quantity);
+        this.stashedItemStacks.splice(i, 1);
       }
     }
   }
@@ -1673,17 +1673,16 @@ export class InventoryService {
 
   restoreArmor() {
     this.characterService.restoreArmor();
-    for (let i = 0; i < this.stashedItemStacks.length; i++) {
-      const item = this.itemStacks[i]?.item;
-      if (item && instanceOfEquipment(item) && item.armorStats) {
-        this.itemStacks.push(this.stashedItemStacks[i]);
-        this.stashedItemStacks[i] = null;
+    for (let i = this.stashedItemStacks.length - 1; i >= 0 ; i--) {
+      const itemStack = this.stashedItemStacks[i];
+      if (itemStack && itemStack.item && instanceOfEquipment(itemStack.item) && itemStack.item.armorStats) {
+        this.addItem(itemStack.item, itemStack.quantity);
+        this.stashedItemStacks.splice(i, 1);
       }
     }
   }
 
   stashInventory() {
-    this.stashedItemStacks = [];
     for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
       if (item && item.type !== "food" && !item.type.includes("Gem")) {
@@ -1694,13 +1693,13 @@ export class InventoryService {
   }
 
   restoreInventory() {
-    this.itemStacks = [];
-    for (let i = 0; i < this.stashedItemStacks.length; i++) {
-      if (this.stashedItemStacks[i]) {
-        this.itemStacks.push(this.stashedItemStacks[i]);
-        this.stashedItemStacks[i] = null;
+    for (let i = this.stashedItemStacks.length - 1; i >= 0 ; i--) {
+      const itemStack = this.stashedItemStacks[i];
+      if (itemStack && itemStack.item) {
+        this.addItem(itemStack.item, itemStack.quantity);
       }
     }
+    this.stashedItemStacks = [];
   }
 
   gemifyEquipment(gemIndex: number, equipment: Equipment) {
