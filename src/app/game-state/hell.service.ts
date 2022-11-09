@@ -786,8 +786,8 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
         name: "Malgorath the Marriage Masher",
-        health: 1e30,
-        maxHealth: 1e30,
+        health: 1e28,
+        maxHealth: 1e28,
         accuracy: 0.8,
         attack: 1e10,
         defense: 1e12,
@@ -816,8 +816,8 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Steamers) {
       this.battleService.addEnemy({
         name: "Stactolus the Steamer",
-        health: 1e30,
-        maxHealth: 1e30,
+        health: 1e28,
+        maxHealth: 1e28,
         accuracy: 0.8,
         attack: 1e10,
         defense: 1e12,
@@ -1098,29 +1098,29 @@ export class HellService {
           if (this.battleService.enemies.length == 0){
             this.battleService.addEnemy({
               name: "Lord Yama",
-              health: 1e39,
-              maxHealth: 1e39,
+              health: 1e40,
+              maxHealth: 1e40,
               accuracy: 0.8,
-              attack: 1e15,
+              attack: 1e14,
               defense: 1e18,
               loot: [this.itemRepoService.items['portalKey']]
             });
             this.battleService.addEnemy({
               name: "Horse Face",
-              health: 1e30,
-              maxHealth: 1e30,
+              health: 1e39,
+              maxHealth: 1e39,
               accuracy: 0.8,
-              attack: 1e10,
-              defense: 1e12,
+              attack: 5e13,
+              defense: 5e17,
               loot: []
             });
             this.battleService.addEnemy({
               name: "Ox Head",
-              health: 1e30,
-              maxHealth: 1e30,
+              health: 1e39,
+              maxHealth: 1e39,
               accuracy: 0.8,
-              attack: 1e10,
-              defense: 1e12,
+              attack: 5e13,
+              defense: 5e17,
               loot: []
             });
           }
@@ -1283,7 +1283,7 @@ export class HellService {
         this.battleService.clearEnemies();
         this.logService.addLogMessage("You defeat so many troublemakers that the rest all beg to return to their baskets for their regular torment.", "STANDARD", "STORY")
       },
-      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.rehabilitation],
+      activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting, this.rehabilitation],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: "There so many troublemakers here that deserve some payback from you. I wonder if you can take them all on.",
       progress: () => {

@@ -556,8 +556,9 @@ export class BattleService {
         armor.armorStats.defense = 1;
       }
       if (armor.armorStats.effect === "life") {
-        this.logService.addLogMessage("Your " + armor.name + " healed you for " + durabilityDamage + " as the enemy struck it.", "STANDARD", "COMBAT");
-        this.characterService.characterState.status.health.value += durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor);
+        const amountHealed = (durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor)) * 10;
+        this.logService.addLogMessage("Your " + armor.name + " healed you for " + amountHealed + " as the enemy struck it.", "STANDARD", "COMBAT");
+        this.characterService.characterState.status.health.value += amountHealed;
         this.characterService.characterState.checkOverage();
       }
       if (armor.armorStats.durability <= 0) {

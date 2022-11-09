@@ -1330,11 +1330,14 @@ export class InventoryService {
       if (itemIterator) {
         const item = itemIterator.item;
         if (instanceOfEquipment(item) && item.slot === slot) {
-          let itemPower = 0
+          let itemPower = 0;
           if (weapon && item.weaponStats && item.weaponStats?.durability > 0) {
             itemPower = item.weaponStats?.baseDamage;
           } else if (!weapon && item.armorStats && item.armorStats?.durability > 0) {
             itemPower = item.armorStats?.defense;
+          } else {
+            // the weapon is broken, skip it
+            continue;
           }
           if (itemPower > equippedPower) {
             this.equip(itemIterator);
@@ -1569,8 +1572,6 @@ export class InventoryService {
         if (((slot === 'rightHand' || slot === 'leftHand') && this.autoequipBestWeapon) ||
           (slot !== 'rightHand' && slot !== 'leftHand' && this.autoequipBestArmor)) {
           this.mergeEquippedSlot(slot, destinationItem, lastdestinationIndex);
-        } else {//slot doesn't match the auto-equip owned.
-          return;
         }
       }
     }
@@ -1578,6 +1579,9 @@ export class InventoryService {
 
   mergeEquippedSlot(slot: EquipmentPosition, itemToMerge: Item, sourceItemIndex: number) {
     const equippedItem = this.characterService.characterState.equipment[slot];
+    if (!equippedItem){
+      return;
+    }
     if (itemToMerge.type.includes("Gem") && equippedItem) {
       this.gemifyEquipment(sourceItemIndex, equippedItem);
       return;

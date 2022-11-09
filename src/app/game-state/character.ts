@@ -414,6 +414,7 @@ export class Character {
     if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
+    this.hellMoney = 0;
     this.recalculateDerivedStats();
     if (this.bloodlineRank === 0) {
       this.equipment = {
