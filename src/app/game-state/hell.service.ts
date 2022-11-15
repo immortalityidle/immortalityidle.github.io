@@ -786,10 +786,10 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
         name: "Malgorath the Marriage Masher",
-        health: 1e28,
-        maxHealth: 1e28,
+        health: 1e27,
+        maxHealth: 1e27,
         accuracy: 0.8,
-        attack: 1e10,
+        attack: 1e11,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownScissors']]
       });
@@ -816,8 +816,8 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Steamers) {
       this.battleService.addEnemy({
         name: "Stactolus the Steamer",
-        health: 1e28,
-        maxHealth: 1e28,
+        health: 1e27,
+        maxHealth: 1e27,
         accuracy: 0.8,
         attack: 1e10,
         defense: 1e12,

@@ -512,24 +512,45 @@ export class BattleService {
       this.hellService.trouble();
       return;
     }
-    const rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
-    const index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
-    const nameIndex = Math.floor(index / this.monsterQualities.length);
-    const qualityIndex = index % this.monsterQualities.length;
 
-    let monsterName = this.monsterQualities[qualityIndex] + " " + this.monsterNames[nameIndex];
-    if (rank > 0) {
-      monsterName += " " + (rank + 1);
+    let health = this.troubleKills * 10;
+    let attack = this.troubleKills / 5;
+    let defense = this.troubleKills / 5;
+    let gem;
+    let monsterName;
+    if (this.characterService.characterState.god){
+      const index = this.troubleKills % (this.monsterNames.length);
+      const rank = Math.floor(this.troubleKills / this.monsterNames.length);
+      monsterName = "Godslaying " + this.monsterNames[index];
+      if (rank > 0) {
+        monsterName += " " + (rank + 1);
+      }
+
+      attack = Math.round(Math.pow(1.1, this.troubleKills));
+      defense = attack * 10;
+      health = attack * 200;
+      gem = this.inventoryService.generateSpiritGem(Math.ceil(this.troubleKills / 30));
+    } else {
+      const rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
+      const index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
+      const nameIndex = Math.floor(index / this.monsterQualities.length);
+      const qualityIndex = index % this.monsterQualities.length;
+      monsterName = this.monsterQualities[qualityIndex] + " " + this.monsterNames[nameIndex];
+      if (rank > 0) {
+        monsterName += " " + (rank + 1);
+      }
+
+      gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
     }
 
-    const gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
+    
     this.addEnemy({
       name: monsterName,
-      health: this.troubleKills * 10,
-      maxHealth: this.troubleKills * 10,
+      health: health,
+      maxHealth: health,
       accuracy: 0.5,
-      attack: this.troubleKills / 5,
-      defense: this.troubleKills / 5,
+      attack: attack,
+      defense: defense,
       loot: [gem]
     });
     this.troubleKills++;

@@ -1178,9 +1178,17 @@ export class ItemRepoService {
         if (!this.gameStateService) {
           this.gameStateService = this.injector.get(GameStateService);
         }
+        if (!this.activityService) {
+          this.activityService = this.injector.get(ActivityService);
+        }
+        if (!this.battleService) {
+          this.battleService = this.injector.get(BattleService);
+        }
         this.logService.addLogMessage("You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and achieved godhood on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
         this.logService.addLogMessage("You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to claim your throne on Mount Penglai.", "STANDARD", 'STORY');
         this.characterService.characterState.god = true;
+        this.battleService.troubleKills = 0;
+        this.activityService.reloadActivities();
       },
     },
     fingers: {
