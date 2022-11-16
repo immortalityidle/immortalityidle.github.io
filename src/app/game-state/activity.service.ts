@@ -63,7 +63,6 @@ export class ActivityService {
   totalExhaustedDays = 0;
   activityHeader = "";
   activityHeaderDescription = "";
-  hellEnabled = true;
   hellService?: HellService;
   spiritActivityProgress = false;
   purifyGemsUnlocked = false;
