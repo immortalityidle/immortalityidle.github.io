@@ -243,7 +243,7 @@ export class AchievementService {
       description: "You really love holding vast amounts of materials and unlocked the " + this.itemRepoService.items['bestStorageManual'].name,
       hint: "Just stop already, it's too much. Why would an aspiring immortal need this much?",
       check: () => {
-        return this.inventoryService.maxStackSize >= 10000;
+        return this.inventoryService.maxStackSize >= 10000 && this.inventoryService.thrownAwayItems >= 1000000;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestStorageManual']);
