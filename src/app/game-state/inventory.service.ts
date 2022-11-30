@@ -925,7 +925,7 @@ export class InventoryService {
       this.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
         'STANDARD', 'EVENT');
-      this.itemStacks[0] = { item: this.itemRepoService.items['rice'], quantity: 300 };
+      this.addItem(this.itemRepoService.items['rice'], 300);
     }
   }
 
