@@ -573,17 +573,17 @@ export class HomeService {
       }
       if (!this.hellService?.inHell || this.hellHome) {
         this.home.consequence();
-      }
-      for (const slot of this.furniturePositionsArray) {
-        const furniturePiece = this.furniture[slot];
-        if (furniturePiece?.use) {
-          furniturePiece?.use();
+        for (const slot of this.furniturePositionsArray) {
+          const furniturePiece = this.furniture[slot];
+          if (furniturePiece?.use) {
+            furniturePiece?.use();
+          }
         }
       }
       if (!this.hellService?.inHell || this.hellFood) {
         this.ageFields();
       }
-      if (!this.hellService?.inHell){
+      if (!this.hellService?.inHell && !this.characterService.characterState.god){
         if (this.home.costPerDay > this.characterService.characterState.money ) {
           this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
           if (this.thugPause) {

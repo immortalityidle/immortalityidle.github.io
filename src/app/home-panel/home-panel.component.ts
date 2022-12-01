@@ -8,6 +8,7 @@ import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture
 import { FarmPanelComponent } from '../farm-panel/farm-panel.component';
 import { FollowersService } from '../game-state/followers.service';
 import { BigNumberPipe } from '../app.component';
+import { HellService } from '../game-state/hell.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class HomePanelComponent {
   constructor(public characterService: CharacterService,
     public homeService: HomeService,
     public followerService: FollowersService,
+    public hellService: HellService,
     public dialog: MatDialog,
     private storeService: StoreService,
     private bignumber: BigNumberPipe) {

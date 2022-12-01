@@ -206,4 +206,10 @@ export class InventoryPanelComponent {
       }
     }
   }
+
+  throwAway(){
+    if (this.inventoryService.selectedItem) {
+      this.inventoryService.removeItemStack(this.inventoryService.selectedItem);
+    }
+  }
 }
