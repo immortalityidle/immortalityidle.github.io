@@ -93,6 +93,7 @@ export class HellService {
     consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you 1 hell money.'],
     consequence: [() => {
       if (this.characterService.characterState.money < 1e6) {
+        this.logService.addLogMessage("You fail to burn the money that you don't have, and feel pretty dumb for trying.", "STANDARD", "EVENT");
         return;
       }
       this.characterService.characterState.money -= 1e6;
@@ -115,6 +116,10 @@ export class HellService {
     description: ['Look for followers willing to help you.'],
     consequenceDescription: ['Uses 100 Stamina and 1000 hell money. Gives you a small chance of finding a follower.'],
     consequence: [() => {
+      if (this.characterService.characterState.attributes.charisma.value < 1e6){
+        this.logService.addLogMessage("You completely fail to catch the attention of any of the damned.", "STANDARD", "EVENT");
+        return;
+      }
       if (this.characterService.characterState.hellMoney < 1000) {
         this.logService.addLogMessage("You don't have enough hell money. The damned souls around you team up with the demons to give you a beating.", "INJURY", "EVENT");
         this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
@@ -128,13 +133,14 @@ export class HellService {
       if (Math.random() < 0.01) {
         this.followerService.generateFollower(false, "damned");
         this.logService.addLogMessage("Your recruiting efforts seem to infuriate the demons here.", "STANDARD", "EVENT");
+      } else {
+        this.logService.addLogMessage("You pass around some bribes but fail to find any interested followers today.", "STANDARD", "EVENT");
       }
     }],
     resourceUse: [{
       stamina: 100
     }],
     requirements: [{
-      charisma: 1e6,
     }],
     unlocked: false,
     discovered: true,
@@ -177,8 +183,8 @@ export class HellService {
     description: ['You look around and realize that you have many family members and ancestors here. You should probably give them some credit for what they have done for you. And some money.'],
     consequenceDescription: ['Uses 1 hell money.'],
     consequence: [() => {
-      //TODO: tune this
       if (this.characterService.characterState.hellMoney < 1) {
+        this.logService.addLogMessage("Your ancestors are not impressed with your lack of financial offerings.", "STANDARD", "EVENT");
         return;
       }
       this.characterService.characterState.hellMoney--;
@@ -201,6 +207,10 @@ export class HellService {
     description: ["The copper pillars here look like they're made of a decent grade of copper. It looks like you have enough slack in your chains to turn and break off some pieces."],
     consequenceDescription: ['Uses 100,000 stamina and produces one copper bar.'],
     consequence: [() => {
+      if (this.characterService.characterState.attributes.strength.value < 1e24){
+        this.logService.addLogMessage("You try to crack into the pillar, but you're not strong enough.", "STANDARD", "EVENT");
+        return;
+      }
       this.characterService.characterState.status.stamina.value -= 100000;
       this.inventoryService.addItem(this.itemRepoService.items['copperBar']);
     }],
@@ -208,7 +218,6 @@ export class HellService {
       stamina: 100000
     }],
     requirements: [{
-      strength: 1e24
     }],
     unlocked: true,
     discovered: true,
@@ -222,6 +231,10 @@ export class HellService {
     description: ["Shape a bar of copper into a hammer using your bare hands. This would be so much easier with an anvil and tools."],
     consequenceDescription: ['Uses 100,000 stamina and produces the worst hammer in the world.'],
     consequence: [() => {
+      if (this.characterService.characterState.attributes.strength.value < 1e24){
+        this.logService.addLogMessage("Your weak muscles flinch at the very thought of trying to mold metal by hand.", "STANDARD", "EVENT");
+        return;
+      }
       this.characterService.characterState.status.stamina.value -= 100000;
       if (this.inventoryService.consume("metal", 1) > 0) {
         const newHammer: Equipment = {
@@ -245,7 +258,6 @@ export class HellService {
       stamina: 100000
     }],
     requirements: [{
-      strength: 1e24
     }],
     unlocked: true,
     discovered: true,
@@ -259,6 +271,10 @@ export class HellService {
     description: ["Take another step up the mountain. The path before you seems exceptionally jagged. Maybe you shouldn't have killed so very many little spiders."],
     consequenceDescription: ['Uses 1000 stamina and produces the worst hammer in the world.'],
     consequence: [() => {
+      if (this.characterService.characterState.attributes.strength.value < 1e24 || this.characterService.characterState.attributes.toughness.value < 1e24){
+        this.logService.addLogMessage("Your legs give out before you can take a single step up the mountain. Maybe if you were stronger and tougher you could climb.", "STANDARD", "EVENT");
+        return;
+      }
       this.characterService.characterState.status.stamina.value -= 1000;
       this.mountainSteps++;
     }],
@@ -299,6 +315,11 @@ export class HellService {
     description: ["The mountain is far to slippery climb. The only way you're getting to the top is to bring the top down to you."],
     consequenceDescription: ['Focus your connection to fire and melt that sucker down.'],
     consequence: [() => {
+      if (this.characterService.characterState.attributes.fireLore.value < 1e16){
+        this.logService.addLogMessage("Your connection to fire isn't nearly as strong as you thought it was.", "STANDARD", "EVENT");
+        return;
+      }
+
       const numberSpawned = Math.log10(this.characterService.characterState.attributes.fireLore.value);
       for (let i = 0; i < numberSpawned; i++) {
         this.battleService.addEnemy({
@@ -315,7 +336,6 @@ export class HellService {
     resourceUse: [{
     }],
     requirements: [{
-      fireLore: 1000 // TODO: tune this
     }],
     unlocked: true,
     discovered: true,
@@ -329,6 +349,10 @@ export class HellService {
     description: ["Swimming in lava is less fun that it seemed like it would be."],
     consequenceDescription: ['Focus your connection to water and turn that lava back to stone.'],
     consequence: [() => {
+      if (this.characterService.characterState.attributes.waterLore.value < 1e16){
+        this.logService.addLogMessage("Your connection to water isn't nearly as strong as you thought it was.", "STANDARD", "EVENT");
+        return;
+      }
       const numberSpawned = Math.log10(this.characterService.characterState.attributes.waterLore.value);
       for (let i = 0; i < numberSpawned; i++) {
         this.battleService.addEnemy({
@@ -345,7 +369,6 @@ export class HellService {
     resourceUse: [{
     }],
     requirements: [{
-      fireLore: 1000 // TODO: tune this
     }],
     unlocked: true,
     discovered: true,
@@ -426,6 +449,7 @@ export class HellService {
       this.characterService.characterState.status.stamina.value -= 200000;
       // TODO: tune this
       if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
+        this.logService.addLogMessage("You stumble around completely lost like the rest of the souls here. If only you were smarter.", "STANDARD", "EVENT");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
@@ -457,6 +481,7 @@ export class HellService {
       this.characterService.characterState.status.stamina.value -= 200000;
       // TODO: tune this
       if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
+        this.logService.addLogMessage("The damned souls completely ignore your attempts at instruction.", "STANDARD", "EVENT");
         return;
       }
       const numberTaught = Math.floor(Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24));
@@ -481,11 +506,14 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
+        this.logService.addLogMessage("The damned here completely ignore you attempts.", "STANDARD", "EVENT");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24) * 0.000001);
       if (Math.random() < threshold) {
         this.inventoryService.addItem(this.itemRepoService.items["treasureMap"]);
+      } else {
+        this.logService.addLogMessage("You almost talk a soul into telling you where their treasure is hidden.", "STANDARD", "EVENT");
       }
     }],
     resourceUse: [{
@@ -507,6 +535,7 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
+        this.logService.addLogMessage("The puzzle your best puzzling but can't figure out how to even start on this relic.", "STANDARD", "EVENT");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
@@ -514,6 +543,8 @@ export class HellService {
         if (this.inventoryService.consume("treasureMap") > 0) {
           this.inventoryService.addItem(this.itemRepoService.items["stolenRelic"]);
         }
+      } else {
+        this.logService.addLogMessage("You think you're getting close to figuring out where this relic is. If only you were more clever.", "STANDARD", "EVENT");
       }
     }],
     resourceUse: [{
@@ -535,6 +566,7 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       if (this.characterService.characterState.attributes.speed.value <= 1e24) {
+        this.logService.addLogMessage("You are too slow to even attempt replacing a treasure.", "STANDARD", "EVENT");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.speed.value - 1e24) * 0.000001);
@@ -542,6 +574,8 @@ export class HellService {
         if (this.inventoryService.consume("stolenRelic") > 0) {
           this.relicsReturned++;
         }
+      } else {
+        this.logService.addLogMessage("You make a good effort to run through the tomb, but you fail. Try harder!", "STANDARD", "EVENT");
       }
     }],
     resourceUse: [{
@@ -590,11 +624,14 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 500000;
       if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
+        this.logService.addLogMessage("You can't even begin to read the complex contracts.", "STANDARD", "EVENT");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
       if (Math.random() < threshold) {
         this.contractsExamined++;
+      } else {
+        this.logService.addLogMessage("You very nearly make out the meaning of the scrawled contract.", "STANDARD", "EVENT");
       }
     }],
     resourceUse: [{
@@ -1317,7 +1354,9 @@ export class HellService {
       dailyEffect: () => {
         // take damage from the pillar
         if (this.inventoryService.consume("iceCore") < 0) {
-          this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+          const damage =  Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+          this.characterService.characterState.status.health.value -= damage;
+          this.logService.addLogMessage("The heat of the pillars burns you for " + damage + " damage.", "INJURY", "COMBAT");
         }
       },
       completeEffect: () => {

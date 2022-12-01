@@ -59,9 +59,16 @@ export class CharacterService {
           const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
           logService.addLogMessage("You take " + starvationDamage + " damage from starvation.", "INJURY", "COMBAT"); // it's not really a combat message, but I didn't want to spam the event log
           this.characterState.status.health.value -= starvationDamage;
+          if (this.characterState.status.health.value < 0){
+            this.characterState.status.health.value = 0;
+          }
           this.characterState.increaseAttribute('spirituality', 0.1);
-          if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
-            deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
+          if (this.characterState.status.health.value <= 0){
+            if (!this.characterState.immortal) {
+              deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
+            } else if (this.hellService?.inHell){
+              this.hellService.beaten = true;
+            }
           }
         } else if (!this.characterState.immortal) {
           deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
