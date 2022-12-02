@@ -269,7 +269,7 @@ export class HellService {
     name: ['Climb the Mountain'],
     activityType: ActivityType.ClimbMountain,
     description: ["Take another step up the mountain. The path before you seems exceptionally jagged. Maybe you shouldn't have killed so very many little spiders."],
-    consequenceDescription: ['Uses 1000 stamina and produces the worst hammer in the world.'],
+    consequenceDescription: ['Uses 1000 stamina and works off some of that murderous karma you have built up.'],
     consequence: [() => {
       if (this.characterService.characterState.attributes.strength.value < 1e24 || this.characterService.characterState.attributes.toughness.value < 1e24){
         this.logService.addLogMessage("Your legs give out before you can take a single step up the mountain. Maybe if you were stronger and tougher you could climb.", "STANDARD", "EVENT");
@@ -402,7 +402,7 @@ export class HellService {
     name: ['Lift the Boulder Higher'],
     activityType: ActivityType.LiftBoulder,
     description: ["The boulder is heavy, but you are strong. See how high you can lift it."],
-    consequenceDescription: ['Uses 100,000 stamina. Heals an animal.'],
+    consequenceDescription: ['Uses 100,000 stamina.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 100000;
       this.boulderHeight++;
@@ -669,6 +669,8 @@ export class HellService {
       if (this.beaten) {
         this.beaten = false;
         this.logService.addLogMessage("You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm.", "INJURY", "EVENT");
+        this.battleService.enemies = [];
+        this.battleService.currentEnemy = null;
         if (hell.exitEffect) {
           hell.exitEffect();
         }
@@ -1246,7 +1248,9 @@ export class HellService {
       },
       dailyEffect: () => {
         // lose 10% of your health every day
-        this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.1);
+        const damage = (this.characterService.characterState.status.health.value * 0.1);
+        this.logService.addLogMessage("The knives dig into your flesh, causing " + damage + " damage.", "INJURY", "COMBAT");
+        this.characterService.characterState.status.health.value -= damage;
       },
       exitEffect: () => {
         this.characterService.restoreMoney();
@@ -1309,7 +1313,9 @@ export class HellService {
       dailyEffect: () => {
         // take damage from the steam and get robbed by troublemakers
         if (this.inventoryService.consume("iceCore") < 0) {
-          this.characterService.characterState.status.health.value -= (this.characterService.characterState.status.health.value * 0.05);
+          const damage = (this.characterService.characterState.status.health.value * 0.05);
+          this.logService.addLogMessage("The steam cooks your skin, causing " + damage + " damage.", "INJURY", "COMBAT");
+          this.characterService.characterState.status.health.value -= damage;
         }
         if (Math.random() < 0.2) {
           this.logService.addLogMessage("As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?", "STANDARD", "EVENT")
@@ -1385,6 +1391,7 @@ export class HellService {
         if (damage < 0) {
           damage = 0;
         }
+        
         this.characterService.characterState.status.health.value -= damage;
         if (damage > 0) {
           this.logService.addLogMessage("The mountain's blades shred you for " + damage + " damage.", "INJURY", "COMBAT");
@@ -1450,7 +1457,9 @@ export class HellService {
             return;
           }
           // take damage from the oil
-          this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+          const damage = Math.max(this.characterService.characterState.status.health.value * 0.1, 20)
+          this.logService.addLogMessage("The oil scorches you, causing " + damage + " damage.", "INJURY", "COMBAT");
+          this.characterService.characterState.status.health.value -= damage;
         }
         // chance to drop weapon
         if (Math.random() < 0.1) {
@@ -1607,6 +1616,7 @@ export class HellService {
         }
       },
       dailyEffect: () => {
+        this.logService.addLogMessage("The constant storm saps you of 500 health and 100 stamina.", "INJURY", "COMBAT");
         this.characterService.characterState.status.health.value -= 500;
         this.characterService.characterState.status.stamina.value -= 100;
       },
@@ -1654,7 +1664,9 @@ export class HellService {
       dailyEffect: () => {
         // take damage from the volcano
         if (this.inventoryService.consume("iceCore") < 0) {
-          this.characterService.characterState.status.health.value -= Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+          const damage = Math.max(this.characterService.characterState.status.health.value * 0.1, 20)
+          this.logService.addLogMessage("The oppressive heat of the volcano burns you for " + damage + " damage.", "INJURY", "COMBAT");
+          this.characterService.characterState.status.health.value -= damage;
         }
       },
       completeEffect: () => {
@@ -1701,6 +1713,7 @@ export class HellService {
       dailyEffect: () => {
         if (this.contractsExamined <= 20000) {
           // saw damage
+          this.logService.addLogMessage("The saws tear into your flesh, causing 100 damage.", "INJURY", "COMBAT");
           this.characterService.characterState.status.health.value -= 100;
         }
       },

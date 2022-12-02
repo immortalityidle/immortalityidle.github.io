@@ -91,7 +91,7 @@
           <label for="autoequipEnable">Automatically equip best equipment</label>
         </span>
       </div>
-      <div *ngIf="(inventoryService.autoequipBestArmor && inventoryService.autoArmorMergeUnlocked) || (inventoryService.autoequipBestWeapon && inventoryService.autoArmorMergeUnlocked)"  class="optionField">
+      <div *ngIf="(inventoryService.autoequipBestArmor && inventoryService.autoArmorMergeUnlocked) || (inventoryService.autoequipBestWeapon && inventoryService.autoWeaponMergeUnlocked)"  class="optionField">
         <span>
           <input type="checkbox" (change)="automergeEquippedChange($event)"
             id="automergeEquipped"  [checked]="inventoryService.automergeEquipped"/>
