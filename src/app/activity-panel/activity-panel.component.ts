@@ -11,7 +11,8 @@ import { JoinTheGodsText } from '../game-state/textResources';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
-import { CamelToTitlePipe } from '../app.component';
+import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
+import { Injectable, Injector } from '@angular/core';
 
 @Component({
   selector: 'app-activity-panel',
@@ -32,7 +33,9 @@ export class ActivityPanelComponent {
     private inventoryService: InventoryService,
     private followerService: FollowersService,
     public impossibleTaskService: ImpossibleTaskService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private bigNumberPipe: BigNumberPipe
+
   ) {
     this.Math = Math;
     this.character = characterService.characterState;
@@ -123,7 +126,7 @@ export class ActivityPanelComponent {
       const requirements = activity.requirements[0];
       for (const prop in requirements){
         //@ts-ignore
-        requirementString += this.camelToTitle.transform(prop) + ": " + requirements[prop] + "\n";
+        requirementString += this.camelToTitle.transform(prop) + ": " + this.bigNumberPipe.transform(requirements[prop]) + "\n";
       }
       return requirementString;
     }

@@ -201,9 +201,11 @@ export class ActivityService {
         this.spiritActivityProgress = true;
         const activity = this.getActivityByType(this.spiritActivity);
         // if we don't have the resources for spirit activities, just don't do them
-        if (activity !== null && this.checkResourceUse(activity, true)) {
+        if (activity !== null && this.checkResourceUse(activity, true) && activity.unlocked) {
           activity.consequence[activity.level]();
           this.characterService.characterState.status.mana.value -= 5;
+        } else {
+          this.spiritActivityProgress = false;
         }
       } else {
         this.spiritActivityProgress = false;

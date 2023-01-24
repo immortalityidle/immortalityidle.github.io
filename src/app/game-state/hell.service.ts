@@ -452,7 +452,7 @@ export class HellService {
         this.logService.addLogMessage("You stumble around completely lost like the rest of the souls here. If only you were smarter.", "STANDARD", "EVENT");
         return;
       }
-      const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
+      const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001);
       if (Math.random() < threshold) {
         this.exitFound = true;
         if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)) {
@@ -509,7 +509,7 @@ export class HellService {
         this.logService.addLogMessage("The damned here completely ignore you attempts.", "STANDARD", "EVENT");
         return;
       }
-      const threshold = (Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24) * 0.000001);
+      const threshold = (Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24) * 0.00001);
       if (Math.random() < threshold) {
         this.inventoryService.addItem(this.itemRepoService.items["treasureMap"]);
       } else {
@@ -538,7 +538,7 @@ export class HellService {
         this.logService.addLogMessage("The puzzle your best puzzling but can't figure out how to even start on this relic.", "STANDARD", "EVENT");
         return;
       }
-      const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
+      const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001);
       if (Math.random() < threshold) {
         if (this.inventoryService.consume("treasureMap") > 0) {
           this.inventoryService.addItem(this.itemRepoService.items["stolenRelic"]);
@@ -569,7 +569,7 @@ export class HellService {
         this.logService.addLogMessage("You are too slow to even attempt replacing a treasure.", "STANDARD", "EVENT");
         return;
       }
-      const threshold = (Math.log10(this.characterService.characterState.attributes.speed.value - 1e24) * 0.000001);
+      const threshold = (Math.log10(this.characterService.characterState.attributes.speed.value - 1e24) * 0.00001);
       if (Math.random() < threshold) {
         if (this.inventoryService.consume("stolenRelic") > 0) {
           this.relicsReturned++;
@@ -627,7 +627,7 @@ export class HellService {
         this.logService.addLogMessage("You can't even begin to read the complex contracts.", "STANDARD", "EVENT");
         return;
       }
-      const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.000001);
+      const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001);
       if (Math.random() < threshold) {
         this.contractsExamined++;
       } else {
