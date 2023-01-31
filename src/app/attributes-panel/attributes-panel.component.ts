@@ -39,7 +39,7 @@ export class AttributesPanelComponent {
     if ((event.ctrlKey || event.metaKey) && this.followerService.autoDismissUnlocked){
       this.followerService.limitFollower(follower);
     } else if (event.shiftKey && this.followerService.autoDismissUnlocked){
-      this.followerService.dismissFollowerAll(follower);
+      this.followerService.dismissAllFollowers(follower);
     } else {
       this.followerService.dismissFollower(follower);
     }

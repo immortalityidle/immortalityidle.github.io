@@ -55,4 +55,8 @@ export class FollowerManagementPanelComponent implements OnInit {
     this.followerService.sortField = event.target.value;
     this.followerService.sortFollowers(this.followerService.sortAscending);
   }
+
+  dismissAllClicked(){
+    this.followerService.dismissAllFollowers();
+  }
 }

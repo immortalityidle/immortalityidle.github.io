@@ -1,17 +1,25 @@
 <div class="darkMode">
   <h3>Manage Followers</h3>
   <hr />
-  <div class="topInfo"><span>You are currently supporting {{followerService.followers.length}} follower. You can support up to {{followerService.followerCap}}.</span></div>
+  <div class="topInfo">
+    <span>
+      You are currently supporting {{followerService.followers.length}} follower(s). You can support up to {{followerService.followerCap}}.
+    </span>
+    <span>
+      <button (click)="dismissAllClicked()">Dismiss All Followers</button>
+    </span>
+  </div>
   <div class="topInfo"><span matTooltip="Set a number to change all of the follower job limits to.">Set limit on all jobs to <input min="0" max="1000" value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> followers. <button (click)="changeAllClicked()">Change All</button></span></div>
-  <div class="topInfo"><span>
-    Sort followers by
-    <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
-      <option [selected]="followerService.sortField === 'Name'">Name</option>
-      <option [selected]="followerService.sortField === 'Job'">Job</option>
-      <option [selected]="followerService.sortField === 'Age'">Age</option>
-      <option [selected]="followerService.sortField === 'Power'">Power</option>
-      <option [selected]="followerService.sortField === 'Remaining Life'">Remaining Life</option>
-    </select>
+  <div class="topInfo">
+    <span>
+      Sort followers by
+      <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
+        <option [selected]="followerService.sortField === 'Name'">Name</option>
+        <option [selected]="followerService.sortField === 'Job'">Job</option>
+        <option [selected]="followerService.sortField === 'Age'">Age</option>
+        <option [selected]="followerService.sortField === 'Power'">Power</option>
+        <option [selected]="followerService.sortField === 'Remaining Life'">Remaining Life</option>
+      </select>
     <span>
       <input type="checkbox" id="followerSort"  [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
       <label for="followerSort">Sort Ascending</label>

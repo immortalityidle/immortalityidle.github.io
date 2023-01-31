@@ -631,11 +631,6 @@ export class FollowersService {
     return possibleJobs[Math.floor(Math.random() * (possibleJobs.length))];
   }
 
-  /**
-   *
-   * @param follower the Follower interface of the selected follower.
-   *
-   */
   dismissFollower(follower: Follower) {
     this.totalDismissed++;
     const index = this.followers.indexOf(follower);
@@ -644,14 +639,19 @@ export class FollowersService {
     this.updateFollowerTotalPower();
   }
 
-  dismissFollowerAll(follower: Follower) {
-    this.totalDismissed += this.followers.length;
-    for (let index = this.followers.length - 1; index >= 0; index--) {
-      if (this.followers[index].job === follower.job) {
-        this.followers.splice(index, 1);
+  
+  dismissAllFollowers(follower: Follower | null = null) {
+    if (follower){
+      for (let index = this.followers.length - 1; index >= 0; index--) {
+        if (this.followers[index].job === follower.job) {
+          this.followers.splice(index, 1);
+          this.totalDismissed++;
+        }
       }
+    } else {
+      this.totalDismissed += this.followers.length;
+      this.followers.splice(0);
     }
-    this.maxFollowerByType[follower.job] = 0;
     this.followersMaxed = 'UNMAXED';
     this.updateFollowerTotalPower();
   }

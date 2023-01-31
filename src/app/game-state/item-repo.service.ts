@@ -1580,8 +1580,9 @@ export class ItemRepoService {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You can now infuse new effects into your weapons.", "STANDARD", 'STORY');
+        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.", "STANDARD", 'STORY');
         this.activityService.purifyGemsUnlocked = true;
+        this.activityService.reloadActivities();
       },
     },
     hellCrownFireMountain: {
