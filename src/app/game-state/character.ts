@@ -573,7 +573,7 @@ export class Character {
       increaseAmount = amount;
     }
     this.attributes[attribute].value += increaseAmount;
-    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] > this.attributes[attribute].value) {
+    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;
     }
     return increaseAmount;
