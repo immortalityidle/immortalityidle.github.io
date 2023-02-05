@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
@@ -383,17 +383,17 @@ export class FollowersService {
             if (newFollower) {
               newFollower.power = Math.round(follower.power / 2);
               newFollower.cost = 100 * newFollower.power;
-              this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age but was replaced by their child " + newFollower?.name + ".", "STANDARD", "FOLLOWER");
+              this.logService.log(LogTopic.FOLLOWER, "Your follower " + follower.name + " passed away from old age but was replaced by their child " + newFollower?.name + ".");
             }
-            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age and was not replaced because of your choices in follower jobs.", "STANDARD", "FOLLOWER");
+            this.logService.log(LogTopic.FOLLOWER, "Your follower " + follower.name + " passed away from old age and was not replaced because of your choices in follower jobs.");
           } else {
-            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age.", "INJURY", "FOLLOWER");
+            this.logService.injury(LogTopic.EVENT, "Your follower " + follower.name + " passed away from old age.");
           }
           this.updateFollowerTotalPower();
         } else if (this.characterService.characterState.money < this.followers[i].cost && !this.hellService?.inHell) {
           // quit from not being paid
           this.totalDismissed++;
-          this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
+          this.logService.injury(LogTopic.FOLLOWER, "You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.");
           this.followers.splice(i, 1);
           this.updateFollowerTotalPower();
         } else if (!this.hellService?.inHell){
@@ -454,7 +454,7 @@ export class FollowersService {
 
   reset() {
     if (this.characterService.characterState.bloodlineRank >= 7) {
-      this.logService.addLogMessage("Your imperial entourage rejoins you as you set out.", "STANDARD", 'EVENT');
+      this.logService.log(LogTopic.EVENT, "Your imperial entourage rejoins you as you set out.");
     } else {
       this.followers.splice(0, this.followers.length);
       this.followersMaxed = 'UNMAXED';
@@ -551,12 +551,12 @@ export class FollowersService {
           }
         }
         if (!removedOne){
-          this.logService.addLogMessage("A new follower shows up, but you already have all the followers you want.", "INJURY", "FOLLOWER");
+          this.logService.injury(LogTopic.FOLLOWER, "A new follower shows up, but you already have all the followers you want.");
           this.followersMaxed = 'MAXED'; // Sanity check, true check below.
           return null;
         }
       } else {
-        this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.", "INJURY", "FOLLOWER");
+        this.logService.injury(LogTopic.FOLLOWER, "A new follower shows up, but you already have too many. You are forced to turn them away.");
         this.followersMaxed = 'MAXED'; // Sanity check, true check below.
         return null;
       }
@@ -569,13 +569,13 @@ export class FollowersService {
     }
     let capNumber = (this.maxFollowerByType[job] !== undefined) ? this.maxFollowerByType[job] : 1000;
     if (this.numFollowersOnJob(job) >= capNumber) {
-      this.logService.addLogMessage("A new follower shows up, but they were a " + this.camelToTitle.transform(job) + " and you don't want any more of those.", "STANDARD", "FOLLOWER");
+      this.logService.log(LogTopic.FOLLOWER, "A new follower shows up, but they were a " + this.camelToTitle.transform(job) + " and you don't want any more of those.");
       this.totalDismissed++;
       return null;
     }
 
     const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
-    this.logService.addLogMessage("A new " + this.camelToTitle.transform(job) + " has come to learn at your feet.", "STANDARD", "FOLLOWER");
+    this.logService.log(LogTopic.FOLLOWER, "A new " + this.camelToTitle.transform(job) + " has come to learn at your feet.");
     const follower = {
       name: this.generateFollowerName(),
       age: 0,

@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
@@ -93,7 +93,7 @@ export class HellService {
     consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you 1 hell money.'],
     consequence: [() => {
       if (this.characterService.characterState.money < 1e6) {
-        this.logService.addLogMessage("You fail to burn the money that you don't have, and feel pretty dumb for trying.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You fail to burn the money that you don't have, and feel pretty dumb for trying.");
         return;
       }
       this.characterService.characterState.money -= 1e6;
@@ -117,11 +117,11 @@ export class HellService {
     consequenceDescription: ['Uses 100 Stamina and 1000 hell money. Gives you a small chance of finding a follower.'],
     consequence: [() => {
       if (this.characterService.characterState.attributes.charisma.value < 1e6){
-        this.logService.addLogMessage("You completely fail to catch the attention of any of the damned.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You completely fail to catch the attention of any of the damned.");
         return;
       }
       if (this.characterService.characterState.hellMoney < 1000) {
-        this.logService.addLogMessage("You don't have enough hell money. The damned souls around you team up with the demons to give you a beating.", "INJURY", "EVENT");
+        this.logService.injury(LogTopic.EVENT, "You don't have enough hell money. The damned souls around you team up with the demons to give you a beating.");
         this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
         if (this.characterService.characterState.status.health.value <= 0) {
           this.beaten = true;
@@ -132,9 +132,9 @@ export class HellService {
       this.characterService.characterState.hellMoney -= 1000;
       if (Math.random() < 0.01) {
         this.followerService.generateFollower(false, "damned");
-        this.logService.addLogMessage("Your recruiting efforts seem to infuriate the demons here.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "Your recruiting efforts seem to infuriate the demons here.");
       } else {
-        this.logService.addLogMessage("You pass around some bribes but fail to find any interested followers today.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You pass around some bribes but fail to find any interested followers today.");
       }
     }],
     resourceUse: [{
@@ -184,7 +184,7 @@ export class HellService {
     consequenceDescription: ['Uses 1 hell money.'],
     consequence: [() => {
       if (this.characterService.characterState.hellMoney < 1) {
-        this.logService.addLogMessage("Your ancestors are not impressed with your lack of financial offerings.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "Your ancestors are not impressed with your lack of financial offerings.");
         return;
       }
       this.characterService.characterState.hellMoney--;
@@ -208,7 +208,7 @@ export class HellService {
     consequenceDescription: ['Uses 100,000 stamina and produces one copper bar.'],
     consequence: [() => {
       if (this.characterService.characterState.attributes.strength.value < 1e24){
-        this.logService.addLogMessage("You try to crack into the pillar, but you're not strong enough.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You try to crack into the pillar, but you're not strong enough.");
         return;
       }
       this.characterService.characterState.status.stamina.value -= 100000;
@@ -232,7 +232,7 @@ export class HellService {
     consequenceDescription: ['Uses 100,000 stamina and produces the worst hammer in the world.'],
     consequence: [() => {
       if (this.characterService.characterState.attributes.strength.value < 1e24){
-        this.logService.addLogMessage("Your weak muscles flinch at the very thought of trying to mold metal by hand.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "Your weak muscles flinch at the very thought of trying to mold metal by hand.");
         return;
       }
       this.characterService.characterState.status.stamina.value -= 100000;
@@ -272,7 +272,7 @@ export class HellService {
     consequenceDescription: ['Uses 1000 stamina and works off some of that murderous karma you have built up.'],
     consequence: [() => {
       if (this.characterService.characterState.attributes.strength.value < 1e24 || this.characterService.characterState.attributes.toughness.value < 1e24){
-        this.logService.addLogMessage("Your legs give out before you can take a single step up the mountain. Maybe if you were stronger and tougher you could climb.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "Your legs give out before you can take a single step up the mountain. Maybe if you were stronger and tougher you could climb.");
         return;
       }
       this.characterService.characterState.status.stamina.value -= 1000;
@@ -316,7 +316,7 @@ export class HellService {
     consequenceDescription: ['Focus your connection to fire and melt that sucker down.'],
     consequence: [() => {
       if (this.characterService.characterState.attributes.fireLore.value < 1e16){
-        this.logService.addLogMessage("Your connection to fire isn't nearly as strong as you thought it was.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "Your connection to fire isn't nearly as strong as you thought it was.");
         return;
       }
 
@@ -350,7 +350,7 @@ export class HellService {
     consequenceDescription: ['Focus your connection to water and turn that lava back to stone.'],
     consequence: [() => {
       if (this.characterService.characterState.attributes.waterLore.value < 1e16){
-        this.logService.addLogMessage("Your connection to water isn't nearly as strong as you thought it was.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "Your connection to water isn't nearly as strong as you thought it was.");
         return;
       }
       const numberSpawned = Math.log10(this.characterService.characterState.attributes.waterLore.value);
@@ -449,7 +449,7 @@ export class HellService {
       this.characterService.characterState.status.stamina.value -= 200000;
       // TODO: tune this
       if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
-        this.logService.addLogMessage("You stumble around completely lost like the rest of the souls here. If only you were smarter.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You stumble around completely lost like the rest of the souls here. If only you were smarter.");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001);
@@ -481,7 +481,7 @@ export class HellService {
       this.characterService.characterState.status.stamina.value -= 200000;
       // TODO: tune this
       if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
-        this.logService.addLogMessage("The damned souls completely ignore your attempts at instruction.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "The damned souls completely ignore your attempts at instruction.");
         return;
       }
       const numberTaught = Math.floor(Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24));
@@ -506,14 +506,14 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
-        this.logService.addLogMessage("The damned here completely ignore you attempts.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "The damned here completely ignore you attempts.");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24) * 0.00001);
       if (Math.random() < threshold) {
         this.inventoryService.addItem(this.itemRepoService.items["treasureMap"]);
       } else {
-        this.logService.addLogMessage("You almost talk a soul into telling you where their treasure is hidden.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You almost talk a soul into telling you where their treasure is hidden.");
       }
     }],
     resourceUse: [{
@@ -535,7 +535,7 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
-        this.logService.addLogMessage("The puzzle your best puzzling but can't figure out how to even start on this relic.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "The puzzle your best puzzling but can't figure out how to even start on this relic.");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001);
@@ -544,7 +544,7 @@ export class HellService {
           this.inventoryService.addItem(this.itemRepoService.items["stolenRelic"]);
         }
       } else {
-        this.logService.addLogMessage("You think you're getting close to figuring out where this relic is. If only you were more clever.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You think you're getting close to figuring out where this relic is. If only you were more clever.");
       }
     }],
     resourceUse: [{
@@ -566,7 +566,7 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 1000;
       if (this.characterService.characterState.attributes.speed.value <= 1e24) {
-        this.logService.addLogMessage("You are too slow to even attempt replacing a treasure.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You are too slow to even attempt replacing a treasure.");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.speed.value - 1e24) * 0.00001);
@@ -575,7 +575,7 @@ export class HellService {
           this.relicsReturned++;
         }
       } else {
-        this.logService.addLogMessage("You make a good effort to run through the tomb, but you fail. Try harder!", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You make a good effort to run through the tomb, but you fail. Try harder!");
       }
     }],
     resourceUse: [{
@@ -624,14 +624,14 @@ export class HellService {
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 500000;
       if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
-        this.logService.addLogMessage("You can't even begin to read the complex contracts.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You can't even begin to read the complex contracts.");
         return;
       }
       const threshold = (Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001);
       if (Math.random() < threshold) {
         this.contractsExamined++;
       } else {
-        this.logService.addLogMessage("You very nearly make out the meaning of the scrawled contract.", "STANDARD", "EVENT");
+        this.logService.log(LogTopic.EVENT, "You very nearly make out the meaning of the scrawled contract.");
       }
     }],
     resourceUse: [{
@@ -668,7 +668,7 @@ export class HellService {
       }
       if (this.beaten) {
         this.beaten = false;
-        this.logService.addLogMessage("You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm.", "INJURY", "EVENT");
+        this.logService.injury(LogTopic.EVENT, "You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm.");
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
         if (hell.exitEffect) {
@@ -1190,7 +1190,7 @@ export class HellService {
         this.followerService.restoreFollowers();
       },
       completeEffect: () => {
-        this.logService.addLogMessage("Together with your new followers, you have seized control of the Hell of Tongue-ripping. Now all that remains is to defeat its lord.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "Together with your new followers, you have seized control of the Hell of Tongue-ripping. Now all that remains is to defeat its lord.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.hellRecruiting, this.activityService.TrainingFollowers],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1224,7 +1224,7 @@ export class HellService {
         this.inventoryService.restoreWeapons();
       },
       completeEffect: () => {
-        this.logService.addLogMessage("Using nothing but the strength of your body and mind, you have seized control of the Hell of Scissors. Now all that remains is to defeat its lord.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "Using nothing but the strength of your body and mind, you have seized control of the Hell of Scissors. Now all that remains is to defeat its lord.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1249,14 +1249,14 @@ export class HellService {
       dailyEffect: () => {
         // lose 10% of your health every day
         const damage = (this.characterService.characterState.status.health.value * 0.1);
-        this.logService.addLogMessage("The knives dig into your flesh, causing " + damage + " damage.", "INJURY", "COMBAT");
+        this.logService.injury(LogTopic.COMBAT, "The knives dig into your flesh, causing " + damage + " damage.");
         this.characterService.characterState.status.health.value -= damage;
       },
       exitEffect: () => {
         this.characterService.restoreMoney();
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You have reconciled yourself with all of your family members and satisfied the demands of this hell. Now all that remains is to defeat its lord (while still tied to this tree).", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "You have reconciled yourself with all of your family members and satisfied the demands of this hell. Now all that remains is to defeat its lord (while still tied to this tree).");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.honorAncestors],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1283,7 +1283,7 @@ export class HellService {
       },
       completeEffect: () => {
         this.inventoryService.consume("mirrorShard", 1000);
-        this.logService.addLogMessage("You piece together the shards of mirror that you have collected to form a new mirror. A dark shape looms beyond it.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "You piece together the shards of mirror that you have collected to form a new mirror. A dark shape looms beyond it.");
       },
       activities: [this.activityService.Resting, this.activityService.CombatTraining, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1314,17 +1314,17 @@ export class HellService {
         // take damage from the steam and get robbed by troublemakers
         if (this.inventoryService.consume("iceCore") < 0) {
           const damage = (this.characterService.characterState.status.health.value * 0.05);
-          this.logService.addLogMessage("The steam cooks your skin, causing " + damage + " damage.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "The steam cooks your skin, causing " + damage + " damage.");
           this.characterService.characterState.status.health.value -= damage;
         }
         if (Math.random() < 0.2) {
-          this.logService.addLogMessage("As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?", "STANDARD", "EVENT")
+          this.logService.log(LogTopic.EVENT, "As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?");
           this.characterService.characterState.hellMoney -= this.characterService.characterState.hellMoney * 0.1;
         }
       },
       completeEffect: () => {
         this.battleService.clearEnemies();
-        this.logService.addLogMessage("You defeat so many troublemakers that the rest all beg to return to their baskets for their regular torment.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "You defeat so many troublemakers that the rest all beg to return to their baskets for their regular torment.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.activityService.Taunting, this.rehabilitation],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1362,11 +1362,11 @@ export class HellService {
         if (this.inventoryService.consume("iceCore") < 0) {
           const damage =  Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
           this.characterService.characterState.status.health.value -= damage;
-          this.logService.addLogMessage("The heat of the pillars burns you for " + damage + " damage.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "The heat of the pillars burns you for " + damage + " damage.");
         }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You finally forge a hammer powerful enough to break through the chains that bind you to the pillar. The Lord of this Hell comes to investigate all the commotion as the chains fall to the ground.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "You finally forge a hammer powerful enough to break through the chains that bind you to the pillar. The Lord of this Hell comes to investigate all the commotion as the chains fall to the ground.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.copperMining, this.forgeHammer],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1394,11 +1394,11 @@ export class HellService {
         
         this.characterService.characterState.status.health.value -= damage;
         if (damage > 0) {
-          this.logService.addLogMessage("The mountain's blades shred you for " + damage + " damage.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "The mountain's blades shred you for " + damage + " damage.");
         }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You finally reach the peak. The karmic weight of all the killing you've ever done drops from your shoulders. Now to defeat this hell's lord without taking any pleasure in the act.", "STANDARD", "STORY");
+        this.logService.log(LogTopic.STORY, "You finally reach the peak. The karmic weight of all the killing you've ever done drops from your shoulders. Now to defeat this hell's lord without taking any pleasure in the act.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.climbMountain],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1419,14 +1419,14 @@ export class HellService {
       description: "Torment for adulterers and schemers. The chill wind blowing through the gate is so cold it burns.",
       index: HellLevel.MountainOfIce,
       completeEffect: () => {
-        this.logService.addLogMessage("You realize that the power of the ice cores is all that prevents the heat from the neighboring hells from turning the mountain into slush. With enough of these tucked away in your pack, the mountain dwindles down to a managable size. Now to see who's in charge around here.", "STANDARD", "STORY");
+        this.logService.log(LogTopic.STORY, "You realize that the power of the ice cores is all that prevents the heat from the neighboring hells from turning the mountain into slush. With enough of these tucked away in your pack, the mountain dwindles down to a managable size. Now to see who's in charge around here.");
       },
       dailyEffect: () => {
         // TODO: tune this
         const damage = 1000;
         if (this.inventoryService.consume("fireCore") < 0) {
           this.characterService.characterState.status.health.value -= damage;
-          this.logService.addLogMessage("The mountain's ice freezes you for " + damage + " damage.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "The mountain's ice freezes you for " + damage + " damage.");
         }
         // This might be a stupid way to nerf fireLore. Consider other alternatives.
         const reducer = .9;
@@ -1452,18 +1452,18 @@ export class HellService {
       dailyEffect: () => {
         if (!this.completedHellTasks.includes(HellLevel.CauldronsOfOil)) {
           if (this.inventoryService.consume("iceCore") > 0) {
-            this.logService.addLogMessage("The ice cores you brought in with you make the oil sputter and pop, baking you in a cloud of superheated steam.", "INJURY", "EVENT");
+            this.logService.injury(LogTopic.EVENT, "The ice cores you brought in with you make the oil sputter and pop, baking you in a cloud of superheated steam.");
             this.characterService.characterState.status.health.value -= 100000;
             return;
           }
           // take damage from the oil
           const damage = Math.max(this.characterService.characterState.status.health.value * 0.1, 20)
-          this.logService.addLogMessage("The oil scorches you, causing " + damage + " damage.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "The oil scorches you, causing " + damage + " damage.");
           this.characterService.characterState.status.health.value -= damage;
         }
         // chance to drop weapon
         if (Math.random() < 0.1) {
-          this.logService.addLogMessage("Your weapons slip from your oily hands.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "Your weapons slip from your oily hands.");
           this.inventoryService.autoequipBestEnabled = false;
           let item = this.characterService.characterState.equipment.rightHand;
           // check for existence and make sure there's an empty slot for it
@@ -1480,7 +1480,7 @@ export class HellService {
         }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("The pile of ice cores you brought in with you make the oil sputter and pop, but you are tough enough to withstand the superheated steam. Out of the cauldron now, you look around for the boss.", "STANDARD", "STORY");
+        this.logService.log(LogTopic.STORY, "The pile of ice cores you brought in with you make the oil sputter and pop, but you are tough enough to withstand the superheated steam. Out of the cauldron now, you look around for the boss.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation,],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1500,7 +1500,7 @@ export class HellService {
       description: "Torment for animal abusers. The cows are looking a little restless.",
       index: HellLevel.CattlePit,
       completeEffect: () => {
-        this.logService.addLogMessage("The horde of rampaging cattle finally seems to understand that you're not there to hurt them. They back off and leave you alone. All except for that really big cow over there.", "STANDARD", "STORY");
+        this.logService.log(LogTopic.STORY, "The horde of rampaging cattle finally seems to understand that you're not there to hurt them. They back off and leave you alone. All except for that really big cow over there.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.healAnimals],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1526,7 +1526,7 @@ export class HellService {
         // TODO: tune this
         const damage = 500;
         this.characterService.characterState.status.health.value -= damage;
-        this.logService.addLogMessage("The boulder crushes you for " + damage + " damage.", "INJURY", "COMBAT");
+        this.logService.injury(LogTopic.COMBAT, "The boulder crushes you for " + damage + " damage.");
         if (Math.random() < 0.1) {
           this.battleService.addEnemy({
             name: "An Annoying Imp",
@@ -1543,7 +1543,7 @@ export class HellService {
         this.boulderHeight = 0;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You hoist the boulder high over your head, then throw it high into the air. It lands with a satisfying thud. Unfortunately, it grows arms and legs and walks back to you, and this time it looks angry.", "STANDARD", "STORY");
+        this.logService.log(LogTopic.STORY, "You hoist the boulder high over your head, then throw it high into the air. It lands with a satisfying thud. Unfortunately, it grows arms and legs and walks back to you, and this time it looks angry.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.liftBoulder],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1566,7 +1566,7 @@ export class HellService {
         this.daysFasted++;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("Your righteous asceticism have served you well. The lord of this hell has arrived to deal with you personally.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "Your righteous asceticism have served you well. The lord of this hell has arrived to deal with you personally.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1589,7 +1589,7 @@ export class HellService {
         this.swimDepth = 0;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You finally reach the bottom of the pool where you find a massive plug. When you pull it, the pool begins to drain, revealing the source of all this blood.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "You finally reach the bottom of the pool where you find a massive plug. When you pull it, the pool begins to drain, revealing the source of all this blood.");
       },
       activities: [this.swim],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1616,12 +1616,12 @@ export class HellService {
         }
       },
       dailyEffect: () => {
-        this.logService.addLogMessage("The constant storm saps you of 500 health and 100 stamina.", "INJURY", "COMBAT");
+        this.logService.injury(LogTopic.COMBAT, "The constant storm saps you of 500 health and 100 stamina.");
         this.characterService.characterState.status.health.value -= 500;
         this.characterService.characterState.status.stamina.value -= 100;
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You sigh in relief as you usher the last of the damned out. The hell is finally empty. Well, empty except for the monstrous Hell Lord coming toward you.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "You sigh in relief as you usher the last of the damned out. The hell is finally empty. Well, empty except for the monstrous Hell Lord coming toward you.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.searchForExit],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1641,7 +1641,7 @@ export class HellService {
       description: "Torment for tomb-raiders and grave-robbers. The demons here look awfully handy with those giant axes.",
       index: HellLevel.Dismemberment,
       completeEffect: () => {
-        this.logService.addLogMessage("As you help more of the damned here to resolve their crimes, an angry cry sounds through the hell. The lord has arrived.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "As you help more of the damned here to resolve their crimes, an angry cry sounds through the hell. The lord has arrived.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.interrogate],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney, this.recoverTreasure, this.replaceTreasure],
@@ -1665,12 +1665,12 @@ export class HellService {
         // take damage from the volcano
         if (this.inventoryService.consume("iceCore") < 0) {
           const damage = Math.max(this.characterService.characterState.status.health.value * 0.1, 20)
-          this.logService.addLogMessage("The oppressive heat of the volcano burns you for " + damage + " damage.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "The oppressive heat of the volcano burns you for " + damage + " damage.");
           this.characterService.characterState.status.health.value -= damage;
         }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You realize that the power of the fire cores is essential to keeping the lava in the volcano liquid. With enough of these tucked away in your pack, the the surface finally cools enough to turn back to stone. Someone is not happy with this change.", "STANDARD", "STORY");
+        this.logService.log(LogTopic.STORY, "You realize that the power of the fire cores is essential to keeping the lava in the volcano liquid. With enough of these tucked away in your pack, the the surface finally cools enough to turn back to stone. Someone is not happy with this change.");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.freezeMountain],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
@@ -1691,7 +1691,7 @@ export class HellService {
       description: "Torment for any who abused their power to oppress the weak. You don't look forward to being ground into immortal flour.",
       index: HellLevel.Mills,
       completeEffect: () => {
-        this.logService.addLogMessage("Your karmic debt for all the oppression you've ever inflicted is paid off. Now you just need to show the strongest demon here not to pick on the weak.", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "Your karmic debt for all the oppression you've ever inflicted is paid off. Now you just need to show the strongest demon here not to pick on the weak.");
       },
       activities: [this.endureTheMill],
       projectionActivities: [],
@@ -1713,12 +1713,12 @@ export class HellService {
       dailyEffect: () => {
         if (this.contractsExamined <= 20000) {
           // saw damage
-          this.logService.addLogMessage("The saws tear into your flesh, causing 100 damage.", "INJURY", "COMBAT");
+          this.logService.injury(LogTopic.COMBAT, "The saws tear into your flesh, causing 100 damage.");
           this.characterService.characterState.status.health.value -= 100;
         }
       },
       completeEffect: () => {
-        this.logService.addLogMessage("You finally find article 131 of bylaw 8888 subsection 42(b)6.42 where paragraph fourty-eight clearly states that you have the right to confront the Hell Lord. Time to party!", "STANDARD", "STORY")
+        this.logService.log(LogTopic.STORY, "You finally find article 131 of bylaw 8888 subsection 42(b)6.42 where paragraph fourty-eight clearly states that you have the right to confront the Hell Lord. Time to party!");
       },
       activities: [this.activityService.Resting, this.activityService.MindCultivation, this.activityService.BodyCultivation, this.activityService.CoreCultivation, this.activityService.SoulCultivation, this.examineContracts,],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],

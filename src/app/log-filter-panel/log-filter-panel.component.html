@@ -1,19 +1,17 @@
 <div class="darkMode">
   <h3>Log Filters</h3>
   <span class="filters">
-    <input type="checkbox" (change)="topicFilter($event, 'STORY')" id="filterStory" [checked]="logService.logTopics.includes('STORY')"/>
-    <label for="filterStory">Show Story Log Entries <span class="highlightText">{{logService.newStory}}</span></label>
-    <br/>
-    <input type="checkbox" (change)="topicFilter($event, 'EVENT')" id="filterEvent" [checked]="logService.logTopics.includes('EVENT')"/>
-    <label for="filterEvent">Show Events Log Entries {{logService.newEvents}}</label>
-    <br/>
-    <input type="checkbox" (change)="topicFilter($event, 'CRAFTING')" id="filterCrafting" [checked]="logService.logTopics.includes('CRAFTING')"/>
-    <label for="filterCrafting">Show Crafting Log Entries {{logService.newCrafting}}</label>
-    <br/>
-    <input type="checkbox" (change)="topicFilter($event, 'COMBAT')" id="filterCombat" [checked]="logService.logTopics.includes('COMBAT')"/>
-    <label for="filterCombat">Show Combat Log Entries {{logService.newCombat}}</label>
-    <br/>
-    <input type="checkbox" (change)="topicFilter($event, 'FOLLOWER')" id="filterFollower" [checked]="logService.logTopics.includes('FOLLOWER')"/>
-    <label for="filterFollower">Show Followers Log Entries {{logService.newFollower}}</label>
+    <ng-container *ngFor="let topic of logTopics">
+      <input
+        type="checkbox"
+        (change)="topicFilter($event, topic)"
+        [id]="'filter' + topic"
+        [checked]="logService.topicProperties[topic].enabled" />
+      <label [for]="'filter' + topic">
+        Show {{topic}} Log Entries
+        <span class="highlightText" *ngIf="logService.topicProperties[topic].hasNewMessages"> (new)</span>
+      </label>
+      <br/>
+    </ng-container>
   </span>
 </div>
