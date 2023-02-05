@@ -1,16 +1,16 @@
 {
-    "eslint.format.enable": true,
-    "eslint.quiet": false,
-    "eslint.run": "onType",
-    "eslint.codeActionsOnSave.mode": "all",
-    "files.eol": "\n",
-    "eslint.workingDirectories": [
-        {
-            "mode": "auto"
-        }
-    ],
-    "editor.codeActionsOnSave": {
-        "source.fixAll": true
-    },
-    "editor.formatOnSave": true,
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": true
+        },
+        "editor.formatOnSave": false
+      },
+      "[typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": true
+        },
+        "editor.formatOnSave": false
+      },
 }
