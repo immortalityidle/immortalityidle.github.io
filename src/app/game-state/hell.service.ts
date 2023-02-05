@@ -620,7 +620,7 @@ export class HellService {
     name: ['Examine Contracts'],
     activityType: ActivityType.ExamineContracts,
     description: ["As if the saw-weilding demons weren't bad enough, this place is a haven for fiendish bureaucrats. Huge piles of paper containing the contracts, covenants, bylaws, stipulations, regulations, and heretofor unspecified legal nonsense for this hell. Maybe if you go through them carefully, you can find a loophole to get yourself an audience with the boss."],
-    consequenceDescription: ['Uses 500,000 stamina because hellish legalize is so incredibly boring.'],
+    consequenceDescription: ['Uses 500,000 stamina because hellish legalese is so incredibly boring.'],
     consequence: [() => {
       this.characterService.characterState.status.stamina.value -= 500000;
       if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
