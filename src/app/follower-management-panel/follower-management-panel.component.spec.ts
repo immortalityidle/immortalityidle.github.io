@@ -8,9 +8,8 @@ describe('FollowerManagementPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FollowerManagementPanelComponent ]
-    })
-    .compileComponents();
+      declarations: [FollowerManagementPanelComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

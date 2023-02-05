@@ -2,7 +2,7 @@ export abstract class PanelSliderComponent {
   mouseMoveListener = this.handleMouseMove.bind(this);
   mouseUpListener = this.handleMouseUp.bind(this);
 
-  constructor() { }
+  constructor() {}
 
   handleMouseDown(event: MouseEvent) {
     window.addEventListener('mousemove', this.mouseMoveListener);
@@ -15,5 +15,4 @@ export abstract class PanelSliderComponent {
   }
 
   abstract handleMouseMove(event: MouseEvent): void;
-
 }

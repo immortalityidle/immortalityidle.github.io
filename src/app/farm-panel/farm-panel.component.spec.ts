@@ -8,9 +8,8 @@ describe('FarmPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FarmPanelComponent ]
-    })
-    .compileComponents();
+      declarations: [FarmPanelComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

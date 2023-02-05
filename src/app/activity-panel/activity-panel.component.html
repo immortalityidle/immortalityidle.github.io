@@ -1,64 +1,100 @@
 <h3 class="panelHeader">
   <div class="standardHeader">
-    <mat-icon matTooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available. Click the button or drag and drop the activity you want to put on your schedule.">
+    <mat-icon
+      matTooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available. Click the button or drag and drop the activity you want to put on your schedule.">
       help
     </mat-icon>
     Activities
   </div>
   <div class="customHeader">
-    <span *ngIf="characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god">
+    <span
+      *ngIf="characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god">
       <button (click)="JoinTheGodsClick()">Join the Gods</button>
     </span>
-    <span matTooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
+    <span matTooltip="{{ activityService.activityHeaderDescription }}">{{ activityService.activityHeader }} </span>
     <span *ngIf="impossibleTaskService.activeTaskIndex >= 0">
-      <div  class="progress-bar"
+      <div
+        class="progress-bar"
         [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
         [attr.max]="Math.floor(impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired)">
         <span
-          [style.width.%]="100 *
-            impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress /
-            impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired">
+          [style.width.%]="
+            (100 * impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress) /
+            impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired
+          ">
         </span>
       </div>
     </span>
-    <span *ngIf="hellService.inHell && hellService.currentHell >= 0 && !hellService.completedHellTasks.includes(hellService.currentHell)">
-      <div  class="progress-bar"
+    <span
+      *ngIf="
+        hellService.inHell &&
+        hellService.currentHell >= 0 &&
+        !hellService.completedHellTasks.includes(hellService.currentHell)
+      ">
+      <div
+        class="progress-bar"
         [attr.value]="Math.floor(hellService.hells[hellService.currentHell].progress())"
         [attr.max]="Math.floor(hellService.hells[hellService.currentHell].progressMax())">
         <span
-          [style.width.%]="100 *
-            hellService.hells[hellService.currentHell].progress() /
-            hellService.hells[hellService.currentHell].progressMax()">
+          [style.width.%]="
+            (100 * hellService.hells[hellService.currentHell].progress()) /
+            hellService.hells[hellService.currentHell].progressMax()
+          ">
         </span>
       </div>
     </span>
     <span *ngIf="hellService.inHell && hellService.completedHellTasks.includes(hellService.currentHell)">
-      <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(hellService.currentHell) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
+      <button (click)="hellBoss()">
+        {{
+          hellService.completedHellBosses.includes(hellService.currentHell)
+            ? 'Beat On The Hell Lord Some More'
+            : 'Challenge the Hell Lord'
+        }}
+      </button>
     </span>
   </div>
 </h3>
 <div class="activitiesContainer">
   <table>
     <ng-container *ngFor="let activity of activityService.activities">
-      <tr [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" *ngIf="(activity.discovered || activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
+      <tr
+        [ngClass]="{ projectionOnly: activity.projectionOnly, lockedActivity: !activity.unlocked }"
+        *ngIf="activity.discovered || activity.unlocked"
+        draggable="true"
+        (dragstart)="drag(activity, $event)">
         <td>
           <span class="noWrap">
-            <button class="activityButton" (click)="onClick(activity, $event)" (contextmenu)="rightClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}">
-              {{activity.name[activity.level]}}
+            <button
+              class="activityButton"
+              (click)="onClick(activity, $event)"
+              (contextmenu)="rightClick(activity, $event)"
+              matTooltip="{{ getActivityTooltip(activity) }}">
+              {{ activity.name[activity.level] }}
             </button>
-            <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)"
+            <mat-icon
+              *ngIf="
+                activity.skipApprenticeshipLevel > 0 &&
+                !activityService.completedApprenticeships.includes(activity.activityType)
+              "
               matTooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life.">
               model_training
             </mat-icon>
           </span>
         </td>
         <td>
-          {{activity.description[activity.level]}}
-          <br/>
-          {{activity.consequenceDescription[activity.level]}}
-          {{activity.projectionOnly ? "This activity can only be performed by a spiritual projection of yourself back in the mortal realm." : ""}}
+          {{ activity.description[activity.level] }}
+          <br />
+          {{ activity.consequenceDescription[activity.level] }}
+          {{
+            activity.projectionOnly
+              ? 'This activity can only be performed by a spiritual projection of yourself back in the mortal realm.'
+              : ''
+          }}
           <span *ngIf="activity.lastIncome && activity.lastIncome > 0">
-            <mat-icon matTooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels.">
+            <mat-icon
+              matTooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{
+                activity.lastIncome | bigNumber
+              }} taels.">
               attach_money
             </mat-icon>
           </span>

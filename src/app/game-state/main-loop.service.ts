@@ -1,4 +1,3 @@
-
 import { Injectable, Injector } from '@angular/core';
 import { Subject } from 'rxjs';
 //import { threadId } from 'worker_threads';
@@ -10,23 +9,23 @@ const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
 
 export interface MainLoopProperties {
-  unlockFastSpeed: boolean,
-  unlockFasterSpeed: boolean,
-  unlockFastestSpeed: boolean,
-  unlockAgeSpeed: boolean,
-  unlockPlaytimeSpeed: boolean,
+  unlockFastSpeed: boolean;
+  unlockFasterSpeed: boolean;
+  unlockFastestSpeed: boolean;
+  unlockAgeSpeed: boolean;
+  unlockPlaytimeSpeed: boolean;
   lastTime: number;
   tickDivider: number;
   offlineDivider: number;
   pause: boolean;
   bankedTicks: number;
   totalTicks: number;
-  useBankedTicks: boolean,
-  scientificNotation: boolean
+  useBankedTicks: boolean;
+  scientificNotation: boolean;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MainLoopService {
   /**
@@ -53,10 +52,7 @@ export class MainLoopService {
   scientificNotation = false;
   earnedTicks = 0;
 
-  constructor(
-    private injector: Injector,
-    public dialog: MatDialog) {
-  }
+  constructor(private injector: Injector, public dialog: MatDialog) {}
 
   getProperties(): MainLoopProperties {
     return {
@@ -72,15 +68,15 @@ export class MainLoopService {
       bankedTicks: this.bankedTicks,
       totalTicks: this.totalTicks,
       useBankedTicks: this.useBankedTicks,
-      scientificNotation: this.scientificNotation
-    }
+      scientificNotation: this.scientificNotation,
+    };
   }
 
   setProperties(properties: MainLoopProperties) {
     this.unlockFastSpeed = properties.unlockFastSpeed;
     this.unlockFasterSpeed = properties.unlockFasterSpeed;
     this.unlockFastestSpeed = properties.unlockFastestSpeed;
-    this.topDivider = 10; // For earning bankedticks based on top divider. 
+    this.topDivider = 10; // For earning bankedticks based on top divider.
     if (this.unlockFastestSpeed) {
       this.topDivider = 1;
     } else if (this.unlockFasterSpeed) {
@@ -97,7 +93,8 @@ export class MainLoopService {
     const newTime = new Date().getTime();
     if (newTime - this.lastTime > 168 * 60 * 60 * 1000) {
       // to diminish effects of forgetting about the game for a year and coming back with basically infinite ticks
-      this.earnedTicks = (3 * 168 * 60 * 60 * 1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
+      this.earnedTicks =
+        (3 * 168 * 60 * 60 * 1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
     } else {
       this.earnedTicks = (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
     }
@@ -129,22 +126,24 @@ export class MainLoopService {
       let ticksPassed = timeDiff / TICK_INTERVAL_MS;
       if (this.pause) {
         this.bankedTicks += ticksPassed / this.offlineDivider; // offlineDivider currently either 10 or 2.
-      } else if (timeDiff > 900 * 1000) { // away for over 15 mins, push to offline ticks and display gains.
+      } else if (timeDiff > 900 * 1000) {
+        // away for over 15 mins, push to offline ticks and display gains.
         const earnedTicks = ticksPassed / this.offlineDivider;
         this.bankedTicks += earnedTicks;
         this.dialog.open(OfflineModalComponent, {
           data: { earnedTicks: earnedTicks },
-          autoFocus: false
+          autoFocus: false,
         });
       } else {
-        const currentTPS = this.getTPS(this.tickDivider) / 1000 * TICK_INTERVAL_MS;
-        const topTPS = this.getTPS(this.topDivider) / 1000 * TICK_INTERVAL_MS;
+        const currentTPS = (this.getTPS(this.tickDivider) / 1000) * TICK_INTERVAL_MS;
+        const topTPS = (this.getTPS(this.topDivider) / 1000) * TICK_INTERVAL_MS;
         let usedBanked = false;
-        if (this.bankedTicks > 0 && this.useBankedTicks && this.tickDivider < 40) { // don't use banked ticks on slow speed
+        if (this.bankedTicks > 0 && this.useBankedTicks && this.tickDivider < 40) {
+          // don't use banked ticks on slow speed
           //using banked ticks makes time happen 10 times faster
           let bankedPassed = ticksPassed * 10 * (currentTPS / topTPS); // reduce usage rate if going slower than max
-          if (bankedPassed > this.bankedTicks) // Check for not enough bankedTicks, usually for large timeDiff.
-          {
+          if (bankedPassed > this.bankedTicks) {
+            // Check for not enough bankedTicks, usually for large timeDiff.
             bankedPassed = this.bankedTicks;
           }
           this.bankedTicks -= bankedPassed;
@@ -162,7 +161,7 @@ export class MainLoopService {
         }
         if (this.tickCount >= 1) {
           if (usedBanked) {
-            this.bankedTicks += this.tickCount / (currentTPS * 11) * (10 * (currentTPS / topTPS));
+            this.bankedTicks += (this.tickCount / (currentTPS * 11)) * (10 * (currentTPS / topTPS));
           }
           this.tickCount = 0;
         }
@@ -172,11 +171,13 @@ export class MainLoopService {
 
   getTPS(div: number) {
     let ticksPassed = 1000 / TICK_INTERVAL_MS;
-    if (this.characterService && this.unlockAgeSpeed && this.tickDivider < 40) { // don't do this on slow speed
+    if (this.characterService && this.unlockAgeSpeed && this.tickDivider < 40) {
+      // don't do this on slow speed
       // 73000 is 200 years. reaches 2x at 600 years, 3x at 1600, 4x at 3000. Caps at 12600
       ticksPassed *= Math.min(8, Math.sqrt(1 + this.characterService.characterState.age / 73000));
     }
-    if (this.unlockPlaytimeSpeed && this.tickDivider < 40) { // don't do this on slow speed
+    if (this.unlockPlaytimeSpeed && this.tickDivider < 40) {
+      // don't do this on slow speed
       ticksPassed *= Math.pow(1 + this.totalTicks / (2000 * 365), 0.3);
     }
     ticksPassed /= div;

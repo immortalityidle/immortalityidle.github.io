@@ -7,28 +7,27 @@ export type LogType = 'STANDARD' | 'INJURY';
 export type LogTopic = 'COMBAT' | 'CRAFTING' | 'FOLLOWER' | 'STORY' | 'EVENT';
 
 export interface Log {
-  message: string,
-  type: LogType,
-  topic: LogTopic,
-  timestamp: number
+  message: string;
+  type: LogType;
+  topic: LogTopic;
+  timestamp: number;
 }
 
 export interface LogProperties {
-  logTopics: LogTopic[],
-  storyLog: Log[]
+  logTopics: LogTopic[];
+  storyLog: Log[];
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LogService {
-
   logTopics: LogTopic[] = ['STORY', 'EVENT'];
-  newStory = "";
-  newEvents = "";
-  newCombat = "";
-  newCrafting = "";
-  newFollower = "";
+  newStory = '';
+  newEvents = '';
+  newCombat = '';
+  newCrafting = '';
+  newFollower = '';
   storyLog: Log[] = [];
   eventLog: Log[] = [];
   combatLog: Log[] = [];
@@ -36,17 +35,26 @@ export class LogService {
   followerLog: Log[] = [];
   currentLog: Log[] = [];
 
-  constructor(
-
-    mainLoopService: MainLoopService
-  ) {
+  constructor(mainLoopService: MainLoopService) {
     mainLoopService.frameSubject.subscribe(() => {
       this.updateLogTopics();
     });
-    this.addLogMessage("Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.", 'STANDARD', 'STORY');
-    this.addLogMessage("Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.", 'STANDARD', 'STORY');
-    this.addLogMessage("It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.", 'STANDARD', 'STORY');
-    this.addLogMessage("Be careful, the world can be a dangerous place.", 'STANDARD', 'STORY');
+    this.addLogMessage(
+      'Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.',
+      'STANDARD',
+      'STORY'
+    );
+    this.addLogMessage(
+      'Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.',
+      'STANDARD',
+      'STORY'
+    );
+    this.addLogMessage(
+      'It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.',
+      'STANDARD',
+      'STORY'
+    );
+    this.addLogMessage('Be careful, the world can be a dangerous place.', 'STANDARD', 'STORY');
   }
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {
@@ -65,10 +73,14 @@ export class LogService {
       message: message,
       type: type,
       topic: topic,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
-    if (log.length === 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
+    if (
+      log.length === 0 ||
+      newMessage.timestamp - log[0].timestamp > LOG_MERGE_INTERVAL_MS ||
+      !log[0].message.includes(newMessage.message)
+    ) {
       // Initialization || Repeat Not Found || Repeat is not within 1 second
       log.push(newMessage);
     } else {
@@ -86,15 +98,15 @@ export class LogService {
     // check if we need to age off the oldest logs
     if (!this.logTopics.includes(topic)) {
       if (topic === 'STORY') {
-        this.newStory = " (new)";
+        this.newStory = ' (new)';
       } else if (topic === 'EVENT') {
-        this.newEvents = " (new)";
+        this.newEvents = ' (new)';
       } else if (topic === 'CRAFTING') {
-        this.newCrafting = " (new)";
+        this.newCrafting = ' (new)';
       } else if (topic === 'COMBAT') {
-        this.newCombat = " (new)";
+        this.newCombat = ' (new)';
       } else if (topic === 'FOLLOWER') {
-        this.newFollower = " (new)";
+        this.newFollower = ' (new)';
       }
     }
   }
@@ -102,8 +114,8 @@ export class LogService {
   getProperties(): LogProperties {
     return {
       logTopics: this.logTopics,
-      storyLog: this.storyLog
-    }
+      storyLog: this.storyLog,
+    };
   }
 
   setProperties(properties: LogProperties) {
@@ -136,23 +148,23 @@ export class LogService {
     this.followerLog = this.followerLog.slice(-300);
 
     if (this.logTopics.includes('STORY')) {
-      this.newStory = "";
+      this.newStory = '';
       logs.push(...this.storyLog);
     }
     if (this.logTopics.includes('EVENT')) {
-      this.newEvents = "";
+      this.newEvents = '';
       logs.push(...this.eventLog);
     }
     if (this.logTopics.includes('COMBAT')) {
-      this.newCombat = "";
+      this.newCombat = '';
       logs.push(...this.combatLog);
     }
     if (this.logTopics.includes('CRAFTING')) {
-      this.newCrafting = "";
+      this.newCrafting = '';
       logs.push(...this.craftingLog);
     }
     if (this.logTopics.includes('FOLLOWER')) {
-      this.newFollower = "";
+      this.newFollower = '';
       logs.push(...this.followerLog);
     }
 
@@ -162,5 +174,4 @@ export class LogService {
     logs.sort((a, b) => b.timestamp - a.timestamp);
     this.currentLog = logs.slice(0, 299);
   }
-
 }

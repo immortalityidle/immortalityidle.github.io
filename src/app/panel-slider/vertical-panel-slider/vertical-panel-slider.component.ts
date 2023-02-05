@@ -5,7 +5,7 @@ import { ResizableDirective, Size } from '../resizable.directive';
 @Component({
   selector: 'app-vertical-panel-slider',
   templateUrl: './vertical-panel-slider.component.html',
-  styleUrls: ['./vertical-panel-slider.component.less']
+  styleUrls: ['./vertical-panel-slider.component.less'],
 })
 export class VerticalPanelSliderComponent extends PanelSliderComponent {
   @Input() top?: ResizableDirective;

@@ -1,8 +1,10 @@
-<div class='darkMode'>
+<div class="darkMode">
   <h3>Import/Export Save File</h3>
-  <hr/>
+  <hr />
   <div>
-    <textarea #saveFileTextArea id="saveFileTextArea">To export a game, press the Export button then copy and paste the contents of this box to wherever you want to store the save data. To import a game, paste save data into this box and press the Import button. Make sure that the only thing in the box is your save data or the save may be corrupted. The best way to do this is have the game data in your clipboard, then click on this box and press Ctrl-a then Ctrl-v.</textarea>
+    <textarea #saveFileTextArea id="saveFileTextArea">
+To export a game, press the Export button then copy and paste the contents of this box to wherever you want to store the save data. To import a game, paste save data into this box and press the Import button. Make sure that the only thing in the box is your save data or the save may be corrupted. The best way to do this is have the game data in your clipboard, then click on this box and press Ctrl-a then Ctrl-v.</textarea
+    >
   </div>
   <button (click)="importClick(saveFileTextArea.value)">Import</button>
   <button (click)="exportClick()">Export</button>
@@ -10,4 +12,3 @@
   <button (click)="importFile.click()">Import file</button>
   <button (click)="exportFileClick()">Export file</button>
 </div>
-

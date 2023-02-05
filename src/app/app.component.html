@@ -1,82 +1,166 @@
-<div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
+<div class="wrapper" [ngClass]="{ darkMode: gameStateService.isDarkMode }">
   <div class="mainContainer">
     <div class="top-line">
       <span class="gameTitle">
-        Immortality Idle - {{characterService.characterState.god ? "The Divine Cultivator" : hellService.inHell ? "Escape from The Eighteen Hells" : characterService.characterState.immortal ? "You are Immortal!" : "Can you become an immortal?"}}
-        <span class="versionNumber" (click)="changelogClicked()">{{gameStateService.isExperimental ? "Experimental" : "v" + applicationVersion}}</span>
+        Immortality Idle -
+        {{
+          characterService.characterState.god
+            ? 'The Divine Cultivator'
+            : hellService.inHell
+            ? 'Escape from The Eighteen Hells'
+            : characterService.characterState.immortal
+            ? 'You are Immortal!'
+            : 'Can you become an immortal?'
+        }}
+        <span class="versionNumber" (click)="changelogClicked()">{{
+          gameStateService.isExperimental ? 'Experimental' : 'v' + applicationVersion
+        }}</span>
       </span>
-      <mat-icon matTooltip="Confused? Click here." class="iconButton" (click)="tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
+      <mat-icon
+        matTooltip="Confused? Click here."
+        class="iconButton"
+        (click)="tutorialClicked()"
+        aria-label="Tutorial"
+        aria-hidden="false">
         help
       </mat-icon>
       <mat-icon matTooltip="Statistics!" class="iconButton" (click)="statisticsClicked()">
         format_list_numbered_rtl
       </mat-icon>
       <span>
-        <mat-icon matTooltip="A store that sells special manuals for aspiring immortals." class="iconButton" aria-label="Store" aria-hidden="false"
-          [ngClass]="{highlighted: storeService.isManualAvailable()}"
+        <mat-icon
+          matTooltip="A store that sells special manuals for aspiring immortals."
+          class="iconButton"
+          aria-label="Store"
+          aria-hidden="false"
+          [ngClass]="{ highlighted: storeService.isManualAvailable() }"
           (click)="storeClicked()">
           local_library
         </mat-icon>
-        <mat-icon matTooltip="Configuration options for purchased items." class="iconButton" aria-label="Options" aria-hidden="false"
+        <mat-icon
+          matTooltip="Configuration options for purchased items."
+          class="iconButton"
+          aria-label="Options"
+          aria-hidden="false"
           (click)="storeOptionsClicked()">
           settings
         </mat-icon>
       </span>
-      <mat-icon matTooltip="Achievements!" class="iconButton" aria-label="Achievements" aria-hidden="false"
+      <mat-icon
+        matTooltip="Achievements!"
+        class="iconButton"
+        aria-label="Achievements"
+        aria-hidden="false"
         (click)="achievementsClicked()">
         military_tech
       </mat-icon>
-      <mat-icon matTooltip="Impossible Tasks" class="iconButton" *ngIf="impossibleTaskService.impossibleTasksUnlocked" aria-label="Impossible Tasks" aria-hidden="false"
+      <mat-icon
+        matTooltip="Impossible Tasks"
+        class="iconButton"
+        *ngIf="impossibleTaskService.impossibleTasksUnlocked"
+        aria-label="Impossible Tasks"
+        aria-hidden="false"
         (click)="impossibleTasksClicked()">
         priority_high
       </mat-icon>
       <span *ngIf="characterService.characterState.ascensionUnlocked">
-        <mat-icon matTooltip="Ascension Techniques." class="iconButton" aria-label="Ascension" aria-hidden="false"
+        <mat-icon
+          matTooltip="Ascension Techniques."
+          class="iconButton"
+          aria-label="Ascension"
+          aria-hidden="false"
           (click)="ascensionStoreClicked()">
           keyboard_double_arrow_up
         </mat-icon>
       </span>
       <span>
-        <a href="" matTooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">Reincarnate</a>
+        <a
+          href=""
+          matTooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life."
+          (click)="rebirthClicked($event)"
+          >Reincarnate</a
+        >
       </span>
-      <mat-icon matTooltip="Click to save your game now.
+      <mat-icon
+        matTooltip="Click to save your game now.
         Shift-click for save options.
         Ctrl-shift-click to load backup save."
-        class="iconButton" aria-label="Save" aria-hidden="false"
+        class="iconButton"
+        aria-label="Save"
+        aria-hidden="false"
         (click)="saveClicked($event)">
         save
       </mat-icon>
       <span>
-        <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode"/>
+        <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode" />
         <label for="darkMode">Dark Mode</label>
       </span>
-      <mat-icon matTooltip="Import or export your save game file. Sometimes immortals need a different browser." class="iconButton" aria-label="Export" aria-hidden="false"
+      <mat-icon
+        matTooltip="Import or export your save game file. Sometimes immortals need a different browser."
+        class="iconButton"
+        aria-label="Export"
+        aria-hidden="false"
         (click)="exportClicked()">
         upload
       </mat-icon>
-      <a href="" matTooltip="Completely restart your journey toward immortality." (click)="hardResetClicked($event)">Hard Reset</a>
-      <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" matTooltip="Have questions? Try the Immortality Idle Discord.">Discord</a>
+      <a href="" matTooltip="Completely restart your journey toward immortality." (click)="hardResetClicked($event)"
+        >Hard Reset</a
+      >
+      <a
+        href="https://discord.gg/Na7Qmwy3XK"
+        target="_blank"
+        rel="noopener noreferrer"
+        matTooltip="Have questions? Try the Immortality Idle Discord."
+        >Discord</a
+      >
     </div>
     <div class="bodyContainer">
       <div appResizable class="panelContainer" #panelContainer="appResizable">
         <div class="leftPanel">
           <app-time-panel appResizable class="timePanel panel" #timePanel="appResizable"></app-time-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="timePanel" [bottom]="attributesPanel"></app-vertical-panel-slider>
-          <app-attributes-panel appResizable class="attributesPanel panel" #attributesPanel="appResizable"></app-attributes-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="attributesPanel" [bottom]="healthPanel"></app-vertical-panel-slider>
+          <app-vertical-panel-slider
+            *ngIf="activateSliders"
+            [top]="timePanel"
+            [bottom]="attributesPanel"></app-vertical-panel-slider>
+          <app-attributes-panel
+            appResizable
+            class="attributesPanel panel"
+            #attributesPanel="appResizable"></app-attributes-panel>
+          <app-vertical-panel-slider
+            *ngIf="activateSliders"
+            [top]="attributesPanel"
+            [bottom]="healthPanel"></app-vertical-panel-slider>
           <app-health-panel appResizable class="healthPanel panel" #healthPanel="appResizable"></app-health-panel>
         </div>
         <div class="centerPanel">
-          <app-activity-panel appResizable class="activityPanel panel" #activityPanel="appResizable"></app-activity-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="activityPanel" [bottom]="battlePanel"></app-vertical-panel-slider>
+          <app-activity-panel
+            appResizable
+            class="activityPanel panel"
+            #activityPanel="appResizable"></app-activity-panel>
+          <app-vertical-panel-slider
+            *ngIf="activateSliders"
+            [top]="activityPanel"
+            [bottom]="battlePanel"></app-vertical-panel-slider>
           <app-battle-panel appResizable class="battlePanel panel" #battlePanel="appResizable"></app-battle-panel>
         </div>
         <div class="rightPanel">
-          <app-equipment-panel appResizable class="equipmentPanel panel" #equipmentPanel="appResizable"></app-equipment-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="equipmentPanel" [bottom]="homePanel"></app-vertical-panel-slider>
+          <app-equipment-panel
+            appResizable
+            class="equipmentPanel panel"
+            #equipmentPanel="appResizable"></app-equipment-panel>
+          <app-vertical-panel-slider
+            *ngIf="activateSliders"
+            [top]="equipmentPanel"
+            [bottom]="homePanel"></app-vertical-panel-slider>
           <app-home-panel appResizable class="homePanel panel" #homePanel="appResizable"></app-home-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="homePanel" [bottom]="inventoryPanel"></app-vertical-panel-slider>
-          <app-inventory-panel appResizable class="inventoryPanel panel" #inventoryPanel="appResizable"></app-inventory-panel>
+          <app-vertical-panel-slider
+            *ngIf="activateSliders"
+            [top]="homePanel"
+            [bottom]="inventoryPanel"></app-vertical-panel-slider>
+          <app-inventory-panel
+            appResizable
+            class="inventoryPanel panel"
+            #inventoryPanel="appResizable"></app-inventory-panel>
         </div>
       </div>
       <app-vertical-panel-slider [top]="panelContainer" [bottom]="logContainer"></app-vertical-panel-slider>

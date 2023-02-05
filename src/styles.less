@@ -1,9 +1,9 @@
 :root {
   --bodyText: black;
-  --bodyBackground: #C4E9CC; //#efefef;
+  --bodyBackground: #c4e9cc; //#efefef;
   --panelBackground: #e9f7ec; //#fcfcfc;
-  --panelBorder: #a4c9aC; //#121212;
-  --tableDividerColor: #a4c9aC;
+  --panelBorder: #a4c9ac; //#121212;
+  --tableDividerColor: #a4c9ac;
   --itemSlotColor: rgb(252, 252, 239);
   --itemSlotHighlight: #d8deff;
   --storeButtonColor: #fdfffc;
@@ -14,7 +14,7 @@
   --nutritionColor: yellow;
   --manaColor: lightblue;
   --buttonColor: #fdfffc;
-  --buttonBorder: #a4c9aC;
+  --buttonBorder: #a4c9ac;
   --dialogBackground: #333333;
   --disabledText: #555555;
   --textHighlight: green;
@@ -23,7 +23,7 @@
   --lifeEffectColor: #00aa08;
   --corruptionEffectColor: #aa0008;
 }
-:root .darkMode{
+:root .darkMode {
   --bodyText: #cacaca;
   --bodyBackground: #000000;
   --panelBackground: #222222;
@@ -49,12 +49,14 @@
   --corruptionEffectColor: #aa0008;
 }
 
-
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -111,7 +113,7 @@ button:disabled {
 
 .itemSlot.brokenItem {
   border: 2px dashed var(--panelBorder);
-  filter:brightness(85%);
+  filter: brightness(85%);
 }
 
 .textOverflow {
@@ -151,11 +153,12 @@ button:disabled {
   height: 100%;
   width: 100%;
   background: linear-gradient(
-        90deg,
-        rgba(0,0,0,0)    0%,
-        rgba(0,0,0,0.4) 40%,
-        rgba(0,0,0,0.4) 60%,
-        rgba(0,0,0,0)  100%);
+    90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 40%,
+    rgba(0, 0, 0, 0.4) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 .progress-bar[value]::after {
@@ -163,7 +166,7 @@ button:disabled {
 }
 
 .progress-bar[max]::after {
-  content: attr(value) "/" attr(max);
+  content: attr(value) '/' attr(max);
 }
 
 .progress-bar > span {
@@ -179,8 +182,12 @@ button:disabled {
 }
 
 @keyframes anim-indeterminate {
-  0% {left: 0%};
-  100% {left: 75%}
+  0% {
+    left: 0%;
+  }
+  100% {
+    left: 75%;
+  }
 }
 
 .progress-bar.indeterminate > span {
@@ -194,8 +201,8 @@ button:disabled {
 }
 
 .snackBar {
-    white-space: pre-wrap;
-    background-color: var(--manaColor);
+  white-space: pre-wrap;
+  background-color: var(--manaColor);
 }
 
 .mat-tooltip {

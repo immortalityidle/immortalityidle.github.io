@@ -7,20 +7,19 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class StoreService {
   manuals: Item[];
   furniture: Furniture[];
   selectedItem: Item | null;
   soulCoreRank = 0;
   meridianRank = 0;
-  bloodlineLabel = "";
-  bloodlineDescription = "";
+  bloodlineLabel = '';
+  bloodlineDescription = '';
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
   storeOpened = false;
-  furniturePrices: { [key: string]: number; } = {};
+  furniturePrices: { [key: string]: number } = {};
 
   constructor(
     private logService: LogService,
@@ -34,8 +33,6 @@ export class StoreService {
 
     this.manuals = [];
     this.furniture = [];
-
-
   }
 
   setStoreInventory() {
@@ -52,7 +49,6 @@ export class StoreService {
       }
     }
     this.selectedItem = null;
-
   }
 
   unlockManual(manual: Item) {
@@ -98,7 +94,10 @@ export class StoreService {
         return;
       }
       const slot = item.slot;
-      if (item.value < this.characterService.characterState.money || this.homeService.ownedFurniture.includes(item.name)) {
+      if (
+        item.value < this.characterService.characterState.money ||
+        this.homeService.ownedFurniture.includes(item.name)
+      ) {
         if (!this.homeService.ownedFurniture.includes(item.name)) {
           // only pay for it once per lifetime
           this.characterService.characterState.money -= item.value;
@@ -115,63 +114,75 @@ export class StoreService {
     this.soulCoreRank = this.characterService.soulCoreRank();
     this.meridianRank = this.characterService.meridianRank();
     if (this.characterService.characterState.bloodlineRank === 0) {
-      this.bloodlineLabel = "Establish Bloodline";
+      this.bloodlineLabel = 'Establish Bloodline';
     } else {
-      this.bloodlineLabel = "Enhance Bloodline";
+      this.bloodlineLabel = 'Enhance Bloodline';
     }
     if (this.characterService.characterState.bloodlineRank === 0) {
       // Weapons
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and establish a bloodline. All of your future reincarnations will be born as your own descendants. Your weapons equipped on death will become family heirlooms and will be inherited by your future self.";
+      this.bloodlineDescription =
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and establish a bloodline. All of your future reincarnations will be born as your own descendants. Your weapons equipped on death will become family heirlooms and will be inherited by your future self.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mansion];
     } else if (this.characterService.characterState.bloodlineRank === 1) {
       // Armor
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self.";
+      this.bloodlineDescription =
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Palace];
     } else if (this.characterService.characterState.bloodlineRank === 2) {
       // Inherit Money
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit some of your past self's money.";
+      this.bloodlineDescription =
+        "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit some of your past self's money.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Castle];
     } else if (this.characterService.characterState.bloodlineRank === 3) {
       // Interest
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest.";
+      this.bloodlineDescription =
+        "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Fortress];
     } else if (this.characterService.characterState.bloodlineRank === 4) {
       // Basic Stat Lifespan
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";
+      this.bloodlineDescription =
+        "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree.";
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mountain];
     } else if (this.characterService.characterState.bloodlineRank === 5) {
       // Home
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. You will keep your ancestral Home. You will keep your weapons, armor, and money with interest. ";
+      this.bloodlineDescription =
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. You will keep your ancestral Home. You will keep your weapons, armor, and money with interest. ';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.ForbiddenCity];
     } else if (this.characterService.characterState.bloodlineRank === 6) {
       // Entourage
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your followers will have enhanced bloodlines and will follow you between incarnations. You will keep your weapons, armor, money with interest, your home and your Empire.";
+      this.bloodlineDescription =
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your followers will have enhanced bloodlines and will follow you between incarnations. You will keep your weapons, armor, money with interest, your home and your Empire.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Capital];
     } else if (this.characterService.characterState.bloodlineRank === 7) {
       // Limit Break
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Break through the limits of humanity. You will keep your weapons, armor, money with interest, your home, and your Empire.";
+      this.bloodlineDescription =
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Break through the limits of humanity. You will keep your weapons, armor, money with interest, your home, and your Empire.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.ImperialSeat];
     } else if (this.characterService.characterState.bloodlineRank === 8) {
       // Daily Aptitude Increase
-      this.bloodlineDescription = "End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline one last time. Finally, you will gain aptitudes every day from your current Attributes, improving constantly. You will keep your weapons, armor, money with interest, your home, and your Empire.";
+      this.bloodlineDescription =
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline one last time. Finally, you will gain aptitudes every day from your current Attributes, improving constantly. You will keep your weapons, armor, money with interest, your home, and your Empire.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Godthrone];
     } else if (this.characterService.characterState.bloodlineRank === 9) {
-      this.bloodlineDescription = "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Home and your Empire, and can break through the limits of humanity. Finally, you will gain aptitudes every day from your current Attributes.";
+      this.bloodlineDescription =
+        "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Home and your Empire, and can break through the limits of humanity. Finally, you will gain aptitudes every day from your current Attributes.";
     }
-
   }
 
   condenseSoulCore() {
     if (this.soulCoreRank >= 9) {
-      this.logService.addLogMessage("You can't condense your soul core any further.", "INJURY", "EVENT");
+      this.logService.addLogMessage("You can't condense your soul core any further.", 'INJURY', 'EVENT');
       return;
     }
-    if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.condenseSoulCoreCost) {
-      this.logService.addLogMessage("You don't have the spirituality required to ascend.", "INJURY", "EVENT");
+    if (
+      this.characterService.characterState.attributes.spirituality.value <
+      this.characterService.characterState.condenseSoulCoreCost
+    ) {
+      this.logService.addLogMessage("You don't have the spirituality required to ascend.", 'INJURY', 'EVENT');
       return;
     }
-    if (this.inventoryService.checkFor("spiritGem") < (this.soulCoreRank + 12) * 10) {
-      this.logService.addLogMessage("You don't have the gem required to ascend.", "INJURY", "EVENT");
+    if (this.inventoryService.checkFor('spiritGem') < (this.soulCoreRank + 12) * 10) {
+      this.logService.addLogMessage("You don't have the gem required to ascend.", 'INJURY', 'EVENT');
       return;
     }
     this.characterService.condenseSoulCore();
@@ -180,15 +191,18 @@ export class StoreService {
 
   reinforceMeridians() {
     if (this.meridianRank >= 9) {
-      this.logService.addLogMessage("You can't reinforce your meridians any further.", "INJURY", "EVENT");
+      this.logService.addLogMessage("You can't reinforce your meridians any further.", 'INJURY', 'EVENT');
       return;
     }
-    if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.reinforceMeridiansCost) {
-      this.logService.addLogMessage("You don't have the spirituality required to ascend.", "INJURY", "EVENT");
+    if (
+      this.characterService.characterState.attributes.spirituality.value <
+      this.characterService.characterState.reinforceMeridiansCost
+    ) {
+      this.logService.addLogMessage("You don't have the spirituality required to ascend.", 'INJURY', 'EVENT');
       return;
     }
-    if (this.inventoryService.checkFor("spiritGem") < (this.meridianRank + 16) * 10) {
-      this.logService.addLogMessage("You don't have the gem required to ascend.", "INJURY", "EVENT");
+    if (this.inventoryService.checkFor('spiritGem') < (this.meridianRank + 16) * 10) {
+      this.logService.addLogMessage("You don't have the gem required to ascend.", 'INJURY', 'EVENT');
       return;
     }
 
@@ -197,20 +211,22 @@ export class StoreService {
   }
 
   upgradeBloodline() {
-    if (this.characterService.characterState.attributes.spirituality.value < this.characterService.characterState.bloodlineCost) {
-      this.logService.addLogMessage("You don't have the spirituality required to ascend.", "INJURY", "EVENT");
+    if (
+      this.characterService.characterState.attributes.spirituality.value <
+      this.characterService.characterState.bloodlineCost
+    ) {
+      this.logService.addLogMessage("You don't have the spirituality required to ascend.", 'INJURY', 'EVENT');
       return;
     }
     if (this.characterService.characterState.bloodlineRank >= 9) {
-      this.logService.addLogMessage("You can't enhance your bloodline any further.", "INJURY", "EVENT");
+      this.logService.addLogMessage("You can't enhance your bloodline any further.", 'INJURY', 'EVENT');
       return;
     }
     if (this.homeService.home.type < this.bloodLineHomeRequirement.type) {
-      this.logService.addLogMessage("You don't have a powerful enough home to ascend.", "INJURY", "EVENT");
+      this.logService.addLogMessage("You don't have a powerful enough home to ascend.", 'INJURY', 'EVENT');
       return;
     }
     this.characterService.upgradeBloodline();
     this.dialog.closeAll();
   }
-
 }

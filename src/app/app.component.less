@@ -1,184 +1,184 @@
-@import (reference) "../styles.less";
+@import (reference) '../styles.less';
 
 .wrapper {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-    min-height: 0;
-    height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .top-line {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .gameTitle {
-    font-size: x-large;
-    margin: 4px;
+  font-size: x-large;
+  margin: 4px;
 }
 
 .mainContainer {
-    height: 100%;
-    width: 100%;
-    background-color: var(--bodyBackground);
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bodyBackground);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .bodyContainer {
-    width: 100%;
-    display:flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0;
 }
 
 .panelContainer {
-    display: flex;
-    min-height: 0;
-    flex: 1 0 75%;
-    overflow: auto;
+  display: flex;
+  min-height: 0;
+  flex: 1 0 75%;
+  overflow: auto;
 }
 
 .logContainer {
-    width: 100%;
-    flex: 1 1 110px;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+  width: 100%;
+  flex: 1 1 110px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .leftPanel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 440px;
-    gap: 8px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 440px;
+  gap: 8px;
 }
 
 .centerPanel {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .rightPanel {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    width: 360px;
-    max-width: 320px;
-    gap: 8px;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  max-width: 320px;
+  gap: 8px;
 }
 
 .timePanel {
-    flex: 1 1 50%;
-    overflow: auto;
-    margin-bottom: 0 !important;
+  flex: 1 1 50%;
+  overflow: auto;
+  margin-bottom: 0 !important;
 }
 
 .attributesPanel {
-    flex: 1 1 50%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+  flex: 1 1 50%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .healthPanel {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    overflow: auto;
-    flex: 0 0 auto;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  overflow: auto;
+  flex: 0 0 auto;
 }
 
 .activityPanel {
-    overflow: auto;
-    flex-grow: 2;
-    margin-bottom: 0 !important;
+  overflow: auto;
+  flex-grow: 2;
+  margin-bottom: 0 !important;
 }
 
 .battlePanel {
-    flex: 1 0 auto;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    overflow: auto;
+  flex: 1 0 auto;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  overflow: auto;
 }
 
 .homePanel {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
 }
 
 .logPanel {
-    display: flex;
-    flex-grow: 1;
-    margin-top: 0 !important;
-    min-height: 0;
+  display: flex;
+  flex-grow: 1;
+  margin-top: 0 !important;
+  min-height: 0;
 }
 
 .inventoryPanel {
-    flex-grow: 1;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+  flex-grow: 1;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .equipmentPanel {
-    margin-bottom: 0 !important;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    flex: 0 0 auto;
+  margin-bottom: 0 !important;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
 }
 
 .panel {
-    background-color: var(--panelBackground);
-    margin: 4px;
-    border: 3px solid var(--panelBorder);
-    border-radius: 4px;
+  background-color: var(--panelBackground);
+  margin: 4px;
+  border: 3px solid var(--panelBorder);
+  border-radius: 4px;
 }
 
 .panelHeader {
-    border-bottom: 1px solid var(--panelBorder);
-    color: var(--bodyText);
-    font-size: 14px;
-    font-weight: 400;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 4px;
-    margin-right: 4px;
+  border-bottom: 1px solid var(--panelBorder);
+  color: var(--bodyText);
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 mat-icon {
-    height: 16px;
-    width: 16px;
-    font-size: 16px;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    margin-left: 1px;
-    margin-right: 1px;
-    vertical-align: middle;
-    color: var(--bodyText);
+  height: 16px;
+  width: 16px;
+  font-size: 16px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-left: 1px;
+  margin-right: 1px;
+  vertical-align: middle;
+  color: var(--bodyText);
 }
 
 .versionNumber {
-    font-size: x-small;
-    text-decoration: underline;
-    cursor: pointer;
+  font-size: x-small;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .highlighted {
-    background-color: var(--buttonHighlightBg);
+  background-color: var(--buttonHighlightBg);
 }

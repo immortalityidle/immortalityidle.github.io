@@ -1,33 +1,37 @@
-<div class='darkMode lifeSummary'>
-    <h3>A New Life Begins</h3>
-    <hr/>
-    <br/>
-    <div class="textDiv">
-        <span>
-            {{causeOfDeath}}
-        </span>
-    </div>
-    <br/>
-    <div class="textDiv" *ngIf="!characterService.characterState.immortal">
-        <span>Don't worry. Each mortal life is just a drop of time in the vast ocean of eternity.
-            You are destined for immortality, and immortality you will achieve!
-            Your experiences in your previous life will let you learn faster and grow stronger in the next life.</span>
-    </div>
-    <br/>
-    <div class="textDiv">
-        <span>{{attributeGains}}</span>
-    </div>
-    <br/>
-    <div class="textDiv" *ngIf="characterService.characterState.showTips">
-      <span>{{tip}}</span>
-    </div>
-    <br/>
-    <div class="textDiv">
-        <span>
-            <input type="checkbox" (change)="showLifeSummaryChange($event)"
-                id="showLifeSummary" [checked]="characterService.characterState.showLifeSummary">
-            <label for="showLifeSummary">Show this summary at the start of each life</label>
-        </span>
-    </div>
-
+<div class="darkMode lifeSummary">
+  <h3>A New Life Begins</h3>
+  <hr />
+  <br />
+  <div class="textDiv">
+    <span>
+      {{ causeOfDeath }}
+    </span>
+  </div>
+  <br />
+  <div class="textDiv" *ngIf="!characterService.characterState.immortal">
+    <span
+      >Don't worry. Each mortal life is just a drop of time in the vast ocean of eternity. You are destined for
+      immortality, and immortality you will achieve! Your experiences in your previous life will let you learn faster
+      and grow stronger in the next life.</span
+    >
+  </div>
+  <br />
+  <div class="textDiv">
+    <span>{{ attributeGains }}</span>
+  </div>
+  <br />
+  <div class="textDiv" *ngIf="characterService.characterState.showTips">
+    <span>{{ tip }}</span>
+  </div>
+  <br />
+  <div class="textDiv">
+    <span>
+      <input
+        type="checkbox"
+        (change)="showLifeSummaryChange($event)"
+        id="showLifeSummary"
+        [checked]="characterService.characterState.showLifeSummary" />
+      <label for="showLifeSummary">Show this summary at the start of each life</label>
+    </span>
+  </div>
 </div>

@@ -5,40 +5,41 @@ import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService, Follower } from '../game-state/followers.service';
 
-
 @Component({
   selector: 'app-attributes-panel',
   templateUrl: './attributes-panel.component.html',
-  styleUrls: ['./attributes-panel.component.less', '../app.component.less']
+  styleUrls: ['./attributes-panel.component.less', '../app.component.less'],
 })
 export class AttributesPanelComponent {
   character: Character;
 
-  constructor(public characterService: CharacterService,
+  constructor(
+    public characterService: CharacterService,
     public dialog: MatDialog,
-    public followerService: FollowersService) {
+    public followerService: FollowersService
+  ) {
     this.character = characterService.characterState;
-   }
-  
-   // Preserve original property order
+  }
+
+  // Preserve original property order
   originalOrder = (): number => {
     return 0;
-  }
+  };
 
   followerOptionsClicked(): void {
     const dialogRef = this.dialog.open(FollowerManagementPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
-  dismissFollower(event: MouseEvent, follower: Follower){
+  dismissFollower(event: MouseEvent, follower: Follower) {
     event.preventDefault();
     event.stopPropagation();
-    if ((event.ctrlKey || event.metaKey) && this.followerService.autoDismissUnlocked){
+    if ((event.ctrlKey || event.metaKey) && this.followerService.autoDismissUnlocked) {
       this.followerService.limitFollower(follower);
-    } else if (event.shiftKey && this.followerService.autoDismissUnlocked){
+    } else if (event.shiftKey && this.followerService.autoDismissUnlocked) {
       this.followerService.dismissAllFollowers(follower);
     } else {
       this.followerService.dismissFollower(follower);

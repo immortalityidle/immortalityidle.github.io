@@ -5,7 +5,7 @@ import { ResizableDirective, Size } from '../resizable.directive';
 @Component({
   selector: 'app-horizontal-panel-slider',
   templateUrl: './horizontal-panel-slider.component.html',
-  styleUrls: ['./horizontal-panel-slider.component.less']
+  styleUrls: ['./horizontal-panel-slider.component.less'],
 })
 export class HorizontalPanelSliderComponent extends PanelSliderComponent implements OnInit {
   @Input() left?: ResizableDirective;
@@ -14,12 +14,11 @@ export class HorizontalPanelSliderComponent extends PanelSliderComponent impleme
   leftInitialSize?: Size;
   dragBeginX = 0;
 
-  constructor() { 
+  constructor() {
     super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   override handleMouseDown(event: MouseEvent): void {
     super.handleMouseDown(event);

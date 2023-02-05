@@ -8,9 +8,8 @@ describe('AscensionStoreModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AscensionStoreModalComponent ]
-    })
-    .compileComponents();
+      declarations: [AscensionStoreModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

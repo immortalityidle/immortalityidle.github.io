@@ -9,52 +9,51 @@ import { HellService } from './hell.service';
 import { BigNumberPipe } from '../app.component';
 
 export interface Enemy {
-  name: string,
-  health: number,
-  maxHealth: number,
-  accuracy: number,
-  attack: number,
-  defense: number,
-  loot: Item[],
-  unique?: boolean,
-  defeatEffect?: string,
-  attackEffect?: string,
-  hitTracker?: number
+  name: string;
+  health: number;
+  maxHealth: number;
+  accuracy: number;
+  attack: number;
+  defense: number;
+  loot: Item[];
+  unique?: boolean;
+  defeatEffect?: string;
+  attackEffect?: string;
+  hitTracker?: number;
 }
 
 export interface EnemyStack {
-  enemy: Enemy,
-  quantity: number
+  enemy: Enemy;
+  quantity: number;
 }
 
 export interface BattleProperties {
-  enemies: EnemyStack[],
-  currentEnemy: EnemyStack | null,
-  kills: number,
-  troubleKills: number,
-  totalKills: number,
-  autoTroubleUnlocked: boolean,
-  autoTroubleEnabled: boolean,
-  monthlyMonsterDay: number,
-  manaShieldUnlocked: boolean,
-  manaAttackUnlocked: boolean,
-  pyroclasmUnlocked: boolean,
-  metalFistUnlocked: boolean,
-  fireShieldUnlocked: boolean,
-  iceShieldUnlocked: boolean,
-  enableManaShield: boolean,
-  enableManaAttack: boolean,
-  enablePyroclasm: boolean,
-  enableMetalFist: boolean,
-  enableFireShield: boolean,
-  enableIceShield: boolean,
-  highestDamageTaken: number,
-  highestDamageDealt: number
+  enemies: EnemyStack[];
+  currentEnemy: EnemyStack | null;
+  kills: number;
+  troubleKills: number;
+  totalKills: number;
+  autoTroubleUnlocked: boolean;
+  autoTroubleEnabled: boolean;
+  monthlyMonsterDay: number;
+  manaShieldUnlocked: boolean;
+  manaAttackUnlocked: boolean;
+  pyroclasmUnlocked: boolean;
+  metalFistUnlocked: boolean;
+  fireShieldUnlocked: boolean;
+  iceShieldUnlocked: boolean;
+  enableManaShield: boolean;
+  enableManaAttack: boolean;
+  enablePyroclasm: boolean;
+  enableMetalFist: boolean;
+  enableFireShield: boolean;
+  enableIceShield: boolean;
+  highestDamageTaken: number;
+  highestDamageDealt: number;
 }
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BattleService {
   bigNumberPipe: BigNumberPipe;
@@ -93,10 +92,9 @@ export class BattleService {
     private itemRepoService: ItemRepoService,
     private inventoryService: InventoryService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
-
+    reincarnationService: ReincarnationService
   ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
+    setTimeout(() => (this.hellService = this.injector.get(HellService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.enemies = [];
     this.currentEnemy = null;
@@ -129,7 +127,6 @@ export class BattleService {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
-
   }
 
   reset() {
@@ -162,8 +159,8 @@ export class BattleService {
       enableFireShield: this.enableFireShield,
       enableIceShield: this.enableIceShield,
       highestDamageDealt: this.highestDamageDealt,
-      highestDamageTaken: this.highestDamageTaken
-    }
+      highestDamageTaken: this.highestDamageTaken,
+    };
   }
 
   setProperties(properties: BattleProperties) {
@@ -228,7 +225,8 @@ export class BattleService {
             damageBack = true;
           }
           if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000) {
-            let waterDivisor = Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
+            let waterDivisor =
+              Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
             if (waterDivisor < 1) {
               waterDivisor = 1;
             }
@@ -244,9 +242,16 @@ export class BattleService {
             // TODO: tune this
             damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
           }
-          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
+          this.logService.addLogMessage(
+            'Ow! ' + enemyStack.enemy.name + ' hit you for ' + this.bigNumberPipe.transform(damage) + ' damage',
+            'INJURY',
+            'COMBAT'
+          );
           if (damageBack) {
-            this.damageEnemy(damage, "The flames of your shield strike back, damaging the enemy for " + damage + " damage.");
+            this.damageEnemy(
+              damage,
+              'The flames of your shield strike back, damaging the enemy for ' + damage + ' damage.'
+            );
           }
           if (damage > this.highestDamageTaken) {
             this.highestDamageTaken = damage;
@@ -273,10 +278,17 @@ export class BattleService {
           }
 
           if (this.characterService.characterState.status.health.value <= 0) {
-            if (enemyStack.enemy.name === "Death itself") {
-              this.logService.addLogMessage(enemyStack.enemy.name + " overkilled you by " + Math.floor(-this.characterService.characterState.status.health.value) + " damage. You were defeated.", 'INJURY', 'EVENT');
+            if (enemyStack.enemy.name === 'Death itself') {
+              this.logService.addLogMessage(
+                enemyStack.enemy.name +
+                  ' overkilled you by ' +
+                  Math.floor(-this.characterService.characterState.status.health.value) +
+                  ' damage. You were defeated.',
+                'INJURY',
+                'EVENT'
+              );
             } else {
-              this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
+              this.logService.addLogMessage('You were defeated by ' + enemyStack.enemy.name, 'INJURY', 'EVENT');
             }
             if (!this.characterService.characterState.immortal) {
               this.characterService.characterState.dead = true;
@@ -288,17 +300,31 @@ export class BattleService {
             return;
           }
         } else {
-          this.logService.addLogMessage("Miss! " + enemyStack.enemy.name + " tries to hit you but fails.", 'STANDARD', 'COMBAT');
+          this.logService.addLogMessage(
+            'Miss! ' + enemyStack.enemy.name + ' tries to hit you but fails.',
+            'STANDARD',
+            'COMBAT'
+          );
         }
       }
     }
   }
 
   youAttack() {
-    this.characterService.characterState.accuracy = Math.min((this.troubleKills + Math.sqrt(this.characterService.characterState.attributes.speed.value)) / this.troubleKills / 2, 1)
-    if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) { // Check health for immortals
+    this.characterService.characterState.accuracy = Math.min(
+      (this.troubleKills + Math.sqrt(this.characterService.characterState.attributes.speed.value)) /
+        this.troubleKills /
+        2,
+      1
+    );
+    if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
+      // Check health for immortals
       if (Math.random() > this.characterService.characterState.accuracy) {
-        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " but miss.", 'STANDARD', 'COMBAT');
+        this.logService.addLogMessage(
+          'You attack ' + this.currentEnemy.enemy.name + ' but miss.',
+          'STANDARD',
+          'COMBAT'
+        );
         return;
       }
 
@@ -343,22 +369,22 @@ export class BattleService {
         // TODO: tune this
         damage += damage * this.characterService.characterState.yinYangBalance;
       }
-      if (this.characterService.characterState.equipment?.leftHand?.weaponStats?.effect === "corruption") {
+      if (this.characterService.characterState.equipment?.leftHand?.weaponStats?.effect === 'corruption') {
         damage *= 10;
       }
-      if (this.characterService.characterState.equipment?.rightHand?.weaponStats?.effect === "corruption") {
+      if (this.characterService.characterState.equipment?.rightHand?.weaponStats?.effect === 'corruption') {
         damage *= 10;
       }
-      if (this.characterService.characterState.equipment?.head?.armorStats?.effect === "corruption") {
+      if (this.characterService.characterState.equipment?.head?.armorStats?.effect === 'corruption') {
         damage *= 2;
       }
-      if (this.characterService.characterState.equipment?.body?.armorStats?.effect === "corruption") {
+      if (this.characterService.characterState.equipment?.body?.armorStats?.effect === 'corruption') {
         damage *= 2;
       }
-      if (this.characterService.characterState.equipment?.legs?.armorStats?.effect === "corruption") {
+      if (this.characterService.characterState.equipment?.legs?.armorStats?.effect === 'corruption') {
         damage *= 2;
       }
-      if (this.characterService.characterState.equipment?.feet?.armorStats?.effect === "corruption") {
+      if (this.characterService.characterState.equipment?.feet?.armorStats?.effect === 'corruption') {
         damage *= 2;
       }
 
@@ -373,22 +399,43 @@ export class BattleService {
       }
       // degrade weapons
       const degradeFactor = this.degradeFactor / 4; // degrade weapons more slowly since they take the hit every time
-      if (this.characterService.characterState.equipment.leftHand && this.characterService.characterState.equipment.leftHand.weaponStats) {
-        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === "corruption") {
-          this.characterService.characterState.equipment.leftHand.weaponStats.durability -= 100 * (durabilityDamage + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor));
+      if (
+        this.characterService.characterState.equipment.leftHand &&
+        this.characterService.characterState.equipment.leftHand.weaponStats
+      ) {
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === 'corruption') {
+          this.characterService.characterState.equipment.leftHand.weaponStats.durability -=
+            100 *
+            (durabilityDamage +
+              Math.floor(
+                this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor
+              ));
         } else {
-          this.characterService.characterState.equipment.leftHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor);
+          this.characterService.characterState.equipment.leftHand.weaponStats.durability -=
+            durabilityDamage +
+            Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.durability * degradeFactor);
         }
-        this.characterService.characterState.equipment.leftHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * degradeFactor);
-        if (this.characterService.characterState.equipment.leftHand.value < 1){
+        this.characterService.characterState.equipment.leftHand.value -=
+          1 + Math.floor(this.characterService.characterState.equipment.leftHand.value * degradeFactor);
+        if (this.characterService.characterState.equipment.leftHand.value < 1) {
           this.characterService.characterState.equipment.leftHand.value = 1;
         }
-        this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage * degradeFactor);
-        if (this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage < 1){
+        this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage -=
+          1 +
+          Math.floor(this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage * degradeFactor);
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage < 1) {
           this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage = 1;
         }
-        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === "life") {
-          this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.leftHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
+        if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === 'life') {
+          this.logService.addLogMessage(
+            'Your ' +
+              this.characterService.characterState.equipment.leftHand.name +
+              ' healed you for ' +
+              durabilityDamage +
+              ' as you struck the enemy.',
+            'STANDARD',
+            'COMBAT'
+          );
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
         }
@@ -397,22 +444,43 @@ export class BattleService {
           this.characterService.characterState.equipment.leftHand = null;
         }
       }
-      if (this.characterService.characterState.equipment.rightHand && this.characterService.characterState.equipment.rightHand.weaponStats) {
-        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === "corruption") {
-          this.characterService.characterState.equipment.rightHand.weaponStats.durability -= 100 * (durabilityDamage + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor));
+      if (
+        this.characterService.characterState.equipment.rightHand &&
+        this.characterService.characterState.equipment.rightHand.weaponStats
+      ) {
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === 'corruption') {
+          this.characterService.characterState.equipment.rightHand.weaponStats.durability -=
+            100 *
+            (durabilityDamage +
+              Math.floor(
+                this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor
+              ));
         } else {
-          this.characterService.characterState.equipment.rightHand.weaponStats.durability -= durabilityDamage + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor);
+          this.characterService.characterState.equipment.rightHand.weaponStats.durability -=
+            durabilityDamage +
+            Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.durability * degradeFactor);
         }
-        this.characterService.characterState.equipment.rightHand.value -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * degradeFactor);
-        if (this.characterService.characterState.equipment.rightHand.value < 1){
+        this.characterService.characterState.equipment.rightHand.value -=
+          1 + Math.floor(this.characterService.characterState.equipment.rightHand.value * degradeFactor);
+        if (this.characterService.characterState.equipment.rightHand.value < 1) {
           this.characterService.characterState.equipment.rightHand.value = 1;
         }
-        this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage -= 1 + Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage * degradeFactor);
-        if (this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage < 1){
+        this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage -=
+          1 +
+          Math.floor(this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage * degradeFactor);
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage < 1) {
           this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage = 1;
         }
-        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === "life") {
-          this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.rightHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
+        if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === 'life') {
+          this.logService.addLogMessage(
+            'Your ' +
+              this.characterService.characterState.equipment.rightHand.name +
+              ' healed you for ' +
+              durabilityDamage +
+              ' as you struck the enemy.',
+            'STANDARD',
+            'COMBAT'
+          );
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
         }
@@ -432,23 +500,24 @@ export class BattleService {
     }
   }
 
-  damageEnemy(damage: number, customMessage = ""): number {
+  damageEnemy(damage: number, customMessage = ''): number {
     if (!this.currentEnemy) {
       return 0;
     }
     const enemyHealth = this.currentEnemy.enemy.health;
     this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
-    if (customMessage === "") {
-      customMessage = "You attack " + this.currentEnemy.enemy.name + " for " + this.bigNumberPipe.transform(damage) + " damage";
+    if (customMessage === '') {
+      customMessage =
+        'You attack ' + this.currentEnemy.enemy.name + ' for ' + this.bigNumberPipe.transform(damage) + ' damage';
     }
     damage -= enemyHealth;
     if (this.currentEnemy.enemy.health <= 0) {
       this.kills++;
       this.totalKills++;
-      this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
-      if (this.currentEnemy.enemy.name === "Death itself") {
-        this.characterService.toast("HURRAY! Check your inventory. You just got something special!", 0);
-      }      
+      this.logService.addLogMessage('You manage to kill ' + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
+      if (this.currentEnemy.enemy.name === 'Death itself') {
+        this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
+      }
       for (const item of this.currentEnemy.enemy.loot) {
         const lootItem = this.itemRepoService.getItemById(item.id);
         if (lootItem) {
@@ -479,7 +548,7 @@ export class BattleService {
   }
 
   addEnemy(enemy: Enemy) {
-    this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
+    this.logService.addLogMessage('A new enemy comes along to trouble your sleep: ' + enemy.name, 'STANDARD', 'COMBAT');
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name === enemy.name) {
         // it matches an existing enemy, add it to the stack and bail out
@@ -494,7 +563,6 @@ export class BattleService {
     if (this.currentEnemy === null) {
       this.currentEnemy = this.enemies[0];
     }
-
   }
 
   clearEnemies() {
@@ -518,12 +586,12 @@ export class BattleService {
     let defense = this.troubleKills / 5;
     let gem;
     let monsterName;
-    if (this.characterService.characterState.god){
-      const index = this.troubleKills % (this.monsterNames.length);
+    if (this.characterService.characterState.god) {
+      const index = this.troubleKills % this.monsterNames.length;
       const rank = Math.floor(this.troubleKills / this.monsterNames.length);
-      monsterName = "Godslaying " + this.monsterNames[index];
+      monsterName = 'Godslaying ' + this.monsterNames[index];
       if (rank > 0) {
-        monsterName += " " + (rank + 1);
+        monsterName += ' ' + (rank + 1);
       }
 
       attack = Math.round(Math.pow(1.1, this.troubleKills));
@@ -535,15 +603,14 @@ export class BattleService {
       const index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
       const nameIndex = Math.floor(index / this.monsterQualities.length);
       const qualityIndex = index % this.monsterQualities.length;
-      monsterName = this.monsterQualities[qualityIndex] + " " + this.monsterNames[nameIndex];
+      monsterName = this.monsterQualities[qualityIndex] + ' ' + this.monsterNames[nameIndex];
       if (rank > 0) {
-        monsterName += " " + (rank + 1);
+        monsterName += ' ' + (rank + 1);
       }
 
       gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
     }
 
-    
     this.addEnemy({
       name: monsterName,
       health: health,
@@ -551,7 +618,7 @@ export class BattleService {
       accuracy: 0.5,
       attack: attack,
       defense: defense,
-      loot: [gem]
+      loot: [gem],
     });
     this.troubleKills++;
   }
@@ -563,22 +630,27 @@ export class BattleService {
       durabilityDamage += Math.sqrt(damage - 20000);
     }
     if (armor.armorStats) {
-      if (armor.armorStats.effect === "corruption") {
-        armor.armorStats.durability -= 100 * (durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor));
+      if (armor.armorStats.effect === 'corruption') {
+        armor.armorStats.durability -=
+          100 * (durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor));
       } else {
         armor.armorStats.durability -= durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor);
       }
       armor.value -= 1 + Math.floor(armor.value * this.degradeFactor);
-      if (armor.value < 1){
+      if (armor.value < 1) {
         armor.value = 1;
       }
       armor.armorStats.defense -= 1 + Math.floor(armor.armorStats.defense * this.degradeFactor);
-      if (armor.armorStats.defense < 1){
+      if (armor.armorStats.defense < 1) {
         armor.armorStats.defense = 1;
       }
-      if (armor.armorStats.effect === "life") {
+      if (armor.armorStats.effect === 'life') {
         const amountHealed = (durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor)) * 10;
-        this.logService.addLogMessage("Your " + armor.name + " healed you for " + amountHealed + " as the enemy struck it.", "STANDARD", "COMBAT");
+        this.logService.addLogMessage(
+          'Your ' + armor.name + ' healed you for ' + amountHealed + ' as the enemy struck it.',
+          'STANDARD',
+          'COMBAT'
+        );
         this.characterService.characterState.status.health.value += amountHealed;
         this.characterService.characterState.checkOverage();
       }
@@ -594,9 +666,9 @@ export class BattleService {
     if (!enemy.defeatEffect) {
       return;
     }
-    if (enemy.defeatEffect === "respawnDouble") {
+    if (enemy.defeatEffect === 'respawnDouble') {
       // add two more of the same enemy
-      this.logService.addLogMessage("They just keep coming! Two more " + enemy.name + " appear!", "STANDARD", "COMBAT");
+      this.logService.addLogMessage('They just keep coming! Two more ' + enemy.name + ' appear!', 'STANDARD', 'COMBAT');
       this.addEnemy({
         name: enemy.name,
         health: enemy.maxHealth,
@@ -605,7 +677,7 @@ export class BattleService {
         attack: enemy.attack,
         defense: enemy.defense,
         defeatEffect: enemy.defeatEffect,
-        loot: enemy.loot
+        loot: enemy.loot,
       });
       this.addEnemy({
         name: enemy.name,
@@ -615,7 +687,7 @@ export class BattleService {
         attack: enemy.attack,
         defense: enemy.defense,
         defeatEffect: enemy.defeatEffect,
-        loot: enemy.loot
+        loot: enemy.loot,
       });
     }
   }
@@ -624,38 +696,168 @@ export class BattleService {
     if (!enemy.attackEffect) {
       return;
     }
-    if (enemy.attackEffect === "feeder" && this.hellService) {
+    if (enemy.attackEffect === 'feeder' && this.hellService) {
       if (enemy.hitTracker !== undefined && enemy.hitTracker < 2) {
         enemy.hitTracker++;
       } else {
         // force feed on third hit
         this.hellService.daysFasted = 0;
         const damage = this.characterService.characterState.status.health.value / 4;
-        this.logService.addLogMessage("The hellfire burns as it goes down, damaging you for " + damage + " extra damage.", 'INJURY', 'COMBAT');
+        this.logService.addLogMessage(
+          'The hellfire burns as it goes down, damaging you for ' + damage + ' extra damage.',
+          'INJURY',
+          'COMBAT'
+        );
         this.characterService.characterState.status.health.value -= damage;
       }
     }
   }
 
-  monsterNames = ["spider", "rat", "scorpion", "lizard", "snake", "jack-o-lantern", "gnome", "imp", "ooze", "jackalope",
-    "pixie", "goblin", "monkey", "redcap", "boar", "skeleton", "zombie", "hobgoblin", "kobold",
-    "chupacabra", "siren", "crocodile", "incubus", "succubus", "jackal", "basilisk", "mogwai", "ghoul", "gremlin", "orc",
-    "tiger", "ghost", "centaur", "troll", "manticore", "merlion", "mummy", "landshark", "bugbear", "yeti",
-    "dreameater", "kelpie", "unicorn", "hippo", "ogre", "banshee", "harpy", "sphinx", "werewolf", "boogeyman", "golem",
-    "leshy", "hellhound", "chimaera", "undine", "minotaur", "bunyip", "cyclops", "rakshasa", "oni", "nyuk",
-    "cavebear", "wendigo", "dinosaur", "wyvern", "doomworm", "lich", "thunderbird", "vampire", "beholder",
-    "hydra", "roc", "wyrm", "giant", "kraken", "behemonth", "phoenix", "pazuzu", "titan", "leviathan", "stormbringer"
+  monsterNames = [
+    'spider',
+    'rat',
+    'scorpion',
+    'lizard',
+    'snake',
+    'jack-o-lantern',
+    'gnome',
+    'imp',
+    'ooze',
+    'jackalope',
+    'pixie',
+    'goblin',
+    'monkey',
+    'redcap',
+    'boar',
+    'skeleton',
+    'zombie',
+    'hobgoblin',
+    'kobold',
+    'chupacabra',
+    'siren',
+    'crocodile',
+    'incubus',
+    'succubus',
+    'jackal',
+    'basilisk',
+    'mogwai',
+    'ghoul',
+    'gremlin',
+    'orc',
+    'tiger',
+    'ghost',
+    'centaur',
+    'troll',
+    'manticore',
+    'merlion',
+    'mummy',
+    'landshark',
+    'bugbear',
+    'yeti',
+    'dreameater',
+    'kelpie',
+    'unicorn',
+    'hippo',
+    'ogre',
+    'banshee',
+    'harpy',
+    'sphinx',
+    'werewolf',
+    'boogeyman',
+    'golem',
+    'leshy',
+    'hellhound',
+    'chimaera',
+    'undine',
+    'minotaur',
+    'bunyip',
+    'cyclops',
+    'rakshasa',
+    'oni',
+    'nyuk',
+    'cavebear',
+    'wendigo',
+    'dinosaur',
+    'wyvern',
+    'doomworm',
+    'lich',
+    'thunderbird',
+    'vampire',
+    'beholder',
+    'hydra',
+    'roc',
+    'wyrm',
+    'giant',
+    'kraken',
+    'behemonth',
+    'phoenix',
+    'pazuzu',
+    'titan',
+    'leviathan',
+    'stormbringer',
   ];
 
   monsterQualities = [
-    "an infant", "a puny", "a tiny", "a pathetic", "a sickly", "a starving", "a wimpy", "a frail",
-    "an ill", "a weak", "a badly wounded", "a tired", "a poor", "a small", "a despondent", "a frightened",
-    "a skinny", "a sad", "a stinking", "a scatterbrained", "a mediocre", "a typical", "an average",
-    "a healthy", "a big", "a tough", "a crazy", "a strong", "a fearsome", "a gutsy", "a quick",
-    "a hefty", "a grotesque", "a large", "a brawny", "an athletic", "a muscular", "a rugged",
-    "a resilient", "an angry", "a clever", "a fierce", "a brutal", "a devious", "a mighty",
-    "a frightening", "a massive", "a powerful", "a noble", "a magical", "a dangerous", "a murderous",
-    "a terrifying", "a gargantuan", "a flame-shrouded", "an abominable", "a monstrous", "a dominating",
-    "a demonic", "a diabolical", "an infernal"
+    'an infant',
+    'a puny',
+    'a tiny',
+    'a pathetic',
+    'a sickly',
+    'a starving',
+    'a wimpy',
+    'a frail',
+    'an ill',
+    'a weak',
+    'a badly wounded',
+    'a tired',
+    'a poor',
+    'a small',
+    'a despondent',
+    'a frightened',
+    'a skinny',
+    'a sad',
+    'a stinking',
+    'a scatterbrained',
+    'a mediocre',
+    'a typical',
+    'an average',
+    'a healthy',
+    'a big',
+    'a tough',
+    'a crazy',
+    'a strong',
+    'a fearsome',
+    'a gutsy',
+    'a quick',
+    'a hefty',
+    'a grotesque',
+    'a large',
+    'a brawny',
+    'an athletic',
+    'a muscular',
+    'a rugged',
+    'a resilient',
+    'an angry',
+    'a clever',
+    'a fierce',
+    'a brutal',
+    'a devious',
+    'a mighty',
+    'a frightening',
+    'a massive',
+    'a powerful',
+    'a noble',
+    'a magical',
+    'a dangerous',
+    'a murderous',
+    'a terrifying',
+    'a gargantuan',
+    'a flame-shrouded',
+    'an abominable',
+    'a monstrous',
+    'a dominating',
+    'a demonic',
+    'a diabolical',
+    'an infernal',
   ];
 }

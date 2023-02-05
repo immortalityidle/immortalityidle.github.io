@@ -4,8 +4,13 @@
     "eslint.run": "onType",
     "eslint.codeActionsOnSave.mode": "all",
     "files.eol": "\n",
-    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "eslint.workingDirectories": [
+        {
+            "mode": "auto"
+        }
+    ],
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
+    "editor.formatOnSave": true,
 }

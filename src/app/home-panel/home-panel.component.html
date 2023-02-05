@@ -1,50 +1,111 @@
 <div class="homeContainer">
   <h3 class="panelHeader">
-    <mat-icon matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">home</mat-icon>
-    <div matTooltip="{{homeService.home.description}}" [ngClass]="{'hellDisabled': hellService.inHell}">
-      You live in a {{homeService.home.name}}
+    <mat-icon
+      matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development."
+      >home</mat-icon
+    >
+    <div matTooltip="{{ homeService.home.description }}" [ngClass]="{ hellDisabled: hellService.inHell }">
+      You live in a {{ homeService.home.name }}
     </div>
-    <button (click)="homeService.hideHome = !homeService.hideHome">{{homeService.hideHome ? 'Show' : 'Hide'}}</button>
+    <button (click)="homeService.hideHome = !homeService.hideHome">{{ homeService.hideHome ? 'Show' : 'Hide' }}</button>
   </h3>
-  <div class="homeContainer" *ngIf="!homeService.hideHome && (!hellService.inHell || homeService.hellHome || homeService.hellFood)">
+  <div
+    class="homeContainer"
+    *ngIf="!homeService.hideHome && (!hellService.inHell || homeService.hellHome || homeService.hellFood)">
     <div class="overflow">
-      <div class="homeInfo" *ngIf="!hellService.inHell && !characterService.characterState.god"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>      <div class="homeInfo"><span>You own {{homeService.land | bigNumber}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length + homeService.extraFields | bigNumber}} fields</span></div>
-      <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length > 0 && (!hellService.inHell || homeService.hellHome)">
-          <div *ngFor="let slot of homeService.home.furnitureSlots">
-              <div *ngIf="!homeService.furniture[slot]" class="itemSlot" matTooltip="You don't own a {{slot}}, but your home could hold one."></div>
-              <div *ngIf="homeService.furniture[slot]" class="itemSlot textOverflow" matTooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
+      <div class="homeInfo" *ngIf="!hellService.inHell && !characterService.characterState.god">
+        <span
+          >It costs {{ homeService.home.costPerDay | bigNumber }}
+          {{ homeService.home.costPerDay === 1 ? 'tael' : 'taels' }} per day to maintain your home</span
+        >
+      </div>
+      <div class="homeInfo">
+        <span
+          >You own {{ homeService.land | bigNumber }} open {{ homeService.land === 1 ? 'plot' : 'plots' }} of land and
+          {{ homeService.fields.length + homeService.extraFields | bigNumber }} fields</span
+        >
+      </div>
+      <div
+        class="furnitureSlots"
+        *ngIf="homeService.home.furnitureSlots.length > 0 && (!hellService.inHell || homeService.hellHome)">
+        <div *ngFor="let slot of homeService.home.furnitureSlots">
+          <div
+            *ngIf="!homeService.furniture[slot]"
+            class="itemSlot"
+            matTooltip="You don't own a {{ slot }}, but your home could hold one."></div>
+          <div
+            *ngIf="homeService.furniture[slot]"
+            class="itemSlot textOverflow"
+            matTooltip="{{ homeService.furniture[slot]?.description }}">
+            {{ homeService.furniture[slot]?.name | titlecase }}
           </div>
+        </div>
       </div>
       <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length === 0">
-        <span class="mouseWarning">Tent living is rough. All these pesky mice could become a real problem. You might want to buy some land and get a better home.</span>
+        <span class="mouseWarning"
+          >Tent living is rough. All these pesky mice could become a real problem. You might want to buy some land and
+          get a better home.</span
+        >
       </div>
     </div>
     <div class="buttons">
-        <div class="button-group" *ngIf="!hellService.inHell || homeService.hellHome">
-            <mat-icon  (click)="buyClicked($event)" matTooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton" aria-label="Buy Land" aria-hidden="false">
-              add
-            </mat-icon>
-            <mat-icon *ngIf="(homeService.home.name !== homeService.nextHome.name)" (click)="homeService.upgradeToNextHome()" class="iconButton" aria-label="Upgrade Home" aria-hidden="false"
-              matTooltip="{{homeService.nextHome.upgradeToTooltip}}">
-              add_business
-            </mat-icon>
-            <mat-icon class="iconButton" *ngIf="homeService.home.furnitureSlots.length" aria-label="Buy Furniture" aria-hidden="false"
-              matTooltip="Buy Furniture" (click)="storeClicked()">
-              shopping_cart
-            </mat-icon>
-            <div *ngIf="homeService.upgrading" class="progress-bar" style="height:20px;" matTooltip="Upgrading your home."
-              [attr.value]=buildTimeYears()>
-              <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
-            </div>
-            <span *ngIf="homeService.upgrading" style="margin-left: 4px;"></span>
+      <div class="button-group" *ngIf="!hellService.inHell || homeService.hellHome">
+        <mat-icon
+          (click)="buyClicked($event)"
+          matTooltip="Buy a plot of land for {{
+            homeService.landPrice | bigNumber
+          }} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford."
+          class="iconButton"
+          aria-label="Buy Land"
+          aria-hidden="false">
+          add
+        </mat-icon>
+        <mat-icon
+          *ngIf="homeService.home.name !== homeService.nextHome.name"
+          (click)="homeService.upgradeToNextHome()"
+          class="iconButton"
+          aria-label="Upgrade Home"
+          aria-hidden="false"
+          matTooltip="{{ homeService.nextHome.upgradeToTooltip }}">
+          add_business
+        </mat-icon>
+        <mat-icon
+          class="iconButton"
+          *ngIf="homeService.home.furnitureSlots.length"
+          aria-label="Buy Furniture"
+          aria-hidden="false"
+          matTooltip="Buy Furniture"
+          (click)="storeClicked()">
+          shopping_cart
+        </mat-icon>
+        <div
+          *ngIf="homeService.upgrading"
+          class="progress-bar"
+          style="height: 20px"
+          matTooltip="Upgrading your home."
+          [attr.value]="buildTimeYears()">
+          <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
         </div>
-        <div class="button-group" *ngIf="!hellService.inHell || homeService.hellFood">
-            <mat-icon matTooltip="View your farm." class="iconButton" (click)="farmClicked()" aria-label="View Farm" aria-hidden="false">grass</mat-icon>
-            <mat-icon  (click)="plowClicked($event)" class="iconButton" aria-label="Plow Field" aria-hidden="false"
-              matTooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
-              waves
-            </mat-icon>
-        </div>
+        <span *ngIf="homeService.upgrading" style="margin-left: 4px"></span>
+      </div>
+      <div class="button-group" *ngIf="!hellService.inHell || homeService.hellFood">
+        <mat-icon
+          matTooltip="View your farm."
+          class="iconButton"
+          (click)="farmClicked()"
+          aria-label="View Farm"
+          aria-hidden="false"
+          >grass</mat-icon
+        >
+        <mat-icon
+          (click)="plowClicked($event)"
+          class="iconButton"
+          aria-label="Plow Field"
+          aria-hidden="false"
+          matTooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
+          waves
+        </mat-icon>
+      </div>
     </div>
   </div>
 </div>
