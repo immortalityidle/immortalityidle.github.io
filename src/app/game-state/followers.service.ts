@@ -534,7 +534,7 @@ export class FollowersService {
           if (this.jobs[key].hidden) {
             continue;
           }
-          let capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
+          const capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
           let count = 0;
           for (const follower of this.followers) {
             if (follower.job === key){
@@ -567,7 +567,7 @@ export class FollowersService {
       // couldn't find a job that we want
       return null;
     }
-    let capNumber = (this.maxFollowerByType[job] !== undefined) ? this.maxFollowerByType[job] : 1000;
+    const capNumber = (this.maxFollowerByType[job] !== undefined) ? this.maxFollowerByType[job] : 1000;
     if (this.numFollowersOnJob(job) >= capNumber) {
       this.logService.addLogMessage("A new follower shows up, but they were a " + this.camelToTitle.transform(job) + " and you don't want any more of those.", "STANDARD", "FOLLOWER");
       this.totalDismissed++;
@@ -615,7 +615,7 @@ export class FollowersService {
       if (!this.jobs[key].hidden) {
         if ((pet && this.jobs[key].pet) || (!pet && !this.jobs[key].pet)) {
           if (this.onlyWantedFollowers){
-            let capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
+            const capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
             if (this.numFollowersOnJob(key) < capNumber){
               possibleJobs.push(key);
             }

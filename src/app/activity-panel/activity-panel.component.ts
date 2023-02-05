@@ -118,7 +118,7 @@ export class ActivityPanelComponent {
     } else if (activity.unlocked){
       let projectionString = "";
       if (this.characterService.characterState.manaUnlocked){
-        projectionString = "\n\Right-click to set this as your spriritual projection activity";
+        projectionString = "\nRight-click to set this as your spriritual projection activity";
       }
        return 'Add this to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top' + projectionString;
     } else {

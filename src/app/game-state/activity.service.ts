@@ -432,7 +432,7 @@ export class ActivityService {
     }
     if (this.currentApprenticeship === activityType){
       // check for completed apprenticeship
-      let activity = this.getActivityByType(activityType);
+      const activity = this.getActivityByType(activityType);
       if (activity){
         if (activity.level >= activity.skipApprenticeshipLevel){
           this.completedApprenticeships.push(activityType);
@@ -442,7 +442,7 @@ export class ActivityService {
       // start an apprenticeship
       this.openApprenticeships--;
       this.currentApprenticeship = activityType;
-      for (let activity of this.activities){
+      for (const activity of this.activities){
         if (activity.skipApprenticeshipLevel > 0){
           activity.unlocked = false;
         }
@@ -487,21 +487,21 @@ export class ActivityService {
   }
 
   saveActivityLoop(index = 1) {
-    if (index == 1){
+    if (index === 1){
       this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop));
-    } else if (index == 2){
+    } else if (index === 2){
       this.savedActivityLoop2 = JSON.parse(JSON.stringify(this.activityLoop));
-    } else if (index == 3){
+    } else if (index === 3){
       this.savedActivityLoop3 = JSON.parse(JSON.stringify(this.activityLoop));
     }
   }
 
   loadActivityLoop(index = 1) {
-    if (index == 1){
+    if (index === 1){
       this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop));
-    } else if (index == 2){
+    } else if (index === 2){
       this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop2));
-    } else if (index == 3){
+    } else if (index === 3){
       this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop3));
     }
     this.checkRequirements(true);
@@ -2337,7 +2337,7 @@ export class ActivityService {
           this.inventoryService.addItem(this.itemRepoService.items['meat']);
           this.inventoryService.addItem(this.inventoryService.getHide(), Math.floor(this.followerService.jobs['hunter'].totalPower / 20));
         }
-        if (Math.random() < 0.01 && this.battleService.enemies.length == 0) {
+        if (Math.random() < 0.01 && this.battleService.enemies.length === 0) {
           this.battleService.addEnemy({
             name: "a hungry wolf",
             health: 20,

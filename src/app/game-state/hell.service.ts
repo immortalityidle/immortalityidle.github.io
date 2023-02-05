@@ -1134,7 +1134,7 @@ export class HellService {
         description: ["You've had enough of this place and learned everything these hells can teach you. Challenge Lord Yama to prove you deserve your rightful place in the heavens."],
         consequenceDescription: [""],
         consequence: [() => {
-          if (this.battleService.enemies.length == 0){
+          if (this.battleService.enemies.length === 0){
             this.battleService.addEnemy({
               name: "Lord Yama",
               health: 1e40,

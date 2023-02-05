@@ -42,7 +42,7 @@ export class StatisticsPanelComponent implements OnInit {
       const currentTimestamp = new Date().getTime();
       const timeDiff = (currentTimestamp - this.lastTimestamp) / 1000;
       const tickDiff = this.mainLoopService.totalTicks - this.lastTickTotal;
-      if (timeDiff != 0){
+      if (timeDiff !== 0){
         this.daysPerSecond = tickDiff / timeDiff;
       }
       this.lastTickTotal = this.mainLoopService.totalTicks;

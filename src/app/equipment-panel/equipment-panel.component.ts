@@ -56,7 +56,7 @@ export class EquipmentPanelComponent {
       const equipmentSlot: EquipmentPosition = slot as EquipmentPosition;
       if (itemToEquip){
         if (instanceOfEquipment(itemToEquip)){
-          if (itemToEquip.slot != slot){
+          if (itemToEquip.slot !== slot){
             return;
           }
         }
