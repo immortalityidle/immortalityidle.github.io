@@ -1,10 +1,9 @@
 
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-//import { threadId } from 'worker_threads';
-import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
+import { ServicesService } from './services.service';
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
@@ -48,15 +47,14 @@ export class MainLoopService {
   lastTime: number = new Date().getTime();
   bankedTicks = 0;
   offlineDivider = 10;
-  characterService?: CharacterService;
   useBankedTicks = true;
   scientificNotation = false;
   earnedTicks = 0;
 
   constructor(
-    private injector: Injector,
-    public dialog: MatDialog) {
-  }
+    private services: ServicesService,
+    public dialog: MatDialog
+  ) {}
 
   getProperties(): MainLoopProperties {
     return {
@@ -109,10 +107,6 @@ export class MainLoopService {
   }
 
   start() {
-    if (!this.characterService) {
-      this.characterService = this.injector.get(CharacterService);
-    }
-
     window.setInterval(() => {
       this.longTickSubject.next(true);
     }, LONG_TICK_INTERVAL_MS);
@@ -172,9 +166,9 @@ export class MainLoopService {
 
   getTPS(div: number) {
     let ticksPassed = 1000 / TICK_INTERVAL_MS;
-    if (this.characterService && this.unlockAgeSpeed && this.tickDivider < 40) { // don't do this on slow speed
+    if (this.services.characterService && this.unlockAgeSpeed && this.tickDivider < 40) { // don't do this on slow speed
       // 73000 is 200 years. reaches 2x at 600 years, 3x at 1600, 4x at 3000. Caps at 12600
-      ticksPassed *= Math.min(8, Math.sqrt(1 + this.characterService.characterState.age / 73000));
+      ticksPassed *= Math.min(8, Math.sqrt(1 + this.services.characterService.characterState.age / 73000));
     }
     if (this.unlockPlaytimeSpeed && this.tickDivider < 40) { // don't do this on slow speed
       ticksPassed *= Math.pow(1 + this.totalTicks / (2000 * 365), 0.3);

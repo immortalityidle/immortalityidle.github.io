@@ -1,14 +1,9 @@
-import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
-import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
+import { Injectable } from '@angular/core';
 import { EquipmentPosition, AttributeType } from './character';
-import { CharacterService } from './character.service';
-import { ItemRepoService } from './item-repo.service';
 import { WeaponNames, ItemPrefixes, WeaponSuffixes, WeaponSuffixModifiers, ArmorSuffixes, ArmorSuffixModifiers, herbNames, herbQuality, ChestArmorNames, LegArmorNames, ShoeNames, HelmetNames } from './itemResources';
 import { FurniturePosition } from './home.service';
 import { BigNumberPipe } from '../app.component';
-import { HellService } from './hell.service';
+import { ServicesService } from './services.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -122,40 +117,39 @@ export interface InventoryProperties {
   providedIn: 'root',
 })
 export class InventoryService {
-  hellService?: HellService
-  bigNumberPipe: BigNumberPipe;
+  farmFoodList: Item[] = [];
   itemStacks: (ItemStack | null)[] = [];
   stashedItemStacks: (ItemStack | null)[] = [];
   maxItems = 10;
   maxStackSize = 100;
-  noFood: boolean;
+  noFood = false;
   selectedItem: ItemStack | null = null;
-  autoSellUnlocked: boolean;
-  autoSellEntries: AutoItemEntry[];
-  autoUseUnlocked: boolean;
-  autoUseEntries: AutoItemEntry[];
-  autoBalanceUnlocked: boolean;
-  autoBalanceItems: BalanceItem[];
-  autoPotionUnlocked: boolean;
-  autoPillUnlocked: boolean;
-  autoWeaponMergeUnlocked: boolean;
-  autoArmorMergeUnlocked: boolean;
-  autoequipBestWeapon: boolean;
-  autoequipBestArmor: boolean;
+  autoSellUnlocked = false;
+  autoSellEntries: AutoItemEntry[] = [];
+  autoUseUnlocked = false;
+  autoUseEntries: AutoItemEntry[] = [];
+  autoBalanceUnlocked = false;
+  autoBalanceItems: BalanceItem[] = [];
+  autoPotionUnlocked = false;
+  autoPillUnlocked = false;
+  autoWeaponMergeUnlocked = false;
+  autoArmorMergeUnlocked = false;
+  autoequipBestWeapon = false;
+  autoequipBestArmor = false;
   autoequipBestEnabled = true;
-  useSpiritGemUnlocked: boolean;
-  useSpiritGemWeapons: boolean;
-  useSpiritGemPotions: boolean;
-  useCheapestSpiritGem: boolean;
-  autoSellOldHerbs: boolean;
-  autoSellOldWood: boolean;
-  autoSellOldOre: boolean;
-  autoSellOldHides: boolean
-  autoSellOldHerbsEnabled: boolean;
-  autoSellOldWoodEnabled: boolean;
-  autoSellOldOreEnabled: boolean;
-  autoSellOldBarsEnabled: boolean;
-  autoSellOldHidesEnabled: boolean;
+  useSpiritGemUnlocked = false;
+  useSpiritGemWeapons = false;
+  useSpiritGemPotions = false;
+  useCheapestSpiritGem = false;
+  autoSellOldHerbs = false;
+  autoSellOldWood = false;
+  autoSellOldOre = false;
+  autoSellOldHides = false
+  autoSellOldHerbsEnabled = false;
+  autoSellOldWoodEnabled = false;
+  autoSellOldOreEnabled = false;
+  autoSellOldBarsEnabled = false;
+  autoSellOldHidesEnabled = false;
   fed = false;
   lifetimeUsedItems = 0;
   lifetimeSoldItems = 0;
@@ -166,8 +160,8 @@ export class InventoryService {
   grandmotherGift = false;
   thrownAwayItems = 0;
   mergeCounter = 0;
-  autoSellOldGemsUnlocked: boolean;
-  autoSellOldGemsEnabled: boolean;
+  autoSellOldGemsUnlocked = false;
+  autoSellOldGemsEnabled = false;
   autoBuyFood = true;
   automergeEquipped = false;
   autoSort = false;
@@ -176,15 +170,11 @@ export class InventoryService {
   hideEquipment = false;
 
   constructor(
-    private injector: Injector,
-    private logService: LogService,
-    private characterService: CharacterService,
-    mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
-    private itemRepoService: ItemRepoService,
-  ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
-    this.bigNumberPipe = this.injector.get(BigNumberPipe);
+    private services: ServicesService,
+    private bigNumberPipe: BigNumberPipe,
+  ) {}
+
+  init(): InventoryService {
     this.noFood = false;
     this.autoSellUnlocked = false;
     this.autoSellEntries = [];
@@ -218,8 +208,8 @@ export class InventoryService {
       this.itemStacks.push(null);
     }
 
-    mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead) {
+    this.services.mainLoopService.tickSubject.subscribe(() => {
+      if (this.services.characterService.characterState.dead) {
         return;
       }
       this.eatFood();
@@ -235,8 +225,8 @@ export class InventoryService {
         this.mergeCounter++;
       }
     });
-    mainLoopService.longTickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead) {
+    this.services.mainLoopService.longTickSubject.subscribe(() => {
+      if (this.services.characterService.characterState.dead) {
         return;
       }
       //if autoequip is unlocked, but automerge isn't, equip best
@@ -248,13 +238,13 @@ export class InventoryService {
         this.autoequipArmor();
       }
       for (const key of ["head", "body", "legs", "feet"] as EquipmentPosition[]) {
-        const item = this.characterService.characterState.equipment[key]
+        const item = this.services.characterService.characterState.equipment[key]
         if (item) {
           this.updateArmorDescription(item);
         }
       }
       for (const key of ["leftHand", "rightHand"] as EquipmentPosition[]) {
-        const item = this.characterService.characterState.equipment[key]
+        const item = this.services.characterService.characterState.equipment[key]
         if (item) {
           this.updateWeaponDescription(item);
         }
@@ -275,12 +265,13 @@ export class InventoryService {
       if (this.autoSort) {
         this.sortInventory();
       }
-
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    this.services.reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+
+    return this;
   }
 
   getProperties(): InventoryProperties {
@@ -377,23 +368,25 @@ export class InventoryService {
     }
   }
 
-  farmFoodList = [
-    this.itemRepoService.items['rice'],
-    this.itemRepoService.items['cabbage'],
-    this.itemRepoService.items['beans'],
-    this.itemRepoService.items['broccoli'],
-    this.itemRepoService.items['calabash'],
-    this.itemRepoService.items['taro'],
-    this.itemRepoService.items['pear'],
-    this.itemRepoService.items['melon'],
-    this.itemRepoService.items['plum'],
-    this.itemRepoService.items['apricot'],
-    this.itemRepoService.items['peach']
-  ]
+  populateFarmFoodList() {
+    this.farmFoodList = [
+      this.services.itemRepoService.items['rice'],
+      this.services.itemRepoService.items['cabbage'],
+      this.services.itemRepoService.items['beans'],
+      this.services.itemRepoService.items['broccoli'],
+      this.services.itemRepoService.items['calabash'],
+      this.services.itemRepoService.items['taro'],
+      this.services.itemRepoService.items['pear'],
+      this.services.itemRepoService.items['melon'],
+      this.services.itemRepoService.items['plum'],
+      this.services.itemRepoService.items['apricot'],
+      this.services.itemRepoService.items['peach']
+    ]
+  }
 
   updateFarmFoodList() {
     if (this.divinePeachesUnlocked) {
-      this.farmFoodList.push(this.itemRepoService.items['divinePeach']);
+      this.farmFoodList.push(this.services.itemRepoService.items['divinePeach']);
     }
   }
 
@@ -494,7 +487,7 @@ export class InventoryService {
     } else {
       name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     }
-    this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!', 'STANDARD', 'CRAFTING');
+    this.services.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!', 'STANDARD', 'CRAFTING');
     const durability = grade * 15;
     const damage = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -542,23 +535,23 @@ export class InventoryService {
   upgradeEquppedEquipment(value: number) {
 
     const upgradables = [];
-    if (this.characterService.characterState.equipment.leftHand) {
-      upgradables.push(this.characterService.characterState.equipment.leftHand);
+    if (this.services.characterService.characterState.equipment.leftHand) {
+      upgradables.push(this.services.characterService.characterState.equipment.leftHand);
     }
-    if (this.characterService.characterState.equipment.rightHand) {
-      upgradables.push(this.characterService.characterState.equipment.rightHand);
+    if (this.services.characterService.characterState.equipment.rightHand) {
+      upgradables.push(this.services.characterService.characterState.equipment.rightHand);
     }
-    if (this.characterService.characterState.equipment.head) {
-      upgradables.push(this.characterService.characterState.equipment.head);
+    if (this.services.characterService.characterState.equipment.head) {
+      upgradables.push(this.services.characterService.characterState.equipment.head);
     }
-    if (this.characterService.characterState.equipment.body) {
-      upgradables.push(this.characterService.characterState.equipment.body);
+    if (this.services.characterService.characterState.equipment.body) {
+      upgradables.push(this.services.characterService.characterState.equipment.body);
     }
-    if (this.characterService.characterState.equipment.legs) {
-      upgradables.push(this.characterService.characterState.equipment.legs);
+    if (this.services.characterService.characterState.equipment.legs) {
+      upgradables.push(this.services.characterService.characterState.equipment.legs);
     }
-    if (this.characterService.characterState.equipment.feet) {
-      upgradables.push(this.characterService.characterState.equipment.feet);
+    if (this.services.characterService.characterState.equipment.feet) {
+      upgradables.push(this.services.characterService.characterState.equipment.feet);
     }
     if (upgradables.length > 0) {
       const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
@@ -581,7 +574,7 @@ export class InventoryService {
       }
     }
     equipment.value += value;
-    this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
+    this.services.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
@@ -607,12 +600,12 @@ export class InventoryService {
     }
 
     const keys = Object.keys(
-      this.characterService.characterState.attributes
+      this.services.characterService.characterState.attributes
     ) as AttributeType[];
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
     const name = "Potion of " + key + " +" + grade;
-    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
+    this.services.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
 
     this.addItem({
       name: name,
@@ -643,9 +636,9 @@ export class InventoryService {
       useDescription = "Use to permanently empower the increase of your attributes based on your aptitudes.";
       value = 1;
       name = "Empowerment Pill";
-      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.", "STANDARD", "CRAFTING");
+      this.services.logService.addLogMessage("Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.", "STANDARD", "CRAFTING");
     } else {
-      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
+      this.services.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
     }
     this.addItem({
       name: name,
@@ -664,7 +657,7 @@ export class InventoryService {
   generateHerb(): void {
     let grade = 0;
     const maxGrade = herbNames.length * herbQuality.length;
-    const woodLore = this.characterService.characterState.attributes.woodLore.value;
+    const woodLore = this.services.characterService.characterState.attributes.woodLore.value;
     grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * maxGrade); // 1e9 woodlore is maximum grade, adjust if necessary
     let name: string;
     let quality: string;
@@ -756,7 +749,7 @@ export class InventoryService {
     }
     const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
-    this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!', 'STANDARD', 'CRAFTING');
+    this.services.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!', 'STANDARD', 'CRAFTING');
     const durability = grade * 10;
     const defense = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -792,17 +785,17 @@ export class InventoryService {
   }
 
   getOre(): Item {
-    const earthLore = this.characterService.characterState.attributes.earthLore.value;
+    const earthLore = this.services.characterService.characterState.attributes.earthLore.value;
     const oreValue = Math.floor(Math.pow(earthLore / 1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
-    let lastOre = this.itemRepoService.items['copperOre'];
-    for (const key in this.itemRepoService.items) {
-      const item = this.itemRepoService.items[key];
+    let lastOre = this.services.itemRepoService.items['copperOre'];
+    for (const key in this.services.itemRepoService.items) {
+      const item = this.services.itemRepoService.items[key];
       if (item.type === 'ore' && item.value > lastOre.value && item.value <= oreValue) {
         lastOre = item;
       }
     }
 
-    if (this.autoSellOldOreEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldOreEnabled && !this.services.hellService?.inHell) {
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -818,16 +811,16 @@ export class InventoryService {
     // metal bars should always be 10x the value of the associated ore
     const barValue = oreValue * 10;
 
-    let lastMetal = this.itemRepoService.items['copperBar'];
-    for (const key in this.itemRepoService.items) {
-      const item = this.itemRepoService.items[key];
+    let lastMetal = this.services.itemRepoService.items['copperBar'];
+    for (const key in this.services.itemRepoService.items) {
+      const item = this.services.itemRepoService.items[key];
       if (item.type === 'metal' && item.value === barValue) {
         lastMetal = item;
         break;
       }
     }
 
-    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldBarsEnabled && !this.services.hellService?.inHell) {
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -840,18 +833,18 @@ export class InventoryService {
   }
 
   getWood(): Item {
-    const woodLore = this.characterService.characterState.attributes.woodLore.value;
+    const woodLore = this.services.characterService.characterState.attributes.woodLore.value;
     const woodvalue = Math.floor(Math.pow(woodLore / 1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
-    let lastWood = this.itemRepoService.items['balsaLog'];
+    let lastWood = this.services.itemRepoService.items['balsaLog'];
 
-    for (const key in this.itemRepoService.items) {
-      const item = this.itemRepoService.items[key];
+    for (const key in this.services.itemRepoService.items) {
+      const item = this.services.itemRepoService.items[key];
       if (item.type === 'wood' && item.value > lastWood.value && item.value <= woodvalue) {
         lastWood = item;
       }
     }
 
-    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldWoodEnabled && !this.services.hellService?.inHell) {
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -864,19 +857,19 @@ export class InventoryService {
   }
 
   getHide(): Item {
-    const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
+    const animalHandling = this.services.characterService.characterState.attributes.animalHandling.value;
     const hideValue = Math.floor(Math.pow(animalHandling / 1e9, 0.15) * 16);
 
-    let lastHide = this.itemRepoService.items['hide'];
+    let lastHide = this.services.itemRepoService.items['hide'];
 
-    for (const key in this.itemRepoService.items) {
-      const item = this.itemRepoService.items[key];
+    for (const key in this.services.itemRepoService.items) {
+      const item = this.services.itemRepoService.items[key];
       if (item.type === 'hide' && item.value > lastHide.value && item.value <= hideValue) {
         lastHide = item;
       }
     }
 
-    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldHidesEnabled && !this.services.hellService?.inHell) {
       // sell any hides cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -918,14 +911,14 @@ export class InventoryService {
       this.addItem(stick);
     }
 
-    if (this.characterService.characterState.bloodlineRank >= 6) {
+    if (this.services.characterService.characterState.bloodlineRank >= 6) {
       return; // Skip the rice gift, thematically inappropriate
     }
     if (this.motherGift) {
-      this.logService.addLogMessage(
+      this.services.logService.addLogMessage(
         'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
         'STANDARD', 'EVENT');
-      this.addItem(this.itemRepoService.items['rice'], 300);
+      this.addItem(this.services.itemRepoService.items['rice'], 300);
     }
   }
 
@@ -953,9 +946,9 @@ export class InventoryService {
     } else {
       // no food found, buy a bowl of rice automatically
       this.noFood = true;
-      if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
-        this.characterService.characterState.money--;
-        this.characterService.characterState.status.nourishment.value++;
+      if (!this.services.hellService?.inHell && this.services.characterService.characterState.money > 0 && this.autoBuyFood) {
+        this.services.characterService.characterState.money--;
+        this.services.characterService.characterState.status.nourishment.value++;
       }
     }
     this.fed = false;
@@ -978,7 +971,7 @@ export class InventoryService {
           if (balanceItem.sellNumber < 1) {
             break; // dump to inventory if user enters balance numbers under 1
           } else {
-            this.characterService.characterState.money += item.value * quantity; // Sell it all
+            this.services.characterService.characterState.money += item.value * quantity; // Sell it all
             return -1;
           }
         } else if (balanceItem.sellNumber < 1) {
@@ -1001,11 +994,11 @@ export class InventoryService {
           }
           if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
             if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
-              this.characterService.characterState.money += item.value * modulo;
+              this.services.characterService.characterState.money += item.value * modulo;
               balanceItem.index += modulo;
               break;
             } else {
-              this.characterService.characterState.money += item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index);
+              this.services.characterService.characterState.money += item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index);
               modulo -= balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index;
               balanceItem.index = 0;
             }
@@ -1017,7 +1010,7 @@ export class InventoryService {
         if (quantity) {
           quantity /= (balanceItem.useNumber + balanceItem.sellNumber);
           this.useItem(item, quantity * balanceItem.useNumber)
-          this.characterService.characterState.money += item.value * quantity;
+          this.services.characterService.characterState.money += item.value * quantity;
           quantity = 0;
         }
         if (quantity < 1) { // Sanity check, spill out what should be impossible excess to inventory as though balance were disabled.
@@ -1051,25 +1044,25 @@ export class InventoryService {
         }
       }
     }
-    if (this.autoSellOldGemsEnabled && item.type === "spiritGem" && !this.hellService?.inHell) {
+    if (this.autoSellOldGemsEnabled && item.type === "spiritGem" && !this.services.hellService?.inHell) {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (itemStack && itemStack.item.type === "spiritGem" && itemStack.item.value < item.value) {
-          this.characterService.characterState.money += itemStack.item.value * itemStack.quantity;
+          this.services.characterService.characterState.money += itemStack.item.value * itemStack.quantity;
           this.itemStacks[i] = null;
         }
       }
     }
     for (const entry of this.autoSellEntries) {
-      if (entry.name === item.name && !this.hellService?.inHell) {
+      if (entry.name === item.name && !this.services.hellService?.inHell) {
         let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
         if (numberToSell > quantity) {
           // don't worry about selling more than the incoming quantity here
           numberToSell = quantity;
         }
         if (numberToSell > 0) {
-          this.characterService.characterState.money += item.value * numberToSell;
+          this.services.characterService.characterState.money += item.value * numberToSell;
           quantity -= numberToSell;
           if (quantity === 0) {
             return -1;
@@ -1122,11 +1115,11 @@ export class InventoryService {
     }
 
     // if we're here we didn't find a slot for anything/everything.
-    if (this.autoSellUnlocked && !this.hellService?.inHell) {
-      this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
-      this.characterService.characterState.money += item.value * quantity;
+    if (this.autoSellUnlocked && !this.services.hellService?.inHell) {
+      this.services.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
+      this.services.characterService.characterState.money += item.value * quantity;
     } else {
-      this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you threw it away.`, 'STANDARD', 'EVENT');
+      this.services.logService.addLogMessage(`You don't have enough room for the ${item.name} so you threw it away.`, 'STANDARD', 'EVENT');
     }
     this.thrownAwayItems += quantity;
     return firstStack;
@@ -1138,7 +1131,7 @@ export class InventoryService {
       return;
     }
     // can't sell in hell
-    if (this.hellService?.inHell) {
+    if (this.services.hellService?.inHell) {
       return;
     }
     this.lifetimeSoldItems += quantity;
@@ -1148,13 +1141,13 @@ export class InventoryService {
     const index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks[index] = null;
-      this.characterService.characterState.money += itemStack.quantity * itemStack.item.value;
+      this.services.characterService.characterState.money += itemStack.quantity * itemStack.item.value;
       if (itemStack === this.selectedItem) {
         this.selectedItem = null;
       }
     } else {
       itemStack.quantity -= quantity;
-      this.characterService.characterState.money += quantity * itemStack.item.value;
+      this.services.characterService.characterState.money += quantity * itemStack.item.value;
     }
   }
 
@@ -1227,8 +1220,8 @@ export class InventoryService {
       item.use(quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
       if (item.type === "food") {
         this.fed = true;
-        if (this.hellService) {
-          this.hellService.daysFasted = 0;
+        if (this.services.hellService) {
+          this.services.hellService.daysFasted = 0;
         }
       }
     }
@@ -1303,15 +1296,15 @@ export class InventoryService {
     if ((item.armorStats?.durability || 0) <= 0 && (item.weaponStats?.durability || 0) <= 0) {
 
       //it's broken, bail out
-      this.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.", "STANDARD", "EVENT")
+      this.services.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.", "STANDARD", "EVENT")
       return;
     }
 
-    const itemToEquip = this.characterService.characterState.equipment[item.slot];
+    const itemToEquip = this.services.characterService.characterState.equipment[item.slot];
     if (itemToEquip) {
       this.addItem(itemToEquip);
     }
-    this.characterService.characterState.equipment[item.slot] = item;
+    this.services.characterService.characterState.equipment[item.slot] = item;
     const index = this.itemStacks.indexOf(itemStack);
     this.itemStacks[index] = null;
   }
@@ -1320,10 +1313,10 @@ export class InventoryService {
     let equippedPower = 0;
     let weapon = true;
     if (slot === 'leftHand' || slot === 'rightHand') {
-      equippedPower = this.characterService.characterState.equipment[slot]?.weaponStats?.baseDamage || 0;
+      equippedPower = this.services.characterService.characterState.equipment[slot]?.weaponStats?.baseDamage || 0;
     } else {
       weapon = false;
-      equippedPower = this.characterService.characterState.equipment[slot]?.armorStats?.defense || 0;
+      equippedPower = this.services.characterService.characterState.equipment[slot]?.armorStats?.defense || 0;
     }
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
@@ -1446,7 +1439,7 @@ export class InventoryService {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.lifetimePotionsUsed += quantity;
-    this.characterService.characterState.attributes[potion.attribute].value += potion.increase * quantity;
+    this.services.characterService.characterState.attributes[potion.attribute].value += potion.increase * quantity;
   }
 
   /** A special use function for generated pills*/
@@ -1456,14 +1449,14 @@ export class InventoryService {
     }
     this.lifetimePillsUsed += quantity;
     if (pill.effect === "Longevity") {
-      this.characterService.characterState.alchemyLifespan += pill.power * quantity;
-      if (this.characterService.characterState.alchemyLifespan > 36500) {
-        this.characterService.characterState.alchemyLifespan = 36500;
+      this.services.characterService.characterState.alchemyLifespan += pill.power * quantity;
+      if (this.services.characterService.characterState.alchemyLifespan > 36500) {
+        this.services.characterService.characterState.alchemyLifespan = 36500;
       }
     } else if (pill.effect === "Empowerment") {
-      this.characterService.characterState.empowermentFactor += 0.01;
+      this.services.characterService.characterState.empowermentFactor += 0.01;
     }
-    this.characterService.characterState.checkOverage();
+    this.services.characterService.characterState.checkOverage();
   }
 
   /** Returns the number of open inventory slots. */
@@ -1578,7 +1571,7 @@ export class InventoryService {
   }
 
   mergeEquippedSlot(slot: EquipmentPosition, itemToMerge: Item, sourceItemIndex: number) {
-    const equippedItem = this.characterService.characterState.equipment[slot];
+    const equippedItem = this.services.characterService.characterState.equipment[slot];
     if (!equippedItem){
       return;
     }
@@ -1591,7 +1584,7 @@ export class InventoryService {
     }
     let newItem;
     if (!equippedItem) {
-      this.characterService.characterState.equipment[slot] = itemToMerge;
+      this.services.characterService.characterState.equipment[slot] = itemToMerge;
       this.itemStacks[sourceItemIndex] = null;
       return;
     }
@@ -1600,7 +1593,7 @@ export class InventoryService {
     } else {
       newItem = this.generateArmor(equippedItem.value + itemToMerge.value, itemToMerge.armorStats?.material + "", slot, false, equippedItem.armorStats?.baseName, equippedItem.armorStats?.effect);
     }
-    this.characterService.characterState.equipment[slot] = newItem;
+    this.services.characterService.characterState.equipment[slot] = newItem;
     this.itemStacks[sourceItemIndex] = null;
   }
 
@@ -1622,7 +1615,7 @@ export class InventoryService {
   }
 
   mergeAnySpiritGem(power = 0) {
-    const meridianRank = this.characterService.meridianRank();
+    const meridianRank = this.services.characterService.meridianRank();
     if (power > meridianRank - 5) {
       power = meridianRank - 5
     }
@@ -1642,7 +1635,7 @@ export class InventoryService {
   }
 
   stashWeapons() {
-    this.characterService.stashWeapons();
+    this.services.characterService.stashWeapons();
     for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
       if (item && instanceOfEquipment(item) && item.weaponStats) {
@@ -1654,7 +1647,7 @@ export class InventoryService {
   }
 
   restoreWeapons() {
-    this.characterService.restoreWeapons();
+    this.services.characterService.restoreWeapons();
     for (let i = this.stashedItemStacks.length - 1; i >= 0 ; i--) {
       const itemStack = this.stashedItemStacks[i];
       if (itemStack && itemStack.item && instanceOfEquipment(itemStack.item) && itemStack.item.weaponStats) {
@@ -1665,7 +1658,7 @@ export class InventoryService {
   }
 
   stashArmor() {
-    this.characterService.stashArmor();
+    this.services.characterService.stashArmor();
     for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
       if (item && instanceOfEquipment(item) && item.armorStats) {
@@ -1676,7 +1669,7 @@ export class InventoryService {
   }
 
   restoreArmor() {
-    this.characterService.restoreArmor();
+    this.services.characterService.restoreArmor();
     for (let i = this.stashedItemStacks.length - 1; i >= 0 ; i--) {
       const itemStack = this.stashedItemStacks[i];
       if (itemStack && itemStack.item && instanceOfEquipment(itemStack.item) && itemStack.item.armorStats) {
@@ -1719,9 +1712,9 @@ export class InventoryService {
       } else {
         this.itemStacks[gemIndex] = null;
       }
-      if (this.characterService.characterState.yinYangUnlocked) {
-        this.characterService.characterState.yang++;
-        this.characterService.characterState.yin++;
+      if (this.services.characterService.characterState.yinYangUnlocked) {
+        this.services.characterService.characterState.yang++;
+        this.services.characterService.characterState.yin++;
       }
     }
   }

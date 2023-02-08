@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FollowerManagementPanelComponent } from '../follower-management-panel/follower-management-panel.component';
 import { Character } from '../game-state/character';
@@ -11,14 +11,17 @@ import { FollowersService, Follower } from '../game-state/followers.service';
   templateUrl: './attributes-panel.component.html',
   styleUrls: ['./attributes-panel.component.less', '../app.component.less']
 })
-export class AttributesPanelComponent {
-  character: Character;
+export class AttributesPanelComponent implements OnInit {
+  character!: Character;
 
   constructor(public characterService: CharacterService,
     public dialog: MatDialog,
     public followerService: FollowersService) {
-    this.character = characterService.characterState;
    }
+
+  ngOnInit(): void {
+    this.character = this.characterService.characterState;
+  }
   
    // Preserve original property order
   originalOrder = (): number => {

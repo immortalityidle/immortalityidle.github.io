@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { isEmpty } from 'rxjs';
-import { MainLoopService } from './main-loop.service';
+import { ServicesService } from './services.service';
 
 const LOG_MERGE_INTERVAL_MS = 1000;
 export type LogType = 'STANDARD' | 'INJURY';
@@ -37,16 +36,18 @@ export class LogService {
   currentLog: Log[] = [];
 
   constructor(
+    private services: ServicesService
+  ) {}
 
-    mainLoopService: MainLoopService
-  ) {
-    mainLoopService.frameSubject.subscribe(() => {
+  init(): LogService {
+    this.services.mainLoopService.frameSubject.subscribe(() => {
       this.updateLogTopics();
     });
     this.addLogMessage("Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.", 'STANDARD', 'STORY');
     this.addLogMessage("Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.", 'STANDARD', 'STORY');
     this.addLogMessage("It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.", 'STANDARD', 'STORY');
     this.addLogMessage("Be careful, the world can be a dangerous place.", 'STANDARD', 'STORY');
+    return this;
   }
 
   addLogMessage(message: string, type: LogType, topic: LogTopic): void {

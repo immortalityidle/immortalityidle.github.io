@@ -1,32 +1,18 @@
-import { Injectable, Injector } from '@angular/core';
-import { ActivityService } from './activity.service';
-import { BattleService } from './battle.service';
-import { LogService } from './log.service';
-import { MainLoopService } from './main-loop.service';
-import { CharacterService } from './character.service';
-import { HomeService } from './home.service';
-import { Furniture, InventoryService, Item } from './inventory.service';
-import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
-import { FollowersService } from './followers.service';
-import { AutoBuyerService } from './autoBuyer.service';
-import { GameStateService } from './game-state.service';
-import { HellLevel, HellService } from './hell.service';
+import { Injectable } from '@angular/core';
+import { Furniture, Item } from './inventory.service';
+import { ImpossibleTaskType } from './impossibleTask.service';
+import { HellLevel } from './hell.service';
+import { ServicesService } from './services.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ItemRepoService {
-  homeService?: HomeService;
-  activityService?: ActivityService;
-  inventoryService?: InventoryService;
-  battleService?: BattleService;
-  impossibleTaskService?: ImpossibleTaskService;
-  followerService?: FollowersService;
-  autoBuyerService?: AutoBuyerService;
-  gameStateService?: GameStateService;
-  hellService?: HellService;
+  furniture: { [key: string]: Furniture } = {};
+  items: { [key: string]: Item } = {};
 
-  furniture: { [key: string]: Furniture } = {
+  populateFurniture(): void {
+  this.furniture = {
     blanket: {
       id: 'blanket',
       name: "Blanket",
@@ -36,7 +22,7 @@ export class ItemRepoService {
       description: "A tattered blanket. Not much, but it could keep you warm at night. Increases daily stamina recovery by 1.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value++;
+        this.services.characterService.characterState.status.stamina.value++;
       },
     },
     mat: {
@@ -48,9 +34,9 @@ export class ItemRepoService {
       description: "A thin woven mat to sleep on. Increases daily stamina recovery by 1 and restores a bit of health.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 1;
-        this.characterService.characterState.status.health.value += 0.1;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.stamina.value += 1;
+        this.services.characterService.characterState.status.health.value += 0.1;
+        this.services.characterService.characterState.checkOverage();
       }
     },
     canopyBed: {
@@ -62,9 +48,9 @@ export class ItemRepoService {
       description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 2 and restores a bit of health.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 2;
-        this.characterService.characterState.status.health.value += 0.2;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.stamina.value += 2;
+        this.services.characterService.characterState.status.health.value += 0.2;
+        this.services.characterService.characterState.checkOverage();
       }
     },
     heatedBed: {
@@ -76,9 +62,9 @@ export class ItemRepoService {
       description: "A bed built over a small clay oven. Keeps you toasty on even the coldest nights. Increases daily stamina recovery by 5 and improves health recovery.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 5;
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.stamina.value += 5;
+        this.services.characterService.characterState.status.health.value += 1;
+        this.services.characterService.characterState.checkOverage();
       }
     },
     bedOfNails: {
@@ -90,8 +76,8 @@ export class ItemRepoService {
       description: "A solid board with nails poking upwards. You won't sleep as well, but it is certain to toughen you up.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value -= 1;
-        this.characterService.characterState.increaseAttribute('toughness', 0.1);
+        this.services.characterService.characterState.status.stamina.value -= 1;
+        this.services.characterService.characterState.increaseAttribute('toughness', 0.1);
       }
     },
     waterBucket: {
@@ -103,7 +89,7 @@ export class ItemRepoService {
       description: "A bucket of water that lets you splash water on your face. Increases charisma.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.01);
+        this.services.characterService.characterState.increaseAttribute('charisma', 0.01);
       }
     },
     washBasin: {
@@ -115,7 +101,7 @@ export class ItemRepoService {
       description: "A wash basin with a rag to clean yourself. Increases charisma.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.05);
+        this.services.characterService.characterState.increaseAttribute('charisma', 0.05);
       }
     },
     woodenTub: {
@@ -127,9 +113,9 @@ export class ItemRepoService {
       description: "A tall and narrow tub where you can squat and bathe. Increases charisma and health recovery.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.1);
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.increaseAttribute('charisma', 0.1);
+        this.services.characterService.characterState.status.health.value += 1;
+        this.services.characterService.characterState.checkOverage();
       }
     },
     bronzeTub: {
@@ -141,9 +127,9 @@ export class ItemRepoService {
       description: "A luxurious tub where you can get sparkling clean. Increases charisma and health recovery.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.2);
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.increaseAttribute('charisma', 0.2);
+        this.services.characterService.characterState.status.health.value += 1;
+        this.services.characterService.characterState.checkOverage();
       }
     },
     heatedTub: {
@@ -155,11 +141,11 @@ export class ItemRepoService {
       description: "A luxurious tub with its own heating stove. Good for your health and beauty.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.2);
-        this.characterService.characterState.status.stamina.value += 5;
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.healthBonusBath++;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.increaseAttribute('charisma', 0.2);
+        this.services.characterService.characterState.status.stamina.value += 5;
+        this.services.characterService.characterState.status.health.value += 1;
+        this.services.characterService.characterState.healthBonusBath++;
+        this.services.characterService.characterState.checkOverage();
       }
     },
     cookPot: {
@@ -171,9 +157,9 @@ export class ItemRepoService {
       description: "A simple pot over a fire to boil your food. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.01);
-        this.characterService.characterState.increaseAttribute('speed', 0.01);
-        this.characterService.characterState.increaseAttribute('toughness', 0.01);
+        this.services.characterService.characterState.increaseAttribute('strength', 0.01);
+        this.services.characterService.characterState.increaseAttribute('speed', 0.01);
+        this.services.characterService.characterState.increaseAttribute('toughness', 0.01);
       }
     },
     roastingSpit: {
@@ -185,9 +171,9 @@ export class ItemRepoService {
       description: "A simple spit to go along with your cookpot, letting you add more variety to your diet. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.02);
-        this.characterService.characterState.increaseAttribute('speed', 0.02);
-        this.characterService.characterState.increaseAttribute('toughness', 0.02);
+        this.services.characterService.characterState.increaseAttribute('strength', 0.02);
+        this.services.characterService.characterState.increaseAttribute('speed', 0.02);
+        this.services.characterService.characterState.increaseAttribute('toughness', 0.02);
       }
     },
     wok: {
@@ -199,9 +185,9 @@ export class ItemRepoService {
       description: "A large metal wok to stir-fry a tasty dinner. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.05);
-        this.characterService.characterState.increaseAttribute('speed', 0.05);
-        this.characterService.characterState.increaseAttribute('toughness', 0.05);
+        this.services.characterService.characterState.increaseAttribute('strength', 0.05);
+        this.services.characterService.characterState.increaseAttribute('speed', 0.05);
+        this.services.characterService.characterState.increaseAttribute('toughness', 0.05);
       }
     },
     chefKitchen: {
@@ -213,9 +199,9 @@ export class ItemRepoService {
       description: "An elaborate kitchen that allows you to cook anything. Improves all physical attributes.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.1);
-        this.characterService.characterState.increaseAttribute('speed', 0.1);
-        this.characterService.characterState.increaseAttribute('toughness', 0.1);
+        this.services.characterService.characterState.increaseAttribute('strength', 0.1);
+        this.services.characterService.characterState.increaseAttribute('speed', 0.1);
+        this.services.characterService.characterState.increaseAttribute('toughness', 0.1);
       }
     },
     anvil: {
@@ -227,7 +213,7 @@ export class ItemRepoService {
       description: "An anvil to work on blacksmithing.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('metalLore', 0.01);
+        this.services.characterService.characterState.increaseAttribute('metalLore', 0.01);
       }
     },
     herbGarden: {
@@ -239,7 +225,7 @@ export class ItemRepoService {
       description: "An pleasant garden growing herbs.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('woodLore', 0.01);
+        this.services.characterService.characterState.increaseAttribute('woodLore', 0.01);
       }
     },
     dogKennel: {
@@ -251,7 +237,7 @@ export class ItemRepoService {
       description: "A kennel for training hunting dogs.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
+        this.services.characterService.characterState.increaseAttribute('animalHandling', 0.01);
       }
     },
     cauldron: {
@@ -263,7 +249,7 @@ export class ItemRepoService {
       description: "A cauldron for practicing alchemy.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('waterLore', 0.01);
+        this.services.characterService.characterState.increaseAttribute('waterLore', 0.01);
       }
     },
     bookshelf: {
@@ -275,7 +261,7 @@ export class ItemRepoService {
       description: "An bookshelf to read and expand your mind.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('intelligence', 0.1);
+        this.services.characterService.characterState.increaseAttribute('intelligence', 0.1);
       }
     },
     prayerShrine: {
@@ -287,14 +273,16 @@ export class ItemRepoService {
       description: "A quiet shrine for contemplative prayer. You won't be able to use this unless you have some innate spirituality.",
       useConsumes: false,
       use: () => {
-        if (this.characterService.characterState.attributes.spirituality.value > 0) {
-          this.characterService.characterState.increaseAttribute('spirituality', 0.01);
+        if (this.services.characterService.characterState.attributes.spirituality.value > 0) {
+          this.services.characterService.characterState.increaseAttribute('spirituality', 0.01);
         }
       }
     }
   }
+}
 
-  items: { [key: string]: Item } = {
+  populateItems(): void {
+  this.items = {
     rice: {
       id: 'rice',
       name: 'rice',
@@ -305,8 +293,8 @@ export class ItemRepoService {
       useDescription: 'Fills your belly.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.checkOverage();
       },
     },
     cabbage: {
@@ -319,12 +307,12 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.01) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     beans: {
@@ -337,17 +325,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.02) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 5)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 5)) {
-            this.characterService.characterState.foodLifespan = 365 * 5;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 5)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 5)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 5;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     broccoli: {
@@ -360,17 +348,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.05) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 10)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 10)) {
-            this.characterService.characterState.foodLifespan = 365 * 10;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 10)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 10)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 10;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     calabash: {
@@ -383,17 +371,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.08) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 15)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 15)) {
-            this.characterService.characterState.foodLifespan = 365 * 15;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 15)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 15)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 15;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     taro: {
@@ -406,17 +394,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.1) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 20)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 20)) {
-            this.characterService.characterState.foodLifespan = 365 * 20;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 20)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 20)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 20;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     pear: {
@@ -429,17 +417,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.12) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 25)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 25)) {
-            this.characterService.characterState.foodLifespan = 365 * 25;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 25)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 25)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 25;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     melon: {
@@ -452,17 +440,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.15) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 30)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 30)) {
-            this.characterService.characterState.foodLifespan = 365 * 30;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 30)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 30)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 30;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     plum: {
@@ -475,17 +463,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.18) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 35)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 35)) {
-            this.characterService.characterState.foodLifespan = 365 * 35;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 35)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 35)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 35;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     apricot: {
@@ -498,17 +486,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.20) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 40)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 40)) {
-            this.characterService.characterState.foodLifespan = 365 * 40;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 40)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 40)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 40;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     peach: {
@@ -521,17 +509,17 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and can even lead to a long life.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.22) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity * 2;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 72)) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 72)) {
-            this.characterService.characterState.foodLifespan = 365 * 72;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.health.value += quantity * 2;
+          if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 72)) {
+            this.services.characterService.characterState.foodLifespan += quantity;
+          } else if (this.services.characterService.characterState.foodLifespan < (365 * 72)) {
+            this.services.characterService.characterState.foodLifespan = 365 * 72;
           }
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     divinePeach: {
@@ -544,19 +532,19 @@ export class ItemRepoService {
       useDescription: 'Sates your immortal hunger.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.max += quantity;
-        this.characterService.characterState.status.nourishment.value += quantity;
-        this.characterService.characterState.healthBonusFood += quantity * 2;
-        this.characterService.characterState.status.health.value += quantity * 20;
-        this.characterService.characterState.status.stamina.value += quantity * 2;
-        this.characterService.characterState.status.stamina.max += quantity * 2;
-        this.characterService.characterState.status.mana.value += quantity;
-        if (this.characterService.characterState.foodLifespan + quantity <= (365 * 720)) {
-          this.characterService.characterState.foodLifespan += quantity;
-        } else if (this.characterService.characterState.foodLifespan < (365 * 720)) {
-          this.characterService.characterState.foodLifespan = 365 * 720;
+        this.services.characterService.characterState.status.nourishment.max += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.healthBonusFood += quantity * 2;
+        this.services.characterService.characterState.status.health.value += quantity * 20;
+        this.services.characterService.characterState.status.stamina.value += quantity * 2;
+        this.services.characterService.characterState.status.stamina.max += quantity * 2;
+        this.services.characterService.characterState.status.mana.value += quantity;
+        if (this.services.characterService.characterState.foodLifespan + quantity <= (365 * 720)) {
+          this.services.characterService.characterState.foodLifespan += quantity;
+        } else if (this.services.characterService.characterState.foodLifespan < (365 * 720)) {
+          this.services.characterService.characterState.foodLifespan = 365 * 720;
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     meat: {
@@ -569,11 +557,11 @@ export class ItemRepoService {
       useDescription: 'Fills your belly. Can also improve your health and stamina.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity * 2;
-        this.characterService.characterState.healthBonusFood += quantity;
-        this.characterService.characterState.status.health.value += quantity * 10;
-        this.characterService.characterState.status.stamina.max += quantity;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.nourishment.value += quantity * 2;
+        this.services.characterService.characterState.healthBonusFood += quantity;
+        this.services.characterService.characterState.status.health.value += quantity * 10;
+        this.services.characterService.characterState.status.stamina.max += quantity;
+        this.services.characterService.characterState.checkOverage();
       },
     },
     spiritMeat: {
@@ -586,11 +574,11 @@ export class ItemRepoService {
       useDescription: 'Fills your belly. Can also improve your health and stamina.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity * 2;
-        this.characterService.characterState.healthBonusFood += quantity;
-        this.characterService.characterState.status.health.value += quantity * 20;
-        this.characterService.characterState.status.stamina.max += quantity;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.nourishment.value += quantity * 2;
+        this.services.characterService.characterState.healthBonusFood += quantity;
+        this.services.characterService.characterState.status.health.value += quantity * 20;
+        this.services.characterService.characterState.status.stamina.max += quantity;
+        this.services.characterService.characterState.checkOverage();
       },
     },
     carp: {
@@ -603,12 +591,12 @@ export class ItemRepoService {
       useDescription: 'Fills your belly. Might also improve your health and stamina.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
+        this.services.characterService.characterState.status.nourishment.value += quantity;
         if (Math.random() < 0.1) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.stamina.max += quantity;
+          this.services.characterService.characterState.healthBonusFood += quantity;
+          this.services.characterService.characterState.status.stamina.max += quantity;
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
     },
     hide: {
@@ -1140,23 +1128,17 @@ export class ItemRepoService {
       useDescription: 'Become immortal and win the game.',
       useConsumes: true,
       use: () => {
-        if (!this.impossibleTaskService) {
-          this.impossibleTaskService = this.injector.get(ImpossibleTaskService);
-        }
-        this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].progress++;
-        this.impossibleTaskService.activeTaskIndex = ImpossibleTaskType.OvercomeDeath; // just in case. Don't want this use to fail.
-        this.impossibleTaskService.checkCompletion();
-        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete) {
-          this.logService.addLogMessage("YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!", "INJURY", 'STORY');
-          if (!this.gameStateService) {
-            this.gameStateService = this.injector.get(GameStateService);
+        this.services.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].progress++;
+        this.services.impossibleTaskService.activeTaskIndex = ImpossibleTaskType.OvercomeDeath; // just in case. Don't want this use to fail.
+        this.services.impossibleTaskService.checkCompletion();
+        if (this.services.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete) {
+          this.services.logService.addLogMessage("YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!", "INJURY", 'STORY');
+          if (this.services.gameStateService.easyModeEver) {
+            this.services.logService.addLogMessage("Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.", "STANDARD", 'STORY');
           }
-          if (this.gameStateService.easyModeEver) {
-            this.logService.addLogMessage("Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.", "STANDARD", 'STORY');
-          }
-          this.logService.addLogMessage("You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and succeeded in your quest on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
-          this.logService.addLogMessage("You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to overcome death.", "STANDARD", 'STORY');
-          this.characterService.characterState.immortal = true;
+          this.services.logService.addLogMessage("You started your journey on " + new Date(this.services.gameStateService.gameStartTimestamp).toDateString() + " and succeeded in your quest on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
+          this.services.logService.addLogMessage("You took " + this.services.mainLoopService.totalTicks + " days over " + this.services.characterService.characterState.totalLives + " lifetimes to overcome death.", "STANDARD", 'STORY');
+          this.services.characterService.characterState.immortal = true;
         }
       },
     },
@@ -1170,25 +1152,13 @@ export class ItemRepoService {
       useDescription: 'Become a god and win the game (again).',
       useConsumes: true,
       use: () => {
-        this.logService.addLogMessage("YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!", "INJURY", 'STORY');
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
-        }
-        this.hellService.inHell = false;
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        if (!this.battleService) {
-          this.battleService = this.injector.get(BattleService);
-        }
-        this.logService.addLogMessage("You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and achieved godhood on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
-        this.logService.addLogMessage("You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to claim your throne on Mount Penglai.", "STANDARD", 'STORY');
-        this.characterService.characterState.god = true;
-        this.battleService.troubleKills = 0;
-        this.activityService.reloadActivities();
+        this.services.logService.addLogMessage("YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!", "INJURY", 'STORY');
+        this.services.hellService.inHell = false;
+        this.services.logService.addLogMessage("You started your journey on " + new Date(this.services.gameStateService.gameStartTimestamp).toDateString() + " and achieved godhood on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
+        this.services.logService.addLogMessage("You took " + this.services.mainLoopService.totalTicks + " days over " + this.services.characterService.characterState.totalLives + " lifetimes to claim your throne on Mount Penglai.", "STANDARD", 'STORY');
+        this.services.characterService.characterState.god = true;
+        this.services.battleService.troubleKills = 0;
+        this.services.activityService.reloadActivities();
       },
     },
     fingers: {
@@ -1250,17 +1220,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.TongueRipping)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.TongueRipping);
         }
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
-        }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.TongueRipping)) {
-          this.hellService.completedHellBosses.push(HellLevel.TongueRipping);
-        }
-        this.logService.addLogMessage("The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.", "STANDARD", 'STORY');
-        this.followerService.unlockJob("prophet");
+        this.services.logService.addLogMessage("The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.", "STANDARD", 'STORY');
+        this.services.followerService.unlockJob("prophet");
       },
     },
     hellCrownScissors: {
@@ -1273,18 +1237,12 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.Scissors)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.Scissors);
         }
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
-        }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Scissors)) {
-          this.hellService.completedHellBosses.push(HellLevel.Scissors);
-        }
-        this.logService.addLogMessage("The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.", "STANDARD", 'STORY');
-        this.logService.addLogMessage("From now on, each follower will train a child to replace themselves in your service when they pass away.", "STANDARD", 'STORY');
-        this.followerService.autoReplaceUnlocked = true;
+        this.services.logService.addLogMessage("The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.", "STANDARD", 'STORY');
+        this.services.logService.addLogMessage("From now on, each follower will train a child to replace themselves in your service when they pass away.", "STANDARD", 'STORY');
+        this.services.followerService.autoReplaceUnlocked = true;
       },
     },
     hellCrownTreesOfKnives: {
@@ -1297,17 +1255,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
         }
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
-        }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)) {
-          this.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
-        }
-        this.logService.addLogMessage("The Crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
-        this.followerService.unlockJob("moneyBurner");
+        this.services.logService.addLogMessage("The Crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
+        this.services.followerService.unlockJob("moneyBurner");
       },
     },
     hellCrownMirrors: {
@@ -1320,21 +1272,12 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.Mirrors)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.Mirrors);
         }
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
-        }
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Mirrors)) {
-          this.hellService.completedHellBosses.push(HellLevel.Mirrors);
-        }
-        this.logService.addLogMessage("The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.", "STANDARD", 'STORY');
-        this.characterService.characterState.attributes.combatMastery.value += 1;
-        this.activityService.CombatTraining.unlocked = true;
+        this.services.logService.addLogMessage("The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.", "STANDARD", 'STORY');
+        this.services.characterService.characterState.attributes.combatMastery.value += 1;
+        this.services.activityService.CombatTraining.unlocked = true;
       },
     },
     hellCrownSteamers: {
@@ -1347,17 +1290,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.Steamers)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.Steamers);
         }
-        if (!this.battleService) {
-          this.battleService = this.injector.get(BattleService);
-        }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Steamers)) {
-          this.hellService.completedHellBosses.push(HellLevel.Steamers);
-        }
-        this.logService.addLogMessage("The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.", "STANDARD", 'STORY');
-        this.battleService.pyroclasmUnlocked = true;
+        this.services.logService.addLogMessage("The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.", "STANDARD", 'STORY');
+        this.services.battleService.pyroclasmUnlocked = true;
       },
     },
     hellCrownPillars: {
@@ -1370,17 +1307,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.CopperPillars)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.CopperPillars);
         }
-        if (!this.battleService) {
-          this.battleService = this.injector.get(BattleService);
-        }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)) {
-          this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
-        }
-        this.logService.addLogMessage("The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.", "STANDARD", 'STORY');
-        this.battleService.metalFistUnlocked = true;
+        this.services.logService.addLogMessage("The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.", "STANDARD", 'STORY');
+        this.services.battleService.metalFistUnlocked = true;
       },
     },
     hellCrownMountainOfKnives: {
@@ -1393,14 +1324,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.MountainOfKnives)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.MountainOfKnives);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfKnives)) {
-          this.hellService.completedHellBosses.push(HellLevel.MountainOfKnives);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.", "STANDARD", 'STORY');
-        this.characterService.characterState.yinYangUnlocked = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.", "STANDARD", 'STORY');
+        this.services.characterService.characterState.yinYangUnlocked = true;
       },
     },
     hellCrownMountainOfIce: {
@@ -1413,17 +1341,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.MountainOfIce)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.MountainOfIce);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfIce)) {
-          this.hellService.completedHellBosses.push(HellLevel.MountainOfIce);
-        }
-        if (!this.battleService) {
-          this.battleService = this.injector.get(BattleService);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.", "STANDARD", 'STORY');
-        this.battleService.iceShieldUnlocked = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.", "STANDARD", 'STORY');
+        this.services.battleService.iceShieldUnlocked = true;
       },
     },
     hellCrownCauldronsOfOil: {
@@ -1436,14 +1358,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.CauldronsOfOil)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.CauldronsOfOil);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CauldronsOfOil)) {
-          this.hellService.completedHellBosses.push(HellLevel.CauldronsOfOil);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.", "STANDARD", 'STORY');
-        this.characterService.characterState.righteousWrathUnlocked = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.", "STANDARD", 'STORY');
+        this.services.characterService.characterState.righteousWrathUnlocked = true;
       },
     },
     hellCrownCattlePit: {
@@ -1456,17 +1375,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.CattlePit)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.CattlePit);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CattlePit)) {
-          this.hellService.completedHellBosses.push(HellLevel.CattlePit);
-        }
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before.", "STANDARD", 'STORY');
-        this.followerService.unlockElementalPets();
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before.", "STANDARD", 'STORY');
+        this.services.followerService.unlockElementalPets();
       },
     },
     hellCrownCrushingBoulder: {
@@ -1479,14 +1392,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.CrushingBoulder)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.CrushingBoulder);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CrushingBoulder)) {
-          this.hellService.completedHellBosses.push(HellLevel.CrushingBoulder);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.", "STANDARD", 'STORY');
-        this.characterService.characterState.bonusMuscles = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.", "STANDARD", 'STORY');
+        this.services.characterService.characterState.bonusMuscles = true;
       },
     },
     hellCrownMortarsAndPestles: {
@@ -1499,22 +1409,13 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.MortarsAndPestles)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.MortarsAndPestles);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MortarsAndPestles)) {
-          this.hellService.completedHellBosses.push(HellLevel.MortarsAndPestles);
-        }
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.", "STANDARD", 'STORY');
-        this.homeService.hellFood = true;
-        this.inventoryService.divinePeachesUnlocked = true;
-        this.inventoryService.updateFarmFoodList();
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.", "STANDARD", 'STORY');
+        this.services.homeService.hellFood = true;
+        this.services.inventoryService.divinePeachesUnlocked = true;
+        this.services.inventoryService.updateFarmFoodList();
 
       },
     },
@@ -1528,17 +1429,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.BloodPool)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.BloodPool);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.BloodPool)) {
-          this.hellService.completedHellBosses.push(HellLevel.BloodPool);
-        }
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.", "STANDARD", 'STORY');
-        this.homeService.hellHome = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.", "STANDARD", 'STORY');
+        this.services.homeService.hellHome = true;
       },
     },
     hellCrownWrongfulDead: {
@@ -1551,14 +1446,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.WrongfulDead)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.WrongfulDead);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.WrongfulDead)) {
-          this.hellService.completedHellBosses.push(HellLevel.WrongfulDead);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.", "STANDARD", 'STORY');
-        this.characterService.characterState.bonusBrains = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.", "STANDARD", 'STORY');
+        this.services.characterService.characterState.bonusBrains = true;
       },
     },
     hellCrownDismemberment: {
@@ -1571,18 +1463,12 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.Dismemberment)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.Dismemberment);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Dismemberment)) {
-          this.hellService.completedHellBosses.push(HellLevel.Dismemberment);
-        }
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.", "STANDARD", 'STORY');
-        this.activityService.purifyGemsUnlocked = true;
-        this.activityService.reloadActivities();
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.", "STANDARD", 'STORY');
+        this.services.activityService.purifyGemsUnlocked = true;
+        this.services.activityService.reloadActivities();
       },
     },
     hellCrownFireMountain: {
@@ -1595,17 +1481,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.MountainOfFire)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.MountainOfFire);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfFire)) {
-          this.hellService.completedHellBosses.push(HellLevel.MountainOfFire);
-        }
-        if (!this.battleService) {
-          this.battleService = this.injector.get(BattleService);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
-        this.battleService.fireShieldUnlocked = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
+        this.services.battleService.fireShieldUnlocked = true;
       },
     },
     hellCrownMills: {
@@ -1618,14 +1498,11 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.Mills)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.Mills);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Mills)) {
-          this.hellService.completedHellBosses.push(HellLevel.Mills);
-        }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.", "STANDARD", 'STORY');
-        this.characterService.characterState.bonusHealth = true;
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.", "STANDARD", 'STORY');
+        this.services.characterService.characterState.bonusHealth = true;
       },
     },
     hellCrownSaws: {
@@ -1638,18 +1515,12 @@ export class ItemRepoService {
       useDescription: '',
       useConsumes: true,
       use: () => {
-        if (!this.hellService) {
-          this.hellService = this.injector.get(HellService);
-        }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Saws)) {
-          this.hellService.completedHellBosses.push(HellLevel.Saws);
-        }
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
+        if (!this.services.hellService.completedHellBosses.includes(HellLevel.Saws)) {
+          this.services.hellService.completedHellBosses.push(HellLevel.Saws);
         }
 
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.", "STANDARD", 'STORY');
-        this.followerService.unlockJob("banker");
+        this.services.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.", "STANDARD", 'STORY');
+        this.services.followerService.unlockJob("banker");
       },
     },
     fastPlayManual: {
@@ -1662,12 +1533,12 @@ export class ItemRepoService {
       useDescription: "Permanently unlock fast game speed.",
       useConsumes: true,
       use: () => {
-        this.mainLoopService.unlockFastSpeed = true;
-        this.mainLoopService.topDivider = this.mainLoopService.topDivider > 5 ? 5 : this.mainLoopService.topDivider;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.mainLoopService.unlockFastSpeed = true;
+        this.services.mainLoopService.topDivider = this.services.mainLoopService.topDivider > 5 ? 5 : this.services.mainLoopService.topDivider;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        return this.mainLoopService.unlockFastSpeed;
+        return this.services.mainLoopService.unlockFastSpeed;
       }
     },
     fasterPlayManual: {
@@ -1680,12 +1551,12 @@ export class ItemRepoService {
       useDescription: "Permanently unlock faster game speed.",
       useConsumes: true,
       use: () => {
-        this.mainLoopService.unlockFasterSpeed = true;
-        this.mainLoopService.topDivider = this.mainLoopService.topDivider > 2 ? 2 : this.mainLoopService.topDivider;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.mainLoopService.unlockFasterSpeed = true;
+        this.services.mainLoopService.topDivider = this.services.mainLoopService.topDivider > 2 ? 2 : this.services.mainLoopService.topDivider;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        return this.mainLoopService.unlockFasterSpeed;
+        return this.services.mainLoopService.unlockFasterSpeed;
       }
     },
     fastestPlayManual: {
@@ -1698,12 +1569,12 @@ export class ItemRepoService {
       useDescription: "Permanently unlock fastest game speed.",
       useConsumes: true,
       use: () => {
-        this.mainLoopService.unlockFastestSpeed = true;
-        this.mainLoopService.topDivider = 1;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.mainLoopService.unlockFastestSpeed = true;
+        this.services.mainLoopService.topDivider = 1;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        return this.mainLoopService.unlockFastestSpeed;
+        return this.services.mainLoopService.unlockFastestSpeed;
       }
     },
     restartActivityManual: {
@@ -1716,19 +1587,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock preserving activity plans across reincarnations.",
       useConsumes: true,
       use: () => {
-        // check if actvityService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        this.activityService.autoRestart = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.activityService.autoRestart = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if actvityService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        return this.activityService?.autoRestart;
+        return this.services.activityService?.autoRestart;
       }
     },
     autoSellManual: {
@@ -1741,19 +1604,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-sell button in the inventory panel.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoSellUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoSellUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoSellUnlocked;
+        return this.services.inventoryService.autoSellUnlocked;
       }
     },
     autoUseManual: {
@@ -1766,19 +1621,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-use button in the inventory panel.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoUseUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoUseUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoUseUnlocked;
+        return this.services.inventoryService.autoUseUnlocked;
       }
     },
     autoBalanceManual: {
@@ -1791,19 +1638,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-balance button in the inventory panel.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoBalanceUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoBalanceUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoBalanceUnlocked;
+        return this.services.inventoryService.autoBalanceUnlocked;
       }
     },
     autoBuyLandManual: {
@@ -1816,17 +1655,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic land purchasing.",
       useConsumes: true,
       use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoBuyLandUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.homeService.autoBuyLandUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        return this.homeService.autoBuyLandUnlocked;
+        return this.services.homeService.autoBuyLandUnlocked;
       }
     },
     autoBuyHomeManual: {
@@ -1839,17 +1672,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic home upgrades.",
       useConsumes: true,
       use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoBuyHomeUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.homeService.autoBuyHomeUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        return this.homeService.autoBuyHomeUnlocked;
+        return this.services.homeService.autoBuyHomeUnlocked;
       }
     },
     autoBuyFurnitureManual: {
@@ -1862,17 +1689,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic purchasing for furniture.",
       useConsumes: true,
       use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoBuyFurnitureUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.homeService.autoBuyFurnitureUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        return this.homeService.autoBuyFurnitureUnlocked;
+        return this.services.homeService.autoBuyFurnitureUnlocked;
       }
     },
     autoBuyerSettingsManual: {
@@ -1885,17 +1706,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-buying customization",
       useConsumes: true,
       use: () => {
-        if (!this.autoBuyerService) {
-          this.autoBuyerService = this.injector.get(AutoBuyerService);
-        }
-        this.autoBuyerService.autoBuyerSettingsUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.autoBuyerService.autoBuyerSettingsUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (!this.autoBuyerService) {
-          this.autoBuyerService = this.injector.get(AutoBuyerService);
-        }
-        return this.autoBuyerService.autoBuyerSettingsUnlocked;
+        return this.services.autoBuyerService.autoBuyerSettingsUnlocked;
       }
     },
     autoFieldManual: {
@@ -1908,17 +1723,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic field plowing.",
       useConsumes: true,
       use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoFieldUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.homeService.autoFieldUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        return this.homeService.autoFieldUnlocked;
+        return this.services.homeService.autoFieldUnlocked;
       }
     },
     autoPotionManual: {
@@ -1931,24 +1740,16 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-drinking all potions.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoPotionUnlocked = true;
-        for (let index = this.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
-          if (this.inventoryService.autoUseEntries[index].name.includes("Potion")) {
-            this.inventoryService.autoUseEntries.splice(index, 1);
+        this.services.inventoryService.autoPotionUnlocked = true;
+        for (let index = this.services.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
+          if (this.services.inventoryService.autoUseEntries[index].name.includes("Potion")) {
+            this.services.inventoryService.autoUseEntries.splice(index, 1);
           }
         }
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoPotionUnlocked;
+        return this.services.inventoryService.autoPotionUnlocked;
       }
     },
     autoPillManual: {
@@ -1961,24 +1762,16 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-swallowing all pills.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoPillUnlocked = true;
-        for (let index = this.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
-          if (this.inventoryService.autoUseEntries[index].name.includes("Pill")) {
-            this.inventoryService.autoUseEntries.splice(index, 1);
+        this.services.inventoryService.autoPillUnlocked = true;
+        for (let index = this.services.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
+          if (this.services.inventoryService.autoUseEntries[index].name.includes("Pill")) {
+            this.services.inventoryService.autoUseEntries.splice(index, 1);
           }
         }
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoPillUnlocked;
+        return this.services.inventoryService.autoPillUnlocked;
       }
     },
     autoTroubleManual: {
@@ -1991,19 +1784,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic trouble in the battle panel.",
       useConsumes: true,
       use: () => {
-        // check if battleService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.battleService) {
-          this.battleService = this.injector.get(BattleService);
-        }
-        this.battleService.autoTroubleUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.battleService.autoTroubleUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if battleService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.battleService) {
-          this.battleService = this.injector.get(BattleService);
-        }
-        return this.battleService?.autoTroubleUnlocked;
+        return this.services.battleService?.autoTroubleUnlocked;
       }
     },
     autoWeaponMergeManual: {
@@ -2016,19 +1801,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic weapon merging in the inventory panel.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoWeaponMergeUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoWeaponMergeUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoWeaponMergeUnlocked;
+        return this.services.inventoryService.autoWeaponMergeUnlocked;
       }
     },
     autoArmorMergeManual: {
@@ -2041,19 +1818,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic armor merging in the inventory panel.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoArmorMergeUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoArmorMergeUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoArmorMergeUnlocked;
+        return this.services.inventoryService.autoArmorMergeUnlocked;
       }
     },
     useSpiritGemManual: {
@@ -2066,21 +1835,13 @@ export class ItemRepoService {
       useDescription: "Permanently unlock including spirit gems when creating items.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.useSpiritGemUnlocked = true;
-        this.inventoryService.useSpiritGemWeapons = true;
-        this.inventoryService.useSpiritGemPotions = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.useSpiritGemUnlocked = true;
+        this.services.inventoryService.useSpiritGemWeapons = true;
+        this.services.inventoryService.useSpiritGemPotions = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.useSpiritGemUnlocked;
+        return this.services.inventoryService.useSpiritGemUnlocked;
       }
     },
     bestHerbsManual: {
@@ -2093,20 +1854,12 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-selling lower grade herbs.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoSellOldHerbs = true;
-        this.inventoryService.autoSellOldHerbsEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoSellOldHerbs = true;
+        this.services.inventoryService.autoSellOldHerbsEnabled = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoSellOldHerbs;
+        return this.services.inventoryService.autoSellOldHerbs;
       }
     },
     bestWoodManual: {
@@ -2119,20 +1872,12 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-selling lower grade logs.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoSellOldWood = true;
-        this.inventoryService.autoSellOldWoodEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoSellOldWood = true;
+        this.services.inventoryService.autoSellOldWoodEnabled = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoSellOldWood;
+        return this.services.inventoryService.autoSellOldWood;
       }
     },
     bestOreManual: {
@@ -2145,21 +1890,13 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-selling lower grade ores and bars.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoSellOldOre = true;
-        this.inventoryService.autoSellOldOreEnabled = true;
-        this.inventoryService.autoSellOldBarsEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoSellOldOre = true;
+        this.services.inventoryService.autoSellOldOreEnabled = true;
+        this.services.inventoryService.autoSellOldBarsEnabled = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoSellOldOre;
+        return this.services.inventoryService.autoSellOldOre;
       }
     },
     bestHidesManual: {
@@ -2172,20 +1909,12 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-selling lower grade hides.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoSellOldHides = true;
-        this.inventoryService.autoSellOldHidesEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoSellOldHides = true;
+        this.services.inventoryService.autoSellOldHidesEnabled = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoSellOldHides;
+        return this.services.inventoryService.autoSellOldHides;
       }
     },
     bestWeaponManual: {
@@ -2198,19 +1927,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-equipping the best weapons in your inventory.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoequipBestWeapon = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoequipBestWeapon = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoequipBestWeapon;
+        return this.services.inventoryService.autoequipBestWeapon;
       }
     },
     bestArmorManual: {
@@ -2223,19 +1944,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-equipping the best armor in your inventory.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoequipBestArmor = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoequipBestArmor = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoequipBestArmor;
+        return this.services.inventoryService.autoequipBestArmor;
       }
     },
     betterStorageManual: {
@@ -2248,19 +1961,11 @@ export class ItemRepoService {
       useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.maxStackSize *= 10;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.maxStackSize *= 10;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.maxStackSize >= 1000;
+        return this.services.inventoryService.maxStackSize >= 1000;
       }
     },
     evenBetterStorageManual: {
@@ -2273,19 +1978,11 @@ export class ItemRepoService {
       useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.maxStackSize *= 10;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.maxStackSize *= 10;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.maxStackSize >= 10000;
+        return this.services.inventoryService.maxStackSize >= 10000;
       }
     },
     bestStorageManual: {
@@ -2298,19 +1995,11 @@ export class ItemRepoService {
       useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.maxStackSize *= 10;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.maxStackSize *= 10;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.maxStackSize >= 100000;
+        return this.services.inventoryService.maxStackSize >= 100000;
       }
     },
     followerAutoDismissManual: {
@@ -2323,19 +2012,11 @@ export class ItemRepoService {
       useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
-        }
-        this.followerService.autoDismissUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.followerService.autoDismissUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.followerService) {
-          this.followerService = this.injector.get(FollowersService);
-        }
-        return this.followerService.autoDismissUnlocked;
+        return this.services.followerService.autoDismissUnlocked;
       }
     },
     bestGemsManual: {
@@ -2348,20 +2029,12 @@ export class ItemRepoService {
       useDescription: "Permanently unlock gem auto-selling for lower level gems.",
       useConsumes: true,
       use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoSellOldGemsUnlocked = true;
-        this.inventoryService.autoSellOldGemsEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.inventoryService.autoSellOldGemsUnlocked = true;
+        this.services.inventoryService.autoSellOldGemsEnabled = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoSellOldGemsUnlocked;
+        return this.services.inventoryService.autoSellOldGemsUnlocked;
       }
     },
     autoPauseSettingsManual: {
@@ -2374,17 +2047,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock auto-pausing customization",
       useConsumes: true,
       use: () => {
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        this.activityService.autoPauseUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.activityService.autoPauseUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        return this.activityService.autoPauseUnlocked;
+        return this.services.activityService.autoPauseUnlocked;
       }
     },
     bankedTicksEfficiencyManual: {
@@ -2397,11 +2064,11 @@ export class ItemRepoService {
       useDescription: "Permanently increase banked tick efficiency to 50%.",
       useConsumes: true,
       use: () => {
-        this.mainLoopService.offlineDivider = 2;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.mainLoopService.offlineDivider = 2;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        return this.mainLoopService.offlineDivider <= 2;
+        return this.services.mainLoopService.offlineDivider <= 2;
       }
     },
     autoRestManual: {
@@ -2414,17 +2081,11 @@ export class ItemRepoService {
       useDescription: "Permanently unlock automatic resting.",
       useConsumes: true,
       use: () => {
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        this.activityService.autoRestUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.activityService.autoRestUnlocked = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        return this.activityService.autoRestUnlocked;
+        return this.services.activityService.autoRestUnlocked;
       }
     },
     ageSpeedManual: {
@@ -2437,11 +2098,11 @@ export class ItemRepoService {
       useDescription: "Permanently increase time passage based on your age.",
       useConsumes: true,
       use: () => {
-        this.mainLoopService.unlockAgeSpeed = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.mainLoopService.unlockAgeSpeed = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        return this.mainLoopService.unlockAgeSpeed;
+        return this.services.mainLoopService.unlockAgeSpeed;
       }
     },
     totalPlaytimeManual: {
@@ -2454,20 +2115,24 @@ export class ItemRepoService {
       useDescription: "Permanently increase time passage based on your total time lived.",
       useConsumes: true,
       use: () => {
-        this.mainLoopService.unlockPlaytimeSpeed = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.services.mainLoopService.unlockPlaytimeSpeed = true;
+        this.services.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
       },
       owned: () => {
-        return this.mainLoopService.unlockPlaytimeSpeed;
+        return this.services.mainLoopService.unlockPlaytimeSpeed;
       }
     },
   }
+}
 
-  constructor(private characterService: CharacterService,
-    private injector: Injector,
-    private logService: LogService,
-    private mainLoopService: MainLoopService) {
+  constructor(private services: ServicesService) {
 
+  }
+
+  init(): ItemRepoService {
+    this.populateFurniture();
+    this.populateItems();
+    return this;
   }
 
   getItemById(id: string): Item | undefined {

@@ -1,17 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
-import { MainLoopService } from './main-loop.service';
-import { CharacterService } from './character.service';
-import { HomeService } from './home.service';
+import { Injectable } from '@angular/core';
 import { FirstNames } from './followerResources';
-import { InventoryService } from './inventory.service';
-import { ItemRepoService } from './item-repo.service';
-import { ReincarnationService } from './reincarnation.service';
-import { BattleService } from './battle.service';
-import { HellService } from './hell.service';
 import { EquipmentPosition } from './character';
 import { CamelToTitlePipe } from '../app.component';
+import { ServicesService } from './services.service';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -80,7 +72,6 @@ export class FollowersService {
   totalDied = 0;
   totalDismissed = 0;
   highestLevel = 0;
-  hellService?: HellService;
   unlockedHiddenJobs: string[] = [];
   autoReplaceUnlocked = false;
   petsEnabled = false;
@@ -89,9 +80,9 @@ export class FollowersService {
   jobs: jobsType = {
     "builder": {
       work: () => {
-        this.homeService.nextHomeCostReduction += this.jobs["builder"].totalPower;
-        if (this.homeService.upgrading) {
-          this.homeService.upgradeTick(this.jobs["builder"].totalPower);
+        this.services.homeService.nextHomeCostReduction += this.jobs["builder"].totalPower;
+        if (this.services.homeService.upgrading) {
+          this.services.homeService.upgradeTick(this.jobs["builder"].totalPower);
         }
       },
       description: "Builders reduce the cost of the next home you upgrade to. They can also help you build it faster.",
@@ -99,19 +90,19 @@ export class FollowersService {
     },
     "hunter": {
       work: () => {
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           if (this.jobs["hunter"].totalPower > 1000)
-            this.inventoryService.addItem(this.itemRepoService.items['spiritMeat'], Math.floor(this.jobs["hunter"].totalPower / 1000));
+            this.services.inventoryService.addItem(this.services.itemRepoService.items['spiritMeat'], Math.floor(this.jobs["hunter"].totalPower / 1000));
           return;
         }
-        this.inventoryService.addItem(this.itemRepoService.items['meat'], this.jobs["hunter"].totalPower);
+        this.services.inventoryService.addItem(this.services.itemRepoService.items['meat'], this.jobs["hunter"].totalPower);
       },
       description: "Hunters collect meat and help you hunt for hides.",
       totalPower: 0
     },
     "farmer": {
       work: () => {
-        this.homeService.workFields(this.jobs["farmer"].totalPower);
+        this.services.homeService.workFields(this.jobs["farmer"].totalPower);
       },
       description: "Farmers work your fields, helping your crops to grow.",
       totalPower: 0
@@ -119,11 +110,11 @@ export class FollowersService {
     "weaponsmith": {
       work: () => {
         let totalPower = this.jobs["weaponsmith"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        const rightHand = this.characterService.characterState.equipment.rightHand;
-        const leftHand = this.characterService.characterState.equipment.leftHand;
+        const rightHand = this.services.characterService.characterState.equipment.rightHand;
+        const leftHand = this.services.characterService.characterState.equipment.leftHand;
         if (rightHand && rightHand.weaponStats) {
           rightHand.weaponStats.durability += Math.ceil(Math.pow((totalPower / 10), 2) * 100);
           rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2));
@@ -142,10 +133,10 @@ export class FollowersService {
     "armorer": {
       work: () => {
         let totalPower = this.jobs["armorer"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
+        const equipment = this.services.characterService.characterState.equipment; // Too many long names, reduced and referenced
         for (const key of ["head", "body", "legs", "feet"] as EquipmentPosition[]) {
           if (equipment[key] && equipment[key]!.armorStats) {
             equipment[key]!.armorStats!.durability += Math.ceil(Math.pow((totalPower / 10), 2) * 50);
@@ -160,10 +151,10 @@ export class FollowersService {
     "brawler": {
       work: () => {
         let totalPower = this.jobs["brawler"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.characterService.characterState.increaseAttribute("strength", totalPower);
+        this.services.characterService.characterState.increaseAttribute("strength", totalPower);
       },
       description: "Brawlers will spar with you in wrestling and boxing matches, increasing your strength.",
       totalPower: 0
@@ -171,10 +162,10 @@ export class FollowersService {
     "sprinter": {
       work: () => {
         let totalPower = this.jobs["sprinter"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.characterService.characterState.increaseAttribute("speed", totalPower);
+        this.services.characterService.characterState.increaseAttribute("speed", totalPower);
       },
       description: "Sprinters challenge you to footraces and help you increase your speed.",
       totalPower: 0
@@ -182,10 +173,10 @@ export class FollowersService {
     "trainer": {
       work: () => {
         let totalPower = this.jobs["trainer"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.characterService.characterState.increaseAttribute("toughness", totalPower);
+        this.services.characterService.characterState.increaseAttribute("toughness", totalPower);
       },
       description: "Trainers make sure you follow their strict fitness and diet rules, increasing your toughness.",
       totalPower: 0
@@ -193,10 +184,10 @@ export class FollowersService {
     "tutor": {
       work: () => {
         let totalPower = this.jobs["tutor"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.characterService.characterState.increaseAttribute("intelligence", totalPower);
+        this.services.characterService.characterState.increaseAttribute("intelligence", totalPower);
       },
       description: "Tutors teach you all about the wonders of the universe, increasing your intelligence.",
       totalPower: 0
@@ -204,10 +195,10 @@ export class FollowersService {
     "mediator": {
       work: () => {
         let totalPower = this.jobs["mediator"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.characterService.characterState.increaseAttribute("charisma", totalPower);
+        this.services.characterService.characterState.increaseAttribute("charisma", totalPower);
       },
       description: "Mediators teach you how to persuade others, increasing your charisma.",
       totalPower: 0
@@ -215,10 +206,10 @@ export class FollowersService {
     "priest": {
       work: () => {
         let totalPower = this.jobs["priest"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.characterService.characterState.increaseAttribute("spirituality", totalPower);
+        this.services.characterService.characterState.increaseAttribute("spirituality", totalPower);
       },
       description: "Priests help you get closer to the divine, increasing your sprituality.",
       totalPower: 0
@@ -226,14 +217,14 @@ export class FollowersService {
     "gemologist": {
       work: () => {
         let gemmerPower = this.jobs["gemologist"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           gemmerPower /= 10;
         }
         gemmerPower = Math.floor(gemmerPower / 50);
         if (gemmerPower > 4) {
           gemmerPower = 4;
         }
-        this.inventoryService.mergeAnySpiritGem(gemmerPower);
+        this.services.inventoryService.mergeAnySpiritGem(gemmerPower);
       },
       description: "Gemologists combine spirit gems into higher grades.",
       totalPower: 0
@@ -241,17 +232,17 @@ export class FollowersService {
     "scout": {
       work: () => {
         let totalPower = this.jobs["scout"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.battleService.tickCounter += totalPower;
+        this.services.battleService.tickCounter += totalPower;
       },
       description: "Scouts help you track down and fight monsters faster.",
       totalPower: 0
     },
     "damned": {
       work: () => {
-        this.battleService.tickCounter += this.jobs["damned"].totalPower;
+        this.services.battleService.tickCounter += this.jobs["damned"].totalPower;
       },
       description: "Damned are souls working off karmic debt in hell that hav decided to join you. Having this follower seems to enrage the demons around you.",
       hidden: true,
@@ -276,11 +267,11 @@ export class FollowersService {
         } else if (burnerPower < 1) {
           burnerPower = 1;
         }
-        if (this.characterService.characterState.money < (1e6 / burnerPower)) {
+        if (this.services.characterService.characterState.money < (1e6 / burnerPower)) {
           return;
         }
-        this.characterService.characterState.money -= (1e6 / burnerPower);
-        this.characterService.characterState.hellMoney++;
+        this.services.characterService.characterState.money -= (1e6 / burnerPower);
+        this.services.characterService.characterState.hellMoney++;
       },
       description: "Money Burners dedicate themselves to burning mortal money to produce hell money.",
       hidden: true,
@@ -289,11 +280,11 @@ export class FollowersService {
     "banker": {
       work: () => {
         let totalPower = this.jobs["banker"].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.services.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.characterService.characterState.money += this.characterService.characterState.money * 0.000000273 * totalPower;
-        this.characterService.characterState.hellMoney += this.characterService.characterState.hellMoney * 0.000000273 * totalPower;
+        this.services.characterService.characterState.money += this.services.characterService.characterState.money * 0.000000273 * totalPower;
+        this.services.characterService.characterState.hellMoney += this.services.characterService.characterState.hellMoney * 0.000000273 * totalPower;
       },
       description: "Bankers put your money to use, earning interest on what you have. Surprisingly, this works for hell money too.",
       hidden: true,
@@ -301,7 +292,7 @@ export class FollowersService {
     },
     "snake": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("fireLore", this.jobs["snake"].totalPower);
+        this.services.characterService.characterState.increaseAttribute("fireLore", this.jobs["snake"].totalPower);
       },
       description: "A fiery serpent. Snakes understand fire and can teach you the hidden secrets of the flames.",
       hidden: true,
@@ -310,7 +301,7 @@ export class FollowersService {
     },
     "tiger": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("woodLore", this.jobs["tiger"].totalPower);
+        this.services.characterService.characterState.increaseAttribute("woodLore", this.jobs["tiger"].totalPower);
       },
       description: "Tigers know the secrets of the jungle and can teach you the deepest mysteries of Wood Lore.",
       hidden: true,
@@ -319,7 +310,7 @@ export class FollowersService {
     },
     "ox": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("earthLore", this.jobs["ox"].totalPower);
+        this.services.characterService.characterState.increaseAttribute("earthLore", this.jobs["ox"].totalPower);
       },
       description: "Oxen connect deeply to the earth and can teach you their secret understanding.",
       hidden: true,
@@ -328,7 +319,7 @@ export class FollowersService {
     },
     "monkey": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("metalLore", this.jobs["monkey"].totalPower);
+        this.services.characterService.characterState.increaseAttribute("metalLore", this.jobs["monkey"].totalPower);
       },
       description: "Monkeys know more about metal than the greatest of human blacksmiths.",
       hidden: true,
@@ -337,7 +328,7 @@ export class FollowersService {
     },
     "pig": {
       work: () => {
-        this.characterService.characterState.increaseAttribute("waterLore", this.jobs["pig"].totalPower);
+        this.services.characterService.characterState.increaseAttribute("waterLore", this.jobs["pig"].totalPower);
       },
       description: "Pigs understand the secrets of water and can teach them to you.",
       hidden: true,
@@ -347,27 +338,19 @@ export class FollowersService {
   };
 
   constructor(
-    private injector: Injector,
-    private logService: LogService,
-    private characterService: CharacterService,
-    private homeService: HomeService,
-    private inventoryService: InventoryService,
-    private itemRepoService: ItemRepoService,
-    mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
-    private battleService: BattleService,
+    private services: ServicesService
+  ) {}
 
-  ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
-    mainLoopService.tickSubject.subscribe(() => {
+  init(): FollowersService {
+    this.services.mainLoopService.tickSubject.subscribe(() => {
       if (!this.followersUnlocked) {
         return;
       }
-      if (this.characterService.characterState.dead) {
+      if (this.services.characterService.characterState.dead) {
         return;
       }
       this.updateFollowerCap();
-      if (this.characterService.characterState.age % 18250 === 0 && !this.hellService?.inHell) {
+      if (this.services.characterService.characterState.age % 18250 === 0 && !this.services.hellService?.inHell) {
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
@@ -383,39 +366,40 @@ export class FollowersService {
             if (newFollower) {
               newFollower.power = Math.round(follower.power / 2);
               newFollower.cost = 100 * newFollower.power;
-              this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age but was replaced by their child " + newFollower?.name + ".", "STANDARD", "FOLLOWER");
+              this.services.logService.addLogMessage("Your follower " + follower.name + " passed away from old age but was replaced by their child " + newFollower?.name + ".", "STANDARD", "FOLLOWER");
             }
-            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age and was not replaced because of your choices in follower jobs.", "STANDARD", "FOLLOWER");
+            this.services.logService.addLogMessage("Your follower " + follower.name + " passed away from old age and was not replaced because of your choices in follower jobs.", "STANDARD", "FOLLOWER");
           } else {
-            this.logService.addLogMessage("Your follower " + follower.name + " passed away from old age.", "INJURY", "FOLLOWER");
+            this.services.logService.addLogMessage("Your follower " + follower.name + " passed away from old age.", "INJURY", "FOLLOWER");
           }
           this.updateFollowerTotalPower();
-        } else if (this.characterService.characterState.money < this.followers[i].cost && !this.hellService?.inHell) {
+        } else if (this.services.characterService.characterState.money < this.followers[i].cost && !this.services.hellService?.inHell) {
           // quit from not being paid
           this.totalDismissed++;
-          this.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
+          this.services.logService.addLogMessage("You didn't have enough money to suppport your follower " + this.followers[i].name + " so they left your service.", "INJURY", "FOLLOWER");
           this.followers.splice(i, 1);
           this.updateFollowerTotalPower();
-        } else if (!this.hellService?.inHell){
-          this.characterService.characterState.money -= this.followers[i].cost;
+        } else if (!this.services.hellService?.inHell){
+          this.services.characterService.characterState.money -= this.followers[i].cost;
         }
       }
       this.followersWorks();
       this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
     });
 
-    mainLoopService.longTickSubject.subscribe(() => {
+    this.services.mainLoopService.longTickSubject.subscribe(() => {
       this.sortFollowers(this.sortAscending);
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    this.services.reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
 
+    return this;
   }
 
   updateFollowerCap() {
-    this.followerCap = 1 + (this.homeService.homeValue * 3) + this.characterService.meridianRank() + this.characterService.soulCoreRank() + this.characterService.characterState.bloodlineRank;
+    this.followerCap = 1 + (this.services.homeService.homeValue * 3) + this.services.characterService.meridianRank() + this.services.characterService.soulCoreRank() + this.services.characterService.characterState.bloodlineRank;
     this.followersMaxed = this.followers.length < this.followerCap ? this.followersMaxed = 'UNMAXED' : this.followersMaxed = 'MAXED';
   }
 
@@ -453,8 +437,8 @@ export class FollowersService {
   }
 
   reset() {
-    if (this.characterService.characterState.bloodlineRank >= 7) {
-      this.logService.addLogMessage("Your imperial entourage rejoins you as you set out.", "STANDARD", 'EVENT');
+    if (this.services.characterService.characterState.bloodlineRank >= 7) {
+      this.services.logService.addLogMessage("Your imperial entourage rejoins you as you set out.", "STANDARD", 'EVENT');
     } else {
       this.followers.splice(0, this.followers.length);
       this.followersMaxed = 'UNMAXED';
@@ -534,7 +518,7 @@ export class FollowersService {
           if (this.jobs[key].hidden) {
             continue;
           }
-          let capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
+          const capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
           let count = 0;
           for (const follower of this.followers) {
             if (follower.job === key){
@@ -551,12 +535,12 @@ export class FollowersService {
           }
         }
         if (!removedOne){
-          this.logService.addLogMessage("A new follower shows up, but you already have all the followers you want.", "INJURY", "FOLLOWER");
+          this.services.logService.addLogMessage("A new follower shows up, but you already have all the followers you want.", "INJURY", "FOLLOWER");
           this.followersMaxed = 'MAXED'; // Sanity check, true check below.
           return null;
         }
       } else {
-        this.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.", "INJURY", "FOLLOWER");
+        this.services.logService.addLogMessage("A new follower shows up, but you already have too many. You are forced to turn them away.", "INJURY", "FOLLOWER");
         this.followersMaxed = 'MAXED'; // Sanity check, true check below.
         return null;
       }
@@ -567,19 +551,19 @@ export class FollowersService {
       // couldn't find a job that we want
       return null;
     }
-    let capNumber = (this.maxFollowerByType[job] !== undefined) ? this.maxFollowerByType[job] : 1000;
+    const capNumber = (this.maxFollowerByType[job] !== undefined) ? this.maxFollowerByType[job] : 1000;
     if (this.numFollowersOnJob(job) >= capNumber) {
-      this.logService.addLogMessage("A new follower shows up, but they were a " + this.camelToTitle.transform(job) + " and you don't want any more of those.", "STANDARD", "FOLLOWER");
+      this.services.logService.addLogMessage("A new follower shows up, but they were a " + this.camelToTitle.transform(job) + " and you don't want any more of those.", "STANDARD", "FOLLOWER");
       this.totalDismissed++;
       return null;
     }
 
     const lifespanDivider = this.followerLifespanDoubled ? 5 : 10;
-    this.logService.addLogMessage("A new " + this.camelToTitle.transform(job) + " has come to learn at your feet.", "STANDARD", "FOLLOWER");
+    this.services.logService.addLogMessage("A new " + this.camelToTitle.transform(job) + " has come to learn at your feet.", "STANDARD", "FOLLOWER");
     const follower = {
       name: this.generateFollowerName(),
       age: 0,
-      lifespan: Math.min(this.characterService.characterState.lifespan / lifespanDivider, 365000), // cap follower lifespan at 1000 years
+      lifespan: Math.min(this.services.characterService.characterState.lifespan / lifespanDivider, 365000), // cap follower lifespan at 1000 years
       job: job,
       power: 1,
       cost: 100,
@@ -615,7 +599,7 @@ export class FollowersService {
       if (!this.jobs[key].hidden) {
         if ((pet && this.jobs[key].pet) || (!pet && !this.jobs[key].pet)) {
           if (this.onlyWantedFollowers){
-            let capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
+            const capNumber = (this.maxFollowerByType[key] !== undefined) ? this.maxFollowerByType[key] : 1000;
             if (this.numFollowersOnJob(key) < capNumber){
               possibleJobs.push(key);
             }

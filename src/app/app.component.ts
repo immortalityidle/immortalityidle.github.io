@@ -19,6 +19,7 @@ import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.compo
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { HellService } from './game-state/hell.service';
 import { SaveModalComponent } from './save-modal/save-modal.component';
+import { ServicesService } from './game-state/services.service';
 
 @Pipe({name: 'floor'})
 export class FloorPipe implements PipeTransform {
@@ -115,6 +116,7 @@ export class AppComponent implements OnInit {
   }
 
   constructor(
+    private servicesService: ServicesService,
     private mainLoopService: MainLoopService,
     public gameStateService: GameStateService,
     public storeService: StoreService,
@@ -125,6 +127,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.servicesService.init();
     this.gameStateService.loadFromLocalStorage();
     this.mainLoopService.start();
   }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character'
 import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-state/inventory.service';
@@ -11,17 +11,18 @@ import { MainLoopService } from '../game-state/main-loop.service';
   styleUrls: ['./inventory-panel.component.less', '../app.component.less']
 })
 
-export class InventoryPanelComponent {
-  equipmentSlots: string[];
+export class InventoryPanelComponent implements OnInit {
+  equipmentSlots: string[] = [];
   instanceOfEquipment =  instanceOfEquipment;
 
   constructor(public inventoryService: InventoryService,
     public characterService: CharacterService,
     public hellService: HellService,
     public mainLoopService: MainLoopService
-    ) {
-      this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
+    ) {}
 
+  ngOnInit(): void {
+    this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
   }
 
   isFinite(value: number){

@@ -1,21 +1,19 @@
 import { Injectable } from '@angular/core';
-import { ActivityService, ActivityProperties } from './activity.service';
-import { BattleService, BattleProperties } from './battle.service';
-import { LogProperties, LogService } from './log.service';
-import { MainLoopProperties, MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
-import { AchievementProperties, AchievementService } from './achievement.service';
+import { ActivityProperties } from './activity.service';
+import { BattleProperties } from './battle.service';
+import { LogProperties } from './log.service';
+import { MainLoopProperties } from './main-loop.service';
+import { AchievementProperties } from './achievement.service';
 import { CharacterProperties, AttributeType } from './character';
-import { CharacterService } from './character.service';
-import { FollowersService, FollowersProperties } from './followers.service';
-import { HomeService, HomeProperties } from './home.service';
-import { InventoryService, InventoryProperties } from './inventory.service';
-import { ItemRepoService } from './item-repo.service';
-import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
-import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
-import { HellProperties, HellService } from './hell.service';
+import { FollowersProperties } from './followers.service';
+import { HomeProperties } from './home.service';
+import { InventoryProperties } from './inventory.service';
+import { ImpossibleTaskProperties } from './impossibleTask.service';
+import { AutoBuyerProperties } from './autoBuyer.service';
+import { HellProperties } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ServicesService } from './services.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -53,31 +51,21 @@ export class GameStateService {
   saveSlot = "";
 
   constructor(
-    private characterService: CharacterService,
-    private homeService: HomeService,
-    private inventoryService: InventoryService,
-    private logService: LogService,
-    private reincarnationService: ReincarnationService,
-    private activityService: ActivityService,
-    private itemRepoService: ItemRepoService,
-    private battleService: BattleService,
-    private followersService: FollowersService,
-    private autoBuyerService: AutoBuyerService,
-    private mainLoopService: MainLoopService,
-    private dialog: MatDialog,
-    private achievementService: AchievementService,
-    private impossibleTaskService: ImpossibleTaskService,
-    private hellService: HellService
+    private services: ServicesService,
+    private dialog: MatDialog
 
-  ) {
+  ) {}
+
+  init(): GameStateService {
     // @ts-ignore
     window['GameStateService'] = this;
-    mainLoopService.longTickSubject.subscribe(() => {
+    this.services.mainLoopService.longTickSubject.subscribe(() => {
       const currentTime = new Date().getTime();
       if (currentTime - this.lastSaved >= this.saveInterval * 1000) {
         this.savetoLocalStorage();
       }
     });
+    return this;
   }
 
   changeAutoSaveInterval(interval: number): void {
@@ -125,11 +113,11 @@ export class GameStateService {
     }
     this.importGame(gameStateSerialized);
     if (this.isImport) {
-      this.characterService.toast("Load Successful")
+      this.services.characterService.toast("Load Successful")
       this.updateImportFlagKey(false);
     } else {
       this.dialog.open(OfflineModalComponent, {
-        data: { earnedTicks: this.mainLoopService.earnedTicks },
+        data: { earnedTicks: this.services.mainLoopService.earnedTicks },
         autoFocus: false
       });
     }
@@ -146,51 +134,51 @@ export class GameStateService {
       gameStateSerialized = value;
     }
     const gameState = JSON.parse(gameStateSerialized) as GameState;
-    this.impossibleTaskService.setProperties(gameState.impossibleTasks);
-    this.hellService.setProperties(gameState.hell || {});
-    this.characterService.characterState.setProperties(gameState.character);
-    this.homeService.setProperties(gameState.home);
-    this.inventoryService.setProperties(gameState.inventory);
+    this.services.impossibleTaskService.setProperties(gameState.impossibleTasks);
+    this.services.hellService.setProperties(gameState.hell || {});
+    this.services.characterService.characterState.setProperties(gameState.character);
+    this.services.homeService.setProperties(gameState.home);
+    this.services.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
-    for (const itemStack of this.inventoryService.itemStacks) {
+    for (const itemStack of this.services.inventoryService.itemStacks) {
       if (!itemStack) {
         continue;
       }
-      const item = this.itemRepoService.getItemById(itemStack.item.id);
+      const item = this.services.itemRepoService.getItemById(itemStack.item.id);
       if (item) {
         itemStack.item = item;
       }
     }
-    this.activityService.setProperties(gameState.activities);
-    this.battleService.setProperties(gameState.battles);
-    this.followersService.setProperties(gameState.followers);
-    this.logService.setProperties(gameState.logs);
-    this.autoBuyerService.setProperties(gameState.autoBuy);
-    this.mainLoopService.setProperties(gameState.mainLoop);
-    this.achievementService.setProperties(gameState.achievements);
+    this.services.activityService.setProperties(gameState.activities);
+    this.services.battleService.setProperties(gameState.battles);
+    this.services.followerService.setProperties(gameState.followers);
+    this.services.logService.setProperties(gameState.logs);
+    this.services.autoBuyerService.setProperties(gameState.autoBuy);
+    this.services.mainLoopService.setProperties(gameState.mainLoop);
+    this.services.achievementService.setProperties(gameState.achievements);
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
     this.saveInterval = gameState.saveInterval || 10;
     // Covers the case of folowerCap showing 0 when loading in
-    this.followersService.updateFollowerCap();
+    this.services.followerService.updateFollowerCap();
     this.updateImportFlagKey();
   }
 
   getGameExport(): string {
     const gameState: GameState = {
-      achievements: this.achievementService.getProperties(),
-      impossibleTasks: this.impossibleTaskService.getProperties(),
-      hell: this.hellService.getProperties(),
-      character: this.characterService.characterState.getProperties(),
-      inventory: this.inventoryService.getProperties(),
-      home: this.homeService.getProperties(),
-      activities: this.activityService.getProperties(),
-      battles: this.battleService.getProperties(),
-      followers: this.followersService.getProperties(),
-      logs: this.logService.getProperties(),
-      autoBuy: this.autoBuyerService.getProperties(),
-      mainLoop: this.mainLoopService.getProperties(),
+      achievements: this.services.achievementService.getProperties(),
+      impossibleTasks: this.services.impossibleTaskService.getProperties(),
+      hell: this.services.hellService.getProperties(),
+      character: this.services.characterService.characterState.getProperties(),
+      inventory: this.services.inventoryService.getProperties(),
+      home: this.services.homeService.getProperties(),
+      activities: this.services.activityService.getProperties(),
+      battles: this.services.battleService.getProperties(),
+      followers: this.services.followerService.getProperties(),
+      logs: this.services.logService.getProperties(),
+      autoBuy: this.services.autoBuyerService.getProperties(),
+      mainLoop: this.services.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
       saveInterval: this.saveInterval || 300,
@@ -209,29 +197,29 @@ export class GameStateService {
   }
 
   rebirth(): void {
-    this.characterService.forceRebirth = true;
-    this.mainLoopService.pause = false;
+    this.services.characterService.forceRebirth = true;
+    this.services.mainLoopService.pause = false;
   }
 
   cheat(): void {
-    this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!", "STANDARD", "EVENT");
-    this.characterService.characterState.money += 1e10;
-    for (const key in this.itemRepoService.items) {
-      const item = this.itemRepoService.items[key];
+    this.services.logService.addLogMessage("You dirty cheater! You pressed the cheat button!", "STANDARD", "EVENT");
+    this.services.characterService.characterState.money += 1e10;
+    for (const key in this.services.itemRepoService.items) {
+      const item = this.services.itemRepoService.items[key];
       if (item.type === 'manual' && item.use) {
         item.use();
       }
     }
-    const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
+    const keys = Object.keys(this.services.characterService.characterState.attributes) as AttributeType[];
     for (const key in keys) {
-      const attribute = this.characterService.characterState.attributes[keys[key]];
+      const attribute = this.services.characterService.characterState.attributes[keys[key]];
       attribute.aptitude += 1e7;
       attribute.value += 1e7;
     }
-    this.inventoryService.addItem(this.inventoryService.generateSpiritGem(25));
-    this.homeService.upgradeToNextHome();
-    while (this.homeService.upgrading) {
-      this.homeService.upgradeTick();
+    this.services.inventoryService.addItem(this.services.inventoryService.generateSpiritGem(25));
+    this.services.homeService.upgradeToNextHome();
+    while (this.services.homeService.upgrading) {
+      this.services.homeService.upgradeTick();
     }
   }
 

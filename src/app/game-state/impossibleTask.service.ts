@@ -6,6 +6,7 @@ import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
+import { ServicesService } from './services.service';
 
 export enum ImpossibleTaskType {
   Swim,
@@ -144,16 +145,11 @@ export class ImpossibleTaskService {
   ];
 
   constructor(
-    private injector: Injector,
-    private logService: LogService,
-    private characterService: CharacterService,
-    private itemRepoService: ItemRepoService,
-    mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
-    private battleService: BattleService
-  ) {
+    private services: ServicesService
+  ) {}
 
-    mainLoopService.longTickSubject.subscribe(() => {
+  init(): ImpossibleTaskService {
+    this.services.mainLoopService.longTickSubject.subscribe(() => {
       if (this.nextTask >= this.tasks.length) {
         // all tasks done
         return;
@@ -166,9 +162,11 @@ export class ImpossibleTaskService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    this.services.reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+
+    return this;
   }
 
   markPriorCompletions() {
@@ -201,10 +199,7 @@ export class ImpossibleTaskService {
       }
     }
     this.activeTaskIndex = -1;
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
+    this.services.activityService.reloadActivities();
   }
 
   getProperties(): ImpossibleTaskProperties {
@@ -261,10 +256,7 @@ export class ImpossibleTaskService {
       this.activeTaskIndex = properties.activeTaskIndex;
     }
     this.markPriorCompletions();
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
+    this.services.activityService.reloadActivities();
   }
 
   checkCompletion() {
@@ -279,12 +271,9 @@ export class ImpossibleTaskService {
 
   startTask() {
     this.activeTaskIndex = this.nextTask;
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
+    this.services.activityService.reloadActivities();
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
-      this.battleService.addEnemy({
+      this.services.battleService.addEnemy({
         name: "Death itself",
         health: 1e24,
         maxHealth: 1e24,
@@ -292,7 +281,7 @@ export class ImpossibleTaskService {
         attack: 3e8,
         defense: 3e8,
         loot: [
-          this.itemRepoService.items['immortality']
+          this.services.itemRepoService.items['immortality']
         ],
         unique: true
       });
@@ -305,10 +294,7 @@ export class ImpossibleTaskService {
       this.taskProgress[this.activeTaskIndex].progress = 0;
     }
     this.activeTaskIndex = -1;
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
+    this.services.activityService.reloadActivities();
   }
 
 }

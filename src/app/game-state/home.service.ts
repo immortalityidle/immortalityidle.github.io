@@ -1,12 +1,6 @@
-import { Injectable, Injector } from '@angular/core';
-import { BattleService } from './battle.service';
-import { LogService } from './log.service';
-import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
-import { CharacterService } from './character.service';
-import { Furniture, InventoryService } from './inventory.service';
-import { ItemRepoService } from './item-repo.service';
-import { HellService } from './hell.service';
+import { Injectable } from '@angular/core';
+import { Furniture } from './inventory.service';
+import { ServicesService } from './services.service';
 
 export interface Home {
   name: string;
@@ -90,7 +84,6 @@ export type FurnitureSlots = { [key in FurniturePosition]: Furniture | null };
   providedIn: 'root'
 })
 export class HomeService {
-  hellService?: HellService
   autoBuyLandUnlocked = false;
   autoBuyLandLimit = 5;
   autoBuyHomeUnlocked = false;
@@ -106,8 +99,8 @@ export class HomeService {
   autoFieldLimit = 0;
   useAutoBuyReserve = false;
   autoBuyReserveAmount = 0;
-  land: number;
-  landPrice: number;
+  land = 0;
+  landPrice = 100;
   fields: Field[] = [];
   extraFields = 0;
   averageYield = 0; // running average of how much food is produced
@@ -139,11 +132,11 @@ export class HomeService {
       upgradeToTooltip: "Get a better house.",
       consequence: () => {
         if (Math.random() < 0.05) {
-          this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
-          this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
+          this.services.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
+          this.services.characterService.characterState.money -= (this.services.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.4) {
-          this.battleService.addEnemy({
+          this.services.battleService.addEnemy({
             name: "a pesky mouse",
             health: 2,
             maxHealth: 2,
@@ -167,14 +160,14 @@ export class HomeService {
       maxInventory: 12,
       upgradeToTooltip: "Get a better house. A better home will cost 100 taels and take up 1 land. The new home will restore 1 stamina and a bit of health each night.",
       consequence: () => {
-        this.characterService.characterState.status.health.value += .5;
-        this.characterService.characterState.status.stamina.value += 1;
+        this.services.characterService.characterState.status.health.value += .5;
+        this.services.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.03) {
-          this.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
-          this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
+          this.services.logService.addLogMessage("Some troublemakers stole some money while you were sleeping. It might be time to get some walls.", 'INJURY', 'EVENT');
+          this.services.characterService.characterState.money -= (this.services.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.2) {
-          this.battleService.addEnemy({
+          this.services.battleService.addEnemy({
             name: "a pesky mouse",
             health: 2,
             maxHealth: 2,
@@ -184,7 +177,7 @@ export class HomeService {
             loot: []
           });
         }
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [],
       daysToBuild: 1
@@ -199,9 +192,9 @@ export class HomeService {
       maxInventory: 15,
       upgradeToTooltip: "Get a better house. A better home will cost 1,000 taels and take up 5 land. The new home will restore 3 stamina and a bit of health each night. It also has walls and space to properly sleep.",
       consequence: () => {
-        this.characterService.characterState.status.health.value += .5;
-        this.characterService.characterState.status.stamina.value += 3;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.health.value += .5;
+        this.services.characterService.characterState.status.stamina.value += 3;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed'
@@ -218,9 +211,9 @@ export class HomeService {
       maxInventory: 18,
       upgradeToTooltip: "Get a better house. A better home will cost 10,000 taels and take up 10 land. The new home will restore 5 stamina and a bit of health each night. It has enough room to properly bathe.",
       consequence: () => {
-        this.characterService.characterState.status.health.value += .7;
-        this.characterService.characterState.status.stamina.value += 5;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.health.value += .7;
+        this.services.characterService.characterState.status.stamina.value += 5;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -238,10 +231,10 @@ export class HomeService {
       maxInventory: 20,
       upgradeToTooltip: "Get a better house. A better home will cost 100,000 taels and take up 20 land. The new home will restore 10 stamina and 1 health and a bit of mana each night. It also has room to let you cook.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 0.1;
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.status.stamina.value += 10;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 0.1;
+        this.services.characterService.characterState.status.health.value += 1;
+        this.services.characterService.characterState.status.stamina.value += 10;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -260,10 +253,10 @@ export class HomeService {
       maxInventory: 24,
       upgradeToTooltip: "Get a better house. A better home will cost 1M taels and take up 50 land. The new home will restore 15 stamina, 2 health, and a bit of mana each night. It has room to practice your craft.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 0.2;
-        this.characterService.characterState.status.health.value += 2;
-        this.characterService.characterState.status.stamina.value += 15;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 0.2;
+        this.services.characterService.characterState.status.health.value += 2;
+        this.services.characterService.characterState.status.stamina.value += 15;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -283,10 +276,10 @@ export class HomeService {
       maxInventory: 28,
       upgradeToTooltip: "Get a better house. A better home will cost 10m taels and take up 80 land. The new home will restore 20 stamina, 3 health, and a bit of mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 0.3;
-        this.characterService.characterState.status.health.value += 3;
-        this.characterService.characterState.status.stamina.value += 20;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 0.3;
+        this.services.characterService.characterState.status.health.value += 3;
+        this.services.characterService.characterState.status.stamina.value += 20;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -306,10 +299,10 @@ export class HomeService {
       maxInventory: 30,
       upgradeToTooltip: "Get a better house. A better home will cost 100m taels and take up 100 land. The new home will restore 25 stamina, 4 health, and a bit of mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 0.4;
-        this.characterService.characterState.status.health.value += 4;
-        this.characterService.characterState.status.stamina.value += 25;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 0.4;
+        this.services.characterService.characterState.status.health.value += 4;
+        this.services.characterService.characterState.status.stamina.value += 25;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -329,10 +322,10 @@ export class HomeService {
       maxInventory: 32,
       upgradeToTooltip: "Get a better house. A better home will cost 1B taels and take up 120 land. The new home will restore 30 stamina, 5 health, and a bit of mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 0.5;
-        this.characterService.characterState.status.health.value += 5;
-        this.characterService.characterState.status.stamina.value += 30;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 0.5;
+        this.services.characterService.characterState.status.health.value += 5;
+        this.services.characterService.characterState.status.stamina.value += 30;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -352,10 +345,10 @@ export class HomeService {
       maxInventory: 36,
       upgradeToTooltip: "Get a better house. A better home will cost 10B taels and take up 150 land. The new home will restore 35 stamina, 10 health, and 1 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 1;
-        this.characterService.characterState.status.health.value += 10;
-        this.characterService.characterState.status.stamina.value += 35;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 1;
+        this.services.characterService.characterState.status.health.value += 10;
+        this.services.characterService.characterState.status.stamina.value += 35;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -375,10 +368,10 @@ export class HomeService {
       maxInventory: 40,
       upgradeToTooltip: "Get a better house. A better home will cost 100B taels and take up 150 land. The new home will restore 40 stamina, 15 health, and 2 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 2;
-        this.characterService.characterState.status.health.value += 15;
-        this.characterService.characterState.status.stamina.value += 40;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 2;
+        this.services.characterService.characterState.status.health.value += 15;
+        this.services.characterService.characterState.status.stamina.value += 40;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -398,10 +391,10 @@ export class HomeService {
       maxInventory: 50,
       upgradeToTooltip: "Get a better house. A better home will cost 1T taels and take up 180 land. The new home will restore 50 stamina, 20 health, and 3 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 3;
-        this.characterService.characterState.status.health.value += 20;
-        this.characterService.characterState.status.stamina.value += 50;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 3;
+        this.services.characterService.characterState.status.health.value += 20;
+        this.services.characterService.characterState.status.stamina.value += 50;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -421,10 +414,10 @@ export class HomeService {
       maxInventory: 60,
       upgradeToTooltip: "Get a better house. A better home will cost 10T taels and take up 500 land. The new home will restore 100 stamina, 30 health, and 4 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 4;
-        this.characterService.characterState.status.health.value += 30;
-        this.characterService.characterState.status.stamina.value += 100;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 4;
+        this.services.characterService.characterState.status.health.value += 30;
+        this.services.characterService.characterState.status.stamina.value += 100;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -444,10 +437,10 @@ export class HomeService {
       maxInventory: 80,
       upgradeToTooltip: "Get a better house. A better home will cost 100T taels and take up 1,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 5;
-        this.characterService.characterState.status.health.value += 50;
-        this.characterService.characterState.status.stamina.value += 200;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 5;
+        this.services.characterService.characterState.status.health.value += 50;
+        this.services.characterService.characterState.status.stamina.value += 200;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -467,10 +460,10 @@ export class HomeService {
       maxInventory: 100,
       upgradeToTooltip: "Get a better house. A better home will cost 1q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 10;
-        this.characterService.characterState.status.health.value += 80;
-        this.characterService.characterState.status.stamina.value += 300;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 10;
+        this.services.characterService.characterState.status.health.value += 80;
+        this.services.characterService.characterState.status.stamina.value += 300;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -490,10 +483,10 @@ export class HomeService {
       maxInventory: 125,
       upgradeToTooltip: "Get a better house. A better home will cost 10q taels and take up 1,000,000 land. The new home will restore 500 stamina, 100 health, and 20 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 20;
-        this.characterService.characterState.status.health.value += 100;
-        this.characterService.characterState.status.stamina.value += 500;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 20;
+        this.services.characterService.characterState.status.health.value += 100;
+        this.services.characterService.characterState.status.stamina.value += 500;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -513,10 +506,10 @@ export class HomeService {
       maxInventory: 150,
       upgradeToTooltip: "Get a better house. A better home will cost 100q taels and take up 10,000,000 land. The new home will restore 1000 stamina, 150 health, and 30 mana each night.",
       consequence: () => {
-        this.characterService.characterState.status.mana.value += 30;
-        this.characterService.characterState.status.health.value += 150;
-        this.characterService.characterState.status.stamina.value += 1000;
-        this.characterService.characterState.checkOverage();
+        this.services.characterService.characterState.status.mana.value += 30;
+        this.services.characterService.characterState.status.health.value += 150;
+        this.services.characterService.characterState.status.stamina.value += 1000;
+        this.services.characterService.characterState.checkOverage();
       },
       furnitureSlots: [
         'bed',
@@ -540,19 +533,10 @@ export class HomeService {
   bestHome = 0;
 
   constructor(
-    private injector: Injector,
-    private characterService: CharacterService,
-    private inventoryService: InventoryService,
-    private logService: LogService,
-    private battleService: BattleService,
-    mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
-    private itemRepoService: ItemRepoService,
+    private services: ServicesService,
+  ) {}
 
-  ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
-    this.land = 0;
-    this.landPrice = 100;
+  init(): HomeService {
     this.setCurrentHome(this.homesList[0]);
     if (this.home === undefined ||
       this.homeValue === undefined ||
@@ -560,8 +544,8 @@ export class HomeService {
       throw Error('Home service not initialized correctly.');
     }
 
-    mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead) {
+    this.services.mainLoopService.tickSubject.subscribe(() => {
+      if (this.services.characterService.characterState.dead) {
         return;
       }
       if (this.upgrading) {
@@ -571,7 +555,7 @@ export class HomeService {
       if (this.nextHomeCost < 0) {
         this.nextHomeCost = 0;
       }
-      if (!this.hellService?.inHell || this.hellHome) {
+      if (!this.services.hellService?.inHell || this.hellHome) {
         this.home.consequence();
         for (const slot of this.furniturePositionsArray) {
           const furniturePiece = this.furniture[slot];
@@ -580,24 +564,24 @@ export class HomeService {
           }
         }
       }
-      if (!this.hellService?.inHell || this.hellFood) {
+      if (!this.services.hellService?.inHell || this.hellFood) {
         this.ageFields();
       }
-      if (!this.hellService?.inHell && !this.characterService.characterState.god){
-        if (this.home.costPerDay > this.characterService.characterState.money ) {
-          this.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
+      if (!this.services.hellService?.inHell && !this.services.characterService.characterState.god){
+        if (this.home.costPerDay > this.services.characterService.characterState.money ) {
+          this.services.logService.addLogMessage("You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.", "INJURY", 'EVENT');
           if (this.thugPause) {
-            mainLoopService.pause = true;
+            this.services.mainLoopService.pause = true;
           }
-          this.characterService.characterState.status.health.value -= 20;
-          this.characterService.characterState.money = 0;
+          this.services.characterService.characterState.status.health.value -= 20;
+          this.services.characterService.characterState.money = 0;
         } else {
-          this.characterService.characterState.money -= this.home.costPerDay;
+          this.services.characterService.characterState.money -= this.home.costPerDay;
         }
       }
     });
 
-    mainLoopService.longTickSubject.subscribe(() => {
+    this.services.mainLoopService.longTickSubject.subscribe(() => {
       if (this.land > this.highestLand) {
         this.highestLand = this.land;
       }
@@ -621,22 +605,24 @@ export class HomeService {
 
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    this.services.reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
-      if (this.characterService.characterState.bloodlineRank >= 6) {
-        this.logService.addLogMessage("You reincarnate as one of your descendants and your family recognizes you as you age.", "STANDARD", 'EVENT');
-        if (this.characterService.characterState.bloodlineRank >= 7) {
-          this.logService.addLogMessage("Your family steps aside and assists your takeover of your Empire.", "STANDARD", 'EVENT');
+      if (this.services.characterService.characterState.bloodlineRank >= 6) {
+        this.services.logService.addLogMessage("You reincarnate as one of your descendants and your family recognizes you as you age.", "STANDARD", 'EVENT');
+        if (this.services.characterService.characterState.bloodlineRank >= 7) {
+          this.services.logService.addLogMessage("Your family steps aside and assists your takeover of your Empire.", "STANDARD", 'EVENT');
         } else {
-          this.logService.addLogMessage("Your family escorts you to your ancestral home and helps you get settled in.", "STANDARD", 'EVENT');
+          this.services.logService.addLogMessage("Your family escorts you to your ancestral home and helps you get settled in.", "STANDARD", 'EVENT');
         }
       } else if (this.grandfatherTent) {
-        this.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on it.", "STANDARD", 'EVENT');
+        this.services.logService.addLogMessage("Your grandfather gives you a bit of land and helps you set up a tent on it.", "STANDARD", 'EVENT');
         //and a few coins so you don't immediately get beat up for not having upkeep money for your house
-        this.characterService.characterState.money += 50;
+        this.services.characterService.characterState.money += 50;
         this.setCurrentHome(this.nextHome);
       }
     });
+
+    return this;
   }
 
   getProperties(): HomeProperties {
@@ -697,7 +683,7 @@ export class HomeService {
     for (const slot of this.furniturePositionsArray) {
       const savedFurniture = properties.furniture[slot];
       if (savedFurniture) {
-        this.furniture[slot] = this.itemRepoService.getFurnitureById(savedFurniture.id);
+        this.furniture[slot] = this.services.itemRepoService.getFurnitureById(savedFurniture.id);
       }
     }
     this.ownedFurniture = properties.ownedFurniture || [];
@@ -728,13 +714,13 @@ export class HomeService {
       // currently upgrading, bail out
       return;
     }
-    if (this.characterService.characterState.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired) {
-      this.characterService.characterState.money -= this.nextHomeCost;
+    if (this.services.characterService.characterState.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired) {
+      this.services.characterService.characterState.money -= this.nextHomeCost;
       this.land -= this.nextHome.landRequired;
       this.nextHomeCostReduction = 0;
       this.houseBuildingProgress = 0;
       this.upgrading = true;
-      this.logService.addLogMessage("You start upgrading your home to a " + this.nextHome.name, "STANDARD", 'EVENT');
+      this.services.logService.addLogMessage("You start upgrading your home to a " + this.nextHome.name, "STANDARD", 'EVENT');
     }
   }
 
@@ -748,12 +734,12 @@ export class HomeService {
       this.houseBuildingProgress = 1;
       this.upgrading = false;
       this.setCurrentHome(this.nextHome);
-      this.logService.addLogMessage("You finished upgrading your home. You now live in a " + this.home.name, "STANDARD", 'EVENT');
+      this.services.logService.addLogMessage("You finished upgrading your home. You now live in a " + this.home.name, "STANDARD", 'EVENT');
     }
   }
 
   reset() {
-    if (this.characterService.characterState.bloodlineRank < 6) {
+    if (this.services.characterService.characterState.bloodlineRank < 6) {
       this.setCurrentHome(this.homesList[0]);
       this.furniture.bed = null;
       this.furniture.bathtub = null;
@@ -761,11 +747,11 @@ export class HomeService {
       this.furniture.workbench = null;
       this.ownedFurniture = [];
     }
-    if (this.characterService.characterState.bloodlineRank < 7) {
+    if (this.services.characterService.characterState.bloodlineRank < 7) {
       this.upgrading = false;
       this.houseBuildingProgress = 1;
     }
-    this.inventoryService.changeMaxItems(this.home.maxInventory);
+    this.services.inventoryService.changeMaxItems(this.home.maxInventory);
     this.nextHomeCostReduction = 0;
     this.land = 0;
     this.landPrice = 100;
@@ -780,7 +766,7 @@ export class HomeService {
     this.home = this.getHomeFromValue(this.homeValue);
     this.nextHome = this.getNextHome();
     this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
-    this.inventoryService.changeMaxItems(this.home.maxInventory);
+    this.services.inventoryService.changeMaxItems(this.home.maxInventory);
   }
 
   getHomeFromValue(value: HomeType): Home {
@@ -794,13 +780,13 @@ export class HomeService {
 
   getCrop(): Field {
     let cropIndex = 0;
-    if (this.characterService.characterState.attributes.woodLore.value > 1) {
-      cropIndex = Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value));
+    if (this.services.characterService.characterState.attributes.woodLore.value > 1) {
+      cropIndex = Math.floor(Math.log2(this.services.characterService.characterState.attributes.woodLore.value));
     }
-    if (cropIndex >= this.inventoryService.farmFoodList.length) {
-      cropIndex = this.inventoryService.farmFoodList.length - 1;
+    if (cropIndex >= this.services.inventoryService.farmFoodList.length) {
+      cropIndex = this.services.inventoryService.farmFoodList.length - 1;
     }
-    const cropItem = this.inventoryService.farmFoodList[cropIndex];
+    const cropItem = this.services.inventoryService.farmFoodList[cropIndex];
     // more valuable crops yield less per field and take longer to harvest, tune this later
     return {
       cropName: cropItem.id,
@@ -883,10 +869,10 @@ export class HomeService {
           fieldYield = Math.floor(fieldYield * (this.fields.length + this.extraFields) / 300);
         }
         totalDailyYield += fieldYield;
-        if (this.hellService?.inHell && fieldYield > 0) {
+        if (this.services.hellService?.inHell && fieldYield > 0) {
           fieldYield = Math.max(fieldYield / 1000, 1);
         }
-        this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
+        this.services.inventoryService.addItem(this.services.itemRepoService.items[this.fields[i].cropName], fieldYield);
         this.fields[i] = this.getCrop();
       } else {
         this.fields[i].daysToHarvest--;
@@ -900,7 +886,7 @@ export class HomeService {
    * @returns count of actual purchase
    */
   buyLand(count: number): number {
-    const maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
+    const maximumCount = this.calculateAffordableLand(this.services.characterService.characterState.money);
     if (!maximumCount || !count) {
       return 0;
     }
@@ -913,8 +899,8 @@ export class HomeService {
     }
     increase = 10 * (count * (count - 1) / 2); //mathmatically increase by linear sum n (n + 1) / 2
     price = this.landPrice * count + increase;
-    if (this.characterService.characterState.money >= price) {
-      this.characterService.characterState.money -= price;
+    if (this.services.characterService.characterState.money >= price) {
+      this.services.characterService.characterState.money -= price;
       this.land += count;
       this.landPrice += 10 * count;
     }
@@ -934,10 +920,10 @@ export class HomeService {
   }
 
   buyFurniture(itemId: string) {
-    const item = this.itemRepoService.getFurnitureById(itemId)
+    const item = this.services.itemRepoService.getFurnitureById(itemId)
     if (item) {
-      if (this.characterService.characterState.money >= item.value) {
-        this.characterService.characterState.money -= item.value;
+      if (this.services.characterService.characterState.money >= item.value) {
+        this.services.characterService.characterState.money -= item.value;
         this.ownedFurniture.push(item.name);
         this.furniture[item.slot] = item;
       }

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Character, EquipmentPosition, EquipmentSlots } from '../game-state/character';
+import { Component, OnInit } from '@angular/core';
+import { Character, EquipmentPosition } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 
@@ -8,12 +8,15 @@ import { InventoryService, instanceOfEquipment, Item } from '../game-state/inven
   templateUrl: './equipment-panel.component.html',
   styleUrls: ['./equipment-panel.component.less', '../app.component.less']
 })
-export class EquipmentPanelComponent {
-  character: Character;
+export class EquipmentPanelComponent implements OnInit {
+  character!: Character;
 
   constructor(private characterService: CharacterService,
     public inventoryService: InventoryService) {
-    this.character = characterService.characterState;
+  }
+
+  ngOnInit(): void {
+    this.character = this.characterService.characterState;
   }
 
   slotDoubleClicked(slot: EquipmentPosition, event: MouseEvent): void {

@@ -1,45 +1,36 @@
-import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
-import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
+import { Injectable } from '@angular/core';
 import { Character, AttributeType } from './character';
-import { ActivityService } from './activity.service';
 import { Subscription } from "rxjs";
 import { BigNumberPipe } from '../app.component';
-import { HellLevel, HellService } from './hell.service';
+import { HellLevel } from './hell.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { CamelToTitlePipe } from '../app.component';
+import { ServicesService } from './services.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CharacterService {
   camelToTitlePipe = new CamelToTitlePipe();
-  bigNumberPipe: BigNumberPipe;
-  activityService?: ActivityService;
-  characterState: Character;
+  characterState!: Character;
   forceRebirth = false;
   fatherGift = false;
   lifespanTooltip = "";
   deathSubscriber?: Subscription;
-  hellService?: HellService;
-  private snackBar: MatSnackBar;
   private snackBarObservable?: Subscription;
 
   constructor(
-    private injector: Injector,
-    private mainLoopService: MainLoopService,
-    private logService: LogService,
-    private reincarnationService: ReincarnationService,
-    public dialog: MatDialog
-  ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
-    this.snackBar = this.injector.get(MatSnackBar);
-    this.bigNumberPipe = this.injector.get(BigNumberPipe);
-    this.characterState = new Character(logService, this.camelToTitlePipe, this.bigNumberPipe, mainLoopService, dialog);
-    mainLoopService.tickSubject.subscribe(() => {
-      if (this.mainLoopService.totalTicks % 3650 === 0) {
+    private services: ServicesService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private bigNumberPipe: BigNumberPipe,
+  ) {}
+
+  init(): CharacterService {
+    this.characterState = new Character(this.services.logService, this.camelToTitlePipe, this.bigNumberPipe, this.services.mainLoopService, this.dialog);
+    this.services.mainLoopService.tickSubject.subscribe(() => {
+      if (this.services.mainLoopService.totalTicks % 3650 === 0) {
         this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
       }
       if (!this.characterState.dead) {
@@ -57,7 +48,7 @@ export class CharacterService {
         if (this.characterState.attributes.spirituality.value > 0) {
           // you're spritual now, you can fast!
           const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
-          logService.addLogMessage("You take " + starvationDamage + " damage from starvation.", "INJURY", "COMBAT"); // it's not really a combat message, but I didn't want to spam the event log
+          this.services.logService.addLogMessage("You take " + starvationDamage + " damage from starvation.", "INJURY", "COMBAT"); // it's not really a combat message, but I didn't want to spam the event log
           this.characterState.status.health.value -= starvationDamage;
           if (this.characterState.status.health.value < 0){
             this.characterState.status.health.value = 0;
@@ -66,18 +57,15 @@ export class CharacterService {
           if (this.characterState.status.health.value <= 0){
             if (!this.characterState.immortal) {
               deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
-            } else if (this.hellService?.inHell){
-              this.hellService.beaten = true;
+            } else if (this.services.hellService?.inHell){
+              this.services.hellService.beaten = true;
             }
           }
         } else if (!this.characterState.immortal) {
           deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
         }
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        if (this.activityService.activityDeath) {
+        if (this.services.activityService.activityDeath) {
           deathMessage = "You die from overwork at the age of " + this.formatAge() + ".";
         } else {
           deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
@@ -87,9 +75,9 @@ export class CharacterService {
       }
       if (deathMessage !== "") {
         if (!this.characterState.immortal) {
-          this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
+          this.services.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
           if (!this.forceRebirth) {
-            this.logService.addLogMessage(
+            this.services.logService.addLogMessage(
               "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
               'STANDARD', 'EVENT');
           }
@@ -99,27 +87,27 @@ export class CharacterService {
           this.toast("A new life begins.");
         }
         this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
-        this.reincarnationService.reincarnate();
+        this.services.reincarnationService.reincarnate();
         // Revive the character in the next tick update for making sure that everything is stopped.
-        this.deathSubscriber = this.mainLoopService.tickSubject.subscribe(() => {
+        this.deathSubscriber = this.services.mainLoopService.tickSubject.subscribe(() => {
           this.characterState.dead = false;
           this.deathSubscriber?.unsubscribe();
         });
         this.forceRebirth = false;
         if (this.characterState.immortal) {
-          this.logService.addLogMessage("You are born anew, still an immortal but with the fresh vigor of youth.", 'STANDARD', 'EVENT');
+          this.services.logService.addLogMessage("You are born anew, still an immortal but with the fresh vigor of youth.", 'STANDARD', 'EVENT');
         } else {
-          this.logService.addLogMessage(
+          this.services.logService.addLogMessage(
             "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number " + this.characterState.totalLives + " will be the one.",
             'STANDARD', 'EVENT');
-          this.logService.addLogMessage(
+          this.services.logService.addLogMessage(
             "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
             'STANDARD', 'EVENT');
         }
       }
     });
 
-    mainLoopService.longTickSubject.subscribe(() => {
+    this.services.mainLoopService.longTickSubject.subscribe(() => {
 
       if (this.characterState.highestMoney < this.characterState.money) {
         this.characterState.highestMoney = this.characterState.money;
@@ -141,20 +129,21 @@ export class CharacterService {
         return;
       }
       this.characterState.recalculateDerivedStats();
-      if (this.hellService?.inHell && this.hellService.currentHell === HellLevel.CrushingBoulder && !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)) {
+      if (this.services.hellService?.inHell && this.services.hellService.currentHell === HellLevel.CrushingBoulder && !this.services.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)) {
         this.characterState.attackPower = 1;
       }
       this.setLifespanTooltip();
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    this.services.reincarnationService.reincarnateSubject.subscribe(() => {
       if (this.fatherGift && this.characterState.bloodlineRank < 6) { // Skip the family gifts, it's not thematic.
-        this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
+        this.services.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
           'STANDARD', 'EVENT');
         this.characterState.money += 200;
       }
     });
 
+    return this;
   }
 
   formatAge(): string {
@@ -212,13 +201,10 @@ export class CharacterService {
         attribute.value = 0;
       }
     }
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
-    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
+    this.services.activityService.reloadActivities();
+    this.services.activityService.activityLoop.splice(0, this.services.activityService.activityLoop.length);
     this.forceRebirth = true;
-    this.mainLoopService.tick();
+    this.services.mainLoopService.tick();
   }
 
   condenseSoulCore() {
@@ -226,10 +212,10 @@ export class CharacterService {
       // double check we're not going over the max rank
       return;
     }
-    this.logService.addLogMessage(
+    this.services.logService.addLogMessage(
       "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
       'STANDARD', 'STORY');
-    this.logService.addLogMessage(
+    this.services.logService.addLogMessage(
       "You now gain additional aptitude each time you reincarnate.",
       'STANDARD', 'STORY');
     this.characterState.condenseSoulCoreCost *= 10;
@@ -246,10 +232,10 @@ export class CharacterService {
       // double check we're not going over the max rank
       return;
     }
-    this.logService.addLogMessage(
+    this.services.logService.addLogMessage(
       "The pathways that carry your chi through your body have been strengthened and reinforced.",
       'STANDARD', 'STORY');
-    this.logService.addLogMessage(
+    this.services.logService.addLogMessage(
       "Your aptitudes can now give you a greater increase when gaining attributes.",
       'STANDARD', 'STORY');
 
@@ -267,10 +253,10 @@ export class CharacterService {
       // double check we're not going over the max rank
       return;
     }
-    this.logService.addLogMessage(
+    this.services.logService.addLogMessage(
       "You sacrifice your current life to strengthen a permanent bloodline that will pass on to all of your descendants.",
       'STANDARD', 'STORY');
-    this.logService.addLogMessage(
+    this.services.logService.addLogMessage(
       "You will be reborn into your own family line and reap greater benefits from your previous lives.",
       'STANDARD', 'STORY');
     this.characterState.bloodlineCost *= 100;
