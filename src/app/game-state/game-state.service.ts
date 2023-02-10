@@ -19,7 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
-interface GameState {
+export interface GameState {
   achievements: AchievementProperties,
   character: CharacterProperties,
   inventory: InventoryProperties,

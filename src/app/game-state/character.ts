@@ -94,7 +94,7 @@ export interface CharacterProperties {
   showTips: boolean
 }
 
-const INITIAL_AGE = 18 * 365;
+export const INITIAL_AGE = 18 * 365;
 
 export class Character {
 
