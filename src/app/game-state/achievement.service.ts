@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { CharacterService } from './character.service';
 import { InventoryService } from './inventory.service';
 import { HomeService, HomeType } from './home.service';
@@ -860,7 +860,7 @@ export class AchievementService {
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {
     if (newAchievement) {
       this.unlockedAchievements.push(achievement.name);
-      this.logService.addLogMessage(achievement.description, 'STANDARD', 'STORY');
+      this.logService.log(LogTopic.STORY, achievement.description);
       // check if gameStateService is injected yet, if not, inject it (circular dependency issues)
       if (!this.gameStateService) {
         this.gameStateService = this.injector.get(GameStateService);

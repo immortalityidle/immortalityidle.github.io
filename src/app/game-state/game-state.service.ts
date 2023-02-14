@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivityService, ActivityProperties } from './activity.service';
 import { BattleService, BattleProperties } from './battle.service';
-import { LogProperties, LogService } from './log.service';
+import { LogProperties, LogService, LogTopic } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { AchievementProperties, AchievementService } from './achievement.service';
@@ -214,7 +214,7 @@ export class GameStateService {
   }
 
   cheat(): void {
-    this.logService.addLogMessage("You dirty cheater! You pressed the cheat button!", "STANDARD", "EVENT");
+    this.logService.log(LogTopic.EVENT, "You dirty cheater! You pressed the cheat button!");
     this.characterService.characterState.money += 1e10;
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];

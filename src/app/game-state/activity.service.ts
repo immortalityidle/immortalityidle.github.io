@@ -6,7 +6,7 @@ import { CharacterService } from '../game-state/character.service';
 import { HomeService, HomeType } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
-import { LogService } from './log.service';
+import { LogService, LogTopic, LogType } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
@@ -96,7 +96,7 @@ export class ActivityService {
         return;
       }
       if (this.pauseBeforeDeath && this.characterService.characterState.age >= this.characterService.characterState.lifespan - 1 && !this.characterService.characterState.immortal) {
-        this.logService.addLogMessage("The end of your natural life is imminent. Game paused.", "INJURY", "EVENT");
+        this.logService.injury(LogTopic.EVENT, "The end of your natural life is imminent. Game paused.");
         this.mainLoopService.pause = true;
       }
       if (this.exhaustionDays > 0) {
@@ -150,14 +150,14 @@ export class ActivityService {
         // check for exhaustion
         if (this.characterService.characterState.status.stamina.value < 0) {
           // take 5 days to recover, regain stamina, restart loop
-          this.logService.addLogMessage('You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.', 'INJURY', 'EVENT');
+          this.logService.injury(LogTopic.EVENT, "You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.");
           this.exhaustionDays = 5;
           this.characterService.characterState.status.stamina.value = 100;
           this.characterService.characterState.status.health.value -= 0.01 * this.characterService.characterState.status.health.max;
         }
         // check for mana overuse
         if (this.characterService.characterState.status.mana.value < 0) {
-          this.logService.addLogMessage('You overextend your mana and damage your mana channels. It takes you 10 days to recover.', 'INJURY', 'EVENT');
+          this.logService.injury(LogTopic.EVENT, "You overextend your mana and damage your mana channels. It takes you 10 days to recover.");
           if (this.characterService.characterState.status.mana.max > 1) {
             this.characterService.characterState.status.mana.max -= 1;
           }
@@ -360,7 +360,7 @@ export class ActivityService {
     for (const activity of this.activities) {
       if (!activity.unlocked && this.meetsRequirements(activity)) {
         if (!squelchLogs) {
-          this.logService.addLogMessage("A new activity is available. Maybe you should try " + activity.name[activity.level] + ".", "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, "A new activity is available. Maybe you should try " + activity.name[activity.level] + ".");
         }
       }
     }
@@ -376,7 +376,7 @@ export class ActivityService {
       if (activity.level < (activity.description.length - 1)) {
         if (this.meetsRequirementsByLevel(activity, (activity.level + 1))) {
           if (!squelchLogs && activity.unlocked) {
-            this.logService.addLogMessage("Congratulations on your promotion! " + activity.name[activity.level] + " upgraded to " + activity.name[activity.level + 1], "STANDARD", "EVENT");
+            this.logService.log(LogTopic.EVENT, "Congratulations on your promotion! " + activity.name[activity.level] + " upgraded to " + activity.name[activity.level + 1]);
           }
           activity.level++;
         }
@@ -720,7 +720,7 @@ export class ActivityService {
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress++;
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].complete) {
-          this.logService.addLogMessage("Your preparations were worthwhile! You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found a mythical sunken island.", "STANDARD", "STORY");
+          this.logService.log(LogTopic.STORY, "Your preparations were worthwhile! You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found a mythical sunken island.");
         }
       }],
       resourceUse: [{
@@ -743,19 +743,19 @@ export class ActivityService {
         const metalValue = this.inventoryService.consume('metal');
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "anvil" && metalValue >= 150 && this.characterService.characterState.attributes.metalLore.value >= 1e9) {
           if (Math.random() < 0.1) {
-            this.logService.addLogMessage("Your anvil gives off an ear-splitting ringing and echoes endlessly into the depths. The new chain glows with power!", "STANDARD", "CRAFTING");
+            this.logService.log(LogTopic.CRAFTING, "Your anvil gives off an ear-splitting ringing and echoes endlessly into the depths. The new chain glows with power!");
             this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
           } else {
-            this.logService.addLogMessage("Your anvil rings and weakly echoes into the depths. You throw aside the useless dull chain.", "STANDARD", "CRAFTING");
+            this.logService.log(LogTopic.CRAFTING, "Your anvil rings and weakly echoes into the depths. You throw aside the useless dull chain.");
           }
         } else if (this.characterService.characterState.attributes.metalLore.value < 1e9) {
-          this.logService.addLogMessage("You lack the necessary knowledge and cause a deadly explosion.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You lack the necessary knowledge and cause a deadly explosion.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.6;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
           }
         } else {
-          this.logService.addLogMessage("You fumble with the wrong tools and materials and hurt yourself.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You fumble with the wrong tools and materials and hurt yourself.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -780,20 +780,20 @@ export class ActivityService {
       consequence: [() => {
         if (this.characterService.characterState.status.stamina.value >= 1000000 && this.inventoryService.consume("chain") > 0) {
           this.characterService.characterState.status.stamina.value -= 1000000;
-          this.logService.addLogMessage("You attach a chain to the island, and give your chains a long, strenuous tug.", "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, "You attach a chain to the island, and give your chains a long, strenuous tug.");
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].progress++;
           this.impossibleTaskService.checkCompletion();
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete) {
-            this.logService.addLogMessage("With a mighty pull of 777 chains, the island comes loose. You haul it to the surface.", "STANDARD", "STORY");
+            this.logService.log(LogTopic.STORY, "With a mighty pull of 777 chains, the island comes loose. You haul it to the surface.");
           }
         } else if (this.inventoryService.consume("chain", 0)) {
-          this.logService.addLogMessage("You strain yourself trying to lug the chain to an anchor point and collapse.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You strain yourself trying to lug the chain to an anchor point and collapse.");
           this.characterService.characterState.status.stamina.value -= 1000000;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
           }
         } else {
-          this.logService.addLogMessage("You pass time exploring the hidden tunnels without a chain until a horror of the depths takes a nibble.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You pass time exploring the hidden tunnels without a chain until a horror of the depths takes a nibble.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -821,10 +821,9 @@ export class ActivityService {
         const builderPower = Math.floor((this.followerService.jobs["builder"].totalPower + 10) / 10);
         if (oreValue >= 10) {
           this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick'], builderPower);
-          this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingBrick'].name, "STANDARD", "CRAFTING");
-
+          this.logService.log(LogTopic.CRAFTING, "You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingBrick'].name);
         } else {
-          this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You fumble with the wrong materials and hurt yourself.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -852,9 +851,9 @@ export class ActivityService {
         woodValue = this.inventoryService.consume('wood', 200);
         if (woodValue >= 11) {
           this.inventoryService.addItem(this.itemRepoService.items['scaffolding']);
-          this.logService.addLogMessage("You made " + this.itemRepoService.items['scaffolding'].name, "STANDARD", "CRAFTING");
+          this.logService.log(LogTopic.CRAFTING, "You made " + this.itemRepoService.items['scaffolding'].name);
         } else {
-          this.logService.addLogMessage("You fumble with the wrong materials, hurt yourself, and break your weak attempt at scaffolding.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You fumble with the wrong materials, hurt yourself, and break your weak attempt at scaffolding.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -882,9 +881,9 @@ export class ActivityService {
         const builderPower = Math.floor((this.followerService.jobs["builder"].totalPower + 100) / 100);
         if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === "cauldron" && oreValue >= 10) {
           this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar'], builderPower);
-          this.logService.addLogMessage("You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingMortar'].name, "STANDARD", "CRAFTING");
+          this.logService.log(LogTopic.CRAFTING, "You and your followers made " + (1 + builderPower) + " " + this.itemRepoService.items['everlastingMortar'].name);
         } else {
-          this.logService.addLogMessage("You fumble with the wrong materials and hurt yourself.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You fumble with the wrong materials and hurt yourself.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -915,7 +914,7 @@ export class ActivityService {
           }
         }
         if (numBuilders < 10) {
-          this.logService.addLogMessage("You fumble without the proper help and hurt yourself.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You fumble without the proper help and hurt yourself.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.05;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -925,7 +924,7 @@ export class ActivityService {
         let value = 0;
         value = this.inventoryService.consume('scaffolding');
         if (value < 1) {
-          this.logService.addLogMessage("You try building without a scaffolding, but it ends in a disaster and you are badly hurt.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You try building without a scaffolding, but it ends in a disaster and you are badly hurt.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -935,7 +934,7 @@ export class ActivityService {
         value = 0;
         value = this.inventoryService.consume('mortar', 100);
         if (value < 1) {
-          this.logService.addLogMessage("You try building without enough mortar, but it ends in a disaster and you are badly hurt.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You try building without enough mortar, but it ends in a disaster and you are badly hurt.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -945,7 +944,7 @@ export class ActivityService {
         value = 0;
         value = this.inventoryService.consume('brick', 1000);
         if (value < 1) {
-          this.logService.addLogMessage("You try building without enough bricks, but it ends in a disaster and you are badly hurt.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You try building without enough bricks, but it ends in a disaster and you are badly hurt.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.2;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -955,7 +954,7 @@ export class ActivityService {
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].progress++;
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].complete) {
-          this.logService.addLogMessage("You have acheived the impossible and built a tower beyond the heavens.", "STANDARD", "STORY");
+          this.logService.log(LogTopic.STORY, "You have acheived the impossible and built a tower beyond the heavens.");
         }
       }],
       resourceUse: [{
@@ -977,12 +976,12 @@ export class ActivityService {
         this.characterService.characterState.status.stamina.value -= 100;
         this.characterService.characterState.status.mana.value -= 100;
         if (this.characterService.characterState.status.stamina.value < 0 || this.characterService.characterState.status.mana.value < 0) {
-          this.logService.addLogMessage("You try to research, but you just don't have the energy.", "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, "You try to research, but you just don't have the energy.");
           return;
         }
         if (this.characterService.characterState.status.stamina.value >= 0 && this.characterService.characterState.status.mana.value >= 0) {
           if (Math.random() < 0.01) {
-            this.logService.addLogMessage("Research breakthrough! You produce a tome!.", "STANDARD", "CRAFTING");
+            this.logService.log(LogTopic.CRAFTING, "Research breakthrough! You produce a tome!.");
             this.inventoryService.addItem(this.itemRepoService.items['windTome']);
           }
         }
@@ -1011,10 +1010,10 @@ export class ActivityService {
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].progress++;
           this.impossibleTaskService.checkCompletion();
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].complete) {
-            this.logService.addLogMessage("You acheived the impossible and tamed a hurricane.", "STANDARD", "STORY");
+            this.logService.log(LogTopic.STORY, "You acheived the impossible and tamed a hurricane.");
           }
         } else {
-          this.logService.addLogMessage("You try to tame the winds, but without the proper preparation you are blown off the top of the tower.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You try to tame the winds, but without the proper preparation you are blown off the top of the tower.");
           this.characterService.characterState.status.health.value -= this.characterService.characterState.status.health.max * 0.5;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -1039,21 +1038,21 @@ export class ActivityService {
       consequence: [() => {
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress++;
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 2222) {
-          this.logService.addLogMessage("Jumping off an impossibly tall tower ends about like you might expect. Your wounds may take a bit to heal, but at least you learned something.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "Jumping off an impossibly tall tower ends about like you might expect. Your wounds may take a bit to heal, but at least you learned something.");
           this.characterService.characterState.status.health.value -= 1000;
         } else if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 4444) {
-          this.logService.addLogMessage("You feel like you might have flown a litte bit, somewhere near the time you hit the ground.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You feel like you might have flown a litte bit, somewhere near the time you hit the ground.");
           this.characterService.characterState.status.health.value -= 500;
         } else if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 6666) {
-          this.logService.addLogMessage("You definitely did better that time. You did some great flying but sticking the landing is still tricky.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You definitely did better that time. You did some great flying but sticking the landing is still tricky.");
           this.characterService.characterState.status.health.value -= 100;
         } else {
-          this.logService.addLogMessage("Almost there! Perfect landings are so hard.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "Almost there! Perfect landings are so hard.");
           this.characterService.characterState.status.health.value -= 10;
         }
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].complete) {
-          this.logService.addLogMessage("You mastered flight! You can go anywhere in the world now, even where the ancient dragons live.", "STANDARD", "STORY");
+          this.logService.log(LogTopic.STORY, "You mastered flight! You can go anywhere in the world now, even where the ancient dragons live.");
         }
       }],
       resourceUse: [{
@@ -1075,7 +1074,7 @@ export class ActivityService {
         let value = 0;
         value = this.inventoryService.consume('food', 1000);
         if (value < 1) {
-          this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.");
           this.characterService.characterState.status.health.value -= 1000;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -1085,7 +1084,7 @@ export class ActivityService {
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 2000) {
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         } else {
-          this.logService.addLogMessage("The dragon doesn't seem interested in any more food.", "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, "The dragon doesn't seem interested in any more food.");
         }
       }],
       resourceUse: [{
@@ -1104,7 +1103,7 @@ export class ActivityService {
       consequenceDescription: ['You will need at least a billion taels for this to work.'],
       consequence: [() => {
         if (this.characterService.characterState.money < 1e9) {
-          this.logService.addLogMessage("The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.");
           this.characterService.characterState.status.health.value -= 1000;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -1115,7 +1114,7 @@ export class ActivityService {
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 4000) {
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         } else {
-          this.logService.addLogMessage("The dragon doesn't seem interested in any more money.", "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, "The dragon doesn't seem interested in any more money.");
         }
       }],
       resourceUse: [{
@@ -1134,7 +1133,7 @@ export class ActivityService {
       consequenceDescription: ['The dragon probably likes you enough to talk to you now, right?'],
       consequence: [() => {
         if (this.characterService.characterState.attributes.charisma.value < 1e10) {
-          this.logService.addLogMessage("The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first.");
           this.characterService.characterState.status.health.value -= 1000;
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
@@ -1142,13 +1141,13 @@ export class ActivityService {
           return;
         }
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 3500) {
-          this.logService.addLogMessage("The dragon doesn't like like you enough to talk to you, but at least he doesn't attack you.", "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, "The dragon doesn't like like you enough to talk to you, but at least he doesn't attack you.");
           return;
         }
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].complete) {
-          this.logService.addLogMessage("You did the impossible and made friends with a dragon!", "STANDARD", "STORY");
+          this.logService.log(LogTopic.STORY, "You did the impossible and made friends with a dragon!");
         }
       }],
       resourceUse: [{
@@ -1167,7 +1166,7 @@ export class ActivityService {
       consequenceDescription: ["You rule a country by now, right? If not, this isn't going to go well."],
       consequence: [() => {
         if (this.homeService.homeValue < HomeType.Capital) {
-          this.logService.addLogMessage("You don't even have your own kingdom? What were you thinking? The nearby rulers send their forces against you.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You don't even have your own kingdom? What were you thinking? The nearby rulers send their forces against you.");
           for (let i = 0; i < 3; i++) {
             this.battleService.addEnemy({
               name: "an angry army",
@@ -1184,7 +1183,7 @@ export class ActivityService {
         let value = 0;
         value = this.inventoryService.consume('food', 10000);
         if (value < 1) {
-          this.logService.addLogMessage("You don't have enough food to feed your army, so they revolt and fight you instead.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You don't have enough food to feed your army, so they revolt and fight you instead.");
           this.battleService.addEnemy({
             name: "an angry army",
             health: 2e11,
@@ -1200,7 +1199,7 @@ export class ActivityService {
           return;
         }
         if (this.characterService.characterState.money < 1e10) {
-          this.logService.addLogMessage("You don't have enough money to pay your army, so they revolt and fight you instead.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "You don't have enough money to pay your army, so they revolt and fight you instead.");
           this.battleService.addEnemy({
             name: "an angry army",
             health: 2e11,
@@ -1247,7 +1246,7 @@ export class ActivityService {
               loot: []
             });
           }
-          this.logService.addLogMessage("Your armies failed you and you are forced to fight the enemy armies to a standstill.", "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, "Your armies failed you and you are forced to fight the enemy armies to a standstill.");
           if (this.pauseOnImpossibleFail) {
             this.mainLoopService.pause = true;
           }
@@ -1256,7 +1255,7 @@ export class ActivityService {
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress++;
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].complete) {
-          this.logService.addLogMessage("You did the impossible and conquered the world! Under your wise rule all human suffering ceases.", "STANDARD", "STORY");
+          this.logService.log(LogTopic.STORY, "You did the impossible and conquered the world! Under your wise rule all human suffering ceases.");
         }
       }],
       resourceUse: [{
@@ -1280,7 +1279,7 @@ export class ActivityService {
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.RearrangeTheStars].progress++;
           this.impossibleTaskService.checkCompletion();
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RearrangeTheStars].complete) {
-            this.logService.addLogMessage("You did the impossible and rearranged the stars themselves. You are so near to achieving immortality you can almost taste it. It tastes like peaches.", "STANDARD", "STORY");
+            this.logService.log(LogTopic.STORY, "You did the impossible and rearranged the stars themselves. You are so near to achieving immortality you can almost taste it. It tastes like peaches.");
           }
         }
       }],
@@ -2733,7 +2732,7 @@ export class ActivityService {
             this.followerService.generateFollower();
           }
         } else {
-          this.logService.addLogMessage("All of your potential followers ignore your recruiting efforts after sensing your low cultivation.", "INJURY", "EVENT");
+          this.logService.injury(LogTopic.EVENT, "All of your potential followers ignore your recruiting efforts after sensing your low cultivation.");
         }
         if (this.characterService.characterState.yinYangUnlocked) {
           this.characterService.characterState.yang++;
@@ -2773,13 +2772,13 @@ export class ActivityService {
                   this.followerService.highestLevel = follower.power;
                 }
                 follower.cost = 100 * follower.power;
-                this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "FOLLOWER");
+                this.logService.log(LogTopic.FOLLOWER, follower.name + " gains additional power as a " + follower.job);
                 this.followerService.updateFollowerTotalPower();
               }
             }
           }
           if (allMaxed) {
-            this.logService.addLogMessage("You try to train your followers, but they are all already as powerful as they can be. You pat them each on the back and tell them they are great.", "STANDARD", "FOLLOWER");
+            this.logService.log(LogTopic.FOLLOWER, "You try to train your followers, but they are all already as powerful as they can be. You pat them each on the back and tell them they are great.");
           }
         }
         if (this.characterService.characterState.yinYangUnlocked) {
@@ -2900,13 +2899,13 @@ export class ActivityService {
                 this.followerService.highestLevel = follower.power;
               }
               follower.cost = 100 * follower.power;
-              this.logService.addLogMessage(follower.name + " gains additional power as a " + follower.job, "STANDARD", "FOLLOWER");
+              this.logService.log(LogTopic.FOLLOWER, follower.name + " gains additional power as a " + follower.job);
               this.followerService.updateFollowerTotalPower();
             }
           }
         }
         if (allMaxed) {
-          this.logService.addLogMessage("You try to train your pets, but they are all already as powerful as they can be. You give them all belly rubs and tell them they are great.", "STANDARD", "FOLLOWER");
+          this.logService.log(LogTopic.FOLLOWER, "You try to train your pets, but they are all already as powerful as they can be. You give them all belly rubs and tell them they are great.");
         }
         if (this.characterService.characterState.yinYangUnlocked) {
           this.characterService.characterState.yang++;

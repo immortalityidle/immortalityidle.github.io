@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
@@ -494,7 +494,7 @@ export class InventoryService {
     } else {
       name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     }
-    this.logService.addLogMessage('Your hard work paid off! You created a new weapon: ' + name + '!', 'STANDARD', 'CRAFTING');
+    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created a new weapon: ' + name + '!");
     const durability = grade * 15;
     const damage = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -581,7 +581,7 @@ export class InventoryService {
       }
     }
     equipment.value += value;
-    this.logService.addLogMessage("You add " + value + " power to your " + equipment.name, "STANDARD", "CRAFTING");
+    this.logService.log(LogTopic.CRAFTING, "You add " + value + " power to your " + equipment.name);
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
@@ -612,7 +612,7 @@ export class InventoryService {
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
     const name = "Potion of " + key + " +" + grade;
-    this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
+    this.logService.log(LogTopic.CRAFTING, "Alchemy Success! Created a " + name + ". Keep up the good work.");
 
     this.addItem({
       name: name,
@@ -643,9 +643,9 @@ export class InventoryService {
       useDescription = "Use to permanently empower the increase of your attributes based on your aptitudes.";
       value = 1;
       name = "Empowerment Pill";
-      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.", "STANDARD", "CRAFTING");
+      this.logService.log(LogTopic.CRAFTING, "Alchemy Success! Created a " + name + ". Its effect gets worse the more you take.");
     } else {
-      this.logService.addLogMessage("Alchemy Success! Created a " + name + ". Keep up the good work.", "STANDARD", "CRAFTING");
+      this.logService.log(LogTopic.CRAFTING, "Alchemy Success! Created a " + name + ". Keep up the good work.");
     }
     this.addItem({
       name: name,
@@ -756,7 +756,7 @@ export class InventoryService {
     }
     const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
-    this.logService.addLogMessage('Your hard work paid off! You created some armor: ' + name + '!', 'STANDARD', 'CRAFTING');
+    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created some armor: ' + name + '!");
     const durability = grade * 10;
     const defense = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -922,9 +922,7 @@ export class InventoryService {
       return; // Skip the rice gift, thematically inappropriate
     }
     if (this.motherGift) {
-      this.logService.addLogMessage(
-        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.',
-        'STANDARD', 'EVENT');
+      this.logService.log(LogTopic.EVENT, 'Your mother gives you three big bags of rice as she sends you out to make your way in the world.');
       this.addItem(this.itemRepoService.items['rice'], 300);
     }
   }
@@ -1123,10 +1121,10 @@ export class InventoryService {
 
     // if we're here we didn't find a slot for anything/everything.
     if (this.autoSellUnlocked && !this.hellService?.inHell) {
-      this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you sold it.`, 'STANDARD', 'EVENT');
+      this.logService.log(LogTopic.EVENT, `You don't have enough room for the ${item.name} so you sold it.`);
       this.characterService.characterState.money += item.value * quantity;
     } else {
-      this.logService.addLogMessage(`You don't have enough room for the ${item.name} so you threw it away.`, 'STANDARD', 'EVENT');
+      this.logService.log(LogTopic.EVENT, `You don't have enough room for the ${item.name} so you threw it away.`);
     }
     this.thrownAwayItems += quantity;
     return firstStack;
@@ -1303,7 +1301,7 @@ export class InventoryService {
     if ((item.armorStats?.durability || 0) <= 0 && (item.weaponStats?.durability || 0) <= 0) {
 
       //it's broken, bail out
-      this.logService.addLogMessage("You tried to equip some broken equipment, but it was broken.", "STANDARD", "EVENT")
+      this.logService.log(LogTopic.EVENT, "You tried to equip some broken equipment, but it was broken.");
       return;
     }
 

@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
@@ -1147,15 +1147,15 @@ export class ItemRepoService {
         this.impossibleTaskService.activeTaskIndex = ImpossibleTaskType.OvercomeDeath; // just in case. Don't want this use to fail.
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete) {
-          this.logService.addLogMessage("YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!", "INJURY", 'STORY');
+          this.logService.injury(LogTopic.STORY, "YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!");
           if (!this.gameStateService) {
             this.gameStateService = this.injector.get(GameStateService);
           }
           if (this.gameStateService.easyModeEver) {
-            this.logService.addLogMessage("Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.", "STANDARD", 'STORY');
+            this.logService.log(LogTopic.STORY, "Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.");
           }
-          this.logService.addLogMessage("You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and succeeded in your quest on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
-          this.logService.addLogMessage("You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to overcome death.", "STANDARD", 'STORY');
+          this.logService.log(LogTopic.STORY, "You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and succeeded in your quest on " + new Date().toDateString() + ".");
+          this.logService.log(LogTopic.STORY, "You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to overcome death.");
           this.characterService.characterState.immortal = true;
         }
       },
@@ -1170,7 +1170,7 @@ export class ItemRepoService {
       useDescription: 'Become a god and win the game (again).',
       useConsumes: true,
       use: () => {
-        this.logService.addLogMessage("YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!", "INJURY", 'STORY');
+        this.logService.injury(LogTopic.STORY, "YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!");
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
@@ -1184,8 +1184,8 @@ export class ItemRepoService {
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        this.logService.addLogMessage("You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and achieved godhood on " + new Date().toDateString() + ".", "STANDARD", 'STORY');
-        this.logService.addLogMessage("You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to claim your throne on Mount Penglai.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and achieved godhood on " + new Date().toDateString() + ".");
+        this.logService.log(LogTopic.STORY, "You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to claim your throne on Mount Penglai.");
         this.characterService.characterState.god = true;
         this.battleService.troubleKills = 0;
         this.activityService.reloadActivities();
@@ -1259,7 +1259,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.TongueRipping)) {
           this.hellService.completedHellBosses.push(HellLevel.TongueRipping);
         }
-        this.logService.addLogMessage("The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.");
         this.followerService.unlockJob("prophet");
       },
     },
@@ -1282,8 +1282,8 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Scissors)) {
           this.hellService.completedHellBosses.push(HellLevel.Scissors);
         }
-        this.logService.addLogMessage("The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.", "STANDARD", 'STORY');
-        this.logService.addLogMessage("From now on, each follower will train a child to replace themselves in your service when they pass away.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.");
+        this.logService.log(LogTopic.STORY, "From now on, each follower will train a child to replace themselves in your service when they pass away.");
         this.followerService.autoReplaceUnlocked = true;
       },
     },
@@ -1306,7 +1306,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)) {
           this.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
         }
-        this.logService.addLogMessage("The Crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The Crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.");
         this.followerService.unlockJob("moneyBurner");
       },
     },
@@ -1332,7 +1332,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Mirrors)) {
           this.hellService.completedHellBosses.push(HellLevel.Mirrors);
         }
-        this.logService.addLogMessage("The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.");
         this.characterService.characterState.attributes.combatMastery.value += 1;
         this.activityService.CombatTraining.unlocked = true;
       },
@@ -1356,7 +1356,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Steamers)) {
           this.hellService.completedHellBosses.push(HellLevel.Steamers);
         }
-        this.logService.addLogMessage("The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.");
         this.battleService.pyroclasmUnlocked = true;
       },
     },
@@ -1379,7 +1379,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)) {
           this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
         }
-        this.logService.addLogMessage("The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.");
         this.battleService.metalFistUnlocked = true;
       },
     },
@@ -1399,7 +1399,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfKnives)) {
           this.hellService.completedHellBosses.push(HellLevel.MountainOfKnives);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.");
         this.characterService.characterState.yinYangUnlocked = true;
       },
     },
@@ -1422,7 +1422,7 @@ export class ItemRepoService {
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.");
         this.battleService.iceShieldUnlocked = true;
       },
     },
@@ -1442,7 +1442,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CauldronsOfOil)) {
           this.hellService.completedHellBosses.push(HellLevel.CauldronsOfOil);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.");
         this.characterService.characterState.righteousWrathUnlocked = true;
       },
     },
@@ -1465,7 +1465,7 @@ export class ItemRepoService {
         if (!this.followerService) {
           this.followerService = this.injector.get(FollowersService);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before.");
         this.followerService.unlockElementalPets();
       },
     },
@@ -1485,7 +1485,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CrushingBoulder)) {
           this.hellService.completedHellBosses.push(HellLevel.CrushingBoulder);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.");
         this.characterService.characterState.bonusMuscles = true;
       },
     },
@@ -1511,7 +1511,7 @@ export class ItemRepoService {
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.");
         this.homeService.hellFood = true;
         this.inventoryService.divinePeachesUnlocked = true;
         this.inventoryService.updateFarmFoodList();
@@ -1537,7 +1537,7 @@ export class ItemRepoService {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.");
         this.homeService.hellHome = true;
       },
     },
@@ -1557,7 +1557,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.WrongfulDead)) {
           this.hellService.completedHellBosses.push(HellLevel.WrongfulDead);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.");
         this.characterService.characterState.bonusBrains = true;
       },
     },
@@ -1580,7 +1580,7 @@ export class ItemRepoService {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.");
         this.activityService.purifyGemsUnlocked = true;
         this.activityService.reloadActivities();
       },
@@ -1604,7 +1604,7 @@ export class ItemRepoService {
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.");
         this.battleService.fireShieldUnlocked = true;
       },
     },
@@ -1624,7 +1624,7 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Mills)) {
           this.hellService.completedHellBosses.push(HellLevel.Mills);
         }
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.");
         this.characterService.characterState.bonusHealth = true;
       },
     },
@@ -1648,7 +1648,7 @@ export class ItemRepoService {
           this.followerService = this.injector.get(FollowersService);
         }
 
-        this.logService.addLogMessage("The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.", "STANDARD", 'STORY');
+        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.");
         this.followerService.unlockJob("banker");
       },
     },
@@ -1664,7 +1664,7 @@ export class ItemRepoService {
       use: () => {
         this.mainLoopService.unlockFastSpeed = true;
         this.mainLoopService.topDivider = this.mainLoopService.topDivider > 5 ? 5 : this.mainLoopService.topDivider;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         return this.mainLoopService.unlockFastSpeed;
@@ -1682,7 +1682,7 @@ export class ItemRepoService {
       use: () => {
         this.mainLoopService.unlockFasterSpeed = true;
         this.mainLoopService.topDivider = this.mainLoopService.topDivider > 2 ? 2 : this.mainLoopService.topDivider;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         return this.mainLoopService.unlockFasterSpeed;
@@ -1700,7 +1700,7 @@ export class ItemRepoService {
       use: () => {
         this.mainLoopService.unlockFastestSpeed = true;
         this.mainLoopService.topDivider = 1;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         return this.mainLoopService.unlockFastestSpeed;
@@ -1721,7 +1721,7 @@ export class ItemRepoService {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoRestart = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if actvityService is injected yet, if not, inject it (circular dependency issues)
@@ -1746,7 +1746,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoSellUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1771,7 +1771,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoUseUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1796,7 +1796,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoBalanceUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1820,7 +1820,7 @@ export class ItemRepoService {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoBuyLandUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         if (!this.homeService) {
@@ -1843,7 +1843,7 @@ export class ItemRepoService {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoBuyHomeUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         if (!this.homeService) {
@@ -1866,7 +1866,7 @@ export class ItemRepoService {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoBuyFurnitureUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         if (!this.homeService) {
@@ -1889,7 +1889,7 @@ export class ItemRepoService {
           this.autoBuyerService = this.injector.get(AutoBuyerService);
         }
         this.autoBuyerService.autoBuyerSettingsUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         if (!this.autoBuyerService) {
@@ -1912,7 +1912,7 @@ export class ItemRepoService {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoFieldUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         if (!this.homeService) {
@@ -1941,7 +1941,7 @@ export class ItemRepoService {
             this.inventoryService.autoUseEntries.splice(index, 1);
           }
         }
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1971,7 +1971,7 @@ export class ItemRepoService {
             this.inventoryService.autoUseEntries.splice(index, 1);
           }
         }
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1996,7 +1996,7 @@ export class ItemRepoService {
           this.battleService = this.injector.get(BattleService);
         }
         this.battleService.autoTroubleUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if battleService is injected yet, if not, inject it (circular dependency issues)
@@ -2021,7 +2021,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoWeaponMergeUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2046,7 +2046,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoArmorMergeUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2073,7 +2073,7 @@ export class ItemRepoService {
         this.inventoryService.useSpiritGemUnlocked = true;
         this.inventoryService.useSpiritGemWeapons = true;
         this.inventoryService.useSpiritGemPotions = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2099,7 +2099,7 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldHerbs = true;
         this.inventoryService.autoSellOldHerbsEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2125,7 +2125,7 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldWood = true;
         this.inventoryService.autoSellOldWoodEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2152,7 +2152,7 @@ export class ItemRepoService {
         this.inventoryService.autoSellOldOre = true;
         this.inventoryService.autoSellOldOreEnabled = true;
         this.inventoryService.autoSellOldBarsEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2178,7 +2178,7 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldHides = true;
         this.inventoryService.autoSellOldHidesEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2203,7 +2203,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoequipBestWeapon = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2228,7 +2228,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoequipBestArmor = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2253,7 +2253,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.maxStackSize *= 10;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2278,7 +2278,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.maxStackSize *= 10;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2303,7 +2303,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.maxStackSize *= 10;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2328,7 +2328,7 @@ export class ItemRepoService {
           this.followerService = this.injector.get(FollowersService);
         }
         this.followerService.autoDismissUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2354,7 +2354,7 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldGemsUnlocked = true;
         this.inventoryService.autoSellOldGemsEnabled = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2378,7 +2378,7 @@ export class ItemRepoService {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoPauseUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         if (!this.activityService) {
@@ -2398,7 +2398,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.offlineDivider = 2;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         return this.mainLoopService.offlineDivider <= 2;
@@ -2418,7 +2418,7 @@ export class ItemRepoService {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoRestUnlocked = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         if (!this.activityService) {
@@ -2438,7 +2438,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockAgeSpeed = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         return this.mainLoopService.unlockAgeSpeed;
@@ -2455,7 +2455,7 @@ export class ItemRepoService {
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockPlaytimeSpeed = true;
-        this.logService.addLogMessage("The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.", "STANDARD", 'EVENT');
+        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
       },
       owned: () => {
         return this.mainLoopService.unlockPlaytimeSpeed;
