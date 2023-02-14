@@ -1,5 +1,5 @@
 import { Equipment } from './inventory.service'
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
@@ -346,7 +346,7 @@ export class Character {
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
           const message = "Your aptitude for " + this.camelToTitlePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue) + "\n    New aptitude: " + this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
-          this.logService.addLogMessage(message, "STANDARD", "EVENT");
+          this.logService.log(LogTopic.EVENT, message);
           attributeGains += message + "\n    New starting value: " + this.bigNumberPipe.transform(this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude)) + "\n";
         }
         // start at the aptitude value

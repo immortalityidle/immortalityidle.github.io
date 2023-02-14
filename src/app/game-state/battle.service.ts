@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { Equipment, InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from './main-loop.service';
@@ -244,7 +244,7 @@ export class BattleService {
             // TODO: tune this
             damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
           }
-          this.logService.addLogMessage("Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage", 'INJURY', 'COMBAT');
+          this.logService.injury(LogTopic.COMBAT, "Ow! " + enemyStack.enemy.name + " hit you for " + this.bigNumberPipe.transform(damage) + " damage");
           if (damageBack) {
             this.damageEnemy(damage, "The flames of your shield strike back, damaging the enemy for " + damage + " damage.");
           }
@@ -274,9 +274,9 @@ export class BattleService {
 
           if (this.characterService.characterState.status.health.value <= 0) {
             if (enemyStack.enemy.name === "Death itself") {
-              this.logService.addLogMessage(enemyStack.enemy.name + " overkilled you by " + Math.floor(-this.characterService.characterState.status.health.value) + " damage. You were defeated.", 'INJURY', 'EVENT');
+              this.logService.injury(LogTopic.EVENT, enemyStack.enemy.name + " overkilled you by " + Math.floor(-this.characterService.characterState.status.health.value) + " damage. You were defeated.");
             } else {
-              this.logService.addLogMessage("You were defeated by " + enemyStack.enemy.name, 'INJURY', 'EVENT');
+              this.logService.injury(LogTopic.EVENT, "You were defeated by " + enemyStack.enemy.name);
             }
             if (!this.characterService.characterState.immortal) {
               this.characterService.characterState.dead = true;
@@ -288,7 +288,7 @@ export class BattleService {
             return;
           }
         } else {
-          this.logService.addLogMessage("Miss! " + enemyStack.enemy.name + " tries to hit you but fails.", 'STANDARD', 'COMBAT');
+          this.logService.log(LogTopic.COMBAT, "Miss! " + enemyStack.enemy.name + " tries to hit you but fails.");
         }
       }
     }
@@ -298,7 +298,7 @@ export class BattleService {
     this.characterService.characterState.accuracy = Math.min((this.troubleKills + Math.sqrt(this.characterService.characterState.attributes.speed.value)) / this.troubleKills / 2, 1)
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) { // Check health for immortals
       if (Math.random() > this.characterService.characterState.accuracy) {
-        this.logService.addLogMessage("You attack " + this.currentEnemy.enemy.name + " but miss.", 'STANDARD', 'COMBAT');
+        this.logService.log(LogTopic.COMBAT, "You attack " + this.currentEnemy.enemy.name + " but miss.");
         return;
       }
 
@@ -388,7 +388,7 @@ export class BattleService {
           this.characterService.characterState.equipment.leftHand.weaponStats.baseDamage = 1;
         }
         if (this.characterService.characterState.equipment.leftHand.weaponStats.effect === "life") {
-          this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.leftHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
+          this.logService.log(LogTopic.COMBAT, "Your " + this.characterService.characterState.equipment.leftHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.");
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
         }
@@ -412,7 +412,7 @@ export class BattleService {
           this.characterService.characterState.equipment.rightHand.weaponStats.baseDamage = 1;
         }
         if (this.characterService.characterState.equipment.rightHand.weaponStats.effect === "life") {
-          this.logService.addLogMessage("Your " + this.characterService.characterState.equipment.rightHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.", "STANDARD", "COMBAT");
+          this.logService.log(LogTopic.COMBAT, "Your " + this.characterService.characterState.equipment.rightHand.name + " healed you for " + durabilityDamage + " as you struck the enemy.");
           this.characterService.characterState.status.health.value += durabilityDamage;
           this.characterService.characterState.checkOverage();
         }
@@ -445,7 +445,7 @@ export class BattleService {
     if (this.currentEnemy.enemy.health <= 0) {
       this.kills++;
       this.totalKills++;
-      this.logService.addLogMessage("You manage to kill " + this.currentEnemy.enemy.name, 'STANDARD', 'COMBAT');
+      this.logService.log(LogTopic.COMBAT, "You manage to kill " + this.currentEnemy.enemy.name);
       if (this.currentEnemy.enemy.name === "Death itself") {
         this.characterService.toast("HURRAY! Check your inventory. You just got something special!", 0);
       }      
@@ -469,7 +469,7 @@ export class BattleService {
       }
       return (damage - enemyHealth) / 2; // return half the damage left over
     } else {
-      this.logService.addLogMessage(customMessage, 'STANDARD', 'COMBAT');
+      this.logService.log(LogTopic.COMBAT, customMessage);
       return 0;
     }
   }
@@ -479,7 +479,7 @@ export class BattleService {
   }
 
   addEnemy(enemy: Enemy) {
-    this.logService.addLogMessage("A new enemy comes along to trouble your sleep: " + enemy.name, 'STANDARD', 'COMBAT');
+    this.logService.log(LogTopic.COMBAT, "A new enemy comes along to trouble your sleep: " + enemy.name);
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name === enemy.name) {
         // it matches an existing enemy, add it to the stack and bail out
@@ -578,7 +578,7 @@ export class BattleService {
       }
       if (armor.armorStats.effect === "life") {
         const amountHealed = (durabilityDamage + Math.floor(armor.armorStats.durability * this.degradeFactor)) * 10;
-        this.logService.addLogMessage("Your " + armor.name + " healed you for " + amountHealed + " as the enemy struck it.", "STANDARD", "COMBAT");
+        this.logService.log(LogTopic.COMBAT, "Your " + armor.name + " healed you for " + amountHealed + " as the enemy struck it.");
         this.characterService.characterState.status.health.value += amountHealed;
         this.characterService.characterState.checkOverage();
       }
@@ -596,7 +596,7 @@ export class BattleService {
     }
     if (enemy.defeatEffect === "respawnDouble") {
       // add two more of the same enemy
-      this.logService.addLogMessage("They just keep coming! Two more " + enemy.name + " appear!", "STANDARD", "COMBAT");
+      this.logService.log(LogTopic.COMBAT, "They just keep coming! Two more " + enemy.name + " appear!");
       this.addEnemy({
         name: enemy.name,
         health: enemy.maxHealth,
@@ -631,7 +631,7 @@ export class BattleService {
         // force feed on third hit
         this.hellService.daysFasted = 0;
         const damage = this.characterService.characterState.status.health.value / 4;
-        this.logService.addLogMessage("The hellfire burns as it goes down, damaging you for " + damage + " extra damage.", 'INJURY', 'COMBAT');
+        this.logService.injury(LogTopic.COMBAT, "The hellfire burns as it goes down, damaging you for " + damage + " extra damage.");
         this.characterService.characterState.status.health.value -= damage;
       }
     }
