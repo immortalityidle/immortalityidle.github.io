@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { environment } from '../../environments/environment';
 
@@ -23,8 +23,9 @@ export class ExportPanelComponent {
     textArea.value = this.gameStateService.getGameExport();
   }
 
-  importFileClick(event: any) {
-    const file = event.target.files[0];
+  importFileClick(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target?.files?.[0];
     if (file) {
       const Reader = new FileReader();
       const gameStateService = this.gameStateService;

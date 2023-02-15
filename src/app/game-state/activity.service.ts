@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable, Injector } from '@angular/core';
 import { BattleService } from './battle.service';
 import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
-import { AttributeType, CharacterAttribute } from '../game-state/character';
+import { AttributeType, CharacterAttribute, StatusType } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService, HomeType } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
-import { LogService, LogTopic, LogType } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
@@ -257,17 +258,18 @@ export class ActivityService {
       if (!activity.resourceUse[activity.level]['mana']) {
         activity.resourceUse[activity.level]['mana'] = 0;
       }
-      //@ts-ignore
       if (
         this.characterService.characterState.status['mana'].value <
-        activity.resourceUse[activity.level]['mana'] + 5
+        (activity.resourceUse[activity.level]?.['mana'] ?? 0) + 5
       ) {
         return false;
       }
     }
     for (const key in activity.resourceUse[activity.level]) {
-      //@ts-ignore
-      if (this.characterService.characterState.status[key].value < activity.resourceUse[activity.level][key]) {
+      if (
+        this.characterService.characterState.status[key as StatusType].value <
+        (activity.resourceUse?.[activity.level]?.[key as StatusType] ?? 0)
+      ) {
         return false;
       }
     }
@@ -381,9 +383,9 @@ export class ActivityService {
       const key = keys[keyIndex];
       let requirementValue = 0;
       if (activity.requirements[level][key] !== undefined) {
-        requirementValue = activity.requirements[level][key]!;
+        requirementValue = activity.requirements[level][key] ?? 0;
       }
-      if (this.characterService.characterState.attributes[key].value <= requirementValue) {
+      if (this.characterService.characterState.attributes[key as AttributeType].value <= requirementValue) {
         return false;
       }
     }
@@ -474,7 +476,7 @@ export class ActivityService {
     }
     if (this.currentApprenticeship === activityType) {
       // check for completed apprenticeship
-      let activity = this.getActivityByType(activityType);
+      const activity = this.getActivityByType(activityType);
       if (activity) {
         if (activity.level >= activity.skipApprenticeshipLevel) {
           this.completedApprenticeships.push(activityType);
@@ -484,7 +486,7 @@ export class ActivityService {
       // start an apprenticeship
       this.openApprenticeships--;
       this.currentApprenticeship = activityType;
-      for (let activity of this.activities) {
+      for (const activity of this.activities) {
         if (activity.skipApprenticeshipLevel > 0) {
           activity.unlocked = false;
         }
@@ -529,21 +531,21 @@ export class ActivityService {
   }
 
   saveActivityLoop(index = 1) {
-    if (index == 1) {
+    if (index === 1) {
       this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop));
-    } else if (index == 2) {
+    } else if (index === 2) {
       this.savedActivityLoop2 = JSON.parse(JSON.stringify(this.activityLoop));
-    } else if (index == 3) {
+    } else if (index === 3) {
       this.savedActivityLoop3 = JSON.parse(JSON.stringify(this.activityLoop));
     }
   }
 
   loadActivityLoop(index = 1) {
-    if (index == 1) {
+    if (index === 1) {
       this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop));
-    } else if (index == 2) {
+    } else if (index === 2) {
       this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop2));
-    } else if (index == 3) {
+    } else if (index === 3) {
       this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop3));
     }
     this.checkRequirements(true);
@@ -2704,7 +2706,7 @@ export class ActivityService {
               Math.floor(this.followerService.jobs['hunter'].totalPower / 20)
             );
           }
-          if (Math.random() < 0.01 && this.battleService.enemies.length == 0) {
+          if (Math.random() < 0.01 && this.battleService.enemies.length === 0) {
             this.battleService.addEnemy({
               name: 'a hungry wolf',
               health: 20,
@@ -3486,3 +3488,4 @@ export class ActivityService {
     };
   }
 }
+/* eslint-enable @typescript-eslint/ban-ts-comment */

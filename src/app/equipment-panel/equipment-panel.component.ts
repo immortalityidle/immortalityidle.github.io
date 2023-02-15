@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Character, EquipmentPosition, EquipmentSlots } from '../game-state/character';
+import { Character, EquipmentPosition } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 
@@ -54,7 +54,7 @@ export class EquipmentPanelComponent {
       const equipmentSlot: EquipmentPosition = slot as EquipmentPosition;
       if (itemToEquip) {
         if (instanceOfEquipment(itemToEquip)) {
-          if (itemToEquip.slot != slot) {
+          if (itemToEquip.slot !== slot) {
             return;
           }
         }

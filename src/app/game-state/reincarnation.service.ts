@@ -7,8 +7,6 @@ import { Subject } from 'rxjs';
 export class ReincarnationService {
   reincarnateSubject = new Subject<undefined>();
 
-  constructor() {}
-
   reincarnate(): void {
     this.reincarnateSubject.next(undefined);
   }

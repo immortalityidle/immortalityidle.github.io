@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 
 @Component({
@@ -6,10 +6,8 @@ import { ActivityService } from '../game-state/activity.service';
   templateUrl: './time-options-panel.component.html',
   styleUrls: ['./time-options-panel.component.less', '../app.component.less'],
 })
-export class TimeOptionsPanelComponent implements OnInit {
+export class TimeOptionsPanelComponent {
   constructor(public activityService: ActivityService) {}
-
-  ngOnInit(): void {}
 
   pauseOnDeath(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;

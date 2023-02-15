@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Log, LogService, LogTopic } from '../game-state/log.service';
+import { Component } from '@angular/core';
+import { LogService, LogTopic } from '../game-state/log.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LogFilterPanelComponent } from '../log-filter-panel/log-filter-panel.component';
 
@@ -17,7 +17,7 @@ export class LogPanelComponent {
   }
 
   logFilterClicked(): void {
-    const dialogRef = this.dialog.open(LogFilterPanelComponent, {
+    this.dialog.open(LogFilterPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,

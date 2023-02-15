@@ -43,7 +43,7 @@ export class HomePanelComponent {
 
   storeClicked(): void {
     this.storeService.setStoreInventory();
-    const dialogRef = this.dialog.open(FurnitureStoreModalComponent, {
+    this.dialog.open(FurnitureStoreModalComponent, {
       width: '600px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -52,7 +52,7 @@ export class HomePanelComponent {
 
   farmClicked(): void {
     this.storeService.setStoreInventory();
-    const dialogRef = this.dialog.open(FarmPanelComponent, {
+    this.dialog.open(FarmPanelComponent, {
       width: '800px',
       data: { someField: 'foo' },
       autoFocus: false,

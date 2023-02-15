@@ -2,8 +2,7 @@ export abstract class PanelSliderComponent {
   mouseMoveListener = this.handleMouseMove.bind(this);
   mouseUpListener = this.handleMouseUp.bind(this);
 
-  constructor() {}
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleMouseDown(event: MouseEvent) {
     window.addEventListener('mousemove', this.mouseMoveListener);
     window.addEventListener('mouseup', this.mouseUpListener);

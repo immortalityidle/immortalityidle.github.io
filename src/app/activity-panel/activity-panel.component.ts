@@ -12,7 +12,6 @@ import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
-import { Injectable, Injector } from '@angular/core';
 
 @Component({
   selector: 'app-activity-panel',
@@ -127,15 +126,14 @@ export class ActivityPanelComponent {
         projectionString
       );
     } else {
-      let requirementString =
-        'This activity is locked until you have the attributes required for it. You will need:\n\n';
-      const requirements = activity.requirements[0];
-      for (const prop in requirements) {
-        //@ts-ignore
-        requirementString +=
-          this.camelToTitle.transform(prop) + ': ' + this.bigNumberPipe.transform(requirements[prop]) + '\n';
-      }
-      return requirementString;
+      return [
+        'This activity is locked until you have the attributes required for it. You will need:\n',
+        ...Object.entries(activity.requirements[0]).map(entry =>
+          entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
+        ),
+      ]
+        .filter(line => line)
+        .join('\n');
     }
   }
 }

@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { makeStateKey } from '@angular/platform-browser';
+import { Component } from '@angular/core';
 import { FollowersService } from '../game-state/followers.service';
 
 @Component({
@@ -7,13 +6,9 @@ import { FollowersService } from '../game-state/followers.service';
   templateUrl: './follower-management-panel.component.html',
   styleUrls: ['./follower-management-panel.component.less', '../app.component.less'],
 })
-export class FollowerManagementPanelComponent implements OnInit {
+export class FollowerManagementPanelComponent {
   changeAll = 0;
   constructor(public followerService: FollowersService) {}
-
-  ngOnInit(): void {
-    let a;
-  }
 
   getTotalAssingments() {
     let max = 0;
@@ -21,7 +16,7 @@ export class FollowerManagementPanelComponent implements OnInit {
       if (!this.followerService.jobs[followerType].hidden) {
         if (this.followerService.maxFollowerByType[followerType]) {
           max += this.followerService.maxFollowerByType[followerType];
-        } else if (this.followerService.maxFollowerByType[followerType] != 0) {
+        } else if (this.followerService.maxFollowerByType[followerType] !== 0) {
           max += 1000;
         }
       }
