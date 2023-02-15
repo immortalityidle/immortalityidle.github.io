@@ -38,6 +38,12 @@ interface GameState {
   easyModeEver: boolean;
 }
 
+declare global {
+  interface Window {
+    GameStateService: GameStateService;
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -68,8 +74,7 @@ export class GameStateService {
     private impossibleTaskService: ImpossibleTaskService,
     private hellService: HellService
   ) {
-    // @ts-ignore
-    window['GameStateService'] = this;
+    window.GameStateService = this;
     mainLoopService.longTickSubject.subscribe(() => {
       const currentTime = new Date().getTime();
       if (currentTime - this.lastSaved >= this.saveInterval * 1000) {

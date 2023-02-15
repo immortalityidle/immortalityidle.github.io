@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { CharacterService } from '../game-state/character.service';
@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './time-panel.component.html',
   styleUrls: ['./time-panel.component.less', '../app.component.less'],
 })
-export class TimePanelComponent implements OnInit {
+export class TimePanelComponent {
   unlockFastSpeed = false;
   unlockFasterSpeed = false;
   unlockFastestSpeed = false;
@@ -22,10 +22,6 @@ export class TimePanelComponent implements OnInit {
     public characterService: CharacterService,
     public dialog: MatDialog
   ) {}
-
-  ngOnInit(): void {
-    let a;
-  }
 
   pauseClick() {
     if (this.mainLoopService.pause) {
@@ -61,7 +57,7 @@ export class TimePanelComponent implements OnInit {
   }
 
   timeOptions() {
-    const dialogRef = this.dialog.open(TimeOptionsPanelComponent, {
+    this.dialog.open(TimeOptionsPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,

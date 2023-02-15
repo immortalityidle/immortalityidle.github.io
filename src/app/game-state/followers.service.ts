@@ -5,17 +5,17 @@ import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
-import { InventoryService } from './inventory.service';
+import { Equipment, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
-import { EquipmentPosition } from './character';
 import { CamelToTitlePipe } from '../app.component';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
 export interface Follower {
+  [key: string]: string | number | boolean | undefined;
   name: string;
   age: number;
   lifespan: number;
@@ -148,13 +148,29 @@ export class FollowersService {
         if (this.hellService?.inHell) {
           totalPower /= 10;
         }
+        const improveArmor = (armor: Equipment): Equipment => ({
+          ...armor,
+          armorStats: armor.armorStats
+            ? {
+                ...armor.armorStats,
+                durability: armor.armorStats?.durability + Math.ceil(Math.pow(totalPower / 10, 2) * 50),
+                defense: armor.armorStats?.defense + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2),
+              }
+            : undefined,
+          value: armor.value + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2),
+        });
         const equipment = this.characterService.characterState.equipment; // Too many long names, reduced and referenced
-        for (const key of ['head', 'body', 'legs', 'feet'] as EquipmentPosition[]) {
-          if (equipment[key] && equipment[key]!.armorStats) {
-            equipment[key]!.armorStats!.durability += Math.ceil(Math.pow(totalPower / 10, 2) * 50);
-            equipment[key]!.armorStats!.defense += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2);
-            equipment[key]!.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2);
-          }
+        if (equipment.head && equipment.head.armorStats) {
+          equipment.head = improveArmor(equipment.head);
+        }
+        if (equipment.body && equipment.body.armorStats) {
+          equipment.body = improveArmor(equipment.body);
+        }
+        if (equipment.legs && equipment.legs.armorStats) {
+          equipment.legs = improveArmor(equipment.legs);
+        }
+        if (equipment.feet && equipment.feet.armorStats) {
+          equipment.feet = improveArmor(equipment.feet);
         }
       },
       description:
@@ -472,9 +488,8 @@ export class FollowersService {
         a.lifespan - a.age > b.lifespan - b.age ? left : a.lifespan - a.age === b.lifespan - b.age ? 0 : right
       );
     } else {
-      //@ts-ignore
       this.followers.sort((a, b) =>
-        a[this.sortField.toLowerCase()] > b[this.sortField.toLowerCase()]
+        (a[this.sortField.toLowerCase()] ?? 0) > (b[this.sortField.toLowerCase()] ?? 0)
           ? left
           : a[this.sortField.toLowerCase()] === b[this.sortField.toLowerCase()]
           ? 0
@@ -573,7 +588,7 @@ export class FollowersService {
           if (this.jobs[key].hidden) {
             continue;
           }
-          let capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
+          const capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
           let count = 0;
           for (const follower of this.followers) {
             if (follower.job === key) {
@@ -612,7 +627,7 @@ export class FollowersService {
       // couldn't find a job that we want
       return null;
     }
-    let capNumber = this.maxFollowerByType[job] !== undefined ? this.maxFollowerByType[job] : 1000;
+    const capNumber = this.maxFollowerByType[job] !== undefined ? this.maxFollowerByType[job] : 1000;
     if (this.numFollowersOnJob(job) >= capNumber) {
       this.logService.log(
         LogTopic.FOLLOWER,
@@ -668,7 +683,7 @@ export class FollowersService {
       if (!this.jobs[key].hidden) {
         if ((pet && this.jobs[key].pet) || (!pet && !this.jobs[key].pet)) {
           if (this.onlyWantedFollowers) {
-            let capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
+            const capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
             if (this.numFollowersOnJob(key) < capNumber) {
               possibleJobs.push(key);
             }

@@ -1,4 +1,4 @@
-import { CharacterAttribute } from '../game-state/character';
+import { CharacterAttribute, StatusType } from '../game-state/character';
 
 export enum ActivityType {
   OddJobs,
@@ -71,12 +71,9 @@ export enum ActivityType {
   Hell, // hell needs to be last for indexing purposes
 }
 
-export interface ActivityResource {
-  health?: number;
-  stamina?: number;
-  mana?: number;
-  nourishment?: number;
-}
+export type ActivityResource = {
+  [key in StatusType]?: number;
+};
 
 export interface Activity {
   name: string[];

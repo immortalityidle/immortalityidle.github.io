@@ -27,7 +27,7 @@ export class AttributesPanelComponent {
   };
 
   followerOptionsClicked(): void {
-    const dialogRef = this.dialog.open(FollowerManagementPanelComponent, {
+    this.dialog.open(FollowerManagementPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,

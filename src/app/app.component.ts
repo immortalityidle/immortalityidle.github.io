@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
@@ -8,7 +8,6 @@ import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-
 import { HostListener } from '@angular/core';
 import { StoreService } from './game-state/store.service';
 import { CharacterService } from './game-state/character.service';
-import { formatNumber } from '@angular/common';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { ImpossibleTaskService } from './game-state/impossibleTask.service';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
@@ -155,7 +154,7 @@ export class AppComponent implements OnInit {
     if ((event.ctrlKey || event.metaKey) && (event.shiftKey || event.altKey)) {
       this.gameStateService.loadFromLocalStorage(true);
     } else if (event.shiftKey || event.altKey) {
-      const dialogRef = this.dialog.open(SaveModalComponent, {
+      this.dialog.open(SaveModalComponent, {
         width: '400px',
         data: { someField: 'foo' },
         autoFocus: false,
@@ -167,7 +166,7 @@ export class AppComponent implements OnInit {
   }
 
   exportClicked(): void {
-    const dialogRef = this.dialog.open(ExportPanelComponent, {
+    this.dialog.open(ExportPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -175,7 +174,7 @@ export class AppComponent implements OnInit {
   }
 
   storeClicked(): void {
-    const dialogRef = this.dialog.open(ManualStoreModalComponent, {
+    this.dialog.open(ManualStoreModalComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -183,7 +182,7 @@ export class AppComponent implements OnInit {
   }
 
   storeOptionsClicked(): void {
-    const dialogRef = this.dialog.open(OptionsModalComponent, {
+    this.dialog.open(OptionsModalComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -199,7 +198,7 @@ export class AppComponent implements OnInit {
 
   ascensionStoreClicked() {
     this.storeService.updateAscensions();
-    const dialogRef = this.dialog.open(AscensionStoreModalComponent, {
+    this.dialog.open(AscensionStoreModalComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -207,7 +206,7 @@ export class AppComponent implements OnInit {
   }
 
   tutorialClicked() {
-    const dialogRef = this.dialog.open(TutorialPanelComponent, {
+    this.dialog.open(TutorialPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -215,7 +214,7 @@ export class AppComponent implements OnInit {
   }
 
   statisticsClicked() {
-    const dialogRef = this.dialog.open(StatisticsPanelComponent, {
+    this.dialog.open(StatisticsPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -223,7 +222,7 @@ export class AppComponent implements OnInit {
   }
 
   changelogClicked() {
-    const dialogRef = this.dialog.open(ChangelogPanelComponent, {
+    this.dialog.open(ChangelogPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -231,7 +230,7 @@ export class AppComponent implements OnInit {
   }
 
   achievementsClicked() {
-    const dialogRef = this.dialog.open(AchievementPanelComponent, {
+    this.dialog.open(AchievementPanelComponent, {
       width: '750px',
       data: { someField: 'foo' },
       autoFocus: false,
@@ -239,7 +238,7 @@ export class AppComponent implements OnInit {
   }
 
   impossibleTasksClicked() {
-    const dialogRef = this.dialog.open(ImpossibleTaskPanelComponent, {
+    this.dialog.open(ImpossibleTaskPanelComponent, {
       width: '500px',
       data: { someField: 'foo' },
       autoFocus: false,

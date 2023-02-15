@@ -139,7 +139,9 @@ export class AchievementService {
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Blacksmithing);
       },
-      effect: () => {},
+      effect: () => {
+        /* intentionally empty */
+      },
       unlocked: false,
     },
     {
@@ -150,7 +152,9 @@ export class AchievementService {
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Alchemy);
       },
-      effect: () => {},
+      effect: () => {
+        /* intentionally empty */
+      },
       unlocked: false,
     },
     {
@@ -161,7 +165,9 @@ export class AchievementService {
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Leatherworking);
       },
-      effect: () => {},
+      effect: () => {
+        /* intentionally empty */
+      },
       unlocked: false,
     },
     {
@@ -172,7 +178,9 @@ export class AchievementService {
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Woodworking);
       },
-      effect: () => {},
+      effect: () => {
+        /* intentionally empty */
+      },
       unlocked: false,
     },
     {
@@ -541,7 +549,9 @@ export class AchievementService {
       check: () => {
         return this.characterService.characterState.bloodlineRank >= 4;
       },
-      effect: () => {},
+      effect: () => {
+        /* intentionally empty */
+      },
       unlocked: false,
     },
     {
@@ -552,7 +562,9 @@ export class AchievementService {
       check: () => {
         return this.characterService.characterState.money >= this.characterService.characterState.maxMoney - 1e21; //not exactly max in case this gets checked at a bad time
       },
-      effect: () => {},
+      effect: () => {
+        /* intentionally empty */
+      },
       unlocked: false,
     },
     {
@@ -731,7 +743,9 @@ export class AchievementService {
       check: () => {
         return this.characterService.characterState.bloodlineRank >= 9;
       },
-      effect: () => {},
+      effect: () => {
+        /* intentionally empty */
+      },
       unlocked: false,
     },
     {

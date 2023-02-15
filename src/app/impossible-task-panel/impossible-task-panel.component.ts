@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
@@ -8,7 +8,7 @@ import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
   templateUrl: './impossible-task-panel.component.html',
   styleUrls: ['./impossible-task-panel.component.less', '../app.component.less'],
 })
-export class ImpossibleTaskPanelComponent implements OnInit {
+export class ImpossibleTaskPanelComponent {
   Math: Math;
   constructor(
     public impossibleTaskService: ImpossibleTaskService,
@@ -16,10 +16,6 @@ export class ImpossibleTaskPanelComponent implements OnInit {
     public activityService: ActivityService
   ) {
     this.Math = Math;
-  }
-
-  ngOnInit(): void {
-    let a;
   }
 
   pauseOnImpossibleFailChange(event: Event) {

@@ -85,8 +85,8 @@ export class LogService {
   }
 
   fullLog(topic: LogTopic, type: LogType, message: string): void {
-    let log = this.logs[topic];
-    let timestamp = Date.now();
+    const log = this.logs[topic];
+    const timestamp = Date.now();
 
     if (this.isRepeat(message, timestamp, log)) {
       log[0].repeat = (log[0].repeat || 1) + 1;

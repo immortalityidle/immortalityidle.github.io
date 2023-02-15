@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BattleService } from '../game-state/battle.service';
 import { CharacterService } from '../game-state/character.service';
 
@@ -7,10 +7,8 @@ import { CharacterService } from '../game-state/character.service';
   templateUrl: './battle-options-panel.component.html',
   styleUrls: ['./battle-options-panel.component.less', '../app.component.less'],
 })
-export class BattleOptionsPanelComponent implements OnInit {
+export class BattleOptionsPanelComponent {
   constructor(public battleService: BattleService, public characterService: CharacterService) {}
-
-  ngOnInit(): void {}
 
   noAttackToggle() {
     this.battleService.enableManaAttack = false;

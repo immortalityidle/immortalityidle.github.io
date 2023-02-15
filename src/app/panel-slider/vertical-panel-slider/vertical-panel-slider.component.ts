@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PanelSliderComponent } from '../panel-slider.component';
 import { ResizableDirective, Size } from '../resizable.directive';
 
@@ -14,10 +14,6 @@ export class VerticalPanelSliderComponent extends PanelSliderComponent {
   topInitialSize?: Size;
   bottomInitialSize?: Size;
   dragBeginY = 0;
-
-  constructor() {
-    super();
-  }
 
   override handleMouseDown(event: MouseEvent): void {
     super.handleMouseDown(event);

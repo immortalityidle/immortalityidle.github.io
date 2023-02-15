@@ -1270,7 +1270,7 @@ export class HellService {
         consequenceDescription: [''],
         consequence: [
           () => {
-            if (this.battleService.enemies.length == 0) {
+            if (this.battleService.enemies.length === 0) {
               this.battleService.addEnemy({
                 name: 'Lord Yama',
                 health: 1e40,

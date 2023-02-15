@@ -1817,18 +1817,18 @@ export class InventoryService {
   }
 }
 
-export function instanceOfEquipment(object: any): object is Equipment {
+export function instanceOfEquipment(object: Item): object is Equipment {
   return 'slot' in object;
 }
 
-export function instanceOfPotion(object: any): object is Potion {
+export function instanceOfPotion(object: Item): object is Potion {
   return 'attribute' in object;
 }
 
-export function instanceOfPill(object: any): object is Pill {
+export function instanceOfPill(object: Item): object is Pill {
   return 'effect' in object;
 }
 
-export function instanceOfFurniture(object: any): object is Furniture {
+export function instanceOfFurniture(object: Item): object is Furniture {
   return 'slot' in object;
 }

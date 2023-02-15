@@ -3,6 +3,7 @@
   "eslint.quiet": false,
   "eslint.run": "onType",
   "eslint.codeActionsOnSave.mode": "all",
+  "eslint.lintTask.enable": true,
   "files.eol": "\n",
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "[html]": {

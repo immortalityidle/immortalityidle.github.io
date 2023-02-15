@@ -5,7 +5,8 @@ import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-export interface CharacterAttribute {
+export type CharacterAttribute = {
+  [key: string]: number | undefined;
   strength?: number;
   toughness?: number;
   speed?: number;
@@ -20,7 +21,7 @@ export interface CharacterAttribute {
   animalHandling?: number;
   combatMastery?: number;
   magicMastery?: number;
-}
+};
 
 export type AttributeType =
   | 'strength'
@@ -53,7 +54,7 @@ export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' |
 
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
-type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
+export type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
 type CharacterStatus = { [key in StatusType]: { description: string; value: number; max: number } };
 
 export interface CharacterProperties {
@@ -166,7 +167,7 @@ export class Character {
   bonusHealth = false;
   showLifeSummary = true;
   showTips = false;
-  dialogRef: MatDialogRef<LifeSummaryComponent, any> | null = null;
+  dialogRef: MatDialogRef<LifeSummaryComponent> | null = null;
 
   attributes: AttributeObject = {
     strength: {
