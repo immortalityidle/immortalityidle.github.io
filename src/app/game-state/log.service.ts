@@ -18,7 +18,7 @@ export interface Log {
 }
 
 export interface LogProperties {
-  logTopics: LogTopic[],
+  logTopics: Uppercase<LogTopic>[],
   storyLog: Log[],
 }
 
@@ -44,7 +44,7 @@ export class LogService {
     .reduce((result, topic) => ({
       ...result,
       [topic]: {
-        enabled: false,
+        enabled: [LogTopic.STORY, LogTopic.EVENT].includes(topic),
         hasNewMessages: false
       }
     }), {} as AllTopicProperties);
@@ -104,7 +104,8 @@ export class LogService {
     return {
       logTopics: Object.entries(this.topicProperties)
         .filter((entry) => entry[1].enabled)
-        .map((entry) => entry[0] as LogTopic),
+        .map((entry) => entry[0] as LogTopic)
+        .map(topic => topic.toUpperCase() as Uppercase<LogTopic>),
       storyLog: this.logs[LogTopic.STORY]
     }
   }
@@ -114,7 +115,7 @@ export class LogService {
 
     if (properties.logTopics) {
       properties.logTopics.forEach((topic) => {
-        this.topicProperties[topic].enabled = true;
+        this.topicProperties[LogTopic[topic]].enabled = true;
       });
     } else {
       this.topicProperties[LogTopic.STORY].enabled = true;
