@@ -8,9 +8,8 @@ describe('SaveModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SaveModalComponent ]
-    })
-    .compileComponents();
+      declarations: [SaveModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

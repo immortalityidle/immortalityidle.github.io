@@ -7,4 +7,3 @@ This game is open source, so use the code as much as you want. Please keep anyth
 This project was generated with Angular version 13.3.3. Use "ng serve" to run locally, "npm run build" to create deployables.
 
 Interested in contributing? Join the development channel of the discord at https://discord.com/channels/996414713766363146/997376399797137448
-

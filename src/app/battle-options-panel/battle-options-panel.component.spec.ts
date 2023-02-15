@@ -8,9 +8,8 @@ describe('BattleOptionsPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BattleOptionsPanelComponent ]
-    })
-    .compileComponents();
+      declarations: [BattleOptionsPanelComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

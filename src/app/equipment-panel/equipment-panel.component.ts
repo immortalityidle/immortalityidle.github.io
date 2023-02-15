@@ -6,13 +6,12 @@ import { InventoryService, instanceOfEquipment, Item } from '../game-state/inven
 @Component({
   selector: 'app-equipment-panel',
   templateUrl: './equipment-panel.component.html',
-  styleUrls: ['./equipment-panel.component.less', '../app.component.less']
+  styleUrls: ['./equipment-panel.component.less', '../app.component.less'],
 })
 export class EquipmentPanelComponent {
   character: Character;
 
-  constructor(private characterService: CharacterService,
-    public inventoryService: InventoryService) {
+  constructor(private characterService: CharacterService, public inventoryService: InventoryService) {
     this.character = characterService.characterState;
   }
 
@@ -21,15 +20,14 @@ export class EquipmentPanelComponent {
     event.stopPropagation();
     const item = this.characterService.characterState.equipment[slot];
     // check for existence and make sure there's an empty slot for it
-    if (item && this.inventoryService.openInventorySlots() > 0){
+    if (item && this.inventoryService.openInventorySlots() > 0) {
       this.inventoryService.addItem(item as Item);
       this.characterService.characterState.equipment[slot] = null;
       this.inventoryService.selectedItem = null;
     }
-
   }
 
-  getSelectedItemSlot(){
+  getSelectedItemSlot() {
     const item = this.inventoryService.selectedItem?.item;
     if (!item || !instanceOfEquipment(item)) {
       return null;
@@ -37,26 +35,26 @@ export class EquipmentPanelComponent {
     return item?.slot;
   }
 
-  allowDrop(event: DragEvent){
-    if (event.dataTransfer?.types[0] === "inventory"){
+  allowDrop(event: DragEvent) {
+    if (event.dataTransfer?.types[0] === 'inventory') {
       event.preventDefault();
     }
   }
 
-  drag(slot: string, event: DragEvent){
-    event.dataTransfer?.setData("equipment", slot);
+  drag(slot: string, event: DragEvent) {
+    event.dataTransfer?.setData('equipment', slot);
   }
 
-  drop(slot: string, event: DragEvent){
+  drop(slot: string, event: DragEvent) {
     event.preventDefault();
-    const sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
+    const sourceIndexString: string = event.dataTransfer?.getData('inventory') + '';
     const sourceIndex = parseInt(sourceIndexString);
-    if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
+    if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length) {
       const itemToEquip = this.inventoryService.itemStacks[sourceIndex]?.item;
       const equipmentSlot: EquipmentPosition = slot as EquipmentPosition;
-      if (itemToEquip){
-        if (instanceOfEquipment(itemToEquip)){
-          if (itemToEquip.slot != slot){
+      if (itemToEquip) {
+        if (instanceOfEquipment(itemToEquip)) {
+          if (itemToEquip.slot != slot) {
             return;
           }
         }
@@ -66,16 +64,16 @@ export class EquipmentPanelComponent {
     }
   }
 
-  getEffectClass(slot: string): string{
+  getEffectClass(slot: string): string {
     let effect;
-    if (slot === "leftHand" || slot === "rightHand"){
+    if (slot === 'leftHand' || slot === 'rightHand') {
       effect = this.character.equipment[slot]?.weaponStats?.effect;
-    } else if (slot === "head" || slot === "body" || slot === "legs" || slot === "feet"){
+    } else if (slot === 'head' || slot === 'body' || slot === 'legs' || slot === 'feet') {
       effect = this.character.equipment[slot]?.armorStats?.effect;
     }
-    if (effect){
-      return "effect" + effect;
+    if (effect) {
+      return 'effect' + effect;
     }
-    return "";
+    return '';
   }
 }

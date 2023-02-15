@@ -8,9 +8,8 @@ describe('VerticalPanelSliderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VerticalPanelSliderComponent ]
-    })
-    .compileComponents();
+      declarations: [VerticalPanelSliderComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

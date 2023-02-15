@@ -7,17 +7,15 @@ import { CharacterService } from '../game-state/character.service';
 @Component({
   selector: 'app-battle-panel',
   templateUrl: './battle-panel.component.html',
-  styleUrls: ['./battle-panel.component.less', '../app.component.less']
+  styleUrls: ['./battle-panel.component.less', '../app.component.less'],
 })
 export class BattlePanelComponent implements OnInit {
-
   Math: Math;
   constructor(
     public battleService: BattleService,
     public characterService: CharacterService,
     public dialog: MatDialog
-
-  ){
+  ) {
     this.Math = Math;
   }
 
@@ -31,12 +29,11 @@ export class BattlePanelComponent implements OnInit {
     this.battleService.autoTroubleEnabled = event.target.checked;
   }
 
-  battleOptions(){
+  battleOptions() {
     const dialogRef = this.dialog.open(BattleOptionsPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
-
   }
 }

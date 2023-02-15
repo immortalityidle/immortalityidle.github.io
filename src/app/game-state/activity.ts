@@ -68,14 +68,13 @@ export enum ActivityType {
   FreezeMountain,
   ExamineContracts,
   FinishHell,
-  Hell // hell needs to be last for indexing purposes
-
+  Hell, // hell needs to be last for indexing purposes
 }
 
 export interface ActivityResource {
-  health?: number,
-  stamina?: number,
-  mana?: number,
+  health?: number;
+  stamina?: number;
+  mana?: number;
   nourishment?: number;
 }
 
@@ -92,8 +91,8 @@ export interface Activity {
   discovered?: boolean;
   skipApprenticeshipLevel: number;
   lastIncome?: number;
-  resourceUse?: ActivityResource[]
-  projectionOnly?: boolean
+  resourceUse?: ActivityResource[];
+  projectionOnly?: boolean;
 }
 
 export interface ActivityLoopEntry {

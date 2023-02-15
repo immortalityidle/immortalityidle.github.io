@@ -11,10 +11,9 @@ import { MainLoopService } from '../game-state/main-loop.service';
 @Component({
   selector: 'app-options-modal',
   templateUrl: './options-modal.component.html',
-  styleUrls: ['./options-modal.component.less']
+  styleUrls: ['./options-modal.component.less'],
 })
 export class OptionsModalComponent {
-
   constructor(
     public homeService: HomeService,
     public characterService: CharacterService,
@@ -23,76 +22,76 @@ export class OptionsModalComponent {
     public followerService: FollowersService,
     public autoBuyerService: AutoBuyerService,
     public mainLoopService: MainLoopService,
-    private activityService: ActivityService,
-  ) { }
+    private activityService: ActivityService
+  ) {}
 
-  autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry){
+  autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry) {
     if (!(event.target instanceof HTMLInputElement)) return;
     autosellEntry.reserve = Math.floor(parseFloat(event.target.value));
-    if (!autosellEntry.reserve){
+    if (!autosellEntry.reserve) {
       autosellEntry.reserve = 0;
     }
   }
 
-  autoUseReserveChange(event: Event, autouseEntry: AutoItemEntry){
+  autoUseReserveChange(event: Event, autouseEntry: AutoItemEntry) {
     if (!(event.target instanceof HTMLInputElement)) return;
     autouseEntry.reserve = Math.floor(parseFloat(event.target.value));
-    if (!autouseEntry.reserve){
+    if (!autouseEntry.reserve) {
       autouseEntry.reserve = 0;
     }
   }
 
-  autoBuyLandLimitChanged(event: Event){
+  autoBuyLandLimitChanged(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoBuyLandLimit = Math.floor(parseFloat(event.target.value));
-    if (!this.homeService.autoBuyLandLimit){
+    if (!this.homeService.autoBuyLandLimit) {
       this.homeService.autoBuyLandLimit = 0;
     }
   }
 
-  autoFieldLimitChanged(event: Event){
+  autoFieldLimitChanged(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoFieldLimit = Math.floor(parseFloat(event.target.value));
-    if (!this.homeService.autoFieldLimit){
+    if (!this.homeService.autoFieldLimit) {
       this.homeService.autoFieldLimit = 0;
     }
   }
 
-  autoBuyHomeLimitChanged(event: Event){
+  autoBuyHomeLimitChanged(event: Event) {
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.homeService.autoBuyHomeLimit = parseInt(event.target.value);
   }
 
-  autoPauseThugs(event: Event){
+  autoPauseThugs(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.thugPause = !this.homeService.thugPause;
   }
 
-  useAutoBuyReserveChanged(event: Event){
+  useAutoBuyReserveChanged(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.useAutoBuyReserve = event.target.checked;
   }
 
-  autoBuyReserveAmountChanged(event: Event){
+  autoBuyReserveAmountChanged(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.homeService.autoBuyReserveAmount = parseFloat(event.target.value);
-    if (!this.homeService.autoBuyReserveAmount){
+    if (!this.homeService.autoBuyReserveAmount) {
       this.homeService.autoBuyReserveAmount = 0;
     }
   }
 
-  autoBalanceUseChanged(event: Event, balanceItem: BalanceItem){
+  autoBalanceUseChanged(event: Event, balanceItem: BalanceItem) {
     if (!(event.target instanceof HTMLInputElement)) return;
     balanceItem.useNumber = Math.floor(parseFloat(event.target.value));
-    if (!balanceItem.useNumber){
+    if (!balanceItem.useNumber) {
       balanceItem.useNumber = 0;
     }
   }
 
-  autoBalanceSellChanged(event: Event, balanceItem: BalanceItem){
+  autoBalanceSellChanged(event: Event, balanceItem: BalanceItem) {
     if (!(event.target instanceof HTMLInputElement)) return;
     balanceItem.sellNumber = Math.floor(parseFloat(event.target.value));
-    if (!balanceItem.sellNumber){
+    if (!balanceItem.sellNumber) {
       balanceItem.sellNumber = 0;
     }
   }
@@ -153,7 +152,11 @@ export class OptionsModalComponent {
   }
 
   autoBuySettingsPriorityChanged(index: number, moveUp: boolean): void {
-    this.autoBuyerService.autoBuyerSettings.splice(index + (moveUp ? -1 : 1), 0, this.autoBuyerService.autoBuyerSettings.splice(index, 1)[0]);
+    this.autoBuyerService.autoBuyerSettings.splice(
+      index + (moveUp ? -1 : 1),
+      0,
+      this.autoBuyerService.autoBuyerSettings.splice(index, 1)[0]
+    );
   }
 
   autoBuySettingsEnabledChange(event: Event, setting: AutoBuyerSetting): void {
@@ -166,16 +169,16 @@ export class OptionsModalComponent {
     setting.waitForFinish = event.target.checked;
   }
 
-  easyModeChange(event: Event){
+  easyModeChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     event.preventDefault();
     event.stopPropagation();
-    if (this.characterService.characterState.easyMode){
+    if (this.characterService.characterState.easyMode) {
       //coming back from easy mode
       this.characterService.characterState.easyMode = false;
     } else {
-      if (!this.gameStateService.easyModeEver){
-        if (confirm("This will enable easy mode and mark your save permanently. Are you sure?")){
+      if (!this.gameStateService.easyModeEver) {
+        if (confirm('This will enable easy mode and mark your save permanently. Are you sure?')) {
           this.gameStateService.easyModeEver = true;
         } else {
           event.target.checked = false;
@@ -187,22 +190,22 @@ export class OptionsModalComponent {
     }
   }
 
-  autoBuyFoodChange(event: Event){
+  autoBuyFoodChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoBuyFood = event.target.checked;
   }
 
-  showLifeSummaryChange(event: Event){
+  showLifeSummaryChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.characterService.characterState.showLifeSummary = event.target.checked;
   }
 
-  showTipsChange(event: Event){
+  showTipsChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.characterService.characterState.showTips = event.target.checked;
   }
 
-  scientificNotationChange(event: Event){
+  scientificNotationChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.scientificNotation = event.target.checked;
     this.gameStateService.savetoLocalStorage();
