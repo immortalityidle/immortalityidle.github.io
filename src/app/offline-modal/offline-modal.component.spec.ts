@@ -8,9 +8,8 @@ describe('OfflineModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OfflineModalComponent ]
-    })
-    .compileComponents();
+      declarations: [OfflineModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -8,9 +8,8 @@ describe('ExportPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ExportPanelComponent ]
-    })
-    .compileComponents();
+      declarations: [ExportPanelComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

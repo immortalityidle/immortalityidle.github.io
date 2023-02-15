@@ -13,7 +13,7 @@ import { GameStateService } from './game-state.service';
 import { HellLevel, HellService } from './hell.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ItemRepoService {
   homeService?: HomeService;
@@ -29,11 +29,12 @@ export class ItemRepoService {
   furniture: { [key: string]: Furniture } = {
     blanket: {
       id: 'blanket',
-      name: "Blanket",
+      name: 'Blanket',
       type: 'furniture',
       slot: 'bed',
       value: 10,
-      description: "A tattered blanket. Not much, but it could keep you warm at night. Increases daily stamina recovery by 1.",
+      description:
+        'A tattered blanket. Not much, but it could keep you warm at night. Increases daily stamina recovery by 1.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value++;
@@ -41,118 +42,121 @@ export class ItemRepoService {
     },
     mat: {
       id: 'mat',
-      name: "Sleeping Mat",
+      name: 'Sleeping Mat',
       type: 'furniture',
       slot: 'bed',
       value: 1000,
-      description: "A thin woven mat to sleep on. Increases daily stamina recovery by 1 and restores a bit of health.",
+      description: 'A thin woven mat to sleep on. Increases daily stamina recovery by 1 and restores a bit of health.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 1;
         this.characterService.characterState.status.health.value += 0.1;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     canopyBed: {
       id: 'canopyBed',
-      name: "Canopy Bed",
+      name: 'Canopy Bed',
       type: 'furniture',
       slot: 'bed',
       value: 10000,
-      description: "A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 2 and restores a bit of health.",
+      description:
+        'A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 2 and restores a bit of health.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 2;
         this.characterService.characterState.status.health.value += 0.2;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     heatedBed: {
       id: 'heatedBed',
-      name: "Heated Bed",
+      name: 'Heated Bed',
       type: 'furniture',
       slot: 'bed',
       value: 100000,
-      description: "A bed built over a small clay oven. Keeps you toasty on even the coldest nights. Increases daily stamina recovery by 5 and improves health recovery.",
+      description:
+        'A bed built over a small clay oven. Keeps you toasty on even the coldest nights. Increases daily stamina recovery by 5 and improves health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     bedOfNails: {
       id: 'bedOfNails',
-      name: "Bed of Nails",
+      name: 'Bed of Nails',
       type: 'furniture',
       slot: 'bed',
       value: 10000,
-      description: "A solid board with nails poking upwards. You won't sleep as well, but it is certain to toughen you up.",
+      description:
+        "A solid board with nails poking upwards. You won't sleep as well, but it is certain to toughen you up.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value -= 1;
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
-      }
+      },
     },
     waterBucket: {
       id: 'waterBucket',
-      name: "water bucket ",
+      name: 'water bucket ',
       type: 'furniture',
       slot: 'bathtub',
       value: 10,
-      description: "A bucket of water that lets you splash water on your face. Increases charisma.",
+      description: 'A bucket of water that lets you splash water on your face. Increases charisma.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.01);
-      }
+      },
     },
     washBasin: {
       id: 'washBasin',
-      name: "wash basin",
+      name: 'wash basin',
       type: 'furniture',
       slot: 'bathtub',
       value: 1000,
-      description: "A wash basin with a rag to clean yourself. Increases charisma.",
+      description: 'A wash basin with a rag to clean yourself. Increases charisma.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.05);
-      }
+      },
     },
     woodenTub: {
       id: 'woodenTub',
-      name: "wooden tub",
+      name: 'wooden tub',
       type: 'furniture',
       slot: 'bathtub',
       value: 10000,
-      description: "A tall and narrow tub where you can squat and bathe. Increases charisma and health recovery.",
+      description: 'A tall and narrow tub where you can squat and bathe. Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.1);
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     bronzeTub: {
       id: 'bronzeTub',
-      name: "bronze tub",
+      name: 'bronze tub',
       type: 'furniture',
       slot: 'bathtub',
       value: 1000000,
-      description: "A luxurious tub where you can get sparkling clean. Increases charisma and health recovery.",
+      description: 'A luxurious tub where you can get sparkling clean. Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     heatedTub: {
       id: 'heatedTub',
-      name: "heated tub",
+      name: 'heated tub',
       type: 'furniture',
       slot: 'bathtub',
       value: 1e8,
-      description: "A luxurious tub with its own heating stove. Good for your health and beauty.",
+      description: 'A luxurious tub with its own heating stove. Good for your health and beauty.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
@@ -160,139 +164,141 @@ export class ItemRepoService {
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.healthBonusBath++;
         this.characterService.characterState.checkOverage();
-      }
+      },
     },
     cookPot: {
       id: 'cookPot',
-      name: "cook pot",
+      name: 'cook pot',
       type: 'furniture',
       slot: 'kitchen',
       value: 10,
-      description: "A simple pot over a fire to boil your food. Improves all physical attributes.",
+      description: 'A simple pot over a fire to boil your food. Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.01);
         this.characterService.characterState.increaseAttribute('speed', 0.01);
         this.characterService.characterState.increaseAttribute('toughness', 0.01);
-      }
+      },
     },
     roastingSpit: {
       id: 'roastingSpit',
-      name: "roasting spit",
+      name: 'roasting spit',
       type: 'furniture',
       slot: 'kitchen',
       value: 1000,
-      description: "A simple spit to go along with your cookpot, letting you add more variety to your diet. Improves all physical attributes.",
+      description:
+        'A simple spit to go along with your cookpot, letting you add more variety to your diet. Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.02);
         this.characterService.characterState.increaseAttribute('speed', 0.02);
         this.characterService.characterState.increaseAttribute('toughness', 0.02);
-      }
+      },
     },
     wok: {
       id: 'wok',
-      name: "wok",
+      name: 'wok',
       type: 'furniture',
       slot: 'kitchen',
       value: 1000000,
-      description: "A large metal wok to stir-fry a tasty dinner. Improves all physical attributes.",
+      description: 'A large metal wok to stir-fry a tasty dinner. Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.05);
         this.characterService.characterState.increaseAttribute('speed', 0.05);
         this.characterService.characterState.increaseAttribute('toughness', 0.05);
-      }
+      },
     },
     chefKitchen: {
       id: 'chefKitchen',
-      name: "chef kitchen",
+      name: 'chef kitchen',
       type: 'furniture',
       slot: 'kitchen',
       value: 1e9,
-      description: "An elaborate kitchen that allows you to cook anything. Improves all physical attributes.",
+      description: 'An elaborate kitchen that allows you to cook anything. Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.1);
         this.characterService.characterState.increaseAttribute('speed', 0.1);
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
-      }
+      },
     },
     anvil: {
       id: 'anvil',
-      name: "anvil",
+      name: 'anvil',
       type: 'furniture',
       slot: 'workbench',
       value: 1000000,
-      description: "An anvil to work on blacksmithing.",
+      description: 'An anvil to work on blacksmithing.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('metalLore', 0.01);
-      }
+      },
     },
     herbGarden: {
       id: 'herbGarden',
-      name: "herb garden",
+      name: 'herb garden',
       type: 'furniture',
       slot: 'workbench',
       value: 1000000,
-      description: "An pleasant garden growing herbs.",
+      description: 'An pleasant garden growing herbs.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('woodLore', 0.01);
-      }
+      },
     },
     dogKennel: {
       id: 'dogKennel',
-      name: "dog kennel",
+      name: 'dog kennel',
       type: 'furniture',
       slot: 'workbench',
       value: 1000000,
-      description: "A kennel for training hunting dogs.",
+      description: 'A kennel for training hunting dogs.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
-      }
+      },
     },
     cauldron: {
       id: 'cauldron',
-      name: "cauldron",
+      name: 'cauldron',
       type: 'furniture',
       slot: 'workbench',
       value: 1000000,
-      description: "A cauldron for practicing alchemy.",
+      description: 'A cauldron for practicing alchemy.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('waterLore', 0.01);
-      }
+      },
     },
     bookshelf: {
       id: 'bookshelf',
-      name: "bookshelf",
+      name: 'bookshelf',
       type: 'furniture',
       slot: 'workbench',
       value: 1000000,
-      description: "An bookshelf to read and expand your mind.",
+      description: 'An bookshelf to read and expand your mind.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('intelligence', 0.1);
-      }
+      },
     },
     prayerShrine: {
       id: 'prayerShrine',
-      name: "prayer shrine",
+      name: 'prayer shrine',
       type: 'furniture',
       slot: 'workbench',
       value: 1e7,
-      description: "A quiet shrine for contemplative prayer. You won't be able to use this unless you have some innate spirituality.",
+      description:
+        "A quiet shrine for contemplative prayer. You won't be able to use this unless you have some innate spirituality.",
       useConsumes: false,
       use: () => {
         if (this.characterService.characterState.attributes.spirituality.value > 0) {
           this.characterService.characterState.increaseAttribute('spirituality', 0.01);
         }
-      }
-    }
-  }
+      },
+    },
+  };
 
   items: { [key: string]: Item } = {
     rice: {
@@ -341,9 +347,9 @@ export class ItemRepoService {
         if (Math.random() < 0.02) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 5)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 5) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 5)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 5) {
             this.characterService.characterState.foodLifespan = 365 * 5;
           }
         }
@@ -364,9 +370,9 @@ export class ItemRepoService {
         if (Math.random() < 0.05) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 10)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 10) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 10)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 10) {
             this.characterService.characterState.foodLifespan = 365 * 10;
           }
         }
@@ -387,9 +393,9 @@ export class ItemRepoService {
         if (Math.random() < 0.08) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 15)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 15) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 15)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 15) {
             this.characterService.characterState.foodLifespan = 365 * 15;
           }
         }
@@ -410,9 +416,9 @@ export class ItemRepoService {
         if (Math.random() < 0.1) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 20)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 20) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 20)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 20) {
             this.characterService.characterState.foodLifespan = 365 * 20;
           }
         }
@@ -433,9 +439,9 @@ export class ItemRepoService {
         if (Math.random() < 0.12) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 25)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 25) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 25)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 25) {
             this.characterService.characterState.foodLifespan = 365 * 25;
           }
         }
@@ -456,9 +462,9 @@ export class ItemRepoService {
         if (Math.random() < 0.15) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 30)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 30) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 30)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 30) {
             this.characterService.characterState.foodLifespan = 365 * 30;
           }
         }
@@ -479,9 +485,9 @@ export class ItemRepoService {
         if (Math.random() < 0.18) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 35)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 35) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 35)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 35) {
             this.characterService.characterState.foodLifespan = 365 * 35;
           }
         }
@@ -499,12 +505,12 @@ export class ItemRepoService {
       useConsumes: true,
       use: (quantity = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.20) {
+        if (Math.random() < 0.2) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 40)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 40) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 40)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 40) {
             this.characterService.characterState.foodLifespan = 365 * 40;
           }
         }
@@ -525,9 +531,9 @@ export class ItemRepoService {
         if (Math.random() < 0.22) {
           this.characterService.characterState.healthBonusFood += quantity;
           this.characterService.characterState.status.health.value += quantity * 2;
-          if (this.characterService.characterState.foodLifespan + quantity <= (365 * 72)) {
+          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 72) {
             this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < (365 * 72)) {
+          } else if (this.characterService.characterState.foodLifespan < 365 * 72) {
             this.characterService.characterState.foodLifespan = 365 * 72;
           }
         }
@@ -551,9 +557,9 @@ export class ItemRepoService {
         this.characterService.characterState.status.stamina.value += quantity * 2;
         this.characterService.characterState.status.stamina.max += quantity * 2;
         this.characterService.characterState.status.mana.value += quantity;
-        if (this.characterService.characterState.foodLifespan + quantity <= (365 * 720)) {
+        if (this.characterService.characterState.foodLifespan + quantity <= 365 * 720) {
           this.characterService.characterState.foodLifespan += quantity;
-        } else if (this.characterService.characterState.foodLifespan < (365 * 720)) {
+        } else if (this.characterService.characterState.foodLifespan < 365 * 720) {
           this.characterService.characterState.foodLifespan = 365 * 720;
         }
         this.characterService.characterState.checkOverage();
@@ -616,112 +622,112 @@ export class ItemRepoService {
       name: 'tattered hide',
       type: 'hide',
       value: 1,
-      description: 'A tattered animal hide.'
+      description: 'A tattered animal hide.',
     },
     thinPelt: {
       id: 'thinPelt',
       name: 'thin pelt',
       type: 'hide',
       value: 2,
-      description: 'A thin fur pelt.'
+      description: 'A thin fur pelt.',
     },
     plainLeather: {
       id: 'plainLeather',
       name: 'plain leather',
       type: 'hide',
       value: 3,
-      description: 'A basic leather hide.'
+      description: 'A basic leather hide.',
     },
     scaleSkin: {
       id: 'scaleSkin',
       name: 'scale skin',
       type: 'hide',
       value: 4,
-      description: 'A scaly reptile skin.'
+      description: 'A scaly reptile skin.',
     },
     thickFur: {
       id: 'thickFur',
       name: 'thick fur',
       type: 'hide',
       value: 5,
-      description: 'A thick animal fur.'
+      description: 'A thick animal fur.',
     },
     armoredHide: {
       id: 'armoredHide',
       name: 'armored hide',
       type: 'hide',
       value: 6,
-      description: 'An armored animal hide.'
+      description: 'An armored animal hide.',
     },
     frozenScales: {
       id: 'frozenScales',
       name: 'frozen scales',
       type: 'hide',
       value: 7,
-      description: 'A frozen scaly hide.'
+      description: 'A frozen scaly hide.',
     },
     mysticalLeather: {
       id: 'mysticalLeather',
       name: 'mystical leather',
       type: 'hide',
       value: 8,
-      description: 'A mystical animal hide.'
+      description: 'A mystical animal hide.',
     },
     infernalFur: {
       id: 'infernalFur',
       name: 'infernal fur',
       type: 'hide',
       value: 9,
-      description: 'A fiery pelt.'
+      description: 'A fiery pelt.',
     },
     orichalcumHide: {
       id: 'orichalcumHide',
       name: 'orichalcum hide',
       type: 'hide',
       value: 10,
-      description: 'A strong magic-infused hide.'
+      description: 'A strong magic-infused hide.',
     },
     tempestScales: {
       id: 'tempestScales',
       name: 'tempest scales',
       type: 'hide',
       value: 11,
-      description: 'A hide bristling with electricity.'
+      description: 'A hide bristling with electricity.',
     },
     evergreenVeil: {
       id: 'evergreenVeil',
       name: 'evergreen veil',
       type: 'hide',
       value: 12,
-      description: 'An extremely durable hide .'
+      description: 'An extremely durable hide .',
     },
     sovereignLeather: {
       id: 'sovereignLeather',
       name: 'sovereign leather',
       type: 'hide',
       value: 13,
-      description: 'A powerful hide of a noble animal.'
+      description: 'A powerful hide of a noble animal.',
     },
     abyssalFur: {
       id: 'abyssalFur',
       name: 'abyssal fur',
       type: 'hide',
       value: 14,
-      description: 'A fur brimming with unholy power.'
+      description: 'A fur brimming with unholy power.',
     },
     umbralHide: {
       id: 'umbralHide',
       name: 'umbral hide',
       type: 'hide',
       value: 15,
-      description: 'A hide made of shadows themselves.'
+      description: 'A hide made of shadows themselves.',
     },
     divineVeil: {
       id: 'divineVeil',
       name: 'divine veil',
       type: 'hide',
       value: 16,
-      description: 'A hide consecrated with divine protection.'
+      description: 'A hide consecrated with divine protection.',
     },
     balsaLog: {
       id: 'balsaLog',
@@ -847,14 +853,14 @@ export class ItemRepoService {
       name: 'tin ore',
       type: 'ore',
       value: 2,
-      description: 'A chunk of tin ore.'
+      description: 'A chunk of tin ore.',
     },
     bronzeOre: {
       id: 'bronzeOre',
       name: 'mixed ore',
       type: 'ore',
       value: 3,
-      description: 'A chunk of ore containing copper, tin, lead, and zinc.'
+      description: 'A chunk of ore containing copper, tin, lead, and zinc.',
     },
     ironOre: {
       id: 'ironOre',
@@ -1086,14 +1092,15 @@ export class ItemRepoService {
       name: 'pill pouch',
       type: 'pillPouch',
       value: 100,
-      description: 'A leather pouch designed to fit inside a pill box and preserve the power of certain very potent pills.',
+      description:
+        'A leather pouch designed to fit inside a pill box and preserve the power of certain very potent pills.',
     },
     unbreakableChain: {
       id: 'unbreakableChain',
       name: 'unbreakable chain',
       type: 'chain',
       value: 1,
-      description: 'This chain is specially forged to be incredibly strong, but it\'s REALLY heavy.',
+      description: "This chain is specially forged to be incredibly strong, but it's REALLY heavy.",
     },
     everlastingBrick: {
       id: 'everlastingBrick',
@@ -1147,15 +1154,32 @@ export class ItemRepoService {
         this.impossibleTaskService.activeTaskIndex = ImpossibleTaskType.OvercomeDeath; // just in case. Don't want this use to fail.
         this.impossibleTaskService.checkCompletion();
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.OvercomeDeath].complete) {
-          this.logService.injury(LogTopic.STORY, "YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!");
+          this.logService.injury(LogTopic.STORY, 'YOU HAVE ACHIEVED IMMORTALITY! YOU WILL LIVE FOREVER!');
           if (!this.gameStateService) {
             this.gameStateService = this.injector.get(GameStateService);
           }
           if (this.gameStateService.easyModeEver) {
-            this.logService.log(LogTopic.STORY, "Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.");
+            this.logService.log(
+              LogTopic.STORY,
+              'Good work, even if you did take the easy path. For more of a challenge, you could reset and try without using the easy game mode.'
+            );
           }
-          this.logService.log(LogTopic.STORY, "You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and succeeded in your quest on " + new Date().toDateString() + ".");
-          this.logService.log(LogTopic.STORY, "You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to overcome death.");
+          this.logService.log(
+            LogTopic.STORY,
+            'You started your journey on ' +
+              new Date(this.gameStateService.gameStartTimestamp).toDateString() +
+              ' and succeeded in your quest on ' +
+              new Date().toDateString() +
+              '.'
+          );
+          this.logService.log(
+            LogTopic.STORY,
+            'You took ' +
+              this.mainLoopService.totalTicks +
+              ' days over ' +
+              this.characterService.characterState.totalLives +
+              ' lifetimes to overcome death.'
+          );
           this.characterService.characterState.immortal = true;
         }
       },
@@ -1165,12 +1189,13 @@ export class ItemRepoService {
       name: 'Portal Key',
       type: 'portalKey',
       value: Infinity,
-      description: "The key to Lord Yama's kingdom. With this key, you can use his portals to instantly travel anywhere.",
+      description:
+        "The key to Lord Yama's kingdom. With this key, you can use his portals to instantly travel anywhere.",
       useLabel: 'Create a portal back to the palace of the gods on Mount Penglai and claim your throne.',
       useDescription: 'Become a god and win the game (again).',
       useConsumes: true,
       use: () => {
-        this.logService.injury(LogTopic.STORY, "YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!");
+        this.logService.injury(LogTopic.STORY, 'YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!');
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
@@ -1184,8 +1209,22 @@ export class ItemRepoService {
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        this.logService.log(LogTopic.STORY, "You started your journey on " + new Date(this.gameStateService.gameStartTimestamp).toDateString() + " and achieved godhood on " + new Date().toDateString() + ".");
-        this.logService.log(LogTopic.STORY, "You took " + this.mainLoopService.totalTicks + " days over " + this.characterService.characterState.totalLives + " lifetimes to claim your throne on Mount Penglai.");
+        this.logService.log(
+          LogTopic.STORY,
+          'You started your journey on ' +
+            new Date(this.gameStateService.gameStartTimestamp).toDateString() +
+            ' and achieved godhood on ' +
+            new Date().toDateString() +
+            '.'
+        );
+        this.logService.log(
+          LogTopic.STORY,
+          'You took ' +
+            this.mainLoopService.totalTicks +
+            ' days over ' +
+            this.characterService.characterState.totalLives +
+            ' lifetimes to claim your throne on Mount Penglai.'
+        );
         this.characterService.characterState.god = true;
         this.battleService.troubleKills = 0;
         this.activityService.reloadActivities();
@@ -1245,7 +1284,8 @@ export class ItemRepoService {
       name: 'Crown of the Tongue Rippers',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown proving your mastery over the Hell of Tongue Rippers. Using this will unlock a new type of follower.',
+      description:
+        'A crown proving your mastery over the Hell of Tongue Rippers. Using this will unlock a new type of follower.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1259,8 +1299,11 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.TongueRipping)) {
           this.hellService.completedHellBosses.push(HellLevel.TongueRipping);
         }
-        this.logService.log(LogTopic.STORY, "The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.");
-        this.followerService.unlockJob("prophet");
+        this.logService.log(
+          LogTopic.STORY,
+          'The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.'
+        );
+        this.followerService.unlockJob('prophet');
       },
     },
     hellCrownScissors: {
@@ -1268,7 +1311,8 @@ export class ItemRepoService {
       name: 'Crown of Scissors',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown proving your mastery over the Hell of Scissors. Using this will unlock a new ability for your followers.',
+      description:
+        'A crown proving your mastery over the Hell of Scissors. Using this will unlock a new ability for your followers.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1282,8 +1326,14 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Scissors)) {
           this.hellService.completedHellBosses.push(HellLevel.Scissors);
         }
-        this.logService.log(LogTopic.STORY, "The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.");
-        this.logService.log(LogTopic.STORY, "From now on, each follower will train a child to replace themselves in your service when they pass away.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The Crown of Scissors settles onto your head, then sinks in to become a part of your very soul. You feel a deeper appreciation for marriage and family, and your followers sense it.'
+        );
+        this.logService.log(
+          LogTopic.STORY,
+          'From now on, each follower will train a child to replace themselves in your service when they pass away.'
+        );
         this.followerService.autoReplaceUnlocked = true;
       },
     },
@@ -1292,7 +1342,8 @@ export class ItemRepoService {
       name: 'Crown of Knives',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown proving your mastery over the Hell of Trees of Knives. Using this will unlock a new follower.',
+      description:
+        'A crown proving your mastery over the Hell of Trees of Knives. Using this will unlock a new follower.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1306,8 +1357,11 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)) {
           this.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
         }
-        this.logService.log(LogTopic.STORY, "The Crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.");
-        this.followerService.unlockJob("moneyBurner");
+        this.logService.log(
+          LogTopic.STORY,
+          'The Crown of Knives settles onto your head, then sinks in to become a part of your very soul. You can recruit a new follower specialized in honoring ancestors.'
+        );
+        this.followerService.unlockJob('moneyBurner');
       },
     },
     hellCrownMirrors: {
@@ -1315,7 +1369,8 @@ export class ItemRepoService {
       name: 'Crown of Mirrors',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown proving your mastery over the Hell of Mirrors. Using this will unlock a new understanding of combat.',
+      description:
+        'A crown proving your mastery over the Hell of Mirrors. Using this will unlock a new understanding of combat.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1332,7 +1387,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Mirrors)) {
           this.hellService.completedHellBosses.push(HellLevel.Mirrors);
         }
-        this.logService.log(LogTopic.STORY, "The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.'
+        );
         this.characterService.characterState.attributes.combatMastery.value += 1;
         this.activityService.CombatTraining.unlocked = true;
       },
@@ -1356,7 +1414,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Steamers)) {
           this.hellService.completedHellBosses.push(HellLevel.Steamers);
         }
-        this.logService.log(LogTopic.STORY, "The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.'
+        );
         this.battleService.pyroclasmUnlocked = true;
       },
     },
@@ -1379,7 +1440,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)) {
           this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
         }
-        this.logService.log(LogTopic.STORY, "The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.'
+        );
         this.battleService.metalFistUnlocked = true;
       },
     },
@@ -1388,7 +1452,8 @@ export class ItemRepoService {
       name: 'Crown of the Knife Mountain',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown shaped like a mountain covered in tiny blades. Using this will unlock a new understanding of the world.',
+      description:
+        'A crown shaped like a mountain covered in tiny blades. Using this will unlock a new understanding of the world.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1399,7 +1464,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfKnives)) {
           this.hellService.completedHellBosses.push(HellLevel.MountainOfKnives);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.'
+        );
         this.characterService.characterState.yinYangUnlocked = true;
       },
     },
@@ -1422,7 +1490,10 @@ export class ItemRepoService {
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.'
+        );
         this.battleService.iceShieldUnlocked = true;
       },
     },
@@ -1431,7 +1502,8 @@ export class ItemRepoService {
       name: 'Cauldron Crown',
       type: 'hellcrown',
       value: Infinity,
-      description: 'An ugly pot you can wear on your head. Using this will unlock a new respect for the sanctity and dignity of human life.',
+      description:
+        'An ugly pot you can wear on your head. Using this will unlock a new respect for the sanctity and dignity of human life.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1442,7 +1514,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CauldronsOfOil)) {
           this.hellService.completedHellBosses.push(HellLevel.CauldronsOfOil);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.'
+        );
         this.characterService.characterState.righteousWrathUnlocked = true;
       },
     },
@@ -1465,7 +1540,10 @@ export class ItemRepoService {
         if (!this.followerService) {
           this.followerService = this.injector.get(FollowersService);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before.");
+        this.logService.log(
+          LogTopic.STORY,
+          "The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before."
+        );
         this.followerService.unlockElementalPets();
       },
     },
@@ -1485,7 +1563,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.CrushingBoulder)) {
           this.hellService.completedHellBosses.push(HellLevel.CrushingBoulder);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.'
+        );
         this.characterService.characterState.bonusMuscles = true;
       },
     },
@@ -1494,7 +1575,8 @@ export class ItemRepoService {
       name: 'Gluttonous Crown',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown topped with mortars full of hellfire. Using this will lead you to a new enlightenment about food.',
+      description:
+        'A crown topped with mortars full of hellfire. Using this will lead you to a new enlightenment about food.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1511,11 +1593,13 @@ export class ItemRepoService {
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.'
+        );
         this.homeService.hellFood = true;
         this.inventoryService.divinePeachesUnlocked = true;
         this.inventoryService.updateFarmFoodList();
-
       },
     },
     hellCrownBloodPool: {
@@ -1537,7 +1621,10 @@ export class ItemRepoService {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.'
+        );
         this.homeService.hellHome = true;
       },
     },
@@ -1546,7 +1633,8 @@ export class ItemRepoService {
       name: 'Hollow Crown',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown so light you can barely feel it. Using this will greatly improve your mental characteristics.',
+      description:
+        'A crown so light you can barely feel it. Using this will greatly improve your mental characteristics.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1557,7 +1645,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.WrongfulDead)) {
           this.hellService.completedHellBosses.push(HellLevel.WrongfulDead);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.'
+        );
         this.characterService.characterState.bonusBrains = true;
       },
     },
@@ -1580,7 +1671,10 @@ export class ItemRepoService {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.'
+        );
         this.activityService.purifyGemsUnlocked = true;
         this.activityService.reloadActivities();
       },
@@ -1604,7 +1698,10 @@ export class ItemRepoService {
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.'
+        );
         this.battleService.fireShieldUnlocked = true;
       },
     },
@@ -1624,7 +1721,10 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.Mills)) {
           this.hellService.completedHellBosses.push(HellLevel.Mills);
         }
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.'
+        );
         this.characterService.characterState.bonusHealth = true;
       },
     },
@@ -1648,72 +1748,85 @@ export class ItemRepoService {
           this.followerService = this.injector.get(FollowersService);
         }
 
-        this.logService.log(LogTopic.STORY, "The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.");
-        this.followerService.unlockJob("banker");
+        this.logService.log(
+          LogTopic.STORY,
+          'The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.'
+        );
+        this.followerService.unlockJob('banker');
       },
     },
     fastPlayManual: {
       id: 'fastPlayManual',
-      name: "Manual of Expeditious Time Perception",
-      type: "manual",
-      description: "This manual teaches you to perceive time as moving faster.",
+      name: 'Manual of Expeditious Time Perception',
+      type: 'manual',
+      description: 'This manual teaches you to perceive time as moving faster.',
       value: 28000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock fast game speed.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock fast game speed.',
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFastSpeed = true;
         this.mainLoopService.topDivider = this.mainLoopService.topDivider > 5 ? 5 : this.mainLoopService.topDivider;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         return this.mainLoopService.unlockFastSpeed;
-      }
+      },
     },
     fasterPlayManual: {
       id: 'fasterPlayManual',
-      name: "Manual of Greatly Expeditious Time Perception",
-      type: "manual",
-      description: "This manual teaches you to perceive time as moving much faster.",
+      name: 'Manual of Greatly Expeditious Time Perception',
+      type: 'manual',
+      description: 'This manual teaches you to perceive time as moving much faster.',
       value: 100000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock faster game speed.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock faster game speed.',
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFasterSpeed = true;
         this.mainLoopService.topDivider = this.mainLoopService.topDivider > 2 ? 2 : this.mainLoopService.topDivider;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         return this.mainLoopService.unlockFasterSpeed;
-      }
+      },
     },
     fastestPlayManual: {
       id: 'fastestPlayManual',
-      name: "Manual of Ludicrous Time Perception",
-      type: "manual",
-      description: "This manual teaches you to perceive time as moving incredibly fast.",
+      name: 'Manual of Ludicrous Time Perception',
+      type: 'manual',
+      description: 'This manual teaches you to perceive time as moving incredibly fast.',
       value: 800000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock fastest game speed.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock fastest game speed.',
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockFastestSpeed = true;
         this.mainLoopService.topDivider = 1;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         return this.mainLoopService.unlockFastestSpeed;
-      }
+      },
     },
     restartActivityManual: {
       id: 'restartActivityManual',
-      name: "Manual of Remembered Plans",
-      type: "manual",
-      description: "This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.",
+      name: 'Manual of Remembered Plans',
+      type: 'manual',
+      description:
+        'This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.',
       value: 500,
-      useLabel: "Read",
-      useDescription: "Permanently unlock preserving activity plans across reincarnations.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock preserving activity plans across reincarnations.',
       useConsumes: true,
       use: () => {
         // check if actvityService is injected yet, if not, inject it (circular dependency issues)
@@ -1721,7 +1834,10 @@ export class ItemRepoService {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoRestart = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if actvityService is injected yet, if not, inject it (circular dependency issues)
@@ -1729,16 +1845,16 @@ export class ItemRepoService {
           this.activityService = this.injector.get(ActivityService);
         }
         return this.activityService?.autoRestart;
-      }
+      },
     },
     autoSellManual: {
       id: 'autoSellManual',
-      name: "Manual of Mercantile Fluency",
-      type: "manual",
-      description: "This manual teaches you to automatically sell items.",
+      name: 'Manual of Mercantile Fluency',
+      type: 'manual',
+      description: 'This manual teaches you to automatically sell items.',
       value: 80000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-sell button in the inventory panel.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-sell button in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1746,7 +1862,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoSellUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1754,16 +1873,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoSellUnlocked;
-      }
+      },
     },
     autoUseManual: {
       id: 'autoUseManual',
-      name: "Manual of Facilitated Usage",
-      type: "manual",
-      description: "This manual teaches you to automatically use items.",
+      name: 'Manual of Facilitated Usage',
+      type: 'manual',
+      description: 'This manual teaches you to automatically use items.',
       value: 1000000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-use button in the inventory panel.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-use button in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1771,7 +1890,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoUseUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1779,16 +1901,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoUseUnlocked;
-      }
+      },
     },
     autoBalanceManual: {
       id: 'autoBalanceManual',
-      name: "Manual of Balanced Consumption and Mercantile Moderation",
-      type: "manual",
-      description: "This manual teaches you to automatically balance between using and selling items.",
+      name: 'Manual of Balanced Consumption and Mercantile Moderation',
+      type: 'manual',
+      description: 'This manual teaches you to automatically balance between using and selling items.',
       value: 5e7,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-balance button in the inventory panel.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-balance button in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1796,7 +1918,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoBalanceUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1804,131 +1929,147 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoBalanceUnlocked;
-      }
+      },
     },
     autoBuyLandManual: {
       id: 'autoBuyLandManual',
-      name: "Manual of Land Acquisition",
-      type: "manual",
-      description: "This manual teaches you to automatically purchase land.",
+      name: 'Manual of Land Acquisition',
+      type: 'manual',
+      description: 'This manual teaches you to automatically purchase land.',
       value: 2000000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic land purchasing.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic land purchasing.',
       useConsumes: true,
       use: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoBuyLandUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         return this.homeService.autoBuyLandUnlocked;
-      }
+      },
     },
     autoBuyHomeManual: {
       id: 'autoBuyHomeManual',
-      name: "Manual of Home Improvement",
-      type: "manual",
-      description: "This manual teaches you to automatically upgrade your home.",
+      name: 'Manual of Home Improvement',
+      type: 'manual',
+      description: 'This manual teaches you to automatically upgrade your home.',
       value: 1e7,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic home upgrades.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic home upgrades.',
       useConsumes: true,
       use: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoBuyHomeUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         return this.homeService.autoBuyHomeUnlocked;
-      }
+      },
     },
     autoBuyFurnitureManual: {
       id: 'autoBuyFurnitureManual',
-      name: "Manual of Home Furnishing",
-      type: "manual",
-      description: "This manual teaches you to automatically buy the last furniture you bought for your home in future lives.",
+      name: 'Manual of Home Furnishing',
+      type: 'manual',
+      description:
+        'This manual teaches you to automatically buy the last furniture you bought for your home in future lives.',
       value: 8e7,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic purchasing for furniture.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic purchasing for furniture.',
       useConsumes: true,
       use: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoBuyFurnitureUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         return this.homeService.autoBuyFurnitureUnlocked;
-      }
+      },
     },
     autoBuyerSettingsManual: {
       id: 'autoBuySettingsManual',
-      name: "Manual of Customized Automation",
-      type: "manual",
-      description: "This manual teaches you to customize the order and behavior of auto-buying.",
+      name: 'Manual of Customized Automation',
+      type: 'manual',
+      description: 'This manual teaches you to customize the order and behavior of auto-buying.',
       value: 1e9,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-buying customization",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-buying customization',
       useConsumes: true,
       use: () => {
         if (!this.autoBuyerService) {
           this.autoBuyerService = this.injector.get(AutoBuyerService);
         }
         this.autoBuyerService.autoBuyerSettingsUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         if (!this.autoBuyerService) {
           this.autoBuyerService = this.injector.get(AutoBuyerService);
         }
         return this.autoBuyerService.autoBuyerSettingsUnlocked;
-      }
+      },
     },
     autoFieldManual: {
       id: 'autoFieldManual',
-      name: "Manual of Field Conversion",
-      type: "manual",
-      description: "This manual teaches you to automatically plow open land into fields.",
+      name: 'Manual of Field Conversion',
+      type: 'manual',
+      description: 'This manual teaches you to automatically plow open land into fields.',
       value: 2000000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic field plowing.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic field plowing.',
       useConsumes: true,
       use: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         this.homeService.autoFieldUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
         }
         return this.homeService.autoFieldUnlocked;
-      }
+      },
     },
     autoPotionManual: {
       id: 'autoPotionManual',
-      name: "Manual of Gluttonous Potion Consumption",
-      type: "manual",
-      description: "This manual teaches you to automatically use all potions.",
+      name: 'Manual of Gluttonous Potion Consumption',
+      type: 'manual',
+      description: 'This manual teaches you to automatically use all potions.',
       value: 2e8,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-drinking all potions.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-drinking all potions.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1937,11 +2078,14 @@ export class ItemRepoService {
         }
         this.inventoryService.autoPotionUnlocked = true;
         for (let index = this.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
-          if (this.inventoryService.autoUseEntries[index].name.includes("Potion")) {
+          if (this.inventoryService.autoUseEntries[index].name.includes('Potion')) {
             this.inventoryService.autoUseEntries.splice(index, 1);
           }
         }
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1949,16 +2093,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoPotionUnlocked;
-      }
+      },
     },
     autoPillManual: {
       id: 'autoPotionManual',
-      name: "Manual of Reckless Pill Consumption",
-      type: "manual",
-      description: "This manual teaches you to automatically use all pills.",
+      name: 'Manual of Reckless Pill Consumption',
+      type: 'manual',
+      description: 'This manual teaches you to automatically use all pills.',
       value: 1e10,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-swallowing all pills.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-swallowing all pills.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1967,11 +2111,14 @@ export class ItemRepoService {
         }
         this.inventoryService.autoPillUnlocked = true;
         for (let index = this.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
-          if (this.inventoryService.autoUseEntries[index].name.includes("Pill")) {
+          if (this.inventoryService.autoUseEntries[index].name.includes('Pill')) {
             this.inventoryService.autoUseEntries.splice(index, 1);
           }
         }
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -1979,16 +2126,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoPillUnlocked;
-      }
+      },
     },
     autoTroubleManual: {
       id: 'autoTroubleManual',
-      name: "Manual of Consistent Troublemaking",
-      type: "manual",
-      description: "This manual teaches you to automatically look for trouble.",
+      name: 'Manual of Consistent Troublemaking',
+      type: 'manual',
+      description: 'This manual teaches you to automatically look for trouble.',
       value: 5e8,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic trouble in the battle panel.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic trouble in the battle panel.',
       useConsumes: true,
       use: () => {
         // check if battleService is injected yet, if not, inject it (circular dependency issues)
@@ -1996,7 +2143,10 @@ export class ItemRepoService {
           this.battleService = this.injector.get(BattleService);
         }
         this.battleService.autoTroubleUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if battleService is injected yet, if not, inject it (circular dependency issues)
@@ -2004,16 +2154,16 @@ export class ItemRepoService {
           this.battleService = this.injector.get(BattleService);
         }
         return this.battleService?.autoTroubleUnlocked;
-      }
+      },
     },
     autoWeaponMergeManual: {
       id: 'autoWeaponMergeManual',
-      name: "Manual of Effortless Weapon Merging",
-      type: "manual",
-      description: "This manual teaches you to automatically merge weapons.",
+      name: 'Manual of Effortless Weapon Merging',
+      type: 'manual',
+      description: 'This manual teaches you to automatically merge weapons.',
       value: 1e9,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic weapon merging in the inventory panel.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic weapon merging in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2021,7 +2171,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoWeaponMergeUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2029,16 +2182,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoWeaponMergeUnlocked;
-      }
+      },
     },
     autoArmorMergeManual: {
       id: 'autoArmorMergeManual',
-      name: "Manual of Effortless Armor Merging",
-      type: "manual",
-      description: "This manual teaches you to automatically merge armor.",
+      name: 'Manual of Effortless Armor Merging',
+      type: 'manual',
+      description: 'This manual teaches you to automatically merge armor.',
       value: 1e9,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic armor merging in the inventory panel.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic armor merging in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2046,7 +2199,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoArmorMergeUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2054,16 +2210,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoArmorMergeUnlocked;
-      }
+      },
     },
     useSpiritGemManual: {
       id: 'useSpiritGemManual',
-      name: "Manual of Spirit Gem Comprehension",
-      type: "manual",
-      description: "This manual teaches you to incorporate spirit gems in your crafting.",
+      name: 'Manual of Spirit Gem Comprehension',
+      type: 'manual',
+      description: 'This manual teaches you to incorporate spirit gems in your crafting.',
       value: 500000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock including spirit gems when creating items.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock including spirit gems when creating items.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2073,7 +2229,10 @@ export class ItemRepoService {
         this.inventoryService.useSpiritGemUnlocked = true;
         this.inventoryService.useSpiritGemWeapons = true;
         this.inventoryService.useSpiritGemPotions = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2081,16 +2240,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.useSpiritGemUnlocked;
-      }
+      },
     },
     bestHerbsManual: {
       id: 'bestHerbsManual',
-      name: "Manual of the Herbal Connoisseur",
-      type: "manual",
-      description: "This manual teaches you to automatically sell any herbs below your current ability to gather.",
+      name: 'Manual of the Herbal Connoisseur',
+      type: 'manual',
+      description: 'This manual teaches you to automatically sell any herbs below your current ability to gather.',
       value: 5000000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-selling lower grade herbs.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-selling lower grade herbs.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2099,7 +2258,10 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldHerbs = true;
         this.inventoryService.autoSellOldHerbsEnabled = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2107,16 +2269,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoSellOldHerbs;
-      }
+      },
     },
     bestWoodManual: {
       id: 'bestWoodManual',
-      name: "Manual of the Discerning Wood Collector",
-      type: "manual",
-      description: "This manual teaches you to automatically sell any logs below your current ability to gather.",
+      name: 'Manual of the Discerning Wood Collector',
+      type: 'manual',
+      description: 'This manual teaches you to automatically sell any logs below your current ability to gather.',
       value: 5000000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-selling lower grade logs.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-selling lower grade logs.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2125,7 +2287,10 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldWood = true;
         this.inventoryService.autoSellOldWoodEnabled = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2133,16 +2298,17 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoSellOldWood;
-      }
+      },
     },
     bestOreManual: {
       id: 'bestOreManual',
-      name: "Manual of Mineral Pragmatism",
-      type: "manual",
-      description: "This manual teaches you to automatically sell any ores and bars below your current ability to gather.",
+      name: 'Manual of Mineral Pragmatism',
+      type: 'manual',
+      description:
+        'This manual teaches you to automatically sell any ores and bars below your current ability to gather.',
       value: 5000000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-selling lower grade ores and bars.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-selling lower grade ores and bars.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2152,7 +2318,10 @@ export class ItemRepoService {
         this.inventoryService.autoSellOldOre = true;
         this.inventoryService.autoSellOldOreEnabled = true;
         this.inventoryService.autoSellOldBarsEnabled = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2160,16 +2329,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoSellOldOre;
-      }
+      },
     },
     bestHidesManual: {
       id: 'bestHidesManual',
-      name: "Manual of Pelt Perception",
-      type: "manual",
-      description: "This manual teaches you to automatically sell any hides below your current ability to gather.",
+      name: 'Manual of Pelt Perception',
+      type: 'manual',
+      description: 'This manual teaches you to automatically sell any hides below your current ability to gather.',
       value: 5000000,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-selling lower grade hides.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-selling lower grade hides.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2178,7 +2347,10 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldHides = true;
         this.inventoryService.autoSellOldHidesEnabled = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2186,16 +2358,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoSellOldHides;
-      }
+      },
     },
     bestWeaponManual: {
       id: 'bestWeaponManual',
-      name: "Manual of Wise Weapon Selection",
-      type: "manual",
-      description: "This manual teaches you to automatically equip the best weapons that you have.",
+      name: 'Manual of Wise Weapon Selection',
+      type: 'manual',
+      description: 'This manual teaches you to automatically equip the best weapons that you have.',
       value: 1e10,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-equipping the best weapons in your inventory.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-equipping the best weapons in your inventory.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2203,7 +2375,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoequipBestWeapon = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2211,16 +2386,16 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoequipBestWeapon;
-      }
+      },
     },
     bestArmorManual: {
       id: 'bestArmorManual',
-      name: "Manual of Defensive Preparation",
-      type: "manual",
-      description: "This manual teaches you to automatically equip the best armor that you have.",
+      name: 'Manual of Defensive Preparation',
+      type: 'manual',
+      description: 'This manual teaches you to automatically equip the best armor that you have.',
       value: 1e10,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-equipping the best armor in your inventory.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-equipping the best armor in your inventory.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2228,7 +2403,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoequipBestArmor = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2236,16 +2414,17 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoequipBestArmor;
-      }
+      },
     },
     betterStorageManual: {
       id: 'betterStorageManual',
-      name: "Manual of Efficient Item Storage",
-      type: "manual",
-      description: "This manual teaches you to store items more efficiently so you can keep more in each stack.",
+      name: 'Manual of Efficient Item Storage',
+      type: 'manual',
+      description: 'This manual teaches you to store items more efficiently so you can keep more in each stack.',
       value: 1000000,
-      useLabel: "Read",
-      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useLabel: 'Read',
+      useDescription:
+        'Permanently increase by ten times the number of items you can put in each stack in your inventory.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2253,7 +2432,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.maxStackSize *= 10;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2261,16 +2443,17 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.maxStackSize >= 1000;
-      }
+      },
     },
     evenBetterStorageManual: {
       id: 'evenBetterStorageManual',
-      name: "Manual of Hyperefficient Item Storage",
-      type: "manual",
-      description: "This manual teaches you to store items more efficiently so you can keep more in each stack.",
+      name: 'Manual of Hyperefficient Item Storage',
+      type: 'manual',
+      description: 'This manual teaches you to store items more efficiently so you can keep more in each stack.',
       value: 1e8,
-      useLabel: "Read",
-      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useLabel: 'Read',
+      useDescription:
+        'Permanently increase by ten times the number of items you can put in each stack in your inventory.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2278,7 +2461,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.maxStackSize *= 10;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2286,16 +2472,17 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.maxStackSize >= 10000;
-      }
+      },
     },
     bestStorageManual: {
       id: 'bestStorageManual',
-      name: "Manual of Hyperspatial Item Storage",
-      type: "manual",
-      description: "This manual teaches you to store items more efficiently so you can keep more in each stack.",
+      name: 'Manual of Hyperspatial Item Storage',
+      type: 'manual',
+      description: 'This manual teaches you to store items more efficiently so you can keep more in each stack.',
       value: 1e8,
-      useLabel: "Read",
-      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useLabel: 'Read',
+      useDescription:
+        'Permanently increase by ten times the number of items you can put in each stack in your inventory.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2303,7 +2490,10 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.maxStackSize *= 10;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2311,16 +2501,17 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.maxStackSize >= 100000;
-      }
+      },
     },
     followerAutoDismissManual: {
       id: 'followerAutoDismissManual',
-      name: "Manual of Judicious Disciple Selection",
-      type: "manual",
-      description: "This manual teaches you to automatically dismiss followers based on their jobs.",
+      name: 'Manual of Judicious Disciple Selection',
+      type: 'manual',
+      description: 'This manual teaches you to automatically dismiss followers based on their jobs.',
       value: 1e11,
-      useLabel: "Read",
-      useDescription: "Permanently increase by ten times the number of items you can put in each stack in your inventory.",
+      useLabel: 'Read',
+      useDescription:
+        'Permanently increase by ten times the number of items you can put in each stack in your inventory.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2328,7 +2519,10 @@ export class ItemRepoService {
           this.followerService = this.injector.get(FollowersService);
         }
         this.followerService.autoDismissUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2336,16 +2530,17 @@ export class ItemRepoService {
           this.followerService = this.injector.get(FollowersService);
         }
         return this.followerService.autoDismissUnlocked;
-      }
+      },
     },
     bestGemsManual: {
       id: 'bestGemsManual',
-      name: "Manual of Gemological Purity",
-      type: "manual",
-      description: "This manual teaches you to automatically sell gems that are below the value of the gems your current monster drops.",
+      name: 'Manual of Gemological Purity',
+      type: 'manual',
+      description:
+        'This manual teaches you to automatically sell gems that are below the value of the gems your current monster drops.',
       value: 1e9,
-      useLabel: "Read",
-      useDescription: "Permanently unlock gem auto-selling for lower level gems.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock gem auto-selling for lower level gems.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2354,7 +2549,10 @@ export class ItemRepoService {
         }
         this.inventoryService.autoSellOldGemsUnlocked = true;
         this.inventoryService.autoSellOldGemsEnabled = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2362,113 +2560,128 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoSellOldGemsUnlocked;
-      }
+      },
     },
     autoPauseSettingsManual: {
       id: 'autoPauseSettingsManual',
-      name: "Manual of Customized Danger Sensing",
-      type: "manual",
-      description: "This manual teaches you to customize options for automatically pausing the game.",
+      name: 'Manual of Customized Danger Sensing',
+      type: 'manual',
+      description: 'This manual teaches you to customize options for automatically pausing the game.',
       value: 1e7,
-      useLabel: "Read",
-      useDescription: "Permanently unlock auto-pausing customization",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock auto-pausing customization',
       useConsumes: true,
       use: () => {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoPauseUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
         return this.activityService.autoPauseUnlocked;
-      }
+      },
     },
     bankedTicksEfficiencyManual: {
       id: 'bankedTicksEfficiencyManual',
-      name: "Manual of Efficient Time Banking",
-      type: "manual",
-      description: "This manual teaches you to more efficiently bank ticks when paused or offline.",
+      name: 'Manual of Efficient Time Banking',
+      type: 'manual',
+      description: 'This manual teaches you to more efficiently bank ticks when paused or offline.',
       value: 2.5e9,
-      useLabel: "Read",
-      useDescription: "Permanently increase banked tick efficiency to 50%.",
+      useLabel: 'Read',
+      useDescription: 'Permanently increase banked tick efficiency to 50%.',
       useConsumes: true,
       use: () => {
         this.mainLoopService.offlineDivider = 2;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         return this.mainLoopService.offlineDivider <= 2;
-      }
+      },
     },
     autoRestManual: {
       id: 'autoRestManual',
-      name: "Manual of Timely Rest",
-      type: "manual",
-      description: "This manual teaches you to avoid overwork by resting just in time.",
+      name: 'Manual of Timely Rest',
+      type: 'manual',
+      description: 'This manual teaches you to avoid overwork by resting just in time.',
       value: 4e10,
-      useLabel: "Read",
-      useDescription: "Permanently unlock automatic resting.",
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic resting.',
       useConsumes: true,
       use: () => {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
         this.activityService.autoRestUnlocked = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
         return this.activityService.autoRestUnlocked;
-      }
+      },
     },
     ageSpeedManual: {
       id: 'ageSpeedManual',
-      name: "Manual of Aged Time Perception",
-      type: "manual",
-      description: "This manual teaches you to perceive time faster the older you are.",
+      name: 'Manual of Aged Time Perception',
+      type: 'manual',
+      description: 'This manual teaches you to perceive time faster the older you are.',
       value: 7.5e9,
-      useLabel: "Read",
-      useDescription: "Permanently increase time passage based on your age.",
+      useLabel: 'Read',
+      useDescription: 'Permanently increase time passage based on your age.',
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockAgeSpeed = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         return this.mainLoopService.unlockAgeSpeed;
-      }
+      },
     },
     totalPlaytimeManual: {
       id: 'totalPlaytimeManual',
-      name: "Manual of Lifetime Time Perception",
-      type: "manual",
+      name: 'Manual of Lifetime Time Perception',
+      type: 'manual',
       description: "This manual teaches you to perceive time faster the longer you've lived across all your lives.",
       value: 5e10,
-      useLabel: "Read",
-      useDescription: "Permanently increase time passage based on your total time lived.",
+      useLabel: 'Read',
+      useDescription: 'Permanently increase time passage based on your total time lived.',
       useConsumes: true,
       use: () => {
         this.mainLoopService.unlockPlaytimeSpeed = true;
-        this.logService.log(LogTopic.EVENT, "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations.");
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
       },
       owned: () => {
         return this.mainLoopService.unlockPlaytimeSpeed;
-      }
+      },
     },
-  }
+  };
 
-  constructor(private characterService: CharacterService,
+  constructor(
+    private characterService: CharacterService,
     private injector: Injector,
     private logService: LogService,
-    private mainLoopService: MainLoopService) {
-
-  }
+    private mainLoopService: MainLoopService
+  ) {}
 
   getItemById(id: string): Item | undefined {
     if (this.items[id]) {
@@ -2483,6 +2696,4 @@ export class ItemRepoService {
     }
     return null;
   }
-
 }
-

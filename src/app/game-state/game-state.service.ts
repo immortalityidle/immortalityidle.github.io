@@ -20,37 +20,36 @@ import { MatDialog } from '@angular/material/dialog';
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
 interface GameState {
-  achievements: AchievementProperties,
-  character: CharacterProperties,
-  inventory: InventoryProperties,
-  home: HomeProperties,
-  activities: ActivityProperties,
-  battles: BattleProperties,
-  followers: FollowersProperties,
-  logs: LogProperties,
-  autoBuy: AutoBuyerProperties,
-  mainLoop: MainLoopProperties,
-  impossibleTasks: ImpossibleTaskProperties,
-  hell: HellProperties,
-  darkMode: boolean,
-  gameStartTimestamp: number,
-  saveInterval: number,
-  easyModeEver: boolean,
+  achievements: AchievementProperties;
+  character: CharacterProperties;
+  inventory: InventoryProperties;
+  home: HomeProperties;
+  activities: ActivityProperties;
+  battles: BattleProperties;
+  followers: FollowersProperties;
+  logs: LogProperties;
+  autoBuy: AutoBuyerProperties;
+  mainLoop: MainLoopProperties;
+  impossibleTasks: ImpossibleTaskProperties;
+  hell: HellProperties;
+  darkMode: boolean;
+  gameStartTimestamp: number;
+  saveInterval: number;
+  easyModeEver: boolean;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameStateService {
-
   lastSaved = new Date().getTime();
   isDarkMode = false;
   isImport = false;
-  isExperimental = window.location.href.includes("experimental");
+  isExperimental = window.location.href.includes('experimental');
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
   saveInterval = 300; //In seconds
-  saveSlot = "";
+  saveSlot = '';
 
   constructor(
     private characterService: CharacterService,
@@ -68,7 +67,6 @@ export class GameStateService {
     private achievementService: AchievementService,
     private impossibleTaskService: ImpossibleTaskService,
     private hellService: HellService
-
   ) {
     // @ts-ignore
     window['GameStateService'] = this;
@@ -94,7 +92,8 @@ export class GameStateService {
    *
    * @param isImport Leave undefined to load flag, boolean to change save to that boolean.
    */
-  updateImportFlagKey(isImport?: boolean) { // A new key to avoid saving backups over mains, and mains over backups.
+  updateImportFlagKey(isImport?: boolean) {
+    // A new key to avoid saving backups over mains, and mains over backups.
     if (isImport !== undefined) {
       this.isImport = isImport;
       const data = JSON.stringify(this.isImport);
@@ -108,29 +107,39 @@ export class GameStateService {
   }
 
   savetoLocalStorage(): void {
-    const saveCopy = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot)
+    const saveCopy = window.localStorage.getItem(
+      LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot
+    );
     if (saveCopy) {
-      window.localStorage.setItem("BACKUP" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot, saveCopy);
+      window.localStorage.setItem(
+        'BACKUP' + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot,
+        saveCopy
+      );
     }
-    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot, this.getGameExport());
+    window.localStorage.setItem(
+      LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot,
+      this.getGameExport()
+    );
     this.lastSaved = new Date().getTime();
   }
 
   loadFromLocalStorage(backup = false): boolean {
     this.getSaveFile();
-    const backupStr = backup ? "BACKUP" : "";
-    const gameStateSerialized = window.localStorage.getItem(backupStr + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot);
+    const backupStr = backup ? 'BACKUP' : '';
+    const gameStateSerialized = window.localStorage.getItem(
+      backupStr + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot
+    );
     if (!gameStateSerialized) {
       return false;
     }
     this.importGame(gameStateSerialized);
     if (this.isImport) {
-      this.characterService.toast("Load Successful")
+      this.characterService.toast('Load Successful');
       this.updateImportFlagKey(false);
     } else {
       this.dialog.open(OfflineModalComponent, {
         data: { earnedTicks: this.mainLoopService.earnedTicks },
-        autoFocus: false
+        autoFocus: false,
       });
     }
     return true;
@@ -138,7 +147,7 @@ export class GameStateService {
 
   importGame(value: string) {
     let gameStateSerialized: string;
-    if (value.substring(0, 3) === "iig") {
+    if (value.substring(0, 3) === 'iig') {
       // it's a new save file
       gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
@@ -194,11 +203,11 @@ export class GameStateService {
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
       saveInterval: this.saveInterval || 300,
-      easyModeEver: this.easyModeEver
+      easyModeEver: this.easyModeEver,
     };
     let gameStateString = JSON.stringify(gameState);
     //gameStateString = "iig" + btoa(gameStateString);
-    gameStateString = "iig" + btoa(encodeURIComponent(gameStateString));
+    gameStateString = 'iig' + btoa(encodeURIComponent(gameStateString));
     return gameStateString;
   }
 
@@ -214,7 +223,7 @@ export class GameStateService {
   }
 
   cheat(): void {
-    this.logService.log(LogTopic.EVENT, "You dirty cheater! You pressed the cheat button!");
+    this.logService.log(LogTopic.EVENT, 'You dirty cheater! You pressed the cheat button!');
     this.characterService.characterState.money += 1e10;
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
@@ -236,11 +245,16 @@ export class GameStateService {
   }
 
   setSaveFile() {
-    window.localStorage.setItem("saveSlotFor" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(), this.saveSlot);
+    window.localStorage.setItem(
+      'saveSlotFor' + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(),
+      this.saveSlot
+    );
   }
 
   getSaveFile() {
-    const saveString = window.localStorage.getItem("saveSlotFor" + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor())
+    const saveString = window.localStorage.getItem(
+      'saveSlotFor' + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor()
+    );
     if (!saveString) {
       return;
     }
@@ -249,16 +263,16 @@ export class GameStateService {
 
   getDeploymentFlavor() {
     let href = window.location.href;
-    if (href === "http://localhost:4200/") {
+    if (href === 'http://localhost:4200/') {
       // development, use the standard save
-      return "";
-    } else if (href === "https://immortalityidle.github.io/" || href === "https://immortalityidle.github.io/old/") {
+      return '';
+    } else if (href === 'https://immortalityidle.github.io/' || href === 'https://immortalityidle.github.io/old/') {
       // main game branch or old branch, use the standard save
-      return "";
-    } else if (href.includes("https://immortalityidle.github.io/")) {
+      return '';
+    } else if (href.includes('https://immortalityidle.github.io/')) {
       href = href.substring(0, href.length - 1); // trim the trailing slash
-      return href.substring(href.lastIndexOf("/") + 1); //return the deployed branch so that the saves can be different for each branch
+      return href.substring(href.lastIndexOf('/') + 1); //return the deployed branch so that the saves can be different for each branch
     }
-    throw new Error("Hey, someone stole this game!"); // mess with whoever is hosting the game somewhere else and doesn't know enough javascript to fix this.
+    throw new Error('Hey, someone stole this game!'); // mess with whoever is hosting the game somewhere else and doesn't know enough javascript to fix this.
   }
 }

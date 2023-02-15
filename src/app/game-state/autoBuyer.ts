@@ -1,13 +1,13 @@
-import { AutoBuyerService } from "./autoBuyer.service";
-import { CharacterService } from "./character.service";
-import { HomeService } from "./home.service";
+import { AutoBuyerService } from './autoBuyer.service';
+import { CharacterService } from './character.service';
+import { HomeService } from './home.service';
 
 export abstract class AutoBuyer {
-
   constructor(
     protected autoBuyerService: AutoBuyerService,
     protected homeService: HomeService,
-    protected characterService: CharacterService) { }
+    protected characterService: CharacterService
+  ) {}
 
   /**
    * Checks if permissions are correct to run this autobuyer.
@@ -51,7 +51,7 @@ export class HomeAutoBuyer extends AutoBuyer {
       const landRequired = Math.min(
         this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
         this.homeService.nextHome.landRequired - this.homeService.land
-      )
+      );
       if (landRequired > 0) {
         this.homeService.buyLand(landRequired);
       }
@@ -62,7 +62,7 @@ export class HomeAutoBuyer extends AutoBuyer {
         const landRequired = Math.min(
           this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
           nnHome.landRequired - this.homeService.land
-        )
+        );
         if (landRequired > 0) {
           this.homeService.buyLand(landRequired);
         }
@@ -87,8 +87,10 @@ export class HomeAutoBuyer extends AutoBuyer {
 
   isComplete(): boolean {
     // We're complete if we've bought the last home upgrade, even if it isn't finished building
-    return this.homeService.homeValue >= this.homeService.autoBuyHomeLimit
-      || this.homeService.upgrading && (this.homeService.homeValue + 1 >= this.homeService.autoBuyHomeLimit);
+    return (
+      this.homeService.homeValue >= this.homeService.autoBuyHomeLimit ||
+      (this.homeService.upgrading && this.homeService.homeValue + 1 >= this.homeService.autoBuyHomeLimit)
+    );
   }
 }
 
@@ -98,19 +100,25 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
   }
 
   run(reserveAmount: number) {
-    if (this.homeService.autoBuyLandUnlocked
-      && this.characterService.characterState.money >= this.homeService.landPrice + reserveAmount) {
+    if (
+      this.homeService.autoBuyLandUnlocked &&
+      this.characterService.characterState.money >= this.homeService.landPrice + reserveAmount
+    ) {
       const landRequired = Math.min(
         this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
-        this.homeService.autoBuyLandLimit - (this.homeService.land + this.homeService.fields.length + this.homeService.extraFields)
-      )
+        this.homeService.autoBuyLandLimit -
+          (this.homeService.land + this.homeService.fields.length + this.homeService.extraFields)
+      );
       if (landRequired > 0) {
         this.homeService.buyLand(landRequired);
       }
     }
 
     if (this.homeService.autoFieldUnlocked) {
-      const minFields = Math.min(this.homeService.land, this.homeService.autoFieldLimit - (this.homeService.fields.length + this.homeService.extraFields));
+      const minFields = Math.min(
+        this.homeService.land,
+        this.homeService.autoFieldLimit - (this.homeService.fields.length + this.homeService.extraFields)
+      );
 
       if (minFields > 0) {
         this.homeService.addField(minFields);
@@ -121,7 +129,10 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
   isBlocked(): boolean {
     // This autobuyer can be blocked if it needs more fields, but we haven't unlocked buying land yet
     if (this.homeService.autoFieldUnlocked && !this.homeService.autoBuyLandUnlocked) {
-      return this.homeService.land === 0 && this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit
+      return (
+        this.homeService.land === 0 &&
+        this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit
+      );
     }
 
     return false;
@@ -134,7 +145,9 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
   isComplete(): boolean {
     let landComplete = true;
     if (this.homeService.autoBuyLandUnlocked) {
-      landComplete = this.homeService.land + this.homeService.fields.length + this.homeService.extraFields >= this.homeService.autoBuyLandLimit;
+      landComplete =
+        this.homeService.land + this.homeService.fields.length + this.homeService.extraFields >=
+        this.homeService.autoBuyLandLimit;
     }
 
     let fieldsComplete = true;
@@ -144,7 +157,6 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
 
     return landComplete && fieldsComplete;
   }
-
 }
 
 export class FurnitureAutoBuyer extends AutoBuyer {
@@ -197,8 +209,10 @@ export class FurnitureAutoBuyer extends AutoBuyer {
       const targetItem = this.homeService.autoBuyFurniture[slot];
       if (targetItem) {
         // If the current home doesn't include a slot that the next one does...
-        if (!this.homeService.home.furnitureSlots.includes(slot)
-          && this.homeService.nextHome.furnitureSlots.includes(slot)) {
+        if (
+          !this.homeService.home.furnitureSlots.includes(slot) &&
+          this.homeService.nextHome.furnitureSlots.includes(slot)
+        ) {
           neededSlotsIncludedInNextHome = false;
         }
       }
@@ -214,8 +228,10 @@ export class FurnitureAutoBuyer extends AutoBuyer {
       // Automatically consider unfilled auto-buy slots complete
       if (targetItem) {
         // If we don't have the slot, or we don't have the last bought furniture, consider incomplete
-        if (!this.homeService.home.furnitureSlots.includes(slot)
-          || this.homeService.furniture[slot]?.id !== targetItem.id) {
+        if (
+          !this.homeService.home.furnitureSlots.includes(slot) ||
+          this.homeService.furniture[slot]?.id !== targetItem.id
+        ) {
           return false;
         }
       }

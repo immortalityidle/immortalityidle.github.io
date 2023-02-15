@@ -39,58 +39,58 @@ export enum HomeType {
   ForbiddenCity,
   Capital,
   ImperialSeat,
-  Godthrone
+  Godthrone,
 }
 
 export interface Field {
-  cropName: string,
-  yield: number,
-  maxYield: number,
-  daysToHarvest: number,
-  originalDaysToHarvest: number
+  cropName: string;
+  yield: number;
+  maxYield: number;
+  daysToHarvest: number;
+  originalDaysToHarvest: number;
 }
 
 export interface HomeProperties {
-  land: number,
-  homeValue: HomeType,
-  furniture: FurnitureSlots,
-  fields: Field[],
-  extraFields: number,
-  averageYield: number,
-  landPrice: number,
-  autoBuyLandUnlocked: boolean,
-  autoBuyLandLimit: number,
-  autoBuyHomeUnlocked: boolean,
-  autoBuyHomeLimit: HomeType,
-  autoBuyFurnitureUnlocked: boolean,
-  autoBuyFurniture: FurnitureSlots,
-  autoFieldUnlocked: boolean,
-  autoFieldLimit: number,
-  useAutoBuyReserve: boolean,
-  autoBuyReserveAmount: number,
-  nextHomeCostReduction: number,
-  houseBuildingProgress: number,
-  upgrading: boolean,
-  ownedFurniture: string[],
-  highestLand: number,
-  highestLandPrice: number,
-  mostFields: number,
-  highestAverageYield: number,
-  bestHome: HomeType,
-  thugPause: boolean,
-  hellFood: boolean,
-  hellHome: boolean,
-  hideHome: boolean
+  land: number;
+  homeValue: HomeType;
+  furniture: FurnitureSlots;
+  fields: Field[];
+  extraFields: number;
+  averageYield: number;
+  landPrice: number;
+  autoBuyLandUnlocked: boolean;
+  autoBuyLandLimit: number;
+  autoBuyHomeUnlocked: boolean;
+  autoBuyHomeLimit: HomeType;
+  autoBuyFurnitureUnlocked: boolean;
+  autoBuyFurniture: FurnitureSlots;
+  autoFieldUnlocked: boolean;
+  autoFieldLimit: number;
+  useAutoBuyReserve: boolean;
+  autoBuyReserveAmount: number;
+  nextHomeCostReduction: number;
+  houseBuildingProgress: number;
+  upgrading: boolean;
+  ownedFurniture: string[];
+  highestLand: number;
+  highestLandPrice: number;
+  mostFields: number;
+  highestAverageYield: number;
+  bestHome: HomeType;
+  thugPause: boolean;
+  hellFood: boolean;
+  hellHome: boolean;
+  hideHome: boolean;
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
 export type FurnitureSlots = { [key in FurniturePosition]: Furniture | null };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HomeService {
-  hellService?: HellService
+  hellService?: HellService;
   autoBuyLandUnlocked = false;
   autoBuyLandLimit = 5;
   autoBuyHomeUnlocked = false;
@@ -100,8 +100,8 @@ export class HomeService {
     bed: null,
     bathtub: null,
     kitchen: null,
-    workbench: null
-  }
+    workbench: null,
+  };
   autoFieldUnlocked = false;
   autoFieldLimit = 0;
   useAutoBuyReserve = false;
@@ -115,8 +115,8 @@ export class HomeService {
     bed: null,
     bathtub: null,
     kitchen: null,
-    workbench: null
-  }
+    workbench: null,
+  };
   furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
   ownedFurniture: string[] = [];
   grandfatherTent = false;
@@ -129,403 +129,366 @@ export class HomeService {
 
   homesList: Home[] = [
     {
-      name: "Squatter Tent",
+      name: 'Squatter Tent',
       type: HomeType.SquatterTent,
-      description: "A dirty tent pitched in an unused field. Costs nothing, but you get what you pay for. The mice around here are pretty nasty and you might get robbed by bandits.",
+      description:
+        'A dirty tent pitched in an unused field. Costs nothing, but you get what you pay for. The mice around here are pretty nasty and you might get robbed by bandits.',
       cost: 0,
       costPerDay: 0,
       landRequired: 0,
       maxInventory: 10,
-      upgradeToTooltip: "Get a better house.",
+      upgradeToTooltip: 'Get a better house.',
       consequence: () => {
         if (Math.random() < 0.05) {
-          this.logService.injury(LogTopic.EVENT, "Some troublemakers stole some money while you were sleeping. It might be time to get some walls.");
-          this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
+          this.logService.injury(
+            LogTopic.EVENT,
+            'Some troublemakers stole some money while you were sleeping. It might be time to get some walls.'
+          );
+          this.characterService.characterState.money -= this.characterService.characterState.money / 10;
         }
         if (Math.random() < 0.4) {
           this.battleService.addEnemy({
-            name: "a pesky mouse",
+            name: 'a pesky mouse',
             health: 2,
             maxHealth: 2,
             accuracy: 0.15,
             attack: 0.3,
             defense: 0,
-            loot: []
+            loot: [],
           });
         }
       },
       furnitureSlots: [],
-      daysToBuild: 1
+      daysToBuild: 1,
     },
     {
-      name: "Tent of Your Own",
+      name: 'Tent of Your Own',
       type: HomeType.OwnTent,
-      description: "A decent tent pitched on your own bit of land. The occasional mouse or ruffian might give you trouble. Automatically restores 1 stamina and a bit of health each night.",
+      description:
+        'A decent tent pitched on your own bit of land. The occasional mouse or ruffian might give you trouble. Automatically restores 1 stamina and a bit of health each night.',
       cost: 100,
       costPerDay: 1,
       landRequired: 1,
       maxInventory: 12,
-      upgradeToTooltip: "Get a better house. A better home will cost 100 taels and take up 1 land. The new home will restore 1 stamina and a bit of health each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 100 taels and take up 1 land. The new home will restore 1 stamina and a bit of health each night.',
       consequence: () => {
-        this.characterService.characterState.status.health.value += .5;
+        this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 1;
         if (Math.random() < 0.03) {
-          this.logService.injury(LogTopic.EVENT, "Some troublemakers stole some money while you were sleeping. It might be time to get some walls.");
-          this.characterService.characterState.money -= (this.characterService.characterState.money / 10);
+          this.logService.injury(
+            LogTopic.EVENT,
+            'Some troublemakers stole some money while you were sleeping. It might be time to get some walls.'
+          );
+          this.characterService.characterState.money -= this.characterService.characterState.money / 10;
         }
         if (Math.random() < 0.2) {
           this.battleService.addEnemy({
-            name: "a pesky mouse",
+            name: 'a pesky mouse',
             health: 2,
             maxHealth: 2,
             accuracy: 0.15,
             attack: 0.3,
             defense: 0,
-            loot: []
+            loot: [],
           });
         }
         this.characterService.characterState.checkOverage();
       },
       furnitureSlots: [],
-      daysToBuild: 1
+      daysToBuild: 1,
     },
     {
-      name: "Dirty Shack",
+      name: 'Dirty Shack',
       type: HomeType.DirtyShack,
-      description: "A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out. Automatically restores 3 stamina and a bit of health each night.",
+      description:
+        'A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out. Automatically restores 3 stamina and a bit of health each night.',
       cost: 1000,
       costPerDay: 5,
       landRequired: 5,
       maxInventory: 15,
-      upgradeToTooltip: "Get a better house. A better home will cost 1,000 taels and take up 5 land. The new home will restore 3 stamina and a bit of health each night. It also has walls and space to properly sleep.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 1,000 taels and take up 5 land. The new home will restore 3 stamina and a bit of health each night. It also has walls and space to properly sleep.',
       consequence: () => {
-        this.characterService.characterState.status.health.value += .5;
+        this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 3;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed'
-      ],
-      daysToBuild: 1
+      furnitureSlots: ['bed'],
+      daysToBuild: 1,
     },
     {
-      name: "Simple Hut",
+      name: 'Simple Hut',
       type: HomeType.SimpleHut,
-      description: "A very simple hut. Automatically restores 5 stamina and a bit of health each night.",
+      description: 'A very simple hut. Automatically restores 5 stamina and a bit of health each night.',
       cost: 10000,
       costPerDay: 10,
       landRequired: 10,
       maxInventory: 18,
-      upgradeToTooltip: "Get a better house. A better home will cost 10,000 taels and take up 10 land. The new home will restore 5 stamina and a bit of health each night. It has enough room to properly bathe.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 10,000 taels and take up 10 land. The new home will restore 5 stamina and a bit of health each night. It has enough room to properly bathe.',
       consequence: () => {
-        this.characterService.characterState.status.health.value += .7;
+        this.characterService.characterState.status.health.value += 0.7;
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub'
-      ],
-      daysToBuild: 10
+      furnitureSlots: ['bed', 'bathtub'],
+      daysToBuild: 10,
     },
     {
-      name: "Pleasant Cottage",
+      name: 'Pleasant Cottage',
       type: HomeType.PleasantCottage,
-      description: "A nice little home where you can rest peacefully. Automatically restores 10 stamina, 1 health and a bit of mana each night.",
+      description:
+        'A nice little home where you can rest peacefully. Automatically restores 10 stamina, 1 health and a bit of mana each night.',
       cost: 100000,
       costPerDay: 20,
       landRequired: 20,
       maxInventory: 20,
-      upgradeToTooltip: "Get a better house. A better home will cost 100,000 taels and take up 20 land. The new home will restore 10 stamina and 1 health and a bit of mana each night. It also has room to let you cook.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 100,000 taels and take up 20 land. The new home will restore 10 stamina and 1 health and a bit of mana each night. It also has room to let you cook.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.1;
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 10;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen'
-      ],
-      daysToBuild: 30
+      furnitureSlots: ['bed', 'bathtub', 'kitchen'],
+      daysToBuild: 30,
     },
     {
-      name: "Large House",
+      name: 'Large House',
       type: HomeType.LargeHouse,
-      description: "A large house where you can live and work. Automatically restores 15 stamina, 2 health, and a bit of mana each night.",
+      description:
+        'A large house where you can live and work. Automatically restores 15 stamina, 2 health, and a bit of mana each night.',
       cost: 1000000,
       costPerDay: 50,
       landRequired: 50,
       maxInventory: 24,
-      upgradeToTooltip: "Get a better house. A better home will cost 1M taels and take up 50 land. The new home will restore 15 stamina, 2 health, and a bit of mana each night. It has room to practice your craft.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 1M taels and take up 50 land. The new home will restore 15 stamina, 2 health, and a bit of mana each night. It has room to practice your craft.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.2;
         this.characterService.characterState.status.health.value += 2;
         this.characterService.characterState.status.stamina.value += 15;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 90
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 90,
     },
     {
-      name: "Courtyard House",
+      name: 'Courtyard House',
       type: HomeType.CourtyardHouse,
-      description: "A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina, 3 health, and a bit of mana each night.",
+      description:
+        'A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina, 3 health, and a bit of mana each night.',
       cost: 1e7,
       costPerDay: 80,
       landRequired: 80,
       maxInventory: 28,
-      upgradeToTooltip: "Get a better house. A better home will cost 10m taels and take up 80 land. The new home will restore 20 stamina, 3 health, and a bit of mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 10m taels and take up 80 land. The new home will restore 20 stamina, 3 health, and a bit of mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.3;
         this.characterService.characterState.status.health.value += 3;
         this.characterService.characterState.status.stamina.value += 20;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 180
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 180,
     },
     {
-      name: "Manor",
+      name: 'Manor',
       type: HomeType.Manor,
-      description: "A large manor house. You are really moving up in the world. Automatically restores 25 stamina, 4 health, and a bit of mana each night.",
+      description:
+        'A large manor house. You are really moving up in the world. Automatically restores 25 stamina, 4 health, and a bit of mana each night.',
       cost: 1e8,
       costPerDay: 100,
       landRequired: 100,
       maxInventory: 30,
-      upgradeToTooltip: "Get a better house. A better home will cost 100m taels and take up 100 land. The new home will restore 25 stamina, 4 health, and a bit of mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 100m taels and take up 100 land. The new home will restore 25 stamina, 4 health, and a bit of mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.4;
         this.characterService.characterState.status.health.value += 4;
         this.characterService.characterState.status.stamina.value += 25;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 365
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 365,
     },
     {
-      name: "Mansion",
+      name: 'Mansion',
       type: HomeType.Mansion,
-      description: "An elaborate mansion. Automatically restores 30 stamina, 5 health, and a bit of mana each night.",
+      description: 'An elaborate mansion. Automatically restores 30 stamina, 5 health, and a bit of mana each night.',
       cost: 1e9,
       costPerDay: 120,
       landRequired: 120,
       maxInventory: 32,
-      upgradeToTooltip: "Get a better house. A better home will cost 1B taels and take up 120 land. The new home will restore 30 stamina, 5 health, and a bit of mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 1B taels and take up 120 land. The new home will restore 30 stamina, 5 health, and a bit of mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 0.5;
         this.characterService.characterState.status.health.value += 5;
         this.characterService.characterState.status.stamina.value += 30;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 3650
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 3650,
     },
     {
-      name: "Palace",
+      name: 'Palace',
       type: HomeType.Palace,
-      description: "A lavish palace. Automatically restores 35 stamina, 10 health, and 1 mana each night.",
+      description: 'A lavish palace. Automatically restores 35 stamina, 10 health, and 1 mana each night.',
       cost: 1e10,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 36,
-      upgradeToTooltip: "Get a better house. A better home will cost 10B taels and take up 150 land. The new home will restore 35 stamina, 10 health, and 1 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 10B taels and take up 150 land. The new home will restore 35 stamina, 10 health, and 1 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 1;
         this.characterService.characterState.status.health.value += 10;
         this.characterService.characterState.status.stamina.value += 35;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 36500
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 36500,
     },
     {
-      name: "Castle",
+      name: 'Castle',
       type: HomeType.Castle,
-      description: "An imposing castle. Automatically restores 40 stamina, 15 health, and 2 mana each night.",
+      description: 'An imposing castle. Automatically restores 40 stamina, 15 health, and 2 mana each night.',
       cost: 1e11,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 40,
-      upgradeToTooltip: "Get a better house. A better home will cost 100B taels and take up 150 land. The new home will restore 40 stamina, 15 health, and 2 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 100B taels and take up 150 land. The new home will restore 40 stamina, 15 health, and 2 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 2;
         this.characterService.characterState.status.health.value += 15;
         this.characterService.characterState.status.stamina.value += 40;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 365000
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 365000,
     },
     {
-      name: "Fortress",
+      name: 'Fortress',
       type: HomeType.Fortress,
-      description: "An indomitable fortress. Automatically restores 50 stamina, 20 health, and 3 mana each night.",
+      description: 'An indomitable fortress. Automatically restores 50 stamina, 20 health, and 3 mana each night.',
       cost: 1e12,
       costPerDay: 180,
       landRequired: 180,
       maxInventory: 50,
-      upgradeToTooltip: "Get a better house. A better home will cost 1T taels and take up 180 land. The new home will restore 50 stamina, 20 health, and 3 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 1T taels and take up 180 land. The new home will restore 50 stamina, 20 health, and 3 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 3;
         this.characterService.characterState.status.health.value += 20;
         this.characterService.characterState.status.stamina.value += 50;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 3650000
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 3650000,
     },
     {
-      name: "Mountain",
+      name: 'Mountain',
       type: HomeType.Mountain,
-      description: "An entire mighty mountain. Automatically restores 100 stamina, 30 health, and 4 mana each night.",
+      description: 'An entire mighty mountain. Automatically restores 100 stamina, 30 health, and 4 mana each night.',
       cost: 1e13,
       costPerDay: 500,
       landRequired: 500,
       maxInventory: 60,
-      upgradeToTooltip: "Get a better house. A better home will cost 10T taels and take up 500 land. The new home will restore 100 stamina, 30 health, and 4 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 10T taels and take up 500 land. The new home will restore 100 stamina, 30 health, and 4 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 4;
         this.characterService.characterState.status.health.value += 30;
         this.characterService.characterState.status.stamina.value += 100;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 365e5
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 365e5,
     },
     {
-      name: "Forbidden City",
+      name: 'Forbidden City',
       type: HomeType.ForbiddenCity,
-      description: "A city of your very own. Automatically restores 200 stamina, 50 health, and 5 mana each night.",
+      description: 'A city of your very own. Automatically restores 200 stamina, 50 health, and 5 mana each night.',
       cost: 1e14,
       costPerDay: 1000,
       landRequired: 1000,
       maxInventory: 80,
-      upgradeToTooltip: "Get a better house. A better home will cost 100T taels and take up 1,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 100T taels and take up 1,000 land. The new home will restore 200 stamina, 50 health, and 5 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 5;
         this.characterService.characterState.status.health.value += 50;
         this.characterService.characterState.status.stamina.value += 200;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 365e6
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 365e6,
     },
     {
-      name: "Capital",
+      name: 'Capital',
       type: HomeType.Capital,
-      description: "The entire province is yours now. Automatically restores 300 stamina, 80 health, and 10 mana each night.",
+      description:
+        'The entire province is yours now. Automatically restores 300 stamina, 80 health, and 10 mana each night.',
       cost: 1e15,
       costPerDay: 10000,
       landRequired: 10000,
       maxInventory: 100,
-      upgradeToTooltip: "Get a better house. A better home will cost 1q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 1q taels and take up 10,000 land. The new home will restore 300 stamina, 80 health, and 10 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 10;
         this.characterService.characterState.status.health.value += 80;
         this.characterService.characterState.status.stamina.value += 300;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 365e7
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 365e7,
     },
     {
-      name: "Seat of the Empire",
+      name: 'Seat of the Empire',
       type: HomeType.ImperialSeat,
-      description: "You've built quite an empire. Automatically restores 500 stamina, 100 health, and 20 mana each night.",
+      description:
+        "You've built quite an empire. Automatically restores 500 stamina, 100 health, and 20 mana each night.",
       cost: 1e16,
       costPerDay: 1e6,
       landRequired: 1e6,
       maxInventory: 125,
-      upgradeToTooltip: "Get a better house. A better home will cost 10q taels and take up 1,000,000 land. The new home will restore 500 stamina, 100 health, and 20 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 10q taels and take up 1,000,000 land. The new home will restore 500 stamina, 100 health, and 20 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 20;
         this.characterService.characterState.status.health.value += 100;
         this.characterService.characterState.status.stamina.value += 500;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 365e8
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 365e8,
     },
     {
-      name: "Godthrone",
+      name: 'Godthrone',
       type: HomeType.Godthrone,
-      description: "The entire world kneels far beneath you. Automatically restores 1000 stamina, 150 health, and 30 mana each night.",
+      description:
+        'The entire world kneels far beneath you. Automatically restores 1000 stamina, 150 health, and 30 mana each night.',
       cost: 1e17,
       costPerDay: 1e7,
       landRequired: 1e7,
       maxInventory: 150,
-      upgradeToTooltip: "Get a better house. A better home will cost 100q taels and take up 10,000,000 land. The new home will restore 1000 stamina, 150 health, and 30 mana each night.",
+      upgradeToTooltip:
+        'Get a better house. A better home will cost 100q taels and take up 10,000,000 land. The new home will restore 1000 stamina, 150 health, and 30 mana each night.',
       consequence: () => {
         this.characterService.characterState.status.mana.value += 30;
         this.characterService.characterState.status.health.value += 150;
         this.characterService.characterState.status.stamina.value += 1000;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [
-        'bed',
-        'bathtub',
-        'kitchen',
-        'workbench'
-      ],
-      daysToBuild: 365e9
-    }
+      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      daysToBuild: 365e9,
+    },
   ];
 
   homeValue!: HomeType;
@@ -547,16 +510,13 @@ export class HomeService {
     private battleService: BattleService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
-    private itemRepoService: ItemRepoService,
-
+    private itemRepoService: ItemRepoService
   ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
+    setTimeout(() => (this.hellService = this.injector.get(HellService)));
     this.land = 0;
     this.landPrice = 100;
     this.setCurrentHome(this.homesList[0]);
-    if (this.home === undefined ||
-      this.homeValue === undefined ||
-      this.nextHome === undefined) {
+    if (this.home === undefined || this.homeValue === undefined || this.nextHome === undefined) {
       throw Error('Home service not initialized correctly.');
     }
 
@@ -583,9 +543,12 @@ export class HomeService {
       if (!this.hellService?.inHell || this.hellFood) {
         this.ageFields();
       }
-      if (!this.hellService?.inHell && !this.characterService.characterState.god){
-        if (this.home.costPerDay > this.characterService.characterState.money ) {
-          this.logService.injury(LogTopic.EVENT, "You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast.");
+      if (!this.hellService?.inHell && !this.characterService.characterState.god) {
+        if (this.home.costPerDay > this.characterService.characterState.money) {
+          this.logService.injury(
+            LogTopic.EVENT,
+            "You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast."
+          );
           if (this.thugPause) {
             mainLoopService.pause = true;
           }
@@ -618,20 +581,28 @@ export class HomeService {
         this.upgrading = false;
         this.setCurrentHome(this.home);
       }
-
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
       if (this.characterService.characterState.bloodlineRank >= 6) {
-        this.logService.log(LogTopic.EVENT, "You reincarnate as one of your descendants and your family recognizes you as you age.");
+        this.logService.log(
+          LogTopic.EVENT,
+          'You reincarnate as one of your descendants and your family recognizes you as you age.'
+        );
         if (this.characterService.characterState.bloodlineRank >= 7) {
-          this.logService.log(LogTopic.EVENT, "Your family steps aside and assists your takeover of your Empire.");
+          this.logService.log(LogTopic.EVENT, 'Your family steps aside and assists your takeover of your Empire.');
         } else {
-          this.logService.log(LogTopic.EVENT, "Your family escorts you to your ancestral home and helps you get settled in.");
+          this.logService.log(
+            LogTopic.EVENT,
+            'Your family escorts you to your ancestral home and helps you get settled in.'
+          );
         }
       } else if (this.grandfatherTent) {
-        this.logService.log(LogTopic.EVENT, "Your grandfather gives you a bit of land and helps you set up a tent on it.");
+        this.logService.log(
+          LogTopic.EVENT,
+          'Your grandfather gives you a bit of land and helps you set up a tent on it.'
+        );
         //and a few coins so you don't immediately get beat up for not having upkeep money for your house
         this.characterService.characterState.money += 50;
         this.setCurrentHome(this.nextHome);
@@ -670,8 +641,8 @@ export class HomeService {
       thugPause: this.thugPause,
       hellFood: this.hellFood,
       hellHome: this.hellHome,
-      hideHome: this.hideHome
-    }
+      hideHome: this.hideHome,
+    };
   }
 
   setProperties(properties: HomeProperties) {
@@ -734,7 +705,7 @@ export class HomeService {
       this.nextHomeCostReduction = 0;
       this.houseBuildingProgress = 0;
       this.upgrading = true;
-      this.logService.log(LogTopic.EVENT, "You start upgrading your home to a " + this.nextHome.name);
+      this.logService.log(LogTopic.EVENT, 'You start upgrading your home to a ' + this.nextHome.name);
     }
   }
 
@@ -743,12 +714,12 @@ export class HomeService {
       quantity = 1; //handle potential 0 and negatives just in case
     }
 
-    this.houseBuildingProgress += 1 / this.nextHome.daysToBuild * quantity;
+    this.houseBuildingProgress += (1 / this.nextHome.daysToBuild) * quantity;
     if (this.houseBuildingProgress >= 1) {
       this.houseBuildingProgress = 1;
       this.upgrading = false;
       this.setCurrentHome(this.nextHome);
-      this.logService.log(LogTopic.EVENT, "You finished upgrading your home. You now live in a " + this.home.name);
+      this.logService.log(LogTopic.EVENT, 'You finished upgrading your home. You now live in a ' + this.home.name);
     }
   }
 
@@ -772,7 +743,6 @@ export class HomeService {
     this.fields = [];
     this.extraFields = 0;
     this.averageYield = 0;
-
   }
 
   setCurrentHome(home: Home) {
@@ -807,7 +777,7 @@ export class HomeService {
       yield: 1,
       maxYield: Math.floor(200 / cropItem.value),
       daysToHarvest: 180 + cropItem.value,
-      originalDaysToHarvest: 180 + cropItem.value
+      originalDaysToHarvest: 180 + cropItem.value,
     };
   }
 
@@ -880,7 +850,7 @@ export class HomeService {
       if (this.fields[i].daysToHarvest <= 0) {
         let fieldYield = this.fields[i].yield;
         if (this.fields.length + this.extraFields > 300) {
-          fieldYield = Math.floor(fieldYield * (this.fields.length + this.extraFields) / 300);
+          fieldYield = Math.floor((fieldYield * (this.fields.length + this.extraFields)) / 300);
         }
         totalDailyYield += fieldYield;
         if (this.hellService?.inHell && fieldYield > 0) {
@@ -892,7 +862,7 @@ export class HomeService {
         this.fields[i].daysToHarvest--;
       }
     }
-    this.averageYield = ((this.averageYield * 364) + totalDailyYield) / 365;
+    this.averageYield = (this.averageYield * 364 + totalDailyYield) / 365;
   }
 
   /**
@@ -911,7 +881,7 @@ export class HomeService {
     } else {
       count = Math.floor(maximumCount / 2);
     }
-    increase = 10 * (count * (count - 1) / 2); //mathmatically increase by linear sum n (n + 1) / 2
+    increase = 10 * ((count * (count - 1)) / 2); //mathmatically increase by linear sum n (n + 1) / 2
     price = this.landPrice * count + increase;
     if (this.characterService.characterState.money >= price) {
       this.characterService.characterState.money -= price;
@@ -929,12 +899,11 @@ export class HomeService {
   calculateAffordableLand(money: number): number {
     const x = money;
     const C = this.landPrice;
-    return Math.floor(((-C - 5) + (Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25))) / 10); // I know this looks nuts but I tested it on its own ^_^;;
-
+    return Math.floor((-C - 5 + Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)) / 10); // I know this looks nuts but I tested it on its own ^_^;;
   }
 
   buyFurniture(itemId: string) {
-    const item = this.itemRepoService.getFurnitureById(itemId)
+    const item = this.itemRepoService.getFurnitureById(itemId);
     if (item) {
       if (this.characterService.characterState.money >= item.value) {
         this.characterService.characterState.money -= item.value;

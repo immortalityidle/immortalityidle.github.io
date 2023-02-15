@@ -1,4 +1,3 @@
-
 import { Directive, ElementRef } from '@angular/core';
 
 export interface Size {
@@ -8,14 +7,14 @@ export interface Size {
 
 @Directive({
   selector: '[appResizable]',
-  exportAs: 'appResizable'
+  exportAs: 'appResizable',
 })
 export class ResizableDirective {
-  private nativeElement: HTMLElement
+  private nativeElement: HTMLElement;
 
   constructor(elementRef: ElementRef) {
     this.nativeElement = elementRef.nativeElement;
-   }
+  }
 
   setMaxHeight(maxHeight: number) {
     this.nativeElement.setAttribute('style', `max-height: ${maxHeight}px;`);
@@ -24,7 +23,7 @@ export class ResizableDirective {
   getSize(): Size {
     return {
       width: this.nativeElement.clientWidth,
-      height: this.nativeElement.clientHeight
+      height: this.nativeElement.clientHeight,
     };
   }
 }
