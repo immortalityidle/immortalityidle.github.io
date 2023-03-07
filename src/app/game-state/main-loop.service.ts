@@ -26,6 +26,10 @@ export interface MainLoopProperties {
   scientificNotation: boolean
 }
 
+export let ticksProcessed = 0;
+export let timeExecutingTicks = 0;
+export let avgTimePer100Ticks = 0;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -183,6 +187,7 @@ export class MainLoopService {
 
     scheduleInterval(() => {
       this.longTickSubject.next(true);
+      console.log("Took %o time to execute", avgTimePer100Ticks);
     }, LONG_TICK_INTERVAL_MS);
 
     let actualDelay = 0;
@@ -232,8 +237,12 @@ export class MainLoopService {
         let tickTime = new Date().getTime();
         while (!this.pause && this.tickCount >= 1 && tickTime < tickInterval + newTime) {
           this.tick();
+          ticksProcessed++;
           this.tickCount--;
+          const prevTime = tickTime;
           tickTime = new Date().getTime();
+          timeExecutingTicks += tickTime - prevTime
+          avgTimePer100Ticks = timeExecutingTicks / ticksProcessed * 100;
         }
         if (this.tickCount >= 1) {
           if (usedBanked) {
