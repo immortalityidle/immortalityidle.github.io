@@ -8,6 +8,7 @@ import { OfflineModalComponent } from '../offline-modal/offline-modal.component'
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
+const SLOW_TICK_INTERVAL_MS = 1000;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean,
@@ -113,15 +114,89 @@ export class MainLoopService {
       this.characterService = this.injector.get(CharacterService);
     }
 
-    window.setInterval(() => {
+    type CancelFunc = () => void;
+    const customSetInterval = (func: () => void, time: number): CancelFunc => {
+      let isCancelled = false;
+      let currentTimeout: any = null;
+      const cancelFunc = () => {
+        isCancelled = true;
+        if (currentTimeout !== null) {
+          clearTimeout(currentTimeout);
+        }
+      };
+
+      const timeoutFunc = () => {
+        if (isCancelled) {
+          return;
+        }
+
+        const startTime = new Date();
+        func();
+        const endTime = new Date();
+        const timeDiff = endTime.getTime() - startTime.getTime();
+
+        if (isCancelled) {
+          return;
+        }
+
+        if (timeDiff >= time) {
+          queueMicrotask(timeoutFunc);
+        } else {
+          currentTimeout = setTimeout(timeoutFunc, timeDiff);
+        }
+      };
+
+      currentTimeout = setTimeout(timeoutFunc, time);
+      return cancelFunc;
+    };
+
+    const scheduleInterval = (func: () => void, desiredTime: number) => {
+      if (desiredTime >= SLOW_TICK_INTERVAL_MS) {
+        customSetInterval(func, desiredTime);
+      }
+
+      const backgroundTimeTicks = Math.floor(SLOW_TICK_INTERVAL_MS / desiredTime);
+      const percExtraTick = SLOW_TICK_INTERVAL_MS / desiredTime - backgroundTimeTicks;
+
+      let cancelCurrentTimer = () => {};
+      const documentVisibilityChanged = () => {
+        cancelCurrentTimer();
+
+        if (document.hidden) {
+          cancelCurrentTimer = customSetInterval(() => {
+            for (let i = 0; i < backgroundTimeTicks; i++) {
+              func();
+            }
+
+            if (percExtraTick > 0 && Math.random() < percExtraTick) {
+              func();
+            }
+          }, SLOW_TICK_INTERVAL_MS)
+        } else {
+          cancelCurrentTimer = customSetInterval(func, desiredTime);
+        }
+      };
+
+      documentVisibilityChanged();
+      document.addEventListener("visibilitychange", documentVisibilityChanged);
+    };
+
+    scheduleInterval(() => {
       this.longTickSubject.next(true);
     }, LONG_TICK_INTERVAL_MS);
 
-    window.setInterval(() => {
+    let actualDelay = 0;
+    let prevTimeHelp = Date.now();
+
+    scheduleInterval(() => {
+      actualDelay = Date.now() - prevTimeHelp;
+      console.log(actualDelay);
+      prevTimeHelp = Date.now();
       this.frameSubject.next(true);
     }, TICK_INTERVAL_MS);
 
-    window.setInterval(() => {
+    scheduleInterval(() => {
+      const tickInterval = document.hidden ? SLOW_TICK_INTERVAL_MS : TICK_INTERVAL_MS;
       const newTime = new Date().getTime();
       const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
@@ -155,7 +230,7 @@ export class MainLoopService {
 
         this.tickCount += ticksPassed;
         let tickTime = new Date().getTime();
-        while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
+        while (!this.pause && this.tickCount >= 1 && tickTime < tickInterval + newTime) {
           this.tick();
           this.tickCount--;
           tickTime = new Date().getTime();
