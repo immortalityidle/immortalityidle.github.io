@@ -8,7 +8,7 @@ import { OfflineModalComponent } from '../offline-modal/offline-modal.component'
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
-const SLOW_TICK_INTERVAL_MS = 1000;
+const BACKGROUND_TICK_INTERVAL_MS = 1 * 1000;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean,
@@ -57,6 +57,7 @@ export class MainLoopService {
   useBankedTicks = true;
   scientificNotation = false;
   earnedTicks = 0;
+  playMusic = false;
 
   constructor(
     private injector: Injector,
@@ -118,16 +119,31 @@ export class MainLoopService {
       this.characterService = this.injector.get(CharacterService);
     }
 
+    // The string reason we play audio is to avoid getting deprioritized in the background.
+    const audio = new Audio("/assets/music/The-Celebrated-Minuet.mp3");
+    audio.volume = 0.01;
+    audio.loop = true;
+    const startAudio = () => {
+      if (this.playMusic) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    };
+    document.addEventListener("click", startAudio);
+
     type CancelFunc = () => void;
     const customSetInterval = (func: () => void, time: number): CancelFunc => {
       let isCancelled = false;
-      let currentTimeout: any = null;
+      let currentTimeout: CancelFunc = () => {};
       const cancelFunc = () => {
         isCancelled = true;
         if (currentTimeout !== null) {
-          clearTimeout(currentTimeout);
+          currentTimeout();
         }
       };
+
+      const cancelFuncForSetTimeout = (timeoutKey: any) => () => clearTimeout(timeoutKey);
 
       const timeoutFunc = () => {
         if (isCancelled) {
@@ -137,30 +153,30 @@ export class MainLoopService {
         const startTime = new Date();
         func();
         const endTime = new Date();
-        const timeDiff = endTime.getTime() - startTime.getTime();
+        const executionTime = endTime.getTime() - startTime.getTime();
+        const timeToWait = time - executionTime;
 
         if (isCancelled) {
           return;
         }
 
-        if (timeDiff >= time) {
+        if (timeToWait <= 0) {
           queueMicrotask(timeoutFunc);
         } else {
-          currentTimeout = setTimeout(timeoutFunc, timeDiff);
+          currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, timeToWait));
         }
       };
 
-      currentTimeout = setTimeout(timeoutFunc, time);
+      currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, time));
       return cancelFunc;
     };
 
     const scheduleInterval = (func: () => void, desiredTime: number) => {
-      if (desiredTime >= SLOW_TICK_INTERVAL_MS) {
+      if (desiredTime >= BACKGROUND_TICK_INTERVAL_MS) {
         customSetInterval(func, desiredTime);
       }
 
-      const backgroundTimeTicks = Math.floor(SLOW_TICK_INTERVAL_MS / desiredTime);
-      const percExtraTick = SLOW_TICK_INTERVAL_MS / desiredTime - backgroundTimeTicks;
+      const backgroundTimeTicks = Math.floor(BACKGROUND_TICK_INTERVAL_MS / desiredTime);
 
       let cancelCurrentTimer = () => {};
       const documentVisibilityChanged = () => {
@@ -171,11 +187,7 @@ export class MainLoopService {
             for (let i = 0; i < backgroundTimeTicks; i++) {
               func();
             }
-
-            if (percExtraTick > 0 && Math.random() < percExtraTick) {
-              func();
-            }
-          }, SLOW_TICK_INTERVAL_MS)
+          }, BACKGROUND_TICK_INTERVAL_MS)
         } else {
           cancelCurrentTimer = customSetInterval(func, desiredTime);
         }
@@ -187,21 +199,16 @@ export class MainLoopService {
 
     scheduleInterval(() => {
       this.longTickSubject.next(true);
-      console.log("Took %o time to execute", avgTimePer100Ticks);
+      console.log("Took %o time to execute at %o", avgTimePer100Ticks, new Date());
     }, LONG_TICK_INTERVAL_MS);
 
-    let actualDelay = 0;
-    let prevTimeHelp = Date.now();
 
     scheduleInterval(() => {
-      actualDelay = Date.now() - prevTimeHelp;
-      console.log(actualDelay);
-      prevTimeHelp = Date.now();
       this.frameSubject.next(true);
     }, TICK_INTERVAL_MS);
 
     scheduleInterval(() => {
-      const tickInterval = document.hidden ? SLOW_TICK_INTERVAL_MS : TICK_INTERVAL_MS;
+      const tickInterval = document.hidden ? BACKGROUND_TICK_INTERVAL_MS : TICK_INTERVAL_MS;
       const newTime = new Date().getTime();
       const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;

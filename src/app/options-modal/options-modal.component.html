@@ -44,6 +44,12 @@
           <span class="spaced warning">Changing this will save and reload immediately.</span>
         </span>
       </div>
+      <div class="optionField">
+        <span matTooltip="Enable some background music (this allows the game to run in the background more efficiently).">
+          <input type="checkbox" id="backgroundMusic" [checked]="mainLoopService.playMusic" (change)="playMusicChange($event)">
+          <label for="backgroundMusic" >Background Music (enable background play)</label>
+        </span>
+      </div>
     </mat-tab>
     <mat-tab *ngIf="homeService.autoBuyLandUnlocked || homeService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked">
       <ng-template mat-tab-label>
