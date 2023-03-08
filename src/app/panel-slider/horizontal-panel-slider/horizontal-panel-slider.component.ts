@@ -1,25 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PanelSliderComponent } from '../panel-slider.component';
 import { ResizableDirective, Size } from '../resizable.directive';
 
 @Component({
   selector: 'app-horizontal-panel-slider',
   templateUrl: './horizontal-panel-slider.component.html',
-  styleUrls: ['./horizontal-panel-slider.component.less']
+  styleUrls: ['./horizontal-panel-slider.component.less'],
 })
-export class HorizontalPanelSliderComponent extends PanelSliderComponent implements OnInit {
+export class HorizontalPanelSliderComponent extends PanelSliderComponent {
   @Input() left?: ResizableDirective;
   @Input() right?: ResizableDirective;
 
   leftInitialSize?: Size;
   dragBeginX = 0;
-
-  constructor() { 
-    super();
-  }
-
-  ngOnInit(): void {
-  }
 
   override handleMouseDown(event: MouseEvent): void {
     super.handleMouseDown(event);

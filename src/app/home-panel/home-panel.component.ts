@@ -10,59 +10,61 @@ import { FollowersService } from '../game-state/followers.service';
 import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
 
-
 @Component({
   selector: 'app-home-panel',
   templateUrl: './home-panel.component.html',
-  styleUrls: ['./home-panel.component.less', '../app.component.less']
+  styleUrls: ['./home-panel.component.less', '../app.component.less'],
 })
-
 export class HomePanelComponent {
-
   character: Character;
   Math: Math;
 
-  constructor(public characterService: CharacterService,
+  constructor(
+    public characterService: CharacterService,
     public homeService: HomeService,
     public followerService: FollowersService,
     public hellService: HellService,
     public dialog: MatDialog,
     private storeService: StoreService,
-    private bignumber: BigNumberPipe) {
+    private bignumber: BigNumberPipe
+  ) {
     this.character = characterService.characterState;
     this.Math = Math;
   }
 
-
   buildTimeYears(): string {
-    const builderPower = 1 + this.followerService.jobs["builder"].totalPower;
-    return this.bignumber.transform((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild / builderPower / 365) + " years";
+    const builderPower = 1 + this.followerService.jobs['builder'].totalPower;
+    return (
+      this.bignumber.transform(
+        ((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild) / builderPower / 365
+      ) + ' years'
+    );
   }
 
   storeClicked(): void {
     this.storeService.setStoreInventory();
-    const dialogRef = this.dialog.open(FurnitureStoreModalComponent, {
+    this.dialog.open(FurnitureStoreModalComponent, {
       width: '600px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
   farmClicked(): void {
     this.storeService.setStoreInventory();
-    const dialogRef = this.dialog.open(FarmPanelComponent, {
+    this.dialog.open(FarmPanelComponent, {
       width: '800px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
   buyClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey || event.altKey){
+    if (event.shiftKey || event.altKey) {
       this.homeService.buyLand(10);
-    } else if (event.ctrlKey || event.metaKey){
+    } else if (event.ctrlKey || event.metaKey) {
       this.homeService.buyLand(-1);
     } else {
       this.homeService.buyLand(1);
@@ -72,13 +74,12 @@ export class HomePanelComponent {
   plowClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey || event.altKey){
+    if (event.shiftKey || event.altKey) {
       this.homeService.addField(10);
-    } else if (event.ctrlKey || event.metaKey){
+    } else if (event.ctrlKey || event.metaKey) {
       this.homeService.addField(-1);
     } else {
       this.homeService.addField();
     }
   }
-
 }

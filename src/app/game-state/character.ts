@@ -1,103 +1,113 @@
-import { Equipment } from './inventory.service'
-import { LogService } from './log.service';
+import { Equipment } from './inventory.service';
+import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-export interface CharacterAttribute {
-  strength?: number,
-  toughness?: number,
-  speed?: number,
-  intelligence?: number,
-  charisma?: number,
-  spirituality?: number,
-  earthLore?: number,
-  metalLore?: number,
-  woodLore?: number,
-  waterLore?: number,
-  fireLore?: number,
-  animalHandling?: number,
-  combatMastery?: number,
-  magicMastery?: number,
-}
+export type CharacterAttribute = {
+  [key: string]: number | undefined;
+  strength?: number;
+  toughness?: number;
+  speed?: number;
+  intelligence?: number;
+  charisma?: number;
+  spirituality?: number;
+  earthLore?: number;
+  metalLore?: number;
+  woodLore?: number;
+  waterLore?: number;
+  fireLore?: number;
+  animalHandling?: number;
+  combatMastery?: number;
+  magicMastery?: number;
+};
 
-export type AttributeType = 'strength' |
-  'toughness' |
-  'speed' |
-  'intelligence' |
-  'charisma' |
-  'spirituality' |
-  'earthLore' |
-  'metalLore' |
-  'woodLore' |
-  'waterLore' |
-  'fireLore' |
-  'animalHandling' |
-  'combatMastery' |
-  'magicMastery';
+export type AttributeType =
+  | 'strength'
+  | 'toughness'
+  | 'speed'
+  | 'intelligence'
+  | 'charisma'
+  | 'spirituality'
+  | 'earthLore'
+  | 'metalLore'
+  | 'woodLore'
+  | 'waterLore'
+  | 'fireLore'
+  | 'animalHandling'
+  | 'combatMastery'
+  | 'magicMastery';
 
-type AttributeObject = { [key in AttributeType]: { description: string, value: number, lifeStartValue: number, aptitude: number, aptitudeMult: number, icon: string } };
+type AttributeObject = {
+  [key in AttributeType]: {
+    description: string;
+    value: number;
+    lifeStartValue: number;
+    aptitude: number;
+    aptitudeMult: number;
+    icon: string;
+  };
+};
 
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
 
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
-type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
-type CharacterStatus = { [key in StatusType]: { description: string, value: number, max: number } }
+export type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
+type CharacterStatus = { [key in StatusType]: { description: string; value: number; max: number } };
 
 export interface CharacterProperties {
-  attributes: AttributeObject,
-  money: number,
-  stashedMoney: number,
-  hellMoney: number,
-  equipment: EquipmentSlots,
-  stashedEquipment: EquipmentSlots,
-  age: number,
-  status: CharacterStatus,
-  baseLifespan: number,
-  foodLifespan: number,
-  alchemyLifespan: number,
-  statLifespan: number,
-  spiritualityLifespan: number,
-  magicLifespan: number,
-  attributeScalingLimit: number,
-  attributeSoftCap: number,
-  aptitudeGainDivider: number,
-  condenseSoulCoreCost: number,
-  reinforceMeridiansCost: number,
-  bloodlineRank: number,
-  manaUnlocked: boolean,
-  totalLives: number,
-  healthBonusFood: number,
-  healthBonusBath: number,
-  healthBonusMagic: number,
-  healthBonusSoul: number,
-  empowermentFactor: number,
-  immortal: boolean,
-  god: boolean,
-  easyMode: boolean
-  highestMoney: number,
-  highestAge: number,
-  highestHealth: number,
-  highestStamina: number,
-  highestMana: number,
-  highestAttributes: { [key: string]: number; },
-  yinYangUnlocked: boolean,
-  yin: number,
-  yang: number,
-  righteousWrathUnlocked: boolean,
-  bonusMuscles: boolean,
-  bonusBrains: boolean,
-  bonusHealth: boolean,
-  showLifeSummary: boolean,
-  showTips: boolean
+  attributes: AttributeObject;
+  money: number;
+  stashedMoney: number;
+  hellMoney: number;
+  equipment: EquipmentSlots;
+  stashedEquipment: EquipmentSlots;
+  age: number;
+  status: CharacterStatus;
+  baseLifespan: number;
+  foodLifespan: number;
+  alchemyLifespan: number;
+  statLifespan: number;
+  spiritualityLifespan: number;
+  magicLifespan: number;
+  attributeScalingLimit: number;
+  attributeSoftCap: number;
+  aptitudeGainDivider: number;
+  condenseSoulCoreCost: number;
+  reinforceMeridiansCost: number;
+  bloodlineRank: number;
+  manaUnlocked: boolean;
+  totalLives: number;
+  healthBonusFood: number;
+  healthBonusBath: number;
+  healthBonusMagic: number;
+  healthBonusSoul: number;
+  empowermentFactor: number;
+  immortal: boolean;
+  god: boolean;
+  easyMode: boolean;
+  highestMoney: number;
+  highestAge: number;
+  highestHealth: number;
+  highestStamina: number;
+  highestMana: number;
+  highestAttributes: { [key: string]: number };
+  yinYangUnlocked: boolean;
+  yin: number;
+  yang: number;
+  righteousWrathUnlocked: boolean;
+  bonusMuscles: boolean;
+  bonusBrains: boolean;
+  bonusHealth: boolean;
+  showLifeSummary: boolean;
+  showTips: boolean;
 }
 
 const INITIAL_AGE = 18 * 365;
 
 export class Character {
-
   constructor(
     private logService: LogService,
     private camelToTitlePipe: CamelToTitlePipe,
@@ -110,10 +120,10 @@ export class Character {
       const keys = Object.keys(this.attributes) as AttributeType[];
       for (const key in keys) {
         this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
-        if ((keys[key] === "strength" || keys[key] === "speed" || keys[key] === "toughness") && this.bonusMuscles) {
+        if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
           this.attributes[keys[key]].aptitudeMult *= 1000;
         }
-        if ((keys[key] === "intelligence" || keys[key] === "charisma") && this.bonusBrains) {
+        if ((keys[key] === 'intelligence' || keys[key] === 'charisma') && this.bonusBrains) {
           this.attributes[keys[key]].aptitudeMult *= 1000;
         }
       }
@@ -157,143 +167,145 @@ export class Character {
   bonusHealth = false;
   showLifeSummary = true;
   showTips = false;
-  dialogRef: MatDialogRef<LifeSummaryComponent, any> | null = null;
+  dialogRef: MatDialogRef<LifeSummaryComponent> | null = null;
 
   attributes: AttributeObject = {
     strength: {
-      description: "An immortal must have raw physical power.",
+      description: 'An immortal must have raw physical power.',
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "fitness_center"
+      icon: 'fitness_center',
     },
     toughness: {
-      description: "An immortal must develop resilience to endure hardship.",
+      description: 'An immortal must develop resilience to endure hardship.',
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "castle"
+      icon: 'castle',
     },
     speed: {
-      description: "An immortal must be quick of foot and hand.",
+      description: 'An immortal must be quick of foot and hand.',
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "directions_run"
+      icon: 'directions_run',
     },
     intelligence: {
-      description: "An immortal must understand the workings of the universe.",
+      description: 'An immortal must understand the workings of the universe.',
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "local_library"
+      icon: 'local_library',
     },
     charisma: {
-      description: "An immortal must influence the hearts and minds of others.",
+      description: 'An immortal must influence the hearts and minds of others.',
       value: 1,
       lifeStartValue: 1,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "forum"
+      icon: 'forum',
     },
     spirituality: {
-      description: "An immortal must find deep connections to the divine.",
+      description: 'An immortal must find deep connections to the divine.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "auto_awesome"
+      icon: 'auto_awesome',
     },
     earthLore: {
-      description: "Understanding the earth and how to draw power and materials from it.",
+      description: 'Understanding the earth and how to draw power and materials from it.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "landslide"
+      icon: 'landslide',
     },
     metalLore: {
-      description: "Understanding metals and how to forge and use them.",
+      description: 'Understanding metals and how to forge and use them.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "hardware"
+      icon: 'hardware',
     },
     woodLore: {
-      description: "Understanding plants and how to grow and care for them.",
+      description: 'Understanding plants and how to grow and care for them.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "forest"
+      icon: 'forest',
     },
     waterLore: {
-      description: "Understanding potions and pills and how to make and use them.",
+      description: 'Understanding potions and pills and how to make and use them.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "emoji_food_beverage"
+      icon: 'emoji_food_beverage',
     },
     fireLore: {
-      description: "Burn! Burn! BURN!!!",
+      description: 'Burn! Burn! BURN!!!',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "local_fire_department"
+      icon: 'local_fire_department',
     },
     animalHandling: {
-      description: "Skill in working with animals and monsters.",
+      description: 'Skill in working with animals and monsters.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "pets"
+      icon: 'pets',
     },
     combatMastery: {
-      description: "Mastery of combat skills.",
+      description: 'Mastery of combat skills.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "sports_martial_arts"
+      icon: 'sports_martial_arts',
     },
     magicMastery: {
-      description: "Mastery of magical skills.",
+      description: 'Mastery of magical skills.',
       value: 0,
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: "self_improvement"
-    }
+      icon: 'self_improvement',
+    },
   };
   status: CharacterStatus = {
     health: {
-      description: "Physical well-being. Take too much damage and you will die.",
+      description: 'Physical well-being. Take too much damage and you will die.',
       value: 100,
-      max: 100
+      max: 100,
     },
     stamina: {
-      description: "Physical energy to accomplish tasks. Most activities use stamina, and if you let yourself run down you could get sick and have to stay in bed for a few days.",
+      description:
+        'Physical energy to accomplish tasks. Most activities use stamina, and if you let yourself run down you could get sick and have to stay in bed for a few days.',
       value: 100,
-      max: 100
+      max: 100,
     },
     mana: {
-      description: "Magical energy required for mysterious spiritual activities.",
+      description: 'Magical energy required for mysterious spiritual activities.',
       value: 0,
-      max: 0
+      max: 0,
     },
     nourishment: {
-      description: "Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food you will automatically spend your money on a bowl of rice each day.",
+      description:
+        'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food you will automatically spend your money on a bowl of rice each day.',
       value: 7,
-      max: 14
-    }
+      max: 14,
+    },
   };
   money = 300;
   stashedMoney = 0;
@@ -306,63 +318,85 @@ export class Character {
   statLifespan = 0; // bonus to lifespan based on base stat aptitudes
   spiritualityLifespan = 0; // bonus to lifespan based on spirituality
   magicLifespan = 0;
-  lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
+  lifespan =
+    this.baseLifespan +
+    this.foodLifespan +
+    this.alchemyLifespan +
+    this.statLifespan +
+    this.spiritualityLifespan +
+    this.magicLifespan;
   equipment: EquipmentSlots = {
     head: null,
     body: null,
     leftHand: null,
     rightHand: null,
     legs: null,
-    feet: null
-  }
+    feet: null,
+  };
   stashedEquipment: EquipmentSlots = {
     head: null,
     body: null,
     leftHand: null,
     rightHand: null,
     legs: null,
-    feet: null
-  }
+    feet: null,
+  };
   highestMoney = 0;
   highestAge = 0;
   highestHealth = 0;
   highestStamina = 0;
   highestMana = 0;
-  highestAttributes: { [key: string]: number; } = {};
-
+  highestAttributes: { [key: string]: number } = {};
 
   // reset everything but increase aptitudes
   reincarnate(causeOfDeath: string): void {
     this.totalLives++;
 
-    let attributeGains = "";
+    let attributeGains = '';
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
       if (this.attributes[keys[key]].value > 0) {
         // gain aptitude based on last life's value
-        const addedValue = (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) / this.aptitudeGainDivider;
+        const addedValue =
+          (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) /
+          this.aptitudeGainDivider;
         if (addedValue > 0) {
           // never reduce aptitudes during reincarnation
           this.attributes[keys[key]].aptitude += addedValue;
-          const message = "Your aptitude for " + this.camelToTitlePipe.transform(keys[key]) + " increased by " + this.bigNumberPipe.transform(addedValue) + "\n    New aptitude: " + this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
-          this.logService.addLogMessage(message, "STANDARD", "EVENT");
-          attributeGains += message + "\n    New starting value: " + this.bigNumberPipe.transform(this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude)) + "\n";
+          const message =
+            'Your aptitude for ' +
+            this.camelToTitlePipe.transform(keys[key]) +
+            ' increased by ' +
+            this.bigNumberPipe.transform(addedValue) +
+            '\n    New aptitude: ' +
+            this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
+          this.logService.log(LogTopic.EVENT, message);
+          attributeGains +=
+            message +
+            '\n    New starting value: ' +
+            this.bigNumberPipe.transform(
+              this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude)
+            ) +
+            '\n';
         }
         // start at the aptitude value
-        this.attributes[keys[key]].value = this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude);
+        this.attributes[keys[key]].value = this.getAttributeStartingValue(
+          this.attributes[keys[key]].value,
+          this.attributes[keys[key]].aptitude
+        );
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
       }
     }
 
-    if (this.showLifeSummary){
-      if (this.dialogRef){
-        this.dialogRef.close()
+    if (this.showLifeSummary) {
+      if (this.dialogRef) {
+        this.dialogRef.close();
       }
       this.dialogRef = this.dialog.open(LifeSummaryComponent, {
         width: '600px',
-        data: {causeOfDeath: causeOfDeath, attributeGains: attributeGains},
-        autoFocus: false
+        data: { causeOfDeath: causeOfDeath, attributeGains: attributeGains },
+        autoFocus: false,
       });
     }
 
@@ -391,8 +425,12 @@ export class Character {
     this.spiritualityLifespan = 0;
     this.magicLifespan = 0;
     let totalAptitude = 0;
-    totalAptitude += this.attributes.strength.aptitude + this.attributes.toughness.aptitude +
-      this.attributes.speed.aptitude + this.attributes.intelligence.aptitude + this.attributes.charisma.aptitude;
+    totalAptitude +=
+      this.attributes.strength.aptitude +
+      this.attributes.toughness.aptitude +
+      this.attributes.speed.aptitude +
+      this.attributes.intelligence.aptitude +
+      this.attributes.charisma.aptitude;
     this.statLifespan = this.getAptitudeMultipier(totalAptitude / 5);
     if (this.bloodlineRank < 5) {
       this.statLifespan *= 0.1;
@@ -423,16 +461,14 @@ export class Character {
         leftHand: null,
         rightHand: null,
         legs: null,
-        feet: null
-      }
+        feet: null,
+      };
     } else if (this.bloodlineRank <= 1) {
       this.equipment.body = null;
       this.equipment.head = null;
       this.equipment.legs = null;
       this.equipment.feet = null;
     }
-
-
   }
 
   getAttributeStartingValue(value: number, aptitude: number): number {
@@ -448,7 +484,7 @@ export class Character {
     if (aptitude < this.attributeSoftCap) {
       return 1 + aptitude / 10;
     }
-    return (this.attributeSoftCap / 10) + Math.log2(aptitude - (this.attributeSoftCap - 1));
+    return this.attributeSoftCap / 10 + Math.log2(aptitude - (this.attributeSoftCap - 1));
   }
 
   recalculateDerivedStats(): void {
@@ -456,8 +492,14 @@ export class Character {
     if (this.bonusHealth) {
       bonusFactor = 5;
     }
-    this.status.health.max = (100 + this.healthBonusFood + this.healthBonusBath + this.healthBonusMagic + this.healthBonusSoul +
-      Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) * bonusFactor;
+    this.status.health.max =
+      (100 +
+        this.healthBonusFood +
+        this.healthBonusBath +
+        this.healthBonusMagic +
+        this.healthBonusSoul +
+        Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
+      bonusFactor;
     if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
@@ -466,7 +508,13 @@ export class Character {
       this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
     }
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
-    this.lifespan = this.baseLifespan + this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan;
+    this.lifespan =
+      this.baseLifespan +
+      this.foodLifespan +
+      this.alchemyLifespan +
+      this.statLifespan +
+      this.spiritualityLifespan +
+      this.magicLifespan;
     let leftHand = 1;
     let rightHand = 1;
     let head = 1;
@@ -474,22 +522,22 @@ export class Character {
     let legs = 1;
     let feet = 1;
     if (this.equipment.leftHand) {
-      leftHand = (this.equipment.leftHand.weaponStats?.baseDamage || 1);
+      leftHand = this.equipment.leftHand.weaponStats?.baseDamage || 1;
     }
     if (this.equipment.rightHand) {
-      rightHand = (this.equipment.rightHand.weaponStats?.baseDamage || 1);
+      rightHand = this.equipment.rightHand.weaponStats?.baseDamage || 1;
     }
     if (this.equipment.head) {
-      head = (this.equipment.head.armorStats?.defense || 1);
+      head = this.equipment.head.armorStats?.defense || 1;
     }
     if (this.equipment.body) {
-      body = (this.equipment.body.armorStats?.defense || 1);
+      body = this.equipment.body.armorStats?.defense || 1;
     }
     if (this.equipment.legs) {
-      legs = (this.equipment.legs.armorStats?.defense || 1);
+      legs = this.equipment.legs.armorStats?.defense || 1;
     }
     if (this.equipment.feet) {
-      feet = (this.equipment.feet.armorStats?.defense || 1);
+      feet = this.equipment.feet.armorStats?.defense || 1;
     }
     const strengthPower = Math.sqrt(this.attributes.strength.value) || 1;
     this.attackPower = Math.floor(strengthPower * Math.sqrt(rightHand * leftHand)) || 1;
@@ -509,13 +557,12 @@ export class Character {
       // calculate yin/yang balance bonus, 1 for perfect balance, 0 at worst
       this.yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
     }
-
   }
 
   getEmpowermentMult(): number {
     const max = 99;
     const empowermentFactor = this.empowermentFactor - 1;
-    let returnValue = 1 + 2 * max / (1 + Math.pow(1.02, (-empowermentFactor / 3))) - max;
+    let returnValue = 1 + (2 * max) / (1 + Math.pow(1.02, -empowermentFactor / 3)) - max;
     if (this.easyMode) {
       returnValue *= 100;
     }
@@ -535,21 +582,31 @@ export class Character {
       x = aptitude * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 10) {
       // from the limit to 10x the limit, change growth rate to 1/4
-      x = (this.attributeScalingLimit + ((aptitude - this.attributeScalingLimit) / 4)) * empowermentFactor;
+      x = (this.attributeScalingLimit + (aptitude - this.attributeScalingLimit) / 4) * empowermentFactor;
     } else if (aptitude < this.attributeScalingLimit * 100) {
       // from the 10x limit to 100x the limit, change growth rate to 1/20
-      x = (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        ((aptitude - (this.attributeScalingLimit * 10)) / 20)) * empowermentFactor;
+      x =
+        (this.attributeScalingLimit +
+          (this.attributeScalingLimit * 9) / 4 +
+          (aptitude - this.attributeScalingLimit * 10) / 20) *
+        empowermentFactor;
     } else if (aptitude <= this.attributeSoftCap) {
       // from the 100x limit to softcap, change growth rate to 1/100
-      x = (this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        (this.attributeScalingLimit * 90 / 20) +
-        ((aptitude - (this.attributeScalingLimit * 100)) / 100)) * empowermentFactor;
+      x =
+        (this.attributeScalingLimit +
+          (this.attributeScalingLimit * 9) / 4 +
+          (this.attributeScalingLimit * 90) / 20 +
+          (aptitude - this.attributeScalingLimit * 100) / 100) *
+        empowermentFactor;
     } else {
-      const d = this.attributeScalingLimit + (this.attributeScalingLimit * 9 / 4) +
-        (this.attributeScalingLimit * 90 / 20) +
-        (this.attributeSoftCap - (this.attributeScalingLimit * 100)) / 100; // Pre-softcap
-      x = (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) * empowermentFactor; // Softcap
+      const d =
+        this.attributeScalingLimit +
+        (this.attributeScalingLimit * 9) / 4 +
+        (this.attributeScalingLimit * 90) / 20 +
+        (this.attributeSoftCap - this.attributeScalingLimit * 100) / 100; // Pre-softcap
+      x =
+        (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) *
+        empowermentFactor; // Softcap
     }
     if (this.bloodlineRank >= 8) {
       return x;
@@ -560,10 +617,9 @@ export class Character {
       const yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
       // apply bonus to hardcap value
       // TODO: tune this
-      c += (yinYangBalance * c);
+      c += yinYangBalance * c;
     }
-    return (c / (- 1 - Math.log((x + c) / c))) + c; // soft-hardcap math
-
+    return c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
   }
 
   increaseAttribute(attribute: AttributeType, amount: number): number {
@@ -573,7 +629,7 @@ export class Character {
       increaseAmount = amount;
     }
     this.attributes[attribute].value += increaseAmount;
-    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] > this.attributes[attribute].value) {
+    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;
     }
     return increaseAmount;
@@ -596,7 +652,7 @@ export class Character {
    * limit in years
    *
    * returns false if limit is reached.
-  */
+   */
   increaseBaseLifespan(increase: number, limit: number): boolean {
     if (this.baseLifespan + increase < limit * 365) {
       this.baseLifespan += increase;
@@ -608,7 +664,6 @@ export class Character {
   }
 
   checkOverage() {
-
     if (this.healthBonusFood > 1900) {
       this.healthBonusFood = 1900;
     }
@@ -618,8 +673,8 @@ export class Character {
     let healthBonusMagicCap = 10000;
     let healthBonusSoulCap = 20000;
     if (this.yinYangUnlocked) {
-      healthBonusMagicCap += (2 * this.yinYangBalance * healthBonusMagicCap);
-      healthBonusSoulCap += (2 * this.yinYangBalance * healthBonusSoulCap);
+      healthBonusMagicCap += 2 * this.yinYangBalance * healthBonusMagicCap;
+      healthBonusSoulCap += 2 * this.yinYangBalance * healthBonusSoulCap;
     }
     if (this.healthBonusMagic > healthBonusMagicCap) {
       this.healthBonusMagic = healthBonusMagicCap;
@@ -699,8 +754,8 @@ export class Character {
       bonusBrains: this.bonusBrains,
       bonusHealth: this.bonusHealth,
       showLifeSummary: this.showLifeSummary,
-      showTips: this.showTips
-    }
+      showTips: this.showTips,
+    };
   }
 
   setProperties(properties: CharacterProperties): void {
@@ -718,7 +773,7 @@ export class Character {
       leftHand: null,
       rightHand: null,
       legs: null,
-      feet: null
+      feet: null,
     };
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
@@ -730,10 +785,12 @@ export class Character {
     this.magicLifespan = properties.magicLifespan || 0;
     this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
     // This is derived to avoid save issues. Calculate rank and subtract from power to reduce the exponential aptitude divider.
-    this.aptitudeGainDivider = 5 * Math.pow(1.5, 9 - Math.log10(this.condenseSoulCoreCost / this.condenseSoulCoreOriginalCost));
+    this.aptitudeGainDivider =
+      5 * Math.pow(1.5, 9 - Math.log10(this.condenseSoulCoreCost / this.condenseSoulCoreOriginalCost));
     this.reinforceMeridiansCost = properties.reinforceMeridiansCost;
     // Similarly here, 10 * 2 ^ rank.
-    this.attributeScalingLimit = 10 * Math.pow(2, Math.log10(this.reinforceMeridiansCost / this.reinforceMeridiansOriginalCost));
+    this.attributeScalingLimit =
+      10 * Math.pow(2, Math.log10(this.reinforceMeridiansCost / this.reinforceMeridiansOriginalCost));
     this.attributeSoftCap = properties.attributeSoftCap;
     this.bloodlineRank = properties.bloodlineRank;
     this.bloodlineCost = 1000 * Math.pow(100, this.bloodlineRank); // This is derived to avoid save issues.
@@ -766,23 +823,23 @@ export class Character {
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery) {
       this.attributes.combatMastery = {
-        description: "Mastery of combat skills.",
+        description: 'Mastery of combat skills.',
         value: 0,
         lifeStartValue: 0,
         aptitude: 1,
         aptitudeMult: 1,
-        icon: "sports_martial_arts"
-      }
+        icon: 'sports_martial_arts',
+      };
     }
     if (!this.attributes.magicMastery) {
       this.attributes.magicMastery = {
-        description: "Mastery of magical skills.",
+        description: 'Mastery of magical skills.',
         value: 0,
         lifeStartValue: 0,
         aptitude: 1,
         aptitudeMult: 1,
-        icon: "self_improvement"
-      }
+        icon: 'self_improvement',
+      };
     }
     this.recalculateDerivedStats();
   }

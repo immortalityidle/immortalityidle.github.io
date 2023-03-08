@@ -18,11 +18,8 @@
     "importHelpers": true,
     "target": "es2017",
     "module": "es2020",
-    "types": ["node"],
-    "lib": [
-      "es2020",
-      "dom"
-    ]
+    "types": ["node", "jasmine"],
+    "lib": ["es2020", "dom"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

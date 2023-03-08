@@ -8,9 +8,8 @@ describe('BattlePanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BattlePanelComponent ]
-    })
-    .compileComponents();
+      declarations: [BattlePanelComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

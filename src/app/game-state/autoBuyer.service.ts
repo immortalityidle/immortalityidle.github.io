@@ -6,41 +6,41 @@ import { AutoBuyer, FurnitureAutoBuyer, HomeAutoBuyer, LandAndFieldAutoBuyer } f
 import { HellService } from './hell.service';
 
 export interface AutoBuyerProperties {
-  autoBuyerSettingsUnlocked: boolean,
-  autoBuyerSettings: AutoBuyerSetting[]
+  autoBuyerSettingsUnlocked: boolean;
+  autoBuyerSettings: AutoBuyerSetting[];
 }
 
 export type AutoBuyerType = 'home' | 'land' | 'furniture';
 export type AutoBuyerSetting = {
-  label: string,
-  type: AutoBuyerType,
-  enabled: boolean,
-  waitForFinish: boolean
-}
-type AutoBuyersMap = {[key in AutoBuyerType]: AutoBuyer}
+  label: string;
+  type: AutoBuyerType;
+  enabled: boolean;
+  waitForFinish: boolean;
+};
+type AutoBuyersMap = { [key in AutoBuyerType]: AutoBuyer };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AutoBuyerService {
   hellService?: HellService;
   autoBuyerSettingsUnlocked = false;
-  
+
   autoBuyerSettings: AutoBuyerSetting[] = this.getDefaultSettings();
 
   autobuyers: AutoBuyersMap = {
-    'home': new HomeAutoBuyer(this, this.homeService, this.characterService),
-    'land': new LandAndFieldAutoBuyer(this, this.homeService, this.characterService),
-    'furniture': new FurnitureAutoBuyer(this, this.homeService, this.characterService)
-  }
+    home: new HomeAutoBuyer(this, this.homeService, this.characterService),
+    land: new LandAndFieldAutoBuyer(this, this.homeService, this.characterService),
+    furniture: new FurnitureAutoBuyer(this, this.homeService, this.characterService),
+  };
 
   constructor(
     private injector: Injector,
     private characterService: CharacterService,
     private homeService: HomeService,
-    mainLoopService: MainLoopService,
+    mainLoopService: MainLoopService
   ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
+    setTimeout(() => (this.hellService = this.injector.get(HellService)));
     mainLoopService.tickSubject.subscribe(() => {
       if (this.characterService.characterState.dead) {
         return;
@@ -52,7 +52,7 @@ export class AutoBuyerService {
   getProperties(): AutoBuyerProperties {
     return {
       autoBuyerSettingsUnlocked: this.autoBuyerSettingsUnlocked,
-      autoBuyerSettings: this.autoBuyerSettings
+      autoBuyerSettings: this.autoBuyerSettings,
     };
   }
 
@@ -67,32 +67,36 @@ export class AutoBuyerService {
   }
 
   getDefaultSettings(): AutoBuyerSetting[] {
-    return [{ 
-      label: 'Home',
-      type: 'home',
-      enabled: true,
-      waitForFinish: true
-    },
-    {
-      label: 'Furniture',
-      type: 'furniture',
-      enabled: true,
-      waitForFinish: true
-    },
-    { 
-      label: 'Land/Field',
-      type: 'land',
-      enabled: true,
-      waitForFinish: true
-    }];
+    return [
+      {
+        label: 'Home',
+        type: 'home',
+        enabled: true,
+        waitForFinish: true,
+      },
+      {
+        label: 'Furniture',
+        type: 'furniture',
+        enabled: true,
+        waitForFinish: true,
+      },
+      {
+        label: 'Land/Field',
+        type: 'land',
+        enabled: true,
+        waitForFinish: true,
+      },
+    ];
   }
 
   tick() {
-    if (this.hellService?.inHell){
+    if (this.hellService?.inHell) {
       return;
     }
     // Use auto-buy reserve amount if enabled in settings, otherwise default to 10 days living expenses (food + lodging)
-    const reserveAmount = this.homeService.useAutoBuyReserve ? this.homeService.autoBuyReserveAmount : (this.homeService.home.costPerDay + 1) * 10;
+    const reserveAmount = this.homeService.useAutoBuyReserve
+      ? this.homeService.autoBuyReserveAmount
+      : (this.homeService.home.costPerDay + 1) * 10;
 
     // go through priorities in order
     for (const setting of this.autoBuyerSettings) {

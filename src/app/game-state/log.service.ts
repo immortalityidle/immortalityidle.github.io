@@ -1,166 +1,158 @@
 import { Injectable } from '@angular/core';
-import { isEmpty } from 'rxjs';
 import { MainLoopService } from './main-loop.service';
 
 const LOG_MERGE_INTERVAL_MS = 1000;
-export type LogType = 'STANDARD' | 'INJURY';
-export type LogTopic = 'COMBAT' | 'CRAFTING' | 'FOLLOWER' | 'STORY' | 'EVENT';
+type AllTopicProperties = { [key: string]: TopicProperties };
+
+export enum LogType {
+  Standard = 'STANDARD',
+  Injury = 'INJURY',
+}
 
 export interface Log {
-  message: string,
-  type: LogType,
-  topic: LogTopic,
-  timestamp: number
+  message: string;
+  type: LogType;
+  topic: LogTopic;
+  timestamp: number;
+  repeat?: number;
 }
 
 export interface LogProperties {
-  logTopics: LogTopic[],
-  storyLog: Log[]
+  logTopics: Uppercase<LogTopic>[];
+  storyLog: Log[];
+}
+
+export enum LogTopic {
+  STORY = 'Story',
+  EVENT = 'Event',
+  COMBAT = 'Combat',
+  CRAFTING = 'Crafting',
+  FOLLOWER = 'Follower',
+}
+
+export interface TopicProperties {
+  enabled: boolean;
+  hasNewMessages: boolean;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LogService {
+  topicProperties: AllTopicProperties = Object.values(LogTopic).reduce(
+    (result, topic) => ({
+      ...result,
+      [topic]: {
+        enabled: [LogTopic.STORY, LogTopic.EVENT].includes(topic),
+        hasNewMessages: false,
+      },
+    }),
+    {} as AllTopicProperties
+  );
 
-  logTopics: LogTopic[] = ['STORY', 'EVENT'];
-  newStory = "";
-  newEvents = "";
-  newCombat = "";
-  newCrafting = "";
-  newFollower = "";
-  storyLog: Log[] = [];
-  eventLog: Log[] = [];
-  combatLog: Log[] = [];
-  craftingLog: Log[] = [];
-  followerLog: Log[] = [];
+  logs: Record<LogTopic, Log[]> = Object.values(LogTopic).reduce(
+    (result, topic) => ({ ...result, [topic]: [] }),
+    {} as Record<LogTopic, Log[]>
+  );
+
   currentLog: Log[] = [];
 
-  constructor(
-
-    mainLoopService: MainLoopService
-  ) {
+  constructor(mainLoopService: MainLoopService) {
     mainLoopService.frameSubject.subscribe(() => {
       this.updateLogTopics();
     });
-    this.addLogMessage("Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.", 'STANDARD', 'STORY');
-    this.addLogMessage("Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.", 'STANDARD', 'STORY');
-    this.addLogMessage("It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.", 'STANDARD', 'STORY');
-    this.addLogMessage("Be careful, the world can be a dangerous place.", 'STANDARD', 'STORY');
+    this.log(
+      LogTopic.STORY,
+      'Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.'
+    );
+    this.log(
+      LogTopic.STORY,
+      'Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.'
+    );
+    this.log(
+      LogTopic.STORY,
+      'It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.'
+    );
+    this.log(LogTopic.STORY, 'Be careful, the world can be a dangerous place.');
   }
 
-  addLogMessage(message: string, type: LogType, topic: LogTopic): void {
-    let log = this.eventLog;
-    if (topic === 'COMBAT') {
-      log = this.combatLog;
-    } else if (topic === 'STORY') {
-      log = this.storyLog;
-    } else if (topic === 'CRAFTING') {
-      log = this.craftingLog;
-    } else if (topic === 'FOLLOWER') {
-      log = this.followerLog;
-    }
+  log(topic: LogTopic, message: string): void {
+    this.fullLog(topic, LogType.Standard, message);
+  }
 
-    const newMessage: Log = {
-      message: message,
-      type: type,
-      topic: topic,
-      timestamp: Date.now()
-    };
+  injury(topic: LogTopic, message: string): void {
+    this.fullLog(topic, LogType.Injury, message);
+  }
 
-    if (log.length === 0 || ((newMessage.timestamp - log[0].timestamp) > LOG_MERGE_INTERVAL_MS) || !log[0].message.includes(newMessage.message)) {
-      // Initialization || Repeat Not Found || Repeat is not within 1 second
-      log.push(newMessage);
+  fullLog(topic: LogTopic, type: LogType, message: string): void {
+    const log = this.logs[topic];
+    const timestamp = Date.now();
+
+    if (this.isRepeat(message, timestamp, log)) {
+      log[0].repeat = (log[0].repeat || 1) + 1;
     } else {
-      // Repeat Found
-      const hasRepeatNumber = /\((\d+)\)$/.exec(log[0].message);
-      let repeatNumber = 2;
-      if (hasRepeatNumber) {
-        repeatNumber = parseInt(hasRepeatNumber[1]) + 1;
-      }
-
-      // Update message reference
-      log[0].message = `${newMessage.message} (${repeatNumber})`;
+      log.push({
+        message: message,
+        type: type,
+        topic: topic,
+        timestamp: timestamp,
+      });
     }
 
-    // check if we need to age off the oldest logs
-    if (!this.logTopics.includes(topic)) {
-      if (topic === 'STORY') {
-        this.newStory = " (new)";
-      } else if (topic === 'EVENT') {
-        this.newEvents = " (new)";
-      } else if (topic === 'CRAFTING') {
-        this.newCrafting = " (new)";
-      } else if (topic === 'COMBAT') {
-        this.newCombat = " (new)";
-      } else if (topic === 'FOLLOWER') {
-        this.newFollower = " (new)";
-      }
+    if (!this.topicProperties[topic].enabled) {
+      this.topicProperties[topic].hasNewMessages = true;
     }
+  }
+
+  isRepeat(message: string, timestamp: number, log: Log[]): boolean {
+    return log.length > 0 && timestamp - log[0].timestamp <= LOG_MERGE_INTERVAL_MS && message === log[0].message;
   }
 
   getProperties(): LogProperties {
     return {
-      logTopics: this.logTopics,
-      storyLog: this.storyLog
-    }
+      logTopics: Object.entries(this.topicProperties)
+        .filter(entry => entry[1].enabled)
+        .map(entry => entry[0] as LogTopic)
+        .map(topic => topic.toUpperCase() as Uppercase<LogTopic>),
+      storyLog: this.logs[LogTopic.STORY],
+    };
   }
 
   setProperties(properties: LogProperties) {
-    this.storyLog = properties.storyLog || [];
-    this.logTopics = properties.logTopics || ['STORY', 'EVENT'];
+    this.logs[LogTopic.STORY] = properties.storyLog || [];
+
+    if (properties.logTopics) {
+      properties.logTopics.forEach(topic => {
+        this.topicProperties[LogTopic[topic]].enabled = true;
+      });
+    } else {
+      this.topicProperties[LogTopic.STORY].enabled = true;
+      this.topicProperties[LogTopic.EVENT].enabled = true;
+    }
+
     this.updateLogTopics();
   }
 
   enableLogTopic(topic: LogTopic, enabled: boolean) {
-    if (!enabled && this.logTopics.includes(topic)) {
-      for (let index = 0; index < this.logTopics.length; index++) {
-        if (this.logTopics[index] === topic) {
-          this.logTopics.splice(index, 1);
-        }
-      }
-      this.updateLogTopics();
-    } else if (enabled && !this.logTopics.includes(topic)) {
-      this.logTopics.push(topic);
-      this.updateLogTopics();
-    }
+    this.topicProperties[topic].enabled = enabled;
+    this.updateLogTopics();
   }
 
   updateLogTopics() {
-    const logs: Log[] = [];
+    Object.values(LogTopic).forEach(topic => {
+      if (topic !== LogTopic.STORY) {
+        this.logs[topic] = this.logs[topic].slice(-300);
+      }
+      if (this.topicProperties[topic].enabled) {
+        this.topicProperties[topic].hasNewMessages = false;
+      }
+    });
 
-    // limit logs to last 300 messages
-    this.eventLog = this.eventLog.slice(-300);
-    this.combatLog = this.combatLog.slice(-300);
-    this.craftingLog = this.craftingLog.slice(-300);
-    this.followerLog = this.followerLog.slice(-300);
-
-    if (this.logTopics.includes('STORY')) {
-      this.newStory = "";
-      logs.push(...this.storyLog);
-    }
-    if (this.logTopics.includes('EVENT')) {
-      this.newEvents = "";
-      logs.push(...this.eventLog);
-    }
-    if (this.logTopics.includes('COMBAT')) {
-      this.newCombat = "";
-      logs.push(...this.combatLog);
-    }
-    if (this.logTopics.includes('CRAFTING')) {
-      this.newCrafting = "";
-      logs.push(...this.craftingLog);
-    }
-    if (this.logTopics.includes('FOLLOWER')) {
-      this.newFollower = "";
-      logs.push(...this.followerLog);
-    }
-
-    if (logs.length === 0) {
-      return;
-    }
-    logs.sort((a, b) => b.timestamp - a.timestamp);
-    this.currentLog = logs.slice(0, 299);
+    this.currentLog = Object.keys(this.logs)
+      .map(topic => topic as LogTopic)
+      .filter(topic => this.topicProperties[topic].enabled)
+      .flatMap(topic => this.logs[topic])
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 299);
   }
-
 }

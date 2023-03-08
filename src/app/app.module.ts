@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -44,12 +44,7 @@ import { SaveModalComponent } from './save-modal/save-modal.component';
 import { OfflineModalComponent } from './offline-modal/offline-modal.component';
 import { LifeSummaryComponent } from './life-summary/life-summary.component';
 
-const materialModules = [
-  MatDialogModule,
-  MatIconModule,
-  MatTabsModule,
-  MatTooltipModule
-];
+const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatTooltipModule];
 
 @NgModule({
   declarations: [
@@ -89,23 +84,14 @@ const materialModules = [
     OfflineModalComponent,
     LifeSummaryComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    CommonModule,
-    ...materialModules
-  ],
-  exports: [
-    ...materialModules
-  ],
+  imports: [BrowserModule, AppRoutingModule, BrowserAnimationsModule, FormsModule, CommonModule, ...materialModules],
+  exports: [...materialModules],
   providers: [
     TitleCasePipe,
     BigNumberPipe,
     MatSnackBar,
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { disableTooltipInteractivity: true, showDelay: 500 } }
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { disableTooltipInteractivity: true, showDelay: 500 } },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

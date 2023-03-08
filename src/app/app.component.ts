@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
@@ -8,7 +8,6 @@ import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-
 import { HostListener } from '@angular/core';
 import { StoreService } from './game-state/store.service';
 import { CharacterService } from './game-state/character.service';
-import { formatNumber } from '@angular/common';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { ImpossibleTaskService } from './game-state/impossibleTask.service';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
@@ -20,53 +19,53 @@ import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.co
 import { HellService } from './game-state/hell.service';
 import { SaveModalComponent } from './save-modal/save-modal.component';
 
-@Pipe({name: 'floor'})
+@Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
-    /**
-     *
-     * @param value
-     * @returns {number}
-     */
-    transform(value: number): number {
-        return Math.floor(value);
-    }
-}
-
-@Pipe({name: 'camelToTitle'})
-export class CamelToTitlePipe implements PipeTransform {
-    /**
-     *
-     * @param value
-     * @returns {string}
-     */
-     transform(value: string): string {
-      value = value.split(/(?=[A-Z])/).join(' ');
-      value = value[0].toUpperCase() + value.slice(1);
-      return value;
+  /**
+   *
+   * @param value
+   * @returns {number}
+   */
+  transform(value: number): number {
+    return Math.floor(value);
   }
 }
 
-@Pipe({name: 'bigNumber'})
+@Pipe({ name: 'camelToTitle' })
+export class CamelToTitlePipe implements PipeTransform {
+  /**
+   *
+   * @param value
+   * @returns {string}
+   */
+  transform(value: string): string {
+    value = value.split(/(?=[A-Z])/).join(' ');
+    value = value[0].toUpperCase() + value.slice(1);
+    return value;
+  }
+}
+
+@Pipe({ name: 'bigNumber' })
 export class BigNumberPipe implements PipeTransform {
-  constructor(public mainLoopService: MainLoopService){}
+  constructor(public mainLoopService: MainLoopService) {}
 
   /**
-  *
-  * @param value
-  * @returns {string}
-  */
+   *
+   * @param value
+   * @returns {string}
+   */
   transform(value: number): string {
-    if(!this.mainLoopService.scientificNotation){
-      const suffixArray = ["", "k", "M", "B", "T", "q", "Q", "s"];
-      if (value < 100 && !Number.isInteger(value) ){
+    if (!this.mainLoopService.scientificNotation) {
+      const suffixArray = ['', 'k', 'M', 'B', 'T', 'q', 'Q', 's'];
+      if (value < 100 && !Number.isInteger(value)) {
         return value.toFixed(2) + '';
-      } else if (value < 10000){
+      } else if (value < 10000) {
         return Math.round(value) + '';
-      } else if (value >= Math.pow(10, (suffixArray.length)  * 3)){
+      } else if (value >= Math.pow(10, suffixArray.length * 3)) {
         return value.toPrecision(3);
       } else {
         const numberPower = Math.floor(Math.log10(value));
-        const numStr = Math.floor(value / Math.pow(10,numberPower - (numberPower % 3) - 2)) / 100;
+        const numStr = Math.floor(value / Math.pow(10, numberPower - (numberPower % 3) - 2)) / 100;
         return numStr + suffixArray[Math.floor(numberPower / 3)];
       }
     } else {
@@ -78,7 +77,7 @@ export class BigNumberPipe implements PipeTransform {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less']
+  styleUrls: ['./app.component.less'],
 })
 export class AppComponent implements OnInit {
   title = 'immortalityidle';
@@ -88,27 +87,39 @@ export class AppComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.code === 'Space'){
+    if (event.code === 'Space') {
       this.mainLoopService.pause = !this.mainLoopService.pause;
       event.preventDefault();
-    } else if ((event.code === 'Enter' || event.code === 'NumpadEnter') && this.mainLoopService.pause){
+    } else if ((event.code === 'Enter' || event.code === 'NumpadEnter') && this.mainLoopService.pause) {
       this.mainLoopService.tick();
       event.preventDefault();
-    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit0' || event.code === 'Numpad0')){
+    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit0' || event.code === 'Numpad0')) {
       this.mainLoopService.pause = true;
-    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit1' || event.code === 'Numpad1')){
+    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit1' || event.code === 'Numpad1')) {
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 40;
-    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit2' || event.code === 'Numpad2')){
+    } else if ((event.altKey || event.metaKey) && (event.code === 'Digit2' || event.code === 'Numpad2')) {
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 10;
-    } else if (((event.altKey || event.metaKey) && (event.code === 'Digit3' || event.code === 'Numpad3')) && this.mainLoopService.unlockFastSpeed){
+    } else if (
+      (event.altKey || event.metaKey) &&
+      (event.code === 'Digit3' || event.code === 'Numpad3') &&
+      this.mainLoopService.unlockFastSpeed
+    ) {
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 5;
-    } else if (((event.altKey || event.metaKey) && (event.code === 'Digit4' || event.code === 'Numpad4')) && this.mainLoopService.unlockFasterSpeed){
+    } else if (
+      (event.altKey || event.metaKey) &&
+      (event.code === 'Digit4' || event.code === 'Numpad4') &&
+      this.mainLoopService.unlockFasterSpeed
+    ) {
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 2;
-    } else if (((event.altKey || event.metaKey) && (event.code === 'Digit5' || event.code === 'Numpad5')) && this.mainLoopService.unlockFastestSpeed){
+    } else if (
+      (event.altKey || event.metaKey) &&
+      (event.code === 'Digit5' || event.code === 'Numpad5') &&
+      this.mainLoopService.unlockFastestSpeed
+    ) {
       this.mainLoopService.pause = false;
       this.mainLoopService.tickDivider = 1;
     }
@@ -131,7 +142,7 @@ export class AppComponent implements OnInit {
 
   hardResetClicked(event: Event): void {
     event.preventDefault();
-    if (confirm("This will reset everything permanently. Are you sure?")){
+    if (confirm('This will reset everything permanently. Are you sure?')) {
       this.gameStateService.hardReset();
     }
   }
@@ -140,101 +151,100 @@ export class AppComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
 
-    if((event.ctrlKey || event.metaKey) && (event.shiftKey || event.altKey)){
+    if ((event.ctrlKey || event.metaKey) && (event.shiftKey || event.altKey)) {
       this.gameStateService.loadFromLocalStorage(true);
-    }else if(event.shiftKey || event.altKey){
-      const dialogRef = this.dialog.open(SaveModalComponent, {
+    } else if (event.shiftKey || event.altKey) {
+      this.dialog.open(SaveModalComponent, {
         width: '400px',
-        data: {someField: 'foo'},
-        autoFocus: false
+        data: { someField: 'foo' },
+        autoFocus: false,
       });
     } else {
       this.gameStateService.savetoLocalStorage();
-      this.characterService.toast("Manual Save Complete");
+      this.characterService.toast('Manual Save Complete');
     }
   }
 
   exportClicked(): void {
-    const dialogRef = this.dialog.open(ExportPanelComponent, {
+    this.dialog.open(ExportPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
   storeClicked(): void {
-    const dialogRef = this.dialog.open(ManualStoreModalComponent, {
+    this.dialog.open(ManualStoreModalComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
   storeOptionsClicked(): void {
-    const dialogRef = this.dialog.open(OptionsModalComponent, {
+    this.dialog.open(OptionsModalComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
-  rebirthClicked(event: Event){
+  rebirthClicked(event: Event) {
     event.preventDefault();
-    if (confirm("This will end your current life. Are you sure?")){
+    if (confirm('This will end your current life. Are you sure?')) {
       this.gameStateService.rebirth();
     }
   }
 
-  ascensionStoreClicked(){
+  ascensionStoreClicked() {
     this.storeService.updateAscensions();
-    const dialogRef = this.dialog.open(AscensionStoreModalComponent, {
+    this.dialog.open(AscensionStoreModalComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
-  tutorialClicked(){
-    const dialogRef = this.dialog.open(TutorialPanelComponent, {
+  tutorialClicked() {
+    this.dialog.open(TutorialPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
-  statisticsClicked(){
-    const dialogRef = this.dialog.open(StatisticsPanelComponent, {
+  statisticsClicked() {
+    this.dialog.open(StatisticsPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
-  changelogClicked(){
-    const dialogRef = this.dialog.open(ChangelogPanelComponent, {
+  changelogClicked() {
+    this.dialog.open(ChangelogPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
-  achievementsClicked(){
-    const dialogRef = this.dialog.open(AchievementPanelComponent, {
+  achievementsClicked() {
+    this.dialog.open(AchievementPanelComponent, {
       width: '750px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
 
-  impossibleTasksClicked(){
-    const dialogRef = this.dialog.open(ImpossibleTaskPanelComponent, {
+  impossibleTasksClicked() {
+    this.dialog.open(ImpossibleTaskPanelComponent, {
       width: '500px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
   }
-  darkModeToggle(){
+  darkModeToggle() {
     this.gameStateService.isDarkMode = !this.gameStateService.isDarkMode;
   }
-  
 }

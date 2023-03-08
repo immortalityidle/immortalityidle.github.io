@@ -1,81 +1,72 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BattleService } from '../game-state/battle.service';
 import { CharacterService } from '../game-state/character.service';
 
 @Component({
   selector: 'app-battle-options-panel',
   templateUrl: './battle-options-panel.component.html',
-  styleUrls: ['./battle-options-panel.component.less', '../app.component.less']
+  styleUrls: ['./battle-options-panel.component.less', '../app.component.less'],
 })
-export class BattleOptionsPanelComponent implements OnInit {
+export class BattleOptionsPanelComponent {
+  constructor(public battleService: BattleService, public characterService: CharacterService) {}
 
-  constructor(
-    public battleService: BattleService,
-    public characterService: CharacterService
-  ) { }
-
-  ngOnInit(): void {
-  }
-
-  noAttackToggle(){
+  noAttackToggle() {
     this.battleService.enableManaAttack = false;
     this.battleService.enablePyroclasm = false;
     this.battleService.enableMetalFist = false;
   }
 
-  manaAttackToggle(){
+  manaAttackToggle() {
     this.battleService.enablePyroclasm = false;
     this.battleService.enableMetalFist = false;
-    if (this.battleService.manaAttackUnlocked){
+    if (this.battleService.manaAttackUnlocked) {
       this.battleService.enableManaAttack = true;
     }
   }
 
-  pyroclasmToggle(){
+  pyroclasmToggle() {
     this.battleService.enableManaAttack = false;
     this.battleService.enableMetalFist = false;
-    if (this.battleService.pyroclasmUnlocked){
+    if (this.battleService.pyroclasmUnlocked) {
       this.battleService.enablePyroclasm = true;
     }
   }
 
-  metalFistToggle(){
+  metalFistToggle() {
     this.battleService.enableManaAttack = false;
     this.battleService.enablePyroclasm = false;
-    if (this.battleService.metalFistUnlocked){
+    if (this.battleService.metalFistUnlocked) {
       this.battleService.enableMetalFist = true;
     }
   }
 
-  noShieldToggle(){
+  noShieldToggle() {
     this.battleService.enableManaShield = false;
     this.battleService.enableFireShield = false;
     this.battleService.enableIceShield = false;
   }
 
-  manaShieldToggle(){
+  manaShieldToggle() {
     this.battleService.enableFireShield = false;
     this.battleService.enableIceShield = false;
-    if (this.battleService.manaShieldUnlocked){
+    if (this.battleService.manaShieldUnlocked) {
       this.battleService.enableManaShield = true;
     }
   }
 
-
-  fireShieldToggle(){
+  fireShieldToggle() {
     this.battleService.enableManaAttack = false;
     this.battleService.enableIceShield = false;
-    if (this.battleService.fireShieldUnlocked){
+    if (this.battleService.fireShieldUnlocked) {
       this.battleService.enableFireShield = true;
     }
   }
 
-  iceShieldToggle(){
+  iceShieldToggle() {
     this.battleService.enableManaAttack = false;
     this.battleService.enableFireShield = false;
-    if (this.battleService.iceShieldUnlocked){
+    if (this.battleService.iceShieldUnlocked) {
       this.battleService.enableIceShield = true;
     }
   }
-
 }

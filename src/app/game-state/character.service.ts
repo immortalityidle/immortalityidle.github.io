@@ -1,10 +1,10 @@
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
 import { ActivityService } from './activity.service';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { BigNumberPipe } from '../app.component';
 import { HellLevel, HellService } from './hell.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CamelToTitlePipe } from '../app.component';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CharacterService {
   camelToTitlePipe = new CamelToTitlePipe();
@@ -21,7 +21,7 @@ export class CharacterService {
   characterState: Character;
   forceRebirth = false;
   fatherGift = false;
-  lifespanTooltip = "";
+  lifespanTooltip = '';
   deathSubscriber?: Subscription;
   hellService?: HellService;
   private snackBar: MatSnackBar;
@@ -34,7 +34,7 @@ export class CharacterService {
     private reincarnationService: ReincarnationService,
     public dialog: MatDialog
   ) {
-    setTimeout(() => this.hellService = this.injector.get(HellService));
+    setTimeout(() => (this.hellService = this.injector.get(HellService)));
     this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.characterState = new Character(logService, this.camelToTitlePipe, this.bigNumberPipe, mainLoopService, dialog);
@@ -47,56 +47,60 @@ export class CharacterService {
         this.characterState.status.nourishment.value--;
       }
       // check for death
-      let deathMessage = "";
+      let deathMessage = '';
       if (this.forceRebirth) {
-        deathMessage = "You release your soul from your body at the age of " + this.formatAge() + ".";
+        deathMessage = 'You release your soul from your body at the age of ' + this.formatAge() + '.';
       } else if (this.characterState.age >= this.characterState.lifespan && !this.characterState.immortal) {
-        deathMessage = "You reach the end of your natural life and pass away from natural causes at the age of " + this.formatAge() + ".";
+        deathMessage =
+          'You reach the end of your natural life and pass away from natural causes at the age of ' +
+          this.formatAge() +
+          '.';
       } else if (this.characterState.status.nourishment.value <= 0) {
         this.characterState.status.nourishment.value = 0;
         if (this.characterState.attributes.spirituality.value > 0) {
           // you're spritual now, you can fast!
           const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
-          logService.addLogMessage("You take " + starvationDamage + " damage from starvation.", "INJURY", "COMBAT"); // it's not really a combat message, but I didn't want to spam the event log
+          this.logService.injury(LogTopic.COMBAT, 'You take ' + starvationDamage + ' damage from starvation.'); // it's not really a combat message, but I didn't want to spam the event log
           this.characterState.status.health.value -= starvationDamage;
-          if (this.characterState.status.health.value < 0){
+          if (this.characterState.status.health.value < 0) {
             this.characterState.status.health.value = 0;
           }
           this.characterState.increaseAttribute('spirituality', 0.1);
-          if (this.characterState.status.health.value <= 0){
+          if (this.characterState.status.health.value <= 0) {
             if (!this.characterState.immortal) {
-              deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
-            } else if (this.hellService?.inHell){
+              deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
+            } else if (this.hellService?.inHell) {
               this.hellService.beaten = true;
             }
           }
         } else if (!this.characterState.immortal) {
-          deathMessage = "You starve to death at the age of " + this.formatAge() + ".";
+          deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
         }
       } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
         if (this.activityService.activityDeath) {
-          deathMessage = "You die from overwork at the age of " + this.formatAge() + ".";
+          deathMessage = 'You die from overwork at the age of ' + this.formatAge() + '.';
         } else {
-          deathMessage = "You succumb to your wounds and die at the age of " + this.formatAge() + ".";
+          deathMessage = 'You succumb to your wounds and die at the age of ' + this.formatAge() + '.';
         }
       } else if (this.characterState.immortal && this.characterState.status.health.value < 0) {
         this.characterState.status.health.value = 0;
       }
-      if (deathMessage !== "") {
+      if (deathMessage !== '') {
         if (!this.characterState.immortal) {
-          this.logService.addLogMessage(deathMessage, 'INJURY', 'EVENT');
+          this.logService.injury(LogTopic.EVENT, deathMessage);
           if (!this.forceRebirth) {
-            this.logService.addLogMessage(
-              "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life.",
-              'STANDARD', 'EVENT');
+            this.logService.log(
+              LogTopic.EVENT,
+              "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life."
+            );
           }
         }
         this.characterState.dead = true;
-        if (!this.characterState.showLifeSummary){
-          this.toast("A new life begins.");
+        if (!this.characterState.showLifeSummary) {
+          this.toast('A new life begins.');
         }
         this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
         this.reincarnationService.reincarnate();
@@ -107,20 +111,26 @@ export class CharacterService {
         });
         this.forceRebirth = false;
         if (this.characterState.immortal) {
-          this.logService.addLogMessage("You are born anew, still an immortal but with the fresh vigor of youth.", 'STANDARD', 'EVENT');
+          this.logService.log(
+            LogTopic.EVENT,
+            'You are born anew, still an immortal but with the fresh vigor of youth.'
+          );
         } else {
-          this.logService.addLogMessage(
-            "Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number " + this.characterState.totalLives + " will be the one.",
-            'STANDARD', 'EVENT');
-          this.logService.addLogMessage(
-            "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!",
-            'STANDARD', 'EVENT');
+          this.logService.log(
+            LogTopic.EVENT,
+            'Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number ' +
+              this.characterState.totalLives +
+              ' will be the one.'
+          );
+          this.logService.log(
+            LogTopic.EVENT,
+            "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!"
+          );
         }
       }
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
-
       if (this.characterState.highestMoney < this.characterState.money) {
         this.characterState.highestMoney = this.characterState.money;
       }
@@ -141,62 +151,78 @@ export class CharacterService {
         return;
       }
       this.characterState.recalculateDerivedStats();
-      if (this.hellService?.inHell && this.hellService.currentHell === HellLevel.CrushingBoulder && !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)) {
+      if (
+        this.hellService?.inHell &&
+        this.hellService.currentHell === HellLevel.CrushingBoulder &&
+        !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)
+      ) {
         this.characterState.attackPower = 1;
       }
       this.setLifespanTooltip();
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
-      if (this.fatherGift && this.characterState.bloodlineRank < 6) { // Skip the family gifts, it's not thematic.
-        this.logService.addLogMessage("Your father puts some coins in your purse before sending you on your way.",
-          'STANDARD', 'EVENT');
+      if (this.fatherGift && this.characterState.bloodlineRank < 6) {
+        // Skip the family gifts, it's not thematic.
+        this.logService.log(
+          LogTopic.EVENT,
+          'Your father puts some coins in your purse before sending you on your way.'
+        );
         this.characterState.money += 200;
       }
     });
-
   }
 
   formatAge(): string {
     const years = Math.floor(this.characterState.age / 365);
     const days = this.characterState.age % 365;
-    return years + " years, " + days + " days"
+    return years + ' years, ' + days + ' days';
   }
 
   setLifespanTooltip() {
-    if (this.characterState.foodLifespan + this.characterState.alchemyLifespan + this.characterState.statLifespan + this.characterState.spiritualityLifespan + this.characterState.magicLifespan <= 0) {
-      this.lifespanTooltip = "You have done nothing to extend your lifespan.";
+    if (
+      this.characterState.foodLifespan +
+        this.characterState.alchemyLifespan +
+        this.characterState.statLifespan +
+        this.characterState.spiritualityLifespan +
+        this.characterState.magicLifespan <=
+      0
+    ) {
+      this.lifespanTooltip = 'You have done nothing to extend your lifespan.';
       return;
     }
-    let tooltip = "Your base lifespan of " + this.yearify(this.characterState.baseLifespan) + " is extended by"
+    let tooltip = 'Your base lifespan of ' + this.yearify(this.characterState.baseLifespan) + ' is extended by';
     if (this.characterState.immortal) {
-      tooltip = "You are immortal. If you had remained mortal, your base lifespan of " + this.yearify(this.characterState.baseLifespan) + " would be extended by"
+      tooltip =
+        'You are immortal. If you had remained mortal, your base lifespan of ' +
+        this.yearify(this.characterState.baseLifespan) +
+        ' would be extended by';
     }
     if (this.characterState.foodLifespan > 0) {
-      tooltip += "\nHealthy Food: " + this.yearify(this.characterState.foodLifespan);
+      tooltip += '\nHealthy Food: ' + this.yearify(this.characterState.foodLifespan);
     }
     if (this.characterState.alchemyLifespan > 0) {
-      tooltip += "\nAlchemy: " + this.yearify(this.characterState.alchemyLifespan);
+      tooltip += '\nAlchemy: ' + this.yearify(this.characterState.alchemyLifespan);
     }
     if (this.characterState.statLifespan > 0) {
-      tooltip += "\nBasic Attributes: " + this.yearify(this.characterState.statLifespan);
+      tooltip += '\nBasic Attributes: ' + this.yearify(this.characterState.statLifespan);
     }
     if (this.characterState.spiritualityLifespan > 0) {
-      tooltip += "\nSpirituality: " + this.yearify(this.characterState.spiritualityLifespan);
+      tooltip += '\nSpirituality: ' + this.yearify(this.characterState.spiritualityLifespan);
     }
     if (this.characterState.magicLifespan > 0) {
-      tooltip += "\nMagic: " + this.yearify(this.characterState.magicLifespan);
+      tooltip += '\nMagic: ' + this.yearify(this.characterState.magicLifespan);
     }
     this.lifespanTooltip = tooltip;
   }
 
   yearify(value: number) {
     if (value < 365) {
-      return "< 1 year";
+      return '< 1 year';
     } else if (value < 730) {
-      return "1 year";
+      return '1 year';
     } else {
-      return this.bigNumberPipe.transform(Math.floor(value / 365)) + " years";
+      return this.bigNumberPipe.transform(Math.floor(value / 365)) + ' years';
     }
   }
 
@@ -226,12 +252,11 @@ export class CharacterService {
       // double check we're not going over the max rank
       return;
     }
-    this.logService.addLogMessage(
-      "Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.",
-      'STANDARD', 'STORY');
-    this.logService.addLogMessage(
-      "You now gain additional aptitude each time you reincarnate.",
-      'STANDARD', 'STORY');
+    this.logService.log(
+      LogTopic.STORY,
+      'Your spirituality coelesces around the core of your soul, strengthening it and reforging it into something stronger.'
+    );
+    this.logService.log(LogTopic.STORY, 'You now gain additional aptitude each time you reincarnate.');
     this.characterState.condenseSoulCoreCost *= 10;
     this.characterState.aptitudeGainDivider /= 1.5;
     this.resetAptitudes();
@@ -246,12 +271,11 @@ export class CharacterService {
       // double check we're not going over the max rank
       return;
     }
-    this.logService.addLogMessage(
-      "The pathways that carry your chi through your body have been strengthened and reinforced.",
-      'STANDARD', 'STORY');
-    this.logService.addLogMessage(
-      "Your aptitudes can now give you a greater increase when gaining attributes.",
-      'STANDARD', 'STORY');
+    this.logService.log(
+      LogTopic.STORY,
+      'The pathways that carry your chi through your body have been strengthened and reinforced.'
+    );
+    this.logService.log(LogTopic.STORY, 'Your aptitudes can now give you a greater increase when gaining attributes.');
 
     this.characterState.reinforceMeridiansCost *= 10;
     this.characterState.attributeScalingLimit *= 2;
@@ -267,12 +291,14 @@ export class CharacterService {
       // double check we're not going over the max rank
       return;
     }
-    this.logService.addLogMessage(
-      "You sacrifice your current life to strengthen a permanent bloodline that will pass on to all of your descendants.",
-      'STANDARD', 'STORY');
-    this.logService.addLogMessage(
-      "You will be reborn into your own family line and reap greater benefits from your previous lives.",
-      'STANDARD', 'STORY');
+    this.logService.log(
+      LogTopic.STORY,
+      'You sacrifice your current life to strengthen a permanent bloodline that will pass on to all of your descendants.'
+    );
+    this.logService.log(
+      LogTopic.STORY,
+      'You will be reborn into your own family line and reap greater benefits from your previous lives.'
+    );
     this.characterState.bloodlineCost *= 100;
     this.characterState.bloodlineRank++;
     this.resetAptitudes();
@@ -316,19 +342,24 @@ export class CharacterService {
 
   stashMoney() {
     this.characterState.stashedMoney = this.characterState.money;
-    this.characterState.money = 0
+    this.characterState.money = 0;
   }
 
   restoreMoney() {
     this.characterState.money = this.characterState.stashedMoney;
-    this.characterState.stashedMoney = 0
+    this.characterState.stashedMoney = 0;
   }
 
   // this doesn't really belong here, but nearly everything accesses this service and I didn't want to make a whole service for one function, so here it will live for now
   toast(message: string, duration = 5000) {
-    const snackBar = this.snackBar.open(message, "Close", { duration: duration, horizontalPosition: 'right', verticalPosition: 'bottom', panelClass: ['snackBar', 'darkMode'] });
+    const snackBar = this.snackBar.open(message, 'Close', {
+      duration: duration,
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+      panelClass: ['snackBar', 'darkMode'],
+    });
     this.snackBarObservable = snackBar.onAction().subscribe(() => {
       this.snackBarObservable?.unsubscribe();
-    })
+    });
   }
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
-import { EquipmentPosition } from '../game-state/character'
+import { EquipmentPosition } from '../game-state/character';
 import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-state/inventory.service';
 import { HellService } from '../game-state/hell.service';
 import { MainLoopService } from '../game-state/main-loop.service';
@@ -8,23 +8,22 @@ import { MainLoopService } from '../game-state/main-loop.service';
 @Component({
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
-  styleUrls: ['./inventory-panel.component.less', '../app.component.less']
+  styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
 })
-
 export class InventoryPanelComponent {
   equipmentSlots: string[];
-  instanceOfEquipment =  instanceOfEquipment;
+  instanceOfEquipment = instanceOfEquipment;
 
-  constructor(public inventoryService: InventoryService,
+  constructor(
+    public inventoryService: InventoryService,
     public characterService: CharacterService,
     public hellService: HellService,
     public mainLoopService: MainLoopService
-    ) {
-      this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
-
+  ) {
+    this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
   }
 
-  isFinite(value: number){
+  isFinite(value: number) {
     return Number.isFinite(value);
   }
 
@@ -32,7 +31,7 @@ export class InventoryPanelComponent {
     event.stopPropagation();
     if (event.shiftKey || event.altKey) {
       let oldSelected = null;
-      if (oldSelected !== item){
+      if (oldSelected !== item) {
         oldSelected = this.inventoryService.selectedItem;
       }
       this.inventoryService.selectedItem = item;
@@ -42,7 +41,7 @@ export class InventoryPanelComponent {
       this.inventoryService.selectedItem = item;
       this.autoUse();
     } else {
-      if (this.inventoryService.selectedItem === item){
+      if (this.inventoryService.selectedItem === item) {
         this.inventoryService.selectedItem = null;
       } else {
         this.inventoryService.selectedItem = item;
@@ -60,7 +59,7 @@ export class InventoryPanelComponent {
     }
   }
 
-  slotRightClicked(item: ItemStack| null, event: MouseEvent) {
+  slotRightClicked(item: ItemStack | null, event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.inventoryService.selectedItem = item;
@@ -73,7 +72,7 @@ export class InventoryPanelComponent {
     }
   }
 
-  sortClicked(event: MouseEvent){
+  sortClicked(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
     if (event.ctrlKey || event.metaKey) {
@@ -139,49 +138,49 @@ export class InventoryPanelComponent {
       // if I'm manually doing a gem merge, I don't want the rest of the stack to be automatically sold
       this.inventoryService.autoSellOldGemsEnabled = false;
       this.inventoryService.mergeSpiritGem(this.inventoryService.selectedItem);
-      if (this.inventoryService.selectedItem.quantity === 0){
+      if (this.inventoryService.selectedItem.quantity === 0) {
         this.inventoryService.selectedItem = null;
       }
     }
   }
 
-  allowDrop(event: DragEvent){
-    if (event.dataTransfer?.types[0] === "inventory" || event.dataTransfer?.types[0] === "equipment"){
+  allowDrop(event: DragEvent) {
+    if (event.dataTransfer?.types[0] === 'inventory' || event.dataTransfer?.types[0] === 'equipment') {
       event.preventDefault();
     }
   }
 
   drag(sourceIndex: number, event: DragEvent) {
     this.inventoryService.selectedItem = this.inventoryService.itemStacks[sourceIndex];
-    event.dataTransfer?.setData("inventory", sourceIndex + "");
+    event.dataTransfer?.setData('inventory', sourceIndex + '');
   }
 
   drop(destIndex: number, event: DragEvent) {
     event.preventDefault();
-    if (event.dataTransfer?.types[0] === "inventory"){
-      const sourceIndexString: string = event.dataTransfer?.getData("inventory") + "";
+    if (event.dataTransfer?.types[0] === 'inventory') {
+      const sourceIndexString: string = event.dataTransfer?.getData('inventory') + '';
       const sourceIndex = parseInt(sourceIndexString);
-      if (sourceIndex === destIndex){
+      if (sourceIndex === destIndex) {
         return;
       }
-      if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length){
+      if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length) {
         const sourceItemStack = this.inventoryService.itemStacks[sourceIndex];
         const destItemStack = this.inventoryService.itemStacks[destIndex];
         const sourceItem = sourceItemStack?.item;
         const destItem = destItemStack?.item;
-        if (sourceItem && destItem){
-          if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)){
-            if (sourceItem.slot === destItem.slot){
+        if (sourceItem && destItem) {
+          if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)) {
+            if (sourceItem.slot === destItem.slot) {
               this.inventoryService.itemStacks[destIndex] = null;
-              this.inventoryService.itemStacks[sourceIndex] = null
+              this.inventoryService.itemStacks[sourceIndex] = null;
               this.inventoryService.selectedItem = null;
               this.inventoryService.mergeEquipment(destItem, sourceItem, destIndex);
               return;
             }
-          } else if (sourceItem.type.includes("Gem") && instanceOfEquipment(destItem)){
+          } else if (sourceItem.type.includes('Gem') && instanceOfEquipment(destItem)) {
             this.inventoryService.gemifyEquipment(sourceIndex, destItem);
             return;
-          } else if (sourceItem.name === destItem.name){
+          } else if (sourceItem.name === destItem.name) {
             this.inventoryService.mergeItemStacks(sourceItemStack, destItemStack, sourceIndex);
           } else {
             // it wasn't a merge, just swap their positions
@@ -189,14 +188,14 @@ export class InventoryPanelComponent {
             this.inventoryService.itemStacks[sourceIndex] = destItemStack;
           }
         } else {
-            // it wasn't a merge, just swap their positions
-            this.inventoryService.itemStacks[destIndex] = sourceItemStack;
-            this.inventoryService.itemStacks[sourceIndex] = destItemStack;
+          // it wasn't a merge, just swap their positions
+          this.inventoryService.itemStacks[destIndex] = sourceItemStack;
+          this.inventoryService.itemStacks[sourceIndex] = destItemStack;
         }
       }
-    } else if (event.dataTransfer?.types[0] === "equipment"){
+    } else if (event.dataTransfer?.types[0] === 'equipment') {
       //unequiping something
-      const slot: EquipmentPosition = (event.dataTransfer?.getData("equipment") + "") as EquipmentPosition;
+      const slot: EquipmentPosition = (event.dataTransfer?.getData('equipment') + '') as EquipmentPosition;
       const item = this.characterService.characterState.equipment[slot];
       // check for existence and make sure there's an empty slot for it
       if (item && this.inventoryService.openInventorySlots() > 0) {
@@ -207,7 +206,7 @@ export class InventoryPanelComponent {
     }
   }
 
-  throwAway(){
+  throwAway() {
     if (this.inventoryService.selectedItem) {
       this.inventoryService.removeItemStack(this.inventoryService.selectedItem);
     }

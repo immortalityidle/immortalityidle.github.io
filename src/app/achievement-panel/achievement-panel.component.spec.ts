@@ -8,9 +8,8 @@ describe('AchievementPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AchievementPanelComponent ]
-    })
-    .compileComponents();
+      declarations: [AchievementPanelComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

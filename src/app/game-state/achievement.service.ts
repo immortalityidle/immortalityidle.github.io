@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
+import { LogService, LogTopic } from './log.service';
 import { CharacterService } from './character.service';
 import { InventoryService } from './inventory.service';
 import { HomeService, HomeType } from './home.service';
@@ -25,16 +25,15 @@ export interface Achievement {
 }
 
 export interface AchievementProperties {
-  unlockedAchievements: string[]
+  unlockedAchievements: string[];
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AchievementService {
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
-
 
   constructor(
     private mainLoopService: MainLoopService,
@@ -48,7 +47,7 @@ export class AchievementService {
     private homeService: HomeService,
     private activityService: ActivityService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService,
+    private impossibleTaskService: ImpossibleTaskService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (const achievement of this.achievements) {
@@ -64,20 +63,23 @@ export class AchievementService {
   // important: achievement effects must be idempotent as they may be called multiple times
   achievements: Achievement[] = [
     {
-      name: "Bookworm",
-      description: "You opened the manuals shop and unlocked the " + this.itemRepoService.items['restartActivityManual'].name,
-      hint: "There are lots of buttons in this game, maybe an aspiring immortal should press a few.",
+      name: 'Bookworm',
+      description:
+        'You opened the manuals shop and unlocked the ' + this.itemRepoService.items['restartActivityManual'].name,
+      hint: 'There are lots of buttons in this game, maybe an aspiring immortal should press a few.',
       check: () => {
         return this.storeService.storeOpened;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['restartActivityManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Played a Bit",
-      description: "You worked toward immortality for ten years across your lifetimes and unlocked the " + this.itemRepoService.items['fastPlayManual'].name,
+      name: 'Played a Bit',
+      description:
+        'You worked toward immortality for ten years across your lifetimes and unlocked the ' +
+        this.itemRepoService.items['fastPlayManual'].name,
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.mainLoopService.totalTicks > 3650;
@@ -85,11 +87,13 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fastPlayManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Basically an Expert",
-      description: "You worked toward immortality for one hundred years across your lifetimes and unlocked the " + this.itemRepoService.items['fasterPlayManual'].name,
+      name: 'Basically an Expert',
+      description:
+        'You worked toward immortality for one hundred years across your lifetimes and unlocked the ' +
+        this.itemRepoService.items['fasterPlayManual'].name,
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.mainLoopService.totalTicks > 36500;
@@ -97,150 +101,170 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fasterPlayManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Persistent Reincarnator",
-      description: "You lived one thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['fastestPlayManual'].name,
-      hint: "The millennial.",
+      name: 'Persistent Reincarnator',
+      description:
+        'You lived one thousand years across your lifetimes and unlocked the ' +
+        this.itemRepoService.items['fastestPlayManual'].name,
+      hint: 'The millennial.',
       check: () => {
         return this.mainLoopService.totalTicks > 365000;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fastestPlayManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Veteran Cultivator",
-      description: "You lived ten thousand years across your lifetimes and unlocked the " + this.itemRepoService.items['totalPlaytimeManual'].name,
-      hint: "A long life. Myriad years.",
+      name: 'Veteran Cultivator',
+      description:
+        'You lived ten thousand years across your lifetimes and unlocked the ' +
+        this.itemRepoService.items['totalPlaytimeManual'].name,
+      hint: 'A long life. Myriad years.',
       check: () => {
         return this.mainLoopService.totalTicks > 3650000;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['totalPlaytimeManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Clang! Clang! Clang!",
-      description: "You reached proficiency in blacksmithing and can now work as a Blacksmith without going through an apprenticeship (you still need the attributes for the Blacksmithing activity).",
-      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      name: 'Clang! Clang! Clang!',
+      description:
+        'You reached proficiency in blacksmithing and can now work as a Blacksmith without going through an apprenticeship (you still need the attributes for the Blacksmithing activity).',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Blacksmithing);
       },
       effect: () => {
+        /* intentionally empty */
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Bubble, Bubble",
-      description: "You reached proficiency in alchemy and can now work as a Alchemist without going through an apprenticeship (you still need the attributes for the Alchemy activity).",
-      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      name: 'Bubble, Bubble',
+      description:
+        'You reached proficiency in alchemy and can now work as a Alchemist without going through an apprenticeship (you still need the attributes for the Alchemy activity).',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Alchemy);
       },
       effect: () => {
+        /* intentionally empty */
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Tanner",
-      description: "You reached proficiency in leatherworking and can now work as a Leatherworker without going through an apprenticeship (you still need the attributes for the Leatherworking activity).",
-      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      name: 'Tanner',
+      description:
+        'You reached proficiency in leatherworking and can now work as a Leatherworker without going through an apprenticeship (you still need the attributes for the Leatherworking activity).',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Leatherworking);
       },
       effect: () => {
+        /* intentionally empty */
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Carpenter",
-      description: "You reached proficiency in woodworking and can now work as a Woodworker without going through an apprenticeship (you still need the attributes for the Woodworking activity).",
-      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      name: 'Carpenter',
+      description:
+        'You reached proficiency in woodworking and can now work as a Woodworker without going through an apprenticeship (you still need the attributes for the Woodworking activity).',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Woodworking);
       },
       effect: () => {
+        /* intentionally empty */
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Addict",
-      description: "You got a taste of those sweet, sweet empowerment pills and want more.",
-      hint: "Master of all.",
+      name: 'Addict',
+      description: 'You got a taste of those sweet, sweet empowerment pills and want more.',
+      hint: 'Master of all.',
       check: () => {
         return this.characterService.characterState.empowermentFactor > 1;
       },
-      effect: () => { //TODO: Create a downside to taking empowerment pills, maybe post-Death
+      effect: () => {
+        //TODO: Create a downside to taking empowerment pills, maybe post-Death
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Habitual User",
-      displayName: "Dope",
-      description: "You got every last drop you could out of those pills and now you feel nothing from them. At least they didn't kill you or do lasting harm, right?",
-      hint: "D.A.R.E.",
+      name: 'Habitual User',
+      displayName: 'Dope',
+      description:
+        "You got every last drop you could out of those pills and now you feel nothing from them. At least they didn't kill you or do lasting harm, right?",
+      hint: 'D.A.R.E.',
       check: () => {
         return this.characterService.characterState.empowermentFactor >= 1953.65;
       },
-      effect: () => { //TODO: Create a downside to taking HUGE NUMBERS of empowerment pills, maybe in Hell?
+      effect: () => {
+        //TODO: Create a downside to taking HUGE NUMBERS of empowerment pills, maybe in Hell?
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "This Sparks Joy",
-      description: "You used 888 items and unlocked the " + this.itemRepoService.items['autoUseManual'].name,
-      hint: "Immortals should know the potential of the things they use.",
+      name: 'This Sparks Joy',
+      description: 'You used 888 items and unlocked the ' + this.itemRepoService.items['autoUseManual'].name,
+      hint: 'Immortals should know the potential of the things they use.',
       check: () => {
         return this.inventoryService.lifetimeUsedItems >= 888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoUseManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "This Does Not Spark Joy",
-      description: "You filled your entire inventory and unlocked the " + this.itemRepoService.items['autoSellManual'].name,
-      hint: "So much stuff.",
+      name: 'This Does Not Spark Joy',
+      description:
+        'You filled your entire inventory and unlocked the ' + this.itemRepoService.items['autoSellManual'].name,
+      hint: 'So much stuff.',
       check: () => {
         return this.inventoryService.openInventorySlots() === 0;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoSellManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Waster",
-      description: "You throw away 10,000 items and unlocked the " + this.itemRepoService.items['betterStorageManual'].name,
-      hint: "Too much stuff.",
+      name: 'Waster',
+      description:
+        'You throw away 10,000 items and unlocked the ' + this.itemRepoService.items['betterStorageManual'].name,
+      hint: 'Too much stuff.',
       check: () => {
         return this.inventoryService.thrownAwayItems >= 10000;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['betterStorageManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Landfill",
-      description: "You throw away 100,000 items and unlocked the " + this.itemRepoService.items['evenBetterStorageManual'].name,
-      hint: "Way, way too much stuff.",
+      name: 'Landfill',
+      description:
+        'You throw away 100,000 items and unlocked the ' + this.itemRepoService.items['evenBetterStorageManual'].name,
+      hint: 'Way, way too much stuff.',
       check: () => {
         return this.inventoryService.maxStackSize >= 1000 && this.inventoryService.thrownAwayItems >= 100000;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['evenBetterStorageManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Hoarder",
-      description: "You really love holding vast amounts of materials and unlocked the " + this.itemRepoService.items['bestStorageManual'].name,
+      name: 'Hoarder',
+      description:
+        'You really love holding vast amounts of materials and unlocked the ' +
+        this.itemRepoService.items['bestStorageManual'].name,
       hint: "Just stop already, it's too much. Why would an aspiring immortal need this much?",
       check: () => {
         return this.inventoryService.maxStackSize >= 10000 && this.inventoryService.thrownAwayItems >= 1000000;
@@ -248,128 +272,142 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestStorageManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "All Things In Moderation",
-      hint: "Immortals know what to use and what to toss.",
-      description: "You sold and used 8888 items and unlocked the " + this.itemRepoService.items['autoBalanceManual'].name,
+      name: 'All Things In Moderation',
+      hint: 'Immortals know what to use and what to toss.',
+      description:
+        'You sold and used 8888 items and unlocked the ' + this.itemRepoService.items['autoBalanceManual'].name,
       check: () => {
         return this.inventoryService.lifetimeUsedItems >= 8888 && this.inventoryService.lifetimeSoldItems >= 8888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBalanceManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Land Rush",
-      description: "You owned 520 plots of land and unlocked the " + this.itemRepoService.items['autoBuyLandManual'].name,
-      hint: "Immortals are known for their vast real estate holdings.",
+      name: 'Land Rush',
+      description:
+        'You owned 520 plots of land and unlocked the ' + this.itemRepoService.items['autoBuyLandManual'].name,
+      hint: 'Immortals are known for their vast real estate holdings.',
       check: () => {
         return this.homeService.land >= 520;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyLandManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Real Housewives of Immortality",
-      description: "You acquired a very fine home and unlocked the " + this.itemRepoService.items['autoBuyHomeManual'].name,
-      hint: "Immortals value a good home.",
+      name: 'Real Housewives of Immortality',
+      description:
+        'You acquired a very fine home and unlocked the ' + this.itemRepoService.items['autoBuyHomeManual'].name,
+      hint: 'Immortals value a good home.',
       check: () => {
         return this.homeService.homeValue >= HomeType.CourtyardHouse;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyHomeManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Off to Ikea",
-      description: "You filled all your furniture slots and unlocked the " + this.itemRepoService.items['autoBuyFurnitureManual'].name,
-      hint: "Immortals have discerning taste in furnishings.",
+      name: 'Off to Ikea',
+      description:
+        'You filled all your furniture slots and unlocked the ' +
+        this.itemRepoService.items['autoBuyFurnitureManual'].name,
+      hint: 'Immortals have discerning taste in furnishings.',
       check: () => {
-        return this.homeService.furniture.bathtub !== null &&
+        return (
+          this.homeService.furniture.bathtub !== null &&
           this.homeService.furniture.bed !== null &&
           this.homeService.furniture.kitchen !== null &&
-          this.homeService.furniture.workbench !== null;
+          this.homeService.furniture.workbench !== null
+        );
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyFurnitureManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Time to Buy a Tractor",
-      description: "You plowed 888 fields and unlocked the " + this.itemRepoService.items['autoFieldManual'].name,
-      hint: "An aspiring immortal should have vast tracts of fertile land.",
+      name: 'Time to Buy a Tractor',
+      description: 'You plowed 888 fields and unlocked the ' + this.itemRepoService.items['autoFieldManual'].name,
+      hint: 'An aspiring immortal should have vast tracts of fertile land.',
       check: () => {
         return this.homeService.fields.length + this.homeService.extraFields >= 888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoFieldManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Industrial Revolution",
-      description: "You've found all the basic autobuyers and unlocked the " + this.itemRepoService.items['autoBuyerSettingsManual'].name,
-      hint: "Become really, really lazy",
+      name: 'Industrial Revolution',
+      description:
+        "You've found all the basic autobuyers and unlocked the " +
+        this.itemRepoService.items['autoBuyerSettingsManual'].name,
+      hint: 'Become really, really lazy',
       check: () => {
-        return this.homeService.autoBuyHomeUnlocked &&
+        return (
+          this.homeService.autoBuyHomeUnlocked &&
           this.homeService.autoBuyLandUnlocked &&
           this.homeService.autoFieldUnlocked &&
           this.homeService.autoBuyFurnitureUnlocked
+        );
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyerSettingsManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Guzzler",
-      description: "You drank 88 potions and unlocked the " + this.itemRepoService.items['autoPotionManual'].name,
-      hint: "Glug, glug, glug.",
+      name: 'Guzzler',
+      description: 'You drank 88 potions and unlocked the ' + this.itemRepoService.items['autoPotionManual'].name,
+      hint: 'Glug, glug, glug.',
       check: () => {
         return this.inventoryService.lifetimePotionsUsed >= 88;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoPotionManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Junkie",
-      description: "You took 131 pills and unlocked the " + this.itemRepoService.items['autoPillManual'].name,
-      hint: "An aspiring immortal should take the red one. Take it over and over.",
+      name: 'Junkie',
+      description: 'You took 131 pills and unlocked the ' + this.itemRepoService.items['autoPillManual'].name,
+      hint: 'An aspiring immortal should take the red one. Take it over and over.',
       check: () => {
         return this.inventoryService.lifetimePillsUsed >= 131;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoPillManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Monster Slayer",
-      description: "You killed 131 monsters and unlocked the " + this.itemRepoService.items['autoTroubleManual'].name,
-      hint: "An aspiring immortal bravely faces down their foes.",
+      name: 'Monster Slayer',
+      description: 'You killed 131 monsters and unlocked the ' + this.itemRepoService.items['autoTroubleManual'].name,
+      hint: 'An aspiring immortal bravely faces down their foes.',
       check: () => {
         return this.battleService.troubleKills >= 131;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoTroubleManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Weapons Master",
-      description: "You wielded powerful weapons of both metal and wood and unlocked the " + this.itemRepoService.items['autoWeaponMergeManual'].name,
-      hint: "Left and right.",
+      name: 'Weapons Master',
+      description:
+        'You wielded powerful weapons of both metal and wood and unlocked the ' +
+        this.itemRepoService.items['autoWeaponMergeManual'].name,
+      hint: 'Left and right.',
       check: () => {
-        if (this.characterService.characterState.equipment?.rightHand?.weaponStats &&
+        if (
+          this.characterService.characterState.equipment?.rightHand?.weaponStats &&
           this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 60 &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 60
@@ -381,21 +419,25 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoWeaponMergeManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Practically Invincible",
-      description: "You equipped yourself with powerful armor and unlocked the " + this.itemRepoService.items['autoArmorMergeManual'].name,
-      hint: "Suit up.",
+      name: 'Practically Invincible',
+      description:
+        'You equipped yourself with powerful armor and unlocked the ' +
+        this.itemRepoService.items['autoArmorMergeManual'].name,
+      hint: 'Suit up.',
       check: () => {
-        if (this.characterService.characterState.equipment?.head?.armorStats &&
+        if (
+          this.characterService.characterState.equipment?.head?.armorStats &&
           this.characterService.characterState.equipment?.head?.armorStats.defense >= 60 &&
           this.characterService.characterState.equipment?.body?.armorStats &&
           this.characterService.characterState.equipment?.body?.armorStats.defense >= 60 &&
           this.characterService.characterState.equipment?.legs?.armorStats &&
           this.characterService.characterState.equipment?.legs?.armorStats.defense >= 60 &&
           this.characterService.characterState.equipment?.feet?.armorStats &&
-          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 60) {
+          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 60
+        ) {
           return true;
         }
         return false;
@@ -403,112 +445,132 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoArmorMergeManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Gemologist",
-      description: "You acquired 88 gems and unlocked the " + this.itemRepoService.items['useSpiritGemManual'].name,
-      hint: "Ooh, shiny.",
+      name: 'Gemologist',
+      description: 'You acquired 88 gems and unlocked the ' + this.itemRepoService.items['useSpiritGemManual'].name,
+      hint: 'Ooh, shiny.',
       check: () => {
         return this.battleService.troubleKills > 88;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['useSpiritGemManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Ingredient Snob",
-      description: "You achieved a deep understanding of herbs and unlocked the " + this.itemRepoService.items['bestHerbsManual'].name,
-      hint: "An aspiring immortal should take the red one. Take it over and over.",
+      name: 'Ingredient Snob',
+      description:
+        'You achieved a deep understanding of herbs and unlocked the ' +
+        this.itemRepoService.items['bestHerbsManual'].name,
+      hint: 'An aspiring immortal should take the red one. Take it over and over.',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 1024 &&
-          this.characterService.characterState.attributes.waterLore.value > 1024;
+        return (
+          this.characterService.characterState.attributes.woodLore.value > 1024 &&
+          this.characterService.characterState.attributes.waterLore.value > 1024
+        );
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestHerbsManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Wood Snob",
-      description: "You achieved a deep understanding of wood and unlocked the " + this.itemRepoService.items['bestWoodManual'].name,
-      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      name: 'Wood Snob',
+      description:
+        'You achieved a deep understanding of wood and unlocked the ' +
+        this.itemRepoService.items['bestWoodManual'].name,
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 1024 &&
-          this.characterService.characterState.attributes.intelligence.value > 1024;
+        return (
+          this.characterService.characterState.attributes.woodLore.value > 1024 &&
+          this.characterService.characterState.attributes.intelligence.value > 1024
+        );
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestWoodManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Ore Snob",
-      displayName: "Smelting Snob",
-      description: "You achieved a deep understanding of digging and smelting metal and unlocked the " + this.itemRepoService.items['bestOreManual'].name,
-      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      name: 'Ore Snob',
+      displayName: 'Smelting Snob',
+      description:
+        'You achieved a deep understanding of digging and smelting metal and unlocked the ' +
+        this.itemRepoService.items['bestOreManual'].name,
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
       check: () => {
-        return this.characterService.characterState.attributes.metalLore.value > 1024 &&
-          this.characterService.characterState.attributes.earthLore.value > 1024;
+        return (
+          this.characterService.characterState.attributes.metalLore.value > 1024 &&
+          this.characterService.characterState.attributes.earthLore.value > 1024
+        );
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestOreManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Hide Snob",
-      displayName: "Hunting Snob",
-      description: "You achieved a deep understanding of hunting and gathering hides and unlocked the " + this.itemRepoService.items['bestHidesManual'].name,
-      hint: "There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.",
+      name: 'Hide Snob',
+      displayName: 'Hunting Snob',
+      description:
+        'You achieved a deep understanding of hunting and gathering hides and unlocked the ' +
+        this.itemRepoService.items['bestHidesManual'].name,
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
       check: () => {
-        return this.characterService.characterState.attributes.animalHandling.value > 1024 &&
-          this.characterService.characterState.attributes.speed.value > 1024;
+        return (
+          this.characterService.characterState.attributes.animalHandling.value > 1024 &&
+          this.characterService.characterState.attributes.speed.value > 1024
+        );
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestHidesManual']);
       },
-      unlocked: false
-
+      unlocked: false,
     },
     {
-      name: "Gem Snob",
-      description: "You have sold 888 gems and unlocked the " + this.itemRepoService.items['bestGemsManual'].name,
-      hint: "I hear the market for fine jewelry is so hot right now.",
+      name: 'Gem Snob',
+      description: 'You have sold 888 gems and unlocked the ' + this.itemRepoService.items['bestGemsManual'].name,
+      hint: 'I hear the market for fine jewelry is so hot right now.',
       check: () => {
         return this.inventoryService.lifetimeGemsSold >= 888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestGemsManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Unlimited Taels",
-      description: "Your family has unlocked the secrets of compound interest. You probably never have to worry about money again.",
-      hint: "Family first. Especially in matters of money.",
+      name: 'Unlimited Taels',
+      description:
+        'Your family has unlocked the secrets of compound interest. You probably never have to worry about money again.',
+      hint: 'Family first. Especially in matters of money.',
       check: () => {
         return this.characterService.characterState.bloodlineRank >= 4;
       },
       effect: () => {
+        /* intentionally empty */
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Not Unlimited Taels",
-      description: "You filled up your purse, your wall safe, the box under your bed, and a giant money pit in the backyard. You just can't hold any more money.",
-      hint: "How rich can you get?",
+      name: 'Not Unlimited Taels',
+      description:
+        "You filled up your purse, your wall safe, the box under your bed, and a giant money pit in the backyard. You just can't hold any more money.",
+      hint: 'How rich can you get?',
       check: () => {
         return this.characterService.characterState.money >= this.characterService.characterState.maxMoney - 1e21; //not exactly max in case this gets checked at a bad time
       },
       effect: () => {
+        /* intentionally empty */
       },
-      unlocked: false
+      unlocked: false,
     },
     {
       name: "Grandpa's Old Tent",
-      description: "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
+      description:
+        "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.characterService.characterState.totalLives > 8;
@@ -516,10 +578,10 @@ export class AchievementService {
       effect: () => {
         this.homeService.grandfatherTent = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Paternal Pride",
+      name: 'Paternal Pride',
       description: "You've worked 888 days of odd jobs and come to understand the value of fathers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
@@ -528,10 +590,10 @@ export class AchievementService {
       effect: () => {
         this.characterService.fatherGift = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Maternal Love",
+      name: 'Maternal Love',
       description: "You've done 888 days of begging and come to understand the value of mothers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
@@ -540,7 +602,7 @@ export class AchievementService {
       effect: () => {
         this.inventoryService.motherGift = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
       name: "Grandma's Stick",
@@ -552,14 +614,17 @@ export class AchievementService {
       effect: () => {
         this.inventoryService.grandmotherGift = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Weapons Grandmaster",
-      description: "You wielded epic weapons of both metal and wood and unlocked the " + this.itemRepoService.items['bestWeaponManual'].name,
-      hint: "Power level 10,000!",
+      name: 'Weapons Grandmaster',
+      description:
+        'You wielded epic weapons of both metal and wood and unlocked the ' +
+        this.itemRepoService.items['bestWeaponManual'].name,
+      hint: 'Power level 10,000!',
       check: () => {
-        if (this.characterService.characterState.equipment?.rightHand?.weaponStats &&
+        if (
+          this.characterService.characterState.equipment?.rightHand?.weaponStats &&
           this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 8888 &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats &&
           this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 8888
@@ -571,21 +636,25 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestWeaponManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Tank!",
-      description: "You armored yourself with epic defenses and unlocked the " + this.itemRepoService.items['bestArmorManual'].name,
+      name: 'Tank!',
+      description:
+        'You armored yourself with epic defenses and unlocked the ' +
+        this.itemRepoService.items['bestArmorManual'].name,
       hint: "Don't hurt me!",
       check: () => {
-        if (this.characterService.characterState.equipment?.head?.armorStats &&
+        if (
+          this.characterService.characterState.equipment?.head?.armorStats &&
           this.characterService.characterState.equipment?.head?.armorStats.defense >= 8888 &&
           this.characterService.characterState.equipment?.body?.armorStats &&
           this.characterService.characterState.equipment?.body?.armorStats.defense >= 8888 &&
           this.characterService.characterState.equipment?.legs?.armorStats &&
           this.characterService.characterState.equipment?.legs?.armorStats.defense >= 8888 &&
           this.characterService.characterState.equipment?.feet?.armorStats &&
-          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 8888) {
+          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 8888
+        ) {
           return true;
         }
         return false;
@@ -593,12 +662,13 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bestArmorManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
       name: "You're a wizard now.",
-      description: "Enlightenment! You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements. Mana is now unlocked for all future lives.",
-      hint: "Seek the balance of the dao.",
+      description:
+        'Enlightenment! You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements. Mana is now unlocked for all future lives.',
+      hint: 'Seek the balance of the dao.',
       check: () => {
         const fireLore = this.characterService.characterState.attributes.fireLore.value;
         const earthLore = this.characterService.characterState.attributes.earthLore.value;
@@ -618,63 +688,71 @@ export class AchievementService {
         }
         this.activityService.reloadActivities();
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Sect Leader",
-      description: "You have become powerful enough that you may now start attracting followers.",
-      hint: "Ascension has its privileges.",
+      name: 'Sect Leader',
+      description: 'You have become powerful enough that you may now start attracting followers.',
+      hint: 'Ascension has its privileges.',
       check: () => {
-        return (this.characterService.soulCoreRank() >= 1) &&
-          (this.characterService.meridianRank() >= 1) &&
-          this.characterService.characterState.bloodlineRank >= 1;
+        return (
+          this.characterService.soulCoreRank() >= 1 &&
+          this.characterService.meridianRank() >= 1 &&
+          this.characterService.characterState.bloodlineRank >= 1
+        );
       },
       effect: () => {
         this.followerService.followersUnlocked = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Impossible",
-      description: "You have achieved incredible power and are ready to begin taking on impossible tasks.",
+      name: 'Impossible',
+      description: 'You have achieved incredible power and are ready to begin taking on impossible tasks.',
       hint: "No one can exceed the limits of humanity. It can't be done.",
       check: () => {
-        return (this.characterService.soulCoreRank() >= 9) &&
-          (this.characterService.meridianRank() >= 9) &&
-          this.characterService.characterState.bloodlineRank >= 5;
+        return (
+          this.characterService.soulCoreRank() >= 9 &&
+          this.characterService.meridianRank() >= 9 &&
+          this.characterService.characterState.bloodlineRank >= 5
+        );
       },
       effect: () => {
         this.impossibleTaskService.impossibleTasksUnlocked = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Eternal Nation",
-      description: "You have established an empire that will never fall, and a bloodline that will always inherit it.",
-      hint: "Bloodline Empire.",
+      name: 'Eternal Nation',
+      description: 'You have established an empire that will never fall, and a bloodline that will always inherit it.',
+      hint: 'Bloodline Empire.',
       check: () => {
-        return (this.homeService.home.type === HomeType.Capital && this.characterService.characterState.bloodlineRank >= 7);
+        return (
+          this.homeService.home.type >= HomeType.Capital && this.characterService.characterState.bloodlineRank >= 7
+        );
       },
       effect: () => {
         this.characterService.characterState.imperial = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Limit Breaker",
-      description: "You have broken past human limits and improve constantly! What new fate awaits you?",
-      hint: "999",
+      name: 'Limit Breaker',
+      description: 'You have broken past human limits and improve constantly! What new fate awaits you?',
+      hint: '999',
       check: () => {
-        return (this.characterService.characterState.bloodlineRank >= 9);
+        return this.characterService.characterState.bloodlineRank >= 9;
       },
       effect: () => {
+        /* intentionally empty */
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Harmony of Mind and Body",
-      description: "You have balanced your powerful mind and body and unlocked the ability to use your mana to strike down your enemies.",
-      hint: "The dao embraces all things in perfect harmony.",
+      name: 'Harmony of Mind and Body',
+      description:
+        'You have balanced your powerful mind and body and unlocked the ability to use your mana to strike down your enemies.',
+      hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
         const speed = this.characterService.characterState.attributes.speed.value;
         const toughness = this.characterService.characterState.attributes.toughness.value;
@@ -689,12 +767,13 @@ export class AchievementService {
       effect: () => {
         this.battleService.manaAttackUnlocked = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Unity of Spirit, Mind, and Body",
-      description: "You have balanced your powerful spirit with your mind and body. You unlocked the ability to use your mana to protect yourself.",
-      hint: "The dao embraces all things in perfect harmony.",
+      name: 'Unity of Spirit, Mind, and Body',
+      description:
+        'You have balanced your powerful spirit with your mind and body. You unlocked the ability to use your mana to protect yourself.',
+      hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
         const spirituality = this.characterService.characterState.attributes.spirituality.value;
         const speed = this.characterService.characterState.attributes.speed.value;
@@ -710,47 +789,51 @@ export class AchievementService {
       effect: () => {
         this.battleService.manaShieldUnlocked = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Disposable Followers",
-      description: "You have recruited so many people you can now freely dismiss followers using the " + this.itemRepoService.items['followerAutoDismissManual'].name,
-      hint: "The One Hundred Companions.",
+      name: 'Disposable Followers',
+      description:
+        'You have recruited so many people you can now freely dismiss followers using the ' +
+        this.itemRepoService.items['followerAutoDismissManual'].name,
+      hint: 'The One Hundred Companions.',
       check: () => {
         return this.followerService.followersRecruited >= 100;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['followerAutoDismissManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Loyal Followers",
-      description: "One of your followers has trained under you so long they have nothing else to learn. In an epiphany you realized how to double your new followers' lifespan.",
-      hint: "Endless training.",
+      name: 'Loyal Followers',
+      description:
+        "One of your followers has trained under you so long they have nothing else to learn. In an epiphany you realized how to double your new followers' lifespan.",
+      hint: 'Endless training.',
       check: () => {
         return this.followerService.highestLevel >= 100;
       },
       effect: () => {
         this.followerService.followerLifespanDoubled = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Ascension",
-      description: "You have developed enough spirituality to ascend.",
-      hint: "Only with spiritual development can you ascend to higher states.",
+      name: 'Ascension',
+      description: 'You have developed enough spirituality to ascend.',
+      hint: 'Only with spiritual development can you ascend to higher states.',
       check: () => {
         return this.characterService.characterState.attributes.spirituality.value >= 10;
       },
       effect: () => {
         this.characterService.characterState.ascensionUnlocked = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
       name: "I don't want to go.",
-      description: "You have lived many lives and unlocked the " + this.itemRepoService.items['autoPauseSettingsManual'].name,
+      description:
+        'You have lived many lives and unlocked the ' + this.itemRepoService.items['autoPauseSettingsManual'].name,
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
         return this.characterService.characterState.totalLives >= 48 && this.mainLoopService.totalTicks > 18250;
@@ -758,23 +841,27 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoPauseSettingsManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Breaks are Good",
-      description: "You have collected two hour's worth of offline ticks and unlocked the " + this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
-      hint: "Take a day off from cultivating.", //it takes 20h to get
+      name: 'Breaks are Good',
+      description:
+        "You have collected two hour's worth of offline ticks and unlocked the " +
+        this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
+      hint: 'Take a day off from cultivating.', //it takes 20h to get
       check: () => {
         return this.mainLoopService.bankedTicks > 2 * 60 * 60 * 40; //there are 40 ticks a second
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['bankedTicksEfficiencyManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Breaks are Bad",
-      description: "You died from overwork performing an activity without necessary rest and unlocked the " + this.itemRepoService.items['autoRestManual'].name,
+      name: 'Breaks are Bad',
+      description:
+        'You died from overwork performing an activity without necessary rest and unlocked the ' +
+        this.itemRepoService.items['autoRestManual'].name,
       hint: "There's no time to rest, cultivating is life.",
       check: () => {
         return this.activityService.activityDeath || this.characterService.characterState.immortal;
@@ -782,91 +869,93 @@ export class AchievementService {
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoRestManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Still Spry",
-      description: "You have lived to be 300 years old and unlocked the " + this.itemRepoService.items['ageSpeedManual'].name,
-      hint: "One step to becoming immortal is to live longer.",
+      name: 'Still Spry',
+      description:
+        'You have lived to be 300 years old and unlocked the ' + this.itemRepoService.items['ageSpeedManual'].name,
+      hint: 'One step to becoming immortal is to live longer.',
       check: () => {
         return this.characterService.characterState.age > 300 * 365;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['ageSpeedManual']);
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Immortality",
-      description: "Congratulations! You are now immortal.",
-      hint: "Name of the game.",
+      name: 'Immortality',
+      description: 'Congratulations! You are now immortal.',
+      hint: 'Name of the game.',
       check: () => {
         return this.characterService.characterState.immortal;
       },
-      effect: () => { 
+      effect: () => {
         this.activityService.reloadActivities();
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Headhunter",
+      name: 'Headhunter',
       description: "You've sorted through so many applicants that you can now always find followers you want.",
       hint: "You didn't really want one thousand scouts, did you?",
       check: () => {
         return this.followerService.totalDismissed > 888;
       },
-      effect: () => { 
+      effect: () => {
         this.followerService.onlyWantedFollowers = true;
       },
-      unlocked: false
+      unlocked: false,
     },
     {
-      name: "Yes We Can!",
-      description: "You found him.",
-      hint: "Can we fix it?",
+      name: 'Yes We Can!',
+      description: 'You found him.',
+      hint: 'Can we fix it?',
       check: () => {
-        for (const follower of this.followerService.followers){
-          if ((follower.name === "Robert" || follower.name === "Bob") && follower.job === "builder"){
+        for (const follower of this.followerService.followers) {
+          if ((follower.name === 'Robert' || follower.name === 'Bob') && follower.job === 'builder') {
             return true;
           }
         }
         return false;
       },
-      effect: () => { 
+      effect: () => {
         // no effect, it's just for fun
       },
-      unlocked: false
+      unlocked: false,
     },
     {
       name: "Don't mess with Grandma",
-      description: "You have crafted the mightiest stick. Grandmother would be so proud.",
-      hint: "The best stick.",
+      description: 'You have crafted the mightiest stick. Grandmother would be so proud.',
+      hint: 'The best stick.',
       check: () => {
-        if (this.characterService.characterState.equipment.leftHand?.name === "Grandmother's Walking Stick"){
-          if ((this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 0) > 1e9){
+        if (this.characterService.characterState.equipment.leftHand?.name === "Grandmother's Walking Stick") {
+          if ((this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 0) > 1e9) {
             return true;
           }
         }
         return false;
       },
-      effect: () => { 
+      effect: () => {
         // no effect, it's just for fun
       },
-      unlocked: false
+      unlocked: false,
     },
-    
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {
     if (newAchievement) {
       this.unlockedAchievements.push(achievement.name);
-      this.logService.addLogMessage(achievement.description, 'STANDARD', 'STORY');
+      this.logService.log(LogTopic.STORY, achievement.description);
       // check if gameStateService is injected yet, if not, inject it (circular dependency issues)
       if (!this.gameStateService) {
         this.gameStateService = this.injector.get(GameStateService);
       }
       this.gameStateService.savetoLocalStorage();
-      this.characterService.toast('Achievement Unlocked: ' + (achievement.displayName ? achievement.displayName : achievement.name));
+      this.characterService.toast(
+        'Achievement Unlocked: ' + (achievement.displayName ? achievement.displayName : achievement.name)
+      );
     }
     achievement.effect();
     achievement.unlocked = true;
@@ -874,8 +963,8 @@ export class AchievementService {
 
   getProperties(): AchievementProperties {
     return {
-      unlockedAchievements: this.unlockedAchievements
-    }
+      unlockedAchievements: this.unlockedAchievements,
+    };
   }
 
   setProperties(properties: AchievementProperties) {
@@ -886,5 +975,4 @@ export class AchievementService {
       }
     }
   }
-
 }

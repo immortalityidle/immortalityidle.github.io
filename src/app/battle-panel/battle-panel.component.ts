@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
 import { BattleService } from '../game-state/battle.service';
@@ -7,23 +7,16 @@ import { CharacterService } from '../game-state/character.service';
 @Component({
   selector: 'app-battle-panel',
   templateUrl: './battle-panel.component.html',
-  styleUrls: ['./battle-panel.component.less', '../app.component.less']
+  styleUrls: ['./battle-panel.component.less', '../app.component.less'],
 })
-export class BattlePanelComponent implements OnInit {
-
+export class BattlePanelComponent {
   Math: Math;
   constructor(
     public battleService: BattleService,
     public characterService: CharacterService,
     public dialog: MatDialog
-
-  ){
+  ) {
     this.Math = Math;
-  }
-
-  ngOnInit(): void {
-    // so that eslint stops whining
-    let a;
   }
 
   autoTroubleChange(event: Event): void {
@@ -31,12 +24,11 @@ export class BattlePanelComponent implements OnInit {
     this.battleService.autoTroubleEnabled = event.target.checked;
   }
 
-  battleOptions(){
-    const dialogRef = this.dialog.open(BattleOptionsPanelComponent, {
+  battleOptions() {
+    this.dialog.open(BattleOptionsPanelComponent, {
       width: '700px',
-      data: {someField: 'foo'},
-      autoFocus: false
+      data: { someField: 'foo' },
+      autoFocus: false,
     });
-
   }
 }
