@@ -24,11 +24,8 @@ export interface MainLoopProperties {
   totalTicks: number;
   useBankedTicks: boolean,
   scientificNotation: boolean
+  playMusic: boolean;
 }
-
-export let ticksProcessed = 0;
-export let timeExecutingTicks = 0;
-export let avgTimePer100Ticks = 0;
 
 @Injectable({
   providedIn: 'root'
@@ -78,7 +75,8 @@ export class MainLoopService {
       bankedTicks: this.bankedTicks,
       totalTicks: this.totalTicks,
       useBankedTicks: this.useBankedTicks,
-      scientificNotation: this.scientificNotation
+      scientificNotation: this.scientificNotation,
+      playMusic: this.playMusic
     }
   }
 
@@ -112,6 +110,7 @@ export class MainLoopService {
     this.totalTicks = properties.totalTicks || 0;
     this.useBankedTicks = properties.useBankedTicks ?? true;
     this.scientificNotation = properties.scientificNotation || false;
+    this.playMusic = properties.playMusic;
   }
 
   start() {
@@ -199,7 +198,6 @@ export class MainLoopService {
 
     scheduleInterval(() => {
       this.longTickSubject.next(true);
-      console.log("Took %o time to execute at %o", avgTimePer100Ticks, new Date());
     }, LONG_TICK_INTERVAL_MS);
 
 
@@ -244,12 +242,8 @@ export class MainLoopService {
         let tickTime = new Date().getTime();
         while (!this.pause && this.tickCount >= 1 && tickTime < tickInterval + newTime) {
           this.tick();
-          ticksProcessed++;
           this.tickCount--;
-          const prevTime = tickTime;
           tickTime = new Date().getTime();
-          timeExecutingTicks += tickTime - prevTime
-          avgTimePer100Ticks = timeExecutingTicks / ticksProcessed * 100;
         }
         if (this.tickCount >= 1) {
           if (usedBanked) {
