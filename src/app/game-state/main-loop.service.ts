@@ -7,7 +7,7 @@ import { OfflineModalComponent } from '../offline-modal/offline-modal.component'
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
-const BACKGROUND_TICK_INTERVAL_MS = 1 * 1000;
+const BACKGROUND_TICK_INTERVAL_MS = 1000;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean;
@@ -21,8 +21,8 @@ export interface MainLoopProperties {
   pause: boolean;
   bankedTicks: number;
   totalTicks: number;
-  useBankedTicks: boolean,
-  scientificNotation: boolean
+  useBankedTicks: boolean;
+  scientificNotation: boolean;
   playMusic: boolean;
 }
 
@@ -115,7 +115,7 @@ export class MainLoopService {
       this.characterService = this.injector.get(CharacterService);
     }
 
-    // The string reason we play audio is to avoid getting deprioritized in the background.
+    // The reason we play audio is to avoid getting deprioritized in the background.
     const audio = new Audio("/assets/music/The-Celebrated-Minuet.mp3");
     audio.volume = 0.01;
     audio.loop = true;
