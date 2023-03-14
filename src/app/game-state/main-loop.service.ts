@@ -157,7 +157,7 @@ export class MainLoopService {
         }
 
         if (timeToWait <= 0) {
-          queueMicrotask(timeoutFunc);
+          currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, 0));
         } else {
           currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, timeToWait));
         }
