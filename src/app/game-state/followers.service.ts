@@ -794,6 +794,7 @@ export class FollowersService {
         this.followers.splice(index, 1);
       }
     }
+    this.updateFollowerTotalPower();
   }
 
   unlockElementalPets() {
