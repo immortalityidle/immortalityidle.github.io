@@ -11,7 +11,7 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
-import { FollowersService } from './followers.service';
+import { Follower, FollowersService } from './followers.service';
 import { HellLevel, HellService } from './hell.service';
 
 export interface ActivityProperties {
@@ -67,6 +67,8 @@ export class ActivityService {
   hellService?: HellService;
   spiritActivityProgress = false;
   purifyGemsUnlocked = false;
+  private trainingFollowersDays = 0;
+  private trainingPetsDays = 0;
 
   constructor(
     private injector: Injector,
@@ -88,6 +90,137 @@ export class ActivityService {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+
+    mainLoopService.longTickSubject.subscribe(daysElapsed => {
+      if (
+        this.characterService.characterState.bloodlineRank >= 9 &&
+        !(this.hellService?.inHell && this.hellService.currentHell === HellLevel.TreesOfKnives)
+      ) {
+        this.characterService.characterState.increaseAptitudeDaily(daysElapsed);
+      }
+    });
+
+    const trainingActionTemplate = (attribute: number, trainingDays: number, follower: Follower): boolean => {
+      let upgraded = false;
+
+      const getDailyUpgradeChance = () => (1 - Math.pow(follower.power / 100, 0.55)) /
+        (36500000 /
+          (3650 +
+            follower.age *
+              Math.log2(attribute / 1e10 + 1)));
+
+      const getProbUpgradeAfterDayFunc = () => {
+        const dailyFailureChance = 1 - getDailyUpgradeChance();
+        return (days:number) => days > 0 ? Math.pow(dailyFailureChance, days) : 1;
+      };
+
+      let availableDays = trainingDays;
+      while (availableDays > 0) {
+        const getProbUpgradeAfterDay = getProbUpgradeAfterDayFunc();
+        const chance = Math.random();
+        if (chance < getProbUpgradeAfterDay(availableDays)) {
+          availableDays = 0;
+          break;
+        }
+
+        upgraded = true;
+
+        // Use Bayes Theorem to do binary search for exact day upgrade happens.
+        let lowerBoundExclusive = 0;
+        let upperBoundInclusive = availableDays;
+        while (upperBoundInclusive - lowerBoundExclusive > 1) {
+          const midpoint = Math.floor((upperBoundInclusive + lowerBoundExclusive) / 2);
+          const baseMidpointProb = 1 - getProbUpgradeAfterDay(midpoint);
+          const baseGreaterThanLowerBoundProb = getProbUpgradeAfterDay(lowerBoundExclusive);
+          const probLowerThanUpperGivenLowerBound = 1 - getProbUpgradeAfterDay(upperBoundInclusive - lowerBoundExclusive);
+          const probWithinLowerAndUpperBound = baseGreaterThanLowerBoundProb * probLowerThanUpperGivenLowerBound;
+          const midpointProbGivenBounds = baseMidpointProb / probWithinLowerAndUpperBound;
+          if (chance < midpointProbGivenBounds) {
+            upperBoundInclusive = midpoint;
+          } else {
+            lowerBoundExclusive = midpoint + 1;
+          }
+        }
+
+        availableDays -= upperBoundInclusive;
+
+        // Softcap the increase
+        follower.power++;
+        if (follower.power > this.followerService.highestLevel) {
+          this.followerService.highestLevel = follower.power;
+        }
+        follower.cost = 100 * follower.power;
+        this.logService.log(
+          LogTopic.FOLLOWER,
+          follower.name + ' gains additional power as a ' + follower.job
+        );
+      }
+
+      return upgraded;
+    };
+
+    mainLoopService.yearOrLongTickSubject.subscribe(() => {
+      if (!((this.trainingFollowersDays + this.trainingPetsDays > 0) && this.followerService.followersUnlocked)) {
+        return;
+      }
+
+      if (this.followerService.followersUnlocked) {
+        let allFollowersMaxed = true;
+        let allPetsMaxed = true;
+        let anyUpgraded = false;
+
+        for (const follower of this.followerService.followers) {
+          let attribute = this.characterService.characterState.attributes.charisma.value;
+          let trainingDays = this.trainingFollowersDays;
+
+          if (follower.pet) {
+            attribute = this.characterService.characterState.attributes.animalHandling.value;
+            trainingDays = this.trainingPetsDays;
+            if (follower.power >= 100) {
+              follower.power = 100;
+              continue;
+            } else {
+              allPetsMaxed = false;
+            }
+          } else {
+            if (follower.power >= 100) {
+              follower.power = 100;
+              continue;
+            } else {
+              allFollowersMaxed = false;
+            }
+          }
+
+          if (trainingDays === 0) {
+            continue;
+          }
+
+          anyUpgraded ||= trainingActionTemplate(attribute, trainingDays, follower);
+        }
+
+        if (allFollowersMaxed && this.trainingFollowersDays) {
+          this.logService.log(
+            LogTopic.FOLLOWER,
+            'You try to train your followers, but they are all already as powerful as they can be. You pat them each on the back and tell them they are great.'
+          );
+        }
+
+        if (allPetsMaxed && this.trainingPetsDays) {
+          this.logService.log(
+            LogTopic.FOLLOWER,
+            'You try to train your pets, but they are all already as powerful as they can be. You give them all belly rubs and tell them they are great.'
+          );
+        }
+
+        if (anyUpgraded) {
+          this.followerService.updateFollowerTotalPower();
+        }
+      }
+
+      this.trainingFollowersDays = 0;
+      this.trainingPetsDays = 0;
+    });
+
     mainLoopService.tickSubject.subscribe(() => {
       if (this.activityLoop.length === 0) {
         this.mainLoopService.pause = true;
@@ -108,12 +241,6 @@ export class ActivityService {
         this.totalExhaustedDays++;
         this.exhaustionDays--;
         return;
-      }
-      if (
-        this.characterService.characterState.bloodlineRank >= 9 &&
-        !(this.hellService?.inHell && this.hellService.currentHell === HellLevel.TreesOfKnives)
-      ) {
-        this.characterService.characterState.increaseAptitudeDaily();
       }
 
       if (this.currentIndex < this.activityLoop.length) {
@@ -3236,45 +3363,7 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 1000;
-          if (this.followerService.followersUnlocked) {
-            let allMaxed = true;
-            for (const follower of this.followerService.followers) {
-              if (follower.pet) {
-                continue;
-              }
-              if (follower.power >= 100) {
-                follower.power = 100; // Set max level to 100
-              } else {
-                allMaxed = false;
-                if (
-                  Math.random() <
-                  (1 - Math.pow(follower.power / 100, 0.55)) /
-                    (36500000 /
-                      (3650 +
-                        follower.age *
-                          Math.log2(this.characterService.characterState.attributes.charisma.value / 1e10 + 1)))
-                ) {
-                  // Softcap the increase
-                  follower.power++;
-                  if (follower.power > this.followerService.highestLevel) {
-                    this.followerService.highestLevel = follower.power;
-                  }
-                  follower.cost = 100 * follower.power;
-                  this.logService.log(
-                    LogTopic.FOLLOWER,
-                    follower.name + ' gains additional power as a ' + follower.job
-                  );
-                  this.followerService.updateFollowerTotalPower();
-                }
-              }
-            }
-            if (allMaxed) {
-              this.logService.log(
-                LogTopic.FOLLOWER,
-                'You try to train your followers, but they are all already as powerful as they can be. You pat them each on the back and tell them they are great.'
-              );
-            }
-          }
+          this.trainingFollowersDays++;
           if (this.characterService.characterState.yinYangUnlocked) {
             this.characterService.characterState.yang++;
           }
@@ -3394,49 +3483,19 @@ export class ActivityService {
       activityType: ActivityType.PetTraining,
       description: ['Train your pets to make them more powerful.'],
       consequenceDescription: [
-        'Uses 1000 Stamina and 1M food. Gives you a small chance for each pet of increasing their power. They might learn more if you are a better with animals.',
+        'Uses 1000 Stamina and 100k food. Gives you a small chance for each pet of increasing their power. They might learn more if you are a better with animals.',
       ],
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 1000;
+          // Consuming this food is kind of expensive performance wise, but since the stacks are so high
+          // it would be impractical to ask players to keep so much in inventory. Maybe we can keep track of
+          // a hidden temporary food value or something in the future?
           if (this.inventoryService.consume('food', 100000, true) <= 0) {
             return;
           }
           this.characterService.characterState.increaseAttribute('animalHandling', 1);
-          let allMaxed = true;
-          for (const follower of this.followerService.followers) {
-            if (!follower.pet) {
-              continue;
-            }
-            if (follower.power >= 100) {
-              follower.power = 100; // Set max level to 100
-            } else {
-              allMaxed = false;
-              if (
-                Math.random() <
-                (1 - Math.pow(follower.power / 100, 0.55)) /
-                  (36500000 /
-                    (3650 +
-                      follower.age *
-                        Math.log2(this.characterService.characterState.attributes.animalHandling.value / 1e10 + 1)))
-              ) {
-                // Softcap the increase
-                follower.power++;
-                if (follower.power > this.followerService.highestLevel) {
-                  this.followerService.highestLevel = follower.power;
-                }
-                follower.cost = 100 * follower.power;
-                this.logService.log(LogTopic.FOLLOWER, follower.name + ' gains additional power as a ' + follower.job);
-                this.followerService.updateFollowerTotalPower();
-              }
-            }
-          }
-          if (allMaxed) {
-            this.logService.log(
-              LogTopic.FOLLOWER,
-              'You try to train your pets, but they are all already as powerful as they can be. You give them all belly rubs and tell them they are great.'
-            );
-          }
+          this.trainingPetsDays++;
           if (this.characterService.characterState.yinYangUnlocked) {
             this.characterService.characterState.yang++;
           }

@@ -18,6 +18,7 @@ import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.compo
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { HellService } from './game-state/hell.service';
 import { SaveModalComponent } from './save-modal/save-modal.component';
+import { StatisticsService } from './game-state/statistics.service';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -128,6 +129,7 @@ export class AppComponent implements OnInit {
   constructor(
     private mainLoopService: MainLoopService,
     public gameStateService: GameStateService,
+    public statisticsService: StatisticsService, // Want to start this ASAP so we start getting statistics immediately.
     public storeService: StoreService,
     public characterService: CharacterService,
     public impossibleTaskService: ImpossibleTaskService,

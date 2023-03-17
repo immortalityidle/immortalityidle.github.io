@@ -1,12 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
-import { Subject } from 'rxjs';
 //import { threadId } from 'worker_threads';
+import { throttleTime, map, bufferCount, Subject, distinct, merge, OperatorFunction, filter } from 'rxjs'
 import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
+const BACKGROUND_TICK_INTERVAL_MS = 1000;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean;
@@ -32,8 +33,24 @@ export class MainLoopService {
    * Sends true on new day
    */
   tickSubject = new Subject<boolean>();
+
+  /**
+   * Sends every 25ms if in foreground or every second if in background.
+   */
   frameSubject = new Subject<boolean>();
-  longTickSubject = new Subject<boolean>();
+
+  /**
+   * Only emits every 500ms and returns number of days that elapsed since
+   * the previous tick of longTickSubject
+   */
+  longTickSubject = new Subject<number>();
+
+  /**
+   * Updates every year or every long tick, whichever comes first.
+   * Emits the number of elapsed days (which must be <= 365).
+   */
+  yearOrLongTickSubject = new Subject<number>();
+
   pause = true;
   tickDivider = 10;
   tickCount = 0;
@@ -110,15 +127,102 @@ export class MainLoopService {
       this.characterService = this.injector.get(CharacterService);
     }
 
-    window.setInterval(() => {
-      this.longTickSubject.next(true);
-    }, LONG_TICK_INTERVAL_MS);
+    type CancelFunc = () => void;
+    const customSetInterval = (func: () => void, time: number): CancelFunc => {
+      let isCancelled = false;
+      let currentTimeout: CancelFunc = () => {};
+      const cancelFunc = () => {
+        isCancelled = true;
+        if (currentTimeout !== null) {
+          currentTimeout();
+        }
+      };
 
-    window.setInterval(() => {
+      const cancelFuncForSetTimeout = (timeoutKey: any) => () => clearTimeout(timeoutKey);
+
+      const timeoutFunc = () => {
+        if (isCancelled) {
+          return;
+        }
+
+        const startTime = new Date();
+        func();
+        const endTime = new Date();
+        const executionTime = endTime.getTime() - startTime.getTime();
+        const timeToWait = time - executionTime;
+
+        if (isCancelled) {
+          return;
+        }
+
+        if (timeToWait <= 0) {
+          currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, 0));
+        } else {
+          currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, timeToWait));
+        }
+      };
+
+      currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, time));
+      return cancelFunc;
+    };
+
+    const scheduleInterval = (func: () => void, desiredTime: number) => {
+      if (desiredTime >= BACKGROUND_TICK_INTERVAL_MS) {
+        customSetInterval(func, desiredTime);
+      }
+
+      const backgroundTimeTicks = Math.floor(BACKGROUND_TICK_INTERVAL_MS / desiredTime);
+
+      let cancelCurrentTimer = () => {};
+      const documentVisibilityChanged = () => {
+        cancelCurrentTimer();
+
+        if (document.hidden) {
+          cancelCurrentTimer = customSetInterval(() => {
+            for (let i = 0; i < backgroundTimeTicks; i++) {
+              func();
+            }
+          }, BACKGROUND_TICK_INTERVAL_MS)
+        } else {
+          cancelCurrentTimer = customSetInterval(func, desiredTime);
+        }
+      };
+
+      documentVisibilityChanged();
+      document.addEventListener("visibilitychange", documentVisibilityChanged);
+    };
+
+    const trackTicksOp: OperatorFunction<any, number> = observable => {
+      return observable.pipe(
+        map(() => this.totalTicks),
+        bufferCount(2, 1),
+        map(totalTicksArr => totalTicksArr[1] - totalTicksArr[0])
+      );
+    };
+
+    this.frameSubject.pipe(
+      throttleTime(LONG_TICK_INTERVAL_MS),
+      trackTicksOp
+    ).subscribe(this.longTickSubject);
+
+    let lastFireTime = Date.now();
+    let lastFireDay = this.totalTicks;
+    this.tickSubject.subscribe(() => {
+      const currentTime = Date.now();
+      if (currentTime - lastFireTime > LONG_TICK_INTERVAL_MS ||
+        this.totalTicks - lastFireDay <= 365
+        ) {
+        this.yearOrLongTickSubject.next(this.totalTicks - lastFireDay);
+        lastFireTime = currentTime;
+        lastFireDay = this.totalTicks;
+      }
+    });
+
+    scheduleInterval(() => {
       this.frameSubject.next(true);
     }, TICK_INTERVAL_MS);
 
-    window.setInterval(() => {
+    scheduleInterval(() => {
       const newTime = new Date().getTime();
       const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
