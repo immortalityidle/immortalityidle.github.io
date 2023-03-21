@@ -23,6 +23,7 @@ export interface MainLoopProperties {
   totalTicks: number;
   useBankedTicks: boolean;
   scientificNotation: boolean;
+  playMusic: boolean;
 }
 
 @Injectable({
@@ -68,6 +69,7 @@ export class MainLoopService {
   useBankedTicks = true;
   scientificNotation = false;
   earnedTicks = 0;
+  playMusic = false;
 
   constructor(private injector: Injector, public dialog: MatDialog) {}
 
@@ -86,6 +88,7 @@ export class MainLoopService {
       totalTicks: this.totalTicks,
       useBankedTicks: this.useBankedTicks,
       scientificNotation: this.scientificNotation,
+      playMusic: this.playMusic
     };
   }
 
@@ -120,12 +123,26 @@ export class MainLoopService {
     this.totalTicks = properties.totalTicks || 0;
     this.useBankedTicks = properties.useBankedTicks ?? true;
     this.scientificNotation = properties.scientificNotation || false;
+    this.playMusic = properties.playMusic;
   }
 
   start() {
     if (!this.characterService) {
       this.characterService = this.injector.get(CharacterService);
     }
+
+    // The reason we play audio is to avoid getting deprioritized in the background.
+    const audio = new Audio("/assets/music/The-Celebrated-Minuet.mp3");
+    audio.volume = 0.01;
+    audio.loop = true;
+    const startAudio = () => {
+      if (this.playMusic) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    };
+    document.addEventListener("click", startAudio);
 
     type CancelFunc = () => void;
     const customSetInterval = (func: () => void, time: number): CancelFunc => {
@@ -223,6 +240,7 @@ export class MainLoopService {
     }, TICK_INTERVAL_MS);
 
     scheduleInterval(() => {
+      const tickInterval = document.hidden ? BACKGROUND_TICK_INTERVAL_MS : TICK_INTERVAL_MS;
       const newTime = new Date().getTime();
       const timeDiff = newTime - this.lastTime;
       this.lastTime = newTime;
@@ -258,7 +276,7 @@ export class MainLoopService {
 
         this.tickCount += ticksPassed;
         let tickTime = new Date().getTime();
-        while (!this.pause && this.tickCount >= 1 && tickTime < TICK_INTERVAL_MS + newTime) {
+        while (!this.pause && this.tickCount >= 1 && tickTime < tickInterval + newTime) {
           this.tick();
           this.tickCount--;
           tickTime = new Date().getTime();
