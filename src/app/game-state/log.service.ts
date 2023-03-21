@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 
-const LOG_MERGE_INTERVAL_MS = 1000;
+const LOG_MERGE_INTERVAL_MS = 5000;
 type AllTopicProperties = { [key: string]: TopicProperties };
 
 export enum LogType {
@@ -87,9 +87,8 @@ export class LogService {
   fullLog(topic: LogTopic, type: LogType, message: string): void {
     const log = this.logs[topic];
     const timestamp = Date.now();
-
     if (this.isRepeat(message, timestamp, log)) {
-      log[0].repeat = (log[0].repeat || 1) + 1;
+      log[log.length - 1].repeat = (log[log.length - 1].repeat || 1) + 1;
     } else {
       log.push({
         message: message,
@@ -105,7 +104,7 @@ export class LogService {
   }
 
   isRepeat(message: string, timestamp: number, log: Log[]): boolean {
-    return log.length > 0 && timestamp - log[0].timestamp <= LOG_MERGE_INTERVAL_MS && message === log[0].message;
+    return log.length > 0 && timestamp - log[log.length - 1].timestamp <= LOG_MERGE_INTERVAL_MS && message === log[log.length - 1].message;
   }
 
   getProperties(): LogProperties {

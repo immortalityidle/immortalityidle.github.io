@@ -9,7 +9,7 @@
   <div class="logBox">
     <ng-container *ngFor="let logMsg of logService.currentLog">
       <div [ngClass]="logMsg.type" class="logEntryDiv">
-        {{logMsg.message}}<div *ngIf="logMsg.repeat"> ({{logMsg.repeat}})</div>
+        {{logMsg.message}}<span *ngIf="logMsg.repeat"> ({{logMsg.repeat}} times)</span>
       </div>
     </ng-container>
   </div>

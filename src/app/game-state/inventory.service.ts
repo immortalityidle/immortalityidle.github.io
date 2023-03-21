@@ -5,6 +5,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
+import { TitleCasePipe } from '@angular/common';
 import {
   WeaponNames,
   ItemPrefixes,
@@ -194,7 +195,8 @@ export class InventoryService {
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
-    private itemRepoService: ItemRepoService
+    private itemRepoService: ItemRepoService,
+    private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
@@ -511,7 +513,7 @@ export class InventoryService {
     } else {
       name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     }
-    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created a new weapon: ' + name + '!");
+    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created a new weapon: " + this.titleCasePipe.transform(name) + "!");
     const durability = grade * 15;
     const damage = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -614,7 +616,7 @@ export class InventoryService {
       }
     }
     equipment.value += value;
-    this.logService.log(LogTopic.CRAFTING, 'You add ' + value + ' power to your ' + equipment.name);
+    this.logService.log(LogTopic.CRAFTING, 'You add ' + value + ' power to your ' + this.titleCasePipe.transform(equipment.name));
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
@@ -642,7 +644,7 @@ export class InventoryService {
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
     const name = 'Potion of ' + key + ' +' + grade;
-    this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + name + '. Keep up the good work.');
+    this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.');
 
     this.addItem({
       name: name,
@@ -675,10 +677,10 @@ export class InventoryService {
       name = 'Empowerment Pill';
       this.logService.log(
         LogTopic.CRAFTING,
-        'Alchemy Success! Created a ' + name + '. Its effect gets worse the more you take.'
+        'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Its effect gets worse the more you take.'
       );
     } else {
-      this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + name + '. Keep up the good work.');
+      this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.');
     }
     this.addItem({
       name: name,
@@ -796,7 +798,7 @@ export class InventoryService {
     }
     const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
-    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created some armor: ' + name + '!");
+    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created some armor: " + this.titleCasePipe.transform(name) + "!");
     const durability = grade * 10;
     const defense = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -1172,10 +1174,10 @@ export class InventoryService {
 
     // if we're here we didn't find a slot for anything/everything.
     if (this.autoSellUnlocked && !this.hellService?.inHell) {
-      this.logService.log(LogTopic.EVENT, `You don't have enough room for the ${item.name} so you sold it.`);
+      this.logService.log(LogTopic.EVENT, "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + " so you sold it.");
       this.characterService.characterState.money += item.value * quantity;
     } else {
-      this.logService.log(LogTopic.EVENT, `You don't have enough room for the ${item.name} so you threw it away.`);
+      this.logService.log(LogTopic.EVENT, "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + " so you threw it away.");
     }
     this.thrownAwayItems += quantity;
     return firstStack;
