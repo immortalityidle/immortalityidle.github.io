@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
-import { Subject } from 'rxjs';
 //import { threadId } from 'worker_threads';
+import { throttleTime, map, bufferCount, Subject, distinct, merge, OperatorFunction, filter } from 'rxjs'
 import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
@@ -34,8 +34,24 @@ export class MainLoopService {
    * Sends true on new day
    */
   tickSubject = new Subject<boolean>();
+
+  /**
+   * Sends every 25ms if in foreground or every second if in background.
+   */
   frameSubject = new Subject<boolean>();
-  longTickSubject = new Subject<boolean>();
+
+  /**
+   * Only emits every 500ms and returns number of days that elapsed since
+   * the previous tick of longTickSubject
+   */
+  longTickSubject = new Subject<number>();
+
+  /**
+   * Updates every year or every long tick, whichever comes first.
+   * Emits the number of elapsed days (which must be <= 365).
+   */
+  yearOrLongTickSubject = new Subject<number>();
+
   pause = true;
   tickDivider = 10;
   tickCount = 0;
@@ -116,7 +132,7 @@ export class MainLoopService {
     }
 
     // The reason we play audio is to avoid getting deprioritized in the background.
-    const audio = new Audio("/assets/music/The-Celebrated-Minuet.mp3");
+    const audio = new Audio("/assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3");
     audio.volume = 0.01;
     audio.loop = true;
     const startAudio = () => {
@@ -193,10 +209,31 @@ export class MainLoopService {
       document.addEventListener("visibilitychange", documentVisibilityChanged);
     };
 
-    scheduleInterval(() => {
-      this.longTickSubject.next(true);
-    }, LONG_TICK_INTERVAL_MS);
+    const trackTicksOp: OperatorFunction<any, number> = observable => {
+      return observable.pipe(
+        map(() => this.totalTicks),
+        bufferCount(2, 1),
+        map(totalTicksArr => totalTicksArr[1] - totalTicksArr[0])
+      );
+    };
 
+    this.frameSubject.pipe(
+      throttleTime(LONG_TICK_INTERVAL_MS),
+      trackTicksOp
+    ).subscribe(this.longTickSubject);
+
+    let lastFireTime = Date.now();
+    let lastFireDay = this.totalTicks;
+    this.tickSubject.subscribe(() => {
+      const currentTime = Date.now();
+      if (currentTime - lastFireTime > LONG_TICK_INTERVAL_MS ||
+        this.totalTicks - lastFireDay <= 365
+        ) {
+        this.yearOrLongTickSubject.next(this.totalTicks - lastFireDay);
+        lastFireTime = currentTime;
+        lastFireDay = this.totalTicks;
+      }
+    });
 
     scheduleInterval(() => {
       this.frameSubject.next(true);

@@ -38,10 +38,25 @@ export class CharacterService {
     this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.characterState = new Character(logService, this.camelToTitlePipe, this.bigNumberPipe, mainLoopService, dialog);
-    mainLoopService.tickSubject.subscribe(() => {
-      if (this.mainLoopService.totalTicks % 3650 === 0) {
-        this.characterState.increaseBaseLifespan(1, 70); //bonus day for living another 10 years, capped at 70 years
+
+    let prevTotalTicks = this.mainLoopService.totalTicks;
+    mainLoopService.longTickSubject.subscribe(elapsedDays => {
+      const currentTotalTicks = this.mainLoopService.totalTicks;
+      const daysPerExtraDay = 3650;
+
+      let extraDays = Math.floor(elapsedDays / daysPerExtraDay);
+      if ((prevTotalTicks % daysPerExtraDay) > (currentTotalTicks % daysPerExtraDay)) {
+        extraDays++;
       }
+
+      if (extraDays > 0) {
+        this.characterState.increaseBaseLifespan(extraDays, 70); //bonus day for living another 10 years, capped at 70 years
+      }
+
+      prevTotalTicks = currentTotalTicks;
+    });
+
+    mainLoopService.tickSubject.subscribe(() => {
       if (!this.characterState.dead) {
         this.characterState.age++;
         this.characterState.status.nourishment.value--;
