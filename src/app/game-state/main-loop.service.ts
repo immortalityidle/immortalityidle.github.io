@@ -132,7 +132,7 @@ export class MainLoopService {
     }
 
     // The reason we play audio is to avoid getting deprioritized in the background.
-    const audio = new Audio("/assets/music/The-Celebrated-Minuet.mp3");
+    const audio = new Audio("/assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3");
     audio.volume = 0.01;
     audio.loop = true;
     const startAudio = () => {
