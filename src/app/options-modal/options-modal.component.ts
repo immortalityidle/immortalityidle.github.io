@@ -198,6 +198,7 @@ export class OptionsModalComponent {
   playMusicChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.playMusic = event.target.checked;
+    this.mainLoopService.playAudio();
   }
 
   showLifeSummaryChange(event: Event) {

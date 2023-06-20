@@ -70,8 +70,13 @@ export class MainLoopService {
   scientificNotation = false;
   earnedTicks = 0;
   playMusic = false;
+  audio: HTMLAudioElement;
 
-  constructor(private injector: Injector, public dialog: MatDialog) {}
+  constructor(private injector: Injector, public dialog: MatDialog) {
+    this.audio = new Audio("./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3");
+    this.audio.volume = 0.2;
+    this.audio.loop = true;
+  }
 
   getProperties(): MainLoopProperties {
     return {
@@ -126,23 +131,20 @@ export class MainLoopService {
     this.playMusic = properties.playMusic;
   }
 
+  // audio also helps avoid getting deprioritized in the background.
+  playAudio() {
+    if (this.playMusic) {
+      this.audio.play();
+    } else {
+      this.audio.pause();
+    }
+  };  
+
   start() {
     if (!this.characterService) {
       this.characterService = this.injector.get(CharacterService);
     }
-
-    // The reason we play audio is to avoid getting deprioritized in the background.
-    const audio = new Audio("./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3");
-    audio.volume = 0.1;
-    audio.loop = true;
-    const startAudio = () => {
-      if (this.playMusic) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
-    };
-    document.addEventListener("click", startAudio);
+    this.playAudio();
 
     type CancelFunc = () => void;
     const customSetInterval = (func: () => void, time: number): CancelFunc => {

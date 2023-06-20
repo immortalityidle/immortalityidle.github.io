@@ -942,6 +942,18 @@ export class AchievementService {
       },
       unlocked: false,
     },
+    {
+      name: "Smooth Farming",
+      description: 'You have harvested crops every day for months and can now count on more regular and reliable harvests.',
+      hint: "When starting your garden, it's best to work a little every day.",
+      check: () => {
+        return this.homeService.consecutiveHarvests >= 60;
+      },
+      effect: () => {
+        this.homeService.smoothFarming = true;
+      },
+      unlocked: false,
+    },
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {

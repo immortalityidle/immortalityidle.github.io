@@ -126,6 +126,7 @@ export class HomeService {
   hellFood = false;
   hellHome = false;
   hideHome = false;
+  smoothFarming = false;
 
   homesList: Home[] = [
     {
@@ -501,6 +502,7 @@ export class HomeService {
   mostFields = 0;
   highestAverageYield = 0;
   bestHome = 0;
+  consecutiveHarvests = 0;
 
   constructor(
     private injector: Injector,
@@ -841,11 +843,13 @@ export class HomeService {
   // only ever really work the first 300 fields that we show.
   // After that prorate yields by the amount of fields over 300.
   ageFields() {
+
     let startIndex = this.fields.length - 1;
     if (startIndex > 299) {
       startIndex = 299;
     }
     let totalDailyYield = 0;
+    let harvested = false;
     for (let i = startIndex; i >= 0; i--) {
       if (this.fields[i].daysToHarvest <= 0) {
         let fieldYield = this.fields[i].yield;
@@ -857,12 +861,22 @@ export class HomeService {
           fieldYield = Math.max(fieldYield / 1000, 1);
         }
         this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
+        harvested = true;
         this.fields[i] = this.getCrop();
       } else {
         this.fields[i].daysToHarvest--;
       }
     }
+    if (totalDailyYield > 0 || this.smoothFarming){
+      this.consecutiveHarvests++;
+    } else {
+      this.consecutiveHarvests = 0;
+    }
     this.averageYield = (this.averageYield * 364 + totalDailyYield) / 365;
+    if (this.smoothFarming && !harvested && this.fields.length > 0 && this.averageYield > 0.5){
+      // smooth farming bonus crops on a day when no crops are harvested
+      this.inventoryService.addItem(this.itemRepoService.items[this.fields[0].cropName], Math.round(this.averageYield));
+    }
   }
 
   /**
