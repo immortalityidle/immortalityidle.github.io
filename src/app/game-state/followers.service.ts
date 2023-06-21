@@ -436,7 +436,7 @@ export class FollowersService {
                 ' passed away from old age and was not replaced because of your choices in follower jobs.'
             );
           } else {
-            this.logService.injury(LogTopic.EVENT, 'Your follower ' + follower.name + ' passed away from old age.');
+            this.logService.injury(LogTopic.FOLLOWER, 'Your follower ' + follower.name + ' passed away from old age.');
           }
           this.updateFollowerTotalPower();
         } else if (this.characterService.characterState.money < this.followers[i].cost * daysElapsed && !this.hellService?.inHell) {
@@ -540,7 +540,7 @@ export class FollowersService {
 
   reset() {
     if (this.characterService.characterState.bloodlineRank >= 7) {
-      this.logService.log(LogTopic.EVENT, 'Your imperial entourage rejoins you as you set out.');
+      this.logService.log(LogTopic.FOLLOWER, 'Your imperial entourage rejoins you as you set out.');
     } else {
       this.followers.splice(0, this.followers.length);
       this.followersMaxed = 'UNMAXED';
