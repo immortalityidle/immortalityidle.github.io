@@ -12,6 +12,7 @@ import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
+import { MainLoopProperties, MainLoopService } from '../game-state/main-loop.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -32,7 +33,8 @@ export class ActivityPanelComponent {
     private followerService: FollowersService,
     public impossibleTaskService: ImpossibleTaskService,
     public dialog: MatDialog,
-    private bigNumberPipe: BigNumberPipe
+    private bigNumberPipe: BigNumberPipe,
+    private mainLoopService: MainLoopService
   ) {
     this.Math = Math;
     this.character = characterService.characterState;
@@ -60,13 +62,12 @@ export class ActivityPanelComponent {
     });
   }
 
-  onClick(activity: Activity, event: MouseEvent): void {
+  scheduleActivity(activity: Activity, event: MouseEvent): void {
     if (!activity.unlocked) {
       return;
     }
 
-    if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell) {
-      // Hell transition activities fire immediately instead of adding to activityLoop
+    if (activity.instant) {
       activity.consequence[activity.level]();
       return;
     }
@@ -93,6 +94,17 @@ export class ActivityPanelComponent {
         repeatTimes: repeat,
       });
     }
+  }
+
+  doActivity(activity: Activity){
+    if (activity.instant) {
+      activity.consequence[activity.level]();
+      return;
+    }
+
+    this.activityService.immediateActivity = activity;
+    this.mainLoopService.tick()
+    this.activityService.immediateActivity = null;
   }
 
   rightClick(activity: Activity, event: MouseEvent) {
@@ -122,7 +134,7 @@ export class ActivityPanelComponent {
         projectionString = '\nRight-click to set this as your spriritual projection activity';
       }
       return (
-        'Add this to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top' +
+        'Add this activity to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top' +
         projectionString
       );
     } else {

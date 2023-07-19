@@ -1022,6 +1022,13 @@ export class InventoryService {
 
     for (const balanceItem of this.autoBalanceItems) {
       if (balanceItem.name === item.name) {
+
+        // can't sell in hell, use it all
+        if (this.hellService?.inHell) {
+          this.useItem(item, quantity * balanceItem.useNumber);
+          return -1;
+        }
+
         if (balanceItem.useNumber < 1) {
           if (balanceItem.sellNumber < 1) {
             break; // dump to inventory if user enters balance numbers under 1
@@ -1049,6 +1056,7 @@ export class InventoryService {
             }
           }
           if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
+            // sell the item
             if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
               this.characterService.characterState.money += item.value * modulo;
               balanceItem.index += modulo;
@@ -1210,6 +1218,11 @@ export class InventoryService {
   }
 
   sellAll(item: Item) {
+    // can't sell in hell
+    if (this.hellService?.inHell) {
+      return;
+    }
+
     for (const itemIterator of this.itemStacks) {
       if (itemIterator === null) {
         continue;

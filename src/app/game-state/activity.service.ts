@@ -69,6 +69,7 @@ export class ActivityService {
   purifyGemsUnlocked = false;
   private trainingFollowersDays = 0;
   private trainingPetsDays = 0;
+  immediateActivity: Activity | null = null;
 
   constructor(
     private injector: Injector,
@@ -222,7 +223,7 @@ export class ActivityService {
     });
 
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.activityLoop.length === 0) {
+      if (this.activityLoop.length === 0 && !this.immediateActivity) {
         this.mainLoopService.pause = true;
         return;
       }
@@ -240,6 +241,30 @@ export class ActivityService {
       if (this.exhaustionDays > 0) {
         this.totalExhaustedDays++;
         this.exhaustionDays--;
+        if (this.immediateActivity){
+          this.logService.log(LogTopic.EVENT, "You were too exhausted to do " + this.immediateActivity.name[this.immediateActivity.level] + " today, but you are getting better.");
+        }
+        return;
+      }
+
+      if (this.immediateActivity){
+        let activity = this.immediateActivity;
+        if (this.autoRestUnlocked && !this.checkResourceUse(activity)) {
+          // we can't do the activity because of resources, so rest instead
+          activity = this.Resting;
+        }
+        activity.consequence[activity.level]();
+        this.checkExhaustion();
+        this.checkManaOveruse();
+        // check for activity death
+        this.activityDeath = false;
+        if (this.characterService.characterState.status.health.value <= 0) {
+          this.activityDeath = true;
+        }
+        this.handleSpiritActivity();
+        if (this.characterService.characterState.money > this.characterService.characterState.maxMoney) {
+          this.characterService.characterState.money = this.characterService.characterState.maxMoney;
+        }
         return;
       }
 
@@ -286,38 +311,13 @@ export class ActivityService {
         } else {
           console.log('Invalid activity, skipping activity for the day');
         }
-
-        // check for exhaustion
-        if (this.characterService.characterState.status.stamina.value < 0) {
-          // take 5 days to recover, regain stamina, restart loop
-          this.logService.injury(
-            LogTopic.EVENT,
-            'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.'
-          );
-          this.exhaustionDays = 5;
-          this.characterService.characterState.status.stamina.value = 100;
-          this.characterService.characterState.status.health.value -=
-            0.01 * this.characterService.characterState.status.health.max;
-        }
-        // check for mana overuse
-        if (this.characterService.characterState.status.mana.value < 0) {
-          this.logService.injury(
-            LogTopic.EVENT,
-            'You overextend your mana and damage your mana channels. It takes you 10 days to recover.'
-          );
-          if (this.characterService.characterState.status.mana.max > 1) {
-            this.characterService.characterState.status.mana.max -= 1;
-          }
-          this.exhaustionDays = 10;
-          this.characterService.characterState.status.health.value -=
-            0.01 * this.characterService.characterState.status.health.max;
-        }
+        this.checkExhaustion();
+        this.checkManaOveruse();
         // check for activity death
         this.activityDeath = false;
         if (this.characterService.characterState.status.health.value <= 0) {
           this.activityDeath = true;
         }
-
         this.currentTickCount++;
         if (this.currentTickCount >= this.currentLoopEntry.repeatTimes) {
           // hit the end of the current activity repeats, move on to the next
@@ -353,20 +353,7 @@ export class ActivityService {
         // make sure that we reset the current index if activities get removed so that we're past the end of the list
         this.currentIndex = 0;
       }
-      // do the spirit activity if we can
-      if (this.spiritActivity !== null && this.characterService.characterState.status.mana.value >= 5) {
-        this.spiritActivityProgress = true;
-        const activity = this.getActivityByType(this.spiritActivity);
-        // if we don't have the resources for spirit activities, just don't do them
-        if (activity !== null && this.checkResourceUse(activity, true) && activity.unlocked) {
-          activity.consequence[activity.level]();
-          this.characterService.characterState.status.mana.value -= 5;
-        } else {
-          this.spiritActivityProgress = false;
-        }
-      } else {
-        this.spiritActivityProgress = false;
-      }
+      this.handleSpiritActivity();
       if (this.characterService.characterState.money > this.characterService.characterState.maxMoney) {
         this.characterService.characterState.money = this.characterService.characterState.maxMoney;
       }
@@ -375,6 +362,35 @@ export class ActivityService {
       this.upgradeActivities(false);
       this.checkRequirements(false);
     });
+  }
+
+  checkExhaustion(){
+    if (this.characterService.characterState.status.stamina.value < 0) {
+      // take 5 days to recover, regain stamina, restart loop
+      this.logService.injury(
+        LogTopic.EVENT,
+        'You collapse to the ground, completely exhausted. It takes you 5 days to recover enough to work again.'
+      );
+      this.exhaustionDays = 5;
+      this.characterService.characterState.status.stamina.value = 100;
+      this.characterService.characterState.status.health.value -=
+        0.01 * this.characterService.characterState.status.health.max;
+    }
+  }
+
+  checkManaOveruse(){
+    if (this.characterService.characterState.status.mana.value < 0) {
+      this.logService.injury(
+        LogTopic.EVENT,
+        'You overextend your mana and damage your mana channels. It takes you 10 days to recover.'
+      );
+      if (this.characterService.characterState.status.mana.max > 1) {
+        this.characterService.characterState.status.mana.max -= 1;
+      }
+      this.exhaustionDays = 10;
+      this.characterService.characterState.status.health.value -=
+        0.01 * this.characterService.characterState.status.health.max;
+    }
   }
 
   checkResourceUse(activity: Activity, spirit = false): boolean {
@@ -401,6 +417,22 @@ export class ActivityService {
       }
     }
     return true;
+  }
+
+  handleSpiritActivity(){
+    if (this.spiritActivity !== null && this.characterService.characterState.status.mana.value >= 5) {
+      this.spiritActivityProgress = true;
+      const activity = this.getActivityByType(this.spiritActivity);
+      // if we don't have the resources for spirit activities, just don't do them
+      if (activity !== null && this.checkResourceUse(activity, true) && activity.unlocked) {
+        activity.consequence[activity.level]();
+        this.characterService.characterState.status.mana.value -= 5;
+      } else {
+        this.spiritActivityProgress = false;
+      }
+    } else {
+      this.spiritActivityProgress = false;
+    }
   }
 
   getProperties(): ActivityProperties {

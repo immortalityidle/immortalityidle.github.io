@@ -75,7 +75,7 @@ export class CharacterService {
         if (this.characterState.attributes.spirituality.value > 0) {
           // you're spritual now, you can fast!
           const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
-          this.logService.injury(LogTopic.COMBAT, 'You take ' + starvationDamage + ' damage from starvation.'); // it's not really a combat message, but I didn't want to spam the event log
+          this.logService.injury(LogTopic.COMBAT, 'You take ' + this.bigNumberPipe.transform(starvationDamage) + ' damage from starvation.'); // it's not really a combat message, but I didn't want to spam the event log
           this.characterState.status.health.value -= starvationDamage;
           if (this.characterState.status.health.value < 0) {
             this.characterState.status.health.value = 0;

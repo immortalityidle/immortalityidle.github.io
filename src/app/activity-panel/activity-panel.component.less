@@ -1,8 +1,21 @@
 @import (reference) "../../styles.less";
 
 td {
-  border-bottom: 1px var(--tableDividerColor) solid;
   font-size: 12px;
+  padding-left: 6px;
+  padding-right: 2px;
+  position: relative;
+  border-bottom: 1px solid var(--tableDividerColor);
+}
+
+td:not(:last-child):before {
+  content: "";
+  position: absolute;
+  width: 1px;
+  background: var(--tableDividerColor);
+  right: 0;
+  top: 10%;
+  bottom: 10%;
 }
 
 .activitiesContainer {
@@ -56,4 +69,10 @@ button {
   width: 100px;
 }
 
+.activityLabel {
+  font-size: 120%;
+}
 
+.floatRight {
+  float: right;
+}
