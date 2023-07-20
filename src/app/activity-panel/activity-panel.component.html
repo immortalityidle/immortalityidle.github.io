@@ -47,7 +47,7 @@
           </div>
           <div>
             <span>
-              <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="Spend a day doing this activity" 
+              <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="{{getActivityTooltip(activity, true)}}" 
                 aria-label="Do this activity" aria-hidden="false">
                 update
               </mat-icon>

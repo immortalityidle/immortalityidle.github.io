@@ -13,6 +13,7 @@ import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { MainLoopProperties, MainLoopService } from '../game-state/main-loop.service';
+import { LogService, LogTopic } from '../game-state/log.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -34,7 +35,8 @@ export class ActivityPanelComponent {
     public impossibleTaskService: ImpossibleTaskService,
     public dialog: MatDialog,
     private bigNumberPipe: BigNumberPipe,
-    private mainLoopService: MainLoopService
+    private mainLoopService: MainLoopService,
+    private logService: LogService
   ) {
     this.Math = Math;
     this.character = characterService.characterState;
@@ -101,6 +103,14 @@ export class ActivityPanelComponent {
       activity.consequence[activity.level]();
       return;
     }
+    if (!this.activityService.meetsRequirements(activity)){
+      this.logService.log(LogTopic.EVENT, activity.name[activity.level] + " is unavailable now.");
+      return;
+    } 
+    if (!this.activityService.checkResourceUse(activity)){
+      this.logService.log(LogTopic.EVENT, "You don't meet the requirements to do " + activity.name[activity.level] + " right now.");
+      return;
+    }
 
     this.activityService.immediateActivity = activity;
     this.mainLoopService.tick()
@@ -125,18 +135,22 @@ export class ActivityPanelComponent {
     this.hellService.fightHellBoss();
   }
 
-  getActivityTooltip(activity: Activity) {
+  getActivityTooltip(activity: Activity, doNow = false) {
     if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell) {
       return '';
     } else if (activity.unlocked) {
-      let projectionString = '';
-      if (this.characterService.characterState.manaUnlocked) {
-        projectionString = '\nRight-click to set this as your spriritual projection activity';
+      if (doNow){
+        return "Spend a day doing this activity";
+      } else {
+        let projectionString = '';
+        if (this.characterService.characterState.manaUnlocked) {
+          projectionString = '\nRight-click to set this as your spriritual projection activity';
+        }
+        return (
+          'Add this activity to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top' +
+          projectionString
+        );
       }
-      return (
-        'Add this activity to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top' +
-        projectionString
-      );
     } else {
       return [
         'This activity is locked until you have the attributes required for it. You will need:\n',
