@@ -38,47 +38,52 @@
   </div>
 </h3>
 <div class="activitiesContainer">
-  <table>
-    <ng-container *ngFor="let activity of activityService.activities">
-      <tr [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" *ngIf="(activity.discovered || activity.unlocked)" draggable="true" (dragstart)="drag(activity, $event)">
-        <td>
-          <div class="activityLabel">
-            {{activity.name[activity.level]}}
-          </div>
-          <div>
-            <span>
-              <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="{{getActivityTooltip(activity, true)}}" 
-                aria-label="Do this activity" aria-hidden="false">
-                update
-              </mat-icon>
-              <mat-icon *ngIf="activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="Do this activity" 
-                aria-label="Do this activity" aria-hidden="false">
-                arrow_forward
-              </mat-icon>
-              <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="scheduleActivity(activity, $event)" 
-                (contextmenu)="rightClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}"
-                aria-label="Schedule this activity" aria-hidden="false">
-                event
-              </mat-icon>
-            </span>
-            <span class='floatRight'>
-              <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)"
-                matTooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life.">
-                model_training
-              </mat-icon>
-              <mat-icon *ngIf="activity.lastIncome && activity.lastIncome > 0" matTooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels.">
-                attach_money
-              </mat-icon>
-            </span>
-          </div>
-        </td>
-        <td>
-          {{activity.description[activity.level]}}
-          <br/>
-          {{activity.consequenceDescription[activity.level]}}
-          {{activity.projectionOnly ? "This activity can only be performed by a spiritual projection of yourself back in the mortal realm." : ""}}
-        </td>
-      </tr>
-    </ng-container>
-  </table>
+
+  <div class="overflow">
+    <div class="activityGrid">
+        <div *ngFor="let activity of activityService.activities; let indexOfelement=index;">
+          <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" 
+            *ngIf="(activity.discovered || activity.unlocked)"[tabindex]="0"
+            draggable="true" (dragstart)="drag(activity, $event)">
+              <div class="activityLabel">
+                <span>{{activity.name[activity.level]}}</span>
+              </div>
+              <div class="activityButtons">
+                <span>
+                  <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="{{getActivityTooltip(activity, true)}}" 
+                    aria-label="Do this activity" aria-hidden="false">
+                    update
+                  </mat-icon>
+                  <mat-icon *ngIf="activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="Do this activity" 
+                    aria-label="Do this activity" aria-hidden="false">
+                    arrow_forward
+                  </mat-icon>
+                  <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="scheduleActivity(activity, $event)" 
+                    (contextmenu)="rightClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}"
+                    aria-label="Schedule this activity" aria-hidden="false">
+                    event
+                  </mat-icon>
+                </span>
+                <span class='floatRight'>
+                  <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)"
+                    matTooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life."
+                    aria-label="Requires an apprenticeship" aria-hidden="false">
+                    model_training
+                  </mat-icon>
+                  <mat-icon *ngIf="activity.lastIncome && activity.lastIncome > 0" matTooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels."
+                    aria-label="Earns money" aria-hidden="false">
+                    attach_money
+                  </mat-icon>
+                  <mat-icon class="iconButton" (click)="showActivity(activity)"
+                    matTooltip="What is this activity? Tell me all about it!"
+                    aria-label="Help" aria-hidden="false">
+                    help
+                  </mat-icon>
+                </span>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
 </div>

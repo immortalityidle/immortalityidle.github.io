@@ -19,7 +19,33 @@ td:not(:last-child):before {
 }
 
 .activitiesContainer {
-  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.activityGrid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 3px 0;
+  gap: 3px;
+  overflow-anchor: none;
+}
+
+.activitySlot {
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid var(--panelBorder);
+  padding: 2px;
+  border-spacing: 0px;
+  cursor: pointer;
+  background-color: var(--itemSlotColor);
+  color: var(--bodyText);
+  box-sizing: border-box;
+  width: 160px;
+  height: 75px;
+  display: flex;
+  flex-direction: column;
 }
 
 button {
@@ -71,6 +97,11 @@ button {
 
 .activityLabel {
   font-size: 120%;
+  flex-grow: 1;
+}
+
+.activityButtons {
+  flex-grow: 0;
 }
 
 .floatRight {

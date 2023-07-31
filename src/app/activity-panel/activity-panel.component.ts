@@ -162,4 +162,19 @@ export class ActivityPanelComponent {
         .join('\n');
     }
   }
+
+  showActivity(activity: Activity){
+    let bodyString = activity.description[activity.level] + "\n\n" + activity.consequenceDescription[activity.level];
+    if (activity.projectionOnly){
+      bodyString +="\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.";
+    }
+
+    const dialogRef = this.dialog.open(TextPanelComponent, {
+      width: '400px',
+      data: { titleText: activity.name[activity.level], bodyText: bodyString },
+      autoFocus: false,
+    });
+
+  }
 }
+

@@ -1241,7 +1241,7 @@ export class HellService {
       }
       newList.push({
         level: 0,
-        name: ['Enter the ' + hell.name],
+        name: [hell.name],
         activityType: ActivityType.Hell + hell.index,
         description: [hell.description],
         consequenceDescription: [consequenceDescription],
