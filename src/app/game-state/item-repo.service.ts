@@ -12,6 +12,7 @@ import { AutoBuyerService } from './autoBuyer.service';
 import { GameStateService } from './game-state.service';
 import { HellLevel, HellService } from './hell.service';
 
+const daysInYear = 365;
 @Injectable({
   providedIn: 'root',
 })
@@ -343,17 +344,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.02) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 5) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 5) {
-            this.characterService.characterState.foodLifespan = 365 * 5;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.02;
+        const maxLifespanIncrease = 5;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     broccoli: {
@@ -366,17 +359,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.05) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 10) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 10) {
-            this.characterService.characterState.foodLifespan = 365 * 10;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.05;
+        const maxLifespanIncrease = 10;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     calabash: {
@@ -389,17 +374,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.08) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 15) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 15) {
-            this.characterService.characterState.foodLifespan = 365 * 15;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.08;
+        const maxLifespanIncrease = 15;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     taro: {
@@ -412,17 +389,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.1) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 20) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 20) {
-            this.characterService.characterState.foodLifespan = 365 * 20;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.1;
+        const maxLifespanIncrease = 20;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     pear: {
@@ -435,17 +404,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.12) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 25) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 25) {
-            this.characterService.characterState.foodLifespan = 365 * 25;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.12;
+        const maxLifespanIncrease = 25;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     melon: {
@@ -458,17 +419,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.15) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 30) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 30) {
-            this.characterService.characterState.foodLifespan = 365 * 30;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.15;
+        const maxLifespanIncrease = 30;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     plum: {
@@ -481,17 +434,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.18) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 35) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 35) {
-            this.characterService.characterState.foodLifespan = 365 * 35;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.18;
+        const maxLifespanIncrease = 35;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     apricot: {
@@ -504,17 +449,9 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.2) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 40) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 40) {
-            this.characterService.characterState.foodLifespan = 365 * 40;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.2;
+        const maxLifespanIncrease = 40;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
       },
     },
     peach: {
@@ -527,17 +464,10 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and can even lead to a long life.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.22) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity * 2;
-          if (this.characterService.characterState.foodLifespan + quantity <= 365 * 72) {
-            this.characterService.characterState.foodLifespan += quantity;
-          } else if (this.characterService.characterState.foodLifespan < 365 * 72) {
-            this.characterService.characterState.foodLifespan = 365 * 72;
-          }
-        }
-        this.characterService.characterState.checkOverage();
+        const lifespanChance = 0.22;
+        const maxLifespanIncrease = 72;
+        const healValue = 2;
+        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity, healValue);
       },
     },
     divinePeach: {
@@ -557,10 +487,10 @@ export class ItemRepoService {
         this.characterService.characterState.status.stamina.value += quantity * 2;
         this.characterService.characterState.status.stamina.max += quantity * 2;
         this.characterService.characterState.status.mana.value += quantity;
-        if (this.characterService.characterState.foodLifespan + quantity <= 365 * 720) {
+        if (this.characterService.characterState.foodLifespan + quantity <= daysInYear * 720) {
           this.characterService.characterState.foodLifespan += quantity;
-        } else if (this.characterService.characterState.foodLifespan < 365 * 720) {
-          this.characterService.characterState.foodLifespan = 365 * 720;
+        } else if (this.characterService.characterState.foodLifespan < daysInYear * 720) {
+          this.characterService.characterState.foodLifespan = daysInYear * 720;
         }
         this.characterService.characterState.checkOverage();
       },
@@ -2695,5 +2625,19 @@ export class ItemRepoService {
       return this.furniture[id];
     }
     return null;
+  }
+
+  private eatProduce(lifespanChance: number, maxLifespanIncrease: number, quantity = 1, healValue = 1) {
+    this.characterService.characterState.status.nourishment.value += quantity;
+    if (Math.random() < lifespanChance) {
+      this.characterService.characterState.healthBonusFood += quantity;
+      this.characterService.characterState.status.health.value += quantity * healValue;
+      if (this.characterService.characterState.foodLifespan + quantity <= daysInYear * maxLifespanIncrease) {
+        this.characterService.characterState.foodLifespan += quantity;
+      } else if (this.characterService.characterState.foodLifespan < daysInYear * maxLifespanIncrease) {
+        this.characterService.characterState.foodLifespan = daysInYear * maxLifespanIncrease;
+      }
+    }
+    this.characterService.characterState.checkOverage();
   }
 }
