@@ -640,9 +640,9 @@ export class Character {
     const slowGrowers = ['combatMastery', 'magicMastery'];
     for (const key in keys) {
       if (slowGrowers.includes(key)) {
-        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e14 * days;
+        this.attributes[keys[key]].aptitude += (this.attributes[keys[key]].value / 1e14) * days;
       } else {
-        this.attributes[keys[key]].aptitude += this.attributes[keys[key]].value / 1e7 * days;
+        this.attributes[keys[key]].aptitude += (this.attributes[keys[key]].value / 1e7) * days;
       }
     }
   }
