@@ -543,7 +543,8 @@ export class Character {
     this.attackPower = Math.floor(strengthPower * Math.sqrt(rightHand * leftHand)) || 1;
     if (this.attributes.combatMastery.value > 1) {
       // multiply by log base 100 of combatMastery
-      this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / Math.log(100);
+      // Math.log(100)=4.605170185988092
+      this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / 4.605170185988092;
     }
     if (this.righteousWrathUnlocked) {
       this.attackPower *= 2;
