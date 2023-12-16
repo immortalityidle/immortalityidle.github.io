@@ -104,15 +104,13 @@ export class ActivityService {
     const trainingActionTemplate = (attribute: number, trainingDays: number, follower: Follower): boolean => {
       let upgraded = false;
 
-      const getDailyUpgradeChance = () => (1 - Math.pow(follower.power / 100, 0.55)) /
-        (36500000 /
-          (3650 +
-            follower.age *
-              Math.log2(attribute / 1e10 + 1)));
+      const getDailyUpgradeChance = () =>
+        (1 - Math.pow(follower.power / 100, 0.55)) /
+        (36500000 / (3650 + follower.age * Math.log2(attribute / 1e10 + 1)));
 
       const getProbUpgradeAfterDayFunc = () => {
         const dailyFailureChance = 1 - getDailyUpgradeChance();
-        return (days:number) => days > 0 ? Math.pow(dailyFailureChance, days) : 1;
+        return (days: number) => (days > 0 ? Math.pow(dailyFailureChance, days) : 1);
       };
 
       let availableDays = trainingDays;
@@ -133,7 +131,8 @@ export class ActivityService {
           const midpoint = Math.floor((upperBoundInclusive + lowerBoundExclusive) / 2);
           const baseMidpointProb = 1 - getProbUpgradeAfterDay(midpoint);
           const baseGreaterThanLowerBoundProb = getProbUpgradeAfterDay(lowerBoundExclusive);
-          const probLowerThanUpperGivenLowerBound = 1 - getProbUpgradeAfterDay(upperBoundInclusive - lowerBoundExclusive);
+          const probLowerThanUpperGivenLowerBound =
+            1 - getProbUpgradeAfterDay(upperBoundInclusive - lowerBoundExclusive);
           const probWithinLowerAndUpperBound = baseGreaterThanLowerBoundProb * probLowerThanUpperGivenLowerBound;
           const midpointProbGivenBounds = baseMidpointProb / probWithinLowerAndUpperBound;
           if (chance < midpointProbGivenBounds) {
@@ -151,17 +150,14 @@ export class ActivityService {
           this.followerService.highestLevel = follower.power;
         }
         follower.cost = 100 * follower.power;
-        this.logService.log(
-          LogTopic.FOLLOWER,
-          follower.name + ' gains additional power as a ' + follower.job
-        );
+        this.logService.log(LogTopic.FOLLOWER, follower.name + ' gains additional power as a ' + follower.job);
       }
 
       return upgraded;
     };
 
     mainLoopService.yearOrLongTickSubject.subscribe(() => {
-      if (!((this.trainingFollowersDays + this.trainingPetsDays > 0) && this.followerService.followersUnlocked)) {
+      if (!(this.trainingFollowersDays + this.trainingPetsDays > 0 && this.followerService.followersUnlocked)) {
         return;
       }
 
@@ -241,13 +237,18 @@ export class ActivityService {
       if (this.exhaustionDays > 0) {
         this.totalExhaustedDays++;
         this.exhaustionDays--;
-        if (this.immediateActivity){
-          this.logService.log(LogTopic.EVENT, "You were too exhausted to do " + this.immediateActivity.name[this.immediateActivity.level] + " today, but you are getting better.");
+        if (this.immediateActivity) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'You were too exhausted to do ' +
+              this.immediateActivity.name[this.immediateActivity.level] +
+              ' today, but you are getting better.'
+          );
         }
         return;
       }
 
-      if (this.immediateActivity){
+      if (this.immediateActivity) {
         let activity = this.immediateActivity;
         if (this.autoRestUnlocked && !this.checkResourceUse(activity)) {
           // we can't do the activity because of resources, so rest instead
@@ -364,7 +365,7 @@ export class ActivityService {
     });
   }
 
-  checkExhaustion(){
+  checkExhaustion() {
     if (this.characterService.characterState.status.stamina.value < 0) {
       // take 5 days to recover, regain stamina, restart loop
       this.logService.injury(
@@ -378,7 +379,7 @@ export class ActivityService {
     }
   }
 
-  checkManaOveruse(){
+  checkManaOveruse() {
     if (this.characterService.characterState.status.mana.value < 0) {
       this.logService.injury(
         LogTopic.EVENT,
@@ -419,7 +420,7 @@ export class ActivityService {
     return true;
   }
 
-  handleSpiritActivity(){
+  handleSpiritActivity() {
     if (this.spiritActivity !== null && this.characterService.characterState.status.mana.value >= 5) {
       this.spiritActivityProgress = true;
       const activity = this.getActivityByType(this.spiritActivity);

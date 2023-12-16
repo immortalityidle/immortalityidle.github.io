@@ -105,7 +105,7 @@ export class FollowersService {
           if (this.jobs['hunter'].totalPower > 1000)
             this.inventoryService.addItem(
               this.itemRepoService.items['spiritMeat'],
-              Math.floor(this.jobs['hunter'].totalPower / 1000 * daysElapsed)
+              Math.floor((this.jobs['hunter'].totalPower / 1000) * daysElapsed)
             );
           return;
         }
@@ -113,7 +113,7 @@ export class FollowersService {
       },
       description: 'Hunters collect meat and help you hunt for hides.',
       totalPower: 0,
-      runEachTick: true
+      runEachTick: true,
     },
     farmer: {
       work: daysElapsed => {
@@ -121,7 +121,7 @@ export class FollowersService {
       },
       description: 'Farmers work your fields, helping your crops to grow.',
       totalPower: 0,
-      runEachTick: true
+      runEachTick: true,
     },
     weaponsmith: {
       work: daysElapsed => {
@@ -158,7 +158,8 @@ export class FollowersService {
             ? {
                 ...armor.armorStats,
                 durability: armor.armorStats?.durability + Math.ceil(Math.pow(totalPower / 10, 2) * 50) * daysElapsed,
-                defense: armor.armorStats?.defense + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
+                defense:
+                  armor.armorStats?.defense + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
               }
             : undefined,
           value: armor.value + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
@@ -277,7 +278,7 @@ export class FollowersService {
       },
       description: 'Scouts help you track down and fight monsters faster.',
       totalPower: 0,
-      runEachTick: true
+      runEachTick: true,
     },
     damned: {
       work: daysElapsed => {
@@ -369,7 +370,10 @@ export class FollowersService {
     },
     monkey: {
       work: daysElapsed => {
-        this.characterService.characterState.increaseAttribute('metalLore', this.jobs['monkey'].totalPower * daysElapsed);
+        this.characterService.characterState.increaseAttribute(
+          'metalLore',
+          this.jobs['monkey'].totalPower * daysElapsed
+        );
       },
       description: 'Monkeys know more about metal than the greatest of human blacksmiths.',
       hidden: true,
@@ -439,7 +443,10 @@ export class FollowersService {
             this.logService.injury(LogTopic.FOLLOWER, 'Your follower ' + follower.name + ' passed away from old age.');
           }
           this.updateFollowerTotalPower();
-        } else if (this.characterService.characterState.money < this.followers[i].cost * daysElapsed && !this.hellService?.inHell) {
+        } else if (
+          this.characterService.characterState.money < this.followers[i].cost * daysElapsed &&
+          !this.hellService?.inHell
+        ) {
           // quit from not being paid
           this.totalDismissed++;
           this.logService.injury(
