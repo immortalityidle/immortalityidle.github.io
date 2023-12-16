@@ -124,25 +124,11 @@ export class ActivityService {
 
         upgraded = true;
 
-        // Use Bayes Theorem to do binary search for exact day upgrade happens.
-        let lowerBoundExclusive = 0;
-        let upperBoundInclusive = availableDays;
-        while (upperBoundInclusive - lowerBoundExclusive > 1) {
-          const midpoint = Math.floor((upperBoundInclusive + lowerBoundExclusive) / 2);
-          const baseMidpointProb = 1 - getProbUpgradeAfterDay(midpoint);
-          const baseGreaterThanLowerBoundProb = getProbUpgradeAfterDay(lowerBoundExclusive);
-          const probLowerThanUpperGivenLowerBound =
-            1 - getProbUpgradeAfterDay(upperBoundInclusive - lowerBoundExclusive);
-          const probWithinLowerAndUpperBound = baseGreaterThanLowerBoundProb * probLowerThanUpperGivenLowerBound;
-          const midpointProbGivenBounds = baseMidpointProb / probWithinLowerAndUpperBound;
-          if (chance < midpointProbGivenBounds) {
-            upperBoundInclusive = midpoint;
-          } else {
-            lowerBoundExclusive = midpoint + 1;
-          }
-        }
+        // Use logarithm to calculate exact day upgrade happens
+        // rolledChance < dailyFailureChance^days -> log chance / log dailyFailureChance < days
+        const daysNeeded = Math.max(1, Math.ceil(Math.log(chance) / Math.log(1 - getDailyUpgradeChance())));
 
-        availableDays -= upperBoundInclusive;
+        availableDays -= daysNeeded;
 
         // Softcap the increase
         follower.power++;
