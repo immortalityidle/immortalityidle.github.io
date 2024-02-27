@@ -259,7 +259,7 @@ export const WeaponNames = [
   'trident',
   'trishula',
   'tsurugi',
-  'ulfberh',
+  'ulfberht',
   'vechevoral',
   'vettukathi',
   'voulge',

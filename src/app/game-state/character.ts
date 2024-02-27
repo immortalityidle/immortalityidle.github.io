@@ -503,6 +503,9 @@ export class Character {
     if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
+    if (this.hellMoney > this.maxMoney) {
+      this.hellMoney = this.maxMoney;
+    }
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
       this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
@@ -707,6 +710,9 @@ export class Character {
     if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
+    if (this.hellMoney > this.maxMoney) {
+      this.hellMoney = this.maxMoney;
+    }
   }
 
   getProperties(): CharacterProperties {
@@ -766,6 +772,9 @@ export class Character {
     this.hellMoney = properties.hellMoney || 0;
     if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
+    }
+    if (this.hellMoney > this.maxMoney) {
+      this.hellMoney = this.maxMoney;
     }
     this.equipment = properties.equipment;
     this.stashedEquipment = properties.stashedEquipment || {
