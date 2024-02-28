@@ -62,6 +62,7 @@ export interface HellProperties {
   relicsReturned: number;
   timesCrushed: number;
   contractsExamined: number;
+  atonedKills: number;
 }
 
 @Injectable({
@@ -83,6 +84,7 @@ export class HellService {
   relicsReturned = 0;
   timesCrushed = 0;
   contractsExamined = 0;
+  atonedKills = 0;
 
   burnMoney = {
     level: 0,
@@ -1141,6 +1143,7 @@ export class HellService {
       relicsReturned: this.relicsReturned,
       timesCrushed: this.timesCrushed,
       contractsExamined: this.contractsExamined,
+      atonedKills: this.atonedKills
     };
   }
 
@@ -1159,6 +1162,7 @@ export class HellService {
     this.relicsReturned = properties.relicsReturned || 0;
     this.timesCrushed = properties.timesCrushed || 0;
     this.contractsExamined = properties.contractsExamined || 0;
+    this.atonedKills = properties.atonedKills || 0;
     this.activityService.reloadActivities();
   }
 
@@ -1595,12 +1599,11 @@ export class HellService {
         'Torment for those who killed for pleasure. The mountain of sharp blades looks like it might be rough on footwear.',
       index: HellLevel.MountainOfKnives,
       dailyEffect: () => {
-        // TODO: tune this
-        let damage = this.battleService.totalKills / 10 - this.mountainSteps * 10;
+        let damage = (this.battleService.totalKills / 100 - this.mountainSteps) - this.atonedKills;
+        this.atonedKills++;
         if (damage < 0) {
           damage = 0;
         }
-
         this.characterService.characterState.status.health.value -= damage;
         if (damage > 0) {
           this.logService.injury(LogTopic.COMBAT, "The mountain's blades shred you for " + damage + ' damage.');
@@ -1629,7 +1632,7 @@ export class HellService {
         return this.battleService.totalKills / 100;
       },
       successCheck: () => {
-        // let's just say that 90% of our kills were justified and we didn't enjoy them one bit. Still gotta pay for the other 10%.
+        // let's just say that 99% of our kills were justified and we didn't enjoy them one bit. Still gotta pay for the other 1%.
         return this.mountainSteps >= this.battleService.totalKills / 100;
       },
     },
