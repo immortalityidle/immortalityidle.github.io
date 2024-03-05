@@ -50,6 +50,10 @@ type AttributeObject = {
   };
 };
 
+export type AttributeUpdates = {
+  [key in AttributeType]: number
+};
+
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
 
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
@@ -128,6 +132,23 @@ export class Character {
         }
       }
     });
+    this.attributeUpdates = {
+      strength: 0,
+      toughness: 0,
+      speed: 0,
+      intelligence: 0,
+      charisma: 0,
+      spirituality: 0,
+      earthLore: 0,
+      metalLore: 0,
+      woodLore: 0,
+      waterLore: 0,
+      fireLore: 0,
+      animalHandling: 0,
+      combatMastery: 0,
+      magicMastery: 0
+    };
+
   }
 
   maxMoney = 9.9999e23;
@@ -168,6 +189,7 @@ export class Character {
   showLifeSummary = true;
   showTips = false;
   dialogRef: MatDialogRef<LifeSummaryComponent> | null = null;
+  attributeUpdates: AttributeUpdates;
 
   attributes: AttributeObject = {
     strength: {
@@ -636,6 +658,7 @@ export class Character {
     if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;
     }
+    this.attributeUpdates[attribute] += increaseAmount;
     return increaseAmount;
   }
 

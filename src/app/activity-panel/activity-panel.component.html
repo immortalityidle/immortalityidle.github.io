@@ -41,7 +41,7 @@
 
   <div class="overflow">
     <div class="activityGrid">
-        <div *ngFor="let activity of activityService.activities; let indexOfelement=index;">
+        <ng-container *ngFor="let activity of activityService.activities; let indexOfelement=index;">
           <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" 
             *ngIf="(activity.discovered || activity.unlocked)"[tabindex]="0"
             draggable="true" (dragstart)="drag(activity, $event)">
@@ -82,7 +82,7 @@
                 </span>
               </div>
             </div>
-        </div>
+        </ng-container>
     </div>
   </div>
 

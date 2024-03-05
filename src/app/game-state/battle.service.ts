@@ -193,7 +193,7 @@ export class BattleService {
       this.skipEnemyAttack--;
       return;
     }
-
+    let toughnessIncrease = 0;
     for (const enemyStack of this.enemies) {
       for (let i = 0; i < enemyStack.quantity; i++) {
         if (Math.random() < enemyStack.enemy.accuracy) {
@@ -256,7 +256,7 @@ export class BattleService {
             this.highestDamageTaken = damage;
           }
           this.characterService.characterState.status.health.value -= damage;
-          this.characterService.characterState.increaseAttribute('toughness', 0.01);
+          toughnessIncrease += 0.01;
           this.attackEffect(enemyStack.enemy);
           // degrade armor
           const degradables = [];
@@ -302,6 +302,7 @@ export class BattleService {
         }
       }
     }
+    this.characterService.characterState.increaseAttribute('toughness', toughnessIncrease);
   }
 
   youAttack() {
