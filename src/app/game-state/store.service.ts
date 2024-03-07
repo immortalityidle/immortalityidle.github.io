@@ -60,7 +60,7 @@ export class StoreService {
   buyManual() {
     if (this.selectedItem) {
       if (this.selectedItem.value < this.characterService.characterState.money) {
-        this.characterService.characterState.money -= this.selectedItem.value;
+        this.characterService.characterState.updateMoney(0 - this.selectedItem.value);
         if (this.selectedItem.type === 'manual' && this.selectedItem.use) {
           // use manuals immediately
           this.selectedItem.use();
@@ -100,7 +100,7 @@ export class StoreService {
       ) {
         if (!this.homeService.ownedFurniture.includes(item.name)) {
           // only pay for it once per lifetime
-          this.characterService.characterState.money -= item.value;
+          this.characterService.characterState.updateMoney(0 - item.value);
           this.homeService.ownedFurniture.push(item.name);
           this.furniturePrices[item.name] = 0;
         }

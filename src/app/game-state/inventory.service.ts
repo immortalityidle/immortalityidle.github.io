@@ -1011,7 +1011,7 @@ export class InventoryService {
       // no food found, buy a bowl of rice automatically
       this.noFood = true;
       if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
-        this.characterService.characterState.money--;
+        this.characterService.characterState.updateMoney(-1);
         this.characterService.characterState.status.nourishment.value++;
       }
     }
@@ -1042,7 +1042,7 @@ export class InventoryService {
           if (balanceItem.sellNumber < 1) {
             break; // dump to inventory if user enters balance numbers under 1
           } else {
-            this.characterService.characterState.money += item.value * quantity; // Sell it all
+            this.characterService.characterState.updateMoney(item.value * quantity); // Sell it all
             return -1;
           }
         } else if (balanceItem.sellNumber < 1) {
@@ -1067,12 +1067,12 @@ export class InventoryService {
           if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
             // sell the item
             if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
-              this.characterService.characterState.money += item.value * modulo;
+              this.characterService.characterState.updateMoney(item.value * modulo);
               balanceItem.index += modulo;
               break;
             } else {
-              this.characterService.characterState.money +=
-                item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index);
+              this.characterService.characterState.updateMoney(
+                item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index));
               modulo -= balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index;
               balanceItem.index = 0;
             }
@@ -1084,7 +1084,7 @@ export class InventoryService {
         if (quantity) {
           quantity /= balanceItem.useNumber + balanceItem.sellNumber;
           this.useItem(item, quantity * balanceItem.useNumber);
-          this.characterService.characterState.money += item.value * quantity;
+          this.characterService.characterState.updateMoney(item.value * quantity);
           quantity = 0;
         }
         if (quantity < 1) {
@@ -1124,7 +1124,7 @@ export class InventoryService {
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (itemStack && itemStack.item.type === 'spiritGem' && itemStack.item.value < item.value) {
-          this.characterService.characterState.money += itemStack.item.value * itemStack.quantity;
+          this.characterService.characterState.updateMoney(itemStack.item.value * itemStack.quantity);
           this.itemStacks[i] = null;
         }
       }
@@ -1137,7 +1137,7 @@ export class InventoryService {
           numberToSell = quantity;
         }
         if (numberToSell > 0) {
-          this.characterService.characterState.money += item.value * numberToSell;
+          this.characterService.characterState.updateMoney(item.value * numberToSell);
           quantity -= numberToSell;
           if (quantity === 0) {
             return -1;
@@ -1192,7 +1192,7 @@ export class InventoryService {
     // if we're here we didn't find a slot for anything/everything.
     if (this.autoSellUnlocked && !this.hellService?.inHell) {
       this.logService.log(LogTopic.EVENT, "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + " so you sold it.");
-      this.characterService.characterState.money += item.value * quantity;
+      this.characterService.characterState.updateMoney(item.value * quantity);
     } else {
       this.logService.log(LogTopic.EVENT, "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + " so you threw it away.");
     }
@@ -1216,13 +1216,13 @@ export class InventoryService {
     const index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.itemStacks[index] = null;
-      this.characterService.characterState.money += itemStack.quantity * itemStack.item.value;
+      this.characterService.characterState.updateMoney(itemStack.quantity * itemStack.item.value);
       if (itemStack === this.selectedItem) {
         this.selectedItem = null;
       }
     } else {
       itemStack.quantity -= quantity;
-      this.characterService.characterState.money += quantity * itemStack.item.value;
+      this.characterService.characterState.updateMoney(quantity * itemStack.item.value);
     }
   }
 

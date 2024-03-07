@@ -184,7 +184,7 @@ export class CharacterService {
           LogTopic.EVENT,
           'Your father puts some coins in your purse before sending you on your way.'
         );
-        this.characterState.money += 200;
+        this.characterState.updateMoney(200);
       }
     });
   }

@@ -1445,7 +1445,7 @@ export class ActivityService {
             }
             return;
           }
-          this.characterService.characterState.money -= 1e9;
+          this.characterService.characterState.updateMoney(1e9);
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 4000) {
             this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
           } else {
@@ -1564,7 +1564,7 @@ export class ActivityService {
             }
             return;
           }
-          this.characterService.characterState.money -= 1e10;
+          this.characterService.characterState.updateMoney(1e10);
           this.inventoryService.addItem(this.itemRepoService.items['army']);
         },
       ],
@@ -1687,7 +1687,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('intelligence', 0.02);
           this.characterService.characterState.increaseAttribute('charisma', 0.02);
           this.characterService.characterState.status.stamina.value -= 5;
-          this.characterService.characterState.money += 3;
+          this.characterService.characterState.updateMoney(3);
           this.OddJobs.lastIncome = 3;
           this.oddJobDays++;
         },
@@ -1828,7 +1828,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('charisma', 0.1);
           this.characterService.characterState.status.stamina.value -= 5;
           const money = 3 + Math.log2(this.characterService.characterState.attributes.charisma.value);
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
           if (this.characterService.characterState.yinYangUnlocked) {
@@ -1839,7 +1839,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('charisma', 0.2);
           this.characterService.characterState.status.stamina.value -= 5;
           const money = 10 + Math.log2(this.characterService.characterState.attributes.charisma.value);
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
           if (this.characterService.characterState.yinYangUnlocked) {
@@ -1850,7 +1850,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('charisma', 0.3);
           this.characterService.characterState.status.stamina.value -= 5;
           const money = 20 + Math.log2(this.characterService.characterState.attributes.charisma.value * 2);
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
           if (this.characterService.characterState.yinYangUnlocked) {
@@ -1861,7 +1861,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('charisma', 0.5);
           this.characterService.characterState.status.stamina.value -= 5;
           const money = 30 + Math.log2(this.characterService.characterState.attributes.charisma.value * 10);
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
           if (this.characterService.characterState.yinYangUnlocked) {
@@ -1929,7 +1929,7 @@ export class ActivityService {
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.toughness.value
             ) + this.characterService.characterState.attributes.metalLore.value;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.01;
           if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === 'anvil') {
@@ -1956,7 +1956,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.metalLore.value * 2;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.02;
           if (this.homeService.furniture.workbench?.id === 'anvil') {
@@ -1998,7 +1998,7 @@ export class ActivityService {
             ) +
             this.characterService.characterState.attributes.fireLore.value +
             this.characterService.characterState.attributes.metalLore.value * 5;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.05;
           if (this.homeService.furniture.workbench?.id === 'anvil') {
@@ -2040,7 +2040,7 @@ export class ActivityService {
             ) +
             this.characterService.characterState.attributes.fireLore.value +
             this.characterService.characterState.attributes.metalLore.value * 10;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.2;
           if (this.homeService.furniture.workbench?.id === 'anvil') {
@@ -2175,7 +2175,7 @@ export class ActivityService {
           const money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           let alchemySuccessChance = 0.01;
           if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === 'cauldron') {
@@ -2194,7 +2194,7 @@ export class ActivityService {
           const money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value * 2;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           let alchemySuccessChance = 0.02;
           if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === 'cauldron') {
@@ -2225,7 +2225,7 @@ export class ActivityService {
           const money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value * 5;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           let alchemySuccessChance =
             1 - Math.exp(0 - 0.025 * Math.log(this.characterService.characterState.attributes.waterLore.value));
@@ -2257,7 +2257,7 @@ export class ActivityService {
           const money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value * 10;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.2);
           this.characterService.characterState.increaseAttribute('waterLore', 0.6);
@@ -2371,7 +2371,7 @@ export class ActivityService {
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.intelligence.value
             ) + this.characterService.characterState.attributes.woodLore.value;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.001);
           if (this.characterService.characterState.yinYangUnlocked) {
@@ -2389,7 +2389,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.intelligence.value
             ) +
             this.characterService.characterState.attributes.woodLore.value * 2;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.005);
           if (Math.random() < 0.02) {
@@ -2423,7 +2423,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.intelligence.value
             ) +
             this.characterService.characterState.attributes.woodLore.value * 5;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.02);
           if (Math.random() < 0.05) {
@@ -2457,7 +2457,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.intelligence.value
             ) +
             this.characterService.characterState.attributes.woodLore.value * 10;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.6);
           if (Math.random() < 0.2) {
@@ -2550,7 +2550,7 @@ export class ActivityService {
               this.characterService.characterState.attributes.speed.value +
                 this.characterService.characterState.attributes.toughness.value
             ) + this.characterService.characterState.attributes.animalHandling.value;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.001);
           if (this.characterService.characterState.yinYangUnlocked) {
@@ -2569,7 +2569,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.animalHandling.value * 2;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.002);
           if (Math.random() < 0.01) {
@@ -2605,7 +2605,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.animalHandling.value * 5;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.003);
           if (Math.random() < 0.01) {
@@ -2641,7 +2641,7 @@ export class ActivityService {
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.animalHandling.value * 10;
-          this.characterService.characterState.money += money;
+          this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.1);
           if (Math.random() < 0.2) {
@@ -2929,7 +2929,7 @@ export class ActivityService {
         () => {
           this.characterService.characterState.status.stamina.value -= 5;
           const moneyCost = this.characterService.characterState.increaseAttribute('fireLore', 0.1);
-          this.characterService.characterState.money -= moneyCost;
+          this.characterService.characterState.updateMoney(0 - moneyCost);
           if (this.characterService.characterState.money < 0) {
             this.characterService.characterState.money = 0;
           }
@@ -3341,7 +3341,7 @@ export class ActivityService {
           if (this.characterService.characterState.money <= 1000000) {
             return;
           }
-          this.characterService.characterState.money -= 1000000;
+          this.characterService.characterState.updateMoney(-1000000);
           if (this.followerService.followersUnlocked && this.characterService.characterState.money > 0) {
             if (Math.random() < 0.01) {
               this.followerService.generateFollower();

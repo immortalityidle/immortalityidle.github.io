@@ -8,7 +8,11 @@
       </div>
       <div class="moneyLabelColumn">Money: </div>
       <div class="moneyContainer">
-        <div class="moneyColumn"><span>{{characterService.characterState.money | bigNumber}} Taels</span></div>
+        <div class="moneyColumn">
+          <span>{{characterService.characterState.money | bigNumber}} Taels</span>
+          <span *ngFor="let update of getMoneyUpdates()" class="popupText" [ngClass]="{'popupTextColor' : update > 0, 'popupTextNegativeColor' : update < 0}"
+                [@popupText]=update (@popupText.done)="animationDoneEvent($event)"><span *ngIf="update > 0">+</span>{{update | bigNumber}}</span>
+        </div>
         <div *ngIf="characterService.characterState.hellMoney > 0" matTooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
       </div>
       <div><mat-icon *ngIf="inventoryService.noFood" class="noFood"

@@ -1,5 +1,5 @@
 <div class='darkMode optionsDiv'>
-  <span>Manuals Options</span>
+  <span>Options</span>
   <mat-tab-group>
     <mat-tab>
       <ng-template mat-tab-label>
@@ -34,6 +34,13 @@
           <input type="checkbox" (change)="showTipsChange($event)"
             id="showTips" [checked]="characterService.characterState.showTips">
           <label for="showTips">Include tips in the life summary. Warning, this can spoil the fun of discovering things for yourself.</label>
+        </span>
+      </div>
+      <div class="optionField">
+        <span>
+          <input type="checkbox" (change)="showUpdateAnimationsChange($event)"
+            id="showUpdateAnimations" [checked]="characterService.characterState.showUpdateAnimations">
+          <label for="showUpdateAnimations">Show animated updates when attributes or money values change.</label>
         </span>
       </div>
       <div class="optionField">

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { trigger, state, style, transition, animate, keyframes, AnimationEvent } from '@angular/animations';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character';
 import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-state/inventory.service';
@@ -9,10 +10,25 @@ import { MainLoopService } from '../game-state/main-loop.service';
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
+  animations: [ 
+    trigger('popupText', [
+      state('in', style({ position:"fixed"  })),
+      transition(":leave", [
+        animate(
+          1000,
+          keyframes([
+            style({ transform: 'translate(0%, 0%)' }),
+            style({ transform: 'translate(0%, -150%)' }),
+          ])
+        )
+      ]),
+    ])
+  ]
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];
   instanceOfEquipment = instanceOfEquipment;
+  popupCounter = 0;
 
   constructor(
     public inventoryService: InventoryService,
@@ -21,7 +37,22 @@ export class InventoryPanelComponent {
     public mainLoopService: MainLoopService
   ) {
     this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
+    this.moneyUpdates = [];
+    this.mainLoopService.longTickSubject.subscribe(() => {
+      if (this.popupCounter < 1){
+        this.popupCounter++;
+        return;
+      }
+      this.popupCounter = 0;
+      if (this.characterService.characterState.moneyUpdates != 0){
+        this.moneyUpdates.push(this.characterService.characterState.moneyUpdates);
+        this.characterService.characterState.moneyUpdates = 0;
+      }
+    });
+
   }
+
+  moneyUpdates: number[];
 
   isFinite(value: number) {
     return Number.isFinite(value);
@@ -211,4 +242,15 @@ export class InventoryPanelComponent {
       this.inventoryService.removeItemStack(this.inventoryService.selectedItem);
     }
   }
+
+  animationDoneEvent(event: AnimationEvent){
+    while (this.moneyUpdates.length > 0){
+      this.moneyUpdates.pop();
+    }
+  }
+
+  getMoneyUpdates(): number[] {
+    return this.moneyUpdates;
+  }
+
 }

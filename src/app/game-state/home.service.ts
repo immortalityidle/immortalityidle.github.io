@@ -145,7 +145,7 @@ export class HomeService {
             LogTopic.EVENT,
             'Some troublemakers stole some money while you were sleeping. It might be time to get some walls.'
           );
-          this.characterService.characterState.money -= this.characterService.characterState.money / 10;
+          this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.4) {
           this.battleService.addEnemy({
@@ -181,7 +181,7 @@ export class HomeService {
             LogTopic.EVENT,
             'Some troublemakers stole some money while you were sleeping. It might be time to get some walls.'
           );
-          this.characterService.characterState.money -= this.characterService.characterState.money / 10;
+          this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
         }
         if (Math.random() < 0.2) {
           this.battleService.addEnemy({
@@ -557,7 +557,7 @@ export class HomeService {
           this.characterService.characterState.status.health.value -= 20;
           this.characterService.characterState.money = 0;
         } else {
-          this.characterService.characterState.money -= this.home.costPerDay;
+          this.characterService.characterState.updateMoney(0 - this.home.costPerDay);
         }
       }
     });
@@ -606,7 +606,7 @@ export class HomeService {
           'Your grandfather gives you a bit of land and helps you set up a tent on it.'
         );
         //and a few coins so you don't immediately get beat up for not having upkeep money for your house
-        this.characterService.characterState.money += 50;
+        this.characterService.characterState.updateMoney(50);
         this.setCurrentHome(this.nextHome);
       }
     });
@@ -702,7 +702,7 @@ export class HomeService {
       return;
     }
     if (this.characterService.characterState.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired) {
-      this.characterService.characterState.money -= this.nextHomeCost;
+      this.characterService.characterState.updateMoney(0 - this.nextHomeCost);
       this.land -= this.nextHome.landRequired;
       this.nextHomeCostReduction = 0;
       this.houseBuildingProgress = 0;
@@ -898,7 +898,7 @@ export class HomeService {
     increase = 10 * ((count * (count - 1)) / 2); //mathmatically increase by linear sum n (n + 1) / 2
     price = this.landPrice * count + increase;
     if (this.characterService.characterState.money >= price) {
-      this.characterService.characterState.money -= price;
+      this.characterService.characterState.updateMoney(0 - price);
       this.land += count;
       this.landPrice += 10 * count;
     }
@@ -920,7 +920,7 @@ export class HomeService {
     const item = this.itemRepoService.getFurnitureById(itemId);
     if (item) {
       if (this.characterService.characterState.money >= item.value) {
-        this.characterService.characterState.money -= item.value;
+        this.characterService.characterState.updateMoney(0 - item.value);
         this.ownedFurniture.push(item.name);
         this.furniture[item.slot] = item;
       }

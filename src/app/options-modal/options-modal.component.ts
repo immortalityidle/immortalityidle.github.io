@@ -211,6 +211,11 @@ export class OptionsModalComponent {
     this.characterService.characterState.showTips = event.target.checked;
   }
 
+  showUpdateAnimationsChange(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.characterService.characterState.showUpdateAnimations = event.target.checked;
+  }
+
   scientificNotationChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.scientificNotation = event.target.checked;

@@ -20,7 +20,7 @@ export type AttributeUpdatesArrays = {
       state('in', style({ position:"fixed"  })),
       transition(":leave", [
         animate(
-          500,
+          1000,
           keyframes([
             style({ transform: 'translate(0%, 0%)' }),
             style({ transform: 'translate(100%, -150%)' }),
@@ -33,6 +33,7 @@ export type AttributeUpdatesArrays = {
 
 export class AttributesPanelComponent {
   character: Character;
+  popupCounter = 0;
 
   constructor(
     public characterService: CharacterService,
@@ -59,6 +60,11 @@ export class AttributesPanelComponent {
     };
 
     this.mainLoopService.longTickSubject.subscribe(() => {
+      if (this.popupCounter < 1){
+        this.popupCounter++;
+        return;
+      }
+      this.popupCounter = 0;
       for (let key in this.character.attributeUpdates) {
         let attributeType = key as AttributeType;        
         if (this.character.attributeUpdates[attributeType] != 0){

@@ -107,6 +107,7 @@ export interface CharacterProperties {
   bonusHealth: boolean;
   showLifeSummary: boolean;
   showTips: boolean;
+  showUpdateAnimations: boolean;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -188,8 +189,10 @@ export class Character {
   bonusHealth = false;
   showLifeSummary = true;
   showTips = false;
+  showUpdateAnimations = true;
   dialogRef: MatDialogRef<LifeSummaryComponent> | null = null;
   attributeUpdates: AttributeUpdates;
+  moneyUpdates = 0;
 
   attributes: AttributeObject = {
     strength: {
@@ -648,6 +651,13 @@ export class Character {
     return c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
   }
 
+  updateMoney(amount: number) {
+    this.money += amount;
+    if (this.showUpdateAnimations){
+      this.moneyUpdates += amount;
+    }
+  }
+
   increaseAttribute(attribute: AttributeType, amount: number): number {
     let increaseAmount = amount * this.attributes[attribute].aptitudeMult;
     // sanity check that gain is never less than base gain
@@ -658,9 +668,12 @@ export class Character {
     if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;
     }
-    this.attributeUpdates[attribute] += increaseAmount;
+    if (this.showUpdateAnimations){
+      this.attributeUpdates[attribute] += increaseAmount;
+    }
     return increaseAmount;
   }
+
 
   increaseAptitudeDaily(days: number) {
     const keys = Object.keys(this.attributes) as AttributeType[];
@@ -785,6 +798,7 @@ export class Character {
       bonusHealth: this.bonusHealth,
       showLifeSummary: this.showLifeSummary,
       showTips: this.showTips,
+      showUpdateAnimations: this.showUpdateAnimations
     };
   }
 
@@ -852,6 +866,7 @@ export class Character {
     this.bonusHealth = properties.bonusHealth || false;
     this.showLifeSummary = properties.showLifeSummary ?? true;
     this.showTips = properties.showTips || false;
+    this.showUpdateAnimations = properties.showUpdateAnimations ?? true;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery) {

@@ -316,7 +316,7 @@ export class FollowersService {
         if (this.characterService.characterState.money < hellMoneyCost * newHellMoney) {
           newHellMoney = Math.floor(this.characterService.characterState.money / hellMoneyCost);
         }
-        this.characterService.characterState.money -= newHellMoney * hellMoneyCost;
+        this.characterService.characterState.updateMoney(0 - newHellMoney * hellMoneyCost);
         this.characterService.characterState.hellMoney += newHellMoney;
       },
       description: 'Money Burners dedicate themselves to burning mortal money to produce hell money.',
@@ -330,8 +330,8 @@ export class FollowersService {
           totalPower /= 10;
         }
         for (let i = 0; i < daysElapsed; i++) {
-          this.characterService.characterState.money +=
-            this.characterService.characterState.money * 0.000000273 * totalPower;
+          this.characterService.characterState.updateMoney(
+            this.characterService.characterState.money * 0.000000273 * totalPower);
           this.characterService.characterState.hellMoney +=
             this.characterService.characterState.hellMoney * 0.000000273 * totalPower;
         }
@@ -458,7 +458,7 @@ export class FollowersService {
           this.followers.splice(i, 1);
           this.updateFollowerTotalPower();
         } else if (!this.hellService?.inHell) {
-          this.characterService.characterState.money -= this.followers[i].cost * daysElapsed;
+          this.characterService.characterState.updateMoney(0 - this.followers[i].cost * daysElapsed);
         }
       }
 

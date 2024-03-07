@@ -101,7 +101,7 @@ export class HellService {
           );
           return;
         }
-        this.characterService.characterState.money -= 1e6;
+        this.characterService.characterState.updateMoney(-1e6);
         this.characterService.characterState.hellMoney++;
       },
     ],
