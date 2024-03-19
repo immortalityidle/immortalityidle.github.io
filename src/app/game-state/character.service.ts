@@ -7,8 +7,8 @@ import { ActivityService } from './activity.service';
 import { Subscription } from 'rxjs';
 import { BigNumberPipe } from '../app.component';
 import { HellLevel, HellService } from './hell.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CamelToTitlePipe } from '../app.component';
 
 @Injectable({

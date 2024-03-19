@@ -6,7 +6,7 @@ import { Activity, ActivityType } from '../game-state/activity';
 import { Character } from '../game-state/character';
 import { HellService } from '../game-state/hell.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { JoinTheGodsText } from '../game-state/textResources';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';

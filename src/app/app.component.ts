@@ -1,5 +1,5 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';

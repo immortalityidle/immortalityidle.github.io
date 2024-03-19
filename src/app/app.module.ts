@@ -13,12 +13,12 @@ import { InventoryPanelComponent } from './inventory-panel/inventory-panel.compo
 import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
 import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.component';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
+import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MAT_LEGACY_TOOLTIP_DEFAULT_OPTIONS as MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/legacy-tooltip';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { BattlePanelComponent } from './battle-panel/battle-panel.component';

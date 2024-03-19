@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
 import { BattleService } from '../game-state/battle.service';
 import { CharacterService } from '../game-state/character.service';

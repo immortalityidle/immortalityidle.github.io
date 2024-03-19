@@ -15,7 +15,7 @@ import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTas
 import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
 import { HellProperties, HellService } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
