@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "immortalityidle:build:production"
+              "buildTarget": "immortalityidle:build:production"
             },
             "development": {
-              "browserTarget": "immortalityidle:build:development"
+              "buildTarget": "immortalityidle:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "immortalityidle:build"
+            "buildTarget": "immortalityidle:build"
           }
         },
         "test": {
