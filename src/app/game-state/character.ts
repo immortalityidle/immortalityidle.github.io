@@ -3,7 +3,7 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 export type CharacterAttribute = {
   [key: string]: number | undefined;

@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 //import { threadId } from 'worker_threads';
 import { throttleTime, map, bufferCount, Subject, distinct, merge, OperatorFunction, filter } from 'rxjs'
 import { CharacterService } from './character.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 
 const TICK_INTERVAL_MS = 25;

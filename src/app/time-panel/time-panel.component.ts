@@ -4,7 +4,7 @@ import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { TimeOptionsPanelComponent } from '../time-options-panel/time-options-panel.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-time-panel',

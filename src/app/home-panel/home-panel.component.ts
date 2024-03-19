@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { StoreService } from '../game-state/store.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
 import { FarmPanelComponent } from '../farm-panel/farm-panel.component';

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { LogService, LogTopic } from '../game-state/log.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { LogFilterPanelComponent } from '../log-filter-panel/log-filter-panel.component';
 
 @Component({

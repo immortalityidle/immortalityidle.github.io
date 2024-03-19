@@ -4,7 +4,7 @@ import { CharacterService } from '../game-state/character.service';
 import { Furniture, InventoryService, Item, instanceOfFurniture } from '../game-state/inventory.service';
 import { HomeService, HomeType, Home } from '../game-state/home.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root',
