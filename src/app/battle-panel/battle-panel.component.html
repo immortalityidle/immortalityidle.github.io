@@ -1,6 +1,13 @@
+<div cdkDragHandle class="panelHeader">
+  <mat-icon>
+    fort
+  </mat-icon>
+  Battles
+  <mat-icon class="panelHelp" matTooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">
+    help
+  </mat-icon>
+</div>
 <h3>
-    <mat-icon matTooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">fort</mat-icon>
-    Battles
     <span *ngIf="battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
       battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked">
       <mat-icon  (click)="battleOptions()" matTooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">

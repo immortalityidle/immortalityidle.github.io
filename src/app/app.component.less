@@ -10,7 +10,6 @@
 
 .top-line {
     display: flex;
-    justify-content: space-between;
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
@@ -21,9 +20,13 @@
     margin: 4px;
 }
 
+.discordLink {
+    font-size: large;
+    margin-top: 4px;
+    margin-left: 8px;
+}
+
 .mainContainer {
-    height: 100%;
-    width: 100%;
     background-color: var(--bodyBackground);
     min-height: 0;
     display: flex;
@@ -31,116 +34,19 @@
 }
 
 .bodyContainer {
-    width: 100%;
-    display:flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-height: 0;
+    width: 3000px;
+    height: 2000px;
+    min-width: 3000px;
+    min-height: 2000px;
+    max-width: 3000px;
+    max-height: 2000px;
+    flex: auto;
+    overflow: hidden;
 }
+
 
 .panelContainer {
-    display: flex;
     min-height: 0;
-    flex: 1 0 75%;
-    overflow: auto;
-}
-
-.logContainer {
-    width: 100%;
-    flex: 1 1 110px;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.leftPanel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 440px;
-    gap: 8px;
-}
-
-.centerPanel {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.rightPanel {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    width: 360px;
-    max-width: 320px;
-    gap: 8px;
-}
-
-.timePanel {
-    flex: 1 1 50%;
-    overflow: auto;
-    margin-bottom: 0 !important;
-}
-
-.attributesPanel {
-    flex: 1 1 50%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-.healthPanel {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    overflow: auto;
-    flex: 0 0 auto;
-}
-
-.activityPanel {
-    overflow: auto;
-    flex-grow: 2;
-    margin-bottom: 0 !important;
-}
-
-.battlePanel {
-    flex: 1 0 auto;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    overflow: auto;
-}
-
-.homePanel {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 0;
-}
-
-.logPanel {
-    display: flex;
-    flex-grow: 1;
-    margin-top: 0 !important;
-    min-height: 0;
-}
-
-.inventoryPanel {
-    flex-grow: 1;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.equipmentPanel {
-    margin-bottom: 0 !important;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    flex: 0 0 auto;
 }
 
 .panel {
@@ -148,17 +54,50 @@
     margin: 4px;
     border: 3px solid var(--panelBorder);
     border-radius: 4px;
+    display: inline-table;
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }
 
 .panelHeader {
+    background-color: var(--panelHeader);
     border-bottom: 1px solid var(--panelBorder);
     color: var(--bodyText);
     font-size: 14px;
     font-weight: 400;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 4px;
-    margin-right: 4px;
+    margin: 0px;
+    cursor: move;
+}
+
+.panelHelp {
+    float: right;
+}
+
+.activityPanel {
+    min-width: 500px;
+    width: 500px;
+    max-width: 500px;
+}
+
+.inventoryPanel {
+    min-width: 375px;
+    width: 375px;
+    max-width: 375px;
+}
+
+.timePanel {
+    min-width: 360px;
+}
+
+.dragHandle {
+    position: relative;
+    top: 10px;
+    right: 10px;
+    color: var(--bodyText);
+    cursor: move;
+    width: 16px;
+    height: 16px;
 }
 
 mat-icon {

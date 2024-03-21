@@ -1,6 +1,6 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GameStateService } from './game-state/game-state.service';
+import { GameStateService, PanelIndex } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { OptionsModalComponent } from './options-modal/options-modal.component';
@@ -12,13 +12,14 @@ import { AchievementPanelComponent } from './achievement-panel/achievement-panel
 import { ImpossibleTaskService } from './game-state/impossibleTask.service';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
 import { environment } from '../environments/environment';
-import { ExportPanelComponent } from './export-panel/export-panel.component';
 import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.component';
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { HellService } from './game-state/hell.service';
-import { SaveModalComponent } from './save-modal/save-modal.component';
 import { StatisticsService } from './game-state/statistics.service';
+import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
+import { ViewportScroller } from '@angular/common';
+import { FollowersService } from './game-state/followers.service';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -81,6 +82,9 @@ export class BigNumberPipe implements PipeTransform {
   styleUrls: ['./app.component.less'],
 })
 export class AppComponent implements OnInit {
+  doingPanelDrag = false;
+  panelIndex: typeof PanelIndex = PanelIndex;
+
   title = 'immortalityidle';
   applicationVersion = environment.appVersion;
 
@@ -127,8 +131,10 @@ export class AppComponent implements OnInit {
   }
 
   constructor(
+    private scroller: ViewportScroller,
     private mainLoopService: MainLoopService,
     public gameStateService: GameStateService,
+    public followersService: FollowersService,
     public statisticsService: StatisticsService, // Want to start this ASAP so we start getting statistics immediately.
     public storeService: StoreService,
     public characterService: CharacterService,
@@ -140,39 +146,56 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.gameStateService.loadFromLocalStorage();
     this.mainLoopService.start();
+    this.setPanelPositions();
   }
 
-  hardResetClicked(event: Event): void {
-    event.preventDefault();
-    if (confirm('This will reset everything permanently. Are you sure?')) {
-      this.gameStateService.hardReset();
+  dragStart(event: CdkDragStart, panelIndex: number) {
+    this.doingPanelDrag = true;
+    const originalZIndex = this.gameStateService.panelZIndex[panelIndex];
+    for (const index in this.panelIndex) {
+      if (isNaN(Number(index))) {
+        continue;
+      }
+      if (this.gameStateService.panelZIndex[index] > originalZIndex) {
+        this.gameStateService.panelZIndex[index]--;
+        this.gameStateService.panelZIndex[panelIndex]++;
+      }
+    }
+    event.source.element.nativeElement.style.zIndex = this.gameStateService.panelZIndex[panelIndex] + '';
+  }
+
+  dragEnd(event: CdkDragEnd, panelIndex: number) {
+    this.gameStateService.panelPositions[panelIndex].x = event.source.getFreeDragPosition().x;
+    this.gameStateService.panelPositions[panelIndex].y = event.source.getFreeDragPosition().y;
+    // always save when the player moves the windows around
+    this.gameStateService.savetoLocalStorage();
+    this.doingPanelDrag = false;
+  }
+
+  setPanelPositions() {
+    for (const index in this.panelIndex) {
+      if (isNaN(Number(index))) {
+        continue;
+      }
+      this.gameStateService.panelPositions[index] = {
+        x: this.gameStateService.panelPositions[index].x,
+        y: this.gameStateService.panelPositions[index].y,
+      };
     }
   }
 
-  saveClicked(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if ((event.ctrlKey || event.metaKey) && (event.shiftKey || event.altKey)) {
-      this.gameStateService.loadFromLocalStorage(true);
-    } else if (event.shiftKey || event.altKey) {
-      this.dialog.open(SaveModalComponent, {
-        width: '400px',
-        data: { someField: 'foo' },
-        autoFocus: false,
-      });
-    } else {
-      this.gameStateService.savetoLocalStorage();
-      this.characterService.toast('Manual Save Complete');
+  onBodyDrag(event: MouseEvent) {
+    if (this.doingPanelDrag) {
+      return;
     }
-  }
-
-  exportClicked(): void {
-    this.dialog.open(ExportPanelComponent, {
-      width: '700px',
-      data: { someField: 'foo' },
-      autoFocus: false,
-    });
+    if (event.buttons !== 1) {
+      return;
+    }
+    if (event.target instanceof Element && event.target.classList.contains('bodyContainer')) {
+      const x = this.scroller.getScrollPosition()[0] - event.movementX;
+      const y = this.scroller.getScrollPosition()[1] - event.movementY;
+      this.scroller.scrollToPosition([x, y]);
+    }
   }
 
   storeClicked(): void {
@@ -189,13 +212,6 @@ export class AppComponent implements OnInit {
       data: { someField: 'foo' },
       autoFocus: false,
     });
-  }
-
-  rebirthClicked(event: Event) {
-    event.preventDefault();
-    if (confirm('This will end your current life. Are you sure?')) {
-      this.gameStateService.rebirth();
-    }
   }
 
   ascensionStoreClicked() {
@@ -245,8 +261,5 @@ export class AppComponent implements OnInit {
       data: { someField: 'foo' },
       autoFocus: false,
     });
-  }
-  darkModeToggle() {
-    this.gameStateService.isDarkMode = !this.gameStateService.isDarkMode;
   }
 }

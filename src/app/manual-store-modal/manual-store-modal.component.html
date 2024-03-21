@@ -9,6 +9,7 @@
           <div><mat-icon>menu_book</mat-icon></div>
           <div>{{item.name | titlecase}}</div>
           <div *ngIf="item.owned && !(item.owned())">$ {{item.value | bigNumber}}</div>
+          <div *ngIf="item.owned && (item.owned())">OWNED</div>
         </div>
       </div>
   </div>

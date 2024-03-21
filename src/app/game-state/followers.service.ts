@@ -11,7 +11,6 @@ import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { CamelToTitlePipe } from '../app.component';
-import { Subject } from 'rxjs';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -331,7 +330,8 @@ export class FollowersService {
         }
         for (let i = 0; i < daysElapsed; i++) {
           this.characterService.characterState.updateMoney(
-            this.characterService.characterState.money * 0.000000273 * totalPower);
+            this.characterService.characterState.money * 0.000000273 * totalPower
+          );
           this.characterService.characterState.hellMoney +=
             this.characterService.characterState.hellMoney * 0.000000273 * totalPower;
         }

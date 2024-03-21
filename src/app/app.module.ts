@@ -6,6 +6,7 @@ import { AppComponent, CamelToTitlePipe, FloorPipe, BigNumberPipe } from './app.
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TimePanelComponent } from './time-panel/time-panel.component';
 import { AttributesPanelComponent } from './attributes-panel/attributes-panel.component';
+import { FollowersPanelComponent } from './followers-panel/followers-panel.component';
 import { HealthPanelComponent } from './health-panel/health-panel.component';
 import { HomePanelComponent } from './home-panel/home-panel.component';
 import { LogPanelComponent } from './log-panel/log-panel.component';
@@ -43,6 +44,7 @@ import { BattleOptionsPanelComponent } from './battle-options-panel/battle-optio
 import { SaveModalComponent } from './save-modal/save-modal.component';
 import { OfflineModalComponent } from './offline-modal/offline-modal.component';
 import { LifeSummaryComponent } from './life-summary/life-summary.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatTooltipModule];
 
@@ -51,6 +53,7 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatToolt
     AppComponent,
     TimePanelComponent,
     AttributesPanelComponent,
+    FollowersPanelComponent,
     HealthPanelComponent,
     HomePanelComponent,
     LogPanelComponent,
@@ -84,7 +87,15 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatToolt
     OfflineModalComponent,
     LifeSummaryComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, BrowserAnimationsModule, FormsModule, CommonModule, ...materialModules],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    CommonModule,
+    DragDropModule,
+    ...materialModules,
+  ],
   exports: [...materialModules],
   providers: [
     TitleCasePipe,

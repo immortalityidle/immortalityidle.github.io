@@ -1,4 +1,13 @@
-<h3 class="panelHeader">Equipment <button (click)="inventoryService.hideEquipment = !inventoryService.hideEquipment">{{inventoryService.hideEquipment ? 'Show' : 'Hide'}}</button></h3>
+<div cdkDragHandle class="panelHeader">
+  <mat-icon>
+    colorize
+  </mat-icon>
+  Equipment
+  <mat-icon class="panelHelp" matTooltip="You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality. Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment. Watch out, each piece of gear will take damage with use and you will need to constantly improve it to keep it strong.">
+    help
+  </mat-icon>  
+</div>
+
 <div class="equipmentContainer" *ngIf="!inventoryService.hideEquipment">
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"

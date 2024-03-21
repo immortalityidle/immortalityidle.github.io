@@ -84,7 +84,6 @@ export const FirstNames = [
   'Anton',
   'Antonia',
   'Antonio',
-  'António',
   'Anwar',
   'Arif',
   'Arjun',

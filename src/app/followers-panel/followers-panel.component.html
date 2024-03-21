@@ -1,0 +1,37 @@
+<div cdkDragHandle class="panelHeader">
+    <mat-icon>
+        groups
+    </mat-icon>
+    Followers
+    <mat-icon class="panelHelp" matTooltip="Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.">
+        help
+    </mat-icon>
+</div>
+<h3>
+    <span [ngClass]="followerService.followersMaxed">
+    &nbsp;({{this.followerService.followers.length}} / {{this.followerService.followerCap}})
+    </span>
+    <mat-icon *ngIf="followerService.autoDismissUnlocked" class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Followers" aria-hidden="false"
+    matTooltip="Manage your followers.">
+    settings
+    </mat-icon>
+</h3>
+<div class="followersContainer">
+    <div class="followerPanel">
+        <div class="attributeLine" *ngFor="let follower of followerService.followers">
+            <span class="followerName" matTooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}. {{followerService.jobs[follower.job].description}}
+            {{follower.name}} has followed you for {{follower.age / 365 | number: '1.0-1'}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | number: '1.0-1'}} more years. Daily cost: {{follower.cost | number:'1.0-0'}}">
+            {{follower.name | titlecase}} (lv.{{follower.power}} {{follower.job | camelToTitle}})
+            </span>
+            <mat-icon class="smallerIcon"
+            aria-label="Dismiss Follower" aria-hidden="false"
+            (click)="dismissFollower($event, follower)"
+            [matTooltip]="followerService.autoDismissUnlocked ? 'Dismiss this follower.
+            Shift-click to automatically dismiss everyone of this job type.
+            Ctrl-click to set the current number as the limit without dismissing.':
+            'Dismiss this follower.'">
+            cancel
+            </mat-icon>
+        </div>
+    </div>
+</div>

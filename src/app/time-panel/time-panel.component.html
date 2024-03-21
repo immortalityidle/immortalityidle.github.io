@@ -1,9 +1,16 @@
+<div cdkDragHandle class="panelHeader">
+  <mat-icon>
+    calendar_month
+  </mat-icon>
+  Time
+  <mat-icon class="panelHelp" matTooltip="Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential. Click the schedule button on activities or drag them here to put them on your schedule. When you allow time to move forward, you will perform each activity in your schedule in the order it is listed. You can move scheduled activities around or repeat activities over multiple days. Don't forget to schedule some rest too! You'll need to take a break now and then in your journey toward immortality.">
+    help
+  </mat-icon>
+  
+</div>
 <div class="dropAccepter" (dragover)="allowDrop($event)" (drop)="drop(activityService.activityLoop.length, $event)">
-  <h3 class="panelHeader">
-    <span matTooltip="Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential. Add activities from the activities panel. Repeat them if you want to, or rearrange them by dragging them where you want them to go.">
-      <mat-icon>
-        calendar_month
-      </mat-icon>
+  <h3 >
+    <span>
       How will you spend your days?
     </span>
     <mat-icon (click)="pauseClick()" [ngClass]="{'iconActive': this.mainLoopService.pause}"
@@ -43,7 +50,7 @@
       settings
     </mat-icon>
 
-    <h6 *ngIf="mainLoopService.bankedTicks > 1">
+    <h6>
       <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
         [checked]="mainLoopService.useBankedTicks"/>
       <label for="useSavedTicks">Use banked time to accelerate reality (10x). {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</label>

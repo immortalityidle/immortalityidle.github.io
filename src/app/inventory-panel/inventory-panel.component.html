@@ -1,10 +1,15 @@
+<div cdkDragHandle class="panelHeader">
+  <mat-icon>
+    shopping_bag
+  </mat-icon>
+  Inventory
+  <mat-icon class="panelHelp" matTooltip="The items that you gain during your quest for immortality will appear here. Hover your cursor over an item to learn more about it.">
+    help
+  </mat-icon>
+</div>
 <div class="inventoryContainer">
-  <h3 class="panelHeader">
+  <h3>
       <div class="inventoryLabelColumn">
-        <mat-icon matTooltip="The items that you gain during your quest for immortality will appear here. Hover your cursor over an item to learn more about it.">
-          help
-        </mat-icon>
-        Inventory -&nbsp;
       </div>
       <div class="moneyLabelColumn">Money: </div>
       <div class="moneyContainer">
@@ -57,7 +62,7 @@
       shopping_basket
     </mat-icon>
     <mat-icon *ngIf="inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item.value) && !instanceOfEquipment(inventoryService.selectedItem.item) && !hellService.inHell" class="iconButton" (click)="autoSell()"
-      matTooltip="Automatically sell this kind of item whenever you get one. Ctrl-right-click items to autosell.">
+      matTooltip="Automatically sell this kind of item whenever you get one. You can change this in the options menu later if you change your mind. Ctrl-right-click items to autosell.">
       currency_exchange
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" class="iconButton" aria-label="Use" aria-hidden="false"
@@ -66,11 +71,11 @@
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
       (click)="autoUse()" class="iconButton" aria-label="Auto Use" aria-hidden="false"
-      matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Ctrl-click items to auto-use.">
+      matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} You can change this in the options menu later if you change your mind. Ctrl-click items to auto-use.">
       auto_mode
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item.value)) && !hellService.inHell"
-      class="iconButton" aria-label="Balance" aria-hidden="false" (click)="autoBalance()" matTooltip="Balance between automatically using and selling this item.">
+      class="iconButton" aria-label="Balance" aria-hidden="false" (click)="autoBalance()" matTooltip="Balance between automatically using and selling this item. You can change this in the options menu later if you change your mind.">
       balance
     </mat-icon>
     <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()" class="iconButton" aria-label="Equip" aria-hidden="false"

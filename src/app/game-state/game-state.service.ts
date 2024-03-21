@@ -16,6 +16,7 @@ import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
 import { HellProperties, HellService } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Point } from '@angular/cdk/drag-drop';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -36,12 +37,27 @@ interface GameState {
   gameStartTimestamp: number;
   saveInterval: number;
   easyModeEver: boolean;
+  panelPositions: Point[];
+  panelZIndex: number[];
 }
 
 declare global {
   interface Window {
     GameStateService: GameStateService;
   }
+}
+
+export enum PanelIndex {
+  Attributes = 0,
+  Health = 1,
+  Log = 2,
+  Activity = 3,
+  Home = 4,
+  Time = 5,
+  Battle = 6,
+  Inventory = 7,
+  Equipment = 8,
+  Followers = 9,
 }
 
 @Injectable({
@@ -56,6 +72,10 @@ export class GameStateService {
   easyModeEver = false;
   saveInterval = 300; //In seconds
   saveSlot = '';
+  panelPositions: Point[];
+  defaultPanelPositions: Point[];
+  panelZIndex: number[];
+  defaultPanelZIndex: number[];
 
   constructor(
     private characterService: CharacterService,
@@ -81,6 +101,29 @@ export class GameStateService {
         this.savetoLocalStorage();
       }
     });
+    this.defaultPanelPositions = [];
+
+    this.defaultPanelPositions[PanelIndex.Attributes] = { x: 0, y: 200 };
+    this.defaultPanelPositions[PanelIndex.Health] = { x: 0, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Log] = { x: 0, y: 715 };
+    this.defaultPanelPositions[PanelIndex.Activity] = { x: 460, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Home] = { x: 975, y: 340 };
+    this.defaultPanelPositions[PanelIndex.Time] = { x: 975, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Battle] = { x: 0, y: 580 };
+    this.defaultPanelPositions[PanelIndex.Inventory] = { x: 1350, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 1020, y: 580 };
+    this.defaultPanelPositions[PanelIndex.Followers] = { x: 230, y: 200 };
+
+    this.panelPositions = this.defaultPanelPositions;
+    this.defaultPanelZIndex = [];
+    for (const index in PanelIndex) {
+      if (isNaN(Number(index))) {
+        continue;
+      }
+      this.defaultPanelZIndex[index] = Number(index);
+    }
+
+    this.panelZIndex = this.defaultPanelZIndex;
   }
 
   changeAutoSaveInterval(interval: number): void {
@@ -188,6 +231,8 @@ export class GameStateService {
     this.saveInterval = gameState.saveInterval || 10;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
+    this.panelPositions = gameState.panelPositions || this.defaultPanelPositions;
+    this.panelZIndex = gameState.panelZIndex || this.defaultPanelZIndex;
     this.updateImportFlagKey();
   }
 
@@ -209,9 +254,10 @@ export class GameStateService {
       gameStartTimestamp: this.gameStartTimestamp,
       saveInterval: this.saveInterval || 300,
       easyModeEver: this.easyModeEver,
+      panelPositions: this.panelPositions,
+      panelZIndex: this.panelZIndex,
     };
     let gameStateString = JSON.stringify(gameState);
-    //gameStateString = "iig" + btoa(gameStateString);
     gameStateString = 'iig' + btoa(encodeURIComponent(gameStateString));
     return gameStateString;
   }

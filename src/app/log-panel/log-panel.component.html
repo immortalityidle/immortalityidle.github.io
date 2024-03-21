@@ -1,10 +1,18 @@
+<div cdkDragHandle class="panelHeader">
+  <mat-icon>
+    feed
+  </mat-icon>
+  Log
+  <mat-icon class="panelHelp" matTooltip="A record of the events that lead you to immortality will surely be of interest to those who sing your legend in the ages to come. You can filter out the events that are less interesting to you in the present.">
+    help
+  </mat-icon>
+</div>
 <div class="log">
-  <h3 class="panelHeader">
-    <span>Log</span>
+  <h3>
     <mat-icon class="iconButton optionsIcon" aria-label="Filter Log" aria-hidden="false" (click)="logFilterClicked()" matTooltip="Manage Log Filters">
       filter_alt
     </mat-icon>
-    <span class="headerNote">Newest messages appear at the top, so read from the bottom up.</span>
+    <span class="headerNote">Newest messages appear at the top.</span>
   </h3>
   <div class="logBox">
     <ng-container *ngFor="let logMsg of logService.currentLog">

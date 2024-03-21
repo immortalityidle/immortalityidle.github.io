@@ -1,10 +1,17 @@
+<div cdkDragHandle class="panelHeader">
+  <mat-icon>
+    home
+  </mat-icon>
+  Home
+  <mat-icon class="panelHelp" matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">
+    help
+  </mat-icon>
+</div>
 <div class="homeContainer">
-  <h3 class="panelHeader">
-    <mat-icon matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">home</mat-icon>
+  <h3 >
     <div matTooltip="{{homeService.home.description}}" [ngClass]="{'hellDisabled': hellService.inHell}">
       You live in a {{homeService.home.name}}
     </div>
-    <button (click)="homeService.hideHome = !homeService.hideHome">{{homeService.hideHome ? 'Show' : 'Hide'}}</button>
   </h3>
   <div class="homeContainer" *ngIf="!homeService.hideHome && (!hellService.inHell || homeService.hellHome || homeService.hellFood)">
     <div class="overflow">

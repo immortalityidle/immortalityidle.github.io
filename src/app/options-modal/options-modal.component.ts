@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivityService } from '../game-state/activity.service';
 import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.service';
 import { CharacterService } from '../game-state/character.service';
@@ -7,6 +8,8 @@ import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { ExportPanelComponent } from '../export-panel/export-panel.component';
+import { SaveModalComponent } from '../save-modal/save-modal.component';
 
 @Component({
   selector: 'app-options-modal',
@@ -22,8 +25,53 @@ export class OptionsModalComponent {
     public followerService: FollowersService,
     public autoBuyerService: AutoBuyerService,
     public mainLoopService: MainLoopService,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    public dialog: MatDialog
   ) {}
+
+  hardResetClicked(event: Event): void {
+    event.preventDefault();
+    if (confirm('This will reset everything permanently. Are you sure?')) {
+      this.gameStateService.hardReset();
+    }
+  }
+
+  saveClicked(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if ((event.ctrlKey || event.metaKey) && (event.shiftKey || event.altKey)) {
+      this.gameStateService.loadFromLocalStorage(true);
+    } else if (event.shiftKey || event.altKey) {
+      this.dialog.open(SaveModalComponent, {
+        width: '400px',
+        data: { someField: 'foo' },
+        autoFocus: false,
+      });
+    } else {
+      this.gameStateService.savetoLocalStorage();
+      this.characterService.toast('Manual Save Complete');
+    }
+  }
+
+  exportClicked(): void {
+    this.dialog.open(ExportPanelComponent, {
+      width: '700px',
+      data: { someField: 'foo' },
+      autoFocus: false,
+    });
+  }
+
+  rebirthClicked(event: Event) {
+    event.preventDefault();
+    if (confirm('This will end your current life. Are you sure?')) {
+      this.gameStateService.rebirth();
+    }
+  }
+
+  darkModeToggle() {
+    this.gameStateService.isDarkMode = !this.gameStateService.isDarkMode;
+  }
 
   autoSellReserveChange(event: Event, autosellEntry: AutoItemEntry) {
     if (!(event.target instanceof HTMLInputElement)) return;

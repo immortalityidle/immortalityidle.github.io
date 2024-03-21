@@ -1,9 +1,16 @@
-<h3 class="panelHeader">
+<div cdkDragHandle class="panelHeader">
+  <mat-icon>
+    self_improvement
+  </mat-icon>
+  Activities
+  <mat-icon class="panelHelp" matTooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available.">
+    help
+  </mat-icon>
+
+</div>
+<h3 class="activitiesHeader">
   <div class="standardHeader">
-    <mat-icon matTooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available. Click the button or drag and drop the activity you want to put on your schedule.">
-      help
-    </mat-icon>
-    Activities
+    
   </div>
   <div class="customHeader">
     <span *ngIf="characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god">

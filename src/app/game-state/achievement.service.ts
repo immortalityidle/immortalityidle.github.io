@@ -943,14 +943,32 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      name: "Smooth Farming",
-      description: 'You have harvested crops every day for months and can now count on more regular and reliable harvests.',
+      name: 'Smooth Farming',
+      description:
+        'You have harvested crops every day for months and can now count on more regular and reliable harvests.',
       hint: "When starting your garden, it's best to work a little every day.",
       check: () => {
         return this.homeService.consecutiveHarvests >= 60;
       },
       effect: () => {
         this.homeService.smoothFarming = true;
+      },
+      unlocked: false,
+    },
+    {
+      name: "They're Great",
+      description: 'You have made a friend who can provide you with a tasty breakfast.',
+      hint: "You'll need to find a very special pet.",
+      check: () => {
+        for (const follower of this.followerService.followers) {
+          if ((follower.name === 'Tony' || follower.name === 'Antonio') && follower.job === 'tiger') {
+            return true;
+          }
+        }
+        return false;
+      },
+      effect: () => {
+        // no effect, it's just for fun
       },
       unlocked: false,
     },

@@ -17,7 +17,7 @@
           (click)="storeClicked()">
           local_library
         </mat-icon>
-        <mat-icon matTooltip="Configuration options for purchased items." class="iconButton" aria-label="Options" aria-hidden="false"
+        <mat-icon matTooltip="Options. Lots of them." class="iconButton" aria-label="Options" aria-hidden="false"
           (click)="storeOptionsClicked()">
           settings
         </mat-icon>
@@ -36,53 +36,81 @@
           keyboard_double_arrow_up
         </mat-icon>
       </span>
-      <span>
-        <a href="" matTooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">Reincarnate</a>
+      <span class="discordLink">
+        <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" matTooltip="Have questions? Try the Immortality Idle Discord.">Discord</a>
       </span>
-      <mat-icon matTooltip="Click to save your game now.
-        Shift-click for save options.
-        Ctrl-shift-click to load backup save."
-        class="iconButton" aria-label="Save" aria-hidden="false"
-        (click)="saveClicked($event)">
-        save
-      </mat-icon>
-      <span>
-        <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode"/>
-        <label for="darkMode">Dark Mode</label>
-      </span>
-      <mat-icon matTooltip="Import or export your save game file. Sometimes immortals need a different browser." class="iconButton" aria-label="Export" aria-hidden="false"
-        (click)="exportClicked()">
-        upload
-      </mat-icon>
-      <a href="" matTooltip="Completely restart your journey toward immortality." (click)="hardResetClicked($event)">Hard Reset</a>
-      <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" matTooltip="Have questions? Try the Immortality Idle Discord.">Discord</a>
     </div>
-    <div class="bodyContainer">
-      <div appResizable class="panelContainer" #panelContainer="appResizable">
-        <div class="leftPanel">
-          <app-time-panel appResizable class="timePanel panel" #timePanel="appResizable"></app-time-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="timePanel" [bottom]="attributesPanel"></app-vertical-panel-slider>
-          <app-attributes-panel appResizable class="attributesPanel panel" #attributesPanel="appResizable"></app-attributes-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="attributesPanel" [bottom]="healthPanel"></app-vertical-panel-slider>
-          <app-health-panel appResizable class="healthPanel panel" #healthPanel="appResizable"></app-health-panel>
-        </div>
-        <div class="centerPanel">
-          <app-activity-panel appResizable class="activityPanel panel" #activityPanel="appResizable"></app-activity-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="activityPanel" [bottom]="battlePanel"></app-vertical-panel-slider>
-          <app-battle-panel appResizable class="battlePanel panel" #battlePanel="appResizable"></app-battle-panel>
-        </div>
-        <div class="rightPanel">
-          <app-equipment-panel appResizable class="equipmentPanel panel" #equipmentPanel="appResizable"></app-equipment-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="equipmentPanel" [bottom]="homePanel"></app-vertical-panel-slider>
-          <app-home-panel appResizable class="homePanel panel" #homePanel="appResizable"></app-home-panel>
-          <app-vertical-panel-slider *ngIf="activateSliders" [top]="homePanel" [bottom]="inventoryPanel"></app-vertical-panel-slider>
-          <app-inventory-panel appResizable class="inventoryPanel panel" #inventoryPanel="appResizable"></app-inventory-panel>
-        </div>
-      </div>
-      <app-vertical-panel-slider [top]="panelContainer" [bottom]="logContainer"></app-vertical-panel-slider>
-      <div appResizable class="logContainer" #logContainer="appResizable">
-        <app-log-panel class="logPanel panel"></app-log-panel>
-      </div>
+    <div class="bodyContainer" #bodyContainer (mousemove)="onBodyDrag($event)">
+      <app-time-panel cdkDrag  appResizable class="timePanel panel"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Time]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Time)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Time)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Time]"
+        cdkDragBoundary=".bodyContainer">
+      </app-time-panel>
+      <app-attributes-panel cdkDrag appResizable class="attributesPanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Attributes]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Attributes)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Attributes)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Attributes]"
+        cdkDragBoundary=".bodyContainer">
+      </app-attributes-panel>
+      <app-followers-panel *ngIf="followersService.followersUnlocked" cdkDrag appResizable class="followersPanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Followers]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Followers)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Followers)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Followers]"
+        cdkDragBoundary=".bodyContainer">
+      </app-followers-panel>
+      <app-health-panel cdkDrag appResizable class="healthPanel panel"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Health]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Health)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Health)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Health]"
+        cdkDragBoundary=".bodyContainer">
+      </app-health-panel>
+      <app-activity-panel cdkDrag appResizable class="activityPanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Activity]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Activity)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Activity)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Activity]"
+        cdkDragBoundary=".bodyContainer">
+      </app-activity-panel>
+      <app-battle-panel cdkDrag appResizable class="battlePanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Battle]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Battle)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Battle)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Battle]"
+        cdkDragBoundary=".bodyContainer">
+      </app-battle-panel>
+      <app-equipment-panel cdkDrag appResizable class="equipmentPanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Equipment]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Equipment)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Equipment)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Equipment]"
+        cdkDragBoundary=".bodyContainer">
+      </app-equipment-panel>
+      <app-home-panel cdkDrag appResizable class="homePanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Home]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Home)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Home)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Home]"
+        cdkDragBoundary=".bodyContainer">
+      </app-home-panel>
+      <app-inventory-panel cdkDrag appResizable class="inventoryPanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Inventory]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Inventory)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Inventory)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Inventory]"
+        cdkDragBoundary=".bodyContainer">
+      </app-inventory-panel>
+      <app-log-panel cdkDrag class="logPanel panel" 
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Log]}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Log)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Log)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Log]"
+        cdkDragBoundary=".bodyContainer">
+      </app-log-panel>
     </div>
   </div>
 </div>
