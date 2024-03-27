@@ -188,7 +188,8 @@ export class InventoryService {
   descendingSort = false;
   divinePeachesUnlocked = false;
   hideEquipment = false;
-  durabilityDisclaimer = "\nThe durability and value of equipment degrades with use. Be careful when merging powerful items that have seen a lot of wear, the product may be even lower quality than the original if the item's value is low.";
+  durabilityDisclaimer =
+    "\nThe durability and value of equipment degrades with use. Be careful when merging powerful items that have seen a lot of wear, the product may be even lower quality than the original if the item's value is low.";
 
   constructor(
     private injector: Injector,
@@ -252,9 +253,6 @@ export class InventoryService {
       }
     });
     mainLoopService.longTickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead) {
-        return;
-      }
       //if autoequip is unlocked, but automerge isn't, equip best
       //automerge will merge into equipped if both are unlocked
       if (this.autoequipBestWeapon && this.autoWeaponMergeUnlocked && this.autoequipBestEnabled) {
@@ -514,7 +512,10 @@ export class InventoryService {
     } else {
       name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     }
-    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created a new weapon: " + this.titleCasePipe.transform(name) + "!");
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'Your hard work paid off! You created a new weapon: ' + this.titleCasePipe.transform(name) + '!'
+    );
     const durability = grade * 15;
     const damage = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -538,7 +539,8 @@ export class InventoryService {
         '\nDurability: ' +
         this.bigNumberPipe.transform(durability) +
         '\nValue: ' +
-        this.bigNumberPipe.transform(grade) + this.durabilityDisclaimer,
+        this.bigNumberPipe.transform(grade) +
+        this.durabilityDisclaimer,
     };
   }
 
@@ -559,7 +561,8 @@ export class InventoryService {
       '\nDurability: ' +
       this.bigNumberPipe.transform(weapon.weaponStats.durability) +
       '\nValue: ' +
-      this.bigNumberPipe.transform(weapon.value) + this.durabilityDisclaimer;
+      this.bigNumberPipe.transform(weapon.value) +
+      this.durabilityDisclaimer;
   }
 
   updateArmorDescription(armor: Equipment) {
@@ -579,7 +582,8 @@ export class InventoryService {
       '\nDurability: ' +
       this.bigNumberPipe.transform(armor.armorStats.durability) +
       '\nValue: ' +
-      this.bigNumberPipe.transform(armor.value) + this.durabilityDisclaimer;
+      this.bigNumberPipe.transform(armor.value) +
+      this.durabilityDisclaimer;
   }
 
   upgradeEquppedEquipment(value: number) {
@@ -623,7 +627,10 @@ export class InventoryService {
       }
     }
     equipment.value += value;
-    this.logService.log(LogTopic.CRAFTING, 'You add ' + value + ' power to your ' + this.titleCasePipe.transform(equipment.name));
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'You add ' + value + ' power to your ' + this.titleCasePipe.transform(equipment.name)
+    );
   }
 
   generatePotion(grade: number, masterLevel: boolean): void {
@@ -651,7 +658,10 @@ export class InventoryService {
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
     const name = 'Potion of ' + key + ' +' + grade;
-    this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.');
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.'
+    );
 
     this.addItem({
       name: name,
@@ -684,10 +694,15 @@ export class InventoryService {
       name = 'Empowerment Pill';
       this.logService.log(
         LogTopic.CRAFTING,
-        'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Its effect gets worse the more you take.'
+        'Alchemy Success! Created a ' +
+          this.titleCasePipe.transform(name) +
+          '. Its effect gets worse the more you take.'
       );
     } else {
-      this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.');
+      this.logService.log(
+        LogTopic.CRAFTING,
+        'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.'
+      );
     }
     this.addItem({
       name: name,
@@ -805,7 +820,10 @@ export class InventoryService {
     }
     const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
     const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
-    this.logService.log(LogTopic.CRAFTING, "Your hard work paid off! You created some armor: " + this.titleCasePipe.transform(name) + "!");
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'Your hard work paid off! You created some armor: ' + this.titleCasePipe.transform(name) + '!'
+    );
     const durability = grade * 10;
     const defense = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
@@ -829,7 +847,8 @@ export class InventoryService {
         '\nDurability: ' +
         this.bigNumberPipe.transform(durability) +
         '\nValue: ' +
-        this.bigNumberPipe.transform(grade) + this.durabilityDisclaimer,
+        this.bigNumberPipe.transform(grade) +
+        this.durabilityDisclaimer,
     };
   }
 
@@ -969,7 +988,8 @@ export class InventoryService {
           baseName: "Grandmother's Walking Stick",
         },
         description:
-          "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.\nBase Damage: 10\nDurability: 100\nValue: 10" + this.durabilityDisclaimer,
+          "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.\nBase Damage: 10\nDurability: 100\nValue: 10" +
+          this.durabilityDisclaimer,
       };
       this.addItem(stick);
     }
@@ -1031,7 +1051,6 @@ export class InventoryService {
 
     for (const balanceItem of this.autoBalanceItems) {
       if (balanceItem.name === item.name) {
-
         // can't sell in hell, use it all
         if (this.hellService?.inHell) {
           this.useItem(item, quantity * balanceItem.useNumber);
@@ -1072,7 +1091,8 @@ export class InventoryService {
               break;
             } else {
               this.characterService.characterState.updateMoney(
-                item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index));
+                item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index)
+              );
               modulo -= balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index;
               balanceItem.index = 0;
             }
@@ -1191,10 +1211,16 @@ export class InventoryService {
 
     // if we're here we didn't find a slot for anything/everything.
     if (this.autoSellUnlocked && !this.hellService?.inHell) {
-      this.logService.log(LogTopic.EVENT, "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + " so you sold it.");
+      this.logService.log(
+        LogTopic.EVENT,
+        "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + ' so you sold it.'
+      );
       this.characterService.characterState.updateMoney(item.value * quantity);
     } else {
-      this.logService.log(LogTopic.EVENT, "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + " so you threw it away.");
+      this.logService.log(
+        LogTopic.EVENT,
+        "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + ' so you threw it away.'
+      );
     }
     this.thrownAwayItems += quantity;
     return firstStack;
