@@ -41,71 +41,131 @@
       </span>
     </div>
     <div class="bodyContainer" #bodyContainer (mousemove)="onBodyDrag($event)">
-      <app-time-panel cdkDrag  appResizable class="timePanel panel"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Time]}"
+      <app-time-panel cdkDrag class="timePanel panel" id="{{panelIndex.Time}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Time], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Time].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Time].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Time].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Time].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Time].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Time].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Time)"
         (cdkDragStarted)="dragStart($event, panelIndex.Time)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Time]"
         cdkDragBoundary=".bodyContainer">
       </app-time-panel>
-      <app-attributes-panel cdkDrag appResizable class="attributesPanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Attributes]}"
+      <app-attributes-panel cdkDrag class="attributesPanel panel" id="{{panelIndex.Attributes}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Attributes], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Attributes].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Attributes].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Attributes].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Attributes)"
         (cdkDragStarted)="dragStart($event, panelIndex.Attributes)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Attributes]"
         cdkDragBoundary=".bodyContainer">
       </app-attributes-panel>
-      <app-followers-panel *ngIf="followersService.followersUnlocked" cdkDrag appResizable class="followersPanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Followers]}"
+      <app-followers-panel *ngIf="followersService.followersUnlocked" cdkDrag class="followersPanel panel"  id="{{panelIndex.Followers}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Followers], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Followers].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Followers].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Followers].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Followers)"
         (cdkDragStarted)="dragStart($event, panelIndex.Followers)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Followers]"
         cdkDragBoundary=".bodyContainer">
       </app-followers-panel>
-      <app-health-panel cdkDrag appResizable class="healthPanel panel"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Health]}"
+      <app-health-panel cdkDrag class="healthPanel panel" id="{{panelIndex.Health}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Health], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Health].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Health].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Health].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Health].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Health].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Health].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Health)"
         (cdkDragStarted)="dragStart($event, panelIndex.Health)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Health]"
         cdkDragBoundary=".bodyContainer">
       </app-health-panel>
-      <app-activity-panel cdkDrag appResizable class="activityPanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Activity]}"
+      <app-activity-panel cdkDrag class="activityPanel panel" id="{{panelIndex.Activity}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Activity], 
+          'minWidth': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
+          'width': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
+          'maxWidth': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
+          'minHeight': gameStateService.panelSizes[panelIndex.Activity].y + 'px',
+          'height': gameStateService.panelSizes[panelIndex.Activity].y + 'px',
+          'maxHeight': gameStateService.panelSizes[panelIndex.Activity].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Activity)"
         (cdkDragStarted)="dragStart($event, panelIndex.Activity)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Activity]"
         cdkDragBoundary=".bodyContainer">
       </app-activity-panel>
-      <app-battle-panel cdkDrag appResizable class="battlePanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Battle]}"
+      <app-battle-panel cdkDrag class="battlePanel panel"  id="{{panelIndex.Battle}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Battle], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Battle].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Battle].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Battle].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Battle)"
         (cdkDragStarted)="dragStart($event, panelIndex.Battle)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Battle]"
         cdkDragBoundary=".bodyContainer">
       </app-battle-panel>
-      <app-equipment-panel cdkDrag appResizable class="equipmentPanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Equipment]}"
+      <app-equipment-panel cdkDrag class="equipmentPanel panel"  id="{{panelIndex.Equipment}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Equipment], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Equipment].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Equipment].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Equipment].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Equipment)"
         (cdkDragStarted)="dragStart($event, panelIndex.Equipment)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Equipment]"
         cdkDragBoundary=".bodyContainer">
       </app-equipment-panel>
-      <app-home-panel cdkDrag appResizable class="homePanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Home]}"
+      <app-home-panel cdkDrag class="homePanel panel"  id="{{panelIndex.Home}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Home], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Home].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Home].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Home].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Home].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Home].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Home].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Home)"
         (cdkDragStarted)="dragStart($event, panelIndex.Home)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Home]"
         cdkDragBoundary=".bodyContainer">
       </app-home-panel>
-      <app-inventory-panel cdkDrag appResizable class="inventoryPanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Inventory]}"
+      <app-inventory-panel cdkDrag class="inventoryPanel panel"  id="{{panelIndex.Inventory}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Inventory], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Inventory].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Inventory].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Inventory].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Inventory)"
         (cdkDragStarted)="dragStart($event, panelIndex.Inventory)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Inventory]"
         cdkDragBoundary=".bodyContainer">
       </app-inventory-panel>
-      <app-log-panel cdkDrag class="logPanel panel" 
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Log]}"
+      <app-log-panel cdkDrag class="logPanel panel"  id="{{panelIndex.Log}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Log], 
+        'minWidth': gameStateService.panelSizes[panelIndex.Log].x + 'px',
+        'width': gameStateService.panelSizes[panelIndex.Log].x + 'px',
+        'maxWidth': gameStateService.panelSizes[panelIndex.Log].x + 'px',
+        'minHeight': gameStateService.panelSizes[panelIndex.Log].y + 'px',
+        'height': gameStateService.panelSizes[panelIndex.Log].y + 'px',
+        'maxHeight': gameStateService.panelSizes[panelIndex.Log].y + 'px'}"
         (cdkDragEnded)="dragEnd($event, panelIndex.Log)"
         (cdkDragStarted)="dragStart($event, panelIndex.Log)"
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Log]"

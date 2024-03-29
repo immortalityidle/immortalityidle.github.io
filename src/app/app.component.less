@@ -54,10 +54,12 @@
     margin: 4px;
     border: 3px solid var(--panelBorder);
     border-radius: 4px;
-    display: inline-table;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     top: 0px;
     left: 0px;
+    overflow: hidden;
 }
 
 .panelHeader {
@@ -74,20 +76,15 @@
     float: right;
 }
 
-.activityPanel {
-    min-width: 500px;
-    width: 500px;
-    max-width: 500px;
-}
-
-.inventoryPanel {
-    min-width: 375px;
-    width: 375px;
-    max-width: 375px;
-}
-
-.timePanel {
-    min-width: 360px;
+.panelResizeHandle {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    cursor: se-resize;
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-bottom: 10px solid var(--panelBorder);
 }
 
 .dragHandle {

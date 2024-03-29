@@ -84,6 +84,7 @@ export class BigNumberPipe implements PipeTransform {
 export class AppComponent implements OnInit {
   doingPanelDrag = false;
   panelIndex: typeof PanelIndex = PanelIndex;
+  resizingPanel = -1;
 
   title = 'immortalityidle';
   applicationVersion = environment.appVersion;
@@ -189,7 +190,29 @@ export class AppComponent implements OnInit {
       return;
     }
     if (event.buttons !== 1) {
+      this.doingPanelDrag = false;
+      if (this.resizingPanel !== -1) {
+        // just released a panel resize
+        this.resizingPanel = -1;
+        // always save when the player moves the windows around
+        this.gameStateService.savetoLocalStorage();
+      }
       return;
+    }
+    if (this.resizingPanel !== -1) {
+      const newWidth = this.gameStateService.panelSizes[this.resizingPanel].x + event.movementX;
+      this.gameStateService.panelSizes[this.resizingPanel].x = newWidth;
+      const newHeight = this.gameStateService.panelSizes[this.resizingPanel].y + event.movementY;
+      this.gameStateService.panelSizes[this.resizingPanel].y = newHeight;
+      return;
+    }
+
+    if (event.target instanceof Element && event.target.classList.contains('panelResizeHandle')) {
+      if (this.resizingPanel === -1) {
+        if (event.target.parentElement) {
+          this.resizingPanel = parseInt(event.target.parentElement.id);
+        }
+      }
     }
     if (event.target instanceof Element && event.target.classList.contains('bodyContainer')) {
       const x = this.scroller.getScrollPosition()[0] - event.movementX;

@@ -32,9 +32,6 @@ import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible
 import { ExportPanelComponent } from './export-panel/export-panel.component';
 import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.component';
-import { VerticalPanelSliderComponent } from './panel-slider/vertical-panel-slider/vertical-panel-slider.component';
-import { ResizableDirective } from './panel-slider/resizable.directive';
-import { HorizontalPanelSliderComponent } from './panel-slider/horizontal-panel-slider/horizontal-panel-slider.component';
 import { FollowerManagementPanelComponent } from './follower-management-panel/follower-management-panel.component';
 import { TimeOptionsPanelComponent } from './time-options-panel/time-options-panel.component';
 import { LogFilterPanelComponent } from './log-filter-panel/log-filter-panel.component';
@@ -74,9 +71,6 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatToolt
     ExportPanelComponent,
     TutorialPanelComponent,
     ChangelogPanelComponent,
-    VerticalPanelSliderComponent,
-    ResizableDirective,
-    HorizontalPanelSliderComponent,
     FollowerManagementPanelComponent,
     TimeOptionsPanelComponent,
     LogFilterPanelComponent,
