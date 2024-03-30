@@ -40,6 +40,7 @@ interface GameState {
   panelPositions: Point[];
   panelZIndex: number[];
   panelSizes: Point[];
+  lockPanels: boolean;
 }
 
 declare global {
@@ -79,6 +80,7 @@ export class GameStateService {
   defaultPanelZIndex: number[];
   panelSizes: Point[];
   defaultPanelSizes: Point[];
+  lockPanels = false;
 
   constructor(
     private characterService: CharacterService,
@@ -110,11 +112,11 @@ export class GameStateService {
     this.defaultPanelPositions[PanelIndex.Health] = { x: 0, y: 40 };
     this.defaultPanelPositions[PanelIndex.Log] = { x: 0, y: 900 };
     this.defaultPanelPositions[PanelIndex.Activity] = { x: 420, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Home] = { x: 800, y: 260 };
+    this.defaultPanelPositions[PanelIndex.Home] = { x: 800, y: 360 };
     this.defaultPanelPositions[PanelIndex.Time] = { x: 800, y: 40 };
     this.defaultPanelPositions[PanelIndex.Battle] = { x: 0, y: 680 };
     this.defaultPanelPositions[PanelIndex.Inventory] = { x: 1220, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 800, y: 480 };
+    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 800, y: 580 };
     this.defaultPanelPositions[PanelIndex.Followers] = { x: 230, y: 200 };
 
     this.defaultPanelSizes = [];
@@ -124,10 +126,10 @@ export class GameStateService {
     this.defaultPanelSizes[PanelIndex.Log] = { x: 1200, y: 400 };
     this.defaultPanelSizes[PanelIndex.Activity] = { x: 360, y: 620 };
     this.defaultPanelSizes[PanelIndex.Home] = { x: 400, y: 200 };
-    this.defaultPanelSizes[PanelIndex.Time] = { x: 400, y: 200 };
+    this.defaultPanelSizes[PanelIndex.Time] = { x: 400, y: 300 };
     this.defaultPanelSizes[PanelIndex.Battle] = { x: 780, y: 200 };
     this.defaultPanelSizes[PanelIndex.Inventory] = { x: 200, y: 840 };
-    this.defaultPanelSizes[PanelIndex.Equipment] = { x: 400, y: 400 };
+    this.defaultPanelSizes[PanelIndex.Equipment] = { x: 400, y: 300 };
     this.defaultPanelSizes[PanelIndex.Followers] = { x: 400, y: 400 };
 
     this.panelPositions = this.defaultPanelPositions;
@@ -252,6 +254,7 @@ export class GameStateService {
     this.panelPositions = gameState.panelPositions || this.defaultPanelPositions;
     this.panelZIndex = gameState.panelZIndex || this.defaultPanelZIndex;
     this.panelSizes = gameState.panelSizes || this.defaultPanelSizes;
+    this.lockPanels = gameState.lockPanels || false;
     this.updateImportFlagKey();
   }
 
@@ -276,6 +279,7 @@ export class GameStateService {
       panelPositions: this.panelPositions,
       panelZIndex: this.panelZIndex,
       panelSizes: this.panelSizes,
+      lockPanels: this.lockPanels,
     };
     let gameStateString = JSON.stringify(gameState);
     gameStateString = 'iig' + btoa(encodeURIComponent(gameStateString));

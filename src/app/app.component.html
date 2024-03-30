@@ -39,9 +39,14 @@
       <span class="discordLink">
         <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" matTooltip="Have questions? Try the Immortality Idle Discord.">Discord</a>
       </span>
+      <span>
+        <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
+        <label for="lockPanels">Lock panels in place</label>
+      </span>
     </div>
-    <div class="bodyContainer" #bodyContainer (mousemove)="onBodyDrag($event)">
-      <app-time-panel cdkDrag class="timePanel panel" id="{{panelIndex.Time}}"
+    <div class="bodyContainer" #bodyContainer (mousemove)="onBodyMouseMove($event)" 
+      (touchmove)="onBodyTouchMove($event)" (touchstart)="onBodyTouchStart($event)" (touchend)="onBodyTouchEnd()">
+      <app-time-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="timePanel panel" id="{{panelIndex.Time}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Time], 
         'minWidth': gameStateService.panelSizes[panelIndex.Time].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Time].x + 'px',
@@ -54,7 +59,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Time]"
         cdkDragBoundary=".bodyContainer">
       </app-time-panel>
-      <app-attributes-panel cdkDrag class="attributesPanel panel" id="{{panelIndex.Attributes}}"
+      <app-attributes-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="attributesPanel panel" id="{{panelIndex.Attributes}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Attributes], 
         'minWidth': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
@@ -67,7 +72,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Attributes]"
         cdkDragBoundary=".bodyContainer">
       </app-attributes-panel>
-      <app-followers-panel *ngIf="followersService.followersUnlocked" cdkDrag class="followersPanel panel"  id="{{panelIndex.Followers}}"
+      <app-followers-panel *ngIf="followersService.followersUnlocked" cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="followersPanel panel"  id="{{panelIndex.Followers}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Followers], 
         'minWidth': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
@@ -80,7 +85,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Followers]"
         cdkDragBoundary=".bodyContainer">
       </app-followers-panel>
-      <app-health-panel cdkDrag class="healthPanel panel" id="{{panelIndex.Health}}"
+      <app-health-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="healthPanel panel" id="{{panelIndex.Health}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Health], 
         'minWidth': gameStateService.panelSizes[panelIndex.Health].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Health].x + 'px',
@@ -93,7 +98,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Health]"
         cdkDragBoundary=".bodyContainer">
       </app-health-panel>
-      <app-activity-panel cdkDrag class="activityPanel panel" id="{{panelIndex.Activity}}"
+      <app-activity-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="activityPanel panel" id="{{panelIndex.Activity}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Activity], 
           'minWidth': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
           'width': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
@@ -106,7 +111,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Activity]"
         cdkDragBoundary=".bodyContainer">
       </app-activity-panel>
-      <app-battle-panel cdkDrag class="battlePanel panel"  id="{{panelIndex.Battle}}"
+      <app-battle-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="battlePanel panel"  id="{{panelIndex.Battle}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Battle], 
         'minWidth': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
@@ -119,7 +124,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Battle]"
         cdkDragBoundary=".bodyContainer">
       </app-battle-panel>
-      <app-equipment-panel cdkDrag class="equipmentPanel panel"  id="{{panelIndex.Equipment}}"
+      <app-equipment-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="equipmentPanel panel"  id="{{panelIndex.Equipment}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Equipment], 
         'minWidth': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
@@ -132,7 +137,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Equipment]"
         cdkDragBoundary=".bodyContainer">
       </app-equipment-panel>
-      <app-home-panel cdkDrag class="homePanel panel"  id="{{panelIndex.Home}}"
+      <app-home-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="homePanel panel"  id="{{panelIndex.Home}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Home], 
         'minWidth': gameStateService.panelSizes[panelIndex.Home].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Home].x + 'px',
@@ -145,7 +150,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Home]"
         cdkDragBoundary=".bodyContainer">
       </app-home-panel>
-      <app-inventory-panel cdkDrag class="inventoryPanel panel"  id="{{panelIndex.Inventory}}"
+      <app-inventory-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="inventoryPanel panel"  id="{{panelIndex.Inventory}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Inventory], 
         'minWidth': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
@@ -158,7 +163,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Inventory]"
         cdkDragBoundary=".bodyContainer">
       </app-inventory-panel>
-      <app-log-panel cdkDrag class="logPanel panel"  id="{{panelIndex.Log}}"
+      <app-log-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="logPanel panel"  id="{{panelIndex.Log}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Log], 
         'minWidth': gameStateService.panelSizes[panelIndex.Log].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Log].x + 'px',

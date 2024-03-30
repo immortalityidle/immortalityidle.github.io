@@ -17,7 +17,7 @@ import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.compo
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { HellService } from './game-state/hell.service';
 import { StatisticsService } from './game-state/statistics.service';
-import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragStart, Point } from '@angular/cdk/drag-drop';
 import { ViewportScroller } from '@angular/common';
 import { FollowersService } from './game-state/followers.service';
 
@@ -83,8 +83,10 @@ export class BigNumberPipe implements PipeTransform {
 })
 export class AppComponent implements OnInit {
   doingPanelDrag = false;
+  doingBodyDrag = false;
   panelIndex: typeof PanelIndex = PanelIndex;
   resizingPanel = -1;
+  previousPoint: Point = { x: 0, y: 0 };
 
   title = 'immortalityidle';
   applicationVersion = environment.appVersion;
@@ -185,12 +187,13 @@ export class AppComponent implements OnInit {
     }
   }
 
-  onBodyDrag(event: MouseEvent) {
+  onBodyMouseMove(event: MouseEvent) {
     if (this.doingPanelDrag) {
       return;
     }
     if (event.buttons !== 1) {
       this.doingPanelDrag = false;
+      this.doingBodyDrag = false;
       if (this.resizingPanel !== -1) {
         // just released a panel resize
         this.resizingPanel = -1;
@@ -206,18 +209,66 @@ export class AppComponent implements OnInit {
       this.gameStateService.panelSizes[this.resizingPanel].y = newHeight;
       return;
     }
-
     if (event.target instanceof Element && event.target.classList.contains('panelResizeHandle')) {
+      if (this.gameStateService.lockPanels) {
+        return;
+      }
       if (this.resizingPanel === -1) {
         if (event.target.parentElement) {
           this.resizingPanel = parseInt(event.target.parentElement.id);
         }
       }
     }
-    if (event.target instanceof Element && event.target.classList.contains('bodyContainer')) {
+    if (this.doingBodyDrag || (event.target instanceof Element && event.target.classList.contains('bodyContainer'))) {
       const x = this.scroller.getScrollPosition()[0] - event.movementX;
       const y = this.scroller.getScrollPosition()[1] - event.movementY;
       this.scroller.scrollToPosition([x, y]);
+      this.doingBodyDrag = true;
+    }
+  }
+
+  onBodyTouchStart(event: TouchEvent) {
+    this.previousPoint.x = event.touches[0].pageX;
+    this.previousPoint.y = event.touches[0].pageY;
+  }
+
+  onBodyTouchEnd() {
+    if (this.resizingPanel !== -1) {
+      // just released a panel resize
+      this.resizingPanel = -1;
+      // always save when the player moves the windows around
+      this.gameStateService.savetoLocalStorage();
+    }
+  }
+
+  onBodyTouchMove(event: TouchEvent) {
+    if (this.gameStateService.lockPanels) {
+      return;
+    }
+
+    if (this.doingPanelDrag) {
+      event.preventDefault();
+      return;
+    }
+    if (this.resizingPanel !== -1) {
+      const movementX = event.touches[0].pageX - this.previousPoint.x;
+      const movementY = event.touches[0].pageY - this.previousPoint.y;
+      const newWidth = this.gameStateService.panelSizes[this.resizingPanel].x + movementX;
+      this.gameStateService.panelSizes[this.resizingPanel].x = newWidth;
+      const newHeight = this.gameStateService.panelSizes[this.resizingPanel].y + movementY;
+      this.gameStateService.panelSizes[this.resizingPanel].y = newHeight;
+      this.previousPoint.x = event.touches[0].pageX;
+      this.previousPoint.y = event.touches[0].pageY;
+      event.preventDefault();
+      return;
+    }
+    if (event.target instanceof Element && event.target.classList.contains('panelResizeHandle')) {
+      if (this.resizingPanel === -1) {
+        if (event.target.parentElement) {
+          this.resizingPanel = parseInt(event.target.parentElement.id);
+          event.preventDefault();
+        }
+      }
     }
   }
 
@@ -284,5 +335,9 @@ export class AppComponent implements OnInit {
       data: { someField: 'foo' },
       autoFocus: false,
     });
+  }
+
+  lockPanelsToggle() {
+    this.gameStateService.lockPanels = !this.gameStateService.lockPanels;
   }
 }
