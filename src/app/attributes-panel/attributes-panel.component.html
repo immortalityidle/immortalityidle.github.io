@@ -10,7 +10,7 @@
 <div class="attributesContainer">
   <table class="attributesTable">
     <ng-container *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
-      <tr *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" 
+      <tr *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" class="attributeLine"
         matTooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your gains by {{attribute.value.aptitudeMult | bigNumber}}.">
         <td >
           <mat-icon>{{attribute.value.icon}}</mat-icon>

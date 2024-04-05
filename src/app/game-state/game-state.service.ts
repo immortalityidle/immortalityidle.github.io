@@ -111,23 +111,23 @@ export class GameStateService {
     this.defaultPanelPositions[PanelIndex.Attributes] = { x: 0, y: 260 };
     this.defaultPanelPositions[PanelIndex.Health] = { x: 0, y: 40 };
     this.defaultPanelPositions[PanelIndex.Log] = { x: 0, y: 900 };
-    this.defaultPanelPositions[PanelIndex.Activity] = { x: 420, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Home] = { x: 800, y: 360 };
-    this.defaultPanelPositions[PanelIndex.Time] = { x: 800, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Activity] = { x: 450, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Home] = { x: 830, y: 360 };
+    this.defaultPanelPositions[PanelIndex.Time] = { x: 830, y: 40 };
     this.defaultPanelPositions[PanelIndex.Battle] = { x: 0, y: 680 };
-    this.defaultPanelPositions[PanelIndex.Inventory] = { x: 1220, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 800, y: 580 };
-    this.defaultPanelPositions[PanelIndex.Followers] = { x: 230, y: 200 };
+    this.defaultPanelPositions[PanelIndex.Inventory] = { x: 1250, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 830, y: 580 };
+    this.defaultPanelPositions[PanelIndex.Followers] = { x: 1470, y: 40 };
 
     this.defaultPanelSizes = [];
 
-    this.defaultPanelSizes[PanelIndex.Attributes] = { x: 400, y: 400 };
-    this.defaultPanelSizes[PanelIndex.Health] = { x: 400, y: 200 };
-    this.defaultPanelSizes[PanelIndex.Log] = { x: 1200, y: 400 };
+    this.defaultPanelSizes[PanelIndex.Attributes] = { x: 430, y: 400 };
+    this.defaultPanelSizes[PanelIndex.Health] = { x: 430, y: 200 };
+    this.defaultPanelSizes[PanelIndex.Log] = { x: 1230, y: 400 };
     this.defaultPanelSizes[PanelIndex.Activity] = { x: 360, y: 620 };
     this.defaultPanelSizes[PanelIndex.Home] = { x: 400, y: 200 };
     this.defaultPanelSizes[PanelIndex.Time] = { x: 400, y: 300 };
-    this.defaultPanelSizes[PanelIndex.Battle] = { x: 780, y: 200 };
+    this.defaultPanelSizes[PanelIndex.Battle] = { x: 810, y: 200 };
     this.defaultPanelSizes[PanelIndex.Inventory] = { x: 200, y: 840 };
     this.defaultPanelSizes[PanelIndex.Equipment] = { x: 400, y: 300 };
     this.defaultPanelSizes[PanelIndex.Followers] = { x: 400, y: 400 };

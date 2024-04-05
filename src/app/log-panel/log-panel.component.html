@@ -14,12 +14,14 @@
     </mat-icon>
     <span class="headerNote">Newest messages appear at the top.</span>
   </h3>
-  <div class="logBox">
-    <ng-container *ngFor="let logMsg of logService.currentLog">
-      <div [ngClass]="logMsg.type" class="logEntryDiv">
-        {{logMsg.message}}<span *ngIf="logMsg.repeat"> ({{logMsg.repeat}} times)</span>
-      </div>
-    </ng-container>
+  <div class="logBoxContainer">
+    <div class="logBox">
+      <ng-container *ngFor="let logMsg of logService.currentLog">
+        <div [ngClass]="logMsg.type" class="logEntryDiv">
+          {{logMsg.message}}<span *ngIf="logMsg.repeat"> ({{logMsg.repeat}} times)</span>
+        </div>
+      </ng-container>
+    </div>
   </div>
 </div>
 <div class="panelResizeHandle"></div>
