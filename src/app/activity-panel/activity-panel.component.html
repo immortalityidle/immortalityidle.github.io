@@ -51,16 +51,13 @@
         <ng-container *ngFor="let activity of activityService.activities; let indexOfelement=index;">
           <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" 
             *ngIf="(activity.discovered || activity.unlocked)"[tabindex]="0"
-            draggable="true" (dragstart)="drag(activity, $event)">
-              <div class="activityLabel">
+            draggable="true" (dragstart)="drag(activity, $event)"
+            (click)="doActivity(activity)" >
+              <div class="activityLabel" matTooltip="{{getActivityTooltip(activity, true)}}" >
                 <span>{{activity.name[activity.level]}}</span>
               </div>
               <div class="activityButtons">
                 <span>
-                  <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="{{getActivityTooltip(activity, true)}}" 
-                    aria-label="Do this activity" aria-hidden="false">
-                    update
-                  </mat-icon>
                   <mat-icon *ngIf="activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="Do this activity" 
                     aria-label="Do this activity" aria-hidden="false">
                     arrow_forward

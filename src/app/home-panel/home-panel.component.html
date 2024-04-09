@@ -13,7 +13,7 @@
       You live in a {{homeService.home.name}}
     </div>
   </h3>
-  <div class="homeContainer" *ngIf="!homeService.hideHome && (!hellService.inHell || homeService.hellHome || homeService.hellFood)">
+  <div class="homeContainer" *ngIf="(!hellService.inHell || homeService.hellHome || homeService.hellFood)">
     <div class="overflow">
       <div class="homeInfo" *ngIf="!hellService.inHell && !characterService.characterState.god"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>      <div class="homeInfo"><span>You own {{homeService.land | bigNumber}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length + homeService.extraFields | bigNumber}} fields</span></div>
       <div class="furnitureSlots" *ngIf="homeService.home.furnitureSlots.length > 0 && (!hellService.inHell || homeService.hellHome)">

@@ -112,11 +112,11 @@ export class GameStateService {
     this.defaultPanelPositions[PanelIndex.Health] = { x: 0, y: 40 };
     this.defaultPanelPositions[PanelIndex.Log] = { x: 0, y: 900 };
     this.defaultPanelPositions[PanelIndex.Activity] = { x: 450, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Home] = { x: 830, y: 360 };
-    this.defaultPanelPositions[PanelIndex.Time] = { x: 830, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Home] = { x: 1050, y: 360 };
+    this.defaultPanelPositions[PanelIndex.Time] = { x: 1050, y: 40 };
     this.defaultPanelPositions[PanelIndex.Battle] = { x: 0, y: 680 };
-    this.defaultPanelPositions[PanelIndex.Inventory] = { x: 1250, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 830, y: 580 };
+    this.defaultPanelPositions[PanelIndex.Inventory] = { x: 830, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 1050, y: 580 };
     this.defaultPanelPositions[PanelIndex.Followers] = { x: 1470, y: 40 };
 
     this.defaultPanelSizes = [];

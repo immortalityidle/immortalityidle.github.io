@@ -12,7 +12,7 @@ import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
-import { MainLoopProperties, MainLoopService } from '../game-state/main-loop.service';
+import { MainLoopService } from '../game-state/main-loop.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 
 @Component({
@@ -98,22 +98,27 @@ export class ActivityPanelComponent {
     }
   }
 
-  doActivity(activity: Activity){
+  doActivity(activity: Activity) {
     if (activity.instant) {
       activity.consequence[activity.level]();
       return;
     }
-    if (!this.activityService.meetsRequirements(activity)){
-      this.logService.log(LogTopic.EVENT, activity.name[activity.level] + " is unavailable now.");
+    if (!this.activityService.meetsRequirements(activity)) {
+      this.logService.log(LogTopic.EVENT, activity.name[activity.level] + ' is unavailable now.');
       return;
-    } 
-    if (!this.activityService.checkResourceUse(activity)){
-      this.logService.log(LogTopic.EVENT, "You don't meet the requirements to do " + activity.name[activity.level] + " right now.");
+    }
+    const failedStatus = this.activityService.checkResourceUse(activity);
+    if (failedStatus !== '') {
+      this.characterService.characterState.flashStatus(failedStatus);
+      this.logService.log(
+        LogTopic.EVENT,
+        "You don't meet the requirements to do " + activity.name[activity.level] + ' right now.'
+      );
       return;
     }
 
     this.activityService.immediateActivity = activity;
-    this.mainLoopService.tick()
+    this.mainLoopService.tick();
     this.activityService.immediateActivity = null;
   }
 
@@ -139,8 +144,8 @@ export class ActivityPanelComponent {
     if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell) {
       return '';
     } else if (activity.unlocked) {
-      if (doNow){
-        return "Spend a day doing this activity";
+      if (doNow) {
+        return 'Spend a day doing this activity';
       } else {
         let projectionString = '';
         if (this.characterService.characterState.manaUnlocked) {
@@ -163,18 +168,17 @@ export class ActivityPanelComponent {
     }
   }
 
-  showActivity(activity: Activity){
-    let bodyString = activity.description[activity.level] + "\n\n" + activity.consequenceDescription[activity.level];
-    if (activity.projectionOnly){
-      bodyString +="\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.";
+  showActivity(activity: Activity) {
+    let bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
+    if (activity.projectionOnly) {
+      bodyString +=
+        '\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.';
     }
 
-    const dialogRef = this.dialog.open(TextPanelComponent, {
+    this.dialog.open(TextPanelComponent, {
       width: '400px',
       data: { titleText: activity.name[activity.level], bodyText: bodyString },
       autoFocus: false,
     });
-
   }
 }
-

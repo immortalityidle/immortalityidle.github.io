@@ -63,6 +63,31 @@ export class AchievementService {
   // important: achievement effects must be idempotent as they may be called multiple times
   achievements: Achievement[] = [
     {
+      name: 'One Week',
+      description: 'You survived your first week of this game!',
+      hint: 'Try some activities.',
+      check: () => {
+        return this.mainLoopService.totalTicks > 7;
+      },
+      effect: () => {
+        this.mainLoopService.timeUnlocked = true;
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Big Earner',
+      description:
+        'You earned your first few taels by working hard. Maybe you should invest in some land and a better home.',
+      hint: 'Make some money.',
+      check: () => {
+        return this.characterService.characterState.money >= 350;
+      },
+      effect: () => {
+        this.homeService.homeUnlocked = true;
+      },
+      unlocked: false,
+    },
+    {
       name: 'Bookworm',
       description:
         'You opened the manuals shop and unlocked the ' + this.itemRepoService.items['restartActivityManual'].name,
@@ -100,6 +125,18 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fasterPlayManual']);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Gear Up!',
+      description: 'You created some equipment and now you can wear it.',
+      hint: 'Some jobs let you make stuff you can use.',
+      check: () => {
+        return this.inventoryService.equipmentCreated > 0;
+      },
+      effect: () => {
+        this.inventoryService.equipmentUnlocked = true;
       },
       unlocked: false,
     },

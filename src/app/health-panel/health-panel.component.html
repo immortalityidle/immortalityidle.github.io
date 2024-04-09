@@ -31,7 +31,7 @@
     <tr>
       <td matTooltip="{{characterService.characterState.status.health.description}}" >Health</td>
       <td class="health">
-        <div class="progress-bar"
+        <div class="progress-bar" [ngClass]="flashHealth ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.health.max) | bigNumber">
           <span
@@ -43,7 +43,7 @@
       </td>
       <td matTooltip="{{characterService.characterState.status.stamina.description}}" >Stamina</td>
       <td class="stamina">
-        <div class="progress-bar"
+        <div class="progress-bar" [ngClass]="flashStamina ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.status.stamina.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.stamina.max) | bigNumber">
           <span
@@ -57,7 +57,7 @@
     <tr>
       <td matTooltip="{{characterService.characterState.status.nourishment.description}}" >Nutrition</td>
       <td class="nourishment">
-        <div class="progress-bar"
+        <div class="progress-bar" [ngClass]="flashNutrition ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.status.nourishment.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.nourishment.max) | bigNumber">
           <span
@@ -69,7 +69,7 @@
       </td>
       <td matTooltip="{{characterService.characterState.status.mana.description}}" >Mana</td>
       <td class="mana">
-        <div class="progress-bar"
+        <div class="progress-bar" [ngClass]="flashMana ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.status.mana.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.mana.max) | bigNumber">
           <span

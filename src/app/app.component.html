@@ -46,7 +46,7 @@
     </div>
     <div class="bodyContainer" #bodyContainer (mousemove)="onBodyMouseMove($event)" 
       (touchmove)="onBodyTouchMove($event)" (touchstart)="onBodyTouchStart($event)" (touchend)="onBodyTouchEnd()">
-      <app-time-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="timePanel panel" id="{{panelIndex.Time}}"
+      <app-time-panel *ngIf="mainLoopService.timeUnlocked" cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="timePanel panel" id="{{panelIndex.Time}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Time], 
         'minWidth': gameStateService.panelSizes[panelIndex.Time].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Time].x + 'px',
@@ -124,7 +124,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Battle]"
         cdkDragBoundary=".bodyContainer">
       </app-battle-panel>
-      <app-equipment-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="equipmentPanel panel"  id="{{panelIndex.Equipment}}"
+      <app-equipment-panel *ngIf="inventoryService.equipmentUnlocked" cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="equipmentPanel panel"  id="{{panelIndex.Equipment}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Equipment], 
         'minWidth': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
@@ -137,7 +137,7 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Equipment]"
         cdkDragBoundary=".bodyContainer">
       </app-equipment-panel>
-      <app-home-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="homePanel panel"  id="{{panelIndex.Home}}"
+      <app-home-panel *ngIf="homeService.homeUnlocked" cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="homePanel panel"  id="{{panelIndex.Home}}"
         [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Home], 
         'minWidth': gameStateService.panelSizes[panelIndex.Home].x + 'px',
         'width': gameStateService.panelSizes[panelIndex.Home].x + 'px',

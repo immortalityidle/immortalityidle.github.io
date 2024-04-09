@@ -51,7 +51,7 @@ type AttributeObject = {
 };
 
 export type AttributeUpdates = {
-  [key in AttributeType]: number
+  [key in AttributeType]: number;
 };
 
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
@@ -147,9 +147,8 @@ export class Character {
       fireLore: 0,
       animalHandling: 0,
       combatMastery: 0,
-      magicMastery: 0
+      magicMastery: 0,
     };
-
   }
 
   maxMoney = 9.9999e23;
@@ -193,6 +192,7 @@ export class Character {
   dialogRef: MatDialogRef<LifeSummaryComponent> | null = null;
   attributeUpdates: AttributeUpdates;
   moneyUpdates = 0;
+  statusToFlash: string[] = [];
 
   attributes: AttributeObject = {
     strength: {
@@ -653,8 +653,14 @@ export class Character {
 
   updateMoney(amount: number) {
     this.money += amount;
-    if (this.showUpdateAnimations){
+    if (this.showUpdateAnimations) {
       this.moneyUpdates += amount;
+    }
+  }
+
+  flashStatus(statusToFlash: string) {
+    if (!this.statusToFlash.includes(statusToFlash)) {
+      this.statusToFlash.push(statusToFlash);
     }
   }
 
@@ -668,12 +674,11 @@ export class Character {
     if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;
     }
-    if (this.showUpdateAnimations){
+    if (this.showUpdateAnimations) {
       this.attributeUpdates[attribute] += increaseAmount;
     }
     return increaseAmount;
   }
-
 
   increaseAptitudeDaily(days: number) {
     const keys = Object.keys(this.attributes) as AttributeType[];
@@ -798,7 +803,7 @@ export class Character {
       bonusHealth: this.bonusHealth,
       showLifeSummary: this.showLifeSummary,
       showTips: this.showTips,
-      showUpdateAnimations: this.showUpdateAnimations
+      showUpdateAnimations: this.showUpdateAnimations,
     };
   }
 

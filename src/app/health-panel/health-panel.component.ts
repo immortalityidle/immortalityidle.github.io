@@ -11,12 +11,21 @@ export class HealthPanelComponent {
   yinColor = '#000000';
   yangColor = '#ffffff';
   balanceString = 'perfect';
+  flashHealth = false;
+  flashStamina = false;
+  flashMana = false;
+  flashNutrition = false;
 
   Math: Math;
   constructor(public characterService: CharacterService, private mainLoopService: MainLoopService) {
     this.Math = Math;
     mainLoopService.longTickSubject.subscribe(() => {
       this.updateYinYang();
+      this.flashHealth = this.characterService.characterState.statusToFlash.includes('health');
+      this.flashStamina = this.characterService.characterState.statusToFlash.includes('stamina');
+      this.flashMana = this.characterService.characterState.statusToFlash.includes('mana');
+      this.flashNutrition = this.characterService.characterState.statusToFlash.includes('nourishment');
+      this.characterService.characterState.statusToFlash = [];
     });
   }
 

@@ -10,6 +10,7 @@ import { BigNumberPipe } from '../app.component';
 
 export interface Enemy {
   name: string;
+  baseName: string;
   health: number;
   maxHealth: number;
   accuracy: number;
@@ -575,10 +576,13 @@ export class BattleService {
     let defense = this.troubleKills / 5;
     let gem;
     let monsterName;
+    let monsterBaseName;
     if (this.characterService.characterState.god) {
       const index = this.troubleKills % this.monsterNames.length;
       const rank = Math.floor(this.troubleKills / this.monsterNames.length);
-      monsterName = 'Godslaying ' + this.monsterNames[index];
+      monsterBaseName = this.monsterNames[index];
+      monsterName = 'Godslaying ' + monsterBaseName;
+
       if (rank > 0) {
         monsterName += ' ' + (rank + 1);
       }
@@ -592,6 +596,7 @@ export class BattleService {
       const index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
       const nameIndex = Math.floor(index / this.monsterQualities.length);
       const qualityIndex = index % this.monsterQualities.length;
+      monsterBaseName = this.monsterNames[nameIndex];
       monsterName = this.monsterQualities[qualityIndex] + ' ' + this.monsterNames[nameIndex];
       if (rank > 0) {
         monsterName += ' ' + (rank + 1);
@@ -602,6 +607,7 @@ export class BattleService {
 
     this.addEnemy({
       name: monsterName,
+      baseName: monsterBaseName,
       health: health,
       maxHealth: health,
       accuracy: 0.5,
@@ -659,6 +665,7 @@ export class BattleService {
       this.logService.log(LogTopic.COMBAT, 'They just keep coming! Two more ' + enemy.name + ' appear!');
       this.addEnemy({
         name: enemy.name,
+        baseName: enemy.baseName,
         health: enemy.maxHealth,
         maxHealth: enemy.maxHealth,
         accuracy: enemy.accuracy,
@@ -669,6 +676,7 @@ export class BattleService {
       });
       this.addEnemy({
         name: enemy.name,
+        baseName: enemy.baseName,
         health: enemy.maxHealth,
         maxHealth: enemy.maxHealth,
         accuracy: enemy.accuracy,
@@ -725,7 +733,7 @@ export class BattleService {
     'crocodile',
     'incubus',
     'succubus',
-    'jackal',
+    'jackal', // need image
     'basilisk',
     'mogwai',
     'ghoul',
@@ -758,7 +766,7 @@ export class BattleService {
     'undine',
     'minotaur',
     'bunyip',
-    'cyclops',
+    'cyclops', //
     'rakshasa',
     'oni',
     'nyuk',
@@ -776,7 +784,7 @@ export class BattleService {
     'wyrm',
     'giant',
     'kraken',
-    'behemonth',
+    'behemoth',
     'phoenix',
     'pazuzu',
     'titan',

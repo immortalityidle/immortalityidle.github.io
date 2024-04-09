@@ -8,7 +8,7 @@
   </mat-icon>  
 </div>
 
-<div class="equipmentContainer" *ngIf="!inventoryService.hideEquipment">
+<div class="equipmentContainer">
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
       draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
       (dblclick)="slotDoubleClicked('head', $event)" tabindex="0"

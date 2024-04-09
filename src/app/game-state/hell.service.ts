@@ -179,6 +179,7 @@ export class HellService {
         this.characterService.characterState.status.stamina.value -= 100;
         this.battleService.addEnemy({
           name: 'Troublemaker',
+          baseName: 'troublemaker',
           health: 100,
           maxHealth: 100,
           accuracy: 0.5,
@@ -388,6 +389,7 @@ export class HellService {
         for (let i = 0; i < numberSpawned; i++) {
           this.battleService.addEnemy({
             name: 'Ice Golem',
+            baseName: 'icegolem',
             health: 1e15,
             maxHealth: 1e15,
             accuracy: 0.7,
@@ -421,6 +423,7 @@ export class HellService {
         for (let i = 0; i < numberSpawned; i++) {
           this.battleService.addEnemy({
             name: 'Lava Golem',
+            baseName: 'lavagolem',
             health: 1e15,
             maxHealth: 1e15,
             accuracy: 0.7,
@@ -843,6 +846,7 @@ export class HellService {
       // tinker with stats/growth
       this.battleService.addEnemy({
         name: 'Tongue Ripper',
+        baseName: 'tongueripper',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         accuracy: 0.5,
@@ -853,6 +857,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
         name: 'Scissors Demon',
+        baseName: 'scissorsdemon',
         health: 1e15 + 1e14 * hellProgress,
         maxHealth: 1e15 + 1e14 * hellProgress,
         accuracy: 0.5,
@@ -866,6 +871,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
         name: 'Hungry Crow',
+        baseName: 'crow',
         health: 1e6,
         maxHealth: 1e6,
         accuracy: 1,
@@ -876,6 +882,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Mirrors) {
       this.battleService.addEnemy({
         name: 'Your Reflection',
+        baseName: 'mirror',
         health: this.characterService.characterState.status.health.value,
         maxHealth: this.characterService.characterState.status.health.value,
         accuracy: this.characterService.characterState.accuracy,
@@ -886,6 +893,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: 'Oiled Demon',
+        baseName: 'oileddemon',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         accuracy: 1,
@@ -898,6 +906,7 @@ export class HellService {
         for (let i = 0; i < 10; i++) {
           this.battleService.addEnemy({
             name: 'Demonic Cow',
+            baseName: 'demoniccow',
             health: 1e20 + 1e19 * hellProgress,
             maxHealth: 1e20 + 1e19 * hellProgress,
             accuracy: 1,
@@ -910,6 +919,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.MortarsAndPestles) {
       this.battleService.addEnemy({
         name: 'Force Feeder',
+        baseName: 'forcefeeder',
         health: 1e6,
         maxHealth: 1e6,
         accuracy: 1,
@@ -922,6 +932,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
         name: 'Axe Demon',
+        baseName: 'axedemon',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         accuracy: 1,
@@ -932,6 +943,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
         name: 'Saw Demon',
+        baseName: 'sawdemon',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         accuracy: 1,
@@ -947,6 +959,7 @@ export class HellService {
     if (this.currentHell === HellLevel.TongueRipping) {
       this.battleService.addEnemy({
         name: 'Gorbolash the Gossip Gasher',
+        baseName: 'Gorbolash',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -957,6 +970,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
         name: 'Malgorath the Marriage Masher',
+        baseName: 'Malgorath',
         health: 1e27,
         maxHealth: 1e27,
         accuracy: 0.8,
@@ -967,6 +981,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
         name: 'Flamgolus the Family Flayer',
+        baseName: 'Flamgolus',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -977,6 +992,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Mirrors) {
       this.battleService.addEnemy({
         name: 'Myorshuggath the Mirror Master',
+        baseName: 'Myorshuggath',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -987,6 +1003,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Steamers) {
       this.battleService.addEnemy({
         name: 'Stactolus the Steamer',
+        baseName: 'Stactolus',
         health: 1e27,
         maxHealth: 1e27,
         accuracy: 0.8,
@@ -997,6 +1014,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.CopperPillars) {
       this.battleService.addEnemy({
         name: 'Ignificor the Forever Burning',
+        baseName: 'Ignificor',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1007,6 +1025,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.MountainOfKnives) {
       this.battleService.addEnemy({
         name: 'Malignus the Murderer Muncher',
+        baseName: 'Malignus',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1017,6 +1036,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.MountainOfIce) {
       this.battleService.addEnemy({
         name: 'The Cheat',
+        baseName: 'Cheat',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1027,6 +1047,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: 'Nestor the Molestor',
+        baseName: 'Nestor',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1037,6 +1058,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.CattlePit) {
       this.battleService.addEnemy({
         name: 'The Cow Emperor',
+        baseName: 'CowEmperor',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1047,6 +1069,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.CrushingBoulder) {
       this.battleService.addEnemy({
         name: 'The Crusher',
+        baseName: 'Crusher',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1057,6 +1080,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.MortarsAndPestles) {
       this.battleService.addEnemy({
         name: 'Glorbulskath the Gluttonous',
+        baseName: 'Glorbulskath',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1067,6 +1091,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.BloodPool) {
       this.battleService.addEnemy({
         name: 'Gnarlyathor the Ever-Bleeding',
+        baseName: 'Gnarlyathor',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1077,6 +1102,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.WrongfulDead) {
       this.battleService.addEnemy({
         name: 'Azoth-Raketh the Storm Master',
+        baseName: 'Azoth-Raketh',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1087,6 +1113,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
         name: 'Druskall the Dismemberer',
+        baseName: 'Druskall',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1097,6 +1124,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.MountainOfFire) {
       this.battleService.addEnemy({
         name: 'Magmar the Lava King',
+        baseName: 'Magmar',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1107,6 +1135,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Mills) {
       this.battleService.addEnemy({
         name: 'Grimstone The Human Grinder',
+        baseName: 'Grimstone',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1117,6 +1146,7 @@ export class HellService {
     } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
         name: 'Crognaslark the Corrupter',
+        baseName: 'Crognaslark',
         health: 1e30,
         maxHealth: 1e30,
         accuracy: 0.8,
@@ -1143,7 +1173,7 @@ export class HellService {
       relicsReturned: this.relicsReturned,
       timesCrushed: this.timesCrushed,
       contractsExamined: this.contractsExamined,
-      atonedKills: this.atonedKills
+      atonedKills: this.atonedKills,
     };
   }
 
@@ -1218,7 +1248,7 @@ export class HellService {
       unlocked: true,
       discovered: true,
       skipApprenticeshipLevel: 0,
-      instant: true
+      instant: true,
     };
   }
 
@@ -1262,7 +1292,7 @@ export class HellService {
         requirements: [{}],
         unlocked: true,
         skipApprenticeshipLevel: 0,
-        instant: true
+        instant: true,
       });
     }
     if (allComplete) {
@@ -1279,6 +1309,7 @@ export class HellService {
             if (this.battleService.enemies.length === 0) {
               this.battleService.addEnemy({
                 name: 'Lord Yama',
+                baseName: 'Yama',
                 health: 1e40,
                 maxHealth: 1e40,
                 accuracy: 0.8,
@@ -1288,6 +1319,7 @@ export class HellService {
               });
               this.battleService.addEnemy({
                 name: 'Horse Face',
+                baseName: 'HorseFace',
                 health: 1e39,
                 maxHealth: 1e39,
                 accuracy: 0.8,
@@ -1297,6 +1329,7 @@ export class HellService {
               });
               this.battleService.addEnemy({
                 name: 'Ox Head',
+                baseName: 'OxHead',
                 health: 1e39,
                 maxHealth: 1e39,
                 accuracy: 0.8,
@@ -1599,7 +1632,7 @@ export class HellService {
         'Torment for those who killed for pleasure. The mountain of sharp blades looks like it might be rough on footwear.',
       index: HellLevel.MountainOfKnives,
       dailyEffect: () => {
-        let damage = (this.battleService.totalKills / 100 - this.mountainSteps) - this.atonedKills;
+        let damage = this.battleService.totalKills / 100 - this.mountainSteps - this.atonedKills;
         this.atonedKills++;
         if (damage < 0) {
           damage = 0;
@@ -1789,6 +1822,7 @@ export class HellService {
         if (Math.random() < 0.1) {
           this.battleService.addEnemy({
             name: 'An Annoying Imp',
+            baseName: 'imp',
             health: 10,
             maxHealth: 10,
             accuracy: 1,

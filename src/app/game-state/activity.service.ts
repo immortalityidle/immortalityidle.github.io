@@ -236,7 +236,7 @@ export class ActivityService {
 
       if (this.immediateActivity) {
         let activity = this.immediateActivity;
-        if (this.autoRestUnlocked && !this.checkResourceUse(activity)) {
+        if (this.autoRestUnlocked && this.checkResourceUse(activity) !== '') {
           // we can't do the activity because of resources, so rest instead
           activity = this.Resting;
         }
@@ -290,7 +290,7 @@ export class ActivityService {
         }
         if (activity) {
           // this should always be true at this point
-          if (this.autoRestUnlocked && !this.checkResourceUse(activity)) {
+          if (this.autoRestUnlocked && this.checkResourceUse(activity) !== '') {
             // we can't do the activity because of resources, so rest instead
             activity = this.Resting;
           }
@@ -380,9 +380,9 @@ export class ActivityService {
     }
   }
 
-  checkResourceUse(activity: Activity, spirit = false): boolean {
+  checkResourceUse(activity: Activity, spirit = false): string {
     if (!activity.resourceUse || !activity.resourceUse[activity.level]) {
-      return true;
+      return '';
     }
     if (spirit) {
       if (!activity.resourceUse[activity.level]['mana']) {
@@ -392,7 +392,7 @@ export class ActivityService {
         this.characterService.characterState.status['mana'].value <
         (activity.resourceUse[activity.level]?.['mana'] ?? 0) + 5
       ) {
-        return false;
+        return 'mana';
       }
     }
     for (const key in activity.resourceUse[activity.level]) {
@@ -400,10 +400,10 @@ export class ActivityService {
         this.characterService.characterState.status[key as StatusType].value <
         (activity.resourceUse?.[activity.level]?.[key as StatusType] ?? 0)
       ) {
-        return false;
+        return key;
       }
     }
-    return true;
+    return '';
   }
 
   handleSpiritActivity() {
@@ -411,7 +411,7 @@ export class ActivityService {
       this.spiritActivityProgress = true;
       const activity = this.getActivityByType(this.spiritActivity);
       // if we don't have the resources for spirit activities, just don't do them
-      if (activity !== null && this.checkResourceUse(activity, true) && activity.unlocked) {
+      if (activity !== null && this.checkResourceUse(activity, true) === '' && activity.unlocked) {
         activity.consequence[activity.level]();
         this.characterService.characterState.status.mana.value -= 5;
       } else {
@@ -1514,6 +1514,7 @@ export class ActivityService {
             for (let i = 0; i < 3; i++) {
               this.battleService.addEnemy({
                 name: 'an angry army',
+                baseName: 'army',
                 health: 2e11,
                 maxHealth: 2e11,
                 accuracy: 0.9,
@@ -1533,6 +1534,7 @@ export class ActivityService {
             );
             this.battleService.addEnemy({
               name: 'an angry army',
+              baseName: 'army',
               health: 2e11,
               maxHealth: 2e11,
               accuracy: 0.9,
@@ -1552,6 +1554,7 @@ export class ActivityService {
             );
             this.battleService.addEnemy({
               name: 'an angry army',
+              baseName: 'army',
               health: 2e11,
               maxHealth: 2e11,
               accuracy: 0.9,
@@ -1593,6 +1596,7 @@ export class ActivityService {
             for (let i = 0; i < 5; i++) {
               this.battleService.addEnemy({
                 name: 'an angry army',
+                baseName: 'army',
                 health: 2e11,
                 maxHealth: 2e11,
                 accuracy: 0.9,
@@ -2855,6 +2859,7 @@ export class ActivityService {
           if (Math.random() < 0.01 && this.battleService.enemies.length === 0) {
             this.battleService.addEnemy({
               name: 'a hungry wolf',
+              baseName: 'wolf',
               health: 20,
               maxHealth: 20,
               accuracy: 0.5,

@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 //import { threadId } from 'worker_threads';
-import { throttleTime, map, bufferCount, Subject, distinct, merge, OperatorFunction, filter } from 'rxjs'
+import { throttleTime, map, bufferCount, Subject, distinct, merge, OperatorFunction, filter } from 'rxjs';
 import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
@@ -24,6 +24,7 @@ export interface MainLoopProperties {
   useBankedTicks: boolean;
   scientificNotation: boolean;
   playMusic: boolean;
+  timeUnlocked: boolean;
 }
 
 @Injectable({
@@ -71,9 +72,10 @@ export class MainLoopService {
   earnedTicks = 0;
   playMusic = false;
   audio: HTMLAudioElement;
+  timeUnlocked = false;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
-    this.audio = new Audio("./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3");
+    this.audio = new Audio('./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3');
     this.audio.volume = 0.2;
     this.audio.loop = true;
   }
@@ -93,7 +95,8 @@ export class MainLoopService {
       totalTicks: this.totalTicks,
       useBankedTicks: this.useBankedTicks,
       scientificNotation: this.scientificNotation,
-      playMusic: this.playMusic
+      playMusic: this.playMusic,
+      timeUnlocked: this.timeUnlocked,
     };
   }
 
@@ -129,6 +132,7 @@ export class MainLoopService {
     this.useBankedTicks = properties.useBankedTicks ?? true;
     this.scientificNotation = properties.scientificNotation || false;
     this.playMusic = properties.playMusic;
+    this.timeUnlocked = properties.timeUnlocked || false;
   }
 
   // audio also helps avoid getting deprioritized in the background.
@@ -138,7 +142,7 @@ export class MainLoopService {
     } else {
       this.audio.pause();
     }
-  };  
+  }
 
   start() {
     if (!this.characterService) {
@@ -201,14 +205,14 @@ export class MainLoopService {
             for (let i = 0; i < backgroundTimeTicks; i++) {
               func();
             }
-          }, BACKGROUND_TICK_INTERVAL_MS)
+          }, BACKGROUND_TICK_INTERVAL_MS);
         } else {
           cancelCurrentTimer = customSetInterval(func, desiredTime);
         }
       };
 
       documentVisibilityChanged();
-      document.addEventListener("visibilitychange", documentVisibilityChanged);
+      document.addEventListener('visibilitychange', documentVisibilityChanged);
     };
 
     const trackTicksOp: OperatorFunction<any, number> = observable => {
@@ -219,18 +223,13 @@ export class MainLoopService {
       );
     };
 
-    this.frameSubject.pipe(
-      throttleTime(LONG_TICK_INTERVAL_MS),
-      trackTicksOp
-    ).subscribe(this.longTickSubject);
+    this.frameSubject.pipe(throttleTime(LONG_TICK_INTERVAL_MS), trackTicksOp).subscribe(this.longTickSubject);
 
     let lastFireTime = Date.now();
     let lastFireDay = this.totalTicks;
     this.tickSubject.subscribe(() => {
       const currentTime = Date.now();
-      if (currentTime - lastFireTime > LONG_TICK_INTERVAL_MS ||
-        this.totalTicks - lastFireDay <= 365
-        ) {
+      if (currentTime - lastFireTime > LONG_TICK_INTERVAL_MS || this.totalTicks - lastFireDay <= 365) {
         this.yearOrLongTickSubject.next(this.totalTicks - lastFireDay);
         lastFireTime = currentTime;
         lastFireDay = this.totalTicks;

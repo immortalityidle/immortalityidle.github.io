@@ -129,7 +129,8 @@ export interface InventoryProperties {
   autoSort: boolean;
   descendingSort: boolean;
   divinePeachesUnlocked: boolean;
-  hideEquipment: boolean;
+  equipmentUnlocked: boolean;
+  equipmentCreated: number;
 }
 
 @Injectable({
@@ -187,7 +188,8 @@ export class InventoryService {
   autoSort = false;
   descendingSort = false;
   divinePeachesUnlocked = false;
-  hideEquipment = false;
+  equipmentUnlocked = false;
+  equipmentCreated = 0;
   durabilityDisclaimer =
     "\nThe durability and value of equipment degrades with use. Be careful when merging powerful items that have seen a lot of wear, the product may be even lower quality than the original if the item's value is low.";
 
@@ -335,7 +337,8 @@ export class InventoryService {
       autoSort: this.autoSort,
       descendingSort: this.descendingSort,
       divinePeachesUnlocked: this.divinePeachesUnlocked,
-      hideEquipment: this.hideEquipment,
+      equipmentUnlocked: this.equipmentUnlocked,
+      equipmentCreated: this.equipmentCreated,
     };
   }
 
@@ -381,13 +384,14 @@ export class InventoryService {
     this.autoSort = properties.autoSort || false;
     this.descendingSort = properties.descendingSort || false;
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
-    this.hideEquipment = properties.hideEquipment || false;
     this.updateFarmFoodList();
     for (const itemStack of this.itemStacks) {
       if (itemStack && itemStack.item.name.includes('monster gem')) {
         itemStack.item.name = itemStack.item.name.replace('monster gem', 'spirit gem');
       }
     }
+    this.equipmentUnlocked = properties.equipmentUnlocked || false;
+    this.equipmentCreated = properties.equipmentCreated || 0;
   }
 
   farmFoodList = [
@@ -467,6 +471,7 @@ export class InventoryService {
     defaultName: string | undefined = undefined,
     effect: string | undefined = undefined
   ): Equipment {
+    this.equipmentCreated++;
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
       // consume a spirit gem and increase the grade
       const value = this.consume('spiritGem', 1, this.useCheapestSpiritGem);
@@ -778,6 +783,7 @@ export class InventoryService {
     defaultName: string | undefined = undefined,
     effect: string | undefined = undefined
   ): Equipment {
+    this.equipmentCreated++;
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
       // consume a spirit gem and increase the grade
       const value = this.consume('spiritGem', 1, this.useCheapestSpiritGem);

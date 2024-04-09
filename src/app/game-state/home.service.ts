@@ -80,7 +80,7 @@ export interface HomeProperties {
   thugPause: boolean;
   hellFood: boolean;
   hellHome: boolean;
-  hideHome: boolean;
+  homeUnlocked: boolean;
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -125,7 +125,7 @@ export class HomeService {
   thugPause = false;
   hellFood = false;
   hellHome = false;
-  hideHome = false;
+  homeUnlocked = false;
   smoothFarming = false;
 
   homesList: Home[] = [
@@ -150,6 +150,7 @@ export class HomeService {
         if (Math.random() < 0.4) {
           this.battleService.addEnemy({
             name: 'a pesky mouse',
+            baseName: 'mouse',
             health: 2,
             maxHealth: 2,
             accuracy: 0.15,
@@ -186,6 +187,7 @@ export class HomeService {
         if (Math.random() < 0.2) {
           this.battleService.addEnemy({
             name: 'a pesky mouse',
+            baseName: 'mouse',
             health: 2,
             maxHealth: 2,
             accuracy: 0.15,
@@ -643,7 +645,7 @@ export class HomeService {
       thugPause: this.thugPause,
       hellFood: this.hellFood,
       hellHome: this.hellHome,
-      hideHome: this.hideHome,
+      homeUnlocked: this.homeUnlocked,
     };
   }
 
@@ -682,7 +684,7 @@ export class HomeService {
     this.thugPause = properties.thugPause || false;
     this.hellFood = properties.hellFood || false;
     this.hellHome = properties.hellHome || false;
-    this.hideHome = properties.hideHome || false;
+    this.homeUnlocked = properties.homeUnlocked || false;
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -843,7 +845,6 @@ export class HomeService {
   // only ever really work the first 300 fields that we show.
   // After that prorate yields by the amount of fields over 300.
   ageFields() {
-
     let startIndex = this.fields.length - 1;
     if (startIndex > 299) {
       startIndex = 299;
@@ -867,13 +868,13 @@ export class HomeService {
         this.fields[i].daysToHarvest--;
       }
     }
-    if (totalDailyYield > 0 || this.smoothFarming){
+    if (totalDailyYield > 0 || this.smoothFarming) {
       this.consecutiveHarvests++;
     } else {
       this.consecutiveHarvests = 0;
     }
     this.averageYield = (this.averageYield * 364 + totalDailyYield) / 365;
-    if (this.smoothFarming && !harvested && this.fields.length > 0 && this.averageYield > 0.5){
+    if (this.smoothFarming && !harvested && this.fields.length > 0 && this.averageYield > 0.5) {
       // smooth farming bonus crops on a day when no crops are harvested
       this.inventoryService.addItem(this.itemRepoService.items[this.fields[0].cropName], Math.round(this.averageYield));
     }

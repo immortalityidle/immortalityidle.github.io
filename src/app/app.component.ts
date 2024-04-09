@@ -20,6 +20,8 @@ import { StatisticsService } from './game-state/statistics.service';
 import { CdkDragEnd, CdkDragStart, Point } from '@angular/cdk/drag-drop';
 import { ViewportScroller } from '@angular/common';
 import { FollowersService } from './game-state/followers.service';
+import { HomeService } from './game-state/home.service';
+import { InventoryService } from './game-state/inventory.service';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -135,7 +137,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private scroller: ViewportScroller,
-    private mainLoopService: MainLoopService,
+    public mainLoopService: MainLoopService,
     public gameStateService: GameStateService,
     public followersService: FollowersService,
     public statisticsService: StatisticsService, // Want to start this ASAP so we start getting statistics immediately.
@@ -143,6 +145,8 @@ export class AppComponent implements OnInit {
     public characterService: CharacterService,
     public impossibleTaskService: ImpossibleTaskService,
     public hellService: HellService,
+    public inventoryService: InventoryService,
+    public homeService: HomeService,
     public dialog: MatDialog
   ) {}
 
