@@ -6,4 +6,7 @@
             {{bodyText}}
         </span>
     </div>
+    <div *ngIf="imageFile !== ''" class="imageDiv">
+        <img src='{{imageFile}}' alt="An activity image goes here" width="160" height="200"/>
+    </div>
 </div>

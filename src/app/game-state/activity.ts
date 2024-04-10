@@ -77,6 +77,7 @@ export type ActivityResource = {
 
 export interface Activity {
   name: string[];
+  imageBaseName?: string;
   level: number;
   activityType: ActivityType;
   description: string[];

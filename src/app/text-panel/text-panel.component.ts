@@ -10,9 +10,11 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class TextPanelComponent {
   titleText = '';
   bodyText = '';
+  imageFile = '';
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { titleText: string; bodyText: string }) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { titleText: string; bodyText: string; imageFile: string }) {
     this.titleText = data.titleText;
     this.bodyText = data.bodyText;
+    this.imageFile = data.imageFile;
   }
 }

@@ -901,6 +901,7 @@ export class ActivityService {
     this.Swim = {
       level: 0,
       name: ['Swim Deeper'],
+      imageBaseName: 'swim',
       activityType: ActivityType.Swim,
       description: ['Swim down further into the depths.'],
       consequenceDescription: ['Uses 20 Stamina. Reduce health by 100.'],
@@ -931,6 +932,7 @@ export class ActivityService {
     this.ForgeChains = {
       level: 0,
       name: ['Forge Unbreakable Chain'],
+      imageBaseName: 'forgechains',
       activityType: ActivityType.ForgeChains,
       description: ['Forge a chain strong enough to pull the island from the depths.'],
       consequenceDescription: [
@@ -988,6 +990,7 @@ export class ActivityService {
     this.AttachChains = {
       level: 0,
       name: ['Attach Chains to the Island'],
+      imageBaseName: 'attachchains',
       activityType: ActivityType.AttachChains,
       description: ['Swim deep and attach one of your chains to the island, then pull.'],
       consequenceDescription: [
@@ -1047,6 +1050,7 @@ export class ActivityService {
     this.MakeBrick = {
       level: 0,
       name: ['Create an Everlasting Brick'],
+      imageBaseName: 'makebrick',
       activityType: ActivityType.MakeBrick,
       description: ['Create bricks sturdy enough to support the weight of your tower.'],
       consequenceDescription: [
@@ -1089,6 +1093,7 @@ export class ActivityService {
     this.MakeScaffold = {
       level: 0,
       name: ['Build Scaffolding'],
+      imageBaseName: 'scaffolding',
       activityType: ActivityType.MakeScaffold,
       description: ['Set up the scaffolding for the next level of your tower.'],
       consequenceDescription: [
@@ -1128,6 +1133,7 @@ export class ActivityService {
     this.MakeMortar = {
       level: 0,
       name: ['Mix Everlasting Mortar'],
+      imageBaseName: 'makemortar',
       activityType: ActivityType.MakeMortar,
       description: ['Mix mortar powerful enough to hold your mighty tower together.'],
       consequenceDescription: [
@@ -1174,6 +1180,7 @@ export class ActivityService {
     this.BuildTower = {
       level: 0,
       name: ['Build the Next Level'],
+      imageBaseName: 'buildtower',
       activityType: ActivityType.BuildTower,
       description: [
         'Assemble 1000 bricks, 100 barrels of mortar, and your scaffolding to construct the next level of your tower. You will need a lot of expert help for this.',
@@ -1264,6 +1271,7 @@ export class ActivityService {
     this.ResearchWind = {
       level: 0,
       name: ['Research Wind Control'],
+      imageBaseName: 'researchwind',
       activityType: ActivityType.ResearchWind,
       description: ['Delve deep into wind lore to understand how the neverending storm can be controlled.'],
       consequenceDescription: [
@@ -1305,6 +1313,7 @@ export class ActivityService {
     this.TameWinds = {
       level: 0,
       name: ['Tame Winds'],
+      imageBaseName: 'tamewind',
       activityType: ActivityType.TameWinds,
       description: ['Use your research to tame the winds.'],
       consequenceDescription: ['Uses 100 Stamina. Use a Tome of Wind Control to tame the hurricane.'],
@@ -1345,6 +1354,7 @@ export class ActivityService {
     this.LearnToFly = {
       level: 0,
       name: ['Learn To Fly'],
+      imageBaseName: 'learntofly',
       activityType: ActivityType.LearnToFly,
       description: ['Jump off your tower and practice flying. This will definitely go well for you.'],
       consequenceDescription: ['You will certainly, probably, maybe not die doing this.'],
@@ -1395,6 +1405,7 @@ export class ActivityService {
     this.OfferDragonFood = {
       level: 0,
       name: ['Offer Food'],
+      imageBaseName: 'offerfood',
       activityType: ActivityType.OfferDragonFood,
       description: ['It turns out that dragons love peaches. Bring the dragon a bunch and he may be more friendly.'],
       consequenceDescription: ['You will need at least 1000 food for this to work.'],
@@ -1429,6 +1440,7 @@ export class ActivityService {
     this.OfferDragonWealth = {
       level: 0,
       name: ['Offer Wealth'],
+      imageBaseName: 'offergold',
       activityType: ActivityType.OfferDragonWealth,
       description: ['You have heard that dragons like treasure. Bring the dragon a bunch and he may be more friendly.'],
       consequenceDescription: ['You will need at least a billion taels for this to work.'],
@@ -1462,6 +1474,7 @@ export class ActivityService {
     this.TalkToDragon = {
       level: 0,
       name: ['Talk to the Dragon'],
+      imageBaseName: 'talktodragon',
       activityType: ActivityType.TalkToDragon,
       description: ['Try to strike up a conversation with the dragon.'],
       consequenceDescription: ['The dragon probably likes you enough to talk to you now, right?'],
@@ -1501,6 +1514,7 @@ export class ActivityService {
     this.GatherArmies = {
       level: 0,
       name: ['Gather Armies'],
+      imageBaseName: 'gatherarmy',
       activityType: ActivityType.GatherArmies,
       description: ['Gather troops into armies. This will require vast amounts of food and money.'],
       consequenceDescription: ["You rule a country by now, right? If not, this isn't going to go well."],
@@ -1580,6 +1594,7 @@ export class ActivityService {
     this.ConquerTheWorld = {
       level: 0,
       name: ['Conquer More Territory'],
+      imageBaseName: 'conquer',
       activityType: ActivityType.ConquerTheWorld,
       description: ['Send out your armies to conquer the world.'],
       consequenceDescription: [
@@ -1633,6 +1648,7 @@ export class ActivityService {
     this.MoveStars = {
       level: 0,
       name: ['Move Stars'],
+      imageBaseName: 'movestars',
       activityType: ActivityType.MoveStars,
       description: ['Extend your vast magical powers into the heavens and force the stars into alignment.'],
       consequenceDescription: ['Uses 1000 Stamina and Mana.'],
@@ -1678,6 +1694,7 @@ export class ActivityService {
     this.OddJobs = {
       level: 0,
       name: ['Odd Jobs'],
+      imageBaseName: 'oddjobs',
       activityType: ActivityType.OddJobs,
       description: [oddJobsDescription],
       consequenceDescription: [
@@ -1710,6 +1727,7 @@ export class ActivityService {
     this.Resting = {
       level: 0,
       name: ['Resting', 'Meditation', 'Communing With Divinity', 'Finding True Inner Peace'],
+      imageBaseName: 'resting',
       activityType: ActivityType.Resting,
       description: [
         'Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
@@ -1814,6 +1832,7 @@ export class ActivityService {
     this.Begging = {
       level: 0,
       name: ['Begging', 'Street Performing', 'Oration', 'Politics'],
+      imageBaseName: 'begging',
       activityType: ActivityType.Begging,
       description: [
         'Find a nice spot on the side of the street, look sad, and put your hand out. Someone might put a coin in it if you are charasmatic enough.',
@@ -1908,6 +1927,7 @@ export class ActivityService {
     this.Blacksmithing = {
       level: 0,
       name: ['Apprentice Blacksmithing', 'Journeyman Blacksmithing', 'Blacksmithing', 'Master Blacksmithing'],
+      imageBaseName: 'blacksmithing',
       activityType: ActivityType.Blacksmithing,
       description: [
         "Work for the local blacksmith. You mostly pump the bellows, but at least you're learning a trade.",
@@ -2121,6 +2141,7 @@ export class ActivityService {
     this.GatherHerbs = {
       level: 0,
       name: ['Gathering Herbs'],
+      imageBaseName: 'herbs',
       activityType: ActivityType.GatherHerbs,
       description: ['Search the natural world for useful herbs.'],
       consequenceDescription: ['Uses 10 Stamina. Find herbs and learn about plants'],
@@ -2158,6 +2179,7 @@ export class ActivityService {
     this.Alchemy = {
       level: 0,
       name: ['Apprentice Alchemy', 'Journeyman Alchemy', 'Alchemy', 'Master Alchemy'],
+      imageBaseName: 'alchemy',
       activityType: ActivityType.Alchemy,
       description: [
         "Get a job at the alchemist's workshop. It smells awful but you might learn a few things.",
@@ -2320,6 +2342,7 @@ export class ActivityService {
     this.ChopWood = {
       level: 0,
       name: ['Chopping Wood'],
+      imageBaseName: 'chopping',
       activityType: ActivityType.ChopWood,
       description: ['Work as a woodcutter, cutting logs in the forest.'],
       consequenceDescription: ['Uses 10 Stamina. Get a log and learn about plants.'],
@@ -2351,6 +2374,7 @@ export class ActivityService {
     this.Woodworking = {
       level: 0,
       name: ['Apprentice Woodworking', 'Journeyman Woodworking', 'Woodworking', 'Master Woodworking'],
+      imageBaseName: 'woodworking',
       activityType: ActivityType.Woodworking,
       description: [
         "Work in a woodcarver's shop.",
@@ -2530,6 +2554,7 @@ export class ActivityService {
     this.Leatherworking = {
       level: 0,
       name: ['Apprentice Leatherworking', 'Journeyman Leatherworking', 'Leatherworking', 'Master Leatherworking'],
+      imageBaseName: 'leatherworking',
       activityType: ActivityType.Leatherworking,
       description: [
         'Work in a tannery, where hides are turned into leather items.',
@@ -2716,6 +2741,7 @@ export class ActivityService {
     this.Farming = {
       level: 0,
       name: ['Farming'],
+      imageBaseName: 'farming',
       activityType: ActivityType.Farming,
       description: ["Plant crops in your fields. This is a waste of time if you don't have some fields ready to work."],
       consequenceDescription: [
@@ -2761,6 +2787,7 @@ export class ActivityService {
     this.Mining = {
       level: 0,
       name: ['Mining'],
+      imageBaseName: 'mining',
       activityType: ActivityType.Mining,
       description: ['Dig in the ground for usable minerals.'],
       consequenceDescription: ['Uses 20 Stamina. Increases strength and sometimes finds something useful.'],
@@ -2794,6 +2821,7 @@ export class ActivityService {
     this.Smelting = {
       level: 0,
       name: ['Smelting'],
+      imageBaseName: 'smelting',
       activityType: ActivityType.Smelting,
       description: ['Smelt metal ores into usable metal.'],
       consequenceDescription: [
@@ -2835,6 +2863,7 @@ export class ActivityService {
     this.Hunting = {
       level: 0,
       name: ['Hunting'],
+      imageBaseName: 'hunting',
       activityType: ActivityType.Hunting,
       description: ['Hunt for animals in the nearby woods.'],
       consequenceDescription: [
@@ -2890,6 +2919,7 @@ export class ActivityService {
     this.Fishing = {
       level: 0,
       name: ['Fishing'],
+      imageBaseName: 'fishing',
       // cormorant fishing later!
       activityType: ActivityType.Fishing,
       description: ['Grab your net and see if you can catch some fish.'],
@@ -2927,6 +2957,7 @@ export class ActivityService {
     this.Burning = {
       level: 0,
       name: ['Burning Things'],
+      imageBaseName: 'burning',
       activityType: ActivityType.Burning,
       description: ['Light things on fire and watch them burn.'],
       consequenceDescription: ['Uses 5 Stamina. You will be charged for what you burn. Teaches you to love fire.'],
@@ -2960,6 +2991,7 @@ export class ActivityService {
     this.BalanceChi = {
       level: 0,
       name: ['Balance Your Chi'],
+      imageBaseName: 'balance',
       activityType: ActivityType.BalanceChi,
       description: ['Balance the flow of your chi and widen your meridians.'],
       consequenceDescription: ['Uses 100 Stamina. Increases your weakest lore.'],
@@ -3017,6 +3049,7 @@ export class ActivityService {
     this.BodyCultivation = {
       level: 0,
       name: ['Body Cultivation'],
+      imageBaseName: 'bodycultivation',
       activityType: ActivityType.BodyCultivation,
       description: [
         'Focus on the development of your body. Unblock your meridians, let your chi flow, and prepare your body for immortality.',
@@ -3059,6 +3092,7 @@ export class ActivityService {
     this.MindCultivation = {
       level: 0,
       name: ['Mind Cultivation'],
+      imageBaseName: 'mindcultivation',
       activityType: ActivityType.MindCultivation,
       description: [
         'Focus on the development of your mind. Unblock your meridians, let your chi flow, and prepare your mind for immortality.',
@@ -3098,6 +3132,7 @@ export class ActivityService {
     this.CoreCultivation = {
       level: 0,
       name: ['Core Cultivation'],
+      imageBaseName: 'corecultivation',
       activityType: ActivityType.CoreCultivation,
       description: ['Focus on the development of your soul core.'],
       consequenceDescription: [
@@ -3140,6 +3175,7 @@ export class ActivityService {
     this.SoulCultivation = {
       level: 0,
       name: ['Soul Cultivation'],
+      imageBaseName: 'soulcultivation0',
       activityType: ActivityType.SoulCultivation,
       description: ['Focus on the development of your immortal soul.'],
       consequenceDescription: [
@@ -3202,6 +3238,7 @@ export class ActivityService {
     this.InfuseEquipment = {
       level: 0,
       name: ['Infuse Equipment'],
+      imageBaseName: 'infuseequipment',
       activityType: ActivityType.InfuseEquipment,
       description: ['Infuse the power of a gem into your equipment.'],
       consequenceDescription: ['Uses 200 Stamina and 10 mana. An advanced magical technique.'],
@@ -3243,6 +3280,7 @@ export class ActivityService {
     this.InfuseBody = {
       level: 0,
       name: ['Infuse Body'],
+      imageBaseName: 'infusebody',
       activityType: ActivityType.InfuseBody,
       description: [
         'Direct your magical energy into reinforcing your physical body, making it healthier and more able to sustain damage without falling.',
@@ -3289,6 +3327,7 @@ export class ActivityService {
     this.ExtendLife = {
       level: 0,
       name: ['Extending Life'],
+      imageBaseName: 'extendlife',
       activityType: ActivityType.ExtendLife,
       description: ['Direct your magical energy into extending your lifespan, making you live longer.'],
       consequenceDescription: [
@@ -3335,6 +3374,7 @@ export class ActivityService {
     this.Recruiting = {
       level: 0,
       name: ['Recruiting Followers'],
+      imageBaseName: 'recruiting',
       activityType: ActivityType.Recruiting,
       description: ['Look for followers willing to serve you.'],
       consequenceDescription: [
@@ -3379,6 +3419,7 @@ export class ActivityService {
     this.TrainingFollowers = {
       level: 0,
       name: ['Training Followers'],
+      imageBaseName: 'trainingfollowers',
       activityType: ActivityType.TrainingFollowers,
       description: ['Train your followers to make them more powerful.'],
       consequenceDescription: [
@@ -3410,6 +3451,7 @@ export class ActivityService {
     this.Taunting = {
       level: 0,
       name: ['Taunting Enemies'],
+      imageBaseName: 'taunting',
       activityType: ActivityType.Taunting,
       description: ['Rudely point at your enemies and call them out to battle.'],
       consequenceDescription: ['Incites a fight with your current enemy this very night.'],
@@ -3435,6 +3477,7 @@ export class ActivityService {
     this.CombatTraining = {
       level: 0,
       name: ['Combat Training'],
+      imageBaseName: 'combattraining',
       activityType: ActivityType.CombatTraining,
       description: [
         'Hone every fiber of your being to martial sepremacy. Your experience in the Hell of Mirrors allowed you to examine your own combat form and understand how to improve it. Now all you need is practice.',
@@ -3467,6 +3510,7 @@ export class ActivityService {
     this.PetRecruiting = {
       level: 0,
       name: ['Finding Pets'],
+      imageBaseName: 'findingpets',
       activityType: ActivityType.PetRecruiting,
       description: ['Look for animals that want to be your pets.'],
       consequenceDescription: ['Uses 100 Stamina and 100,000 food. Gives you a small chance of finding a pet.'],
@@ -3504,6 +3548,7 @@ export class ActivityService {
     this.PetTraining = {
       level: 0,
       name: ['Training Pets'],
+      imageBaseName: 'trainingpets',
       activityType: ActivityType.PetTraining,
       description: ['Train your pets to make them more powerful.'],
       consequenceDescription: [
@@ -3542,6 +3587,7 @@ export class ActivityService {
     this.PurifyGems = {
       level: 0,
       name: ['Purifying Gems'],
+      imageBaseName: 'purifyinggems',
       activityType: ActivityType.PurifyGems,
       description: ['Purify corrupted spirit gems into something more useful.'],
       consequenceDescription: ['Uses 100000 Stamina and a corrupted spirit gem.'],

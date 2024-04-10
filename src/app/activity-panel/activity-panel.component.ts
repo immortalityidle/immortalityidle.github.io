@@ -175,9 +175,13 @@ export class ActivityPanelComponent {
         '\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.';
     }
 
+    const dialogProperties = { titleText: activity.name[activity.level], bodyText: bodyString, imageFile: '' };
+    if (activity.imageBaseName) {
+      dialogProperties.imageFile = 'assets/images/activities/' + activity.imageBaseName + activity.level + '.png';
+    }
     this.dialog.open(TextPanelComponent, {
       width: '400px',
-      data: { titleText: activity.name[activity.level], bodyText: bodyString },
+      data: dialogProperties,
       autoFocus: false,
     });
   }
