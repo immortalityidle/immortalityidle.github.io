@@ -81,6 +81,7 @@ export class GameStateService {
   panelSizes: Point[];
   defaultPanelSizes: Point[];
   lockPanels = false;
+  dragging = false;
 
   constructor(
     private characterService: CharacterService,

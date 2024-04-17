@@ -1048,9 +1048,10 @@ export class InventoryService {
    *
    * @param item the Item to add
    * @param quantity the quantity the Item to stack. Ignores for unstackables. Default 1
+   * @param inventoryIndex the first inventory slot to try to put the item in
    * @returns first itemStack position, -1 if not applicable
    */
-  addItem(item: Item, quantity = 1): number {
+  addItem(item: Item, quantity = 1, inventoryIndex = 0): number {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
@@ -1200,7 +1201,7 @@ export class InventoryService {
     }
 
     // couldn't stack it all, make a new stack
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = inventoryIndex; i < this.itemStacks.length; i++) {
       if (this.itemStacks[i] === null) {
         if (firstStack === -1) {
           firstStack = i;

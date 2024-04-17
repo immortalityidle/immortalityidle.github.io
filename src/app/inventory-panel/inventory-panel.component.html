@@ -16,7 +16,7 @@
         <div class="moneyColumn">
           <span>{{characterService.characterState.money | bigNumber}} Taels</span>
           <span *ngFor="let update of getMoneyUpdates()" class="popupText" [ngClass]="{'popupTextColor' : update > 0, 'popupTextNegativeColor' : update < 0}"
-                [@popupText]=update (@popupText.done)="animationDoneEvent($event)"><span *ngIf="update > 0">+</span>{{update | bigNumber}}</span>
+                [@popupText]=update (@popupText.done)="animationDoneEvent()"><span *ngIf="update > 0">+</span>{{update | bigNumber}}</span>
         </div>
         <div *ngIf="characterService.characterState.hellMoney > 0" matTooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
       </div>
@@ -31,19 +31,22 @@
   </h3>
 
   <div class="overflow">
-    <div class="inventoryGrid">
-        <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;"
-          draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
-          <diV class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)" 
-            (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
-            [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
-            'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
-            matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '
+    <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
+        <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
+          <div id="itemIndex{{indexOfelement}}" >
+            <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)" 
+              cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+              [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
+              (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
+              [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
+              'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
+              matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.
 
-            ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
-            <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
-            <div *ngIf="(itemStack?.quantity || 0) > 1" class="itemQuantity">x{{itemStack?.quantity}}</div>
-          </diV>
+              ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
+              <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
+              <div *ngIf="(itemStack?.quantity || 0) > 1" class="itemQuantity">x{{itemStack?.quantity}}</div>
+            </div>
+          </div>
         </div>
     </div>
   </div>

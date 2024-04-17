@@ -195,6 +195,10 @@ export class AppComponent implements OnInit {
     if (this.doingPanelDrag) {
       return;
     }
+    if (this.gameStateService.dragging) {
+      // don't do this if dragging from other panels is going on
+      return;
+    }
     if (event.buttons !== 1) {
       this.doingPanelDrag = false;
       this.doingBodyDrag = false;

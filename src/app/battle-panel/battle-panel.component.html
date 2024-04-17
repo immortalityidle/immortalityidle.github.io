@@ -66,7 +66,7 @@
         </ng-container>
       </table>
     </div>
-    <div>
+    <div *ngIf="battleService.currentEnemy?.enemy?.baseName">
       <img class="monsterImage" src="assets/images/monsters/{{battleService.currentEnemy?.enemy?.baseName}}.png" alt="A Monster!" width="80" height="100"/>
     </div>
   </div>

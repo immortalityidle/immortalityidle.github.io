@@ -1,29 +1,28 @@
 import { Component } from '@angular/core';
-import { trigger, state, style, transition, animate, keyframes, AnimationEvent } from '@angular/animations';
+import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character';
-import { InventoryService, ItemStack, Item, instanceOfEquipment } from '../game-state/inventory.service';
+import { InventoryService, ItemStack, instanceOfEquipment } from '../game-state/inventory.service';
 import { HellService } from '../game-state/hell.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { GameStateService } from '../game-state/game-state.service';
+import { CdkDragRelease } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
-  animations: [ 
+  animations: [
     trigger('popupText', [
-      state('in', style({ position:"fixed"  })),
-      transition(":leave", [
+      state('in', style({ position: 'fixed' })),
+      transition(':leave', [
         animate(
           1000,
-          keyframes([
-            style({ transform: 'translate(0%, 0%)' }),
-            style({ transform: 'translate(0%, -150%)' }),
-          ])
-        )
+          keyframes([style({ transform: 'translate(0%, 0%)' }), style({ transform: 'translate(0%, -150%)' })])
+        ),
       ]),
-    ])
-  ]
+    ]),
+  ],
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];
@@ -34,22 +33,22 @@ export class InventoryPanelComponent {
     public inventoryService: InventoryService,
     public characterService: CharacterService,
     public hellService: HellService,
-    public mainLoopService: MainLoopService
+    public mainLoopService: MainLoopService,
+    public gameStateService: GameStateService
   ) {
     this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
     this.moneyUpdates = [];
     this.mainLoopService.longTickSubject.subscribe(() => {
-      if (this.popupCounter < 1){
+      if (this.popupCounter < 1) {
         this.popupCounter++;
         return;
       }
       this.popupCounter = 0;
-      if (this.characterService.characterState.moneyUpdates != 0){
+      if (this.characterService.characterState.moneyUpdates !== 0) {
         this.moneyUpdates.push(this.characterService.characterState.moneyUpdates);
         this.characterService.characterState.moneyUpdates = 0;
       }
     });
-
   }
 
   moneyUpdates: number[];
@@ -175,64 +174,90 @@ export class InventoryPanelComponent {
     }
   }
 
-  allowDrop(event: DragEvent) {
-    if (event.dataTransfer?.types[0] === 'inventory' || event.dataTransfer?.types[0] === 'equipment') {
-      event.preventDefault();
+  dragStart() {
+    this.gameStateService.dragging = true;
+  }
+
+  dragEnd() {
+    this.gameStateService.dragging = false;
+  }
+
+  // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
+  dragReleased(event: CdkDragRelease) {
+    let x: number;
+    let y: number;
+    if (event.event instanceof MouseEvent) {
+      x = event.event.clientX;
+      y = event.event.clientY;
+    } else if (event.event instanceof TouchEvent) {
+      x = event.event.touches[0].clientX;
+      y = event.event.touches[0].clientY;
+    } else {
+      return;
+    }
+
+    let sourceItemIndex = -1;
+    for (let i = 0; i < this.inventoryService.itemStacks.length; i++) {
+      if (event.source.data === this.inventoryService.itemStacks[i]) {
+        sourceItemIndex = i;
+      }
+    }
+    if (sourceItemIndex === -1) {
+      return;
+    }
+    const itemStack = this.inventoryService.itemStacks[sourceItemIndex];
+    if (!itemStack) {
+      return;
+    }
+
+    const elements = document.elementsFromPoint(x, y);
+    for (const element of elements) {
+      if (element.id.startsWith('itemIndex')) {
+        const destinationItemIndex = parseInt(element.id.substring('itemIndex'.length));
+        this.mergeOrSwapStacks(sourceItemIndex, destinationItemIndex);
+      } else if (element.id.startsWith('equipmentSlot')) {
+        const equipmentSlotString = element.id.substring('equipmentSlot'.length);
+        const slot: EquipmentPosition = equipmentSlotString as EquipmentPosition;
+        if (!this.characterService.characterState.equipment[slot]) {
+          this.inventoryService.equip(itemStack);
+        } else {
+          if (!instanceOfEquipment(itemStack.item) || itemStack.item.slot === slot) {
+            this.inventoryService.mergeEquippedSlot(slot, itemStack.item, sourceItemIndex);
+          }
+        }
+      }
     }
   }
 
-  drag(sourceIndex: number, event: DragEvent) {
-    this.inventoryService.selectedItem = this.inventoryService.itemStacks[sourceIndex];
-    event.dataTransfer?.setData('inventory', sourceIndex + '');
-  }
-
-  drop(destIndex: number, event: DragEvent) {
-    event.preventDefault();
-    if (event.dataTransfer?.types[0] === 'inventory') {
-      const sourceIndexString: string = event.dataTransfer?.getData('inventory') + '';
-      const sourceIndex = parseInt(sourceIndexString);
-      if (sourceIndex === destIndex) {
-        return;
-      }
-      if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length) {
-        const sourceItemStack = this.inventoryService.itemStacks[sourceIndex];
-        const destItemStack = this.inventoryService.itemStacks[destIndex];
-        const sourceItem = sourceItemStack?.item;
-        const destItem = destItemStack?.item;
-        if (sourceItem && destItem) {
-          if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)) {
-            if (sourceItem.slot === destItem.slot) {
-              this.inventoryService.itemStacks[destIndex] = null;
-              this.inventoryService.itemStacks[sourceIndex] = null;
-              this.inventoryService.selectedItem = null;
-              this.inventoryService.mergeEquipment(destItem, sourceItem, destIndex);
-              return;
-            }
-          } else if (sourceItem.type.includes('Gem') && instanceOfEquipment(destItem)) {
-            this.inventoryService.gemifyEquipment(sourceIndex, destItem);
+  mergeOrSwapStacks(sourceIndex: number, destIndex: number) {
+    if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length) {
+      const sourceItemStack = this.inventoryService.itemStacks[sourceIndex];
+      const destItemStack = this.inventoryService.itemStacks[destIndex];
+      const sourceItem = sourceItemStack?.item;
+      const destItem = destItemStack?.item;
+      if (sourceItem && destItem) {
+        if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)) {
+          if (sourceItem.slot === destItem.slot) {
+            this.inventoryService.itemStacks[destIndex] = null;
+            this.inventoryService.itemStacks[sourceIndex] = null;
+            this.inventoryService.selectedItem = null;
+            this.inventoryService.mergeEquipment(destItem, sourceItem, destIndex);
             return;
-          } else if (sourceItem.name === destItem.name) {
-            this.inventoryService.mergeItemStacks(sourceItemStack, destItemStack, sourceIndex);
-          } else {
-            // it wasn't a merge, just swap their positions
-            this.inventoryService.itemStacks[destIndex] = sourceItemStack;
-            this.inventoryService.itemStacks[sourceIndex] = destItemStack;
           }
+        } else if (sourceItem.type.includes('Gem') && instanceOfEquipment(destItem)) {
+          this.inventoryService.gemifyEquipment(sourceIndex, destItem);
+          return;
+        } else if (sourceItem.name === destItem.name) {
+          this.inventoryService.mergeItemStacks(sourceItemStack, destItemStack, sourceIndex);
         } else {
           // it wasn't a merge, just swap their positions
           this.inventoryService.itemStacks[destIndex] = sourceItemStack;
           this.inventoryService.itemStacks[sourceIndex] = destItemStack;
         }
-      }
-    } else if (event.dataTransfer?.types[0] === 'equipment') {
-      //unequiping something
-      const slot: EquipmentPosition = (event.dataTransfer?.getData('equipment') + '') as EquipmentPosition;
-      const item = this.characterService.characterState.equipment[slot];
-      // check for existence and make sure there's an empty slot for it
-      if (item && this.inventoryService.openInventorySlots() > 0) {
-        this.inventoryService.addItem(item as Item);
-        this.characterService.characterState.equipment[slot] = null;
-        this.inventoryService.selectedItem = null;
+      } else {
+        // it wasn't a merge, just swap their positions
+        this.inventoryService.itemStacks[destIndex] = sourceItemStack;
+        this.inventoryService.itemStacks[sourceIndex] = destItemStack;
       }
     }
   }
@@ -243,8 +268,8 @@ export class InventoryPanelComponent {
     }
   }
 
-  animationDoneEvent(event: AnimationEvent){
-    while (this.moneyUpdates.length > 0){
+  animationDoneEvent() {
+    while (this.moneyUpdates.length > 0) {
       this.moneyUpdates.pop();
     }
   }
@@ -252,5 +277,4 @@ export class InventoryPanelComponent {
   getMoneyUpdates(): number[] {
     return this.moneyUpdates;
   }
-
 }

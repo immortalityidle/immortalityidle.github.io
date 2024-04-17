@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Character, EquipmentPosition } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
+import { GameStateService } from '../game-state/game-state.service';
+import { CdkDragRelease } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-equipment-panel',
@@ -11,7 +13,11 @@ import { InventoryService, instanceOfEquipment, Item } from '../game-state/inven
 export class EquipmentPanelComponent {
   character: Character;
 
-  constructor(private characterService: CharacterService, public inventoryService: InventoryService) {
+  constructor(
+    private characterService: CharacterService,
+    public inventoryService: InventoryService,
+    private gameStateService: GameStateService
+  ) {
     this.character = characterService.characterState;
   }
 
@@ -35,31 +41,63 @@ export class EquipmentPanelComponent {
     return item?.slot;
   }
 
-  allowDrop(event: DragEvent) {
-    if (event.dataTransfer?.types[0] === 'inventory') {
-      event.preventDefault();
+  dragStart() {
+    this.gameStateService.dragging = true;
+  }
+
+  dragEnd() {
+    this.gameStateService.dragging = false;
+  }
+
+  // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
+  dragReleased(event: CdkDragRelease) {
+    let x: number;
+    let y: number;
+    if (event.event instanceof MouseEvent) {
+      x = event.event.clientX;
+      y = event.event.clientY;
+    } else if (event.event instanceof TouchEvent) {
+      x = event.event.touches[0].clientX;
+      y = event.event.touches[0].clientY;
+    } else {
+      return;
     }
-  }
 
-  drag(slot: string, event: DragEvent) {
-    event.dataTransfer?.setData('equipment', slot);
-  }
+    const sourceItem = event.source.data;
+    if (!sourceItem) {
+      return;
+    }
 
-  drop(slot: string, event: DragEvent) {
-    event.preventDefault();
-    const sourceIndexString: string = event.dataTransfer?.getData('inventory') + '';
-    const sourceIndex = parseInt(sourceIndexString);
-    if (sourceIndex >= 0 && sourceIndex < this.inventoryService.itemStacks.length) {
-      const itemToEquip = this.inventoryService.itemStacks[sourceIndex]?.item;
-      const equipmentSlot: EquipmentPosition = slot as EquipmentPosition;
-      if (itemToEquip) {
-        if (instanceOfEquipment(itemToEquip)) {
-          if (itemToEquip.slot !== slot) {
-            return;
+    let destinationItemIndex: number = -1;
+    const elements = document.elementsFromPoint(x, y);
+    for (const element of elements) {
+      if (element.id.startsWith('itemIndex')) {
+        destinationItemIndex = parseInt(element.id.substring('itemIndex'.length));
+      }
+    }
+    if (destinationItemIndex === -1) {
+      return;
+    }
+
+    for (const element of elements) {
+      if (element.id.startsWith('itemIndex')) {
+        const destinationItemIndex = parseInt(element.id.substring('itemIndex'.length));
+        if (destinationItemIndex >= 0 && destinationItemIndex < this.inventoryService.itemStacks.length) {
+          const destinationItemStack = this.inventoryService.itemStacks[destinationItemIndex];
+          if (destinationItemStack) {
+            // there's something there, see if we can merge
+            if (instanceOfEquipment(destinationItemStack.item) && destinationItemStack.item.slot === sourceItem.slot) {
+              // clear out the destination slot and merge
+              this.inventoryService.itemStacks[destinationItemIndex] = null;
+              this.inventoryService.mergeEquipment(destinationItemStack.item, sourceItem, destinationItemIndex);
+              this.characterService.characterState.equipment[destinationItemStack.item.slot] = null;
+            }
+          } else {
+            this.inventoryService.addItem(sourceItem as Item, 1, destinationItemIndex);
+            const equipmentSlot: EquipmentPosition = sourceItem.slot as EquipmentPosition;
+            this.characterService.characterState.equipment[equipmentSlot] = null;
           }
         }
-        this.inventoryService.mergeEquippedSlot(equipmentSlot, itemToEquip, sourceIndex);
-        this.inventoryService.selectedItem = null;
       }
     }
   }

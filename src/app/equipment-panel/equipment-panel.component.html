@@ -8,10 +8,14 @@
   </mat-icon>  
 </div>
 
-<div class="equipmentContainer">
+<!-- draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)" -->
+
+<div class="equipmentContainer" cdkDropList cdkDropListSortingDisabled>
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
-      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('head', $event)" (dragstart)="drag('head', $event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      [cdkDragData]="character.equipment.head" [cdkDragDisabled]="!character.equipment.head"    
       (dblclick)="slotDoubleClicked('head', $event)" tabindex="0"
+      id="equipmentSlothead"
       matTooltip="{{(character.equipment.head !== null) ? (character.equipment.head.name | titlecase) + '
 
       ' + (character.equipment.head.description) : ''}}">
@@ -19,24 +23,30 @@
     </div>
     <div style="grid-area: right;" class="itemSlot textOverflow"
       [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"  [ngClass]="getEffectClass('rightHand')"
-      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('rightHand', $event)" (dragstart)="drag('rightHand', $event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      [cdkDragData]="character.equipment.rightHand" [cdkDragDisabled]="!character.equipment.rightHand"    
       (dblclick)="slotDoubleClicked('rightHand', $event)" tabindex="0"
+      id="equipmentSlotrightHand"
       matTooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand.name | titlecase) + '
 
       ' + (character.equipment.rightHand.description) : ''}}">
       {{character.equipment.rightHand?.name | titlecase}}
     </div>
     <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}" [ngClass]="getEffectClass('body')"
-      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('body', $event)" (dragstart)="drag('body', $event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      [cdkDragData]="character.equipment.body" [cdkDragDisabled]="!character.equipment.body"    
       (dblclick)="slotDoubleClicked('body', $event)" tabindex="0"
+      id="equipmentSlotbody"
       matTooltip="{{(character.equipment.body !== null) ? (character.equipment.body.name | titlecase) + '
 
       ' + (character.equipment.body.description) : ''}}">
       {{character.equipment.body?.name | titlecase}}
     </div>
     <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}" [ngClass]="getEffectClass('leftHand')"
-      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('leftHand', $event)" (dragstart)="drag('leftHand', $event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      [cdkDragData]="character.equipment.leftHand" [cdkDragDisabled]="!character.equipment.leftHand"    
       (dblclick)="slotDoubleClicked('leftHand', $event)" tabindex="0"
+      id="equipmentSlotleftHand"
       matTooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand.name | titlecase) + '
 
       ' + (character.equipment.leftHand.description) : ''}}">
@@ -50,16 +60,20 @@
       <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
     </div>
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}" [ngClass]="getEffectClass('legs')"
-      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('legs', $event)" (dragstart)="drag('legs', $event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      [cdkDragData]="character.equipment.legs" [cdkDragDisabled]="!character.equipment.legs"    
       (dblclick)="slotDoubleClicked('legs', $event)" tabindex="0"
+      id="equipmentSlotlegs"
       matTooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs.name | titlecase) + '
 
       ' + (character.equipment.legs.description) : ''}}">
       {{character.equipment.legs?.name | titlecase}}
     </div>
     <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}" [ngClass]="getEffectClass('feet')"
-      draggable="true" (dragover)="allowDrop($event)" (drop)="drop('feet', $event)" (dragstart)="drag('feet', $event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      [cdkDragData]="character.equipment.feet" [cdkDragDisabled]="!character.equipment.feet"    
       (dblclick)="slotDoubleClicked('feet', $event)" tabindex="0"
+      id="equipmentSlotfeet"
       matTooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet.name | titlecase) + '
 
       ' + (character.equipment.feet.description) : ''}}">
