@@ -14,6 +14,7 @@ import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { LogService, LogTopic } from '../game-state/log.service';
+import { CdkDragRelease } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-activity-panel',
@@ -128,12 +129,53 @@ export class ActivityPanelComponent {
     this.activityService.spiritActivity = activity.activityType;
   }
 
-  drag(activity: Activity, event: DragEvent) {
-    if (activity.projectionOnly || !activity.unlocked) {
-      // don't allow projection only activities to drag and drop
+  dragStart() {
+    this.gameStateService.dragging = true;
+  }
+
+  dragEnd() {
+    this.gameStateService.dragging = false;
+  }
+
+  // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
+  dragReleased(event: CdkDragRelease) {
+    event.event.preventDefault();
+    event.event.stopPropagation();
+
+    let x: number;
+    let y: number;
+    if (event.event instanceof MouseEvent) {
+      x = event.event.clientX;
+      y = event.event.clientY;
+    } else if (event.event instanceof TouchEvent) {
+      x = event.event.touches[0].clientX;
+      y = event.event.touches[0].clientY;
+    } else {
       return;
     }
-    event.dataTransfer?.setData('activity', '' + activity.activityType);
+
+    const elements = document.elementsFromPoint(x, y);
+    let destIndex = this.activityService.activityLoop.length;
+    let acceptDrop = false;
+    for (const element of elements) {
+      if (element.id === 'activityDropDiv') {
+        acceptDrop = true;
+      } else if (element.id.startsWith('activityLoopIndex')) {
+        destIndex = parseInt(element.id.substring('activityLoopIndex'.length + 1));
+      }
+    }
+    if (acceptDrop) {
+      const activityType = event.source.data;
+      const newEntry = {
+        activity: activityType,
+        repeatTimes: 1,
+      };
+      if (destIndex >= this.activityService.activityLoop.length) {
+        this.activityService.activityLoop.push(newEntry);
+      } else {
+        this.activityService.activityLoop.splice(destIndex, 0, newEntry);
+      }
+    }
   }
 
   hellBoss() {

@@ -8,7 +8,7 @@
   </mat-icon>
   
 </div>
-<div class="dropAccepter" (dragover)="allowDrop($event)" (drop)="drop(activityService.activityLoop.length, $event)">
+<div class="dropAccepter" id="activityDropDiv" (dragover)="allowDrop($event)" (drop)="drop(activityService.activityLoop.length, $event)">
   <h3 >
     <span>
       How will you spend your days?
@@ -59,16 +59,19 @@
   <div class="overflow">
     <table>
       <ng-container *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;">
-        <tr *ngIf="getActivityName(entry.activity) !== ''" draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
-          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">{{getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})</td>
-          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
+        <tr *ngIf="getActivityName(entry.activity) !== ''" id="activityLoopIndex{{indexOfelement}}"
+          draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
+          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}" id="activityLoopIndex0{{indexOfelement}}">
+            {{getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
+          </td>
+          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}" id="activityLoopIndex1{{indexOfelement}}">
             <div class="progress-bar">
               <span
                 [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
               </span>
             </div>
           </td>
-          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}">
+          <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}" id="activityLoopIndex2{{indexOfelement}}">
             <mat-icon matTooltip="Spend fewer days on this.
 
             Shift- or Ctrl-click to remove 10x
