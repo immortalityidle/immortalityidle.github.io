@@ -166,23 +166,30 @@ export class ActivityPanelComponent {
     const elements = document.elementsFromPoint(x, y);
     let destIndex = this.activityService.activityLoop.length;
     let acceptDrop = false;
+    let spiritActivity = false;
     for (const element of elements) {
       if (element.id === 'activityDropDiv') {
         acceptDrop = true;
       } else if (element.id.startsWith('activityLoopIndex')) {
         destIndex = parseInt(element.id.substring('activityLoopIndex'.length + 1));
+      } else if (element.id === 'spiritActivity') {
+        spiritActivity = true;
       }
     }
     if (acceptDrop) {
       const activityType = event.source.data;
-      const newEntry = {
-        activity: activityType,
-        repeatTimes: 1,
-      };
-      if (destIndex >= this.activityService.activityLoop.length) {
-        this.activityService.activityLoop.push(newEntry);
+      if (spiritActivity) {
+        this.activityService.spiritActivity = activityType;
       } else {
-        this.activityService.activityLoop.splice(destIndex, 0, newEntry);
+        const newEntry = {
+          activity: activityType,
+          repeatTimes: 1,
+        };
+        if (destIndex >= this.activityService.activityLoop.length) {
+          this.activityService.activityLoop.push(newEntry);
+        } else {
+          this.activityService.activityLoop.splice(destIndex, 0, newEntry);
+        }
       }
     }
   }

@@ -5,6 +5,8 @@ import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { TimeOptionsPanelComponent } from '../time-options-panel/time-options-panel.component';
 import { MatDialog } from '@angular/material/dialog';
+import { GameStateService } from '../game-state/game-state.service';
+import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-time-panel',
@@ -15,11 +17,14 @@ export class TimePanelComponent {
   unlockFastSpeed = false;
   unlockFasterSpeed = false;
   unlockFastestSpeed = false;
+  dragPositionX = 0;
+  dragPositionY = 0;
 
   constructor(
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
     public characterService: CharacterService,
+    private gameStateService: GameStateService,
     public dialog: MatDialog
   ) {}
 
@@ -116,43 +121,52 @@ export class TimePanelComponent {
     this.mainLoopService.useBankedTicks = event.target.checked;
   }
 
-  allowDrop(event: DragEvent) {
-    if (event.dataTransfer?.types[0] === 'activityloop' || event.dataTransfer?.types[0] === 'activity') {
-      event.preventDefault();
-    }
+  dragStart() {
+    this.gameStateService.dragging = true;
   }
 
-  drag(sourceIndex: number, event: DragEvent) {
-    if (this.activityService.activityLoop[sourceIndex].disabled) {
-      // don't allow drag and drop of disabled activities
+  dragEnd() {
+    this.gameStateService.dragging = false;
+  }
+
+  dragMoved(event: CdkDragMove) {
+    this.dragPositionX = event.pointerPosition.x;
+    this.dragPositionY = event.pointerPosition.y;
+  }
+
+  // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
+  dragReleased(event: CdkDragRelease) {
+    let x: number;
+    let y: number;
+    if (event.event instanceof MouseEvent) {
+      x = event.event.clientX;
+      y = event.event.clientY;
+    } else if (event.event instanceof TouchEvent) {
+      x = this.dragPositionX;
+      y = this.dragPositionY;
+    } else {
       return;
     }
-    event.dataTransfer?.setData('activityloop', '' + sourceIndex);
-  }
 
-  drop(destIndex: number, event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    let sourceIndexString: string = event.dataTransfer?.getData('activityloop') + '';
-    if (sourceIndexString === '') {
-      sourceIndexString = event.dataTransfer?.getData('activity') + '';
-      if (sourceIndexString === '') {
-        // could find a source from either of the acceptable locations
-        return;
+    const sourceIndex = event.source.data;
+    const elements = document.elementsFromPoint(x, y);
+    let destIndex = this.activityService.activityLoop.length;
+    let acceptDrop = false;
+    let spiritActivity = false;
+    for (const element of elements) {
+      if (element.id === 'activityDropDiv') {
+        acceptDrop = true;
+      } else if (element.id.startsWith('activityLoopIndex')) {
+        destIndex = parseInt(element.id.substring('activityLoopIndex'.length + 1));
+      } else if (element.id === 'spiritActivity') {
+        spiritActivity = true;
       }
-      const sourceType = parseInt(sourceIndexString);
-      const newEntry = {
-        activity: sourceType,
-        repeatTimes: 1,
-      };
-      if (destIndex >= this.activityService.activityLoop.length) {
-        this.activityService.activityLoop.push(newEntry);
+    }
+    if (acceptDrop && sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length) {
+      if (spiritActivity) {
+        const activity = this.activityService.activityLoop[sourceIndex].activity;
+        this.activityService.spiritActivity = activity;
       } else {
-        this.activityService.activityLoop.splice(destIndex, 0, newEntry);
-      }
-    } else {
-      const sourceIndex = parseInt(sourceIndexString);
-      if (sourceIndex >= 0 && sourceIndex < this.activityService.activityLoop.length) {
         const activity = this.activityService.activityLoop.splice(sourceIndex, 1);
         if (destIndex >= this.activityService.activityLoop.length) {
           this.activityService.activityLoop.push(activity[0]);

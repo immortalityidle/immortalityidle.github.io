@@ -8,7 +8,7 @@
   </mat-icon>
   
 </div>
-<div class="dropAccepter" id="activityDropDiv" (dragover)="allowDrop($event)" (drop)="drop(activityService.activityLoop.length, $event)">
+<div class="dropAccepter" id="activityDropDiv">
   <h3 >
     <span>
       How will you spend your days?
@@ -56,11 +56,32 @@
       <label for="useSavedTicks">Use banked time to accelerate reality (10x). {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</label>
     </h6>
   </h3>
-  <div class="overflow">
+  <div class="overflow" cdkDropList cdkDropListSortingDisabled>
+    <table *ngIf="characterService.characterState.manaUnlocked" class="spiritActivityPanel" id="spiritActivity"
+      (drop)="spiritActivityDrop($event)">
+      <tr>
+        <td class="spiritProjectionLabel" matTooltip="You can project your spiritual self to take on a second activity while your physical body continues its work. Whatever activity you drop here will be completed each day as long as you have enough mana to support the effort. Requires 5 mana in addition to the regular requirements of the activity.">
+          Spiritual Projection
+        </td>
+      </tr>
+      <tr *ngIf="activityService.spiritActivity !== null">
+        <td>{{getActivityName(activityService.spiritActivity)}}</td>
+        <td>
+          <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">
+            <span></span>
+          </div>
+        </td>
+        <td>
+          <mat-icon matTooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
+        </td>
+      </tr>
+    </table>
+
     <table>
       <ng-container *ngFor="let entry of activityService.activityLoop; let indexOfelement=index;">
         <tr *ngIf="getActivityName(entry.activity) !== ''" id="activityLoopIndex{{indexOfelement}}"
-          draggable="true" (dragover)="allowDrop($event)" (drop)="drop(indexOfelement, $event)" (dragstart)="drag(indexOfelement, $event)">
+          cdkDrag [cdkDragData]="indexOfelement"
+          (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)" cdkDragPreviewClass="currentRow">
           <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}" id="activityLoopIndex0{{indexOfelement}}">
             {{getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
           </td>
@@ -90,72 +111,6 @@
       </ng-container>
     </table>
 
-    <table *ngIf="characterService.characterState.manaUnlocked" class="spiritActivityPanel"
-    (drop)="spiritActivityDrop($event)" (dragover)="allowDrop($event)">
-      <tr>
-        <td class="spiritProjectionLabel" matTooltip="You can project your spiritual self to take on a second activity while your physical body continues its work. Whatever activity you drop here will be completed each day as long as you have enough mana to support the effort. Requires 5 mana in addition to the regular requirements of the activity.">
-          Spiritual Projection
-        </td>
-      </tr>
-      <tr *ngIf="activityService.spiritActivity !== null">
-        <td>{{getActivityName(activityService.spiritActivity)}}</td>
-        <td>
-          <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">
-            <span></span>
-          </div>
-        </td>
-        <td>
-          <mat-icon matTooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
-        </td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="saveButtonBar">
-    <div class="saveButtonGroup">
-      <div class="saveButton" matTooltip="Save your current schedule of actviities (Schedule #1)." (click)="activityService.saveActivityLoop()">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 1" aria-hidden="false">
-          content_paste
-        </mat-icon>
-        <div class="saveSlot">1</div>
-      </div>
-      <div class="saveButton" matTooltip="Save your current schedule of actviities (Schedule #2)." (click)="activityService.saveActivityLoop(2)">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 2" aria-hidden="false">
-          content_paste
-        </mat-icon>
-        <div class="saveSlot">2</div>
-      </div>
-      <div class="saveButton" matTooltip="Save your current schedule of actviities (Schedule #3)." (click)="activityService.saveActivityLoop(3)">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 3" aria-hidden="false">
-          content_paste
-        </mat-icon>
-        <div class="saveSlot">3</div>
-      </div>
-    </div>
-    <div class="saveButtonGroup">
-      <div class="saveButton" matTooltip="Load your saved schedule of actviities (Schedule #1). Note that activities that you cannot do right now will not be loaded."  (click)="activityService.loadActivityLoop()">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 1" aria-hidden="false">
-          content_paste_go
-        </mat-icon>
-        <div class="saveSlot">1</div>
-      </div>
-      <div class="saveButton" matTooltip="Load your saved schedule of actviities (Schedule #2). Note that activities that you cannot do right now will not be loaded." (click)="activityService.loadActivityLoop(2)">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 2" aria-hidden="false">
-          content_paste_go
-        </mat-icon>
-        <div class="saveSlot">2</div>
-      </div>
-      <div class="saveButton" matTooltip="Load your saved schedule of actviities (Schedule #3). Note that activities that you cannot do right now will not be loaded." (click)="activityService.loadActivityLoop(3)">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 3" aria-hidden="false">
-          content_paste_go
-        </mat-icon>
-        <div class="saveSlot">3</div>
-      </div>
-    </div>
-    <mat-icon matTooltip="Clear your current schedule."
-      class="iconButton saveIcon" aria-label="Clear Schedule" aria-hidden="false" (click)="activityService.activityLoop = []">
-      delete_sweep
-    </mat-icon>
   </div>
 </div>
 <div class="panelResizeHandle"></div>
