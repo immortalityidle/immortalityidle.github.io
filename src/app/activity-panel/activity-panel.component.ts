@@ -14,7 +14,7 @@ import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { LogService, LogTopic } from '../game-state/log.service';
-import { CdkDragRelease } from '@angular/cdk/drag-drop';
+import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-activity-panel',
@@ -25,6 +25,8 @@ export class ActivityPanelComponent {
   camelToTitle = new CamelToTitlePipe();
   character: Character;
   Math: Math;
+  dragPositionX = 0;
+  dragPositionY = 0;
 
   constructor(
     public gameStateService: GameStateService,
@@ -137,10 +139,17 @@ export class ActivityPanelComponent {
     this.gameStateService.dragging = false;
   }
 
+  dragMoved(event: CdkDragMove) {
+    this.dragPositionX = event.pointerPosition.x;
+    this.dragPositionY = event.pointerPosition.y;
+  }
+
   // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
   dragReleased(event: CdkDragRelease) {
     event.event.preventDefault();
     event.event.stopPropagation();
+
+    console.log(event);
 
     let x: number;
     let y: number;
@@ -148,8 +157,8 @@ export class ActivityPanelComponent {
       x = event.event.clientX;
       y = event.event.clientY;
     } else if (event.event instanceof TouchEvent) {
-      x = event.event.touches[0].clientX;
-      y = event.event.touches[0].clientY;
+      x = this.dragPositionX;
+      y = this.dragPositionY;
     } else {
       return;
     }

@@ -12,7 +12,7 @@
 
 <div class="equipmentContainer" cdkDropList cdkDropListSortingDisabled>
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
-      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.head" [cdkDragDisabled]="!character.equipment.head"    
       (dblclick)="slotDoubleClicked('head', $event)" tabindex="0"
       id="equipmentSlothead"
@@ -23,7 +23,7 @@
     </div>
     <div style="grid-area: right;" class="itemSlot textOverflow"
       [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"  [ngClass]="getEffectClass('rightHand')"
-      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.rightHand" [cdkDragDisabled]="!character.equipment.rightHand"    
       (dblclick)="slotDoubleClicked('rightHand', $event)" tabindex="0"
       id="equipmentSlotrightHand"
@@ -33,7 +33,7 @@
       {{character.equipment.rightHand?.name | titlecase}}
     </div>
     <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}" [ngClass]="getEffectClass('body')"
-      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.body" [cdkDragDisabled]="!character.equipment.body"    
       (dblclick)="slotDoubleClicked('body', $event)" tabindex="0"
       id="equipmentSlotbody"
@@ -43,7 +43,7 @@
       {{character.equipment.body?.name | titlecase}}
     </div>
     <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}" [ngClass]="getEffectClass('leftHand')"
-      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.leftHand" [cdkDragDisabled]="!character.equipment.leftHand"    
       (dblclick)="slotDoubleClicked('leftHand', $event)" tabindex="0"
       id="equipmentSlotleftHand"
@@ -60,7 +60,7 @@
       <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
     </div>
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}" [ngClass]="getEffectClass('legs')"
-      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.legs" [cdkDragDisabled]="!character.equipment.legs"    
       (dblclick)="slotDoubleClicked('legs', $event)" tabindex="0"
       id="equipmentSlotlegs"
@@ -70,7 +70,7 @@
       {{character.equipment.legs?.name | titlecase}}
     </div>
     <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}" [ngClass]="getEffectClass('feet')"
-      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.feet" [cdkDragDisabled]="!character.equipment.feet"    
       (dblclick)="slotDoubleClicked('feet', $event)" tabindex="0"
       id="equipmentSlotfeet"

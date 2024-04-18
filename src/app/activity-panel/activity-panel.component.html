@@ -52,7 +52,7 @@
           <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" 
             *ngIf="(activity.discovered || activity.unlocked)"[tabindex]="0"
             cdkDrag [cdkDragDisabled]="activity.projectionOnly || !activity.unlocked" [cdkDragData]="activity.activityType"
-            (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+            (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
             (click)="doActivity(activity)" >
               <div class="activityLabel" matTooltip="{{getActivityTooltip(activity, true)}}" >
                 <span>{{activity.name[activity.level]}}</span>

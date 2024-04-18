@@ -35,7 +35,7 @@
         <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
           <div id="itemIndex{{indexOfelement}}" >
             <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)" 
-              cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragReleased)="dragReleased($event)"
+              cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
               [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
               (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
               [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),

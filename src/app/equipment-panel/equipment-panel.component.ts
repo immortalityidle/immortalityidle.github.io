@@ -3,7 +3,7 @@ import { Character, EquipmentPosition } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { CdkDragRelease } from '@angular/cdk/drag-drop';
+import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-equipment-panel',
@@ -12,6 +12,8 @@ import { CdkDragRelease } from '@angular/cdk/drag-drop';
 })
 export class EquipmentPanelComponent {
   character: Character;
+  dragPositionX = 0;
+  dragPositionY = 0;
 
   constructor(
     private characterService: CharacterService,
@@ -49,6 +51,11 @@ export class EquipmentPanelComponent {
     this.gameStateService.dragging = false;
   }
 
+  dragMoved(event: CdkDragMove) {
+    this.dragPositionX = event.pointerPosition.x;
+    this.dragPositionY = event.pointerPosition.y;
+  }
+
   // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
   dragReleased(event: CdkDragRelease) {
     let x: number;
@@ -57,8 +64,8 @@ export class EquipmentPanelComponent {
       x = event.event.clientX;
       y = event.event.clientY;
     } else if (event.event instanceof TouchEvent) {
-      x = event.event.touches[0].clientX;
-      y = event.event.touches[0].clientY;
+      x = this.dragPositionX;
+      y = this.dragPositionY;
     } else {
       return;
     }
