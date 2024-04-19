@@ -38,7 +38,7 @@ export class ActivityPanelComponent {
     public impossibleTaskService: ImpossibleTaskService,
     public dialog: MatDialog,
     private bigNumberPipe: BigNumberPipe,
-    private mainLoopService: MainLoopService,
+    public mainLoopService: MainLoopService,
     private logService: LogService
   ) {
     this.Math = Math;

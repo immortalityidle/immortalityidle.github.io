@@ -3175,7 +3175,7 @@ export class ActivityService {
     this.SoulCultivation = {
       level: 0,
       name: ['Soul Cultivation'],
-      imageBaseName: 'soulcultivation0',
+      imageBaseName: 'soulcultivation',
       activityType: ActivityType.SoulCultivation,
       description: ['Focus on the development of your immortal soul.'],
       consequenceDescription: [

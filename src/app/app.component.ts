@@ -60,17 +60,27 @@ export class BigNumberPipe implements PipeTransform {
    */
   transform(value: number): string {
     if (!this.mainLoopService.scientificNotation) {
+      let unsignedValue = value;
+      let returnValue = '';
+      if (value < 0) {
+        unsignedValue = 0 - value;
+      }
       const suffixArray = ['', 'k', 'M', 'B', 'T', 'q', 'Q', 's'];
-      if (value < 100 && !Number.isInteger(value)) {
-        return value.toFixed(2) + '';
-      } else if (value < 10000) {
-        return Math.round(value) + '';
-      } else if (value >= Math.pow(10, suffixArray.length * 3)) {
-        return value.toPrecision(3);
+      if (unsignedValue < 100 && !Number.isInteger(unsignedValue)) {
+        returnValue = unsignedValue.toFixed(2) + '';
+      } else if (unsignedValue < 10000) {
+        returnValue = Math.round(unsignedValue) + '';
+      } else if (unsignedValue >= Math.pow(10, suffixArray.length * 3)) {
+        returnValue = unsignedValue.toPrecision(3);
       } else {
-        const numberPower = Math.floor(Math.log10(value));
-        const numStr = Math.floor(value / Math.pow(10, numberPower - (numberPower % 3) - 2)) / 100;
-        return numStr + suffixArray[Math.floor(numberPower / 3)];
+        const numberPower = Math.floor(Math.log10(unsignedValue));
+        const numStr = Math.floor(unsignedValue / Math.pow(10, numberPower - (numberPower % 3) - 2)) / 100;
+        returnValue = numStr + suffixArray[Math.floor(numberPower / 3)];
+      }
+      if (value < 0) {
+        return '-' + returnValue;
+      } else {
+        return returnValue;
       }
     } else {
       return value.toPrecision(3);

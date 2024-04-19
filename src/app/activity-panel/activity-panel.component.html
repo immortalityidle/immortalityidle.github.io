@@ -63,7 +63,7 @@
                     aria-label="Do this activity" aria-hidden="false">
                     arrow_forward
                   </mat-icon>
-                  <mat-icon *ngIf="!activity.instant" class="iconButton" (click)="scheduleActivity(activity, $event)" 
+                  <mat-icon *ngIf="!activity.instant && mainLoopService.timeUnlocked" class="iconButton" (click)="scheduleActivity(activity, $event)" 
                     (contextmenu)="rightClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}"
                     aria-label="Schedule this activity" aria-hidden="false">
                     event
