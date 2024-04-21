@@ -91,7 +91,7 @@ export interface Activity {
   lastIncome?: number;
   resourceUse?: ActivityResource[];
   projectionOnly?: boolean;
-  instant?: boolean;
+  portal?: boolean;
 }
 
 export interface ActivityLoopEntry {

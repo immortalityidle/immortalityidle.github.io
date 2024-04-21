@@ -1248,7 +1248,7 @@ export class HellService {
       unlocked: true,
       discovered: true,
       skipApprenticeshipLevel: 0,
-      instant: true,
+      portal: true,
     };
   }
 
@@ -1292,7 +1292,7 @@ export class HellService {
         requirements: [{}],
         unlocked: true,
         skipApprenticeshipLevel: 0,
-        instant: true,
+        portal: true,
       });
     }
     if (allComplete) {

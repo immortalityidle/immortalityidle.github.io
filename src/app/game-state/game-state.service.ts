@@ -60,6 +60,7 @@ export enum PanelIndex {
   Inventory = 7,
   Equipment = 8,
   Followers = 9,
+  Portal = 10,
 }
 
 @Injectable({
@@ -119,6 +120,7 @@ export class GameStateService {
     this.defaultPanelPositions[PanelIndex.Inventory] = { x: 830, y: 40 };
     this.defaultPanelPositions[PanelIndex.Equipment] = { x: 1050, y: 580 };
     this.defaultPanelPositions[PanelIndex.Followers] = { x: 1470, y: 40 };
+    this.defaultPanelPositions[PanelIndex.Portal] = { x: 1470, y: 460 };
 
     this.defaultPanelSizes = [];
 
@@ -132,9 +134,10 @@ export class GameStateService {
     this.defaultPanelSizes[PanelIndex.Inventory] = { x: 200, y: 840 };
     this.defaultPanelSizes[PanelIndex.Equipment] = { x: 400, y: 300 };
     this.defaultPanelSizes[PanelIndex.Followers] = { x: 400, y: 400 };
+    this.defaultPanelSizes[PanelIndex.Portal] = { x: 400, y: 800 };
 
-    this.panelPositions = this.defaultPanelPositions;
-    this.panelSizes = this.defaultPanelSizes;
+    this.panelPositions = structuredClone(this.defaultPanelPositions);
+    this.panelSizes = structuredClone(this.defaultPanelSizes);
 
     this.defaultPanelZIndex = [];
     for (const index in PanelIndex) {
@@ -145,6 +148,28 @@ export class GameStateService {
     }
 
     this.panelZIndex = this.defaultPanelZIndex;
+  }
+
+  populateMissingPanelInfo() {
+    for (const index in PanelIndex) {
+      if (isNaN(Number(index))) {
+        continue;
+      }
+      if (this.panelSizes[index] === undefined) {
+        this.panelSizes[index] = this.defaultPanelSizes[index];
+      }
+      if (this.panelSizes[index] === undefined) {
+        this.panelPositions[index] = this.defaultPanelPositions[index];
+      }
+      if (this.panelZIndex[index] === undefined) {
+        this.panelZIndex[index] = this.defaultPanelZIndex[index];
+      }
+    }
+  }
+
+  resetPanels() {
+    this.panelPositions = structuredClone(this.defaultPanelPositions);
+    this.panelSizes = structuredClone(this.defaultPanelSizes);
   }
 
   changeAutoSaveInterval(interval: number): void {
@@ -252,11 +277,12 @@ export class GameStateService {
     this.saveInterval = gameState.saveInterval || 10;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
-    this.panelPositions = gameState.panelPositions || this.defaultPanelPositions;
-    this.panelZIndex = gameState.panelZIndex || this.defaultPanelZIndex;
-    this.panelSizes = gameState.panelSizes || this.defaultPanelSizes;
+    this.panelPositions = gameState.panelPositions || structuredClone(this.defaultPanelPositions);
+    this.panelZIndex = gameState.panelZIndex || structuredClone(this.defaultPanelZIndex);
+    this.panelSizes = gameState.panelSizes || structuredClone(this.defaultPanelSizes);
     this.lockPanels = gameState.lockPanels || false;
     this.updateImportFlagKey();
+    this.populateMissingPanelInfo();
   }
 
   getGameExport(): string {

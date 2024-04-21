@@ -50,8 +50,8 @@
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
         <ng-container *ngFor="let activity of activityService.activities; let indexOfelement=index;">
           <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" 
-            *ngIf="(activity.discovered || activity.unlocked)"[tabindex]="0"
-            cdkDrag [cdkDragDisabled]="activity.projectionOnly || !activity.unlocked" [cdkDragData]="activity.activityType"
+            *ngIf="!activity.portal && (activity.discovered || activity.unlocked)" [tabindex]="0"
+            cdkDrag [cdkDragDisabled]="!activity.unlocked" [cdkDragData]="activity.activityType"
             (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
             (click)="doActivity(activity)" >
               <div class="activityLabel" matTooltip="{{getActivityTooltip(activity, true)}}" >
@@ -59,11 +59,7 @@
               </div>
               <div class="activityButtons">
                 <span>
-                  <mat-icon *ngIf="activity.instant" class="iconButton" (click)="doActivity(activity)" matTooltip="Do this activity" 
-                    aria-label="Do this activity" aria-hidden="false">
-                    arrow_forward
-                  </mat-icon>
-                  <mat-icon *ngIf="!activity.instant && mainLoopService.timeUnlocked" class="iconButton" (click)="scheduleActivity(activity, $event)" 
+                  <mat-icon *ngIf="mainLoopService.timeUnlocked" class="iconButton" (click)="scheduleActivity(activity, $event)" 
                     (contextmenu)="rightClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}"
                     aria-label="Schedule this activity" aria-hidden="false">
                     event

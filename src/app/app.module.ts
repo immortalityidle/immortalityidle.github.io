@@ -12,6 +12,7 @@ import { HomePanelComponent } from './home-panel/home-panel.component';
 import { LogPanelComponent } from './log-panel/log-panel.component';
 import { InventoryPanelComponent } from './inventory-panel/inventory-panel.component';
 import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
+import { PortalPanelComponent } from './portal-panel/portal-panel.component';
 import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.component';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -56,6 +57,7 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatToolt
     LogPanelComponent,
     InventoryPanelComponent,
     ActivityPanelComponent,
+    PortalPanelComponent,
     EquipmentPanelComponent,
     FloorPipe,
     CamelToTitlePipe,

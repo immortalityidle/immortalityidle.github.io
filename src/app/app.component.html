@@ -43,6 +43,9 @@
         <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
         <label for="lockPanels">Lock panels in place</label>
       </span>
+      <span>
+        <button (click)="gameStateService.resetPanels()">Reset Panels to Default Locations</button>
+      </span>
     </div>
     <div class="bodyContainer" #bodyContainer (mousemove)="onBodyMouseMove($event)" 
       (touchmove)="onBodyTouchMove($event)" (touchstart)="onBodyTouchStart($event)" (touchend)="onBodyTouchEnd()">
@@ -176,6 +179,20 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Log]"
         cdkDragBoundary=".bodyContainer">
       </app-log-panel>
+      <app-portal-panel *ngIf="hellService.inHell" cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" 
+        class="portalPanel panel" id="{{panelIndex.Portal}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Portal], 
+          'minWidth': gameStateService.panelSizes[panelIndex.Portal].x + 'px',
+          'width': gameStateService.panelSizes[panelIndex.Portal].x + 'px',
+          'maxWidth': gameStateService.panelSizes[panelIndex.Portal].x + 'px',
+          'minHeight': gameStateService.panelSizes[panelIndex.Portal].y + 'px',
+          'height': gameStateService.panelSizes[panelIndex.Portal].y + 'px',
+          'maxHeight': gameStateService.panelSizes[panelIndex.Portal].y + 'px'}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Portal)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Portal)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Portal]"
+        cdkDragBoundary=".bodyContainer">
+      </app-portal-panel>
     </div>
   </div>
 </div>

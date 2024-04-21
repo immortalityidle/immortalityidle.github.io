@@ -72,11 +72,6 @@ export class ActivityPanelComponent {
       return;
     }
 
-    if (activity.instant) {
-      activity.consequence[activity.level]();
-      return;
-    }
-
     if (activity.projectionOnly) {
       this.activityService.spiritActivity = activity.activityType;
       return;
@@ -102,10 +97,6 @@ export class ActivityPanelComponent {
   }
 
   doActivity(activity: Activity) {
-    if (activity.instant) {
-      activity.consequence[activity.level]();
-      return;
-    }
     if (!this.activityService.meetsRequirements(activity)) {
       this.logService.log(LogTopic.EVENT, activity.name[activity.level] + ' is unavailable now.');
       return;
@@ -178,6 +169,9 @@ export class ActivityPanelComponent {
     }
     if (acceptDrop) {
       const activityType = event.source.data;
+      if (this.activityService.getActivityByType(activityType)?.projectionOnly) {
+        spiritActivity = true;
+      }
       if (spiritActivity) {
         this.activityService.spiritActivity = activityType;
       } else {
