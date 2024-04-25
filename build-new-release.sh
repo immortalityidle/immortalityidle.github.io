@@ -6,10 +6,16 @@ rm -rf /tmp/docs
 cp -rf docs/ /tmp
 echo "Building"
 npm run build
-echo "Creating new old version"
-rm -rf /tmp/docs/old
-rm -rf docs/old
-cp -rf /tmp/docs docs/old
-sed -i 's/href=\"\/\"/href=\"\/old\/\"/' docs/old/index.html
 echo "restoring classic version"
 cp -rf /tmp/docs/classic docs/classic
+echo "Creating new old version"
+# remove the versions we don't want to put in the new old version
+rm -rf /tmp/docs/old
+rm -rf /tmp/docs/experimental
+rm -rf /tmp/docs/experimental2
+rm -rf /tmp/docs/classic
+# remove the previous old version
+rm -rf docs/old
+# copy in the new old version
+cp -rf /tmp/docs docs/old
+sed -i 's/href=\"\/\"/href=\"\/old\/\"/' docs/old/index.html
