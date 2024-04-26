@@ -44,7 +44,7 @@
         <label for="lockPanels">Lock panels in place</label>
       </span>
       <span>
-        <button (click)="gameStateService.resetPanels()">Reset Panels to Default Locations</button>
+        <button [disabled]="gameStateService.lockPanels" (click)="gameStateService.resetPanels()">Reset Panels to Default Locations</button>
       </span>
     </div>
     <div class="bodyContainer" #bodyContainer (mousemove)="onBodyMouseMove($event)" 

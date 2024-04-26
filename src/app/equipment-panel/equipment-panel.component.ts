@@ -18,7 +18,7 @@ export class EquipmentPanelComponent {
   constructor(
     private characterService: CharacterService,
     public inventoryService: InventoryService,
-    private gameStateService: GameStateService
+    public gameStateService: GameStateService
   ) {
     this.character = characterService.characterState;
   }

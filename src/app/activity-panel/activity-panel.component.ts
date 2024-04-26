@@ -140,8 +140,6 @@ export class ActivityPanelComponent {
     event.event.preventDefault();
     event.event.stopPropagation();
 
-    console.log(event);
-
     let x: number;
     let y: number;
     if (event.event instanceof MouseEvent) {

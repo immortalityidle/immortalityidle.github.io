@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LogFilterPanelComponent } from '../log-filter-panel/log-filter-panel.component';
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-log-panel',
@@ -9,7 +10,7 @@ import { LogFilterPanelComponent } from '../log-filter-panel/log-filter-panel.co
   styleUrls: ['./log-panel.component.less', '../app.component.less'],
 })
 export class LogPanelComponent {
-  constructor(public logService: LogService, public dialog: MatDialog) {}
+  constructor(public logService: LogService, public gameStateService: GameStateService, public dialog: MatDialog) {}
 
   topicFilter(event: Event, topic: LogTopic) {
     if (!(event.target instanceof HTMLInputElement)) return;

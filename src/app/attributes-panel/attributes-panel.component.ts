@@ -4,6 +4,7 @@ import { trigger, state, style, transition, animate, keyframes, AnimationEvent }
 import { Character, AttributeType } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { GameStateService } from '../game-state/game-state.service';
 
 export type AttributeUpdatesArrays = {
   [key in AttributeType]: number[];
@@ -32,6 +33,7 @@ export class AttributesPanelComponent {
   constructor(
     public characterService: CharacterService,
     public dialog: MatDialog,
+    public gameStateService: GameStateService,
     public mainLoopService: MainLoopService
   ) {
     this.character = characterService.characterState;

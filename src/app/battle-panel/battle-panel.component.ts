@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
 import { BattleService } from '../game-state/battle.service';
 import { CharacterService } from '../game-state/character.service';
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-battle-panel',
@@ -14,6 +15,7 @@ export class BattlePanelComponent {
   constructor(
     public battleService: BattleService,
     public characterService: CharacterService,
+    public gameStateService: GameStateService,
     public dialog: MatDialog
   ) {
     this.Math = Math;

@@ -24,7 +24,7 @@ export class TimePanelComponent {
     public mainLoopService: MainLoopService,
     public activityService: ActivityService,
     public characterService: CharacterService,
-    private gameStateService: GameStateService,
+    public gameStateService: GameStateService,
     public dialog: MatDialog
   ) {}
 

@@ -1,4 +1,4 @@
-<div cdkDragHandle class="panelHeader">
+<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
   <mat-icon>
     shopping_bag
   </mat-icon>

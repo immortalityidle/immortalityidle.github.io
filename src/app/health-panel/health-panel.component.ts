@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-health-panel',
@@ -17,7 +18,11 @@ export class HealthPanelComponent {
   flashNutrition = false;
 
   Math: Math;
-  constructor(public characterService: CharacterService, private mainLoopService: MainLoopService) {
+  constructor(
+    public characterService: CharacterService,
+    public gameStateService: GameStateService,
+    private mainLoopService: MainLoopService
+  ) {
     this.Math = Math;
     mainLoopService.longTickSubject.subscribe(() => {
       this.updateYinYang();

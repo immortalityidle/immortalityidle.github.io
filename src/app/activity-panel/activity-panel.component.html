@@ -1,4 +1,4 @@
-<div cdkDragHandle class="panelHeader">
+<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" draggableCursor class="panelHeader">
   <mat-icon>
     self_improvement
   </mat-icon>

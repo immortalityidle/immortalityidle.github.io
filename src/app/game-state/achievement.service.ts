@@ -133,7 +133,15 @@ export class AchievementService {
       description: 'You created some equipment and now you can wear it.',
       hint: 'Some jobs let you make stuff you can use.',
       check: () => {
-        return this.inventoryService.equipmentCreated > 0;
+        return (
+          this.inventoryService.equipmentCreated > 0 ||
+          this.characterService.characterState.equipment.head !== null ||
+          this.characterService.characterState.equipment.body !== null ||
+          this.characterService.characterState.equipment.leftHand !== null ||
+          this.characterService.characterState.equipment.rightHand !== null ||
+          this.characterService.characterState.equipment.legs !== null ||
+          this.characterService.characterState.equipment.feet !== null
+        );
       },
       effect: () => {
         this.inventoryService.equipmentUnlocked = true;

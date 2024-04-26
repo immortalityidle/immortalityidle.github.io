@@ -19,3 +19,5 @@ rm -rf docs/old
 # copy in the new old version
 cp -rf /tmp/docs docs/old
 sed -i 's/href=\"\/\"/href=\"\/old\/\"/' docs/old/index.html
+
+npm run build-experimental

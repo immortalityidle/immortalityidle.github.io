@@ -9,6 +9,7 @@ import { FarmPanelComponent } from '../farm-panel/farm-panel.component';
 import { FollowersService } from '../game-state/followers.service';
 import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-home-panel',
@@ -26,6 +27,7 @@ export class HomePanelComponent {
     public hellService: HellService,
     public dialog: MatDialog,
     private storeService: StoreService,
+    public gameStateService: GameStateService,
     private bignumber: BigNumberPipe
   ) {
     this.character = characterService.characterState;

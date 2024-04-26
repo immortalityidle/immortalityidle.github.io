@@ -4,6 +4,7 @@ import { FollowerManagementPanelComponent } from '../follower-management-panel/f
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService, Follower } from '../game-state/followers.service';
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-followers-panel',
@@ -17,6 +18,7 @@ export class FollowersPanelComponent {
   constructor(
     public characterService: CharacterService,
     public dialog: MatDialog,
+    public gameStateService: GameStateService,
     public followerService: FollowersService
   ) {
     this.character = characterService.characterState;
