@@ -68,6 +68,7 @@ export class ActivityPanelComponent {
   }
 
   scheduleActivity(activity: Activity, event: MouseEvent): void {
+    event.stopPropagation();
     if (!activity.unlocked) {
       return;
     }
@@ -218,7 +219,8 @@ export class ActivityPanelComponent {
     }
   }
 
-  showActivity(activity: Activity) {
+  showActivity(event: MouseEvent, activity: Activity) {
+    event.stopPropagation();
     let bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
     if (activity.projectionOnly) {
       bodyString +=

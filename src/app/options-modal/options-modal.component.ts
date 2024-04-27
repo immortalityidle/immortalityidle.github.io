@@ -8,8 +8,8 @@ import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
 import { MainLoopService } from '../game-state/main-loop.service';
-import { ExportPanelComponent } from '../export-panel/export-panel.component';
 import { SaveModalComponent } from '../save-modal/save-modal.component';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-options-modal',
@@ -52,14 +52,6 @@ export class OptionsModalComponent {
       this.gameStateService.savetoLocalStorage();
       this.characterService.toast('Manual Save Complete');
     }
-  }
-
-  exportClicked(): void {
-    this.dialog.open(ExportPanelComponent, {
-      width: '700px',
-      data: { someField: 'foo' },
-      autoFocus: false,
-    });
   }
 
   rebirthClicked(event: Event) {
@@ -270,5 +262,76 @@ export class OptionsModalComponent {
     this.gameStateService.savetoLocalStorage();
     // eslint-disable-next-line no-self-assign
     window.location.href = window.location.href;
+  }
+
+  importGameFileClick(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target?.files?.[0];
+    if (file) {
+      const Reader = new FileReader();
+      const gameStateService = this.gameStateService;
+      const mainLoopService = this.mainLoopService;
+      Reader.readAsText(file, 'UTF-8');
+      Reader.onload = function () {
+        if (typeof Reader.result === 'string') {
+          mainLoopService.importing = true;
+          gameStateService.importGame(Reader.result);
+          gameStateService.savetoLocalStorage();
+          gameStateService.updateImportFlagKey(true);
+          // refresh the page
+          setTimeout(() => {
+            window.location.reload();
+          }, 10);
+        }
+      };
+    }
+  }
+
+  exportGameFileClick() {
+    const element = document.createElement('a');
+    element.setAttribute(
+      'href',
+      `data:text/plain;charset=utf-8,${encodeURIComponent(this.gameStateService.getGameExport())}`
+    );
+    element.setAttribute(
+      'download',
+      `Immortality_Idle_${
+        this.gameStateService.isExperimental ? 'Experimental' : 'v' + environment.appVersion
+      }_${new Date().toISOString()}.txt`
+    );
+    const event = new MouseEvent('click');
+    element.dispatchEvent(event);
+  }
+
+  importLayoutFileClick(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target?.files?.[0];
+    if (file) {
+      const Reader = new FileReader();
+      const gameStateService = this.gameStateService;
+      Reader.readAsText(file, 'UTF-8');
+      Reader.onload = function () {
+        if (typeof Reader.result === 'string') {
+          gameStateService.importLayout(Reader.result);
+          gameStateService.savetoLocalStorage();
+        }
+      };
+    }
+  }
+
+  exportLayoutFileClick() {
+    const element = document.createElement('a');
+    element.setAttribute(
+      'href',
+      `data:text/plain;charset=utf-8,${encodeURIComponent(this.gameStateService.getLayoutExport())}`
+    );
+    element.setAttribute(
+      'download',
+      `Immortality_Idle_Layout_${
+        this.gameStateService.isExperimental ? 'Experimental' : 'v' + environment.appVersion
+      }_${new Date().toISOString()}.txt`
+    );
+    const event = new MouseEvent('click');
+    element.dispatchEvent(event);
   }
 }

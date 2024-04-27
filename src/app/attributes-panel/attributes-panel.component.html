@@ -8,21 +8,30 @@
   </mat-icon>
 </div>
 <div class="attributesContainer">
-  <table class="attributesTable">
-    <ng-container *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
-      <tr *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" class="attributeLine"
-        matTooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your gains by {{attribute.value.aptitudeMult | bigNumber}}.">
-        <td >
+  <div class="attributesTable">
+    <div class="attributeColumn">
+      <ng-container *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
+        <div *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" class='attributeLine'
+          matTooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your gains by {{attribute.value.aptitudeMult | bigNumber}}.">
           <mat-icon>{{attribute.value.icon}}</mat-icon>
-          {{attribute.key | camelToTitle}}:
-        </td>
-        <td class="attributeValueCell">
-          {{attribute.value.value | bigNumber}}
+          <span>
+            {{attribute.key | camelToTitle}}:
+          </span>
+        </div>
+      </ng-container>
+    </div>
+    <div class="attributeColumn growColumn">
+      <ng-container *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
+        <div *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" class='attributeLine'>
+          <span>
+            {{attribute.value.value | bigNumber}}
+          </span>
           <span *ngFor="let update of getAttributeUpdates(attribute.key)" class="popupText" 
-            [@popupText]=update (@popupText.done)="animationDoneEvent($event, attribute.key)">+{{update | bigNumber}}</span>
-      </td>
-      </tr>
-    </ng-container>
-  </table>
+          [@popupText]=update (@popupText.done)="animationDoneEvent($event, attribute.key)">+{{update | bigNumber}}</span>
+          
+        </div>
+      </ng-container>
+    </div>
+  </div>
 </div>
 <div class="panelResizeHandle"></div>

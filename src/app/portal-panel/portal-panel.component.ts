@@ -38,7 +38,8 @@ export class PortalPanelComponent {
     activity.consequence[activity.level]();
   }
 
-  showActivity(activity: Activity) {
+  showActivity(event: MouseEvent, activity: Activity) {
+    event.stopPropagation();
     const bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
 
     const dialogProperties = { titleText: activity.name[activity.level], bodyText: bodyString, imageFile: '' };

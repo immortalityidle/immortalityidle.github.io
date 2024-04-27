@@ -37,7 +37,8 @@ span {
 
 .attributesContainer {
   display: flex;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: visible;
 }
 
 .attributesTable {
@@ -45,9 +46,22 @@ span {
   border-collapse: collapse;
   margin-left: 4px;
   margin-right: 4px;
+  display: flex;
+}
+
+.attributeColumn {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.growColumn {
+  flex-grow: 1;
 }
 
 .attributeLine {
+  height: 20px;
+  margin-top: 2px;
+  padding-bottom: 2px;
   border-bottom: 1px var(--tableDividerColor) solid;
 }
 

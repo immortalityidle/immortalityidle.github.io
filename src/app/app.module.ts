@@ -30,7 +30,6 @@ import { OptionsModalComponent } from './options-modal/options-modal.component';
 import { FarmPanelComponent } from './farm-panel/farm-panel.component';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { ImpossibleTaskPanelComponent } from './impossible-task-panel/impossible-task-panel.component';
-import { ExportPanelComponent } from './export-panel/export-panel.component';
 import { TutorialPanelComponent } from './tutorial-panel/tutorial-panel.component';
 import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.component';
 import { FollowerManagementPanelComponent } from './follower-management-panel/follower-management-panel.component';
@@ -70,7 +69,6 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatToolt
     FarmPanelComponent,
     AchievementPanelComponent,
     ImpossibleTaskPanelComponent,
-    ExportPanelComponent,
     TutorialPanelComponent,
     ChangelogPanelComponent,
     FollowerManagementPanelComponent,

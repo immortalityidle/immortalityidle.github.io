@@ -73,6 +73,7 @@ export class MainLoopService {
   playMusic = false;
   audio: HTMLAudioElement;
   timeUnlocked = false;
+  importing = false;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
     this.audio = new Audio('./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3');
@@ -241,6 +242,9 @@ export class MainLoopService {
     }, TICK_INTERVAL_MS);
 
     scheduleInterval(() => {
+      if (this.importing) {
+        return;
+      }
       const tickInterval = document.hidden ? BACKGROUND_TICK_INTERVAL_MS : TICK_INTERVAL_MS;
       const newTime = new Date().getTime();
       const timeDiff = newTime - this.lastTime;

@@ -77,10 +77,16 @@
         </span>
       </div>
       <div class="optionField">
-        <button matTooltip="Import or export your save game file. Sometimes immortals need a different browser."
-          (click)="exportClicked()">
-          Import or Export Save File
-      </button>
+        <div>
+          <input type="file" id="importLayoutFile" #importLayoutFile (change)="importLayoutFileClick($event)" />
+          <button (click)="importLayoutFile.click()">Import Layout File</button>
+          <button (click)="exportLayoutFileClick()">Export Layout File</button>
+        </div>
+        <div>
+          <input type="file" id="importGameFile" #importGameFile (change)="importGameFileClick($event)" />
+          <button (click)="importGameFile.click()">Import Game File</button>
+          <button (click)="exportGameFileClick()">Export Game File</button>
+        </div>
       </div>
       <div class="optionField">
         <button matTooltip="Completely restart your journey toward immortality." class="warning" (click)="hardResetClicked($event)">Hard Reset</button>

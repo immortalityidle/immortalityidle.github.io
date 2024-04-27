@@ -239,6 +239,18 @@ export class GameStateService {
     return true;
   }
 
+  importLayout(value: string) {
+    const layout = JSON.parse(value) as GameState;
+    if (!layout || !layout.panelPositions || !layout.panelZIndex || !layout.panelSizes) {
+      return;
+    }
+    this.panelPositions = layout.panelPositions || structuredClone(this.defaultPanelPositions);
+    this.panelZIndex = layout.panelZIndex || structuredClone(this.defaultPanelZIndex);
+    this.panelSizes = layout.panelSizes || structuredClone(this.defaultPanelSizes);
+    this.lockPanels = layout.lockPanels || false;
+    this.populateMissingPanelInfo();
+  }
+
   importGame(value: string) {
     let gameStateSerialized: string;
     if (value.substring(0, 3) === 'iig') {
@@ -283,6 +295,16 @@ export class GameStateService {
     this.lockPanels = gameState.lockPanels || false;
     this.updateImportFlagKey();
     this.populateMissingPanelInfo();
+  }
+
+  getLayoutExport(): string {
+    const layout = {
+      panelPositions: this.panelPositions,
+      panelZIndex: this.panelZIndex,
+      panelSizes: this.panelSizes,
+      lockPanels: this.lockPanels,
+    };
+    return JSON.stringify(layout);
   }
 
   getGameExport(): string {
