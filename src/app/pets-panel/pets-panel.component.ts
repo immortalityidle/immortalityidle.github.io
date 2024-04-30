@@ -7,11 +7,11 @@ import { FollowersService, Follower } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
-  selector: 'app-followers-panel',
-  templateUrl: './followers-panel.component.html',
-  styleUrls: ['./followers-panel.component.less', '../app.component.less'],
+  selector: 'app-pets-panel',
+  templateUrl: './pets-panel.component.html',
+  styleUrls: ['./pets-panel.component.less', '../app.component.less'],
 })
-export class FollowersPanelComponent {
+export class PetsPanelComponent {
   character: Character;
   popupCounter = 0;
 
@@ -32,7 +32,7 @@ export class FollowersPanelComponent {
   followerOptionsClicked(): void {
     this.dialog.open(FollowerManagementPanelComponent, {
       width: '700px',
-      data: { pets: false },
+      data: { pets: true },
       autoFocus: false,
     });
   }

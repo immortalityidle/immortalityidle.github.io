@@ -61,6 +61,7 @@ export enum PanelIndex {
   Equipment = 8,
   Followers = 9,
   Portal = 10,
+  Pets = 11,
 }
 
 @Injectable({
@@ -121,6 +122,7 @@ export class GameStateService {
     this.defaultPanelPositions[PanelIndex.Equipment] = { x: 1050, y: 580 };
     this.defaultPanelPositions[PanelIndex.Followers] = { x: 1470, y: 40 };
     this.defaultPanelPositions[PanelIndex.Portal] = { x: 1470, y: 460 };
+    this.defaultPanelPositions[PanelIndex.Pets] = { x: 1890, y: 40 };
 
     this.defaultPanelSizes = [];
 
@@ -135,6 +137,7 @@ export class GameStateService {
     this.defaultPanelSizes[PanelIndex.Equipment] = { x: 400, y: 300 };
     this.defaultPanelSizes[PanelIndex.Followers] = { x: 400, y: 400 };
     this.defaultPanelSizes[PanelIndex.Portal] = { x: 400, y: 800 };
+    this.defaultPanelSizes[PanelIndex.Pets] = { x: 400, y: 400 };
 
     this.panelPositions = structuredClone(this.defaultPanelPositions);
     this.panelSizes = structuredClone(this.defaultPanelSizes);
@@ -158,7 +161,7 @@ export class GameStateService {
       if (this.panelSizes[index] === undefined) {
         this.panelSizes[index] = this.defaultPanelSizes[index];
       }
-      if (this.panelSizes[index] === undefined) {
+      if (this.panelPositions[index] === undefined) {
         this.panelPositions[index] = this.defaultPanelPositions[index];
       }
       if (this.panelZIndex[index] === undefined) {

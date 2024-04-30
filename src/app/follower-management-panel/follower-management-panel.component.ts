@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { FollowersService } from '../game-state/followers.service';
+import { Component, Inject } from '@angular/core';
+import { FollowersService, Follower } from '../game-state/followers.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-follower-management-panel',
@@ -8,7 +9,20 @@ import { FollowersService } from '../game-state/followers.service';
 })
 export class FollowerManagementPanelComponent {
   changeAll = 0;
-  constructor(public followerService: FollowersService) {}
+  pets = false;
+  followerType = 'Follower';
+  followers: Follower[];
+  followerCap: number;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { pets: boolean }, public followerService: FollowersService) {
+    this.pets = data.pets;
+    this.followers = followerService.followers;
+    this.followerCap = followerService.followerCap;
+    if (this.pets) {
+      this.followerType = 'Pet';
+      this.followers = followerService.pets;
+      this.followerCap = followerService.petsCap;
+    }
+  }
 
   getTotalAssingments() {
     let max = 0;

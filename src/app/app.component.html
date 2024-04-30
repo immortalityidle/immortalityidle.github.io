@@ -193,6 +193,20 @@
         [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Portal]"
         cdkDragBoundary=".bodyContainer">
       </app-portal-panel>
+      <app-pets-panel *ngIf="followersService.petsEnabled" cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" 
+        class="petsPanel panel" id="{{panelIndex.Pets}}"
+        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Pets], 
+          'minWidth': gameStateService.panelSizes[panelIndex.Pets].x + 'px',
+          'width': gameStateService.panelSizes[panelIndex.Pets].x + 'px',
+          'maxWidth': gameStateService.panelSizes[panelIndex.Pets].x + 'px',
+          'minHeight': gameStateService.panelSizes[panelIndex.Pets].y + 'px',
+          'height': gameStateService.panelSizes[panelIndex.Pets].y + 'px',
+          'maxHeight': gameStateService.panelSizes[panelIndex.Pets].y + 'px'}"
+        (cdkDragEnded)="dragEnd($event, panelIndex.Pets)"
+        (cdkDragStarted)="dragStart($event, panelIndex.Pets)"
+        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Pets]"
+        cdkDragBoundary=".bodyContainer">
+      </app-pets-panel>
     </div>
   </div>
 </div>

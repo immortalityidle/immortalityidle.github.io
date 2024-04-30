@@ -3516,6 +3516,9 @@ export class ActivityService {
       consequenceDescription: ['Uses 100 Stamina and 100,000 food. Gives you a small chance of finding a pet.'],
       consequence: [
         () => {
+          if (this.inventoryService.getQuantityByType('food') < 100000) {
+            return;
+          }
           this.characterService.characterState.status.stamina.value -= 100;
           if (this.inventoryService.consume('food', 100000, true) <= 0) {
             return;
@@ -3556,6 +3559,9 @@ export class ActivityService {
       ],
       consequence: [
         () => {
+          if (this.inventoryService.getQuantityByType('food') < 100000) {
+            return;
+          }
           this.characterService.characterState.status.stamina.value -= 1000;
           // Consuming this food is kind of expensive performance wise, but since the stacks are so high
           // it would be impractical to ask players to keep so much in inventory. Maybe we can keep track of

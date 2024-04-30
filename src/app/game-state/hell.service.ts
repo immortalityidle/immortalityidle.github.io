@@ -1200,7 +1200,7 @@ export class HellService {
     const newList: Activity[] = [];
     if (this.currentHell === -1) {
       // between hells now, choose which one to enter
-      this.activityService.activityHeader = 'Choose your Hell';
+      this.activityService.activityHeader = 'The Gates of Hell';
       this.activityService.activityHeaderDescription =
         "The heavens have cast you down to the depths of hell. You'll need to defeat every level to escape.";
       this.setEnterHellsArray(newList);
@@ -1301,7 +1301,7 @@ export class HellService {
         name: ['Challenge Lord Yama'],
         activityType: ActivityType.FinishHell,
         description: [
-          "You've had enough of this place and learned everything these hells can teach you. Challenge Lord Yama to prove you deserve your rightful place in the heavens.",
+          "You've had enough of this place and learned everything these hells can teach you. Your karmic debt is paid. Challenge Lord Yama to prove you deserve your rightful place in the heavens.",
         ],
         consequenceDescription: [''],
         consequence: [

@@ -16,7 +16,7 @@
     <span *ngIf="characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god">
       <button (click)="JoinTheGodsClick()">Join the Gods</button>
     </span>
-    <span matTooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
+    <span *ngIf="!hellService.inHell" matTooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
     <span *ngIf="impossibleTaskService.activeTaskIndex >= 0">
       <div  class="progress-bar"
         [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
@@ -39,7 +39,7 @@
         </span>
       </div>
     </span>
-    <span *ngIf="hellService.inHell && hellService.completedHellTasks.includes(hellService.currentHell)">
+    <span *ngIf="hellService.inHell && hellService.currentHell >= 0 && hellService.completedHellTasks.includes(hellService.currentHell)">
       <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(hellService.currentHell) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
     </span>
   </div>

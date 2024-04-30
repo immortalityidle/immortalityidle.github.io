@@ -1533,6 +1533,20 @@ export class InventoryService {
     return itemCount;
   }
 
+  getQuantityByType(itemType: string): number {
+    let itemCount = 0;
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      const itemIterator = this.itemStacks[i];
+      if (!itemIterator) {
+        continue;
+      }
+      if (itemIterator.item.type === itemType) {
+        itemCount += itemIterator.quantity;
+      }
+    }
+    return itemCount;
+  }
+
   /** Checks for equipment durability. Returns false if equipment has 0 durability. */
   hasDurability(itemStack: ItemStack): boolean {
     const item = itemStack.item;

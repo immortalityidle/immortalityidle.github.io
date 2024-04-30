@@ -30,6 +30,7 @@ export interface FollowersProperties {
   followers: Follower[];
   autoDismissUnlocked: boolean;
   maxFollowerByType: { [key: string]: number };
+  maxPetsByType: { [key: string]: number };
   sortField: string;
   sortAscending: boolean;
   totalRecruited: number;
@@ -37,11 +38,14 @@ export interface FollowersProperties {
   totalDismissed: number;
   highestLevel: number;
   stashedFollowers: Follower[];
+  stashedPets: Follower[];
   stashedFollowersMaxes: { [key: string]: number };
+  stashedPetMaxes: { [key: string]: number };
   unlockedHiddenJobs: string[];
   autoReplaceUnlocked: boolean;
   petsEnabled: boolean;
   onlyWantedFollowers: boolean;
+  pets: Follower[];
 }
 
 export interface FollowerReserve {
@@ -68,13 +72,19 @@ export class FollowersService {
   followersUnlocked = false;
   followerLifespanDoubled = false; // achievement
   followers: Follower[] = [];
+  pets: Follower[] = [];
   stashedFollowers: Follower[] = [];
+  stashedPets: Follower[] = [];
   followersRecruited = 0;
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number } = {};
+  maxPetsByType: { [key: string]: number } = {};
   stashedFollowersMaxes: { [key: string]: number } = {};
+  stashedPetMaxes: { [key: string]: number } = {};
   followerCap = 0;
+  petsCap = 0;
   followersMaxed: FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
+  petsMaxed: FollowerColor = 'UNMAXED'; // for front-end follower count number colorizing
   sortField = 'Job';
   sortAscending = true;
   totalRecruited = 0;
@@ -412,59 +422,13 @@ export class FollowersService {
 
       this.updateFollowerCap();
 
-      for (let i = this.followers.length - 1; i >= 0; i--) {
-        const follower = this.followers[i];
-        follower.age += daysElapsed;
-        if (follower.age >= this.followers[i].lifespan) {
-          // follower aged off
-          this.totalDied++;
-          this.followers.splice(i, 1);
-          if (this.autoReplaceUnlocked) {
-            const newFollower = this.generateFollower(follower.pet, follower.job);
-            if (newFollower) {
-              newFollower.power = Math.round(follower.power / 2);
-              newFollower.cost = 100 * newFollower.power;
-              this.logService.log(
-                LogTopic.FOLLOWER,
-                'Your follower ' +
-                  follower.name +
-                  ' passed away from old age but was replaced by their child ' +
-                  newFollower?.name +
-                  '.'
-              );
-            }
-            this.logService.log(
-              LogTopic.FOLLOWER,
-              'Your follower ' +
-                follower.name +
-                ' passed away from old age and was not replaced because of your choices in follower jobs.'
-            );
-          } else {
-            this.logService.injury(LogTopic.FOLLOWER, 'Your follower ' + follower.name + ' passed away from old age.');
-          }
-          this.updateFollowerTotalPower();
-        } else if (
-          this.characterService.characterState.money < this.followers[i].cost * daysElapsed &&
-          !this.hellService?.inHell
-        ) {
-          // quit from not being paid
-          this.totalDismissed++;
-          this.logService.injury(
-            LogTopic.FOLLOWER,
-            "You didn't have enough money to suppport your follower " +
-              this.followers[i].name +
-              ' so they left your service.'
-          );
-          this.followers.splice(i, 1);
-          this.updateFollowerTotalPower();
-        } else if (!this.hellService?.inHell) {
-          this.characterService.characterState.updateMoney(0 - this.followers[i].cost * daysElapsed);
-        }
-      }
+      this.yearTickFollowers(this.followers, daysElapsed);
+      this.yearTickFollowers(this.pets, daysElapsed);
 
       this.followersWorks(daysElapsed);
       this.sortFollowers(this.sortAscending);
     });
+
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.followersUnlocked) {
         return;
@@ -482,11 +446,64 @@ export class FollowersService {
 
       this.followersMaxed =
         this.followers.length < this.followerCap ? (this.followersMaxed = 'UNMAXED') : (this.followersMaxed = 'MAXED');
+      this.petsMaxed = this.pets.length < this.petsCap ? (this.petsMaxed = 'UNMAXED') : (this.petsMaxed = 'MAXED');
     });
 
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+  }
+
+  yearTickFollowers(listToHandle: Follower[], daysElapsed: number) {
+    for (let i = listToHandle.length - 1; i >= 0; i--) {
+      const follower = listToHandle[i];
+      follower.age += daysElapsed;
+      if (follower.age >= listToHandle[i].lifespan) {
+        // follower aged off
+        this.totalDied++;
+        listToHandle.splice(i, 1);
+        if (this.autoReplaceUnlocked) {
+          const newFollower = this.generateFollower(follower.pet, follower.job);
+          if (newFollower) {
+            newFollower.power = Math.round(follower.power / 2);
+            newFollower.cost = 100 * newFollower.power;
+            this.logService.log(
+              LogTopic.FOLLOWER,
+              'Your follower ' +
+                follower.name +
+                ' passed away from old age but was replaced by their child ' +
+                newFollower?.name +
+                '.'
+            );
+          }
+          this.logService.log(
+            LogTopic.FOLLOWER,
+            'Your follower ' +
+              follower.name +
+              ' passed away from old age and was not replaced because of your choices in follower jobs.'
+          );
+        } else {
+          this.logService.injury(LogTopic.FOLLOWER, 'Your follower ' + follower.name + ' passed away from old age.');
+        }
+        this.updateFollowerTotalPower();
+      } else if (
+        this.characterService.characterState.money < listToHandle[i].cost * daysElapsed &&
+        !this.hellService?.inHell
+      ) {
+        // quit from not being paid
+        this.totalDismissed++;
+        this.logService.injury(
+          LogTopic.FOLLOWER,
+          "You didn't have enough money to suppport your follower " +
+            listToHandle[i].name +
+            ' so they left your service.'
+        );
+        listToHandle.splice(i, 1);
+        this.updateFollowerTotalPower();
+      } else if (!this.hellService?.inHell) {
+        this.characterService.characterState.updateMoney(0 - listToHandle[i].cost * daysElapsed);
+      }
+    }
   }
 
   updateFollowerCap() {
@@ -496,6 +513,13 @@ export class FollowersService {
       this.characterService.meridianRank() +
       this.characterService.soulCoreRank() +
       this.characterService.characterState.bloodlineRank;
+    this.petsCap = Math.round(
+      1 +
+        this.characterService.meridianRank() / 10 +
+        this.characterService.soulCoreRank() / 10 +
+        this.characterService.characterState.bloodlineRank / 10 +
+        Math.log10(this.characterService.characterState.attributes.animalHandling.value)
+    );
     this.followersMaxed =
       this.followers.length < this.followerCap ? (this.followersMaxed = 'UNMAXED') : (this.followersMaxed = 'MAXED');
   }
@@ -508,17 +532,24 @@ export class FollowersService {
     for (let i = this.followers.length - 1; i >= 0; i--) {
       this.jobs[this.followers[i].job].totalPower += this.followers[i].power;
     }
+    for (let i = this.pets.length - 1; i >= 0; i--) {
+      this.jobs[this.pets[i].job].totalPower += this.pets[i].power;
+    }
   }
 
-  sortFollowers(ascending: boolean) {
+  sortFollowers(ascending: boolean, sortPets: boolean = false) {
     let left = 1;
     let right = -1;
     if (!ascending) {
       left = -1;
       right = 1;
     }
+    let listToSort = this.followers;
+    if (sortPets) {
+      listToSort = this.pets;
+    }
     if (this.sortField === 'Remaining Life') {
-      this.followers.sort((a, b) =>
+      listToSort.sort((a, b) =>
         a.lifespan - a.age > b.lifespan - b.age ? left : a.lifespan - a.age === b.lifespan - b.age ? 0 : right
       );
     } else {
@@ -560,10 +591,14 @@ export class FollowersService {
     return {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
+      pets: this.pets,
       stashedFollowers: this.stashedFollowers,
+      stashedPets: this.stashedPets,
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
-      stashedFollowersMaxes: this.maxFollowerByType,
+      maxPetsByType: this.maxPetsByType,
+      stashedFollowersMaxes: this.stashedFollowersMaxes,
+      stashedPetMaxes: this.stashedPetMaxes,
       sortField: this.sortField,
       sortAscending: this.sortAscending,
       totalRecruited: this.totalRecruited,
@@ -579,11 +614,15 @@ export class FollowersService {
 
   setProperties(properties: FollowersProperties) {
     this.followers = properties.followers || [];
+    this.pets = properties.pets || [];
     this.stashedFollowers = properties.stashedFollowers || [];
+    this.stashedPets = properties.stashedPets || [];
     this.followersUnlocked = properties.followersUnlocked || false;
     this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
     this.maxFollowerByType = properties.maxFollowerByType || {};
+    this.maxPetsByType = properties.maxPetsByType || {};
     this.stashedFollowersMaxes = properties.stashedFollowersMaxes || {};
+    this.stashedPetMaxes = properties.stashedPetMaxes || {};
     this.sortField = properties.sortField || 'Job';
     if (properties.sortAscending === undefined) {
       this.sortAscending = true;
@@ -616,9 +655,15 @@ export class FollowersService {
   }
 
   generateFollower(pet = false, job?: Follower['job']): Follower | null {
+    let followersList = this.followers;
+    let cap = this.followerCap;
+    if (pet) {
+      followersList = this.pets;
+      cap = this.petsCap;
+    }
     this.totalRecruited++;
     this.followersRecruited++;
-    if (this.followers.length >= this.followerCap) {
+    if (followersList.length >= cap) {
       if (this.onlyWantedFollowers) {
         // check to see if we have any unwanted jobs
         const keys = Object.keys(this.jobs);
@@ -627,9 +672,12 @@ export class FollowersService {
           if (this.jobs[key].hidden) {
             continue;
           }
-          const capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
+          let capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
+          if (pet) {
+            capNumber = this.maxPetsByType[key] !== undefined ? this.maxPetsByType[key] : 1000;
+          }
           let count = 0;
-          for (const follower of this.followers) {
+          for (const follower of followersList) {
             if (follower.job === key) {
               count++;
             }
@@ -648,7 +696,11 @@ export class FollowersService {
             LogTopic.FOLLOWER,
             'A new follower shows up, but you already have all the followers you want.'
           );
-          this.followersMaxed = 'MAXED'; // Sanity check, true check below.
+          if (pet) {
+            this.petsMaxed = 'MAXED'; // Sanity check, true check below.
+          } else {
+            this.followersMaxed = 'MAXED'; // Sanity check, true check below.
+          }
           return null;
         }
       } else {
@@ -656,17 +708,23 @@ export class FollowersService {
           LogTopic.FOLLOWER,
           'A new follower shows up, but you already have too many. You are forced to turn them away.'
         );
-        this.followersMaxed = 'MAXED'; // Sanity check, true check below.
+        if (pet) {
+          this.petsMaxed = 'MAXED'; // Sanity check, true check below.
+        } else {
+          this.followersMaxed = 'MAXED'; // Sanity check, true check below.
+        }
         return null;
       }
     }
-
     job = job ? job : this.generateFollowerJob(pet);
     if (job === '') {
       // couldn't find a job that we want
       return null;
     }
-    const capNumber = this.maxFollowerByType[job] !== undefined ? this.maxFollowerByType[job] : 1000;
+    let capNumber = this.maxFollowerByType[job] !== undefined ? this.maxFollowerByType[job] : 1000;
+    if (pet) {
+      capNumber = this.maxPetsByType[job] !== undefined ? this.maxPetsByType[job] : 1000;
+    }
     if (this.numFollowersOnJob(job) >= capNumber) {
       this.logService.log(
         LogTopic.FOLLOWER,
@@ -692,10 +750,14 @@ export class FollowersService {
       cost: 100,
       pet: pet,
     };
-    this.followers.push(follower);
+    followersList.push(follower);
     this.sortFollowers(this.sortAscending);
-    if (this.followers.length >= this.followerCap) {
-      this.followersMaxed = 'MAXED';
+    if (followersList.length >= this.followerCap) {
+      if (pet) {
+        this.petsMaxed = 'MAXED';
+      } else {
+        this.followersMaxed = 'MAXED';
+      }
     }
     this.updateFollowerTotalPower();
     return follower;
@@ -722,7 +784,10 @@ export class FollowersService {
       if (!this.jobs[key].hidden) {
         if ((pet && this.jobs[key].pet) || (!pet && !this.jobs[key].pet)) {
           if (this.onlyWantedFollowers) {
-            const capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
+            let capNumber = this.maxFollowerByType[key] !== undefined ? this.maxFollowerByType[key] : 1000;
+            if (pet) {
+              capNumber = this.maxPetsByType[key] !== undefined ? this.maxPetsByType[key] : 1000;
+            }
             if (this.numFollowersOnJob(key) < capNumber) {
               possibleJobs.push(key);
             }
@@ -740,9 +805,15 @@ export class FollowersService {
 
   dismissFollower(follower: Follower) {
     this.totalDismissed++;
-    const index = this.followers.indexOf(follower);
-    this.followers.splice(index, 1);
-    this.followersMaxed = 'UNMAXED';
+    if (follower.pet) {
+      const index = this.pets.indexOf(follower);
+      this.pets.splice(index, 1);
+      this.petsMaxed = 'UNMAXED';
+    } else {
+      const index = this.followers.indexOf(follower);
+      this.followers.splice(index, 1);
+      this.followersMaxed = 'UNMAXED';
+    }
     this.updateFollowerTotalPower();
   }
 
@@ -764,12 +835,20 @@ export class FollowersService {
 
   limitFollower(follower: Follower) {
     let count = 0;
-    for (let index = this.followers.length - 1; index >= 0; index--) {
-      if (this.followers[index].job === follower.job) {
+    let followerList = this.followers;
+    if (follower.pet) {
+      followerList = this.pets;
+    }
+    for (let index = followerList.length - 1; index >= 0; index--) {
+      if (followerList[index].job === follower.job) {
         count++;
       }
     }
-    this.maxFollowerByType[follower.job] = count;
+    if (follower.pet) {
+      this.maxPetsByType[follower.job] = count;
+    } else {
+      this.maxFollowerByType[follower.job] = count;
+    }
   }
 
   setMaxFollowers(job: string, value: number) {
@@ -783,15 +862,23 @@ export class FollowersService {
   stashFollowers() {
     this.stashedFollowers = this.followers;
     this.followers = [];
+    this.stashedPets = this.pets;
+    this.pets = [];
     this.stashedFollowersMaxes = this.maxFollowerByType;
+    this.stashedPetMaxes = this.maxPetsByType;
     this.maxFollowerByType = {};
+    this.maxPetsByType = {};
   }
 
   restoreFollowers() {
     this.followers = this.stashedFollowers;
     this.stashedFollowers = [];
+    this.pets = this.stashedPets;
+    this.stashedPets = [];
     this.maxFollowerByType = this.stashedFollowersMaxes;
+    this.maxPetsByType = this.stashedPetMaxes;
     this.stashedFollowersMaxes = {};
+    this.stashedPetMaxes = {};
   }
 
   hellPurge() {

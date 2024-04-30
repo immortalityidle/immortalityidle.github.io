@@ -9,6 +9,7 @@
   
   </div>
   <h3 class="portalsHeader">
+    <span *ngIf="hellService.inHell" matTooltip="{{activityService.activityHeaderDescription}}">Current Location: {{activityService.activityHeader}} </span>
   </h3>
   <div class="portalsContainer">
     <div class="overflow">

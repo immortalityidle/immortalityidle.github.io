@@ -8,10 +8,9 @@ describe('FollowersPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FollowersPanelComponent]
-    })
-    .compileComponents();
-    
+      imports: [FollowersPanelComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(FollowersPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

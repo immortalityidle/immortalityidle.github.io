@@ -1231,7 +1231,7 @@ export class ItemRepoService {
         }
         this.logService.log(
           LogTopic.STORY,
-          'The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might we worthwhile.'
+          'The Crown of Tongue Rippers settles onto your head, then sinks in to become a part of your very soul. You feel that your words carry a new power that can inspire a new kind of follower to worship you as the god you are becoming. Perhaps a trip back to the mortal realm through reincarnation might be worthwhile.'
         );
         this.followerService.unlockJob('prophet');
       },
