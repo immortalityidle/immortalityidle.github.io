@@ -10,80 +10,98 @@
 </div>
 <h3 class="activitiesHeader">
   <div class="standardHeader">
-    
+
   </div>
   <div class="customHeader">
-    <span *ngIf="characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god">
-      <button (click)="JoinTheGodsClick()">Join the Gods</button>
-    </span>
-    <span *ngIf="!hellService.inHell" matTooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
-    <span *ngIf="impossibleTaskService.activeTaskIndex >= 0">
-      <div  class="progress-bar"
-        [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
-        [attr.max]="Math.floor(impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired)">
-        <span
+    @if (characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god) {
+      <span>
+        <button (click)="JoinTheGodsClick()">Join the Gods</button>
+      </span>
+    }
+    @if (!hellService.inHell) {
+      <span matTooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
+    }
+    @if (impossibleTaskService.activeTaskIndex >= 0) {
+      <span>
+        <div  class="progress-bar"
+          [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
+          [attr.max]="Math.floor(impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired)">
+          <span
           [style.width.%]="100 *
             impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress /
             impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired">
-        </span>
-      </div>
-    </span>
-    <span *ngIf="hellService.inHell && hellService.currentHell >= 0 && !hellService.completedHellTasks.includes(hellService.currentHell)">
-      <div  class="progress-bar"
-        [attr.value]="Math.floor(hellService.hells[hellService.currentHell].progress())"
-        [attr.max]="Math.floor(hellService.hells[hellService.currentHell].progressMax())">
-        <span
+          </span>
+        </div>
+      </span>
+    }
+    @if (hellService.inHell && hellService.currentHell >= 0 && !hellService.completedHellTasks.includes(hellService.currentHell)) {
+      <span>
+        <div  class="progress-bar"
+          [attr.value]="Math.floor(hellService.hells[hellService.currentHell].progress())"
+          [attr.max]="Math.floor(hellService.hells[hellService.currentHell].progressMax())">
+          <span
           [style.width.%]="100 *
             hellService.hells[hellService.currentHell].progress() /
             hellService.hells[hellService.currentHell].progressMax()">
-        </span>
-      </div>
-    </span>
-    <span *ngIf="hellService.inHell && hellService.currentHell >= 0 && hellService.completedHellTasks.includes(hellService.currentHell)">
-      <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(hellService.currentHell) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
-    </span>
+          </span>
+        </div>
+      </span>
+    }
+    @if (hellService.inHell && hellService.currentHell >= 0 && hellService.completedHellTasks.includes(hellService.currentHell)) {
+      <span>
+        <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(hellService.currentHell) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
+      </span>
+    }
   </div>
 </h3>
 <div class="activitiesContainer">
-<!-- draggable="true" (dragstart)="drag(activity, $event)" -->
+  <!-- draggable="true" (dragstart)="drag(activity, $event)" -->
   <div class="overflow">
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
-        <ng-container *ngFor="let activity of activityService.activities; let indexOfelement=index;">
-          <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}" 
-            *ngIf="!activity.portal && (activity.discovered || activity.unlocked)" [tabindex]="0"
+      @for (activity of activityService.activities; track activity; let indexOfelement = $index) {
+        @if (!activity.portal && (activity.discovered || activity.unlocked)) {
+          <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}"
+            [tabindex]="0"
             cdkDrag [cdkDragDisabled]="!activity.unlocked" [cdkDragData]="activity.activityType"
             (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
             (click)="doActivity(activity)" >
-              <div class="activityLabel" matTooltip="{{getActivityTooltip(activity, true)}}" >
-                <span>{{activity.name[activity.level]}}</span>
-              </div>
-              <div class="activityButtons">
-                <span>
-                  <mat-icon *ngIf="mainLoopService.timeUnlocked" class="iconButton" (click)="scheduleActivity(activity, $event)" 
+            <div class="activityLabel" matTooltip="{{getActivityTooltip(activity, true)}}" >
+              <span>{{activity.name[activity.level]}}</span>
+            </div>
+            <div class="activityButtons">
+              <span>
+                @if (mainLoopService.timeUnlocked) {
+                  <mat-icon class="iconButton" (click)="scheduleActivity(activity, $event)"
                     (contextmenu)="rightClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}"
                     aria-label="Schedule this activity" aria-hidden="false">
                     event
                   </mat-icon>
-                </span>
-                <span class='floatRight'>
-                  <mat-icon *ngIf="activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)"
+                }
+              </span>
+              <span class='floatRight'>
+                @if (activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)) {
+                  <mat-icon
                     matTooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life."
                     aria-label="Requires an apprenticeship" aria-hidden="false">
                     model_training
                   </mat-icon>
-                  <mat-icon *ngIf="activity.lastIncome && activity.lastIncome > 0" matTooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels."
+                }
+                @if (activity.lastIncome && activity.lastIncome > 0) {
+                  <mat-icon matTooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels."
                     aria-label="Earns money" aria-hidden="false">
                     attach_money
                   </mat-icon>
-                  <mat-icon class="iconButton" (click)="showActivity($event, activity)"
-                    matTooltip="What is this activity? Click to learn all about it!"
-                    aria-label="Help" aria-hidden="false">
-                    help
-                  </mat-icon>
-                </span>
-              </div>
+                }
+                <mat-icon class="iconButton" (click)="showActivity($event, activity)"
+                  matTooltip="What is this activity? Click to learn all about it!"
+                  aria-label="Help" aria-hidden="false">
+                  help
+                </mat-icon>
+              </span>
             </div>
-        </ng-container>
+          </div>
+        }
+      }
     </div>
   </div>
 

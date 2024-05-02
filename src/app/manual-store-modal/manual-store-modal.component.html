@@ -2,19 +2,25 @@
   <span>Manuals Shop</span>
   <hr/>
   <div class="inventoryGrid">
-      <div *ngFor="let item of storeService.manuals">
+    @for (item of storeService.manuals; track item) {
+      <div>
         <div class="itemSlot" (click)="slotClicked(item)" tabindex="0"
           [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
           matTooltip="{{item.description}}">
           <div><mat-icon>menu_book</mat-icon></div>
           <div>{{item.name | titlecase}}</div>
-          <div *ngIf="item.owned && !(item.owned())">$ {{item.value | bigNumber}}</div>
-          <div *ngIf="item.owned && (item.owned())">OWNED</div>
+          @if (item.owned && !(item.owned())) {
+            <div>$ {{item.value | bigNumber}}</div>
+          }
+          @if (item.owned && (item.owned())) {
+            <div>OWNED</div>
+          }
         </div>
       </div>
+    }
   </div>
   <button (click)="storeService.buyManual()"
-      [disabled]="buyDisabled">
-      Buy
+    [disabled]="buyDisabled">
+    Buy
   </button>
 </div>

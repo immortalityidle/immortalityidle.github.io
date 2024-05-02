@@ -9,32 +9,41 @@
 </div>
 <div class="inventoryContainer">
   <h3>
-      <div class="inventoryLabelColumn">
+    <div class="inventoryLabelColumn">
+    </div>
+    <div class="moneyLabelColumn">Money: </div>
+    <div class="moneyContainer">
+      <div class="moneyColumn">
+        <span>{{characterService.characterState.money | bigNumber}} Taels</span>
+        @for (update of getMoneyUpdates(); track update) {
+          <span class="popupText" [ngClass]="{'popupTextColor' : update > 0, 'popupTextNegativeColor' : update < 0}"
+            [@popupText]=update (@popupText.done)="animationDoneEvent()">@if (update > 0) {
+            <span>+</span>
+          }{{update | bigNumber}}</span>
+        }
       </div>
-      <div class="moneyLabelColumn">Money: </div>
-      <div class="moneyContainer">
-        <div class="moneyColumn">
-          <span>{{characterService.characterState.money | bigNumber}} Taels</span>
-          <span *ngFor="let update of getMoneyUpdates()" class="popupText" [ngClass]="{'popupTextColor' : update > 0, 'popupTextNegativeColor' : update < 0}"
-                [@popupText]=update (@popupText.done)="animationDoneEvent()"><span *ngIf="update > 0">+</span>{{update | bigNumber}}</span>
-        </div>
-        <div *ngIf="characterService.characterState.hellMoney > 0" matTooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
-      </div>
-      <div><mat-icon *ngIf="inventoryService.noFood" class="noFood"
+      @if (characterService.characterState.hellMoney > 0) {
+        <div matTooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
+      }
+    </div>
+    <div>@if (inventoryService.noFood) {
+      <mat-icon class="noFood"
         matTooltip="{{hellService.inHell ? 'You have no food, and no one in hell sells rice.' : inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
         soup_kitchen
-      </mat-icon></div>
-      <div><mat-icon matTooltip="Click to sort your inventory. Shift-click to toggle autosort. Ctrl-click to toggle descending."
-        (click)="sortClicked($event)" class="iconButton" aria-label="Sort Inventory" aria-hidden="false" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">
-        sort
-      </mat-icon></div>
+      </mat-icon>
+    }</div>
+    <div><mat-icon matTooltip="Click to sort your inventory. Shift-click to toggle autosort. Ctrl-click to toggle descending."
+      (click)="sortClicked($event)" class="iconButton" aria-label="Sort Inventory" aria-hidden="false" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">
+      sort
+    </mat-icon></div>
   </h3>
 
   <div class="overflow">
     <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
-        <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
+      @for (itemStack of inventoryService.itemStacks; track itemStack; let indexOfelement = $index) {
+        <div>
           <div id="itemIndex{{indexOfelement}}" >
-            <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)" 
+            <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)"
               cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
               [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
               (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
@@ -44,56 +53,80 @@
 
               ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
               <div class="itemName textOverflow">{{itemStack?.item?.name | titlecase}}</div>
-              <div *ngIf="(itemStack?.quantity || 0) > 1" class="itemQuantity">x{{itemStack?.quantity}}</div>
+              @if ((itemStack?.quantity || 0) > 1) {
+                <div class="itemQuantity">x{{itemStack?.quantity}}</div>
+              }
             </div>
           </div>
         </div>
+      }
     </div>
   </div>
 
-  <div class="inventoryButtons" *ngIf="inventoryService.selectedItem">
-    <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell" (click)="sell(1)" class="iconButton" aria-label="Sell" aria-hidden="false"
-      matTooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">
-      attach_money
-    </mat-icon>
-    <mat-icon  *ngIf="isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell" (click)="sellStack()" class="iconButton" aria-label="Sell Stack" aria-hidden="false"
-      matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
-      paid
-    </mat-icon>
-    <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell" (click)="sellAll()" class="iconButton" aria-label="Sell All" aria-hidden="false"
-      matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
-      shopping_basket
-    </mat-icon>
-    <mat-icon *ngIf="inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item.value) && !instanceOfEquipment(inventoryService.selectedItem.item) && !hellService.inHell" class="iconButton" (click)="autoSell()"
-      matTooltip="Automatically sell this kind of item whenever you get one. You can change this in the options menu later if you change your mind. Ctrl-right-click items to autosell.">
-      currency_exchange
-    </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined)" (click)="use()" class="iconButton" aria-label="Use" aria-hidden="false"
-      matTooltip="{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
-      auto_awesome
-    </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)"
-      (click)="autoUse()" class="iconButton" aria-label="Auto Use" aria-hidden="false"
-      matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} You can change this in the options menu later if you change your mind. Ctrl-click items to auto-use.">
-      auto_mode
-    </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item.value)) && !hellService.inHell"
-      class="iconButton" aria-label="Balance" aria-hidden="false" (click)="autoBalance()" matTooltip="Balance between automatically using and selling this item. You can change this in the options menu later if you change your mind.">
-      balance
-    </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'equipment')" (click)="equip()" class="iconButton" aria-label="Equip" aria-hidden="false"
-      matTooltip="Equip this. Double-click weapons or armor to equip.">
-      shield
-    </mat-icon>
-    <mat-icon *ngIf="(inventoryService.selectedItem.item.type === 'spiritGem')" (click)="mergeSpiritGem()"  class="iconButton" aria-label="Merge Gem" aria-hidden="false"
-      matTooltip="Merge 10 of these into a higher grade gem.">
-      diamond
-    </mat-icon>
-    <mat-icon *ngIf="isFinite(inventoryService.selectedItem.item.value)" (click)="throwAway()"  class="iconButton" aria-label="Throw Away" aria-hidden="false"
-      matTooltip="Throw this stack of items away.">
-      delete
-    </mat-icon>
-
-  </div>
+  @if (inventoryService.selectedItem) {
+    <div class="inventoryButtons">
+      @if (isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell) {
+        <mat-icon (click)="sell(1)" class="iconButton" aria-label="Sell" aria-hidden="false"
+          matTooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">
+          attach_money
+        </mat-icon>
+      }
+      @if (isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell) {
+        <mat-icon  (click)="sellStack()" class="iconButton" aria-label="Sell Stack" aria-hidden="false"
+          matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
+          paid
+        </mat-icon>
+      }
+      @if (isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell) {
+        <mat-icon (click)="sellAll()" class="iconButton" aria-label="Sell All" aria-hidden="false"
+          matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
+          shopping_basket
+        </mat-icon>
+      }
+      @if (inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item.value) && !instanceOfEquipment(inventoryService.selectedItem.item) && !hellService.inHell) {
+        <mat-icon class="iconButton" (click)="autoSell()"
+          matTooltip="Automatically sell this kind of item whenever you get one. You can change this in the options menu later if you change your mind. Ctrl-right-click items to autosell.">
+          currency_exchange
+        </mat-icon>
+      }
+      @if ((inventoryService.selectedItem.item.useLabel !== undefined)) {
+        <mat-icon (click)="use()" class="iconButton" aria-label="Use" aria-hidden="false"
+          matTooltip="{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Shift-click items to use.">
+          auto_awesome
+        </mat-icon>
+      }
+      @if ((inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)) {
+        <mat-icon
+          (click)="autoUse()" class="iconButton" aria-label="Auto Use" aria-hidden="false"
+          matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} You can change this in the options menu later if you change your mind. Ctrl-click items to auto-use.">
+          auto_mode
+        </mat-icon>
+      }
+      @if ((inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item.value)) && !hellService.inHell) {
+        <mat-icon
+          class="iconButton" aria-label="Balance" aria-hidden="false" (click)="autoBalance()" matTooltip="Balance between automatically using and selling this item. You can change this in the options menu later if you change your mind.">
+          balance
+        </mat-icon>
+      }
+      @if ((inventoryService.selectedItem.item.type === 'equipment')) {
+        <mat-icon (click)="equip()" class="iconButton" aria-label="Equip" aria-hidden="false"
+          matTooltip="Equip this. Double-click weapons or armor to equip.">
+          shield
+        </mat-icon>
+      }
+      @if ((inventoryService.selectedItem.item.type === 'spiritGem')) {
+        <mat-icon (click)="mergeSpiritGem()"  class="iconButton" aria-label="Merge Gem" aria-hidden="false"
+          matTooltip="Merge 10 of these into a higher grade gem.">
+          diamond
+        </mat-icon>
+      }
+      @if (isFinite(inventoryService.selectedItem.item.value)) {
+        <mat-icon (click)="throwAway()"  class="iconButton" aria-label="Throw Away" aria-hidden="false"
+          matTooltip="Throw this stack of items away.">
+          delete
+        </mat-icon>
+      }
+    </div>
+  }
 </div>
 <div class="panelResizeHandle"></div>

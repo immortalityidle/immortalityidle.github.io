@@ -1,51 +1,65 @@
 <div class='darkMode'>
-    <h3>Impossible Tasks</h3>
-    <span>
-      <input type="checkbox" (change)="pauseOnImpossibleFailChange($event)"
-        id="pauseOnImpossibleFail" [checked]="activityService.pauseOnImpossibleFail"/>
-      <label for="pauseOnImpossibleFail">Automatically pause if task related activity fails</label>
-    </span>
-    <hr/>
-    <div>
-        <table>
-            <tr *ngFor="let task of impossibleTaskService.tasks">
-                <td>
-                  <span *ngIf="impossibleTaskService.nextTask >= task.taskType">
-                    <mat-icon matTooltip="{{task.description}}">
-                      help
-                    </mat-icon>
-                    {{task.name}}
-                  </span>
-                  <span *ngIf="impossibleTaskService.nextTask < task.taskType">
-                    ????????????
-                  </span>
-                </td>
-                <td>
-                  <div *ngIf="impossibleTaskService.nextTask >= task.taskType" class="progress-bar" style="height:20px;"
-                    [attr.value]="Math.floor(impossibleTaskService.taskProgress[task.taskType].progress)"
-                    [attr.max]="Math.floor(task.progressRequired)">
-                    <span
+  <h3>Impossible Tasks</h3>
+  <span>
+    <input type="checkbox" (change)="pauseOnImpossibleFailChange($event)"
+      id="pauseOnImpossibleFail" [checked]="activityService.pauseOnImpossibleFail"/>
+    <label for="pauseOnImpossibleFail">Automatically pause if task related activity fails</label>
+  </span>
+  <hr/>
+  <div>
+    <table>
+      @for (task of impossibleTaskService.tasks; track task) {
+        <tr>
+          <td>
+            @if (impossibleTaskService.nextTask >= task.taskType) {
+              <span>
+                <mat-icon matTooltip="{{task.description}}">
+                  help
+                </mat-icon>
+                {{task.name}}
+              </span>
+            }
+            @if (impossibleTaskService.nextTask < task.taskType) {
+              <span>
+                ????????????
+              </span>
+            }
+          </td>
+          <td>
+            @if (impossibleTaskService.nextTask >= task.taskType) {
+              <div class="progress-bar" style="height:20px;"
+                [attr.value]="Math.floor(impossibleTaskService.taskProgress[task.taskType].progress)"
+                [attr.max]="Math.floor(task.progressRequired)">
+                <span
                       [style.width.%]="100 *
                         impossibleTaskService.taskProgress[task.taskType].progress /
                         task.progressRequired">
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <span *ngIf="impossibleTaskService.taskProgress[task.taskType].complete">
-                    <mat-icon>
-                      done
-                    </mat-icon>
-                  </span>
-                  <span *ngIf="impossibleTaskService.activeTaskIndex === task.taskType">
-                    <button (click)="impossibleTaskService.stopTask()">Stop</button>
-                  </span>
-                  <span *ngIf="impossibleTaskService.activeTaskIndex === -1 && impossibleTaskService.nextTask === task.taskType">
-                    <button (click)="impossibleTaskService.startTask()">Start</button>
-                  </span>
-                </td>
-            </tr>
-        </table>
-    </div>
+                </span>
+              </div>
+            }
+          </td>
+          <td>
+            @if (impossibleTaskService.taskProgress[task.taskType].complete) {
+              <span>
+                <mat-icon>
+                  done
+                </mat-icon>
+              </span>
+            }
+            @if (impossibleTaskService.activeTaskIndex === task.taskType) {
+              <span>
+                <button (click)="impossibleTaskService.stopTask()">Stop</button>
+              </span>
+            }
+            @if (impossibleTaskService.activeTaskIndex === -1 && impossibleTaskService.nextTask === task.taskType) {
+              <span>
+                <button (click)="impossibleTaskService.startTask()">Start</button>
+              </span>
+            }
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
 </div>
 

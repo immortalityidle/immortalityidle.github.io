@@ -20,22 +20,24 @@
         <option [selected]="followerService.sortField === 'Power'">Power</option>
         <option [selected]="followerService.sortField === 'Remaining Life'">Remaining Life</option>
       </select>
-    <span>
-      <input type="checkbox" id="followerSort"  [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
-      <label for="followerSort">Sort Ascending</label>
-    </span>
-  </span></div>
-  <div class="scrollingDiv">
-    <table>
-      <ng-container *ngFor="let job of followerService.jobs | keyvalue">
-        <tr *ngIf="!job.value.hidden && (job.value.pet === pets || (!job.value.pet && !pets))" >
-          <td>{{job.key | camelToTitle}}</td>
-          <td>{{job.value.description}}</td>
-          <td matTooltip="This value will only apply to new {{followerType}}s. You'll have to dismiss current {{followerType}}s yourself.">Keep up to <input min="0" max="1000" value="{{followerService.maxFollowerByType[job.key] === undefined ? 1000 : followerService.maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
-        </tr>
-      </ng-container>
-    </table>
+      <span>
+        <input type="checkbox" id="followerSort"  [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
+        <label for="followerSort">Sort Ascending</label>
+      </span>
+    </span></div>
+    <div class="scrollingDiv">
+      <table>
+        @for (job of followerService.jobs | keyvalue; track job) {
+          @if (!job.value.hidden && (job.value.pet === pets || (!job.value.pet && !pets))) {
+            <tr >
+              <td>{{job.key | camelToTitle}}</td>
+              <td>{{job.value.description}}</td>
+              <td matTooltip="This value will only apply to new {{followerType}}s. You'll have to dismiss current {{followerType}}s yourself.">Keep up to <input min="0" max="1000" value="{{followerService.maxFollowerByType[job.key] === undefined ? 1000 : followerService.maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
+            </tr>
+          }
+        }
+      </table>
+    </div>
+    <br/>
+    <span>Total assignments: {{getTotalAssingments()}}</span>
   </div>
-  <br/>
-  <span>Total assignments: {{getTotalAssingments()}}</span>
-</div>

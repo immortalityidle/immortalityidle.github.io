@@ -2,16 +2,26 @@
   <h3>Achievements ({{achievementService.unlockedAchievements.length}} / {{achievementService.achievements.length}})</h3>
   <hr/>
   <div class="achievementGrid">
-      <div *ngFor="let achievement of achievementService.achievements">
-        <div class="itemSlot" *ngIf="achievement.unlocked" tabindex="0"
-          matTooltip="{{achievement.description}}">
-          <div *ngIf="achievement.displayName">{{achievement.displayName}}</div>
-          <div *ngIf="!achievement.displayName">{{achievement.name}}</div>
-        </div>
-        <div class="itemSlot" *ngIf="!achievement.unlocked" matTooltip="{{achievement.hint}}">
-          ?
-        </div>
+    @for (achievement of achievementService.achievements; track achievement) {
+      <div>
+        @if (achievement.unlocked) {
+          <div class="itemSlot" tabindex="0"
+            matTooltip="{{achievement.description}}">
+            @if (achievement.displayName) {
+              <div>{{achievement.displayName}}</div>
+            }
+            @if (!achievement.displayName) {
+              <div>{{achievement.name}}</div>
+            }
+          </div>
+        }
+        @else {
+          <div class="itemSlot" matTooltip="{{achievement.hint}}">
+            ?
+          </div>
+        }
       </div>
-    </div>
+    }
+  </div>
 </div>
 

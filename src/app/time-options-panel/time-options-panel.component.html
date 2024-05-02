@@ -3,18 +3,26 @@
   <hr/>
   <div>
     <span>
-        <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
+      @if (activityService.autoRestart) {
+        <input type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
           [checked]="activityService.pauseOnDeath"/>
-        <label *ngIf="activityService.autoRestart" for="pauseOnDeath">Pause on Death</label>
+      }
+      @if (activityService.autoRestart) {
+        <label for="pauseOnDeath">Pause on Death</label>
+      }
     </span>
   </div>
-  <div *ngIf="activityService.autoPauseUnlocked">
-    <span>
-      <input *ngIf="activityService.autoRestart" type="checkbox" (change)="pauseBeforeDeath($event)" id="pauseBeforeDeath"
-        [checked]="activityService.pauseBeforeDeath"/>
-      <label *ngIf="activityService.autoRestart" for="pauseBeforeDeath">Pause Before Death - This will pause one day before the end of your expected lifespan.</label>
-    </span>
-  </div>
+  @if (activityService.autoPauseUnlocked) {
+    <div>
+      <span>
+        @if (activityService.autoRestart) {
+          <input type="checkbox" (change)="pauseBeforeDeath($event)" id="pauseBeforeDeath"
+            [checked]="activityService.pauseBeforeDeath"/>
+          <label for="pauseBeforeDeath">Pause Before Death - This will pause one day before the end of your expected lifespan.</label>
+        }
+      </span>
+    </div>
+  }
   <div class="saveButtonBar">
     <div class="saveButtonGroup">
       <div class="saveButton" matTooltip="Save your current schedule of actviities (Schedule #1)." (click)="activityService.saveActivityLoop()">
@@ -60,5 +68,5 @@
       class="iconButton saveIcon" aria-label="Clear Schedule" aria-hidden="false" (click)="activityService.activityLoop = []">
       delete_sweep
     </mat-icon>
-  </div>  
+  </div>
 </div>

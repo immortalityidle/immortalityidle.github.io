@@ -1,40 +1,42 @@
 <div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-    <mat-icon>
-        pets
-    </mat-icon>
-    Pets
-    <mat-icon class="panelHelp" matTooltip="Your pets can aid you in many ways. Each has a specific skill that they will use to your benefit.">
-        help
-    </mat-icon>
+  <mat-icon>
+    pets
+  </mat-icon>
+  Pets
+  <mat-icon class="panelHelp" matTooltip="Your pets can aid you in many ways. Each has a specific skill that they will use to your benefit.">
+    help
+  </mat-icon>
 </div>
 <h3>
-    <span [ngClass]="followerService.followersMaxed">
+  <span [ngClass]="followerService.followersMaxed">
     &nbsp;({{this.followerService.pets.length}} / {{this.followerService.petsCap}})
-    </span>
-    <mat-icon *ngIf="followerService.autoDismissUnlocked" class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Pets" aria-hidden="false"
-    matTooltip="Manage your pets.">
-    settings
+  </span>
+  @if (followerService.autoDismissUnlocked) {
+    <mat-icon class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Pets" aria-hidden="false"
+      matTooltip="Manage your pets.">
+      settings
     </mat-icon>
+  }
 </h3>
 <div class="followersContainer">
-    <div class="followerPanel">
-        <ng-container *ngFor="let follower of followerService.pets">
-            <div class="attributeLine">
+  <div class="followerPanel">
+    @for (follower of followerService.pets; track follower) {
+      <div class="attributeLine">
                 <span class="followerName" matTooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}. {{followerService.jobs[follower.job].description}}
                 {{follower.name}} has followed you for {{follower.age / 365 | bigNumber}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | bigNumber}} more years. Daily cost: {{follower.cost | bigNumber}}">
-                {{follower.name | titlecase}} (lv.{{follower.power}} {{follower.job | camelToTitle}})
-                </span>
-                <mat-icon class="smallerIcon"
-                aria-label="Dismiss Pet" aria-hidden="false"
-                (click)="dismissFollower($event, follower)"
+          {{follower.name | titlecase}} (lv.{{follower.power}} {{follower.job | camelToTitle}})
+        </span>
+        <mat-icon class="smallerIcon"
+          aria-label="Dismiss Pet" aria-hidden="false"
+          (click)="dismissFollower($event, follower)"
                 [matTooltip]="followerService.autoDismissUnlocked ? 'Dismiss this pet.
                 Shift-click to automatically dismiss every pet of this type.
                 Ctrl-click to set the current number as the limit without dismissing.':
                 'Dismiss this pet.'">
-                cancel
-                </mat-icon>
-            </div>
-        </ng-container>
-    </div>
+          cancel
+        </mat-icon>
+      </div>
+    }
+  </div>
 </div>
 <div class="panelResizeHandle"></div>

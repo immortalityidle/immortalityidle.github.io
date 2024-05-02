@@ -1,7 +1,7 @@
 <div class="darkMode">
   <h3>Log Filters</h3>
   <span class="filters">
-    <ng-container *ngFor="let topic of logTopics">
+    @for (topic of logTopics; track topic) {
       <input
         type="checkbox"
         (change)="topicFilter($event, topic)"
@@ -9,9 +9,11 @@
         [checked]="logService.topicProperties[topic].enabled" />
       <label [for]="'filter' + topic">
         Show {{topic}} Log Entries
-        <span class="highlightText" *ngIf="logService.topicProperties[topic].hasNewMessages"> (new)</span>
+        @if (logService.topicProperties[topic].hasNewMessages) {
+          <span class="highlightText"> (new)</span>
+        }
       </label>
       <br/>
-    </ng-container>
+    }
   </span>
 </div>

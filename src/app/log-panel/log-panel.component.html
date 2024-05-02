@@ -16,12 +16,14 @@
   </h3>
   <div class="logBoxContainer">
     <div class="logBox">
-      <ng-container *ngFor="let logMsg of logService.currentLog">
+      @for (logMsg of logService.currentLog; track logMsg) {
         <div [ngClass]="logMsg.type" class="logEntryDiv">
-          {{logMsg.message}}<span *ngIf="logMsg.repeat"> ({{logMsg.repeat}} times)</span>
-        </div>
-      </ng-container>
-    </div>
+          {{logMsg.message}}@if (logMsg.repeat) {
+          <span> ({{logMsg.repeat}} times)</span>
+        }
+      </div>
+    }
   </div>
+</div>
 </div>
 <div class="panelResizeHandle"></div>

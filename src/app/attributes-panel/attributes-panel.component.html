@@ -10,27 +10,32 @@
 <div class="attributesContainer">
   <div class="attributesTable">
     <div class="attributeColumn">
-      <ng-container *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
-        <div *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" class='attributeLine'
-          matTooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your gains by {{attribute.value.aptitudeMult | bigNumber}}.">
-          <mat-icon>{{attribute.value.icon}}</mat-icon>
-          <span>
-            {{attribute.key | camelToTitle}}:
-          </span>
-        </div>
-      </ng-container>
+      @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
+        @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
+          <div class='attributeLine'
+            matTooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your gains by {{attribute.value.aptitudeMult | bigNumber}}.">
+            <mat-icon>{{attribute.value.icon}}</mat-icon>
+            <span>
+              {{attribute.key | camelToTitle}}:
+            </span>
+          </div>
+        }
+      }
     </div>
     <div class="attributeColumn growColumn">
-      <ng-container *ngFor="let attribute of character.attributes | keyvalue: originalOrder">
-        <div *ngIf="(attribute.value.value !== 0 || character.highestAttributes[attribute.key])" class='attributeLine'>
-          <span>
-            {{attribute.value.value | bigNumber}}
-          </span>
-          <span *ngFor="let update of getAttributeUpdates(attribute.key)" class="popupText" 
-          [@popupText]=update (@popupText.done)="animationDoneEvent($event, attribute.key)">+{{update | bigNumber}}</span>
-          
-        </div>
-      </ng-container>
+      @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
+        @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
+          <div class='attributeLine'>
+            <span>
+              {{attribute.value.value | bigNumber}}
+            </span>
+            @for (update of getAttributeUpdates(attribute.key); track update) {
+              <span class="popupText"
+              [@popupText]=update (@popupText.done)="animationDoneEvent($event, attribute.key)">+{{update | bigNumber}}</span>
+            }
+          </div>
+        }
+      }
     </div>
   </div>
 </div>
