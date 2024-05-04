@@ -43,7 +43,7 @@ export class PetsPanelComponent {
     if ((event.ctrlKey || event.metaKey) && this.followerService.autoDismissUnlocked) {
       this.followerService.limitFollower(follower);
     } else if (event.shiftKey && this.followerService.autoDismissUnlocked) {
-      this.followerService.dismissAllFollowers(follower);
+      this.followerService.dismissAllFollowers(follower, true);
     } else {
       this.followerService.dismissFollower(follower);
     }

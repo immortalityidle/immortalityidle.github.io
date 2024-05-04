@@ -27,7 +27,11 @@ export class FollowerManagementPanelComponent {
   getTotalAssingments() {
     let max = 0;
     for (const followerType in this.followerService.jobs) {
-      if (!this.followerService.jobs[followerType].hidden) {
+      if (
+        !this.followerService.jobs[followerType].hidden &&
+        (this.followerService.jobs[followerType].pet === this.pets ||
+          (!this.followerService.jobs[followerType].pet && !this.pets))
+      ) {
         if (this.followerService.maxFollowerByType[followerType]) {
           max += this.followerService.maxFollowerByType[followerType];
         } else if (this.followerService.maxFollowerByType[followerType] !== 0) {
@@ -45,7 +49,9 @@ export class FollowerManagementPanelComponent {
 
   changeAllClicked() {
     for (const key in this.followerService.jobs) {
-      this.followerService.setMaxFollowers(key, this.changeAll);
+      if (this.followerService.jobs[key].pet === this.pets || (!this.followerService.jobs[key].pet && !this.pets)) {
+        this.followerService.setMaxFollowers(key, this.changeAll);
+      }
     }
   }
 
@@ -65,6 +71,6 @@ export class FollowerManagementPanelComponent {
   }
 
   dismissAllClicked() {
-    this.followerService.dismissAllFollowers();
+    this.followerService.dismissAllFollowers(undefined, this.pets);
   }
 }

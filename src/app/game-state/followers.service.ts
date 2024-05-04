@@ -817,19 +817,25 @@ export class FollowersService {
     this.updateFollowerTotalPower();
   }
 
-  dismissAllFollowers(follower: Follower | null = null) {
+  dismissAllFollowers(follower: Follower | null = null, pet: boolean = false) {
+    let listToDismiss = this.followers;
+    if (pet) {
+      listToDismiss = this.pets;
+      this.petsMaxed = 'UNMAXED';
+    } else {
+      this.followersMaxed = 'UNMAXED';
+    }
     if (follower) {
-      for (let index = this.followers.length - 1; index >= 0; index--) {
-        if (this.followers[index].job === follower.job) {
-          this.followers.splice(index, 1);
+      for (let index = listToDismiss.length - 1; index >= 0; index--) {
+        if (listToDismiss[index].job === follower.job) {
+          listToDismiss.splice(index, 1);
           this.totalDismissed++;
         }
       }
     } else {
-      this.totalDismissed += this.followers.length;
-      this.followers.splice(0);
+      this.totalDismissed += listToDismiss.length;
+      listToDismiss.splice(0);
     }
-    this.followersMaxed = 'UNMAXED';
     this.updateFollowerTotalPower();
   }
 
