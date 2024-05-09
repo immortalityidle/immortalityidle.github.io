@@ -63,6 +63,8 @@ export interface HellProperties {
   timesCrushed: number;
   contractsExamined: number;
   atonedKills: number;
+  fasterHellMoney: boolean;
+  burnedMoney: number;
 }
 
 @Injectable({
@@ -85,13 +87,15 @@ export class HellService {
   timesCrushed = 0;
   contractsExamined = 0;
   atonedKills = 0;
+  fasterHellMoney = false;
+  burnedMoney = 0;
 
   burnMoney = {
     level: 0,
     name: ['Burn Money'],
     activityType: ActivityType.BurnMoney,
     description: ['Burn mortal realm money to receive hell money.'],
-    consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you 1 hell money.'],
+    consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you some hell money.'],
     consequence: [
       () => {
         if (this.characterService.characterState.money < 1e6) {
@@ -102,7 +106,12 @@ export class HellService {
           return;
         }
         this.characterService.characterState.updateMoney(-1e6);
-        this.characterService.characterState.hellMoney++;
+        this.burnedMoney += 1e6;
+        if (this.fasterHellMoney) {
+          this.characterService.characterState.hellMoney += 10;
+        } else {
+          this.characterService.characterState.hellMoney++;
+        }
       },
     ],
     resourceUse: [
@@ -1174,6 +1183,8 @@ export class HellService {
       timesCrushed: this.timesCrushed,
       contractsExamined: this.contractsExamined,
       atonedKills: this.atonedKills,
+      fasterHellMoney: this.fasterHellMoney,
+      burnedMoney: this.burnedMoney,
     };
   }
 
@@ -1193,6 +1204,8 @@ export class HellService {
     this.timesCrushed = properties.timesCrushed || 0;
     this.contractsExamined = properties.contractsExamined || 0;
     this.atonedKills = properties.atonedKills || 0;
+    this.fasterHellMoney = properties.fasterHellMoney || false;
+    this.burnedMoney = properties.burnedMoney || 0;
     this.activityService.reloadActivities();
   }
 

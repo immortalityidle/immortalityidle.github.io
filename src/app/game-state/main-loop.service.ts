@@ -1,6 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-//import { threadId } from 'worker_threads';
-import { throttleTime, map, bufferCount, Subject, distinct, merge, OperatorFunction, filter } from 'rxjs';
+import { throttleTime, map, bufferCount, Subject, OperatorFunction } from 'rxjs';
 import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';

@@ -12,6 +12,7 @@ import { ActivityService } from './activity.service';
 import { ActivityType } from './activity';
 import { ImpossibleTaskService } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
+import { HellService } from './hell.service';
 
 export interface Achievement {
   name: string;
@@ -47,7 +48,8 @@ export class AchievementService {
     private homeService: HomeService,
     private activityService: ActivityService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
+    private hellService: HellService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (const achievement of this.achievements) {
@@ -80,7 +82,9 @@ export class AchievementService {
         'You earned your first few taels by working hard. Maybe you should invest in some land and a better home.',
       hint: 'Make some money.',
       check: () => {
-        return this.characterService.characterState.money >= 350;
+        return (
+          this.characterService.characterState.money >= 350 || this.homeService.homeValue !== HomeType.SquatterTent
+        );
       },
       effect: () => {
         this.homeService.homeUnlocked = true;
@@ -1014,6 +1018,18 @@ export class AchievementService {
       },
       effect: () => {
         // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Let It Burn',
+      description: 'You have burned an insane amount of money.',
+      hint: "You didn't want that money anyway.",
+      check: () => {
+        return this.hellService.burnedMoney > 1e9;
+      },
+      effect: () => {
+        this.hellService.fasterHellMoney = true;
       },
       unlocked: false,
     },

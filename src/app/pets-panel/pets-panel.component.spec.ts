@@ -8,10 +8,9 @@ describe('PetsPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PetsPanelComponent]
-    })
-    .compileComponents();
-    
+      imports: [PetsPanelComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(PetsPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

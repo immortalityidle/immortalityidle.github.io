@@ -140,9 +140,18 @@ export class InventoryPanelComponent {
     }
   }
 
-  use(): void {
+  use(event: MouseEvent | null = null): void {
+    let quantity = 1;
+    if (event) {
+      if (event.shiftKey) {
+        quantity *= 10;
+      }
+      if (event.ctrlKey) {
+        quantity *= 100;
+      }
+    }
     if (this.inventoryService.selectedItem) {
-      this.inventoryService.useItemStack(this.inventoryService.selectedItem);
+      this.inventoryService.useItemStack(this.inventoryService.selectedItem, quantity);
     }
   }
 

@@ -26,7 +26,6 @@ export class StatisticsPanelComponent {
     public battleService: BattleService,
     public activityService: ActivityService,
     public achievementService: AchievementService,
-    public statisticsService: StatisticsService,
-  ) {
-  }
+    public statisticsService: StatisticsService
+  ) {}
 }

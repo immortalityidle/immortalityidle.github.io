@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
-import { map, bufferCount, timeInterval, bufferTime, scan } from 'rxjs';
+import { map, timeInterval, bufferTime } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,9 +8,7 @@ import { map, bufferCount, timeInterval, bufferTime, scan } from 'rxjs';
 export class StatisticsService {
   daysPerSecond = 0;
 
-  constructor(
-    mainLoopService: MainLoopService
-  ) {
+  constructor(mainLoopService: MainLoopService) {
     const daysPerSecond$ = mainLoopService.longTickSubject.pipe(
       timeInterval(),
       map(ticksAndTime => ticksAndTime.value / (ticksAndTime.interval / 1000)),

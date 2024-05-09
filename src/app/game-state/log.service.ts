@@ -104,7 +104,11 @@ export class LogService {
   }
 
   isRepeat(message: string, timestamp: number, log: Log[]): boolean {
-    return log.length > 0 && timestamp - log[log.length - 1].timestamp <= LOG_MERGE_INTERVAL_MS && message === log[log.length - 1].message;
+    return (
+      log.length > 0 &&
+      timestamp - log[log.length - 1].timestamp <= LOG_MERGE_INTERVAL_MS &&
+      message === log[log.length - 1].message
+    );
   }
 
   getProperties(): LogProperties {
