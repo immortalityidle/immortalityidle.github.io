@@ -153,14 +153,16 @@ export class MainLoopService {
     type CancelFunc = () => void;
     const customSetInterval = (func: () => void, time: number): CancelFunc => {
       let isCancelled = false;
-      let currentTimeout: CancelFunc = () => {};
+      let currentTimeout: CancelFunc = () => {
+        // do nothing.
+      };
       const cancelFunc = () => {
         isCancelled = true;
         if (currentTimeout !== null) {
           currentTimeout();
         }
       };
-
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const cancelFuncForSetTimeout = (timeoutKey: any) => () => clearTimeout(timeoutKey);
 
       const timeoutFunc = () => {
@@ -196,7 +198,9 @@ export class MainLoopService {
 
       const backgroundTimeTicks = Math.floor(BACKGROUND_TICK_INTERVAL_MS / desiredTime);
 
-      let cancelCurrentTimer = () => {};
+      let cancelCurrentTimer = () => {
+        // do nothing.
+      };
       const documentVisibilityChanged = () => {
         cancelCurrentTimer();
 

@@ -2007,6 +2007,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoPotionUnlocked = true;
+        this.inventoryService.autoPotionEnabled = true;
         for (let index = this.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
           if (this.inventoryService.autoUseEntries[index].name.includes('Potion')) {
             this.inventoryService.autoUseEntries.splice(index, 1);
@@ -2040,6 +2041,7 @@ export class ItemRepoService {
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoPillUnlocked = true;
+        this.inventoryService.autoPillEnabled = true;
         for (let index = this.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
           if (this.inventoryService.autoUseEntries[index].name.includes('Pill')) {
             this.inventoryService.autoUseEntries.splice(index, 1);

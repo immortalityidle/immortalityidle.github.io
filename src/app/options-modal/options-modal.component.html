@@ -138,11 +138,29 @@
       </mat-tab>
     }
 
-    @if (inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon || inventoryService.useSpiritGemUnlocked) {
+    @if (inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon || inventoryService.useSpiritGemUnlocked || inventoryService.autoPillUnlocked  || inventoryService.autoPotionUnlocked) {
       <mat-tab>
         <ng-template mat-tab-label>
           <span class="tab-label">Crafting</span>
         </ng-template>
+        @if (inventoryService.autoPotionUnlocked) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoPotionChange($event)"
+                id="autoPotionEnable"  [checked]="inventoryService.autoPotionEnabled"/>
+              <label for="autoPotionEnable">Automatically consume potions when you make them</label>
+            </span>
+          </div>
+        }
+        @if (inventoryService.autoPillUnlocked) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoPillChange($event)"
+                id="autoPillEnable"  [checked]="inventoryService.autoPillEnabled"/>
+              <label for="autoPillEnable">Automatically consume pills when you make them</label>
+            </span>
+          </div>
+        }
         @if (inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon) {
           <div  class="optionField">
             <span>

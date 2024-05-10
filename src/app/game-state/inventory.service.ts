@@ -102,6 +102,8 @@ export interface InventoryProperties {
   autoBalanceItems: BalanceItem[];
   autoPotionUnlocked: boolean;
   autoPillUnlocked: boolean;
+  autoPotionEnabled: boolean;
+  autoPillEnabled: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
   useSpiritGemUnlocked: boolean;
@@ -153,6 +155,8 @@ export class InventoryService {
   autoBalanceItems: BalanceItem[];
   autoPotionUnlocked: boolean;
   autoPillUnlocked: boolean;
+  autoPotionEnabled: boolean;
+  autoPillEnabled: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
   autoequipBestWeapon: boolean;
@@ -213,6 +217,8 @@ export class InventoryService {
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
     this.autoPillUnlocked = false;
+    this.autoPotionEnabled = false;
+    this.autoPillEnabled = false;
     this.autoWeaponMergeUnlocked = false;
     this.autoArmorMergeUnlocked = false;
     this.autoequipBestWeapon = false;
@@ -310,6 +316,8 @@ export class InventoryService {
       autoBalanceItems: this.autoBalanceItems,
       autoPotionUnlocked: this.autoPotionUnlocked,
       autoPillUnlocked: this.autoPillUnlocked,
+      autoPotionEnabled: this.autoPotionEnabled,
+      autoPillEnabled: this.autoPillEnabled,
       autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked,
       autoArmorMergeUnlocked: this.autoArmorMergeUnlocked,
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
@@ -353,6 +361,8 @@ export class InventoryService {
     this.autoBalanceItems = properties.autoBalanceItems;
     this.autoPotionUnlocked = properties.autoPotionUnlocked || false;
     this.autoPillUnlocked = properties.autoPillUnlocked || false;
+    this.autoPotionEnabled = properties.autoPotionUnlocked || this.autoPotionUnlocked;
+    this.autoPillEnabled = properties.autoPillUnlocked || this.autoPillUnlocked;
     this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked || false;
     this.autoArmorMergeUnlocked = properties.autoArmorMergeUnlocked || false;
     this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked || false;
@@ -741,9 +751,10 @@ export class InventoryService {
       quality = herbQuality[qualityIndex];
     }
     const value = grade + 1;
+    const herbName = quality + ' ' + name;
     this.addItem({
       id: 'herb',
-      name: quality + ' ' + name,
+      name: herbName,
       type: 'ingredient',
       value: value,
       description: 'Useful herbs. Can be used in creating pills or potions.',
@@ -753,7 +764,7 @@ export class InventoryService {
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (itemStack && itemStack.item.id === 'herb') {
-          if (itemStack.item.value < value) {
+          if (itemStack.item.value < value && itemStack.item.name !== herbName) {
             this.sell(itemStack, itemStack.quantity);
           }
         }
@@ -1122,11 +1133,11 @@ export class InventoryService {
       }
     }
 
-    if (this.autoPotionUnlocked && item.type === 'potion') {
+    if (this.autoPotionEnabled && item.type === 'potion') {
       this.useItem(item, quantity);
       return -1;
     }
-    if (this.autoPillUnlocked && item.type === 'pill') {
+    if (this.autoPillEnabled && item.type === 'pill') {
       this.useItem(item, quantity);
       return -1;
     }

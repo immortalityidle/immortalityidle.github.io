@@ -151,6 +151,16 @@ export class OptionsModalComponent {
     this.inventoryService.useCheapestSpiritGem = event.target.checked;
   }
 
+  autoPotionChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoPotionEnabled = event.target.checked;
+  }
+
+  autoPillChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoPillEnabled = event.target.checked;
+  }
+
   autoequipEnableChange(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoequipBestEnabled = event.target.checked;
