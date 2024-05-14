@@ -304,6 +304,7 @@ export class ItemRepoService {
   items: { [key: string]: Item } = {
     rice: {
       id: 'rice',
+      imageFile: 'rice',
       name: 'rice',
       type: 'food',
       value: 1,
@@ -318,6 +319,7 @@ export class ItemRepoService {
     },
     cabbage: {
       id: 'cabbage',
+      imageFile: 'cabbage',
       name: 'cabbage',
       type: 'food',
       value: 5,
@@ -336,6 +338,7 @@ export class ItemRepoService {
     },
     beans: {
       id: 'beans',
+      imageFile: 'beans',
       name: 'beans',
       type: 'food',
       value: 10,
@@ -351,6 +354,7 @@ export class ItemRepoService {
     },
     broccoli: {
       id: 'broccoli',
+      imageFile: 'broccoli',
       name: 'broccoli',
       type: 'food',
       value: 15,
@@ -366,6 +370,7 @@ export class ItemRepoService {
     },
     calabash: {
       id: 'calabash',
+      imageFile: 'calabash',
       name: 'calabash',
       type: 'food',
       value: 20,
@@ -381,6 +386,7 @@ export class ItemRepoService {
     },
     taro: {
       id: 'taro',
+      imageFile: 'taro',
       name: 'taro',
       type: 'food',
       value: 25,
@@ -396,6 +402,7 @@ export class ItemRepoService {
     },
     pear: {
       id: 'pear',
+      imageFile: 'pear',
       name: 'pear',
       type: 'food',
       value: 30,
@@ -411,6 +418,7 @@ export class ItemRepoService {
     },
     melon: {
       id: 'melon',
+      imageFile: 'melon',
       name: 'melon',
       type: 'food',
       value: 35,
@@ -426,6 +434,7 @@ export class ItemRepoService {
     },
     plum: {
       id: 'plum',
+      imageFile: 'plum',
       name: 'plum',
       type: 'food',
       value: 40,
@@ -441,6 +450,7 @@ export class ItemRepoService {
     },
     apricot: {
       id: 'apricot',
+      imageFile: 'apricot',
       name: 'apricot',
       type: 'food',
       value: 45,
@@ -456,6 +466,7 @@ export class ItemRepoService {
     },
     peach: {
       id: 'peach',
+      imageFile: 'peach',
       name: 'peach',
       type: 'food',
       value: 50,
@@ -472,6 +483,7 @@ export class ItemRepoService {
     },
     divinePeach: {
       id: 'divinePeach',
+      imageFile: 'divinePeach',
       name: 'divine peach',
       type: 'food',
       value: 100,

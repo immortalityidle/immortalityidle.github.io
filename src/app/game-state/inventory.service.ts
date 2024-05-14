@@ -52,6 +52,7 @@ export interface Item {
   use?: (quantity?: number) => void;
   /** Used for single-use permanent upgrades so we can see if they need to be bought again */
   owned?: () => boolean;
+  imageFile?: string;
 }
 
 export interface Equipment extends Item {
