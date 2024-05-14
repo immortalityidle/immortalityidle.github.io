@@ -293,4 +293,16 @@ export class InventoryPanelComponent {
   getMoneyUpdates(): number[] {
     return this.moneyUpdates;
   }
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  getStyle(itemStack: ItemStack | null): { [klass: string]: any } {
+    if (itemStack) {
+      if (itemStack.item) {
+        if (itemStack.item.imageColor) {
+          return { 'border-color': itemStack.item.imageColor, border: 'solid 1px' };
+        }
+      }
+    }
+    return {};
+  }
 }

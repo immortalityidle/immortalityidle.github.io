@@ -53,6 +53,7 @@ export interface Item {
   /** Used for single-use permanent upgrades so we can see if they need to be bought again */
   owned?: () => boolean;
   imageFile?: string;
+  imageColor?: string;
 }
 
 export interface Equipment extends Item {

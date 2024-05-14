@@ -107,7 +107,7 @@
 
   <div class="overflow">
     <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
-      @for (itemStack of inventoryService.itemStacks; track itemStack; let indexOfelement = $index) {
+      <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
         <div>
           <div id="itemIndex{{indexOfelement}}" >
             <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)"
@@ -119,7 +119,9 @@
               matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '. ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
               <div class="itemName textOverflow">
                 @if (itemStack?.item?.imageFile){
-                  <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
+                  <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" 
+                    [style]="getStyle(itemStack)"
+                    width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
                 }
                 @else {
                   {{itemStack?.item?.name | titlecase}}
@@ -131,7 +133,6 @@
             </div>
           </div>
         </div>
-      }
     </div>
   </div>
 </div>

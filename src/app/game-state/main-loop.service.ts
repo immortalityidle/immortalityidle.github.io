@@ -179,7 +179,6 @@ export class MainLoopService {
         if (isCancelled) {
           return;
         }
-
         if (timeToWait <= 0) {
           currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, 0));
         } else {
