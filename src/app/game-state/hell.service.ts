@@ -292,6 +292,7 @@ export class HellService {
         if (this.inventoryService.consume('metal', 1) > 0) {
           const newHammer: Equipment = {
             id: 'weapon',
+            imageFile: 'copperHammer',
             name: 'Copper Hammer',
             type: 'equipment',
             slot: 'rightHand',

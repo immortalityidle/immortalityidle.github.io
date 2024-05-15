@@ -729,6 +729,8 @@ export class ItemRepoService {
     },
     balsaLog: {
       id: 'balsaLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[0],
       name: 'balsa log',
       type: 'wood',
       value: 1,
@@ -736,6 +738,8 @@ export class ItemRepoService {
     },
     elmLog: {
       id: 'elmLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[1],
       name: 'elm log',
       type: 'wood',
       value: 2,
@@ -743,6 +747,8 @@ export class ItemRepoService {
     },
     cypressLog: {
       id: 'cypressLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[2],
       name: 'cypress log',
       type: 'wood',
       value: 3,
@@ -750,6 +756,8 @@ export class ItemRepoService {
     },
     walnutLog: {
       id: 'walnutLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[3],
       name: 'walnut log',
       type: 'wood',
       value: 4,
@@ -757,6 +765,8 @@ export class ItemRepoService {
     },
     laurelwoodLog: {
       id: 'laurelwoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[4],
       name: 'laurelwood log',
       type: 'wood',
       value: 5,
@@ -764,6 +774,8 @@ export class ItemRepoService {
     },
     blackwoodLog: {
       id: 'blackwoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[5],
       name: 'blackwood log',
       type: 'wood',
       value: 6,
@@ -771,6 +783,8 @@ export class ItemRepoService {
     },
     rosewoodLog: {
       id: 'rosewoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[6],
       name: 'rosewood log',
       type: 'wood',
       value: 7,
@@ -778,6 +792,8 @@ export class ItemRepoService {
     },
     pearwoodLog: {
       id: 'pearwoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[7],
       name: 'pearwood log',
       type: 'wood',
       value: 8,
@@ -785,6 +801,8 @@ export class ItemRepoService {
     },
     zitanLog: {
       id: 'zitanLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[8],
       name: 'zitan log',
       type: 'wood',
       value: 9,
@@ -792,6 +810,8 @@ export class ItemRepoService {
     },
     lignumvitaeLog: {
       id: 'lignumvitaeLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[9],
       name: 'lignum vitae log',
       type: 'wood',
       value: 10,
@@ -799,6 +819,8 @@ export class ItemRepoService {
     },
     peachwoodlog: {
       id: 'peachwoodlog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[10],
       name: 'peachwood log',
       type: 'wood',
       value: 11,
@@ -806,6 +828,8 @@ export class ItemRepoService {
     },
     diamondwoodLog: {
       id: 'diamondwoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[11],
       name: 'diamondwood log',
       type: 'wood',
       value: 12,
@@ -813,6 +837,8 @@ export class ItemRepoService {
     },
     titanwoodLog: {
       id: 'titanwoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[12],
       name: 'titanwood log',
       type: 'wood',
       value: 13,
@@ -820,6 +846,8 @@ export class ItemRepoService {
     },
     dragonwoodLog: {
       id: 'dragonwoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[13],
       name: 'dragonwood log',
       type: 'wood',
       value: 14,
@@ -827,6 +855,8 @@ export class ItemRepoService {
     },
     devilwoodLog: {
       id: 'devilwoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[14],
       name: 'devilwood log',
       type: 'wood',
       value: 15,
@@ -834,6 +864,8 @@ export class ItemRepoService {
     },
     divinewoodLog: {
       id: 'divinewoodLog',
+      imageFile: 'wood',
+      imageColor: this.colorByRank[15],
       name: 'divinewood log',
       type: 'wood',
       value: 16,
@@ -841,6 +873,8 @@ export class ItemRepoService {
     },
     copperOre: {
       id: 'copperOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[0],
       name: 'copper ore',
       type: 'ore',
       value: 1,
@@ -848,6 +882,8 @@ export class ItemRepoService {
     },
     tinOre: {
       id: 'tinOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[1],
       name: 'tin ore',
       type: 'ore',
       value: 2,
@@ -855,6 +891,8 @@ export class ItemRepoService {
     },
     bronzeOre: {
       id: 'bronzeOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[2],
       name: 'mixed ore',
       type: 'ore',
       value: 3,
@@ -862,6 +900,8 @@ export class ItemRepoService {
     },
     ironOre: {
       id: 'ironOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[3],
       name: 'iron ore',
       type: 'ore',
       value: 4,
@@ -869,6 +909,8 @@ export class ItemRepoService {
     },
     steelOre: {
       id: 'steelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[4],
       name: 'coal-mixed iron ore',
       type: 'ore',
       value: 5,
@@ -876,6 +918,8 @@ export class ItemRepoService {
     },
     mithrilOre: {
       id: 'mithrilOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[5],
       name: 'mithril ore',
       type: 'ore',
       value: 6,
@@ -883,6 +927,8 @@ export class ItemRepoService {
     },
     greensteelOre: {
       id: 'greensteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[6],
       name: 'greensteel ore',
       type: 'ore',
       value: 7,
@@ -890,6 +936,8 @@ export class ItemRepoService {
     },
     bluesteelOre: {
       id: 'bluesteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[7],
       name: 'bluesteel ore',
       type: 'ore',
       value: 8,
@@ -897,6 +945,8 @@ export class ItemRepoService {
     },
     redsteelOre: {
       id: 'redsteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[8],
       name: 'redsteel ore',
       type: 'ore',
       value: 9,
@@ -904,6 +954,8 @@ export class ItemRepoService {
     },
     flamesteelOre: {
       id: 'flamesteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[9],
       name: 'flamesteel ore',
       type: 'ore',
       value: 10,
@@ -911,6 +963,8 @@ export class ItemRepoService {
     },
     froststeelOre: {
       id: 'froststeelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[10],
       name: 'froststeel ore',
       type: 'ore',
       value: 11,
@@ -918,6 +972,8 @@ export class ItemRepoService {
     },
     brightsteelOre: {
       id: 'brightsteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[11],
       name: 'brightsteel ore',
       type: 'ore',
       value: 12,
@@ -925,6 +981,8 @@ export class ItemRepoService {
     },
     darksteelOre: {
       id: 'darksteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[12],
       name: 'darksteel ore',
       type: 'ore',
       value: 13,
@@ -932,6 +990,8 @@ export class ItemRepoService {
     },
     felsteelOre: {
       id: 'felsteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[13],
       name: 'felsteel ore',
       type: 'ore',
       value: 14,
@@ -939,6 +999,8 @@ export class ItemRepoService {
     },
     cloudsteelOre: {
       id: 'cloudsteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[14],
       name: 'cloudsteel ore',
       type: 'ore',
       value: 15,
@@ -946,6 +1008,8 @@ export class ItemRepoService {
     },
     adamantOre: {
       id: 'adamantOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[15],
       name: 'adamant ore',
       type: 'ore',
       value: 16,
@@ -954,6 +1018,8 @@ export class ItemRepoService {
     // metal bars should always be 10x the value of the associated ore
     copperBar: {
       id: 'copperBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[0],
       name: 'copper bar',
       type: 'metal',
       value: 10,
@@ -961,6 +1027,8 @@ export class ItemRepoService {
     },
     tinBar: {
       id: 'tinBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[1],
       name: 'tin bar',
       type: 'metal',
       value: 20,
@@ -968,6 +1036,8 @@ export class ItemRepoService {
     },
     bronzeBar: {
       id: 'bronzeBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[2],
       name: 'bronze bar',
       type: 'metal',
       value: 30,
@@ -975,6 +1045,8 @@ export class ItemRepoService {
     },
     ironBar: {
       id: 'ironBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[3],
       name: 'iron bar',
       type: 'metal',
       value: 40,
@@ -982,6 +1054,8 @@ export class ItemRepoService {
     },
     steelBar: {
       id: 'steelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[4],
       name: 'steel bar',
       type: 'metal',
       value: 50,
@@ -989,6 +1063,8 @@ export class ItemRepoService {
     },
     mithrilBar: {
       id: 'mithrilBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[5],
       name: 'mithril bar',
       type: 'metal',
       value: 60,
@@ -996,6 +1072,8 @@ export class ItemRepoService {
     },
     greensteelBar: {
       id: 'greensteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[6],
       name: 'greensteel bar',
       type: 'metal',
       value: 70,
@@ -1003,6 +1081,8 @@ export class ItemRepoService {
     },
     bluesteelBar: {
       id: 'bluesteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[7],
       name: 'bluesteel bar',
       type: 'metal',
       value: 80,
@@ -1010,6 +1090,8 @@ export class ItemRepoService {
     },
     redsteelBar: {
       id: 'redsteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[8],
       name: 'redsteel bar',
       type: 'metal',
       value: 90,
@@ -1017,6 +1099,8 @@ export class ItemRepoService {
     },
     flamesteelBar: {
       id: 'flamesteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[9],
       name: 'flamesteel bar',
       type: 'metal',
       value: 100,
@@ -1024,6 +1108,8 @@ export class ItemRepoService {
     },
     froststeelBar: {
       id: 'froststeelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[10],
       name: 'froststeel bar',
       type: 'metal',
       value: 110,
@@ -1031,6 +1117,8 @@ export class ItemRepoService {
     },
     brightsteelBar: {
       id: 'brightsteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[11],
       name: 'brightsteel bar',
       type: 'metal',
       value: 120,
@@ -1038,6 +1126,8 @@ export class ItemRepoService {
     },
     darksteelBar: {
       id: 'darksteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[12],
       name: 'darksteel bar',
       type: 'metal',
       value: 130,
@@ -1045,6 +1135,8 @@ export class ItemRepoService {
     },
     felsteelBar: {
       id: 'felsteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[13],
       name: 'felsteel bar',
       type: 'metal',
       value: 140,
@@ -1052,6 +1144,8 @@ export class ItemRepoService {
     },
     cloudsteelBar: {
       id: 'cloudsteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[14],
       name: 'cloudsteel bar',
       type: 'metal',
       value: 150,
@@ -1059,6 +1153,8 @@ export class ItemRepoService {
     },
     adamantBar: {
       id: 'adamantBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[15],
       name: 'adamant bar',
       type: 'metal',
       value: 160,
@@ -1066,6 +1162,7 @@ export class ItemRepoService {
     },
     junk: {
       id: 'junk',
+      imageFile: 'junk',
       name: 'junk',
       type: 'metal',
       value: 10,
@@ -1073,6 +1170,7 @@ export class ItemRepoService {
     },
     pillMold: {
       id: 'pillMold',
+      imageFile: 'pillMold',
       name: 'pill mold',
       type: 'pillMold',
       value: 100,
@@ -1080,6 +1178,7 @@ export class ItemRepoService {
     },
     pillBox: {
       id: 'pillBox',
+      imageFile: 'pillBox',
       name: 'pill box',
       type: 'pillBox',
       value: 100,
@@ -1087,6 +1186,7 @@ export class ItemRepoService {
     },
     pillPouch: {
       id: 'pillPouch',
+      imageFile: 'pillPouch',
       name: 'pill pouch',
       type: 'pillPouch',
       value: 100,
@@ -1095,6 +1195,7 @@ export class ItemRepoService {
     },
     unbreakableChain: {
       id: 'unbreakableChain',
+      imageFile: 'chain',
       name: 'unbreakable chain',
       type: 'chain',
       value: 1,
@@ -1102,6 +1203,7 @@ export class ItemRepoService {
     },
     everlastingBrick: {
       id: 'everlastingBrick',
+      imageFile: 'brick',
       name: 'everlasting brick',
       type: 'brick',
       value: 1,
@@ -1109,6 +1211,7 @@ export class ItemRepoService {
     },
     everlastingMortar: {
       id: 'everlastingMortar',
+      imageFile: 'mortar',
       name: 'everlasting mortar',
       type: 'mortar',
       value: 1,
@@ -1116,6 +1219,7 @@ export class ItemRepoService {
     },
     scaffolding: {
       id: 'scaffolding',
+      imageFile: 'scaffolding',
       name: 'scaffolding',
       type: 'scaffolding',
       value: 1,
@@ -1123,6 +1227,7 @@ export class ItemRepoService {
     },
     windTome: {
       id: 'windTome',
+      imageFile: 'windTome',
       name: 'Tome of Wind Control',
       type: 'windTome',
       value: 1,
@@ -1130,6 +1235,7 @@ export class ItemRepoService {
     },
     army: {
       id: 'army',
+      imageFile: 'army',
       name: 'a vast army',
       type: 'army',
       value: 1,
@@ -1137,6 +1243,7 @@ export class ItemRepoService {
     },
     immortality: {
       id: 'immortality',
+      imageFile: 'immortality',
       name: 'Essence of Immortality',
       type: 'immortality',
       value: Infinity,
@@ -1184,6 +1291,7 @@ export class ItemRepoService {
     },
     portalKey: {
       id: 'portalKey',
+      imageFile: 'key',
       name: 'Portal Key',
       type: 'portalKey',
       value: Infinity,
@@ -1230,6 +1338,7 @@ export class ItemRepoService {
     },
     fingers: {
       id: 'fingers',
+      imageFile: 'finger',
       name: 'fingers',
       type: 'fingers',
       value: 1,
@@ -1237,6 +1346,7 @@ export class ItemRepoService {
     },
     tokenOfGratitude: {
       id: 'tokenOfGratitude',
+      imageFile: 'token',
       name: 'token of gratitude',
       type: 'tokenOfGratitude',
       value: 1,
@@ -1244,6 +1354,7 @@ export class ItemRepoService {
     },
     mirrorShard: {
       id: 'mirrorShard',
+      imageFile: 'mirrorShard',
       name: 'mirror shard',
       type: 'mirrorShard',
       value: 1,
@@ -1251,6 +1362,7 @@ export class ItemRepoService {
     },
     iceCore: {
       id: 'iceCore',
+      imageFile: 'iceCore',
       name: 'ice core',
       type: 'iceCore',
       value: 1,
@@ -1258,6 +1370,7 @@ export class ItemRepoService {
     },
     fireCore: {
       id: 'fireCore',
+      imageFile: 'fireCore',
       name: 'fire core',
       type: 'fireCore',
       value: 1,
@@ -1265,6 +1378,7 @@ export class ItemRepoService {
     },
     treasureMap: {
       id: 'treasureMap',
+      imageFile: 'treasureMap',
       name: 'treasure map',
       type: 'treasureMap',
       value: 1,
@@ -1272,6 +1386,7 @@ export class ItemRepoService {
     },
     stolenRelic: {
       id: 'stolenRelic',
+      imageFile: 'relic',
       name: 'stolen relic',
       type: 'stolenRelic',
       value: 1,
@@ -1279,6 +1394,7 @@ export class ItemRepoService {
     },
     hellCrownTongueRippers: {
       id: 'hellCrownTongueRippers',
+      imageFile: 'crown',
       name: 'Crown of the Tongue Rippers',
       type: 'hellcrown',
       value: Infinity,
@@ -1306,6 +1422,7 @@ export class ItemRepoService {
     },
     hellCrownScissors: {
       id: 'hellCrownScissors',
+      imageFile: 'crown',
       name: 'Crown of Scissors',
       type: 'hellcrown',
       value: Infinity,
@@ -1337,6 +1454,7 @@ export class ItemRepoService {
     },
     hellCrownTreesOfKnives: {
       id: 'hellCrownTreesOfKnives',
+      imageFile: 'crown',
       name: 'Crown of Knives',
       type: 'hellcrown',
       value: Infinity,
@@ -1364,6 +1482,7 @@ export class ItemRepoService {
     },
     hellCrownMirrors: {
       id: 'hellCrownMirrors',
+      imageFile: 'crown',
       name: 'Crown of Mirrors',
       type: 'hellcrown',
       value: Infinity,
@@ -1395,6 +1514,7 @@ export class ItemRepoService {
     },
     hellCrownSteamers: {
       id: 'hellCrownSteamers',
+      imageFile: 'crown',
       name: 'Crown of Steam',
       type: 'hellcrown',
       value: Infinity,
@@ -1421,6 +1541,7 @@ export class ItemRepoService {
     },
     hellCrownPillars: {
       id: 'hellCrownPillars',
+      imageFile: 'crown',
       name: 'Crown of Pillars',
       type: 'hellcrown',
       value: Infinity,
@@ -1447,6 +1568,7 @@ export class ItemRepoService {
     },
     hellCrownMountainOfKnives: {
       id: 'hellCrownMountainOfKnives',
+      imageFile: 'crown',
       name: 'Crown of the Knife Mountain',
       type: 'hellcrown',
       value: Infinity,
@@ -1471,6 +1593,7 @@ export class ItemRepoService {
     },
     hellCrownMountainOfIce: {
       id: 'hellCrownMountainOfIce',
+      imageFile: 'crown',
       name: 'Crown of Ice',
       type: 'hellcrown',
       value: Infinity,
@@ -1497,6 +1620,7 @@ export class ItemRepoService {
     },
     hellCrownCauldronsOfOil: {
       id: 'hellCrownCauldronsOfOil',
+      imageFile: 'crown',
       name: 'Cauldron Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1521,6 +1645,7 @@ export class ItemRepoService {
     },
     hellCrownCattlePit: {
       id: 'hellCrownCattlePit',
+      imageFile: 'crown',
       name: 'Cow Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1547,6 +1672,7 @@ export class ItemRepoService {
     },
     hellCrownCrushingBoulder: {
       id: 'hellCrownCrushingBoulder',
+      imageFile: 'crown',
       name: 'Boulder Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1570,6 +1696,7 @@ export class ItemRepoService {
     },
     hellCrownMortarsAndPestles: {
       id: 'hellCrownMortarsAndPestles',
+      imageFile: 'crown',
       name: 'Gluttonous Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1602,6 +1729,7 @@ export class ItemRepoService {
     },
     hellCrownBloodPool: {
       id: 'hellCrownBloodPool',
+      imageFile: 'crown',
       name: 'Blood Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1628,6 +1756,7 @@ export class ItemRepoService {
     },
     hellCrownWrongfulDead: {
       id: 'hellCrownWrongfulDead',
+      imageFile: 'crown',
       name: 'Hollow Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1652,6 +1781,7 @@ export class ItemRepoService {
     },
     hellCrownDismemberment: {
       id: 'hellCrownDismemberment',
+      imageFile: 'crown',
       name: 'Crown of Limbs',
       type: 'hellcrown',
       value: Infinity,
@@ -1679,6 +1809,7 @@ export class ItemRepoService {
     },
     hellCrownFireMountain: {
       id: 'hellCrownFireMountain',
+      imageFile: 'crown',
       name: 'Lava Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1705,6 +1836,7 @@ export class ItemRepoService {
     },
     hellCrownMills: {
       id: 'hellCrownMills',
+      imageFile: 'crown',
       name: 'Millstone Crown',
       type: 'hellcrown',
       value: Infinity,
@@ -1728,6 +1860,7 @@ export class ItemRepoService {
     },
     hellCrownSaws: {
       id: 'hellCrownSaws',
+      imageFile: 'crown',
       name: 'Saw Crown',
       type: 'hellcrown',
       value: Infinity,

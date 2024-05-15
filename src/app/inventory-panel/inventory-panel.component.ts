@@ -231,14 +231,17 @@ export class InventoryPanelComponent {
       if (element.id.startsWith('itemIndex')) {
         const destinationItemIndex = parseInt(element.id.substring('itemIndex'.length));
         this.mergeOrSwapStacks(sourceItemIndex, destinationItemIndex);
+        this.inventoryService.selectedItem = null;
       } else if (element.id.startsWith('equipmentSlot')) {
         const equipmentSlotString = element.id.substring('equipmentSlot'.length);
         const slot: EquipmentPosition = equipmentSlotString as EquipmentPosition;
         if (!this.characterService.characterState.equipment[slot]) {
           this.inventoryService.equip(itemStack);
+          this.inventoryService.selectedItem = null;
         } else {
           if (!instanceOfEquipment(itemStack.item) || itemStack.item.slot === slot) {
             this.inventoryService.mergeEquippedSlot(slot, itemStack.item, sourceItemIndex);
+            this.inventoryService.selectedItem = null;
           }
         }
       }

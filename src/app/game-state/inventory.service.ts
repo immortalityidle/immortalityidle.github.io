@@ -517,15 +517,18 @@ export class InventoryService {
     }
     let materialPrefix = material;
     let slot: EquipmentPosition = 'rightHand';
+    let imageFileName = 'metalWeapon';
     if (material === 'wood') {
       slot = 'leftHand';
       materialPrefix = 'wooden';
+      imageFileName = 'woodenWeapon';
     }
     const baseName = defaultName ?? WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     let name: string;
     if (baseName === "Grandmother's Walking Stick") {
       // don't rename grandma's stick!
       name = baseName;
+      imageFileName = 'stick';
     } else {
       name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     }
@@ -537,6 +540,7 @@ export class InventoryService {
     const damage = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'weapon',
+      imageFile: imageFileName,
       name: name,
       type: 'equipment',
       slot: slot,
@@ -682,6 +686,7 @@ export class InventoryService {
 
     this.addItem({
       name: name,
+      imageFile: 'potion',
       id: 'potion',
       type: 'potion',
       value: grade,
@@ -700,6 +705,7 @@ export class InventoryService {
     let useDescription = 'Use to increase your lifespan.';
     let value = grade * 10;
     let name = effect + ' Pill ' + ' +' + grade;
+    let imageFileName = 'pill';
     if (this.checkFor('pillBox') > 0 && this.checkFor('pillMold') > 0 && this.checkFor('pillPouch') > 0) {
       this.consume('pillBox');
       this.consume('pillMold');
@@ -709,6 +715,7 @@ export class InventoryService {
       useDescription = 'Use to permanently empower the increase of your attributes based on your aptitudes.';
       value = 1;
       name = 'Empowerment Pill';
+      imageFileName = 'empowermentPill';
       this.logService.log(
         LogTopic.CRAFTING,
         'Alchemy Success! Created a ' +
@@ -723,6 +730,7 @@ export class InventoryService {
     }
     this.addItem({
       name: name,
+      imageFile: imageFileName,
       id: 'pill',
       type: 'pill',
       value: value,
@@ -756,6 +764,7 @@ export class InventoryService {
     const herbName = quality + ' ' + name;
     this.addItem({
       id: 'herb',
+      imageFile: 'herb',
       name: herbName,
       type: 'ingredient',
       value: value,
@@ -781,6 +790,7 @@ export class InventoryService {
     }
     return {
       id: 'spiritGemGrade' + grade,
+      imageFile: 'spiritGem',
       name: flavor + ' gem grade ' + grade,
       type: flavor + 'Gem',
       value: grade * 10,
@@ -828,17 +838,20 @@ export class InventoryService {
         suffix = ' of ' + ArmorSuffixes[suffixIndex - 1];
       }
     }
-    const materialPrefix = material;
     let namePicker = ChestArmorNames;
+    let imageFileName = 'chestArmor';
     if (slot === 'legs') {
       namePicker = LegArmorNames;
+      imageFileName = 'legsArmor';
     } else if (slot === 'head') {
       namePicker = HelmetNames;
+      imageFileName = 'headArmor';
     } else if (slot === 'feet') {
+      imageFileName = 'feetArmor';
       namePicker = ShoeNames;
     }
     const baseName = defaultName ?? namePicker[Math.floor(Math.random() * namePicker.length)];
-    const name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
+    const name = prefix + ' ' + baseName + suffix;
     this.logService.log(
       LogTopic.CRAFTING,
       'Your hard work paid off! You created some armor: ' + this.titleCasePipe.transform(name) + '!'
@@ -847,6 +860,7 @@ export class InventoryService {
     const defense = Math.max(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'armor',
+      imageFile: imageFileName,
       name: name,
       type: 'equipment',
       slot: slot,
@@ -996,6 +1010,7 @@ export class InventoryService {
     if (this.grandmotherGift) {
       const stick: Equipment = {
         id: 'weapon',
+        imageFile: 'stick',
         name: "Grandmother's Walking Stick",
         type: 'equipment',
         slot: 'leftHand',
