@@ -584,6 +584,7 @@ export const herbNames = [
 export const herbQuality = [
   'rotten',
   'wilted',
+  'tiny',
   'poor',
   'weak',
   'low-grade',
@@ -592,7 +593,11 @@ export const herbQuality = [
   'abundant',
   'quality',
   'great',
+  'huge',
   'exceptional',
   'amazing',
+  'exquisite',
+  'sublime',
   'spiritual',
+  'divine',
 ];

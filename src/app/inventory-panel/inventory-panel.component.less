@@ -6,6 +6,10 @@
   min-height: 0;
 }
 
+.inventoryHeader {
+  margin-bottom: 4px;
+}
+
 .inventoryGrid {
   display: flex;
   flex-wrap: wrap;
@@ -64,7 +68,6 @@
   white-space: nowrap;
 }
 
-
 .moneyLabelColumn {
   width: 50px;
   font-size: 12px;
@@ -109,4 +112,39 @@
 
 .cdk-drag-placeholder {
   opacity: .5;
+}
+
+.selectedItemBox {
+  display: flex;
+  flex-direction: row;
+  min-height: 120px;
+  height: 120px;
+  max-height: 120px;
+  margin-bottom: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+  border: 1px solid var(--panelBorder);
+}
+
+.selectedItemText {
+  margin-left: 4px;
+  margin-right: 2px;
+  font-size: 12px;
+  overflow-y: auto;
+}
+
+.selectedItemName {
+  border-bottom: 1px solid var(--panelBorder);
+}
+
+.selectedItemTextBody {
+  line-height: 14px;
+}
+
+.itemImagePlaceholder {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  min-height: 48px;
+  border: solid 1px white;
 }

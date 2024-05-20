@@ -748,23 +748,21 @@ export class InventoryService {
     const maxGrade = herbNames.length * herbQuality.length;
     const woodLore = this.characterService.characterState.attributes.woodLore.value;
     grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * maxGrade); // 1e9 woodlore is maximum grade, adjust if necessary
-    let name: string;
-    let quality: string;
+    let nameIndex = grade % herbNames.length;
+    let qualityIndex = Math.floor(grade / herbNames.length);
     if (grade >= maxGrade) {
       // maxed out
-      name = herbNames[herbNames.length - 1];
-      quality = herbQuality[herbQuality.length - 1];
-    } else {
-      const nameIndex = grade % herbNames.length;
-      const qualityIndex = Math.floor(grade / herbNames.length);
-      name = herbNames[nameIndex];
-      quality = herbQuality[qualityIndex];
+      nameIndex = herbNames.length - 1;
+      qualityIndex = herbQuality.length - 1;
     }
+    const name = herbNames[nameIndex];
+    const quality = herbQuality[qualityIndex];
     const value = grade + 1;
     const herbName = quality + ' ' + name;
     this.addItem({
       id: 'herb',
       imageFile: 'herb',
+      imageColor: this.itemRepoService.colorByRank[qualityIndex],
       name: herbName,
       type: 'ingredient',
       value: value,

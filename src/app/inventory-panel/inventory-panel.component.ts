@@ -306,6 +306,6 @@ export class InventoryPanelComponent {
         }
       }
     }
-    return {};
+    return { 'border-color': 'white', border: 'solid 1px' };
   }
 }
