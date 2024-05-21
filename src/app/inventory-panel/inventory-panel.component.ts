@@ -230,6 +230,9 @@ export class InventoryPanelComponent {
     for (const element of elements) {
       if (element.id.startsWith('itemIndex')) {
         const destinationItemIndex = parseInt(element.id.substring('itemIndex'.length));
+        if (destinationItemIndex === sourceItemIndex) {
+          return;
+        }
         this.mergeOrSwapStacks(sourceItemIndex, destinationItemIndex);
         this.inventoryService.selectedItem = null;
       } else if (element.id.startsWith('equipmentSlot')) {
