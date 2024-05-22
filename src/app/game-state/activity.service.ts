@@ -153,25 +153,32 @@ export class ActivityService {
         let anyUpgraded = false;
 
         for (const follower of this.followerService.followers) {
-          let attribute = this.characterService.characterState.attributes.charisma.value;
-          let trainingDays = this.trainingFollowersDays;
+          const attribute = this.characterService.characterState.attributes.charisma.value;
+          const trainingDays = this.trainingFollowersDays;
 
-          if (follower.pet) {
-            attribute = this.characterService.characterState.attributes.animalHandling.value;
-            trainingDays = this.trainingPetsDays;
-            if (follower.power >= 100) {
-              follower.power = 100;
-              continue;
-            } else {
-              allPetsMaxed = false;
-            }
+          if (follower.power >= 100) {
+            follower.power = 100;
+            continue;
           } else {
-            if (follower.power >= 100) {
-              follower.power = 100;
-              continue;
-            } else {
-              allFollowersMaxed = false;
-            }
+            allFollowersMaxed = false;
+          }
+
+          if (trainingDays === 0) {
+            continue;
+          }
+
+          anyUpgraded ||= trainingActionTemplate(attribute, trainingDays, follower);
+        }
+
+        for (const follower of this.followerService.pets) {
+          const attribute = this.characterService.characterState.attributes.animalHandling.value;
+          const trainingDays = this.trainingPetsDays;
+
+          if (follower.power >= 100) {
+            follower.power = 100;
+            continue;
+          } else {
+            allPetsMaxed = false;
           }
 
           if (trainingDays === 0) {

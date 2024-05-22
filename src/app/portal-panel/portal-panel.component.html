@@ -16,7 +16,7 @@
 <div class="portalsContainer">
   <div class="overflow">
     <div class="activityGrid">
-      @for (activity of activityService.activities; track activity; let indexOfelement = $index) {
+      @for (activity of activityService.activities; track activity.name + '' + activity.level; let indexOfelement = $index) {
         @if (activity.portal && (activity.discovered || activity.unlocked)) {
           <div class="activitySlot" [ngClass]="{'lockedActivity': !activity.unlocked}"
             [tabindex]="0"

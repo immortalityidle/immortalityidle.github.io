@@ -2,7 +2,7 @@
   <span>Manuals Shop</span>
   <hr/>
   <div class="inventoryGrid">
-    @for (item of storeService.manuals; track item) {
+    @for (item of storeService.manuals; track item.id) {
       <div>
         <div class="itemSlot" (click)="slotClicked(item)" tabindex="0"
           [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"

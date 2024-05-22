@@ -118,7 +118,7 @@
             <span>
               Automatically upgrade your home up to a
               <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
-                @for (home of homeService.homesList; track home) {
+                @for (home of homeService.homesList; track home.name) {
                   <option value="{{home.type}}"
                     [selected]="homeService.autoBuyHomeLimit === home.type">
                     {{home.name}}

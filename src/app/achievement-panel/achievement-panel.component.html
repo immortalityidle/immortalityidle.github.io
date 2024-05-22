@@ -2,7 +2,7 @@
   <h3>Achievements ({{achievementService.unlockedAchievements.length}} / {{achievementService.achievements.length}})</h3>
   <hr/>
   <div class="achievementGrid">
-    @for (achievement of achievementService.achievements; track achievement) {
+    @for (achievement of achievementService.achievements; track $index + '' + achievement.unlocked) {
       <div>
         @if (achievement.unlocked) {
           <div class="itemSlot" tabindex="0"
