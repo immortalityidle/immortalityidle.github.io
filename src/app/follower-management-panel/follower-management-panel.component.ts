@@ -13,14 +13,17 @@ export class FollowerManagementPanelComponent {
   followerType = 'Follower';
   followers: Follower[];
   followerCap: number;
+  maxFollowerByType: { [key: string]: number };
   constructor(@Inject(MAT_DIALOG_DATA) public data: { pets: boolean }, public followerService: FollowersService) {
     this.pets = data.pets;
     this.followers = followerService.followers;
     this.followerCap = followerService.followerCap;
+    this.maxFollowerByType = followerService.maxFollowerByType;
     if (this.pets) {
       this.followerType = 'Pet';
       this.followers = followerService.pets;
       this.followerCap = followerService.petsCap;
+      this.maxFollowerByType = followerService.maxPetsByType;
     }
   }
 
@@ -32,9 +35,9 @@ export class FollowerManagementPanelComponent {
         (this.followerService.jobs[followerType].pet === this.pets ||
           (!this.followerService.jobs[followerType].pet && !this.pets))
       ) {
-        if (this.followerService.maxFollowerByType[followerType]) {
-          max += this.followerService.maxFollowerByType[followerType];
-        } else if (this.followerService.maxFollowerByType[followerType] !== 0) {
+        if (this.maxFollowerByType[followerType]) {
+          max += this.maxFollowerByType[followerType];
+        } else if (this.maxFollowerByType[followerType] !== 0) {
           max += 1000;
         }
       }
@@ -49,7 +52,9 @@ export class FollowerManagementPanelComponent {
 
   changeAllClicked() {
     for (const key in this.followerService.jobs) {
-      if (this.followerService.jobs[key].pet === this.pets || (!this.followerService.jobs[key].pet && !this.pets)) {
+      if (this.pets && this.followerService.jobs[key].pet) {
+        this.followerService.setMaxPets(key, this.changeAll);
+      } else if (!this.pets && !this.followerService.jobs[key].pet) {
         this.followerService.setMaxFollowers(key, this.changeAll);
       }
     }
@@ -57,7 +62,11 @@ export class FollowerManagementPanelComponent {
 
   keepValueChanged(event: Event, job: string) {
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.followerService.setMaxFollowers(job, parseInt(event.target.value));
+    if (this.pets) {
+      this.followerService.setMaxPets(job, parseInt(event.target.value));
+    } else {
+      this.followerService.setMaxFollowers(job, parseInt(event.target.value));
+    }
   }
 
   sortAscSwitch() {
@@ -67,7 +76,7 @@ export class FollowerManagementPanelComponent {
   sortOrderChanged(event: Event) {
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.followerService.sortField = event.target.value;
-    this.followerService.sortFollowers(this.followerService.sortAscending);
+    this.followerService.sortFollowers(this.followerService.sortAscending, this.pets);
   }
 
   dismissAllClicked() {

@@ -71,7 +71,7 @@
         </table>
       }
       <table>
-        @for (enemyStack of battleService.enemies; track enemyStack) {
+        @for (enemyStack of battleService.enemies; track enemyStack.enemy.name + enemyStack.quantity) {
           <tr>
             <td>
               @if (battleService.currentEnemy !== enemyStack) {

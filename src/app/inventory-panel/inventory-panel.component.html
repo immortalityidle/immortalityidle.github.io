@@ -145,9 +145,9 @@
 
   <div class="overflow">
     <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
-      <div *ngFor="let itemStack of inventoryService.itemStacks; let indexOfelement=index;">
+      @for (itemStack of inventoryService.itemStacks; track $index + '' + itemStack?.item?.name + itemStack?.quantity;) {
         <div>
-          <div id="itemIndex{{indexOfelement}}" >
+          <div id="itemIndex{{$index}}" >
             <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)"
               cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
               [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
@@ -171,7 +171,8 @@
             </div>
           </div>
         </div>
-    </div>
+        
+      }
   </div>
 </div>
 

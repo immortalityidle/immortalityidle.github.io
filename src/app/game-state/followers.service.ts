@@ -426,7 +426,8 @@ export class FollowersService {
       this.yearTickFollowers(this.pets, daysElapsed);
 
       this.followersWorks(daysElapsed);
-      this.sortFollowers(this.sortAscending);
+      this.sortFollowers(this.sortAscending, true);
+      this.sortFollowers(this.sortAscending, false);
     });
 
     mainLoopService.tickSubject.subscribe(() => {
@@ -553,7 +554,7 @@ export class FollowersService {
         a.lifespan - a.age > b.lifespan - b.age ? left : a.lifespan - a.age === b.lifespan - b.age ? 0 : right
       );
     } else {
-      this.followers.sort((a, b) =>
+      listToSort.sort((a, b) =>
         (a[this.sortField.toLowerCase()] ?? 0) > (b[this.sortField.toLowerCase()] ?? 0)
           ? left
           : a[this.sortField.toLowerCase()] === b[this.sortField.toLowerCase()]
@@ -716,7 +717,7 @@ export class FollowersService {
         return null;
       }
     }
-    job = job ? job : this.generateFollowerJob(pet);
+    job = job ? job : this.generateFollowerJob(pet, followersList);
     if (job === '') {
       // couldn't find a job that we want
       return null;
@@ -725,7 +726,7 @@ export class FollowersService {
     if (pet) {
       capNumber = this.maxPetsByType[job] !== undefined ? this.maxPetsByType[job] : 1000;
     }
-    if (this.numFollowersOnJob(job) >= capNumber) {
+    if (this.numFollowersOnJob(job, followersList) >= capNumber) {
       this.logService.log(
         LogTopic.FOLLOWER,
         'A new follower shows up, but they were a ' +
@@ -751,8 +752,8 @@ export class FollowersService {
       pet: pet,
     };
     followersList.push(follower);
-    this.sortFollowers(this.sortAscending);
-    if (followersList.length >= this.followerCap) {
+    this.sortFollowers(this.sortAscending, pet);
+    if (followersList.length >= cap) {
       if (pet) {
         this.petsMaxed = 'MAXED';
       } else {
@@ -763,9 +764,9 @@ export class FollowersService {
     return follower;
   }
 
-  numFollowersOnJob(job: string): number {
+  numFollowersOnJob(job: string, followerList: Follower[]): number {
     let count = 0;
-    for (const follower of this.followers) {
+    for (const follower of followerList) {
       if (follower.job === job) {
         count++;
       }
@@ -777,7 +778,7 @@ export class FollowersService {
     return FirstNames[Math.floor(Math.random() * FirstNames.length)];
   }
 
-  generateFollowerJob(pet = false): string {
+  generateFollowerJob(pet = false, followersList: Follower[]): string {
     const keys = Object.keys(this.jobs);
     const possibleJobs = [];
     for (const key of keys) {
@@ -788,7 +789,7 @@ export class FollowersService {
             if (pet) {
               capNumber = this.maxPetsByType[key] !== undefined ? this.maxPetsByType[key] : 1000;
             }
-            if (this.numFollowersOnJob(key) < capNumber) {
+            if (this.numFollowersOnJob(key, followersList) < capNumber) {
               possibleJobs.push(key);
             }
           } else {
@@ -862,6 +863,14 @@ export class FollowersService {
       this.maxFollowerByType[job] = 0; // In case of negatives, NaN or undefined.
     } else {
       this.maxFollowerByType[job] = value;
+    }
+  }
+
+  setMaxPets(job: string, value: number) {
+    if (!value || value < 0) {
+      this.maxPetsByType[job] = 0; // In case of negatives, NaN or undefined.
+    } else {
+      this.maxPetsByType[job] = value;
     }
   }
 
