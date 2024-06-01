@@ -61,7 +61,7 @@
     <h6>
       <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
         [checked]="mainLoopService.useBankedTicks"/>
-      <label for="useSavedTicks">Use banked time to accelerate reality (10x). {{mainLoopService.bankedTicks | number: '1.0-0'}} time ticks left.</label>
+      <label for="useSavedTicks">Use banked time to accelerate reality (10x). {{mainLoopService.bankedTicks | bigNumber}} time ticks left.</label>
     </h6>
   </h3>
   <div class="overflow" cdkDropList cdkDropListSortingDisabled>

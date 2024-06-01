@@ -59,7 +59,7 @@ export class InventoryPanelComponent {
     return Number.isFinite(value);
   }
 
-  slotClicked(item: ItemStack | null, event: MouseEvent): void {
+  slotClicked(item: ItemStack, event: MouseEvent): void {
     event.stopPropagation();
     if (event.shiftKey || event.altKey) {
       let oldSelected = null;
@@ -74,24 +74,24 @@ export class InventoryPanelComponent {
       this.autoUse();
     } else {
       if (this.inventoryService.selectedItem === item) {
-        this.inventoryService.selectedItem = null;
+        this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
       } else {
         this.inventoryService.selectedItem = item;
       }
     }
   }
 
-  slotDoubleClicked(item: ItemStack | null, event: MouseEvent): void {
+  slotDoubleClicked(item: ItemStack, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.inventoryService.selectedItem = item;
     if (this.inventoryService.selectedItem) {
       this.inventoryService.equip(this.inventoryService.selectedItem);
-      this.inventoryService.selectedItem = null;
+      this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
   }
 
-  slotRightClicked(item: ItemStack | null, event: MouseEvent) {
+  slotRightClicked(item: ItemStack, event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.inventoryService.selectedItem = item;
@@ -117,7 +117,7 @@ export class InventoryPanelComponent {
   }
 
   sellAll(): void {
-    if (this.inventoryService.selectedItem) {
+    if (this.inventoryService.selectedItem?.item) {
       this.inventoryService.sellAll(this.inventoryService.selectedItem.item);
     }
   }
@@ -135,7 +135,7 @@ export class InventoryPanelComponent {
   }
 
   autoSell() {
-    if (this.inventoryService.selectedItem) {
+    if (this.inventoryService.selectedItem?.item) {
       this.inventoryService.autoSell(this.inventoryService.selectedItem.item);
     }
   }
@@ -156,13 +156,13 @@ export class InventoryPanelComponent {
   }
 
   autoUse(): void {
-    if (this.inventoryService.selectedItem) {
+    if (this.inventoryService.selectedItem?.item) {
       this.inventoryService.autoUse(this.inventoryService.selectedItem.item);
     }
   }
 
   autoBalance(): void {
-    if (this.inventoryService.selectedItem) {
+    if (this.inventoryService.selectedItem?.item) {
       this.inventoryService.autoBalance(this.inventoryService.selectedItem.item);
     }
   }
@@ -170,7 +170,7 @@ export class InventoryPanelComponent {
   equip(): void {
     if (this.inventoryService.selectedItem) {
       this.inventoryService.equip(this.inventoryService.selectedItem);
-      this.inventoryService.selectedItem = null;
+      this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
   }
 
@@ -180,7 +180,7 @@ export class InventoryPanelComponent {
       this.inventoryService.autoSellOldGemsEnabled = false;
       this.inventoryService.mergeSpiritGem(this.inventoryService.selectedItem);
       if (this.inventoryService.selectedItem.quantity === 0) {
-        this.inventoryService.selectedItem = null;
+        this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
       }
     }
   }
@@ -222,7 +222,7 @@ export class InventoryPanelComponent {
       return;
     }
     const itemStack = this.inventoryService.itemStacks[sourceItemIndex];
-    if (!itemStack) {
+    if (!itemStack.item) {
       return;
     }
 
@@ -234,17 +234,17 @@ export class InventoryPanelComponent {
           return;
         }
         this.mergeOrSwapStacks(sourceItemIndex, destinationItemIndex);
-        this.inventoryService.selectedItem = null;
+        this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
       } else if (element.id.startsWith('equipmentSlot')) {
         const equipmentSlotString = element.id.substring('equipmentSlot'.length);
         const slot: EquipmentPosition = equipmentSlotString as EquipmentPosition;
         if (!this.characterService.characterState.equipment[slot]) {
           this.inventoryService.equip(itemStack);
-          this.inventoryService.selectedItem = null;
+          this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
         } else {
           if (!instanceOfEquipment(itemStack.item) || itemStack.item.slot === slot) {
             this.inventoryService.mergeEquippedSlot(slot, itemStack.item, sourceItemIndex);
-            this.inventoryService.selectedItem = null;
+            this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
           }
         }
       }
@@ -260,9 +260,8 @@ export class InventoryPanelComponent {
       if (sourceItem && destItem) {
         if (instanceOfEquipment(sourceItem) && instanceOfEquipment(destItem)) {
           if (sourceItem.slot === destItem.slot) {
-            this.inventoryService.itemStacks[destIndex] = null;
-            this.inventoryService.itemStacks[sourceIndex] = null;
-            this.inventoryService.selectedItem = null;
+            this.inventoryService.setItemEmptyStack(destIndex);
+            this.inventoryService.setItemEmptyStack(sourceIndex);
             this.inventoryService.mergeEquipment(destItem, sourceItem, destIndex);
             return;
           }
@@ -270,11 +269,14 @@ export class InventoryPanelComponent {
           this.inventoryService.gemifyEquipment(sourceIndex, destItem);
           return;
         } else if (sourceItem.name === destItem.name) {
-          this.inventoryService.mergeItemStacks(sourceItemStack, destItemStack, sourceIndex);
+          this.inventoryService.mergeItemStacks(sourceItemStack, destItemStack, sourceIndex, destIndex);
         } else {
           // it wasn't a merge, just swap their positions
           this.inventoryService.itemStacks[destIndex] = sourceItemStack;
           this.inventoryService.itemStacks[sourceIndex] = destItemStack;
+          // fix the ids to use the new indices
+          this.inventoryService.fixId(destIndex);
+          this.inventoryService.fixId(sourceIndex);
         }
       } else {
         // it wasn't a merge, just swap their positions

@@ -271,7 +271,7 @@ export class GameStateService {
     this.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks) {
-      if (!itemStack) {
+      if (!itemStack.item) {
         continue;
       }
       const item = this.itemRepoService.getItemById(itemStack.item.id);

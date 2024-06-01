@@ -31,7 +31,7 @@ export class EquipmentPanelComponent {
     if (item && this.inventoryService.openInventorySlots() > 0) {
       this.inventoryService.addItem(item as Item);
       this.characterService.characterState.equipment[slot] = null;
-      this.inventoryService.selectedItem = null;
+      this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
   }
 
@@ -91,11 +91,11 @@ export class EquipmentPanelComponent {
         const destinationItemIndex = parseInt(element.id.substring('itemIndex'.length));
         if (destinationItemIndex >= 0 && destinationItemIndex < this.inventoryService.itemStacks.length) {
           const destinationItemStack = this.inventoryService.itemStacks[destinationItemIndex];
-          if (destinationItemStack) {
+          if (destinationItemStack.item) {
             // there's something there, see if we can merge
             if (instanceOfEquipment(destinationItemStack.item) && destinationItemStack.item.slot === sourceItem.slot) {
               // clear out the destination slot and merge
-              this.inventoryService.itemStacks[destinationItemIndex] = null;
+              this.inventoryService.setItemEmptyStack(destinationItemIndex);
               this.inventoryService.mergeEquipment(destinationItemStack.item, sourceItem, destinationItemIndex);
               this.characterService.characterState.equipment[destinationItemStack.item.slot] = null;
             }

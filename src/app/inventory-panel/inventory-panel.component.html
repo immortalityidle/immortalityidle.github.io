@@ -15,7 +15,7 @@
     <div class="moneyContainer">
       <div class="moneyColumn">
         <span>{{characterService.characterState.money | bigNumber}} Taels</span>
-        @for (update of getMoneyUpdates(); track update) {
+        @for (update of this.moneyUpdates; track update) {
           <span class="popupText" [ngClass]="{'popupTextColor' : update > 0, 'popupTextNegativeColor' : update < 0}"
             [@popupText]=update (@popupText.done)="animationDoneEvent()">@if (update > 0) {
             <span>+</span>
@@ -37,64 +37,64 @@
         (click)="sortClicked($event)" class="iconButton" aria-label="Sort Inventory" aria-hidden="false" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">
       sort
     </mat-icon>
-    @if (inventoryService.selectedItem) {
+    @if (inventoryService.selectedItem.item) {
       <span class="inventoryButtons">
-        @if (isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell) {
+        @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
           <mat-icon (click)="sell(1)" class="iconButton" aria-label="Sell" aria-hidden="false"
-            matTooltip="Sell one {{inventoryService.selectedItem.item.name}} for {{inventoryService.selectedItem.item.value}} taels. Right-click items to sell.">
+            matTooltip="Sell one {{inventoryService.selectedItem.item!.name}} for {{inventoryService.selectedItem.item!.value}} taels. Right-click items to sell.">
             attach_money
           </mat-icon>
         }
-        @if (isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell) {
+        @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
           <mat-icon  (click)="sellStack()" class="iconButton" aria-label="Sell Stack" aria-hidden="false"
-            matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in this inventory slot for {{inventoryService.selectedItem.item.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
+            matTooltip="Sell all the {{inventoryService.selectedItem.item!.name}} in this inventory slot for {{inventoryService.selectedItem.item!.value * inventoryService.selectedItem.quantity}} taels.  Shift-right-click items to sell the stack.">
             paid
           </mat-icon>
         }
-        @if (isFinite(inventoryService.selectedItem.item.value) && !hellService.inHell) {
+        @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
           <mat-icon (click)="sellAll()" class="iconButton" aria-label="Sell All" aria-hidden="false"
-            matTooltip="Sell all the {{inventoryService.selectedItem.item.name}} in the whole inventory.">
+            matTooltip="Sell all the {{inventoryService.selectedItem.item!.name}} in the whole inventory.">
             shopping_basket
           </mat-icon>
         }
-        @if (inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item.value) && !instanceOfEquipment(inventoryService.selectedItem.item) && !hellService.inHell) {
+        @if (inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item!.value) && !instanceOfEquipment(inventoryService.selectedItem.item!) && !hellService.inHell) {
           <mat-icon class="iconButton" (click)="autoSell()"
             matTooltip="Automatically sell this kind of item whenever you get one. You can change this in the options menu later if you change your mind. Ctrl-right-click items to autosell.">
             currency_exchange
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item.useLabel !== undefined)) {
+        @if ((inventoryService.selectedItem.item!.useLabel !== undefined)) {
           <mat-icon (click)="use($event)" class="iconButton" aria-label="Use" aria-hidden="false"
-            matTooltip="{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} Shift-click items to use them. Shift-click or Ctrl-click this button to use more of them.">
+            matTooltip="{{inventoryService.selectedItem.item!.useLabel}}. {{inventoryService.selectedItem.item!.useDescription}} Shift-click items to use them. Shift-click or Ctrl-click this button to use more of them.">
             auto_awesome
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoUseUnlocked)) {
+        @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.autoUseUnlocked)) {
           <mat-icon
             (click)="autoUse()" class="iconButton" aria-label="Auto Use" aria-hidden="false"
-            matTooltip="Auto-{{inventoryService.selectedItem.item.useLabel}}. {{inventoryService.selectedItem.item.useDescription}} You can change this in the options menu later if you change your mind. Ctrl-click items to auto-use.">
+            matTooltip="Auto-{{inventoryService.selectedItem.item!.useLabel}}. {{inventoryService.selectedItem.item!.useDescription}} You can change this in the options menu later if you change your mind. Ctrl-click items to auto-use.">
             auto_mode
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item.value)) && !hellService.inHell) {
+        @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item!.value)) && !hellService.inHell) {
           <mat-icon
             class="iconButton" aria-label="Balance" aria-hidden="false" (click)="autoBalance()" matTooltip="Balance between automatically using and selling this item. You can change this in the options menu later if you change your mind.">
             balance
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item.type === 'equipment')) {
+        @if ((inventoryService.selectedItem.item!.type === 'equipment')) {
           <mat-icon (click)="equip()" class="iconButton" aria-label="Equip" aria-hidden="false"
             matTooltip="Equip this. Double-click weapons or armor to equip.">
             shield
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item.type === 'spiritGem')) {
+        @if ((inventoryService.selectedItem.item!.type === 'spiritGem')) {
           <mat-icon (click)="mergeSpiritGem()"  class="iconButton" aria-label="Merge Gem" aria-hidden="false"
             matTooltip="Merge 10 of these into a higher grade gem.">
             diamond
           </mat-icon>
         }
-        @if (isFinite(inventoryService.selectedItem.item.value)) {
+        @if (isFinite(inventoryService.selectedItem.item!.value)) {
           <mat-icon (click)="throwAway()"  class="iconButton" aria-label="Throw Away" aria-hidden="false"
             matTooltip="Throw this stack of items away.">
             delete
@@ -106,10 +106,10 @@
   </h3>
 
   <div class="selectedItemBox">
-    @if (inventoryService.selectedItem?.item){
+    @if (inventoryService.selectedItem.item){
       <div>
-        @if (inventoryService.selectedItem?.item?.imageFile){
-          <img src="assets/images/items/{{inventoryService.selectedItem?.item?.imageFile}}.png" class="itemImage" 
+        @if (inventoryService.selectedItem.item.imageFile){
+          <img src="assets/images/items/{{inventoryService.selectedItem.item.imageFile}}.png" class="itemImage" 
             [style]="getStyle(inventoryService.selectedItem)"
             width="48" height="48"/>
         }
@@ -117,12 +117,12 @@
       <div class='selectedItemText'>
         <div class='selectedItemName'>
           <span>
-            {{inventoryService.selectedItem?.item?.name | titlecase}}
+            {{inventoryService.selectedItem.item.name | titlecase}}
           </span>
         </div>
         <div class='selectedItemTextBody'>
           <span>
-            {{inventoryService.selectedItem?.item?.description}}
+            {{inventoryService.selectedItem.item.description}}
           </span>
         </div>
       </div>
@@ -145,7 +145,7 @@
 
   <div class="overflow">
     <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
-      @for (itemStack of inventoryService.itemStacks; track $index + '' + itemStack?.item?.name + itemStack?.quantity;) {
+      @for (itemStack of inventoryService.itemStacks; track itemStack.id;) {
         <div>
           <div id="itemIndex{{$index}}" >
             <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)"

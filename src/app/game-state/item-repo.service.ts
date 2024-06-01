@@ -585,7 +585,7 @@ export class ItemRepoService {
     },
     hide: {
       id: 'hide',
-      imageFile: 'hide',
+      imageFile: 'hide1',
       imageColor: this.colorByRank[0],
       name: 'tattered hide',
       type: 'hide',
@@ -594,7 +594,7 @@ export class ItemRepoService {
     },
     thinPelt: {
       id: 'thinPelt',
-      imageFile: 'hide',
+      imageFile: 'hide2',
       imageColor: this.colorByRank[1],
       name: 'thin pelt',
       type: 'hide',
@@ -603,7 +603,7 @@ export class ItemRepoService {
     },
     plainLeather: {
       id: 'plainLeather',
-      imageFile: 'hide',
+      imageFile: 'hide3',
       imageColor: this.colorByRank[2],
       name: 'plain leather',
       type: 'hide',
@@ -612,7 +612,7 @@ export class ItemRepoService {
     },
     scaleSkin: {
       id: 'scaleSkin',
-      imageFile: 'hide',
+      imageFile: 'hide4',
       imageColor: this.colorByRank[3],
       name: 'scale skin',
       type: 'hide',
@@ -620,7 +620,7 @@ export class ItemRepoService {
       description: 'A scaly reptile skin.',
     },
     thickFur: {
-      id: 'thickFur',
+      id: 'thickFur5',
       imageFile: 'hide',
       imageColor: this.colorByRank[4],
       name: 'thick fur',
@@ -630,7 +630,7 @@ export class ItemRepoService {
     },
     armoredHide: {
       id: 'armoredHide',
-      imageFile: 'hide',
+      imageFile: 'hide6',
       imageColor: this.colorByRank[5],
       name: 'armored hide',
       type: 'hide',
@@ -639,7 +639,7 @@ export class ItemRepoService {
     },
     frozenScales: {
       id: 'frozenScales',
-      imageFile: 'hide',
+      imageFile: 'hide7',
       imageColor: this.colorByRank[6],
       name: 'frozen scales',
       type: 'hide',
@@ -648,7 +648,7 @@ export class ItemRepoService {
     },
     mysticalLeather: {
       id: 'mysticalLeather',
-      imageFile: 'hide',
+      imageFile: 'hide8',
       imageColor: this.colorByRank[7],
       name: 'mystical leather',
       type: 'hide',
@@ -657,16 +657,16 @@ export class ItemRepoService {
     },
     infernalFur: {
       id: 'infernalFur',
-      imageFile: 'hide',
+      imageFile: 'hide9',
       imageColor: this.colorByRank[8],
       name: 'infernal fur',
       type: 'hide',
       value: 9,
-      description: 'A fiery pelt.',
+      description: 'A diabolical pelt.',
     },
     orichalcumHide: {
       id: 'orichalcumHide',
-      imageFile: 'hide',
+      imageFile: 'hide10',
       imageColor: this.colorByRank[9],
       name: 'orichalcum hide',
       type: 'hide',
@@ -675,7 +675,7 @@ export class ItemRepoService {
     },
     tempestScales: {
       id: 'tempestScales',
-      imageFile: 'hide',
+      imageFile: 'hide11',
       imageColor: this.colorByRank[10],
       name: 'tempest scales',
       type: 'hide',
@@ -684,7 +684,7 @@ export class ItemRepoService {
     },
     evergreenVeil: {
       id: 'evergreenVeil',
-      imageFile: 'hide',
+      imageFile: 'hide12',
       imageColor: this.colorByRank[11],
       name: 'evergreen veil',
       type: 'hide',
@@ -693,7 +693,7 @@ export class ItemRepoService {
     },
     sovereignLeather: {
       id: 'sovereignLeather',
-      imageFile: 'hide',
+      imageFile: 'hide13',
       imageColor: this.colorByRank[12],
       name: 'sovereign leather',
       type: 'hide',
@@ -702,7 +702,7 @@ export class ItemRepoService {
     },
     abyssalFur: {
       id: 'abyssalFur',
-      imageFile: 'hide',
+      imageFile: 'hide14',
       imageColor: this.colorByRank[13],
       name: 'abyssal fur',
       type: 'hide',
@@ -711,7 +711,7 @@ export class ItemRepoService {
     },
     umbralHide: {
       id: 'umbralHide',
-      imageFile: 'hide',
+      imageFile: 'hide15',
       imageColor: this.colorByRank[14],
       name: 'umbral hide',
       type: 'hide',
@@ -720,7 +720,7 @@ export class ItemRepoService {
     },
     divineVeil: {
       id: 'divineVeil',
-      imageFile: 'hide',
+      imageFile: 'hide16',
       imageColor: this.colorByRank[15],
       name: 'divine veil',
       type: 'hide',

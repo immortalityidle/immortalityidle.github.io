@@ -77,8 +77,9 @@ export interface Furniture extends Item {
 }
 
 export interface ItemStack {
-  item: Item;
+  item?: Item | null;
   quantity: number;
+  id: string;
 }
 
 export interface BalanceItem {
@@ -94,8 +95,8 @@ export interface AutoItemEntry {
 }
 
 export interface InventoryProperties {
-  itemStacks: (ItemStack | null)[];
-  stashedItemStacks: (ItemStack | null)[];
+  itemStacks: ItemStack[];
+  stashedItemStacks: ItemStack[];
   autoSellUnlocked: boolean;
   autoSellEntries: AutoItemEntry[];
   autoUseUnlocked: boolean;
@@ -143,12 +144,12 @@ export interface InventoryProperties {
 export class InventoryService {
   hellService?: HellService;
   bigNumberPipe: BigNumberPipe;
-  itemStacks: (ItemStack | null)[] = [];
-  stashedItemStacks: (ItemStack | null)[] = [];
+  itemStacks: ItemStack[] = [];
+  stashedItemStacks: ItemStack[] = [];
   maxItems = 10;
   maxStackSize = 100;
   noFood: boolean;
-  selectedItem: ItemStack | null = null;
+  selectedItem: ItemStack = this.getEmptyItemStack();
   autoSellUnlocked: boolean;
   autoSellEntries: AutoItemEntry[];
   autoUseUnlocked: boolean;
@@ -198,6 +199,8 @@ export class InventoryService {
   equipmentCreated = 0;
   durabilityDisclaimer =
     "\nThe durability and value of equipment degrades with use. Be careful when merging powerful items that have seen a lot of wear, the product may be even lower quality than the original if the item's value is low.";
+  emptyIdCounter = 0;
+  emptyIdPrefix = Date.now() + '';
 
   constructor(
     private injector: Injector,
@@ -242,7 +245,7 @@ export class InventoryService {
     this.autoSellOldGemsEnabled = false;
 
     for (let i = 0; i < this.maxItems; i++) {
-      this.itemStacks.push(null);
+      this.itemStacks.push(this.getEmptyItemStack());
     }
 
     mainLoopService.tickSubject.subscribe(() => {
@@ -284,7 +287,7 @@ export class InventoryService {
         }
       }
       for (const itemStack of this.itemStacks) {
-        if (itemStack) {
+        if (itemStack.item) {
           const item = itemStack.item;
           if (instanceOfEquipment(item)) {
             if (item.weaponStats) {
@@ -354,6 +357,13 @@ export class InventoryService {
 
   setProperties(properties: InventoryProperties) {
     this.itemStacks = properties.itemStacks;
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      if (!this.itemStacks[i]) {
+        this.setItemEmptyStack(i);
+      } else {
+        this.fixId(i);
+      }
+    }
     this.stashedItemStacks = properties.stashedItemStacks || [];
     this.autoSellUnlocked = properties.autoSellUnlocked || false;
     this.autoSellEntries = properties.autoSellEntries || [];
@@ -398,7 +408,7 @@ export class InventoryService {
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
     this.updateFarmFoodList();
     for (const itemStack of this.itemStacks) {
-      if (itemStack && itemStack.item.name.includes('monster gem')) {
+      if (itemStack.item && itemStack.item.name.includes('monster gem')) {
         itemStack.item.name = itemStack.item.name.replace('monster gem', 'spirit gem');
       }
     }
@@ -429,7 +439,7 @@ export class InventoryService {
   changeMaxItems(newValue: number) {
     this.maxItems = newValue;
     while (this.itemStacks.length < newValue) {
-      this.itemStacks.push(null);
+      this.itemStacks.push(this.getEmptyItemStack());
     }
   }
 
@@ -439,39 +449,39 @@ export class InventoryService {
     const equipStacks: ItemStack[] = [];
     for (let key = 0; key < this.itemStacks.length; key++) {
       const itemStack = this.itemStacks[key];
-      if (!itemStack) {
-        continue;
-      } else if (this.itemStacks[key]?.item.type === 'spiritGem') {
-        gemStacks.push(itemStack);
-      } else if (this.itemStacks[key]?.item.type === 'equipment') {
-        equipStacks.push(itemStack);
-      } else {
-        tempStacks.push(itemStack);
+      if (itemStack.item) {
+        if (itemStack.item.type === 'spiritGem') {
+          gemStacks.push(itemStack);
+        } else if (itemStack.item.type === 'equipment') {
+          equipStacks.push(itemStack);
+        } else {
+          tempStacks.push(itemStack);
+        }
       }
     }
     if (!this.descendingSort) {
       tempStacks.sort((a, b) => b.quantity - a.quantity);
-      tempStacks.sort((a, b) => b.item.value - a.item.value);
-      tempStacks.sort((a, b) => (b.item.type > a.item.type ? -1 : b.item.type === a.item.type ? 0 : 1));
-      equipStacks.sort((a, b) => (b.item.name > a.item.name ? -1 : b.item.name === a.item.name ? 0 : 1));
-      equipStacks.sort((a, b) => b.item.value - a.item.value);
+      tempStacks.sort((a, b) => b.item!.value - a.item!.value);
+      tempStacks.sort((a, b) => (b.item!.type > a.item!.type ? -1 : b.item!.type === a.item!.type ? 0 : 1));
+      equipStacks.sort((a, b) => (b.item!.name > a.item!.name ? -1 : b.item!.name === a.item!.name ? 0 : 1));
+      equipStacks.sort((a, b) => b.item!.value - a.item!.value);
       gemStacks.sort((a, b) => b.quantity - a.quantity);
-      gemStacks.sort((a, b) => b.item.value - a.item.value);
+      gemStacks.sort((a, b) => b.item!.value - a.item!.value);
     } else {
       tempStacks.sort((b, a) => b.quantity - a.quantity);
-      tempStacks.sort((b, a) => b.item.value - a.item.value);
-      tempStacks.sort((b, a) => (b.item.type > a.item.type ? -1 : b.item.type === a.item.type ? 0 : 1));
-      equipStacks.sort((b, a) => (b.item.name > a.item.name ? -1 : b.item.name === a.item.name ? 0 : 1));
-      equipStacks.sort((b, a) => b.item.value - a.item.value);
+      tempStacks.sort((b, a) => b.item!.value - a.item!.value);
+      tempStacks.sort((b, a) => (b.item!.type > a.item!.type ? -1 : b.item!.type === a.item!.type ? 0 : 1));
+      equipStacks.sort((b, a) => (b.item!.name > a.item!.name ? -1 : b.item!.name === a.item!.name ? 0 : 1));
+      equipStacks.sort((b, a) => b.item!.value - a.item!.value);
       gemStacks.sort((b, a) => b.quantity - a.quantity);
-      gemStacks.sort((b, a) => b.item.value - a.item.value);
+      gemStacks.sort((b, a) => b.item!.value - a.item!.value);
     }
     const emptySlots = this.itemStacks.length - tempStacks.length - gemStacks.length - equipStacks.length;
     this.itemStacks = tempStacks;
     this.itemStacks.push(...equipStacks);
     this.itemStacks.push(...gemStacks);
     for (let i = 0; i < emptySlots; i++) {
-      this.itemStacks.push(null);
+      this.itemStacks.push(this.getEmptyItemStack());
     }
   }
 
@@ -772,7 +782,7 @@ export class InventoryService {
       // sell any herb cheaper than what we just picked
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.id === 'herb') {
+        if (itemStack.item && itemStack.item.id === 'herb') {
           if (itemStack.item.value < value && itemStack.item.name !== herbName) {
             this.sell(itemStack, itemStack.quantity);
           }
@@ -911,7 +921,7 @@ export class InventoryService {
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === 'ore' && itemStack.item.value < lastOre.value) {
+        if (itemStack.item && itemStack.item.type === 'ore' && itemStack.item.value < lastOre.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -936,7 +946,7 @@ export class InventoryService {
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value) {
+        if (itemStack.item && itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -960,7 +970,7 @@ export class InventoryService {
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === 'wood' && itemStack.item.value < lastWood.value) {
+        if (itemStack.item && itemStack.item.type === 'wood' && itemStack.item.value < lastWood.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -985,7 +995,7 @@ export class InventoryService {
       // sell any hides cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === 'hide' && itemStack.item.value < lastHide.value) {
+        if (itemStack.item && itemStack.item.type === 'hide' && itemStack.item.value < lastHide.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -995,7 +1005,7 @@ export class InventoryService {
   }
 
   reset(): void {
-    this.selectedItem = null;
+    this.selectedItem = this.getEmptyItemStack();
     this.lifetimeUsedItems = 0;
     this.lifetimeSoldItems = 0;
     this.lifetimePotionsUsed = 0;
@@ -1049,10 +1059,10 @@ export class InventoryService {
     let foodStack = null;
     const foodValue = 0;
     for (const itemIterator of this.itemStacks) {
-      if (itemIterator === null) {
+      if (itemIterator.item === null) {
         continue;
       }
-      if (itemIterator.item.type === 'food' && itemIterator.item.value > foodValue) {
+      if (itemIterator.item!.type === 'food' && itemIterator.item!.value > foodValue) {
         foodStack = itemIterator;
       }
     }
@@ -1176,9 +1186,9 @@ export class InventoryService {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack && itemStack.item.type === 'spiritGem' && itemStack.item.value < item.value) {
+        if (itemStack.item && itemStack.item.type === 'spiritGem' && itemStack.item.value < item.value) {
           this.characterService.characterState.updateMoney(itemStack.item.value * itemStack.quantity);
-          this.itemStacks[i] = null;
+          this.setItemEmptyStack(i);
         }
       }
     }
@@ -1204,7 +1214,7 @@ export class InventoryService {
       // try to stack the new item with existing items
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemIterator = this.itemStacks[i];
-        if (!itemIterator) {
+        if (!itemIterator.item) {
           continue;
         }
         if (itemIterator.item.name === item.name) {
@@ -1214,6 +1224,7 @@ export class InventoryService {
             if (firstStack === -1) {
               firstStack = i;
             }
+            this.fixId(i);
             return firstStack;
           } else {
             if (firstStack === -1) {
@@ -1221,6 +1232,7 @@ export class InventoryService {
             }
             quantity -= this.maxStackSize - itemIterator.quantity;
             itemIterator.quantity = this.maxStackSize;
+            this.fixId(i);
           }
         }
       }
@@ -1228,15 +1240,15 @@ export class InventoryService {
 
     // couldn't stack it all, make a new stack
     for (let i = inventoryIndex; i < this.itemStacks.length; i++) {
-      if (this.itemStacks[i] === null) {
+      if (!this.itemStacks[i].item) {
         if (firstStack === -1) {
           firstStack = i;
         }
         if (quantity <= this.maxStackSize) {
-          this.itemStacks[i] = { item: item, quantity: quantity };
+          this.itemStacks[i] = { item: item, quantity: quantity, id: i + item.name + quantity };
           return firstStack;
         } else {
-          this.itemStacks[i] = { item: item, quantity: this.maxStackSize };
+          this.itemStacks[i] = { item: item, quantity: this.maxStackSize, id: i + item.name + quantity };
           quantity -= this.maxStackSize;
         }
       }
@@ -1260,6 +1272,9 @@ export class InventoryService {
   }
 
   sell(itemStack: ItemStack, quantity: number): void {
+    if (!itemStack.item) {
+      return;
+    }
     if (itemStack.item.value === Infinity) {
       // don't sell infinitely valuable things.
       return;
@@ -1274,13 +1289,11 @@ export class InventoryService {
     }
     const index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
-      this.itemStacks[index] = null;
+      this.setItemEmptyStack(index);
       this.characterService.characterState.updateMoney(itemStack.quantity * itemStack.item.value);
-      if (itemStack === this.selectedItem) {
-        this.selectedItem = null;
-      }
     } else {
       itemStack.quantity -= quantity;
+      this.fixIdByStack(itemStack);
       this.characterService.characterState.updateMoney(quantity * itemStack.item.value);
     }
   }
@@ -1292,7 +1305,7 @@ export class InventoryService {
     }
 
     for (const itemIterator of this.itemStacks) {
-      if (itemIterator === null) {
+      if (!itemIterator.item) {
         continue;
       }
       if (itemIterator.item.name === item.name) {
@@ -1326,6 +1339,9 @@ export class InventoryService {
   }
 
   useItemStack(itemStack: ItemStack, quantity = 1): void {
+    if (!itemStack.item) {
+      return;
+    }
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
@@ -1337,10 +1353,9 @@ export class InventoryService {
       itemStack.quantity -= quantity;
       if (itemStack.quantity <= 0) {
         const index = this.itemStacks.indexOf(itemStack);
-        this.itemStacks[index] = null;
-        if (itemStack === this.selectedItem) {
-          this.selectedItem = null;
-        }
+        this.setItemEmptyStack(index);
+      } else {
+        this.fixIdByStack(itemStack);
       }
     }
   }
@@ -1380,7 +1395,7 @@ export class InventoryService {
       // use all the ones you have now
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (!itemStack) {
+        if (!itemStack.item) {
           continue;
         }
         if (itemStack.item.name === item.name) {
@@ -1425,7 +1440,7 @@ export class InventoryService {
     // return the item already in the slot to the inventory, if any
     const item = itemStack.item;
 
-    if (!instanceOfEquipment(item)) {
+    if (!item || !instanceOfEquipment(item)) {
       // it's not equipable, bail out
       return;
     }
@@ -1442,7 +1457,7 @@ export class InventoryService {
     }
     this.characterService.characterState.equipment[item.slot] = item;
     const index = this.itemStacks.indexOf(itemStack);
-    this.itemStacks[index] = null;
+    this.setItemEmptyStack(index);
   }
 
   equipBest(slot: EquipmentPosition) {
@@ -1456,7 +1471,7 @@ export class InventoryService {
     }
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (itemIterator) {
+      if (itemIterator.item) {
         const item = itemIterator.item;
         if (instanceOfEquipment(item) && item.slot === slot) {
           let itemPower = 0;
@@ -1488,7 +1503,7 @@ export class InventoryService {
     let itemIndex = -1;
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (!itemIterator) {
+      if (!itemIterator.item) {
         continue;
       }
       if (itemIterator.item.type === consumeType) {
@@ -1507,13 +1522,15 @@ export class InventoryService {
     }
     if (itemIndex >= 0) {
       const itemIterator = this.itemStacks[itemIndex];
-      if (itemIterator !== null) {
+      if (itemIterator.item) {
         const minQuantity = Math.min(itemIterator.quantity, quantity);
         itemIterator.quantity -= minQuantity;
         quantity -= minQuantity;
         if (itemIterator.quantity <= 0) {
           //remove the stack if empty
-          this.itemStacks[itemIndex] = null;
+          this.setItemEmptyStack(itemIndex);
+        } else {
+          this.fixId(itemIndex);
         }
       }
     }
@@ -1533,7 +1550,7 @@ export class InventoryService {
     let itemValue = -1;
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (!itemIterator) {
+      if (!itemIterator.item) {
         continue;
       }
       if (itemIterator.item.type === itemType) {
@@ -1549,7 +1566,7 @@ export class InventoryService {
     let itemCount = 0;
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (!itemIterator) {
+      if (!itemIterator.item) {
         continue;
       }
       if (itemIterator.item.name === itemName) {
@@ -1563,7 +1580,7 @@ export class InventoryService {
     let itemCount = 0;
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (!itemIterator) {
+      if (!itemIterator.item) {
         continue;
       }
       if (itemIterator.item.type === itemType) {
@@ -1577,7 +1594,7 @@ export class InventoryService {
   hasDurability(itemStack: ItemStack): boolean {
     const item = itemStack.item;
 
-    if (!instanceOfEquipment(item)) return true;
+    if (!item || !instanceOfEquipment(item)) return true;
 
     return (item.armorStats?.durability || 0) > 0 || (item.weaponStats?.durability || 0) > 0;
   }
@@ -1612,7 +1629,7 @@ export class InventoryService {
   openInventorySlots() {
     let openSlots = 0;
     for (const itemIterator of this.itemStacks) {
-      if (!itemIterator) {
+      if (!itemIterator.item) {
         openSlots++;
       }
     }
@@ -1651,19 +1668,25 @@ export class InventoryService {
     // if we can, move the new item to the desired destination index
     if (inventoryIndex !== destinationInventoryIndex && !this.itemStacks[destinationInventoryIndex]) {
       this.itemStacks[destinationInventoryIndex] = this.itemStacks[inventoryIndex];
-      this.itemStacks[inventoryIndex] = null;
+      this.setItemEmptyStack(inventoryIndex);
     }
   }
 
-  mergeItemStacks(sourceStack: ItemStack, destStack: ItemStack, sourceInventoryIndex: number) {
+  mergeItemStacks(
+    sourceStack: ItemStack,
+    destStack: ItemStack,
+    sourceInventoryIndex: number,
+    destInventoryIndex: number
+  ) {
     if (
-      sourceStack &&
-      destStack &&
+      sourceStack.item &&
+      destStack.item &&
       sourceStack.item.name === destStack.item.name &&
       sourceStack.quantity + destStack.quantity < this.maxStackSize
     ) {
       destStack.quantity += sourceStack.quantity;
-      this.itemStacks[sourceInventoryIndex] = null;
+      this.fixId(destInventoryIndex);
+      this.setItemEmptyStack(sourceInventoryIndex);
     }
   }
 
@@ -1708,14 +1731,8 @@ export class InventoryService {
             } else {
               sourceItem = item;
               if (destinationItem) {
-                if (
-                  this.selectedItem === this.itemStacks[mergeDestinationIndex] ||
-                  this.selectedItem === this.itemStacks[i]
-                ) {
-                  this.selectedItem = null;
-                }
-                this.itemStacks[mergeDestinationIndex] = null;
-                this.itemStacks[i] = null;
+                this.setItemEmptyStack(mergeDestinationIndex);
+                this.setItemEmptyStack(i);
                 this.mergeEquipment(destinationItem, sourceItem, mergeDestinationIndex);
                 item = this.itemStacks[mergeDestinationIndex]?.item;
                 if (item) {
@@ -1761,7 +1778,7 @@ export class InventoryService {
     let newItem;
     if (!equippedItem) {
       this.characterService.characterState.equipment[slot] = itemToMerge;
-      this.itemStacks[sourceItemIndex] = null;
+      this.setItemEmptyStack(sourceItemIndex);
       return;
     }
     if (slot === 'rightHand' || slot === 'leftHand') {
@@ -1783,21 +1800,26 @@ export class InventoryService {
       );
     }
     this.characterService.characterState.equipment[slot] = newItem;
-    this.itemStacks[sourceItemIndex] = null;
+    this.setItemEmptyStack(sourceItemIndex);
   }
 
   mergeSpiritGem(stack: ItemStack, power = 0) {
+    if (!stack.item) {
+      return;
+    }
     if (stack.quantity < 10 - power) {
       return;
     }
     stack.quantity -= 10 - power;
     this.addItem(this.generateSpiritGem(stack.item.value / 10 + 1));
-    if (stack.quantity === 0) {
-      // go find the stack and remove it
-      for (let i = 0; i < this.itemStacks.length; i++) {
-        if (this.itemStacks[i] === stack) {
-          this.itemStacks[i] = null;
+    // go find the stack and remove it or update the id
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      if (this.itemStacks[i] === stack) {
+        if (stack.quantity === 0) {
+          this.setItemEmptyStack(i);
           return;
+        } else {
+          this.fixId(i);
         }
       }
     }
@@ -1813,7 +1835,7 @@ export class InventoryService {
     }
     for (let i = 0; i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
-      if (!itemIterator) {
+      if (!itemIterator.item) {
         continue;
       }
       if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power) {
@@ -1829,7 +1851,7 @@ export class InventoryService {
       const item = this.itemStacks[i]?.item;
       if (item && instanceOfEquipment(item) && item.weaponStats) {
         this.stashedItemStacks.push(this.itemStacks[i]);
-        this.itemStacks[i] = null;
+        this.setItemEmptyStack(i);
       }
     }
   }
@@ -1851,7 +1873,7 @@ export class InventoryService {
       const item = this.itemStacks[i]?.item;
       if (item && instanceOfEquipment(item) && item.armorStats) {
         this.stashedItemStacks.push(this.itemStacks[i]);
-        this.itemStacks[i] = null;
+        this.setItemEmptyStack(i);
       }
     }
   }
@@ -1872,7 +1894,7 @@ export class InventoryService {
       const item = this.itemStacks[i]?.item;
       if (item && item.type !== 'food' && !item.type.includes('Gem')) {
         this.stashedItemStacks.push(this.itemStacks[i]);
-        this.itemStacks[i] = null;
+        this.setItemEmptyStack(i);
       }
     }
   }
@@ -1897,8 +1919,9 @@ export class InventoryService {
       this.updateArmorDescription(equipment);
       if (gemStack.quantity > 1) {
         gemStack.quantity--;
+        this.fixId(gemIndex);
       } else {
-        this.itemStacks[gemIndex] = null;
+        this.setItemEmptyStack(gemIndex);
       }
       if (this.characterService.characterState.yinYangUnlocked) {
         this.characterService.characterState.yang++;
@@ -1910,7 +1933,39 @@ export class InventoryService {
   removeItemStack(itemStack: ItemStack) {
     const index = this.itemStacks.indexOf(itemStack);
     this.thrownAwayItems += itemStack.quantity;
-    this.itemStacks[index] = null;
+    this.setItemEmptyStack(index);
+  }
+
+  setItemEmptyStack(index: number) {
+    if (this.selectedItem === this.itemStacks[index]) {
+      this.selectedItem = this.getEmptyItemStack();
+    }
+    this.itemStacks[index] = this.getEmptyItemStack();
+  }
+
+  getEmptyItemStack(): ItemStack {
+    return {
+      item: null,
+      quantity: 0,
+      id: this.emptyIdPrefix + this.emptyIdCounter++,
+    };
+  }
+
+  fixId(index: number) {
+    if (this.itemStacks[index].item) {
+      this.itemStacks[index].id = index + this.itemStacks[index].item!.name + this.itemStacks[index].quantity;
+    } else {
+      this.itemStacks[index].id = this.emptyIdPrefix + this.emptyIdCounter++;
+    }
+  }
+
+  fixIdByStack(itemStack: ItemStack) {
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      if (itemStack === this.itemStacks[i]) {
+        this.fixId(i);
+        return;
+      }
+    }
   }
 }
 
