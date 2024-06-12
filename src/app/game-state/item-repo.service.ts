@@ -1332,7 +1332,6 @@ export class ItemRepoService {
             ' lifetimes to claim your throne on Mount Penglai.'
         );
         this.characterService.characterState.god = true;
-        this.battleService.troubleKills = 0;
         this.activityService.reloadActivities();
       },
     },

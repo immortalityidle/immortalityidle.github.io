@@ -561,7 +561,7 @@ export const herbNames = [
   'milkvetch',
   'safflower',
   'cinnamon',
-  'velvet leaf',
+  'velvetleaf',
   'goldthread',
   'lilac',
   'jimson',

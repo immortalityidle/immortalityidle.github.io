@@ -771,7 +771,7 @@ export class InventoryService {
     const herbName = quality + ' ' + name;
     this.addItem({
       id: 'herb',
-      imageFile: 'herb',
+      imageFile: 'herb_' + name,
       imageColor: this.itemRepoService.colorByRank[qualityIndex],
       name: herbName,
       type: 'ingredient',

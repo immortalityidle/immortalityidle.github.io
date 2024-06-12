@@ -17,6 +17,11 @@
     </span>
   }
   <span class="rightAligned" matTooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
+    @if (battleService.godSlayersUnlocked) {
+      <input  type="checkbox" (change)="godSlayersEnableChange($event)"
+        id="godSlayersEnableCheckbox"  [checked]="battleService.godSlayersEnabled"/>
+      <label for="godSlayersEnableCheckbox">Fight the God Slayers</label>
+    }
     @if (!battleService.autoTroubleUnlocked) {
       <button (click)="battleService.trouble()">Look for Trouble</button>
     }

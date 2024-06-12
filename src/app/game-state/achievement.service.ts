@@ -1033,6 +1033,19 @@ export class AchievementService {
       },
       unlocked: false,
     },
+    {
+      name: 'Rise of the God Slayers',
+      description: "A new threat has emerged, more powerful than anything you've ever faced.",
+      hint: 'Godhood comes with issues.',
+      check: () => {
+        return this.characterService.characterState.god;
+      },
+      effect: () => {
+        this.battleService.godSlayersUnlocked = true;
+        this.battleService.godSlayersEnabled = true;
+      },
+      unlocked: false,
+    },
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {

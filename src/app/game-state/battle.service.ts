@@ -33,6 +33,7 @@ export interface BattleProperties {
   currentEnemy: EnemyStack | null;
   kills: number;
   troubleKills: number;
+  godSlayerKills: number;
   totalKills: number;
   autoTroubleUnlocked: boolean;
   autoTroubleEnabled: boolean;
@@ -51,6 +52,8 @@ export interface BattleProperties {
   enableIceShield: boolean;
   highestDamageTaken: number;
   highestDamageDealt: number;
+  godSlayersUnlocked: boolean;
+  godSlayersEnabled: boolean;
 }
 
 @Injectable({
@@ -63,6 +66,7 @@ export class BattleService {
   currentEnemy: EnemyStack | null;
   kills: number;
   troubleKills: number;
+  godSlayerKills: number;
   autoTroubleUnlocked = false;
   autoTroubleEnabled = false;
   yearlyMonsterDay: number;
@@ -85,6 +89,8 @@ export class BattleService {
   totalKills = 0;
   skipEnemyAttack = 0;
   degradeFactor = 0.0000001;
+  godSlayersUnlocked = false;
+  godSlayersEnabled = false;
 
   constructor(
     private injector: Injector,
@@ -101,6 +107,7 @@ export class BattleService {
     this.currentEnemy = null;
     this.kills = 0;
     this.troubleKills = 0;
+    this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
     this.tickCounter = 0;
 
@@ -134,6 +141,7 @@ export class BattleService {
     this.clearEnemies();
     this.kills = 0;
     this.troubleKills = 0;
+    this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
   }
 
@@ -143,6 +151,7 @@ export class BattleService {
       currentEnemy: this.currentEnemy,
       kills: this.kills,
       troubleKills: this.troubleKills,
+      godSlayerKills: this.godSlayerKills,
       totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
       autoTroubleEnabled: this.autoTroubleEnabled,
@@ -161,6 +170,8 @@ export class BattleService {
       enableIceShield: this.enableIceShield,
       highestDamageDealt: this.highestDamageDealt,
       highestDamageTaken: this.highestDamageTaken,
+      godSlayersUnlocked: this.godSlayersUnlocked,
+      godSlayersEnabled: this.godSlayersEnabled,
     };
   }
 
@@ -169,6 +180,7 @@ export class BattleService {
     this.currentEnemy = properties.currentEnemy;
     this.kills = properties.kills;
     this.troubleKills = properties.troubleKills;
+    this.godSlayerKills = properties.godSlayerKills || 0;
     this.totalKills = properties.totalKills || 0;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.autoTroubleEnabled = properties.autoTroubleEnabled;
@@ -187,6 +199,8 @@ export class BattleService {
     this.iceShieldUnlocked = properties.iceShieldUnlocked || false;
     this.highestDamageDealt = properties.highestDamageDealt || 0;
     this.highestDamageTaken = properties.highestDamageTaken || 0;
+    this.godSlayersUnlocked = properties.godSlayersUnlocked || false;
+    this.godSlayersEnabled = properties.godSlayersEnabled || false;
   }
 
   enemiesAttack() {
@@ -308,9 +322,7 @@ export class BattleService {
 
   youAttack() {
     this.characterService.characterState.accuracy = Math.min(
-      (this.troubleKills + Math.sqrt(this.characterService.characterState.attributes.speed.value)) /
-        this.troubleKills /
-        2,
+      Math.sqrt(this.characterService.characterState.attributes.speed.value),
       1
     );
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
@@ -577,9 +589,9 @@ export class BattleService {
     let gem;
     let monsterName;
     let monsterBaseName;
-    if (this.characterService.characterState.god) {
-      const index = this.troubleKills % this.monsterNames.length;
-      const rank = Math.floor(this.troubleKills / this.monsterNames.length);
+    if (this.godSlayersEnabled) {
+      const index = this.godSlayerKills % this.monsterNames.length;
+      const rank = Math.floor(this.godSlayerKills / this.monsterNames.length);
       monsterBaseName = this.monsterNames[index];
       monsterName = 'Godslaying ' + monsterBaseName;
 
@@ -587,10 +599,11 @@ export class BattleService {
         monsterName += ' ' + (rank + 1);
       }
 
-      attack = Math.round(Math.pow(1.1, this.troubleKills));
+      attack = Math.round(Math.pow(1.1, this.godSlayerKills));
       defense = attack * 10;
       health = attack * 200;
-      gem = this.inventoryService.generateSpiritGem(Math.ceil(this.troubleKills / 30));
+      gem = this.inventoryService.generateSpiritGem(Math.ceil(this.godSlayerKills / 20));
+      this.godSlayerKills++;
     } else {
       const rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
       const index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
@@ -603,6 +616,7 @@ export class BattleService {
       }
 
       gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
+      this.troubleKills++;
     }
 
     this.addEnemy({
@@ -615,7 +629,6 @@ export class BattleService {
       defense: defense,
       loot: [gem],
     });
-    this.troubleKills++;
   }
 
   degradeArmor(armor: Equipment, damage: number) {

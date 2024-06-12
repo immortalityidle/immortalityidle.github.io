@@ -26,6 +26,11 @@ export class BattlePanelComponent {
     this.battleService.autoTroubleEnabled = event.target.checked;
   }
 
+  godSlayersEnableChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.battleService.godSlayersEnabled = event.target.checked;
+  }
+
   battleOptions() {
     this.dialog.open(BattleOptionsPanelComponent, {
       width: '700px',
