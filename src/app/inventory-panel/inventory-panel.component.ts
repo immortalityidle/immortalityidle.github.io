@@ -235,6 +235,9 @@ export class InventoryPanelComponent {
         }
         this.mergeOrSwapStacks(sourceItemIndex, destinationItemIndex);
         this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
+      } else if (element.id.startsWith('pouchIndex')) {
+        const destinationPouchIndex = parseInt(element.id.substring('pouchIndex'.length));
+        this.inventoryService.moveToPouch(sourceItemIndex, destinationPouchIndex);
       } else if (element.id.startsWith('equipmentSlot')) {
         const equipmentSlotString = element.id.substring('equipmentSlot'.length);
         const slot: EquipmentPosition = equipmentSlotString as EquipmentPosition;
@@ -303,7 +306,7 @@ export class InventoryPanelComponent {
   }
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  getStyle(itemStack: ItemStack | null): { [klass: string]: any } {
+  getStyle(itemStack: ItemStack): { [klass: string]: any } {
     if (itemStack) {
       if (itemStack.item) {
         if (itemStack.item.imageColor) {

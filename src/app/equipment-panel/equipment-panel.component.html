@@ -97,6 +97,34 @@
         {{character.equipment.legs?.name | titlecase}}
       </div>
     </div>
+    <div style="grid-area: pouch;">
+      <div class="pouchGrid" cdkDropList cdkDropListSortingDisabled>
+        @for (itemStack of character.itemPouches; track itemStack.id;) {
+          <div>
+            <div id="pouchIndex{{$index}}" >
+              <div class="pouchSlot" [tabindex]="itemStack?.item ? '0' : '-1'" 
+                cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
+                [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
+                (dblclick)="pouchDoubleClicked($index, $event)"
+                matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '. ' + (itemStack?.item?.description) : ''}}">
+                <div class="itemName textOverflow">
+                  @if (itemStack?.item?.imageFile){
+                    <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" 
+                      width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
+                  }
+                  @else {
+                    {{itemStack?.item?.name | titlecase}}
+                  }
+                </div>
+                @if ((itemStack?.quantity || 0) > 1) {
+                  <div class="itemQuantity">x{{itemStack?.quantity}}</div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
     <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}" [ngClass]="getEffectClass('feet')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.feet" [cdkDragDisabled]="!character.equipment.feet"    

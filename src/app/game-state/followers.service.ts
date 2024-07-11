@@ -554,12 +554,9 @@ export class FollowersService {
         a.lifespan - a.age > b.lifespan - b.age ? left : a.lifespan - a.age === b.lifespan - b.age ? 0 : right
       );
     } else {
+      const sortField = this.sortField.toLowerCase();
       listToSort.sort((a, b) =>
-        (a[this.sortField.toLowerCase()] ?? 0) > (b[this.sortField.toLowerCase()] ?? 0)
-          ? left
-          : a[this.sortField.toLowerCase()] === b[this.sortField.toLowerCase()]
-          ? 0
-          : right
+        (a[sortField] ?? 0) > (b[sortField] ?? 0) ? left : a[sortField] === b[sortField] ? 0 : right
       );
     }
   }

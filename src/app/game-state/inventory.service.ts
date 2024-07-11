@@ -54,6 +54,9 @@ export interface Item {
   owned?: () => boolean;
   imageFile?: string;
   imageColor?: string;
+  broken?: boolean;
+  pouchable?: boolean;
+  restoreAmount?: number;
 }
 
 export interface Equipment extends Item {
@@ -253,6 +256,30 @@ export class InventoryService {
         return;
       }
       this.eatFood();
+      // use pouch items if needed
+      for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
+        const itemStack = this.characterService.characterState.itemPouches[i];
+        if (
+          itemStack.item?.type === 'healthRestore' &&
+          this.characterService.characterState.status.health.value <
+            this.characterService.characterState.status.health.max
+        ) {
+          const amountToHeal =
+            this.characterService.characterState.status.health.max -
+            this.characterService.characterState.status.health.value;
+          const restoreAmount = itemStack.item.restoreAmount || 1;
+          const numberToUse = Math.ceil(amountToHeal / restoreAmount);
+          if (itemStack.quantity > numberToUse) {
+            this.characterService.characterState.status.health.value =
+              this.characterService.characterState.status.health.max;
+            itemStack.quantity -= numberToUse;
+          } else {
+            this.characterService.characterState.status.health.value += restoreAmount * itemStack.quantity;
+            this.characterService.characterState.itemPouches[i] = this.getEmptyItemStack();
+          }
+        }
+      }
+
       if (this.mergeCounter >= 20) {
         if (this.autoWeaponMergeUnlocked) {
           this.autoWeaponMerge();
@@ -295,6 +322,7 @@ export class InventoryService {
             } else if (item.armorStats) {
               this.updateArmorDescription(item);
             }
+            item.broken = this.isBroken(itemStack);
           }
         }
       }
@@ -408,7 +436,7 @@ export class InventoryService {
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
     this.updateFarmFoodList();
     for (const itemStack of this.itemStacks) {
-      if (itemStack.item && itemStack.item.name.includes('monster gem')) {
+      if (itemStack.item && itemStack.item.name && itemStack.item.name.includes('monster gem')) {
         itemStack.item.name = itemStack.item.name.replace('monster gem', 'spirit gem');
       }
     }
@@ -583,16 +611,18 @@ export class InventoryService {
     if (weapon.weaponStats.effect) {
       effectString = ' and imbued with the power of ' + weapon.weaponStats.effect;
     }
+    const durability = Math.max(weapon.weaponStats.durability, 0);
     weapon.description =
       'A unique weapon made of ' +
       weapon.weaponStats.material +
       effectString +
-      '. Drag and drop onto similar weapons to merge them into something better.\nBase Damage: ' +
+      '. Drag and drop onto similar weapons to merge them into something better. Base Damage: ' +
       this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) +
-      '\nDurability: ' +
-      this.bigNumberPipe.transform(weapon.weaponStats.durability) +
-      '\nValue: ' +
+      '. Durability: ' +
+      this.bigNumberPipe.transform(durability) +
+      '. Value: ' +
       this.bigNumberPipe.transform(weapon.value) +
+      '. ' +
       this.durabilityDisclaimer;
   }
 
@@ -1441,7 +1471,24 @@ export class InventoryService {
     const item = itemStack.item;
 
     if (!item || !instanceOfEquipment(item)) {
-      // it's not equipable, bail out
+      if (item?.pouchable) {
+        const index = this.itemStacks.indexOf(itemStack);
+        for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
+          if (this.characterService.characterState.itemPouches[i].item?.name === item.name) {
+            this.characterService.characterState.itemPouches[i].quantity += itemStack.quantity;
+            this.setItemEmptyStack(index);
+            return;
+          }
+        }
+        // didn't find a stack of the same name, add it if we can
+        for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
+          if (!this.characterService.characterState.itemPouches[i].item) {
+            this.moveToPouch(index, i);
+            return;
+          }
+        }
+      }
+
       return;
     }
 
@@ -1546,6 +1593,44 @@ export class InventoryService {
     return itemValue;
   }
 
+  consumeById(consumeId: string, quantity = 1) {
+    if (quantity < 0) {
+      quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
+    }
+    let itemIndex = -1;
+    let numberConsumed = 0;
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      const itemIterator = this.itemStacks[i];
+      if (!itemIterator.item) {
+        continue;
+      }
+      if (itemIterator.item.id === consumeId) {
+        itemIndex = i;
+      }
+    }
+    if (itemIndex < 0) {
+      return 0;
+    }
+    const itemIterator = this.itemStacks[itemIndex];
+    if (itemIterator.item) {
+      const minQuantity = Math.min(itemIterator.quantity, quantity);
+      itemIterator.quantity -= minQuantity;
+      quantity -= minQuantity;
+      numberConsumed += minQuantity;
+      if (itemIterator.quantity <= 0) {
+        //remove the stack if empty
+        this.setItemEmptyStack(itemIndex);
+      } else {
+        this.fixId(itemIndex);
+      }
+    }
+    if (quantity > 0 && itemIndex >= 0) {
+      // we didn't have enough in the stack we consumed to meet the quantity, consume another
+      numberConsumed += this.consumeById(consumeId, quantity);
+    }
+    return numberConsumed;
+  }
+
   checkFor(itemType: string): number {
     let itemValue = -1;
     for (let i = 0; i < this.itemStacks.length; i++) {
@@ -1591,12 +1676,19 @@ export class InventoryService {
   }
 
   /** Checks for equipment durability. Returns false if equipment has 0 durability. */
-  hasDurability(itemStack: ItemStack): boolean {
+  isBroken(itemStack: ItemStack): boolean {
     const item = itemStack.item;
 
-    if (!item || !instanceOfEquipment(item)) return true;
+    if (!item || !instanceOfEquipment(item)) return false;
 
-    return (item.armorStats?.durability || 0) > 0 || (item.weaponStats?.durability || 0) > 0;
+    if (item.armorStats && item.armorStats?.durability <= 0) {
+      return true;
+    }
+
+    if (item.weaponStats && item.weaponStats?.durability <= 0) {
+      return true;
+    }
+    return false;
   }
 
   /** A special use function for generated potions. */
@@ -1965,6 +2057,54 @@ export class InventoryService {
         this.fixId(i);
         return;
       }
+    }
+    for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
+      if (itemStack === this.characterService.characterState.itemPouches[i]) {
+        itemStack.id =
+          i +
+          this.characterService.characterState.itemPouches[i].item!.name +
+          this.characterService.characterState.itemPouches[i].quantity;
+        return;
+      }
+    }
+  }
+
+  moveToPouch(itemIndex: number, pouchIndex: number) {
+    if (!this.itemStacks[itemIndex].item) {
+      // no item to move, bail out
+      return;
+    }
+    if (!this.itemStacks[itemIndex].item?.pouchable) {
+      // item can't be put in a pouch, bail out
+      return;
+    }
+    if (this.characterService.characterState.itemPouches[pouchIndex].item) {
+      if (
+        this.characterService.characterState.itemPouches[pouchIndex].item?.name ===
+        this.itemStacks[itemIndex].item?.name
+      ) {
+        // same item type, dump the quantity into the pouch
+        this.characterService.characterState.itemPouches[pouchIndex].quantity += this.itemStacks[itemIndex].quantity;
+        this.itemStacks[itemIndex] = this.getEmptyItemStack();
+        return;
+      }
+      // swap the pouch item with the inventory item
+      const temp = this.itemStacks[itemIndex];
+      this.itemStacks[itemIndex] = this.characterService.characterState.itemPouches[pouchIndex];
+      this.characterService.characterState.itemPouches[pouchIndex] = temp;
+      this.characterService.characterState.itemPouches[pouchIndex].id =
+        pouchIndex +
+        this.characterService.characterState.itemPouches[pouchIndex].item!.name +
+        this.characterService.characterState.itemPouches[pouchIndex].quantity;
+      this.fixId(itemIndex);
+    } else {
+      // nothing there now, just put the inventory item in the pouch
+      this.characterService.characterState.itemPouches[pouchIndex] = this.itemStacks[itemIndex];
+      this.characterService.characterState.itemPouches[pouchIndex].id =
+        pouchIndex +
+        this.characterService.characterState.itemPouches[pouchIndex].item!.name +
+        this.characterService.characterState.itemPouches[pouchIndex].quantity;
+      this.itemStacks[itemIndex] = this.getEmptyItemStack();
     }
   }
 }

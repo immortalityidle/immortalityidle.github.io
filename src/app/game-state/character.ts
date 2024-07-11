@@ -1,4 +1,4 @@
-import { Equipment } from './inventory.service';
+import { Equipment, ItemStack } from './inventory.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
@@ -68,6 +68,7 @@ export interface CharacterProperties {
   hellMoney: number;
   equipment: EquipmentSlots;
   stashedEquipment: EquipmentSlots;
+  itemPouches: ItemStack[];
   age: number;
   status: CharacterStatus;
   baseLifespan: number;
@@ -366,6 +367,7 @@ export class Character {
     legs: null,
     feet: null,
   };
+  itemPouches: ItemStack[] = [];
   highestMoney = 0;
   highestAge = 0;
   highestHealth = 0;
@@ -764,6 +766,7 @@ export class Character {
       hellMoney: this.hellMoney,
       equipment: this.equipment,
       stashedEquipment: this.stashedEquipment,
+      itemPouches: this.itemPouches,
       age: this.age,
       status: this.status,
       baseLifespan: this.baseLifespan,
@@ -827,6 +830,8 @@ export class Character {
       legs: null,
       feet: null,
     };
+    this.itemPouches = properties.itemPouches || [];
+
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
     this.baseLifespan = properties.baseLifespan;

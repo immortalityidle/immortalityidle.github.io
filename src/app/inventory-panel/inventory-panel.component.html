@@ -82,7 +82,7 @@
             balance
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item!.type === 'equipment')) {
+        @if ((inventoryService.selectedItem.item!.type === 'equipment' || inventoryService.selectedItem.item!.pouchable)) {
           <mat-icon (click)="equip()" class="iconButton" aria-label="Equip" aria-hidden="false"
             matTooltip="Equip this. Double-click weapons or armor to equip.">
             shield
@@ -153,12 +153,12 @@
               [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
               (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
               [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem),
-              'brokenItem': (itemStack && itemStack !== undefined && !inventoryService.hasDurability(itemStack) )}"
+              'brokenItem': (itemStack?.item && itemStack?.item?.broken)}"
               matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '. ' + (itemStack?.item?.description) : ''}}" matTooltipPosition='left'>
               <div class="itemName textOverflow">
                 @if (itemStack?.item?.imageFile){
-                  <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" 
-                    [style]="getStyle(itemStack)"
+                  <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage"
+                    [style.border-color]="itemStack?.item?.imageColor ? itemStack?.item?.imageColor : 'white'"
                     width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
                 }
                 @else {

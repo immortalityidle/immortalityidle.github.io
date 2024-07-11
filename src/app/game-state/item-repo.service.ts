@@ -528,6 +528,17 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
+    distilledPeachEssence: {
+      id: 'distilledPeachEssence',
+      imageFile: 'distilledPeachEssence',
+      name: 'distilled peach essence',
+      type: 'healthRestore',
+      value: 1000,
+      description:
+        'An alchemical masterpiece created from the most perfect of peaches. When equipped, automatically consumed to restore 50 health when needed.',
+      restoreAmount: 50,
+      pouchable: true,
+    },
     meat: {
       id: 'meat',
       imageFile: 'meat',

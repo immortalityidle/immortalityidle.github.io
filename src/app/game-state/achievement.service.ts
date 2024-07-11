@@ -1009,7 +1009,7 @@ export class AchievementService {
       description: 'You have made a friend who can provide you with a tasty breakfast.',
       hint: "You'll need to find a very special pet.",
       check: () => {
-        for (const follower of this.followerService.followers) {
+        for (const follower of this.followerService.pets) {
           if ((follower.name === 'Tony' || follower.name === 'Antonio') && follower.job === 'tiger') {
             return true;
           }
@@ -1030,6 +1030,21 @@ export class AchievementService {
       },
       effect: () => {
         this.hellService.fasterHellMoney = true;
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Peaches Peaches Peaches',
+      description: "They're so good, you just want to drink them down.",
+      hint: 'There is more alchemy to learn.',
+      check: () => {
+        return this.inventoryService.divinePeachesUnlocked;
+      },
+      effect: () => {
+        if (this.characterService.characterState.itemPouches.length < 1) {
+          // open up an item pouch slot if one isn't open yet
+          this.characterService.characterState.itemPouches.push(this.inventoryService.getEmptyItemStack());
+        }
       },
       unlocked: false,
     },

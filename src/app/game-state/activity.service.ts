@@ -2301,7 +2301,16 @@ export class ActivityService {
               grade = Math.floor(
                 grade * Math.log10(this.characterService.characterState.attributes.waterLore.value + 10)
               );
-              this.inventoryService.generatePotion(grade + 1, true);
+              if (
+                grade > 1000000 &&
+                this.inventoryService.consumeById('divinePeach') >= 1 &&
+                this.homeService.furniture.workbench &&
+                this.homeService.furniture.workbench.id === 'cauldron'
+              ) {
+                this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
+              } else {
+                this.inventoryService.generatePotion(grade + 1, true);
+              }
             }
           }
           if (this.characterService.characterState.yinYangUnlocked) {

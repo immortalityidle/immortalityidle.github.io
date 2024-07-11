@@ -15,7 +15,7 @@
       Sort followers by
       <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
         <option [selected]="followerService.sortField === 'Name'">Name</option>
-        <option [selected]="followerService.sortField === 'Job'">Type</option>
+        <option [selected]="followerService.sortField === 'Job'" value="Job">Type</option>
         <option [selected]="followerService.sortField === 'Age'">Age</option>
         <option [selected]="followerService.sortField === 'Power'">Power</option>
         <option [selected]="followerService.sortField === 'Remaining Life'">Remaining Life</option>
