@@ -292,7 +292,6 @@ export class AppComponent implements OnInit {
 
   storeClicked(): void {
     this.dialog.open(ManualStoreModalComponent, {
-      width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -300,7 +299,6 @@ export class AppComponent implements OnInit {
 
   storeOptionsClicked(): void {
     this.dialog.open(OptionsModalComponent, {
-      width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -309,7 +307,6 @@ export class AppComponent implements OnInit {
   ascensionStoreClicked() {
     this.storeService.updateAscensions();
     this.dialog.open(AscensionStoreModalComponent, {
-      width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -317,7 +314,6 @@ export class AppComponent implements OnInit {
 
   tutorialClicked() {
     this.dialog.open(TutorialPanelComponent, {
-      width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -325,7 +321,6 @@ export class AppComponent implements OnInit {
 
   statisticsClicked() {
     this.dialog.open(StatisticsPanelComponent, {
-      width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -333,7 +328,6 @@ export class AppComponent implements OnInit {
 
   changelogClicked() {
     this.dialog.open(ChangelogPanelComponent, {
-      width: '700px',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -341,7 +335,6 @@ export class AppComponent implements OnInit {
 
   achievementsClicked() {
     this.dialog.open(AchievementPanelComponent, {
-      width: '750px',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -349,7 +342,6 @@ export class AppComponent implements OnInit {
 
   impossibleTasksClicked() {
     this.dialog.open(ImpossibleTaskPanelComponent, {
-      width: '500px',
       data: { someField: 'foo' },
       autoFocus: false,
     });

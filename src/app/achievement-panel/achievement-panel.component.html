@@ -1,27 +1,29 @@
 <div class="darkMode">
   <h3>Achievements ({{achievementService.unlockedAchievements.length}} / {{achievementService.achievements.length}})</h3>
   <hr/>
-  <div class="achievementGrid">
-    @for (achievement of achievementService.achievements; track $index + '' + achievement.unlocked) {
-      <div>
-        @if (achievement.unlocked) {
-          <div class="itemSlot" tabindex="0"
-            matTooltip="{{achievement.description}}">
-            @if (achievement.displayName) {
-              <div>{{achievement.displayName}}</div>
-            }
-            @if (!achievement.displayName) {
-              <div>{{achievement.name}}</div>
-            }
-          </div>
-        }
-        @else {
-          <div class="itemSlot" matTooltip="{{achievement.hint}}">
-            ?
-          </div>
-        }
-      </div>
-    }
+  <div class="achievementContainer">
+    <div class="achievementGrid">
+      @for (achievement of achievementService.achievements; track $index + '' + achievement.unlocked) {
+        <div>
+          @if (achievement.unlocked) {
+            <div class="itemSlot" tabindex="0"
+              matTooltip="{{achievement.description}}">
+              @if (achievement.displayName) {
+                <div>{{achievement.displayName}}</div>
+              }
+              @if (!achievement.displayName) {
+                <div>{{achievement.name}}</div>
+              }
+            </div>
+          }
+          @else {
+            <div class="itemSlot" matTooltip="{{achievement.hint}}">
+              ?
+            </div>
+          }
+        </div>
+      }
+    </div>
   </div>
 </div>
 

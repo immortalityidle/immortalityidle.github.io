@@ -1,74 +1,77 @@
 <div class='darkMode'>
   <span>Ascension Techniques</span>
   <hr/>
-  <table>
-    <tr>
-      <td>
-        <button [disabled]="storeService.soulCoreRank > 8" (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
-      </td>
-      <td>
-        End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and permanently increase the amount of aptitude gained on each Reincarnation and Ascension.
-        <br>
+  <div class="ascensionContainer">
+    <table>
+      <tr>
+        <td>
+          <button [disabled]="storeService.soulCoreRank > 8" (click)="storeService.condenseSoulCore()">Condense Soul Core</button>
+        </td>
+        <td>
+          End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and permanently increase the amount of aptitude gained on each Reincarnation and Ascension.
+          <br>
           Current Rank: {{storeService.soulCoreRank}}
           <br>
-            @if (storeService.soulCoreRank < 9) {
-              <span>
-                Next rank requires {{characterService.characterState.condenseSoulCoreCost | bigNumber}} spirituality and a grade {{storeService.soulCoreRank + 12}} spirit gem.
-              </span>
-            }
-            @else {
-              <span>
-                Max Rank
-              </span>
-            }
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button [disabled]="storeService.meridianRank > 8" (click)="storeService.reinforceMeridians()">Reinforce Meridians</button>
-          </td>
-          <td>
-            End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and permanently increase the power of your aptitudes to improve your attribute gains.
-            <br>
-              Current Rank: {{storeService.meridianRank}}
-              <br>
-                @if (storeService.meridianRank < 9) {
-                  <span>
-                    Next rank requires {{characterService.characterState.reinforceMeridiansCost | bigNumber}} spirituality and a grade {{storeService.meridianRank + 16}} spirit gem.
-                  </span>
-                }
-                @else {
-                  <span>
-                    Max Rank
-                  </span>
-                }
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button [disabled]="characterService.characterState.bloodlineRank >= 9" (click)="storeService.upgradeBloodline()">{{storeService.bloodlineLabel}}</button>
-              </td>
-              <td>
-                {{storeService.bloodlineDescription}}
-                <br>
-                  Current Rank: {{characterService.characterState.bloodlineRank}}
-                  <br>
-                    @if (characterService.characterState.bloodlineRank < 9) {
-                      <span>
-                        Next rank requires {{characterService.characterState.bloodlineCost | bigNumber}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
-                      </span>
-                    }
-                    @else {
-                      <span>
-                        Max Rank
-                      </span>
-                    }
-                  </td>
-                </tr>
-              </table>
-              @if (characterService.characterState.empowermentFactor > 1) {
-                <span>
-                  You have consumed {{(characterService.characterState.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.characterState.getEmpowermentMult()  | number:'1.0-3'}}. You will always keep this bonus, even after ascending.
-                </span>
-              }
-            </div>
+          @if (storeService.soulCoreRank < 9) {
+            <span>
+              Next rank requires {{characterService.characterState.condenseSoulCoreCost | bigNumber}} spirituality and a grade {{storeService.soulCoreRank + 12}} spirit gem.
+            </span>
+          }
+          @else {
+            <span>
+              Max Rank
+            </span>
+          }
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button [disabled]="storeService.meridianRank > 8" (click)="storeService.reinforceMeridians()">Reinforce Meridians</button>
+        </td>
+        <td>
+          End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and permanently increase the power of your aptitudes to improve your attribute gains.
+          <br>
+          Current Rank: {{storeService.meridianRank}}
+          <br>
+            @if (storeService.meridianRank < 9) {
+            <span>
+              Next rank requires {{characterService.characterState.reinforceMeridiansCost | bigNumber}} spirituality and a grade {{storeService.meridianRank + 16}} spirit gem.
+            </span>
+          }
+          @else {
+            <span>
+              Max Rank
+            </span>
+          }
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button [disabled]="characterService.characterState.bloodlineRank >= 9" (click)="storeService.upgradeBloodline()">{{storeService.bloodlineLabel}}</button>
+        </td>
+        <td>
+          {{storeService.bloodlineDescription}}
+          <br>
+          Current Rank: {{characterService.characterState.bloodlineRank}}
+          <br>
+          @if (characterService.characterState.bloodlineRank < 9) {
+            <span>
+              Next rank requires {{characterService.characterState.bloodlineCost | bigNumber}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
+            </span>
+          }
+          @else {
+            <span>
+              Max Rank
+            </span>
+          }
+        </td>
+      </tr>
+    </table>
+    @if (characterService.characterState.empowermentFactor > 1) {
+      <span>
+        You have consumed {{(characterService.characterState.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.characterState.getEmpowermentMult()  | number:'1.0-3'}}. You will always keep this bonus, even after ascending.
+      </span>
+    }
+    
+  </div>
+</div>
