@@ -51,178 +51,221 @@
         <button [disabled]="gameStateService.lockPanels" (click)="gameStateService.resetPanels()">Reset Panels to Default Locations</button>
       </span>
     </div>
-    <div class="bodyContainer" #bodyContainer (mousemove)="onBodyMouseMove($event)"
-      (touchmove)="onBodyTouchMove($event)" (touchstart)="onBodyTouchStart($event)" (touchend)="onBodyTouchEnd()">
-      @if (mainLoopService.timeUnlocked) {
-        <app-time-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="timePanel panel" id="{{panelIndex.Time}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Time], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Time].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Time].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Time].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Time].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Time].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Time].y + 'px'}"
-          (cdkDragEnded)="dragEnd($event, panelIndex.Time)"
-          (cdkDragStarted)="dragStart($event, panelIndex.Time)"
-          [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Time]"
-          cdkDragBoundary=".bodyContainer">
-        </app-time-panel>
-      }
-      <app-attributes-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="attributesPanel panel" id="{{panelIndex.Attributes}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Attributes], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Attributes].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Attributes].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Attributes].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Attributes].y + 'px'}"
-        (cdkDragEnded)="dragEnd($event, panelIndex.Attributes)"
-        (cdkDragStarted)="dragStart($event, panelIndex.Attributes)"
-        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Attributes]"
-        cdkDragBoundary=".bodyContainer">
-      </app-attributes-panel>
-      @if (followersService.followersUnlocked) {
-        <app-followers-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="followersPanel panel"  id="{{panelIndex.Followers}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Followers], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Followers].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Followers].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Followers].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Followers].y + 'px'}"
-          (cdkDragEnded)="dragEnd($event, panelIndex.Followers)"
-          (cdkDragStarted)="dragStart($event, panelIndex.Followers)"
-          [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Followers]"
-          cdkDragBoundary=".bodyContainer">
-        </app-followers-panel>
-      }
-      <app-health-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="healthPanel panel" id="{{panelIndex.Health}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Health], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Health].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Health].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Health].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Health].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Health].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Health].y + 'px'}"
-        (cdkDragEnded)="dragEnd($event, panelIndex.Health)"
-        (cdkDragStarted)="dragStart($event, panelIndex.Health)"
-        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Health]"
-        cdkDragBoundary=".bodyContainer">
-      </app-health-panel>
-      <app-activity-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="activityPanel panel" id="{{panelIndex.Activity}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Activity], 
-          'minWidth': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
-          'width': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
-          'maxWidth': gameStateService.panelSizes[panelIndex.Activity].x + 'px',
-          'minHeight': gameStateService.panelSizes[panelIndex.Activity].y + 'px',
-          'height': gameStateService.panelSizes[panelIndex.Activity].y + 'px',
-          'maxHeight': gameStateService.panelSizes[panelIndex.Activity].y + 'px'}"
-        (cdkDragEnded)="dragEnd($event, panelIndex.Activity)"
-        (cdkDragStarted)="dragStart($event, panelIndex.Activity)"
-        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Activity]"
-        cdkDragBoundary=".bodyContainer">
-      </app-activity-panel>
-      <app-battle-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="battlePanel panel"  id="{{panelIndex.Battle}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Battle], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Battle].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Battle].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Battle].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Battle].y + 'px'}"
-        (cdkDragEnded)="dragEnd($event, panelIndex.Battle)"
-        (cdkDragStarted)="dragStart($event, panelIndex.Battle)"
-        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Battle]"
-        cdkDragBoundary=".bodyContainer">
-      </app-battle-panel>
-      @if (inventoryService.equipmentUnlocked) {
-        <app-equipment-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="equipmentPanel panel"  id="{{panelIndex.Equipment}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Equipment], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Equipment].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Equipment].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Equipment].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Equipment].y + 'px'}"
-          (cdkDragEnded)="dragEnd($event, panelIndex.Equipment)"
-          (cdkDragStarted)="dragStart($event, panelIndex.Equipment)"
-          [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Equipment]"
-          cdkDragBoundary=".bodyContainer">
-        </app-equipment-panel>
-      }
-      @if (homeService.homeUnlocked) {
-        <app-home-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="homePanel panel"  id="{{panelIndex.Home}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Home], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Home].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Home].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Home].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Home].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Home].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Home].y + 'px'}"
-          (cdkDragEnded)="dragEnd($event, panelIndex.Home)"
-          (cdkDragStarted)="dragStart($event, panelIndex.Home)"
-          [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Home]"
-          cdkDragBoundary=".bodyContainer">
-        </app-home-panel>
-      }
-      <app-inventory-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="inventoryPanel panel"  id="{{panelIndex.Inventory}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Inventory], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Inventory].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Inventory].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Inventory].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Inventory].y + 'px'}"
-        (cdkDragEnded)="dragEnd($event, panelIndex.Inventory)"
-        (cdkDragStarted)="dragStart($event, panelIndex.Inventory)"
-        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Inventory]"
-        cdkDragBoundary=".bodyContainer">
-      </app-inventory-panel>
-      <app-log-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels" class="logPanel panel"  id="{{panelIndex.Log}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Log], 
-        'minWidth': gameStateService.panelSizes[panelIndex.Log].x + 'px',
-        'width': gameStateService.panelSizes[panelIndex.Log].x + 'px',
-        'maxWidth': gameStateService.panelSizes[panelIndex.Log].x + 'px',
-        'minHeight': gameStateService.panelSizes[panelIndex.Log].y + 'px',
-        'height': gameStateService.panelSizes[panelIndex.Log].y + 'px',
-        'maxHeight': gameStateService.panelSizes[panelIndex.Log].y + 'px'}"
-        (cdkDragEnded)="dragEnd($event, panelIndex.Log)"
-        (cdkDragStarted)="dragStart($event, panelIndex.Log)"
-        [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Log]"
-        cdkDragBoundary=".bodyContainer">
-      </app-log-panel>
-      @if (hellService.inHell) {
-        <app-portal-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels"
-          class="portalPanel panel" id="{{panelIndex.Portal}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Portal], 
-          'minWidth': gameStateService.panelSizes[panelIndex.Portal].x + 'px',
-          'width': gameStateService.panelSizes[panelIndex.Portal].x + 'px',
-          'maxWidth': gameStateService.panelSizes[panelIndex.Portal].x + 'px',
-          'minHeight': gameStateService.panelSizes[panelIndex.Portal].y + 'px',
-          'height': gameStateService.panelSizes[panelIndex.Portal].y + 'px',
-          'maxHeight': gameStateService.panelSizes[panelIndex.Portal].y + 'px'}"
-          (cdkDragEnded)="dragEnd($event, panelIndex.Portal)"
-          (cdkDragStarted)="dragStart($event, panelIndex.Portal)"
-          [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Portal]"
-          cdkDragBoundary=".bodyContainer">
-        </app-portal-panel>
-      }
-      @if (followersService.petsEnabled) {
-        <app-pets-panel cdkDrag [cdkDragDisabled]="gameStateService.lockPanels"
-          class="petsPanel panel" id="{{panelIndex.Pets}}"
-        [ngStyle]="{'z-index': gameStateService.panelZIndex[panelIndex.Pets], 
-          'minWidth': gameStateService.panelSizes[panelIndex.Pets].x + 'px',
-          'width': gameStateService.panelSizes[panelIndex.Pets].x + 'px',
-          'maxWidth': gameStateService.panelSizes[panelIndex.Pets].x + 'px',
-          'minHeight': gameStateService.panelSizes[panelIndex.Pets].y + 'px',
-          'height': gameStateService.panelSizes[panelIndex.Pets].y + 'px',
-          'maxHeight': gameStateService.panelSizes[panelIndex.Pets].y + 'px'}"
-          (cdkDragEnded)="dragEnd($event, panelIndex.Pets)"
-          (cdkDragStarted)="dragStart($event, panelIndex.Pets)"
-          [cdkDragFreeDragPosition]="gameStateService.panelPositions[panelIndex.Pets]"
-          cdkDragBoundary=".bodyContainer">
-        </app-pets-panel>
-      }
+    <div class="grid-container">
+      <ktd-grid cols="100"
+          rowHeight="50"
+          [compactType]="compactType"
+          [gap]="gridGap"
+          compactOnPropsChange="true"
+          preventCollision="false"
+          [layout]="gameStateService.layout"
+          [scrollableParent]="document"
+          (layoutUpdated)="onLayoutUpdated($event)">
+        @if (mainLoopService.timeUnlocked) {
+          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="timePanel">
+            <div class="panel">
+              <div ktdGridDragHandle [ngClass]="{'grabCursor': !gameStateService.lockPanels}" class="panelHeader">
+                <mat-icon>
+                  calendar_month
+                </mat-icon>
+                <span>Time</span>
+                <mat-icon class="panelHelp" matTooltip="Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential. Click the schedule button on activities or drag them here to put them on your schedule. When you allow time to move forward, you will perform each activity in your schedule in the order it is listed. You can move scheduled activities around or repeat activities over multiple days. Don't forget to schedule some rest too! You'll need to take a break now and then in your journey toward immortality.">
+                  help
+                </mat-icon>
+                </div>
+              <div class="grid-item-content">
+                <app-time-panel class="panelComponent"></app-time-panel>
+              </div>
+            </div>
+          </ktd-grid-item>
+        }
+        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="attributesPanel">
+          <div class="panel">
+            <div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+              <mat-icon>
+                bar_chart
+              </mat-icon>
+              Attributes
+              <mat-icon class="panelHelp" matTooltip="Your attributes define your growing immortal characteristics. You can grow your attributes through the activities that you choose. Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.">
+                help
+              </mat-icon>
+            </div>
+            <div class="grid-item-content">
+              <app-attributes-panel class="panelComponent"></app-attributes-panel>
+            </div>
+          </div>
+        </ktd-grid-item>
+        @if (followersService.followersUnlocked) {
+          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="followersPanel">
+            <div class="panel">
+              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+                <mat-icon>
+                  groups
+                </mat-icon>
+                <span>Followers</span>
+                <mat-icon class="panelHelp" matTooltip="Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.">
+                  help
+                </mat-icon>
+              </div>
+              <div class="grid-item-content">
+                <app-followers-panel class="panelComponent"></app-followers-panel>
+              </div>
+            </div>
+          </ktd-grid-item>
+        }
+        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="healthPanel">
+          <div class="panel">
+            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+              <mat-icon>
+                favorite
+              </mat-icon>
+              <span>Health</span>
+              <mat-icon class="panelHelp" matTooltip="Maintaining your health is an important part of becoming immortal. If your health reaches 0, you will die and need to try for immortality once you are reincarnated in your next life.">
+                help
+              </mat-icon>
+            </div>
+            <div class="grid-item-content">
+              <app-health-panel class="panelComponent"></app-health-panel>
+            </div>
+          </div>
+        </ktd-grid-item>
+        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="activityPanel">
+          <div class="panel">
+            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+              <mat-icon>
+                self_improvement
+              </mat-icon>
+              Activities
+              <mat-icon class="panelHelp" matTooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available.">
+                help
+              </mat-icon>
+            </div>
+            <div class="grid-item-content">
+              <app-activity-panel class="panelComponent" ></app-activity-panel>
+            </div>
+          </div>
+        </ktd-grid-item>
+        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="battlePanel">
+          <div class="panel">
+            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+              <mat-icon>
+                fort
+              </mat-icon>
+              Battles
+              <mat-icon class="panelHelp" matTooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">
+                help
+              </mat-icon>
+            </div>
+            <div class="grid-item-content">
+              <app-battle-panel class="panelComponent" ></app-battle-panel>
+            </div>
+          </div>
+        </ktd-grid-item>
+        @if (inventoryService.equipmentUnlocked) {
+          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="equipmentPanel">
+            <div class="panel">
+              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+                <mat-icon>
+                  colorize
+                </mat-icon>
+                Equipment
+                <mat-icon class="panelHelp" matTooltip="You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality. Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment. Watch out, each piece of gear will take damage with use and you will need to constantly improve it to keep it strong.">
+                  help
+                </mat-icon>  
+              </div>                  
+              <div class="grid-item-content">
+                <app-equipment-panel class="panelComponent" ></app-equipment-panel>
+              </div>
+            </div>
+          </ktd-grid-item>
+        }
+        @if (homeService.homeUnlocked) {
+          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="homePanel">
+            <div class="panel">
+              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+                <mat-icon>
+                  home
+                </mat-icon>
+                Home
+                <mat-icon class="panelHelp" matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">
+                  help
+                </mat-icon>
+              </div>                  
+              <div class="grid-item-content">
+                <app-home-panel class="panelComponent" ></app-home-panel>
+              </div>
+            </div>
+          </ktd-grid-item>
+        }  
+        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="inventoryPanel">
+          <div class="panel">
+            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+              <mat-icon>
+                shopping_bag
+              </mat-icon>
+              Inventory
+              <mat-icon class="panelHelp" matTooltip="The items that you gain during your quest for immortality will appear here. Hover your cursor over an item to learn more about it.">
+                help
+              </mat-icon>
+            </div>                  
+            <div class="grid-item-content">
+              <app-inventory-panel class="panelComponent" ></app-inventory-panel>
+            </div>
+          </div>
+        </ktd-grid-item>
+        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="logPanel">
+          <div class="panel">
+            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+              <mat-icon>
+                feed
+              </mat-icon>
+              Log
+              <mat-icon class="panelHelp" matTooltip="A record of the events that lead you to immortality will surely be of interest to those who sing your legend in the ages to come. You can filter out the events that are less interesting to you in the present.">
+                help
+              </mat-icon>
+            </div>                  
+            <div class="grid-item-content">
+              <app-log-panel class="panelComponent" ></app-log-panel>
+            </div>
+          </div>
+        </ktd-grid-item>
+        @if (hellService.inHell) {
+          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="portalPanel">
+            <div class="panel">
+              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+                <mat-icon>
+                  radio_button_checked
+                </mat-icon>
+                Portals
+                <mat-icon class="panelHelp" matTooltip="Take a portal to a different plane of existence.">
+                  help
+                </mat-icon>
+              </div>                  
+              <div class="grid-item-content">
+                <app-portal-panel class="panelComponent" ></app-portal-panel>
+              </div>
+            </div>
+          </ktd-grid-item>
+        }
+        @if (followersService.petsEnabled) {
+          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="petsPanel">
+            <div class="panel">
+              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
+                <mat-icon>
+                  pets
+                </mat-icon>
+                Pets
+                <mat-icon class="panelHelp" matTooltip="Your pets can aid you in many ways. Each has a specific skill that they will use to your benefit.">
+                  help
+                </mat-icon>
+              </div>                  
+              <div class="grid-item-content">
+                <app-pets-panel class="panelComponent" ></app-pets-panel>
+              </div>
+            </div>
+          </ktd-grid-item>
+        }
+      </ktd-grid>
     </div>
   </div>
 </div>

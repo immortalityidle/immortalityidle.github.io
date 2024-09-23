@@ -535,7 +535,7 @@ export class ItemRepoService {
       type: 'healthRestore',
       value: 1000,
       description:
-        'An alchemical masterpiece created from the most perfect of peaches. When equipped, automatically consumed to restore 50 health when needed.',
+        'An alchemical masterpiece created from the most perfect of peaches. When equipped, it is automatically consumed to restore 50 health when needed.',
       restoreAmount: 50,
       pouchable: true,
     },

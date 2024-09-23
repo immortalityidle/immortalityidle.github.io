@@ -1,12 +1,3 @@
-<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-  <mat-icon>
-    groups
-  </mat-icon>
-  Followers
-  <mat-icon class="panelHelp" matTooltip="Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.">
-    help
-  </mat-icon>
-</div>
 <h3>
   <span [ngClass]="followerService.followersMaxed">
     &nbsp;({{this.followerService.followers.length}} / {{this.followerService.followerCap}})
@@ -39,4 +30,3 @@
     </ng-container>
   </div>
 </div>
-<div class="panelResizeHandle"></div>

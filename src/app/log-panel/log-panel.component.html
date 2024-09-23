@@ -1,12 +1,3 @@
-<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-  <mat-icon>
-    feed
-  </mat-icon>
-  Log
-  <mat-icon class="panelHelp" matTooltip="A record of the events that lead you to immortality will surely be of interest to those who sing your legend in the ages to come. You can filter out the events that are less interesting to you in the present.">
-    help
-  </mat-icon>
-</div>
 <div class="log">
   <h3>
     <mat-icon class="iconButton optionsIcon" aria-label="Filter Log" aria-hidden="false" (click)="logFilterClicked()" matTooltip="Manage Log Filters">
@@ -26,4 +17,3 @@
   </div>
 </div>
 </div>
-<div class="panelResizeHandle"></div>

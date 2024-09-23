@@ -1,13 +1,3 @@
-<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-  <mat-icon>
-    radio_button_checked
-  </mat-icon>
-  Portals
-  <mat-icon class="panelHelp" matTooltip="Take a portal to a different plane of existence.">
-    help
-  </mat-icon>
-
-</div>
 <h3 class="portalsHeader">
   @if (hellService.inHell) {
     <span matTooltip="{{activityService.activityHeaderDescription}}">Current Location: {{activityService.activityHeader}} </span>
@@ -40,4 +30,3 @@
   </div>
 
 </div>
-<div class="panelResizeHandle"></div>

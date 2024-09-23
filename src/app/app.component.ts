@@ -1,11 +1,10 @@
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, Pipe, PipeTransform, ViewChild, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService, PanelIndex } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { OptionsModalComponent } from './options-modal/options-modal.component';
 import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';
-import { HostListener } from '@angular/core';
 import { StoreService } from './game-state/store.service';
 import { CharacterService } from './game-state/character.service';
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
@@ -17,11 +16,14 @@ import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.compo
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { HellService } from './game-state/hell.service';
 import { StatisticsService } from './game-state/statistics.service';
-import { CdkDragEnd, CdkDragStart, Point } from '@angular/cdk/drag-drop';
-import { ViewportScroller } from '@angular/common';
+import { ViewportScroller, DOCUMENT } from '@angular/common';
 import { FollowersService } from './game-state/followers.service';
 import { HomeService } from './game-state/home.service';
 import { InventoryService } from './game-state/inventory.service';
+//import { KtdGridComponent, KtdGridLayout, ktdTrackById, KtdGridItemComponent, KtdGridDragHandle, KtdGridResizeHandle } from '@katoid/angular-grid-layout';
+import { KtdGridComponent, KtdGridLayout, ktdTrackById } from '@katoid/angular-grid-layout';
+import { fromEvent, merge, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -93,17 +95,25 @@ export class BigNumberPipe implements PipeTransform {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  // @ts-expect-error: no initializer
+  @ViewChild(KtdGridComponent, { static: true }) grid: KtdGridComponent;
   doingPanelDrag = false;
   doingBodyDrag = false;
   panelIndex: typeof PanelIndex = PanelIndex;
   resizingPanel = -1;
-  previousPoint: Point = { x: 0, y: 0 };
 
   title = 'immortalityidle';
   applicationVersion = environment.appVersion;
 
   activateSliders = false;
+
+  private resizeSubscription: Subscription;
+  trackById = ktdTrackById;
+  gridGap = 4;
+  mobileDevice = window.navigator.maxTouchPoints > 0;
+
+  compactType: 'vertical' | 'horizontal' | null = this.mobileDevice ? 'vertical' : 'horizontal';
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -157,137 +167,25 @@ export class AppComponent implements OnInit {
     public hellService: HellService,
     public inventoryService: InventoryService,
     public homeService: HomeService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    @Inject(DOCUMENT) public document: Document
+  ) {
+    this.resizeSubscription = new Subscription();
+  }
 
   ngOnInit(): void {
     this.gameStateService.loadFromLocalStorage();
     this.mainLoopService.start();
-    this.setPanelPositions();
+
+    this.resizeSubscription = merge(fromEvent(window, 'resize'), fromEvent(window, 'orientationchange'))
+      .pipe(debounceTime(50))
+      .subscribe(() => {
+        this.grid.resize();
+      });
   }
 
-  dragStart(event: CdkDragStart, panelIndex: number) {
-    this.doingPanelDrag = true;
-    const originalZIndex = this.gameStateService.panelZIndex[panelIndex];
-    for (const index in this.panelIndex) {
-      if (isNaN(Number(index))) {
-        continue;
-      }
-      if (this.gameStateService.panelZIndex[index] > originalZIndex) {
-        this.gameStateService.panelZIndex[index]--;
-        this.gameStateService.panelZIndex[panelIndex]++;
-      }
-    }
-    event.source.element.nativeElement.style.zIndex = this.gameStateService.panelZIndex[panelIndex] + '';
-  }
-
-  dragEnd(event: CdkDragEnd, panelIndex: number) {
-    this.gameStateService.panelPositions[panelIndex].x = event.source.getFreeDragPosition().x;
-    this.gameStateService.panelPositions[panelIndex].y = event.source.getFreeDragPosition().y;
-    // always save when the player moves the windows around
-    this.gameStateService.savetoLocalStorage();
-    this.doingPanelDrag = false;
-  }
-
-  setPanelPositions() {
-    for (const index in this.panelIndex) {
-      if (isNaN(Number(index))) {
-        continue;
-      }
-      this.gameStateService.panelPositions[index] = {
-        x: this.gameStateService.panelPositions[index].x,
-        y: this.gameStateService.panelPositions[index].y,
-      };
-    }
-  }
-
-  onBodyMouseMove(event: MouseEvent) {
-    if (this.doingPanelDrag) {
-      return;
-    }
-    if (this.gameStateService.dragging) {
-      // don't do this if dragging from other panels is going on
-      return;
-    }
-    if (event.buttons !== 1) {
-      this.doingPanelDrag = false;
-      this.doingBodyDrag = false;
-      if (this.resizingPanel !== -1) {
-        // just released a panel resize
-        this.resizingPanel = -1;
-        // always save when the player moves the windows around
-        this.gameStateService.savetoLocalStorage();
-      }
-      return;
-    }
-    if (this.resizingPanel !== -1) {
-      const newWidth = this.gameStateService.panelSizes[this.resizingPanel].x + event.movementX;
-      this.gameStateService.panelSizes[this.resizingPanel].x = newWidth;
-      const newHeight = this.gameStateService.panelSizes[this.resizingPanel].y + event.movementY;
-      this.gameStateService.panelSizes[this.resizingPanel].y = newHeight;
-      return;
-    }
-    if (event.target instanceof Element && event.target.classList.contains('panelResizeHandle')) {
-      if (this.gameStateService.lockPanels) {
-        return;
-      }
-      if (this.resizingPanel === -1) {
-        if (event.target.parentElement) {
-          this.resizingPanel = parseInt(event.target.parentElement.id);
-        }
-      }
-    }
-    if (this.doingBodyDrag || (event.target instanceof Element && event.target.classList.contains('bodyContainer'))) {
-      const x = this.scroller.getScrollPosition()[0] - event.movementX;
-      const y = this.scroller.getScrollPosition()[1] - event.movementY;
-      this.scroller.scrollToPosition([x, y]);
-      this.doingBodyDrag = true;
-    }
-  }
-
-  onBodyTouchStart(event: TouchEvent) {
-    this.previousPoint.x = event.touches[0].pageX;
-    this.previousPoint.y = event.touches[0].pageY;
-  }
-
-  onBodyTouchEnd() {
-    if (this.resizingPanel !== -1) {
-      // just released a panel resize
-      this.resizingPanel = -1;
-      // always save when the player moves the windows around
-      this.gameStateService.savetoLocalStorage();
-    }
-  }
-
-  onBodyTouchMove(event: TouchEvent) {
-    if (this.gameStateService.lockPanels) {
-      return;
-    }
-
-    if (this.doingPanelDrag) {
-      event.preventDefault();
-      return;
-    }
-    if (this.resizingPanel !== -1) {
-      const movementX = event.touches[0].pageX - this.previousPoint.x;
-      const movementY = event.touches[0].pageY - this.previousPoint.y;
-      const newWidth = this.gameStateService.panelSizes[this.resizingPanel].x + movementX;
-      this.gameStateService.panelSizes[this.resizingPanel].x = newWidth;
-      const newHeight = this.gameStateService.panelSizes[this.resizingPanel].y + movementY;
-      this.gameStateService.panelSizes[this.resizingPanel].y = newHeight;
-      this.previousPoint.x = event.touches[0].pageX;
-      this.previousPoint.y = event.touches[0].pageY;
-      event.preventDefault();
-      return;
-    }
-    if (event.target instanceof Element && event.target.classList.contains('panelResizeHandle')) {
-      if (this.resizingPanel === -1) {
-        if (event.target.parentElement) {
-          this.resizingPanel = parseInt(event.target.parentElement.id);
-          event.preventDefault();
-        }
-      }
-    }
+  ngOnDestroy() {
+    this.resizeSubscription.unsubscribe();
   }
 
   storeClicked(): void {
@@ -349,5 +247,11 @@ export class AppComponent implements OnInit {
 
   lockPanelsToggle() {
     this.gameStateService.lockPanels = !this.gameStateService.lockPanels;
+  }
+
+  onLayoutUpdated(layout: KtdGridLayout) {
+    this.gameStateService.layout = layout;
+    // always save when the player moves the windows around
+    this.gameStateService.savetoLocalStorage();
   }
 }

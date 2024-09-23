@@ -1,12 +1,3 @@
-<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-  <mat-icon>
-    home
-  </mat-icon>
-  Home
-  <mat-icon class="panelHelp" matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">
-    help
-  </mat-icon>
-</div>
 <div class="homeContainer">
   <h3 >
     <div matTooltip="{{homeService.home.description}}" [ngClass]="{'hellDisabled': hellService.inHell}">
@@ -79,4 +70,4 @@
       </div>
     }
   </div>
-  <div class="panelResizeHandle"></div>
+  

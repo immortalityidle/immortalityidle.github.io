@@ -262,6 +262,8 @@ export class ActivityService {
         return;
       }
 
+      // TODO: at high tick speeds, don't call the consequences here, instead figure out a set of counters, then do the consequences as a batch
+
       if (this.currentIndex < this.activityLoop.length) {
         this.currentLoopEntry = this.activityLoop[this.currentIndex];
         let activity = this.getActivityByType(this.currentLoopEntry.activity);

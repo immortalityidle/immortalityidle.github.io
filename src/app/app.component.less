@@ -5,7 +5,12 @@
     flex-direction: row;
     flex-grow: 1;
     min-height: 0;
-    height: 100%;
+    width: 3000px;
+    height: 2000px;
+    min-width: 3000px;
+    min-height: 2000px;
+    max-width: 3000px;
+    max-height: 2000px;
 }
 
 .top-line {
@@ -31,6 +36,12 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
+    width: 3000px;
+    height: 2000px;
+    min-width: 3000px;
+    min-height: 2000px;
+    max-width: 3000px;
+    max-height: 2000px;
 }
 
 .bodyContainer {
@@ -44,55 +55,45 @@
     overflow: hidden;
 }
 
-
-.panelContainer {
-    min-height: 0;
-}
-
 .panel {
     background-color: var(--panelBackground);
-    margin: 4px;
-    border: 3px solid var(--panelBorder);
-    border-radius: 4px;
     display: flex;
     flex-direction: column;
-    position: absolute;
     top: 0px;
     left: 0px;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--panelBorder);
+    border-radius: 3px;
+    box-sizing: border-box;
+    flex: auto;
 }
 
 .panelHeader {
+    top: 0px;
+    left: 0px;
+    width: 100%;
     background-color: var(--panelHeader);
     border-bottom: 1px solid var(--panelBorder);
     color: var(--bodyText);
     font-size: 14px;
     font-weight: 400;
     margin: 0px;
+    z-index: 10;
 }
 
 .panelHelp {
     float: right;
 }
 
-.panelResizeHandle {
-    position: absolute;
-    right: 0px;
-    bottom: 0px;
-    cursor: se-resize;
-    width: 0; 
-    height: 0; 
-    border-left: 10px solid transparent;
-    border-bottom: 10px solid var(--panelBorder);
-}
-
-.dragHandle {
-    position: relative;
-    top: 10px;
-    right: 10px;
-    color: var(--bodyText);
-    width: 16px;
-    height: 16px;
+.panelComponent {
+    width: 100%;
+    height: 100%;
+    height: -webkit-calc(100% - 24px);
+    height: -moz-calc(100% - 24px);
+    height: calc(100% - 24px);    
+    display: flex;
+    flex-direction: column;
 }
 
 mat-icon {
@@ -116,3 +117,59 @@ mat-icon {
 .highlighted {
     background-color: var(--buttonHighlightBg);
 }
+
+.grid-container {
+    padding: 4px;
+    box-sizing: border-box;
+    border-radius: 2px;
+    border: 1px solid var(--ktd-border-color);
+    background-color: var(--ktd-background-color);
+    width: 100%;
+}
+
+.grid-item-content {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+ktd-grid {
+    transition: height 500ms ease;
+    background-color: var(--bodyBackground);
+    width: 2900px;
+    height: 1800px;
+}
+
+ktd-grid-item {
+
+    .resizeHandle {
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+        width: 16px;
+        height: 16px;
+        border: 1px solid var(--panelBorder);
+        color: var(--panelBorder);
+        transform: rotate(90deg);
+    }
+
+}
+
+.resizeCursor {
+    cursor: se-resize;
+}
+
+.grabCursor {
+    cursor: grabbing;
+}
+
+// customize placeholder
+::ng-deep .ktd-grid-item-placeholder {
+    background-color: #ffa726;
+}
+

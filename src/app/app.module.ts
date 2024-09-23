@@ -43,6 +43,7 @@ import { SaveModalComponent } from './save-modal/save-modal.component';
 import { OfflineModalComponent } from './offline-modal/offline-modal.component';
 import { LifeSummaryComponent } from './life-summary/life-summary.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { KtdGridModule } from '@katoid/angular-grid-layout';
 
 const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatTooltipModule];
 
@@ -90,6 +91,7 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatToolt
     FormsModule,
     CommonModule,
     DragDropModule,
+    KtdGridModule,
     ...materialModules,
   ],
   exports: [...materialModules],

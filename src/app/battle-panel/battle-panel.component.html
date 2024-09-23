@@ -1,12 +1,3 @@
-<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-  <mat-icon>
-    fort
-  </mat-icon>
-  Battles
-  <mat-icon class="panelHelp" matTooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">
-    help
-  </mat-icon>
-</div>
 <h3>
   @if (battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
     battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked) {
@@ -107,9 +98,8 @@
     </div>
     @if (battleService.currentEnemy?.enemy?.baseName) {
       <div>
-        <img class="monsterImage" src="assets/images/monsters/{{battleService.currentEnemy?.enemy?.baseName}}.png" alt="A Monster!" width="80" height="100"/>
+        <img class="monsterImage" src="{{imageFile}}" alt="A Monster!" width="80" height="100"/>
       </div>
     }
   </div>
 </div>
-<div class="panelResizeHandle"></div>

@@ -4,6 +4,7 @@ import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-opti
 import { BattleService } from '../game-state/battle.service';
 import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
+import { MainLoopService } from '../game-state/main-loop.service';
 
 @Component({
   selector: 'app-battle-panel',
@@ -12,13 +13,20 @@ import { GameStateService } from '../game-state/game-state.service';
 })
 export class BattlePanelComponent {
   Math: Math;
+  imageFile: string = '';
+
   constructor(
     public battleService: BattleService,
     public characterService: CharacterService,
     public gameStateService: GameStateService,
+    public mainLoopService: MainLoopService,
     public dialog: MatDialog
   ) {
     this.Math = Math;
+    // only update the picture for the enemy every long tick for performance
+    this.mainLoopService.longTickSubject.subscribe(() => {
+      this.imageFile = 'assets/images/monsters/' + this.battleService.currentEnemy?.enemy?.baseName + '.png';
+    });
   }
 
   autoTroubleChange(event: Event): void {

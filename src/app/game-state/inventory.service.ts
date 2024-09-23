@@ -1984,6 +1984,7 @@ export class InventoryService {
   stashInventory() {
     for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
+      console.log(item);
       if (item && item.type !== 'food' && !item.type.includes('Gem')) {
         this.stashedItemStacks.push(this.itemStacks[i]);
         this.setItemEmptyStack(i);

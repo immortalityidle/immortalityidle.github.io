@@ -16,7 +16,7 @@ import { AutoBuyerProperties, AutoBuyerService } from './autoBuyer.service';
 import { HellProperties, HellService } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Point } from '@angular/cdk/drag-drop';
+import { KtdGridLayout } from '@katoid/angular-grid-layout';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
 
@@ -37,10 +37,8 @@ interface GameState {
   gameStartTimestamp: number;
   saveInterval: number;
   easyModeEver: boolean;
-  panelPositions: Point[];
-  panelZIndex: number[];
-  panelSizes: Point[];
   lockPanels: boolean;
+  layout: KtdGridLayout;
 }
 
 declare global {
@@ -76,14 +74,9 @@ export class GameStateService {
   easyModeEver = false;
   saveInterval = 300; //In seconds
   saveSlot = '';
-  panelPositions: Point[];
-  defaultPanelPositions: Point[];
-  panelZIndex: number[];
-  defaultPanelZIndex: number[];
-  panelSizes: Point[];
-  defaultPanelSizes: Point[];
-  lockPanels = false;
+  lockPanels = true;
   dragging = false;
+  layout: KtdGridLayout;
 
   constructor(
     private characterService: CharacterService,
@@ -109,70 +102,97 @@ export class GameStateService {
         this.savetoLocalStorage();
       }
     });
-    this.defaultPanelPositions = [];
-
-    this.defaultPanelPositions[PanelIndex.Attributes] = { x: 0, y: 260 };
-    this.defaultPanelPositions[PanelIndex.Health] = { x: 0, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Log] = { x: 0, y: 900 };
-    this.defaultPanelPositions[PanelIndex.Activity] = { x: 450, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Home] = { x: 1050, y: 360 };
-    this.defaultPanelPositions[PanelIndex.Time] = { x: 1050, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Battle] = { x: 0, y: 680 };
-    this.defaultPanelPositions[PanelIndex.Inventory] = { x: 830, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Equipment] = { x: 1050, y: 580 };
-    this.defaultPanelPositions[PanelIndex.Followers] = { x: 1470, y: 40 };
-    this.defaultPanelPositions[PanelIndex.Portal] = { x: 1470, y: 460 };
-    this.defaultPanelPositions[PanelIndex.Pets] = { x: 1890, y: 40 };
-
-    this.defaultPanelSizes = [];
-
-    this.defaultPanelSizes[PanelIndex.Attributes] = { x: 430, y: 400 };
-    this.defaultPanelSizes[PanelIndex.Health] = { x: 430, y: 200 };
-    this.defaultPanelSizes[PanelIndex.Log] = { x: 1230, y: 400 };
-    this.defaultPanelSizes[PanelIndex.Activity] = { x: 360, y: 620 };
-    this.defaultPanelSizes[PanelIndex.Home] = { x: 400, y: 200 };
-    this.defaultPanelSizes[PanelIndex.Time] = { x: 400, y: 300 };
-    this.defaultPanelSizes[PanelIndex.Battle] = { x: 810, y: 200 };
-    this.defaultPanelSizes[PanelIndex.Inventory] = { x: 200, y: 840 };
-    this.defaultPanelSizes[PanelIndex.Equipment] = { x: 400, y: 300 };
-    this.defaultPanelSizes[PanelIndex.Followers] = { x: 400, y: 400 };
-    this.defaultPanelSizes[PanelIndex.Portal] = { x: 400, y: 800 };
-    this.defaultPanelSizes[PanelIndex.Pets] = { x: 400, y: 400 };
-
-    this.panelPositions = structuredClone(this.defaultPanelPositions);
-    this.panelSizes = structuredClone(this.defaultPanelSizes);
-
-    this.defaultPanelZIndex = [];
-    for (const index in PanelIndex) {
-      if (isNaN(Number(index))) {
-        continue;
-      }
-      this.defaultPanelZIndex[index] = Number(index);
-    }
-
-    this.panelZIndex = this.defaultPanelZIndex;
-  }
-
-  populateMissingPanelInfo() {
-    for (const index in PanelIndex) {
-      if (isNaN(Number(index))) {
-        continue;
-      }
-      if (this.panelSizes[index] === undefined) {
-        this.panelSizes[index] = this.defaultPanelSizes[index];
-      }
-      if (this.panelPositions[index] === undefined) {
-        this.panelPositions[index] = this.defaultPanelPositions[index];
-      }
-      if (this.panelZIndex[index] === undefined) {
-        this.panelZIndex[index] = this.defaultPanelZIndex[index];
-      }
-    }
+    this.layout = [];
+    this.resetPanels();
   }
 
   resetPanels() {
-    this.panelPositions = structuredClone(this.defaultPanelPositions);
-    this.panelSizes = structuredClone(this.defaultPanelSizes);
+    this.layout = [
+      {
+        id: 'timePanel',
+        x: 36,
+        y: 0,
+        w: 16,
+        h: 6,
+      },
+      {
+        id: 'attributesPanel',
+        x: 0,
+        y: 3,
+        w: 15,
+        h: 5,
+      },
+      {
+        id: 'followersPanel',
+        x: 52,
+        y: 0,
+        w: 13,
+        h: 6,
+      },
+      {
+        id: 'healthPanel',
+        x: 0,
+        y: 0,
+        w: 15,
+        h: 3,
+      },
+      {
+        id: 'activityPanel',
+        x: 15,
+        y: 0,
+        w: 13,
+        h: 8,
+      },
+      {
+        id: 'battlePanel',
+        x: 0,
+        y: 8,
+        w: 28,
+        h: 4,
+      },
+      {
+        id: 'equipmentPanel',
+        x: 36,
+        y: 10,
+        w: 16,
+        h: 9,
+      },
+      {
+        id: 'homePanel',
+        x: 36,
+        y: 6,
+        w: 16,
+        h: 4,
+      },
+      {
+        id: 'inventoryPanel',
+        x: 28,
+        y: 0,
+        w: 8,
+        h: 12,
+      },
+      {
+        id: 'logPanel',
+        x: 0,
+        y: 12,
+        w: 36,
+        h: 7,
+      },
+      {
+        id: 'portalPanel',
+        x: 52,
+        y: 12,
+        w: 13,
+        h: 7,
+      },
+      {
+        id: 'petsPanel',
+        x: 52,
+        y: 6,
+        w: 13,
+        h: 6,
+      },
+    ];
   }
 
   changeAutoSaveInterval(interval: number): void {
@@ -243,15 +263,11 @@ export class GameStateService {
   }
 
   importLayout(value: string) {
-    const layout = JSON.parse(value) as GameState;
-    if (!layout || !layout.panelPositions || !layout.panelZIndex || !layout.panelSizes) {
+    const layoutData = JSON.parse(value) as GameState;
+    if (!layoutData || !layoutData.layout) {
       return;
     }
-    this.panelPositions = layout.panelPositions || structuredClone(this.defaultPanelPositions);
-    this.panelZIndex = layout.panelZIndex || structuredClone(this.defaultPanelZIndex);
-    this.panelSizes = layout.panelSizes || structuredClone(this.defaultPanelSizes);
-    this.lockPanels = layout.lockPanels || false;
-    this.populateMissingPanelInfo();
+    this.layout = layoutData.layout;
   }
 
   importGame(value: string) {
@@ -292,22 +308,19 @@ export class GameStateService {
     this.saveInterval = gameState.saveInterval || 10;
     // Covers the case of folowerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
-    this.panelPositions = gameState.panelPositions || structuredClone(this.defaultPanelPositions);
-    this.panelZIndex = gameState.panelZIndex || structuredClone(this.defaultPanelZIndex);
-    this.panelSizes = gameState.panelSizes || structuredClone(this.defaultPanelSizes);
-    this.lockPanels = gameState.lockPanels || false;
+    if (gameState.layout) {
+      this.layout = gameState.layout;
+    }
+    this.lockPanels = gameState.lockPanels ?? true;
     this.updateImportFlagKey();
-    this.populateMissingPanelInfo();
   }
 
   getLayoutExport(): string {
-    const layout = {
-      panelPositions: this.panelPositions,
-      panelZIndex: this.panelZIndex,
-      panelSizes: this.panelSizes,
+    const layoutData = {
+      layout: this.layout,
       lockPanels: this.lockPanels,
     };
-    return JSON.stringify(layout);
+    return JSON.stringify(layoutData);
   }
 
   getGameExport(): string {
@@ -328,10 +341,8 @@ export class GameStateService {
       gameStartTimestamp: this.gameStartTimestamp,
       saveInterval: this.saveInterval || 300,
       easyModeEver: this.easyModeEver,
-      panelPositions: this.panelPositions,
-      panelZIndex: this.panelZIndex,
-      panelSizes: this.panelSizes,
       lockPanels: this.lockPanels,
+      layout: this.layout,
     };
     let gameStateString = JSON.stringify(gameState);
     gameStateString = 'iig' + btoa(encodeURIComponent(gameStateString));

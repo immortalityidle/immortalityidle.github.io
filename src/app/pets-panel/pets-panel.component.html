@@ -1,12 +1,3 @@
-<div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-  <mat-icon>
-    pets
-  </mat-icon>
-  Pets
-  <mat-icon class="panelHelp" matTooltip="Your pets can aid you in many ways. Each has a specific skill that they will use to your benefit.">
-    help
-  </mat-icon>
-</div>
 <h3>
   <span [ngClass]="followerService.followersMaxed">
     &nbsp;({{this.followerService.pets.length}} / {{this.followerService.petsCap}})
@@ -39,4 +30,3 @@
     </ng-container>
   </div>
 </div>
-<div class="panelResizeHandle"></div>
