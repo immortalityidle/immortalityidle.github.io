@@ -112,8 +112,9 @@ export class AppComponent implements OnInit, OnDestroy {
   trackById = ktdTrackById;
   gridGap = 4;
   mobileDevice = window.navigator.maxTouchPoints > 0;
-
-  compactType: 'vertical' | 'horizontal' | null = this.mobileDevice ? 'vertical' : 'horizontal';
+  compactType: 'vertical' | 'horizontal' | null = window.matchMedia('(max-width: 700px)').matches
+    ? 'vertical'
+    : 'horizontal';
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -155,6 +156,12 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.compactType = window.matchMedia('(max-width: 700px)').matches ? 'vertical' : 'horizontal';
+    console.log(this.compactType);
+  }
+
   constructor(
     private scroller: ViewportScroller,
     public mainLoopService: MainLoopService,
@@ -171,6 +178,7 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) public document: Document
   ) {
     this.resizeSubscription = new Subscription();
+    console.log(this.compactType);
   }
 
   ngOnInit(): void {

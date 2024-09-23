@@ -107,92 +107,182 @@ export class GameStateService {
   }
 
   resetPanels() {
-    this.layout = [
-      {
-        id: 'timePanel',
-        x: 36,
-        y: 0,
-        w: 16,
-        h: 6,
-      },
-      {
-        id: 'attributesPanel',
-        x: 0,
-        y: 3,
-        w: 15,
-        h: 5,
-      },
-      {
-        id: 'followersPanel',
-        x: 52,
-        y: 0,
-        w: 13,
-        h: 6,
-      },
-      {
-        id: 'healthPanel',
-        x: 0,
-        y: 0,
-        w: 15,
-        h: 3,
-      },
-      {
-        id: 'activityPanel',
-        x: 15,
-        y: 0,
-        w: 13,
-        h: 8,
-      },
-      {
-        id: 'battlePanel',
-        x: 0,
-        y: 8,
-        w: 28,
-        h: 4,
-      },
-      {
-        id: 'equipmentPanel',
-        x: 36,
-        y: 10,
-        w: 16,
-        h: 9,
-      },
-      {
-        id: 'homePanel',
-        x: 36,
-        y: 6,
-        w: 16,
-        h: 4,
-      },
-      {
-        id: 'inventoryPanel',
-        x: 28,
-        y: 0,
-        w: 8,
-        h: 12,
-      },
-      {
-        id: 'logPanel',
-        x: 0,
-        y: 12,
-        w: 36,
-        h: 7,
-      },
-      {
-        id: 'portalPanel',
-        x: 52,
-        y: 12,
-        w: 13,
-        h: 7,
-      },
-      {
-        id: 'petsPanel',
-        x: 52,
-        y: 6,
-        w: 13,
-        h: 6,
-      },
-    ];
+    if (window.matchMedia('(max-width: 700px)').matches) {
+      // narrow viewport
+      this.layout = [
+        {
+          id: 'timePanel',
+          x: 0,
+          y: 16,
+          w: 100,
+          h: 6,
+        },
+        {
+          id: 'attributesPanel',
+          x: 0,
+          y: 3,
+          w: 100,
+          h: 5,
+        },
+        {
+          id: 'followersPanel',
+          x: 0,
+          y: 47,
+          w: 100,
+          h: 6,
+        },
+        {
+          id: 'healthPanel',
+          x: 0,
+          y: 0,
+          w: 100,
+          h: 3,
+        },
+        {
+          id: 'activityPanel',
+          x: 0,
+          y: 8,
+          w: 100,
+          h: 8,
+        },
+        {
+          id: 'battlePanel',
+          x: 0,
+          y: 8,
+          w: 100,
+          h: 4,
+        },
+        {
+          id: 'equipmentPanel',
+          x: 0,
+          y: 26,
+          w: 100,
+          h: 9,
+        },
+        {
+          id: 'homePanel',
+          x: 0,
+          y: 22,
+          w: 100,
+          h: 4,
+        },
+        {
+          id: 'inventoryPanel',
+          x: 0,
+          y: 35,
+          w: 100,
+          h: 12,
+        },
+        {
+          id: 'logPanel',
+          x: 0,
+          y: 66,
+          w: 100,
+          h: 7,
+        },
+        {
+          id: 'portalPanel',
+          x: 0,
+          y: 59,
+          w: 100,
+          h: 7,
+        },
+        {
+          id: 'petsPanel',
+          x: 0,
+          y: 53,
+          w: 100,
+          h: 6,
+        },
+      ];
+    } else {
+      this.layout = [
+        {
+          id: 'timePanel',
+          x: 36,
+          y: 0,
+          w: 16,
+          h: 6,
+        },
+        {
+          id: 'attributesPanel',
+          x: 0,
+          y: 3,
+          w: 15,
+          h: 5,
+        },
+        {
+          id: 'followersPanel',
+          x: 52,
+          y: 0,
+          w: 13,
+          h: 6,
+        },
+        {
+          id: 'healthPanel',
+          x: 0,
+          y: 0,
+          w: 15,
+          h: 3,
+        },
+        {
+          id: 'activityPanel',
+          x: 15,
+          y: 0,
+          w: 13,
+          h: 8,
+        },
+        {
+          id: 'battlePanel',
+          x: 0,
+          y: 8,
+          w: 28,
+          h: 4,
+        },
+        {
+          id: 'equipmentPanel',
+          x: 36,
+          y: 10,
+          w: 16,
+          h: 9,
+        },
+        {
+          id: 'homePanel',
+          x: 36,
+          y: 6,
+          w: 16,
+          h: 4,
+        },
+        {
+          id: 'inventoryPanel',
+          x: 28,
+          y: 0,
+          w: 8,
+          h: 12,
+        },
+        {
+          id: 'logPanel',
+          x: 0,
+          y: 12,
+          w: 36,
+          h: 7,
+        },
+        {
+          id: 'portalPanel',
+          x: 52,
+          y: 12,
+          w: 13,
+          h: 7,
+        },
+        {
+          id: 'petsPanel',
+          x: 52,
+          y: 6,
+          w: 13,
+          h: 6,
+        },
+      ];
+    }
   }
 
   changeAutoSaveInterval(interval: number): void {
