@@ -1,5 +1,5 @@
 <div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
-  <div class="mainContainer">
+  <div class="mainContainer" (mousemove)="onBodyMouseMove($event)">
     <div class="top-line">
       <span class="gameTitle">
         Immortality Idle - {{characterService.characterState.god ? "The Divine Cultivator" : hellService.inHell ? "Escape from The Eighteen Hells" : characterService.characterState.immortal ? "You are Immortal!" : "Can you become an immortal?"}}

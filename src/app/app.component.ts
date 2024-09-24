@@ -98,10 +98,10 @@ export class BigNumberPipe implements PipeTransform {
 export class AppComponent implements OnInit, OnDestroy {
   // @ts-expect-error: no initializer
   @ViewChild(KtdGridComponent, { static: true }) grid: KtdGridComponent;
-  doingPanelDrag = false;
-  doingBodyDrag = false;
   panelIndex: typeof PanelIndex = PanelIndex;
   resizingPanel = -1;
+  previousX = 0;
+  previousY = 0;
 
   title = 'immortalityidle';
   applicationVersion = environment.appVersion;
@@ -159,7 +159,6 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.compactType = window.matchMedia('(max-width: 700px)').matches ? 'vertical' : 'horizontal';
-    console.log(this.compactType);
   }
 
   constructor(
@@ -178,7 +177,6 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) public document: Document
   ) {
     this.resizeSubscription = new Subscription();
-    console.log(this.compactType);
   }
 
   ngOnInit(): void {
@@ -261,5 +259,17 @@ export class AppComponent implements OnInit, OnDestroy {
     this.gameStateService.layout = layout;
     // always save when the player moves the windows around
     this.gameStateService.savetoLocalStorage();
+  }
+
+  onBodyMouseMove(event: MouseEvent) {
+    if (this.gameStateService.dragging) {
+      return;
+    }
+    if (event.buttons !== 1) {
+      return;
+    }
+    const x = this.scroller.getScrollPosition()[0] - event.movementX;
+    const y = this.scroller.getScrollPosition()[1] - event.movementY;
+    this.scroller.scrollToPosition([x, y]);
   }
 }

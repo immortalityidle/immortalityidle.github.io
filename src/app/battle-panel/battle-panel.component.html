@@ -1,105 +1,107 @@
-<h3>
-  @if (battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
-    battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked) {
-    <span>
-      <mat-icon  (click)="battleOptions()" matTooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">
-        settings
-      </mat-icon>
-    </span>
-  }
-  <span class="rightAligned" matTooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
-    @if (battleService.godSlayersUnlocked) {
-      <input  type="checkbox" (change)="godSlayersEnableChange($event)"
-        id="godSlayersEnableCheckbox"  [checked]="battleService.godSlayersEnabled"/>
-      <label for="godSlayersEnableCheckbox">Fight the God Slayers</label>
-    }
-    @if (!battleService.autoTroubleUnlocked) {
-      <button (click)="battleService.trouble()">Look for Trouble</button>
-    }
-    @else {
-      <input  type="checkbox" (change)="autoTroubleChange($event)"
-        id="autoTroubleCheckbox"  [checked]="battleService.autoTroubleEnabled"/>
-      <label for="autoTroubleCheckbox">Look for Trouble</label>
-    }
-  </span>
-</h3>
 <div class="battleContainer">
-  <div class="columnDiv">
-    <div class="actionDiv">
-      @if (battleService.enemies.length > 0) {
-        <table class="clashTable">
-          <tr>
-            <td class="fixedCell"><mat-icon class="clashIcon"></mat-icon></td>
-            <td class="fixedCell">@if (battleService.tickCounter === 4 || battleService.tickCounter === 5) {
-              <mat-icon class="clashIcon">arrow_forward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 3 || battleService.tickCounter === 6) {
-              <mat-icon class="clashIcon">arrow_forward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 2 || battleService.tickCounter === 7) {
-              <mat-icon class="clashIcon">arrow_forward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 1 || battleService.tickCounter === 8) {
-              <mat-icon class="clashIcon">arrow_forward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 0 || battleService.tickCounter === 9) {
-              <mat-icon class="clashIcon">arrow_forward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 10) {
-              <mat-icon class="clashIcon">crisis_alert</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 0 || battleService.tickCounter === 9) {
-              <mat-icon class="clashIcon">arrow_backward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 1 || battleService.tickCounter === 8) {
-              <mat-icon class="clashIcon">arrow_backward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 2 || battleService.tickCounter === 7) {
-              <mat-icon class="clashIcon">arrow_backward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 3 || battleService.tickCounter === 6) {
-              <mat-icon class="clashIcon">arrow_backward</mat-icon>
-            }</td>
-            <td class="fixedCell">@if (battleService.tickCounter === 4 || battleService.tickCounter === 5) {
-              <mat-icon class="clashIcon">arrow_backward</mat-icon>
-            }</td>
-          </tr>
-        </table>
-      }
-      <table>
-        @for (enemyStack of battleService.enemies; track enemyStack.enemy.name + enemyStack.quantity) {
-          <tr>
-            <td>
-              @if (battleService.currentEnemy !== enemyStack) {
-                <button (click)="battleService.fight(enemyStack)">Fight</button>
-              }
-              @else {
-                <span>Fighting</span>
-              }
-            </td>
-            <td class="enemyName">{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(x" + enemyStack.quantity +")" : ""}}</td>
-            <td class="health">
-              <div class="progress-bar"
-                [attr.value]="Math.floor(enemyStack.enemy.health) | bigNumber"
-                [attr.max]="Math.floor(enemyStack.enemy.maxHealth) | bigNumber">
-                <span
-                  [style.width.%]="100 *
-                    Math.floor(enemyStack.enemy.health) /
-                    Math.floor(enemyStack.enemy.maxHealth)">
-                </span>
-              </div>
-            </td>
-            <td matTooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
-            <td matTooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack | bigNumber}}</td>
-            <td matTooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense | bigNumber}}</td>
-          </tr>
-        }
-      </table>
-    </div>
-    @if (battleService.currentEnemy?.enemy?.baseName) {
-      <div>
-        <img class="monsterImage" src="{{imageFile}}" alt="A Monster!" width="80" height="100"/>
-      </div>
+  <h3>
+    @if (battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
+      battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked) {
+      <span>
+        <mat-icon  (click)="battleOptions()" matTooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">
+          settings
+        </mat-icon>
+      </span>
     }
+    <span class="rightAligned" matTooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
+      @if (battleService.godSlayersUnlocked) {
+        <input  type="checkbox" (change)="godSlayersEnableChange($event)"
+          id="godSlayersEnableCheckbox"  [checked]="battleService.godSlayersEnabled"/>
+        <label for="godSlayersEnableCheckbox">Fight the God Slayers</label>
+      }
+      @if (!battleService.autoTroubleUnlocked) {
+        <button (click)="battleService.trouble()">Look for Trouble</button>
+      }
+      @else {
+        <input  type="checkbox" (change)="autoTroubleChange($event)"
+          id="autoTroubleCheckbox"  [checked]="battleService.autoTroubleEnabled"/>
+        <label for="autoTroubleCheckbox">Look for Trouble</label>
+      }
+    </span>
+  </h3>
+  <div>
+    <div class="columnDiv">
+      <div class="actionDiv">
+        @if (battleService.enemies.length > 0) {
+          <table class="clashTable">
+            <tr>
+              <td class="fixedCell"><mat-icon class="clashIcon"></mat-icon></td>
+              <td class="fixedCell">@if (battleService.tickCounter === 4 || battleService.tickCounter === 5) {
+                <mat-icon class="clashIcon">arrow_forward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 3 || battleService.tickCounter === 6) {
+                <mat-icon class="clashIcon">arrow_forward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 2 || battleService.tickCounter === 7) {
+                <mat-icon class="clashIcon">arrow_forward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 1 || battleService.tickCounter === 8) {
+                <mat-icon class="clashIcon">arrow_forward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 0 || battleService.tickCounter === 9) {
+                <mat-icon class="clashIcon">arrow_forward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 10) {
+                <mat-icon class="clashIcon">crisis_alert</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 0 || battleService.tickCounter === 9) {
+                <mat-icon class="clashIcon">arrow_backward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 1 || battleService.tickCounter === 8) {
+                <mat-icon class="clashIcon">arrow_backward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 2 || battleService.tickCounter === 7) {
+                <mat-icon class="clashIcon">arrow_backward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 3 || battleService.tickCounter === 6) {
+                <mat-icon class="clashIcon">arrow_backward</mat-icon>
+              }</td>
+              <td class="fixedCell">@if (battleService.tickCounter === 4 || battleService.tickCounter === 5) {
+                <mat-icon class="clashIcon">arrow_backward</mat-icon>
+              }</td>
+            </tr>
+          </table>
+        }
+        <table>
+          @for (enemyStack of battleService.enemies; track enemyStack.enemy.name + enemyStack.quantity) {
+            <tr>
+              <td>
+                @if (battleService.currentEnemy !== enemyStack) {
+                  <button (click)="battleService.fight(enemyStack)">Fight</button>
+                }
+                @else {
+                  <span>Fighting</span>
+                }
+              </td>
+              <td class="enemyName">{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(x" + enemyStack.quantity +")" : ""}}</td>
+              <td class="health">
+                <div class="progress-bar"
+                  [attr.value]="Math.floor(enemyStack.enemy.health) | bigNumber"
+                  [attr.max]="Math.floor(enemyStack.enemy.maxHealth) | bigNumber">
+                  <span
+                    [style.width.%]="100 *
+                      Math.floor(enemyStack.enemy.health) /
+                      Math.floor(enemyStack.enemy.maxHealth)">
+                  </span>
+                </div>
+              </td>
+              <td matTooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</td>
+              <td matTooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack | bigNumber}}</td>
+              <td matTooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense | bigNumber}}</td>
+            </tr>
+          }
+        </table>
+      </div>
+      @if (battleService.currentEnemy?.enemy?.baseName) {
+        <div>
+          <img class="monsterImage" src="{{imageFile}}" alt="A Monster!" width="80" height="100"/>
+        </div>
+      }
+    </div>
   </div>
 </div>
