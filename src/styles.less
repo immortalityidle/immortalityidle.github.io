@@ -58,6 +58,7 @@ html {
   height: 100%;
   width: 100%;
   overscroll-behavior: none;
+  display: flex;
 }
 
 body {
@@ -71,6 +72,8 @@ body {
   user-select: none;
   overscroll-behavior: none;
   height: 100%;
+  display: flex;
+  flex-grow: 1;
 }
 
 span {
@@ -92,6 +95,7 @@ h3 {
 .iconButton {
   border: 1px var(--bodyText) solid;
   border-radius: 3px;
+  cursor: pointer;
 }
 
 button {
@@ -104,6 +108,11 @@ button {
 
 button:disabled {
   color: var(--bodyText);
+}
+
+.appRoot {
+  display: flex;
+  flex-grow: 1;
 }
 
 .itemSlot {

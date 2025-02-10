@@ -1,7 +1,9 @@
 @import (reference) "../../styles.less";
 
 .progress-bar {
-  vertical-align: -0.3em;
+  vertical-align: -0.4em;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .health > .progress-bar > span {
@@ -20,8 +22,21 @@
   background-color: var(--manaColor);
 }
 
-.headerCell {
-  width: 210px;
+.statusRow {
+  display: flex;
+  flex-direction: row;
+  margin: 2px;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-left: 4px;
+}
+
+.statusCell{
+  flex-grow: 1;
 }
 
 td {
@@ -36,11 +51,6 @@ td {
   overflow: hidden;
 }
 
-.healthPanelContents {
-  display: flex;
-  flex-direction: row;
-}
-
 .flash {
   box-shadow: 0 0 5px 5px #48abe0;
   transition: box-shadow ease-out 0.5s;
@@ -52,4 +62,22 @@ td {
   overflow-y: hidden;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.popupTextColor {
+  color: var(--popupTextColor);
+}
+
+.popupTextNegativeColor {
+  color: red;
+}
+
+.popupText {
+  position: absolute;
+  transform: translateZ(0);
+  z-index: 10000;
+  font-size: x-small;
 }

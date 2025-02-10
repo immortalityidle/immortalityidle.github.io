@@ -2,21 +2,6 @@
   <h3 class="inventoryHeader">
     <div class="inventoryLabelColumn">
     </div>
-    <div class="moneyLabelColumn">Money: </div>
-    <div class="moneyContainer">
-      <div class="moneyColumn">
-        <span>{{characterService.characterState.money | bigNumber}} Taels</span>
-        @for (update of this.moneyUpdates; track update) {
-          <span class="popupText" [ngClass]="{'popupTextColor' : update > 0, 'popupTextNegativeColor' : update < 0}"
-            [@popupText]=update (@popupText.done)="animationDoneEvent()">@if (update > 0) {
-            <span>+</span>
-          }{{update | bigNumber}}</span>
-        }
-      </div>
-      @if (characterService.characterState.hellMoney > 0) {
-        <div matTooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
-      }
-    </div>
     <div>@if (inventoryService.noFood) {
       <mat-icon class="noFood"
         matTooltip="{{hellService.inHell ? 'You have no food, and no one in hell sells rice.' : inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">

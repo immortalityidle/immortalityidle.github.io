@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character';
 import { InventoryService, ItemStack, instanceOfEquipment } from '../game-state/inventory.service';
@@ -12,22 +11,10 @@ import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
-  animations: [
-    trigger('popupText', [
-      state('in', style({ position: 'fixed' })),
-      transition(':leave', [
-        animate(
-          1000,
-          keyframes([style({ transform: 'translate(0%, 0%)' }), style({ transform: 'translate(0%, -150%)' })])
-        ),
-      ]),
-    ]),
-  ],
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];
   instanceOfEquipment = instanceOfEquipment;
-  popupCounter = 0;
   dragPositionX = 0;
   dragPositionY = 0;
 
@@ -39,21 +26,7 @@ export class InventoryPanelComponent {
     public gameStateService: GameStateService
   ) {
     this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
-    this.moneyUpdates = [];
-    this.mainLoopService.longTickSubject.subscribe(() => {
-      if (this.popupCounter < 1) {
-        this.popupCounter++;
-        return;
-      }
-      this.popupCounter = 0;
-      if (this.characterService.characterState.moneyUpdates !== 0) {
-        this.moneyUpdates.push(this.characterService.characterState.moneyUpdates);
-        this.characterService.characterState.moneyUpdates = 0;
-      }
-    });
   }
-
-  moneyUpdates: number[];
 
   isFinite(value: number) {
     return Number.isFinite(value);
@@ -293,16 +266,6 @@ export class InventoryPanelComponent {
     if (this.inventoryService.selectedItem) {
       this.inventoryService.removeItemStack(this.inventoryService.selectedItem);
     }
-  }
-
-  animationDoneEvent() {
-    while (this.moneyUpdates.length > 0) {
-      this.moneyUpdates.pop();
-    }
-  }
-
-  getMoneyUpdates(): number[] {
-    return this.moneyUpdates;
   }
 
   /* eslint-disable @typescript-eslint/no-explicit-any */

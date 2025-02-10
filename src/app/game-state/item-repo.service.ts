@@ -1344,6 +1344,7 @@ export class ItemRepoService {
         );
         this.characterService.characterState.god = true;
         this.activityService.reloadActivities();
+        this.gameStateService.unlockPanel('portalPanel');
       },
     },
     fingers: {
@@ -1596,9 +1597,9 @@ export class ItemRepoService {
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you.'
+          'The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you. Bonuses for Yin and Yang balance are greatly increased.'
         );
-        this.characterService.characterState.yinYangUnlocked = true;
+        this.characterService.characterState.yinYangBoosted = true;
       },
     },
     hellCrownMountainOfIce: {
@@ -1678,6 +1679,10 @@ export class ItemRepoService {
           "The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before."
         );
         this.followerService.unlockElementalPets();
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService.unlockPanel('petsPanel');
       },
     },
     hellCrownCrushingBoulder: {

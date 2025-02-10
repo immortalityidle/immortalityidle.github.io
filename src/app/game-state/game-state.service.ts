@@ -47,19 +47,12 @@ declare global {
   }
 }
 
-export enum PanelIndex {
-  Attributes = 0,
-  Health = 1,
-  Log = 2,
-  Activity = 3,
-  Home = 4,
-  Time = 5,
-  Battle = 6,
-  Inventory = 7,
-  Equipment = 8,
-  Followers = 9,
-  Portal = 10,
-  Pets = 11,
+export interface Panel {
+  id: string;
+  name: string;
+  icon: string;
+  panelHelp: string;
+  unlocked: boolean;
 }
 
 @Injectable({
@@ -77,6 +70,104 @@ export class GameStateService {
   lockPanels = true;
   dragging = false;
   layout: KtdGridLayout;
+  allPanelsUsed = false;
+
+  panels: Panel[] = [
+    {
+      id: 'timePanel',
+      name: 'Time',
+      icon: 'calendar_month',
+      panelHelp:
+        "Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential. Click the schedule button on activities or drag them here to put them on your schedule. When you allow time to move forward, you will perform each activity in your schedule in the order it is listed. You can move scheduled activities around or repeat activities over multiple days. Don't forget to schedule some rest too! You'll need to take a break now and then in your journey toward immortality.",
+      unlocked: false,
+    },
+    {
+      id: 'attributesPanel',
+      name: 'Attributes',
+      icon: 'bar_chart',
+      panelHelp:
+        'Your attributes define your growing immortal characteristics. You can grow your attributes through the activities that you choose. Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.',
+      unlocked: true,
+    },
+    {
+      id: 'followersPanel',
+      name: 'Followers',
+      icon: 'groups',
+      panelHelp:
+        'Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.',
+      unlocked: false,
+    },
+    {
+      id: 'healthPanel',
+      name: 'Status',
+      icon: 'favorite',
+      panelHelp:
+        'Maintaining your health is an important part of becoming immortal. If your health reaches 0, you will die and need to try for immortality once you are reincarnated in your next life.',
+      unlocked: true,
+    },
+    {
+      id: 'activityPanel',
+      name: 'Activities',
+      icon: 'self_improvement',
+      panelHelp:
+        "Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available.",
+      unlocked: true,
+    },
+    {
+      id: 'battlePanel',
+      name: 'Battles',
+      icon: 'fort',
+      panelHelp:
+        "Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.",
+      unlocked: false,
+    },
+    {
+      id: 'equipmentPanel',
+      name: 'Equipment',
+      icon: 'colorize',
+      panelHelp:
+        'You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality. Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment. Watch out, each piece of gear will take damage with use and you will need to constantly improve it to keep it strong.',
+      unlocked: false,
+    },
+    {
+      id: 'homePanel',
+      name: 'Home',
+      icon: 'home',
+      panelHelp:
+        'Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.',
+      unlocked: false,
+    },
+    {
+      id: 'inventoryPanel',
+      name: 'Inventory',
+      icon: 'shopping_bag',
+      panelHelp:
+        'The items that you gain during your quest for immortality will appear here. Hover your cursor over an item to learn more about it.',
+      unlocked: false,
+    },
+    {
+      id: 'logPanel',
+      name: 'Log',
+      icon: 'feed',
+      panelHelp:
+        'A record of the events that lead you to immortality will surely be of interest to those who sing your legend in the ages to come. You can filter out the events that are less interesting to you in the present.',
+      unlocked: true,
+    },
+    {
+      id: 'portalPanel',
+      name: 'Portals',
+      icon: 'radio_button_checked',
+      panelHelp: 'Take a portal to a different plane of existence.',
+      unlocked: false,
+    },
+    {
+      id: 'petsPanel',
+      name: 'pets',
+      icon: 'Pets',
+      panelHelp: 'Your pets can aid you in many ways. Each has a specific skill that they will use to your benefit.',
+      unlocked: false,
+    },
+  ];
 
   constructor(
     private characterService: CharacterService,
@@ -107,182 +198,142 @@ export class GameStateService {
   }
 
   resetPanels() {
-    if (window.matchMedia('(max-width: 700px)').matches) {
-      // narrow viewport
-      this.layout = [
-        {
-          id: 'timePanel',
-          x: 0,
-          y: 16,
-          w: 100,
-          h: 6,
-        },
-        {
-          id: 'attributesPanel',
-          x: 0,
-          y: 3,
-          w: 100,
-          h: 5,
-        },
-        {
-          id: 'followersPanel',
-          x: 0,
-          y: 47,
-          w: 100,
-          h: 6,
-        },
-        {
-          id: 'healthPanel',
-          x: 0,
-          y: 0,
-          w: 100,
-          h: 3,
-        },
-        {
-          id: 'activityPanel',
-          x: 0,
-          y: 8,
-          w: 100,
-          h: 8,
-        },
-        {
-          id: 'battlePanel',
-          x: 0,
-          y: 8,
-          w: 100,
-          h: 4,
-        },
-        {
-          id: 'equipmentPanel',
-          x: 0,
-          y: 26,
-          w: 100,
-          h: 9,
-        },
-        {
-          id: 'homePanel',
-          x: 0,
-          y: 22,
-          w: 100,
-          h: 4,
-        },
-        {
-          id: 'inventoryPanel',
-          x: 0,
-          y: 35,
-          w: 100,
-          h: 12,
-        },
-        {
-          id: 'logPanel',
-          x: 0,
-          y: 66,
-          w: 100,
-          h: 7,
-        },
-        {
-          id: 'portalPanel',
-          x: 0,
-          y: 59,
-          w: 100,
-          h: 7,
-        },
-        {
-          id: 'petsPanel',
-          x: 0,
-          y: 53,
-          w: 100,
-          h: 6,
-        },
-      ];
-    } else {
-      this.layout = [
-        {
-          id: 'timePanel',
-          x: 36,
-          y: 0,
-          w: 16,
-          h: 6,
-        },
-        {
-          id: 'attributesPanel',
-          x: 0,
-          y: 3,
-          w: 15,
-          h: 5,
-        },
-        {
-          id: 'followersPanel',
-          x: 52,
-          y: 0,
-          w: 13,
-          h: 6,
-        },
-        {
-          id: 'healthPanel',
-          x: 0,
-          y: 0,
-          w: 15,
-          h: 3,
-        },
-        {
-          id: 'activityPanel',
-          x: 15,
-          y: 0,
-          w: 13,
-          h: 8,
-        },
-        {
-          id: 'battlePanel',
-          x: 0,
-          y: 8,
-          w: 28,
-          h: 4,
-        },
-        {
-          id: 'equipmentPanel',
-          x: 36,
-          y: 10,
-          w: 16,
-          h: 9,
-        },
-        {
-          id: 'homePanel',
-          x: 36,
-          y: 6,
-          w: 16,
-          h: 4,
-        },
-        {
-          id: 'inventoryPanel',
-          x: 28,
-          y: 0,
-          w: 8,
-          h: 12,
-        },
-        {
-          id: 'logPanel',
-          x: 0,
-          y: 12,
-          w: 36,
-          h: 7,
-        },
-        {
-          id: 'portalPanel',
-          x: 52,
-          y: 12,
-          w: 13,
-          h: 7,
-        },
-        {
-          id: 'petsPanel',
-          x: 52,
-          y: 6,
-          w: 13,
-          h: 6,
-        },
-      ];
+    //if (window.matchMedia('(max-width: 700px)').matches) {
+    // narrow viewport
+    this.layout = [
+      {
+        id: 'healthPanel',
+        x: 0,
+        y: 0,
+        w: 98,
+        h: 8,
+      },
+      {
+        id: 'attributesPanel',
+        x: 0,
+        y: 15,
+        w: 30,
+        h: 20,
+      },
+      {
+        id: 'activityPanel',
+        x: 30,
+        y: 15,
+        w: 68,
+        h: 40,
+      },
+      {
+        id: 'logPanel',
+        x: 0,
+        y: 30,
+        w: 98,
+        h: 25,
+      },
+    ];
+    this.updateAllPanelsUsed();
+  }
+
+  changeLayoutPanel(index: number, backwardSearch: boolean = false) {
+    const newLayout = JSON.parse(JSON.stringify(this.layout));
+    let panelIndex = 0;
+    for (let i = 0; i < this.panels.length; i++) {
+      if (this.panels[i].id === this.layout[index].id) {
+        panelIndex = i;
+      }
     }
+
+    const panelId = this.getNextUnusedPanelId(panelIndex, backwardSearch);
+    if (panelId === '') {
+      // no unused panels, bail out
+      return;
+    }
+    newLayout[index].id = panelId;
+    this.layout = newLayout;
+  }
+
+  removeLayoutPanel(index: number) {
+    const newLayout = JSON.parse(JSON.stringify(this.layout));
+    newLayout.splice(index, 1);
+    this.layout = newLayout;
+    this.updateAllPanelsUsed();
+  }
+
+  addLayoutPanel() {
+    const newLayout = JSON.parse(JSON.stringify(this.layout));
+    const panelId = this.getNextUnusedPanelId(0);
+    if (panelId === '') {
+      // no unused panels, bail out
+      return;
+    }
+    newLayout.push({
+      id: panelId,
+      x: 0,
+      y: 0,
+      w: 30,
+      h: 20,
+    });
+    this.layout = newLayout;
+    this.updateAllPanelsUsed();
+  }
+
+  getNextUnusedPanelId(startIndex: number, backwards: boolean = false) {
+    if (backwards) {
+      for (let i = startIndex - 1; i >= 0; i--) {
+        if (!this.panels[i].unlocked) {
+          continue;
+        }
+        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+          return this.panels[i].id;
+        }
+      }
+      for (let i = this.panels.length - 1; i >= startIndex; i--) {
+        if (!this.panels[i].unlocked) {
+          continue;
+        }
+        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+          return this.panels[i].id;
+        }
+      }
+    } else {
+      for (let i = startIndex + 1; i < this.panels.length; i++) {
+        if (!this.panels[i].unlocked) {
+          continue;
+        }
+        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+          return this.panels[i].id;
+        }
+      }
+      for (let i = 0; i <= startIndex; i++) {
+        if (!this.panels[i].unlocked) {
+          continue;
+        }
+        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+          return this.panels[i].id;
+        }
+      }
+    }
+    return '';
+  }
+
+  updateAllPanelsUsed() {
+    this.allPanelsUsed = true;
+    for (let i = 0; i < this.panels.length; i++) {
+      if (!this.panels[i].unlocked) {
+        continue;
+      }
+      if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+        this.allPanelsUsed = false;
+        return;
+      }
+    }
+  }
+
+  unlockPanel(panelId: string) {
+    const panel = this.panels.find(({ id }) => id === panelId);
+    if (panel) {
+      panel.unlocked = true;
+    }
+    this.updateAllPanelsUsed();
   }
 
   changeAutoSaveInterval(interval: number): void {
@@ -396,13 +447,14 @@ export class GameStateService {
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
     this.saveInterval = gameState.saveInterval || 10;
-    // Covers the case of folowerCap showing 0 when loading in
+    // Covers the case of followerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
     if (gameState.layout) {
       this.layout = gameState.layout;
     }
     this.lockPanels = gameState.lockPanels ?? true;
     this.updateImportFlagKey();
+    this.updateAllPanelsUsed();
   }
 
   getLayoutExport(): string {

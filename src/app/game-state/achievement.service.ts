@@ -73,6 +73,11 @@ export class AchievementService {
       },
       effect: () => {
         this.mainLoopService.timeUnlocked = true;
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService.unlockPanel('timePanel');
+        this.gameStateService.addLayoutPanel();
       },
       unlocked: false,
     },
@@ -88,6 +93,10 @@ export class AchievementService {
       },
       effect: () => {
         this.homeService.homeUnlocked = true;
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService?.unlockPanel('homePanel');
       },
       unlocked: false,
     },
@@ -149,6 +158,40 @@ export class AchievementService {
       },
       effect: () => {
         this.inventoryService.equipmentUnlocked = true;
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService?.unlockPanel('equipmentPanel');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Stuff!',
+      description: 'You got your first item.',
+      hint: 'Find anything.',
+      check: () => {
+        return this.inventoryService.totalItemsReceived > 0;
+      },
+      effect: () => {
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService?.unlockPanel('inventoryPanel');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Attack!',
+      description: 'You are under attack by an enemy.',
+      hint: 'They are coming for you.',
+      check: () => {
+        return this.battleService.totalEnemies > 0;
+      },
+      effect: () => {
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService?.unlockPanel('battlePanel');
       },
       unlocked: false,
     },
@@ -752,6 +795,10 @@ export class AchievementService {
       },
       effect: () => {
         this.followerService.followersUnlocked = true;
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService?.unlockPanel('followersPanel');
       },
       unlocked: false,
     },

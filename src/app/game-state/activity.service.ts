@@ -1755,9 +1755,7 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value += 50;
           this.characterService.characterState.status.health.value += 2;
           this.characterService.characterState.checkOverage();
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
         () => {
           this.characterService.characterState.status.stamina.value += 100;
@@ -1767,9 +1765,7 @@ export class ActivityService {
             this.characterService.characterState.status.mana.value += 1;
           }
           this.characterService.characterState.checkOverage();
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
         () => {
           this.characterService.characterState.status.stamina.value += 200;
@@ -1777,9 +1773,7 @@ export class ActivityService {
           this.characterService.characterState.status.mana.value += 10;
           this.characterService.characterState.increaseAttribute('spirituality', 0.5);
           this.characterService.characterState.checkOverage();
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
         () => {
           this.characterService.characterState.status.stamina.value += 300;
@@ -1787,12 +1781,10 @@ export class ActivityService {
           this.characterService.characterState.status.mana.value += 20;
           this.characterService.characterState.increaseAttribute('spirituality', 1);
           this.characterService.characterState.checkOverage();
-          if (this.characterService.characterState.yinYangUnlocked) {
-            if (this.characterService.characterState.yin > this.characterService.characterState.yang) {
-              this.characterService.characterState.yang++;
-            } else {
-              this.characterService.characterState.yin++;
-            }
+          if (this.characterService.characterState.yin > this.characterService.characterState.yang) {
+            this.characterService.characterState.yang++;
+          } else {
+            this.characterService.characterState.yin++;
           }
         },
       ],
@@ -1863,9 +1855,7 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
         () => {
           this.characterService.characterState.increaseAttribute('charisma', 0.2);
@@ -1874,9 +1864,7 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
         () => {
           this.characterService.characterState.increaseAttribute('charisma', 0.3);
@@ -1885,9 +1873,7 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
         () => {
           this.characterService.characterState.increaseAttribute('charisma', 0.5);
@@ -1896,9 +1882,7 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -1972,10 +1956,8 @@ export class ActivityService {
           if (Math.random() < blacksmithSuccessChance) {
             this.inventoryService.addItem(this.itemRepoService.items['junk']);
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
         // grade 1
         () => {
@@ -2013,10 +1995,8 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
         // grade 2
         () => {
@@ -2055,10 +2035,8 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
         // grade 3
         () => {
@@ -2100,10 +2078,8 @@ export class ActivityService {
           if (Math.random() < 0.001) {
             this.inventoryService.addItem(this.itemRepoService.items['pillMold']);
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2165,9 +2141,7 @@ export class ActivityService {
             this.inventoryService.generateHerb();
           }
           this.characterService.characterState.increaseAttribute('woodLore', 0.003);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2218,9 +2192,7 @@ export class ActivityService {
           }
           this.characterService.characterState.increaseAttribute('woodLore', 0.05 * alchemySuccessChance);
           this.characterService.characterState.increaseAttribute('waterLore', 0.1 * alchemySuccessChance);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Alchemy);
@@ -2249,9 +2221,7 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Alchemy);
@@ -2281,9 +2251,7 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Alchemy);
@@ -2315,9 +2283,7 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -2370,9 +2336,7 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 10;
           this.inventoryService.addItem(this.inventoryService.getWood());
           this.characterService.characterState.increaseAttribute('woodLore', 0.01);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2420,9 +2384,7 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.001);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Woodworking);
@@ -2454,9 +2416,7 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Woodworking);
@@ -2488,9 +2448,7 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Woodworking);
@@ -2525,9 +2483,7 @@ export class ActivityService {
           if (Math.random() < 0.001) {
             this.inventoryService.addItem(this.itemRepoService.items['pillBox']);
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2600,10 +2556,8 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.001);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Leatherworking);
@@ -2636,10 +2590,8 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Leatherworking);
@@ -2672,10 +2624,8 @@ export class ActivityService {
               }
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
         () => {
           this.checkApprenticeship(ActivityType.Leatherworking);
@@ -2711,10 +2661,8 @@ export class ActivityService {
           if (Math.random() < 0.001) {
             this.inventoryService.addItem(this.itemRepoService.items['pillPouch']);
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2782,9 +2730,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.increaseAttribute('woodLore', 0.001);
           this.characterService.characterState.increaseAttribute('earthLore', 0.001);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2817,9 +2763,7 @@ export class ActivityService {
           if (Math.random() < 0.5) {
             this.inventoryService.addItem(this.inventoryService.getOre());
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -2857,10 +2801,8 @@ export class ActivityService {
               this.inventoryService.addItem(this.inventoryService.getBar(grade));
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yin++;
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2915,9 +2857,7 @@ export class ActivityService {
               loot: [this.inventoryService.getHide()],
             });
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -2952,9 +2892,7 @@ export class ActivityService {
           if (Math.random() < 0.2) {
             this.inventoryService.addItem(this.itemRepoService.items['carp']);
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -2987,9 +2925,7 @@ export class ActivityService {
           if (this.characterService.characterState.money < 0) {
             this.characterService.characterState.money = 0;
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -3031,12 +2967,10 @@ export class ActivityService {
           }
           this.characterService.characterState.increaseAttribute(lowStat, value);
           this.characterService.characterState.increaseAttribute('spirituality', 0.001);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            if (this.characterService.characterState.yin > this.characterService.characterState.yang) {
-              this.characterService.characterState.yang++;
-            } else {
-              this.characterService.characterState.yin++;
-            }
+          if (this.characterService.characterState.yin > this.characterService.characterState.yang) {
+            this.characterService.characterState.yang++;
+          } else {
+            this.characterService.characterState.yin++;
           }
         },
       ],
@@ -3085,9 +3019,7 @@ export class ActivityService {
           this.characterService.characterState.attributes.speed.aptitude += 0.1;
           this.characterService.characterState.attributes.toughness.aptitude += 0.1;
           this.characterService.characterState.increaseAttribute('spirituality', 0.001);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -3126,9 +3058,7 @@ export class ActivityService {
           this.characterService.characterState.attributes.intelligence.aptitude += 0.1;
           this.characterService.characterState.attributes.charisma.aptitude += 0.1;
           this.characterService.characterState.increaseAttribute('spirituality', 0.001);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -3165,10 +3095,8 @@ export class ActivityService {
               this.characterService.characterState.status.mana.value++;
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yang++;
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -3229,12 +3157,10 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.max++;
           this.characterService.characterState.status.mana.max++;
           this.characterService.characterState.checkOverage();
-          if (this.characterService.characterState.yinYangUnlocked) {
-            if (this.characterService.characterState.yin > this.characterService.characterState.yang) {
-              this.characterService.characterState.yang++;
-            } else {
-              this.characterService.characterState.yin++;
-            }
+          if (this.characterService.characterState.yin > this.characterService.characterState.yang) {
+            this.characterService.characterState.yang++;
+          } else {
+            this.characterService.characterState.yin++;
           }
         },
       ],
@@ -3271,10 +3197,8 @@ export class ActivityService {
           if (gemValue > 0 && this.characterService.characterState.status.mana.value >= 0) {
             this.inventoryService.upgradeEquppedEquipment(Math.floor(Math.pow(gemValue / 10, 2.4)));
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yang++;
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -3316,10 +3240,8 @@ export class ActivityService {
             this.characterService.characterState.status.mana.value -= 10;
             this.characterService.characterState.healthBonusMagic++;
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yang++;
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -3363,10 +3285,8 @@ export class ActivityService {
               this.characterService.characterState.magicLifespan += 10;
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yang++;
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -3415,9 +3335,7 @@ export class ActivityService {
               'All of your potential followers ignore your recruiting efforts after sensing your low cultivation.'
             );
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -3447,9 +3365,7 @@ export class ActivityService {
         () => {
           this.characterService.characterState.status.stamina.value -= 1000;
           this.trainingFollowersDays++;
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -3476,9 +3392,7 @@ export class ActivityService {
       consequence: [
         () => {
           this.battleService.tickCounter = this.battleService.ticksPerFight;
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [{}],
@@ -3505,10 +3419,8 @@ export class ActivityService {
         () => {
           this.characterService.characterState.status.stamina.value -= 10000;
           this.characterService.characterState.increaseAttribute('combatMastery', 0.01);
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-            this.characterService.characterState.yin++;
-          }
+          this.characterService.characterState.yang++;
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -3547,9 +3459,7 @@ export class ActivityService {
               this.followerService.generateFollower(true);
             }
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [
@@ -3589,9 +3499,7 @@ export class ActivityService {
           }
           this.characterService.characterState.increaseAttribute('animalHandling', 1);
           this.trainingPetsDays++;
-          if (this.characterService.characterState.yinYangUnlocked) {
-            this.characterService.characterState.yang++;
-          }
+          this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [

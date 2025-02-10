@@ -1,11 +1,11 @@
 <div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
-  <div class="mainContainer" (mousemove)="onBodyMouseMove($event)">
+  <div class="mainContainer">
     <div class="top-line">
       <span class="gameTitle">
-        Immortality Idle - {{characterService.characterState.god ? "The Divine Cultivator" : hellService.inHell ? "Escape from The Eighteen Hells" : characterService.characterState.immortal ? "You are Immortal!" : "Can you become an immortal?"}}
+        Immortality Idle 2
         <span class="versionNumber" (click)="changelogClicked()">{{gameStateService.isExperimental ? "Experimental" : "v" + applicationVersion}}</span>
       </span>
-      <mat-icon matTooltip="Confused? Click here." class="iconButton" (click)="tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
+      <mat-icon matTooltip="Confused? Click here for a tutorial." class="iconButton" (click)="tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
         help
       </mat-icon>
       <mat-icon matTooltip="Statistics!" class="iconButton" (click)="statisticsClicked()">
@@ -47,13 +47,22 @@
         <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
         <label for="lockPanels">Lock panels in place</label>
       </span>
-      <span>
-        <button [disabled]="gameStateService.lockPanels" (click)="gameStateService.resetPanels()">Reset Panels to Default Locations</button>
-      </span>
+      <!--
+      @if(!gameStateService.lockPanels){
+        <span>
+          <button (click)="gameStateService.resetPanels()">Reset Panels to Default Locations</button>
+        </span>
+      }
+      -->
+      @if(!gameStateService.allPanelsUsed){
+        <span>
+          <button (click)="gameStateService.addLayoutPanel()">Add New Panel</button>
+        </span>
+      }
     </div>
     <div class="grid-container">
       <ktd-grid cols="100"
-          rowHeight="50"
+          rowHeight="10"
           [compactType]="compactType"
           [gap]="gridGap"
           compactOnPropsChange="true"
@@ -61,210 +70,61 @@
           [layout]="gameStateService.layout"
           [scrollableParent]="document"
           (layoutUpdated)="onLayoutUpdated($event)">
-        @if (mainLoopService.timeUnlocked) {
-          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="timePanel">
-            <div class="panel">
-              <div ktdGridDragHandle [ngClass]="{'grabCursor': !gameStateService.lockPanels}" class="panelHeader">
-                <mat-icon>
-                  calendar_month
-                </mat-icon>
-                <span>Time</span>
-                <mat-icon class="panelHelp" matTooltip="Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential. Click the schedule button on activities or drag them here to put them on your schedule. When you allow time to move forward, you will perform each activity in your schedule in the order it is listed. You can move scheduled activities around or repeat activities over multiple days. Don't forget to schedule some rest too! You'll need to take a break now and then in your journey toward immortality.">
-                  help
-                </mat-icon>
+          @for (panelLayout of gameStateService.layout; track panelLayout.id){
+            <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" [id]="getPanel(panelLayout).id">
+              <div class="panel">
+                <div ktdGridDragHandle [ngClass]="{'grabCursor': !gameStateService.lockPanels}" class="panelHeader">
+                  <mat-icon>
+                    {{getPanel(panelLayout).icon}}
+                  </mat-icon>
+                  <span>{{getPanel(panelLayout).name}}</span>
+                  <span class="panelHelp">
+                    <mat-icon [matTooltip]="getPanel(panelLayout).panelHelp">
+                      help
+                    </mat-icon>
+                    @if(!gameStateService.allPanelsUsed){
+                      <mat-icon class="iconButton" (click)="previousPanelClick($index)">
+                        arrow_back
+                      </mat-icon>
+                      <mat-icon class="iconButton" (click)="nextPanelClick($index)">
+                        arrow_forward
+                      </mat-icon>
+                    }
+                    <mat-icon class="iconButton" (click)="closePanelClick($index)">
+                      close
+                    </mat-icon>
+                  </span>
+                  </div>
+                <div class="grid-item-content">
+                  @if (panelLayout.id === 'timePanel'){
+                    <app-time-panel class="panelComponent"></app-time-panel>
+                  } @else if (panelLayout.id === 'attributesPanel'){
+                    <app-attributes-panel class="panelComponent"></app-attributes-panel>
+                  } @else if (panelLayout.id === 'healthPanel'){
+                    <app-health-panel class="panelComponent"></app-health-panel>
+                  } @else if (panelLayout.id === 'activityPanel'){
+                    <app-activity-panel class="panelComponent" ></app-activity-panel>
+                  } @else if (panelLayout.id === 'battlePanel'){
+                    <app-battle-panel class="panelComponent" ></app-battle-panel>
+                  } @else if (panelLayout.id === 'equipmentPanel'){
+                    <app-equipment-panel class="panelComponent" ></app-equipment-panel>
+                  } @else if (panelLayout.id === 'homePanel'){
+                    <app-home-panel class="panelComponent" ></app-home-panel>
+                  } @else if (panelLayout.id === 'inventoryPanel'){
+                    <app-inventory-panel class="panelComponent" ></app-inventory-panel>
+                  } @else if (panelLayout.id === 'logPanel'){
+                    <app-log-panel class="panelComponent" ></app-log-panel>
+                  } @else if (panelLayout.id === 'portalPanel'){
+                    <app-portal-panel class="panelComponent" ></app-portal-panel>
+                  } @else if (panelLayout.id === 'followersPanel'){
+                    <app-followers-panel class="panelComponent"></app-followers-panel>
+                  } @else if (panelLayout.id === 'petsPanel'){
+                    <app-pets-panel class="panelComponent" ></app-pets-panel>
+                  }
                 </div>
-              <div class="grid-item-content">
-                <app-time-panel class="panelComponent"></app-time-panel>
               </div>
-            </div>
-          </ktd-grid-item>
-        }
-        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="attributesPanel">
-          <div class="panel">
-            <div cdkDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-              <mat-icon>
-                bar_chart
-              </mat-icon>
-              Attributes
-              <mat-icon class="panelHelp" matTooltip="Your attributes define your growing immortal characteristics. You can grow your attributes through the activities that you choose. Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.">
-                help
-              </mat-icon>
-            </div>
-            <div class="grid-item-content">
-              <app-attributes-panel class="panelComponent"></app-attributes-panel>
-            </div>
-          </div>
-        </ktd-grid-item>
-        @if (followersService.followersUnlocked) {
-          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="followersPanel">
-            <div class="panel">
-              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-                <mat-icon>
-                  groups
-                </mat-icon>
-                <span>Followers</span>
-                <mat-icon class="panelHelp" matTooltip="Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.">
-                  help
-                </mat-icon>
-              </div>
-              <div class="grid-item-content">
-                <app-followers-panel class="panelComponent"></app-followers-panel>
-              </div>
-            </div>
-          </ktd-grid-item>
-        }
-        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="healthPanel">
-          <div class="panel">
-            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-              <mat-icon>
-                favorite
-              </mat-icon>
-              <span>Health</span>
-              <mat-icon class="panelHelp" matTooltip="Maintaining your health is an important part of becoming immortal. If your health reaches 0, you will die and need to try for immortality once you are reincarnated in your next life.">
-                help
-              </mat-icon>
-            </div>
-            <div class="grid-item-content">
-              <app-health-panel class="panelComponent"></app-health-panel>
-            </div>
-          </div>
-        </ktd-grid-item>
-        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="activityPanel">
-          <div class="panel">
-            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-              <mat-icon>
-                self_improvement
-              </mat-icon>
-              Activities
-              <mat-icon class="panelHelp" matTooltip="Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available.">
-                help
-              </mat-icon>
-            </div>
-            <div class="grid-item-content">
-              <app-activity-panel class="panelComponent" ></app-activity-panel>
-            </div>
-          </div>
-        </ktd-grid-item>
-        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="battlePanel">
-          <div class="panel">
-            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-              <mat-icon>
-                fort
-              </mat-icon>
-              Battles
-              <mat-icon class="panelHelp" matTooltip="Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.">
-                help
-              </mat-icon>
-            </div>
-            <div class="grid-item-content">
-              <app-battle-panel class="panelComponent" ></app-battle-panel>
-            </div>
-          </div>
-        </ktd-grid-item>
-        @if (inventoryService.equipmentUnlocked) {
-          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="equipmentPanel">
-            <div class="panel">
-              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-                <mat-icon>
-                  colorize
-                </mat-icon>
-                Equipment
-                <mat-icon class="panelHelp" matTooltip="You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality. Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment. Watch out, each piece of gear will take damage with use and you will need to constantly improve it to keep it strong.">
-                  help
-                </mat-icon>  
-              </div>                  
-              <div class="grid-item-content">
-                <app-equipment-panel class="panelComponent" ></app-equipment-panel>
-              </div>
-            </div>
-          </ktd-grid-item>
-        }
-        @if (homeService.homeUnlocked) {
-          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="homePanel">
-            <div class="panel">
-              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-                <mat-icon>
-                  home
-                </mat-icon>
-                Home
-                <mat-icon class="panelHelp" matTooltip="Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.">
-                  help
-                </mat-icon>
-              </div>                  
-              <div class="grid-item-content">
-                <app-home-panel class="panelComponent" ></app-home-panel>
-              </div>
-            </div>
-          </ktd-grid-item>
-        }  
-        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="inventoryPanel">
-          <div class="panel">
-            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-              <mat-icon>
-                shopping_bag
-              </mat-icon>
-              Inventory
-              <mat-icon class="panelHelp" matTooltip="The items that you gain during your quest for immortality will appear here. Hover your cursor over an item to learn more about it.">
-                help
-              </mat-icon>
-            </div>                  
-            <div class="grid-item-content">
-              <app-inventory-panel class="panelComponent" ></app-inventory-panel>
-            </div>
-          </div>
-        </ktd-grid-item>
-        <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="logPanel">
-          <div class="panel">
-            <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-              <mat-icon>
-                feed
-              </mat-icon>
-              Log
-              <mat-icon class="panelHelp" matTooltip="A record of the events that lead you to immortality will surely be of interest to those who sing your legend in the ages to come. You can filter out the events that are less interesting to you in the present.">
-                help
-              </mat-icon>
-            </div>                  
-            <div class="grid-item-content">
-              <app-log-panel class="panelComponent" ></app-log-panel>
-            </div>
-          </div>
-        </ktd-grid-item>
-        @if (hellService.inHell) {
-          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="portalPanel">
-            <div class="panel">
-              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-                <mat-icon>
-                  radio_button_checked
-                </mat-icon>
-                Portals
-                <mat-icon class="panelHelp" matTooltip="Take a portal to a different plane of existence.">
-                  help
-                </mat-icon>
-              </div>                  
-              <div class="grid-item-content">
-                <app-portal-panel class="panelComponent" ></app-portal-panel>
-              </div>
-            </div>
-          </ktd-grid-item>
-        }
-        @if (followersService.petsEnabled) {
-          <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" id="petsPanel">
-            <div class="panel">
-              <div ktdGridDragHandle [ngClass]="{'draggableCursor': !gameStateService.lockPanels}" class="panelHeader">
-                <mat-icon>
-                  pets
-                </mat-icon>
-                Pets
-                <mat-icon class="panelHelp" matTooltip="Your pets can aid you in many ways. Each has a specific skill that they will use to your benefit.">
-                  help
-                </mat-icon>
-              </div>                  
-              <div class="grid-item-content">
-                <app-pets-panel class="panelComponent" ></app-pets-panel>
-              </div>
-            </div>
-          </ktd-grid-item>
-        }
+            </ktd-grid-item>
+          }
       </ktd-grid>
     </div>
   </div>

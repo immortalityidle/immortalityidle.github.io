@@ -4,8 +4,8 @@
 ktd-grid {
     transition: height 500ms ease;
     background-color: var(--bodyBackground);
-    width: 2900px;
-    height: 1800px;
+    width: 100%;
+
 }
 
 .wrapper {
@@ -13,35 +13,10 @@ ktd-grid {
     flex-direction: row;
     flex-grow: 1;
     min-height: 0;
-    width: 3000px;
-    height: 2000px;
-    min-width: 3000px;
-    min-height: 2000px;
-    max-width: 3000px;
-    max-height: 2000px;
-}
-
-@media (max-width: 700px) {
-    // it's a phone or something narrow like that
-
-    ktd-grid {
-        width: 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
     }
-
-    ktd-grid-item {
-        width: 100%;
-    }
-    
-    .wrapper {
-        display: flex;
-        flex-direction: row;
-        flex-grow: 1;
-        min-height: 0;
-        width: 100%;
-        min-width: 100%;
-        max-width: 100%;
-    }
-}
 
 
 .top-line {

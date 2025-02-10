@@ -2,11 +2,24 @@ import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
+import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+import { HomeService } from '../game-state/home.service';
 
 @Component({
   selector: 'app-health-panel',
   templateUrl: './health-panel.component.html',
   styleUrls: ['./health-panel.component.less', '../app.component.less'],
+  animations: [
+    trigger('popupText', [
+      state('in', style({ position: 'fixed' })),
+      transition(':leave', [
+        animate(
+          1000,
+          keyframes([style({ transform: 'translate(0%, 0%)' }), style({ transform: 'translate(0%, -150%)' })])
+        ),
+      ]),
+    ]),
+  ],
 })
 export class HealthPanelComponent {
   yinColor = '#000000';
@@ -16,14 +29,18 @@ export class HealthPanelComponent {
   flashStamina = false;
   flashMana = false;
   flashNutrition = false;
+  moneyUpdates: number[];
+  popupCounter = 0;
 
   Math: Math;
   constructor(
     public characterService: CharacterService,
     public gameStateService: GameStateService,
+    public homeService: HomeService,
     private mainLoopService: MainLoopService
   ) {
     this.Math = Math;
+    this.moneyUpdates = [];
     mainLoopService.longTickSubject.subscribe(() => {
       this.updateYinYang();
       this.flashHealth = this.characterService.characterState.statusToFlash.includes('health');
@@ -31,13 +48,19 @@ export class HealthPanelComponent {
       this.flashMana = this.characterService.characterState.statusToFlash.includes('mana');
       this.flashNutrition = this.characterService.characterState.statusToFlash.includes('nourishment');
       this.characterService.characterState.statusToFlash = [];
+      if (this.popupCounter < 1) {
+        this.popupCounter++;
+        return;
+      }
+      this.popupCounter = 0;
+      if (this.characterService.characterState.moneyUpdates !== 0) {
+        this.moneyUpdates.push(this.characterService.characterState.moneyUpdates);
+        this.characterService.characterState.moneyUpdates = 0;
+      }
     });
   }
 
   updateYinYang() {
-    if (!this.characterService.characterState.yinYangUnlocked) {
-      return;
-    }
     let yang = this.characterService.characterState.yang;
     let yin = this.characterService.characterState.yin;
     if (yin < 1) {
@@ -71,5 +94,15 @@ export class HealthPanelComponent {
     const difference = Math.max((Math.abs(yang - yin) / ((yang + yin) / 2)) * 10000, 1);
     const differenceIndex = Math.min(Math.floor(Math.log(difference) / Math.log(5)), balanceValues.length - 1);
     this.balanceString = balanceValues[differenceIndex];
+  }
+
+  animationDoneEvent() {
+    while (this.moneyUpdates.length > 0) {
+      this.moneyUpdates.pop();
+    }
+  }
+
+  getMoneyUpdates(): number[] {
+    return this.moneyUpdates;
   }
 }

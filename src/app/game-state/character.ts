@@ -99,7 +99,7 @@ export interface CharacterProperties {
   highestStamina: number;
   highestMana: number;
   highestAttributes: { [key: string]: number };
-  yinYangUnlocked: boolean;
+  yinYangBoosted: boolean;
   yin: number;
   yang: number;
   righteousWrathUnlocked: boolean;
@@ -179,7 +179,7 @@ export class Character {
   god = false;
   easyMode = false;
   ascensionUnlocked = false;
-  yinYangUnlocked = false;
+  yinYangBoosted = false;
   yin = 1;
   yang = 1;
   yinYangBalance = 0;
@@ -496,6 +496,8 @@ export class Character {
       this.equipment.legs = null;
       this.equipment.feet = null;
     }
+    this.yin = 1;
+    this.yang = 1;
   }
 
   getAttributeStartingValue(value: number, aptitude: number): number {
@@ -584,7 +586,10 @@ export class Character {
     if (this.righteousWrathUnlocked) {
       this.defense *= 2;
     }
-    if (this.yinYangUnlocked) {
+    if (this.yinYangBoosted) {
+      // calculate yin/yang balance bonus, 10 for perfect balance, 0 at worst
+      this.yinYangBalance = Math.max(10 - (10 * Math.abs(this.yang - this.yin)) / ((this.yang + this.yin) / 2), 0);
+    } else {
       // calculate yin/yang balance bonus, 1 for perfect balance, 0 at worst
       this.yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
     }
@@ -643,12 +648,9 @@ export class Character {
       return x;
     }
     let c = 365000; // Hardcap
-    if (this.yinYangUnlocked) {
-      // calculate balance bonus, 1 for perfect balance, 0 at worst
-      const yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
-      // apply bonus to hardcap value
+    if (this.yinYangBoosted) {
       // TODO: tune this
-      c += yinYangBalance * c;
+      c += this.yinYangBalance * c;
     }
     return c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
   }
@@ -719,7 +721,7 @@ export class Character {
     }
     let healthBonusMagicCap = 10000;
     let healthBonusSoulCap = 20000;
-    if (this.yinYangUnlocked) {
+    if (this.yinYangBoosted) {
       healthBonusMagicCap += 2 * this.yinYangBalance * healthBonusMagicCap;
       healthBonusSoulCap += 2 * this.yinYangBalance * healthBonusSoulCap;
     }
@@ -797,7 +799,7 @@ export class Character {
       highestStamina: this.highestStamina,
       highestMana: this.highestMana,
       highestAttributes: this.highestAttributes,
-      yinYangUnlocked: this.yinYangUnlocked,
+      yinYangBoosted: this.yinYangBoosted,
       yin: this.yin,
       yang: this.yang,
       righteousWrathUnlocked: this.righteousWrathUnlocked,
@@ -867,7 +869,7 @@ export class Character {
     this.highestStamina = properties.highestStamina || 0;
     this.highestMana = properties.highestMana || 0;
     this.highestAttributes = properties.highestAttributes || {};
-    this.yinYangUnlocked = properties.yinYangUnlocked || false;
+    this.yinYangBoosted = properties.yinYangBoosted || false;
     this.yin = properties.yin || 1;
     this.yang = properties.yang || 1;
     this.righteousWrathUnlocked = properties.righteousWrathUnlocked || false;

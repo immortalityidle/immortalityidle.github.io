@@ -54,6 +54,7 @@ export interface BattleProperties {
   highestDamageDealt: number;
   godSlayersUnlocked: boolean;
   godSlayersEnabled: boolean;
+  totalEnemies: number;
 }
 
 @Injectable({
@@ -91,6 +92,7 @@ export class BattleService {
   degradeFactor = 0.0000001;
   godSlayersUnlocked = false;
   godSlayersEnabled = false;
+  totalEnemies = 0;
 
   constructor(
     private injector: Injector,
@@ -172,6 +174,7 @@ export class BattleService {
       highestDamageTaken: this.highestDamageTaken,
       godSlayersUnlocked: this.godSlayersUnlocked,
       godSlayersEnabled: this.godSlayersEnabled,
+      totalEnemies: this.totalEnemies,
     };
   }
 
@@ -201,6 +204,7 @@ export class BattleService {
     this.highestDamageTaken = properties.highestDamageTaken || 0;
     this.godSlayersUnlocked = properties.godSlayersUnlocked || false;
     this.godSlayersEnabled = properties.godSlayersEnabled || false;
+    this.totalEnemies = properties.totalEnemies || 0;
   }
 
   enemiesAttack() {
@@ -252,11 +256,9 @@ export class BattleService {
             this.characterService.characterState.status.mana.value -= 10000;
             this.skipEnemyAttack++;
           }
-          if (this.characterService.characterState.yinYangUnlocked) {
-            // reduce damage by up to half
-            // TODO: tune this
-            damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
-          }
+          // reduce damage by up to half
+          // TODO: tune this
+          damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
           this.logService.injury(
             LogTopic.COMBAT,
             'Ow! ' + enemyStack.enemy.name + ' hit you for ' + this.bigNumberPipe.transform(damage) + ' damage'
@@ -369,10 +371,8 @@ export class BattleService {
         this.characterService.characterState.status.mana.value -= 10000;
         blowthrough = true;
       }
-      if (this.characterService.characterState.yinYangUnlocked) {
-        // TODO: tune this
-        damage += damage * this.characterService.characterState.yinYangBalance;
-      }
+      // TODO: tune this
+      damage += damage * this.characterService.characterState.yinYangBalance;
       if (this.characterService.characterState.equipment?.leftHand?.weaponStats?.effect === 'corruption') {
         damage *= 10;
       }
@@ -550,6 +550,7 @@ export class BattleService {
   }
 
   addEnemy(enemy: Enemy) {
+    this.totalEnemies++;
     this.logService.log(LogTopic.COMBAT, 'A new enemy comes along to trouble your sleep: ' + enemy.name);
     for (const enemyIterator of this.enemies) {
       if (enemyIterator.enemy.name === enemy.name) {

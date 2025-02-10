@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject, Pipe, PipeTransform, ViewChild, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GameStateService, PanelIndex } from './game-state/game-state.service';
+import { GameStateService, Panel } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { OptionsModalComponent } from './options-modal/options-modal.component';
@@ -20,8 +20,7 @@ import { ViewportScroller, DOCUMENT } from '@angular/common';
 import { FollowersService } from './game-state/followers.service';
 import { HomeService } from './game-state/home.service';
 import { InventoryService } from './game-state/inventory.service';
-//import { KtdGridComponent, KtdGridLayout, ktdTrackById, KtdGridItemComponent, KtdGridDragHandle, KtdGridResizeHandle } from '@katoid/angular-grid-layout';
-import { KtdGridComponent, KtdGridLayout, ktdTrackById } from '@katoid/angular-grid-layout';
+import { KtdGridComponent, KtdGridLayout, KtdGridLayoutItem, ktdTrackById } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -98,7 +97,7 @@ export class BigNumberPipe implements PipeTransform {
 export class AppComponent implements OnInit, OnDestroy {
   // @ts-expect-error: no initializer
   @ViewChild(KtdGridComponent, { static: true }) grid: KtdGridComponent;
-  panelIndex: typeof PanelIndex = PanelIndex;
+  panels: Panel[];
   resizingPanel = -1;
   previousX = 0;
   previousY = 0;
@@ -112,10 +111,12 @@ export class AppComponent implements OnInit, OnDestroy {
   trackById = ktdTrackById;
   gridGap = 4;
   mobileDevice = window.navigator.maxTouchPoints > 0;
-  compactType: 'vertical' | 'horizontal' | null = window.matchMedia('(max-width: 700px)').matches
+  compactType: 'vertical' | 'horizontal' | null = 'vertical';
+  /*
+  window.matchMedia('(max-width: 700px)').matches
     ? 'vertical'
     : 'horizontal';
-
+*/
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.code === 'Space') {
@@ -155,12 +156,12 @@ export class AppComponent implements OnInit, OnDestroy {
       this.mainLoopService.tickDivider = 1;
     }
   }
-
+  /*
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.compactType = window.matchMedia('(max-width: 700px)').matches ? 'vertical' : 'horizontal';
   }
-
+*/
   constructor(
     private scroller: ViewportScroller,
     public mainLoopService: MainLoopService,
@@ -177,6 +178,7 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) public document: Document
   ) {
     this.resizeSubscription = new Subscription();
+    this.panels = this.gameStateService.panels;
   }
 
   ngOnInit(): void {
@@ -261,6 +263,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.gameStateService.savetoLocalStorage();
   }
 
+  /*
   onBodyMouseMove(event: MouseEvent) {
     if (this.gameStateService.dragging) {
       return;
@@ -271,5 +274,31 @@ export class AppComponent implements OnInit, OnDestroy {
     const x = this.scroller.getScrollPosition()[0] - event.movementX;
     const y = this.scroller.getScrollPosition()[1] - event.movementY;
     this.scroller.scrollToPosition([x, y]);
+  }
+*/
+  getPanel(layoutPanel: KtdGridLayoutItem) {
+    for (const panel of this.gameStateService.panels) {
+      if (panel.id === layoutPanel.id) {
+        return panel;
+      }
+    }
+    return {
+      id: 'undefinedPanel',
+      name: '',
+      icon: '',
+      panelHelp: '',
+    };
+  }
+
+  nextPanelClick(index: number) {
+    this.gameStateService.changeLayoutPanel(index);
+  }
+
+  previousPanelClick(index: number) {
+    this.gameStateService.changeLayoutPanel(index, true);
+  }
+
+  closePanelClick(index: number) {
+    this.gameStateService.removeLayoutPanel(index);
   }
 }

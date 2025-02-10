@@ -139,6 +139,7 @@ export interface InventoryProperties {
   divinePeachesUnlocked: boolean;
   equipmentUnlocked: boolean;
   equipmentCreated: number;
+  totalItemsReceived: number;
 }
 
 @Injectable({
@@ -204,6 +205,7 @@ export class InventoryService {
     "\nThe durability and value of equipment degrades with use. Be careful when merging powerful items that have seen a lot of wear, the product may be even lower quality than the original if the item's value is low.";
   emptyIdCounter = 0;
   emptyIdPrefix = Date.now() + '';
+  totalItemsReceived = 0;
 
   constructor(
     private injector: Injector,
@@ -380,6 +382,7 @@ export class InventoryService {
       divinePeachesUnlocked: this.divinePeachesUnlocked,
       equipmentUnlocked: this.equipmentUnlocked,
       equipmentCreated: this.equipmentCreated,
+      totalItemsReceived: this.totalItemsReceived,
     };
   }
 
@@ -442,6 +445,7 @@ export class InventoryService {
     }
     this.equipmentUnlocked = properties.equipmentUnlocked || false;
     this.equipmentCreated = properties.equipmentCreated || 0;
+    this.totalItemsReceived = properties.totalItemsReceived || 0;
   }
 
   farmFoodList = [
@@ -1121,6 +1125,7 @@ export class InventoryService {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
+    this.totalItemsReceived += quantity;
 
     for (const balanceItem of this.autoBalanceItems) {
       if (balanceItem.name === item.name) {
@@ -2015,10 +2020,8 @@ export class InventoryService {
       } else {
         this.setItemEmptyStack(gemIndex);
       }
-      if (this.characterService.characterState.yinYangUnlocked) {
-        this.characterService.characterState.yang++;
-        this.characterService.characterState.yin++;
-      }
+      this.characterService.characterState.yang++;
+      this.characterService.characterState.yin++;
     }
   }
 
