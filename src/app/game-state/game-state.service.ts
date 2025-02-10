@@ -258,9 +258,13 @@ export class GameStateService {
     this.updateAllPanelsUsed();
   }
 
-  addLayoutPanel() {
+  addLayoutPanel(newPanelId = '') {
     const newLayout = JSON.parse(JSON.stringify(this.layout));
-    const panelId = this.getNextUnusedPanelId(0);
+    let panelId = newPanelId;
+    if (newPanelId === '') {
+      panelId = this.getNextUnusedPanelId(0);
+    }
+
     if (panelId === '') {
       // no unused panels, bail out
       return;

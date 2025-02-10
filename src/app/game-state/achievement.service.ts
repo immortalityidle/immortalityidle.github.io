@@ -77,7 +77,7 @@ export class AchievementService {
           this.gameStateService = this.injector.get(GameStateService);
         }
         this.gameStateService.unlockPanel('timePanel');
-        this.gameStateService.addLayoutPanel();
+        this.gameStateService.addLayoutPanel('timePanel');
       },
       unlocked: false,
     },

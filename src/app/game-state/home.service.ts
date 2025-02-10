@@ -81,6 +81,7 @@ export interface HomeProperties {
   hellFood: boolean;
   hellHome: boolean;
   homeUnlocked: boolean;
+  mouseCounter: number;
 }
 
 export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
@@ -127,6 +128,7 @@ export class HomeService {
   hellHome = false;
   homeUnlocked = false;
   smoothFarming = false;
+  mouseCounter = 0;
 
   homesList: Home[] = [
     {
@@ -140,6 +142,7 @@ export class HomeService {
       maxInventory: 10,
       upgradeToTooltip: 'Get a better house.',
       consequence: () => {
+        /*
         if (Math.random() < 0.05) {
           this.logService.injury(
             LogTopic.EVENT,
@@ -147,7 +150,8 @@ export class HomeService {
           );
           this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
         }
-        if (Math.random() < 0.4) {
+        */
+        if (this.mouseCounter > 30) {
           this.battleService.addEnemy({
             name: 'a pesky mouse',
             baseName: 'mouse',
@@ -158,6 +162,7 @@ export class HomeService {
             defense: 0,
             loot: [],
           });
+          this.mouseCounter = 0;
         }
       },
       furnitureSlots: [],
@@ -646,6 +651,7 @@ export class HomeService {
       hellFood: this.hellFood,
       hellHome: this.hellHome,
       homeUnlocked: this.homeUnlocked,
+      mouseCounter: this.mouseCounter,
     };
   }
 
@@ -685,6 +691,7 @@ export class HomeService {
     this.hellFood = properties.hellFood || false;
     this.hellHome = properties.hellHome || false;
     this.homeUnlocked = properties.homeUnlocked || false;
+    this.mouseCounter = properties.mouseCounter || 0;
   }
 
   // gets the specs of the next home, doesn't actually upgrade
