@@ -8,6 +8,10 @@ h3 {
   vertical-align: -0.3em;
 }
 
+.technique-bar {
+  vertical-align: -0.5em;
+}
+
 .health > .progress-bar > span {
   background-color: var(--healthColor);
 }
@@ -39,11 +43,9 @@ mat-icon {
 }
 
 .battleContainer {
-  min-height: 90px;
-  min-width: 600px;
   overflow-y: auto;
-  width: 100%;
-  height: 100%;
+  flex-grow: 1;
+  margin: 4px;
 }
 
 .columnDiv {
@@ -51,9 +53,18 @@ mat-icon {
   flex-direction: row;
 }
 
-.actionDiv {
-  flex: 1;
+.splitDiv {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 2px;
+  margin-right: 2px;
 }
+
+.headerDiv {
+  border-bottom: 1px solid var(--panelBorder);
+}
+
 
 .monsterImage {
   border: 3px solid var(--panelBorder);

@@ -152,17 +152,10 @@ export class HomeService {
         }
         */
         if (this.mouseCounter > 30) {
-          this.battleService.addEnemy({
-            name: 'a pesky mouse',
-            baseName: 'mouse',
-            health: 2,
-            maxHealth: 2,
-            accuracy: 0.15,
-            attack: 0.3,
-            defense: 0,
-            loot: [],
-          });
+          this.battleService.addMouse();
           this.mouseCounter = 0;
+        } else {
+          this.mouseCounter++;
         }
       },
       furnitureSlots: [],
@@ -182,6 +175,8 @@ export class HomeService {
       consequence: () => {
         this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 1;
+        this.characterService.characterState.checkOverage();
+        /*
         if (Math.random() < 0.03) {
           this.logService.injury(
             LogTopic.EVENT,
@@ -189,19 +184,13 @@ export class HomeService {
           );
           this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
         }
-        if (Math.random() < 0.2) {
-          this.battleService.addEnemy({
-            name: 'a pesky mouse',
-            baseName: 'mouse',
-            health: 2,
-            maxHealth: 2,
-            accuracy: 0.15,
-            attack: 0.3,
-            defense: 0,
-            loot: [],
-          });
+          */
+        if (this.mouseCounter > 60) {
+          this.battleService.addMouse();
+          this.mouseCounter = 0;
+        } else {
+          this.mouseCounter++;
         }
-        this.characterService.characterState.checkOverage();
       },
       furnitureSlots: [],
       daysToBuild: 1,
@@ -517,7 +506,7 @@ export class HomeService {
     private inventoryService: InventoryService,
     private logService: LogService,
     private battleService: BattleService,
-    mainLoopService: MainLoopService,
+    private mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
     private itemRepoService: ItemRepoService
   ) {
@@ -529,44 +518,8 @@ export class HomeService {
       throw Error('Home service not initialized correctly.');
     }
 
-    mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead) {
-        return;
-      }
-      if (this.upgrading) {
-        this.upgradeTick();
-      }
-      this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
-      if (this.nextHomeCost < 0) {
-        this.nextHomeCost = 0;
-      }
-      if (!this.hellService?.inHell || this.hellHome) {
-        this.home.consequence();
-        for (const slot of this.furniturePositionsArray) {
-          const furniturePiece = this.furniture[slot];
-          if (furniturePiece?.use) {
-            furniturePiece?.use();
-          }
-        }
-      }
-      if (!this.hellService?.inHell || this.hellFood) {
-        this.ageFields();
-      }
-      if (!this.hellService?.inHell && !this.characterService.characterState.god) {
-        if (this.home.costPerDay > this.characterService.characterState.money) {
-          this.logService.injury(
-            LogTopic.EVENT,
-            "You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast."
-          );
-          if (this.thugPause) {
-            mainLoopService.pause = true;
-          }
-          this.characterService.characterState.status.health.value -= 20;
-          this.characterService.characterState.money = 0;
-        } else {
-          this.characterService.characterState.updateMoney(0 - this.home.costPerDay);
-        }
-      }
+    mainLoopService.homeTickSubject.subscribe(() => {
+      this.tick();
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -617,6 +570,46 @@ export class HomeService {
         this.setCurrentHome(this.nextHome);
       }
     });
+  }
+
+  tick() {
+    if (this.characterService.characterState.dead) {
+      return;
+    }
+    if (this.upgrading) {
+      this.upgradeTick();
+    }
+    this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
+    if (this.nextHomeCost < 0) {
+      this.nextHomeCost = 0;
+    }
+    if (!this.hellService?.inHell || this.hellHome) {
+      this.home.consequence();
+      for (const slot of this.furniturePositionsArray) {
+        const furniturePiece = this.furniture[slot];
+        if (furniturePiece?.use) {
+          furniturePiece?.use();
+        }
+      }
+    }
+    if (!this.hellService?.inHell || this.hellFood) {
+      this.ageFields();
+    }
+    if (!this.hellService?.inHell && !this.characterService.characterState.god) {
+      if (this.home.costPerDay > this.characterService.characterState.money) {
+        this.logService.injury(
+          LogTopic.EVENT,
+          "You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast."
+        );
+        if (this.thugPause) {
+          this.mainLoopService.pause = true;
+        }
+        this.characterService.characterState.status.health.value -= 20;
+        this.characterService.characterState.money = 0;
+      } else {
+        this.characterService.characterState.updateMoney(0 - this.home.costPerDay);
+      }
+    }
   }
 
   getProperties(): HomeProperties {

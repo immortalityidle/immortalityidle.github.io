@@ -21,6 +21,7 @@ export interface Enemy {
   defeatEffect?: string;
   attackEffect?: string;
   hitTracker?: number;
+  techniques: Technique[];
 }
 
 export interface EnemyStack {
@@ -57,6 +58,14 @@ export interface BattleProperties {
   totalEnemies: number;
 }
 
+export interface Technique {
+  name: string;
+  ticks: number;
+  ticksRequired: number;
+  baseDamage: number;
+  effect?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -83,8 +92,6 @@ export class BattleService {
   metalFistUnlocked = false;
   fireShieldUnlocked = false;
   iceShieldUnlocked = false;
-  tickCounter: number;
-  ticksPerFight = 10;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
   totalKills = 0;
@@ -93,6 +100,14 @@ export class BattleService {
   godSlayersUnlocked = false;
   godSlayersEnabled = false;
   totalEnemies = 0;
+  techniques: Technique[] = [
+    {
+      name: 'Basic Strike',
+      ticksRequired: 10,
+      ticks: 0,
+      baseDamage: 1,
+    },
+  ];
 
   constructor(
     private injector: Injector,
@@ -111,26 +126,24 @@ export class BattleService {
     this.troubleKills = 0;
     this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
-    this.tickCounter = 0;
 
-    mainLoopService.tickSubject.subscribe(() => {
+    mainLoopService.battleTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead) {
         return;
       }
-      if (this.tickCounter < this.ticksPerFight) {
-        this.tickCounter++;
-        return;
-      }
-      this.tickCounter = 0;
+
       if (this.currentEnemy === null && this.enemies.length > 0) {
         this.currentEnemy = this.enemies[0];
       }
-      this.enemiesAttack();
-      this.youAttack();
+      this.handleYourTechniques();
+      this.handleEnemyTechniques();
       this.yearlyMonsterDay++;
       if (this.yearlyMonsterDay >= 365 || this.autoTroubleEnabled) {
         this.yearlyMonsterDay = 0;
         this.trouble();
+      }
+      if (this.characterService.checkForDeath()) {
+        this.clearEnemies();
       }
     });
 
@@ -180,7 +193,6 @@ export class BattleService {
 
   setProperties(properties: BattleProperties) {
     this.enemies = properties.enemies;
-    this.currentEnemy = properties.currentEnemy;
     this.kills = properties.kills;
     this.troubleKills = properties.troubleKills;
     this.godSlayerKills = properties.godSlayerKills || 0;
@@ -205,9 +217,19 @@ export class BattleService {
     this.godSlayersUnlocked = properties.godSlayersUnlocked || false;
     this.godSlayersEnabled = properties.godSlayersEnabled || false;
     this.totalEnemies = properties.totalEnemies || 0;
+    if (this.enemies.length > 0) {
+      for (const enemy of this.enemies) {
+        if (
+          enemy.enemy.name === properties.currentEnemy?.enemy.name &&
+          enemy.quantity === properties.currentEnemy.quantity
+        ) {
+          this.currentEnemy = enemy;
+        }
+      }
+    }
   }
 
-  enemiesAttack() {
+  handleEnemyTechniques() {
     if (this.skipEnemyAttack > 0) {
       this.skipEnemyAttack--;
       return;
@@ -322,7 +344,18 @@ export class BattleService {
     this.characterService.characterState.increaseAttribute('toughness', toughnessIncrease);
   }
 
-  youAttack() {
+  handleYourTechniques() {
+    for (const technique of this.techniques) {
+      if (technique.ticks === technique.ticksRequired) {
+        this.youAttack(technique.baseDamage);
+        technique.ticks = 0;
+      } else {
+        technique.ticks++;
+      }
+    }
+  }
+
+  youAttack(baseDamage: number) {
     this.characterService.characterState.accuracy = Math.min(
       Math.sqrt(this.characterService.characterState.attributes.speed.value),
       1
@@ -334,7 +367,7 @@ export class BattleService {
         return;
       }
 
-      let damage = this.characterService.characterState.attackPower;
+      let damage = this.characterService.characterState.attackPower * baseDamage;
       const defense = this.currentEnemy.enemy.defense;
       if (defense >= 1) {
         damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
@@ -571,6 +604,9 @@ export class BattleService {
   clearEnemies() {
     this.enemies = [];
     this.currentEnemy = null;
+    for (const technique of this.techniques) {
+      technique.ticks = 0;
+    }
   }
 
   // generate a monster based on current troubleKills
@@ -629,6 +665,99 @@ export class BattleService {
       attack: attack,
       defense: defense,
       loot: [gem],
+      techniques: [
+        {
+          name: 'Attack',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: attack,
+        },
+      ],
+    });
+  }
+
+  addMouse() {
+    this.addEnemy({
+      name: 'a pesky mouse',
+      baseName: 'mouse',
+      health: 5,
+      maxHealth: 5,
+      accuracy: 0.15,
+      attack: 2,
+      defense: 0,
+      loot: [],
+      techniques: [
+        {
+          name: 'Attack',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 2,
+        },
+      ],
+    });
+  }
+
+  addWolf() {
+    this.addEnemy({
+      name: 'a hungry wolf',
+      baseName: 'wolf',
+      health: 20,
+      maxHealth: 20,
+      accuracy: 0.5,
+      attack: 5,
+      defense: 5,
+      loot: [this.inventoryService.getHide()],
+      techniques: [
+        {
+          name: 'Attack',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 5,
+        },
+      ],
+    });
+  }
+
+  addArmy() {
+    this.addEnemy({
+      name: 'an angry army',
+      baseName: 'army',
+      health: 2e11,
+      maxHealth: 2e11,
+      accuracy: 0.9,
+      attack: 1e7,
+      defense: 1e7,
+      loot: [],
+      techniques: [
+        {
+          name: 'Attack',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 1e7,
+        },
+      ],
+    });
+  }
+
+  addDeath() {
+    this.addEnemy({
+      name: 'Death itself',
+      baseName: 'death',
+      health: 1e24,
+      maxHealth: 1e24,
+      accuracy: 0.99,
+      attack: 3e8,
+      defense: 3e8,
+      loot: [this.itemRepoService.items['immortality']],
+      unique: true,
+      techniques: [
+        {
+          name: 'Attack',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 3e8,
+        },
+      ],
     });
   }
 
@@ -687,6 +816,7 @@ export class BattleService {
         defense: enemy.defense,
         defeatEffect: enemy.defeatEffect,
         loot: enemy.loot,
+        techniques: enemy.techniques,
       });
       this.addEnemy({
         name: enemy.name,
@@ -698,6 +828,7 @@ export class BattleService {
         defense: enemy.defense,
         defeatEffect: enemy.defeatEffect,
         loot: enemy.loot,
+        techniques: enemy.techniques,
       });
     }
   }

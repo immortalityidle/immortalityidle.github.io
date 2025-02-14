@@ -3,6 +3,7 @@ import { throttleTime, map, bufferCount, Subject, OperatorFunction } from 'rxjs'
 import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
+import { BattleService } from './battle.service';
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
@@ -30,10 +31,13 @@ export interface MainLoopProperties {
   providedIn: 'root',
 })
 export class MainLoopService {
-  /**
-   * Sends true on new day
-   */
-  tickSubject = new Subject<boolean>();
+  battleService?: BattleService;
+
+  tickSubject = new Subject<number>();
+  homeTickSubject = new Subject<number>();
+  inventoryTickSubject = new Subject<number>();
+  activityTickSubject = new Subject<number>();
+  battleTickSubject = new Subject<number>();
 
   /**
    * Sends every 25ms if in foreground or every second if in background.
@@ -75,6 +79,8 @@ export class MainLoopService {
   importing = false;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
+    setTimeout(() => (this.battleService = this.injector.get(BattleService)));
+
     this.audio = new Audio('./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3');
     this.audio.volume = 0.2;
     this.audio.loop = true;
@@ -323,7 +329,14 @@ export class MainLoopService {
   }
 
   tick() {
-    this.totalTicks++;
-    this.tickSubject.next(true);
+    if (this.battleService && this.battleService.enemies.length > 0) {
+      this.battleTickSubject.next(1);
+    } else {
+      this.totalTicks++;
+      this.homeTickSubject.next(1);
+      this.inventoryTickSubject.next(1);
+      this.activityTickSubject.next(1);
+      this.tickSubject.next(1);
+    }
   }
 }

@@ -213,6 +213,60 @@ button:disabled {
   animation-timing-function: linear;
 }
 
+.technique-bar {
+  overflow: hidden;
+  background-color: var(--progressBackgroundColor);
+  border-radius: 2px;
+  border: 1px solid #555;
+
+  width: 100px;
+  min-height: 8px;
+  height: 30px;
+  height: fit-content;
+  position: relative;
+
+  writing-mode: horizontal-tb !important;
+  display: inline-block;
+  box-sizing: border-box;
+
+  z-index: 0;
+
+  text-align: center;
+}
+
+.technique-bar::after {
+  color: white;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+        90deg,
+        rgba(0,0,0,0)    0%,
+        rgba(0,0,0,0.4) 40%,
+        rgba(0,0,0,0.4) 60%,
+        rgba(0,0,0,0)  100%);
+}
+
+.technique-bar[value]::after {
+  content: attr(value);
+}
+
+.technique-bar[max]::after {
+  content: attr(value) "/" attr(max);
+}
+
+.technique-bar > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+
+  background-color: #0075ff;
+
+  display: block;
+  height: 100%;
+}
+
 .snackBar {
     white-space: pre-wrap;
     background-color: var(--manaColor);

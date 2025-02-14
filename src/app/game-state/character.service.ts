@@ -61,91 +61,7 @@ export class CharacterService {
         this.characterState.age++;
         this.characterState.status.nourishment.value--;
       }
-      // check for death
-      let deathMessage = '';
-      if (this.forceRebirth) {
-        deathMessage = 'You release your soul from your body at the age of ' + this.formatAge() + '.';
-      } else if (this.characterState.age >= this.characterState.lifespan && !this.characterState.immortal) {
-        deathMessage =
-          'You reach the end of your natural life and pass away from natural causes at the age of ' +
-          this.formatAge() +
-          '.';
-      } else if (this.characterState.status.nourishment.value <= 0) {
-        this.characterState.status.nourishment.value = 0;
-        if (this.characterState.attributes.spirituality.value > 0) {
-          // you're spritual now, you can fast!
-          const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
-          this.logService.injury(
-            LogTopic.COMBAT,
-            'You take ' + this.bigNumberPipe.transform(starvationDamage) + ' damage from starvation.'
-          ); // it's not really a combat message, but I didn't want to spam the event log
-          this.characterState.status.health.value -= starvationDamage;
-          if (this.characterState.status.health.value < 0) {
-            this.characterState.status.health.value = 0;
-          }
-          this.characterState.increaseAttribute('spirituality', 0.1);
-          if (this.characterState.status.health.value <= 0) {
-            if (!this.characterState.immortal) {
-              deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
-            } else if (this.hellService?.inHell) {
-              this.hellService.beaten = true;
-            }
-          }
-        } else if (!this.characterState.immortal) {
-          deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
-        }
-      } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
-        if (!this.activityService) {
-          this.activityService = this.injector.get(ActivityService);
-        }
-        if (this.activityService.activityDeath) {
-          deathMessage = 'You die from overwork at the age of ' + this.formatAge() + '.';
-        } else {
-          deathMessage = 'You succumb to your wounds and die at the age of ' + this.formatAge() + '.';
-        }
-      } else if (this.characterState.immortal && this.characterState.status.health.value < 0) {
-        this.characterState.status.health.value = 0;
-      }
-      if (deathMessage !== '') {
-        if (!this.characterState.immortal) {
-          this.logService.injury(LogTopic.EVENT, deathMessage);
-          if (!this.forceRebirth) {
-            this.logService.log(
-              LogTopic.EVENT,
-              "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life."
-            );
-          }
-        }
-        this.characterState.dead = true;
-        if (!this.characterState.showLifeSummary) {
-          this.toast('A new life begins.');
-        }
-        this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
-        this.reincarnationService.reincarnate();
-        // Revive the character in the next tick update for making sure that everything is stopped.
-        this.deathSubscriber = this.mainLoopService.tickSubject.subscribe(() => {
-          this.characterState.dead = false;
-          this.deathSubscriber?.unsubscribe();
-        });
-        this.forceRebirth = false;
-        if (this.characterState.immortal) {
-          this.logService.log(
-            LogTopic.EVENT,
-            'You are born anew, still an immortal but with the fresh vigor of youth.'
-          );
-        } else {
-          this.logService.log(
-            LogTopic.EVENT,
-            'Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number ' +
-              this.characterState.totalLives +
-              ' will be the one.'
-          );
-          this.logService.log(
-            LogTopic.EVENT,
-            "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!"
-          );
-        }
-      }
+      this.checkForDeath();
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -189,6 +105,92 @@ export class CharacterService {
         this.characterState.updateMoney(200);
       }
     });
+  }
+
+  checkForDeath(): boolean {
+    let deathMessage = '';
+    if (this.forceRebirth) {
+      deathMessage = 'You release your soul from your body at the age of ' + this.formatAge() + '.';
+    } else if (this.characterState.age >= this.characterState.lifespan && !this.characterState.immortal) {
+      deathMessage =
+        'You reach the end of your natural life and pass away from natural causes at the age of ' +
+        this.formatAge() +
+        '.';
+    } else if (this.characterState.status.nourishment.value <= 0) {
+      this.characterState.status.nourishment.value = 0;
+      if (this.characterState.attributes.spirituality.value > 0) {
+        // you're spritual now, you can fast!
+        const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
+        this.logService.injury(
+          LogTopic.COMBAT,
+          'You take ' + this.bigNumberPipe.transform(starvationDamage) + ' damage from starvation.'
+        ); // it's not really a combat message, but I didn't want to spam the event log
+        this.characterState.status.health.value -= starvationDamage;
+        if (this.characterState.status.health.value < 0) {
+          this.characterState.status.health.value = 0;
+        }
+        this.characterState.increaseAttribute('spirituality', 0.1);
+        if (this.characterState.status.health.value <= 0) {
+          if (!this.characterState.immortal) {
+            deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
+          } else if (this.hellService?.inHell) {
+            this.hellService.beaten = true;
+          }
+        }
+      } else if (!this.characterState.immortal) {
+        deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
+      }
+    } else if (this.characterState.status.health.value <= 0 && !this.characterState.immortal) {
+      if (!this.activityService) {
+        this.activityService = this.injector.get(ActivityService);
+      }
+      if (this.activityService.activityDeath) {
+        deathMessage = 'You die from overwork at the age of ' + this.formatAge() + '.';
+      } else {
+        deathMessage = 'You succumb to your wounds and die at the age of ' + this.formatAge() + '.';
+      }
+    } else if (this.characterState.immortal && this.characterState.status.health.value < 0) {
+      this.characterState.status.health.value = 0;
+    }
+    if (deathMessage !== '') {
+      if (!this.characterState.immortal) {
+        this.logService.injury(LogTopic.EVENT, deathMessage);
+        if (!this.forceRebirth) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You have failed to achieve immortality and your life has ended. Don't worry, I'm sure you'll achieve immortality in your next life."
+          );
+        }
+      }
+      this.characterState.dead = true;
+      if (!this.characterState.showLifeSummary) {
+        this.toast('A new life begins.');
+      }
+      this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
+      this.reincarnationService.reincarnate();
+      // Revive the character in the next tick update for making sure that everything is stopped.
+      this.deathSubscriber = this.mainLoopService.tickSubject.subscribe(() => {
+        this.characterState.dead = false;
+        this.deathSubscriber?.unsubscribe();
+      });
+      this.forceRebirth = false;
+      if (this.characterState.immortal) {
+        this.logService.log(LogTopic.EVENT, 'You are born anew, still an immortal but with the fresh vigor of youth.');
+      } else {
+        this.logService.log(
+          LogTopic.EVENT,
+          'Congratulations! The cycle of reincarnation has brought you back into the world. You have been born again. You are certain that lucky life number ' +
+            this.characterState.totalLives +
+            ' will be the one.'
+        );
+        this.logService.log(
+          LogTopic.EVENT,
+          "It takes you a few years to grow up and remember your purpose: to become an immortal. You're all grown up now, so get to it!"
+        );
+      }
+      return true;
+    }
+    return false;
   }
 
   formatAge(): string {

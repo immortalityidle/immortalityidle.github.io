@@ -291,17 +291,7 @@ export class ImpossibleTaskService {
     }
     this.activityService.reloadActivities();
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
-      this.battleService.addEnemy({
-        name: 'Death itself',
-        baseName: 'death',
-        health: 1e24,
-        maxHealth: 1e24,
-        accuracy: 0.99,
-        attack: 3e8,
-        defense: 3e8,
-        loot: [this.itemRepoService.items['immortality']],
-        unique: true,
-      });
+      this.battleService.addDeath();
     }
   }
 

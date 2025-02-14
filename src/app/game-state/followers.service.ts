@@ -283,7 +283,8 @@ export class FollowersService {
         if (this.hellService?.inHell) {
           totalPower /= 10;
         }
-        this.battleService.tickCounter += totalPower;
+        this.battleService.trouble();
+        //this.battleService.tickCounter += totalPower;
       },
       description: 'Scouts help you track down and fight monsters faster.',
       totalPower: 0,
@@ -291,7 +292,8 @@ export class FollowersService {
     },
     damned: {
       work: daysElapsed => {
-        this.battleService.tickCounter += this.jobs['damned'].totalPower * daysElapsed;
+        //this.battleService.tickCounter += this.jobs['damned'].totalPower * daysElapsed;
+        this.battleService.trouble();
       },
       description:
         'Damned are souls working off karmic debt in hell that hav decided to join you. Having this follower seems to enrage the demons around you.',

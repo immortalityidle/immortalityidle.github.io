@@ -192,6 +192,7 @@ export class AchievementService {
           this.gameStateService = this.injector.get(GameStateService);
         }
         this.gameStateService?.unlockPanel('battlePanel');
+        this.gameStateService.addLayoutPanel('battlePanel', 68, 15, 30, 40);
       },
       unlocked: false,
     },

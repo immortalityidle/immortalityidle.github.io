@@ -196,6 +196,14 @@ export class HellService {
           defense: 10,
           defeatEffect: 'respawnDouble',
           loot: [],
+          techniques: [
+            {
+              name: 'Attack',
+              ticks: 0,
+              ticksRequired: 10,
+              baseDamage: 10,
+            },
+          ],
         });
       },
     ],
@@ -406,6 +414,14 @@ export class HellService {
             attack: 1e6,
             defense: 1e6,
             loot: [this.itemRepoService.items['iceCore']],
+            techniques: [
+              {
+                name: 'Attack',
+                ticks: 0,
+                ticksRequired: 10,
+                baseDamage: 1e6,
+              },
+            ],
           });
         }
       },
@@ -440,6 +456,14 @@ export class HellService {
             attack: 1e6,
             defense: 1e6,
             loot: [this.itemRepoService.items['fireCore']],
+            techniques: [
+              {
+                name: 'Attack',
+                ticks: 0,
+                ticksRequired: 10,
+                baseDamage: 1e6,
+              },
+            ],
           });
         }
       },
@@ -863,6 +887,14 @@ export class HellService {
         attack: 1e6 + 1e4 * hellProgress,
         defense: 1e8 + 1e7 * hellProgress,
         loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), 'corruption')],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e6 + 1e4 * hellProgress,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
@@ -877,6 +909,14 @@ export class HellService {
           this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), 'corruption'),
           this.itemRepoService.items['fingers'],
         ],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e6 + 1e4 * hellProgress,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
@@ -888,6 +928,14 @@ export class HellService {
         attack: 1e6,
         defense: 1e6,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e6,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Mirrors) {
       this.battleService.addEnemy({
@@ -899,6 +947,14 @@ export class HellService {
         attack: this.characterService.characterState.attackPower,
         defense: this.characterService.characterState.defense,
         loot: [this.itemRepoService.items['mirrorShard']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: this.characterService.characterState.attackPower,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
@@ -910,6 +966,14 @@ export class HellService {
         attack: 1e6,
         defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e6,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.CattlePit) {
       if (this.animalsHealed <= 1000000) {
@@ -923,6 +987,14 @@ export class HellService {
             attack: 1e6,
             defense: 1e8,
             loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+            techniques: [
+              {
+                name: 'Attack',
+                ticks: 0,
+                ticksRequired: 10,
+                baseDamage: 1e6,
+              },
+            ],
           });
         }
       }
@@ -938,6 +1010,14 @@ export class HellService {
         attackEffect: 'feeder',
         hitTracker: 0,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e6,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
@@ -949,6 +1029,14 @@ export class HellService {
         attack: 1e6,
         defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e6,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
@@ -960,6 +1048,14 @@ export class HellService {
         attack: 1e6,
         defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e6,
+          },
+        ],
       });
     }
   }
@@ -976,6 +1072,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTongueRippers']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Scissors) {
       this.battleService.addEnemy({
@@ -987,6 +1091,14 @@ export class HellService {
         attack: 1e11,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownScissors']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e11,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.TreesOfKnives) {
       this.battleService.addEnemy({
@@ -998,6 +1110,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTreesOfKnives']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Mirrors) {
       this.battleService.addEnemy({
@@ -1009,6 +1129,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMirrors']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Steamers) {
       this.battleService.addEnemy({
@@ -1020,6 +1148,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSteamers']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.CopperPillars) {
       this.battleService.addEnemy({
@@ -1031,6 +1167,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownPillars']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.MountainOfKnives) {
       this.battleService.addEnemy({
@@ -1042,6 +1186,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfKnives']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.MountainOfIce) {
       this.battleService.addEnemy({
@@ -1053,6 +1205,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfIce']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({
@@ -1064,6 +1224,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCauldronsOfOil']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.CattlePit) {
       this.battleService.addEnemy({
@@ -1075,6 +1243,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCattlePit']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.CrushingBoulder) {
       this.battleService.addEnemy({
@@ -1086,6 +1262,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCrushingBoulder']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.MortarsAndPestles) {
       this.battleService.addEnemy({
@@ -1097,6 +1281,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMortarsAndPestles']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.BloodPool) {
       this.battleService.addEnemy({
@@ -1108,6 +1300,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownBloodPool']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.WrongfulDead) {
       this.battleService.addEnemy({
@@ -1119,6 +1319,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownWrongfulDead']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Dismemberment) {
       this.battleService.addEnemy({
@@ -1130,6 +1338,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownDismemberment']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.MountainOfFire) {
       this.battleService.addEnemy({
@@ -1141,6 +1357,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownFireMountain']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Mills) {
       this.battleService.addEnemy({
@@ -1152,6 +1376,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMills']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     } else if (this.currentHell === HellLevel.Saws) {
       this.battleService.addEnemy({
@@ -1163,6 +1395,14 @@ export class HellService {
         attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSaws']],
+        techniques: [
+          {
+            name: 'Attack',
+            ticks: 0,
+            ticksRequired: 10,
+            baseDamage: 1e10,
+          },
+        ],
       });
     }
   }
@@ -1330,6 +1570,14 @@ export class HellService {
                 attack: 1e14,
                 defense: 1e18,
                 loot: [this.itemRepoService.items['portalKey']],
+                techniques: [
+                  {
+                    name: 'Attack',
+                    ticks: 0,
+                    ticksRequired: 10,
+                    baseDamage: 1e14,
+                  },
+                ],
               });
               this.battleService.addEnemy({
                 name: 'Horse Face',
@@ -1340,6 +1588,14 @@ export class HellService {
                 attack: 5e13,
                 defense: 5e17,
                 loot: [],
+                techniques: [
+                  {
+                    name: 'Attack',
+                    ticks: 0,
+                    ticksRequired: 10,
+                    baseDamage: 5e13,
+                  },
+                ],
               });
               this.battleService.addEnemy({
                 name: 'Ox Head',
@@ -1350,6 +1606,14 @@ export class HellService {
                 attack: 5e13,
                 defense: 5e17,
                 loot: [],
+                techniques: [
+                  {
+                    name: 'Attack',
+                    ticks: 0,
+                    ticksRequired: 10,
+                    baseDamage: 5e13,
+                  },
+                ],
               });
             }
           },
@@ -1843,6 +2107,14 @@ export class HellService {
             attack: 100,
             defense: 100,
             loot: [],
+            techniques: [
+              {
+                name: 'Attack',
+                ticks: 0,
+                ticksRequired: 10,
+                baseDamage: 100,
+              },
+            ],
           });
         }
       },

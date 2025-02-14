@@ -211,7 +211,7 @@ export class ActivityService {
       this.trainingPetsDays = 0;
     });
 
-    mainLoopService.tickSubject.subscribe(() => {
+    mainLoopService.activityTickSubject.subscribe(() => {
       if (this.activityLoop.length === 0 && !this.immediateActivity) {
         this.mainLoopService.pause = true;
         return;
@@ -1535,16 +1535,7 @@ export class ActivityService {
               "You don't even have your own kingdom? What were you thinking? The nearby rulers send their forces against you."
             );
             for (let i = 0; i < 3; i++) {
-              this.battleService.addEnemy({
-                name: 'an angry army',
-                baseName: 'army',
-                health: 2e11,
-                maxHealth: 2e11,
-                accuracy: 0.9,
-                attack: 1e7,
-                defense: 1e7,
-                loot: [],
-              });
+              this.battleService.addArmy();
             }
             return;
           }
@@ -1555,16 +1546,7 @@ export class ActivityService {
               LogTopic.EVENT,
               "You don't have enough food to feed your army, so they revolt and fight you instead."
             );
-            this.battleService.addEnemy({
-              name: 'an angry army',
-              baseName: 'army',
-              health: 2e11,
-              maxHealth: 2e11,
-              accuracy: 0.9,
-              attack: 1e7,
-              defense: 1e7,
-              loot: [],
-            });
+            this.battleService.addArmy();
             if (this.pauseOnImpossibleFail) {
               this.mainLoopService.pause = true;
             }
@@ -1575,16 +1557,7 @@ export class ActivityService {
               LogTopic.EVENT,
               "You don't have enough money to pay your army, so they revolt and fight you instead."
             );
-            this.battleService.addEnemy({
-              name: 'an angry army',
-              baseName: 'army',
-              health: 2e11,
-              maxHealth: 2e11,
-              accuracy: 0.9,
-              attack: 1e7,
-              defense: 1e7,
-              loot: [],
-            });
+            this.battleService.addArmy();
             if (this.pauseOnImpossibleFail) {
               this.mainLoopService.pause = true;
             }
@@ -1618,16 +1591,7 @@ export class ActivityService {
           );
           if (value < 1) {
             for (let i = 0; i < 5; i++) {
-              this.battleService.addEnemy({
-                name: 'an angry army',
-                baseName: 'army',
-                health: 2e11,
-                maxHealth: 2e11,
-                accuracy: 0.9,
-                attack: 1e7,
-                defense: 1e7,
-                loot: [],
-              });
+              this.battleService.addArmy();
             }
             this.logService.log(
               LogTopic.EVENT,
@@ -2846,16 +2810,7 @@ export class ActivityService {
             );
           }
           if (Math.random() < 0.01 && this.battleService.enemies.length === 0) {
-            this.battleService.addEnemy({
-              name: 'a hungry wolf',
-              baseName: 'wolf',
-              health: 20,
-              maxHealth: 20,
-              accuracy: 0.5,
-              attack: 5,
-              defense: 5,
-              loot: [this.inventoryService.getHide()],
-            });
+            this.battleService.addWolf();
           }
           this.characterService.characterState.yang++;
         },
@@ -3384,21 +3339,21 @@ export class ActivityService {
 
     this.Taunting = {
       level: 0,
-      name: ['Taunting Enemies'],
+      name: ['Looking for Trouble'],
       imageBaseName: 'taunting',
       activityType: ActivityType.Taunting,
-      description: ['Rudely point at your enemies and call them out to battle.'],
-      consequenceDescription: ['Incites a fight with your current enemy this very night.'],
+      description: ['Go looking for an enemy and call them out to battle.'],
+      consequenceDescription: ['Incites a fight.'],
       consequence: [
         () => {
-          this.battleService.tickCounter = this.battleService.ticksPerFight;
+          this.battleService.trouble();
           this.characterService.characterState.yang++;
         },
       ],
       resourceUse: [{}],
       requirements: [
         {
-          strength: 1000,
+          strength: 10,
           toughness: 1000,
         },
       ],

@@ -253,46 +253,8 @@ export class InventoryService {
       this.itemStacks.push(this.getEmptyItemStack());
     }
 
-    mainLoopService.tickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead) {
-        return;
-      }
-      this.eatFood();
-      // use pouch items if needed
-      for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
-        const itemStack = this.characterService.characterState.itemPouches[i];
-        if (
-          itemStack.item?.type === 'healthRestore' &&
-          this.characterService.characterState.status.health.value <
-            this.characterService.characterState.status.health.max
-        ) {
-          const amountToHeal =
-            this.characterService.characterState.status.health.max -
-            this.characterService.characterState.status.health.value;
-          const restoreAmount = itemStack.item.restoreAmount || 1;
-          const numberToUse = Math.ceil(amountToHeal / restoreAmount);
-          if (itemStack.quantity > numberToUse) {
-            this.characterService.characterState.status.health.value =
-              this.characterService.characterState.status.health.max;
-            itemStack.quantity -= numberToUse;
-          } else {
-            this.characterService.characterState.status.health.value += restoreAmount * itemStack.quantity;
-            this.characterService.characterState.itemPouches[i] = this.getEmptyItemStack();
-          }
-        }
-      }
-
-      if (this.mergeCounter >= 20) {
-        if (this.autoWeaponMergeUnlocked) {
-          this.autoWeaponMerge();
-        }
-        if (this.autoArmorMergeUnlocked) {
-          this.autoArmorMerge();
-        }
-        this.mergeCounter = 0;
-      } else {
-        this.mergeCounter++;
-      }
+    mainLoopService.inventoryTickSubject.subscribe(() => {
+      this.tick();
     });
     mainLoopService.longTickSubject.subscribe(() => {
       //if autoequip is unlocked, but automerge isn't, equip best
@@ -337,6 +299,48 @@ export class InventoryService {
     reincarnationService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+  }
+
+  tick() {
+    if (this.characterService.characterState.dead) {
+      return;
+    }
+    this.eatFood();
+    // use pouch items if needed
+    for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
+      const itemStack = this.characterService.characterState.itemPouches[i];
+      if (
+        itemStack.item?.type === 'healthRestore' &&
+        this.characterService.characterState.status.health.value <
+          this.characterService.characterState.status.health.max
+      ) {
+        const amountToHeal =
+          this.characterService.characterState.status.health.max -
+          this.characterService.characterState.status.health.value;
+        const restoreAmount = itemStack.item.restoreAmount || 1;
+        const numberToUse = Math.ceil(amountToHeal / restoreAmount);
+        if (itemStack.quantity > numberToUse) {
+          this.characterService.characterState.status.health.value =
+            this.characterService.characterState.status.health.max;
+          itemStack.quantity -= numberToUse;
+        } else {
+          this.characterService.characterState.status.health.value += restoreAmount * itemStack.quantity;
+          this.characterService.characterState.itemPouches[i] = this.getEmptyItemStack();
+        }
+      }
+    }
+
+    if (this.mergeCounter >= 20) {
+      if (this.autoWeaponMergeUnlocked) {
+        this.autoWeaponMerge();
+      }
+      if (this.autoArmorMergeUnlocked) {
+        this.autoArmorMerge();
+      }
+      this.mergeCounter = 0;
+    } else {
+      this.mergeCounter++;
+    }
   }
 
   getProperties(): InventoryProperties {

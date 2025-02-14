@@ -75,10 +75,10 @@ export class GameStateService {
   panels: Panel[] = [
     {
       id: 'timePanel',
-      name: 'Time',
+      name: 'Schedule',
       icon: 'calendar_month',
       panelHelp:
-        "Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose how to schedule your days to take care of your basic needs and develop your immortal potential. Click the schedule button on activities or drag them here to put them on your schedule. When you allow time to move forward, you will perform each activity in your schedule in the order it is listed. You can move scheduled activities around or repeat activities over multiple days. Don't forget to schedule some rest too! You'll need to take a break now and then in your journey toward immortality.",
+        'Choose activities to add to your schedule by dragging and dropping them here or pressing the calendar button on activities. When you allow time to move forward, you will perform each activity in your schedule in the order it is listed. You can move scheduled activities around or repeat activities over multiple days.',
       unlocked: false,
     },
     {
@@ -110,7 +110,7 @@ export class GameStateService {
       name: 'Activities',
       icon: 'self_improvement',
       panelHelp:
-        "Choose activities to add to your schedule. At first you'll only know how to do a few things, but as you develop your attributes more options will become available.",
+        "Click an activity to spend a day doing it. Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose your activities to take care of your basic needs and develop your immortal potential. At first you'll only know how to do a few things, but as you develop your attributes, more options will become available. Don't forget to schedule some rest too! You'll need to take a break now and then in your journey toward immortality.",
       unlocked: true,
     },
     {
@@ -219,7 +219,7 @@ export class GameStateService {
         id: 'activityPanel',
         x: 30,
         y: 15,
-        w: 68,
+        w: 38,
         h: 40,
       },
       {
@@ -258,7 +258,7 @@ export class GameStateService {
     this.updateAllPanelsUsed();
   }
 
-  addLayoutPanel(newPanelId = '') {
+  addLayoutPanel(newPanelId = '', x = 0, y = 0, w = 30, h = 20) {
     const newLayout = JSON.parse(JSON.stringify(this.layout));
     let panelId = newPanelId;
     if (newPanelId === '') {
@@ -271,10 +271,10 @@ export class GameStateService {
     }
     newLayout.push({
       id: panelId,
-      x: 0,
-      y: 0,
-      w: 30,
-      h: 20,
+      x: x,
+      y: y,
+      w: w,
+      h: h,
     });
     this.layout = newLayout;
     this.updateAllPanelsUsed();
