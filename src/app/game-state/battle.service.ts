@@ -13,25 +13,16 @@ export interface Enemy {
   baseName: string;
   health: number;
   maxHealth: number;
-  accuracy: number;
-  attack: number;
   defense: number;
   loot: Item[];
   unique?: boolean;
   defeatEffect?: string;
-  attackEffect?: string;
-  hitTracker?: number;
   techniques: Technique[];
 }
 
-export interface EnemyStack {
-  enemy: Enemy;
-  quantity: number;
-}
-
 export interface BattleProperties {
-  enemies: EnemyStack[];
-  currentEnemy: EnemyStack | null;
+  enemies: Enemy[];
+  currentEnemy: Enemy | null;
   kills: number;
   troubleKills: number;
   godSlayerKills: number;
@@ -63,6 +54,7 @@ export interface Technique {
   ticks: number;
   ticksRequired: number;
   baseDamage: number;
+  hitTracker?: number;
   effect?: string;
 }
 
@@ -72,8 +64,8 @@ export interface Technique {
 export class BattleService {
   bigNumberPipe: BigNumberPipe;
   hellService?: HellService;
-  enemies: EnemyStack[];
-  currentEnemy: EnemyStack | null;
+  enemies: Enemy[];
+  currentEnemy: Enemy | null;
   kills: number;
   troubleKills: number;
   godSlayerKills: number;
@@ -219,10 +211,7 @@ export class BattleService {
     this.totalEnemies = properties.totalEnemies || 0;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
-        if (
-          enemy.enemy.name === properties.currentEnemy?.enemy.name &&
-          enemy.quantity === properties.currentEnemy.quantity
-        ) {
+        if (enemy.name === properties.currentEnemy?.name) {
           this.currentEnemy = enemy;
         }
       }
@@ -230,116 +219,92 @@ export class BattleService {
   }
 
   handleEnemyTechniques() {
+    for (const enemy of this.enemies) {
+      for (const technique of enemy.techniques) {
+        if (technique.ticks === technique.ticksRequired) {
+          this.enemyAttack(technique);
+          technique.ticks = 0;
+        } else {
+          technique.ticks++;
+        }
+      }
+    }
+  }
+
+  enemyAttack(technique: Technique) {
     if (this.skipEnemyAttack > 0) {
       this.skipEnemyAttack--;
       return;
     }
     let toughnessIncrease = 0;
-    for (const enemyStack of this.enemies) {
-      for (let i = 0; i < enemyStack.quantity; i++) {
-        if (Math.random() < enemyStack.enemy.accuracy) {
-          let damage = enemyStack.enemy.attack;
-          const defense = this.characterService.characterState.defense;
-          // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
-          if (defense >= 1) {
-            damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
-          }
-          //Keep mice scary
-          if (damage < 0.3) {
-            damage = 0.3;
-          }
-          if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10) {
-            damage /= 2;
-            this.characterService.characterState.status.mana.value -= 10;
-          }
-          let damageBack = false;
-          if (this.enableFireShield && this.characterService.characterState.status.mana.value > 10000) {
-            let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
-            if (fireDivisor < 1) {
-              fireDivisor = 1;
-            }
-            if (fireDivisor > 10) {
-              fireDivisor = 10;
-            }
-            damage /= fireDivisor;
-            this.characterService.characterState.status.mana.value -= 10000;
-            damageBack = true;
-          }
-          if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000) {
-            let waterDivisor =
-              Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
-            if (waterDivisor < 1) {
-              waterDivisor = 1;
-            }
-            if (waterDivisor > 10) {
-              waterDivisor = 10;
-            }
-            damage /= waterDivisor;
-            this.characterService.characterState.status.mana.value -= 10000;
-            this.skipEnemyAttack++;
-          }
-          // reduce damage by up to half
-          // TODO: tune this
-          damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
-          this.logService.injury(
-            LogTopic.COMBAT,
-            'Ow! ' + enemyStack.enemy.name + ' hit you for ' + this.bigNumberPipe.transform(damage) + ' damage'
-          );
-          if (damageBack) {
-            this.damageEnemy(
-              damage,
-              'The flames of your shield strike back, damaging the enemy for ' + damage + ' damage.'
-            );
-          }
-          if (damage > this.highestDamageTaken) {
-            this.highestDamageTaken = damage;
-          }
-          this.characterService.characterState.status.health.value -= damage;
-          toughnessIncrease += 0.01;
-          this.attackEffect(enemyStack.enemy);
-          // degrade armor
-          const degradables = [];
-          if (this.characterService.characterState.equipment.head) {
-            degradables.push(this.characterService.characterState.equipment.head);
-          }
-          if (this.characterService.characterState.equipment.body) {
-            degradables.push(this.characterService.characterState.equipment.body);
-          }
-          if (this.characterService.characterState.equipment.legs) {
-            degradables.push(this.characterService.characterState.equipment.legs);
-          }
-          if (this.characterService.characterState.equipment.feet) {
-            degradables.push(this.characterService.characterState.equipment.feet);
-          }
-          if (degradables.length > 0) {
-            this.degradeArmor(degradables[Math.floor(Math.random() * degradables.length)], damage);
-          }
-
-          if (this.characterService.characterState.status.health.value <= 0) {
-            if (enemyStack.enemy.name === 'Death itself') {
-              this.logService.injury(
-                LogTopic.EVENT,
-                enemyStack.enemy.name +
-                  ' overkilled you by ' +
-                  Math.floor(-this.characterService.characterState.status.health.value) +
-                  ' damage. You were defeated.'
-              );
-            } else {
-              this.logService.injury(LogTopic.EVENT, 'You were defeated by ' + enemyStack.enemy.name);
-            }
-            if (!this.characterService.characterState.immortal) {
-              this.characterService.characterState.dead = true;
-            }
-            if (this.hellService?.inHell) {
-              this.hellService.beaten = true;
-              this.clearEnemies();
-            }
-            return;
-          }
-        } else {
-          this.logService.log(LogTopic.COMBAT, 'Miss! ' + enemyStack.enemy.name + ' tries to hit you but fails.');
-        }
+    let damage = technique.baseDamage;
+    const defense = this.characterService.characterState.defense;
+    // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
+    if (defense >= 1) {
+      damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
+    }
+    //Keep mice scary
+    if (damage < 0.3) {
+      damage = 0.3;
+    }
+    if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10) {
+      damage /= 2;
+      this.characterService.characterState.status.mana.value -= 10;
+    }
+    let damageBack = false;
+    if (this.enableFireShield && this.characterService.characterState.status.mana.value > 10000) {
+      let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
+      if (fireDivisor < 1) {
+        fireDivisor = 1;
       }
+      if (fireDivisor > 10) {
+        fireDivisor = 10;
+      }
+      damage /= fireDivisor;
+      this.characterService.characterState.status.mana.value -= 10000;
+      damageBack = true;
+    }
+    if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000) {
+      let waterDivisor = Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
+      if (waterDivisor < 1) {
+        waterDivisor = 1;
+      }
+      if (waterDivisor > 10) {
+        waterDivisor = 10;
+      }
+      damage /= waterDivisor;
+      this.characterService.characterState.status.mana.value -= 10000;
+      this.skipEnemyAttack++;
+    }
+    // reduce damage by up to half
+    // TODO: tune this
+    damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
+    this.logService.injury(LogTopic.COMBAT, 'Ow! You got hit for ' + this.bigNumberPipe.transform(damage) + ' damage');
+    if (damageBack) {
+      this.damageEnemy(damage, 'The flames of your shield strike back, damaging the enemy for ' + damage + ' damage.');
+    }
+    if (damage > this.highestDamageTaken) {
+      this.highestDamageTaken = damage;
+    }
+    this.characterService.characterState.status.health.value -= damage;
+    toughnessIncrease += 0.01;
+    this.attackEffect(technique);
+    // degrade armor
+    const degradables = [];
+    if (this.characterService.characterState.equipment.head) {
+      degradables.push(this.characterService.characterState.equipment.head);
+    }
+    if (this.characterService.characterState.equipment.body) {
+      degradables.push(this.characterService.characterState.equipment.body);
+    }
+    if (this.characterService.characterState.equipment.legs) {
+      degradables.push(this.characterService.characterState.equipment.legs);
+    }
+    if (this.characterService.characterState.equipment.feet) {
+      degradables.push(this.characterService.characterState.equipment.feet);
+    }
+    if (degradables.length > 0) {
+      this.degradeArmor(degradables[Math.floor(Math.random() * degradables.length)], damage);
     }
     this.characterService.characterState.increaseAttribute('toughness', toughnessIncrease);
   }
@@ -347,7 +312,7 @@ export class BattleService {
   handleYourTechniques() {
     for (const technique of this.techniques) {
       if (technique.ticks === technique.ticksRequired) {
-        this.youAttack(technique.baseDamage);
+        this.youAttack(technique);
         technique.ticks = 0;
       } else {
         technique.ticks++;
@@ -355,20 +320,10 @@ export class BattleService {
     }
   }
 
-  youAttack(baseDamage: number) {
-    this.characterService.characterState.accuracy = Math.min(
-      Math.sqrt(this.characterService.characterState.attributes.speed.value),
-      1
-    );
+  youAttack(technique: Technique) {
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
-      // Check health for immortals
-      if (Math.random() > this.characterService.characterState.accuracy) {
-        this.logService.log(LogTopic.COMBAT, 'You attack ' + this.currentEnemy.enemy.name + ' but miss.');
-        return;
-      }
-
-      let damage = this.characterService.characterState.attackPower * baseDamage;
-      const defense = this.currentEnemy.enemy.defense;
+      let damage = this.characterService.characterState.attackPower * technique.baseDamage;
+      const defense = this.currentEnemy.defense;
       if (defense >= 1) {
         damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
       }
@@ -539,21 +494,21 @@ export class BattleService {
     if (!this.currentEnemy) {
       return 0;
     }
-    const enemyHealth = this.currentEnemy.enemy.health;
-    this.currentEnemy.enemy.health = Math.floor(this.currentEnemy.enemy.health - damage);
+    const enemyHealth = this.currentEnemy.health;
+    this.currentEnemy.health = Math.floor(this.currentEnemy.health - damage);
     if (customMessage === '') {
       customMessage =
-        'You attack ' + this.currentEnemy.enemy.name + ' for ' + this.bigNumberPipe.transform(damage) + ' damage';
+        'You attack ' + this.currentEnemy.name + ' for ' + this.bigNumberPipe.transform(damage) + ' damage';
     }
     damage -= enemyHealth;
-    if (this.currentEnemy.enemy.health <= 0) {
+    if (this.currentEnemy.health <= 0) {
       this.kills++;
       this.totalKills++;
-      this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.currentEnemy.enemy.name);
-      if (this.currentEnemy.enemy.name === 'Death itself') {
+      this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.currentEnemy.name);
+      if (this.currentEnemy.name === 'Death itself') {
         this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
       }
-      for (const item of this.currentEnemy.enemy.loot) {
+      for (const item of this.currentEnemy.loot) {
         const lootItem = this.itemRepoService.getItemById(item.id);
         if (lootItem) {
           this.inventoryService.addItem(lootItem);
@@ -562,15 +517,10 @@ export class BattleService {
           this.inventoryService.addItem(item);
         }
       }
-      this.currentEnemy.quantity--;
-      this.defeatEffect(this.currentEnemy.enemy);
-      if (this.currentEnemy.quantity <= 0) {
-        const index = this.enemies.indexOf(this.currentEnemy);
-        this.enemies.splice(index, 1);
-        this.currentEnemy = null;
-      } else {
-        this.currentEnemy.enemy.health = this.currentEnemy.enemy.maxHealth;
-      }
+      this.defeatEffect(this.currentEnemy);
+      const index = this.enemies.indexOf(this.currentEnemy);
+      this.enemies.splice(index, 1);
+      this.currentEnemy = null;
       return (damage - enemyHealth) / 2; // return half the damage left over
     } else {
       this.logService.log(LogTopic.COMBAT, customMessage);
@@ -578,24 +528,15 @@ export class BattleService {
     }
   }
 
-  fight(enemyStack: EnemyStack) {
-    this.currentEnemy = enemyStack;
+  fight(enemy: Enemy) {
+    this.currentEnemy = enemy;
   }
 
   addEnemy(enemy: Enemy) {
     this.totalEnemies++;
-    this.logService.log(LogTopic.COMBAT, 'A new enemy comes along to trouble your sleep: ' + enemy.name);
-    for (const enemyIterator of this.enemies) {
-      if (enemyIterator.enemy.name === enemy.name) {
-        // it matches an existing enemy, add it to the stack and bail out
-        if (!enemy.unique) {
-          enemyIterator.quantity++;
-        }
-        return;
-      }
-    }
+    this.logService.log(LogTopic.COMBAT, 'A new enemy comes to battle: ' + enemy.name);
     // it didn't match any, create a new enemyStack
-    this.enemies.push({ enemy: enemy, quantity: 1 });
+    this.enemies.push(enemy);
     if (this.currentEnemy === null) {
       this.currentEnemy = this.enemies[0];
     }
@@ -661,8 +602,6 @@ export class BattleService {
       baseName: monsterBaseName,
       health: health,
       maxHealth: health,
-      accuracy: 0.5,
-      attack: attack,
       defense: defense,
       loot: [gem],
       techniques: [
@@ -678,12 +617,10 @@ export class BattleService {
 
   addMouse() {
     this.addEnemy({
-      name: 'a pesky mouse',
+      name: 'a gang of pesky mice',
       baseName: 'mouse',
       health: 5,
       maxHealth: 5,
-      accuracy: 0.15,
-      attack: 2,
       defense: 0,
       loot: [],
       techniques: [
@@ -691,7 +628,27 @@ export class BattleService {
           name: 'Attack',
           ticks: 0,
           ticksRequired: 10,
-          baseDamage: 2,
+          baseDamage: 10,
+        },
+      ],
+    });
+  }
+
+  addTroublemaker() {
+    this.addEnemy({
+      name: 'a troublemaker',
+      baseName: 'troublemaker',
+      health: 2,
+      maxHealth: 2,
+      defense: 0,
+      loot: [],
+      techniques: [
+        {
+          name: 'Mugging',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 1,
+          effect: 'theft',
         },
       ],
     });
@@ -703,8 +660,6 @@ export class BattleService {
       baseName: 'wolf',
       health: 20,
       maxHealth: 20,
-      accuracy: 0.5,
-      attack: 5,
       defense: 5,
       loot: [this.inventoryService.getHide()],
       techniques: [
@@ -712,7 +667,7 @@ export class BattleService {
           name: 'Attack',
           ticks: 0,
           ticksRequired: 10,
-          baseDamage: 5,
+          baseDamage: 3,
         },
       ],
     });
@@ -724,8 +679,6 @@ export class BattleService {
       baseName: 'army',
       health: 2e11,
       maxHealth: 2e11,
-      accuracy: 0.9,
-      attack: 1e7,
       defense: 1e7,
       loot: [],
       techniques: [
@@ -745,8 +698,6 @@ export class BattleService {
       baseName: 'death',
       health: 1e24,
       maxHealth: 1e24,
-      accuracy: 0.99,
-      attack: 3e8,
       defense: 3e8,
       loot: [this.itemRepoService.items['immortality']],
       unique: true,
@@ -811,8 +762,6 @@ export class BattleService {
         baseName: enemy.baseName,
         health: enemy.maxHealth,
         maxHealth: enemy.maxHealth,
-        accuracy: enemy.accuracy,
-        attack: enemy.attack,
         defense: enemy.defense,
         defeatEffect: enemy.defeatEffect,
         loot: enemy.loot,
@@ -823,8 +772,6 @@ export class BattleService {
         baseName: enemy.baseName,
         health: enemy.maxHealth,
         maxHealth: enemy.maxHealth,
-        accuracy: enemy.accuracy,
-        attack: enemy.attack,
         defense: enemy.defense,
         defeatEffect: enemy.defeatEffect,
         loot: enemy.loot,
@@ -833,13 +780,13 @@ export class BattleService {
     }
   }
 
-  attackEffect(enemy: Enemy) {
-    if (!enemy.attackEffect) {
+  attackEffect(technique: Technique) {
+    if (!technique.effect) {
       return;
     }
-    if (enemy.attackEffect === 'feeder' && this.hellService) {
-      if (enemy.hitTracker !== undefined && enemy.hitTracker < 2) {
-        enemy.hitTracker++;
+    if (technique.effect === 'feeder' && this.hellService) {
+      if (technique.hitTracker !== undefined && technique.hitTracker < 2) {
+        technique.hitTracker++;
       } else {
         // force feed on third hit
         this.hellService.daysFasted = 0;
@@ -850,6 +797,8 @@ export class BattleService {
         );
         this.characterService.characterState.status.health.value -= damage;
       }
+    } else if (technique.effect === 'theft') {
+      this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
     }
   }
 
@@ -878,7 +827,7 @@ export class BattleService {
     'crocodile',
     'incubus',
     'succubus',
-    'jackal', // need image
+    'jackal',
     'basilisk',
     'mogwai',
     'ghoul',

@@ -65,8 +65,6 @@
       </div>
     </div>
     <div style="grid-area: stats;">
-      <span tabindex="0" matTooltip="Accuracy. Your chance to hit monsters when you attack them. Based on your speed."><mat-icon>manage_accounts</mat-icon>{{character.accuracy | percent}}</span>
-      <br/>
       <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
       <br/>
       <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>

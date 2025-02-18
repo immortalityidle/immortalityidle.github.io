@@ -42,41 +42,36 @@
       <div class="splitDiv">
         <div class="headerDiv">Your Enemies</div>
         <hr>
-        @if (battleService.currentEnemy?.enemy?.baseName) {
+        @if (imageFile) {
           <div>
             <img class="monsterImage" src="{{imageFile}}" alt="A Monster!" width="80" height="100"/>
           </div>
         }
-        @for (enemyStack of battleService.enemies; track enemyStack.enemy.name + enemyStack.quantity) {
+        @for (enemy of battleService.enemies; track enemy) {
           <div>
-              @if (battleService.currentEnemy !== enemyStack) {
-                <button (click)="battleService.fight(enemyStack)">Fight</button>
+              @if (battleService.currentEnemy !== enemy) {
+                <button (click)="battleService.fight(enemy)">Fight</button>
               }
               @else {
                 <span>Fighting </span>
               }
-            <span class="enemyName">{{enemyStack.enemy.name | titlecase}} {{(enemyStack.quantity > 1) ? "(x" + enemyStack.quantity +")" : ""}}</span>
+            <span class="enemyName">{{enemy.name | titlecase}}</span>
           </div>
           <div class="health">
             <div class="progress-bar"
-              [attr.value]="Math.floor(enemyStack.enemy.health) | bigNumber"
-              [attr.max]="Math.floor(enemyStack.enemy.maxHealth) | bigNumber">
+              [attr.value]="Math.floor(enemy.health) | bigNumber"
+              [attr.max]="Math.floor(enemy.maxHealth) | bigNumber">
               <span
                 [style.width.%]="100 *
-                  Math.floor(enemyStack.enemy.health) /
-                  Math.floor(enemyStack.enemy.maxHealth)">
+                  Math.floor(enemy.health) /
+                  Math.floor(enemy.maxHealth)">
               </span>
             </div>
           </div>
           <div>
-            <span matTooltip="Accuracy"><mat-icon>manage_accounts</mat-icon>{{enemyStack.enemy.accuracy | percent}}</span>
-            <span matTooltip="Attack Power"><mat-icon>flare</mat-icon>{{enemyStack.enemy.attack | bigNumber}}</span>
-            <span matTooltip="Defense"><mat-icon>shield</mat-icon>{{enemyStack.enemy.defense | bigNumber}}</span>
+            <span matTooltip="Defense"><mat-icon>shield</mat-icon>{{enemy.defense | bigNumber}}</span>
           </div>
         }
-
-      
-
       </div>
     </div>
   </div>

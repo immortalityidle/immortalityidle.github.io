@@ -97,6 +97,7 @@ export class AchievementService {
           this.gameStateService = this.injector.get(GameStateService);
         }
         this.gameStateService?.unlockPanel('homePanel');
+        this.gameStateService.addLayoutPanel('homePanel', 68, 15, 30, 20);
       },
       unlocked: false,
     },
@@ -192,7 +193,7 @@ export class AchievementService {
           this.gameStateService = this.injector.get(GameStateService);
         }
         this.gameStateService?.unlockPanel('battlePanel');
-        this.gameStateService.addLayoutPanel('battlePanel', 68, 15, 30, 40);
+        this.gameStateService.addLayoutPanel('battlePanel', 68, 35, 30, 20);
       },
       unlocked: false,
     },
@@ -1112,20 +1113,22 @@ export class AchievementService {
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {
+    if (!this.gameStateService) {
+      this.gameStateService = this.injector.get(GameStateService);
+    }
     if (newAchievement) {
       this.unlockedAchievements.push(achievement.name);
       this.logService.log(LogTopic.STORY, achievement.description);
       // check if gameStateService is injected yet, if not, inject it (circular dependency issues)
-      if (!this.gameStateService) {
-        this.gameStateService = this.injector.get(GameStateService);
-      }
-      this.gameStateService.savetoLocalStorage();
       this.characterService.toast(
         'Achievement Unlocked: ' + (achievement.displayName ? achievement.displayName : achievement.name)
       );
     }
     achievement.effect();
     achievement.unlocked = true;
+    if (newAchievement) {
+      this.gameStateService?.savetoLocalStorage();
+    }
   }
 
   getProperties(): AchievementProperties {

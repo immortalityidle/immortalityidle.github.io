@@ -151,7 +151,7 @@ export class HomeService {
           this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
         }
         */
-        if (this.mouseCounter > 30) {
+        if (this.mouseCounter > 100) {
           this.battleService.addMouse();
           this.mouseCounter = 0;
         } else {
@@ -165,7 +165,7 @@ export class HomeService {
       name: 'Tent of Your Own',
       type: HomeType.OwnTent,
       description:
-        'A decent tent pitched on your own bit of land. The occasional mouse or ruffian might give you trouble. Automatically restores 1 stamina and a bit of health each night.',
+        'A decent tent pitched on your own bit of land. The occasional ruffian might give you trouble. Automatically restores 1 stamina and a bit of health each night.',
       cost: 100,
       costPerDay: 1,
       landRequired: 1,
@@ -176,18 +176,12 @@ export class HomeService {
         this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 1;
         this.characterService.characterState.checkOverage();
-        /*
-        if (Math.random() < 0.03) {
+        if (this.mouseCounter > 150) {
           this.logService.injury(
             LogTopic.EVENT,
-            'Some troublemakers stole some money while you were sleeping. It might be time to get some walls.'
+            'Your increased wealth has attracted a troublemaker looking to steal your money.'
           );
-          this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
-        }
-          */
-        if (this.mouseCounter > 60) {
-          this.battleService.addMouse();
-          this.mouseCounter = 0;
+          this.battleService.addTroublemaker();
         } else {
           this.mouseCounter++;
         }

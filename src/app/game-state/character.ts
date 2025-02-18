@@ -165,7 +165,6 @@ export class Character {
   bloodlineCost = 1000;
   bloodlineRank = 0;
   manaUnlocked = false;
-  accuracy = 1;
   attackPower = 0;
   defense = 0;
   healthBonusFood = 0;

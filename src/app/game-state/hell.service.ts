@@ -191,8 +191,6 @@ export class HellService {
           baseName: 'troublemaker',
           health: 100,
           maxHealth: 100,
-          accuracy: 0.5,
-          attack: 10,
           defense: 10,
           defeatEffect: 'respawnDouble',
           loot: [],
@@ -410,8 +408,6 @@ export class HellService {
             baseName: 'icegolem',
             health: 1e15,
             maxHealth: 1e15,
-            accuracy: 0.7,
-            attack: 1e6,
             defense: 1e6,
             loot: [this.itemRepoService.items['iceCore']],
             techniques: [
@@ -452,8 +448,6 @@ export class HellService {
             baseName: 'lavagolem',
             health: 1e15,
             maxHealth: 1e15,
-            accuracy: 0.7,
-            attack: 1e6,
             defense: 1e6,
             loot: [this.itemRepoService.items['fireCore']],
             techniques: [
@@ -883,8 +877,6 @@ export class HellService {
         baseName: 'tongueripper',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
-        accuracy: 0.5,
-        attack: 1e6 + 1e4 * hellProgress,
         defense: 1e8 + 1e7 * hellProgress,
         loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), 'corruption')],
         techniques: [
@@ -902,8 +894,6 @@ export class HellService {
         baseName: 'scissorsdemon',
         health: 1e15 + 1e14 * hellProgress,
         maxHealth: 1e15 + 1e14 * hellProgress,
-        accuracy: 0.5,
-        attack: 1e6 + 1e4 * hellProgress,
         defense: 1e8 + 1e7 * hellProgress,
         loot: [
           this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), 'corruption'),
@@ -924,8 +914,6 @@ export class HellService {
         baseName: 'crow',
         health: 1e6,
         maxHealth: 1e6,
-        accuracy: 1,
-        attack: 1e6,
         defense: 1e6,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
         techniques: [
@@ -943,8 +931,6 @@ export class HellService {
         baseName: 'mirror',
         health: this.characterService.characterState.status.health.value,
         maxHealth: this.characterService.characterState.status.health.value,
-        accuracy: this.characterService.characterState.accuracy,
-        attack: this.characterService.characterState.attackPower,
         defense: this.characterService.characterState.defense,
         loot: [this.itemRepoService.items['mirrorShard']],
         techniques: [
@@ -962,8 +948,6 @@ export class HellService {
         baseName: 'oileddemon',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
-        accuracy: 1,
-        attack: 1e6,
         defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
         techniques: [
@@ -983,8 +967,6 @@ export class HellService {
             baseName: 'demoniccow',
             health: 1e20 + 1e19 * hellProgress,
             maxHealth: 1e20 + 1e19 * hellProgress,
-            accuracy: 1,
-            attack: 1e6,
             defense: 1e8,
             loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
             techniques: [
@@ -1004,18 +986,16 @@ export class HellService {
         baseName: 'forcefeeder',
         health: 1e6,
         maxHealth: 1e6,
-        accuracy: 1,
-        attack: 1e6,
         defense: 1e6,
-        attackEffect: 'feeder',
-        hitTracker: 0,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Force Feeding',
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6,
+            effect: 'feeder',
+            hitTracker: 0,
           },
         ],
       });
@@ -1025,8 +1005,6 @@ export class HellService {
         baseName: 'axedemon',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
-        accuracy: 1,
-        attack: 1e6,
         defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
         techniques: [
@@ -1044,8 +1022,6 @@ export class HellService {
         baseName: 'sawdemon',
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
-        accuracy: 1,
-        attack: 1e6,
         defense: 1e8,
         loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
         techniques: [
@@ -1068,8 +1044,6 @@ export class HellService {
         baseName: 'Gorbolash',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTongueRippers']],
         techniques: [
@@ -1087,8 +1061,6 @@ export class HellService {
         baseName: 'Malgorath',
         health: 1e27,
         maxHealth: 1e27,
-        accuracy: 0.8,
-        attack: 1e11,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownScissors']],
         techniques: [
@@ -1106,8 +1078,6 @@ export class HellService {
         baseName: 'Flamgolus',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTreesOfKnives']],
         techniques: [
@@ -1125,8 +1095,6 @@ export class HellService {
         baseName: 'Myorshuggath',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMirrors']],
         techniques: [
@@ -1144,8 +1112,6 @@ export class HellService {
         baseName: 'Stactolus',
         health: 1e27,
         maxHealth: 1e27,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSteamers']],
         techniques: [
@@ -1163,8 +1129,6 @@ export class HellService {
         baseName: 'Ignificor',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownPillars']],
         techniques: [
@@ -1182,8 +1146,6 @@ export class HellService {
         baseName: 'Malignus',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfKnives']],
         techniques: [
@@ -1201,8 +1163,6 @@ export class HellService {
         baseName: 'Cheat',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfIce']],
         techniques: [
@@ -1220,8 +1180,6 @@ export class HellService {
         baseName: 'Nestor',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCauldronsOfOil']],
         techniques: [
@@ -1239,8 +1197,6 @@ export class HellService {
         baseName: 'CowEmperor',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCattlePit']],
         techniques: [
@@ -1258,8 +1214,6 @@ export class HellService {
         baseName: 'Crusher',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCrushingBoulder']],
         techniques: [
@@ -1277,8 +1231,6 @@ export class HellService {
         baseName: 'Glorbulskath',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMortarsAndPestles']],
         techniques: [
@@ -1296,8 +1248,6 @@ export class HellService {
         baseName: 'Gnarlyathor',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownBloodPool']],
         techniques: [
@@ -1315,8 +1265,6 @@ export class HellService {
         baseName: 'Azoth-Raketh',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownWrongfulDead']],
         techniques: [
@@ -1334,8 +1282,6 @@ export class HellService {
         baseName: 'Druskall',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownDismemberment']],
         techniques: [
@@ -1353,8 +1299,6 @@ export class HellService {
         baseName: 'Magmar',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownFireMountain']],
         techniques: [
@@ -1372,8 +1316,6 @@ export class HellService {
         baseName: 'Grimstone',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMills']],
         techniques: [
@@ -1391,8 +1333,6 @@ export class HellService {
         baseName: 'Crognaslark',
         health: 1e30,
         maxHealth: 1e30,
-        accuracy: 0.8,
-        attack: 1e10,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSaws']],
         techniques: [
@@ -1566,8 +1506,6 @@ export class HellService {
                 baseName: 'Yama',
                 health: 1e40,
                 maxHealth: 1e40,
-                accuracy: 0.8,
-                attack: 1e14,
                 defense: 1e18,
                 loot: [this.itemRepoService.items['portalKey']],
                 techniques: [
@@ -1584,8 +1522,6 @@ export class HellService {
                 baseName: 'HorseFace',
                 health: 1e39,
                 maxHealth: 1e39,
-                accuracy: 0.8,
-                attack: 5e13,
                 defense: 5e17,
                 loot: [],
                 techniques: [
@@ -1602,8 +1538,6 @@ export class HellService {
                 baseName: 'OxHead',
                 health: 1e39,
                 maxHealth: 1e39,
-                accuracy: 0.8,
-                attack: 5e13,
                 defense: 5e17,
                 loot: [],
                 techniques: [
@@ -1841,21 +1775,13 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
       hint: 'There so many troublemakers here that deserve some payback from you. I wonder if you can take them all on.',
       progress: () => {
-        let totalEnemies = 0;
-        for (const enemyStack of this.battleService.enemies) {
-          totalEnemies += enemyStack.quantity;
-        }
-        return totalEnemies;
+        return this.battleService.enemies.length;
       },
       progressMax: () => {
         return 100;
       },
       successCheck: () => {
-        let totalEnemies = 0;
-        for (const enemyStack of this.battleService.enemies) {
-          totalEnemies += enemyStack.quantity;
-        }
-        return totalEnemies > 100; // tune this
+        return this.battleService.enemies.length > 100; // tune this
       },
     },
     {
@@ -2103,8 +2029,6 @@ export class HellService {
             baseName: 'imp',
             health: 10,
             maxHealth: 10,
-            accuracy: 1,
-            attack: 100,
             defense: 100,
             loot: [],
             techniques: [
