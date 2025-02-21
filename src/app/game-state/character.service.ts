@@ -219,19 +219,19 @@ export class CharacterService {
         ' would be extended by';
     }
     if (this.characterState.foodLifespan > 0) {
-      tooltip += '\nHealthy Food: ' + this.yearify(this.characterState.foodLifespan);
+      tooltip += '<br>Healthy Food: ' + this.yearify(this.characterState.foodLifespan);
     }
     if (this.characterState.alchemyLifespan > 0) {
-      tooltip += '\nAlchemy: ' + this.yearify(this.characterState.alchemyLifespan);
+      tooltip += '<br>Alchemy: ' + this.yearify(this.characterState.alchemyLifespan);
     }
     if (this.characterState.statLifespan > 0) {
-      tooltip += '\nBasic Attributes: ' + this.yearify(this.characterState.statLifespan);
+      tooltip += '<br>Basic Attributes: ' + this.yearify(this.characterState.statLifespan);
     }
     if (this.characterState.spiritualityLifespan > 0) {
-      tooltip += '\nSpirituality: ' + this.yearify(this.characterState.spiritualityLifespan);
+      tooltip += '<br>Spirituality: ' + this.yearify(this.characterState.spiritualityLifespan);
     }
     if (this.characterState.magicLifespan > 0) {
-      tooltip += '\nMagic: ' + this.yearify(this.characterState.magicLifespan);
+      tooltip += '<br>Magic: ' + this.yearify(this.characterState.magicLifespan);
     }
     this.lifespanTooltip = tooltip;
   }

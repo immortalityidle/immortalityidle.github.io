@@ -87,9 +87,7 @@ export class AchievementService {
         'You earned your first few taels by working hard. Maybe you should invest in some land and a better home.',
       hint: 'Make some money.',
       check: () => {
-        return (
-          this.characterService.characterState.money >= 350 || this.homeService.homeValue !== HomeType.SquatterTent
-        );
+        return this.characterService.characterState.money >= 100;
       },
       effect: () => {
         this.homeService.homeUnlocked = true;

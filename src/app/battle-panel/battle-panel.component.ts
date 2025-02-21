@@ -13,7 +13,6 @@ import { MainLoopService } from '../game-state/main-loop.service';
 })
 export class BattlePanelComponent {
   Math: Math;
-  imageFile: string = '';
 
   constructor(
     public battleService: BattleService,
@@ -24,13 +23,6 @@ export class BattlePanelComponent {
   ) {
     this.Math = Math;
     // only update the picture for the enemy every long tick for performance
-    this.mainLoopService.longTickSubject.subscribe(() => {
-      if (this.battleService.currentEnemy) {
-        this.imageFile = 'assets/images/monsters/' + this.battleService.currentEnemy.baseName + '.png';
-      } else {
-        this.imageFile = '';
-      }
-    });
   }
 
   autoTroubleChange(event: Event): void {

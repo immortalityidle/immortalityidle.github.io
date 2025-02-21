@@ -1,9 +1,12 @@
 <div class="homeContainer">
   <h3 >
-    <div matTooltip="{{homeService.home.description}}" [ngClass]="{'hellDisabled': hellService.inHell}">
+    <div [ngClass]="{'hellDisabled': hellService.inHell}">
       You live in a {{homeService.home.name}}
     </div>
   </h3>
+  <div class="homeInfo">
+    <span>{{homeService.home.description}}</span>
+  </div>
   @if ((!hellService.inHell || homeService.hellHome || homeService.hellFood)) {
     <div class="homeContainer">
       <div class="overflow">
@@ -15,41 +18,36 @@
               @for (slot of homeService.home.furnitureSlots; track slot) {
                 <div>
                   @if (!homeService.furniture[slot]) {
-                    <div class="itemSlot" matTooltip="You don't own a {{slot}}, but your home could hold one."></div>
+                    <div class="itemSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
                   }
                   @if (homeService.furniture[slot]) {
-                    <div class="itemSlot textOverflow" matTooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
+                    <div class="itemSlot textOverflow" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
                   }
                 </div>
               }
-            </div>
-          }
-          @if (homeService.home.furnitureSlots.length === 0) {
-            <div class="furnitureSlots">
-              <span class="mouseWarning">Tent living is rough. All these pesky mice could become a real problem. You might want to buy some land and get a better home.</span>
             </div>
           }
         </div>
         <div class="buttons">
           @if (!hellService.inHell || homeService.hellHome) {
             <div class="button-group">
-              <mat-icon  (click)="buyClicked($event)" matTooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton" aria-label="Buy Land" aria-hidden="false">
+              <mat-icon  (click)="buyClicked($event)" tooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels. Shift-click to buy 10 plots, Ctrl-click to buy half the land you can afford." class="iconButton" aria-label="Buy Land" aria-hidden="false">
                 add
               </mat-icon>
               @if ((homeService.home.name !== homeService.nextHome.name)) {
                 <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton" aria-label="Upgrade Home" aria-hidden="false"
-                  matTooltip="{{homeService.nextHome.upgradeToTooltip}}">
+                  tooltip="{{homeService.nextHome.upgradeToTooltip}}">
                   add_business
                 </mat-icon>
               }
               @if (homeService.home.furnitureSlots.length) {
                 <mat-icon class="iconButton" aria-label="Buy Furniture" aria-hidden="false"
-                  matTooltip="Buy Furniture" (click)="storeClicked()">
+                  tooltip="Buy Furniture" (click)="storeClicked()">
                   shopping_cart
                 </mat-icon>
               }
               @if (homeService.upgrading) {
-                <div class="progress-bar" style="height:20px;" matTooltip="Upgrading your home."
+                <div class="progress-bar" style="height:20px;" tooltip="Upgrading your home."
                   [attr.value]=buildTimeYears()>
                   <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
                 </div>
@@ -59,9 +57,9 @@
           }
           @if (!hellService.inHell || homeService.hellFood) {
             <div class="button-group">
-              <mat-icon matTooltip="View your farm." class="iconButton" (click)="farmClicked()" aria-label="View Farm" aria-hidden="false">grass</mat-icon>
+              <mat-icon tooltip="View your farm." class="iconButton" (click)="farmClicked()" aria-label="View Farm" aria-hidden="false">grass</mat-icon>
               <mat-icon  (click)="plowClicked($event)" class="iconButton" aria-label="Plow Field" aria-hidden="false"
-                matTooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
+                tooltip="Plow a field. Converts a plot of land to a field. You'll need to work at farming it to make it produce much food. Once the harvest is over, you will get the food you've grown and the land will be available again. Shift-click to plow 10 fields, Ctrl-click to plow all your land.">
                 waves
               </mat-icon>
             </div>

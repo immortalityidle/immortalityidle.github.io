@@ -9,7 +9,7 @@
       </span>
     }
     @if (!hellService.inHell) {
-      <span matTooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
+      <span tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
     }
     @if (impossibleTaskService.activeTaskIndex >= 0) {
       <span>
@@ -55,14 +55,14 @@
             cdkDrag [cdkDragDisabled]="!activity.unlocked" [cdkDragData]="activity.activityType"
             (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
             (click)="doActivity(activity)" >
-            <div class="activityLabel" matTooltip="{{getActivityTooltip(activity, true)}}" >
+            <div class="activityLabel" tooltip="{{getActivityTooltip(activity, true)}}" >
               <span>{{activity.name[activity.level]}}</span>
             </div>
             <div class="activityButtons">
               <span>
                 @if (mainLoopService.timeUnlocked) {
                   <mat-icon class="iconButton" (click)="scheduleActivity(activity, $event)"
-                    (contextmenu)="rightClick(activity, $event)" matTooltip="{{getActivityTooltip(activity)}}"
+                    (contextmenu)="rightClick(activity, $event)" tooltip="{{getActivityTooltip(activity)}}"
                     aria-label="Schedule this activity" aria-hidden="false">
                     event
                   </mat-icon>
@@ -71,19 +71,19 @@
               <span class='floatRight'>
                 @if (activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)) {
                   <mat-icon
-                    matTooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life."
+                    tooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life."
                     aria-label="Requires an apprenticeship" aria-hidden="false">
                     model_training
                   </mat-icon>
                 }
                 @if (activity.lastIncome && activity.lastIncome > 0) {
-                  <mat-icon matTooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels."
+                  <mat-icon tooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels."
                     aria-label="Earns money" aria-hidden="false">
                     attach_money
                   </mat-icon>
                 }
                 <mat-icon class="iconButton" (click)="showActivity($event, activity)"
-                  matTooltip="What is this activity? Click to learn all about it!"
+                  tooltip="What is this activity? Click to learn all about it!"
                   aria-label="Help" aria-hidden="false">
                   help
                 </mat-icon>

@@ -4,7 +4,7 @@
       @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
         @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
           <div class='attributeLine'
-            matTooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your gains by {{attribute.value.aptitudeMult | bigNumber}}.">
+            tooltip="{{attribute.value.description}} Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your gains by {{attribute.value.aptitudeMult | bigNumber}}.">
             <mat-icon>{{attribute.value.icon}}</mat-icon>
             <span>
               {{attribute.key | camelToTitle}}:

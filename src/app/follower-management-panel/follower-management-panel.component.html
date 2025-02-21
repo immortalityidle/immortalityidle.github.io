@@ -9,7 +9,7 @@
       <button (click)="dismissAllClicked()">Dismiss All {{followerType}}s</button>
     </span>
   </div>
-  <div class="topInfo"><span matTooltip="Set a number to change all of the limits to.">Set limit on all to <input min="0" max="1000" value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> {{followerType}}(s). <button (click)="changeAllClicked()">Change All</button></span></div>
+  <div class="topInfo"><span tooltip="Set a number to change all of the limits to.">Set limit on all to <input min="0" max="1000" value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> {{followerType}}(s). <button (click)="changeAllClicked()">Change All</button></span></div>
   <div class="topInfo">
     <span>
       Sort followers by
@@ -32,7 +32,7 @@
             <tr >
               <td>{{job.key | camelToTitle}}</td>
               <td>{{job.value.description}}</td>
-              <td matTooltip="This value will only apply to new {{followerType}}s. You'll have to dismiss current {{followerType}}s yourself.">Keep up to <input min="0" max="1000" value="{{maxFollowerByType[job.key] === undefined ? 1000 : maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
+              <td tooltip="This value will only apply to new {{followerType}}s. You'll have to dismiss current {{followerType}}s yourself.">Keep up to <input min="0" max="1000" value="{{maxFollowerByType[job.key] === undefined ? 1000 : maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
             </tr>
           }
         }

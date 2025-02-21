@@ -327,12 +327,12 @@ export class Character {
     },
     nourishment: {
       description:
-        'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food you will automatically spend your money on a bowl of rice each day.',
-      value: 7,
-      max: 14,
+        'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend your money on a bowl of rice each day.',
+      value: 30,
+      max: 30,
     },
   };
-  money = 300;
+  money = 0;
   stashedMoney = 0;
   hellMoney = 0;
   // age in days

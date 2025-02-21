@@ -188,7 +188,7 @@ export class HellService {
         this.characterService.characterState.status.stamina.value -= 100;
         this.battleService.addEnemy({
           name: 'Troublemaker',
-          baseName: 'troublemaker',
+          baseName: 'deadtroublemaker',
           health: 100,
           maxHealth: 100,
           defense: 10,

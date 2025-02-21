@@ -200,22 +200,22 @@ export class ActivityPanelComponent {
       } else {
         let projectionString = '';
         if (this.characterService.characterState.manaUnlocked) {
-          projectionString = '\nRight-click to set this as your spriritual projection activity';
+          projectionString = '<br>Right-click to set this as your spriritual projection activity';
         }
         return (
-          'Add this activity to your schedule\n\nShift- or Ctrl-click to repeat it 10x\nShift-Ctrl-click to repeat it 100x\nAlt-click to add it to the top' +
+          'Add this activity to your schedule<br>Shift- or Ctrl-click to repeat it 10x<br>Shift-Ctrl-click to repeat it 100x<br>Alt-click to add it to the top' +
           projectionString
         );
       }
     } else {
       return [
-        'This activity is locked until you have the attributes required for it. You will need:\n',
+        'This activity is locked until you have the attributes required for it. You will need:<br>',
         ...Object.entries(activity.requirements[0]).map(entry =>
           entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
         ),
       ]
         .filter(line => line)
-        .join('\n');
+        .join('<br>');
     }
   }
 

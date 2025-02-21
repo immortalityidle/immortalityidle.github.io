@@ -7,7 +7,7 @@
         <div>
           <div class="itemSlot" (click)="slotClicked(item)" tabindex="0"
             [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
-            matTooltip="{{item.description}}">
+            tooltip="{{item.description}}">
             <div><mat-icon>menu_book</mat-icon></div>
             <div>{{item.name | titlecase}}</div>
             @if (item.owned && !(item.owned())) {

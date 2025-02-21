@@ -13,7 +13,7 @@
           <td>
             @if (impossibleTaskService.nextTask >= task.taskType) {
               <span>
-                <mat-icon matTooltip="{{task.description}}">
+                <mat-icon tooltip="{{task.description}}">
                   help
                 </mat-icon>
                 {{task.name}}

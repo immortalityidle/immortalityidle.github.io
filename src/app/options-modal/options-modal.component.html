@@ -6,7 +6,7 @@
         <span class="tab-label">Game</span>
       </ng-template>
       <div class="optionField">
-        <span matTooltip="This game is much too hard and takes much too long to play to the end. Click this to make it easier and allow you to rush through the game.
+        <span tooltip="This game is much too hard and takes much too long to play to the end. Click this to make it easier and allow you to rush through the game.
           Be warned: you will forever be known as a cultivator who took the easy path to immortality.">
           <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)">
           <label for="easyMode" >Easy Mode</label>
@@ -54,18 +54,18 @@
         </span>
       </div>
       <div class="optionField">
-        <span matTooltip="Enable background music (this allows the game to run in the background more efficiently).">
+        <span tooltip="Enable background music (this allows the game to run in the background more efficiently).">
           <input type="checkbox" id="backgroundMusic" [checked]="mainLoopService.playMusic" (change)="playMusicChange($event)">
           <label for="backgroundMusic" >Background Music (also improves background play) - <a href="/assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3" download>Rising Sun Beat by Shaolin Dub</a> (<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons License</a>)</label>
         </span>
       </div>
       <div class="optionField">
-        <button matTooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">
+        <button tooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">
           Reincarnate
         </button>
       </div>
       <div class="optionField">
-        <button matTooltip="Click to save your game now.
+        <button tooltip="Click to save your game now.
           Shift-click for save options.
           Ctrl-shift-click to load backup save."
           (click)="saveClicked($event)">
@@ -91,7 +91,7 @@
         </div>
       </div>
       <div class="optionField">
-        <button matTooltip="Completely restart your journey toward immortality." class="warning" (click)="hardResetClicked($event)">Hard Reset</button>
+        <button tooltip="Completely restart your journey toward immortality." class="warning" (click)="hardResetClicked($event)">Hard Reset</button>
       </div>
     </mat-tab>
     @if (homeService.autoBuyLandUnlocked || homeService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked) {

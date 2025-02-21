@@ -3,12 +3,12 @@
     @if (battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
       battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked) {
       <span>
-        <mat-icon  (click)="battleOptions()" matTooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">
+        <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">
           settings
         </mat-icon>
       </span>
     }
-    <span class="rightAligned" matTooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
+    <span class="rightAligned" tooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
       <!--
       @if (battleService.godSlayersUnlocked) {
         <input  type="checkbox" (change)="godSlayersEnableChange($event)"
@@ -42,11 +42,6 @@
       <div class="splitDiv">
         <div class="headerDiv">Your Enemies</div>
         <hr>
-        @if (imageFile) {
-          <div>
-            <img class="monsterImage" src="{{imageFile}}" alt="A Monster!" width="80" height="100"/>
-          </div>
-        }
         @for (enemy of battleService.enemies; track enemy) {
           <div>
               @if (battleService.currentEnemy !== enemy) {
@@ -57,19 +52,46 @@
               }
             <span class="enemyName">{{enemy.name | titlecase}}</span>
           </div>
-          <div class="health">
-            <div class="progress-bar"
-              [attr.value]="Math.floor(enemy.health) | bigNumber"
-              [attr.max]="Math.floor(enemy.maxHealth) | bigNumber">
-              <span
-                [style.width.%]="100 *
-                  Math.floor(enemy.health) /
-                  Math.floor(enemy.maxHealth)">
-              </span>
+          <div class="columnDiv">
+            <div class="splitDiv">
+              <div>
+                <span tooltip="Defense"><mat-icon>shield</mat-icon>{{enemy.defense | bigNumber}}</span>
+              </div>
+              <div class="health">
+                <div class="progress-bar"
+                  [attr.value]="Math.floor(enemy.health) | bigNumber"
+                  [attr.max]="Math.floor(enemy.maxHealth) | bigNumber">
+                  <span
+                    [style.width.%]="100 *
+                      Math.floor(enemy.health) /
+                      Math.floor(enemy.maxHealth)">
+                  </span>
+                </div>
+              </div>
+              @for (technique of enemy.techniques; track technique.name + technique.ticks) {
+                <div>
+                  <div>
+                    {{technique.name}}
+                  </div>
+                  <div class="technique-bar"
+                      [attr.value]="Math.floor(technique.ticks) | bigNumber"
+                      [attr.max]="Math.floor(technique.ticksRequired) | bigNumber">
+                      <span
+                        [style.width.%]="100 *
+                          Math.floor(technique.ticks) /
+                          Math.floor(technique.ticksRequired)">
+                      </span>
+                    </div>
+                </div>
+              }
             </div>
-          </div>
-          <div>
-            <span matTooltip="Defense"><mat-icon>shield</mat-icon>{{enemy.defense | bigNumber}}</span>
+            <div class="splitDiv">
+              @if (enemy.imageFile) {
+                <div>
+                  <img class="monsterImage" src="{{enemy.imageFile}}" alt="A Monster!" width="80" height="100"/>
+                </div>
+              }
+            </div>
           </div>
         }
       </div>

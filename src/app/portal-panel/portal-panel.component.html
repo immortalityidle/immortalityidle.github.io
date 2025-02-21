@@ -1,6 +1,6 @@
 <h3 class="portalsHeader">
   @if (hellService.inHell) {
-    <span matTooltip="{{activityService.activityHeaderDescription}}">Current Location: {{activityService.activityHeader}} </span>
+    <span tooltip="{{activityService.activityHeaderDescription}}">Current Location: {{activityService.activityHeader}} </span>
   }
 </h3>
 <div class="portalsContainer">
@@ -11,13 +11,13 @@
           <div class="activitySlot" [ngClass]="{'lockedActivity': !activity.unlocked}"
             [tabindex]="0"
             (click)="doActivity(activity)" >
-            <div class="activityLabel" matTooltip="Take this portal" >
+            <div class="activityLabel" tooltip="Take this portal" >
               <span>{{activity.name[activity.level]}}</span>
             </div>
             <div class="activityButtons">
               <span class='floatRight'>
                 <mat-icon class="iconButton" (click)="showActivity($event, activity)"
-                  matTooltip="What is this activity? Click to learn all about it!"
+                  tooltip="What is this activity? Click to learn all about it!"
                   aria-label="Help" aria-hidden="false">
                   help
                 </mat-icon>

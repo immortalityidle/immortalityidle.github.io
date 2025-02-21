@@ -7,7 +7,7 @@
         <div>
           @if (achievement.unlocked) {
             <div class="itemSlot" tabindex="0"
-              matTooltip="{{achievement.description}}">
+              tooltip="{{achievement.description}}">
               @if (achievement.displayName) {
                 <div>{{achievement.displayName}}</div>
               }
@@ -17,7 +17,7 @@
             </div>
           }
           @else {
-            <div class="itemSlot" matTooltip="{{achievement.hint}}">
+            <div class="itemSlot" tooltip="{{achievement.hint}}">
               ?
             </div>
           }

@@ -20,6 +20,7 @@ export interface Log {
 export interface LogProperties {
   logTopics: Uppercase<LogTopic>[];
   storyLog: Log[];
+  startingStoryLogEntries: string[];
 }
 
 export enum LogTopic {
@@ -57,23 +58,36 @@ export class LogService {
 
   currentLog: Log[] = [];
 
+  startingStoryLogEntries = [
+    'Once in a very long while, a soul emerges from the chaos that is destined for immortality.',
+    'You are such a soul.',
+    'Your journey to immortality begins as a humble youth leaves home to experience the world.',
+    'Choose the activities that will help you cultivate the attributes of an immortal.',
+    'Be careful, the world can be a dangerous place.',
+    'It may take you many reincarnations before you achieve your goals.',
+    'With each new life you will rise with greater aptitudes that allow you to learn and grow faster.',
+    'Destiny cannot be denied.',
+    'One day, you will be immortal!',
+  ];
+  longTickCounter = 0;
+
   constructor(mainLoopService: MainLoopService) {
     mainLoopService.frameSubject.subscribe(() => {
       this.updateLogTopics();
     });
-    this.log(
-      LogTopic.STORY,
-      'Once in a very long while, a soul emerges from the chaos that is destined for immortality. You are such a soul.'
-    );
-    this.log(
-      LogTopic.STORY,
-      'Your journey to immortality begins as a humble youth leaves home to experience the world. Choose the activities that will help you cultivate the attributes of an immortal.'
-    );
-    this.log(
-      LogTopic.STORY,
-      'It may take you many reincarnations before you achieve your goals, but with each new life you will rise with greater aptitudes that allow you to learn and grow faster.'
-    );
-    this.log(LogTopic.STORY, 'Be careful, the world can be a dangerous place.');
+
+    mainLoopService.longTickSubject.subscribe(() => {
+      if (this.startingStoryLogEntries.length > 0) {
+        if (this.longTickCounter > 10) {
+          this.longTickCounter = 0;
+        } else {
+          this.longTickCounter++;
+          return;
+        }
+        this.log(LogTopic.STORY, this.startingStoryLogEntries[0]);
+        this.startingStoryLogEntries.splice(0, 1);
+      }
+    });
   }
 
   log(topic: LogTopic, message: string): void {
@@ -118,20 +132,16 @@ export class LogService {
         .map(entry => entry[0] as LogTopic)
         .map(topic => topic.toUpperCase() as Uppercase<LogTopic>),
       storyLog: this.logs[LogTopic.STORY],
+      startingStoryLogEntries: this.startingStoryLogEntries,
     };
   }
 
   setProperties(properties: LogProperties) {
     this.logs[LogTopic.STORY] = properties.storyLog || [];
-
-    if (properties.logTopics) {
-      properties.logTopics.forEach(topic => {
-        this.topicProperties[LogTopic[topic]].enabled = true;
-      });
-    } else {
-      this.topicProperties[LogTopic.STORY].enabled = true;
-      this.topicProperties[LogTopic.EVENT].enabled = true;
-    }
+    properties.logTopics.forEach(topic => {
+      this.topicProperties[LogTopic[topic]].enabled = true;
+    });
+    this.startingStoryLogEntries = properties.startingStoryLogEntries;
 
     this.updateLogTopics();
   }

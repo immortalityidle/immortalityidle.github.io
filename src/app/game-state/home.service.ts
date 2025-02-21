@@ -135,22 +135,13 @@ export class HomeService {
       name: 'Squatter Tent',
       type: HomeType.SquatterTent,
       description:
-        'A dirty tent pitched in an unused field. Costs nothing, but you get what you pay for. The mice around here are pretty nasty and you might get robbed by bandits.',
+        'A dirty tent pitched in an unused field. Costs nothing, but you get what you pay for. The mice around here are pretty nasty, so you should really buy some land and get a safer place to stay.',
       cost: 0,
       costPerDay: 0,
       landRequired: 0,
       maxInventory: 10,
       upgradeToTooltip: 'Get a better house.',
       consequence: () => {
-        /*
-        if (Math.random() < 0.05) {
-          this.logService.injury(
-            LogTopic.EVENT,
-            'Some troublemakers stole some money while you were sleeping. It might be time to get some walls.'
-          );
-          this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
-        }
-        */
         if (this.mouseCounter > 100) {
           this.battleService.addMouse();
           this.mouseCounter = 0;
@@ -182,6 +173,7 @@ export class HomeService {
             'Your increased wealth has attracted a troublemaker looking to steal your money.'
           );
           this.battleService.addTroublemaker();
+          this.mouseCounter = 0;
         } else {
           this.mouseCounter++;
         }

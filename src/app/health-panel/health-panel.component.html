@@ -1,7 +1,7 @@
 <div class="healthContainer">
   <div class="yinYang"
-    matTooltip="Yang: {{characterService.characterState.yang | bigNumber}}
-    Yin: {{characterService.characterState.yin | bigNumber}}
+    tooltip="Yang: {{characterService.characterState.yang | bigNumber}}<br>
+    Yin: {{characterService.characterState.yin | bigNumber}}<br>
     Your balance is {{balanceString}}.">
     <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 1250 1250" [style.fill]="yinColor">
       <defs>
@@ -27,16 +27,16 @@
       </div>
       <div class="statusCell">
         @if (characterService.characterState.immortal) {
-            You expect to live forever.
+            <span>You expect to live forever.</span>
         }
         @else {
-            You expect to live {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.
+          <span>You expect to live {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.</span>
         }
-        <mat-icon matTooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
+        <mat-icon tooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
       </div>
     </div>
     <div class="statusRow">
-      <div class="statusCell health" matTooltip="{{characterService.characterState.status.health.description}}">
+      <div class="statusCell health" tooltip="{{characterService.characterState.status.health.description}}">
         <span>Health</span>
         <div class="progress-bar" [ngClass]="flashHealth ? 'flash' : ''"
             [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) | bigNumber"
@@ -47,7 +47,7 @@
           </span>
         </div>
       </div>
-      <div class="statusCell stamina" matTooltip="{{characterService.characterState.status.stamina.description}}">
+      <div class="statusCell stamina" tooltip="{{characterService.characterState.status.stamina.description}}">
         <span>Stamina</span>
         <div class="progress-bar" [ngClass]="flashStamina ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.stamina.value < 0 ? 0 : characterService.characterState.status.stamina.value) | bigNumber"
@@ -59,7 +59,7 @@
         </div>
 
       </div>
-      <div class="statusCell nourishment" matTooltip="{{characterService.characterState.status.nourishment.description}}">
+      <div class="statusCell nourishment" tooltip="{{characterService.characterState.status.nourishment.description}}">
         <span>Nutrition</span>
         <div class="progress-bar" [ngClass]="flashNutrition ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.status.nourishment.value) | bigNumber"
@@ -71,7 +71,7 @@
           </span>
         </div>
       </div>
-      <div class="statusCell mana" matTooltip="{{characterService.characterState.status.mana.description}}">
+      <div class="statusCell mana" tooltip="{{characterService.characterState.status.mana.description}}">
         <span>Mana</span>
         <div class="progress-bar" [ngClass]="flashNutrition ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.status.mana.value) | bigNumber"
@@ -86,7 +86,7 @@
     </div>
   </div>
   <div class="flexColumn">
-    <div class="moneyLabelColumn">Wealth: </div>
+    <div class="moneyLabelColumn"><span>Wealth:</span></div>
     <div class="moneyContainer">
       <div class="moneyColumn">
         <div>
@@ -99,7 +99,7 @@
           }
         </div>
         @if (characterService.characterState.hellMoney > 0) {
-          <div matTooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
+          <div tooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
         }
         @if (homeService.land > 0) {
           <span>{{homeService.land | bigNumber}} {{homeService.land === 1 ? "Plot" : "Plots"}} of land</span>

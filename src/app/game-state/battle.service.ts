@@ -17,6 +17,7 @@ export interface Enemy {
   loot: Item[];
   unique?: boolean;
   defeatEffect?: string;
+  imageFile?: string;
   techniques: Technique[];
 }
 
@@ -136,6 +137,15 @@ export class BattleService {
       }
       if (this.characterService.checkForDeath()) {
         this.clearEnemies();
+      }
+    });
+
+    mainLoopService.longTickSubject.subscribe(() => {
+      // only update the picture files on each long tick for performance
+      for (const enemy of this.enemies) {
+        if (!enemy.imageFile) {
+          enemy.imageFile = 'assets/images/monsters/' + enemy.baseName + '.png';
+        }
       }
     });
 
@@ -617,18 +627,18 @@ export class BattleService {
 
   addMouse() {
     this.addEnemy({
-      name: 'a gang of pesky mice',
+      name: 'a gang of nasty mice',
       baseName: 'mouse',
-      health: 5,
-      maxHealth: 5,
+      health: 8,
+      maxHealth: 8,
       defense: 0,
       loot: [],
       techniques: [
         {
-          name: 'Attack',
+          name: 'Gnawing Swarm',
           ticks: 0,
-          ticksRequired: 10,
-          baseDamage: 10,
+          ticksRequired: 8,
+          baseDamage: 13,
         },
       ],
     });
@@ -638,15 +648,15 @@ export class BattleService {
     this.addEnemy({
       name: 'a troublemaker',
       baseName: 'troublemaker',
-      health: 2,
-      maxHealth: 2,
+      health: 20,
+      maxHealth: 20,
       defense: 0,
       loot: [],
       techniques: [
         {
           name: 'Mugging',
           ticks: 0,
-          ticksRequired: 10,
+          ticksRequired: 20,
           baseDamage: 1,
           effect: 'theft',
         },

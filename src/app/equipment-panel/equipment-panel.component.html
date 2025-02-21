@@ -4,7 +4,7 @@
       [cdkDragData]="character.equipment.head" [cdkDragDisabled]="!character.equipment.head"    
       (dblclick)="slotDoubleClicked('head', $event)" tabindex="0"
       id="equipmentSlothead"
-      matTooltip="{{(character.equipment.head !== null) ? (character.equipment.head.name | titlecase) + '. ' + (character.equipment.head.description) : ''}}">
+      tooltip="{{(character.equipment.head !== null) ? (character.equipment.head.name | titlecase) + '. ' + (character.equipment.head.description) : ''}}">
       @if (character.equipment.head?.imageFile){
         <div>
           <img src="assets/images/items/{{character.equipment.head?.imageFile}}.png" class="itemImage" 
@@ -21,7 +21,7 @@
       [cdkDragData]="character.equipment.rightHand" [cdkDragDisabled]="!character.equipment.rightHand"    
       (dblclick)="slotDoubleClicked('rightHand', $event)" tabindex="0"
       id="equipmentSlotrightHand"
-      matTooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand.name | titlecase) + '. ' + (character.equipment.rightHand.description) : ''}}">
+      tooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand.name | titlecase) + '. ' + (character.equipment.rightHand.description) : ''}}">
       @if (character.equipment.rightHand?.imageFile){
         <div>
           <img src="assets/images/items/{{character.equipment.rightHand?.imageFile}}.png" class="itemImage" 
@@ -37,7 +37,7 @@
       [cdkDragData]="character.equipment.body" [cdkDragDisabled]="!character.equipment.body"    
       (dblclick)="slotDoubleClicked('body', $event)" tabindex="0"
       id="equipmentSlotbody"
-      matTooltip="{{(character.equipment.body !== null) ? (character.equipment.body.name | titlecase) + '. ' + (character.equipment.body.description) : ''}}">
+      tooltip="{{(character.equipment.body !== null) ? (character.equipment.body.name | titlecase) + '. ' + (character.equipment.body.description) : ''}}">
       @if (character.equipment.body?.imageFile){
         <div>
           <img src="assets/images/items/{{character.equipment.body?.imageFile}}.png" class="itemImage" 
@@ -53,7 +53,7 @@
       [cdkDragData]="character.equipment.leftHand" [cdkDragDisabled]="!character.equipment.leftHand"    
       (dblclick)="slotDoubleClicked('leftHand', $event)" tabindex="0"
       id="equipmentSlotleftHand"
-      matTooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand.name | titlecase) + '. ' + (character.equipment.leftHand.description) : ''}}">
+      tooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand.name | titlecase) + '. ' + (character.equipment.leftHand.description) : ''}}">
       @if (character.equipment.leftHand?.imageFile){
         <div>
           <img src="assets/images/items/{{character.equipment.leftHand?.imageFile}}.png" class="itemImage" 
@@ -65,16 +65,16 @@
       </div>
     </div>
     <div style="grid-area: stats;">
-      <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
+      <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Attack Power. The damage you will do when you hit a monster. Based on your strength and weapons.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
       <br/>
-      <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" matTooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
+      <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Defense. Reduces damage when a monster hits you. Based on your toughness and armor.{{character.righteousWrathUnlocked ? ' Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
     </div>
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}" [ngClass]="getEffectClass('legs')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="character.equipment.legs" [cdkDragDisabled]="!character.equipment.legs"    
       (dblclick)="slotDoubleClicked('legs', $event)" tabindex="0"
       id="equipmentSlotlegs"
-      matTooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs.name | titlecase) + '. ' + (character.equipment.legs.description) : ''}}">
+      tooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs.name | titlecase) + '. ' + (character.equipment.legs.description) : ''}}">
       @if (character.equipment.legs?.imageFile){
         <div>
           <img src="assets/images/items/{{character.equipment.legs?.imageFile}}.png" class="itemImage" 
@@ -94,7 +94,7 @@
                 cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
                 [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
                 (dblclick)="pouchDoubleClicked($index, $event)"
-                matTooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '. ' + (itemStack?.item?.description) : ''}}">
+                tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '. ' + (itemStack?.item?.description) : ''}}">
                 <div class="itemName textOverflow">
                   @if (itemStack?.item?.imageFile){
                     <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" 
@@ -118,7 +118,7 @@
       [cdkDragData]="character.equipment.feet" [cdkDragDisabled]="!character.equipment.feet"    
       (dblclick)="slotDoubleClicked('feet', $event)" tabindex="0"
       id="equipmentSlotfeet"
-      matTooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet.name | titlecase) + '. ' + (character.equipment.feet.description) : ''}}">
+      tooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet.name | titlecase) + '. ' + (character.equipment.feet.description) : ''}}">
       @if (character.equipment.feet?.imageFile){
         <div>
           <img src="assets/images/items/{{character.equipment.feet?.imageFile}}.png" class="itemImage" 
