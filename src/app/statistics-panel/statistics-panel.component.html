@@ -3,6 +3,77 @@
   <h3>Statistics</h3>
   <hr/>
   <div class="statisticsDiv">
+    <br>
+    <br>
+    <span>This Life's Activities</span>
+    <br>
+    <table>
+      @for (activityType of activityService.lifeActivities | keyvalue: originalOrder; track activityType){
+      <tr>
+        <td>
+          Days of {{getActivityName(activityType.key) | camelToTitle}}
+        </td>
+        <td>
+          {{activityType.value}}
+        </td>
+      </tr>
+      }
+    </table>
+    <br>
+    <table>
+      <tr>
+        <td>
+          Enemies killed this life:
+        </td>
+        <td>
+          {{battleService.kills}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Items used:
+        </td>
+        <td>
+          {{inventoryService.lifetimeUsedItems}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Items sold:
+        </td>
+        <td>
+          {{inventoryService.lifetimeSoldItems}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Potions used:
+        </td>
+        <td>
+          {{inventoryService.lifetimePotionsUsed}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Pills used:
+        </td>
+        <td>
+          {{inventoryService.lifetimePillsUsed}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Gems sold:
+        </td>
+        <td>
+          {{inventoryService.lifetimeGemsSold}}
+        </td>
+      </tr>
+    </table>
+    <br>
+    <br>
+    <span>Across All Lives</span>
+    <br>
     <table>
       <tr>
         <td>
@@ -54,14 +125,6 @@
       </tr>
       <tr>
         <td>
-          Enemies killed this life:
-        </td>
-        <td>
-          {{battleService.kills}}
-        </td>
-      </tr>
-      <tr>
-        <td>
           Troubling monsters encountered:
         </td>
         <td>
@@ -106,46 +169,6 @@
         </td>
         <td>
           {{inventoryService.autoBalanceItems.length}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Items used:
-        </td>
-        <td>
-          {{inventoryService.lifetimeUsedItems}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Items sold:
-        </td>
-        <td>
-          {{inventoryService.lifetimeSoldItems}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Potions used:
-        </td>
-        <td>
-          {{inventoryService.lifetimePotionsUsed}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Pills used:
-        </td>
-        <td>
-          {{inventoryService.lifetimePillsUsed}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Gems sold:
-        </td>
-        <td>
-          {{inventoryService.lifetimeGemsSold}}
         </td>
       </tr>
       <tr>
@@ -288,10 +311,10 @@
       </tr>
       <tr>
         <td>
-          Highest mana:
+          Highest qi:
         </td>
         <td>
-          {{characterService.characterState.highestMana}}
+          {{characterService.characterState.highestQi}}
         </td>
       </tr>
       <tr>
@@ -332,22 +355,6 @@
         </td>
         <td>
           {{activityService.openApprenticeships}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Days spend doing odd jobs:
-        </td>
-        <td>
-          {{activityService.oddJobDays}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Days spent begging:
-        </td>
-        <td>
-          {{activityService.beggingDays}}
         </td>
       </tr>
       <tr>

@@ -71,15 +71,15 @@
           </span>
         </div>
       </div>
-      <div class="statusCell mana" tooltip="{{characterService.characterState.status.mana.description}}">
-        <span>Mana</span>
+      <div class="statusCell qi" tooltip="{{characterService.characterState.status.qi.description}}">
+        <span>Qi</span>
         <div class="progress-bar" [ngClass]="flashNutrition ? 'flash' : ''"
-          [attr.value]="Math.floor(characterService.characterState.status.mana.value) | bigNumber"
-          [attr.max]="Math.floor(characterService.characterState.status.mana.max) | bigNumber">
+          [attr.value]="Math.floor(characterService.characterState.status.qi.value) | bigNumber"
+          [attr.max]="Math.floor(characterService.characterState.status.qi.max) | bigNumber">
           <span
             [style.width.%]="100 *
-              Math.floor(characterService.characterState.status.mana.value) /
-              Math.floor(characterService.characterState.status.mana.max)">
+              Math.floor(characterService.characterState.status.qi.value) /
+              Math.floor(characterService.characterState.status.qi.max)">
           </span>
         </div>
       </div>

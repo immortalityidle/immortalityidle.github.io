@@ -84,7 +84,7 @@ export class AchievementService {
     {
       name: 'Big Earner',
       description:
-        'You earned your first few taels by working hard. Maybe you should invest in some land and a better home.',
+        'You earned your first few taels by working hard.<br>Maybe you should invest in some land and a better home.',
       hint: 'Make some money.',
       check: () => {
         return this.characterService.characterState.money >= 100;
@@ -227,7 +227,7 @@ export class AchievementService {
       name: 'Clang! Clang! Clang!',
       description:
         'You reached proficiency in blacksmithing and can now work as a Blacksmith without going through an apprenticeship (you still need the attributes for the Blacksmithing activity).',
-      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Blacksmithing);
       },
@@ -240,7 +240,7 @@ export class AchievementService {
       name: 'Bubble, Bubble',
       description:
         'You reached proficiency in alchemy and can now work as a Alchemist without going through an apprenticeship (you still need the attributes for the Alchemy activity).',
-      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Alchemy);
       },
@@ -253,7 +253,7 @@ export class AchievementService {
       name: 'Tanner',
       description:
         'You reached proficiency in leatherworking and can now work as a Leatherworker without going through an apprenticeship (you still need the attributes for the Leatherworking activity).',
-      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Leatherworking);
       },
@@ -266,7 +266,7 @@ export class AchievementService {
       name: 'Carpenter',
       description:
         'You reached proficiency in woodworking and can now work as a Woodworker without going through an apprenticeship (you still need the attributes for the Woodworking activity).',
-      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return this.activityService.completedApprenticeships.includes(ActivityType.Woodworking);
       },
@@ -291,7 +291,7 @@ export class AchievementService {
       name: 'Habitual User',
       displayName: 'Dope',
       description:
-        "You got every last drop you could out of those pills and now you feel nothing from them. At least they didn't kill you or do lasting harm, right?",
+        "You got every last drop you could out of those pills and now you feel nothing from them.<br>At least they didn't kill you or do lasting harm, right?",
       hint: 'D.A.R.E.',
       check: () => {
         return this.characterService.characterState.empowermentFactor >= 1953.65;
@@ -357,7 +357,7 @@ export class AchievementService {
       description:
         'You really love holding vast amounts of materials and unlocked the ' +
         this.itemRepoService.items['bestStorageManual'].name,
-      hint: "Just stop already, it's too much. Why would an aspiring immortal need this much?",
+      hint: "Just stop already, it's too much.<br>Why would an aspiring immortal need this much stuff?",
       check: () => {
         return this.inventoryService.maxStackSize >= 10000 && this.inventoryService.thrownAwayItems >= 1000000;
       },
@@ -470,7 +470,7 @@ export class AchievementService {
     {
       name: 'Junkie',
       description: 'You took 131 pills and unlocked the ' + this.itemRepoService.items['autoPillManual'].name,
-      hint: 'An aspiring immortal should take the red one. Take it over and over.',
+      hint: 'An aspiring immortal should take the red one.<br>Take it over and over.',
       check: () => {
         return this.inventoryService.lifetimePillsUsed >= 131;
       },
@@ -573,7 +573,7 @@ export class AchievementService {
       description:
         'You achieved a deep understanding of wood and unlocked the ' +
         this.itemRepoService.items['bestWoodManual'].name,
-      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
           this.characterService.characterState.attributes.woodLore.value > 1024 &&
@@ -591,7 +591,7 @@ export class AchievementService {
       description:
         'You achieved a deep understanding of digging and smelting metal and unlocked the ' +
         this.itemRepoService.items['bestOreManual'].name,
-      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
           this.characterService.characterState.attributes.metalLore.value > 1024 &&
@@ -609,7 +609,7 @@ export class AchievementService {
       description:
         'You achieved a deep understanding of hunting and gathering hides and unlocked the ' +
         this.itemRepoService.items['bestHidesManual'].name,
-      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality. Maybe you should try getting good at a few of them.',
+      hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
           this.characterService.characterState.attributes.animalHandling.value > 1024 &&
@@ -636,7 +636,7 @@ export class AchievementService {
     {
       name: 'Unlimited Taels',
       description:
-        'Your family has unlocked the secrets of compound interest. You probably never have to worry about money again.',
+        'Your family has unlocked the secrets of compound interest.<br>You probably never have to worry about money again.',
       hint: 'Family first. Especially in matters of money.',
       check: () => {
         return this.characterService.characterState.bloodlineRank >= 4;
@@ -649,7 +649,7 @@ export class AchievementService {
     {
       name: 'Not Unlimited Taels',
       description:
-        "You filled up your purse, your wall safe, the box under your bed, and a giant money pit in the backyard. You just can't hold any more money.",
+        "You filled up your purse, your wall safe, the box under your bed, and a giant money pit in the backyard.<br>You just can't hold any more money.",
       hint: 'How rich can you get?',
       check: () => {
         return this.characterService.characterState.money >= this.characterService.characterState.maxMoney - 1e21; //not exactly max in case this gets checked at a bad time
@@ -661,11 +661,10 @@ export class AchievementService {
     },
     {
       name: "Grandpa's Old Tent",
-      description:
-        "You've gone through eight cycles of reincarnation and come to understand the value of grandfathers.",
+      description: "You've gone through four cycles of reincarnation and come to understand the value of grandfathers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
-        return this.characterService.characterState.totalLives > 8;
+        return this.characterService.characterState.totalLives > 4;
       },
       effect: () => {
         this.homeService.grandfatherTent = true;
@@ -759,7 +758,7 @@ export class AchievementService {
     {
       name: "You're a wizard now.",
       description:
-        'Enlightenment! You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements. Mana is now unlocked for all future lives.',
+        'Enlightenment!<br>You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements.<br>Qi is now unlocked for all future lives.',
       hint: 'Seek the balance of the dao.',
       check: () => {
         const fireLore = this.characterService.characterState.attributes.fireLore.value;
@@ -773,10 +772,10 @@ export class AchievementService {
         return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
-        this.characterService.characterState.manaUnlocked = true;
-        if (this.characterService.characterState.status.mana.max === 0) {
-          this.characterService.characterState.status.mana.max = 1;
-          this.characterService.characterState.status.mana.value = 1;
+        this.characterService.characterState.qiUnlocked = true;
+        if (this.characterService.characterState.status.qi.max === 0) {
+          this.characterService.characterState.status.qi.max = 1;
+          this.characterService.characterState.status.qi.value = 1;
         }
         this.activityService.reloadActivities();
       },
@@ -819,6 +818,18 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Sturdy Walls',
+      description: 'You have built a home strong enough to endure for generations.',
+      hint: 'Build back better.',
+      check: () => {
+        return this.homeService.home.type >= HomeType.SimpleHut;
+      },
+      effect: () => {
+        this.homeService.keepHome = true;
+      },
+      unlocked: false,
+    },
+    {
       name: 'Eternal Nation',
       description: 'You have established an empire that will never fall, and a bloodline that will always inherit it.',
       hint: 'Bloodline Empire.',
@@ -847,7 +858,7 @@ export class AchievementService {
     {
       name: 'Harmony of Mind and Body',
       description:
-        'You have balanced your powerful mind and body and unlocked the ability to use your mana to strike down your enemies.',
+        'You have balanced your powerful mind and body and unlocked the ability to use your Qi to strike down your enemies.',
       hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
         const speed = this.characterService.characterState.attributes.speed.value;
@@ -861,14 +872,14 @@ export class AchievementService {
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
-        this.battleService.manaAttackUnlocked = true;
+        this.battleService.qiAttackUnlocked = true;
       },
       unlocked: false,
     },
     {
       name: 'Unity of Spirit, Mind, and Body',
       description:
-        'You have balanced your powerful spirit with your mind and body. You unlocked the ability to use your mana to protect yourself.',
+        'You have balanced your powerful spirit with your mind and body.<br>You unlocked the ability to use your Qi to protect yourself.',
       hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
         const spirituality = this.characterService.characterState.attributes.spirituality.value;
@@ -883,7 +894,7 @@ export class AchievementService {
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
-        this.battleService.manaShieldUnlocked = true;
+        this.battleService.qiShieldUnlocked = true;
       },
       unlocked: false,
     },
@@ -904,7 +915,7 @@ export class AchievementService {
     {
       name: 'Loyal Followers',
       description:
-        "One of your followers has trained under you so long they have nothing else to learn. In an epiphany you realized how to double your new followers' lifespan.",
+        "One of your followers has trained under you so long they have nothing else to learn.<br>In an epiphany you realized how to double your new followers' lifespan.",
       hint: 'Endless training.',
       check: () => {
         return this.followerService.highestLevel >= 100;
@@ -1023,7 +1034,7 @@ export class AchievementService {
     },
     {
       name: "Don't mess with Grandma",
-      description: 'You have crafted the mightiest stick. Grandmother would be so proud.',
+      description: 'You have crafted the mightiest stick.<br>Grandmother would be so proud.',
       hint: 'The best stick.',
       check: () => {
         if (this.characterService.characterState.equipment.leftHand?.name === "Grandmother's Walking Stick") {

@@ -77,8 +77,8 @@ export class CharacterService {
       if (this.characterState.highestStamina < this.characterState.status.stamina.value) {
         this.characterState.highestStamina = this.characterState.status.stamina.value;
       }
-      if (this.characterState.highestMana < this.characterState.status.mana.value) {
-        this.characterState.highestMana = this.characterState.status.mana.value;
+      if (this.characterState.highestQi < this.characterState.status.qi.value) {
+        this.characterState.highestQi = this.characterState.status.qi.value;
       }
 
       if (this.characterState.dead) {

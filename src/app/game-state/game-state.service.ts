@@ -18,7 +18,7 @@ import { OfflineModalComponent } from '../offline-modal/offline-modal.component'
 import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 
-const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdleGameState';
+const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
 interface GameState {
   achievements: AchievementProperties;
@@ -78,7 +78,7 @@ export class GameStateService {
       name: 'Schedule',
       icon: 'calendar_month',
       panelHelp:
-        'Choose activities to add to your schedule by dragging and dropping them here or pressing the calendar button on activities. When you allow time to move forward, you will perform each activity in your schedule in the order it is listed. You can move scheduled activities around or repeat activities over multiple days.',
+        'Choose activities to add to your schedule by dragging and dropping them here or pressing the calendar button on activities.<br>When you allow time to move forward, you will perform each activity in your schedule in the order it is listed.<br>You can move scheduled activities around or repeat activities over multiple days.',
       unlocked: false,
     },
     {
@@ -86,7 +86,7 @@ export class GameStateService {
       name: 'Attributes',
       icon: 'bar_chart',
       panelHelp:
-        'Your attributes define your growing immortal characteristics. You can grow your attributes through the activities that you choose. Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.',
+        'Your attributes define your growing immortal characteristics.<br>You can grow your attributes through the activities that you choose.<br>Aptitudes that you developed in your past lives can make it easier to develop attributes in your current life.',
       unlocked: true,
     },
     {
@@ -94,7 +94,7 @@ export class GameStateService {
       name: 'Followers',
       icon: 'groups',
       panelHelp:
-        'Your followers can aid you in many ways. Each has a specific skill that they will use to your benefit. Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.',
+        'Your followers can aid you in many ways.<br>Each has a specific skill that they will use to your benefit.<br>Followers must be taken care of, so having them will cost you some money each day, and more powerful followers will have more expensive needs you will have to take care of.',
       unlocked: false,
     },
     {
@@ -102,7 +102,7 @@ export class GameStateService {
       name: 'Status',
       icon: 'favorite',
       panelHelp:
-        'Maintaining your health is an important part of becoming immortal. If your health reaches 0, you will die and need to try for immortality once you are reincarnated in your next life.',
+        'Maintaining your health is an important part of becoming immortal.<br>If your health reaches 0, you will die and need to try for immortality once you are reincarnated in your next life.',
       unlocked: true,
     },
     {
@@ -110,7 +110,7 @@ export class GameStateService {
       name: 'Activities',
       icon: 'self_improvement',
       panelHelp:
-        "Click an activity to spend a day doing it. Achieving immortality doesn't happen overnight. It takes lifetimes of hard work. Choose your activities to take care of your basic needs and develop your immortal potential. At first you'll only know how to do a few things, but as you develop your attributes, more options will become available. Don't forget to schedule some rest too! You'll need to take a break now and then in your journey toward immortality.",
+        "Click an activity to spend a day doing it.<br>Achieving immortality doesn't happen overnight.<br>It takes lifetimes of hard work.<br>Choose your activities to take care of your basic needs and develop your immortal potential.<br>At first you'll only know how to do a few things, but as you develop your attributes, more options will become available.<br>Don't forget to schedule some rest too!<br>You'll need to take a break now and then in your journey toward immortality.",
       unlocked: true,
     },
     {
@@ -118,7 +118,7 @@ export class GameStateService {
       name: 'Battles',
       icon: 'fort',
       panelHelp:
-        "Monsters come out at night. You'll need to be strong enough to fight them off if you want to become an immortal.",
+        "Battling enemies is an essential part of your quest for immortality.<br>You'll need to be strong enough to fight them off if you want to stay alive.",
       unlocked: false,
     },
     {
@@ -126,7 +126,7 @@ export class GameStateService {
       name: 'Equipment',
       icon: 'colorize',
       panelHelp:
-        'You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality. Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment. Watch out, each piece of gear will take damage with use and you will need to constantly improve it to keep it strong.',
+        'You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality.<br>Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment.<br>Watch out, each piece of gear will take damage with use and you will need to constantly improve it to keep it strong.',
       unlocked: false,
     },
     {
@@ -134,7 +134,7 @@ export class GameStateService {
       name: 'Home',
       icon: 'home',
       panelHelp:
-        'Your home is an essential part of your life. A better home allows you to recover and has room for furniture that can aid your immortal development.',
+        'Your home is an essential part of your life.<br>A better home allows you to recover and has room for furniture that can aid your immortal development.',
       unlocked: false,
     },
     {
@@ -142,7 +142,7 @@ export class GameStateService {
       name: 'Inventory',
       icon: 'shopping_bag',
       panelHelp:
-        'The items that you gain during your quest for immortality will appear here. Hover your cursor over an item to learn more about it.',
+        'The items that you gain during your quest for immortality will appear here.<br>Hover your cursor over an item to learn more about it.',
       unlocked: false,
     },
     {
@@ -150,7 +150,7 @@ export class GameStateService {
       name: 'Log',
       icon: 'feed',
       panelHelp:
-        'A record of the events that lead you to immortality will surely be of interest to those who sing your legend in the ages to come. You can filter out the events that are less interesting to you in the present.',
+        'A record of the events that lead you to immortality will surely be of interest to those who sing your legend in the ages to come.<br>You can filter out the events that are less interesting to you in the present.',
       unlocked: true,
     },
     {
@@ -164,7 +164,7 @@ export class GameStateService {
       id: 'petsPanel',
       name: 'pets',
       icon: 'Pets',
-      panelHelp: 'Your pets can aid you in many ways. Each has a specific skill that they will use to your benefit.',
+      panelHelp: 'Your pets can aid you in many ways.<br>Each has a specific skill that they will use to your benefit.',
       unlocked: false,
     },
   ];

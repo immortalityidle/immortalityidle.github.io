@@ -20,7 +20,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
@@ -46,7 +45,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { KtdGridModule } from '@katoid/angular-grid-layout';
 import { TooltipDirective } from '@webed/angular-tooltip';
 
-const materialModules = [MatDialogModule, MatIconModule, MatTabsModule, MatTooltipModule];
+const materialModules = [MatDialogModule, MatIconModule, MatTabsModule];
 
 @NgModule({
   declarations: [

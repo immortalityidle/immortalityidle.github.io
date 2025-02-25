@@ -56,7 +56,7 @@ export class ItemRepoService {
       slot: 'bed',
       value: 10,
       description:
-        'A tattered blanket. Not much, but it could keep you warm at night. Increases daily stamina recovery by 1.',
+        'A tattered blanket.<br>Not much, but it could keep you warm at night.<br>Increases daily stamina recovery by 1.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value++;
@@ -68,7 +68,8 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bed',
       value: 1000,
-      description: 'A thin woven mat to sleep on. Increases daily stamina recovery by 1 and restores a bit of health.',
+      description:
+        'A thin woven mat to sleep on.<br>Increases daily stamina recovery by 1 and restores a bit of health.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 1;
@@ -83,7 +84,7 @@ export class ItemRepoService {
       slot: 'bed',
       value: 10000,
       description:
-        'A fine bed with a cover. Curtains keep the mosquitoes off you during the night. Increases daily stamina recovery by 2 and restores a bit of health.',
+        'A fine bed with a cover.<br>Curtains keep the mosquitoes off you during the night.<br>Increases daily stamina recovery by 2 and restores a bit of health.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 2;
@@ -98,7 +99,7 @@ export class ItemRepoService {
       slot: 'bed',
       value: 100000,
       description:
-        'A bed built over a small clay oven. Keeps you toasty on even the coldest nights. Increases daily stamina recovery by 5 and improves health recovery.',
+        'A bed built over a small clay oven. Keeps you toasty on even the coldest nights.<br>Increases daily stamina recovery by 5 and improves health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 5;
@@ -113,7 +114,7 @@ export class ItemRepoService {
       slot: 'bed',
       value: 10000,
       description:
-        "A solid board with nails poking upwards. You won't sleep as well, but it is certain to toughen you up.",
+        "A solid board with nails poking upwards.<br>You won't sleep as well, but it is certain to toughen you up.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value -= 1;
@@ -126,7 +127,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 10,
-      description: 'A bucket of water that lets you splash water on your face. Increases charisma.',
+      description: 'A bucket of water that lets you splash water on your face.<br>Increases charisma.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.01);
@@ -138,7 +139,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 1000,
-      description: 'A wash basin with a rag to clean yourself. Increases charisma.',
+      description: 'A wash basin with a rag to clean yourself.<br>Increases charisma.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.05);
@@ -150,7 +151,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 10000,
-      description: 'A tall and narrow tub where you can squat and bathe. Increases charisma and health recovery.',
+      description: 'A tall and narrow tub where you can squat and bathe.<br>Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.1);
@@ -164,7 +165,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 1000000,
-      description: 'A luxurious tub where you can get sparkling clean. Increases charisma and health recovery.',
+      description: 'A luxurious tub where you can get sparkling clean.<br>Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
@@ -178,7 +179,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'bathtub',
       value: 1e8,
-      description: 'A luxurious tub with its own heating stove. Good for your health and beauty.',
+      description: 'A luxurious tub with its own heating stove.<br>Good for your health and beauty.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
@@ -194,7 +195,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'kitchen',
       value: 10,
-      description: 'A simple pot over a fire to boil your food. Improves all physical attributes.',
+      description: 'A simple pot over a fire to boil your food.<br>Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.01);
@@ -209,7 +210,7 @@ export class ItemRepoService {
       slot: 'kitchen',
       value: 1000,
       description:
-        'A simple spit to go along with your cookpot, letting you add more variety to your diet. Improves all physical attributes.',
+        'A simple spit to go along with your cookpot, letting you add more variety to your diet.<br>Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.02);
@@ -223,7 +224,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'kitchen',
       value: 1000000,
-      description: 'A large metal wok to stir-fry a tasty dinner. Improves all physical attributes.',
+      description: 'A large metal wok to stir-fry a tasty dinner.<br>Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.05);
@@ -237,7 +238,7 @@ export class ItemRepoService {
       type: 'furniture',
       slot: 'kitchen',
       value: 1e9,
-      description: 'An elaborate kitchen that allows you to cook anything. Improves all physical attributes.',
+      description: 'An elaborate kitchen that allows you to cook anything.<br>Improves all physical attributes.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('strength', 0.1);
@@ -312,7 +313,7 @@ export class ItemRepoService {
       slot: 'workbench',
       value: 1e7,
       description:
-        "A quiet shrine for contemplative prayer. You won't be able to use this unless you have some innate spirituality.",
+        "A quiet shrine for contemplative prayer.<br>You won't be able to use this unless you have some innate spirituality.",
       useConsumes: false,
       use: () => {
         if (this.characterService.characterState.attributes.spirituality.value > 0) {
@@ -519,7 +520,7 @@ export class ItemRepoService {
         this.characterService.characterState.status.health.value += quantity * 20;
         this.characterService.characterState.status.stamina.value += quantity * 2;
         this.characterService.characterState.status.stamina.max += quantity * 2;
-        this.characterService.characterState.status.mana.value += quantity;
+        this.characterService.characterState.status.qi.value += quantity;
         if (this.characterService.characterState.foodLifespan + quantity <= daysInYear * 720) {
           this.characterService.characterState.foodLifespan += quantity;
         } else if (this.characterService.characterState.foodLifespan < daysInYear * 720) {
@@ -1969,7 +1970,7 @@ export class ItemRepoService {
       name: 'Manual of Remembered Plans',
       type: 'manual',
       description:
-        'This manual teaches you to automatically resume activities from your previous life. Only activities that you qualify for when you reach adulthood are available to resume.',
+        'This manual teaches you to automatically resume activities from your previous life.<br>Only activities that you qualify for when you reach adulthood are available to resume.',
       value: 500,
       useLabel: 'Read',
       useDescription: 'Permanently unlock preserving activity plans across reincarnations.',

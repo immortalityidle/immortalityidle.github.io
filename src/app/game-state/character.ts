@@ -58,7 +58,7 @@ export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' |
 
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
-export type StatusType = 'health' | 'stamina' | 'mana' | 'nourishment';
+export type StatusType = 'health' | 'stamina' | 'qi' | 'nourishment';
 type CharacterStatus = { [key in StatusType]: { description: string; value: number; max: number } };
 
 export interface CharacterProperties {
@@ -83,7 +83,7 @@ export interface CharacterProperties {
   condenseSoulCoreCost: number;
   reinforceMeridiansCost: number;
   bloodlineRank: number;
-  manaUnlocked: boolean;
+  qiUnlocked: boolean;
   totalLives: number;
   healthBonusFood: number;
   healthBonusBath: number;
@@ -97,7 +97,7 @@ export interface CharacterProperties {
   highestAge: number;
   highestHealth: number;
   highestStamina: number;
-  highestMana: number;
+  highestQi: number;
   highestAttributes: { [key: string]: number };
   yinYangBoosted: boolean;
   yin: number;
@@ -164,7 +164,7 @@ export class Character {
   reinforceMeridiansOriginalCost = 1000;
   bloodlineCost = 1000;
   bloodlineRank = 0;
-  manaUnlocked = false;
+  qiUnlocked = false;
   attackPower = 0;
   defense = 0;
   healthBonusFood = 0;
@@ -320,7 +320,7 @@ export class Character {
       value: 100,
       max: 100,
     },
-    mana: {
+    qi: {
       description: 'Magical energy required for mysterious spiritual activities.',
       value: 0,
       max: 0,
@@ -371,7 +371,7 @@ export class Character {
   highestAge = 0;
   highestHealth = 0;
   highestStamina = 0;
-  highestMana = 0;
+  highestQi = 0;
   highestAttributes: { [key: string]: number } = {};
 
   // reset everything but increase aptitudes
@@ -430,14 +430,14 @@ export class Character {
     this.status.health.max = 100;
     this.status.stamina.value = 100;
     this.status.stamina.max = 100;
-    this.status.nourishment.value = 7;
-    this.status.nourishment.max = 14;
-    if (this.manaUnlocked) {
-      this.status.mana.max = 1;
-      this.status.mana.value = 1;
+    this.status.nourishment.value = 30;
+    this.status.nourishment.max = 30;
+    if (this.qiUnlocked) {
+      this.status.qi.max = 1;
+      this.status.qi.value = 1;
     } else {
-      this.status.mana.max = 0;
-      this.status.mana.value = 0;
+      this.status.qi.max = 0;
+      this.status.qi.value = 0;
     }
 
     this.healthBonusFood = 0;
@@ -733,8 +733,8 @@ export class Character {
     if (this.status.stamina.max > 1000000) {
       this.status.stamina.max = 1000000;
     }
-    if (this.status.mana.max > 1000000) {
-      this.status.mana.max = 1000000;
+    if (this.status.qi.max > 1000000) {
+      this.status.qi.max = 1000000;
     }
     if (this.status.nourishment.max > 1000) {
       this.status.nourishment.max = 1000;
@@ -748,8 +748,8 @@ export class Character {
     if (this.status.nourishment.value > this.status.nourishment.max) {
       this.status.nourishment.value = this.status.nourishment.max;
     }
-    if (this.status.mana.value > this.status.mana.max) {
-      this.status.mana.value = this.status.mana.max;
+    if (this.status.qi.value > this.status.qi.max) {
+      this.status.qi.value = this.status.qi.max;
     }
     if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
@@ -782,7 +782,7 @@ export class Character {
       condenseSoulCoreCost: this.condenseSoulCoreCost,
       reinforceMeridiansCost: this.reinforceMeridiansCost,
       bloodlineRank: this.bloodlineRank,
-      manaUnlocked: this.manaUnlocked,
+      qiUnlocked: this.qiUnlocked,
       totalLives: this.totalLives,
       healthBonusFood: this.healthBonusFood,
       healthBonusBath: this.healthBonusBath,
@@ -796,7 +796,7 @@ export class Character {
       highestAge: this.highestAge,
       highestHealth: this.highestHealth,
       highestStamina: this.highestStamina,
-      highestMana: this.highestMana,
+      highestQi: this.highestQi,
       highestAttributes: this.highestAttributes,
       yinYangBoosted: this.yinYangBoosted,
       yin: this.yin,
@@ -852,7 +852,7 @@ export class Character {
     this.attributeSoftCap = properties.attributeSoftCap;
     this.bloodlineRank = properties.bloodlineRank;
     this.bloodlineCost = 1000 * Math.pow(100, this.bloodlineRank); // This is derived to avoid save issues.
-    this.manaUnlocked = properties.manaUnlocked || false;
+    this.qiUnlocked = properties.qiUnlocked || false;
     this.totalLives = properties.totalLives || 1;
     this.healthBonusFood = properties.healthBonusFood || 0;
     this.healthBonusBath = properties.healthBonusBath || 0;
@@ -866,7 +866,7 @@ export class Character {
     this.highestAge = properties.highestAge || 0;
     this.highestHealth = properties.highestHealth || 0;
     this.highestStamina = properties.highestStamina || 0;
-    this.highestMana = properties.highestMana || 0;
+    this.highestQi = properties.highestQi || 0;
     this.highestAttributes = properties.highestAttributes || {};
     this.yinYangBoosted = properties.yinYangBoosted || false;
     this.yin = properties.yin || 1;

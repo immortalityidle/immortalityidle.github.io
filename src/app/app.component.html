@@ -5,7 +5,7 @@
         Immortality Idle 2
         <span class="versionNumber" (click)="changelogClicked()">{{gameStateService.isExperimental ? "Experimental" : "v" + applicationVersion}}</span>
       </span>
-      <mat-icon tooltip="Confused? Click here for a tutorial." class="iconButton" (click)="tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
+      <mat-icon tooltip="Confused?<br>Click here for a tutorial." class="iconButton" (click)="tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
         help
       </mat-icon>
       <mat-icon tooltip="Statistics!" class="iconButton" (click)="statisticsClicked()">
@@ -17,7 +17,7 @@
           (click)="storeClicked()">
           local_library
         </mat-icon>
-        <mat-icon tooltip="Options. Lots of them." class="iconButton" aria-label="Options" aria-hidden="false"
+        <mat-icon tooltip="Options.<br>Lots of them." class="iconButton" aria-label="Options" aria-hidden="false"
           (click)="storeOptionsClicked()">
           settings
         </mat-icon>
@@ -41,7 +41,7 @@
         </span>
       }
       <span class="discordLink">
-        <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" tooltip="Have questions? Try the Immortality Idle Discord.">Discord</a>
+        <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" tooltip="Have questions?<br>Try the Immortality Idle Discord.">Discord</a>
       </span>
       <span>
         <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
@@ -79,7 +79,7 @@
                   </mat-icon>
                   <span>{{getPanel(panelLayout).name}}</span>
                   <span class="panelHelp">
-                    <mat-icon [matTooltip]="getPanel(panelLayout).panelHelp">
+                    <mat-icon [tooltip]="getPanel(panelLayout).panelHelp">
                       help
                     </mat-icon>
                     @if(!gameStateService.allPanelsUsed){

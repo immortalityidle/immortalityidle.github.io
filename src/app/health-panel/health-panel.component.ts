@@ -27,7 +27,7 @@ export class HealthPanelComponent {
   balanceString = 'perfect';
   flashHealth = false;
   flashStamina = false;
-  flashMana = false;
+  flashQi = false;
   flashNutrition = false;
   moneyUpdates: number[];
   popupCounter = 0;
@@ -45,7 +45,7 @@ export class HealthPanelComponent {
       this.updateYinYang();
       this.flashHealth = this.characterService.characterState.statusToFlash.includes('health');
       this.flashStamina = this.characterService.characterState.statusToFlash.includes('stamina');
-      this.flashMana = this.characterService.characterState.statusToFlash.includes('mana');
+      this.flashQi = this.characterService.characterState.statusToFlash.includes('qi');
       this.flashNutrition = this.characterService.characterState.statusToFlash.includes('nourishment');
       this.characterService.characterState.statusToFlash = [];
       if (this.popupCounter < 1) {

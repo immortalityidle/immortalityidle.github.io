@@ -64,7 +64,7 @@ export class LifeSummaryComponent {
     ) {
       this.tip =
         "Ascension provides a pathway to the power you'll need to achieve immortality. Each ascension technique benefits you in unique and important ways.";
-    } else if (!this.characterService.characterState.manaUnlocked) {
+    } else if (!this.characterService.characterState.qiUnlocked) {
       this.tip =
         'Magic will be required for your journey to immortality. Only by balancing your mastery of the five elements will you be able to access magical powers.';
     } else if (this.characterService.characterState.status.stamina.max < 200) {

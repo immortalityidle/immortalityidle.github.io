@@ -476,18 +476,18 @@ export class HellService {
     description: [
       'You notice that not all the animals here are frenzied killers. Some of them are sick, wounded, and miserable. You resolve to do what good you can here.',
     ],
-    consequenceDescription: ['Uses 10,000 mana and 10,000 stamina. Heals an animal.'],
+    consequenceDescription: ['Uses 10,000 Qi and 10,000 stamina. Heals an animal.'],
     consequence: [
       () => {
         this.characterService.characterState.status.stamina.value -= 10000;
-        this.characterService.characterState.status.mana.value -= 10000;
+        this.characterService.characterState.status.qi.value -= 10000;
         this.animalsHealed++;
       },
     ],
     resourceUse: [
       {
         stamina: 10000,
-        mana: 10000,
+        qi: 10000,
       },
     ],
     requirements: [{}],
@@ -511,7 +511,7 @@ export class HellService {
     resourceUse: [
       {
         stamina: 10000,
-        mana: 10000,
+        qi: 10000,
       },
     ],
     requirements: [{}],
@@ -1396,7 +1396,7 @@ export class HellService {
       // between hells now, choose which one to enter
       this.activityService.activityHeader = 'The Gates of Hell';
       this.activityService.activityHeaderDescription =
-        "The heavens have cast you down to the depths of hell. You'll need to defeat every level to escape.";
+        "The heavens have cast you down to the depths of hell.<br>You'll need to defeat every level to escape.";
       this.setEnterHellsArray(newList);
     } else {
       this.activityService.activityHeader = this.hells[this.currentHell].name;

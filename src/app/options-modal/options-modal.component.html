@@ -6,8 +6,8 @@
         <span class="tab-label">Game</span>
       </ng-template>
       <div class="optionField">
-        <span tooltip="This game is much too hard and takes much too long to play to the end. Click this to make it easier and allow you to rush through the game.
-          Be warned: you will forever be known as a cultivator who took the easy path to immortality.">
+        <span tooltip="This game is much too hard and takes much too long to play to the end.<br>Click this to make it easier and allow you to rush through the game.<br>
+          Be warned:<br>you will forever be known as a cultivator who took the easy path to immortality.">
           <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)">
           <label for="easyMode" >Easy Mode</label>
         </span>
@@ -54,7 +54,7 @@
         </span>
       </div>
       <div class="optionField">
-        <span tooltip="Enable background music (this allows the game to run in the background more efficiently).">
+        <span tooltip="Enable background music (this allows the game to run in the background without throttling on some browsers).">
           <input type="checkbox" id="backgroundMusic" [checked]="mainLoopService.playMusic" (change)="playMusicChange($event)">
           <label for="backgroundMusic" >Background Music (also improves background play) - <a href="/assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3" download>Rising Sun Beat by Shaolin Dub</a> (<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons License</a>)</label>
         </span>

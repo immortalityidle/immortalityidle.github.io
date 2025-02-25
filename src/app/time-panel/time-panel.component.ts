@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
-import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
+import { ActivityLoopEntry } from '../game-state/activity';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { TimeOptionsPanelComponent } from '../time-options-panel/time-options-panel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { BattleService } from '../game-state/battle.service';
 
 @Component({
   selector: 'app-time-panel',
@@ -25,6 +26,7 @@ export class TimePanelComponent {
     public activityService: ActivityService,
     public characterService: CharacterService,
     public gameStateService: GameStateService,
+    public battleService: BattleService,
     public dialog: MatDialog
   ) {}
 
@@ -196,13 +198,5 @@ export class TimePanelComponent {
         this.activityService.spiritActivity = activity;
       }
     }
-  }
-
-  getActivityName(activityType: ActivityType) {
-    const activity = this.activityService.getActivityByType(activityType);
-    if (activity) {
-      return activity.name[activity.level];
-    }
-    return '';
   }
 }

@@ -50,7 +50,7 @@
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
       <ng-container *ngFor="let activity of activityService.activities; let indexOfelement=index;">
         @if (!activity.portal && (activity.discovered || activity.unlocked)) {
-          <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': !activity.unlocked}"
+          <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"
             [tabindex]="0"
             cdkDrag [cdkDragDisabled]="!activity.unlocked" [cdkDragData]="activity.activityType"
             (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
@@ -71,19 +71,19 @@
               <span class='floatRight'>
                 @if (activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)) {
                   <mat-icon
-                    tooltip="This activity requires that you go through an apprenticeship. You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn. Once you've started, other trades may be closed off until your next life."
+                    tooltip="This activity requires that you go through an apprenticeship.<br>You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn.<br>Once you've started, other trades may be closed off until your next life."
                     aria-label="Requires an apprenticeship" aria-hidden="false">
                     model_training
                   </mat-icon>
                 }
                 @if (activity.lastIncome && activity.lastIncome > 0) {
-                  <mat-icon tooltip="Exactly how much will you make doing this job? It can depend on your attributes, but the last time you did this job you made {{activity.lastIncome | bigNumber}} taels."
+                  <mat-icon tooltip="Exactly how much will you make doing this job?<br>It can depend on your attributes, but the last time you did this job you made<br>{{activity.lastIncome | bigNumber}} taels."
                     aria-label="Earns money" aria-hidden="false">
                     attach_money
                   </mat-icon>
                 }
                 <mat-icon class="iconButton" (click)="showActivity($event, activity)"
-                  tooltip="What is this activity? Click to learn all about it!"
+                  tooltip="What is this activity?<br>Click to learn all about it!"
                   aria-label="Help" aria-hidden="false">
                   help
                 </mat-icon>

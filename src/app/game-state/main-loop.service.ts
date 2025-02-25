@@ -77,6 +77,7 @@ export class MainLoopService {
   audio: HTMLAudioElement;
   timeUnlocked = false;
   importing = false;
+  gameLoading = true;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
@@ -122,7 +123,6 @@ export class MainLoopService {
     this.unlockPlaytimeSpeed = properties.unlockPlaytimeSpeed;
     this.tickDivider = properties.tickDivider;
     this.offlineDivider = properties.offlineDivider || 10;
-    this.pause = properties.pause;
     this.lastTime = properties.lastTime;
     const newTime = new Date().getTime();
     if (newTime - this.lastTime > 168 * 60 * 60 * 1000) {
@@ -139,6 +139,12 @@ export class MainLoopService {
     this.scientificNotation = properties.scientificNotation || false;
     this.playMusic = properties.playMusic;
     this.timeUnlocked = properties.timeUnlocked || false;
+    if (this.gameLoading) {
+      this.pause = true;
+      this.gameLoading = false;
+    } else {
+      this.pause = properties.pause;
+    }
   }
 
   // audio also helps avoid getting deprioritized in the background.

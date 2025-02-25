@@ -31,14 +31,14 @@ export interface BattleProperties {
   autoTroubleUnlocked: boolean;
   autoTroubleEnabled: boolean;
   monthlyMonsterDay: number;
-  manaShieldUnlocked: boolean;
-  manaAttackUnlocked: boolean;
+  qiShieldUnlocked: boolean;
+  qiAttackUnlocked: boolean;
   pyroclasmUnlocked: boolean;
   metalFistUnlocked: boolean;
   fireShieldUnlocked: boolean;
   iceShieldUnlocked: boolean;
-  enableManaShield: boolean;
-  enableManaAttack: boolean;
+  enableQiShield: boolean;
+  enableQiAttack: boolean;
   enablePyroclasm: boolean;
   enableMetalFist: boolean;
   enableFireShield: boolean;
@@ -73,14 +73,14 @@ export class BattleService {
   autoTroubleUnlocked = false;
   autoTroubleEnabled = false;
   yearlyMonsterDay: number;
-  enableManaShield = false;
-  enableManaAttack = false;
+  enableQiShield = false;
+  enableQiAttack = false;
   enablePyroclasm = false;
   enableMetalFist = false;
   enableFireShield = false;
   enableIceShield = false;
-  manaShieldUnlocked = false;
-  manaAttackUnlocked = false;
+  qiShieldUnlocked = false;
+  qiAttackUnlocked = false;
   pyroclasmUnlocked = false;
   metalFistUnlocked = false;
   fireShieldUnlocked = false;
@@ -173,14 +173,14 @@ export class BattleService {
       autoTroubleUnlocked: this.autoTroubleUnlocked,
       autoTroubleEnabled: this.autoTroubleEnabled,
       monthlyMonsterDay: this.yearlyMonsterDay,
-      manaShieldUnlocked: this.manaShieldUnlocked,
-      manaAttackUnlocked: this.manaAttackUnlocked,
+      qiShieldUnlocked: this.qiShieldUnlocked,
+      qiAttackUnlocked: this.qiAttackUnlocked,
       pyroclasmUnlocked: this.pyroclasmUnlocked,
       metalFistUnlocked: this.metalFistUnlocked,
       fireShieldUnlocked: this.fireShieldUnlocked,
       iceShieldUnlocked: this.iceShieldUnlocked,
-      enableManaShield: this.enableManaShield,
-      enableManaAttack: this.enableManaAttack,
+      enableQiShield: this.enableQiShield,
+      enableQiAttack: this.enableQiAttack,
       enablePyroclasm: this.enablePyroclasm,
       enableMetalFist: this.enableMetalFist,
       enableFireShield: this.enableFireShield,
@@ -202,14 +202,14 @@ export class BattleService {
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.autoTroubleEnabled = properties.autoTroubleEnabled;
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
-    this.enableManaShield = properties.enableManaShield;
-    this.enableManaAttack = properties.enableManaAttack;
+    this.enableQiShield = properties.enableQiShield;
+    this.enableQiAttack = properties.enableQiAttack;
     this.enablePyroclasm = properties.enablePyroclasm || false;
     this.enableMetalFist = properties.enableMetalFist || false;
     this.enableFireShield = properties.enableFireShield || false;
     this.enableIceShield = properties.enableIceShield || false;
-    this.manaShieldUnlocked = properties.manaShieldUnlocked || false;
-    this.manaAttackUnlocked = properties.manaAttackUnlocked || false;
+    this.qiShieldUnlocked = properties.qiShieldUnlocked || false;
+    this.qiAttackUnlocked = properties.qiAttackUnlocked || false;
     this.pyroclasmUnlocked = properties.pyroclasmUnlocked || false;
     this.metalFistUnlocked = properties.metalFistUnlocked || false;
     this.fireShieldUnlocked = properties.fireShieldUnlocked || false;
@@ -257,12 +257,12 @@ export class BattleService {
     if (damage < 0.3) {
       damage = 0.3;
     }
-    if (this.enableManaShield && this.characterService.characterState.status.mana.value > 10) {
+    if (this.enableQiShield && this.characterService.characterState.status.qi.value > 10) {
       damage /= 2;
-      this.characterService.characterState.status.mana.value -= 10;
+      this.characterService.characterState.status.qi.value -= 10;
     }
     let damageBack = false;
-    if (this.enableFireShield && this.characterService.characterState.status.mana.value > 10000) {
+    if (this.enableFireShield && this.characterService.characterState.status.qi.value > 10000) {
       let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
       if (fireDivisor < 1) {
         fireDivisor = 1;
@@ -271,10 +271,10 @@ export class BattleService {
         fireDivisor = 10;
       }
       damage /= fireDivisor;
-      this.characterService.characterState.status.mana.value -= 10000;
+      this.characterService.characterState.status.qi.value -= 10000;
       damageBack = true;
     }
-    if (this.enableIceShield && this.characterService.characterState.status.mana.value > 10000) {
+    if (this.enableIceShield && this.characterService.characterState.status.qi.value > 10000) {
       let waterDivisor = Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
       if (waterDivisor < 1) {
         waterDivisor = 1;
@@ -283,7 +283,7 @@ export class BattleService {
         waterDivisor = 10;
       }
       damage /= waterDivisor;
-      this.characterService.characterState.status.mana.value -= 10000;
+      this.characterService.characterState.status.qi.value -= 10000;
       this.skipEnemyAttack++;
     }
     // reduce damage by up to half
@@ -341,12 +341,12 @@ export class BattleService {
       if (damage < 1) {
         damage = 1;
       }
-      if (this.enableManaAttack && this.characterService.characterState.status.mana.value > 10) {
+      if (this.enableQiAttack && this.characterService.characterState.status.qi.value > 10) {
         damage *= 2;
-        this.characterService.characterState.status.mana.value -= 10;
+        this.characterService.characterState.status.qi.value -= 10;
       }
       let blowthrough = false;
-      if (this.enableMetalFist && this.characterService.characterState.status.mana.value > 10000) {
+      if (this.enableMetalFist && this.characterService.characterState.status.qi.value > 10000) {
         let metalMultiplier = Math.log(this.characterService.characterState.attributes.metalLore.value) / Math.log(50);
         if (metalMultiplier < 1) {
           metalMultiplier = 1;
@@ -355,9 +355,9 @@ export class BattleService {
           metalMultiplier = 100;
         }
         damage *= metalMultiplier;
-        this.characterService.characterState.status.mana.value -= 10000;
+        this.characterService.characterState.status.qi.value -= 10000;
       }
-      if (this.enablePyroclasm && this.characterService.characterState.status.mana.value > 10000) {
+      if (this.enablePyroclasm && this.characterService.characterState.status.qi.value > 10000) {
         let fireMultiplier = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
         if (fireMultiplier < 1) {
           fireMultiplier = 1;
@@ -366,7 +366,7 @@ export class BattleService {
           fireMultiplier = 10;
         }
         damage *= fireMultiplier;
-        this.characterService.characterState.status.mana.value -= 10000;
+        this.characterService.characterState.status.qi.value -= 10000;
         blowthrough = true;
       }
       // TODO: tune this

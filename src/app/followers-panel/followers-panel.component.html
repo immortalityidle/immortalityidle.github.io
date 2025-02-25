@@ -13,15 +13,15 @@
   <div class="followerPanel">
     <ng-container *ngFor="let follower of followerService.followers">
       <div class="attributeLine">
-                <span class="followerName" tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}. {{followerService.jobs[follower.job].description}}
-                {{follower.name}} has followed you for {{follower.age / 365 | bigNumber}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | bigNumber}} more years. Daily cost: {{follower.cost | bigNumber}}">
+                <span class="followerName" tooltip="{{follower.name}}<br>is a level {{follower.power}} {{follower.job | titlecase}}.<br>{{followerService.jobs[follower.job].description}}<br>
+                {{follower.name}} has followed you for {{follower.age / 365 | bigNumber}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | bigNumber}} more years.<br>Daily cost: {{follower.cost | bigNumber}}">
           {{follower.name | titlecase}} (lv.{{follower.power}} {{follower.job | camelToTitle}})
         </span>
         <mat-icon class="smallerIcon"
           aria-label="Dismiss Follower" aria-hidden="false"
           (click)="dismissFollower($event, follower)"
-                [matTooltip]="followerService.autoDismissUnlocked ? 'Dismiss this follower.
-                Shift-click to automatically dismiss everyone of this job type.
+                [tooltip]="followerService.autoDismissUnlocked ? 'Dismiss this follower.<br>
+                Shift-click to automatically dismiss everyone of this job type.<br>
                 Ctrl-click to set the current number as the limit without dismissing.':
                 'Dismiss this follower.'">
           cancel

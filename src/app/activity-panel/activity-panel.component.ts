@@ -15,6 +15,7 @@ import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { BattleService } from '../game-state/battle.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -39,7 +40,8 @@ export class ActivityPanelComponent {
     public dialog: MatDialog,
     private bigNumberPipe: BigNumberPipe,
     public mainLoopService: MainLoopService,
-    private logService: LogService
+    private logService: LogService,
+    public battleService: BattleService
   ) {
     this.Math = Math;
     this.character = characterService.characterState;
@@ -98,6 +100,10 @@ export class ActivityPanelComponent {
   }
 
   doActivity(activity: Activity) {
+    if (this.battleService.enemies.length > 0) {
+      // in a battle, bail out
+      return;
+    }
     if (!this.activityService.meetsRequirements(activity)) {
       this.logService.log(LogTopic.EVENT, activity.name[activity.level] + ' is unavailable now.');
       return;
@@ -199,7 +205,7 @@ export class ActivityPanelComponent {
         return 'Spend a day doing this activity';
       } else {
         let projectionString = '';
-        if (this.characterService.characterState.manaUnlocked) {
+        if (this.characterService.characterState.qiUnlocked) {
           projectionString = '<br>Right-click to set this as your spriritual projection activity';
         }
         return (

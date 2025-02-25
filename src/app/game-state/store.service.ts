@@ -146,26 +146,26 @@ export class StoreService {
     } else if (this.characterService.characterState.bloodlineRank === 5) {
       // Home
       this.bloodlineDescription =
-        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. You will keep your ancestral Home. You will keep your weapons, armor, and money with interest. ';
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. You will keep your weapons, armor, and money with interest. ';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.ForbiddenCity];
     } else if (this.characterService.characterState.bloodlineRank === 6) {
       // Entourage
       this.bloodlineDescription =
-        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your followers will have enhanced bloodlines and will follow you between incarnations. You will keep your weapons, armor, money with interest, your home and your Empire.';
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your followers will have enhanced bloodlines and will follow you between incarnations. You will keep your weapons, armor, money with interest, and your Empire.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Capital];
     } else if (this.characterService.characterState.bloodlineRank === 7) {
       // Limit Break
       this.bloodlineDescription =
-        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Break through the limits of humanity. You will keep your weapons, armor, money with interest, your home, and your Empire.';
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Break through the limits of humanity. You will keep your weapons, armor, money with interest, and your Empire.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.ImperialSeat];
     } else if (this.characterService.characterState.bloodlineRank === 8) {
       // Daily Aptitude Increase
       this.bloodlineDescription =
-        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline one last time. Finally, you will gain aptitudes every day from your current Attributes, improving constantly. You will keep your weapons, armor, money with interest, your home, and your Empire.';
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline one last time. Finally, you will gain aptitudes every day from your current Attributes, improving constantly. You will keep your weapons, armor, money with interest, and your Empire.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Godthrone];
     } else if (this.characterService.characterState.bloodlineRank === 9) {
       this.bloodlineDescription =
-        "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Home and your Empire, and can break through the limits of humanity. Finally, you will gain aptitudes every day from your current Attributes.";
+        "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Empire, and can break through the limits of humanity. Finally, you will gain aptitudes every day from your current Attributes.";
     }
   }
 

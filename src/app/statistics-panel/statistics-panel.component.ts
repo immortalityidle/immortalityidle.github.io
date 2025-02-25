@@ -9,6 +9,7 @@ import { InventoryService } from '../game-state/inventory.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { StatisticsService } from '../game-state/statistics.service';
 import { StoreService } from '../game-state/store.service';
+import { ActivityType } from '../game-state/activity';
 
 @Component({
   selector: 'app-statistics-panel',
@@ -28,4 +29,13 @@ export class StatisticsPanelComponent {
     public achievementService: AchievementService,
     public statisticsService: StatisticsService
   ) {}
+
+  // Preserve original property order
+  originalOrder = (): number => {
+    return 0;
+  };
+
+  getActivityName(key: string) {
+    return this.activityService.getActivityName(parseInt(key) as ActivityType);
+  }
 }

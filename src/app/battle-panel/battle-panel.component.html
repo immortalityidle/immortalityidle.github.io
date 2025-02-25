@@ -1,6 +1,6 @@
 <div class="battleContainer">
   <h3>
-    @if (battleService.manaShieldUnlocked || battleService.manaAttackUnlocked ||
+    @if (battleService.qiShieldUnlocked || battleService.qiAttackUnlocked ||
       battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked) {
       <span>
         <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">
@@ -8,15 +8,6 @@
         </mat-icon>
       </span>
     }
-    <span class="rightAligned" tooltip="Did you need more trouble in your life? If you don't have a monster to fight, get one. Be careful, they get stronger as they go.">
-      <!--
-      @if (battleService.godSlayersUnlocked) {
-        <input  type="checkbox" (change)="godSlayersEnableChange($event)"
-          id="godSlayersEnableCheckbox"  [checked]="battleService.godSlayersEnabled"/>
-        <label for="godSlayersEnableCheckbox">Fight the God Slayers</label>
-      }
-      -->
-    </span>
   </h3>
   <div>
     <div class="columnDiv">

@@ -11,21 +11,21 @@ export class BattleOptionsPanelComponent {
   constructor(public battleService: BattleService, public characterService: CharacterService) {}
 
   noAttackToggle() {
-    this.battleService.enableManaAttack = false;
+    this.battleService.enableQiAttack = false;
     this.battleService.enablePyroclasm = false;
     this.battleService.enableMetalFist = false;
   }
 
-  manaAttackToggle() {
+  qiAttackToggle() {
     this.battleService.enablePyroclasm = false;
     this.battleService.enableMetalFist = false;
-    if (this.battleService.manaAttackUnlocked) {
-      this.battleService.enableManaAttack = true;
+    if (this.battleService.qiAttackUnlocked) {
+      this.battleService.enableQiAttack = true;
     }
   }
 
   pyroclasmToggle() {
-    this.battleService.enableManaAttack = false;
+    this.battleService.enableQiAttack = false;
     this.battleService.enableMetalFist = false;
     if (this.battleService.pyroclasmUnlocked) {
       this.battleService.enablePyroclasm = true;
@@ -33,7 +33,7 @@ export class BattleOptionsPanelComponent {
   }
 
   metalFistToggle() {
-    this.battleService.enableManaAttack = false;
+    this.battleService.enableQiAttack = false;
     this.battleService.enablePyroclasm = false;
     if (this.battleService.metalFistUnlocked) {
       this.battleService.enableMetalFist = true;
@@ -41,21 +41,21 @@ export class BattleOptionsPanelComponent {
   }
 
   noShieldToggle() {
-    this.battleService.enableManaShield = false;
+    this.battleService.enableQiShield = false;
     this.battleService.enableFireShield = false;
     this.battleService.enableIceShield = false;
   }
 
-  manaShieldToggle() {
+  qiShieldToggle() {
     this.battleService.enableFireShield = false;
     this.battleService.enableIceShield = false;
-    if (this.battleService.manaShieldUnlocked) {
-      this.battleService.enableManaShield = true;
+    if (this.battleService.qiShieldUnlocked) {
+      this.battleService.enableQiShield = true;
     }
   }
 
   fireShieldToggle() {
-    this.battleService.enableManaAttack = false;
+    this.battleService.enableQiAttack = false;
     this.battleService.enableIceShield = false;
     if (this.battleService.fireShieldUnlocked) {
       this.battleService.enableFireShield = true;
@@ -63,7 +63,7 @@ export class BattleOptionsPanelComponent {
   }
 
   iceShieldToggle() {
-    this.battleService.enableManaAttack = false;
+    this.battleService.enableQiAttack = false;
     this.battleService.enableFireShield = false;
     if (this.battleService.iceShieldUnlocked) {
       this.battleService.enableIceShield = true;
