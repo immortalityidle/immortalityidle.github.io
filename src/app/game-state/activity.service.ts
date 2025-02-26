@@ -34,6 +34,7 @@ export interface ActivityProperties {
   totalExhaustedDays: number;
   purifyGemsUnlocked: boolean;
   lifeActivities: { [key in ActivityType]?: number };
+  familySpecialty: ActivityType | null;
 }
 
 @Injectable({
@@ -72,6 +73,14 @@ export class ActivityService {
   private trainingPetsDays = 0;
   immediateActivity: Activity | null = null;
   lifeActivities: { [key in ActivityType]?: number } = {};
+  familySpecialty: ActivityType | null = null;
+  supportedSpecialties = [
+    ActivityType.Begging,
+    ActivityType.Blacksmithing,
+    ActivityType.Alchemy,
+    ActivityType.Woodworking,
+    ActivityType.Leatherworking,
+  ];
 
   constructor(
     private injector: Injector,
@@ -468,6 +477,7 @@ export class ActivityService {
       totalExhaustedDays: this.totalExhaustedDays,
       purifyGemsUnlocked: this.purifyGemsUnlocked,
       lifeActivities: this.lifeActivities,
+      familySpecialty: this.familySpecialty,
     };
   }
 
@@ -497,6 +507,7 @@ export class ActivityService {
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
     this.purifyGemsUnlocked = properties.purifyGemsUnlocked || false;
     this.lifeActivities = properties.lifeActivities;
+    this.familySpecialty = properties.familySpecialty;
     if (properties.pauseOnImpossibleFail === undefined) {
       this.pauseOnImpossibleFail = true;
     } else {
@@ -600,6 +611,21 @@ export class ActivityService {
   }
 
   reset(): void {
+    // determine family specialty
+    let highest = 0;
+    for (const key in this.lifeActivities) {
+      const activityType = parseInt(key) as ActivityType;
+      const value = this.lifeActivities[activityType] || 0;
+      if (!activityType) {
+        continue;
+      }
+      if (value > highest && this.supportedSpecialties.includes(activityType)) {
+        highest = value;
+        this.familySpecialty = activityType;
+      }
+    }
+    this.lifeActivities = {};
+
     // downgrade all activities to base level
     this.openApprenticeships = 1;
     this.currentApprenticeship = undefined;
@@ -1830,7 +1856,10 @@ export class ActivityService {
         () => {
           this.characterService.characterState.increaseAttribute('charisma', 0.1);
           this.characterService.characterState.status.stamina.value -= 5;
-          const money = 3 + Math.log2(this.characterService.characterState.attributes.charisma.value);
+          let money = 3 + Math.log2(this.characterService.characterState.attributes.charisma.value);
+          if (this.familySpecialty === ActivityType.Begging) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
@@ -1839,7 +1868,10 @@ export class ActivityService {
         () => {
           this.characterService.characterState.increaseAttribute('charisma', 0.2);
           this.characterService.characterState.status.stamina.value -= 5;
-          const money = 10 + Math.log2(this.characterService.characterState.attributes.charisma.value);
+          let money = 10 + Math.log2(this.characterService.characterState.attributes.charisma.value);
+          if (this.familySpecialty === ActivityType.Begging) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
@@ -1848,7 +1880,10 @@ export class ActivityService {
         () => {
           this.characterService.characterState.increaseAttribute('charisma', 0.3);
           this.characterService.characterState.status.stamina.value -= 5;
-          const money = 20 + Math.log2(this.characterService.characterState.attributes.charisma.value * 2);
+          let money = 20 + Math.log2(this.characterService.characterState.attributes.charisma.value * 2);
+          if (this.familySpecialty === ActivityType.Begging) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
@@ -1857,7 +1892,10 @@ export class ActivityService {
         () => {
           this.characterService.characterState.increaseAttribute('charisma', 0.5);
           this.characterService.characterState.status.stamina.value -= 5;
-          const money = 30 + Math.log2(this.characterService.characterState.attributes.charisma.value * 10);
+          let money = 30 + Math.log2(this.characterService.characterState.attributes.charisma.value * 10);
+          if (this.familySpecialty === ActivityType.Begging) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Begging.lastIncome = money;
           this.beggingDays++;
@@ -1920,11 +1958,14 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           this.characterService.characterState.increaseAttribute('toughness', 0.1);
           this.characterService.characterState.status.stamina.value -= 25;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.toughness.value
             ) + this.characterService.characterState.attributes.metalLore.value;
+          if (this.familySpecialty === ActivityType.Blacksmithing) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.01;
@@ -1944,12 +1985,16 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.2);
           this.characterService.characterState.increaseAttribute('toughness', 0.2);
           this.characterService.characterState.status.stamina.value -= 25;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.metalLore.value * 2;
+          if (this.familySpecialty === ActivityType.Blacksmithing) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.02;
@@ -1983,13 +2028,17 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.5);
           this.characterService.characterState.increaseAttribute('toughness', 0.5);
           this.characterService.characterState.status.stamina.value -= 25;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.fireLore.value +
             this.characterService.characterState.attributes.metalLore.value * 5;
+          if (this.familySpecialty === ActivityType.Blacksmithing) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.05;
@@ -2023,13 +2072,17 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 1);
           this.characterService.characterState.increaseAttribute('toughness', 1);
           this.characterService.characterState.status.stamina.value -= 50;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.fireLore.value +
             this.characterService.characterState.attributes.metalLore.value * 10;
+          if (this.familySpecialty === ActivityType.Blacksmithing) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           let blacksmithSuccessChance = 0.2;
@@ -2160,9 +2213,13 @@ export class ActivityService {
           this.checkApprenticeship(ActivityType.Alchemy);
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
           this.characterService.characterState.status.stamina.value -= 10;
-          const money =
+          let money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           let alchemySuccessChance = 0.01;
@@ -2177,9 +2234,13 @@ export class ActivityService {
           this.checkApprenticeship(ActivityType.Alchemy);
           this.characterService.characterState.increaseAttribute('intelligence', 0.2);
           this.characterService.characterState.status.stamina.value -= 10;
-          const money =
+          let money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value * 2;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           let alchemySuccessChance = 0.02;
@@ -2206,9 +2267,13 @@ export class ActivityService {
           this.checkApprenticeship(ActivityType.Alchemy);
           this.characterService.characterState.increaseAttribute('intelligence', 0.5);
           this.characterService.characterState.status.stamina.value -= 10;
-          const money =
+          let money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value * 5;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           let alchemySuccessChance =
@@ -2236,9 +2301,13 @@ export class ActivityService {
           this.checkApprenticeship(ActivityType.Alchemy);
           this.characterService.characterState.increaseAttribute('intelligence', 1);
           this.characterService.characterState.status.stamina.value -= 20;
-          const money =
+          let money =
             Math.log2(this.characterService.characterState.attributes.intelligence.value) +
             this.characterService.characterState.attributes.waterLore.value * 10;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.2);
@@ -2355,11 +2424,15 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
           this.characterService.characterState.status.stamina.value -= 20;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.intelligence.value
             ) + this.characterService.characterState.attributes.woodLore.value;
+          if (this.familySpecialty === ActivityType.Woodworking) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.001);
@@ -2370,12 +2443,16 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.2);
           this.characterService.characterState.increaseAttribute('intelligence', 0.2);
           this.characterService.characterState.status.stamina.value -= 20;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.intelligence.value
             ) +
             this.characterService.characterState.attributes.woodLore.value * 2;
+          if (this.familySpecialty === ActivityType.Woodworking) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.005);
@@ -2402,12 +2479,16 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 0.5);
           this.characterService.characterState.increaseAttribute('intelligence', 0.5);
           this.characterService.characterState.status.stamina.value -= 20;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.intelligence.value
             ) +
             this.characterService.characterState.attributes.woodLore.value * 5;
+
+          if (this.familySpecialty === ActivityType.Woodworking) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.02);
@@ -2434,12 +2515,16 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('strength', 1);
           this.characterService.characterState.increaseAttribute('intelligence', 1);
           this.characterService.characterState.status.stamina.value -= 40;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.strength.value +
                 this.characterService.characterState.attributes.intelligence.value
             ) +
             this.characterService.characterState.attributes.woodLore.value * 10;
+          if (this.familySpecialty === ActivityType.Woodworking) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.6);
@@ -2527,11 +2612,15 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.increaseAttribute('toughness', 0.1);
           this.characterService.characterState.status.stamina.value -= 20;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.speed.value +
                 this.characterService.characterState.attributes.toughness.value
             ) + this.characterService.characterState.attributes.animalHandling.value;
+          if (this.familySpecialty === ActivityType.Leatherworking) {
+            money += money * 0.2;
+          }
+
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.001);
@@ -2543,12 +2632,15 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.2);
           this.characterService.characterState.increaseAttribute('toughness', 0.2);
           this.characterService.characterState.status.stamina.value -= 20;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.speed.value +
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.animalHandling.value * 2;
+          if (this.familySpecialty === ActivityType.Leatherworking) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.002);
@@ -2577,12 +2669,15 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.5);
           this.characterService.characterState.increaseAttribute('toughness', 0.5);
           this.characterService.characterState.status.stamina.value -= 20;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.speed.value +
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.animalHandling.value * 5;
+          if (this.familySpecialty === ActivityType.Leatherworking) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.003);
@@ -2611,12 +2706,15 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 1);
           this.characterService.characterState.increaseAttribute('toughness', 1);
           this.characterService.characterState.status.stamina.value -= 40;
-          const money =
+          let money =
             Math.log2(
               this.characterService.characterState.attributes.speed.value +
                 this.characterService.characterState.attributes.toughness.value
             ) +
             this.characterService.characterState.attributes.animalHandling.value * 10;
+          if (this.familySpecialty === ActivityType.Leatherworking) {
+            money += money * 0.2;
+          }
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.1);

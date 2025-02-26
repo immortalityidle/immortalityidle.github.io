@@ -76,6 +76,13 @@
                     model_training
                   </mat-icon>
                 }
+                @if (activityService.familySpecialty === activity.activityType) {
+                  <mat-icon
+                    tooltip="This activity is a family specialty, and you will do it better than you could if your ancestors hadn't practiced this so much."
+                    aria-label="Family Specialty" aria-hidden="false">
+                    supervisor_account
+                  </mat-icon>
+                }
                 @if (activity.lastIncome && activity.lastIncome > 0) {
                   <mat-icon tooltip="Exactly how much will you make doing this job?<br>It can depend on your attributes, but the last time you did this job you made<br>{{activity.lastIncome | bigNumber}} taels."
                     aria-label="Earns money" aria-hidden="false">
