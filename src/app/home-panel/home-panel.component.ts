@@ -5,7 +5,6 @@ import { HomeService } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
 import { StoreService } from '../game-state/store.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
-import { FarmPanelComponent } from '../farm-panel/farm-panel.component';
 import { FollowersService } from '../game-state/followers.service';
 import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
@@ -52,15 +51,6 @@ export class HomePanelComponent {
     });
   }
 
-  farmClicked(): void {
-    this.storeService.setStoreInventory();
-    this.dialog.open(FarmPanelComponent, {
-      width: '800px',
-      data: { someField: 'foo' },
-      autoFocus: false,
-    });
-  }
-
   buyClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
@@ -70,18 +60,6 @@ export class HomePanelComponent {
       this.homeService.buyLand(-1);
     } else {
       this.homeService.buyLand(1);
-    }
-  }
-
-  plowClicked(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.shiftKey || event.altKey) {
-      this.homeService.addField(10);
-    } else if (event.ctrlKey || event.metaKey) {
-      this.homeService.addField(-1);
-    } else {
-      this.homeService.addField();
     }
   }
 }

@@ -214,7 +214,7 @@ export class ActivityPanelComponent {
         );
       }
     } else {
-      return [
+      let tooltipText = [
         'This activity is locked until you have the attributes required for it. You will need:<br>',
         ...Object.entries(activity.requirements[0]).map(entry =>
           entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
@@ -222,6 +222,16 @@ export class ActivityPanelComponent {
       ]
         .filter(line => line)
         .join('<br>');
+      if (activity.landRequirements) {
+        tooltipText += '<br>Land: ' + activity.landRequirements;
+      }
+      if (activity.fallowLandRequirements) {
+        tooltipText += '<br>Fallow Land: ' + activity.fallowLandRequirements;
+      }
+      if (activity.farmedLandRequirements) {
+        tooltipText += '<br>Farmed Land: ' + activity.farmedLandRequirements;
+      }
+      return tooltipText;
     }
   }
 

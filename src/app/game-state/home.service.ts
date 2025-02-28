@@ -42,21 +42,10 @@ export enum HomeType {
   Godthrone,
 }
 
-export interface Field {
-  cropName: string;
-  yield: number;
-  maxYield: number;
-  daysToHarvest: number;
-  originalDaysToHarvest: number;
-}
-
 export interface HomeProperties {
   land: number;
   homeValue: HomeType;
   furniture: FurnitureSlots;
-  fields: Field[];
-  extraFields: number;
-  averageYield: number;
   landPrice: number;
   autoBuyLandUnlocked: boolean;
   autoBuyLandLimit: number;
@@ -64,8 +53,6 @@ export interface HomeProperties {
   autoBuyHomeLimit: HomeType;
   autoBuyFurnitureUnlocked: boolean;
   autoBuyFurniture: FurnitureSlots;
-  autoFieldUnlocked: boolean;
-  autoFieldLimit: number;
   useAutoBuyReserve: boolean;
   autoBuyReserveAmount: number;
   nextHomeCostReduction: number;
@@ -74,11 +61,8 @@ export interface HomeProperties {
   ownedFurniture: string[];
   highestLand: number;
   highestLandPrice: number;
-  mostFields: number;
-  highestAverageYield: number;
   bestHome: HomeType;
   thugPause: boolean;
-  hellFood: boolean;
   hellHome: boolean;
   homeUnlocked: boolean;
   mouseCounter: number;
@@ -104,15 +88,10 @@ export class HomeService {
     kitchen: null,
     workbench: null,
   };
-  autoFieldUnlocked = false;
-  autoFieldLimit = 0;
   useAutoBuyReserve = false;
   autoBuyReserveAmount = 0;
   land: number;
   landPrice: number;
-  fields: Field[] = [];
-  extraFields = 0;
-  averageYield = 0; // running average of how much food is produced
   furniture: FurnitureSlots = {
     bed: null,
     bathtub: null,
@@ -125,7 +104,6 @@ export class HomeService {
   houseBuildingProgress = 1;
   upgrading = false;
   thugPause = false;
-  hellFood = false;
   hellHome = false;
   homeUnlocked = false;
   smoothFarming = false;
@@ -483,10 +461,7 @@ export class HomeService {
   nextHomeCost = 0;
   highestLand = 0;
   highestLandPrice = 100;
-  mostFields = 0;
-  highestAverageYield = 0;
   bestHome = 0;
-  consecutiveHarvests = 0;
 
   constructor(
     private injector: Injector,
@@ -517,12 +492,6 @@ export class HomeService {
       if (this.landPrice > this.highestLandPrice) {
         this.highestLandPrice = this.landPrice;
       }
-      if (this.fields.length + this.extraFields > this.mostFields) {
-        this.mostFields = this.fields.length + this.extraFields;
-      }
-      if (this.averageYield > this.highestAverageYield) {
-        this.highestAverageYield = this.averageYield;
-      }
       if (this.homeValue > this.bestHome) {
         this.bestHome = this.homeValue;
       }
@@ -540,16 +509,9 @@ export class HomeService {
           LogTopic.EVENT,
           'You reincarnate as one of your own descendants and your family recognizes you as the reborn heir as you age.'
         );
-      }
-
-      if (this.characterService.characterState.bloodlineRank >= 7) {
-        this.logService.log(LogTopic.EVENT, 'Your family steps aside and assists your takeover of your Empire.');
-      } else if (this.characterService.characterState.bloodlineRank >= 6) {
-        this.logService.log(
-          LogTopic.EVENT,
-          'Your family escorts you to your ancestral home and helps you get settled in.'
-        );
-      } else if (this.grandfatherTent) {
+        //and a few coins so you don't immediately get beat up for not having upkeep money for your house
+        this.characterService.characterState.updateMoney(this.home.costPerDay * 30);
+      } else if (this.homeValue === HomeType.SquatterTent && this.grandfatherTent) {
         this.logService.log(
           LogTopic.EVENT,
           'Your grandfather gives you a bit of land and helps you set up a tent on it.'
@@ -557,6 +519,13 @@ export class HomeService {
         //and a few coins so you don't immediately get beat up for not having upkeep money for your house
         this.characterService.characterState.updateMoney(50);
         this.setCurrentHome(this.nextHome);
+      } else if (this.characterService.characterState.bloodlineRank >= 7) {
+        this.logService.log(LogTopic.EVENT, 'Your family steps aside and assists your takeover of your Empire.');
+      } else if (this.characterService.characterState.bloodlineRank >= 6) {
+        this.logService.log(
+          LogTopic.EVENT,
+          'Your family escorts you to your ancestral home and helps you get settled in.'
+        );
       }
     });
   }
@@ -581,14 +550,11 @@ export class HomeService {
         }
       }
     }
-    if (!this.hellService?.inHell || this.hellFood) {
-      this.ageFields();
-    }
     if (!this.hellService?.inHell && !this.characterService.characterState.god) {
       if (this.home.costPerDay > this.characterService.characterState.money) {
         this.logService.injury(
           LogTopic.EVENT,
-          "You can't afford the upkeep on your home. Some thugs rough you up over the debt. You better get some money, fast."
+          "You can't afford the upkeep on your home. Some thugs rough you up over the debt. You'd better start doing activities that make more money, fast, or you'll work yourself to death."
         );
         if (this.thugPause) {
           this.mainLoopService.pause = true;
@@ -607,30 +573,22 @@ export class HomeService {
       furniture: this.furniture,
       land: this.land,
       landPrice: this.landPrice,
-      fields: this.fields,
-      extraFields: this.extraFields,
-      averageYield: this.averageYield,
       autoBuyLandUnlocked: this.autoBuyLandUnlocked,
       autoBuyLandLimit: this.autoBuyLandLimit,
       autoBuyHomeUnlocked: this.autoBuyHomeUnlocked,
       autoBuyHomeLimit: this.autoBuyHomeLimit,
       autoBuyFurnitureUnlocked: this.autoBuyFurnitureUnlocked,
       autoBuyFurniture: this.autoBuyFurniture,
-      autoFieldUnlocked: this.autoFieldUnlocked,
       useAutoBuyReserve: this.useAutoBuyReserve,
       autoBuyReserveAmount: this.autoBuyReserveAmount,
-      autoFieldLimit: this.autoFieldLimit,
       nextHomeCostReduction: this.nextHomeCostReduction,
       houseBuildingProgress: this.houseBuildingProgress,
       upgrading: this.upgrading,
       ownedFurniture: this.ownedFurniture,
       highestLand: this.highestLand,
       highestLandPrice: this.highestLandPrice,
-      mostFields: this.mostFields,
-      highestAverageYield: this.highestAverageYield,
       bestHome: this.bestHome,
       thugPause: this.thugPause,
-      hellFood: this.hellFood,
       hellHome: this.hellHome,
       homeUnlocked: this.homeUnlocked,
       mouseCounter: this.mouseCounter,
@@ -641,9 +599,6 @@ export class HomeService {
   setProperties(properties: HomeProperties) {
     this.land = properties.land;
     this.landPrice = properties.landPrice;
-    this.fields = properties.fields;
-    this.extraFields = properties.extraFields || 0;
-    this.averageYield = properties.averageYield || 0;
     this.setCurrentHome(this.homesList[properties.homeValue]);
     this.autoBuyLandUnlocked = properties.autoBuyLandUnlocked || false;
     this.autoBuyLandLimit = properties.autoBuyLandLimit || 0;
@@ -651,8 +606,6 @@ export class HomeService {
     this.autoBuyHomeLimit = properties.autoBuyHomeLimit || 3;
     this.autoBuyFurnitureUnlocked = properties.autoBuyFurnitureUnlocked || false;
     this.autoBuyFurniture = properties.autoBuyFurniture || false;
-    this.autoFieldUnlocked = properties.autoFieldUnlocked || false;
-    this.autoFieldLimit = properties.autoFieldLimit || 0;
     this.useAutoBuyReserve = properties.useAutoBuyReserve || false;
     this.autoBuyReserveAmount = properties.autoBuyReserveAmount || 0;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
@@ -667,11 +620,8 @@ export class HomeService {
     this.ownedFurniture = properties.ownedFurniture || [];
     this.highestLand = properties.highestLand || 0;
     this.highestLandPrice = properties.highestLandPrice || 100;
-    this.mostFields = properties.mostFields || 0;
-    this.highestAverageYield = properties.highestAverageYield || 0;
     this.bestHome = properties.bestHome || 0;
     this.thugPause = properties.thugPause || false;
-    this.hellFood = properties.hellFood || false;
     this.hellHome = properties.hellHome || false;
     this.homeUnlocked = properties.homeUnlocked || false;
     this.mouseCounter = properties.mouseCounter || 0;
@@ -737,9 +687,6 @@ export class HomeService {
     this.nextHomeCostReduction = 0;
     this.land = 0;
     this.landPrice = 100;
-    this.fields = [];
-    this.extraFields = 0;
-    this.averageYield = 0;
   }
 
   setCurrentHome(home: Home) {
@@ -757,120 +704,6 @@ export class HomeService {
       }
     }
     throw Error('Home was not found with the given value');
-  }
-
-  getCrop(): Field {
-    let cropIndex = 0;
-    if (this.characterService.characterState.attributes.woodLore.value > 1) {
-      cropIndex = Math.floor(Math.log2(this.characterService.characterState.attributes.woodLore.value));
-    }
-    if (cropIndex >= this.inventoryService.farmFoodList.length) {
-      cropIndex = this.inventoryService.farmFoodList.length - 1;
-    }
-    const cropItem = this.inventoryService.farmFoodList[cropIndex];
-    // more valuable crops yield less per field and take longer to harvest, tune this later
-    return {
-      cropName: cropItem.id,
-      yield: 1,
-      maxYield: Math.floor(200 / cropItem.value),
-      daysToHarvest: 180 + cropItem.value,
-      originalDaysToHarvest: 180 + cropItem.value,
-    };
-  }
-
-  addField(quantity = 1) {
-    if (quantity < 0) {
-      quantity = this.land;
-    }
-    while (quantity > 0 && this.land >= quantity) {
-      if (this.fields.length >= 300) {
-        this.extraFields += quantity;
-        this.land -= quantity;
-        return;
-      } else {
-        this.fields.push(this.getCrop());
-        this.land--;
-        quantity--;
-      }
-    }
-  }
-
-  /**
-   *
-   * @param quantity -1 for all
-   */
-  clearField(quantity = 1) {
-    if (quantity < 0) {
-      this.land += this.extraFields;
-      this.extraFields = 0;
-      this.land += this.fields.length;
-      this.fields.splice(0);
-      return;
-    }
-    if (this.extraFields > 0 && quantity <= this.extraFields) {
-      this.extraFields -= quantity;
-      this.land += quantity;
-      return;
-    } else {
-      quantity -= this.extraFields;
-      this.extraFields = 0;
-    }
-    if (this.fields.length > 0) {
-      if (quantity > this.fields.length) {
-        quantity = this.fields.length;
-      }
-      this.land += quantity;
-      this.fields.splice(this.fields.length - quantity);
-    }
-  }
-
-  workFields(workValue: number) {
-    for (let i = 0; i < this.fields.length && i < 300; i++) {
-      const field = this.fields[i];
-      if (field.yield + workValue < field.maxYield) {
-        field.yield += workValue;
-      } else {
-        field.yield = field.maxYield;
-      }
-    }
-  }
-
-  // only ever really work the first 300 fields that we show.
-  // After that prorate yields by the amount of fields over 300.
-  ageFields() {
-    let startIndex = this.fields.length - 1;
-    if (startIndex > 299) {
-      startIndex = 299;
-    }
-    let totalDailyYield = 0;
-    let harvested = false;
-    for (let i = startIndex; i >= 0; i--) {
-      if (this.fields[i].daysToHarvest <= 0) {
-        let fieldYield = this.fields[i].yield;
-        if (this.fields.length + this.extraFields > 300) {
-          fieldYield = Math.floor((fieldYield * (this.fields.length + this.extraFields)) / 300);
-        }
-        totalDailyYield += fieldYield;
-        if (this.hellService?.inHell && fieldYield > 0) {
-          fieldYield = Math.max(fieldYield / 1000, 1);
-        }
-        this.inventoryService.addItem(this.itemRepoService.items[this.fields[i].cropName], fieldYield);
-        harvested = true;
-        this.fields[i] = this.getCrop();
-      } else {
-        this.fields[i].daysToHarvest--;
-      }
-    }
-    if (totalDailyYield > 0 || this.smoothFarming) {
-      this.consecutiveHarvests++;
-    } else {
-      this.consecutiveHarvests = 0;
-    }
-    this.averageYield = (this.averageYield * 364 + totalDailyYield) / 365;
-    if (this.smoothFarming && !harvested && this.fields.length > 0 && this.averageYield > 0.5) {
-      // smooth farming bonus crops on a day when no crops are harvested
-      this.inventoryService.addItem(this.itemRepoService.items[this.fields[0].cropName], Math.round(this.averageYield));
-    }
   }
 
   /**

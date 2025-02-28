@@ -11,6 +11,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { CamelToTitlePipe } from '../app.component';
+import { FarmService } from './farm.service';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -126,7 +127,7 @@ export class FollowersService {
     },
     farmer: {
       work: daysElapsed => {
-        this.homeService.workFields(this.jobs['farmer'].totalPower * daysElapsed);
+        this.farmService.workFields(this.jobs['farmer'].totalPower * daysElapsed);
       },
       description: 'Farmers work your fields, helping your crops to grow.',
       totalPower: 0,
@@ -408,6 +409,7 @@ export class FollowersService {
     private logService: LogService,
     private characterService: CharacterService,
     private homeService: HomeService,
+    private farmService: FarmService,
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService,
     mainLoopService: MainLoopService,

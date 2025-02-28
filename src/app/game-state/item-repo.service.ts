@@ -11,6 +11,7 @@ import { FollowersService } from './followers.service';
 import { AutoBuyerService } from './autoBuyer.service';
 import { GameStateService } from './game-state.service';
 import { HellLevel, HellService } from './hell.service';
+import { FarmService } from './farm.service';
 
 const daysInYear = 365;
 @Injectable({
@@ -18,6 +19,7 @@ const daysInYear = 365;
 })
 export class ItemRepoService {
   homeService?: HomeService;
+  farmService?: FarmService;
   activityService?: ActivityService;
   inventoryService?: InventoryService;
   battleService?: BattleService;
@@ -329,6 +331,7 @@ export class ItemRepoService {
       imageFile: 'rice',
       name: 'rice',
       type: 'food',
+      subtype: 'grain',
       value: 1,
       description: 'A basic staple of life. One pouch will sustain you for a day.',
       useLabel: 'Eat',
@@ -344,6 +347,7 @@ export class ItemRepoService {
       imageFile: 'cabbage',
       name: 'cabbage',
       type: 'food',
+      subtype: 'vegetable',
       value: 5,
       description: 'A simple, healthy vegetable.',
       useLabel: 'Eat',
@@ -351,10 +355,8 @@ export class ItemRepoService {
       useConsumes: true,
       use: (quantity = 1) => {
         this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.01) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.health.value += quantity;
-        }
+        this.characterService.characterState.healthBonusFood += quantity * 0.01;
+        this.characterService.characterState.status.health.value += quantity * 0.01;
         this.characterService.characterState.checkOverage();
       },
     },
@@ -363,6 +365,7 @@ export class ItemRepoService {
       imageFile: 'beans',
       name: 'beans',
       type: 'food',
+      subtype: 'vegetable',
       value: 10,
       description: 'A handful of healthy vegetables.',
       useLabel: 'Eat',
@@ -379,6 +382,7 @@ export class ItemRepoService {
       imageFile: 'broccoli',
       name: 'broccoli',
       type: 'food',
+      subtype: 'vegetable',
       value: 15,
       description: 'Little green trees. A very healthy vegetable.',
       useLabel: 'Eat',
@@ -395,6 +399,7 @@ export class ItemRepoService {
       imageFile: 'calabash',
       name: 'calabash',
       type: 'food',
+      subtype: 'vegetable',
       value: 20,
       description: 'A tasty gourd with health-giving properties.',
       useLabel: 'Eat',
@@ -411,6 +416,7 @@ export class ItemRepoService {
       imageFile: 'taro',
       name: 'taro',
       type: 'food',
+      subtype: 'vegetable',
       value: 25,
       description: 'A healthy root vegetable.',
       useLabel: 'Eat',
@@ -427,6 +433,7 @@ export class ItemRepoService {
       imageFile: 'pear',
       name: 'pear',
       type: 'food',
+      subtype: 'fruit',
       value: 30,
       description: 'A tasty fruit.',
       useLabel: 'Eat',
@@ -443,6 +450,7 @@ export class ItemRepoService {
       imageFile: 'melon',
       name: 'melon',
       type: 'food',
+      subtype: 'fruit',
       value: 35,
       description: 'A yummy fruit.',
       useLabel: 'Eat',
@@ -459,6 +467,7 @@ export class ItemRepoService {
       imageFile: 'plum',
       name: 'plum',
       type: 'food',
+      subtype: 'fruit',
       value: 40,
       description: 'An excellent fruit.',
       useLabel: 'Eat',
@@ -475,6 +484,7 @@ export class ItemRepoService {
       imageFile: 'apricot',
       name: 'apricot',
       type: 'food',
+      subtype: 'fruit',
       value: 45,
       description: 'A delicious fruit.',
       useLabel: 'Eat',
@@ -491,6 +501,7 @@ export class ItemRepoService {
       imageFile: 'peach',
       name: 'peach',
       type: 'food',
+      subtype: 'fruit',
       value: 50,
       description: 'A highly prized and delicious fruit.',
       useLabel: 'Eat',
@@ -508,6 +519,7 @@ export class ItemRepoService {
       imageFile: 'divinePeach',
       name: 'divine peach',
       type: 'food',
+      subtype: 'fruit',
       value: 100,
       description: 'A divinely prized and delicious fruit.',
       useLabel: 'Eat',
@@ -545,6 +557,7 @@ export class ItemRepoService {
       imageFile: 'meat',
       name: 'meat',
       type: 'food',
+      subtype: 'meat',
       value: 50,
       description: 'Some delicious meat.',
       useLabel: 'Eat',
@@ -563,6 +576,7 @@ export class ItemRepoService {
       imageFile: 'spiritMeat',
       name: 'spirit meat',
       type: 'food',
+      subtype: 'meat',
       value: 1000,
       description: 'Your hunters have performed a ritual burned offering of meat to send you this spiritual feast.',
       useLabel: 'Eat',
@@ -581,6 +595,7 @@ export class ItemRepoService {
       imageFile: 'fish',
       name: 'carp',
       type: 'food',
+      subtype: 'meat',
       value: 50,
       description: 'A common fish.',
       useLabel: 'Eat',
@@ -1728,8 +1743,8 @@ export class ItemRepoService {
         if (!this.hellService.completedHellBosses.includes(HellLevel.MortarsAndPestles)) {
           this.hellService.completedHellBosses.push(HellLevel.MortarsAndPestles);
         }
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
+        if (!this.farmService) {
+          this.farmService = this.injector.get(FarmService);
         }
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
@@ -1738,7 +1753,7 @@ export class ItemRepoService {
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.'
         );
-        this.homeService.hellFood = true;
+        this.farmService.hellFood = true;
         this.inventoryService.divinePeachesUnlocked = true;
         this.inventoryService.updateFarmFoodList();
       },
@@ -2187,26 +2202,26 @@ export class ItemRepoService {
       id: 'autoFieldManual',
       name: 'Manual of Field Conversion',
       type: 'manual',
-      description: 'This manual teaches you to automatically plow open land into fields.',
+      description: 'This manual teaches you to automatically skip plowing actions when you have enough fields.',
       value: 2000000,
       useLabel: 'Read',
       useDescription: 'Permanently unlock automatic field plowing.',
       useConsumes: true,
       use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
+        if (!this.farmService) {
+          this.farmService = this.injector.get(FarmService);
         }
-        this.homeService.autoFieldUnlocked = true;
+        this.farmService.autoFieldUnlocked = true;
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
         );
       },
       owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
+        if (!this.farmService) {
+          this.farmService = this.injector.get(FarmService);
         }
-        return this.homeService.autoFieldUnlocked;
+        return this.farmService.autoFieldUnlocked;
       },
     },
     autoPotionManual: {

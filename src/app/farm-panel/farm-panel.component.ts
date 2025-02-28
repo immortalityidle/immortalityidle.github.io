@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
+import { FarmService } from '../game-state/farm.service';
 
 @Component({
   selector: 'app-farm-panel',
@@ -11,43 +12,32 @@ import { HomeService } from '../game-state/home.service';
 export class FarmPanelComponent {
   constructor(
     public homeService: HomeService,
+    public farmService: FarmService,
     private characterService: CharacterService,
     public gameStateService: GameStateService
   ) {}
 
-  clearClicked(event: MouseEvent) {
+  addFieldClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (event.shiftKey || event.altKey) {
-      this.homeService.clearField(10);
-    } else if (event.ctrlKey || event.metaKey) {
-      this.homeService.clearField(-1);
-    } else {
-      this.homeService.clearField();
-    }
+    this.farmService.addField();
   }
 
-  buyClicked(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.shiftKey || event.altKey) {
-      this.homeService.buyLand(10);
-    } else if (event.ctrlKey || event.metaKey) {
-      this.homeService.buyLand(-1);
-    } else {
-      this.homeService.buyLand(1);
-    }
+  removeFieldClicked(event: MouseEvent, fieldIndex: number) {
+    this.farmService.removeField(fieldIndex);
   }
 
-  plowClicked(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.shiftKey || event.altKey) {
-      this.homeService.addField(10);
-    } else if (event.ctrlKey || event.metaKey) {
-      this.homeService.addField(-1);
-    } else {
-      this.homeService.addField();
-    }
+  addPlotToFieldClicked(event: MouseEvent, fieldIndex: number) {
+    //TODO: shift-click for multiple, etc
+    this.farmService.assignFallowPlots(1, fieldIndex);
+  }
+
+  removePlotFromFieldClicked(event: MouseEvent, fieldIndex: number) {
+    //TODO: shift-click for multiple, etc
+    this.farmService.unassignPlots(1, fieldIndex);
+  }
+
+  changeCropClicked(event: MouseEvent, fieldIndex: number) {
+    this.farmService.changeCrop(fieldIndex);
   }
 }

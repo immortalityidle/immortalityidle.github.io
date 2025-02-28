@@ -10,6 +10,7 @@ import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inve
 import { MainLoopService } from '../game-state/main-loop.service';
 import { SaveModalComponent } from '../save-modal/save-modal.component';
 import { environment } from '../../environments/environment';
+import { FarmService } from '../game-state/farm.service';
 
 @Component({
   selector: 'app-options-modal',
@@ -19,6 +20,7 @@ import { environment } from '../../environments/environment';
 export class OptionsModalComponent {
   constructor(
     public homeService: HomeService,
+    public farmService: FarmService,
     public characterService: CharacterService,
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
@@ -91,9 +93,9 @@ export class OptionsModalComponent {
 
   autoFieldLimitChanged(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.homeService.autoFieldLimit = Math.floor(parseFloat(event.target.value));
-    if (!this.homeService.autoFieldLimit) {
-      this.homeService.autoFieldLimit = 0;
+    this.farmService.autoFieldLimit = Math.floor(parseFloat(event.target.value));
+    if (!this.farmService.autoFieldLimit) {
+      this.farmService.autoFieldLimit = 0;
     }
   }
 

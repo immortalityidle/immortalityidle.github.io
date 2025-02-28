@@ -4,6 +4,7 @@ import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
 import { AutoBuyer, FurnitureAutoBuyer, HomeAutoBuyer, LandAndFieldAutoBuyer } from './autoBuyer';
 import { HellService } from './hell.service';
+import { FarmService } from './farm.service';
 
 export interface AutoBuyerProperties {
   autoBuyerSettingsUnlocked: boolean;
@@ -29,15 +30,16 @@ export class AutoBuyerService {
   autoBuyerSettings: AutoBuyerSetting[] = this.getDefaultSettings();
 
   autobuyers: AutoBuyersMap = {
-    home: new HomeAutoBuyer(this, this.homeService, this.characterService),
-    land: new LandAndFieldAutoBuyer(this, this.homeService, this.characterService),
-    furniture: new FurnitureAutoBuyer(this, this.homeService, this.characterService),
+    home: new HomeAutoBuyer(this, this.homeService, this.farmService, this.characterService),
+    land: new LandAndFieldAutoBuyer(this, this.homeService, this.farmService, this.characterService),
+    furniture: new FurnitureAutoBuyer(this, this.homeService, this.farmService, this.characterService),
   };
 
   constructor(
     private injector: Injector,
     private characterService: CharacterService,
     private homeService: HomeService,
+    private farmService: FarmService,
     mainLoopService: MainLoopService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));

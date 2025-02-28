@@ -9,6 +9,8 @@ export enum ActivityType {
   ChopWood,
   Woodworking,
   Leatherworking,
+  Plowing,
+  Clearing,
   Farming,
   Mining,
   Smelting,
@@ -84,8 +86,11 @@ export interface Activity {
   consequenceDescription: string[];
   requirements: CharacterAttribute[];
   landRequirements?: number;
+  fallowLandRequirements?: number;
+  farmedLandRequirements?: number;
   consequence: (() => void)[];
   unlocked: boolean;
+  relockable?: boolean;
   discovered?: boolean;
   skipApprenticeshipLevel: number;
   lastIncome?: number;

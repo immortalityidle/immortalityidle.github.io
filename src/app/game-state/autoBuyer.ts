@@ -1,11 +1,13 @@
 import { AutoBuyerService } from './autoBuyer.service';
 import { CharacterService } from './character.service';
+import { FarmService } from './farm.service';
 import { HomeService } from './home.service';
 
 export abstract class AutoBuyer {
   constructor(
     protected autoBuyerService: AutoBuyerService,
     protected homeService: HomeService,
+    protected farmService: FarmService,
     protected characterService: CharacterService
   ) {}
 
@@ -96,7 +98,7 @@ export class HomeAutoBuyer extends AutoBuyer {
 
 export class LandAndFieldAutoBuyer extends AutoBuyer {
   shouldRun(): boolean {
-    return this.homeService.autoBuyLandUnlocked || this.homeService.autoFieldUnlocked;
+    return this.homeService.autoBuyLandUnlocked || this.farmService.autoFieldUnlocked;
   }
 
   run(reserveAmount: number) {
@@ -107,31 +109,31 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
       const landRequired = Math.min(
         this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
         this.homeService.autoBuyLandLimit -
-          (this.homeService.land + this.homeService.fields.length + this.homeService.extraFields)
+          (this.homeService.land + this.farmService.fields.length + this.farmService.extraFields)
       );
       if (landRequired > 0) {
         this.homeService.buyLand(landRequired);
       }
     }
 
-    if (this.homeService.autoFieldUnlocked) {
+    if (this.farmService.autoFieldUnlocked) {
       const minFields = Math.min(
         this.homeService.land,
-        this.homeService.autoFieldLimit - (this.homeService.fields.length + this.homeService.extraFields)
+        this.farmService.autoFieldLimit - (this.farmService.fields.length + this.farmService.extraFields)
       );
 
       if (minFields > 0) {
-        this.homeService.addField(minFields);
+        this.farmService.plowPlot(minFields);
       }
     }
   }
 
   isBlocked(): boolean {
     // This autobuyer can be blocked if it needs more fields, but we haven't unlocked buying land yet
-    if (this.homeService.autoFieldUnlocked && !this.homeService.autoBuyLandUnlocked) {
+    if (this.farmService.autoFieldUnlocked && !this.homeService.autoBuyLandUnlocked) {
       return (
         this.homeService.land === 0 &&
-        this.homeService.fields.length + this.homeService.extraFields < this.homeService.autoFieldLimit
+        this.farmService.fields.length + this.farmService.extraFields < this.farmService.autoFieldLimit
       );
     }
 
@@ -146,13 +148,13 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
     let landComplete = true;
     if (this.homeService.autoBuyLandUnlocked) {
       landComplete =
-        this.homeService.land + this.homeService.fields.length + this.homeService.extraFields >=
+        this.homeService.land + this.farmService.fields.length + this.farmService.extraFields >=
         this.homeService.autoBuyLandLimit;
     }
 
     let fieldsComplete = true;
-    if (this.homeService.autoFieldUnlocked) {
-      fieldsComplete = this.homeService.fields.length + this.homeService.extraFields >= this.homeService.autoFieldLimit;
+    if (this.farmService.autoFieldUnlocked) {
+      fieldsComplete = this.farmService.fields.length + this.farmService.extraFields >= this.farmService.autoFieldLimit;
     }
 
     return landComplete && fieldsComplete;

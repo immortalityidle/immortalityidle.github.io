@@ -1,24 +1,45 @@
-
 @import (reference) "../../styles.less";
 
-.itemSlot {
-    width: 42px;
-    height: 42px;
+.farmContainer{
+    display: flex;
+    flex-direction: column;
+    margin: 4px;
+    height: 100%;
+}
+
+.fieldSlot {
+    width: 200px;
+    height: 120px;
     padding: 2px;
     line-height: 12px;
+    display: flex;
+    flex-direction: row;
+
+    border-radius: 4px;
+    border: 1px solid var(--panelBorder);
+    font-size: x-small;
+    border-spacing: 0px;
+    background-color: var(--itemSlotColor);
+    color: var(--bodyText);
+    box-sizing: border-box;
+  
 }
 
+.flexColumn {
+    display: flex;
+    flex-direction: column;
+    margin: 2px;
+}
+
+.flexColumnGrow {
+    flex-grow: 1;
+}
 .farmGrid {
-    width: 670px;
-    margin: 0 auto 0 auto;
+    margin: 2px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 2px;
-}
-
-.iconButton {
-    float: right;
+    overflow-y: auto;
 }
 
 .yieldText {

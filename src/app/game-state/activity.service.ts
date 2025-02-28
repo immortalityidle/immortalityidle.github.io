@@ -13,6 +13,7 @@ import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { Follower, FollowersService } from './followers.service';
 import { HellLevel, HellService } from './hell.service';
+import { FarmService } from './farm.service';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -87,6 +88,7 @@ export class ActivityService {
     private characterService: CharacterService,
     private inventoryService: InventoryService,
     public homeService: HomeService,
+    public farmService: FarmService,
     reincarnationService: ReincarnationService,
     private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
@@ -536,6 +538,9 @@ export class ActivityService {
 
       return true;
     }
+    if (activity.relockable) {
+      activity.unlocked = false;
+    }
     return false;
   }
 
@@ -562,12 +567,27 @@ export class ActivityService {
         return false;
       }
     }
+    if (activity.landRequirements) {
+      if (this.homeService.land < activity.landRequirements) {
+        return false;
+      }
+    }
+    if (activity.fallowLandRequirements) {
+      if (this.farmService.fallowPlots < activity.fallowLandRequirements) {
+        return false;
+      }
+    }
+    if (activity.farmedLandRequirements) {
+      if (this.farmService.farmedPlots < activity.farmedLandRequirements) {
+        return false;
+      }
+    }
     return true;
   }
 
   checkRequirements(squelchLogs: boolean): void {
     for (const activity of this.activities) {
-      if (!activity.unlocked && this.meetsRequirements(activity)) {
+      if (this.meetsRequirements(activity) && !activity.unlocked) {
         if (!squelchLogs) {
           this.logService.log(
             LogTopic.EVENT,
@@ -812,6 +832,8 @@ export class ActivityService {
     newList.push(this.Begging);
     newList.push(this.Burning);
     newList.push(this.Taunting);
+    newList.push(this.Plowing);
+    newList.push(this.Clearing);
     newList.push(this.Farming);
     newList.push(this.Mining);
     newList.push(this.Smelting);
@@ -870,6 +892,10 @@ export class ActivityService {
   Woodworking: Activity;
   // @ts-ignore
   Leatherworking: Activity;
+  // @ts-ignore
+  Plowing: Activity;
+  // @ts-ignore
+  Clearing: Activity;
   // @ts-ignore
   Farming: Activity;
   // @ts-ignore
@@ -2781,12 +2807,84 @@ export class ActivityService {
       skipApprenticeshipLevel: 2,
     };
 
+    this.Plowing = {
+      level: 0,
+      name: ['Plowing Land'],
+      imageBaseName: 'plowing',
+      activityType: ActivityType.Plowing,
+      description: ['Plow an unused plot of land into a field for growing crops.'],
+      consequenceDescription: ['Uses 50 Stamina. Increases strength and speed.'],
+      consequence: [
+        () => {
+          this.farmService.plowPlot();
+          this.characterService.characterState.status.stamina.value -= 50;
+          this.characterService.characterState.increaseAttribute('strength', 0.1);
+          this.characterService.characterState.increaseAttribute('speed', 0.1);
+          this.characterService.characterState.increaseAttribute('woodLore', 0.001);
+          this.characterService.characterState.increaseAttribute('earthLore', 0.001);
+          this.characterService.characterState.yang++;
+        },
+      ],
+      resourceUse: [
+        {
+          stamina: 50,
+        },
+      ],
+      requirements: [
+        {
+          strength: 10,
+          speed: 10,
+        },
+      ],
+      landRequirements: 1,
+      unlocked: false,
+      relockable: true,
+      skipApprenticeshipLevel: 0,
+    };
+
+    this.Clearing = {
+      level: 0,
+      name: ['Clearing Land'],
+      imageBaseName: 'clearing',
+      activityType: ActivityType.Clearing,
+      description: ['Clear a fallow plot of farmland into an empty plot of land.'],
+      consequenceDescription: ['Uses 50 Stamina. Increases strength and speed.'],
+      consequence: [
+        () => {
+          this.farmService.clearPlot();
+          this.characterService.characterState.status.stamina.value -= 50;
+          this.characterService.characterState.increaseAttribute('strength', 0.1);
+          this.characterService.characterState.increaseAttribute('speed', 0.1);
+          this.characterService.characterState.increaseAttribute('woodLore', 0.001);
+          this.characterService.characterState.increaseAttribute('earthLore', 0.001);
+          this.characterService.characterState.yang++;
+        },
+      ],
+      resourceUse: [
+        {
+          stamina: 50,
+        },
+      ],
+      requirements: [
+        {
+          strength: 10,
+          speed: 10,
+        },
+      ],
+      fallowLandRequirements: 1,
+      unlocked: false,
+      relockable: true,
+      skipApprenticeshipLevel: 0,
+    };
+
     this.Farming = {
       level: 0,
       name: ['Farming'],
       imageBaseName: 'farming',
       activityType: ActivityType.Farming,
-      description: ["Plant crops in your fields. This is a waste of time if you don't have some fields ready to work."],
+      description: [
+        "Cultivate the crops in your fields. This is a waste of time if you don't have planted fields ready to work.",
+      ],
       consequenceDescription: [
         'Uses 20 Stamina. Increases strength and speed and helps your fields to produce more food.',
       ],
@@ -2802,7 +2900,7 @@ export class ActivityService {
           if (farmPower < 1) {
             farmPower = 1;
           }
-          this.homeService.workFields(farmPower);
+          this.farmService.workFields(farmPower);
           this.characterService.characterState.increaseAttribute('strength', 0.1);
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.increaseAttribute('woodLore', 0.001);
@@ -2821,7 +2919,9 @@ export class ActivityService {
           speed: 10,
         },
       ],
+      farmedLandRequirements: 1,
       unlocked: false,
+      relockable: true,
       skipApprenticeshipLevel: 0,
     };
 

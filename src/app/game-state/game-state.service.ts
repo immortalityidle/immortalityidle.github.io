@@ -17,6 +17,7 @@ import { HellProperties, HellService } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
+import { FarmProperties, FarmService } from './farm.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -25,6 +26,7 @@ interface GameState {
   character: CharacterProperties;
   inventory: InventoryProperties;
   home: HomeProperties;
+  farm: FarmProperties;
   activities: ActivityProperties;
   battles: BattleProperties;
   followers: FollowersProperties;
@@ -162,9 +164,16 @@ export class GameStateService {
     },
     {
       id: 'petsPanel',
-      name: 'pets',
-      icon: 'Pets',
+      name: 'Pets',
+      icon: 'pets',
       panelHelp: 'Your pets can aid you in many ways.<br>Each has a specific skill that they will use to your benefit.',
+      unlocked: false,
+    },
+    {
+      id: 'farmPanel',
+      name: 'Farm',
+      icon: 'solar_power',
+      panelHelp: 'Your farm can grow healthy food that can aid you on your journey to immortality.',
       unlocked: false,
     },
   ];
@@ -172,6 +181,7 @@ export class GameStateService {
   constructor(
     private characterService: CharacterService,
     private homeService: HomeService,
+    private farmService: FarmService,
     private inventoryService: InventoryService,
     private logService: LogService,
     private reincarnationService: ReincarnationService,
@@ -429,6 +439,7 @@ export class GameStateService {
     this.hellService.setProperties(gameState.hell || {});
     this.characterService.characterState.setProperties(gameState.character);
     this.homeService.setProperties(gameState.home);
+    this.farmService.setProperties(gameState.farm);
     this.inventoryService.setProperties(gameState.inventory);
     // restore functions to itemStacks, because JSON stringification throws them away
     for (const itemStack of this.inventoryService.itemStacks) {
@@ -477,6 +488,7 @@ export class GameStateService {
       character: this.characterService.characterState.getProperties(),
       inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),
+      farm: this.farmService.getProperties(),
       activities: this.activityService.getProperties(),
       battles: this.battleService.getProperties(),
       followers: this.followersService.getProperties(),

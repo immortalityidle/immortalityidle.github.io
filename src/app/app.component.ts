@@ -23,6 +23,7 @@ import { InventoryService } from './game-state/inventory.service';
 import { KtdGridComponent, KtdGridLayout, KtdGridLayoutItem, ktdTrackById } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { FarmService } from './game-state/farm.service';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -174,6 +175,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public hellService: HellService,
     public inventoryService: InventoryService,
     public homeService: HomeService,
+    public farmService: FarmService,
     public dialog: MatDialog,
     @Inject(DOCUMENT) public document: Document
   ) {

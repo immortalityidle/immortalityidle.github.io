@@ -10,6 +10,7 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { StatisticsService } from '../game-state/statistics.service';
 import { StoreService } from '../game-state/store.service';
 import { ActivityType } from '../game-state/activity';
+import { FarmService } from '../game-state/farm.service';
 
 @Component({
   selector: 'app-statistics-panel',
@@ -22,6 +23,7 @@ export class StatisticsPanelComponent {
     public storeService: StoreService,
     public inventoryService: InventoryService,
     public homeService: HomeService,
+    public farmService: FarmService,
     public followerService: FollowersService,
     public characterService: CharacterService,
     public battleService: BattleService,

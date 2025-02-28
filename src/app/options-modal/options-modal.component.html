@@ -94,7 +94,7 @@
         <button tooltip="Completely restart your journey toward immortality." class="warning" (click)="hardResetClicked($event)">Hard Reset</button>
       </div>
     </mat-tab>
-    @if (homeService.autoBuyLandUnlocked || homeService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked) {
+    @if (homeService.autoBuyLandUnlocked || farmService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked) {
       <mat-tab>
         <ng-template mat-tab-label>
           <span class="tab-label">Home</span>
@@ -106,10 +106,10 @@
             </span>
           </div>
         }
-        @if (homeService.autoFieldUnlocked) {
+        @if (farmService.autoFieldUnlocked) {
           <div class="optionField">
             <span>
-              Automatically plow up to <input min="0" value="{{homeService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
+              Automatically plow up to <input min="0" value="{{farmService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
             </span>
           </div>
         }

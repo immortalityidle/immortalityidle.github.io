@@ -13,6 +13,7 @@ import { ActivityType } from './activity';
 import { ImpossibleTaskService } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { HellService } from './hell.service';
+import { FarmService } from './farm.service';
 
 export interface Achievement {
   name: string;
@@ -46,6 +47,7 @@ export class AchievementService {
     private storeService: StoreService,
     private battleService: BattleService,
     private homeService: HomeService,
+    private farmService: FarmService,
     private activityService: ActivityService,
     private followerService: FollowersService,
     private impossibleTaskService: ImpossibleTaskService,
@@ -141,6 +143,18 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Farmer',
+      description: 'You plowed your first field!',
+      hint: 'Cultivation might be important for cultivation.',
+      check: () => {
+        return this.farmService.fallowPlots > 0;
+      },
+      effect: () => {
+        this.gameStateService?.unlockPanel('farmPanel');
+      },
+      unlocked: false,
+    },
+    {
       name: 'Gear Up!',
       description: 'You created some equipment and now you can wear it.',
       hint: 'Some jobs let you make stuff you can use.',
@@ -206,6 +220,138 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['fastestPlayManual']);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Cabbage Stand',
+      description: 'You can now grow cabbage in your farm. Watch out for kids running by when you sell them.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 2;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('cabbage');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'The Magical Fruit',
+      description: 'You can now grow beans in your farm.',
+      hint: "They're not really a fruit.",
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 5;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('beans');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Little Green Trees',
+      description: 'You can now grow broccoli in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 10;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('broccoli');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'A Gourd You Might Not Know',
+      description: 'You can now grow calabash in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 50;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('calabash');
+      },
+      unlocked: false,
+    },
+    {
+      name: "It's Not Just for Boba",
+      description: 'You can now grow taro in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 100;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('taro');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'First Fruits',
+      description: 'You can now grow pears in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 1000;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('pear');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'They Come in Different Sizes',
+      description: 'You can now grow melons in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 10000;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('melon');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Purple Sweet and Sour',
+      description: 'You can now grow plums in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 1e6;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('plum');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'A Tiny Taste of Immortality',
+      description: 'You can now grow apricot in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 1e9;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('apricot');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Almost Eating Like an Immortal',
+      description: 'You can now grow peaches in your farm.',
+      hint: 'Work that farm!',
+      check: () => {
+        return this.characterService.characterState.attributes.woodLore.value > 1e12;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('peach');
+      },
+      unlocked: false,
+    },
+    {
+      name: '',
+      description: 'You can now grow Divine Peaches in your farm.',
+      hint: 'Descend to the depths and bring back the sweetest fruit.',
+      check: () => {
+        return this.inventoryService.divinePeachesUnlocked;
+      },
+      effect: () => {
+        this.farmService.unlockCrop('divinePeach');
       },
       unlocked: false,
     },
@@ -425,11 +571,12 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      //TODO: rework this
       name: 'Time to Buy a Tractor',
       description: 'You plowed 888 fields and unlocked the ' + this.itemRepoService.items['autoFieldManual'].name,
       hint: 'An aspiring immortal should have vast tracts of fertile land.',
       check: () => {
-        return this.homeService.fields.length + this.homeService.extraFields >= 888;
+        return this.farmService.fields.length + this.farmService.extraFields >= 888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoFieldManual']);
@@ -446,7 +593,7 @@ export class AchievementService {
         return (
           this.homeService.autoBuyHomeUnlocked &&
           this.homeService.autoBuyLandUnlocked &&
-          this.homeService.autoFieldUnlocked &&
+          this.farmService.autoFieldUnlocked &&
           this.homeService.autoBuyFurnitureUnlocked
         );
       },
@@ -1055,7 +1202,7 @@ export class AchievementService {
         'You have harvested crops every day for months and can now count on more regular and reliable harvests.',
       hint: "When starting your garden, it's best to work a little every day.",
       check: () => {
-        return this.homeService.consecutiveHarvests >= 60;
+        return this.farmService.consecutiveHarvests >= 60;
       },
       effect: () => {
         this.homeService.smoothFarming = true;

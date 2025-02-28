@@ -1,28 +1,54 @@
-<div class="darkMode">
-  <h3>Your Farm</h3>
-  <hr/>
-  <div class="yieldText">
-    <span>Your {{homeService.fields.length + homeService.extraFields | bigNumber}} fields produced an average of {{homeService.averageYield | bigNumber}} food per day over the last year.</span>
-    <mat-icon  (click)="buyClicked($event)" tooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels.<br>Shift-click to buy 10 plots.<br>Ctrl-click to buy half the land you can afford." class="iconButton" aria-label="Buy Land" aria-hidden="false">
+<div class="farmContainer">
+  <div>
+    <span>
+      You have {{farmService.fallowPlots}} plots of land laying fallow and ready to plant
+    </span>
+  </div>
+  <div>
+    <mat-icon  (click)="addFieldClicked($event)" tooltip="Set up a new field for growing crops." class="iconButton" 
+      aria-label="Set up a field" aria-hidden="false">
       add
-    </mat-icon>
-    <mat-icon  (click)="plowClicked($event)" class="iconButton rightFloat" aria-label="Plow Field" aria-hidden="false"
-      tooltip="Plow a field.<br>Converts a plot of land to a field.<br>You'll need to work at farming it to make it produce much food.<br>Once the harvest is over, you will get the food you've grown and the land will be available again.<br>Shift-click to plow 10 fields.<br>Ctrl-click to plow all your land.">
-      waves
-    </mat-icon>
-    <mat-icon (click)="clearClicked($event)" class="iconButton rightFloat" aria-label="Clear Field" aria-hidden="false"
-      tooltip="Clear a field.<br>Converts a the field back into an open plot of land.<br>Shift-click to clear 10 fields.<br>Ctrl-click to clear all your fields.">
-      delete_sweep
     </mat-icon>
   </div>
   <div class="farmGrid">
-    @for (field of homeService.fields; track field) {
-      <div>
-        <div class="itemSlot" tabindex="0"
-          tooltip="You will harvest {{field.yield}} in {{field.daysToHarvest}} days">
-          <div>{{field.cropName | titlecase}}</div>
-          <div>{{field.yield}}</div>
-          <div>{{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}</div>
+    @for (field of farmService.fields; track field; let index = $index) {
+      <div class="fieldSlot">
+        <div class="flexColumn flexColumnGrow">
+          <div>
+            <div>{{field.cropName | titlecase}} Field</div>
+            <div>{{field.plots}} Plots of Land</div>
+            <div>Harvest Quantity: {{field.yield}}</div>
+            <div>Days Until Next Harvest: {{field.daysToHarvest}}</div>
+            <div>Progress to next harvest: {{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}
+            </div>
+          </div>
+          <div class="yieldText">
+            <span>Average harvest of {{field.averageYield | bigNumber}} per day.</span>
+          </div>
+          @if (field.imageFile){
+            <img src="assets/images/items/{{field.imageFile}}.png" class="itemImage"
+              width="32" height="32"/>
+          }
+        </div>
+        <div class="flexColumn">
+          <mat-icon  (click)="removeFieldClicked($event, index)" tooltip="Clear this field and let its plots go fallow." class="iconButton" 
+            aria-label="Clear the field" aria-hidden="false">
+            close
+          </mat-icon>
+          <mat-icon  (click)="addPlotToFieldClicked($event, index)" tooltip="Assign a fallow plot to this field." class="iconButton" 
+            aria-label="Assign plot" aria-hidden="false">
+            add
+          </mat-icon>
+          <mat-icon  (click)="removePlotFromFieldClicked($event, index)" tooltip="Remove a plot from this field." class="iconButton" 
+            aria-label="Remove plot" aria-hidden="false">
+            remove
+          </mat-icon>
+          @if (farmService.unlockedCrops.length > 1){
+            <mat-icon  (click)="changeCropClicked($event, index)" tooltip="Change the kind of crop you are growing in this field." class="iconButton" 
+              aria-label="Change crop" aria-hidden="false">
+              grass
+            </mat-icon>
+          }
         </div>
       </div>
     }

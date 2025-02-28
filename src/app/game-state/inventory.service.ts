@@ -46,6 +46,7 @@ export interface Item {
   description: string;
   value: number;
   type: string;
+  subtype?: string;
   useLabel?: string;
   useDescription?: string;
   useConsumes?: boolean;
@@ -182,7 +183,6 @@ export class InventoryService {
   autoSellOldOreEnabled: boolean;
   autoSellOldBarsEnabled: boolean;
   autoSellOldHidesEnabled: boolean;
-  fed = false;
   lifetimeUsedItems = 0;
   lifetimeSoldItems = 0;
   lifetimePotionsUsed = 0;
@@ -1088,12 +1088,11 @@ export class InventoryService {
 
   /** Finds the best food in the inventory and uses it. */
   eatFood(): void {
-    if (this.fed) {
-      // we already ate something this tick
-      this.noFood = false;
-      this.fed = false;
+    if (this.characterService.characterState.status.nourishment.value <= 0) {
+      // not hungry enough, don't automatically eat
       return;
     }
+
     let foodStack = null;
     const foodValue = 0;
     for (const itemIterator of this.itemStacks) {
@@ -1115,7 +1114,6 @@ export class InventoryService {
         this.characterService.characterState.status.nourishment.value++;
       }
     }
-    this.fed = false;
   }
 
   /**
@@ -1403,7 +1401,9 @@ export class InventoryService {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
-    this.lifetimeUsedItems++;
+    if (item.type !== 'food') {
+      this.lifetimeUsedItems++;
+    }
     if (item.type === 'potion' && instanceOfPotion(item)) {
       this.usePotion(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
     } else if (item.type === 'pill' && instanceOfPill(item)) {
@@ -1411,7 +1411,6 @@ export class InventoryService {
     } else if (item.use) {
       item.use(quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
       if (item.type === 'food') {
-        this.fed = true;
         if (this.hellService) {
           this.hellService.daysFasted = 0;
         }

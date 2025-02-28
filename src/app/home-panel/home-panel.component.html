@@ -7,12 +7,12 @@
   <div class="homeInfo">
     <span>{{homeService.home.description}}</span>
   </div>
-  @if ((!hellService.inHell || homeService.hellHome || homeService.hellFood)) {
+  @if ((!hellService.inHell || homeService.hellHome)) {
     <div class="homeContainer">
       <div class="overflow">
         @if (!hellService.inHell && !characterService.characterState.god) {
           <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
-          }      <div class="homeInfo"><span>You own {{homeService.land | bigNumber}} open {{homeService.land === 1 ? "plot" : "plots"}} of land and {{homeService.fields.length + homeService.extraFields | bigNumber}} fields</span></div>
+          }      <div class="homeInfo"><span>You own {{homeService.land | bigNumber}} open {{homeService.land === 1 ? "plot" : "plots"}} of land</span></div>
           @if (homeService.home.furnitureSlots.length > 0 && (!hellService.inHell || homeService.hellHome)) {
             <div class="furnitureSlots">
               @for (slot of homeService.home.furnitureSlots; track slot) {
@@ -53,15 +53,6 @@
                 </div>
                 <span style="margin-left: 4px;"></span>
               }
-            </div>
-          }
-          @if (!hellService.inHell || homeService.hellFood) {
-            <div class="button-group">
-              <mat-icon tooltip="View your farm." class="iconButton" (click)="farmClicked()" aria-label="View Farm" aria-hidden="false">grass</mat-icon>
-              <mat-icon  (click)="plowClicked($event)" class="iconButton" aria-label="Plow Field" aria-hidden="false"
-                tooltip="Plow a field.<br>Converts a plot of land to a field.<br>You'll need to work at farming it to make it produce much food.<br>Once the harvest is over, you will get the food you've grown and the land will be available again.<br>Shift-click to plow 10 fields.<br>Ctrl-click to plow all your land.">
-                waves
-              </mat-icon>
             </div>
           }
         </div>
