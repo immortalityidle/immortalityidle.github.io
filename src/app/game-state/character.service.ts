@@ -59,7 +59,6 @@ export class CharacterService {
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.characterState.dead) {
         this.characterState.age++;
-        this.characterState.status.nourishment.value--;
       }
       this.checkForDeath();
     });

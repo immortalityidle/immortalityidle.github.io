@@ -338,8 +338,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        this.characterService.characterState.checkOverage();
+        this.eatProduce(1, quantity);
       },
     },
     cabbage: {
@@ -354,10 +353,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        this.characterService.characterState.healthBonusFood += quantity * 0.01;
-        this.characterService.characterState.status.health.value += quantity * 0.01;
-        this.characterService.characterState.checkOverage();
+        this.eatProduce(5, quantity);
       },
     },
     beans: {
@@ -372,9 +368,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.02;
-        const maxLifespanIncrease = 5;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(10, quantity);
       },
     },
     broccoli: {
@@ -389,9 +383,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.05;
-        const maxLifespanIncrease = 10;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(15, quantity);
       },
     },
     calabash: {
@@ -406,9 +398,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.08;
-        const maxLifespanIncrease = 15;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(20, quantity);
       },
     },
     taro: {
@@ -423,9 +413,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.1;
-        const maxLifespanIncrease = 20;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(25, quantity);
       },
     },
     pear: {
@@ -440,9 +428,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.12;
-        const maxLifespanIncrease = 25;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(30, quantity);
       },
     },
     melon: {
@@ -457,9 +443,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.15;
-        const maxLifespanIncrease = 30;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(35, quantity);
       },
     },
     plum: {
@@ -474,9 +458,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.18;
-        const maxLifespanIncrease = 35;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(40, quantity);
       },
     },
     apricot: {
@@ -491,9 +473,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.2;
-        const maxLifespanIncrease = 40;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity);
+        this.eatProduce(45, quantity);
       },
     },
     peach: {
@@ -508,10 +488,7 @@ export class ItemRepoService {
       useDescription: 'Fills your belly and can even lead to a long life.',
       useConsumes: true,
       use: (quantity = 1) => {
-        const lifespanChance = 0.22;
-        const maxLifespanIncrease = 72;
-        const healValue = 2;
-        this.eatProduce(lifespanChance, maxLifespanIncrease, quantity, healValue);
+        this.eatProduce(50, quantity);
       },
     },
     divinePeach: {
@@ -526,19 +503,7 @@ export class ItemRepoService {
       useDescription: 'Sates your immortal hunger.',
       useConsumes: true,
       use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.max += quantity;
-        this.characterService.characterState.status.nourishment.value += quantity;
-        this.characterService.characterState.healthBonusFood += quantity * 2;
-        this.characterService.characterState.status.health.value += quantity * 20;
-        this.characterService.characterState.status.stamina.value += quantity * 2;
-        this.characterService.characterState.status.stamina.max += quantity * 2;
-        this.characterService.characterState.status.qi.value += quantity;
-        if (this.characterService.characterState.foodLifespan + quantity <= daysInYear * 720) {
-          this.characterService.characterState.foodLifespan += quantity;
-        } else if (this.characterService.characterState.foodLifespan < daysInYear * 720) {
-          this.characterService.characterState.foodLifespan = daysInYear * 720;
-        }
-        this.characterService.characterState.checkOverage();
+        this.eatProduce(100, quantity);
       },
     },
     distilledPeachEssence: {
@@ -2016,7 +1981,7 @@ export class ItemRepoService {
       description: 'This manual teaches you to automatically sell items.',
       value: 80000,
       useLabel: 'Read',
-      useDescription: 'Permanently unlock auto-sell button in the inventory panel.',
+      useDescription: 'Permanently unlock the auto-sell button in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2037,6 +2002,34 @@ export class ItemRepoService {
         return this.inventoryService.autoSellUnlocked;
       },
     },
+    autoEatManual: {
+      id: 'autoEatManual',
+      name: 'Manual of Wise Consumption',
+      type: 'manual',
+      description: 'This manual teaches you to automatically eat to maximize your health, nutition, and stamina.',
+      value: 100000,
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock the auto-eat button in the inventory panel.',
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoEatUnlocked = true;
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoEatUnlocked;
+      },
+    },
     autoUseManual: {
       id: 'autoUseManual',
       name: 'Manual of Facilitated Usage',
@@ -2044,7 +2037,7 @@ export class ItemRepoService {
       description: 'This manual teaches you to automatically use items.',
       value: 1000000,
       useLabel: 'Read',
-      useDescription: 'Permanently unlock auto-use button in the inventory panel.',
+      useDescription: 'Permanently unlock the auto-use button in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2072,7 +2065,7 @@ export class ItemRepoService {
       description: 'This manual teaches you to automatically balance between using and selling items.',
       value: 5e7,
       useLabel: 'Read',
-      useDescription: 'Permanently unlock auto-balance button in the inventory panel.',
+      useDescription: 'Permanently unlock the auto-balance button in the inventory panel.',
       useConsumes: true,
       use: () => {
         // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
@@ -2861,16 +2854,17 @@ export class ItemRepoService {
     return null;
   }
 
-  private eatProduce(lifespanChance: number, maxLifespanIncrease: number, quantity = 1, healValue = 1) {
-    this.characterService.characterState.status.nourishment.value += quantity;
-    if (Math.random() < lifespanChance) {
-      this.characterService.characterState.healthBonusFood += quantity;
-      this.characterService.characterState.status.health.value += quantity * healValue;
-      if (this.characterService.characterState.foodLifespan + quantity <= daysInYear * maxLifespanIncrease) {
-        this.characterService.characterState.foodLifespan += quantity;
-      } else if (this.characterService.characterState.foodLifespan < daysInYear * maxLifespanIncrease) {
-        this.characterService.characterState.foodLifespan = daysInYear * maxLifespanIncrease;
-      }
+  private eatProduce(value: number, quantity = 1) {
+    this.characterService.characterState.status.nourishment.value += quantity + quantity * value * 0.05;
+    this.characterService.characterState.healthBonusFood += quantity * value * 0.01;
+    this.characterService.characterState.status.health.value += quantity * value * 0.01;
+    this.characterService.characterState.status.stamina.value += quantity * value * 0.01;
+    this.characterService.characterState.status.qi.value += quantity * value * 0.01;
+    const maxLifespanIncrease = value * daysInYear;
+    if (this.characterService.characterState.foodLifespan + quantity <= maxLifespanIncrease) {
+      this.characterService.characterState.foodLifespan += quantity;
+    } else if (this.characterService.characterState.foodLifespan < maxLifespanIncrease) {
+      this.characterService.characterState.foodLifespan = maxLifespanIncrease;
     }
     this.characterService.characterState.checkOverage();
   }

@@ -171,7 +171,7 @@ export class HomeService {
       landRequired: 5,
       maxInventory: 15,
       upgradeToTooltip:
-        'Get a better home and stop the troublemakers from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>This home will remain in your family and you wiil reincarnate as its heir.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls and space to properly sleep.',
+        'Get a better home and stop the troublemakers from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls and space to properly sleep.',
       consequence: () => {
         this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 3;
@@ -183,7 +183,8 @@ export class HomeService {
     {
       name: 'Simple Hut',
       type: HomeType.SimpleHut,
-      description: 'A very simple hut. Automatically restores 5 stamina and a bit of health each night.',
+      description:
+        'A very simple hut. Automatically restores 5 stamina and a bit of health each night. This home and all future homes will remain in your family, and you wiil reincarnate as its heir.',
       cost: 10000,
       costPerDay: 10,
       landRequired: 10,

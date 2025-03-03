@@ -21,7 +21,7 @@
         <span>
           <input type="checkbox" (change)="autoBuyFoodChange($event)"
             id="autoBuyFood"  [checked]="inventoryService.autoBuyFood">
-          <label for="autoBuyFood">Automatically buy rice each day if you have no food to avoid starvation.</label>
+          <label for="autoBuyFood">Automatically buy scraps each day if you have no food to avoid starvation.</label>
         </span>
       </div>
       <div class="optionField">
@@ -210,7 +210,7 @@
     }
 
     @if (inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked ||
-      inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoBalanceUnlocked) {
+      inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoEatUnlocked || inventoryService.autoBalanceUnlocked) {
       <mat-tab>
         <ng-template mat-tab-label>
           <span class="tab-label">Sales</span>
@@ -294,16 +294,80 @@
             <span>Automatically Used Items:</span>
             <div class="scrollingDiv">
               @for (entry of inventoryService.autoUseEntries; track entry) {
-                <div>
-                  <span>
-                    - {{entry.name | titlecase}}
-                  </span>
-                  <span>
-                    - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
-                    <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
-                  </span>
-                </div>
+                @if (entry.type !== 'food'){
+                  <div>
+                    <span>
+                      - {{entry.name | titlecase}}
+                    </span>
+                    <span>
+                      - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
+                      <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
+                    </span>
+                  </div>
+                }
               }
+            </div>
+          </div>
+        }
+        @if (inventoryService.autoEatUnlocked) {
+          <div class="optionField">
+            <div>
+              <span>Wisely Eaten Foods:</span>
+              <div class="scrollingDiv">
+                  @for (entry of inventoryService.autoUseEntries; track entry) {
+                    @if (entry.type === 'food'){
+                      <div>
+                        <span>
+                          - {{entry.name | titlecase}}
+                        </span>
+                        <span>
+                          &nbsp;
+                          <button (click)="inventoryService.unAutoUse(entry.name)">Stop Wisely Eating</button>
+                        </span>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+              <div>
+                <span>
+                  When wisely eaten food is available:
+                </span>
+              </div>
+              <div>
+                <span>
+                  <input type="checkbox" (change)="autoEatNutritionChanged($event)"
+                    id="autoEatNutrition"  [checked]="inventoryService.autoEatNutrition"/>
+                  <label for="autoEatNutrition">Eat until nutrition is full</label>
+                </span>
+              </div>
+              <div>
+                <span>
+                <input type="checkbox" (change)="autoEatHealthChanged($event)"
+                  id="autoEatHealth"  [checked]="inventoryService.autoEatHealth"/>
+                <label for="autoEatHealth">Eat until Health is full</label>
+              </span>
+            </div>
+            <div>
+              <span>
+              <input type="checkbox" (change)="autoEatStaminaChanged($event)"
+                  id="autoEatStamina"  [checked]="inventoryService.autoEatStamina"/>
+                <label for="autoEatStamina">Eat until Stamina is full</label>
+              </span>
+            </div>
+            <div>
+              <span>
+                <input type="checkbox" (change)="autoEatQiChanged($event)"
+                  id="autoEatQi"  [checked]="inventoryService.autoEatQi"/>
+                <label for="autoEatQi">Eat until Qi is full</label>
+              </span>
+            </div>
+            <div>
+              <span>
+                <input type="checkbox" (change)="autoEatAllChanged($event)"
+                  id="autoEatAll"  [checked]="inventoryService.autoEatAll"/>
+                <label for="autoEatAll">Just eat it all!</label>
+              </span>
             </div>
           </div>
         }

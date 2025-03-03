@@ -69,7 +69,7 @@ export class GameStateService {
   easyModeEver = false;
   saveInterval = 300; //In seconds
   saveSlot = '';
-  lockPanels = true;
+  lockPanels = false;
   dragging = false;
   layout: KtdGridLayout;
   allPanelsUsed = false;

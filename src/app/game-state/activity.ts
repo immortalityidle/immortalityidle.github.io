@@ -1,5 +1,12 @@
 import { CharacterAttribute, StatusType } from '../game-state/character';
 
+export enum YinYangEffect {
+  Yin,
+  Yang,
+  Balance,
+  None,
+}
+
 export enum ActivityType {
   OddJobs,
   Resting,
@@ -83,6 +90,7 @@ export interface Activity {
   level: number;
   activityType: ActivityType;
   description: string[];
+  yinYangEffect: YinYangEffect[];
   consequenceDescription: string[];
   requirements: CharacterAttribute[];
   landRequirements?: number;

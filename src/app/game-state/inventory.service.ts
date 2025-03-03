@@ -95,6 +95,7 @@ export interface BalanceItem {
 
 export interface AutoItemEntry {
   name: string;
+  type: string;
   reserve: number;
 }
 
@@ -104,6 +105,12 @@ export interface InventoryProperties {
   autoSellUnlocked: boolean;
   autoSellEntries: AutoItemEntry[];
   autoUseUnlocked: boolean;
+  autoEatUnlocked: boolean;
+  autoEatNutrition: boolean;
+  autoEatHealth: boolean;
+  autoEatStamina: boolean;
+  autoEatQi: boolean;
+  autoEatAll: boolean;
   autoUseEntries: AutoItemEntry[];
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
@@ -158,6 +165,12 @@ export class InventoryService {
   autoSellUnlocked: boolean;
   autoSellEntries: AutoItemEntry[];
   autoUseUnlocked: boolean;
+  autoEatUnlocked: boolean;
+  autoEatNutrition: boolean;
+  autoEatHealth: boolean;
+  autoEatStamina: boolean;
+  autoEatQi: boolean;
+  autoEatAll: boolean;
   autoUseEntries: AutoItemEntry[];
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
@@ -184,6 +197,7 @@ export class InventoryService {
   autoSellOldBarsEnabled: boolean;
   autoSellOldHidesEnabled: boolean;
   lifetimeUsedItems = 0;
+  lifetimeUsedFood = 0;
   lifetimeSoldItems = 0;
   lifetimePotionsUsed = 0;
   lifetimePillsUsed = 0;
@@ -222,7 +236,12 @@ export class InventoryService {
     this.autoSellUnlocked = false;
     this.autoSellEntries = [];
     this.autoUseUnlocked = false;
-    this.autoUseEntries = [];
+    this.autoEatUnlocked = false;
+    this.autoEatNutrition = true;
+    this.autoEatHealth = false;
+    this.autoEatStamina = false;
+    this.autoEatQi = false;
+    this.autoEatAll = false;
     this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
     this.autoPotionUnlocked = false;
@@ -248,6 +267,12 @@ export class InventoryService {
     this.autoSellOldHidesEnabled = false;
     this.autoSellOldGemsUnlocked = false;
     this.autoSellOldGemsEnabled = false;
+    this.autoUseEntries = [];
+
+    // basic farm foods should be set to autouse when autoeat unlocks
+    for (const item of this.farmFoodList) {
+      this.autoUseEntries.push({ name: item.name, type: 'food', reserve: 0 });
+    }
 
     for (let i = 0; i < this.maxItems; i++) {
       this.itemStacks.push(this.getEmptyItemStack());
@@ -305,6 +330,7 @@ export class InventoryService {
     if (this.characterService.characterState.dead) {
       return;
     }
+    this.characterService.characterState.status.nourishment.value--; // tick the day's hunger
     this.eatFood();
     // use pouch items if needed
     for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
@@ -350,6 +376,12 @@ export class InventoryService {
       autoSellUnlocked: this.autoSellUnlocked,
       autoSellEntries: this.autoSellEntries,
       autoUseUnlocked: this.autoUseUnlocked,
+      autoEatUnlocked: this.autoEatUnlocked,
+      autoEatNutrition: this.autoEatNutrition,
+      autoEatHealth: this.autoEatHealth,
+      autoEatStamina: this.autoEatStamina,
+      autoEatQi: this.autoEatQi,
+      autoEatAll: this.autoEatAll,
       autoUseEntries: this.autoUseEntries,
       autoBalanceUnlocked: this.autoBalanceUnlocked,
       autoBalanceItems: this.autoBalanceItems,
@@ -403,6 +435,12 @@ export class InventoryService {
     this.autoSellUnlocked = properties.autoSellUnlocked || false;
     this.autoSellEntries = properties.autoSellEntries || [];
     this.autoUseUnlocked = properties.autoUseUnlocked || false;
+    this.autoEatUnlocked = properties.autoEatUnlocked || false;
+    this.autoEatNutrition = properties.autoEatNutrition ?? true;
+    this.autoEatHealth = properties.autoEatHealth || false;
+    this.autoEatStamina = properties.autoEatStamina || false;
+    this.autoEatQi = properties.autoEatQi || false;
+    this.autoEatAll = properties.autoEatAll || false;
     this.autoUseEntries = properties.autoUseEntries || [];
     this.autoBalanceUnlocked = properties.autoBalanceUnlocked || false;
     this.autoBalanceItems = properties.autoBalanceItems;
@@ -1045,6 +1083,7 @@ export class InventoryService {
   reset(): void {
     this.selectedItem = this.getEmptyItemStack();
     this.lifetimeUsedItems = 0;
+    this.lifetimeUsedFood = 0;
     this.lifetimeSoldItems = 0;
     this.lifetimePotionsUsed = 0;
     this.lifetimePillsUsed = 0;
@@ -1086,34 +1125,108 @@ export class InventoryService {
     }
   }
 
-  /** Finds the best food in the inventory and uses it. */
   eatFood(): void {
-    if (this.characterService.characterState.status.nourishment.value <= 0) {
+    if (
+      this.autoEatUnlocked &&
+      (this.autoEatNutrition || this.autoEatHealth || this.autoEatStamina || this.autoEatQi || this.autoEatAll)
+    ) {
+      let foodStack = null;
+      let fed = false;
+      for (const itemIterator of this.itemStacks) {
+        if (itemIterator.item === null) {
+          continue;
+        }
+        if (
+          itemIterator.item!.type === 'food' &&
+          this.autoUseEntries.find(item => item.name === itemIterator.item!.name)
+        ) {
+          foodStack = itemIterator;
+          while (!this.bellyFull() && foodStack.quantity > 0) {
+            this.useItemStack(foodStack);
+            fed = true;
+          }
+        }
+        if (this.bellyFull()) {
+          break;
+        }
+      }
+      if (fed) {
+        this.noFood = false;
+      } else {
+        // no food found, buy scraps automatically
+        this.noFood = true;
+        if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
+          this.characterService.characterState.updateMoney(-1);
+          this.characterService.characterState.status.nourishment.value++;
+        }
+      }
+
+      return;
+    }
+    if (
+      this.characterService.characterState.status.nourishment.value >
+      this.characterService.characterState.status.nourishment.max * 0.2
+    ) {
       // not hungry enough, don't automatically eat
       return;
     }
 
     let foodStack = null;
-    const foodValue = 0;
+    let foodValue = 0;
     for (const itemIterator of this.itemStacks) {
       if (itemIterator.item === null) {
         continue;
       }
       if (itemIterator.item!.type === 'food' && itemIterator.item!.value > foodValue) {
         foodStack = itemIterator;
+        foodValue = foodStack.item?.value || 0;
       }
     }
     if (foodStack) {
       this.useItemStack(foodStack);
       this.noFood = false;
     } else {
-      // no food found, buy a bowl of rice automatically
+      // no food found, buy scraps automatically
       this.noFood = true;
       if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
         this.characterService.characterState.updateMoney(-1);
         this.characterService.characterState.status.nourishment.value++;
       }
     }
+  }
+
+  bellyFull() {
+    if (this.autoEatAll) {
+      return false;
+    }
+    if (
+      this.autoEatNutrition &&
+      this.characterService.characterState.status.nourishment.value <
+        this.characterService.characterState.status.nourishment.max
+    ) {
+      return false;
+    }
+    if (
+      this.autoEatHealth &&
+      this.characterService.characterState.status.health.value <
+        this.characterService.characterState.status.health.max - 1
+    ) {
+      return false;
+    }
+    if (
+      this.autoEatStamina &&
+      this.characterService.characterState.status.stamina.value <
+        this.characterService.characterState.status.stamina.max - 1
+    ) {
+      return false;
+    }
+    if (
+      this.autoEatQi &&
+      this.characterService.characterState.status.qi.value < this.characterService.characterState.status.qi.max - 1
+    ) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -1203,18 +1316,21 @@ export class InventoryService {
       this.useItem(item, quantity);
       return -1;
     }
-    for (const entry of this.autoUseEntries) {
-      if (entry.name === item.name) {
-        let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
-        if (numberToUse > quantity) {
-          // don't worry about using more than the incoming quantity here
-          numberToUse = quantity;
-        }
-        if (numberToUse > 0) {
-          this.useItem(item, quantity);
-          quantity -= numberToUse;
-          if (quantity === 0) {
-            return -1;
+    if (item.type !== 'food') {
+      // food has its own autouse handling in eatFood()
+      for (const entry of this.autoUseEntries) {
+        if (entry.name === item.name) {
+          let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
+          if (numberToUse > quantity) {
+            // don't worry about using more than the incoming quantity here
+            numberToUse = quantity;
+          }
+          if (numberToUse > 0) {
+            this.useItem(item, quantity);
+            quantity -= numberToUse;
+            if (quantity === 0) {
+              return -1;
+            }
           }
         }
       }
@@ -1364,7 +1480,7 @@ export class InventoryService {
       return;
     }
     if (!this.autoSellEntries.some(e => e.name === item.name)) {
-      this.autoSellEntries.push({ name: item.name, reserve: 0 });
+      this.autoSellEntries.push({ name: item.name, type: item.type, reserve: 0 });
     }
     //sell all that you currently have
     this.sellAll(item);
@@ -1401,7 +1517,9 @@ export class InventoryService {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
-    if (item.type !== 'food') {
+    if (item.type === 'food') {
+      this.lifetimeUsedFood++;
+    } else {
       this.lifetimeUsedItems++;
     }
     if (item.type === 'potion' && instanceOfPotion(item)) {
@@ -1419,7 +1537,7 @@ export class InventoryService {
   }
 
   autoUse(item: Item) {
-    if (!this.autoUseUnlocked) {
+    if ((!this.autoUseUnlocked && item.type !== 'food') || (!this.autoEatUnlocked && item.type === 'food')) {
       return;
     }
     if (item.type !== 'potion' && item.type !== 'pill' && !item.use) {
@@ -1427,9 +1545,9 @@ export class InventoryService {
       return;
     }
     if (!this.autoUseEntries.some(e => e.name === item.name)) {
-      this.autoUseEntries.push({ name: item.name, reserve: 0 });
+      this.autoUseEntries.push({ name: item.name, type: item.type, reserve: 0 });
     }
-    if (item.useConsumes) {
+    if (item.useConsumes && item.type !== 'food') {
       // use all the ones you have now
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1440,6 +1558,8 @@ export class InventoryService {
           this.useItemStack(itemStack, itemStack.quantity);
         }
       }
+    } else if (item.type === 'food') {
+      this.eatFood();
     }
   }
 

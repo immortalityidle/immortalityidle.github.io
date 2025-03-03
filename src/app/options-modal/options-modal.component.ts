@@ -138,6 +138,31 @@ export class OptionsModalComponent {
     }
   }
 
+  autoEatNutritionChanged(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoEatNutrition = event.target.checked;
+  }
+
+  autoEatHealthChanged(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoEatHealth = event.target.checked;
+  }
+
+  autoEatStaminaChanged(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoEatStamina = event.target.checked;
+  }
+
+  autoEatQiChanged(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoEatQi = event.target.checked;
+  }
+
+  autoEatAllChanged(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoEatAll = event.target.checked;
+  }
+
   useSpiritGemWeaponsChange(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.useSpiritGemWeapons = event.target.checked;

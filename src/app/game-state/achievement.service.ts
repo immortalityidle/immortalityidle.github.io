@@ -448,6 +448,19 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Rice, Rice, Baby',
+      description:
+        "You've eaten healthy food 88 items and unlocked the " + this.itemRepoService.items['autoEatManual'].name,
+      hint: 'Better than dumpster diving.',
+      check: () => {
+        return this.inventoryService.lifetimeUsedFood >= 88;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['autoEatManual']);
+      },
+      unlocked: false,
+    },
+    {
       name: 'This Sparks Joy',
       description: 'You used 888 items and unlocked the ' + this.itemRepoService.items['autoUseManual'].name,
       hint: 'Immortals should know the potential of the things they use.',

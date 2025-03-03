@@ -2,7 +2,8 @@
   <div class="yinYang"
     tooltip="Yang: {{characterService.characterState.yang | bigNumber}}<br>
     Yin: {{characterService.characterState.yin | bigNumber}}<br>
-    Your balance is {{balanceString}}.">
+    Your balance is {{balanceString}}.<br>
+    A proper balance of Yin and Yang will strengthen you in combat and allow you develop your aptitudes more effectively.">
     <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 1250 1250" [style.fill]="yinColor">
       <defs>
         <filter id="f">
@@ -85,7 +86,7 @@
       </div>
     </div>
   </div>
-  <div class="flexColumn">
+  <div class="flexColumn lastColumn">
     <div class="moneyLabelColumn"><span>Wealth:</span></div>
     <div class="moneyContainer">
       <div class="moneyColumn">
@@ -102,7 +103,7 @@
           <div tooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
         }
         @if (homeService.land > 0) {
-          <span>{{homeService.land | bigNumber}} {{homeService.land === 1 ? "Plot" : "Plots"}} of land</span>
+          <span>{{homeService.land | bigNumber}} Empty {{homeService.land === 1 ? "Plot" : "Plots"}} of Land</span>
         }
       </div>
     </div>

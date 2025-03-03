@@ -342,7 +342,7 @@ export class MainLoopService {
       this.homeTickSubject.next(1);
       this.inventoryTickSubject.next(1);
       this.activityTickSubject.next(1);
-      this.tickSubject.next(1);
+      this.tickSubject.next(1); // ticks autobuyer, character, followers, and hell
     }
   }
 }

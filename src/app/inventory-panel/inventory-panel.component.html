@@ -4,7 +4,7 @@
     </div>
     <div>@if (inventoryService.noFood) {
       <mat-icon class="noFood"
-        tooltip="{{hellService.inHell ? 'You have no food, and no one in hell sells rice.' : inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
+        tooltip="{{hellService.inHell ? 'You have no food, and no one in hell sells any.' : inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
         soup_kitchen
       </mat-icon>
     }</div>
@@ -45,14 +45,21 @@
             auto_awesome
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.autoUseUnlocked)) {
+        @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.selectedItem.item.type !== 'food' && inventoryService.autoUseUnlocked)) {
           <mat-icon
             (click)="autoUse()" class="iconButton" aria-label="Auto Use" aria-hidden="false"
             tooltip="Auto-{{inventoryService.selectedItem.item!.useLabel}}.<br>{{inventoryService.selectedItem.item!.useDescription}}<br>You can change this in the options menu later if you change your mind.<br>Ctrl-click items to auto-use.">
             auto_mode
           </mat-icon>
         }
-        @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item!.value)) && !hellService.inHell) {
+        @if ((inventoryService.selectedItem.item.type === 'food' && inventoryService.autoEatUnlocked)) {
+          <mat-icon
+            (click)="autoUse()" class="iconButton" aria-label="Auto Eat" aria-hidden="false"
+            tooltip="Auto-{{inventoryService.selectedItem.item!.useLabel}}.<br>{{inventoryService.selectedItem.item!.useDescription}}<br>You can change this in the options menu later if you change your mind.<br>Ctrl-click items to auto-eat.">
+            auto_mode
+          </mat-icon>
+        }
+        @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.selectedItem.item.type !== 'food' && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item!.value)) && !hellService.inHell) {
           <mat-icon
             class="iconButton" aria-label="Balance" aria-hidden="false" (click)="autoBalance()" tooltip="Balance between automatically using and selling this item.<br>You can change this in the options menu later if you change your mind.">
             balance

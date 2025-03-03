@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
-import { ActivityLoopEntry } from '../game-state/activity';
+import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { TimeOptionsPanelComponent } from '../time-options-panel/time-options-panel.component';
@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
 import { BattleService } from '../game-state/battle.service';
+import { TextPanelComponent } from '../text-panel/text-panel.component';
 
 @Component({
   selector: 'app-time-panel',
@@ -198,5 +199,29 @@ export class TimePanelComponent {
         this.activityService.spiritActivity = activity;
       }
     }
+  }
+
+  showActivity(event: MouseEvent, activityType: ActivityType) {
+    event.stopPropagation();
+    const activity = this.activityService.getActivityByType(activityType);
+    if (activity === null) {
+      return;
+    }
+    let bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
+    bodyString += this.activityService.getYinYangDescription(activity.yinYangEffect[activity.level]);
+    if (activity.projectionOnly) {
+      bodyString +=
+        '\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.';
+    }
+
+    const dialogProperties = { titleText: activity.name[activity.level], bodyText: bodyString, imageFile: '' };
+    if (activity.imageBaseName) {
+      dialogProperties.imageFile = 'assets/images/activities/' + activity.imageBaseName + activity.level + '.png';
+    }
+    this.dialog.open(TextPanelComponent, {
+      width: '400px',
+      data: dialogProperties,
+      autoFocus: false,
+    });
   }
 }

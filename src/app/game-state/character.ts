@@ -327,7 +327,7 @@ export class Character {
     },
     nourishment: {
       description:
-        'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend your money on a bowl of rice each day.',
+        'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend some money on cheap scraps each day.',
       value: 30,
       max: 30,
     },
@@ -650,6 +650,8 @@ export class Character {
     if (this.yinYangBoosted) {
       // TODO: tune this
       c += this.yinYangBalance * c;
+    } else {
+      c += this.yinYangBalance * c * 0.1;
     }
     return c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
   }

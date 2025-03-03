@@ -86,6 +86,11 @@
             cdkDrag [cdkDragData]="indexOfelement"
             (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)" cdkDragPreviewClass="currentRow">
             <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}" id="activityLoopIndex0{{indexOfelement}}">
+              <mat-icon (click)="showActivity($event, entry.activity)"
+                tooltip="What is this activity?<br>Click to learn all about it!"
+                aria-label="Help" aria-hidden="false">
+                help
+              </mat-icon>
               {{activityService.getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
             </td>
             <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled}" id="activityLoopIndex1{{indexOfelement}}">

@@ -238,6 +238,7 @@ export class ActivityPanelComponent {
   showActivity(event: MouseEvent, activity: Activity) {
     event.stopPropagation();
     let bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
+    bodyString += this.activityService.getYinYangDescription(activity.yinYangEffect[activity.level]);
     if (activity.projectionOnly) {
       bodyString +=
         '\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.';

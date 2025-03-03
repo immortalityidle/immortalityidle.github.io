@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable, Injector } from '@angular/core';
 import { BattleService } from './battle.service';
-import { Activity, ActivityLoopEntry, ActivityType } from '../game-state/activity';
+import { Activity, ActivityLoopEntry, ActivityType, YinYangEffect } from '../game-state/activity';
 import { AttributeType, CharacterAttribute, StatusType } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService, HomeType } from '../game-state/home.service';
@@ -445,6 +445,19 @@ export class ActivityService {
     } else {
       this.spiritActivityProgress = false;
     }
+  }
+
+  getYinYangDescription(yinYangEffect: YinYangEffect) {
+    if (yinYangEffect === YinYangEffect.Yang) {
+      return '\n\nPromotes the development of Yang energy.';
+    }
+    if (yinYangEffect === YinYangEffect.Yin) {
+      return '\n\nPromotes the development of Yin energy.';
+    }
+    if (yinYangEffect === YinYangEffect.Balance) {
+      return '\n\nPromotes a balance of Yin and Yang energies.';
+    }
+    return '';
   }
 
   getProperties(): ActivityProperties {
@@ -980,6 +993,7 @@ export class ActivityService {
       imageBaseName: 'swim',
       activityType: ActivityType.Swim,
       description: ['Swim down further into the depths.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['Uses 20 Stamina. Reduce health by 100.'],
       consequence: [
         () => {
@@ -1011,6 +1025,7 @@ export class ActivityService {
       imageBaseName: 'forgechains',
       activityType: ActivityType.ForgeChains,
       description: ['Forge a chain strong enough to pull the island from the depths.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 100 Stamina. If you have the right facilities, materials, and knowledge you might be able to create an unbreakable chain.',
       ],
@@ -1069,6 +1084,7 @@ export class ActivityService {
       imageBaseName: 'attachchains',
       activityType: ActivityType.AttachChains,
       description: ['Swim deep and attach one of your chains to the island, then pull.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 1,000,000 Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.',
       ],
@@ -1129,6 +1145,7 @@ export class ActivityService {
       imageBaseName: 'makebrick',
       activityType: ActivityType.MakeBrick,
       description: ['Create bricks sturdy enough to support the weight of your tower.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 100 Stamina. If you have the right followers and materials you will create some everlasting bricks.',
       ],
@@ -1172,6 +1189,7 @@ export class ActivityService {
       imageBaseName: 'scaffolding',
       activityType: ActivityType.MakeScaffold,
       description: ['Set up the scaffolding for the next level of your tower.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 1000 Stamina. If you have the right materials you might succeed in setting up the scaffolding for the next level.',
       ],
@@ -1212,6 +1230,7 @@ export class ActivityService {
       imageBaseName: 'makemortar',
       activityType: ActivityType.MakeMortar,
       description: ['Mix mortar powerful enough to hold your mighty tower together.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 100 Stamina. If you have the right followers, facilities, and materials you might succeed in mixing some proper mortar.',
       ],
@@ -1261,6 +1280,7 @@ export class ActivityService {
       description: [
         'Assemble 1000 bricks, 100 barrels of mortar, and your scaffolding to construct the next level of your tower. You will need a lot of expert help for this.',
       ],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 1000 Stamina. If you have the right followers and materials you will build the next level.',
       ],
@@ -1350,6 +1370,7 @@ export class ActivityService {
       imageBaseName: 'researchwind',
       activityType: ActivityType.ResearchWind,
       description: ['Delve deep into wind lore to understand how the neverending storm can be controlled.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 100 Stamina and Qi. Compile your research and if you have done enough you may produce a Tome of Wind Control.',
       ],
@@ -1392,6 +1413,7 @@ export class ActivityService {
       imageBaseName: 'tamewind',
       activityType: ActivityType.TameWinds,
       description: ['Use your research to tame the winds.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['Uses 100 Stamina. Use a Tome of Wind Control to tame the hurricane.'],
       consequence: [
         () => {
@@ -1433,6 +1455,7 @@ export class ActivityService {
       imageBaseName: 'learntofly',
       activityType: ActivityType.LearnToFly,
       description: ['Jump off your tower and practice flying. This will definitely go well for you.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['You will certainly, probably, maybe not die doing this.'],
       consequence: [
         () => {
@@ -1484,6 +1507,7 @@ export class ActivityService {
       imageBaseName: 'offerfood',
       activityType: ActivityType.OfferDragonFood,
       description: ['It turns out that dragons love peaches. Bring the dragon a bunch and he may be more friendly.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['You will need at least 1000 food for this to work.'],
       consequence: [
         () => {
@@ -1519,6 +1543,7 @@ export class ActivityService {
       imageBaseName: 'offergold',
       activityType: ActivityType.OfferDragonWealth,
       description: ['You have heard that dragons like treasure. Bring the dragon a bunch and he may be more friendly.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['You will need at least a billion taels for this to work.'],
       consequence: [
         () => {
@@ -1553,6 +1578,7 @@ export class ActivityService {
       imageBaseName: 'talktodragon',
       activityType: ActivityType.TalkToDragon,
       description: ['Try to strike up a conversation with the dragon.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['The dragon probably likes you enough to talk to you now, right?'],
       consequence: [
         () => {
@@ -1593,6 +1619,7 @@ export class ActivityService {
       imageBaseName: 'gatherarmy',
       activityType: ActivityType.GatherArmies,
       description: ['Gather troops into armies. This will require vast amounts of food and money.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ["You rule a country by now, right? If not, this isn't going to go well."],
       consequence: [
         () => {
@@ -1646,6 +1673,7 @@ export class ActivityService {
       imageBaseName: 'conquer',
       activityType: ActivityType.ConquerTheWorld,
       description: ['Send out your armies to conquer the world.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         "I'm sure you have plenty of armies for this. You wouldn't try this without enough armies, that would end badly.",
       ],
@@ -1691,6 +1719,7 @@ export class ActivityService {
       imageBaseName: 'movestars',
       activityType: ActivityType.MoveStars,
       description: ['Extend your vast magical powers into the heavens and force the stars into alignment.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['Uses 1000 Stamina and Qi.'],
       consequence: [
         () => {
@@ -1737,6 +1766,7 @@ export class ActivityService {
       imageBaseName: 'oddjobs',
       activityType: ActivityType.OddJobs,
       description: [oddJobsDescription],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         'Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.',
       ],
@@ -1769,6 +1799,7 @@ export class ActivityService {
       name: ['Resting', 'Meditation', 'Communing With Divinity', 'Finding True Inner Peace'],
       imageBaseName: 'resting',
       activityType: ActivityType.Resting,
+      yinYangEffect: [YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Balance],
       description: [
         'Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
         'Enter a meditative state and begin your journey toward spritual enlightenment.',
@@ -1872,6 +1903,7 @@ export class ActivityService {
         'Move the crowds with your stirring speeches.',
         'Charm your way into civic leadership.',
       ],
+      yinYangEffect: [YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 5 Stamina. Increases charisma and provides a little money.',
         'Uses 5 Stamina. Increases charisma and provides some money.',
@@ -1971,6 +2003,7 @@ export class ActivityService {
         'Create useful and beautiful metal objects. You might produce a decent weapon occasionally.',
         'Work the forges like a true master.',
       ],
+      yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 25 Stamina. Increases strength and toughness and provides a little money.',
         'Uses 25 Stamina. Increases strength, toughness, and money.',
@@ -2187,6 +2220,7 @@ export class ActivityService {
       imageBaseName: 'herbs',
       activityType: ActivityType.GatherHerbs,
       description: ['Search the natural world for useful herbs.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: ['Uses 10 Stamina. Find herbs and learn about plants'],
       consequence: [
         () => {
@@ -2228,6 +2262,7 @@ export class ActivityService {
         'Open up your own alchemy shop.',
         'Brew power, precipitate life, stir in some magic, and create consumable miracles.',
       ],
+      yinYangEffect: [YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin],
       consequenceDescription: [
         'Uses 10 Stamina. Get smarter, make a few taels, and learn the secrets of alchemy.',
         'Uses 10 Stamina. Get smarter, make money, practice your craft. If you have some herbs, you might make a usable potion or pill.',
@@ -2403,6 +2438,7 @@ export class ActivityService {
       imageBaseName: 'chopping',
       activityType: ActivityType.ChopWood,
       description: ['Work as a woodcutter, cutting logs in the forest.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: ['Uses 10 Stamina. Get a log and learn about plants.'],
       consequence: [
         () => {
@@ -2438,6 +2474,7 @@ export class ActivityService {
         'Open your own woodworking shop.',
         'Carve pure poetry in wooden form.',
       ],
+      yinYangEffect: [YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 20 Stamina. Increases strength and intelligence and provides a little money.',
         'Uses 20 Stamina. Increases strength and intelligence and provides a little money. You may make something you want to keep now and then.',
@@ -2626,6 +2663,7 @@ export class ActivityService {
         'Open your own tannery.',
         'Fashion!',
       ],
+      yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 20 Stamina. Increases speed and toughness and provides a little money.',
         'Uses 20 Stamina. Increases speed and toughness and provides a little money. You may make something you want to keep now and then.',
@@ -2813,6 +2851,7 @@ export class ActivityService {
       imageBaseName: 'plowing',
       activityType: ActivityType.Plowing,
       description: ['Plow an unused plot of land into a field for growing crops.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: ['Uses 50 Stamina. Increases strength and speed.'],
       consequence: [
         () => {
@@ -2848,6 +2887,7 @@ export class ActivityService {
       imageBaseName: 'clearing',
       activityType: ActivityType.Clearing,
       description: ['Clear a fallow plot of farmland into an empty plot of land.'],
+      yinYangEffect: [YinYangEffect.Yin],
       consequenceDescription: ['Uses 50 Stamina. Increases strength and speed.'],
       consequence: [
         () => {
@@ -2857,7 +2897,7 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('speed', 0.1);
           this.characterService.characterState.increaseAttribute('woodLore', 0.001);
           this.characterService.characterState.increaseAttribute('earthLore', 0.001);
-          this.characterService.characterState.yang++;
+          this.characterService.characterState.yin++;
         },
       ],
       resourceUse: [
@@ -2885,6 +2925,7 @@ export class ActivityService {
       description: [
         "Cultivate the crops in your fields. This is a waste of time if you don't have planted fields ready to work.",
       ],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 20 Stamina. Increases strength and speed and helps your fields to produce more food.',
       ],
@@ -2931,6 +2972,7 @@ export class ActivityService {
       imageBaseName: 'mining',
       activityType: ActivityType.Mining,
       description: ['Dig in the ground for usable minerals.'],
+      yinYangEffect: [YinYangEffect.Yin],
       consequenceDescription: ['Uses 20 Stamina. Increases strength and sometimes finds something useful.'],
       consequence: [
         () => {
@@ -2963,6 +3005,7 @@ export class ActivityService {
       imageBaseName: 'smelting',
       activityType: ActivityType.Smelting,
       description: ['Smelt metal ores into usable metal.'],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 20 Stamina. Increases toughness and intelligence. If you have metal ores, you can make them into bars.',
       ],
@@ -3003,6 +3046,7 @@ export class ActivityService {
       imageBaseName: 'hunting',
       activityType: ActivityType.Hunting,
       description: ['Hunt for animals in the nearby woods.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 50 Stamina. Increases speed and a good hunt provides some meat. It might draw unwanted attention to yourself.',
       ],
@@ -3049,6 +3093,7 @@ export class ActivityService {
       // cormorant fishing later!
       activityType: ActivityType.Fishing,
       description: ['Grab your net and see if you can catch some fish.'],
+      yinYangEffect: [YinYangEffect.Yin],
       consequenceDescription: ['Uses 30 Stamina. Increases intelligence and strength and you might catch a fish.'],
       consequence: [
         () => {
@@ -3084,6 +3129,7 @@ export class ActivityService {
       imageBaseName: 'burning',
       activityType: ActivityType.Burning,
       description: ['Light things on fire and watch them burn.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: ['Uses 5 Stamina. You will be charged for what you burn. Teaches you to love fire.'],
       consequence: [
         () => {
@@ -3116,6 +3162,7 @@ export class ActivityService {
       imageBaseName: 'balance',
       activityType: ActivityType.BalanceChi,
       description: ['Balance the flow of your chi and widen your meridians.'],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: ['Uses 100 Stamina. Increases your weakest lore.'],
       consequence: [
         () => {
@@ -3174,6 +3221,7 @@ export class ActivityService {
       description: [
         'Focus on the development of your body. Unblock your meridians, let your chi flow, and prepare your body for immortality.',
       ],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 100 Stamina. Increases your physical abilities and strengthen your aptitudes in them.',
       ],
@@ -3215,6 +3263,7 @@ export class ActivityService {
       description: [
         'Focus on the development of your mind. Unblock your meridians, let your chi flow, and prepare your mind for immortality.',
       ],
+      yinYangEffect: [YinYangEffect.Yin],
       consequenceDescription: [
         'Uses 100 Stamina. Increases your mental abilities and strengthen your aptitudes in them.',
       ],
@@ -3251,6 +3300,7 @@ export class ActivityService {
       imageBaseName: 'corecultivation',
       activityType: ActivityType.CoreCultivation,
       description: ['Focus on the development of your soul core.'],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 200 Stamina. A very advanced cultivation technique. Make sure you have achieved a deep understanding of elemental balance before attempting this. Gives you a small chance of increasing your Qi capabilities.',
       ],
@@ -3292,6 +3342,7 @@ export class ActivityService {
       imageBaseName: 'soulcultivation',
       activityType: ActivityType.SoulCultivation,
       description: ['Focus on the development of your immortal soul.'],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: [
         "Uses 1000 health. An immortal's cultivation technique. Balance your attributes and your lore, and improve yourself in every way.",
       ],
@@ -3353,6 +3404,7 @@ export class ActivityService {
       imageBaseName: 'infuseequipment',
       activityType: ActivityType.InfuseEquipment,
       description: ['Infuse the power of a gem into your equipment.'],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: ['Uses 200 Stamina and 10 Qi. An advanced magical technique.'],
       consequence: [
         () => {
@@ -3395,6 +3447,7 @@ export class ActivityService {
       description: [
         'Direct your magical energy into reinforcing your physical body, making it healthier and more able to sustain damage without falling.',
       ],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 10 Qi and 200 Stamina. Make sure you have enough magical power before attempting this.',
       ],
@@ -3438,6 +3491,7 @@ export class ActivityService {
       imageBaseName: 'extendlife',
       activityType: ActivityType.ExtendLife,
       description: ['Direct your magical energy into extending your lifespan, making you live longer.'],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 20 Qi and 400 Stamina. Make sure you have enough magical power before attempting this.',
       ],
@@ -3483,6 +3537,7 @@ export class ActivityService {
       imageBaseName: 'recruiting',
       activityType: ActivityType.Recruiting,
       description: ['Look for followers willing to serve you.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 100 Stamina and 1M taels. Gives you a small chance of finding a follower, if you are powerful enough to attract any.',
       ],
@@ -3526,6 +3581,7 @@ export class ActivityService {
       imageBaseName: 'trainingfollowers',
       activityType: ActivityType.TrainingFollowers,
       description: ['Train your followers to make them more powerful.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 1000 Stamina. Gives you a small chance for each follower of increasing their power. They might learn more if you are a better leader.',
       ],
@@ -3556,6 +3612,7 @@ export class ActivityService {
       imageBaseName: 'taunting',
       activityType: ActivityType.Taunting,
       description: ['Go looking for an enemy and call them out to battle.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: ['Incites a fight.'],
       consequence: [
         () => {
@@ -3582,6 +3639,7 @@ export class ActivityService {
       description: [
         'Hone every fiber of your being to martial sepremacy. Your experience in the Hell of Mirrors allowed you to examine your own combat form and understand how to improve it. Now all you need is practice.',
       ],
+      yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: ['Uses 10000 stamina. Trains your Combat Mastery.'],
       consequence: [
         () => {
@@ -3611,6 +3669,7 @@ export class ActivityService {
       imageBaseName: 'findingpets',
       activityType: ActivityType.PetRecruiting,
       description: ['Look for animals that want to be your pets.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: ['Uses 100 Stamina and 100,000 food. Gives you a small chance of finding a pet.'],
       consequence: [
         () => {
@@ -3650,6 +3709,7 @@ export class ActivityService {
       imageBaseName: 'trainingpets',
       activityType: ActivityType.PetTraining,
       description: ['Train your pets to make them more powerful.'],
+      yinYangEffect: [YinYangEffect.Yang],
       consequenceDescription: [
         'Uses 1000 Stamina and 100k food. Gives you a small chance for each pet of increasing their power. They might learn more if you are a better with animals.',
       ],
@@ -3690,6 +3750,7 @@ export class ActivityService {
       imageBaseName: 'purifyinggems',
       activityType: ActivityType.PurifyGems,
       description: ['Purify corrupted spirit gems into something more useful.'],
+      yinYangEffect: [YinYangEffect.None],
       consequenceDescription: ['Uses 100000 Stamina and a corrupted spirit gem.'],
       consequence: [
         () => {
