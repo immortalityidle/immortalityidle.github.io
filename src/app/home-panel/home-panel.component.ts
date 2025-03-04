@@ -50,16 +50,4 @@ export class HomePanelComponent {
       autoFocus: false,
     });
   }
-
-  buyClicked(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.shiftKey || event.altKey) {
-      this.homeService.buyLand(10);
-    } else if (event.ctrlKey || event.metaKey) {
-      this.homeService.buyLand(-1);
-    } else {
-      this.homeService.buyLand(1);
-    }
-  }
 }

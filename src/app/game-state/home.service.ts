@@ -510,24 +510,14 @@ export class HomeService {
           LogTopic.EVENT,
           'You reincarnate as one of your own descendants and your family recognizes you as the reborn heir as you age.'
         );
-        //and a few coins so you don't immediately get beat up for not having upkeep money for your house
-        this.characterService.characterState.updateMoney(this.home.costPerDay * 30);
       } else if (this.homeValue === HomeType.SquatterTent && this.grandfatherTent) {
         this.logService.log(
           LogTopic.EVENT,
           'Your grandfather gives you a bit of land and helps you set up a tent on it.'
         );
-        //and a few coins so you don't immediately get beat up for not having upkeep money for your house
-        this.characterService.characterState.updateMoney(50);
         this.setCurrentHome(this.nextHome);
-      } else if (this.characterService.characterState.bloodlineRank >= 7) {
-        this.logService.log(LogTopic.EVENT, 'Your family steps aside and assists your takeover of your Empire.');
-      } else if (this.characterService.characterState.bloodlineRank >= 6) {
-        this.logService.log(
-          LogTopic.EVENT,
-          'Your family escorts you to your ancestral home and helps you get settled in.'
-        );
       }
+      this.characterService.characterState.updateMoney(this.home.costPerDay * 30);
     });
   }
 
@@ -712,19 +702,8 @@ export class HomeService {
    * @returns count of actual purchase
    */
   buyLand(count: number): number {
-    const maximumCount = this.calculateAffordableLand(this.characterService.characterState.money);
-    if (!maximumCount || !count) {
-      return 0;
-    }
-    let increase = 0;
-    let price = 0;
-    if (count > 0) {
-      count = Math.min(count, maximumCount);
-    } else {
-      count = Math.floor(maximumCount / 2);
-    }
-    increase = 10 * ((count * (count - 1)) / 2); //mathmatically increase by linear sum n (n + 1) / 2
-    price = this.landPrice * count + increase;
+    const increase = 10 * ((count * (count - 1)) / 2); //mathmatically increase by linear sum n (n + 1) / 2
+    const price = this.landPrice * count + increase;
     if (this.characterService.characterState.money >= price) {
       this.characterService.characterState.updateMoney(0 - price);
       this.land += count;

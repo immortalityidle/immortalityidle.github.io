@@ -1,0 +1,52 @@
+<div class='darkMode'>
+    <span>Regular People Shop</span>
+    <hr/>
+    <div class="inventoryContainer">
+      <div class="inventoryGrid">
+        <div>
+          <div class="itemSlot" (click)="slotClicked(landItem)" tabindex="0"
+            [ngClass]="{'selectedItem': landItem === storeService.selectedItem}"
+            tooltip="{{landItem.description}}">
+            <div>
+              @if (landItem.imageFile){
+                <img src="assets/images/items/{{landItem.imageFile}}.png" class="itemImage"
+                  width="48" height="48" />
+              }
+            </div>
+            <div>{{landItem.name | titlecase}}</div>
+            <div>$ {{landItem.value | bigNumber}}</div>
+          </div>
+        </div>
+
+        @for (item of storeService.regularStoreItems; track item.id) {
+          <div>
+            <div class="itemSlot" (click)="slotClicked(item)" tabindex="0"
+              [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
+              tooltip="{{item.description}}">
+              <div>
+                @if (item.imageFile){
+                  <img src="assets/images/items/{{item.imageFile}}.png" class="itemImage"
+                    width="48" height="48" />
+                }
+              </div>
+              <div>{{item.name | titlecase}}</div>
+              <div>$ {{item.value * 2 | bigNumber}}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    <button (click)="buyItem(1)"
+      [disabled]="buyDisabled">
+      Buy
+    </button>
+    <button (click)="buyItem(10)"
+      [disabled]="buyDisabled">
+      Buy 10
+    </button>
+    <button (click)="buyItem(100)"
+      [disabled]="buyDisabled">
+      Buy 100
+    </button>
+  </div>
+  

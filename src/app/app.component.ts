@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GameStateService, Panel } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
+import { StoreModalComponent } from './store-modal/store-modal.component';
 import { OptionsModalComponent } from './options-modal/options-modal.component';
 import { AscensionStoreModalComponent } from './ascension-store-modal/ascension-store-modal.component';
 import { StoreService } from './game-state/store.service';
@@ -199,13 +200,20 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   storeClicked(): void {
+    this.dialog.open(StoreModalComponent, {
+      data: { someField: 'foo' },
+      autoFocus: false,
+    });
+  }
+
+  manualStoreClicked(): void {
     this.dialog.open(ManualStoreModalComponent, {
       data: { someField: 'foo' },
       autoFocus: false,
     });
   }
 
-  storeOptionsClicked(): void {
+  optionsClicked(): void {
     this.dialog.open(OptionsModalComponent, {
       data: { someField: 'foo' },
       autoFocus: false,

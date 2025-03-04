@@ -31,9 +31,6 @@
         <div class="buttons">
           @if (!hellService.inHell || homeService.hellHome) {
             <div class="button-group">
-              <mat-icon  (click)="buyClicked($event)" tooltip="Buy a plot of land for {{homeService.landPrice | bigNumber}} taels.<br>Shift-click to buy 10 plots.<br>Ctrl-click to buy half the land you can afford." class="iconButton" aria-label="Buy Land" aria-hidden="false">
-                add
-              </mat-icon>
               @if ((homeService.home.name !== homeService.nextHome.name)) {
                 <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton" aria-label="Upgrade Home" aria-hidden="false"
                   tooltip="{{homeService.nextHome.upgradeToTooltip}}">

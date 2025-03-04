@@ -333,6 +333,13 @@ export class BattleService {
   youAttack(technique: Technique) {
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
       let damage = this.characterService.characterState.attackPower * technique.baseDamage;
+      if (
+        this.characterService.characterState.status.nourishment.value >
+        this.characterService.characterState.status.nourishment.max * 0.8
+      ) {
+        // tummy is mostly full, hit harder
+        damage *= 1.2;
+      }
       const defense = this.currentEnemy.defense;
       if (defense >= 1) {
         damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));

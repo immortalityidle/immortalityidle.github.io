@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class StoreService {
   manuals: Item[];
+  regularStoreItems: Item[];
   furniture: Furniture[];
   selectedItem: Item | null;
   soulCoreRank = 0;
@@ -33,6 +34,8 @@ export class StoreService {
 
     this.manuals = [];
     this.furniture = [];
+
+    this.regularStoreItems = [this.itemRepoService.items['rice']];
   }
 
   setStoreInventory() {

@@ -12,13 +12,17 @@
         format_list_numbered_rtl
       </mat-icon>
       <span>
-        <mat-icon tooltip="A store that sells special manuals for aspiring immortals." class="iconButton" aria-label="Store" aria-hidden="false"
-          [ngClass]="{highlighted: storeService.isManualAvailable()}"
+        <mat-icon tooltip="A store that sells regular stuff for regular mortals.<br>You are destined for immortality, but you might want some stuff from here anyway." class="iconButton" aria-label="Store" aria-hidden="false"
           (click)="storeClicked()">
+          store
+        </mat-icon>
+        <mat-icon tooltip="A store that sells special manuals for aspiring immortals." class="iconButton" aria-label="Manual Store" aria-hidden="false"
+          [ngClass]="{highlighted: storeService.isManualAvailable()}"
+          (click)="manualStoreClicked()">
           local_library
         </mat-icon>
         <mat-icon tooltip="Options.<br>Lots of them." class="iconButton" aria-label="Options" aria-hidden="false"
-          (click)="storeOptionsClicked()">
+          (click)="optionsClicked()">
           settings
         </mat-icon>
       </span>
