@@ -480,11 +480,6 @@ export class InventoryService {
     this.descendingSort = properties.descendingSort || false;
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked || false;
     this.updateFarmFoodList();
-    for (const itemStack of this.itemStacks) {
-      if (itemStack.item && itemStack.item.name && itemStack.item.name.includes('monster gem')) {
-        itemStack.item.name = itemStack.item.name.replace('monster gem', 'spirit gem');
-      }
-    }
     this.equipmentUnlocked = properties.equipmentUnlocked || false;
     this.equipmentCreated = properties.equipmentCreated || 0;
     this.totalItemsReceived = properties.totalItemsReceived || 0;

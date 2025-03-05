@@ -71,9 +71,6 @@ export class ActivityPanelComponent {
 
   scheduleActivity(activity: Activity, event: MouseEvent): void {
     event.stopPropagation();
-    if (!activity.unlocked) {
-      return;
-    }
 
     if (activity.projectionOnly) {
       this.activityService.spiritActivity = activity.activityType;

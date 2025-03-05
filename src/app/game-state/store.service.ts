@@ -35,7 +35,7 @@ export class StoreService {
     this.manuals = [];
     this.furniture = [];
 
-    this.regularStoreItems = [this.itemRepoService.items['rice']];
+    this.regularStoreItems = [this.itemRepoService.items['rice'], this.itemRepoService.items['meat']];
   }
 
   setStoreInventory() {

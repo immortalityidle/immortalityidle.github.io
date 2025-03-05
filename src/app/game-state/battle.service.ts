@@ -120,6 +120,14 @@ export class BattleService {
     this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
 
+    mainLoopService.tickSubject.subscribe(() => {
+      this.yearlyMonsterDay++;
+      if (this.yearlyMonsterDay >= 365 || this.autoTroubleEnabled) {
+        this.yearlyMonsterDay = 0;
+        this.trouble();
+      }
+    });
+
     mainLoopService.battleTickSubject.subscribe(() => {
       if (this.characterService.characterState.dead) {
         return;
@@ -130,11 +138,6 @@ export class BattleService {
       }
       this.handleYourTechniques();
       this.handleEnemyTechniques();
-      this.yearlyMonsterDay++;
-      if (this.yearlyMonsterDay >= 365 || this.autoTroubleEnabled) {
-        this.yearlyMonsterDay = 0;
-        this.trouble();
-      }
       if (this.characterService.checkForDeath()) {
         this.clearEnemies();
       }

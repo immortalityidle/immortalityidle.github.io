@@ -1212,10 +1212,10 @@ export class AchievementService {
     {
       name: 'Smooth Farming',
       description:
-        'You have harvested crops every day for months and can now count on more regular and reliable harvests.',
-      hint: "When starting your garden, it's best to work a little every day.",
+        'You have harvested crops every day for a month and can now count on more regular and reliable harvests.',
+      hint: 'Farm-fresh produce every day would be lovely.',
       check: () => {
-        return this.farmService.consecutiveHarvests >= 60;
+        return this.farmService.consecutiveHarvests >= 30;
       },
       effect: () => {
         this.homeService.smoothFarming = true;

@@ -55,7 +55,7 @@
         @if ((inventoryService.selectedItem.item.type === 'food' && inventoryService.autoEatUnlocked)) {
           <mat-icon
             (click)="autoUse()" class="iconButton" aria-label="Auto Eat" aria-hidden="false"
-            tooltip="Auto-{{inventoryService.selectedItem.item!.useLabel}}.<br>{{inventoryService.selectedItem.item!.useDescription}}<br>You can change this in the options menu later if you change your mind.<br>Ctrl-click items to auto-eat.">
+            tooltip="Wisely {{inventoryService.selectedItem.item!.useLabel}}.<br>Automatically eat appropriate amounts of this food.<br>You can change settings for this in the options menu.">
             auto_mode
           </mat-icon>
         }

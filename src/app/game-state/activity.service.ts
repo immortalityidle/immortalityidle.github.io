@@ -3623,8 +3623,8 @@ export class ActivityService {
       resourceUse: [{}],
       requirements: [
         {
-          strength: 10,
-          toughness: 1000,
+          strength: 100,
+          toughness: 100,
         },
       ],
       unlocked: false,
