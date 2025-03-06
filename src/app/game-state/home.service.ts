@@ -190,7 +190,7 @@ export class HomeService {
       landRequired: 10,
       maxInventory: 18,
       upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10,000 taels and take up 10 land.<br>The new home will restore 5 stamina and a bit of health each night.<br>It has enough room to properly bathe.',
+        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels and take up 10 land.<br>The new home will restore 5 stamina and a bit of health each night.<br>It has enough room to properly bathe.',
       consequence: () => {
         this.characterService.characterState.status.health.value += 0.7;
         this.characterService.characterState.status.stamina.value += 5;
@@ -458,6 +458,7 @@ export class HomeService {
   homeValue!: HomeType;
   home!: Home;
   nextHome!: Home;
+  previousHome!: Home;
   nextHomeCostReduction = 0;
   nextHomeCost = 0;
   highestLand = 0;
@@ -630,6 +631,19 @@ export class HomeService {
     return this.homesList[this.homesList.length - 1];
   }
 
+  // gets the specs of the next home, doesn't actually downgrade
+  getPreviousHome() {
+    if (this.homeValue === HomeType.SquatterTent) {
+      return this.home;
+    }
+    for (let i = 1; i < this.homesList.length; i++) {
+      if (this.homeValue === this.homesList[i].type) {
+        return this.homesList[i - 1];
+      }
+    }
+    return this.home; // shouldn't ever happen
+  }
+
   upgradeToNextHome() {
     if (this.upgrading) {
       // currently upgrading, bail out
@@ -643,6 +657,15 @@ export class HomeService {
       this.upgrading = true;
       this.logService.log(LogTopic.EVENT, 'You start upgrading your home to a ' + this.nextHome.name);
     }
+  }
+
+  downgradeHome() {
+    if (this.upgrading) {
+      this.nextHomeCostReduction = 0;
+      this.houseBuildingProgress = 0;
+      this.upgrading = false;
+    }
+    this.setCurrentHome(this.previousHome);
   }
 
   upgradeTick(quantity = 1) {
@@ -683,6 +706,7 @@ export class HomeService {
   setCurrentHome(home: Home) {
     this.homeValue = home.type;
     this.home = this.getHomeFromValue(this.homeValue);
+    this.previousHome = this.getPreviousHome();
     this.nextHome = this.getNextHome();
     this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
     this.inventoryService.changeMaxItems(this.home.maxInventory);

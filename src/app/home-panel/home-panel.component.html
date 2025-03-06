@@ -1,7 +1,32 @@
 <div class="homeContainer">
   <h3 >
     <div [ngClass]="{'hellDisabled': hellService.inHell}">
-      You live in a {{homeService.home.name}}
+      @if (!hellService.inHell || homeService.hellHome) {
+        @if ((homeService.home.name !== homeService.nextHome.name)) {
+          <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton floatRight" aria-label="Upgrade Home" aria-hidden="false"
+            tooltip="{{homeService.nextHome.upgradeToTooltip}}">
+            add_home
+          </mat-icon>
+        }
+        @if ((homeService.home.name !== homeService.previousHome.name)) {
+          <mat-icon (click)="homeService.downgradeHome()" class="iconButton floatRight" aria-label="Downgrade Home" aria-hidden="false"
+            tooltip="Is your new home too expensive? Downgrade to your previous home.">
+            keyboard_double_arrow_down
+          </mat-icon>
+        }
+        @if (homeService.upgrading) {
+          <div class="progress-bar" tooltip="Upgrading your home."
+            [attr.value]=buildTimeYears()>
+            <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
+          </div>
+          <span style="margin-left: 4px;"></span>
+        }
+      }
+      <div>
+        <span>
+          You live in a {{homeService.home.name}}
+        </span>
+      </div>
     </div>
   </h3>
   <div class="homeInfo">
@@ -12,48 +37,23 @@
       <div class="overflow">
         @if (!hellService.inHell && !characterService.characterState.god) {
           <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
-          }      <div class="homeInfo"><span>You own {{homeService.land | bigNumber}} open {{homeService.land === 1 ? "plot" : "plots"}} of land</span></div>
-          @if (homeService.home.furnitureSlots.length > 0 && (!hellService.inHell || homeService.hellHome)) {
-            <div class="furnitureSlots">
-              @for (slot of homeService.home.furnitureSlots; track slot) {
-                <div>
-                  @if (!homeService.furniture[slot]) {
-                    <div class="itemSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
-                  }
-                  @if (homeService.furniture[slot]) {
-                    <div class="itemSlot textOverflow" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-        </div>
-        <div class="buttons">
-          @if (!hellService.inHell || homeService.hellHome) {
-            <div class="button-group">
-              @if ((homeService.home.name !== homeService.nextHome.name)) {
-                <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton" aria-label="Upgrade Home" aria-hidden="false"
-                  tooltip="{{homeService.nextHome.upgradeToTooltip}}">
-                  add_business
-                </mat-icon>
-              }
-              @if (homeService.home.furnitureSlots.length) {
-                <mat-icon class="iconButton" aria-label="Buy Furniture" aria-hidden="false"
-                  tooltip="Buy Furniture" (click)="storeClicked()">
-                  shopping_cart
-                </mat-icon>
-              }
-              @if (homeService.upgrading) {
-                <div class="progress-bar" style="height:20px;" tooltip="Upgrading your home."
-                  [attr.value]=buildTimeYears()>
-                  <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
-                </div>
-                <span style="margin-left: 4px;"></span>
-              }
-            </div>
-          }
-        </div>
+        }      
+        @if (homeService.home.furnitureSlots.length > 0 && (!hellService.inHell || homeService.hellHome)) {
+          <div class="furnitureSlots">
+            @for (slot of homeService.home.furnitureSlots; track slot) {
+              <div>
+                @if (!homeService.furniture[slot]) {
+                  <div class="itemSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
+                }
+                @if (homeService.furniture[slot]) {
+                  <div class="itemSlot textOverflow" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
-    }
-  </div>
+    </div>
+  }
+</div>
   

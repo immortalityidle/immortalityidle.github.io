@@ -215,8 +215,6 @@ export class InventoryService {
   divinePeachesUnlocked = false;
   equipmentUnlocked = false;
   equipmentCreated = 0;
-  durabilityDisclaimer =
-    "<br>The durability and value of equipment degrades with use. Be careful when merging powerful items that have seen a lot of wear, the product may be even lower quality than the original if the item's value is low.";
   emptyIdCounter = 0;
   emptyIdPrefix = Date.now() + '';
   totalItemsReceived = 0;
@@ -634,13 +632,12 @@ export class InventoryService {
       description:
         'A unique weapon made of ' +
         material +
-        '. Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: ' +
+        '.<br>Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: ' +
         this.bigNumberPipe.transform(damage) +
         '<br>Durability: ' +
         this.bigNumberPipe.transform(durability) +
         '<br>Value: ' +
-        this.bigNumberPipe.transform(grade) +
-        this.durabilityDisclaimer,
+        this.bigNumberPipe.transform(grade),
     };
   }
 
@@ -657,14 +654,12 @@ export class InventoryService {
       'A unique weapon made of ' +
       weapon.weaponStats.material +
       effectString +
-      '. Drag and drop onto similar weapons to merge them into something better. Base Damage: ' +
+      '.<br>Drag and drop onto similar weapons to merge them into something better. Base Damage: ' +
       this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) +
       '. Durability: ' +
       this.bigNumberPipe.transform(durability) +
       '. Value: ' +
-      this.bigNumberPipe.transform(weapon.value) +
-      '. ' +
-      this.durabilityDisclaimer;
+      this.bigNumberPipe.transform(weapon.value);
   }
 
   updateArmorDescription(armor: Equipment) {
@@ -679,13 +674,12 @@ export class InventoryService {
       'A unique piece of armor made of ' +
       armor.armorStats.material +
       effectString +
-      '. Drag and drop onto similar armor to merge them into something better.<br>Defense: ' +
+      '.<br>Drag and drop onto similar armor to merge them into something better.<br>Defense: ' +
       this.bigNumberPipe.transform(armor.armorStats.defense) +
       '<br>Durability: ' +
       this.bigNumberPipe.transform(armor.armorStats.durability) +
       '<br>Value: ' +
-      this.bigNumberPipe.transform(armor.value) +
-      this.durabilityDisclaimer;
+      this.bigNumberPipe.transform(armor.value);
   }
 
   upgradeEquppedEquipment(value: number) {
@@ -954,13 +948,12 @@ export class InventoryService {
       description:
         'A unique piece of armor made of ' +
         material +
-        '. Drag and drop onto similar armor to merge them into something better.<br>nDefense: ' +
+        '.<br>Drag and drop onto similar armor to merge them into something better.<br>nDefense: ' +
         this.bigNumberPipe.transform(defense) +
         '<br>Durability: ' +
         this.bigNumberPipe.transform(durability) +
         '<br>Value: ' +
-        this.bigNumberPipe.transform(grade) +
-        this.durabilityDisclaimer,
+        this.bigNumberPipe.transform(grade),
     };
   }
 
@@ -1102,8 +1095,7 @@ export class InventoryService {
           baseName: "Grandmother's Walking Stick",
         },
         description:
-          "Your grandmother's walking stick. Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: 10<br>Durability: 100<br>Value: 10" +
-          this.durabilityDisclaimer,
+          "Your grandmother's walking stick.<br>Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: 10<br>Durability: 100<br>Value: 10",
       };
       this.addItem(stick);
     }

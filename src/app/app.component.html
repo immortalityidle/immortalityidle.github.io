@@ -16,6 +16,12 @@
           (click)="storeClicked()">
           store
         </mat-icon>
+        @if (homeService.home.furnitureSlots.length) {
+          <mat-icon class="iconButton" aria-label="Buy Furniture" aria-hidden="false"
+            tooltip="Buy Furniture" (click)="furnitureStoreClicked()">
+            shopping_cart
+          </mat-icon>
+        }
         <mat-icon tooltip="A store that sells special manuals for aspiring immortals." class="iconButton" aria-label="Manual Store" aria-hidden="false"
           [ngClass]="{highlighted: storeService.isManualAvailable()}"
           (click)="manualStoreClicked()">

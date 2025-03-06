@@ -4,7 +4,6 @@ import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
 import { StoreService } from '../game-state/store.service';
-import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
 import { FollowersService } from '../game-state/followers.service';
 import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
@@ -40,14 +39,5 @@ export class HomePanelComponent {
         ((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild) / builderPower / 365
       ) + ' years'
     );
-  }
-
-  storeClicked(): void {
-    this.storeService.setStoreInventory();
-    this.dialog.open(FurnitureStoreModalComponent, {
-      width: '600px',
-      data: { someField: 'foo' },
-      autoFocus: false,
-    });
   }
 }

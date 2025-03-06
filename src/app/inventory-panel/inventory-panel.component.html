@@ -104,8 +104,7 @@
           </span>
         </div>
         <div class='selectedItemTextBody'>
-          <span>
-            {{inventoryService.selectedItem.item.description}}
+          <span [innerHTML]="inventoryService.selectedItem.item.description">
           </span>
         </div>
       </div>
