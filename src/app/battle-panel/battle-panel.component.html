@@ -33,7 +33,7 @@
       <div class="splitDiv">
         <div class="headerDiv">Your Enemies</div>
         <hr>
-        @for (enemy of battleService.enemies; track enemy) {
+        @for (enemy of battleService.enemies; track enemy.name) {
           <div>
               @if (battleService.currentEnemy !== enemy) {
                 <button (click)="battleService.fight(enemy)">Fight</button>

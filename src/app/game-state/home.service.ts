@@ -1,5 +1,4 @@
 import { Injectable, Injector } from '@angular/core';
-import { BattleService } from './battle.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
@@ -65,7 +64,6 @@ export interface HomeProperties {
   thugPause: boolean;
   hellHome: boolean;
   homeUnlocked: boolean;
-  mouseCounter: number;
   keepHome: boolean;
 }
 
@@ -107,7 +105,6 @@ export class HomeService {
   hellHome = false;
   homeUnlocked = false;
   smoothFarming = false;
-  mouseCounter = 0;
   keepHome = false;
 
   homesList: Home[] = [
@@ -122,12 +119,7 @@ export class HomeService {
       maxInventory: 10,
       upgradeToTooltip: '',
       consequence: () => {
-        if (this.mouseCounter > 100) {
-          this.battleService.addMouse();
-          this.mouseCounter = 0;
-        } else {
-          this.mouseCounter++;
-        }
+        // do nothing
       },
       furnitureSlots: [],
       daysToBuild: 1,
@@ -147,16 +139,6 @@ export class HomeService {
         this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 1;
         this.characterService.characterState.checkOverage();
-        if (this.mouseCounter > 150) {
-          this.logService.injury(
-            LogTopic.EVENT,
-            'Your increased wealth has attracted a troublemaker looking to steal your money.'
-          );
-          this.battleService.addTroublemaker();
-          this.mouseCounter = 0;
-        } else {
-          this.mouseCounter++;
-        }
       },
       furnitureSlots: [],
       daysToBuild: 1,
@@ -470,7 +452,6 @@ export class HomeService {
     private characterService: CharacterService,
     private inventoryService: InventoryService,
     private logService: LogService,
-    private battleService: BattleService,
     private mainLoopService: MainLoopService,
     reincarnationService: ReincarnationService,
     private itemRepoService: ItemRepoService
@@ -583,7 +564,6 @@ export class HomeService {
       thugPause: this.thugPause,
       hellHome: this.hellHome,
       homeUnlocked: this.homeUnlocked,
-      mouseCounter: this.mouseCounter,
       keepHome: this.keepHome,
     };
   }
@@ -616,7 +596,6 @@ export class HomeService {
     this.thugPause = properties.thugPause || false;
     this.hellHome = properties.hellHome || false;
     this.homeUnlocked = properties.homeUnlocked || false;
-    this.mouseCounter = properties.mouseCounter || 0;
     this.keepHome = properties.keepHome;
   }
 

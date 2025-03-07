@@ -203,7 +203,7 @@ export class FarmService {
     }
   }
 
-  assignFallowPlots(quantity: number, fieldIndex: number) {
+  assignFallowPlots(fieldIndex: number, quantity: number = 1) {
     if (quantity > this.fallowPlots) {
       quantity = this.fallowPlots;
     }
@@ -216,7 +216,7 @@ export class FarmService {
    *
    * @param quantity -1 for all
    */
-  unassignPlots(quantity: number, fieldIndex: number) {
+  unassignPlots(fieldIndex: number, quantity: number) {
     if (quantity < 0 || quantity > this.fields[fieldIndex].plots) {
       quantity = this.fields[fieldIndex].plots;
     }

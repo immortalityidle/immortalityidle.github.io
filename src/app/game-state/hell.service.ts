@@ -312,7 +312,6 @@ export class HellService {
             weaponStats: {
               baseDamage: 1,
               material: 'metal',
-              durability: 1,
               baseName: 'hammer',
             },
             description: 'A crude copper hammer.',

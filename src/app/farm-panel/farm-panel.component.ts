@@ -28,13 +28,33 @@ export class FarmPanelComponent {
   }
 
   addPlotToFieldClicked(event: MouseEvent, fieldIndex: number) {
-    //TODO: shift-click for multiple, etc
-    this.farmService.assignFallowPlots(1, fieldIndex);
+    event.preventDefault();
+    event.stopPropagation();
+    let quantity = 1;
+    if (event) {
+      if (event.shiftKey) {
+        quantity *= 10;
+      }
+      if (event.ctrlKey) {
+        quantity *= 100;
+      }
+    }
+    this.farmService.assignFallowPlots(fieldIndex, quantity);
   }
 
   removePlotFromFieldClicked(event: MouseEvent, fieldIndex: number) {
-    //TODO: shift-click for multiple, etc
-    this.farmService.unassignPlots(1, fieldIndex);
+    event.preventDefault();
+    event.stopPropagation();
+    let quantity = 1;
+    if (event) {
+      if (event.shiftKey) {
+        quantity *= 10;
+      }
+      if (event.ctrlKey) {
+        quantity *= 100;
+      }
+    }
+    this.farmService.unassignPlots(fieldIndex, quantity);
   }
 
   changeCropClicked(event: MouseEvent, fieldIndex: number) {

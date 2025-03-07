@@ -142,18 +142,16 @@ export class FollowersService {
         const rightHand = this.characterService.characterState.equipment.rightHand;
         const leftHand = this.characterService.characterState.equipment.leftHand;
         if (rightHand && rightHand.weaponStats) {
-          rightHand.weaponStats.durability += Math.ceil(Math.pow(totalPower / 10, 2) * 100) * daysElapsed;
           rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
           rightHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
         }
         if (leftHand && leftHand.weaponStats) {
-          leftHand.weaponStats.durability += Math.ceil(Math.pow(totalPower / 10, 2) * 100) * daysElapsed;
           leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
           leftHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
         }
       },
       description:
-        'Weaponsmiths help you take care of your currently equipped weapons, adding durability to them each day. Higher levels can also help improve them.',
+        'Weaponsmiths help you take care of your currently equipped weapons, adding power to them each day. Higher levels can also help improve them.',
       totalPower: 0,
     },
     armorer: {
@@ -167,7 +165,6 @@ export class FollowersService {
           armorStats: armor.armorStats
             ? {
                 ...armor.armorStats,
-                durability: armor.armorStats?.durability + Math.ceil(Math.pow(totalPower / 10, 2) * 50) * daysElapsed,
                 defense:
                   armor.armorStats?.defense + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
               }
@@ -189,7 +186,7 @@ export class FollowersService {
         }
       },
       description:
-        'Armorers help you take care of your currently equipped pieces of armor, adding durability to them each day. Higher levels can also help improve them.',
+        'Armorers help you take care of your currently equipped pieces of armor, adding defense to them each day. Higher levels can also help improve them.',
       totalPower: 0,
     },
     brawler: {
