@@ -1,0 +1,18 @@
+<div class='darkMode'>
+    <span>Select Workstation</span>
+    <hr/>
+    <div class="inventoryContainer">
+      <div class="inventoryGrid">
+        @for (workstation of homeService.workstationsList; track workstation.id) {
+          <div>
+            <div class="itemSlot" (click)="slotClicked(workstation)" tabindex="0"
+              tooltip="{{workstation.description}}">
+              <div>{{workstation.id | titlecase}}</div>
+              <div>$ {{workstation.setupCost | bigNumber}}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  

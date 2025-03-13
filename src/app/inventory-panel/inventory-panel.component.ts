@@ -6,6 +6,7 @@ import { HellService } from '../game-state/hell.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { HomeService } from '../game-state/home.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -21,6 +22,7 @@ export class InventoryPanelComponent {
   constructor(
     public inventoryService: InventoryService,
     public characterService: CharacterService,
+    private homeService: HomeService,
     public hellService: HellService,
     public mainLoopService: MainLoopService,
     public gameStateService: GameStateService
@@ -211,6 +213,16 @@ export class InventoryPanelComponent {
       } else if (element.id.startsWith('pouchIndex')) {
         const destinationPouchIndex = parseInt(element.id.substring('pouchIndex'.length));
         this.inventoryService.moveToPouch(sourceItemIndex, destinationPouchIndex);
+      } else if (element.id.startsWith('wsInputIndex')) {
+        //id="wsInputIndex{{workstation.index}}_{{$index}}"
+        const indexParts = element.id.substring('wsInputIndex'.length).split('_');
+        if (indexParts.length !== 2) {
+          // didn't get two parts, bail out
+          return;
+        }
+        const destinationWorkstationIndex = parseInt(indexParts[0]);
+        const destinationInputIndex = parseInt(indexParts[1]);
+        this.homeService.moveItemToWorkstation(sourceItemIndex, destinationWorkstationIndex, destinationInputIndex);
       } else if (element.id.startsWith('equipmentSlot')) {
         const equipmentSlotString = element.id.substring('equipmentSlot'.length);
         const slot: EquipmentPosition = equipmentSlotString as EquipmentPosition;

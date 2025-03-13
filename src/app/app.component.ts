@@ -25,7 +25,6 @@ import { KtdGridComponent, KtdGridLayout, KtdGridLayoutItem, ktdTrackById } from
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FarmService } from './game-state/farm.service';
-import { FurnitureStoreModalComponent } from './furniture-store-modal/furniture-store-modal.component';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -202,15 +201,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   storeClicked(): void {
     this.dialog.open(StoreModalComponent, {
-      data: { someField: 'foo' },
-      autoFocus: false,
-    });
-  }
-
-  furnitureStoreClicked(): void {
-    this.storeService.setStoreInventory();
-    this.dialog.open(FurnitureStoreModalComponent, {
-      width: '600px',
       data: { someField: 'foo' },
       autoFocus: false,
     });

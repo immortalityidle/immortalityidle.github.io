@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
-import { AutoBuyer, FurnitureAutoBuyer, HomeAutoBuyer, LandAndFieldAutoBuyer } from './autoBuyer';
+import { AutoBuyer, HomeAutoBuyer, LandAndFieldAutoBuyer } from './autoBuyer';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 
@@ -11,7 +11,7 @@ export interface AutoBuyerProperties {
   autoBuyerSettings: AutoBuyerSetting[];
 }
 
-export type AutoBuyerType = 'home' | 'land' | 'furniture';
+export type AutoBuyerType = 'home' | 'land';
 export type AutoBuyerSetting = {
   label: string;
   type: AutoBuyerType;
@@ -32,7 +32,6 @@ export class AutoBuyerService {
   autobuyers: AutoBuyersMap = {
     home: new HomeAutoBuyer(this, this.homeService, this.farmService, this.characterService),
     land: new LandAndFieldAutoBuyer(this, this.homeService, this.farmService, this.characterService),
-    furniture: new FurnitureAutoBuyer(this, this.homeService, this.farmService, this.characterService),
   };
 
   constructor(
@@ -73,12 +72,6 @@ export class AutoBuyerService {
       {
         label: 'Home',
         type: 'home',
-        enabled: true,
-        waitForFinish: true,
-      },
-      {
-        label: 'Furniture',
-        type: 'furniture',
         enabled: true,
         waitForFinish: true,
       },

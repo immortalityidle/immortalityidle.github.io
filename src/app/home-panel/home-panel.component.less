@@ -42,15 +42,17 @@ mat-icon {
 }
 
 .furnitureSlots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
   margin-bottom: 2px;
 }
 
 .itemSlot {
   width: 50px;
   height: 50px;
+}
+
+.doorText {
+  width: 50px;
+  height: 10px;
 }
 
 .progress-bar {
@@ -70,3 +72,50 @@ mat-icon {
 .floatRight {
   float: right;
 }
+
+.inputsContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.inputSlot {
+  width: 52px;
+  height: 52px;
+  line-height: 12px;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  position: relative;
+  padding: 0px;
+  border-radius: 4px;
+  border: 1px solid var(--panelBorder);
+  padding: 2px;
+  font-size: x-small;
+  text-align: center;
+  border-spacing: 0px;
+  cursor: pointer;
+  background-color: var(--itemSlotColor);
+  color: var(--bodyText);
+  box-sizing: border-box;
+}
+
+.itemQuantity {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  line-height: 15px;
+  padding: 0 4px;
+  width: fit-content;
+  height: fit-content;
+  background: inherit;
+  filter: brightness(80%);
+  border-radius: 3px;
+  z-index: 1;
+}
+
+.workstationContainer {
+  margin: 2px;
+  border: 1px solid var(--panelBorder);
+  padding: 2px;
+}
+

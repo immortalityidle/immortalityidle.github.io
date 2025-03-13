@@ -2,100 +2,22 @@
   <span>Furniture Shop</span>
   <hr/>
   <br>
-    @if (storeService.getFurnitureForSlot('bed').length > 0) {
+  <div class="inventoryGrid">
+    @for (item of itemRepoService.furniture; track item.id) {
       <div>
-        <span>Bed</span>
-        <hr/>
-        <div class="inventoryGrid">
-          @for (item of storeService.getFurnitureForSlot('bed'); track item) {
-            <div>
-              <div class="itemSlot" tabindex="0"
-                [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-                tooltip="{{item.description}}">
-                <div><mat-icon>{{item.slot}}</mat-icon></div>
-                <div>{{item.name | titlecase}}</div>
-                @if ((storeService.furniturePrices[item.name] || 0 > 0)) {
-                  <div>$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
-                }
-              </div>
-              <button (click)="storeService.buyFurniture(item)">
-                {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
-              </button>
-            </div>
-          }
-        </div>
-      </div>
-    }
-    @if (storeService.getFurnitureForSlot('bathtub').length > 0) {
-      <div>
-        <span>Bathtub</span>
-        <hr/>
-        <div class="inventoryGrid">
-          @for (item of storeService.getFurnitureForSlot('bathtub'); track item) {
-            <div>
-              <div class="itemSlot" tabindex="0"
-                [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-                tooltip="{{item.description}}">
-                <div><mat-icon>{{item.slot}}</mat-icon></div>
-                <div>{{item.name | titlecase}}</div>
-                @if ((storeService.furniturePrices[item.name] || 0 > 0)) {
-                  <div>$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
-                }
-              </div>
-              <button (click)="storeService.buyFurniture(item)">
-                {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
-              </button>
-            </div>
-          }
-        </div>
-      </div>
-    }
-    @if (storeService.getFurnitureForSlot('kitchen').length > 0) {
-      <div>
-        <span>Kitchen</span>
-        <hr/>
-        <div class="inventoryGrid">
-          @for (item of storeService.getFurnitureForSlot('kitchen'); track item) {
-            <div>
-              <div class="itemSlot" tabindex="0"
-                [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-                tooltip="{{item.description}}">
-                <div><mat-icon>{{item.slot}}</mat-icon></div>
-                <div>{{item.name | titlecase}}</div>
-                @if ((storeService.furniturePrices[item.name] || 0 > 0)) {
-                  <div>$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
-                }
-              </div>
-              <button (click)="storeService.buyFurniture(item)">
-                {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
-              </button>
-            </div>
-          }
-        </div>
-      </div>
-    }
-    @if (storeService.getFurnitureForSlot('workbench').length > 0) {
-      <div>
-        <span>Workbench</span>
-        <hr/>
-        <div class="inventoryGrid">
-          @for (item of storeService.getFurnitureForSlot('workbench'); track item) {
-            <div>
-              <div class="itemSlot" tabindex="0"
-                [ngClass]="{ownedItem: homeService.furniture[item.slot] === item}"
-                tooltip="{{item.description}}">
-                <div><mat-icon>{{item.slot}}</mat-icon></div>
-                <div>{{item.name | titlecase}}</div>
-                @if ((storeService.furniturePrices[item.name] || 0 > 0)) {
-                  <div>$ {{storeService.furniturePrices[item.name] | number: '1.0-0'}}</div>
-                }
-              </div>
-              <button (click)="storeService.buyFurniture(item)">
-                {{(storeService.furniturePrices[item.name] || 0 > 0) ? "Buy" : "Use"}}
-              </button>
-            </div>
+        <div class="itemSlot" tabindex="0"
+          tooltip="{{item.description}}"
+          (click)="storeService.buyFurniture(item)">
+          <div>{{item.name | titlecase}}</div>
+          @if (homeService.ownedFurniture.includes(item.id)) {
+            <div>OWNED</div>
+          } 
+          @else {
+            <div>$ {{item.value | number: '1.0-0'}}</div>
           }
         </div>
       </div>
     }
   </div>
+
+</div>

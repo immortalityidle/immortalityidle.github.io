@@ -1,59 +1,154 @@
-<div class="homeContainer">
-  <h3 >
-    <div [ngClass]="{'hellDisabled': hellService.inHell}">
-      @if (!hellService.inHell || homeService.hellHome) {
-        @if ((homeService.home.name !== homeService.nextHome.name)) {
-          <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton floatRight" aria-label="Upgrade Home" aria-hidden="false"
-            tooltip="{{homeService.nextHome.upgradeToTooltip}}">
-            add_home
-          </mat-icon>
-        }
-        @if ((homeService.home.name !== homeService.previousHome.name)) {
-          <mat-icon (click)="homeService.downgradeHome()" class="iconButton floatRight" aria-label="Downgrade Home" aria-hidden="false"
-            tooltip="Is your new home too expensive? Downgrade to your previous home.">
-            keyboard_double_arrow_down
-          </mat-icon>
-        }
-        @if (homeService.upgrading) {
-          <div class="progress-bar" tooltip="Upgrading your home."
-            [attr.value]=buildTimeYears()>
-            <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
-          </div>
-          <span style="margin-left: 4px;"></span>
-        }
+<div class="homeContainer overflow">
+  <div [ngClass]="{'hellDisabled': hellService.inHell}">
+    @if (!hellService.inHell || homeService.hellHome) {
+      @if ((homeService.home.name !== homeService.nextHome.name)) {
+        <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton floatRight" aria-label="Upgrade Home" aria-hidden="false"
+          tooltip="{{homeService.nextHome.upgradeToTooltip}}">
+          add_home
+        </mat-icon>
       }
-      <div>
-        <span>
-          You live in a {{homeService.home.name}}
-        </span>
-      </div>
+      @if ((homeService.home.name !== homeService.previousHome.name)) {
+        <mat-icon (click)="homeService.downgradeHome()" class="iconButton floatRight" aria-label="Downgrade Home" aria-hidden="false"
+          tooltip="Is your new home too expensive? Downgrade to your previous home.">
+          keyboard_double_arrow_down
+        </mat-icon>
+      }
+      @if (homeService.upgrading) {
+        <div class="progress-bar" tooltip="Upgrading your home."
+          [attr.value]=buildTimeYears()>
+          <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
+        </div>
+        <span style="margin-left: 4px;"></span>
+      }
+    }
+    <div>
+      <span>
+        You live in a {{homeService.home.name}}
+      </span>
     </div>
-  </h3>
+  </div>
   <div class="homeInfo">
     <span>{{homeService.home.description}}</span>
   </div>
   @if ((!hellService.inHell || homeService.hellHome)) {
-    <div class="homeContainer">
-      <div class="overflow">
-        @if (!hellService.inHell && !characterService.characterState.god) {
-          <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
-        }      
-        @if (homeService.home.furnitureSlots.length > 0 && (!hellService.inHell || homeService.hellHome)) {
-          <div class="furnitureSlots">
-            @for (slot of homeService.home.furnitureSlots; track slot) {
-              <div>
-                @if (!homeService.furniture[slot]) {
-                  <div class="itemSlot" tooltip="You don't own a {{slot}}, but your home could hold one."></div>
-                }
-                @if (homeService.furniture[slot]) {
-                  <div class="itemSlot textOverflow" tooltip="{{homeService.furniture[slot]?.description}}">{{homeService.furniture[slot]?.name | titlecase}}</div>
-                }
-              </div>
-            }
+    <div>
+      @if (!hellService.inHell && !characterService.characterState.god) {
+        <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
+      }      
+      @if (homeService.home.maxFurniture > 0 && (!hellService.inHell || homeService.hellHome)) {
+        <hr>
+        <div>
+          <span>Your Bedroom</span>
+          @if (homeService.openBedroomFurnitureSlots > 0){
+            <span> has room for {{homeService.openBedroomFurnitureSlots}} more piece{{homeService.openBedroomFurnitureSlots > 1 ? "s" : ""}} of furniture</span>
+          }
+        </div>
+        <table class="furnitureSlots">
+          <tr>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(0)}}" (click)="selectFurniture(0)">
+              {{homeService.bedroomFurniture[0]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(1)}}" (click)="selectFurniture(1)">
+              {{homeService.bedroomFurniture[1]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(2)}}" (click)="selectFurniture(2)">
+              {{homeService.bedroomFurniture[2]?.name | titlecase}}
+            </td>
+            <td>
+              <span>Feng Shui Score: {{homeService.fengshuiScore}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(3)}}" (click)="selectFurniture(3)">
+              {{homeService.bedroomFurniture[3]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(4)}}" (click)="selectFurniture(4)">
+              {{homeService.bedroomFurniture[4]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(5)}}" (click)="selectFurniture(5)">
+              {{homeService.bedroomFurniture[5]?.name | titlecase}}
+            </td>
+          </tr>
+          <tr>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(6)}}" (click)="selectFurniture(6)">
+              {{homeService.bedroomFurniture[6]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(7)}}" (click)="selectFurniture(7)">
+              {{homeService.bedroomFurniture[7]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(8)}}" (click)="selectFurniture(8)">
+              {{homeService.bedroomFurniture[8]?.name | titlecase}}
+            </td>
+          </tr>
+          <tr>
+            <td class="itemSlot doorText"> 
+              Door
+            </td>
+          </tr>
+        </table>
+      }
+      @if (homeService.home.maxWorkstations && (!hellService.inHell || homeService.hellHome)) {
+        <hr>
+        <div>
+          <span>Your Workstations</span>
+        </div>
+        <div>
+          @if (homeService.workstations.length < homeService.home.maxWorkstations){
+            <mat-icon (click)="addWorkstation()" class="iconButton" aria-label="Add Workstation" aria-hidden="false"
+              tooltip="Add a new Workstation">
+              hardware
+            </mat-icon>
+  
+            <span> You can add {{homeService.home.maxWorkstations - homeService.workstations.length}} more workstations to this home</span>
+          }
+        </div>
+        @for (workstation of homeService.workstations; track workstation.name; let wsIndex = $index){
+          <div class="workstationContainer">
+            <div>
+              <mat-icon tooltip="{{workstation.description}}">
+                help
+              </mat-icon>
+              <span>{{workstation.name}}</span>
+              <mat-icon class="iconButton floatRight" tooltip="Remove this workstation" 
+                (click)="homeService.removeWorkstation(workstation)">
+                close
+              </mat-icon>
+            </div>
+            <div>
+              <span>Costs {{workstation.maintenanceCost | bigNumber}} Taels per day to maintain</span>
+            </div>
+            <div>
+              <span>Inputs:</span>
+            </div>
+            <div class="inputsContainer">
+              @for (itemStack of workstation.inputs; track itemStack.id; let inputIndex = $index) {
+                <div>
+                  <div id="wsInputIndex{{wsIndex}}_{{inputIndex}}" >
+                    <div class="inputSlot" [tabindex]="itemStack?.item ? '0' : '-1'" 
+                      cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
+                      [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
+                      (dblclick)="inputDoubleClicked(workstation, $index, $event)"
+                      tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
+                      <div class="itemName textOverflow">
+                        @if (itemStack?.item?.imageFile){
+                          <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" 
+                            width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
+                        }
+                        @else {
+                          {{itemStack?.item?.name | titlecase}}
+                        }
+                      </div>
+                      <div class="itemQuantity">x{{itemStack?.quantity}}</div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
         }
-      </div>
+      }
     </div>
   }
 </div>
+<br>
   

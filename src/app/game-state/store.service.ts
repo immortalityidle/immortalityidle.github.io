@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
-import { Furniture, InventoryService, Item, instanceOfFurniture } from '../game-state/inventory.service';
+import { InventoryService, Item } from '../game-state/inventory.service';
 import { HomeService, HomeType, Home } from '../game-state/home.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +12,6 @@ import { MatDialog } from '@angular/material/dialog';
 export class StoreService {
   manuals: Item[];
   regularStoreItems: Item[];
-  furniture: Furniture[];
   selectedItem: Item | null;
   soulCoreRank = 0;
   meridianRank = 0;
@@ -20,7 +19,7 @@ export class StoreService {
   bloodlineDescription = '';
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
   storeOpened = false;
-  furniturePrices: { [key: string]: number } = {};
+  furnitureIndex = 0;
 
   constructor(
     private logService: LogService,
@@ -33,24 +32,12 @@ export class StoreService {
     this.selectedItem = null;
 
     this.manuals = [];
-    this.furniture = [];
 
     this.regularStoreItems = [this.itemRepoService.items['rice'], this.itemRepoService.items['meat']];
   }
 
-  setStoreInventory() {
-    this.furniture = [];
-    for (const key in this.itemRepoService.furniture) {
-      const furniture = this.itemRepoService.furniture[key];
-      if (this.homeService.home.furnitureSlots.includes(furniture.slot)) {
-        this.furniture.push(furniture);
-        if (this.homeService.ownedFurniture.includes(furniture.name)) {
-          this.furniturePrices[furniture.name] = 0;
-        } else {
-          this.furniturePrices[furniture.name] = furniture.value;
-        }
-      }
-    }
+  setFurnitureIndex(index: number) {
+    this.furnitureIndex = index;
     this.selectedItem = null;
   }
 
@@ -83,34 +70,18 @@ export class StoreService {
     return false;
   }
 
-  getFurnitureForSlot(slot: string | null = null) {
-    if (slot === null) return this.furniture;
-
-    return this.furniture.filter(item => item.slot === slot);
-  }
-
-  buyFurniture(item: Item | null = null) {
-    if (item === null) item = this.selectedItem;
-
-    if (item) {
-      if (!instanceOfFurniture(item)) {
-        return;
-      }
-      const slot = item.slot;
-      if (
-        item.value < this.characterService.characterState.money ||
-        this.homeService.ownedFurniture.includes(item.name)
-      ) {
-        if (!this.homeService.ownedFurniture.includes(item.name)) {
-          // only pay for it once per lifetime
-          this.characterService.characterState.updateMoney(0 - item.value);
-          this.homeService.ownedFurniture.push(item.name);
-          this.furniturePrices[item.name] = 0;
-        }
-        this.homeService.furniture[slot] = item;
-        this.homeService.autoBuyFurniture[slot] = item;
-      }
+  buyFurniture(item: Item) {
+    let price = item?.value;
+    if (this.homeService.ownedFurniture.includes(item.id)) {
+      price = 0;
+    } else if (this.characterService.characterState.money >= price) {
+      this.characterService.characterState.updateMoney(0 - item.value);
+      this.homeService.ownedFurniture.push(item.id);
+    } else {
+      // not enough money, bail out
+      return;
     }
+    this.homeService.setFurniture(item, this.furnitureIndex);
   }
 
   updateAscensions() {

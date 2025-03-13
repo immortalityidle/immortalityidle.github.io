@@ -391,12 +391,12 @@
       </mat-tab>
     }
 
-    @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked || autoBuyerService.autoBuyerSettingsUnlocked) {
+    @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || autoBuyerService.autoBuyerSettingsUnlocked) {
       <mat-tab>
         <ng-template mat-tab-label>
           <span class="tab-label">Auto-buy</span>
         </ng-template>
-        @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || homeService.autoBuyFurnitureUnlocked) {
+        @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked) {
           <div class="optionField">
             <span>
               <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"

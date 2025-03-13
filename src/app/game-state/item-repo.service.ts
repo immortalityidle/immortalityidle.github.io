@@ -5,7 +5,7 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { HomeService } from './home.service';
-import { Furniture, InventoryService, Item } from './inventory.service';
+import { InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { AutoBuyerService } from './autoBuyer.service';
@@ -50,28 +50,56 @@ export class ItemRepoService {
     'red',
   ];
 
-  furniture: { [key: string]: Furniture } = {
-    blanket: {
+  // TODO: add more furniture, using the feng shui relevant properties:
+  /*
+baguaMap = [
+  //0: Top Left: Wealth, Wood, Purple/Red/Green
+  ['safe', 'wood', 'purple', 'red', 'green'],
+  //1: Top Center: Fame, Fire, Red/Orange
+  ['bed', 'trophy', 'fire', 'red', 'orange'],
+  //2: Top Right: Love/Relationships, Earth, Pink/Red
+  ['bed', 'portrait', 'earth', 'red', 'pink'],
+  //3: Center Left: Family/Health, Wood, Green/Blue
+  ['portrait', 'fitness', 'wood', 'green', 'blue'],
+  //4: Center: Health/Wellbeing, Earth, Yellow/Earth tones
+  ['fitness', 'earth', 'yellow', 'brown'],
+  //5: Center Right: Children/Creativity, Metal, White/Pastels
+  ['portrait', 'metal', 'white', 'pastel'],
+  //6: Bottom Left: Knowledge, Water/Earth, Blue/Black/Green
+  ['book', 'water', 'earth', 'blue', 'black', 'green'],
+  //7: Bottom Center: Career, Water, Black
+  ['water', 'black'],
+  //8: Bottom Left: Helpful People/Travel, Metal, Gray/White/Black
+  ['metal', 'gray', 'white', 'black'],
+];
+*/
+
+  furniture = [
+    {
       id: 'blanket',
-      name: 'Blanket',
+      name: 'Cotton Blanket',
       type: 'furniture',
-      slot: 'bed',
+      subtype: 'bed',
+      color: 'gray',
+      elements: ['wood'],
       value: 10,
       description:
-        'A tattered blanket.<br>Not much, but it could keep you warm at night.<br>Increases daily stamina recovery by 1.',
+        'A tattered, gray cotton blanket.<br>Not much, but it could keep you warm at night.<br>Increases daily stamina recovery by 1.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value++;
       },
     },
-    mat: {
+    {
       id: 'mat',
       name: 'Sleeping Mat',
       type: 'furniture',
-      slot: 'bed',
+      subtype: 'bed',
+      color: 'brown',
+      elements: ['wood'],
       value: 1000,
       description:
-        'A thin woven mat to sleep on.<br>Increases daily stamina recovery by 1 and restores a bit of health.',
+        'A thin mat woven from brown reeds.<br>Increases daily stamina recovery by 1 and restores a bit of health.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 1;
@@ -79,14 +107,15 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    canopyBed: {
+    {
       id: 'canopyBed',
       name: 'Canopy Bed',
       type: 'furniture',
-      slot: 'bed',
+      subtype: 'bed',
+      color: 'red',
       value: 10000,
       description:
-        'A fine bed with a cover.<br>Curtains keep the mosquitoes off you during the night.<br>Increases daily stamina recovery by 2 and restores a bit of health.',
+        'A fine bed with a red silk cover.<br>The curtains keep the mosquitoes off you during the night.<br>Increases daily stamina recovery by 2 and restores a bit of health.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value += 2;
@@ -94,11 +123,13 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    heatedBed: {
+    {
       id: 'heatedBed',
       name: 'Heated Bed',
       type: 'furniture',
-      slot: 'bed',
+      subtype: 'bed',
+      color: 'brown',
+      elements: ['fire'],
       value: 100000,
       description:
         'A bed built over a small clay oven. Keeps you toasty on even the coldest nights.<br>Increases daily stamina recovery by 5 and improves health recovery.',
@@ -109,51 +140,60 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    bedOfNails: {
+    {
       id: 'bedOfNails',
       name: 'Bed of Nails',
       type: 'furniture',
-      slot: 'bed',
+      subtype: 'bed',
+      color: 'black',
+      elements: ['metal'],
       value: 10000,
       description:
-        "A solid board with nails poking upwards.<br>You won't sleep as well, but it is certain to toughen you up.",
+        "A solid board with iron nails poking upwards.<br>You won't sleep as well, but it is certain to toughen you up.",
       useConsumes: false,
       use: () => {
         this.characterService.characterState.status.stamina.value -= 1;
         this.characterService.characterState.increaseAttribute('toughness', 0.1);
       },
     },
-    waterBucket: {
+    {
       id: 'waterBucket',
       name: 'water bucket ',
       type: 'furniture',
-      slot: 'bathtub',
+      subtype: 'bath',
+      color: 'gray',
+      elements: ['water'],
       value: 10,
-      description: 'A bucket of water that lets you splash water on your face.<br>Increases charisma.',
+      description: 'A simple gray bucket of water that lets you splash your face clean.<br>Increases charisma.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.01);
       },
     },
-    washBasin: {
+    {
       id: 'washBasin',
       name: 'wash basin',
       type: 'furniture',
-      slot: 'bathtub',
+      subtype: 'bath',
+      color: 'brown',
+      elements: ['water', 'earth'],
       value: 1000,
-      description: 'A wash basin with a rag to clean yourself.<br>Increases charisma.',
+      description: 'A clay wash basin with a rag to clean yourself.<br>Increases charisma.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.05);
       },
     },
-    woodenTub: {
+    {
       id: 'woodenTub',
       name: 'wooden tub',
       type: 'furniture',
-      slot: 'bathtub',
+      subtype: 'bath',
+      color: 'brown',
+      elements: ['water', 'wood'],
       value: 10000,
-      description: 'A tall and narrow tub where you can squat and bathe.<br>Increases charisma and health recovery.',
+      description:
+        'A tall and narrow wooden tub where you can squat and bathe.<br>Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.1);
@@ -161,13 +201,16 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    bronzeTub: {
+    {
       id: 'bronzeTub',
       name: 'bronze tub',
       type: 'furniture',
-      slot: 'bathtub',
+      subtype: 'bath',
+      color: 'brown',
+      elements: ['water', 'metal'],
       value: 1000000,
-      description: 'A luxurious tub where you can get sparkling clean.<br>Increases charisma and health recovery.',
+      description:
+        'A luxurious bronze tub where you can get sparkling clean.<br>Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('charisma', 0.2);
@@ -175,11 +218,13 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    heatedTub: {
+    {
       id: 'heatedTub',
       name: 'heated tub',
       type: 'furniture',
-      slot: 'bathtub',
+      subtype: 'bath',
+      color: 'brown',
+      elements: ['water', 'metal', 'fire'],
       value: 1e8,
       description: 'A luxurious tub with its own heating stove.<br>Good for your health and beauty.',
       useConsumes: false,
@@ -191,7 +236,9 @@ export class ItemRepoService {
         this.characterService.characterState.checkOverage();
       },
     },
-    cookPot: {
+  ];
+  /*
+    {
       id: 'cookPot',
       name: 'cook pot',
       type: 'furniture',
@@ -205,7 +252,7 @@ export class ItemRepoService {
         this.characterService.characterState.increaseAttribute('toughness', 0.01);
       },
     },
-    roastingSpit: {
+    {
       id: 'roastingSpit',
       name: 'roasting spit',
       type: 'furniture',
@@ -323,7 +370,7 @@ export class ItemRepoService {
         }
       },
     },
-  };
+    */
 
   items: { [key: string]: Item } = {
     rice: {
@@ -725,6 +772,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[0],
       name: 'balsa log',
       type: 'wood',
+      subtype: 'fuel',
       value: 1,
       description: 'A really soft log.',
     },
@@ -734,6 +782,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[1],
       name: 'elm log',
       type: 'wood',
+      subtype: 'fuel',
       value: 2,
       description: 'A soft log.',
     },
@@ -743,6 +792,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[2],
       name: 'cypress log',
       type: 'wood',
+      subtype: 'fuel',
       value: 3,
       description: 'A poor quality log.',
     },
@@ -752,6 +802,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[3],
       name: 'walnut log',
       type: 'wood',
+      subtype: 'fuel',
       value: 4,
       description: 'An adequate quality log.',
     },
@@ -761,6 +812,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[4],
       name: 'laurelwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 5,
       description: 'A nice quality log.',
     },
@@ -770,6 +822,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[5],
       name: 'blackwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 6,
       description: 'A good quality log.',
     },
@@ -779,6 +832,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[6],
       name: 'rosewood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 7,
       description: 'A great quality log.',
     },
@@ -788,6 +842,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[7],
       name: 'pearwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 8,
       description: 'An excellent quality log.',
     },
@@ -797,6 +852,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[8],
       name: 'zitan log',
       type: 'wood',
+      subtype: 'fuel',
       value: 9,
       description: 'An amazing quality log.',
     },
@@ -806,6 +862,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[9],
       name: 'lignum vitae log',
       type: 'wood',
+      subtype: 'fuel',
       value: 10,
       description: 'A log of the highest mortal quality.',
     },
@@ -815,6 +872,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[10],
       name: 'peachwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 11,
       description: 'A log brimming with spiritual energy.',
     },
@@ -824,6 +882,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[11],
       name: 'diamondwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 12,
       description: 'A log as hard as diamond.',
     },
@@ -833,6 +892,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[12],
       name: 'titanwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 13,
       description: 'A log with the strength of titans.',
     },
@@ -842,6 +902,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[13],
       name: 'dragonwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 14,
       description: 'A log blessed by dragons.',
     },
@@ -851,6 +912,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[14],
       name: 'devilwood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 15,
       description: 'A demonic quality log.',
     },
@@ -860,6 +922,7 @@ export class ItemRepoService {
       imageColor: this.colorByRank[15],
       name: 'divinewood log',
       type: 'wood',
+      subtype: 'fuel',
       value: 16,
       description: 'A divine quality log.',
     },
@@ -2138,33 +2201,6 @@ export class ItemRepoService {
         return this.homeService.autoBuyHomeUnlocked;
       },
     },
-    autoBuyFurnitureManual: {
-      id: 'autoBuyFurnitureManual',
-      name: 'Manual of Home Furnishing',
-      type: 'manual',
-      description:
-        'This manual teaches you to automatically buy the last furniture you bought for your home in future lives.',
-      value: 8e7,
-      useLabel: 'Read',
-      useDescription: 'Permanently unlock automatic purchasing for furniture.',
-      useConsumes: true,
-      use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoBuyFurnitureUnlocked = true;
-        this.logService.log(
-          LogTopic.EVENT,
-          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
-        );
-      },
-      owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        return this.homeService.autoBuyFurnitureUnlocked;
-      },
-    },
     autoBuyerSettingsManual: {
       id: 'autoBuySettingsManual',
       name: 'Manual of Customized Automation',
@@ -2847,9 +2883,11 @@ export class ItemRepoService {
     return undefined;
   }
 
-  getFurnitureById(id: string): Furniture | null {
-    if (this.furniture[id]) {
-      return this.furniture[id];
+  getFurnitureById(id: string): Item | null {
+    for (const item of this.furniture) {
+      if (item.id === id) {
+        return item;
+      }
     }
     return null;
   }

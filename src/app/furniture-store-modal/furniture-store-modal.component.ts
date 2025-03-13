@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { StoreService } from '../game-state/store.service';
-import { Item } from '../game-state/inventory.service';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
@@ -23,18 +22,4 @@ export class FurnitureStoreModalComponent {
     public itemRepoService: ItemRepoService,
     public gameStateService: GameStateService
   ) {}
-
-  slotClicked(item: Item) {
-    if (this.storeService.selectedItem === item) {
-      this.storeService.selectedItem = null;
-      this.buyDisabled = true;
-    } else {
-      this.storeService.selectedItem = item;
-      if (item.owned && item.owned()) {
-        this.buyDisabled = true;
-      } else {
-        this.buyDisabled = false;
-      }
-    }
-  }
 }

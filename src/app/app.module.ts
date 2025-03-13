@@ -45,6 +45,7 @@ import { LifeSummaryComponent } from './life-summary/life-summary.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { KtdGridModule } from '@katoid/angular-grid-layout';
 import { TooltipDirective } from '@webed/angular-tooltip';
+import { WorkstationSelectionModalComponent } from './workstation-selection-modal/workstation-selection-modal.component';
 
 const materialModules = [MatDialogModule, MatIconModule, MatTabsModule];
 
@@ -57,6 +58,7 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule];
     PetsPanelComponent,
     HealthPanelComponent,
     HomePanelComponent,
+    WorkstationSelectionModalComponent,
     LogPanelComponent,
     InventoryPanelComponent,
     ActivityPanelComponent,

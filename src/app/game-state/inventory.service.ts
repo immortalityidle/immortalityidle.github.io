@@ -20,7 +20,6 @@ import {
   ShoeNames,
   HelmetNames,
 } from './itemResources';
-import { FurniturePosition } from './home.service';
 import { BigNumberPipe } from '../app.component';
 import { HellService } from './hell.service';
 
@@ -45,6 +44,8 @@ export interface Item {
   value: number;
   type: string;
   subtype?: string;
+  color?: string;
+  elements?: string[];
   useLabel?: string;
   useDescription?: string;
   useConsumes?: boolean;
@@ -71,10 +72,6 @@ export interface Potion extends Item {
 export interface Pill extends Item {
   effect: string;
   power: number;
-}
-
-export interface Furniture extends Item {
-  slot: FurniturePosition;
 }
 
 export interface ItemStack {
@@ -1209,6 +1206,8 @@ export class InventoryService {
     }
     this.totalItemsReceived += quantity;
 
+    //TODO: pouch and workstation inputs need to go straight there when acquired (maybe a manual for that?)
+
     for (const balanceItem of this.autoBalanceItems) {
       if (balanceItem.name === item.name) {
         // can't sell in hell, use it all
@@ -2187,8 +2186,4 @@ export function instanceOfPotion(object: Item): object is Potion {
 
 export function instanceOfPill(object: Item): object is Pill {
   return 'effect' in object;
-}
-
-export function instanceOfFurniture(object: Item): object is Furniture {
-  return 'slot' in object;
 }

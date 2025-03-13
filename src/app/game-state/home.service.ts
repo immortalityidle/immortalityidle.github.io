@@ -3,9 +3,10 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from './character.service';
-import { Furniture, InventoryService } from './inventory.service';
+import { InventoryService, Item, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
+import { ActivityType } from './activity';
 
 export interface Home {
   name: string;
@@ -17,7 +18,8 @@ export interface Home {
   maxInventory: number;
   upgradeToTooltip: string;
   consequence: () => void;
-  furnitureSlots: FurniturePosition[];
+  maxFurniture: number;
+  maxWorkstations: number;
   daysToBuild: number;
 }
 
@@ -41,17 +43,29 @@ export enum HomeType {
   Godthrone,
 }
 
+export interface Workstation {
+  name?: string;
+  id: string;
+  triggerActivity: ActivityType;
+  power: number;
+  setupCost: number;
+  maintenanceCost: number;
+  description: string;
+  maxInputs: number;
+  inputs: ItemStack[];
+  consequence: (workstation: Workstation) => void;
+}
+
 export interface HomeProperties {
   land: number;
   homeValue: HomeType;
-  furniture: FurnitureSlots;
+  bedroomFurniture: (Item | null)[];
   landPrice: number;
   autoBuyLandUnlocked: boolean;
   autoBuyLandLimit: number;
   autoBuyHomeUnlocked: boolean;
   autoBuyHomeLimit: HomeType;
-  autoBuyFurnitureUnlocked: boolean;
-  autoBuyFurniture: FurnitureSlots;
+  keepFurniture: boolean;
   useAutoBuyReserve: boolean;
   autoBuyReserveAmount: number;
   nextHomeCostReduction: number;
@@ -65,10 +79,9 @@ export interface HomeProperties {
   hellHome: boolean;
   homeUnlocked: boolean;
   keepHome: boolean;
+  seeFurnitureEffects: boolean;
+  workstations: Workstation[];
 }
-
-export type FurniturePosition = 'bed' | 'bathtub' | 'kitchen' | 'workbench';
-export type FurnitureSlots = { [key in FurniturePosition]: Furniture | null };
 
 @Injectable({
   providedIn: 'root',
@@ -79,24 +92,11 @@ export class HomeService {
   autoBuyLandLimit = 5;
   autoBuyHomeUnlocked = false;
   autoBuyHomeLimit: HomeType = 2;
-  autoBuyFurnitureUnlocked = false;
-  autoBuyFurniture: FurnitureSlots = {
-    bed: null,
-    bathtub: null,
-    kitchen: null,
-    workbench: null,
-  };
+  keepFurniture = false;
   useAutoBuyReserve = false;
   autoBuyReserveAmount = 0;
   land: number;
   landPrice: number;
-  furniture: FurnitureSlots = {
-    bed: null,
-    bathtub: null,
-    kitchen: null,
-    workbench: null,
-  };
-  furniturePositionsArray: FurniturePosition[] = ['bed', 'bathtub', 'kitchen', 'workbench'];
   ownedFurniture: string[] = [];
   grandfatherTent = false;
   houseBuildingProgress = 1;
@@ -106,6 +106,11 @@ export class HomeService {
   homeUnlocked = false;
   smoothFarming = false;
   keepHome = false;
+  bedroomFurniture: (Item | null)[] = [null, null, null, null, null, null, null, null, null];
+  fengshuiScore = 0;
+  openBedroomFurnitureSlots = 0;
+  seeFurnitureEffects = false;
+  workstations: Workstation[] = [];
 
   homesList: Home[] = [
     {
@@ -121,7 +126,8 @@ export class HomeService {
       consequence: () => {
         // do nothing
       },
-      furnitureSlots: [],
+      maxFurniture: 0,
+      maxWorkstations: 0,
       daysToBuild: 1,
     },
     {
@@ -140,7 +146,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 1;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: [],
+      maxFurniture: 0,
+      maxWorkstations: 0,
       daysToBuild: 1,
     },
     {
@@ -153,13 +160,14 @@ export class HomeService {
       landRequired: 5,
       maxInventory: 15,
       upgradeToTooltip:
-        'Get a better home and stop the troublemakers from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls and space to properly sleep.',
+        'Get a better home and stop the troublemakers from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls.',
       consequence: () => {
         this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 3;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed'],
+      maxFurniture: 1,
+      maxWorkstations: 0,
       daysToBuild: 1,
     },
     {
@@ -172,13 +180,14 @@ export class HomeService {
       landRequired: 10,
       maxInventory: 18,
       upgradeToTooltip:
-        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels and take up 10 land.<br>The new home will restore 5 stamina and a bit of health each night.<br>It has enough room to properly bathe.',
+        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels and take up 10 land.<br>The new home will restore 5 stamina and a bit of health each night.',
       consequence: () => {
         this.characterService.characterState.status.health.value += 0.7;
         this.characterService.characterState.status.stamina.value += 5;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub'],
+      maxFurniture: 2,
+      maxWorkstations: 0,
       daysToBuild: 10,
     },
     {
@@ -191,14 +200,15 @@ export class HomeService {
       landRequired: 20,
       maxInventory: 20,
       upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100,000 taels and take up 20 land.<br>The new home will restore 10 stamina and 1 health and a bit of Qi each night (if unlocked).<br>It also has room to let you cook.',
+        'Get a better house.<br>A better home will cost 100,000 taels and take up 20 land.<br>The new home will restore 10 stamina and 1 health and a bit of Qi each night (if unlocked).',
       consequence: () => {
         this.characterService.characterState.status.qi.value += 0.1;
         this.characterService.characterState.status.health.value += 1;
         this.characterService.characterState.status.stamina.value += 10;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen'],
+      maxFurniture: 3,
+      maxWorkstations: 1,
       daysToBuild: 30,
     },
     {
@@ -211,14 +221,15 @@ export class HomeService {
       landRequired: 50,
       maxInventory: 24,
       upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1M taels and take up 50 land.<br>The new home will restore 15 stamina, 2 health, and a bit of Qi each night (if unlocked).<br>It has room to practice your craft.',
+        'Get a better house.<br>A better home will cost 1M taels and take up 50 land.<br>The new home will restore 15 stamina, 2 health, and a bit of Qi each night (if unlocked).',
       consequence: () => {
         this.characterService.characterState.status.qi.value += 0.2;
         this.characterService.characterState.status.health.value += 2;
         this.characterService.characterState.status.stamina.value += 15;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 4,
+      maxWorkstations: 1,
       daysToBuild: 90,
     },
     {
@@ -238,7 +249,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 20;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 5,
+      maxWorkstations: 1,
       daysToBuild: 180,
     },
     {
@@ -258,7 +270,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 25;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 6,
+      maxWorkstations: 2,
       daysToBuild: 365,
     },
     {
@@ -277,7 +290,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 30;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 7,
+      maxWorkstations: 2,
       daysToBuild: 3650,
     },
     {
@@ -296,7 +310,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 35;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 8,
+      maxWorkstations: 2,
       daysToBuild: 36500,
     },
     {
@@ -315,7 +330,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 40;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 9,
+      maxWorkstations: 3,
       daysToBuild: 365000,
     },
     {
@@ -334,7 +350,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 50;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 9,
+      maxWorkstations: 3,
       daysToBuild: 3650000,
     },
     {
@@ -353,7 +370,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 100;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 9,
+      maxWorkstations: 3,
       daysToBuild: 365e5,
     },
     {
@@ -372,7 +390,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 200;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 9,
+      maxWorkstations: 4,
       daysToBuild: 365e6,
     },
     {
@@ -392,7 +411,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 300;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 9,
+      maxWorkstations: 4,
       daysToBuild: 365e7,
     },
     {
@@ -412,7 +432,8 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 500;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 9,
+      maxWorkstations: 4,
       daysToBuild: 365e8,
     },
     {
@@ -432,9 +453,98 @@ export class HomeService {
         this.characterService.characterState.status.stamina.value += 1000;
         this.characterService.characterState.checkOverage();
       },
-      furnitureSlots: ['bed', 'bathtub', 'kitchen', 'workbench'],
+      maxFurniture: 9,
+      maxWorkstations: 5,
       daysToBuild: 365e9,
     },
+  ];
+
+  workstationsList: Workstation[] = [
+    {
+      id: 'Basic Smelter',
+      triggerActivity: ActivityType.Smelting,
+      power: 0,
+      setupCost: 1000,
+      maintenanceCost: 10,
+      description:
+        'A simple smelter that will produce metal bars when you do Smelting.<br>You will need to provide your own ore and fuel.',
+      maxInputs: 2,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        if (workstation.inputs.length < 2) {
+          // inputs array not populated, bail out
+          return;
+        }
+        const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
+        const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
+
+        console.log('ore', oreStack);
+        console.log('fuel', fuelStack);
+        if (
+          fuelStack &&
+          oreStack &&
+          this.inventoryService.openInventorySlots() > 0 &&
+          oreStack.quantity > 0 &&
+          fuelStack.quantity > 0
+        ) {
+          this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
+          oreStack.quantity--;
+          fuelStack.quantity--;
+        }
+      },
+    },
+    {
+      id: 'Basic Anvil',
+      triggerActivity: ActivityType.Blacksmithing,
+      power: 0,
+      setupCost: 10000,
+      maintenanceCost: 100,
+      description:
+        'A simple anvil that will let you craft your own equipment when you do Blacksmithing.<br>You will need to provide your own metal bars.',
+      maxInputs: 1,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        if (workstation.inputs.length < 1) {
+          // inputs array not populated, bail out
+          return;
+        }
+        const metalStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'metal');
+        if (metalStack && metalStack.quantity >= 10 && this.inventoryService.openInventorySlots() > 0) {
+          const metalLore = this.characterService.characterState.attributes.metalLore.value;
+          const grade = metalStack?.item?.value || 1;
+          this.inventoryService.addItem(
+            this.inventoryService.generateWeapon(
+              Math.floor(Math.max(Math.pow(Math.log2(metalLore), grade / 160), grade / 10)),
+              'metal',
+              true
+            )
+          );
+          metalStack.quantity -= 10;
+        }
+      },
+    },
+  ];
+
+  //Feng Shui Bagua map:
+  baguaMap = [
+    //0: Top Left: Wealth, Wood, Purple/Red/Green
+    ['safe', 'wood', 'purple', 'red', 'green'],
+    //1: Top Center: Fame, Fire, Red/Orange
+    ['bed', 'trophy', 'fire', 'red', 'orange'],
+    //2: Top Right: Love/Relationships, Earth, Pink/Red
+    ['bed', 'portrait', 'earth', 'red', 'pink'],
+    //3: Center Left: Family/Health, Wood, Green/Blue
+    ['portrait', 'fitness', 'wood', 'green', 'blue'],
+    //4: Center: Health/Wellbeing, Earth, Yellow/Earth tones
+    ['fitness', 'earth', 'yellow', 'brown'],
+    //5: Center Right: Children/Creativity, Metal, White/Pastels
+    ['portrait', 'metal', 'white', 'pastel'],
+    //6: Bottom Left: Knowledge, Water/Earth, Blue/Black/Green
+    ['book', 'water', 'earth', 'blue', 'black', 'green'],
+    //7: Bottom Center: Career, Water, Black
+    ['water', 'black'],
+    //8: Bottom Left: Helpful People/Travel, Metal, Gray/White/Black
+    ['metal', 'gray', 'white', 'black'],
   ];
 
   homeValue!: HomeType;
@@ -516,15 +626,19 @@ export class HomeService {
     }
     if (!this.hellService?.inHell || this.hellHome) {
       this.home.consequence();
-      for (const slot of this.furniturePositionsArray) {
-        const furniturePiece = this.furniture[slot];
+      for (const furniturePiece of this.bedroomFurniture) {
         if (furniturePiece?.use) {
           furniturePiece?.use();
         }
       }
     }
     if (!this.hellService?.inHell && !this.characterService.characterState.god) {
-      if (this.home.costPerDay > this.characterService.characterState.money) {
+      let totalCost = 0;
+      for (const workstation of this.workstations) {
+        totalCost += workstation.maintenanceCost;
+      }
+      totalCost += this.home.costPerDay;
+      if (totalCost > this.characterService.characterState.money) {
         this.logService.injury(
           LogTopic.EVENT,
           "You can't afford the upkeep on your home. Some thugs rough you up over the debt. You'd better start doing activities that make more money, fast, or you'll work yourself to death."
@@ -535,7 +649,7 @@ export class HomeService {
         this.characterService.characterState.status.health.value -= 20;
         this.characterService.characterState.money = 0;
       } else {
-        this.characterService.characterState.updateMoney(0 - this.home.costPerDay);
+        this.characterService.characterState.updateMoney(0 - totalCost);
       }
     }
   }
@@ -543,15 +657,14 @@ export class HomeService {
   getProperties(): HomeProperties {
     return {
       homeValue: this.homeValue,
-      furniture: this.furniture,
+      bedroomFurniture: this.bedroomFurniture,
       land: this.land,
       landPrice: this.landPrice,
       autoBuyLandUnlocked: this.autoBuyLandUnlocked,
       autoBuyLandLimit: this.autoBuyLandLimit,
       autoBuyHomeUnlocked: this.autoBuyHomeUnlocked,
       autoBuyHomeLimit: this.autoBuyHomeLimit,
-      autoBuyFurnitureUnlocked: this.autoBuyFurnitureUnlocked,
-      autoBuyFurniture: this.autoBuyFurniture,
+      keepFurniture: this.keepFurniture,
       useAutoBuyReserve: this.useAutoBuyReserve,
       autoBuyReserveAmount: this.autoBuyReserveAmount,
       nextHomeCostReduction: this.nextHomeCostReduction,
@@ -565,6 +678,8 @@ export class HomeService {
       hellHome: this.hellHome,
       homeUnlocked: this.homeUnlocked,
       keepHome: this.keepHome,
+      seeFurnitureEffects: this.seeFurnitureEffects,
+      workstations: this.workstations,
     };
   }
 
@@ -576,17 +691,18 @@ export class HomeService {
     this.autoBuyLandLimit = properties.autoBuyLandLimit || 0;
     this.autoBuyHomeUnlocked = properties.autoBuyHomeUnlocked || false;
     this.autoBuyHomeLimit = properties.autoBuyHomeLimit || 3;
-    this.autoBuyFurnitureUnlocked = properties.autoBuyFurnitureUnlocked || false;
-    this.autoBuyFurniture = properties.autoBuyFurniture || false;
+    this.keepFurniture = properties.keepFurniture || false;
     this.useAutoBuyReserve = properties.useAutoBuyReserve || false;
     this.autoBuyReserveAmount = properties.autoBuyReserveAmount || 0;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
     this.upgrading = properties.upgrading || false;
-    for (const slot of this.furniturePositionsArray) {
-      const savedFurniture = properties.furniture[slot];
-      if (savedFurniture) {
-        this.furniture[slot] = this.itemRepoService.getFurnitureById(savedFurniture.id);
+    for (let i = 0; i < properties.bedroomFurniture.length; i++) {
+      const furnitureItem = properties.bedroomFurniture[i];
+      if (furnitureItem) {
+        this.bedroomFurniture[i] = this.itemRepoService.getFurnitureById(furnitureItem.id);
+      } else {
+        this.bedroomFurniture[i] = null;
       }
     }
     this.ownedFurniture = properties.ownedFurniture || [];
@@ -597,6 +713,12 @@ export class HomeService {
     this.hellHome = properties.hellHome || false;
     this.homeUnlocked = properties.homeUnlocked || false;
     this.keepHome = properties.keepHome;
+    this.seeFurnitureEffects = properties.keepHome;
+    this.workstations = [];
+    for (const workstation of properties.workstations) {
+      this.addWorkstation(workstation.id, workstation);
+    }
+    this.recalculateFengShui();
   }
 
   // gets the specs of the next home, doesn't actually upgrade
@@ -665,12 +787,16 @@ export class HomeService {
     if (!this.keepHome) {
       this.setCurrentHome(this.homesList[0]);
     }
-    if (this.characterService.characterState.bloodlineRank < 6) {
-      this.furniture.bed = null;
-      this.furniture.bathtub = null;
-      this.furniture.kitchen = null;
-      this.furniture.workbench = null;
+    if (!this.keepFurniture) {
+      for (let i = 0; i < this.bedroomFurniture.length; i++) {
+        this.bedroomFurniture[i] = null;
+      }
+      this.recalculateFengShui();
       this.ownedFurniture = [];
+    }
+
+    if (this.characterService.characterState.bloodlineRank < 6) {
+      // TODO: move this to achievements to get keepFurniture
     }
     if (this.characterService.characterState.bloodlineRank < 7) {
       this.upgrading = false;
@@ -689,6 +815,7 @@ export class HomeService {
     this.nextHome = this.getNextHome();
     this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
     this.inventoryService.changeMaxItems(this.home.maxInventory);
+    this.recalculateFengShui();
   }
 
   getHomeFromValue(value: HomeType): Home {
@@ -726,14 +853,150 @@ export class HomeService {
     return Math.floor((-C - 5 + Math.sqrt(Math.pow(C, 2) + 10 * C + 20 * x + 25)) / 10); // I know this looks nuts but I tested it on its own ^_^;;
   }
 
-  buyFurniture(itemId: string) {
-    const item = this.itemRepoService.getFurnitureById(itemId);
-    if (item) {
-      if (this.characterService.characterState.money >= item.value) {
-        this.characterService.characterState.updateMoney(0 - item.value);
-        this.ownedFurniture.push(item.name);
-        this.furniture[item.slot] = item;
+  hasWorkstation(workstationName: string) {
+    console.log(workstationName);
+    return false;
+  }
+
+  setFurniture(item: Item | null, index: number) {
+    if (item === null && this.bedroomFurniture[index]) {
+      this.bedroomFurniture[index] = null;
+      this.openBedroomFurnitureSlots++;
+    } else if (item !== null && this.bedroomFurniture[index]) {
+      // replace the current item
+      this.bedroomFurniture[index] = item;
+    } else if (item !== null && !this.bedroomFurniture[index]) {
+      if (this.openBedroomFurnitureSlots <= 0) {
+        // no room, bail out
+        return;
       }
+      this.bedroomFurniture[index] = item;
+    }
+    this.recalculateFengShui();
+  }
+
+  recalculateFengShui() {
+    this.openBedroomFurnitureSlots = this.home.maxFurniture;
+    this.fengshuiScore = 0;
+    for (let i = 0; i < this.bedroomFurniture.length; i++) {
+      const furnitureItem = this.bedroomFurniture[i];
+      if (furnitureItem) {
+        this.openBedroomFurnitureSlots--;
+        if (this.baguaMap[i].includes(furnitureItem.subtype || '')) {
+          this.fengshuiScore += 1;
+        }
+        if (this.baguaMap[i].includes(furnitureItem.color || '')) {
+          this.fengshuiScore += 1;
+        }
+        if (furnitureItem.elements) {
+          for (const element of furnitureItem.elements) {
+            if (this.baguaMap[i].includes(element)) {
+              this.fengshuiScore += 1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  removeWorkstation(workstation: Workstation) {
+    for (const inputItemStack of workstation.inputs) {
+      if (inputItemStack.item) {
+        this.inventoryService.addItem(inputItemStack.item, inputItemStack.quantity);
+      }
+    }
+    const index = this.workstations.indexOf(workstation);
+    this.workstations.splice(index, 1);
+  }
+
+  addWorkstation(workstationId: string, copyWorkstation: Workstation | null = null) {
+    if (this.workstations.length >= this.home.maxWorkstations) {
+      // can't support another workstation, bail out
+      return;
+    }
+    const workstationTemplate = this.workstationsList.find(({ id }) => id === workstationId);
+    if (!workstationTemplate) {
+      // no template found in the list for the id, bail out
+      return;
+    }
+    let existingSameWorkstations = 0;
+    for (const ws of this.workstations) {
+      if (ws.id === workstationId) {
+        existingSameWorkstations++;
+      }
+    }
+    const emptyInputs: ItemStack[] = [];
+    for (let i = 0; i < workstationTemplate.maxInputs; i++) {
+      emptyInputs.push(this.inventoryService.getEmptyItemStack());
+    }
+
+    const newWorkstation = {
+      index: this.workstations.length,
+      name: workstationId + ' #' + (existingSameWorkstations + 1),
+      id: workstationId,
+      triggerActivity: workstationTemplate?.triggerActivity,
+      power: workstationTemplate.power,
+      setupCost: workstationTemplate.setupCost,
+      maintenanceCost: workstationTemplate.maintenanceCost,
+      description: workstationTemplate.description,
+      maxInputs: workstationTemplate.maxInputs,
+      inputs: emptyInputs,
+      consequence: workstationTemplate.consequence,
+    };
+
+    if (copyWorkstation) {
+      newWorkstation.inputs = copyWorkstation.inputs;
+    }
+    this.workstations.push(newWorkstation);
+  }
+
+  triggerWorkstations(activityType: ActivityType) {
+    for (const workstation of this.workstations) {
+      if (workstation.triggerActivity === activityType) {
+        workstation.consequence(workstation);
+      }
+    }
+  }
+
+  moveItemToWorkstation(itemIndex: number, destinationWorkstationIndex: number, destinationInputIndex: number) {
+    if (!this.inventoryService.itemStacks[itemIndex].item) {
+      // no item to move, bail out
+      return;
+    }
+    if (this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item) {
+      if (
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item?.name ===
+        this.inventoryService.itemStacks[itemIndex].item?.name
+      ) {
+        // same item type, dump the quantity into the workstation
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity +=
+          this.inventoryService.itemStacks[itemIndex].quantity;
+        this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+        return;
+      }
+      // swap the workstation item with the inventory item
+      const temp = this.inventoryService.itemStacks[itemIndex];
+      this.inventoryService.itemStacks[itemIndex] =
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex];
+      this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex] = temp;
+      this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].id =
+        destinationWorkstationIndex +
+        '_' +
+        destinationInputIndex +
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item!.name +
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
+      this.inventoryService.fixId(itemIndex);
+    } else {
+      // nothing there now, just put the inventory item in the pouch
+      this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex] =
+        this.inventoryService.itemStacks[itemIndex];
+      this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].id =
+        destinationWorkstationIndex +
+        '_' +
+        destinationInputIndex +
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item!.name +
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
+      this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
     }
   }
 }

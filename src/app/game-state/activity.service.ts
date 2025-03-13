@@ -36,7 +36,6 @@ export interface ActivityProperties {
   purifyGemsUnlocked: boolean;
   lifeActivities: { [key in ActivityType]?: number };
   familySpecialty: ActivityType | null;
-  blacksmithCounter: number;
   alchemyCounter: number;
   woodworkingCounter: number;
   leatherworkingCounter: number;
@@ -98,7 +97,6 @@ export class ActivityService {
     ActivityType.Woodworking,
     ActivityType.Leatherworking,
   ];
-  blacksmithCounter = 0;
   tauntCounter = 0;
   pillMoldCounter = 0;
   pillBoxCounter = 0;
@@ -294,6 +292,7 @@ export class ActivityService {
         }
         this.lifeActivities[activity.activityType] = (this.lifeActivities[activity.activityType] || 0) + 1;
         activity.consequence[activity.level]();
+        this.homeService.triggerWorkstations(activity.activityType);
         this.checkExhaustion();
         this.checkQiOveruse();
         // check for activity death
@@ -351,6 +350,7 @@ export class ActivityService {
           }
           this.lifeActivities[activity.activityType] = (this.lifeActivities[activity.activityType] || 0) + 1;
           activity.consequence[activity.level]();
+          this.homeService.triggerWorkstations(activity.activityType);
         } else {
           console.log('Invalid activity, skipping activity for the day');
         }
@@ -470,6 +470,7 @@ export class ActivityService {
       if (activity !== null && this.checkResourceUse(activity, true) === '' && activity.unlocked) {
         this.lifeActivities[activity.activityType] = (this.lifeActivities[activity.activityType] || 0) + 1;
         activity.consequence[activity.level]();
+        this.homeService.triggerWorkstations(activity.activityType);
         this.characterService.characterState.status.qi.value -= 5;
       } else {
         this.spiritActivityProgress = false;
@@ -525,7 +526,6 @@ export class ActivityService {
       purifyGemsUnlocked: this.purifyGemsUnlocked,
       lifeActivities: this.lifeActivities,
       familySpecialty: this.familySpecialty,
-      blacksmithCounter: this.blacksmithCounter,
       tauntCounter: this.tauntCounter,
       pillMoldCounter: this.pillMoldCounter,
       pillBoxCounter: this.pillBoxCounter,
@@ -581,7 +581,6 @@ export class ActivityService {
       // upgrade to anything that the loaded attributes allow
       this.upgradeActivities(true);
     }
-    this.blacksmithCounter = properties.blacksmithCounter;
     this.tauntCounter = properties.tauntCounter;
     this.pillMoldCounter = properties.pillMoldCounter;
     this.pillBoxCounter = properties.pillBoxCounter;
@@ -1098,8 +1097,7 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 100;
           const metalValue = this.inventoryService.consume('metal');
           if (
-            this.homeService.furniture.workbench &&
-            this.homeService.furniture.workbench.id === 'anvil' &&
+            this.homeService.hasWorkstation('anvil') &&
             metalValue >= 150 &&
             this.characterService.characterState.attributes.metalLore.value >= 1e9
           ) {
@@ -1305,11 +1303,7 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 100;
           const oreValue = this.inventoryService.consume('ore');
           const builderPower = Math.floor((this.followerService.jobs['builder'].totalPower + 100) / 100);
-          if (
-            this.homeService.furniture.workbench &&
-            this.homeService.furniture.workbench.id === 'cauldron' &&
-            oreValue >= 10
-          ) {
+          if (this.homeService.hasWorkstation('cauldron') && oreValue >= 10) {
             this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar'], builderPower);
             this.logService.log(
               LogTopic.CRAFTING,
@@ -2096,11 +2090,6 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Blacksmithing.lastIncome = money;
           this.characterService.characterState.increaseAttribute('metalLore', 0.1);
-          this.blacksmithCounter++;
-          if (this.blacksmithCounter > 100) {
-            this.inventoryService.addItem(this.itemRepoService.items['junk']);
-            this.blacksmithCounter = 0;
-          }
           this.characterService.characterState.yin++;
           this.characterService.characterState.yang++;
         },
@@ -2124,24 +2113,6 @@ export class ActivityService {
           this.Blacksmithing.lastIncome = money;
           this.characterService.characterState.increaseAttribute('metalLore', 0.2);
           this.characterService.characterState.increaseAttribute('fireLore', 0.02);
-          this.blacksmithCounter++;
-          if (this.blacksmithCounter > 50) {
-            this.blacksmithCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('metal');
-              if (grade >= 1) {
-                // if the metal was found
-                const metalLore = this.characterService.characterState.attributes.metalLore.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateWeapon(
-                    Math.floor(Math.max(Math.pow(Math.log2(metalLore), grade / 160), grade / 10)),
-                    'metal',
-                    true
-                  )
-                );
-              }
-            }
-          }
           this.characterService.characterState.yin++;
           this.characterService.characterState.yang++;
         },
@@ -2166,24 +2137,6 @@ export class ActivityService {
           this.Blacksmithing.lastIncome = money;
           this.characterService.characterState.increaseAttribute('metalLore', 0.3);
           this.characterService.characterState.increaseAttribute('fireLore', 0.05);
-          this.blacksmithCounter++;
-          if (this.blacksmithCounter > 20) {
-            this.blacksmithCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('metal');
-              if (grade >= 1) {
-                // if the metal was found
-                const metalLore = this.characterService.characterState.attributes.metalLore.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateWeapon(
-                    Math.floor(Math.max(Math.pow(Math.log2(metalLore), grade / 160), grade / 10)),
-                    'metal',
-                    true
-                  )
-                );
-              }
-            }
-          }
           this.characterService.characterState.yin++;
           this.characterService.characterState.yang++;
         },
@@ -2208,24 +2161,6 @@ export class ActivityService {
           this.Blacksmithing.lastIncome = money;
           this.characterService.characterState.increaseAttribute('metalLore', 0.5);
           this.characterService.characterState.increaseAttribute('fireLore', 0.1);
-          this.blacksmithCounter++;
-          if (this.blacksmithCounter > 10) {
-            this.blacksmithCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('metal');
-              if (grade >= 1) {
-                // if the metal was found
-                const metalLore = this.characterService.characterState.attributes.metalLore.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateWeapon(
-                    Math.floor(Math.max(Math.pow(Math.log2(metalLore), grade / 160), grade / 10)),
-                    'metal',
-                    true
-                  )
-                );
-              }
-            }
-          }
           this.pillMoldCounter++;
           if (this.pillMoldCounter > 1000) {
             this.pillMoldCounter = 0;
@@ -2291,7 +2226,7 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 10;
           // the grade on herbs probably needs diminishing returns
           this.inventoryService.generateHerb();
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === 'herbGarden') {
+          if (this.homeService.hasWorkstation('herbGarden')) {
             this.inventoryService.generateHerb();
           }
           this.characterService.characterState.increaseAttribute('woodLore', 0.003);
@@ -2345,12 +2280,8 @@ export class ActivityService {
 
           this.characterService.characterState.updateMoney(money);
           this.Alchemy.lastIncome = money;
-          let alchemySuccessChance = 0.01;
-          if (this.homeService.furniture.workbench && this.homeService.furniture.workbench.id === 'cauldron') {
-            alchemySuccessChance += 0.05;
-          }
-          this.characterService.characterState.increaseAttribute('woodLore', 0.05 * alchemySuccessChance);
-          this.characterService.characterState.increaseAttribute('waterLore', 0.1 * alchemySuccessChance);
+          this.characterService.characterState.increaseAttribute('woodLore', 0.05);
+          this.characterService.characterState.increaseAttribute('waterLore', 0.1);
           this.characterService.characterState.yin++;
         },
         () => {
@@ -2444,8 +2375,7 @@ export class ActivityService {
                 if (
                   grade > 1000000 &&
                   this.inventoryService.consumeById('divinePeach') >= 1 &&
-                  this.homeService.furniture.workbench &&
-                  this.homeService.furniture.workbench.id === 'cauldron'
+                  this.homeService.hasWorkstation('cauldron')
                 ) {
                   this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
                 } else {
@@ -3084,7 +3014,9 @@ export class ActivityService {
       name: ['Smelting'],
       imageBaseName: 'smelting',
       activityType: ActivityType.Smelting,
-      description: ['Smelt metal ores into usable metal.'],
+      description: [
+        'Smelt metal ores and fuel into usable metal. You can even keep the metal bars if you have a smelter of your own.',
+      ],
       yinYangEffect: [YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 20 Stamina. Increases toughness and intelligence. If you have metal ores, you can make them into bars.',
@@ -3095,12 +3027,6 @@ export class ActivityService {
           this.characterService.characterState.increaseAttribute('toughness', 0.1);
           this.characterService.characterState.increaseAttribute('intelligence', 0.1);
           this.characterService.characterState.increaseAttribute('metalLore', 0.01);
-          if (this.inventoryService.openInventorySlots() > 0) {
-            const grade = this.inventoryService.consume('ore');
-            if (grade >= 1) {
-              this.inventoryService.addItem(this.inventoryService.getBar(grade));
-            }
-          }
           this.characterService.characterState.yin++;
           this.characterService.characterState.yang++;
         },
