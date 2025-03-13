@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ActivityService, ActivityProperties } from './activity.service';
 import { BattleService, BattleProperties } from './battle.service';
-import { LogProperties, LogService, LogTopic } from './log.service';
+import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { ReincarnationService } from './reincarnation.service';
 import { AchievementProperties, AchievementService } from './achievement.service';
-import { CharacterProperties, AttributeType } from './character';
+import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties } from './followers.service';
 import { HomeService, HomeProperties } from './home.service';
@@ -516,28 +516,6 @@ export class GameStateService {
   rebirth(): void {
     this.characterService.forceRebirth = true;
     this.mainLoopService.pause = false;
-  }
-
-  cheat(): void {
-    this.logService.log(LogTopic.EVENT, 'You dirty cheater! You pressed the cheat button!');
-    this.characterService.characterState.updateMoney(1e10);
-    for (const key in this.itemRepoService.items) {
-      const item = this.itemRepoService.items[key];
-      if (item.type === 'manual' && item.use) {
-        item.use();
-      }
-    }
-    const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
-    for (const key in keys) {
-      const attribute = this.characterService.characterState.attributes[keys[key]];
-      attribute.aptitude += 1e7;
-      attribute.value += 1e7;
-    }
-    this.inventoryService.addItem(this.inventoryService.generateSpiritGem(25));
-    this.homeService.upgradeToNextHome();
-    while (this.homeService.upgrading) {
-      this.homeService.upgradeTick();
-    }
   }
 
   setSaveFile() {

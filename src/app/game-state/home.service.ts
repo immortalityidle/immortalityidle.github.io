@@ -7,6 +7,7 @@ import { InventoryService, Item, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
 import { ActivityType } from './activity';
+import { ActivityService } from './activity.service';
 
 export interface Home {
   name: string;
@@ -88,6 +89,7 @@ export interface HomeProperties {
 })
 export class HomeService {
   hellService?: HellService;
+  activityService?: ActivityService;
   autoBuyLandUnlocked = false;
   autoBuyLandLimit = 5;
   autoBuyHomeUnlocked = false;
@@ -478,15 +480,7 @@ export class HomeService {
         const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
         const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
 
-        console.log('ore', oreStack);
-        console.log('fuel', fuelStack);
-        if (
-          fuelStack &&
-          oreStack &&
-          this.inventoryService.openInventorySlots() > 0 &&
-          oreStack.quantity > 0 &&
-          fuelStack.quantity > 0
-        ) {
+        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity > 0) {
           this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
           oreStack.quantity--;
           fuelStack.quantity--;
@@ -508,8 +502,9 @@ export class HomeService {
           // inputs array not populated, bail out
           return;
         }
+        this.activityService?.getActivityByType(ActivityType.Blacksmithing);
         const metalStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'metal');
-        if (metalStack && metalStack.quantity >= 10 && this.inventoryService.openInventorySlots() > 0) {
+        if (metalStack && metalStack.quantity >= 10) {
           const metalLore = this.characterService.characterState.attributes.metalLore.value;
           const grade = metalStack?.item?.value || 1;
           this.inventoryService.addItem(
@@ -523,7 +518,175 @@ export class HomeService {
         }
       },
     },
+    {
+      id: 'Cook Pot',
+      triggerActivity: ActivityType.Cooking,
+      power: 0,
+      setupCost: 100,
+      maintenanceCost: 10,
+      description: 'A simple cook pot to prepare meals.<br>You will need to provide your own ingredients.',
+      maxInputs: 2,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        if (workstation.inputs.length < 2) {
+          // inputs array not populated, bail out
+          return;
+        }
+        const usedIngredients: string[] = [];
+        const usedSubtypes: string[] = [];
+        let totalValue = 0;
+        for (const itemStack of workstation.inputs) {
+          if (
+            itemStack.item &&
+            itemStack.item.type === 'food' &&
+            itemStack.item.subtype !== 'meal' &&
+            !usedIngredients.includes(itemStack.item.id) &&
+            itemStack.quantity > 1
+          ) {
+            usedIngredients.push(itemStack.item.id);
+            if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
+              usedSubtypes.push(itemStack.item.subtype);
+            }
+            totalValue += itemStack.item.value;
+            itemStack.quantity--;
+          }
+        }
+
+        totalValue *= usedIngredients.length;
+        totalValue *= usedSubtypes.length;
+        totalValue *= 2;
+
+        const cookingLevel = this.activityService?.getActivityByType(ActivityType.Cooking)?.level || 0;
+        let imageFile = 'meal';
+        if (cookingLevel > 0) {
+          totalValue *= 4;
+          imageFile = 'soulfood';
+        }
+        const foodName = 'Menu Special #' + totalValue;
+
+        this.inventoryService.addItem({
+          id: foodName,
+          imageFile: imageFile,
+          name: foodName,
+          type: 'food',
+          subtype: 'meal',
+          value: totalValue,
+          description: 'A home-made meal that can nourish you much more than raw ingredients.',
+          useLabel: 'Eat',
+          useDescription: 'Fills your belly.',
+          useConsumes: true,
+        });
+      },
+    },
   ];
+
+  /*
+    {
+      id: 'cookPot',
+      name: 'cook pot',
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 10,
+      description: 'A simple pot over a fire to boil your food.<br>Improves all physical attributes.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.01);
+        this.characterService.characterState.increaseAttribute('speed', 0.01);
+        this.characterService.characterState.increaseAttribute('toughness', 0.01);
+      },
+    },
+    {
+      id: 'roastingSpit',
+      name: 'roasting spit',
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 1000,
+      description:
+        'A simple spit to go along with your cookpot, letting you add more variety to your diet.<br>Improves all physical attributes.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.02);
+        this.characterService.characterState.increaseAttribute('speed', 0.02);
+        this.characterService.characterState.increaseAttribute('toughness', 0.02);
+      },
+    },
+    wok: {
+      id: 'wok',
+      name: 'wok',
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 1000000,
+      description: 'A large metal wok to stir-fry a tasty dinner.<br>Improves all physical attributes.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.05);
+        this.characterService.characterState.increaseAttribute('speed', 0.05);
+        this.characterService.characterState.increaseAttribute('toughness', 0.05);
+      },
+    },
+    chefKitchen: {
+      id: 'chefKitchen',
+      name: 'chef kitchen',
+      type: 'furniture',
+      slot: 'kitchen',
+      value: 1e9,
+      description: 'An elaborate kitchen that allows you to cook anything.<br>Improves all physical attributes.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.1);
+        this.characterService.characterState.increaseAttribute('speed', 0.1);
+        this.characterService.characterState.increaseAttribute('toughness', 0.1);
+      },
+    },
+    anvil: {
+      id: 'anvil',
+      name: 'anvil',
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1000000,
+      description: 'An anvil to work on blacksmithing.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('metalLore', 0.01);
+      },
+    },
+    herbGarden: {
+      id: 'herbGarden',
+      name: 'herb garden',
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1000000,
+      description: 'An pleasant garden growing herbs.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('woodLore', 0.01);
+      },
+    },
+    dogKennel: {
+      id: 'dogKennel',
+      name: 'dog kennel',
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1000000,
+      description: 'A kennel for training hunting dogs.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
+      },
+    },
+    cauldron: {
+      id: 'cauldron',
+      name: 'cauldron',
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1000000,
+      description: 'A cauldron for practicing alchemy.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('waterLore', 0.01);
+      },
+    },
+*/
 
   //Feng Shui Bagua map:
   baguaMap = [
@@ -567,6 +730,7 @@ export class HomeService {
     private itemRepoService: ItemRepoService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
+    setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
     this.land = 0;
     this.landPrice = 100;
     this.setCurrentHome(this.homesList[0]);
@@ -854,8 +1018,7 @@ export class HomeService {
   }
 
   hasWorkstation(workstationName: string) {
-    console.log(workstationName);
-    return false;
+    return this.workstations.find(ws => ws.id.includes(workstationName)) !== undefined;
   }
 
   setFurniture(item: Item | null, index: number) {

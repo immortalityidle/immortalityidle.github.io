@@ -92,6 +92,7 @@ export class ActivityService {
   familySpecialty: ActivityType | null = null;
   supportedSpecialties = [
     ActivityType.Begging,
+    ActivityType.Cooking,
     ActivityType.Blacksmithing,
     ActivityType.Alchemy,
     ActivityType.Woodworking,
@@ -906,6 +907,7 @@ export class ActivityService {
     newList.push(this.Resting);
     newList.push(this.OddJobs);
     newList.push(this.Begging);
+    newList.push(this.Cooking);
     newList.push(this.Burning);
     newList.push(this.Taunting);
     newList.push(this.Plowing);
@@ -958,6 +960,8 @@ export class ActivityService {
   Resting: Activity;
   // @ts-ignore
   Begging: Activity;
+  // @ts-ignore
+  Cooking: Activity;
   // @ts-ignore
   Blacksmithing: Activity;
   // @ts-ignore
@@ -2054,6 +2058,68 @@ export class ActivityService {
       skipApprenticeshipLevel: 0,
     };
 
+    this.Cooking = {
+      level: 0,
+      name: ['Cooking', 'Soul Food Preparation'],
+      imageBaseName: 'cooking',
+      activityType: ActivityType.Cooking,
+      description: [
+        'Work as a chef. If you have a cooking workstation of your own, you can even make some meals for yourself.',
+        'Work as a spiritual chef, devoting great energy to creating food that feeds both body and soul. If you have a cooking workstation of your own, you can even make some meals for yourself.',
+      ],
+      yinYangEffect: [YinYangEffect.None, YinYangEffect.Balance],
+      consequenceDescription: [
+        'Uses 10 Stamina. Increases charisma and intelligence and provides a little money.',
+        'Uses 100 Stamina. Increases charisma, intelligence, and spirituality.',
+      ],
+      consequence: [
+        () => {
+          this.characterService.characterState.increaseAttribute('charisma', 0.05);
+          this.characterService.characterState.increaseAttribute('intelligence', 0.1);
+          this.characterService.characterState.status.stamina.value -= 10;
+          let money =
+            5 +
+            Math.log2(
+              (this.characterService.characterState.attributes.charisma.value +
+                2 * this.characterService.characterState.attributes.intelligence.value) /
+                3
+            );
+          if (this.familySpecialty === ActivityType.Cooking) {
+            money += money * 0.2;
+          }
+          this.characterService.characterState.updateMoney(money);
+          this.Cooking.lastIncome = money;
+        },
+        () => {
+          this.characterService.characterState.increaseAttribute('charisma', 0.5);
+          this.characterService.characterState.increaseAttribute('intelligence', 1);
+          this.characterService.characterState.increaseAttribute('spirituality', 0.001);
+          this.characterService.characterState.status.stamina.value -= 10;
+        },
+      ],
+      resourceUse: [
+        {
+          stamina: 10,
+        },
+        {
+          stamina: 100,
+        },
+      ],
+      requirements: [
+        {
+          charisma: 10,
+          intelligence: 20,
+        },
+        {
+          charisma: 10000,
+          intelligence: 20000,
+          spirituality: 10,
+        },
+      ],
+      unlocked: false,
+      skipApprenticeshipLevel: 0,
+    };
+
     this.Blacksmithing = {
       level: 0,
       name: ['Apprentice Blacksmithing', 'Journeyman Blacksmithing', 'Blacksmithing', 'Master Blacksmithing'],
@@ -2226,9 +2292,6 @@ export class ActivityService {
           this.characterService.characterState.status.stamina.value -= 10;
           // the grade on herbs probably needs diminishing returns
           this.inventoryService.generateHerb();
-          if (this.homeService.hasWorkstation('herbGarden')) {
-            this.inventoryService.generateHerb();
-          }
           this.characterService.characterState.increaseAttribute('woodLore', 0.003);
           this.characterService.characterState.yang++;
         },

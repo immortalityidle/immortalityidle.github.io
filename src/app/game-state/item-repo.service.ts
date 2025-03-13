@@ -13,7 +13,6 @@ import { GameStateService } from './game-state.service';
 import { HellLevel, HellService } from './hell.service';
 import { FarmService } from './farm.service';
 
-const daysInYear = 365;
 @Injectable({
   providedIn: 'root',
 })
@@ -238,111 +237,6 @@ baguaMap = [
     },
   ];
   /*
-    {
-      id: 'cookPot',
-      name: 'cook pot',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 10,
-      description: 'A simple pot over a fire to boil your food.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.01);
-        this.characterService.characterState.increaseAttribute('speed', 0.01);
-        this.characterService.characterState.increaseAttribute('toughness', 0.01);
-      },
-    },
-    {
-      id: 'roastingSpit',
-      name: 'roasting spit',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 1000,
-      description:
-        'A simple spit to go along with your cookpot, letting you add more variety to your diet.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.02);
-        this.characterService.characterState.increaseAttribute('speed', 0.02);
-        this.characterService.characterState.increaseAttribute('toughness', 0.02);
-      },
-    },
-    wok: {
-      id: 'wok',
-      name: 'wok',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 1000000,
-      description: 'A large metal wok to stir-fry a tasty dinner.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.05);
-        this.characterService.characterState.increaseAttribute('speed', 0.05);
-        this.characterService.characterState.increaseAttribute('toughness', 0.05);
-      },
-    },
-    chefKitchen: {
-      id: 'chefKitchen',
-      name: 'chef kitchen',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 1e9,
-      description: 'An elaborate kitchen that allows you to cook anything.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.1);
-        this.characterService.characterState.increaseAttribute('speed', 0.1);
-        this.characterService.characterState.increaseAttribute('toughness', 0.1);
-      },
-    },
-    anvil: {
-      id: 'anvil',
-      name: 'anvil',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'An anvil to work on blacksmithing.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('metalLore', 0.01);
-      },
-    },
-    herbGarden: {
-      id: 'herbGarden',
-      name: 'herb garden',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'An pleasant garden growing herbs.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('woodLore', 0.01);
-      },
-    },
-    dogKennel: {
-      id: 'dogKennel',
-      name: 'dog kennel',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'A kennel for training hunting dogs.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
-      },
-    },
-    cauldron: {
-      id: 'cauldron',
-      name: 'cauldron',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'A cauldron for practicing alchemy.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('waterLore', 0.01);
-      },
-    },
     bookshelf: {
       id: 'bookshelf',
       name: 'bookshelf',
@@ -384,9 +278,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(1, quantity);
-      },
     },
     cabbage: {
       id: 'cabbage',
@@ -399,9 +290,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(5, quantity);
-      },
     },
     beans: {
       id: 'beans',
@@ -414,9 +302,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(10, quantity);
-      },
     },
     broccoli: {
       id: 'broccoli',
@@ -429,9 +314,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(15, quantity);
-      },
     },
     calabash: {
       id: 'calabash',
@@ -444,9 +326,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(20, quantity);
-      },
     },
     taro: {
       id: 'taro',
@@ -459,9 +338,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(25, quantity);
-      },
     },
     pear: {
       id: 'pear',
@@ -474,9 +350,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(30, quantity);
-      },
     },
     melon: {
       id: 'melon',
@@ -489,9 +362,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(35, quantity);
-      },
     },
     plum: {
       id: 'plum',
@@ -504,9 +374,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(40, quantity);
-      },
     },
     apricot: {
       id: 'apricot',
@@ -519,9 +386,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(45, quantity);
-      },
     },
     peach: {
       id: 'peach',
@@ -534,9 +398,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and can even lead to a long life.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(50, quantity);
-      },
     },
     divinePeach: {
       id: 'divinePeach',
@@ -549,9 +410,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Sates your immortal hunger.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.eatProduce(100, quantity);
-      },
     },
     distilledPeachEssence: {
       id: 'distilledPeachEssence',
@@ -575,13 +433,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly. Can also improve your health and stamina.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity * 2;
-        this.characterService.characterState.healthBonusFood += quantity;
-        this.characterService.characterState.status.health.value += quantity * 10;
-        this.characterService.characterState.status.stamina.max += quantity;
-        this.characterService.characterState.checkOverage();
-      },
     },
     spiritMeat: {
       id: 'spiritMeat',
@@ -594,13 +445,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly. Can also improve your health and stamina.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity * 2;
-        this.characterService.characterState.healthBonusFood += quantity;
-        this.characterService.characterState.status.health.value += quantity * 20;
-        this.characterService.characterState.status.stamina.max += quantity;
-        this.characterService.characterState.checkOverage();
-      },
     },
     carp: {
       id: 'carp',
@@ -613,14 +457,6 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly. Might also improve your health and stamina.',
       useConsumes: true,
-      use: (quantity = 1) => {
-        this.characterService.characterState.status.nourishment.value += quantity;
-        if (Math.random() < 0.1) {
-          this.characterService.characterState.healthBonusFood += quantity;
-          this.characterService.characterState.status.stamina.max += quantity;
-        }
-        this.characterService.characterState.checkOverage();
-      },
     },
     hide: {
       id: 'hide',
@@ -2890,20 +2726,5 @@ baguaMap = [
       }
     }
     return null;
-  }
-
-  private eatProduce(value: number, quantity = 1) {
-    this.characterService.characterState.status.nourishment.value += quantity + quantity * value * 0.05;
-    this.characterService.characterState.healthBonusFood += quantity * value * 0.01;
-    this.characterService.characterState.status.health.value += quantity * value * 0.01;
-    this.characterService.characterState.status.stamina.value += quantity * value * 0.01;
-    this.characterService.characterState.status.qi.value += quantity * value * 0.01;
-    const maxLifespanIncrease = value * daysInYear;
-    if (this.characterService.characterState.foodLifespan + quantity <= maxLifespanIncrease) {
-      this.characterService.characterState.foodLifespan += quantity;
-    } else if (this.characterService.characterState.foodLifespan < maxLifespanIncrease) {
-      this.characterService.characterState.foodLifespan = maxLifespanIncrease;
-    }
-    this.characterService.characterState.checkOverage();
   }
 }

@@ -11,6 +11,7 @@ export enum ActivityType {
   OddJobs,
   Resting,
   Begging,
+  Cooking,
   Blacksmithing,
   GatherHerbs,
   ChopWood,

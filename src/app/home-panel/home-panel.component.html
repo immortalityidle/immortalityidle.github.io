@@ -120,7 +120,7 @@
             <div>
               <span>Inputs:</span>
             </div>
-            <div class="inputsContainer">
+            <div class="inputsContainer" cdkDropList cdkDropListSortingDisabled>
               @for (itemStack of workstation.inputs; track itemStack.id; let inputIndex = $index) {
                 <div>
                   <div id="wsInputIndex{{wsIndex}}_{{inputIndex}}" >

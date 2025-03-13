@@ -322,7 +322,7 @@ export class InventoryService {
       return;
     }
     this.characterService.characterState.status.nourishment.value--; // tick the day's hunger
-    this.eatFood();
+    this.eatDailyMeal();
     // use pouch items if needed
     for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
       const itemStack = this.characterService.characterState.itemPouches[i];
@@ -1089,7 +1089,7 @@ export class InventoryService {
     }
   }
 
-  eatFood(): void {
+  eatDailyMeal(): void {
     if (
       this.autoEatUnlocked &&
       (this.autoEatNutrition || this.autoEatHealth || this.autoEatStamina || this.autoEatQi || this.autoEatAll)
@@ -1193,6 +1193,26 @@ export class InventoryService {
     return true;
   }
 
+  private eatFood(foodItem: Item, quantity = 1) {
+    const value = foodItem.value;
+    this.characterService.characterState.status.nourishment.value += quantity + quantity * value * 0.05;
+    this.characterService.characterState.healthBonusFood += quantity * value * 0.01;
+    this.characterService.characterState.status.health.value += quantity * value * 0.01;
+    this.characterService.characterState.status.stamina.value += quantity * value * 0.01;
+    this.characterService.characterState.status.qi.value += quantity * value * 0.01;
+    const maxLifespanIncrease = Math.min(value * 365, 7300);
+    if (this.characterService.characterState.foodLifespan + quantity <= maxLifespanIncrease) {
+      this.characterService.characterState.foodLifespan += quantity;
+    } else if (this.characterService.characterState.foodLifespan < maxLifespanIncrease) {
+      this.characterService.characterState.foodLifespan = maxLifespanIncrease;
+    }
+    if (foodItem.subtype === 'meal') {
+      this.characterService.characterState.status.stamina.max += (quantity * value) / 100;
+    }
+
+    this.characterService.characterState.checkOverage();
+  }
+
   /**
    *
    * @param item the Item to add
@@ -1283,7 +1303,7 @@ export class InventoryService {
       return -1;
     }
     if (item.type !== 'food') {
-      // food has its own autouse handling in eatFood()
+      // food has its own autouse handling in eatDailyMeal()
       for (const entry of this.autoUseEntries) {
         if (entry.name === item.name) {
           let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
@@ -1485,6 +1505,8 @@ export class InventoryService {
     }
     if (item.type === 'food') {
       this.lifetimeUsedFood++;
+      this.eatFood(item, quantity);
+      return;
     } else {
       this.lifetimeUsedItems++;
     }
@@ -1506,7 +1528,7 @@ export class InventoryService {
     if ((!this.autoUseUnlocked && item.type !== 'food') || (!this.autoEatUnlocked && item.type === 'food')) {
       return;
     }
-    if (item.type !== 'potion' && item.type !== 'pill' && !item.use) {
+    if (item.type !== 'potion' && item.type !== 'pill' && item.type !== 'food' && !item.use) {
       // it's not usable, bail out.
       return;
     }
@@ -1524,8 +1546,6 @@ export class InventoryService {
           this.useItemStack(itemStack, itemStack.quantity);
         }
       }
-    } else if (item.type === 'food') {
-      this.eatFood();
     }
   }
 
