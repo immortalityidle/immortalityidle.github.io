@@ -463,13 +463,13 @@ export class HomeService {
 
   workstationsList: Workstation[] = [
     {
-      id: 'Basic Smelter',
+      id: 'Smelter',
       triggerActivity: ActivityType.Smelting,
       power: 0,
       setupCost: 1000,
       maintenanceCost: 10,
       description:
-        'A simple smelter that will produce metal bars when you do Smelting.<br>You will need to provide your own ore and fuel.',
+        'A smelter that will produce metal bars when you do Smelting.<br>You will need to provide your own ore and fuel.',
       maxInputs: 2,
       inputs: [],
       consequence: (workstation: Workstation) => {
@@ -498,24 +498,77 @@ export class HomeService {
       maxInputs: 1,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        if (workstation.inputs.length < 1) {
-          // inputs array not populated, bail out
-          return;
-        }
-        this.activityService?.getActivityByType(ActivityType.Blacksmithing);
-        const metalStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'metal');
-        if (metalStack && metalStack.quantity >= 10) {
-          const metalLore = this.characterService.characterState.attributes.metalLore.value;
-          const grade = metalStack?.item?.value || 1;
-          this.inventoryService.addItem(
-            this.inventoryService.generateWeapon(
-              Math.floor(Math.max(Math.pow(Math.log2(metalLore), grade / 160), grade / 10)),
-              'metal',
-              true
-            )
-          );
-          metalStack.quantity -= 10;
-        }
+        this.createWeapon(workstation);
+      },
+    },
+    {
+      id: 'Heavy Anvil',
+      triggerActivity: ActivityType.Blacksmithing,
+      power: 1,
+      setupCost: 1000000,
+      maintenanceCost: 1000,
+      description:
+        'A massive anvil that will let you craft more powerful equipment when you do Blacksmithing.<br>You will need to provide your own metal bars.',
+      maxInputs: 2,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createWeapon(workstation);
+      },
+    },
+    {
+      id: 'Masterwork Anvil',
+      triggerActivity: ActivityType.Blacksmithing,
+      power: 2,
+      setupCost: 10000000,
+      maintenanceCost: 10000,
+      description:
+        'An enchanted anvil that will let you craft extremely powerful equipment when you do Blacksmithing.<br>You will need to provide your own metal bars.',
+      maxInputs: 3,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createWeapon(workstation);
+      },
+    },
+    {
+      id: 'Basic Woodworking Bench',
+      triggerActivity: ActivityType.Woodworking,
+      power: 0,
+      setupCost: 10000,
+      maintenanceCost: 100,
+      description:
+        'A simple woodworking workbench that will let you craft your own equipment when you do Woodworking.<br>You will need to provide your own wood.',
+      maxInputs: 1,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createWeapon(workstation);
+      },
+    },
+    {
+      id: 'Advanced Woodworking Bench',
+      triggerActivity: ActivityType.Woodworking,
+      power: 1,
+      setupCost: 1000000,
+      maintenanceCost: 1000,
+      description:
+        'A fully stocked woodworking workbench that will let you craft more powerful equipment when you do Woodworking.<br>You will need to provide your own metal bars.',
+      maxInputs: 2,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createWeapon(workstation);
+      },
+    },
+    {
+      id: 'Masterwork Woodworking Bench',
+      triggerActivity: ActivityType.Woodworking,
+      power: 2,
+      setupCost: 10000000,
+      maintenanceCost: 10000,
+      description:
+        'An enchanted woodworking workbench that will let you craft extremely powerful equipment when you do Woodworking.<br>You will need to provide your own metal bars.',
+      maxInputs: 3,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createWeapon(workstation);
       },
     },
     {
@@ -528,152 +581,40 @@ export class HomeService {
       maxInputs: 2,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        if (workstation.inputs.length < 2) {
-          // inputs array not populated, bail out
-          return;
-        }
-        const usedIngredients: string[] = [];
-        const usedSubtypes: string[] = [];
-        let totalValue = 0;
-        for (const itemStack of workstation.inputs) {
-          if (
-            itemStack.item &&
-            itemStack.item.type === 'food' &&
-            itemStack.item.subtype !== 'meal' &&
-            !usedIngredients.includes(itemStack.item.id) &&
-            itemStack.quantity > 1
-          ) {
-            usedIngredients.push(itemStack.item.id);
-            if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
-              usedSubtypes.push(itemStack.item.subtype);
-            }
-            totalValue += itemStack.item.value;
-            itemStack.quantity--;
-          }
-        }
-
-        totalValue *= usedIngredients.length;
-        totalValue *= usedSubtypes.length;
-        totalValue *= 2;
-
-        const cookingLevel = this.activityService?.getActivityByType(ActivityType.Cooking)?.level || 0;
-        let imageFile = 'meal';
-        if (cookingLevel > 0) {
-          totalValue *= 4;
-          imageFile = 'soulfood';
-        }
-        const foodName = 'Menu Special #' + totalValue;
-
-        this.inventoryService.addItem({
-          id: foodName,
-          imageFile: imageFile,
-          name: foodName,
-          type: 'food',
-          subtype: 'meal',
-          value: totalValue,
-          description: 'A home-made meal that can nourish you much more than raw ingredients.',
-          useLabel: 'Eat',
-          useDescription: 'Fills your belly.',
-          useConsumes: true,
-        });
+        this.cookFood(workstation);
+      },
+    },
+    {
+      id: 'Roasting Spit',
+      triggerActivity: ActivityType.Cooking,
+      power: 1,
+      setupCost: 10000,
+      maintenanceCost: 100,
+      description:
+        'A simple spit to roast your foods, letting you add more variety to your diet.<br>You will need to provide your own ingredients.',
+      maxInputs: 3,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.cookFood(workstation);
+      },
+    },
+    {
+      id: 'Chef Kitchen',
+      triggerActivity: ActivityType.Cooking,
+      power: 1,
+      setupCost: 1000000,
+      maintenanceCost: 1000,
+      description:
+        'A restaurant quality kitchen allowing you to make magnificent meals.<br>You will need to provide your own ingredients.',
+      maxInputs: 5,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.cookFood(workstation);
       },
     },
   ];
 
   /*
-    {
-      id: 'cookPot',
-      name: 'cook pot',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 10,
-      description: 'A simple pot over a fire to boil your food.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.01);
-        this.characterService.characterState.increaseAttribute('speed', 0.01);
-        this.characterService.characterState.increaseAttribute('toughness', 0.01);
-      },
-    },
-    {
-      id: 'roastingSpit',
-      name: 'roasting spit',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 1000,
-      description:
-        'A simple spit to go along with your cookpot, letting you add more variety to your diet.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.02);
-        this.characterService.characterState.increaseAttribute('speed', 0.02);
-        this.characterService.characterState.increaseAttribute('toughness', 0.02);
-      },
-    },
-    wok: {
-      id: 'wok',
-      name: 'wok',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 1000000,
-      description: 'A large metal wok to stir-fry a tasty dinner.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.05);
-        this.characterService.characterState.increaseAttribute('speed', 0.05);
-        this.characterService.characterState.increaseAttribute('toughness', 0.05);
-      },
-    },
-    chefKitchen: {
-      id: 'chefKitchen',
-      name: 'chef kitchen',
-      type: 'furniture',
-      slot: 'kitchen',
-      value: 1e9,
-      description: 'An elaborate kitchen that allows you to cook anything.<br>Improves all physical attributes.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.1);
-        this.characterService.characterState.increaseAttribute('speed', 0.1);
-        this.characterService.characterState.increaseAttribute('toughness', 0.1);
-      },
-    },
-    anvil: {
-      id: 'anvil',
-      name: 'anvil',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'An anvil to work on blacksmithing.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('metalLore', 0.01);
-      },
-    },
-    herbGarden: {
-      id: 'herbGarden',
-      name: 'herb garden',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'An pleasant garden growing herbs.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('woodLore', 0.01);
-      },
-    },
-    dogKennel: {
-      id: 'dogKennel',
-      name: 'dog kennel',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'A kennel for training hunting dogs.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
-      },
-    },
     cauldron: {
       id: 'cauldron',
       name: 'cauldron',
@@ -1160,6 +1101,93 @@ export class HomeService {
         this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item!.name +
         this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
       this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+    }
+  }
+
+  cookFood(workstation: Workstation) {
+    if (workstation.inputs.length < 2) {
+      // inputs array not populated, bail out
+      return;
+    }
+    const usedIngredients: string[] = [];
+    const usedSubtypes: string[] = [];
+    let totalValue = 0;
+    for (const itemStack of workstation.inputs) {
+      if (
+        itemStack.item &&
+        itemStack.item.type === 'food' &&
+        itemStack.item.subtype !== 'meal' &&
+        !usedIngredients.includes(itemStack.item.id) &&
+        itemStack.quantity > 1
+      ) {
+        usedIngredients.push(itemStack.item.id);
+        if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
+          usedSubtypes.push(itemStack.item.subtype);
+        }
+        totalValue += itemStack.item.value;
+        itemStack.quantity--;
+      }
+    }
+
+    totalValue *= usedIngredients.length;
+    totalValue *= usedSubtypes.length;
+    totalValue *= workstation.power + 1;
+
+    const cookingLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
+    let imageFile = 'meal';
+    if (cookingLevel > 0) {
+      totalValue *= 4;
+      imageFile = 'soulfood';
+    }
+    const foodName = 'Menu Special #' + totalValue;
+
+    this.inventoryService.addItem({
+      id: foodName,
+      imageFile: imageFile,
+      name: foodName,
+      type: 'food',
+      subtype: 'meal',
+      value: totalValue,
+      description: 'A home-made meal that can nourish you much more than raw ingredients.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly.',
+      useConsumes: true,
+    });
+  }
+
+  createWeapon(workstation: Workstation) {
+    if (workstation.inputs.length < 1) {
+      // inputs array not populated, bail out
+      return;
+    }
+    let material = 'metal';
+    if (workstation.triggerActivity === ActivityType.Woodworking) {
+      material = 'wood';
+    }
+    const activityLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
+    const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === material);
+    // gems can be added for extra power
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    // wood or leather can be added for extra power
+    const extraStack = workstation.inputs.find(
+      itemStack =>
+        itemStack.item?.type !== material &&
+        (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide')
+    );
+    if (materialStack && materialStack.quantity >= 10) {
+      let grade = (materialStack?.item?.value || 1) + workstation.power * 5;
+      grade += Math.log10(this.characterService.characterState.attributes.metalLore.value);
+      grade += activityLevel;
+      if (gemStack && gemStack.quantity > 0) {
+        grade += gemStack?.item?.value || 1;
+        gemStack.quantity--;
+      }
+      if (extraStack && extraStack.quantity > 0) {
+        grade += extraStack?.item?.value || 1;
+        extraStack.quantity--;
+      }
+      this.inventoryService.addItem(this.inventoryService.generateWeapon(Math.floor(grade / 10), material));
+      materialStack.quantity -= 10;
     }
   }
 }

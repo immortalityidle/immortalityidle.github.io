@@ -253,7 +253,7 @@ export class InventoryPanelComponent {
             this.inventoryService.mergeEquipment(destItem, sourceItem, destIndex);
             return;
           }
-        } else if (sourceItem.type.includes('Gem') && instanceOfEquipment(destItem)) {
+        } else if (sourceItem.type === 'gem' && instanceOfEquipment(destItem)) {
           this.inventoryService.gemifyEquipment(sourceIndex, destItem);
           return;
         } else if (sourceItem.name === destItem.name) {

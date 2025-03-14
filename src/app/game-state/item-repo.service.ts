@@ -264,6 +264,19 @@ baguaMap = [
         }
       },
     },
+    dogKennel: {
+      id: 'dogKennel',
+      name: 'dog kennel',
+      type: 'furniture',
+      slot: 'workbench',
+      value: 1000000,
+      description: 'A kennel for training hunting dogs.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
+      },
+    },
+
     */
 
   items: { [key: string]: Item } = {
@@ -451,7 +464,7 @@ baguaMap = [
       imageFile: 'fish',
       name: 'carp',
       type: 'food',
-      subtype: 'meat',
+      subtype: 'fish',
       value: 50,
       description: 'A common fish.',
       useLabel: 'Eat',

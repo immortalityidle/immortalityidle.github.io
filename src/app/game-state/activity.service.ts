@@ -2585,8 +2585,7 @@ export class ActivityService {
                 this.inventoryService.addItem(
                   this.inventoryService.generateWeapon(
                     Math.floor(Math.max(Math.pow(Math.log2(woodLore), grade / 16), grade)),
-                    'wood',
-                    true
+                    'wood'
                   )
                 );
               }
@@ -2623,8 +2622,7 @@ export class ActivityService {
                 this.inventoryService.addItem(
                   this.inventoryService.generateWeapon(
                     Math.floor(Math.max(Math.pow(Math.log2(woodLore), grade / 16), grade)),
-                    'wood',
-                    true
+                    'wood'
                   )
                 );
               }
@@ -2661,8 +2659,7 @@ export class ActivityService {
                 this.inventoryService.addItem(
                   this.inventoryService.generateWeapon(
                     Math.floor(Math.max(Math.pow(Math.log2(woodLore), grade / 16), grade)),
-                    'wood',
-                    true
+                    'wood'
                   )
                 );
               }
@@ -3116,9 +3113,7 @@ export class ActivityService {
       activityType: ActivityType.Hunting,
       description: ['Hunt for animals in the nearby woods.'],
       yinYangEffect: [YinYangEffect.Yang],
-      consequenceDescription: [
-        'Uses 50 Stamina. Increases speed and a good hunt provides some meat. It might draw unwanted attention to yourself.',
-      ],
+      consequenceDescription: ['Uses 50 Stamina. Increases speed and a good hunt provides some meat.'],
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 50;
@@ -3482,7 +3477,7 @@ export class ActivityService {
           }
           this.characterService.characterState.status.stamina.value -= 200;
           this.characterService.characterState.status.qi.value -= 10;
-          const gemValue = this.inventoryService.consume('spiritGem', 1, this.inventoryService.useCheapestSpiritGem);
+          const gemValue = this.inventoryService.consume('gem', 1, this.inventoryService.useCheapestSpiritGem);
           if (gemValue > 0 && this.characterService.characterState.status.qi.value >= 0) {
             this.inventoryService.upgradeEquppedEquipment(Math.floor(Math.pow(gemValue / 10, 2.4)));
           }

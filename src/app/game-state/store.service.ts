@@ -155,7 +155,7 @@ export class StoreService {
       this.logService.injury(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
-    if (this.inventoryService.checkFor('spiritGem') < (this.soulCoreRank + 12) * 10) {
+    if (this.inventoryService.checkFor('gem') < (this.soulCoreRank + 12) * 10) {
       this.logService.injury(LogTopic.EVENT, "You don't have the gem required to ascend.");
       return;
     }
@@ -175,7 +175,7 @@ export class StoreService {
       this.logService.injury(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
-    if (this.inventoryService.checkFor('spiritGem') < (this.meridianRank + 16) * 10) {
+    if (this.inventoryService.checkFor('gem') < (this.meridianRank + 16) * 10) {
       this.logService.injury(LogTopic.EVENT, "You don't have the gem required to ascend.");
       return;
     }

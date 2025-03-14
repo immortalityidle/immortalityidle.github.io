@@ -510,7 +510,7 @@ export class InventoryService {
     for (let key = 0; key < this.itemStacks.length; key++) {
       const itemStack = this.itemStacks[key];
       if (itemStack.item) {
-        if (itemStack.item.type === 'spiritGem') {
+        if (itemStack.item.type === 'gem') {
           gemStacks.push(itemStack);
         } else if (itemStack.item.type === 'equipment') {
           equipStacks.push(itemStack);
@@ -549,18 +549,10 @@ export class InventoryService {
   generateWeapon(
     grade: number,
     material: string,
-    useGemOkay: boolean,
     defaultName: string | undefined = undefined,
     effect: string | undefined = undefined
   ): Equipment {
     this.equipmentCreated++;
-    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
-      // consume a spirit gem and increase the grade
-      const value = this.consume('spiritGem', 1, this.useCheapestSpiritGem);
-      if (value > 0) {
-        grade = Math.floor(Math.pow(grade, 1 + value / 400));
-      }
-    }
     const highestGrade = ItemPrefixes.length * WeaponSuffixes.length * WeaponSuffixModifiers.length;
     const nameGrade = Math.ceil(Math.sqrt(grade / 1e10) * highestGrade); // Name spreads up to 10B Value (coincides with damage)
     let prefixIndex = nameGrade % ItemPrefixes.length;
@@ -606,7 +598,7 @@ export class InventoryService {
       LogTopic.CRAFTING,
       'Your hard work paid off! You created a new weapon: ' + this.titleCasePipe.transform(name) + '!'
     );
-    const damage = Math.max(Math.sqrt(grade), 1000) * grade;
+    const damage = Math.min(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'weapon',
       imageFile: imageFileName,
@@ -624,9 +616,7 @@ export class InventoryService {
         'A unique weapon made of ' +
         material +
         '.<br>Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: ' +
-        this.bigNumberPipe.transform(damage) +
-        '<br>Value: ' +
-        this.bigNumberPipe.transform(grade),
+        this.bigNumberPipe.transform(damage),
     };
   }
 
@@ -643,9 +633,7 @@ export class InventoryService {
       weapon.weaponStats.material +
       effectString +
       '.<br>Drag and drop onto similar weapons to merge them into something better.<br> Base Damage: ' +
-      this.bigNumberPipe.transform(weapon.weaponStats.baseDamage) +
-      '.<br> Value: ' +
-      this.bigNumberPipe.transform(weapon.value);
+      this.bigNumberPipe.transform(weapon.weaponStats.baseDamage);
   }
 
   updateArmorDescription(armor: Equipment) {
@@ -661,9 +649,7 @@ export class InventoryService {
       armor.armorStats.material +
       effectString +
       '.<br>Drag and drop onto similar armor to merge them into something better.<br>Defense: ' +
-      this.bigNumberPipe.transform(armor.armorStats.defense) +
-      '<br>Value: ' +
-      this.bigNumberPipe.transform(armor.value);
+      this.bigNumberPipe.transform(armor.armorStats.defense);
   }
 
   upgradeEquppedEquipment(value: number) {
@@ -714,7 +700,7 @@ export class InventoryService {
   generatePotion(grade: number, masterLevel: boolean): void {
     if (this.useSpiritGemUnlocked && this.useSpiritGemPotions) {
       // consume a spirit gem and increase the grade
-      const value = this.consume('spiritGem', 1, this.useCheapestSpiritGem);
+      const value = this.consume('gem', 1, this.useCheapestSpiritGem);
       if (value > 0) {
         grade += value;
       }
@@ -847,7 +833,8 @@ export class InventoryService {
       id: 'spiritGemGrade' + grade,
       imageFile: 'spiritGem',
       name: flavor + ' gem grade ' + grade,
-      type: flavor + 'Gem',
+      type: 'gem',
+      subtype: flavor,
       value: grade * 10,
       description: description,
     };
@@ -864,7 +851,7 @@ export class InventoryService {
     this.equipmentCreated++;
     if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
       // consume a spirit gem and increase the grade
-      const value = this.consume('spiritGem', 1, this.useCheapestSpiritGem);
+      const value = this.consume('gem', 1, this.useCheapestSpiritGem);
       if (value > 0) {
         grade = Math.floor(Math.pow(grade, 1 + value / 400));
       }
@@ -911,7 +898,7 @@ export class InventoryService {
       LogTopic.CRAFTING,
       'Your hard work paid off! You created some armor: ' + this.titleCasePipe.transform(name) + '!'
     );
-    const defense = Math.max(Math.sqrt(grade), 1000) * grade;
+    const defense = Math.min(Math.sqrt(grade), 1000) * grade;
     return {
       id: 'armor',
       imageFile: imageFileName,
@@ -929,9 +916,7 @@ export class InventoryService {
         'A unique piece of armor made of ' +
         material +
         '.<br>Drag and drop onto similar armor to merge them into something better.<br>nDefense: ' +
-        this.bigNumberPipe.transform(defense) +
-        '<br>Value: ' +
-        this.bigNumberPipe.transform(grade),
+        this.bigNumberPipe.transform(defense),
     };
   }
 
@@ -1072,7 +1057,7 @@ export class InventoryService {
           baseName: "Grandmother's Walking Stick",
         },
         description:
-          "Your grandmother's walking stick.<br>Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: 10<br>Value: 10",
+          "Your grandmother's walking stick.<br>Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: 10",
       };
       this.addItem(stick);
     }
@@ -1321,11 +1306,11 @@ export class InventoryService {
         }
       }
     }
-    if (this.autoSellOldGemsEnabled && item.type === 'spiritGem' && !this.hellService?.inHell) {
+    if (this.autoSellOldGemsEnabled && item.type === 'gem' && !this.hellService?.inHell) {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === 'spiritGem' && itemStack.item.value < item.value) {
+        if (itemStack.item && itemStack.item.type === 'gem' && itemStack.item.value < item.value) {
           this.characterService.characterState.updateMoney(itemStack.item.value * itemStack.quantity);
           this.setItemEmptyStack(i);
         }
@@ -1423,7 +1408,7 @@ export class InventoryService {
       return;
     }
     this.lifetimeSoldItems += quantity;
-    if (itemStack.item.type === 'spiritGem') {
+    if (itemStack.item.type === 'gem') {
       this.lifetimeGemsSold += quantity;
     }
     const index = this.itemStacks.indexOf(itemStack);
@@ -1829,7 +1814,6 @@ export class InventoryService {
         this.generateWeapon(
           item1.value + item2.value,
           item1.weaponStats?.material + '',
-          false,
           item1.weaponStats?.baseName,
           item1.weaponStats?.effect
         )
@@ -1949,7 +1933,7 @@ export class InventoryService {
     if (!equippedItem) {
       return;
     }
-    if (itemToMerge.type.includes('Gem') && equippedItem) {
+    if (itemToMerge.type === 'gem' && equippedItem) {
       this.gemifyEquipment(sourceItemIndex, equippedItem);
       return;
     }
@@ -1966,7 +1950,6 @@ export class InventoryService {
       newItem = this.generateWeapon(
         equippedItem.value + itemToMerge.value,
         itemToMerge.weaponStats?.material + '',
-        false,
         equippedItem.weaponStats?.baseName,
         equippedItem.weaponStats?.effect
       );
@@ -2019,7 +2002,7 @@ export class InventoryService {
       if (!itemIterator.item) {
         continue;
       }
-      if (itemIterator.item.type === 'spiritGem' && itemIterator.quantity >= 10 - power) {
+      if (itemIterator.item.type === 'gem' && itemIterator.quantity >= 10 - power) {
         this.mergeSpiritGem(itemIterator, power);
         return;
       }
@@ -2073,7 +2056,7 @@ export class InventoryService {
   stashInventory() {
     for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
-      if (item && item.type !== 'food' && !item.type.includes('Gem')) {
+      if (item && item.type !== 'food' && item.type !== 'gem') {
         this.stashedItemStacks.push(this.itemStacks[i]);
         this.setItemEmptyStack(i);
       }
@@ -2093,7 +2076,7 @@ export class InventoryService {
   gemifyEquipment(gemIndex: number, equipment: Equipment) {
     const gemStack = this.itemStacks[gemIndex];
     const gem = this.itemStacks[gemIndex]?.item;
-    if (gemStack && gem && gem.type.includes('Gem')) {
+    if (gemStack && gem && gem.type === 'gem') {
       const gemFlavor = gem.type.substring(0, gem.type.length - 3);
       // TODO: add gemFlavor effects
       this.upgradeEquipment(equipment, Math.floor(Math.pow(gem.value / 10, 2.4)), gemFlavor);

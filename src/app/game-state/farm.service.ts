@@ -28,6 +28,8 @@ export interface FarmProperties {
   unlockedCrops: string[];
 }
 
+// TODO: add growing herbs
+
 @Injectable({
   providedIn: 'root',
 })
