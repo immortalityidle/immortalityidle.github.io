@@ -192,7 +192,7 @@ export class FarmService {
   }
 
   removeField(fieldIndex: number) {
-    this.unassignPlots(-1, fieldIndex);
+    this.unassignPlots(fieldIndex);
     this.fields.splice(fieldIndex, 1);
   }
 
@@ -218,7 +218,7 @@ export class FarmService {
    *
    * @param quantity -1 for all
    */
-  unassignPlots(fieldIndex: number, quantity: number) {
+  unassignPlots(fieldIndex: number, quantity: number = -1) {
     if (quantity < 0 || quantity > this.fields[fieldIndex].plots) {
       quantity = this.fields[fieldIndex].plots;
     }
