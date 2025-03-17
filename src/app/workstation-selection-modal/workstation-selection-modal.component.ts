@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HomeService, Workstation } from '../game-state/home.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { MatDialogRef } from '@angular/material/dialog';
+import { CharacterService } from '../game-state/character.service';
 
 @Component({
   selector: 'app-workstation-selection-modal',
@@ -12,11 +13,15 @@ export class WorkstationSelectionModalComponent {
   constructor(
     public dialogRef: MatDialogRef<WorkstationSelectionModalComponent>,
     public homeService: HomeService,
+    private characterService: CharacterService,
     public gameStateService: GameStateService
   ) {}
 
   slotClicked(workstation: Workstation) {
-    this.homeService.addWorkstation(workstation.id);
-    this.dialogRef.close();
+    if (this.characterService.characterState.money > workstation.setupCost) {
+      this.characterService.characterState.updateMoney(0 - workstation.setupCost);
+      this.homeService.addWorkstation(workstation.id);
+      this.dialogRef.close();
+    }
   }
 }

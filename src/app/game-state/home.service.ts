@@ -82,6 +82,7 @@ export interface HomeProperties {
   keepHome: boolean;
   seeFurnitureEffects: boolean;
   workstations: Workstation[];
+  totalCrafts: number;
 }
 
 @Injectable({
@@ -113,6 +114,7 @@ export class HomeService {
   openBedroomFurnitureSlots = 0;
   seeFurnitureEffects = false;
   workstations: Workstation[] = [];
+  totalCrafts = 0;
 
   homesList: Home[] = [
     {
@@ -498,7 +500,7 @@ export class HomeService {
       maxInputs: 1,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        this.createWeapon(workstation);
+        this.createEquipment(workstation);
       },
     },
     {
@@ -512,7 +514,7 @@ export class HomeService {
       maxInputs: 2,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        this.createWeapon(workstation);
+        this.createEquipment(workstation);
       },
     },
     {
@@ -526,7 +528,7 @@ export class HomeService {
       maxInputs: 3,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        this.createWeapon(workstation);
+        this.createEquipment(workstation);
       },
     },
     {
@@ -540,7 +542,7 @@ export class HomeService {
       maxInputs: 1,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        this.createWeapon(workstation);
+        this.createEquipment(workstation);
       },
     },
     {
@@ -550,11 +552,11 @@ export class HomeService {
       setupCost: 1000000,
       maintenanceCost: 1000,
       description:
-        'A fully stocked woodworking workbench that will let you craft more powerful equipment when you do Woodworking.<br>You will need to provide your own metal bars.',
+        'A fully stocked woodworking workbench that will let you craft more powerful equipment when you do Woodworking.<br>You will need to provide your own wood.',
       maxInputs: 2,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        this.createWeapon(workstation);
+        this.createEquipment(workstation);
       },
     },
     {
@@ -564,11 +566,95 @@ export class HomeService {
       setupCost: 10000000,
       maintenanceCost: 10000,
       description:
-        'An enchanted woodworking workbench that will let you craft extremely powerful equipment when you do Woodworking.<br>You will need to provide your own metal bars.',
+        'An enchanted woodworking workbench that will let you craft extremely powerful equipment when you do Woodworking.<br>You will need to provide your own wood.',
       maxInputs: 3,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        this.createWeapon(workstation);
+        this.createEquipment(workstation);
+      },
+    },
+    {
+      id: 'Basic Leatherworking Station',
+      triggerActivity: ActivityType.Leatherworking,
+      power: 0,
+      setupCost: 10000,
+      maintenanceCost: 100,
+      description:
+        'A simple leatherworking station that will let you craft your own equipment when you do Leatherworking.<br>You will need to provide your own hides.',
+      maxInputs: 1,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createEquipment(workstation);
+      },
+    },
+    {
+      id: 'Advanced Leatherworking Station',
+      triggerActivity: ActivityType.Leatherworking,
+      power: 1,
+      setupCost: 1000000,
+      maintenanceCost: 1000,
+      description:
+        'A fully stocked leatherworking station that will let you craft more powerful equipment when you do Leatherworking.<br>You will need to provide your own hides.',
+      maxInputs: 2,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createEquipment(workstation);
+      },
+    },
+    {
+      id: 'Masterwork Leatherworking Station',
+      triggerActivity: ActivityType.Leatherworking,
+      power: 2,
+      setupCost: 10000000,
+      maintenanceCost: 10000,
+      description:
+        'An enchanted leatherworking station that will let you craft extremely powerful equipment when you do Leatherworking.<br>You will need to provide your own hides.',
+      maxInputs: 3,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createEquipment(workstation);
+      },
+    },
+    {
+      id: 'Basic Cauldron',
+      triggerActivity: ActivityType.Alchemy,
+      power: 0,
+      setupCost: 10000,
+      maintenanceCost: 100,
+      description:
+        'A simple cauldron for brewing potions and making pills when you do alchemy.<br>You will need to provide your own herbs.',
+      maxInputs: 2,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.craftAlchemy(workstation);
+      },
+    },
+    {
+      id: 'Large Cauldron',
+      triggerActivity: ActivityType.Alchemy,
+      power: 1,
+      setupCost: 1000000,
+      maintenanceCost: 1000,
+      description:
+        'A large cauldron for brewing potions and making pills when you do alchemy.<br>You will need to provide your own herbs.',
+      maxInputs: 4,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.craftAlchemy(workstation);
+      },
+    },
+    {
+      id: 'Enchanted Cauldron',
+      triggerActivity: ActivityType.Alchemy,
+      power: 2,
+      setupCost: 10000000,
+      maintenanceCost: 10000,
+      description:
+        'An enchanted cauldron for brewing potions and making pills when you do alchemy.<br>You will need to provide your own herbs.',
+      maxInputs: 6,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.craftAlchemy(workstation);
       },
     },
     {
@@ -785,6 +871,7 @@ export class HomeService {
       keepHome: this.keepHome,
       seeFurnitureEffects: this.seeFurnitureEffects,
       workstations: this.workstations,
+      totalCrafts: this.totalCrafts,
     };
   }
 
@@ -819,6 +906,7 @@ export class HomeService {
     this.homeUnlocked = properties.homeUnlocked || false;
     this.keepHome = properties.keepHome;
     this.seeFurnitureEffects = properties.keepHome;
+    this.totalCrafts = properties.totalCrafts;
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
@@ -1128,6 +1216,10 @@ export class HomeService {
         itemStack.quantity--;
       }
     }
+    if (totalValue < 1) {
+      // didn't find any usable ingredients
+      return;
+    }
 
     totalValue *= usedIngredients.length;
     totalValue *= usedSubtypes.length;
@@ -1135,12 +1227,14 @@ export class HomeService {
 
     const cookingLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
     let imageFile = 'meal';
+    let foodName = 'Menu Special #' + totalValue;
     if (cookingLevel > 0) {
       totalValue *= 4;
       imageFile = 'soulfood';
+      foodName = 'Soul Food Special #' + totalValue;
     }
-    const foodName = 'Menu Special #' + totalValue;
 
+    this.totalCrafts++;
     this.inventoryService.addItem({
       id: foodName,
       imageFile: imageFile,
@@ -1155,7 +1249,9 @@ export class HomeService {
     });
   }
 
-  createWeapon(workstation: Workstation) {
+  // TODO: pill mold/box/pouch and empowerment pills
+
+  createEquipment(workstation: Workstation) {
     if (workstation.inputs.length < 1) {
       // inputs array not populated, bail out
       return;
@@ -1163,6 +1259,8 @@ export class HomeService {
     let material = 'metal';
     if (workstation.triggerActivity === ActivityType.Woodworking) {
       material = 'wood';
+    } else if (workstation.triggerActivity === ActivityType.Leatherworking) {
+      material = 'hide';
     }
     const activityLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
     const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === material);
@@ -1186,8 +1284,71 @@ export class HomeService {
         grade += extraStack?.item?.value || 1;
         extraStack.quantity--;
       }
-      this.inventoryService.addItem(this.inventoryService.generateWeapon(Math.floor(grade / 10), material));
+      this.totalCrafts++;
+      let item;
+      if (workstation.triggerActivity === ActivityType.Leatherworking) {
+        item = this.inventoryService.generateArmor(Math.floor(grade / 10), this.inventoryService.randomArmorSlot());
+      } else {
+        item = this.inventoryService.generateWeapon(Math.floor(grade / 10), material);
+      }
+      this.inventoryService.addItem(item);
       materialStack.quantity -= 10;
+    }
+  }
+
+  craftAlchemy(workstation: Workstation) {
+    if (workstation.inputs.length < 1) {
+      // inputs array not populated, bail out
+      return;
+    }
+    const usedIngredients: string[] = [];
+    const usedSubtypes: string[] = [];
+    let totalValue = 0;
+    let gemUsed = false;
+    let pillMold = false;
+    let pillBox = false;
+    let pillPouch = false;
+    for (const itemStack of workstation.inputs) {
+      if (
+        itemStack.item &&
+        itemStack.item.type === 'herb' &&
+        !usedIngredients.includes(itemStack.item.id) &&
+        itemStack.quantity > 1
+      ) {
+        usedIngredients.push(itemStack.item.id);
+        if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
+          usedSubtypes.push(itemStack.item.subtype);
+        }
+        totalValue += itemStack.item.value;
+        itemStack.quantity--;
+      }
+    }
+    if (totalValue < 1) {
+      // didn't find any usable ingredients
+      return;
+    }
+    for (const itemStack of workstation.inputs) {
+      if (itemStack.item && itemStack.item.type === 'gem' && itemStack.quantity > 1) {
+        gemUsed = true;
+        itemStack.quantity--;
+      } else if (itemStack.item && itemStack.item.type === 'pillMold' && itemStack.quantity > 1) {
+        pillMold = true;
+        itemStack.quantity--;
+      } else if (itemStack.item && itemStack.item.type === 'pillBox' && itemStack.quantity > 1) {
+        pillBox = true;
+        itemStack.quantity--;
+      } else if (itemStack.item && itemStack.item.type === 'pillPouch' && itemStack.quantity > 1) {
+        pillPouch = true;
+        itemStack.quantity--;
+      }
+    }
+    this.totalCrafts++;
+    if (gemUsed && pillMold && pillBox && pillPouch) {
+      this.inventoryService.generateEmpowermentPill();
+    } else if (gemUsed) {
+      this.inventoryService.generatePill(totalValue);
+    } else {
+      this.inventoryService.generatePotion(totalValue);
     }
   }
 }

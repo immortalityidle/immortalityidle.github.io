@@ -35,58 +35,6 @@
       @if (!hellService.inHell && !characterService.characterState.god) {
         <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
       }      
-      @if (homeService.home.maxFurniture > 0 && (!hellService.inHell || homeService.hellHome)) {
-        <hr>
-        <div>
-          <span>Your Bedroom</span>
-          @if (homeService.openBedroomFurnitureSlots > 0){
-            <span> has room for {{homeService.openBedroomFurnitureSlots}} more piece{{homeService.openBedroomFurnitureSlots > 1 ? "s" : ""}} of furniture</span>
-          }
-        </div>
-        <table class="furnitureSlots">
-          <tr>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(0)}}" (click)="selectFurniture(0)">
-              {{homeService.bedroomFurniture[0]?.name | titlecase}}
-            </td>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(1)}}" (click)="selectFurniture(1)">
-              {{homeService.bedroomFurniture[1]?.name | titlecase}}
-            </td>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(2)}}" (click)="selectFurniture(2)">
-              {{homeService.bedroomFurniture[2]?.name | titlecase}}
-            </td>
-            <td>
-              <span>Feng Shui Score: {{homeService.fengshuiScore}}</span>
-            </td>
-          </tr>
-          <tr>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(3)}}" (click)="selectFurniture(3)">
-              {{homeService.bedroomFurniture[3]?.name | titlecase}}
-            </td>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(4)}}" (click)="selectFurniture(4)">
-              {{homeService.bedroomFurniture[4]?.name | titlecase}}
-            </td>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(5)}}" (click)="selectFurniture(5)">
-              {{homeService.bedroomFurniture[5]?.name | titlecase}}
-            </td>
-          </tr>
-          <tr>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(6)}}" (click)="selectFurniture(6)">
-              {{homeService.bedroomFurniture[6]?.name | titlecase}}
-            </td>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(7)}}" (click)="selectFurniture(7)">
-              {{homeService.bedroomFurniture[7]?.name | titlecase}}
-            </td>
-            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(8)}}" (click)="selectFurniture(8)">
-              {{homeService.bedroomFurniture[8]?.name | titlecase}}
-            </td>
-          </tr>
-          <tr>
-            <td class="itemSlot doorText"> 
-              Door
-            </td>
-          </tr>
-        </table>
-      }
       @if (homeService.home.maxWorkstations && (!hellService.inHell || homeService.hellHome)) {
         <hr>
         <div>
@@ -146,6 +94,58 @@
             </div>
           </div>
         }
+      }
+      @if (homeService.home.maxFurniture > 0 && (!hellService.inHell || homeService.hellHome)) {
+        <hr>
+        <div>
+          <span>Your Bedroom</span>
+          @if (homeService.openBedroomFurnitureSlots > 0){
+            <span> has room for {{homeService.openBedroomFurnitureSlots}} more piece{{homeService.openBedroomFurnitureSlots > 1 ? "s" : ""}} of furniture</span>
+          }
+        </div>
+        <table class="furnitureSlots">
+          <tr>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(0)}}" (click)="selectFurniture(0)">
+              {{homeService.bedroomFurniture[0]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(1)}}" (click)="selectFurniture(1)">
+              {{homeService.bedroomFurniture[1]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(2)}}" (click)="selectFurniture(2)">
+              {{homeService.bedroomFurniture[2]?.name | titlecase}}
+            </td>
+            <td>
+              <span>Feng Shui Score: {{homeService.fengshuiScore}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(3)}}" (click)="selectFurniture(3)">
+              {{homeService.bedroomFurniture[3]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(4)}}" (click)="selectFurniture(4)">
+              {{homeService.bedroomFurniture[4]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(5)}}" (click)="selectFurniture(5)">
+              {{homeService.bedroomFurniture[5]?.name | titlecase}}
+            </td>
+          </tr>
+          <tr>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(6)}}" (click)="selectFurniture(6)">
+              {{homeService.bedroomFurniture[6]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(7)}}" (click)="selectFurniture(7)">
+              {{homeService.bedroomFurniture[7]?.name | titlecase}}
+            </td>
+            <td class="itemSlot"  tooltip="{{getFurnitureTooltip(8)}}" (click)="selectFurniture(8)">
+              {{homeService.bedroomFurniture[8]?.name | titlecase}}
+            </td>
+          </tr>
+          <tr>
+            <td class="itemSlot doorText"> 
+              Door
+            </td>
+          </tr>
+        </table>
       }
     </div>
   }

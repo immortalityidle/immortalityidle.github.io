@@ -36,9 +36,6 @@ export interface ActivityProperties {
   purifyGemsUnlocked: boolean;
   lifeActivities: { [key in ActivityType]?: number };
   familySpecialty: ActivityType | null;
-  alchemyCounter: number;
-  woodworkingCounter: number;
-  leatherworkingCounter: number;
   miningCounter: number;
   huntingCounter: number;
   fishingCounter: number;
@@ -46,9 +43,6 @@ export interface ActivityProperties {
   recruitingCounter: number;
   petRecruitingCounter: number;
   coreCultivationCounter: number;
-  pillMoldCounter: number;
-  pillBoxCounter: number;
-  pillPouchCounter: number;
   forgeChainsCounter: number;
   researchWindCounter: number;
 }
@@ -104,9 +98,6 @@ export class ActivityService {
   pillPouchCounter = 0;
   forgeChainsCounter = 0;
   researchWindCounter = 0;
-  alchemyCounter = 0;
-  woodworkingCounter = 0;
-  leatherworkingCounter = 0;
   miningCounter = 0;
   huntingCounter = 0;
   fishingCounter = 0;
@@ -528,14 +519,8 @@ export class ActivityService {
       lifeActivities: this.lifeActivities,
       familySpecialty: this.familySpecialty,
       tauntCounter: this.tauntCounter,
-      pillMoldCounter: this.pillMoldCounter,
-      pillBoxCounter: this.pillBoxCounter,
-      pillPouchCounter: this.pillPouchCounter,
       forgeChainsCounter: this.forgeChainsCounter,
       researchWindCounter: this.researchWindCounter,
-      alchemyCounter: this.alchemyCounter,
-      woodworkingCounter: this.woodworkingCounter,
-      leatherworkingCounter: this.leatherworkingCounter,
       miningCounter: this.miningCounter,
       huntingCounter: this.huntingCounter,
       fishingCounter: this.fishingCounter,
@@ -583,14 +568,8 @@ export class ActivityService {
       this.upgradeActivities(true);
     }
     this.tauntCounter = properties.tauntCounter;
-    this.pillMoldCounter = properties.pillMoldCounter;
-    this.pillBoxCounter = properties.pillBoxCounter;
-    this.pillPouchCounter = properties.pillPouchCounter;
     this.forgeChainsCounter = properties.forgeChainsCounter;
     this.researchWindCounter = properties.researchWindCounter;
-    this.alchemyCounter = properties.alchemyCounter;
-    this.woodworkingCounter = properties.woodworkingCounter;
-    this.leatherworkingCounter = properties.leatherworkingCounter;
     this.miningCounter = properties.miningCounter;
     this.huntingCounter = properties.huntingCounter;
     this.fishingCounter = properties.fishingCounter;
@@ -2362,20 +2341,6 @@ export class ActivityService {
           this.Alchemy.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.1);
           this.characterService.characterState.increaseAttribute('waterLore', 0.2);
-          this.alchemyCounter++;
-          if (this.alchemyCounter > 50) {
-            this.alchemyCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              let grade = this.inventoryService.consume('ingredient');
-              if (grade >= 1) {
-                // if the ingredient was found
-                grade = Math.floor(
-                  grade * Math.log10(this.characterService.characterState.attributes.waterLore.value + 10)
-                );
-                this.inventoryService.generatePotion(grade, false);
-              }
-            }
-          }
           this.characterService.characterState.yin++;
         },
         () => {
@@ -2393,20 +2358,6 @@ export class ActivityService {
           this.Alchemy.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.15);
           this.characterService.characterState.increaseAttribute('waterLore', 0.3);
-          this.alchemyCounter++;
-          if (this.alchemyCounter > 20) {
-            this.alchemyCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              let grade = this.inventoryService.consume('ingredient');
-              if (grade >= 1) {
-                // if the ingredient was found
-                grade = Math.floor(
-                  grade * Math.log10(this.characterService.characterState.attributes.waterLore.value + 10)
-                );
-                this.inventoryService.generatePotion(grade + 1, false);
-              }
-            }
-          }
           this.characterService.characterState.yin++;
         },
         () => {
@@ -2424,29 +2375,6 @@ export class ActivityService {
           this.Alchemy.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.2);
           this.characterService.characterState.increaseAttribute('waterLore', 0.6);
-          this.alchemyCounter++;
-          if (this.alchemyCounter > 10) {
-            this.alchemyCounter = 0;
-
-            if (this.inventoryService.openInventorySlots() > 0) {
-              let grade = this.inventoryService.consume('ingredient');
-              if (grade >= 1) {
-                // if the ingredient was found
-                grade = Math.floor(
-                  grade * Math.log10(this.characterService.characterState.attributes.waterLore.value + 10)
-                );
-                if (
-                  grade > 1000000 &&
-                  this.inventoryService.consumeById('divinePeach') >= 1 &&
-                  this.homeService.hasWorkstation('cauldron')
-                ) {
-                  this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
-                } else {
-                  this.inventoryService.generatePotion(grade + 1, true);
-                }
-              }
-            }
-          }
           this.characterService.characterState.yin++;
         },
       ],
@@ -2574,23 +2502,6 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.005);
-          this.woodworkingCounter++;
-          if (this.woodworkingCounter > 50) {
-            this.woodworkingCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('wood');
-              if (grade >= 1) {
-                // if the wood was found
-                const woodLore = this.characterService.characterState.attributes.woodLore.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateWeapon(
-                    Math.floor(Math.max(Math.pow(Math.log2(woodLore), grade / 16), grade)),
-                    'wood'
-                  )
-                );
-              }
-            }
-          }
           this.characterService.characterState.yang++;
         },
         () => {
@@ -2611,23 +2522,6 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.02);
-          this.woodworkingCounter++;
-          if (this.woodworkingCounter > 20) {
-            this.woodworkingCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('wood');
-              if (grade >= 1) {
-                // if the wood was found
-                const woodLore = this.characterService.characterState.attributes.woodLore.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateWeapon(
-                    Math.floor(Math.max(Math.pow(Math.log2(woodLore), grade / 16), grade)),
-                    'wood'
-                  )
-                );
-              }
-            }
-          }
           this.characterService.characterState.yang++;
         },
         () => {
@@ -2648,23 +2542,6 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Woodworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('woodLore', 0.6);
-          this.woodworkingCounter++;
-          if (this.woodworkingCounter > 10) {
-            this.woodworkingCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('wood');
-              if (grade >= 1) {
-                // if the wood was found
-                const woodLore = this.characterService.characterState.attributes.woodLore.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateWeapon(
-                    Math.floor(Math.max(Math.pow(Math.log2(woodLore), grade / 16), grade)),
-                    'wood'
-                  )
-                );
-              }
-            }
-          }
           this.pillBoxCounter++;
           if (this.pillBoxCounter > 1000) {
             this.pillBoxCounter = 0;
@@ -2768,25 +2645,6 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.002);
-          this.leatherworkingCounter++;
-          if (this.leatherworkingCounter > 100) {
-            this.leatherworkingCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('hide');
-              if (grade >= 1) {
-                // if the hide was found
-                const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateArmor(
-                    Math.floor(Math.max(Math.pow(Math.log2(animalHandling), grade / 16), grade)),
-                    'leather',
-                    this.inventoryService.randomArmorSlot(),
-                    true
-                  )
-                );
-              }
-            }
-          }
           this.characterService.characterState.yin++;
           this.characterService.characterState.yang++;
         },
@@ -2807,25 +2665,6 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.003);
-          this.leatherworkingCounter++;
-          if (this.leatherworkingCounter > 50) {
-            this.leatherworkingCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('hide');
-              if (grade >= 1) {
-                // if the hide was found
-                const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateArmor(
-                    Math.floor(Math.max(Math.pow(Math.log2(animalHandling), grade / 16), grade)),
-                    'leather',
-                    this.inventoryService.randomArmorSlot(),
-                    true
-                  )
-                );
-              }
-            }
-          }
           this.characterService.characterState.yin++;
           this.characterService.characterState.yang++;
         },
@@ -2846,25 +2685,6 @@ export class ActivityService {
           this.characterService.characterState.updateMoney(money);
           this.Leatherworking.lastIncome = money;
           this.characterService.characterState.increaseAttribute('animalHandling', 0.1);
-          this.leatherworkingCounter++;
-          if (this.leatherworkingCounter > 20) {
-            this.leatherworkingCounter = 0;
-            if (this.inventoryService.openInventorySlots() > 0) {
-              const grade = this.inventoryService.consume('hide');
-              if (grade >= 1) {
-                // if the hide was found
-                const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
-                this.inventoryService.addItem(
-                  this.inventoryService.generateArmor(
-                    Math.floor(Math.max(Math.pow(Math.log2(animalHandling), grade / 16), grade)),
-                    'leather',
-                    this.inventoryService.randomArmorSlot(),
-                    true
-                  )
-                );
-              }
-            }
-          }
           this.pillPouchCounter++;
           if (this.pillPouchCounter > 1000) {
             this.pillPouchCounter = 0;

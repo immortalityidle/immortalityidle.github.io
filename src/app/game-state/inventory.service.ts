@@ -32,7 +32,6 @@ export interface WeaponStats {
 
 export interface ArmorStats {
   defense: number;
-  material: string;
   baseName?: string;
   effect?: string;
 }
@@ -645,8 +644,7 @@ export class InventoryService {
       effectString = ' and imbued with the power of ' + armor.armorStats.effect;
     }
     armor.description =
-      'A unique piece of armor made of ' +
-      armor.armorStats.material +
+      'A unique piece of armor ' +
       effectString +
       '.<br>Drag and drop onto similar armor to merge them into something better.<br>Defense: ' +
       this.bigNumberPipe.transform(armor.armorStats.defense);
@@ -697,27 +695,7 @@ export class InventoryService {
     );
   }
 
-  generatePotion(grade: number, masterLevel: boolean): void {
-    if (this.useSpiritGemUnlocked && this.useSpiritGemPotions) {
-      // consume a spirit gem and increase the grade
-      const value = this.consume('gem', 1, this.useCheapestSpiritGem);
-      if (value > 0) {
-        grade += value;
-      }
-      if (value > 0 || masterLevel) {
-        if (Math.random() < 0.1) {
-          //non-master alch can generate pills, if using a spirit gem
-          this.generatePill(grade);
-          return;
-        }
-      }
-    } else if (masterLevel) {
-      if (Math.random() < 0.1) {
-        this.generatePill(grade);
-        return;
-      }
-    }
-
+  generatePotion(grade: number): void {
     const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
     // randomly choose any of the first five stats
     const key = keys[Math.floor(Math.random() * 5)];
@@ -742,35 +720,43 @@ export class InventoryService {
     } as Potion);
   }
 
+  generateEmpowermentPill(): void {
+    const effect = 'Empowerment';
+    const description = 'A pill that permanently empowers the increase of your attributes based on your aptitudes.';
+    const useDescription = 'Use to permanently empower the increase of your attributes based on your aptitudes.';
+    const value = 1;
+    const name = 'Empowerment Pill';
+    const imageFileName = 'empowermentPill';
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Its effect gets worse the more you take.'
+    );
+    this.addItem({
+      name: name,
+      imageFile: imageFileName,
+      id: 'pill',
+      type: 'pill',
+      value: value,
+      description: description,
+      useLabel: 'Swallow',
+      useDescription: useDescription,
+      useConsumes: true,
+      effect: effect,
+      power: 1,
+    } as Pill);
+  }
+
   generatePill(grade: number): void {
-    let effect = 'Longevity'; // add more later
-    let description = 'A pill that increases your lifespan.';
-    let useDescription = 'Use to increase your lifespan.';
-    let value = grade * 10;
-    let name = effect + ' Pill ' + ' +' + grade;
-    let imageFileName = 'pill';
-    if (this.checkFor('pillBox') > 0 && this.checkFor('pillMold') > 0 && this.checkFor('pillPouch') > 0) {
-      this.consume('pillBox');
-      this.consume('pillMold');
-      this.consume('pillPouch');
-      effect = 'Empowerment';
-      description = 'A pill that permanently empowers the increase of your attributes based on your aptitudes.';
-      useDescription = 'Use to permanently empower the increase of your attributes based on your aptitudes.';
-      value = 1;
-      name = 'Empowerment Pill';
-      imageFileName = 'empowermentPill';
-      this.logService.log(
-        LogTopic.CRAFTING,
-        'Alchemy Success! Created a ' +
-          this.titleCasePipe.transform(name) +
-          '. Its effect gets worse the more you take.'
-      );
-    } else {
-      this.logService.log(
-        LogTopic.CRAFTING,
-        'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.'
-      );
-    }
+    const effect = 'Longevity'; // add more later
+    const description = 'A pill that increases your lifespan.';
+    const useDescription = 'Use to increase your lifespan.';
+    const value = grade * 10;
+    const name = effect + ' Pill ' + ' +' + grade;
+    const imageFileName = 'pill';
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.'
+    );
     this.addItem({
       name: name,
       imageFile: imageFileName,
@@ -807,7 +793,7 @@ export class InventoryService {
       imageFile: 'herb_' + name,
       imageColor: this.itemRepoService.colorByRank[qualityIndex],
       name: herbName,
-      type: 'ingredient',
+      type: 'herb',
       value: value,
       description: 'Useful herbs. Can be used in creating pills or potions.',
     });
@@ -842,20 +828,11 @@ export class InventoryService {
 
   generateArmor(
     grade: number,
-    material: string,
     slot: EquipmentPosition,
-    useGemOkay: boolean,
     defaultName: string | undefined = undefined,
     effect: string | undefined = undefined
   ): Equipment {
     this.equipmentCreated++;
-    if (this.useSpiritGemUnlocked && this.useSpiritGemWeapons && useGemOkay) {
-      // consume a spirit gem and increase the grade
-      const value = this.consume('gem', 1, this.useCheapestSpiritGem);
-      if (value > 0) {
-        grade = Math.floor(Math.pow(grade, 1 + value / 400));
-      }
-    }
     const highestGrade = ItemPrefixes.length * ArmorSuffixes.length * ArmorSuffixModifiers.length;
     const nameGrade = Math.ceil(Math.sqrt(grade / 1e10) * highestGrade); // Name spreads up to 10B Value (coincides with defense)
     let prefixIndex = nameGrade % ItemPrefixes.length;
@@ -908,14 +885,11 @@ export class InventoryService {
       value: grade,
       armorStats: {
         defense: defense,
-        material: material,
         baseName: baseName,
         effect: effect,
       },
       description:
-        'A unique piece of armor made of ' +
-        material +
-        '.<br>Drag and drop onto similar armor to merge them into something better.<br>nDefense: ' +
+        'A unique piece of armor that you made.<br>Drag and drop onto similar armor to merge them into something better.<br>nDefense: ' +
         this.bigNumberPipe.transform(defense),
     };
   }
@@ -1820,14 +1794,7 @@ export class InventoryService {
       );
     } else {
       inventoryIndex = this.addItem(
-        this.generateArmor(
-          item1.value + item2.value,
-          item1.armorStats?.material + '',
-          item1.slot,
-          false,
-          item1.armorStats?.baseName,
-          item1.armorStats?.effect
-        )
+        this.generateArmor(item1.value + item2.value, item1.slot, item1.armorStats?.baseName, item1.armorStats?.effect)
       );
     }
     // if we can, move the new item to the desired destination index
@@ -1956,9 +1923,7 @@ export class InventoryService {
     } else {
       newItem = this.generateArmor(
         equippedItem.value + itemToMerge.value,
-        itemToMerge.armorStats?.material + '',
         slot,
-        false,
         equippedItem.armorStats?.baseName,
         equippedItem.armorStats?.effect
       );
