@@ -2716,6 +2716,35 @@ baguaMap = [
         return this.mainLoopService.unlockPlaytimeSpeed;
       },
     },
+    perpetualCraftingManual: {
+      id: 'perpetualCraftingManual',
+      name: 'Manual of Perpetual Crafting',
+      type: 'manual',
+      description:
+        'This manual teaches you to automatically reload crafting input items into workstations when you obtain them.',
+      value: 5e9,
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock automatic crafting ingredient reloading.',
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.autoReloadCraftInputs = true;
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.autoReloadCraftInputs;
+      },
+    },
   };
 
   constructor(

@@ -422,6 +422,19 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Just Put It Over There',
+      description:
+        'You have become an expert at loading inputs into your crafting workstations, and have unlocked a manual to automatically load workstations as you acquire more of the same ingredients.',
+      hint: 'It sure would be nice to have the ore just go right into the smelter.',
+      check: () => {
+        return this.homeService.totalCrafts > 888;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['perpetualCraftingManual']);
+      },
+      unlocked: false,
+    },
+    {
       name: 'Addict',
       description: 'You got a taste of those sweet, sweet empowerment pills and want more.',
       hint: 'Master of all.',

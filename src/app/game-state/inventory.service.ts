@@ -22,6 +22,7 @@ import {
 } from './itemResources';
 import { BigNumberPipe } from '../app.component';
 import { HellService } from './hell.service';
+import { HomeService } from './home.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -141,6 +142,7 @@ export interface InventoryProperties {
   equipmentUnlocked: boolean;
   equipmentCreated: number;
   totalItemsReceived: number;
+  autoReloadCraftInputs: boolean;
 }
 
 @Injectable({
@@ -148,6 +150,7 @@ export interface InventoryProperties {
 })
 export class InventoryService {
   hellService?: HellService;
+  homeService?: HomeService;
   bigNumberPipe: BigNumberPipe;
   itemStacks: ItemStack[] = [];
   stashedItemStacks: ItemStack[] = [];
@@ -211,6 +214,7 @@ export class InventoryService {
   emptyIdCounter = 0;
   emptyIdPrefix = Date.now() + '';
   totalItemsReceived = 0;
+  autoReloadCraftInputs = false;
 
   constructor(
     private injector: Injector,
@@ -222,6 +226,7 @@ export class InventoryService {
     private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
+    setTimeout(() => (this.homeService = this.injector.get(HomeService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.noFood = false;
     this.autoSellUnlocked = false;
@@ -409,6 +414,7 @@ export class InventoryService {
       equipmentUnlocked: this.equipmentUnlocked,
       equipmentCreated: this.equipmentCreated,
       totalItemsReceived: this.totalItemsReceived,
+      autoReloadCraftInputs: this.autoReloadCraftInputs,
     };
   }
 
@@ -473,6 +479,7 @@ export class InventoryService {
     this.equipmentUnlocked = properties.equipmentUnlocked || false;
     this.equipmentCreated = properties.equipmentCreated || 0;
     this.totalItemsReceived = properties.totalItemsReceived || 0;
+    this.autoReloadCraftInputs = properties.autoReloadCraftInputs || false;
   }
 
   farmFoodList = [
@@ -1185,7 +1192,20 @@ export class InventoryService {
     }
     this.totalItemsReceived += quantity;
 
-    //TODO: pouch and workstation inputs need to go straight there when acquired (maybe a manual for that?)
+    //TODO: pouch items need to go straight there when acquired (maybe a manual for that?)
+
+    if (this.autoReloadCraftInputs) {
+      const workstations = this.homeService?.workstations;
+      if (workstations) {
+        for (const workstation of workstations) {
+          const inputSlot = workstation.inputs.find(inputItemStack => inputItemStack.item?.id === item.id);
+          if (inputSlot) {
+            inputSlot.quantity += quantity;
+            return -1;
+          }
+        }
+      }
+    }
 
     for (const balanceItem of this.autoBalanceItems) {
       if (balanceItem.name === item.name) {
