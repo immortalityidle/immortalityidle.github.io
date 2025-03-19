@@ -9,7 +9,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { KtdGridModule } from '@katoid/angular-grid-layout';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -29,7 +28,6 @@ bootstrapApplication(AppComponent, {
       CommonModule,
       DragDropModule,
       KtdGridModule,
-      TooltipDirective,
       ...materialModules
     ),
     TitleCasePipe,

@@ -5,10 +5,10 @@ import { Character, AttributeType } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { KeyValuePipe } from '@angular/common';
 import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 export type AttributeUpdatesArrays = {
   [key in AttributeType]: number[];
@@ -29,7 +29,7 @@ export type AttributeUpdatesArrays = {
       ]),
     ]),
   ],
-  imports: [TooltipDirective, MatIcon, KeyValuePipe, CamelToTitlePipe, BigNumberPipe],
+  imports: [MatIcon, KeyValuePipe, CamelToTitlePipe, BigNumberPipe, TooltipDirective],
 })
 export class AttributesPanelComponent {
   character: Character;

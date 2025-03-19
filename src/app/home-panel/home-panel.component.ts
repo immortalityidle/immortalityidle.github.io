@@ -14,13 +14,13 @@ import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/
 import { InventoryService } from '../game-state/inventory.service';
 import { WorkstationSelectionModalComponent } from '../workstation-selection-modal/workstation-selection-modal.component';
 import { MatIcon } from '@angular/material/icon';
-import { TooltipDirective } from '@webed/angular-tooltip';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-home-panel',
   templateUrl: './home-panel.component.html',
   styleUrls: ['./home-panel.component.less', '../app.component.less'],
-  imports: [NgClass, MatIcon, TooltipDirective, CdkDropList, CdkDrag, TitleCasePipe, BigNumberPipe],
+  imports: [NgClass, MatIcon, CdkDropList, CdkDrag, TitleCasePipe, BigNumberPipe, TooltipDirective],
 })
 export class HomePanelComponent {
   character: Character;

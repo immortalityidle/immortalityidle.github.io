@@ -5,15 +5,15 @@ import { InventoryService, instanceOfEquipment, Item } from '../game-state/inven
 import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { NgClass, TitleCasePipe } from '@angular/common';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { BigNumberPipe } from '../app.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-equipment-panel',
   templateUrl: './equipment-panel.component.html',
   styleUrls: ['./equipment-panel.component.less', '../app.component.less'],
-  imports: [CdkDropList, CdkDrag, NgClass, TooltipDirective, MatIcon, TitleCasePipe, BigNumberPipe],
+  imports: [CdkDropList, CdkDrag, NgClass, MatIcon, TitleCasePipe, BigNumberPipe, TooltipDirective],
 })
 export class EquipmentPanelComponent {
   character: Character;

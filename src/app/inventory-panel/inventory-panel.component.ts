@@ -8,14 +8,14 @@ import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { HomeService } from '../game-state/home.service';
 import { MatIcon } from '@angular/material/icon';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { NgClass, TitleCasePipe } from '@angular/common';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, TooltipDirective, NgClass, CdkDropList, CdkDrag, TitleCasePipe],
+  imports: [MatIcon, NgClass, CdkDropList, CdkDrag, TitleCasePipe, TooltipDirective],
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];

@@ -3,7 +3,7 @@ import { ActivityService } from '../game-state/activity.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { MatIcon } from '@angular/material/icon';
-import { TooltipDirective } from '@webed/angular-tooltip';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-impossible-task-panel',

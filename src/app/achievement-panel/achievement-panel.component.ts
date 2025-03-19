@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AchievementService } from '../game-state/achievement.service';
-import { TooltipDirective } from '@webed/angular-tooltip';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-achievement-panel',

@@ -6,15 +6,15 @@ import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { MatIcon } from '@angular/material/icon';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { TitleCasePipe } from '@angular/common';
 import { BigNumberPipe } from '../app.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-battle-panel',
   templateUrl: './battle-panel.component.html',
   styleUrls: ['./battle-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, TooltipDirective, TitleCasePipe, BigNumberPipe],
+  imports: [MatIcon, TitleCasePipe, BigNumberPipe, TooltipDirective],
 })
 export class BattlePanelComponent {
   Math: Math;

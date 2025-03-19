@@ -33,7 +33,6 @@ import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FarmService } from './game-state/farm.service';
 import { MatIcon } from '@angular/material/icon';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { TimePanelComponent } from './time-panel/time-panel.component';
 import { AttributesPanelComponent } from './attributes-panel/attributes-panel.component';
 import { HealthPanelComponent } from './health-panel/health-panel.component';
@@ -47,6 +46,7 @@ import { PortalPanelComponent } from './portal-panel/portal-panel.component';
 import { FollowersPanelComponent } from './followers-panel/followers-panel.component';
 import { PetsPanelComponent } from './pets-panel/pets-panel.component';
 import { FarmPanelComponent } from './farm-panel/farm-panel.component';
+import { TooltipDirective } from './tooltip/tooltip.directive';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -120,7 +120,6 @@ export class BigNumberPipe implements PipeTransform {
   imports: [
     NgClass,
     MatIcon,
-    TooltipDirective,
     KtdGridComponent,
     KtdGridItemComponent,
     KtdGridDragHandle,
@@ -137,6 +136,7 @@ export class BigNumberPipe implements PipeTransform {
     FollowersPanelComponent,
     PetsPanelComponent,
     FarmPanelComponent,
+    TooltipDirective,
   ],
 })
 export class AppComponent implements OnInit, OnDestroy {

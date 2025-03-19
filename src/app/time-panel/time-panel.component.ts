@@ -10,15 +10,15 @@ import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/
 import { BattleService } from '../game-state/battle.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatIcon } from '@angular/material/icon';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { NgClass, DecimalPipe } from '@angular/common';
 import { BigNumberPipe } from '../app.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-time-panel',
   templateUrl: './time-panel.component.html',
   styleUrls: ['./time-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, TooltipDirective, NgClass, CdkDropList, CdkDrag, DecimalPipe, BigNumberPipe],
+  imports: [MatIcon, NgClass, CdkDropList, CdkDrag, DecimalPipe, BigNumberPipe, TooltipDirective],
 })
 export class TimePanelComponent {
   unlockFastSpeed = false;

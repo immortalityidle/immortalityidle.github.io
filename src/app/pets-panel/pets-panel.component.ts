@@ -7,14 +7,14 @@ import { FollowersService, Follower } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { TooltipDirective } from '@webed/angular-tooltip';
 import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-pets-panel',
   templateUrl: './pets-panel.component.html',
   styleUrls: ['./pets-panel.component.less', '../app.component.less'],
-  imports: [NgClass, MatIcon, TooltipDirective, TitleCasePipe, CamelToTitlePipe, BigNumberPipe],
+  imports: [NgClass, MatIcon, TitleCasePipe, CamelToTitlePipe, BigNumberPipe, TooltipDirective],
 })
 export class PetsPanelComponent {
   character: Character;
