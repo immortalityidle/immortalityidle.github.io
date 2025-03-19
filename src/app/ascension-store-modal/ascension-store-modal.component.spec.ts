@@ -8,7 +8,7 @@ describe('AscensionStoreModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AscensionStoreModalComponent],
+      imports: [AscensionStoreModalComponent],
     }).compileComponents();
   });
 

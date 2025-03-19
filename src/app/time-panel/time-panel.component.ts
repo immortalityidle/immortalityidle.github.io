@@ -6,15 +6,19 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { TimeOptionsPanelComponent } from '../time-options-panel/time-options-panel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from '../game-state/game-state.service';
-import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { BattleService } from '../game-state/battle.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
+import { MatIcon } from '@angular/material/icon';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { NgClass, NgFor, DecimalPipe } from '@angular/common';
+import { BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-time-panel',
   templateUrl: './time-panel.component.html',
   styleUrls: ['./time-panel.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [MatIcon, TooltipDirective, NgClass, CdkDropList, NgFor, CdkDrag, DecimalPipe, BigNumberPipe],
 })
 export class TimePanelComponent {
   unlockFastSpeed = false;

@@ -8,7 +8,7 @@ describe('OfflineModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OfflineModalComponent],
+      imports: [OfflineModalComponent],
     }).compileComponents();
   });
 

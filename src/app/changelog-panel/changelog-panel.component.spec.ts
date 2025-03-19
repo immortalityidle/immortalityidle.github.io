@@ -8,7 +8,7 @@ describe('ChangelogPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ChangelogPanelComponent],
+      imports: [ChangelogPanelComponent],
     }).compileComponents();
   });
 

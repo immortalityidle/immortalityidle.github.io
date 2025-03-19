@@ -3,12 +3,16 @@ import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
 import { FarmService } from '../game-state/farm.service';
+import { MatIcon } from '@angular/material/icon';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { PercentPipe, TitleCasePipe } from '@angular/common';
+import { BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-farm-panel',
   templateUrl: './farm-panel.component.html',
   styleUrls: ['./farm-panel.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [MatIcon, TooltipDirective, PercentPipe, TitleCasePipe, BigNumberPipe],
 })
 export class FarmPanelComponent {
   constructor(

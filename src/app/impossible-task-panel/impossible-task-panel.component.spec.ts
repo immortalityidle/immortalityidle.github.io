@@ -8,7 +8,7 @@ describe('ImpossibleTaskPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ImpossibleTaskPanelComponent],
+      imports: [ImpossibleTaskPanelComponent],
     }).compileComponents();
   });
 

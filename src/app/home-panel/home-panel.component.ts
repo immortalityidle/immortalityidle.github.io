@@ -9,16 +9,18 @@ import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
-import { TitleCasePipe } from '@angular/common';
-import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { TitleCasePipe, NgClass } from '@angular/common';
+import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { InventoryService } from '../game-state/inventory.service';
 import { WorkstationSelectionModalComponent } from '../workstation-selection-modal/workstation-selection-modal.component';
+import { MatIcon } from '@angular/material/icon';
+import { TooltipDirective } from '@webed/angular-tooltip';
 
 @Component({
   selector: 'app-home-panel',
   templateUrl: './home-panel.component.html',
   styleUrls: ['./home-panel.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [NgClass, MatIcon, TooltipDirective, CdkDropList, CdkDrag, TitleCasePipe, BigNumberPipe],
 })
 export class HomePanelComponent {
   character: Character;

@@ -8,7 +8,7 @@ describe('FollowerManagementPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FollowerManagementPanelComponent],
+      imports: [FollowerManagementPanelComponent],
     }).compileComponents();
   });
 

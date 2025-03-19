@@ -14,14 +14,17 @@ import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { LogService, LogTopic } from '../game-state/log.service';
-import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { BattleService } from '../game-state/battle.service';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { NgFor, NgClass } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-activity-panel',
   templateUrl: './activity-panel.component.html',
   styleUrls: ['./activity-panel.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [TooltipDirective, CdkDropList, NgFor, CdkDrag, NgClass, MatIcon, BigNumberPipe],
 })
 export class ActivityPanelComponent {
   camelToTitle = new CamelToTitlePipe();

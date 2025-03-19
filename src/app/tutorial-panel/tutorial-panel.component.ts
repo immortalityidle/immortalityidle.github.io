@@ -4,6 +4,5 @@ import { Component } from '@angular/core';
   selector: 'app-tutorial-panel',
   templateUrl: './tutorial-panel.component.html',
   styleUrls: ['./tutorial-panel.component.less', '../app.component.less'],
-  standalone: false,
 })
 export class TutorialPanelComponent {}

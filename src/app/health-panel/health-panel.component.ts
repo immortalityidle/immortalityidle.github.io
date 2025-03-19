@@ -4,6 +4,10 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { HomeService } from '../game-state/home.service';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { NgClass, DecimalPipe } from '@angular/common';
+import { FloorPipe, BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-health-panel',
@@ -20,7 +24,7 @@ import { HomeService } from '../game-state/home.service';
       ]),
     ]),
   ],
-  standalone: false,
+  imports: [TooltipDirective, MatIcon, NgClass, DecimalPipe, FloorPipe, BigNumberPipe],
 })
 export class HealthPanelComponent {
   yinColor = '#000000';

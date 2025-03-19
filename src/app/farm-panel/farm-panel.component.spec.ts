@@ -8,7 +8,7 @@ describe('FarmPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FarmPanelComponent],
+      imports: [FarmPanelComponent],
     }).compileComponents();
   });
 

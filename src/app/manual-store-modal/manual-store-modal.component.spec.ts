@@ -8,7 +8,7 @@ describe('ManualStoreModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ManualStoreModalComponent],
+      imports: [ManualStoreModalComponent],
     }).compileComponents();
   });
 

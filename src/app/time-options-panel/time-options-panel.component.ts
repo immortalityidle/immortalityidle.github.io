@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-time-options-panel',
   templateUrl: './time-options-panel.component.html',
   styleUrls: ['./time-options-panel.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [TooltipDirective, MatIcon],
 })
 export class TimeOptionsPanelComponent {
   constructor(public activityService: ActivityService) {}

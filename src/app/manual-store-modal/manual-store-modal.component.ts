@@ -7,12 +7,16 @@ import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
+import { NgClass, TitleCasePipe } from '@angular/common';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-store-modal',
   templateUrl: './manual-store-modal.component.html',
   styleUrls: ['./manual-store-modal.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [NgClass, TooltipDirective, MatIcon, TitleCasePipe, BigNumberPipe],
 })
 export class ManualStoreModalComponent {
   character: Character;

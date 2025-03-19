@@ -5,12 +5,15 @@ import { InventoryService, Item } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { CharacterService } from '../game-state/character.service';
+import { NgClass, TitleCasePipe } from '@angular/common';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-store-modal',
   templateUrl: './store-modal.component.html',
   styleUrls: ['./store-modal.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [NgClass, TooltipDirective, TitleCasePipe, BigNumberPipe],
 })
 export class StoreModalComponent {
   buyDisabled = true;

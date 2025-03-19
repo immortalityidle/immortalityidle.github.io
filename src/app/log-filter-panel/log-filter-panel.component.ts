@@ -5,7 +5,6 @@ import { LogService, LogTopic } from '../game-state/log.service';
   selector: 'app-log-filter-panel',
   templateUrl: './log-filter-panel.component.html',
   styleUrls: ['./log-filter-panel.component.less'],
-  standalone: false,
 })
 export class LogFilterPanelComponent {
   logTopics = Object.values(LogTopic);

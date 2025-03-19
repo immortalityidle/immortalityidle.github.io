@@ -11,12 +11,16 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { SaveModalComponent } from '../save-modal/save-modal.component';
 import { environment } from '../../environments/environment';
 import { FarmService } from '../game-state/farm.service';
+import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { FormsModule } from '@angular/forms';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-options-modal',
   templateUrl: './options-modal.component.html',
   styleUrls: ['./options-modal.component.less'],
-  standalone: false,
+  imports: [MatTabGroup, MatTab, MatTabLabel, TooltipDirective, FormsModule, TitleCasePipe],
 })
 export class OptionsModalComponent {
   constructor(

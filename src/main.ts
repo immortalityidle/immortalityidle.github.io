@@ -1,13 +1,40 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
+import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { environment } from './environments/environment';
+import { TitleCasePipe, CommonModule } from '@angular/common';
+import { BigNumberPipe, AppComponent } from './app/app.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { AppRoutingModule } from './app/app-routing.module';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { KtdGridModule } from '@katoid/angular-grid-layout';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
+
+const materialModules = [MatDialogModule, MatIconModule, MatTabsModule];
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(
+      BrowserModule,
+      AppRoutingModule,
+      FormsModule,
+      CommonModule,
+      DragDropModule,
+      KtdGridModule,
+      TooltipDirective,
+      ...materialModules
+    ),
+    TitleCasePipe,
+    BigNumberPipe,
+    MatSnackBar,
+    provideAnimations(),
+  ],
+}).catch(err => console.error(err));

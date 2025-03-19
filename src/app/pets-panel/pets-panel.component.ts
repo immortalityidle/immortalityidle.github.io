@@ -5,12 +5,16 @@ import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService, Follower } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
+import { NgClass, NgFor, TitleCasePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-pets-panel',
   templateUrl: './pets-panel.component.html',
   styleUrls: ['./pets-panel.component.less', '../app.component.less'],
-  standalone: false,
+  imports: [NgClass, MatIcon, TooltipDirective, NgFor, TitleCasePipe, CamelToTitlePipe, BigNumberPipe],
 })
 export class PetsPanelComponent {
   character: Character;

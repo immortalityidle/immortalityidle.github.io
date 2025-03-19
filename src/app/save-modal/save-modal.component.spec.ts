@@ -8,7 +8,7 @@ describe('SaveModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SaveModalComponent],
+      imports: [SaveModalComponent],
     }).compileComponents();
   });
 

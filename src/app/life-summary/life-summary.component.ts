@@ -10,7 +10,6 @@ import { InventoryService } from '../game-state/inventory.service';
   selector: 'app-life-summary',
   templateUrl: './life-summary.component.html',
   styleUrls: ['./life-summary.component.less', '../app.component.less'],
-  standalone: false,
 })
 export class LifeSummaryComponent {
   causeOfDeath = '';
