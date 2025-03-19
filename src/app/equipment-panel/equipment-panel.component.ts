@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { Character, EquipmentPosition } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
@@ -13,7 +13,15 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-equipment-panel',
   templateUrl: './equipment-panel.component.html',
   styleUrls: ['./equipment-panel.component.less', '../app.component.less'],
-  imports: [CdkDropList, CdkDrag, NgClass, MatIcon, TitleCasePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => CdkDropList),
+    forwardRef(() => CdkDrag),
+    forwardRef(() => NgClass),
+    forwardRef(() => MatIcon),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class EquipmentPanelComponent {
   character: Character;

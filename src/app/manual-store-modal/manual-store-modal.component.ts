@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { StoreService } from '../game-state/store.service';
 import { Item } from '../game-state/inventory.service';
 import { CharacterService } from '../game-state/character.service';
@@ -16,7 +16,13 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-store-modal',
   templateUrl: './manual-store-modal.component.html',
   styleUrls: ['./manual-store-modal.component.less', '../app.component.less'],
-  imports: [NgClass, MatIcon, TitleCasePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => NgClass),
+    forwardRef(() => MatIcon),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class ManualStoreModalComponent {
   character: Character;

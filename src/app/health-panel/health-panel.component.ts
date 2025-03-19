@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
@@ -24,7 +24,14 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
       ]),
     ]),
   ],
-  imports: [MatIcon, NgClass, DecimalPipe, FloorPipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => MatIcon),
+    forwardRef(() => NgClass),
+    forwardRef(() => DecimalPipe),
+    forwardRef(() => FloorPipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class HealthPanelComponent {
   yinColor = '#000000';

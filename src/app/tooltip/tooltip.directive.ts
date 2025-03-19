@@ -4,11 +4,12 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { TooltipComponent } from './tooltip.component';
 
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[tooltip]',
 })
 export class TooltipDirective implements OnInit {
   @Input('tooltip') text = '';
-  // @ts-ignore
+  // @ts-expect-error defined in ngOnInit instead of constructor
   private overlayRef: OverlayRef;
 
   constructor(

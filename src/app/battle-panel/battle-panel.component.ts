@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
 import { BattleService } from '../game-state/battle.service';
@@ -14,7 +14,12 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-battle-panel',
   templateUrl: './battle-panel.component.html',
   styleUrls: ['./battle-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, TitleCasePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => MatIcon),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class BattlePanelComponent {
   Math: Math;

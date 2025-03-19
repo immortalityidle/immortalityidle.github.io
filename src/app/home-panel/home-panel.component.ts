@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService, Workstation } from '../game-state/home.service';
@@ -20,7 +20,15 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-home-panel',
   templateUrl: './home-panel.component.html',
   styleUrls: ['./home-panel.component.less', '../app.component.less'],
-  imports: [NgClass, MatIcon, CdkDropList, CdkDrag, TitleCasePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => NgClass),
+    forwardRef(() => MatIcon),
+    forwardRef(() => CdkDropList),
+    forwardRef(() => CdkDrag),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class HomePanelComponent {
   character: Character;

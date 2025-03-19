@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { StoreService } from '../game-state/store.service';
 import { HomeService } from '../game-state/home.service';
 import { InventoryService, Item } from '../game-state/inventory.service';
@@ -13,7 +13,12 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-store-modal',
   templateUrl: './store-modal.component.html',
   styleUrls: ['./store-modal.component.less', '../app.component.less'],
-  imports: [NgClass, TitleCasePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => NgClass),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class StoreModalComponent {
   buyDisabled = true;

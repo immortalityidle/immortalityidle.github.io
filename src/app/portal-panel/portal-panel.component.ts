@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
@@ -17,7 +17,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-portal-panel',
   templateUrl: './portal-panel.component.html',
   styleUrls: ['./portal-panel.component.less', '../app.component.less'],
-  imports: [NgClass, MatIcon, TooltipDirective],
+  imports: [forwardRef(() => NgClass), forwardRef(() => MatIcon), forwardRef(() => TooltipDirective)],
 })
 export class PortalPanelComponent {
   character: Character;

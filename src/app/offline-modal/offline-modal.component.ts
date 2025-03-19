@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, forwardRef, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BigNumberPipe } from '../app.component';
 
@@ -6,7 +6,7 @@ import { BigNumberPipe } from '../app.component';
   selector: 'app-offline-modal',
   templateUrl: './offline-modal.component.html',
   styleUrls: ['./offline-modal.component.less'],
-  imports: [BigNumberPipe],
+  imports: [forwardRef(() => BigNumberPipe)],
 })
 export class OfflineModalComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: { earnedTicks: number }) {}

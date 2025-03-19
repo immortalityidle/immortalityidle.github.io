@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { NgClass } from '@angular/common';
 
@@ -6,7 +6,7 @@ import { NgClass } from '@angular/common';
   selector: 'app-save-modal',
   templateUrl: './save-modal.component.html',
   styleUrls: ['./save-modal.component.less'],
-  imports: [NgClass],
+  imports: [forwardRef(() => NgClass)],
 })
 export class SaveModalComponent {
   error = '';

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { CharacterService } from '../game-state/character.service';
@@ -18,7 +18,15 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-time-panel',
   templateUrl: './time-panel.component.html',
   styleUrls: ['./time-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, NgClass, CdkDropList, CdkDrag, DecimalPipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => MatIcon),
+    forwardRef(() => NgClass),
+    forwardRef(() => CdkDropList),
+    forwardRef(() => CdkDrag),
+    forwardRef(() => DecimalPipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class TimePanelComponent {
   unlockFastSpeed = false;

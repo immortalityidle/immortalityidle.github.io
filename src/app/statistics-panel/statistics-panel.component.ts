@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { AchievementService } from '../game-state/achievement.service';
 import { ActivityService } from '../game-state/activity.service';
 import { BattleService } from '../game-state/battle.service';
@@ -18,7 +18,12 @@ import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
   selector: 'app-statistics-panel',
   templateUrl: './statistics-panel.component.html',
   styleUrls: ['./statistics-panel.component.less'],
-  imports: [DecimalPipe, KeyValuePipe, CamelToTitlePipe, BigNumberPipe],
+  imports: [
+    forwardRef(() => DecimalPipe),
+    forwardRef(() => KeyValuePipe),
+    forwardRef(() => CamelToTitlePipe),
+    forwardRef(() => BigNumberPipe),
+  ],
 })
 export class StatisticsPanelComponent {
   constructor(

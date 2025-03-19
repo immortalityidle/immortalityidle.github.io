@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivityService } from '../game-state/activity.service';
 import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.service';
@@ -19,7 +19,13 @@ import { TitleCasePipe } from '@angular/common';
   selector: 'app-options-modal',
   templateUrl: './options-modal.component.html',
   styleUrls: ['./options-modal.component.less'],
-  imports: [MatTabGroup, MatTab, MatTabLabel, FormsModule, TitleCasePipe],
+  imports: [
+    forwardRef(() => MatTabGroup),
+    forwardRef(() => MatTab),
+    forwardRef(() => MatTabLabel),
+    forwardRef(() => FormsModule),
+    forwardRef(() => TitleCasePipe),
+  ],
 })
 export class OptionsModalComponent {
   constructor(

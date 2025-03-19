@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { trigger, state, style, transition, animate, keyframes, AnimationEvent } from '@angular/animations';
 import { Character, AttributeType } from '../game-state/character';
@@ -29,7 +29,13 @@ export type AttributeUpdatesArrays = {
       ]),
     ]),
   ],
-  imports: [MatIcon, KeyValuePipe, CamelToTitlePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => MatIcon),
+    forwardRef(() => KeyValuePipe),
+    forwardRef(() => CamelToTitlePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class AttributesPanelComponent {
   character: Character;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 import { MatIcon } from '@angular/material/icon';
 
@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-time-options-panel',
   templateUrl: './time-options-panel.component.html',
   styleUrls: ['./time-options-panel.component.less', '../app.component.less'],
-  imports: [MatIcon],
+  imports: [forwardRef(() => MatIcon)],
 })
 export class TimeOptionsPanelComponent {
   constructor(public activityService: ActivityService) {}

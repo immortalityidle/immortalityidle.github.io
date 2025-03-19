@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
@@ -24,7 +24,14 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-activity-panel',
   templateUrl: './activity-panel.component.html',
   styleUrls: ['./activity-panel.component.less', '../app.component.less'],
-  imports: [CdkDropList, CdkDrag, NgClass, MatIcon, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => CdkDropList),
+    forwardRef(() => CdkDrag),
+    forwardRef(() => NgClass),
+    forwardRef(() => MatIcon),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class ActivityPanelComponent {
   camelToTitle = new CamelToTitlePipe();

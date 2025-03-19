@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, forwardRef, Inject } from '@angular/core';
 import { FollowersService, Follower } from '../game-state/followers.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +10,12 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-follower-management-panel',
   templateUrl: './follower-management-panel.component.html',
   styleUrls: ['./follower-management-panel.component.less', '../app.component.less'],
-  imports: [FormsModule, KeyValuePipe, CamelToTitlePipe, TooltipDirective],
+  imports: [
+    forwardRef(() => FormsModule),
+    forwardRef(() => KeyValuePipe),
+    forwardRef(() => CamelToTitlePipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class FollowerManagementPanelComponent {
   changeAll = 0;

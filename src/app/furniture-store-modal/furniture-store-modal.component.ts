@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { StoreService } from '../game-state/store.service';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
@@ -12,7 +12,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-furniture-store-modal',
   templateUrl: './furniture-store-modal.component.html',
   styleUrls: ['./furniture-store-modal.component.less'],
-  imports: [DecimalPipe, TitleCasePipe, TooltipDirective],
+  imports: [forwardRef(() => DecimalPipe), forwardRef(() => TitleCasePipe), forwardRef(() => TooltipDirective)],
 })
 export class FurnitureStoreModalComponent {
   buyDisabled = true;

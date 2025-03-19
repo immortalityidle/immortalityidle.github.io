@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FollowerManagementPanelComponent } from '../follower-management-panel/follower-management-panel.component';
 import { Character } from '../game-state/character';
@@ -14,7 +14,14 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-pets-panel',
   templateUrl: './pets-panel.component.html',
   styleUrls: ['./pets-panel.component.less', '../app.component.less'],
-  imports: [NgClass, MatIcon, TitleCasePipe, CamelToTitlePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => NgClass),
+    forwardRef(() => MatIcon),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => CamelToTitlePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class PetsPanelComponent {
   character: Character;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character';
 import { InventoryService, ItemStack, instanceOfEquipment } from '../game-state/inventory.service';
@@ -15,7 +15,14 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, NgClass, CdkDropList, CdkDrag, TitleCasePipe, TooltipDirective],
+  imports: [
+    forwardRef(() => MatIcon),
+    forwardRef(() => NgClass),
+    forwardRef(() => CdkDropList),
+    forwardRef(() => CdkDrag),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];

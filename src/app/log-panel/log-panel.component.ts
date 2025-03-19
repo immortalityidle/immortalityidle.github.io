@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LogFilterPanelComponent } from '../log-filter-panel/log-filter-panel.component';
@@ -11,7 +11,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-log-panel',
   templateUrl: './log-panel.component.html',
   styleUrls: ['./log-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, NgClass, TooltipDirective],
+  imports: [forwardRef(() => MatIcon), forwardRef(() => NgClass), forwardRef(() => TooltipDirective)],
 })
 export class LogPanelComponent {
   constructor(public logService: LogService, public gameStateService: GameStateService, public dialog: MatDialog) {}

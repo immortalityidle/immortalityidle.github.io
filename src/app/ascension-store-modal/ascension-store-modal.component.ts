@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { StoreService } from '../game-state/store.service';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
@@ -12,7 +12,7 @@ import { BigNumberPipe } from '../app.component';
   selector: 'app-ascension-store-modal',
   templateUrl: './ascension-store-modal.component.html',
   styleUrls: ['./ascension-store-modal.component.less'],
-  imports: [DecimalPipe, BigNumberPipe],
+  imports: [forwardRef(() => DecimalPipe), forwardRef(() => BigNumberPipe)],
 })
 export class AscensionStoreModalComponent {
   constructor(

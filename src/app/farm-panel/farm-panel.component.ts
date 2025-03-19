@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
@@ -12,7 +12,13 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   selector: 'app-farm-panel',
   templateUrl: './farm-panel.component.html',
   styleUrls: ['./farm-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, PercentPipe, TitleCasePipe, BigNumberPipe, TooltipDirective],
+  imports: [
+    forwardRef(() => MatIcon),
+    forwardRef(() => PercentPipe),
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class FarmPanelComponent {
   constructor(
