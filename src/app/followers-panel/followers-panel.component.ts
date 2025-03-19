@@ -5,7 +5,7 @@ import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService, Follower } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { NgClass, NgFor, TitleCasePipe } from '@angular/common';
+import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '@webed/angular-tooltip';
 import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
@@ -14,7 +14,7 @@ import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
   selector: 'app-followers-panel',
   templateUrl: './followers-panel.component.html',
   styleUrls: ['./followers-panel.component.less', '../app.component.less'],
-  imports: [NgClass, MatIcon, TooltipDirective, NgFor, TitleCasePipe, CamelToTitlePipe, BigNumberPipe],
+  imports: [NgClass, MatIcon, TooltipDirective, TitleCasePipe, CamelToTitlePipe, BigNumberPipe],
 })
 export class FollowersPanelComponent {
   character: Character;

@@ -48,7 +48,7 @@
   <!-- draggable="true" (dragstart)="drag(activity, $event)" -->
   <div class="overflow">
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
-      <ng-container *ngFor="let activity of activityService.activities; let indexOfelement=index;">
+      @for (activity of activityService.activities; track activity; let indexOfelement = $index) {
         @if (!activity.portal && (activity.discovered || activity.unlocked)) {
           <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"
             [tabindex]="0"
@@ -98,7 +98,7 @@
             </div>
           </div>
         }
-      </ng-container>
+      }
     </div>
   </div>
 

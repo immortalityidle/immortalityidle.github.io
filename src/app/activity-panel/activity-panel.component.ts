@@ -17,14 +17,14 @@ import { LogService, LogTopic } from '../game-state/log.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { BattleService } from '../game-state/battle.service';
 import { TooltipDirective } from '@webed/angular-tooltip';
-import { NgFor, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-activity-panel',
   templateUrl: './activity-panel.component.html',
   styleUrls: ['./activity-panel.component.less', '../app.component.less'],
-  imports: [TooltipDirective, CdkDropList, NgFor, CdkDrag, NgClass, MatIcon, BigNumberPipe],
+  imports: [TooltipDirective, CdkDropList, CdkDrag, NgClass, MatIcon, BigNumberPipe],
 })
 export class ActivityPanelComponent {
   camelToTitle = new CamelToTitlePipe();

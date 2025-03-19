@@ -11,14 +11,14 @@ import { BattleService } from '../game-state/battle.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '@webed/angular-tooltip';
-import { NgClass, NgFor, DecimalPipe } from '@angular/common';
+import { NgClass, DecimalPipe } from '@angular/common';
 import { BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-time-panel',
   templateUrl: './time-panel.component.html',
   styleUrls: ['./time-panel.component.less', '../app.component.less'],
-  imports: [MatIcon, TooltipDirective, NgClass, CdkDropList, NgFor, CdkDrag, DecimalPipe, BigNumberPipe],
+  imports: [MatIcon, TooltipDirective, NgClass, CdkDropList, CdkDrag, DecimalPipe, BigNumberPipe],
 })
 export class TimePanelComponent {
   unlockFastSpeed = false;
