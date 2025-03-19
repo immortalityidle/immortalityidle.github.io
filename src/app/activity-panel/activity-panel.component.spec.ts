@@ -8,7 +8,7 @@ describe('ActivityPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ActivityPanelComponent],
+      imports: [ActivityPanelComponent],
     }).compileComponents();
   });
 

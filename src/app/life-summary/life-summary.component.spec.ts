@@ -8,7 +8,7 @@ describe('LifeSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LifeSummaryComponent],
+      imports: [LifeSummaryComponent],
     }).compileComponents();
   });
 

@@ -11,11 +11,14 @@ import { StatisticsService } from '../game-state/statistics.service';
 import { StoreService } from '../game-state/store.service';
 import { ActivityType } from '../game-state/activity';
 import { FarmService } from '../game-state/farm.service';
+import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-statistics-panel',
   templateUrl: './statistics-panel.component.html',
   styleUrls: ['./statistics-panel.component.less'],
+  imports: [DecimalPipe, KeyValuePipe, CamelToTitlePipe, BigNumberPipe],
 })
 export class StatisticsPanelComponent {
   constructor(

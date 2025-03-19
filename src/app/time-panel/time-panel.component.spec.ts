@@ -8,7 +8,7 @@ describe('TimePanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TimePanelComponent],
+      imports: [TimePanelComponent],
     }).compileComponents();
   });
 

@@ -11,7 +11,7 @@
 </h3>
 <div class="followersContainer">
   <div class="followerPanel">
-    <ng-container *ngFor="let follower of followerService.pets">
+    @for (follower of followerService.pets; track follower) {
       <div class="attributeLine">
                 <span class="followerName" tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}.<br>{{followerService.jobs[follower.job].description}}<br>
                 {{follower.name}} has followed you for {{follower.age / 365 | bigNumber}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | bigNumber}} more years.<br>Daily cost: {{follower.cost | bigNumber}}">
@@ -27,6 +27,6 @@
           cancel
         </mat-icon>
       </div>
-    </ng-container>
+    }
   </div>
 </div>

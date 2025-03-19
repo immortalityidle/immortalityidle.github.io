@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-save-modal',
   templateUrl: './save-modal.component.html',
   styleUrls: ['./save-modal.component.less'],
+  imports: [NgClass],
 })
 export class SaveModalComponent {
   error = '';

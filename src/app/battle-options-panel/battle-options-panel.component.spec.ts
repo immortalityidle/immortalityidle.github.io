@@ -8,7 +8,7 @@ describe('BattleOptionsPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BattleOptionsPanelComponent],
+      imports: [BattleOptionsPanelComponent],
     }).compileComponents();
   });
 

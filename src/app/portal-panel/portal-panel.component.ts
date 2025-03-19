@@ -9,11 +9,15 @@ import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { NgClass } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-portal-panel',
   templateUrl: './portal-panel.component.html',
   styleUrls: ['./portal-panel.component.less', '../app.component.less'],
+  imports: [TooltipDirective, NgClass, MatIcon],
 })
 export class PortalPanelComponent {
   character: Character;

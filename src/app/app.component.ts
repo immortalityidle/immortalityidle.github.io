@@ -17,14 +17,36 @@ import { ChangelogPanelComponent } from './changelog-panel/changelog-panel.compo
 import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.component';
 import { HellService } from './game-state/hell.service';
 import { StatisticsService } from './game-state/statistics.service';
-import { ViewportScroller, DOCUMENT } from '@angular/common';
+import { ViewportScroller, DOCUMENT, NgClass } from '@angular/common';
 import { FollowersService } from './game-state/followers.service';
 import { HomeService } from './game-state/home.service';
 import { InventoryService } from './game-state/inventory.service';
-import { KtdGridComponent, KtdGridLayout, KtdGridLayoutItem, ktdTrackById } from '@katoid/angular-grid-layout';
+import {
+  KtdGridComponent,
+  KtdGridLayout,
+  KtdGridLayoutItem,
+  ktdTrackById,
+  KtdGridItemComponent,
+  KtdGridDragHandle,
+} from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FarmService } from './game-state/farm.service';
+import { MatIcon } from '@angular/material/icon';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { TimePanelComponent } from './time-panel/time-panel.component';
+import { AttributesPanelComponent } from './attributes-panel/attributes-panel.component';
+import { HealthPanelComponent } from './health-panel/health-panel.component';
+import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
+import { BattlePanelComponent } from './battle-panel/battle-panel.component';
+import { EquipmentPanelComponent } from './equipment-panel/equipment-panel.component';
+import { HomePanelComponent } from './home-panel/home-panel.component';
+import { InventoryPanelComponent } from './inventory-panel/inventory-panel.component';
+import { LogPanelComponent } from './log-panel/log-panel.component';
+import { PortalPanelComponent } from './portal-panel/portal-panel.component';
+import { FollowersPanelComponent } from './followers-panel/followers-panel.component';
+import { PetsPanelComponent } from './pets-panel/pets-panel.component';
+import { FarmPanelComponent } from './farm-panel/farm-panel.component';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -95,6 +117,27 @@ export class BigNumberPipe implements PipeTransform {
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],
+  imports: [
+    NgClass,
+    MatIcon,
+    TooltipDirective,
+    KtdGridComponent,
+    KtdGridItemComponent,
+    KtdGridDragHandle,
+    TimePanelComponent,
+    AttributesPanelComponent,
+    HealthPanelComponent,
+    ActivityPanelComponent,
+    BattlePanelComponent,
+    EquipmentPanelComponent,
+    HomePanelComponent,
+    InventoryPanelComponent,
+    LogPanelComponent,
+    PortalPanelComponent,
+    FollowersPanelComponent,
+    PetsPanelComponent,
+    FarmPanelComponent,
+  ],
 })
 export class AppComponent implements OnInit, OnDestroy {
   // @ts-expect-error: no initializer

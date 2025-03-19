@@ -8,7 +8,7 @@ describe('HealthPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HealthPanelComponent],
+      imports: [HealthPanelComponent],
     }).compileComponents();
   });
 

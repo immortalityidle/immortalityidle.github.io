@@ -8,7 +8,7 @@ describe('InventoryPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InventoryPanelComponent],
+      imports: [InventoryPanelComponent],
     }).compileComponents();
   });
 

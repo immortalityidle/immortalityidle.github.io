@@ -1,11 +1,16 @@
 import { Component, Inject } from '@angular/core';
 import { FollowersService, Follower } from '../game-state/followers.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { FormsModule } from '@angular/forms';
+import { KeyValuePipe } from '@angular/common';
+import { CamelToTitlePipe } from '../app.component';
 
 @Component({
   selector: 'app-follower-management-panel',
   templateUrl: './follower-management-panel.component.html',
   styleUrls: ['./follower-management-panel.component.less', '../app.component.less'],
+  imports: [TooltipDirective, FormsModule, KeyValuePipe, CamelToTitlePipe],
 })
 export class FollowerManagementPanelComponent {
   changeAll = 0;

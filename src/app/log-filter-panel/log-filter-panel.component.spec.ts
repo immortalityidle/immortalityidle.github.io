@@ -8,7 +8,7 @@ describe('LogFilterPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LogFilterPanelComponent],
+      imports: [LogFilterPanelComponent],
     }).compileComponents();
   });
 

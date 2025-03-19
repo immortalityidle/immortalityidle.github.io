@@ -8,7 +8,7 @@ describe('FurnitureStoreModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FurnitureStoreModalComponent],
+      imports: [FurnitureStoreModalComponent],
     }).compileComponents();
   });
 

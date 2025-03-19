@@ -3,12 +3,17 @@ import { Character, EquipmentPosition } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { NgClass, TitleCasePipe } from '@angular/common';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-equipment-panel',
   templateUrl: './equipment-panel.component.html',
   styleUrls: ['./equipment-panel.component.less', '../app.component.less'],
+  imports: [CdkDropList, CdkDrag, NgClass, TooltipDirective, MatIcon, TitleCasePipe, BigNumberPipe],
 })
 export class EquipmentPanelComponent {
   character: Character;

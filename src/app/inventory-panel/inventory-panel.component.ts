@@ -5,13 +5,17 @@ import { InventoryService, ItemStack, instanceOfEquipment } from '../game-state/
 import { HellService } from '../game-state/hell.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
+import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { HomeService } from '../game-state/home.service';
+import { MatIcon } from '@angular/material/icon';
+import { TooltipDirective } from '@webed/angular-tooltip';
+import { NgClass, TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
+  imports: [MatIcon, TooltipDirective, NgClass, CdkDropList, CdkDrag, TitleCasePipe],
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];

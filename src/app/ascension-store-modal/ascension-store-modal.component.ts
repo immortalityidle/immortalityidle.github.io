@@ -5,11 +5,14 @@ import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
+import { DecimalPipe } from '@angular/common';
+import { BigNumberPipe } from '../app.component';
 
 @Component({
   selector: 'app-ascension-store-modal',
   templateUrl: './ascension-store-modal.component.html',
   styleUrls: ['./ascension-store-modal.component.less'],
+  imports: [DecimalPipe, BigNumberPipe],
 })
 export class AscensionStoreModalComponent {
   constructor(
