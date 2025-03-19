@@ -110,7 +110,6 @@ export class HomeService {
   smoothFarming = false;
   keepHome = false;
   bedroomFurniture: (Item | null)[] = [null, null, null, null, null, null, null, null, null];
-  fengshuiScore = 0;
   openBedroomFurnitureSlots = 0;
   seeFurnitureEffects = false;
   workstations: Workstation[] = [];
@@ -701,25 +700,10 @@ export class HomeService {
     },
   ];
 
-  /*
-    cauldron: {
-      id: 'cauldron',
-      name: 'cauldron',
-      type: 'furniture',
-      slot: 'workbench',
-      value: 1000000,
-      description: 'A cauldron for practicing alchemy.',
-      useConsumes: false,
-      use: () => {
-        this.characterService.characterState.increaseAttribute('waterLore', 0.01);
-      },
-    },
-*/
-
   //Feng Shui Bagua map:
   baguaMap = [
     //0: Top Left: Wealth, Wood, Purple/Red/Green
-    ['safe', 'wood', 'purple', 'red', 'green'],
+    ['books', 'wood', 'purple', 'red', 'green'],
     //1: Top Center: Fame, Fire, Red/Orange
     ['bed', 'trophy', 'fire', 'red', 'orange'],
     //2: Top Right: Love/Relationships, Earth, Pink/Red
@@ -731,11 +715,11 @@ export class HomeService {
     //5: Center Right: Children/Creativity, Metal, White/Pastels
     ['portrait', 'metal', 'white', 'pastel'],
     //6: Bottom Left: Knowledge, Water/Earth, Blue/Black/Green
-    ['book', 'water', 'earth', 'blue', 'black', 'green'],
+    ['books', 'spiritual', 'water', 'earth', 'blue', 'black', 'green'],
     //7: Bottom Center: Career, Water, Black
     ['water', 'black'],
     //8: Bottom Left: Helpful People/Travel, Metal, Gray/White/Black
-    ['metal', 'gray', 'white', 'black'],
+    ['books', 'metal', 'gray', 'white', 'black'],
   ];
 
   homeValue!: HomeType;
@@ -988,10 +972,6 @@ export class HomeService {
       this.recalculateFengShui();
       this.ownedFurniture = [];
     }
-
-    if (this.characterService.characterState.bloodlineRank < 6) {
-      // TODO: move this to achievements to get keepFurniture
-    }
     if (this.characterService.characterState.bloodlineRank < 7) {
       this.upgrading = false;
       this.houseBuildingProgress = 1;
@@ -1070,26 +1050,27 @@ export class HomeService {
 
   recalculateFengShui() {
     this.openBedroomFurnitureSlots = this.home.maxFurniture;
-    this.fengshuiScore = 0;
+    let fengshuiScore = 0;
     for (let i = 0; i < this.bedroomFurniture.length; i++) {
       const furnitureItem = this.bedroomFurniture[i];
       if (furnitureItem) {
         this.openBedroomFurnitureSlots--;
         if (this.baguaMap[i].includes(furnitureItem.subtype || '')) {
-          this.fengshuiScore += 1;
+          fengshuiScore += 1;
         }
         if (this.baguaMap[i].includes(furnitureItem.color || '')) {
-          this.fengshuiScore += 1;
+          fengshuiScore += 1;
         }
         if (furnitureItem.elements) {
           for (const element of furnitureItem.elements) {
             if (this.baguaMap[i].includes(element)) {
-              this.fengshuiScore += 1;
+              fengshuiScore += 1;
             }
           }
         }
       }
     }
+    this.characterService.characterState.fengshuiScore = fengshuiScore;
   }
 
   removeWorkstation(workstation: Workstation) {

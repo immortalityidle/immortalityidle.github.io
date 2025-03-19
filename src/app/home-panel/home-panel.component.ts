@@ -82,6 +82,9 @@ export class HomePanelComponent {
     tooltip = item.description;
     if (this.homeService.seeFurnitureEffects) {
       tooltip += '<br>Feng Shui Properties:';
+      if (item.subtype) {
+        tooltip += '<br>' + this.titleCasePipe.transform(item.subtype);
+      }
       if (item.color) {
         tooltip += '<br>Color: ' + this.titleCasePipe.transform(item.color);
       }

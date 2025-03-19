@@ -235,49 +235,227 @@ baguaMap = [
         this.characterService.characterState.checkOverage();
       },
     },
-  ];
-  /*
-    bookshelf: {
+    {
       id: 'bookshelf',
       name: 'bookshelf',
       type: 'furniture',
-      slot: 'workbench',
+      subtype: 'books',
       value: 1000000,
       description: 'An bookshelf to read and expand your mind.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('intelligence', 0.1);
+        this.characterService.characterState.increaseAttribute('intelligence', 0.01);
       },
     },
-    prayerShrine: {
+    {
       id: 'prayerShrine',
       name: 'prayer shrine',
       type: 'furniture',
-      slot: 'workbench',
+      subtype: 'spiritual',
       value: 1e7,
       description:
         "A quiet shrine for contemplative prayer.<br>You won't be able to use this unless you have some innate spirituality.",
       useConsumes: false,
       use: () => {
         if (this.characterService.characterState.attributes.spirituality.value > 0) {
-          this.characterService.characterState.increaseAttribute('spirituality', 0.01);
+          this.characterService.characterState.increaseAttribute('spirituality', 0.001);
         }
       },
     },
-    dogKennel: {
+    {
       id: 'dogKennel',
       name: 'dog kennel',
       type: 'furniture',
-      slot: 'workbench',
+      subtype: 'animal',
       value: 1000000,
-      description: 'A kennel for training hunting dogs.',
+      description: 'A kennel that comes with a faithful hunting dog.',
       useConsumes: false,
       use: () => {
         this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
       },
     },
-
-    */
+    {
+      id: 'wingChunDummy',
+      name: 'wing-chun dummy',
+      type: 'furniture',
+      subtype: 'fitness',
+      value: 1000000,
+      description: 'A training dummy for practicing martial arts.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.characterState.increaseAttribute('strength', 0.001);
+        this.characterService.characterState.increaseAttribute('speed', 0.001);
+      },
+    },
+    {
+      id: 'ancestorPortraitPurple',
+      name: 'purple ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'purple',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a purple robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitGreen',
+      name: 'green ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'green',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a green robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitRed',
+      name: 'red ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'red',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a red robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitOrange',
+      name: 'orange ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'orange',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing an orange robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitPink',
+      name: 'pink ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'pink',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a pink robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitBlue',
+      name: 'blue ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'blue',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a blue robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitYellow',
+      name: 'yellow ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'yellow',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a yellow robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitBrown',
+      name: 'brown ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'brown',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a brown robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitWhite',
+      name: 'white ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'white',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a white robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitPastel',
+      name: 'pastel ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'pastel',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a pastel robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitBlack',
+      name: 'black ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'black',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a black robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ancestorPortraitGray',
+      name: 'gray ancestor portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'gray',
+      value: 1e7,
+      description: 'A fine portrait of one of your ancestors wearing a gray robe.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'trophy',
+      name: 'trophy',
+      type: 'furniture',
+      subtype: 'trophy',
+      value: 1e6,
+      description: 'A hunting trophy from a monster you fought in a previous life.',
+      useConsumes: false,
+      use: () => {
+        // just decorative
+      },
+    },
+  ];
 
   items: { [key: string]: Item } = {
     rice: {

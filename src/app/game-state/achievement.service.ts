@@ -583,7 +583,7 @@ export class AchievementService {
         'You set up some great furniture and taught your descendants to leave it alone for your next incarnation.',
       hint: 'Immortals have discerning taste in furnishings.',
       check: () => {
-        return this.homeService.fengshuiScore >= 10;
+        return this.characterService.characterState.fengshuiScore >= 10;
       },
       effect: () => {
         this.homeService.seeFurnitureEffects = true;
@@ -596,7 +596,7 @@ export class AchievementService {
         'Your bloodline is so powerful that even the furniture in your bedroom will be preserved untouched until your next reincarnation.',
       hint: 'Strong family bonds mean more heirlooms.',
       check: () => {
-        return this.characterService.characterState.bloodlineRank > 6;
+        return this.characterService.characterState.bloodlineRank >= 6;
       },
       effect: () => {
         this.homeService.keepFurniture = true;

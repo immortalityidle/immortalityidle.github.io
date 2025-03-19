@@ -81,6 +81,11 @@ export class StoreService {
       // not enough money, bail out
       return;
     }
+    // if the item is already in the bedroom, remove it from its old slot
+    const currentIndex = this.homeService.bedroomFurniture.findIndex(existingItem => item.id === existingItem?.id);
+    if (currentIndex >= 0) {
+      this.homeService.setFurniture(null, currentIndex);
+    }
     this.homeService.setFurniture(item, this.furnitureIndex);
   }
 

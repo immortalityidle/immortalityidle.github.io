@@ -20,7 +20,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { ManualStoreModalComponent } from './manual-store-modal/manual-store-modal.component';
 import { StoreModalComponent } from './store-modal/store-modal.component';
@@ -100,12 +99,7 @@ const materialModules = [MatDialogModule, MatIconModule, MatTabsModule];
     ...materialModules,
   ],
   exports: [...materialModules],
-  providers: [
-    TitleCasePipe,
-    BigNumberPipe,
-    MatSnackBar,
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { disableTooltipInteractivity: true, showDelay: 500 } },
-  ],
+  providers: [TitleCasePipe, BigNumberPipe, MatSnackBar],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

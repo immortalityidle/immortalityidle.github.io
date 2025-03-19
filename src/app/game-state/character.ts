@@ -193,6 +193,7 @@ export class Character {
   attributeUpdates: AttributeUpdates;
   moneyUpdates = 0;
   statusToFlash: string[] = [];
+  fengshuiScore = 0;
 
   attributes: AttributeObject = {
     strength: {
@@ -520,6 +521,7 @@ export class Character {
     if (this.bonusHealth) {
       bonusFactor = 5;
     }
+    bonusFactor += this.fengshuiScore / 20;
     this.status.health.max =
       (100 +
         this.healthBonusFood +
@@ -657,7 +659,8 @@ export class Character {
   }
 
   updateMoney(amount: number) {
-    this.money += amount;
+    const multiplier = 1 + this.fengshuiScore / 100;
+    this.money += amount * multiplier;
     if (this.showUpdateAnimations) {
       this.moneyUpdates += amount;
     }

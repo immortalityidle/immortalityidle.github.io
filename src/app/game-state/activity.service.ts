@@ -2938,10 +2938,13 @@ export class ActivityService {
         () => {
           this.characterService.characterState.status.stamina.value -= 50;
           this.characterService.characterState.increaseAttribute('speed', 0.1);
-          //TODO: handle dog kennel
+          let counterSatisfied = 10;
+          if (this.homeService.bedroomFurniture.find(item => item?.id === 'dogKennel')) {
+            counterSatisfied = 5;
+          }
           this.characterService.characterState.increaseAttribute('animalHandling', 0.1);
           this.huntingCounter++;
-          if (this.huntingCounter > 10) {
+          if (this.huntingCounter > counterSatisfied) {
             this.huntingCounter = 0;
             this.inventoryService.addItem(this.itemRepoService.items['meat']);
             this.inventoryService.addItem(
