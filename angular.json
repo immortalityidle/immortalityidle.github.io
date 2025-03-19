@@ -18,11 +18,9 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": {
-              "base": "docs"
-            },
+            "outputPath": "docs",
             "index": "src/index.html",
             "polyfills": [
               "src/polyfills.ts"
@@ -37,7 +35,7 @@
               "src/styles.less"
             ],
             "scripts": [],
-            "browser": "src/main.ts"
+            "main": "src/main.ts"
           },
           "configurations": {
             "production": {
