@@ -10,6 +10,7 @@ import { CharacterService } from '../game-state/character.service';
   selector: 'app-store-modal',
   templateUrl: './store-modal.component.html',
   styleUrls: ['./store-modal.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class StoreModalComponent {
   buyDisabled = true;

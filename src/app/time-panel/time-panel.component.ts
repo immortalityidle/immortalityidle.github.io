@@ -14,6 +14,7 @@ import { TextPanelComponent } from '../text-panel/text-panel.component';
   selector: 'app-time-panel',
   templateUrl: './time-panel.component.html',
   styleUrls: ['./time-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class TimePanelComponent {
   unlockFastSpeed = false;

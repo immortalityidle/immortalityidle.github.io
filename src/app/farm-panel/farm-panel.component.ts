@@ -8,6 +8,7 @@ import { FarmService } from '../game-state/farm.service';
   selector: 'app-farm-panel',
   templateUrl: './farm-panel.component.html',
   styleUrls: ['./farm-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class FarmPanelComponent {
   constructor(

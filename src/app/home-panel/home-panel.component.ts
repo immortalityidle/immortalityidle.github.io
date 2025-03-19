@@ -18,6 +18,7 @@ import { WorkstationSelectionModalComponent } from '../workstation-selection-mod
   selector: 'app-home-panel',
   templateUrl: './home-panel.component.html',
   styleUrls: ['./home-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class HomePanelComponent {
   character: Character;

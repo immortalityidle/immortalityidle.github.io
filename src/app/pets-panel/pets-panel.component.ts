@@ -10,6 +10,7 @@ import { GameStateService } from '../game-state/game-state.service';
   selector: 'app-pets-panel',
   templateUrl: './pets-panel.component.html',
   styleUrls: ['./pets-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class PetsPanelComponent {
   character: Character;

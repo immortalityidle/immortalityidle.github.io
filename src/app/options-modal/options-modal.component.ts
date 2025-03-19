@@ -16,6 +16,7 @@ import { FarmService } from '../game-state/farm.service';
   selector: 'app-options-modal',
   templateUrl: './options-modal.component.html',
   styleUrls: ['./options-modal.component.less'],
+  standalone: false,
 })
 export class OptionsModalComponent {
   constructor(

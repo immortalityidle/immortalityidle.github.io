@@ -14,6 +14,7 @@ import { MainLoopService } from '../game-state/main-loop.service';
   selector: 'app-portal-panel',
   templateUrl: './portal-panel.component.html',
   styleUrls: ['./portal-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class PortalPanelComponent {
   character: Character;

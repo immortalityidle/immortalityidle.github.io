@@ -8,6 +8,7 @@ import { CharacterService } from '../game-state/character.service';
   selector: 'app-workstation-selection-modal',
   templateUrl: './workstation-selection-modal.component.html',
   styleUrls: ['./workstation-selection-modal.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class WorkstationSelectionModalComponent {
   constructor(

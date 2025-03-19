@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   template: 'passed in {{ data.name }}',
   templateUrl: './text-panel.component.html',
   styleUrls: ['./text-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class TextPanelComponent {
   titleText = '';

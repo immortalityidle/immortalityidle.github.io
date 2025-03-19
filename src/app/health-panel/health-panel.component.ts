@@ -20,6 +20,7 @@ import { HomeService } from '../game-state/home.service';
       ]),
     ]),
   ],
+  standalone: false,
 })
 export class HealthPanelComponent {
   yinColor = '#000000';

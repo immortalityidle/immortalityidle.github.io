@@ -5,6 +5,7 @@ import { ActivityService } from '../game-state/activity.service';
   selector: 'app-time-options-panel',
   templateUrl: './time-options-panel.component.html',
   styleUrls: ['./time-options-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class TimeOptionsPanelComponent {
   constructor(public activityService: ActivityService) {}

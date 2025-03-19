@@ -10,6 +10,7 @@ import { GameStateService } from '../game-state/game-state.service';
   selector: 'app-followers-panel',
   templateUrl: './followers-panel.component.html',
   styleUrls: ['./followers-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class FollowersPanelComponent {
   character: Character;

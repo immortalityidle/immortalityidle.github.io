@@ -25,6 +25,7 @@ export type AttributeUpdatesArrays = {
       ]),
     ]),
   ],
+  standalone: false,
 })
 export class AttributesPanelComponent {
   character: Character;

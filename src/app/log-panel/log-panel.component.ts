@@ -8,6 +8,7 @@ import { GameStateService } from '../game-state/game-state.service';
   selector: 'app-log-panel',
   templateUrl: './log-panel.component.html',
   styleUrls: ['./log-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class LogPanelComponent {
   constructor(public logService: LogService, public gameStateService: GameStateService, public dialog: MatDialog) {}

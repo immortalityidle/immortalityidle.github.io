@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   selector: 'app-offline-modal',
   templateUrl: './offline-modal.component.html',
   styleUrls: ['./offline-modal.component.less'],
+  standalone: false,
 })
 export class OfflineModalComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: { earnedTicks: number }) {}

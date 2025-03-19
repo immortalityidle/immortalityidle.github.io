@@ -16,6 +16,7 @@ import { FarmService } from '../game-state/farm.service';
   selector: 'app-statistics-panel',
   templateUrl: './statistics-panel.component.html',
   styleUrls: ['./statistics-panel.component.less'],
+  standalone: false,
 })
 export class StatisticsPanelComponent {
   constructor(

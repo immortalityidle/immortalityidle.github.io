@@ -7,6 +7,7 @@ import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
   selector: 'app-impossible-task-panel',
   templateUrl: './impossible-task-panel.component.html',
   styleUrls: ['./impossible-task-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class ImpossibleTaskPanelComponent {
   Math: Math;

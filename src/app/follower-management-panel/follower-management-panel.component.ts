@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   selector: 'app-follower-management-panel',
   templateUrl: './follower-management-panel.component.html',
   styleUrls: ['./follower-management-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class FollowerManagementPanelComponent {
   changeAll = 0;

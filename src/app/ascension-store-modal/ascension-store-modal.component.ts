@@ -10,6 +10,7 @@ import { GameStateService } from '../game-state/game-state.service';
   selector: 'app-ascension-store-modal',
   templateUrl: './ascension-store-modal.component.html',
   styleUrls: ['./ascension-store-modal.component.less'],
+  standalone: false,
 })
 export class AscensionStoreModalComponent {
   constructor(

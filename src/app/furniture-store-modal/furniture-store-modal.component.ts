@@ -10,6 +10,7 @@ import { GameStateService } from '../game-state/game-state.service';
   selector: 'app-furniture-store-modal',
   templateUrl: './furniture-store-modal.component.html',
   styleUrls: ['./furniture-store-modal.component.less'],
+  standalone: false,
 })
 export class FurnitureStoreModalComponent {
   buyDisabled = true;

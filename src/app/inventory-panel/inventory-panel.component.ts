@@ -12,6 +12,7 @@ import { HomeService } from '../game-state/home.service';
   selector: 'app-inventory-panel',
   templateUrl: './inventory-panel.component.html',
   styleUrls: ['./inventory-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class InventoryPanelComponent {
   equipmentSlots: string[];

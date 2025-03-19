@@ -9,6 +9,7 @@ import { CdkDragMove, CdkDragRelease } from '@angular/cdk/drag-drop';
   selector: 'app-equipment-panel',
   templateUrl: './equipment-panel.component.html',
   styleUrls: ['./equipment-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class EquipmentPanelComponent {
   character: Character;

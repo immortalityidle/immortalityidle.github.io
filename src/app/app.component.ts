@@ -26,7 +26,10 @@ import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FarmService } from './game-state/farm.service';
 
-@Pipe({ name: 'floor' })
+@Pipe({
+  name: 'floor',
+  standalone: false,
+})
 export class FloorPipe implements PipeTransform {
   /**
    *
@@ -38,7 +41,10 @@ export class FloorPipe implements PipeTransform {
   }
 }
 
-@Pipe({ name: 'camelToTitle' })
+@Pipe({
+  name: 'camelToTitle',
+  standalone: false,
+})
 export class CamelToTitlePipe implements PipeTransform {
   /**
    *
@@ -52,7 +58,10 @@ export class CamelToTitlePipe implements PipeTransform {
   }
 }
 
-@Pipe({ name: 'bigNumber' })
+@Pipe({
+  name: 'bigNumber',
+  standalone: false,
+})
 export class BigNumberPipe implements PipeTransform {
   constructor(public mainLoopService: MainLoopService) {}
 
@@ -95,6 +104,7 @@ export class BigNumberPipe implements PipeTransform {
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],
+  standalone: false,
 })
 export class AppComponent implements OnInit, OnDestroy {
   // @ts-expect-error: no initializer

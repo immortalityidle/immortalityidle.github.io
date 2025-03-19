@@ -21,6 +21,7 @@ import { BattleService } from '../game-state/battle.service';
   selector: 'app-activity-panel',
   templateUrl: './activity-panel.component.html',
   styleUrls: ['./activity-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class ActivityPanelComponent {
   camelToTitle = new CamelToTitlePipe();

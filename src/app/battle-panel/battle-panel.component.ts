@@ -10,6 +10,7 @@ import { MainLoopService } from '../game-state/main-loop.service';
   selector: 'app-battle-panel',
   templateUrl: './battle-panel.component.html',
   styleUrls: ['./battle-panel.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class BattlePanelComponent {
   Math: Math;

@@ -12,6 +12,7 @@ import { GameStateService } from '../game-state/game-state.service';
   selector: 'app-store-modal',
   templateUrl: './manual-store-modal.component.html',
   styleUrls: ['./manual-store-modal.component.less', '../app.component.less'],
+  standalone: false,
 })
 export class ManualStoreModalComponent {
   character: Character;
