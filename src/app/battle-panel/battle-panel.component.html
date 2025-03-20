@@ -12,11 +12,14 @@
   <div>
     <div class="columnDiv">
       <div class="splitDiv">
-        <div class="headerDiv">Your Techniques</div>
-        <hr>
+        <div class="headerDiv">
+          <span>Your Techniques</span>
+        </div>
         @for (technique of battleService.techniques; track technique.name + technique.ticks) {
-          <div>
-            {{technique.name}}
+          <div class="techniqueLine">
+            <div class="techniqueName">
+              <span>{{technique.name}}</span>
+            </div>
             <div class="technique-bar"
                 [attr.value]="Math.floor(technique.ticks) | bigNumber"
                 [attr.max]="Math.floor(technique.ticksRequired) | bigNumber">
@@ -31,8 +34,9 @@
 
       </div>
       <div class="splitDiv">
-        <div class="headerDiv">Your Enemies</div>
-        <hr>
+        <div class="headerDiv">
+          <span>Your Enemies</span>
+        </div>
         @for (enemy of battleService.enemies; track enemy.name) {
           <div>
               @if (battleService.currentEnemy !== enemy) {
@@ -60,9 +64,9 @@
                 </div>
               </div>
               @for (technique of enemy.techniques; track technique.name + technique.ticks) {
-                <div>
-                  <div>
-                    {{technique.name}}
+                <div class="techniqueLine">
+                  <div class="techniqueName">
+                    <span>{{technique.name}}</span>
                   </div>
                   <div class="technique-bar"
                       [attr.value]="Math.floor(technique.ticks) | bigNumber"

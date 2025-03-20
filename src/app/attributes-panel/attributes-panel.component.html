@@ -2,7 +2,7 @@
   <div class="attributesTable">
     <div class="attributeColumn">
       <div class='attributeLine'>
-        Attribute
+        <span>Attribute</span>
       </div>
       @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
         @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
@@ -17,7 +17,7 @@
     </div>
     <div class="attributeColumn">
       <div class='attributeLine'>
-        Aptitude &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span>Aptitude &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       </div>
       @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
         @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
@@ -31,7 +31,7 @@
     </div>
     <div class="attributeColumn growColumn">
       <div class='attributeLine'>
-        Value
+        <span>Value</span>
       </div>
       @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
         @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {

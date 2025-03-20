@@ -54,7 +54,6 @@ export class HealthPanelComponent {
     this.Math = Math;
     this.moneyUpdates = [];
     mainLoopService.longTickSubject.subscribe(() => {
-      this.updateYinYang();
       this.flashHealth = this.characterService.characterState.statusToFlash.includes('health');
       this.flashStamina = this.characterService.characterState.statusToFlash.includes('stamina');
       this.flashQi = this.characterService.characterState.statusToFlash.includes('qi');
@@ -69,6 +68,7 @@ export class HealthPanelComponent {
         this.moneyUpdates.push(this.characterService.characterState.moneyUpdates);
         this.characterService.characterState.moneyUpdates = 0;
       }
+      this.updateYinYang();
     });
   }
 
