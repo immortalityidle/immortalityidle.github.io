@@ -91,11 +91,11 @@ export class LogService {
   }
 
   log(topic: LogTopic, message: string): void {
-    this.fullLog(topic, LogType.Standard, message);
+    setTimeout(() => this.fullLog(topic, LogType.Standard, message));
   }
 
   injury(topic: LogTopic, message: string): void {
-    this.fullLog(topic, LogType.Injury, message);
+    setTimeout(() => this.fullLog(topic, LogType.Injury, message));
   }
 
   fullLog(topic: LogTopic, type: LogType, message: string): void {

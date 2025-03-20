@@ -38,6 +38,7 @@ export class MainLoopService {
   inventoryTickSubject = new Subject<number>();
   activityTickSubject = new Subject<number>();
   battleTickSubject = new Subject<number>();
+  reincarnateSubject = new Subject<number>();
 
   /**
    * Sends every 25ms if in foreground or every second if in background.
@@ -78,6 +79,7 @@ export class MainLoopService {
   timeUnlocked = false;
   importing = false;
   gameLoading = true;
+  reincarnating = false;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
@@ -343,6 +345,10 @@ export class MainLoopService {
       this.inventoryTickSubject.next(1);
       this.activityTickSubject.next(1);
       this.tickSubject.next(1); // ticks autobuyer, character, followers, and hell
+      if (this.reincarnating) {
+        this.reincarnating = false;
+        this.reincarnateSubject.next(1);
+      }
     }
   }
 }

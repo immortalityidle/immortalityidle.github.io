@@ -1,7 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from './character.service';
 import { InventoryService, Item, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
@@ -143,7 +142,7 @@ export class HomeService {
       landRequired: 1,
       maxInventory: 12,
       upgradeToTooltip:
-        'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels and take up 1 land.<br>The new home will restore 1 stamina and a bit of health each night.',
+        'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels and take up 1 land.<br>Land can be purchasd in the Regular People Shop.<br>The new home will restore 1 stamina and a bit of health each night.',
       consequence: () => {
         this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 1;
@@ -163,7 +162,7 @@ export class HomeService {
       landRequired: 5,
       maxInventory: 15,
       upgradeToTooltip:
-        'Get a better home and stop the troublemakers from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls.',
+        'Get a better home and stop the ruffians from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls.',
       consequence: () => {
         this.characterService.characterState.status.health.value += 0.5;
         this.characterService.characterState.status.stamina.value += 3;
@@ -738,7 +737,6 @@ export class HomeService {
     private inventoryService: InventoryService,
     private logService: LogService,
     private mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
     private itemRepoService: ItemRepoService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -771,12 +769,12 @@ export class HomeService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
       if (this.keepHome) {
         this.logService.log(
           LogTopic.EVENT,
-          'You reincarnate as one of your own descendants and your family recognizes you as the reborn heir as you age.'
+          'You reincarnate as one of your own descendants, and your family recognizes you as the reborn heir to the family home as you age.'
         );
       } else if (this.homeValue === HomeType.SquatterTent && this.grandfatherTent) {
         this.logService.log(
@@ -785,6 +783,15 @@ export class HomeService {
         );
         this.setCurrentHome(this.nextHome);
       }
+      if (this.characterService.fatherGift && this.characterService.characterState.bloodlineRank < 6) {
+        // Skip this at higher bloodline ranks, it's not thematic.
+        this.logService.log(
+          LogTopic.EVENT,
+          'Your father puts some coins in your purse as you begin your grand adventure.'
+        );
+        this.characterService.characterState.updateMoney(2000);
+      }
+
       this.characterService.characterState.updateMoney(this.home.costPerDay * 30);
     });
   }
@@ -978,8 +985,10 @@ export class HomeService {
     }
     this.inventoryService.changeMaxItems(this.home.maxInventory);
     this.nextHomeCostReduction = 0;
+
+    // reduce land price to account for lost land
+    this.landPrice -= 10 * (this.land - 1);
     this.land = 0;
-    this.landPrice = 100;
   }
 
   setCurrentHome(home: Home) {
@@ -1230,8 +1239,6 @@ export class HomeService {
       useConsumes: true,
     });
   }
-
-  // TODO: pill mold/box/pouch and empowerment pills
 
   createEquipment(workstation: Workstation) {
     if (workstation.inputs.length < 1) {

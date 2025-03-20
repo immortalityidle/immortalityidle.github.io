@@ -9,7 +9,6 @@ import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { Follower, FollowersService } from './followers.service';
 import { HellLevel, HellService } from './hell.service';
@@ -111,7 +110,6 @@ export class ActivityService {
     private inventoryService: InventoryService,
     public homeService: HomeService,
     public farmService: FarmService,
-    reincarnationService: ReincarnationService,
     private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
     private battleService: BattleService,
@@ -123,7 +121,7 @@ export class ActivityService {
     this.activities = [];
     setTimeout(() => (this.activities = this.getActivityList()));
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
 
@@ -305,7 +303,12 @@ export class ActivityService {
         this.currentLoopEntry = this.activityLoop[this.currentIndex];
         let activity = this.getActivityByType(this.currentLoopEntry.activity);
         // check if our current activity is zero-day
-        if (activity === null || this.currentLoopEntry.disabled || this.currentLoopEntry.repeatTimes === 0) {
+        if (
+          activity === null ||
+          this.currentLoopEntry.disabled ||
+          this.currentLoopEntry.userDisabled ||
+          this.currentLoopEntry.repeatTimes === 0
+        ) {
           // don't do the activity, instead see if there's a next one we can switch to
           let index = 0;
           if (this.currentIndex < this.activityLoop.length - 1) {
@@ -315,6 +318,7 @@ export class ActivityService {
             index !== this.currentIndex &&
             (this.activityLoop[index].repeatTimes === 0 ||
               this.activityLoop[index].disabled ||
+              this.activityLoop[index].userDisabled ||
               this.getActivityByType(this.activityLoop[index].activity) === null)
           ) {
             index++;
@@ -366,6 +370,7 @@ export class ActivityService {
           while (
             this.activityLoop[this.currentIndex].repeatTimes === 0 ||
             this.activityLoop[this.currentIndex].disabled ||
+            this.activityLoop[this.currentIndex].userDisabled ||
             this.getActivityByType(this.activityLoop[this.currentIndex].activity) === null
           ) {
             this.currentIndex++;
@@ -376,6 +381,7 @@ export class ActivityService {
               this.currentIndex === startingIndex &&
               (this.activityLoop[this.currentIndex].repeatTimes === 0 ||
                 this.activityLoop[this.currentIndex].disabled ||
+                this.activityLoop[this.currentIndex].userDisabled ||
                 this.getActivityByType(this.activityLoop[this.currentIndex].activity) === null)
             ) {
               // we looped all the way around without getting any valid activities, pause the game and bail out

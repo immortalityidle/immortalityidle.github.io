@@ -60,15 +60,15 @@
         </div>
 
       </div>
-      <div class="statusCell nourishment" tooltip="{{characterService.characterState.status.nourishment.description}}">
+      <div class="statusCell nutrition" tooltip="{{characterService.characterState.status.nutrition.description}}">
         <span>Nutrition</span>
         <div class="progress-bar" [ngClass]="flashNutrition ? 'flash' : ''"
-          [attr.value]="Math.floor(characterService.characterState.status.nourishment.value) | bigNumber"
-          [attr.max]="Math.floor(characterService.characterState.status.nourishment.max) | bigNumber">
+          [attr.value]="Math.floor(characterService.characterState.status.nutrition.value) | bigNumber"
+          [attr.max]="Math.floor(characterService.characterState.status.nutrition.max) | bigNumber">
           <span
             [style.width.%]="100 *
-              Math.floor(characterService.characterState.status.nourishment.value) /
-              Math.floor(characterService.characterState.status.nourishment.max)">
+              Math.floor(characterService.characterState.status.nutrition.value) /
+              Math.floor(characterService.characterState.status.nutrition.max)">
           </span>
         </div>
       </div>

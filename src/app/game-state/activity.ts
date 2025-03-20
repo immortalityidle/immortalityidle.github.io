@@ -112,4 +112,5 @@ export interface ActivityLoopEntry {
   activity: ActivityType;
   repeatTimes: number;
   disabled?: boolean;
+  userDisabled?: boolean;
 }

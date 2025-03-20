@@ -8,6 +8,7 @@ import { CharacterService } from '../game-state/character.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { MainLoopService } from '../game-state/main-loop.service';
 
 @Component({
   selector: 'app-store-modal',
@@ -39,9 +40,14 @@ export class StoreModalComponent {
     public inventoryService: InventoryService,
     private characterService: CharacterService,
     public itemRepoService: ItemRepoService,
-    public gameStateService: GameStateService
+    public gameStateService: GameStateService,
+    mainloopService: MainLoopService
   ) {
     this.landItem.value = this.homeService.landPrice;
+
+    mainloopService.reincarnateSubject.subscribe(() => {
+      this.landItem.value = this.homeService.landPrice;
+    });
   }
 
   slotClicked(item: Item) {

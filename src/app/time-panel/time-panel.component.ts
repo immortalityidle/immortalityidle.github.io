@@ -121,8 +121,8 @@ export class TimePanelComponent {
   }
 
   onDisableClick(entry: ActivityLoopEntry): void {
-    entry.disabled = !entry.disabled;
-    if (!entry.disabled) {
+    entry.userDisabled = !entry.userDisabled;
+    if (!entry.userDisabled) {
       // make sure nothing that can't be enabled gets enabled
       this.activityService.checkRequirements(true);
     }

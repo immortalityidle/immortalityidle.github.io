@@ -3,7 +3,6 @@ import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { Equipment, InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { HellService } from './hell.service';
 import { BigNumberPipe } from '../app.component';
@@ -110,8 +109,7 @@ export class BattleService {
     private itemRepoService: ItemRepoService,
     private inventoryService: InventoryService,
     private homeService: HomeService,
-    mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService
+    mainLoopService: MainLoopService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
@@ -124,18 +122,18 @@ export class BattleService {
 
     mainLoopService.tickSubject.subscribe(() => {
       this.yearlyMonsterDay++;
-      if (homeService.homeValue === HomeType.SquatterTent && this.yearlyMonsterDay > 100) {
+      if (this.homeService.homeValue === HomeType.SquatterTent && this.yearlyMonsterDay > 100) {
         this.yearlyMonsterDay = 0;
         this.logService.injury(LogTopic.EVENT, 'The shabby tent you live in has attracted some nasty mice.');
         this.addMouse();
         return;
-      } else if (homeService.homeValue === HomeType.OwnTent && this.yearlyMonsterDay > 150) {
+      } else if (this.homeService.homeValue === HomeType.OwnTent && this.yearlyMonsterDay > 150) {
         this.yearlyMonsterDay = 0;
         this.logService.injury(
           LogTopic.EVENT,
-          'Your increased wealth has attracted a troublemaker looking to steal your money.'
+          "Your increased wealth has attracted a ruffian who's looking to steal your money."
         );
-        this.addTroublemaker();
+        this.addRuffian();
       }
       if (this.yearlyMonsterDay >= 365 || this.autoTroubleEnabled) {
         this.yearlyMonsterDay = 0;
@@ -167,7 +165,7 @@ export class BattleService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
   }
@@ -335,8 +333,8 @@ export class BattleService {
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
       let damage = this.characterService.characterState.attackPower * technique.baseDamage;
       if (
-        this.characterService.characterState.status.nourishment.value >
-        this.characterService.characterState.status.nourishment.max * 0.8
+        this.characterService.characterState.status.nutrition.value >
+        this.characterService.characterState.status.nutrition.max * 0.8
       ) {
         // tummy is mostly full, hit harder
         damage *= 1.2;
@@ -574,10 +572,10 @@ export class BattleService {
     });
   }
 
-  addTroublemaker() {
+  addRuffian() {
     this.addEnemy({
-      name: 'a troublemaker',
-      baseName: 'troublemaker',
+      name: 'a ruffian',
+      baseName: 'ruffian',
       health: 20,
       maxHealth: 20,
       defense: 0,

@@ -1,7 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { Character, AttributeType } from './character';
 import { ActivityService } from './activity.service';
 import { Subscription } from 'rxjs';
@@ -31,7 +30,6 @@ export class CharacterService {
     private injector: Injector,
     private mainLoopService: MainLoopService,
     private logService: LogService,
-    private reincarnationService: ReincarnationService,
     public dialog: MatDialog
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -93,17 +91,6 @@ export class CharacterService {
       }
       this.setLifespanTooltip();
     });
-
-    reincarnationService.reincarnateSubject.subscribe(() => {
-      if (this.fatherGift && this.characterState.bloodlineRank < 6) {
-        // Skip the family gifts, it's not thematic.
-        this.logService.log(
-          LogTopic.EVENT,
-          'Your father puts some coins in your purse before sending you on your way.'
-        );
-        this.characterState.updateMoney(200);
-      }
-    });
   }
 
   checkForDeath(): boolean {
@@ -115,8 +102,8 @@ export class CharacterService {
         'You reach the end of your natural life and pass away from natural causes at the age of ' +
         this.formatAge() +
         '.';
-    } else if (this.characterState.status.nourishment.value <= 0) {
-      this.characterState.status.nourishment.value = 0;
+    } else if (this.characterState.status.nutrition.value <= 0) {
+      this.characterState.status.nutrition.value = 0;
       if (this.characterState.attributes.spirituality.value > 0) {
         // you're spritual now, you can fast!
         const starvationDamage = Math.max(this.characterState.status.health.value * 0.2, 20);
@@ -166,7 +153,7 @@ export class CharacterService {
         this.toast('A new life begins.');
       }
       this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
-      this.reincarnationService.reincarnate();
+      this.mainLoopService.reincarnating = true;
       // Revive the character in the next tick update for making sure that everything is stopped.
       this.deathSubscriber = this.mainLoopService.tickSubject.subscribe(() => {
         this.characterState.dead = false;

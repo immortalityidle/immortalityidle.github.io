@@ -7,7 +7,6 @@ import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
 import { Equipment, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
-import { ReincarnationService } from './reincarnation.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { CamelToTitlePipe } from '../app.component';
@@ -410,7 +409,6 @@ export class FollowersService {
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
     private battleService: BattleService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -451,7 +449,7 @@ export class FollowersService {
       this.petsMaxed = this.pets.length < this.petsCap ? (this.petsMaxed = 'UNMAXED') : (this.petsMaxed = 'MAXED');
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
   }

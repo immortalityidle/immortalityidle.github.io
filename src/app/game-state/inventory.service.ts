@@ -1,7 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { EquipmentPosition, AttributeType } from './character';
 import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
@@ -221,7 +220,6 @@ export class InventoryService {
     private logService: LogService,
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
     private itemRepoService: ItemRepoService,
     private titleCasePipe: TitleCasePipe
   ) {
@@ -316,7 +314,7 @@ export class InventoryService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
   }
@@ -325,7 +323,7 @@ export class InventoryService {
     if (this.characterService.characterState.dead) {
       return;
     }
-    this.characterService.characterState.status.nourishment.value--; // tick the day's hunger
+    this.characterService.characterState.status.nutrition.value--; // tick the day's hunger
     this.eatDailyMeal();
     // use pouch items if needed
     for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
@@ -1049,7 +1047,7 @@ export class InventoryService {
     if (this.motherGift) {
       this.logService.log(
         LogTopic.EVENT,
-        'Your mother gives you three big bags of rice as she sends you out to make your way in the world.'
+        'Your mother gives you three big bags of rice as you prepare to make your way in the world.'
       );
       this.addItem(this.itemRepoService.items['rice'], 300);
     }
@@ -1087,15 +1085,15 @@ export class InventoryService {
         this.noFood = true;
         if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
           this.characterService.characterState.updateMoney(-1);
-          this.characterService.characterState.status.nourishment.value++;
+          this.characterService.characterState.status.nutrition.value++;
         }
       }
 
       return;
     }
     if (
-      this.characterService.characterState.status.nourishment.value >
-      this.characterService.characterState.status.nourishment.max * 0.2
+      this.characterService.characterState.status.nutrition.value >
+      this.characterService.characterState.status.nutrition.max * 0.2
     ) {
       // not hungry enough, don't automatically eat
       return;
@@ -1120,7 +1118,7 @@ export class InventoryService {
       this.noFood = true;
       if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
         this.characterService.characterState.updateMoney(-1);
-        this.characterService.characterState.status.nourishment.value++;
+        this.characterService.characterState.status.nutrition.value++;
       }
     }
   }
@@ -1131,8 +1129,8 @@ export class InventoryService {
     }
     if (
       this.autoEatNutrition &&
-      this.characterService.characterState.status.nourishment.value <
-        this.characterService.characterState.status.nourishment.max
+      this.characterService.characterState.status.nutrition.value <
+        this.characterService.characterState.status.nutrition.max
     ) {
       return false;
     }
@@ -1161,7 +1159,7 @@ export class InventoryService {
 
   private eatFood(foodItem: Item, quantity = 1) {
     const value = foodItem.value;
-    this.characterService.characterState.status.nourishment.value += quantity + quantity * value * 0.05;
+    this.characterService.characterState.status.nutrition.value += quantity + quantity * value * 0.05;
     this.characterService.characterState.healthBonusFood += quantity * value * 0.01;
     this.characterService.characterState.status.health.value += quantity * value * 0.01;
     this.characterService.characterState.status.stamina.value += quantity * value * 0.01;
@@ -1376,13 +1374,13 @@ export class InventoryService {
     if (this.autoSellUnlocked && !this.hellService?.inHell) {
       this.logService.log(
         LogTopic.EVENT,
-        "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + ' so you sold it.'
+        "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + ' so you sell it.'
       );
       this.characterService.characterState.updateMoney(item.value * quantity);
     } else {
       this.logService.log(
         LogTopic.EVENT,
-        "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + ' so you threw it away.'
+        "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + ' so you throw it away.'
       );
     }
     this.thrownAwayItems += quantity;

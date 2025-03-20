@@ -3,7 +3,6 @@ import { ActivityService, ActivityProperties } from './activity.service';
 import { BattleService, BattleProperties } from './battle.service';
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { AchievementProperties, AchievementService } from './achievement.service';
 import { CharacterProperties } from './character';
 import { CharacterService } from './character.service';
@@ -184,7 +183,6 @@ export class GameStateService {
     private farmService: FarmService,
     private inventoryService: InventoryService,
     private logService: LogService,
-    private reincarnationService: ReincarnationService,
     private activityService: ActivityService,
     private itemRepoService: ItemRepoService,
     private battleService: BattleService,

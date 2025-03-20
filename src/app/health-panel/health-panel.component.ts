@@ -57,7 +57,7 @@ export class HealthPanelComponent {
       this.flashHealth = this.characterService.characterState.statusToFlash.includes('health');
       this.flashStamina = this.characterService.characterState.statusToFlash.includes('stamina');
       this.flashQi = this.characterService.characterState.statusToFlash.includes('qi');
-      this.flashNutrition = this.characterService.characterState.statusToFlash.includes('nourishment');
+      this.flashNutrition = this.characterService.characterState.statusToFlash.includes('nutrition');
       this.characterService.characterState.statusToFlash = [];
       if (this.popupCounter < 1) {
         this.popupCounter++;

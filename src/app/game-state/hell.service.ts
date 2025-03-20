@@ -2,7 +2,6 @@ import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 import { Activity, ActivityType, YinYangEffect } from './activity';
@@ -177,21 +176,21 @@ export class HellService {
 
   rehabilitation = {
     level: 0,
-    name: ['Rehabilitate Troublemakers'],
+    name: ['Rehabilitate Ruffian'],
     activityType: ActivityType.Rehabilitation,
     description: [
-      'You recognize a bunch of the troublemakers here as people who used to beat and rob you in your past lives. Perhaps you can give them some some friendly rehabilitation. With your fists.',
+      'You recognize a bunch of the ruffians here as people who used to beat and rob you in your past lives. Perhaps you can give them some some friendly rehabilitation. With your fists.',
     ],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Uses 100 Stamina and 10 hell money as bait. Breaks a troublemaker out of their basket and picks a fight with them.',
+      'Uses 100 Stamina and 10 hell money as bait. Breaks a ruffian out of their basket and picks a fight with them.',
     ],
     consequence: [
       () => {
         this.characterService.characterState.status.stamina.value -= 100;
         this.battleService.addEnemy({
-          name: 'Troublemaker',
-          baseName: 'deadtroublemaker',
+          name: 'Ruffian',
+          baseName: 'deadruffian',
           health: 100,
           maxHealth: 100,
           defense: 10,
@@ -826,7 +825,6 @@ export class HellService {
     private logService: LogService,
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
     private activityService: ActivityService,
     private followerService: FollowersService,
     private battleService: BattleService,
@@ -862,7 +860,7 @@ export class HellService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
   }
@@ -1753,7 +1751,7 @@ export class HellService {
     },
     {
       name: 'Hell of Steamers',
-      description: 'Torment for hypocrites and troublemakers. The steam baskets here are just the right size for you.',
+      description: 'Torment for hypocrites and ruffians. The steam baskets here are just the right size for you.',
       index: HellLevel.Steamers,
       entryEffect: () => {
         this.inventoryService.stashWeapons();
@@ -1764,7 +1762,7 @@ export class HellService {
         this.inventoryService.restoreArmor();
       },
       dailyEffect: () => {
-        // take damage from the steam and get robbed by troublemakers
+        // take damage from the steam and get robbed by ruffians
         if (this.inventoryService.consume('iceCore') < 0) {
           const damage = this.characterService.characterState.status.health.value * 0.05;
           this.logService.injury(LogTopic.COMBAT, 'The steam cooks your skin, causing ' + damage + ' damage.');
@@ -1773,7 +1771,7 @@ export class HellService {
         if (Math.random() < 0.2) {
           this.logService.log(
             LogTopic.EVENT,
-            "As if the constant scalding steam isn't enough, one of these troublemakers stole some money! Why does this feel so familiar?"
+            "As if the constant scalding steam isn't enough, one of these ruffians stole some money! Why does this feel so familiar?"
           );
           this.characterService.characterState.hellMoney -= this.characterService.characterState.hellMoney * 0.1;
         }
@@ -1782,7 +1780,7 @@ export class HellService {
         this.battleService.clearEnemies();
         this.logService.log(
           LogTopic.STORY,
-          'You defeat so many troublemakers that the rest all beg to return to their baskets for their regular torment.'
+          'You defeat so many ruffians that the rest all beg to return to their baskets for their regular torment.'
         );
       },
       activities: [
@@ -1795,7 +1793,7 @@ export class HellService {
         this.rehabilitation,
       ],
       projectionActivities: [this.activityService.OddJobs, this.burnMoney],
-      hint: 'There so many troublemakers here that deserve some payback from you. I wonder if you can take them all on.',
+      hint: 'There so many ruffians here that deserve some payback from you. I wonder if you can take them all on.',
       progress: () => {
         return this.battleService.enemies.length;
       },

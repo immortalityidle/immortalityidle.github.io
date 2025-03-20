@@ -1,6 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { CharacterService } from './character.service';
 import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
@@ -54,7 +53,6 @@ export class FarmService {
     private inventoryService: InventoryService,
     mainLoopService: MainLoopService,
     private homeService: HomeService,
-    reincarnationService: ReincarnationService,
     private itemRepoService: ItemRepoService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -73,7 +71,7 @@ export class FarmService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
   }

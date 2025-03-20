@@ -3,7 +3,6 @@ import { LogService } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { MainLoopService } from './main-loop.service';
-import { ReincarnationService } from './reincarnation.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 
@@ -157,7 +156,6 @@ export class ImpossibleTaskService {
     private characterService: CharacterService,
     private itemRepoService: ItemRepoService,
     mainLoopService: MainLoopService,
-    reincarnationService: ReincarnationService,
     private battleService: BattleService
   ) {
     mainLoopService.longTickSubject.subscribe(() => {
@@ -173,7 +171,7 @@ export class ImpossibleTaskService {
       }
     });
 
-    reincarnationService.reincarnateSubject.subscribe(() => {
+    mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
   }

@@ -58,7 +58,7 @@ export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' |
 
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
-export type StatusType = 'health' | 'stamina' | 'qi' | 'nourishment';
+export type StatusType = 'health' | 'stamina' | 'qi' | 'nutrition';
 type CharacterStatus = { [key in StatusType]: { description: string; value: number; max: number } };
 
 export interface CharacterProperties {
@@ -326,7 +326,7 @@ export class Character {
       value: 0,
       max: 0,
     },
-    nourishment: {
+    nutrition: {
       description:
         'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend some money on cheap scraps each day.',
       value: 30,
@@ -431,8 +431,8 @@ export class Character {
     this.status.health.max = 100;
     this.status.stamina.value = 100;
     this.status.stamina.max = 100;
-    this.status.nourishment.value = 30;
-    this.status.nourishment.max = 30;
+    this.status.nutrition.value = 30;
+    this.status.nutrition.max = 30;
     if (this.qiUnlocked) {
       this.status.qi.max = 1;
       this.status.qi.value = 1;
@@ -741,8 +741,8 @@ export class Character {
     if (this.status.qi.max > 1000000) {
       this.status.qi.max = 1000000;
     }
-    if (this.status.nourishment.max > 1000) {
-      this.status.nourishment.max = 1000;
+    if (this.status.nutrition.max > 1000) {
+      this.status.nutrition.max = 1000;
     }
     if (this.status.health.value > this.status.health.max) {
       this.status.health.value = this.status.health.max;
@@ -750,8 +750,8 @@ export class Character {
     if (this.status.stamina.value > this.status.stamina.max) {
       this.status.stamina.value = this.status.stamina.max;
     }
-    if (this.status.nourishment.value > this.status.nourishment.max) {
-      this.status.nourishment.value = this.status.nourishment.max;
+    if (this.status.nutrition.value > this.status.nutrition.max) {
+      this.status.nutrition.value = this.status.nutrition.max;
     }
     if (this.status.qi.value > this.status.qi.max) {
       this.status.qi.value = this.status.qi.max;
@@ -840,6 +840,10 @@ export class Character {
 
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
+    if (!this.status.nutrition) {
+      // @ts-ignore
+      this.status.nutrition = properties.status.nourishment;
+    }
     this.baseLifespan = properties.baseLifespan;
     this.foodLifespan = properties.foodLifespan || 0;
     this.alchemyLifespan = properties.alchemyLifespan || 0;
