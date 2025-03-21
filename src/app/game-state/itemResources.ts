@@ -1,3 +1,5 @@
+import { Herb } from './inventory.service';
+
 // alphabetical list of weapons
 export const WeaponNames = [
   'adze',
@@ -549,36 +551,123 @@ export const ArmorSuffixModifiers = [
   'perfect',
 ];
 
-export const herbNames = [
-  'patchouli',
-  'alangium',
-  'lobelia',
-  'lovage',
-  'anemone',
-  'kudzu',
-  'marlberry',
-  'aster',
-  'milkvetch',
-  'safflower',
-  'cinnamon',
-  'velvetleaf',
-  'goldthread',
-  'lilac',
-  'jimson',
-  'dendrobium',
-  'ephedra',
-  'forsythia',
-  'honeylocust',
-  'licorice',
-  'holly',
-  'motherwort',
-  'arborvitae',
-  'snakeroot',
-  'foxglove',
-  'stringbush',
-  'ginger',
-  'ginkgo',
-  'ginseng',
+export const Herbs: Herb[] = [
+  {
+    name: 'patchouli',
+    attribute: 'toughness',
+  },
+  {
+    name: 'alangium',
+    attribute: 'speed',
+  },
+  {
+    name: 'lobelia',
+    attribute: 'charisma',
+  },
+  {
+    name: 'lovage',
+    attribute: 'charisma',
+  },
+  {
+    name: 'anemone',
+    attribute: 'intelligence',
+  },
+  {
+    name: 'kudzu',
+    attribute: 'strength',
+  },
+  {
+    name: 'marlberry',
+    attribute: 'toughness',
+  },
+  {
+    name: 'aster',
+    attribute: 'toughness',
+  },
+  {
+    name: 'milkvetch',
+    attribute: 'strength',
+  },
+  {
+    name: 'safflower',
+    attribute: 'strength',
+  },
+  {
+    name: 'cinnamon',
+    attribute: 'intelligence',
+  },
+  {
+    name: 'velvetleaf',
+    attribute: 'toughness',
+  },
+  {
+    name: 'goldthread',
+    attribute: 'charisma',
+  },
+  {
+    name: 'lilac',
+    attribute: 'intelligence',
+  },
+  {
+    name: 'jimson',
+    attribute: 'speed',
+  },
+  {
+    name: 'dendrobium',
+    attribute: 'charisma',
+  },
+  {
+    name: 'ephedra',
+    attribute: 'speed',
+  },
+  {
+    name: 'forsythia',
+    attribute: 'speed',
+  },
+  {
+    name: 'honeylocust',
+    attribute: 'toughness',
+  },
+  {
+    name: 'licorice',
+    attribute: 'strength',
+  },
+  {
+    name: 'holly',
+    attribute: 'strength',
+  },
+  {
+    name: 'motherwort',
+    attribute: 'charisma',
+  },
+  {
+    name: 'arborvitae',
+    attribute: 'intelligence',
+  },
+  {
+    name: 'snakeroot',
+    attribute: 'intelligence',
+  },
+  {
+    name: 'foxglove',
+    attribute: 'toughness',
+  },
+  {
+    name: 'stringbush',
+    attribute: 'charisma',
+  },
+  {
+    name: 'ginger',
+    attribute: 'speed',
+  },
+  {
+    name: 'ginkgo',
+    attribute: 'intelligence',
+  },
+  {
+    name: 'ginseng',
+    attribute: 'strength',
+  },
 ];
 
 export const herbQuality = [

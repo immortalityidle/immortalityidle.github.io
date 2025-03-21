@@ -2087,7 +2087,7 @@ export class ActivityService {
           stamina: 10,
         },
         {
-          stamina: 100,
+          stamina: 90,
         },
       ],
       requirements: [

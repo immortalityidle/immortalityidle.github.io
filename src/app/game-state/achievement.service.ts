@@ -580,7 +580,7 @@ export class AchievementService {
     {
       name: 'Off to Ikea',
       description:
-        'You set up some great furniture and taught your descendants to leave it alone for your next incarnation.',
+        'You set up some great furniture and can now better discern where furniture items should go to improve the flow of Qi in your home.',
       hint: 'Immortals have discerning taste in furnishings.',
       check: () => {
         return this.characterService.characterState.fengshuiScore >= 10;
@@ -631,6 +631,21 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoBuyerSettingsManual']);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'First Sip',
+      description: 'You drank your first potions and unlocked a special equipment slot',
+      hint: "Just take a taste. You'll like it.",
+      check: () => {
+        return this.inventoryService.lifetimePotionsUsed >= 1;
+      },
+      effect: () => {
+        if (this.characterService.characterState.itemPouches.length < 1) {
+          // open up an item pouch slot if one isn't open yet
+          this.characterService.characterState.itemPouches.push(this.inventoryService.getEmptyItemStack());
+        }
       },
       unlocked: false,
     },
@@ -1278,7 +1293,7 @@ export class AchievementService {
         return this.inventoryService.divinePeachesUnlocked;
       },
       effect: () => {
-        if (this.characterService.characterState.itemPouches.length < 1) {
+        if (this.characterService.characterState.itemPouches.length < 2) {
           // open up an item pouch slot if one isn't open yet
           this.characterService.characterState.itemPouches.push(this.inventoryService.getEmptyItemStack());
         }

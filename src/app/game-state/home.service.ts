@@ -7,6 +7,7 @@ import { ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
 import { ActivityType } from './activity';
 import { ActivityService } from './activity.service';
+import { AttributeType } from './character';
 
 export interface Home {
   name: string;
@@ -82,6 +83,7 @@ export interface HomeProperties {
   seeFurnitureEffects: boolean;
   workstations: Workstation[];
   totalCrafts: number;
+  alchemyCounter: number;
 }
 
 @Injectable({
@@ -113,6 +115,7 @@ export class HomeService {
   seeFurnitureEffects = false;
   workstations: Workstation[] = [];
   totalCrafts = 0;
+  alchemyCounter = 0;
 
   homesList: Home[] = [
     {
@@ -864,6 +867,7 @@ export class HomeService {
       seeFurnitureEffects: this.seeFurnitureEffects,
       workstations: this.workstations,
       totalCrafts: this.totalCrafts,
+      alchemyCounter: this.alchemyCounter,
     };
   }
 
@@ -899,6 +903,7 @@ export class HomeService {
     this.keepHome = properties.keepHome;
     this.seeFurnitureEffects = properties.keepHome;
     this.totalCrafts = properties.totalCrafts;
+    this.alchemyCounter = properties.alchemyCounter || 0;
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
@@ -986,8 +991,12 @@ export class HomeService {
     this.inventoryService.changeMaxItems(this.home.maxInventory);
     this.nextHomeCostReduction = 0;
 
-    // reduce land price to account for lost land
-    this.landPrice -= 10 * (this.land - 1);
+    if (this.keepHome) {
+      // reduce land price to account for lost land, but not land that you are keeping as farms
+      this.landPrice -= 10 * (this.land - 1);
+    } else {
+      this.landPrice = 100;
+    }
     this.land = 0;
   }
 
@@ -1197,7 +1206,7 @@ export class HomeService {
         itemStack.item.type === 'food' &&
         itemStack.item.subtype !== 'meal' &&
         !usedIngredients.includes(itemStack.item.id) &&
-        itemStack.quantity > 1
+        itemStack.quantity > 0
       ) {
         usedIngredients.push(itemStack.item.id);
         if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
@@ -1297,12 +1306,14 @@ export class HomeService {
     let pillMold = false;
     let pillBox = false;
     let pillPouch = false;
+    const alchemyLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
+    let attribute: AttributeType = 'toughness';
     for (const itemStack of workstation.inputs) {
       if (
         itemStack.item &&
         itemStack.item.type === 'herb' &&
         !usedIngredients.includes(itemStack.item.id) &&
-        itemStack.quantity > 1
+        itemStack.quantity > 0
       ) {
         usedIngredients.push(itemStack.item.id);
         if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
@@ -1310,6 +1321,9 @@ export class HomeService {
         }
         totalValue += itemStack.item.value;
         itemStack.quantity--;
+        if (itemStack.item.attribute) {
+          attribute = itemStack.item.attribute;
+        }
       }
     }
     if (totalValue < 1) {
@@ -1317,25 +1331,27 @@ export class HomeService {
       return;
     }
     for (const itemStack of workstation.inputs) {
-      if (itemStack.item && itemStack.item.type === 'gem' && itemStack.quantity > 1) {
+      if (itemStack.item && itemStack.item.type === 'gem' && itemStack.quantity > 0) {
         gemUsed = true;
         itemStack.quantity--;
-      } else if (itemStack.item && itemStack.item.type === 'pillMold' && itemStack.quantity > 1) {
+      } else if (itemStack.item && itemStack.item.type === 'pillMold' && itemStack.quantity > 0) {
         pillMold = true;
         itemStack.quantity--;
-      } else if (itemStack.item && itemStack.item.type === 'pillBox' && itemStack.quantity > 1) {
+      } else if (itemStack.item && itemStack.item.type === 'pillBox' && itemStack.quantity > 0) {
         pillBox = true;
         itemStack.quantity--;
-      } else if (itemStack.item && itemStack.item.type === 'pillPouch' && itemStack.quantity > 1) {
+      } else if (itemStack.item && itemStack.item.type === 'pillPouch' && itemStack.quantity > 0) {
         pillPouch = true;
         itemStack.quantity--;
       }
     }
     this.totalCrafts++;
+    this.alchemyCounter++;
     if (gemUsed && pillMold && pillBox && pillPouch) {
       this.inventoryService.generateEmpowermentPill();
-    } else if (gemUsed) {
-      this.inventoryService.generatePill(totalValue);
+    } else if ((gemUsed || alchemyLevel > 2) && this.alchemyCounter > 10) {
+      this.alchemyCounter = 0;
+      this.inventoryService.generatePill(totalValue, attribute);
     } else {
       this.inventoryService.generatePotion(totalValue);
     }

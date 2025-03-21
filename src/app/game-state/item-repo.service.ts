@@ -602,15 +602,17 @@ baguaMap = [
       useDescription: 'Sates your immortal hunger.',
       useConsumes: true,
     },
+    // TODO: incorporate this into alchemy crafting
     distilledPeachEssence: {
       id: 'distilledPeachEssence',
       imageFile: 'distilledPeachEssence',
       name: 'distilled peach essence',
-      type: 'healthRestore',
+      type: 'potion',
       value: 1000,
       description:
         'An alchemical masterpiece created from the most perfect of peaches. When equipped, it is automatically consumed to restore 50 health when needed.',
-      restoreAmount: 50,
+      effect: 'health',
+      increaseAmount: 500,
       pouchable: true,
     },
     meat: {

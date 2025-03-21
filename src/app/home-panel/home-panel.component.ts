@@ -168,6 +168,12 @@ export class HomePanelComponent {
       return;
     }
 
+    if (sourceWorkstation.inputs[inputIndex].quantity === 0) {
+      // the stack is empty, so destination doesn't matter. Clear it and bail out.
+      sourceWorkstation.inputs[inputIndex] = this.inventoryService.getEmptyItemStack();
+      return;
+    }
+
     let destinationItemIndex: number = -1;
     const elements = document.elementsFromPoint(x, y);
     for (const element of elements) {

@@ -21,6 +21,9 @@ export class TooltipDirective implements OnInit, OnDestroy {
   ) {}
 
   ngOnDestroy(): void {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
     this.overlayRef.detach();
     this.overlayRef.dispose();
   }

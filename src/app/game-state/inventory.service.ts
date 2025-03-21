@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { EquipmentPosition, AttributeType } from './character';
+import { EquipmentPosition, AttributeType, StatusType } from './character';
 import { CharacterService } from './character.service';
 import { ItemRepoService } from './item-repo.service';
 import { TitleCasePipe } from '@angular/common';
@@ -12,7 +12,7 @@ import {
   WeaponSuffixModifiers,
   ArmorSuffixes,
   ArmorSuffixModifiers,
-  herbNames,
+  Herbs,
   herbQuality,
   ChestArmorNames,
   LegArmorNames,
@@ -45,6 +45,8 @@ export interface Item {
   subtype?: string;
   color?: string;
   elements?: string[];
+  attribute?: AttributeType;
+  effect?: string;
   useLabel?: string;
   useDescription?: string;
   useConsumes?: boolean;
@@ -54,23 +56,13 @@ export interface Item {
   imageFile?: string;
   imageColor?: string;
   pouchable?: boolean;
-  restoreAmount?: number;
+  increaseAmount?: number;
 }
 
 export interface Equipment extends Item {
   slot: EquipmentPosition;
   weaponStats?: WeaponStats;
   armorStats?: ArmorStats;
-}
-
-export interface Potion extends Item {
-  attribute: AttributeType;
-  increase: number;
-}
-
-export interface Pill extends Item {
-  effect: string;
-  power: number;
 }
 
 export interface ItemStack {
@@ -90,6 +82,11 @@ export interface AutoItemEntry {
   name: string;
   type: string;
   reserve: number;
+}
+
+export interface Herb {
+  name: string;
+  attribute: AttributeType;
 }
 
 export interface InventoryProperties {
@@ -142,6 +139,8 @@ export interface InventoryProperties {
   equipmentCreated: number;
   totalItemsReceived: number;
   autoReloadCraftInputs: boolean;
+  pillCounter: number;
+  potionCounter: number;
 }
 
 @Injectable({
@@ -214,6 +213,8 @@ export class InventoryService {
   emptyIdPrefix = Date.now() + '';
   totalItemsReceived = 0;
   autoReloadCraftInputs = false;
+  pillCounter = 0;
+  potionCounter = 0;
 
   constructor(
     private injector: Injector,
@@ -328,23 +329,26 @@ export class InventoryService {
     // use pouch items if needed
     for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
       const itemStack = this.characterService.characterState.itemPouches[i];
-      if (
-        itemStack.item?.type === 'healthRestore' &&
-        this.characterService.characterState.status.health.value <
-          this.characterService.characterState.status.health.max
-      ) {
-        const amountToHeal =
-          this.characterService.characterState.status.health.max -
-          this.characterService.characterState.status.health.value;
-        const restoreAmount = itemStack.item.restoreAmount || 1;
-        const numberToUse = Math.ceil(amountToHeal / restoreAmount);
-        if (itemStack.quantity > numberToUse) {
-          this.characterService.characterState.status.health.value =
-            this.characterService.characterState.status.health.max;
-          itemStack.quantity -= numberToUse;
-        } else {
-          this.characterService.characterState.status.health.value += restoreAmount * itemStack.quantity;
-          this.characterService.characterState.itemPouches[i] = this.getEmptyItemStack();
+      if (itemStack.item?.type === 'potion') {
+        // @ts-ignore
+        const effect: StatusType = itemStack.item.effect;
+        if (
+          this.characterService.characterState.status[effect].value <
+          this.characterService.characterState.status[effect].max
+        ) {
+          const amountToHeal =
+            this.characterService.characterState.status[effect].max -
+            this.characterService.characterState.status[effect].value;
+          const restoreAmount = itemStack.item.increaseAmount || 1;
+          const numberToUse = Math.ceil(amountToHeal / restoreAmount);
+          if (itemStack.quantity > numberToUse) {
+            this.characterService.characterState.status[effect].value =
+              this.characterService.characterState.status[effect].max;
+            itemStack.quantity -= numberToUse;
+          } else {
+            this.characterService.characterState.status[effect].value += restoreAmount * itemStack.quantity;
+            this.characterService.characterState.itemPouches[i] = this.getEmptyItemStack();
+          }
         }
       }
     }
@@ -413,6 +417,8 @@ export class InventoryService {
       equipmentCreated: this.equipmentCreated,
       totalItemsReceived: this.totalItemsReceived,
       autoReloadCraftInputs: this.autoReloadCraftInputs,
+      pillCounter: this.pillCounter,
+      potionCounter: this.potionCounter,
     };
   }
 
@@ -478,6 +484,8 @@ export class InventoryService {
     this.equipmentCreated = properties.equipmentCreated || 0;
     this.totalItemsReceived = properties.totalItemsReceived || 0;
     this.autoReloadCraftInputs = properties.autoReloadCraftInputs || false;
+    this.pillCounter = properties.pillCounter || 0;
+    this.potionCounter = properties.potionCounter || 0;
   }
 
   farmFoodList = [
@@ -701,10 +709,25 @@ export class InventoryService {
   }
 
   generatePotion(grade: number): void {
-    const keys = Object.keys(this.characterService.characterState.attributes) as AttributeType[];
-    // randomly choose any of the first five stats
-    const key = keys[Math.floor(Math.random() * 5)];
-    const name = 'Potion of ' + key + ' +' + grade;
+    this.potionCounter++;
+    let effect = 'health';
+    let restoreAmount = grade;
+    if (this.characterService.characterState.qiUnlocked) {
+      const potionType = this.potionCounter % 3;
+      if (potionType === 0) {
+        effect = 'stamina';
+      } else if (potionType === 1) {
+        effect = 'qi';
+        restoreAmount = Math.floor(grade / 10);
+      }
+    } else {
+      const potionType = this.potionCounter % 2;
+      if (potionType === 0) {
+        effect = 'stamina';
+      }
+    }
+
+    const name = 'Potion of ' + this.titleCasePipe.transform(effect) + ' +' + restoreAmount;
     this.logService.log(
       LogTopic.CRAFTING,
       'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.'
@@ -716,17 +739,18 @@ export class InventoryService {
       id: 'potion',
       type: 'potion',
       value: grade,
-      description: 'A potion that increases ' + key,
+      description: 'A potion that restores ' + effect,
       useLabel: 'Drink',
-      useDescription: 'Drink to increase your ' + key + '.',
+      useDescription: 'Drink to increase restores ' + effect + '.',
       useConsumes: true,
-      attribute: key,
-      increase: grade,
-    } as Potion);
+      pouchable: true,
+      effect: effect,
+      increaseAmount: restoreAmount,
+    });
   }
 
   generateEmpowermentPill(): void {
-    const effect = 'Empowerment';
+    const effect = 'empowerment';
     const description = 'A pill that permanently empowers the increase of your attributes based on your aptitudes.';
     const useDescription = 'Use to permanently empower the increase of your attributes based on your aptitudes.';
     const value = 1;
@@ -747,16 +771,22 @@ export class InventoryService {
       useDescription: useDescription,
       useConsumes: true,
       effect: effect,
-      power: 1,
-    } as Pill);
+      increaseAmount: 1,
+    });
   }
 
-  generatePill(grade: number): void {
-    const effect = 'Longevity'; // add more later
-    const description = 'A pill that increases your lifespan.';
-    const useDescription = 'Use to increase your lifespan.';
+  generatePill(grade: number, attribute: AttributeType): void {
+    this.pillCounter++;
+    let effect: string = attribute;
+    if (this.pillCounter > 100) {
+      this.pillCounter = 0;
+      effect = 'longevity';
+    }
+
+    const description = 'A powerful pill that increases your ' + effect + '.';
+    const useDescription = 'Use to increase your ' + effect;
     const value = grade * 10;
-    const name = effect + ' Pill ' + ' +' + grade;
+    const name = this.titleCasePipe.transform(effect) + ' Pill ' + ' +' + grade;
     const imageFileName = 'pill';
     this.logService.log(
       LogTopic.CRAFTING,
@@ -773,23 +803,23 @@ export class InventoryService {
       useDescription: useDescription,
       useConsumes: true,
       effect: effect,
-      power: grade,
-    } as Pill);
+      increaseAmount: grade,
+    });
   }
 
   generateHerb(): void {
     let grade = 0;
-    const maxGrade = herbNames.length * herbQuality.length;
+    const maxGrade = Herbs.length * herbQuality.length;
     const woodLore = this.characterService.characterState.attributes.woodLore.value;
     grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * maxGrade); // 1e9 woodlore is maximum grade, adjust if necessary
-    let nameIndex = grade % herbNames.length;
-    let qualityIndex = Math.floor(grade / herbNames.length);
+    let nameIndex = grade % Herbs.length;
+    let qualityIndex = Math.floor(grade / Herbs.length);
     if (grade >= maxGrade) {
       // maxed out
-      nameIndex = herbNames.length - 1;
+      nameIndex = Herbs.length - 1;
       qualityIndex = herbQuality.length - 1;
     }
-    const name = herbNames[nameIndex];
+    const name = Herbs[nameIndex].name;
     const quality = herbQuality[qualityIndex];
     const value = grade + 1;
     const herbName = quality + ' ' + name;
@@ -799,6 +829,7 @@ export class InventoryService {
       imageColor: this.itemRepoService.colorByRank[qualityIndex],
       name: herbName,
       type: 'herb',
+      attribute: Herbs[nameIndex].attribute,
       value: value,
       description: 'Useful herbs. Can be used in creating pills or potions.',
     });
@@ -1487,9 +1518,9 @@ export class InventoryService {
     } else {
       this.lifetimeUsedItems++;
     }
-    if (item.type === 'potion' && instanceOfPotion(item)) {
+    if (item.type === 'potion') {
       this.usePotion(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
-    } else if (item.type === 'pill' && instanceOfPill(item)) {
+    } else if (item.type === 'pill') {
       this.usePill(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
     } else if (item.use) {
       item.use(quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
@@ -1758,27 +1789,43 @@ export class InventoryService {
   }
 
   /** A special use function for generated potions. */
-  usePotion(potion: Potion, quantity = 1) {
+  usePotion(potion: Item, quantity = 1) {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.lifetimePotionsUsed += quantity;
-    this.characterService.characterState.attributes[potion.attribute].value += potion.increase * quantity;
+    let effect = 'health';
+    if (potion.effect) {
+      effect = potion.effect;
+    }
+    // TODO: make the type checking on the string conversion right
+    // @ts-ignore
+    this.characterService.characterState.status[effect].value += (potion.increaseAmount || 1) * quantity;
+    this.characterService.characterState.checkOverage();
   }
 
   /** A special use function for generated pills*/
-  usePill(pill: Pill, quantity = 1) {
+  usePill(pill: Item, quantity = 1) {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.lifetimePillsUsed += quantity;
-    if (pill.effect === 'Longevity') {
-      this.characterService.characterState.alchemyLifespan += pill.power * quantity;
+    if (pill.effect === 'longevity') {
+      this.characterService.characterState.alchemyLifespan += (pill.increaseAmount || 1) * quantity;
       if (this.characterService.characterState.alchemyLifespan > 36500) {
         this.characterService.characterState.alchemyLifespan = 36500;
       }
-    } else if (pill.effect === 'Empowerment') {
+    } else if (pill.effect === 'empowerment') {
       this.characterService.characterState.empowermentFactor += 0.01;
+    } else {
+      // effect should be an attribute
+      let effect = 'strength';
+      if (pill.effect) {
+        effect = pill.effect;
+      }
+      // TODO: make the type checking on the string conversion right
+      // @ts-ignore
+      this.characterService.characterState.attributes[effect].value += (pill.increaseAmount || 1) * quantity;
     }
     this.characterService.characterState.checkOverage();
   }
@@ -2164,12 +2211,4 @@ export class InventoryService {
 
 export function instanceOfEquipment(object: Item): object is Equipment {
   return 'slot' in object;
-}
-
-export function instanceOfPotion(object: Item): object is Potion {
-  return 'attribute' in object;
-}
-
-export function instanceOfPill(object: Item): object is Pill {
-  return 'effect' in object;
 }
