@@ -1215,7 +1215,7 @@ export class InventoryService {
    * @param inventoryIndex the first inventory slot to try to put the item in
    * @returns first itemStack position, -1 if not applicable
    */
-  addItem(item: Item, quantity = 1, inventoryIndex = 0): number {
+  addItem(item: Item, quantity = 1, inventoryIndex = 0, ignoreAutoReload: boolean = false): number {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
@@ -1223,7 +1223,7 @@ export class InventoryService {
 
     //TODO: pouch items need to go straight there when acquired (maybe a manual for that?)
 
-    if (this.autoReloadCraftInputs) {
+    if (this.autoReloadCraftInputs && !ignoreAutoReload) {
       const workstations = this.homeService?.workstations;
       if (workstations) {
         for (const workstation of workstations) {
@@ -1329,6 +1329,7 @@ export class InventoryService {
         }
       }
     }
+
     if (this.autoSellOldGemsEnabled && item.type === 'gem' && !this.hellService?.inHell) {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++) {

@@ -111,7 +111,17 @@ export class HomePanelComponent {
   }
 
   inputDoubleClicked(workstation: Workstation, inputSlot: number, event: MouseEvent) {
-    console.log(workstation, inputSlot, event);
+    if (workstation.inputs[inputSlot].item) {
+      if (workstation.inputs[inputSlot].quantity > 0) {
+        this.inventoryService.addItem(
+          workstation.inputs[inputSlot].item,
+          workstation.inputs[inputSlot].quantity,
+          0,
+          true
+        );
+      }
+      workstation.inputs[inputSlot] = this.inventoryService.getEmptyItemStack();
+    }
   }
 
   addWorkstation() {
@@ -198,7 +208,7 @@ export class HomePanelComponent {
               sourceWorkstation.inputs[inputIndex] = this.inventoryService.getEmptyItemStack();
             }
           } else {
-            this.inventoryService.addItem(sourceItem.item, sourceItem.quantity, destinationItemIndex);
+            this.inventoryService.addItem(sourceItem.item, sourceItem.quantity, destinationItemIndex, true);
             sourceWorkstation.inputs[inputIndex] = this.inventoryService.getEmptyItemStack();
           }
         }
