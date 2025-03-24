@@ -51,13 +51,6 @@
         <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
         <label for="lockPanels">Lock panels in place</label>
       </span>
-      <!--
-      @if(!gameStateService.lockPanels){
-        <span>
-          <button (click)="gameStateService.resetPanels()">Reset Panels to Default Locations</button>
-        </span>
-      }
-      -->
       @if(!gameStateService.allPanelsUsed){
         <span>
           <button (click)="gameStateService.addLayoutPanel()">Add New Panel</button>
@@ -126,6 +119,8 @@
                     <app-pets-panel class="panelComponent" ></app-pets-panel>
                   } @else if (panelLayout.id === 'farmPanel'){
                     <app-farm-panel class="panelComponent" ></app-farm-panel>
+                  } @else if (panelLayout.id === 'locationPanel'){
+                    <app-location-panel class="panelComponent" ></app-location-panel>
                   }
                 </div>
               </div>

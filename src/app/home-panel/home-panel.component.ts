@@ -110,7 +110,7 @@ export class HomePanelComponent {
     return tooltip;
   }
 
-  inputDoubleClicked(workstation: Workstation, inputSlot: number, event: MouseEvent) {
+  inputDoubleClicked(workstation: Workstation, inputSlot: number) {
     if (workstation.inputs[inputSlot].item) {
       if (workstation.inputs[inputSlot].quantity > 0) {
         this.inventoryService.addItem(

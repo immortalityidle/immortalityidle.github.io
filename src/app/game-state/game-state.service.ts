@@ -17,6 +17,7 @@ import { OfflineModalComponent } from '../offline-modal/offline-modal.component'
 import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
+import { LocationProperties, LocationService } from './location.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -27,6 +28,7 @@ interface GameState {
   home: HomeProperties;
   farm: FarmProperties;
   activities: ActivityProperties;
+  locations: LocationProperties;
   battles: BattleProperties;
   followers: FollowersProperties;
   logs: LogProperties;
@@ -175,6 +177,14 @@ export class GameStateService {
       panelHelp: 'Your farm can grow healthy food that can aid you on your journey to immortality.',
       unlocked: false,
     },
+    {
+      id: 'locationPanel',
+      name: 'Location',
+      icon: 'globe_asia',
+      panelHelp:
+        'The locations you have available depend mostly on your speed, and will determine what activities you have available. You can select which locations you would prefer to find monsters in when you look for trouble.',
+      unlocked: false,
+    },
   ];
 
   constructor(
@@ -192,6 +202,7 @@ export class GameStateService {
     private dialog: MatDialog,
     private achievementService: AchievementService,
     private impossibleTaskService: ImpossibleTaskService,
+    private locationService: LocationService,
     private hellService: HellService
   ) {
     window.GameStateService = this;
@@ -449,6 +460,7 @@ export class GameStateService {
         itemStack.item = item;
       }
     }
+    this.locationService.setProperties(gameState.locations);
     this.activityService.setProperties(gameState.activities);
     this.battleService.setProperties(gameState.battles);
     this.followersService.setProperties(gameState.followers);
@@ -487,6 +499,7 @@ export class GameStateService {
       inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),
       farm: this.farmService.getProperties(),
+      locations: this.locationService.getProperties(),
       activities: this.activityService.getProperties(),
       battles: this.battleService.getProperties(),
       followers: this.followersService.getProperties(),

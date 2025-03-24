@@ -50,7 +50,7 @@ export enum ActivityType {
   OfferDragonWealth,
   TalkToDragon,
   GatherArmies,
-  ConquerTheWorld,
+  ConquerTheNation,
   MoveStars,
   Taunting,
   EscapeHell,
@@ -87,6 +87,7 @@ export type ActivityResource = {
 
 export interface Activity {
   name: string[];
+  location: LocationType;
   imageBaseName?: string;
   level: number;
   activityType: ActivityType;
@@ -113,4 +114,38 @@ export interface ActivityLoopEntry {
   repeatTimes: number;
   disabled?: boolean;
   userDisabled?: boolean;
+}
+
+export enum LocationType {
+  Self = 'Self',
+  SmallTown = 'SmallTown',
+  LargeCity = 'LargeCity',
+  SmallPond = 'SmallPond',
+  Forest = 'Forest',
+  Mine = 'Mine',
+  Desert = 'Desert',
+  Jungle = 'Jungle',
+  Dungeon = 'Dungeon',
+  Beach = 'Beach',
+  DeepSea = 'DeepSea',
+  MountainTops = 'MountainTops',
+  Hell = 'Hell',
+  HellOfTongueRipping = 'HellOfTongueRipping',
+  HellOfScissors = 'HellOfScissors',
+  HellOfTreesOfKnives = 'HellOfTreesOfKnives',
+  HellOfMirrors = 'HellOfMirrors',
+  HellOfSteamers = 'HellOfSteamers',
+  HellOfCopperPillars = 'HellOfCopperPillars',
+  HellOfMountainOfKnives = 'HellOfMountainOfKnives',
+  HellOfMountainOfIce = 'HellOfMountainOfIce',
+  HellOfCauldronsOfOil = 'HellOfCauldronsOfOil',
+  HellOfCattlePit = 'HellOfCattlePit',
+  HellOfCrushingBoulder = 'HellOfCrushingBoulder',
+  HellOfMortarsAndPestles = 'HellOfMortarsAndPestles',
+  HellOfBloodPool = 'HellOfBloodPool',
+  HellOfWrongfulDead = 'HellOfWrongfulDead',
+  HellOfHellOfDismemberment = 'HellOfHellOfDismemberment',
+  HellOfMountainOfFire = 'HellOfMountainOfFire',
+  HellOfMills = 'HellOfMills',
+  HellOfSaws = 'HellOfSaws',
 }

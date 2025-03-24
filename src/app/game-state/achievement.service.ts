@@ -14,6 +14,7 @@ import { ImpossibleTaskService } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
+import { LocationService } from './location.service';
 
 export interface Achievement {
   name: string;
@@ -51,7 +52,8 @@ export class AchievementService {
     private activityService: ActivityService,
     private followerService: FollowersService,
     private impossibleTaskService: ImpossibleTaskService,
-    private hellService: HellService
+    private hellService: HellService,
+    private locationService: LocationService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       for (const achievement of this.achievements) {
@@ -366,6 +368,18 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['totalPlaytimeManual']);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Going Places',
+      description: 'You have reached beyond the confines of your home town and started to explore the wider world.',
+      hint: 'Run, Forrest, Run!',
+      check: () => {
+        return this.locationService.unlockedLocations.length > 2;
+      },
+      effect: () => {
+        this.gameStateService?.unlockPanel('locationPanel');
       },
       unlocked: false,
     },

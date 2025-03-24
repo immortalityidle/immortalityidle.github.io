@@ -75,7 +75,7 @@
                     <div class="inputSlot" [tabindex]="itemStack?.item ? '0' : '-1'" 
                       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
                       [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
-                      (dblclick)="inputDoubleClicked(workstation, $index, $event)"
+                      (dblclick)="inputDoubleClicked(workstation, $index)"
                       tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
                       <div class="itemName textOverflow">
                         @if (itemStack?.item?.imageFile){

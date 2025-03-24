@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable, Injector } from '@angular/core';
 import { BattleService } from './battle.service';
-import { Activity, ActivityLoopEntry, ActivityType, YinYangEffect } from '../game-state/activity';
+import { Activity, ActivityLoopEntry, ActivityType, LocationType, YinYangEffect } from '../game-state/activity';
 import { AttributeType, CharacterAttribute, StatusType } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService, HomeType } from '../game-state/home.service';
@@ -13,6 +13,7 @@ import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.serv
 import { Follower, FollowersService } from './followers.service';
 import { HellLevel, HellService } from './hell.service';
 import { FarmService } from './farm.service';
+import { LocationService } from './location.service';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -103,6 +104,7 @@ export class ActivityService {
   recruitingCounter = 0;
   petRecruitingCounter = 0;
   coreCultivationCounter = 0;
+  locationService?: LocationService;
 
   constructor(
     private injector: Injector,
@@ -119,6 +121,7 @@ export class ActivityService {
   ) {
     this.defineActivities();
     this.activities = [];
+    setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     setTimeout(() => (this.activities = this.getActivityList()));
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -585,6 +588,9 @@ export class ActivityService {
   }
 
   meetsRequirements(activity: Activity): boolean {
+    if (this.locationService && !this.locationService.unlockedLocations.includes(activity.location)) {
+      return false;
+    }
     if (this.meetsRequirementsByLevel(activity, activity.level)) {
       activity.unlocked = true;
       if (activity.discovered) {
@@ -880,9 +886,9 @@ export class ActivityService {
       newList.push(this.TalkToDragon);
     }
 
-    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.ConquerTheWorld) {
+    if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.ConquerTheNation) {
       newList.push(this.GatherArmies);
-      newList.push(this.ConquerTheWorld);
+      newList.push(this.ConquerTheNation);
     }
 
     if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.RearrangeTheStars) {
@@ -1022,7 +1028,7 @@ export class ActivityService {
   // @ts-ignore
   GatherArmies: Activity;
   // @ts-ignore
-  ConquerTheWorld: Activity;
+  ConquerTheNation: Activity;
   // @ts-ignore
   MoveStars: Activity;
   // @ts-ignore
@@ -1042,6 +1048,7 @@ export class ActivityService {
     this.Swim = {
       level: 0,
       name: ['Swim Deeper'],
+      location: LocationType.DeepSea,
       imageBaseName: 'swim',
       activityType: ActivityType.Swim,
       description: ['Swim down further into the depths.'],
@@ -1073,6 +1080,7 @@ export class ActivityService {
 
     this.ForgeChains = {
       level: 0,
+      location: LocationType.LargeCity,
       name: ['Forge Unbreakable Chain'],
       imageBaseName: 'forgechains',
       activityType: ActivityType.ForgeChains,
@@ -1134,6 +1142,7 @@ export class ActivityService {
     this.AttachChains = {
       level: 0,
       name: ['Attach Chains to the Island'],
+      location: LocationType.DeepSea,
       imageBaseName: 'attachchains',
       activityType: ActivityType.AttachChains,
       description: ['Swim deep and attach one of your chains to the island, then pull.'],
@@ -1195,6 +1204,7 @@ export class ActivityService {
     this.MakeBrick = {
       level: 0,
       name: ['Create an Everlasting Brick'],
+      location: LocationType.LargeCity,
       imageBaseName: 'makebrick',
       activityType: ActivityType.MakeBrick,
       description: ['Create bricks sturdy enough to support the weight of your tower.'],
@@ -1239,6 +1249,7 @@ export class ActivityService {
     this.MakeScaffold = {
       level: 0,
       name: ['Build Scaffolding'],
+      location: LocationType.LargeCity,
       imageBaseName: 'scaffolding',
       activityType: ActivityType.MakeScaffold,
       description: ['Set up the scaffolding for the next level of your tower.'],
@@ -1280,6 +1291,7 @@ export class ActivityService {
     this.MakeMortar = {
       level: 0,
       name: ['Mix Everlasting Mortar'],
+      location: LocationType.LargeCity,
       imageBaseName: 'makemortar',
       activityType: ActivityType.MakeMortar,
       description: ['Mix mortar powerful enough to hold your mighty tower together.'],
@@ -1324,6 +1336,7 @@ export class ActivityService {
     this.BuildTower = {
       level: 0,
       name: ['Build the Next Level'],
+      location: LocationType.LargeCity,
       imageBaseName: 'buildtower',
       activityType: ActivityType.BuildTower,
       description: [
@@ -1416,6 +1429,7 @@ export class ActivityService {
     this.ResearchWind = {
       level: 0,
       name: ['Research Wind Control'],
+      location: LocationType.MountainTops,
       imageBaseName: 'researchwind',
       activityType: ActivityType.ResearchWind,
       description: ['Delve deep into wind lore to understand how the neverending storm can be controlled.'],
@@ -1461,6 +1475,7 @@ export class ActivityService {
     this.TameWinds = {
       level: 0,
       name: ['Tame Winds'],
+      location: LocationType.MountainTops,
       imageBaseName: 'tamewind',
       activityType: ActivityType.TameWinds,
       description: ['Use your research to tame the winds.'],
@@ -1503,6 +1518,7 @@ export class ActivityService {
     this.LearnToFly = {
       level: 0,
       name: ['Learn To Fly'],
+      location: LocationType.MountainTops,
       imageBaseName: 'learntofly',
       activityType: ActivityType.LearnToFly,
       description: ['Jump off your tower and practice flying. This will definitely go well for you.'],
@@ -1555,6 +1571,7 @@ export class ActivityService {
     this.OfferDragonFood = {
       level: 0,
       name: ['Offer Food'],
+      location: LocationType.MountainTops,
       imageBaseName: 'offerfood',
       activityType: ActivityType.OfferDragonFood,
       description: ['It turns out that dragons love peaches. Bring the dragon a bunch and he may be more friendly.'],
@@ -1591,6 +1608,7 @@ export class ActivityService {
     this.OfferDragonWealth = {
       level: 0,
       name: ['Offer Wealth'],
+      location: LocationType.MountainTops,
       imageBaseName: 'offergold',
       activityType: ActivityType.OfferDragonWealth,
       description: ['You have heard that dragons like treasure. Bring the dragon a bunch and he may be more friendly.'],
@@ -1626,6 +1644,7 @@ export class ActivityService {
     this.TalkToDragon = {
       level: 0,
       name: ['Talk to the Dragon'],
+      location: LocationType.MountainTops,
       imageBaseName: 'talktodragon',
       activityType: ActivityType.TalkToDragon,
       description: ['Try to strike up a conversation with the dragon.'],
@@ -1667,6 +1686,7 @@ export class ActivityService {
     this.GatherArmies = {
       level: 0,
       name: ['Gather Armies'],
+      location: LocationType.LargeCity,
       imageBaseName: 'gatherarmy',
       activityType: ActivityType.GatherArmies,
       description: ['Gather troops into armies. This will require vast amounts of food and money.'],
@@ -1718,12 +1738,13 @@ export class ActivityService {
       skipApprenticeshipLevel: 0,
     };
 
-    this.ConquerTheWorld = {
+    this.ConquerTheNation = {
       level: 0,
       name: ['Conquer More Territory'],
+      location: LocationType.LargeCity,
       imageBaseName: 'conquer',
-      activityType: ActivityType.ConquerTheWorld,
-      description: ['Send out your armies to conquer the world.'],
+      activityType: ActivityType.ConquerTheNation,
+      description: ['Send out your armies to conquer the nation.'],
       yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
         "I'm sure you have plenty of armies for this. You wouldn't try this without enough armies, that would end badly.",
@@ -1733,7 +1754,7 @@ export class ActivityService {
           let value = 0;
           value = this.inventoryService.consume(
             'army',
-            this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress + 1
+            this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheNation].progress + 1
           );
           if (value < 1) {
             for (let i = 0; i < 5; i++) {
@@ -1748,12 +1769,12 @@ export class ActivityService {
             }
             return;
           }
-          this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].progress++;
+          this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheNation].progress++;
           this.impossibleTaskService.checkCompletion();
-          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheWorld].complete) {
+          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheNation].complete) {
             this.logService.log(
               LogTopic.STORY,
-              'You did the impossible and conquered the world! Under your wise rule all human suffering ceases.'
+              'You did the impossible and conquered the nation! Under your wise rule all human suffering ceases.'
             );
           }
         },
@@ -1767,6 +1788,7 @@ export class ActivityService {
     this.MoveStars = {
       level: 0,
       name: ['Move Stars'],
+      location: LocationType.Self,
       imageBaseName: 'movestars',
       activityType: ActivityType.MoveStars,
       description: ['Extend your vast magical powers into the heavens and force the stars into alignment.'],
@@ -1814,6 +1836,7 @@ export class ActivityService {
     this.OddJobs = {
       level: 0,
       name: ['Odd Jobs'],
+      location: LocationType.SmallTown,
       imageBaseName: 'oddjobs',
       activityType: ActivityType.OddJobs,
       description: [oddJobsDescription],
@@ -1848,6 +1871,7 @@ export class ActivityService {
     this.Resting = {
       level: 0,
       name: ['Resting', 'Meditation', 'Communing With Divinity', 'Finding True Inner Peace'],
+      location: LocationType.Self,
       imageBaseName: 'resting',
       activityType: ActivityType.Resting,
       yinYangEffect: [YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Balance],
@@ -1946,6 +1970,7 @@ export class ActivityService {
     this.Begging = {
       level: 0,
       name: ['Begging', 'Street Performing', 'Oration', 'Politics'],
+      location: LocationType.SmallTown,
       imageBaseName: 'begging',
       activityType: ActivityType.Begging,
       description: [
@@ -2046,6 +2071,7 @@ export class ActivityService {
     this.Cooking = {
       level: 0,
       name: ['Cooking', 'Soul Food Preparation'],
+      location: LocationType.SmallTown,
       imageBaseName: 'cooking',
       activityType: ActivityType.Cooking,
       description: [
@@ -2055,7 +2081,7 @@ export class ActivityService {
       yinYangEffect: [YinYangEffect.None, YinYangEffect.Balance],
       consequenceDescription: [
         'Uses 10 Stamina. Increases charisma and intelligence and provides a little money.',
-        'Uses 100 Stamina. Increases charisma, intelligence, and spirituality.',
+        'Uses 90 Stamina. Increases charisma, intelligence, and spirituality.',
       ],
       consequence: [
         () => {
@@ -2108,6 +2134,7 @@ export class ActivityService {
     this.Blacksmithing = {
       level: 0,
       name: ['Apprentice Blacksmithing', 'Journeyman Blacksmithing', 'Blacksmithing', 'Master Blacksmithing'],
+      location: LocationType.LargeCity,
       imageBaseName: 'blacksmithing',
       activityType: ActivityType.Blacksmithing,
       description: [
@@ -2265,6 +2292,7 @@ export class ActivityService {
     this.GatherHerbs = {
       level: 0,
       name: ['Gathering Herbs'],
+      location: LocationType.SmallTown,
       imageBaseName: 'herbs',
       activityType: ActivityType.GatherHerbs,
       description: ['Search the natural world for useful herbs.'],
@@ -2299,6 +2327,7 @@ export class ActivityService {
     this.Alchemy = {
       level: 0,
       name: ['Apprentice Alchemy', 'Journeyman Alchemy', 'Alchemy', 'Master Alchemy'],
+      location: LocationType.LargeCity,
       imageBaseName: 'alchemy',
       activityType: ActivityType.Alchemy,
       description: [
@@ -2424,6 +2453,7 @@ export class ActivityService {
     this.ChopWood = {
       level: 0,
       name: ['Chopping Wood'],
+      location: LocationType.Forest,
       imageBaseName: 'chopping',
       activityType: ActivityType.ChopWood,
       description: ['Work as a woodcutter, cutting logs in the forest.'],
@@ -2455,6 +2485,7 @@ export class ActivityService {
     this.Woodworking = {
       level: 0,
       name: ['Apprentice Woodworking', 'Journeyman Woodworking', 'Woodworking', 'Master Woodworking'],
+      location: LocationType.SmallTown,
       imageBaseName: 'woodworking',
       activityType: ActivityType.Woodworking,
       description: [
@@ -2598,6 +2629,7 @@ export class ActivityService {
     this.Leatherworking = {
       level: 0,
       name: ['Apprentice Leatherworking', 'Journeyman Leatherworking', 'Leatherworking', 'Master Leatherworking'],
+      location: LocationType.SmallTown,
       imageBaseName: 'leatherworking',
       activityType: ActivityType.Leatherworking,
       description: [
@@ -2742,6 +2774,7 @@ export class ActivityService {
     this.Plowing = {
       level: 0,
       name: ['Plowing Land'],
+      location: LocationType.SmallTown,
       imageBaseName: 'plowing',
       activityType: ActivityType.Plowing,
       description: ['Plow an unused plot of land into a field for growing crops.'],
@@ -2778,6 +2811,7 @@ export class ActivityService {
     this.Clearing = {
       level: 0,
       name: ['Clearing Land'],
+      location: LocationType.SmallTown,
       imageBaseName: 'clearing',
       activityType: ActivityType.Clearing,
       description: ['Clear a fallow plot of farmland into an empty plot of land.'],
@@ -2814,6 +2848,7 @@ export class ActivityService {
     this.Farming = {
       level: 0,
       name: ['Farming'],
+      location: LocationType.SmallTown,
       imageBaseName: 'farming',
       activityType: ActivityType.Farming,
       description: [
@@ -2863,6 +2898,7 @@ export class ActivityService {
     this.Mining = {
       level: 0,
       name: ['Mining'],
+      location: LocationType.SmallTown,
       imageBaseName: 'mining',
       activityType: ActivityType.Mining,
       description: ['Dig in the ground for usable minerals.'],
@@ -2898,6 +2934,7 @@ export class ActivityService {
     this.Smelting = {
       level: 0,
       name: ['Smelting'],
+      location: LocationType.SmallTown,
       imageBaseName: 'smelting',
       activityType: ActivityType.Smelting,
       description: [
@@ -2935,6 +2972,7 @@ export class ActivityService {
     this.Hunting = {
       level: 0,
       name: ['Hunting'],
+      location: LocationType.Forest,
       imageBaseName: 'hunting',
       activityType: ActivityType.Hunting,
       description: ['Hunt for animals in the nearby woods.'],
@@ -2978,6 +3016,7 @@ export class ActivityService {
     this.Fishing = {
       level: 0,
       name: ['Fishing'],
+      location: LocationType.SmallPond,
       imageBaseName: 'fishing',
       // cormorant fishing later!
       activityType: ActivityType.Fishing,
@@ -3017,6 +3056,7 @@ export class ActivityService {
     this.Burning = {
       level: 0,
       name: ['Burning Things'],
+      location: LocationType.SmallTown,
       imageBaseName: 'burning',
       activityType: ActivityType.Burning,
       description: ['Light things on fire and watch them burn.'],
@@ -3050,6 +3090,7 @@ export class ActivityService {
     this.BalanceChi = {
       level: 0,
       name: ['Balance Your Chi'],
+      location: LocationType.Self,
       imageBaseName: 'balance',
       activityType: ActivityType.BalanceChi,
       description: ['Balance the flow of your chi and widen your meridians.'],
@@ -3107,6 +3148,7 @@ export class ActivityService {
     this.BodyCultivation = {
       level: 0,
       name: ['Body Cultivation'],
+      location: LocationType.Self,
       imageBaseName: 'bodycultivation',
       activityType: ActivityType.BodyCultivation,
       description: [
@@ -3149,6 +3191,7 @@ export class ActivityService {
     this.MindCultivation = {
       level: 0,
       name: ['Mind Cultivation'],
+      location: LocationType.Self,
       imageBaseName: 'mindcultivation',
       activityType: ActivityType.MindCultivation,
       description: [
@@ -3188,6 +3231,7 @@ export class ActivityService {
     this.CoreCultivation = {
       level: 0,
       name: ['Core Cultivation'],
+      location: LocationType.Self,
       imageBaseName: 'corecultivation',
       activityType: ActivityType.CoreCultivation,
       description: ['Focus on the development of your soul core.'],
@@ -3232,6 +3276,7 @@ export class ActivityService {
     this.SoulCultivation = {
       level: 0,
       name: ['Soul Cultivation'],
+      location: LocationType.Self,
       imageBaseName: 'soulcultivation',
       activityType: ActivityType.SoulCultivation,
       description: ['Focus on the development of your immortal soul.'],
@@ -3294,6 +3339,7 @@ export class ActivityService {
     this.InfuseEquipment = {
       level: 0,
       name: ['Infuse Equipment'],
+      location: LocationType.Self,
       imageBaseName: 'infuseequipment',
       activityType: ActivityType.InfuseEquipment,
       description: ['Infuse the power of a gem into your equipment.'],
@@ -3335,6 +3381,7 @@ export class ActivityService {
     this.InfuseBody = {
       level: 0,
       name: ['Infuse Body'],
+      location: LocationType.Self,
       imageBaseName: 'infusebody',
       activityType: ActivityType.InfuseBody,
       description: [
@@ -3381,6 +3428,7 @@ export class ActivityService {
     this.ExtendLife = {
       level: 0,
       name: ['Extending Life'],
+      location: LocationType.Self,
       imageBaseName: 'extendlife',
       activityType: ActivityType.ExtendLife,
       description: ['Direct your magical energy into extending your lifespan, making you live longer.'],
@@ -3427,6 +3475,7 @@ export class ActivityService {
     this.Recruiting = {
       level: 0,
       name: ['Recruiting Followers'],
+      location: LocationType.LargeCity,
       imageBaseName: 'recruiting',
       activityType: ActivityType.Recruiting,
       description: ['Look for followers willing to serve you.'],
@@ -3473,6 +3522,7 @@ export class ActivityService {
     this.TrainingFollowers = {
       level: 0,
       name: ['Training Followers'],
+      location: LocationType.LargeCity,
       imageBaseName: 'trainingfollowers',
       activityType: ActivityType.TrainingFollowers,
       description: ['Train your followers to make them more powerful.'],
@@ -3504,6 +3554,7 @@ export class ActivityService {
     this.Taunting = {
       level: 0,
       name: ['Looking for Trouble'],
+      location: LocationType.Self,
       imageBaseName: 'taunting',
       activityType: ActivityType.Taunting,
       description: ['Go looking for an enemy and call them out to battle.'],
@@ -3533,6 +3584,7 @@ export class ActivityService {
     this.CombatTraining = {
       level: 0,
       name: ['Combat Training'],
+      location: LocationType.Self,
       imageBaseName: 'combattraining',
       activityType: ActivityType.CombatTraining,
       description: [
@@ -3565,6 +3617,7 @@ export class ActivityService {
     this.PetRecruiting = {
       level: 0,
       name: ['Finding Pets'],
+      location: LocationType.Self,
       imageBaseName: 'findingpets',
       activityType: ActivityType.PetRecruiting,
       description: ['Look for animals that want to be your pets.'],
@@ -3607,6 +3660,7 @@ export class ActivityService {
     this.PetTraining = {
       level: 0,
       name: ['Training Pets'],
+      location: LocationType.Self,
       imageBaseName: 'trainingpets',
       activityType: ActivityType.PetTraining,
       description: ['Train your pets to make them more powerful.'],
@@ -3648,6 +3702,7 @@ export class ActivityService {
     this.PurifyGems = {
       level: 0,
       name: ['Purifying Gems'],
+      location: LocationType.Self,
       imageBaseName: 'purifyinggems',
       activityType: ActivityType.PurifyGems,
       description: ['Purify corrupted spirit gems into something more useful.'],

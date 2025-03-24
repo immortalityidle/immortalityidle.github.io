@@ -7,6 +7,8 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { HellService } from './hell.service';
 import { BigNumberPipe } from '../app.component';
 import { HomeService, HomeType } from './home.service';
+import { LocationType } from './activity';
+import { LocationService } from './location.service';
 
 export interface Enemy {
   name: string;
@@ -20,6 +22,14 @@ export interface Enemy {
   imageFile?: string;
   techniques: Technique[];
   index?: number;
+}
+
+export interface EnemyTypes {
+  name: string;
+  location: LocationType;
+  description: string;
+  element?: string;
+  basePower: number;
 }
 
 export interface BattleProperties {
@@ -49,6 +59,7 @@ export interface BattleProperties {
   godSlayersUnlocked: boolean;
   godSlayersEnabled: boolean;
   totalEnemies: number;
+  troubleCounter: number;
 }
 
 export interface Technique {
@@ -66,6 +77,7 @@ export interface Technique {
 export class BattleService {
   bigNumberPipe: BigNumberPipe;
   hellService?: HellService;
+  locationService?: LocationService;
   enemies: Enemy[];
   currentEnemy: Enemy | null;
   kills: number;
@@ -93,6 +105,7 @@ export class BattleService {
   godSlayersUnlocked = false;
   godSlayersEnabled = false;
   totalEnemies = 0;
+  troubleCounter = 0;
   techniques: Technique[] = [
     {
       name: 'Basic Strike',
@@ -112,6 +125,7 @@ export class BattleService {
     mainLoopService: MainLoopService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
+    setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.enemies = [];
     this.currentEnemy = null;
@@ -206,6 +220,7 @@ export class BattleService {
       godSlayersUnlocked: this.godSlayersUnlocked,
       godSlayersEnabled: this.godSlayersEnabled,
       totalEnemies: this.totalEnemies,
+      troubleCounter: this.troubleCounter,
     };
   }
 
@@ -235,6 +250,7 @@ export class BattleService {
     this.godSlayersUnlocked = properties.godSlayersUnlocked || false;
     this.godSlayersEnabled = properties.godSlayersEnabled || false;
     this.totalEnemies = properties.totalEnemies || 0;
+    this.troubleCounter = properties.troubleCounter || 0;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -499,17 +515,27 @@ export class BattleService {
       return;
     }
 
-    let health = this.troubleKills * 10;
-    let attack = this.troubleKills / 5;
-    let defense = this.troubleKills / 5;
-    let gem;
-    let monsterName;
-    let monsterBaseName;
+    if (!this.locationService) {
+      // location service not injected yet, bail out
+      return;
+    }
+
+    this.troubleCounter++;
+
+    let targetLocation = this.locationService.troubleTarget;
+    if (!targetLocation) {
+      const locationIndex = (this.troubleCounter % this.locationService.unlockedLocations.length) - 1;
+      targetLocation = this.locationService.unlockedLocations[locationIndex + 1];
+    }
+    if (!targetLocation) {
+      return;
+    }
+    /*
     if (this.godSlayersEnabled) {
-      const index = this.godSlayerKills % this.monsterNames.length;
-      const rank = Math.floor(this.godSlayerKills / this.monsterNames.length);
-      monsterBaseName = this.monsterNames[index];
-      monsterName = 'Godslaying ' + monsterBaseName;
+      const index = this.godSlayerKills % this.monsterTypes.length;
+      const rank = Math.floor(this.godSlayerKills / this.monsterTypes.length);
+      monsterType = this.monsterTypes[index];
+      monsterName = 'Godslaying ' + monsterType;
 
       if (rank > 0) {
         monsterName += ' ' + (rank + 1);
@@ -521,33 +547,39 @@ export class BattleService {
       gem = this.inventoryService.generateSpiritGem(Math.ceil(this.godSlayerKills / 20));
       this.godSlayerKills++;
     } else {
-      const rank = Math.floor(this.troubleKills / (this.monsterNames.length * this.monsterQualities.length));
-      const index = this.troubleKills % (this.monsterNames.length * this.monsterQualities.length);
-      const nameIndex = Math.floor(index / this.monsterQualities.length);
-      const qualityIndex = index % this.monsterQualities.length;
-      monsterBaseName = this.monsterNames[nameIndex];
-      monsterName = this.monsterQualities[qualityIndex] + ' ' + this.monsterNames[nameIndex];
-      if (rank > 0) {
-        monsterName += ' ' + (rank + 1);
-      }
+     */
+    const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
 
-      gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
-      this.troubleKills++;
+    const monsterType = possibleMonsters[this.troubleCounter % possibleMonsters.length];
+
+    const killsToNextQualityRank = (monsterType.basePower + '').length * 5;
+    const modifier = this.troubleKills / killsToNextQualityRank;
+    let qualityIndex = Math.floor(modifier);
+    if (qualityIndex >= this.monsterQualities.length) {
+      qualityIndex = this.monsterQualities.length - 1;
     }
+    const modifiedBasePower = monsterType.basePower * modifier;
+
+    const monsterName = this.monsterQualities[qualityIndex] + ' ' + monsterType.name;
+    const health = modifiedBasePower * 10;
+    const attackDefense = modifiedBasePower / 5;
+    const gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
+    this.troubleKills++;
+    //}
 
     this.addEnemy({
       name: monsterName,
-      baseName: monsterBaseName,
+      baseName: monsterType.name,
       health: health,
       maxHealth: health,
-      defense: defense,
+      defense: attackDefense,
       loot: [gem],
       techniques: [
         {
           name: 'Attack',
           ticks: 0,
           ticksRequired: 10,
-          baseDamage: attack,
+          baseDamage: attackDefense,
         },
       ],
     });
@@ -702,88 +734,493 @@ export class BattleService {
     }
   }
 
-  monsterNames = [
-    'spider',
-    'rat',
-    'scorpion',
-    'lizard',
-    'snake',
-    'jack-o-lantern',
-    'gnome',
-    'imp',
-    'ooze',
-    'jackalope',
-    'pixie',
-    'goblin',
-    'monkey',
-    'redcap',
-    'boar',
-    'skeleton',
-    'zombie',
-    'hobgoblin',
-    'kobold',
-    'chupacabra',
-    'siren',
-    'crocodile',
-    'incubus',
-    'succubus',
-    'jackal',
-    'basilisk',
-    'mogwai',
-    'ghoul',
-    'gremlin',
-    'orc',
-    'tiger',
-    'ghost',
-    'centaur',
-    'troll',
-    'manticore',
-    'merlion',
-    'mummy',
-    'landshark',
-    'bugbear',
-    'yeti',
-    'dreameater',
-    'kelpie',
-    'unicorn',
-    'hippo',
-    'ogre',
-    'banshee',
-    'harpy',
-    'sphinx',
-    'werewolf',
-    'boogeyman',
-    'golem',
-    'leshy',
-    'hellhound',
-    'chimaera',
-    'undine',
-    'minotaur',
-    'bunyip',
-    'cyclops', //
-    'rakshasa',
-    'oni',
-    'nyuk',
-    'cavebear',
-    'wendigo',
-    'dinosaur',
-    'wyvern',
-    'doomworm',
-    'lich',
-    'thunderbird',
-    'vampire',
-    'beholder',
-    'hydra',
-    'roc',
-    'wyrm',
-    'giant',
-    'kraken',
-    'behemoth',
-    'phoenix',
-    'pazuzu',
-    'titan',
-    'leviathan',
-    'stormbringer',
+  monsterTypes: EnemyTypes[] = [
+    {
+      name: 'spider',
+      description: '',
+      location: LocationType.SmallTown,
+      basePower: 1,
+    },
+    {
+      name: 'rat',
+      description: '',
+      location: LocationType.SmallTown,
+      basePower: 2,
+    },
+    {
+      name: 'scorpion',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 3,
+    },
+    {
+      name: 'lizard',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 5,
+    },
+    {
+      name: 'snake',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 8,
+    },
+    {
+      name: 'jack-o-lantern',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 10,
+    },
+    {
+      name: 'redcap',
+      description: '',
+      location: LocationType.SmallTown,
+      basePower: 12,
+    },
+    {
+      name: 'gnome',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 15,
+    },
+    {
+      name: 'gremlin',
+      description: '',
+      location: LocationType.SmallTown,
+      basePower: 18,
+    },
+    {
+      name: 'imp',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 20,
+    },
+    {
+      name: 'ooze',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 30,
+    },
+    {
+      name: 'jackalope',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 40,
+    },
+    {
+      name: 'pixie',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 50,
+    },
+    {
+      name: 'goblin',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 100,
+    },
+    {
+      name: 'monkey',
+      description: '',
+      location: LocationType.Jungle,
+      basePower: 100,
+    },
+    {
+      name: 'boar',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 200,
+    },
+    {
+      name: 'skeleton',
+      description: '',
+      location: LocationType.Mine,
+      basePower: 300,
+    },
+    {
+      name: 'zombie',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 400,
+    },
+    {
+      name: 'kelpie',
+      description: '',
+      location: LocationType.SmallPond,
+      basePower: 500,
+    },
+    {
+      name: 'bunyip',
+      description: '',
+      location: LocationType.SmallPond,
+      basePower: 600,
+    },
+    {
+      name: 'hobgoblin',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 700,
+    },
+    {
+      name: 'kobold',
+      description: '',
+      location: LocationType.Mine,
+      basePower: 800,
+    },
+    {
+      name: 'chupacabra',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 900,
+    },
+    {
+      name: 'siren',
+      description: '',
+      location: LocationType.SmallPond,
+      basePower: 1000,
+    },
+    {
+      name: 'crocodile',
+      description: '',
+      location: LocationType.SmallPond,
+      basePower: 1200,
+    },
+    {
+      name: 'golem',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 1300,
+    },
+    {
+      name: 'incubus',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 1400,
+    },
+    {
+      name: 'succubus',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 1500,
+    },
+    {
+      name: 'jackal',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 1800,
+    },
+    {
+      name: 'boogeyman',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 2000,
+    },
+    {
+      name: 'basilisk',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 2100,
+    },
+    {
+      name: 'mogwai',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 2500,
+    },
+    {
+      name: 'ghoul',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 3000,
+    },
+    {
+      name: 'orc',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 1000,
+    },
+    {
+      name: 'tiger',
+      description: '',
+      location: LocationType.Jungle,
+      basePower: 4000,
+    },
+    {
+      name: 'hippo',
+      description: '',
+      location: LocationType.SmallPond,
+      basePower: 5000,
+    },
+    {
+      name: 'ghost',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 5000,
+    },
+    {
+      name: 'centaur',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 8000,
+    },
+    {
+      name: 'hellhound',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 9000,
+    },
+    {
+      name: 'troll',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 10000,
+    },
+    {
+      name: 'werewolf',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 11000,
+    },
+    {
+      name: 'ogre',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 12000,
+    },
+    {
+      name: 'manticore',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 15000,
+    },
+    {
+      name: 'minotaur',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 18000,
+    },
+    {
+      name: 'merlion',
+      description: '',
+      location: LocationType.Beach,
+      basePower: 20000,
+    },
+    {
+      name: 'mummy',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 30000,
+    },
+    {
+      name: 'landshark',
+      description: '',
+      location: LocationType.Beach,
+      basePower: 40000,
+    },
+    {
+      name: 'bugbear',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 50000,
+    },
+    {
+      name: 'rakshasa',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 60000,
+    },
+    {
+      name: 'cavebear',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 70000,
+    },
+    {
+      name: 'yeti',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 80000,
+    },
+    {
+      name: 'dreameater',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 100000,
+    },
+    {
+      name: 'unicorn',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 120000,
+    },
+    {
+      name: 'banshee',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 140000,
+    },
+    {
+      name: 'harpy',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 150000,
+    },
+    {
+      name: 'phoenix',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 180000,
+    },
+    {
+      name: 'sphinx',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 200000,
+    },
+    {
+      name: 'oni',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 300000,
+    },
+    {
+      name: 'leshy',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 300000,
+    },
+    {
+      name: 'chimaera',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 400000,
+    },
+    {
+      name: 'undine',
+      description: '',
+      location: LocationType.DeepSea,
+      basePower: 500000,
+    },
+    {
+      name: 'cyclops',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 600000,
+    },
+    {
+      name: 'nyuk',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 700000,
+    },
+    {
+      name: 'wendigo',
+      description: '',
+      location: LocationType.Forest,
+      basePower: 800000,
+    },
+    {
+      name: 'behemoth',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 800000,
+    },
+    {
+      name: 'dinosaur',
+      description: '',
+      location: LocationType.Jungle,
+      basePower: 1000000,
+    },
+    {
+      name: 'wyvern',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 2000000,
+    },
+    {
+      name: 'doomworm',
+      description: '',
+      location: LocationType.Desert,
+      basePower: 3000000,
+    },
+    {
+      name: 'lich',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 5000000,
+    },
+    {
+      name: 'thunderbird',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 8000000,
+    },
+    {
+      name: 'vampire',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 10000000,
+    },
+    {
+      name: 'beholder',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 15000000,
+    },
+    {
+      name: 'hydra',
+      description: '',
+      location: LocationType.DeepSea,
+      basePower: 20000000,
+    },
+    {
+      name: 'roc',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 40000000,
+    },
+    {
+      name: 'wyrm',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 50000000,
+    },
+    {
+      name: 'giant',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 60000000,
+    },
+    {
+      name: 'kraken',
+      description: '',
+      location: LocationType.DeepSea,
+      basePower: 80000000,
+    },
+    {
+      name: 'pazuzu',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 100000000,
+    },
+    {
+      name: 'titan',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 200000000,
+    },
+    {
+      name: 'leviathan',
+      description: '',
+      location: LocationType.DeepSea,
+      basePower: 500000000,
+    },
+    {
+      name: 'stormbringer',
+      description: '',
+      location: LocationType.MountainTops,
+      basePower: 1000000000,
+    },
   ];
 
   monsterQualities = [

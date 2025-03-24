@@ -1,0 +1,20 @@
+<div class="locationsContainer">
+  <span>Available Locations</span>
+  <br>
+  <div>
+    @for (location of locationService.unlockedLocations; track location) {
+      @if (location !== locationTypeSelf) {
+        <div class="itemSlot locationEntry" (click)="locationClicked(location)">
+          @if (locationService.troubleTarget === location){
+            <mat-icon tooltip="When you look for trouble, you will look for it here.">
+              crisis_alert
+            </mat-icon>
+          }
+          <div>{{locationService.locationMap[location].name}}</div>
+          <div>{{locationService.locationMap[location].description}}</div>
+        </div>
+      }
+    }
+  </div>
+</div>
+  

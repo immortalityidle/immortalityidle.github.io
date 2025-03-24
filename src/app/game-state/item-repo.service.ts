@@ -2042,7 +2042,7 @@ baguaMap = [
       name: 'Manual of Remembered Plans',
       type: 'manual',
       description:
-        'This manual teaches you to automatically resume activities from your previous life.<br>Only activities that you qualify for when you reach adulthood are available to resume.',
+        'This manual teaches you to automatically schedule activities that you performed in your previous life.',
       value: 500,
       useLabel: 'Read',
       useDescription: 'Permanently unlock preserving activity plans across reincarnations.',

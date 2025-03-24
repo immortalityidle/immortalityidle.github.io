@@ -4,7 +4,7 @@ import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
-import { Activity, ActivityType, YinYangEffect } from './activity';
+import { Activity, ActivityType, LocationType, YinYangEffect } from './activity';
 import { FollowersService } from './followers.service';
 import { Equipment, InventoryService, Item } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
@@ -92,6 +92,7 @@ export class HellService {
   burnMoney = {
     level: 0,
     name: ['Burn Money'],
+    location: LocationType.Hell,
     activityType: ActivityType.BurnMoney,
     description: ['Burn mortal realm money to receive hell money.'],
     yinYangEffect: [YinYangEffect.None],
@@ -128,6 +129,7 @@ export class HellService {
   hellRecruiting = {
     level: 0,
     name: ['Recruiting the Damned'],
+    location: LocationType.Hell,
     activityType: ActivityType.HellRecruiting,
     description: ['Look for followers willing to help you.'],
     yinYangEffect: [YinYangEffect.None],
@@ -177,6 +179,7 @@ export class HellService {
   rehabilitation = {
     level: 0,
     name: ['Rehabilitate Ruffian'],
+    location: LocationType.Hell,
     activityType: ActivityType.Rehabilitation,
     description: [
       'You recognize a bunch of the ruffians here as people who used to beat and rob you in your past lives. Perhaps you can give them some some friendly rehabilitation. With your fists.',
@@ -221,6 +224,7 @@ export class HellService {
   honorAncestors = {
     level: 0,
     name: ['Honor Ancestors'],
+    location: LocationType.Hell,
     activityType: ActivityType.HonorAncestors,
     description: [
       'You look around and realize that you have many family members and ancestors here. You should probably give them some credit for what they have done for you. And some money.',
@@ -254,6 +258,7 @@ export class HellService {
   copperMining = {
     level: 0,
     name: ['Copper Mining'],
+    location: LocationType.Hell,
     activityType: ActivityType.CopperMining,
     description: [
       "The copper pillars here look like they're made of a decent grade of copper. It looks like you have enough slack in your chains to turn and break off some pieces.",
@@ -284,6 +289,7 @@ export class HellService {
   forgeHammer = {
     level: 0,
     name: ['Forge Hammer'],
+    location: LocationType.Hell,
     activityType: ActivityType.ForgeHammer,
     description: [
       'Shape a bar of copper into a hammer using your bare hands. This would be so much easier with an anvil and tools.',
@@ -333,6 +339,7 @@ export class HellService {
   climbMountain = {
     level: 0,
     name: ['Climb the Mountain'],
+    location: LocationType.Hell,
     activityType: ActivityType.ClimbMountain,
     description: [
       "Take another step up the mountain. The path before you seems exceptionally jagged. Maybe you shouldn't have killed so very many little spiders.",
@@ -374,6 +381,7 @@ export class HellService {
   attackClimbers = {
     level: 0,
     name: ['Attack Climbers'],
+    location: LocationType.Hell,
     activityType: ActivityType.AttackClimbers,
     description: [
       "The murderers on this mountain look pretty distracted. It wouldn't be hard to knock them down to the bottom.",
@@ -395,6 +403,7 @@ export class HellService {
   meltMountain = {
     level: 0,
     name: ['Melt the Mountain'],
+    location: LocationType.Hell,
     activityType: ActivityType.MeltMountain,
     description: [
       "The mountain is far to slippery climb. The only way you're getting to the top is to bring the top down to you.",
@@ -439,6 +448,7 @@ export class HellService {
   freezeMountain = {
     level: 0,
     name: ['Rock the Lava'],
+    location: LocationType.Hell,
     activityType: ActivityType.FreezeMountain,
     description: ['Swimming in lava is less fun that it seemed like it would be.'],
     yinYangEffect: [YinYangEffect.None],
@@ -480,6 +490,7 @@ export class HellService {
   healAnimals = {
     level: 0,
     name: ['Heal Animals'],
+    location: LocationType.Hell,
     activityType: ActivityType.HealAnimals,
     description: [
       'You notice that not all the animals here are frenzied killers. Some of them are sick, wounded, and miserable. You resolve to do what good you can here.',
@@ -508,6 +519,7 @@ export class HellService {
   liftBoulder = {
     level: 0,
     name: ['Lift the Boulder Higher'],
+    location: LocationType.Hell,
     activityType: ActivityType.LiftBoulder,
     description: ['The boulder is heavy, but you are strong. See how high you can lift it.'],
     yinYangEffect: [YinYangEffect.None],
@@ -533,6 +545,7 @@ export class HellService {
   swim = {
     level: 0,
     name: ['Swim Deeper into the Blood'],
+    location: LocationType.Hell,
     activityType: ActivityType.Swim,
     description: ['Swim down further into the crimson depths.'],
     yinYangEffect: [YinYangEffect.None],
@@ -558,6 +571,7 @@ export class HellService {
   searchForExit = {
     level: 0,
     name: ['Search for the Exit'],
+    location: LocationType.Hell,
     activityType: ActivityType.SearchForExit,
     description: [
       "The lost souls here are searching for a way out, and they can't seem to see the portal you came in on. You could help them search for the exit they're seeking.",
@@ -600,6 +614,7 @@ export class HellService {
   teachTheWay = {
     level: 0,
     name: ['Teach the Way to the Exit'],
+    location: LocationType.HellOfWrongfulDead,
     activityType: ActivityType.TeachTheWay,
     description: ['Teach the other damned souls here the way out.'],
     yinYangEffect: [YinYangEffect.None],
@@ -632,6 +647,7 @@ export class HellService {
   interrogate = {
     level: 0,
     name: ['Interrogate the Damned'],
+    location: LocationType.Hell,
     activityType: ActivityType.Interrogate,
     description: [
       'Find out where the tomb looters here hid their stolen treasures. You might be able to reverse some of the damage they have done.',
@@ -670,6 +686,7 @@ export class HellService {
   recoverTreasure = {
     level: 0,
     name: ['Recover a Treasure'],
+    location: LocationType.Hell,
     activityType: ActivityType.RecoverTreasure,
     description: [
       "Recover a stolen relic. You'll need all your wits to find it even if you have one the sketchy maps the damned can provide.",
@@ -714,6 +731,7 @@ export class HellService {
   replaceTreasure = {
     level: 0,
     name: ['Replace a Treasure'],
+    location: LocationType.Hell,
     activityType: ActivityType.ReplaceTreasure,
     description: [
       "Return a stolen relic to the tomb where it came from. You'll need to be quick to avoid the tomb's traps.",
@@ -754,6 +772,7 @@ export class HellService {
   endureTheMill = {
     level: 0,
     name: ['Endure the Mill'],
+    location: LocationType.Hell,
     activityType: ActivityType.Endure,
     description: [
       "Trapped under the millstone like this, there's not much you can do but endure the punishment. Fortunately, you probably never went out looking for tiny spiders to squash, right?",
@@ -787,6 +806,7 @@ export class HellService {
   examineContracts = {
     level: 0,
     name: ['Examine Contracts'],
+    location: LocationType.Hell,
     activityType: ActivityType.ExamineContracts,
     description: [
       "As if the saw-weilding demons weren't bad enough, this place is a haven for fiendish bureaucrats. Huge piles of paper containing the contracts, covenants, bylaws, stipulations, regulations, and heretofor unspecified legal nonsense for this hell. Maybe if you go through them carefully, you can find a loophole to get yourself an audience with the boss.",
@@ -1439,6 +1459,7 @@ export class HellService {
   flee(): Activity {
     return {
       level: 0,
+      location: LocationType.Self,
       name: ['Escape from this hell'],
       activityType: ActivityType.EscapeHell,
       description: ["Return to the gates of Lord Yama's realm."],
@@ -1488,6 +1509,7 @@ export class HellService {
       newList.push({
         level: 0,
         name: [hell.name],
+        location: LocationType.Hell,
         activityType: ActivityType.Hell + hell.index,
         description: [hell.description],
         yinYangEffect: [YinYangEffect.None],
@@ -1512,6 +1534,7 @@ export class HellService {
       newList.push({
         level: 0,
         name: ['Challenge Lord Yama'],
+        location: LocationType.Hell,
         activityType: ActivityType.FinishHell,
         description: [
           "You've had enough of this place and learned everything these hells can teach you. Your karmic debt is paid. Challenge Lord Yama to prove you deserve your rightful place in the heavens.",
