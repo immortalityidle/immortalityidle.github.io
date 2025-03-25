@@ -30,13 +30,13 @@ export interface EnemyTypes {
   description: string;
   element?: string;
   basePower: number;
+  lootType?: string[];
 }
 
 export interface BattleProperties {
   enemies: Enemy[];
   currentEnemy: Enemy | null;
   kills: number;
-  troubleKills: number;
   godSlayerKills: number;
   totalKills: number;
   autoTroubleUnlocked: boolean;
@@ -81,7 +81,6 @@ export class BattleService {
   enemies: Enemy[];
   currentEnemy: Enemy | null;
   kills: number;
-  troubleKills: number;
   godSlayerKills: number;
   autoTroubleUnlocked = false;
   autoTroubleEnabled = false;
@@ -130,7 +129,6 @@ export class BattleService {
     this.enemies = [];
     this.currentEnemy = null;
     this.kills = 0;
-    this.troubleKills = 0;
     this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
 
@@ -187,7 +185,6 @@ export class BattleService {
   reset() {
     this.clearEnemies();
     this.kills = 0;
-    this.troubleKills = 0;
     this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
   }
@@ -197,7 +194,6 @@ export class BattleService {
       enemies: this.enemies,
       currentEnemy: this.currentEnemy,
       kills: this.kills,
-      troubleKills: this.troubleKills,
       godSlayerKills: this.godSlayerKills,
       totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
@@ -227,7 +223,6 @@ export class BattleService {
   setProperties(properties: BattleProperties) {
     this.enemies = properties.enemies;
     this.kills = properties.kills;
-    this.troubleKills = properties.troubleKills;
     this.godSlayerKills = properties.godSlayerKills || 0;
     this.totalKills = properties.totalKills || 0;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
@@ -504,7 +499,7 @@ export class BattleService {
     }
   }
 
-  // generate a monster based on current troubleKills
+  // generate a monster based on current trouble location and lifetime kills
   trouble() {
     if (this.enemies.length !== 0) {
       return;
@@ -546,14 +541,15 @@ export class BattleService {
       health = attack * 200;
       gem = this.inventoryService.generateSpiritGem(Math.ceil(this.godSlayerKills / 20));
       this.godSlayerKills++;
-    } else {
+    }
      */
     const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
 
     const monsterType = possibleMonsters[this.troubleCounter % possibleMonsters.length];
 
     const killsToNextQualityRank = (monsterType.basePower + '').length * 5;
-    const modifier = this.troubleKills / killsToNextQualityRank;
+    const modifier = (this.kills + 1) / killsToNextQualityRank;
+
     let qualityIndex = Math.floor(modifier);
     if (qualityIndex >= this.monsterQualities.length) {
       qualityIndex = this.monsterQualities.length - 1;
@@ -563,9 +559,28 @@ export class BattleService {
     const monsterName = this.monsterQualities[qualityIndex] + ' ' + monsterType.name;
     const health = modifiedBasePower * 10;
     const attackDefense = modifiedBasePower / 5;
-    const gem = this.inventoryService.generateSpiritGem(Math.floor(Math.log2(this.troubleKills + 2)));
-    this.troubleKills++;
-    //}
+    const loot: Item[] = [];
+    if (monsterType.lootType) {
+      const grade = Math.floor(Math.log2(modifiedBasePower + 2));
+      if (monsterType.lootType.includes('gem')) {
+        loot.push(this.inventoryService.generateSpiritGem(grade));
+      }
+      if (monsterType.lootType.includes('hide')) {
+        loot.push(this.inventoryService.getHide(grade));
+      }
+      if (monsterType.lootType.includes('ore')) {
+        loot.push(this.inventoryService.getOre(grade));
+      }
+      if (monsterType.lootType.includes('fruit')) {
+        loot.push(this.itemRepoService.items['pear']);
+      }
+      if (monsterType.lootType.includes('meat')) {
+        loot.push(this.inventoryService.getWildMeat(grade));
+      }
+      if (monsterType.lootType.includes('money')) {
+        loot.push(this.inventoryService.getCoinPurse(Math.floor(modifiedBasePower)));
+      }
+    }
 
     this.addEnemy({
       name: monsterName,
@@ -573,7 +588,7 @@ export class BattleService {
       health: health,
       maxHealth: health,
       defense: attackDefense,
-      loot: [gem],
+      loot: loot,
       techniques: [
         {
           name: 'Attack',
@@ -740,486 +755,567 @@ export class BattleService {
       description: '',
       location: LocationType.SmallTown,
       basePower: 1,
+      lootType: ['gem'],
     },
     {
       name: 'rat',
       description: '',
       location: LocationType.SmallTown,
       basePower: 2,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'scorpion',
       description: '',
       location: LocationType.Desert,
       basePower: 3,
+      lootType: ['gem'],
     },
     {
       name: 'lizard',
       description: '',
       location: LocationType.Desert,
       basePower: 5,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'snake',
       description: '',
       location: LocationType.Desert,
       basePower: 8,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'jack-o-lantern',
       description: '',
       location: LocationType.LargeCity,
       basePower: 10,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'redcap',
       description: '',
       location: LocationType.SmallTown,
       basePower: 12,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'gnome',
       description: '',
       location: LocationType.LargeCity,
       basePower: 15,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'gremlin',
       description: '',
       location: LocationType.SmallTown,
       basePower: 18,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'imp',
       description: '',
       location: LocationType.LargeCity,
       basePower: 20,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'ooze',
       description: '',
       location: LocationType.Forest,
       basePower: 30,
+      lootType: ['gem'],
     },
     {
       name: 'jackalope',
       description: '',
       location: LocationType.Desert,
       basePower: 40,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'pixie',
       description: '',
       location: LocationType.Forest,
       basePower: 50,
+      lootType: ['gem', 'fruit'],
     },
     {
       name: 'goblin',
       description: '',
       location: LocationType.Forest,
       basePower: 100,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'monkey',
       description: '',
       location: LocationType.Jungle,
       basePower: 100,
+      lootType: ['gem', 'hide', 'fruit'],
     },
     {
       name: 'boar',
       description: '',
       location: LocationType.Forest,
       basePower: 200,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'skeleton',
       description: '',
       location: LocationType.Mine,
       basePower: 300,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'zombie',
       description: '',
       location: LocationType.Dungeon,
       basePower: 400,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'kelpie',
       description: '',
       location: LocationType.SmallPond,
       basePower: 500,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'bunyip',
       description: '',
       location: LocationType.SmallPond,
       basePower: 600,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'hobgoblin',
       description: '',
       location: LocationType.LargeCity,
       basePower: 700,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'kobold',
       description: '',
       location: LocationType.Mine,
       basePower: 800,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'chupacabra',
       description: '',
       location: LocationType.Desert,
       basePower: 900,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'siren',
       description: '',
       location: LocationType.SmallPond,
       basePower: 1000,
+      lootType: ['gem'],
     },
     {
       name: 'crocodile',
       description: '',
       location: LocationType.SmallPond,
       basePower: 1200,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'golem',
       description: '',
       location: LocationType.LargeCity,
       basePower: 1300,
+      lootType: ['gem', 'ore'],
     },
     {
       name: 'incubus',
       description: '',
       location: LocationType.LargeCity,
       basePower: 1400,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'succubus',
       description: '',
       location: LocationType.LargeCity,
       basePower: 1500,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'jackal',
       description: '',
       location: LocationType.Desert,
       basePower: 1800,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'boogeyman',
       description: '',
       location: LocationType.LargeCity,
       basePower: 2000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'basilisk',
       description: '',
       location: LocationType.Desert,
       basePower: 2100,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'mogwai',
       description: '',
       location: LocationType.LargeCity,
       basePower: 2500,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'ghoul',
       description: '',
       location: LocationType.Dungeon,
       basePower: 3000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'orc',
       description: '',
       location: LocationType.LargeCity,
       basePower: 1000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'tiger',
       description: '',
       location: LocationType.Jungle,
       basePower: 4000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'hippo',
       description: '',
       location: LocationType.SmallPond,
       basePower: 5000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'ghost',
       description: '',
       location: LocationType.Dungeon,
       basePower: 5000,
+      lootType: ['gem'],
     },
     {
       name: 'centaur',
       description: '',
       location: LocationType.Forest,
       basePower: 8000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'hellhound',
       description: '',
       location: LocationType.Desert,
       basePower: 9000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'troll',
       description: '',
       location: LocationType.Dungeon,
       basePower: 10000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'werewolf',
       description: '',
       location: LocationType.Forest,
       basePower: 11000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'ogre',
       description: '',
       location: LocationType.Dungeon,
       basePower: 12000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'manticore',
       description: '',
       location: LocationType.Forest,
       basePower: 15000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'minotaur',
       description: '',
       location: LocationType.Dungeon,
       basePower: 18000,
+      lootType: ['gem', 'hide', 'money'],
     },
     {
       name: 'merlion',
       description: '',
       location: LocationType.Beach,
       basePower: 20000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'mummy',
       description: '',
       location: LocationType.Desert,
       basePower: 30000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'landshark',
       description: '',
       location: LocationType.Beach,
       basePower: 40000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'bugbear',
       description: '',
       location: LocationType.Forest,
       basePower: 50000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'rakshasa',
       description: '',
       location: LocationType.LargeCity,
       basePower: 60000,
+      lootType: ['gem', 'hide', 'money'],
     },
     {
       name: 'cavebear',
       description: '',
       location: LocationType.MountainTops,
       basePower: 70000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'yeti',
       description: '',
       location: LocationType.MountainTops,
       basePower: 80000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'dreameater',
       description: '',
       location: LocationType.Dungeon,
       basePower: 100000,
+      lootType: ['gem'],
     },
     {
       name: 'unicorn',
       description: '',
       location: LocationType.Forest,
       basePower: 120000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'banshee',
       description: '',
       location: LocationType.Dungeon,
       basePower: 140000,
+      lootType: ['gem'],
     },
     {
       name: 'harpy',
       description: '',
       location: LocationType.MountainTops,
       basePower: 150000,
+      lootType: ['gem'],
     },
     {
       name: 'phoenix',
       description: '',
       location: LocationType.Desert,
       basePower: 180000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'sphinx',
       description: '',
       location: LocationType.Desert,
       basePower: 200000,
+      lootType: ['gem', 'hide', 'ore'],
     },
     {
       name: 'oni',
       description: '',
       location: LocationType.Dungeon,
       basePower: 300000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'leshy',
       description: '',
       location: LocationType.Forest,
       basePower: 300000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'chimaera',
       description: '',
       location: LocationType.Dungeon,
       basePower: 400000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'undine',
       description: '',
       location: LocationType.DeepSea,
       basePower: 500000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'cyclops',
       description: '',
       location: LocationType.MountainTops,
       basePower: 600000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'nyuk',
       description: '',
       location: LocationType.Dungeon,
       basePower: 700000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'wendigo',
       description: '',
       location: LocationType.Forest,
       basePower: 800000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'behemoth',
       description: '',
       location: LocationType.Desert,
       basePower: 800000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'dinosaur',
       description: '',
       location: LocationType.Jungle,
       basePower: 1000000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'wyvern',
       description: '',
       location: LocationType.MountainTops,
       basePower: 2000000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'doomworm',
       description: '',
       location: LocationType.Desert,
       basePower: 3000000,
+      lootType: ['gem', 'hide', 'meat', 'ore'],
     },
     {
       name: 'lich',
       description: '',
       location: LocationType.Dungeon,
       basePower: 5000000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'thunderbird',
       description: '',
       location: LocationType.MountainTops,
       basePower: 8000000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'vampire',
       description: '',
       location: LocationType.Dungeon,
       basePower: 10000000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'beholder',
       description: '',
       location: LocationType.Dungeon,
       basePower: 15000000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'hydra',
       description: '',
       location: LocationType.DeepSea,
       basePower: 20000000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'roc',
       description: '',
       location: LocationType.MountainTops,
       basePower: 40000000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'wyrm',
       description: '',
       location: LocationType.MountainTops,
       basePower: 50000000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'giant',
       description: '',
       location: LocationType.MountainTops,
       basePower: 60000000,
+      lootType: ['gem', 'money'],
     },
     {
       name: 'kraken',
       description: '',
       location: LocationType.DeepSea,
       basePower: 80000000,
+      lootType: ['gem', 'hide'],
     },
     {
       name: 'pazuzu',
       description: '',
       location: LocationType.MountainTops,
       basePower: 100000000,
+      lootType: ['gem', 'hide', 'money'],
     },
     {
       name: 'titan',
       description: '',
       location: LocationType.MountainTops,
       basePower: 200000000,
+      lootType: ['gem', 'money', 'ore'],
     },
     {
       name: 'leviathan',
       description: '',
       location: LocationType.DeepSea,
       basePower: 500000000,
+      lootType: ['gem', 'hide', 'meat'],
     },
     {
       name: 'stormbringer',
       description: '',
       location: LocationType.MountainTops,
       basePower: 1000000000,
+      lootType: ['gem', 'hide', 'meat'],
     },
   ];
 

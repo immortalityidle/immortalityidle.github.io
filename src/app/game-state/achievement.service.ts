@@ -689,10 +689,10 @@ export class AchievementService {
     },
     {
       name: 'Monster Slayer',
-      description: 'You killed 131 monsters and unlocked the ' + this.itemRepoService.items['autoTroubleManual'].name,
+      description: 'You fought 131 monsters and unlocked the ' + this.itemRepoService.items['autoTroubleManual'].name,
       hint: 'An aspiring immortal bravely faces down their foes.',
       check: () => {
-        return this.battleService.troubleKills >= 131;
+        return this.battleService.totalKills >= 131;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoTroubleManual']);
@@ -752,7 +752,7 @@ export class AchievementService {
       description: 'You acquired 88 gems and unlocked the ' + this.itemRepoService.items['useSpiritGemManual'].name,
       hint: 'Ooh, shiny.',
       check: () => {
-        return this.battleService.troubleKills > 88;
+        return this.inventoryService.gemsAcquired >= 88;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['useSpiritGemManual']);

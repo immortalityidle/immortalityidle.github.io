@@ -23,13 +23,13 @@
         }
         @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
           <mat-icon  (click)="sellStack()" class="iconButton" aria-label="Sell Stack" aria-hidden="false"
-            tooltip="Sell all the {{inventoryService.selectedItem.item!.name}} in this inventory slot for {{inventoryService.selectedItem.item!.value * inventoryService.selectedItem.quantity}} taels.<br>Shift-right-click items to sell the stack.">
+            tooltip="Sell all the {{inventoryService.selectedItem.item!.name}}(s) in this inventory slot for {{inventoryService.selectedItem.item!.value * inventoryService.selectedItem.quantity}} taels.<br>Shift-right-click items to sell the stack.">
             paid
           </mat-icon>
         }
         @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
           <mat-icon (click)="sellAll()" class="iconButton" aria-label="Sell All" aria-hidden="false"
-            tooltip="Sell all the {{inventoryService.selectedItem.item!.name}} in the whole inventory.">
+            tooltip="Sell all the {{inventoryService.selectedItem.item!.name}}(s) in the whole inventory.">
             shopping_basket
           </mat-icon>
         }

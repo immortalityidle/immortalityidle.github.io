@@ -141,6 +141,7 @@ export interface InventoryProperties {
   autoReloadCraftInputs: boolean;
   pillCounter: number;
   potionCounter: number;
+  gemsAcquired: number;
 }
 
 @Injectable({
@@ -215,6 +216,7 @@ export class InventoryService {
   autoReloadCraftInputs = false;
   pillCounter = 0;
   potionCounter = 0;
+  gemsAcquired = 0;
 
   constructor(
     private injector: Injector,
@@ -419,6 +421,7 @@ export class InventoryService {
       autoReloadCraftInputs: this.autoReloadCraftInputs,
       pillCounter: this.pillCounter,
       potionCounter: this.potionCounter,
+      gemsAcquired: this.gemsAcquired,
     };
   }
 
@@ -486,6 +489,7 @@ export class InventoryService {
     this.autoReloadCraftInputs = properties.autoReloadCraftInputs || false;
     this.pillCounter = properties.pillCounter || 0;
     this.potionCounter = properties.potionCounter || 0;
+    this.gemsAcquired = properties.gemsAcquired || 0;
   }
 
   farmFoodList = [
@@ -943,9 +947,12 @@ export class InventoryService {
     }
   }
 
-  getOre(): Item {
-    const earthLore = this.characterService.characterState.attributes.earthLore.value;
-    const oreValue = Math.floor(Math.pow(earthLore / 1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
+  getOre(value: number = -1): Item {
+    let oreValue = value;
+    if (value === -1) {
+      const earthLore = this.characterService.characterState.attributes.earthLore.value;
+      oreValue = Math.floor(Math.pow(earthLore / 1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
+    }
     let lastOre = this.itemRepoService.items['copperOre'];
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
@@ -1015,9 +1022,12 @@ export class InventoryService {
     return lastWood;
   }
 
-  getHide(): Item {
-    const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
-    const hideValue = Math.floor(Math.pow(animalHandling / 1e9, 0.15) * 16);
+  getHide(value: number = -1): Item {
+    let hideValue = value;
+    if (hideValue === -1) {
+      const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
+      hideValue = Math.floor(Math.pow(animalHandling / 1e9, 0.15) * 16);
+    }
 
     let lastHide = this.itemRepoService.items['hide'];
 
@@ -1039,6 +1049,29 @@ export class InventoryService {
     }
 
     return lastHide;
+  }
+
+  getWildMeat(grade: number): Item {
+    return {
+      id: 'wildMeat' + grade,
+      imageFile: 'meat',
+      name: 'wild meat',
+      type: 'food',
+      subtype: 'wildMeat',
+      value: 100 * grade,
+      description: 'Meat from a wild beast',
+    };
+  }
+
+  getCoinPurse(value: number): Item {
+    return {
+      id: 'coinPurse',
+      imageFile: 'pillPouch', // TODO: make a different icon for this
+      name: 'coin purse',
+      type: 'sellable',
+      value: value,
+      description: 'A purse with strange coins. You could probably sell this.',
+    };
   }
 
   reset(): void {
@@ -1220,7 +1253,9 @@ export class InventoryService {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.totalItemsReceived += quantity;
-
+    if (item.type === 'gem') {
+      this.gemsAcquired++;
+    }
     //TODO: pouch items need to go straight there when acquired (maybe a manual for that?)
 
     if (this.autoReloadCraftInputs && !ignoreAutoReload) {
@@ -1369,6 +1404,12 @@ export class InventoryService {
           if (itemIterator.quantity + quantity <= this.maxStackSize) {
             // it matches an existing item and there's room in the stack for everything, add it to the stack and bail out
             itemIterator.quantity += quantity;
+            // adjust values if different
+            if (itemIterator.item.value !== item.value) {
+              const totalValue = itemIterator.item.value * itemIterator.quantity + item.value * quantity;
+              const totalQuantity = quantity + itemIterator.quantity;
+              itemIterator.item.value = Math.round(totalValue / totalQuantity);
+            }
             if (firstStack === -1) {
               firstStack = i;
             }
