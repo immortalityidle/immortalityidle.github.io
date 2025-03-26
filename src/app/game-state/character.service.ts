@@ -21,7 +21,6 @@ export class CharacterService {
   forceRebirth = false;
   fatherGift = false;
   lifespanTooltip = '';
-  deathSubscriber?: Subscription;
   hellService?: HellService;
   private snackBar: MatSnackBar;
   private snackBarObservable?: Subscription;
@@ -154,11 +153,6 @@ export class CharacterService {
       }
       this.characterState.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
       this.mainLoopService.reincarnating = true;
-      // Revive the character in the next tick update for making sure that everything is stopped.
-      this.deathSubscriber = this.mainLoopService.tickSubject.subscribe(() => {
-        this.characterState.dead = false;
-        this.deathSubscriber?.unsubscribe();
-      });
       this.forceRebirth = false;
       if (this.characterState.immortal) {
         this.logService.log(LogTopic.EVENT, 'You are born anew, still an immortal but with the fresh vigor of youth.');

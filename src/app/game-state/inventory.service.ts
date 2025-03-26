@@ -155,7 +155,6 @@ export class InventoryService {
   stashedItemStacks: ItemStack[] = [];
   maxItems = 10;
   maxStackSize = 100;
-  noFood: boolean;
   selectedItem: ItemStack = this.getEmptyItemStack();
   autoSellUnlocked: boolean;
   autoSellEntries: AutoItemEntry[];
@@ -229,7 +228,6 @@ export class InventoryService {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.homeService = this.injector.get(HomeService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
-    this.noFood = false;
     this.autoSellUnlocked = false;
     this.autoSellEntries = [];
     this.autoUseUnlocked = false;
@@ -328,32 +326,7 @@ export class InventoryService {
     }
     this.characterService.characterState.status.nutrition.value--; // tick the day's hunger
     this.eatDailyMeal();
-    // use pouch items if needed
-    for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
-      const itemStack = this.characterService.characterState.itemPouches[i];
-      if (itemStack.item?.type === 'potion') {
-        // @ts-ignore
-        const effect: StatusType = itemStack.item.effect;
-        if (
-          this.characterService.characterState.status[effect].value <
-          this.characterService.characterState.status[effect].max
-        ) {
-          const amountToHeal =
-            this.characterService.characterState.status[effect].max -
-            this.characterService.characterState.status[effect].value;
-          const restoreAmount = itemStack.item.increaseAmount || 1;
-          const numberToUse = Math.ceil(amountToHeal / restoreAmount);
-          if (itemStack.quantity > numberToUse) {
-            this.characterService.characterState.status[effect].value =
-              this.characterService.characterState.status[effect].max;
-            itemStack.quantity -= numberToUse;
-          } else {
-            this.characterService.characterState.status[effect].value += restoreAmount * itemStack.quantity;
-            this.characterService.characterState.itemPouches[i] = this.getEmptyItemStack();
-          }
-        }
-      }
-    }
+    this.usePouchItem();
 
     if (this.mergeCounter >= 20) {
       if (this.autoWeaponMergeUnlocked) {
@@ -614,7 +587,7 @@ export class InventoryService {
       LogTopic.CRAFTING,
       'Your hard work paid off! You created a new weapon: ' + this.titleCasePipe.transform(name) + '!'
     );
-    const damage = Math.min(Math.sqrt(grade), 1000) * grade;
+    const damage = Math.min(Math.sqrt(grade + 1), 1000) * grade;
     return {
       id: 'weapon',
       imageFile: imageFileName,
@@ -782,7 +755,7 @@ export class InventoryService {
   generatePill(grade: number, attribute: AttributeType): void {
     this.pillCounter++;
     let effect: string = attribute;
-    if (this.pillCounter > 100) {
+    if (this.pillCounter > 10) {
       this.pillCounter = 0;
       effect = 'longevity';
     }
@@ -828,20 +801,21 @@ export class InventoryService {
     const value = grade + 1;
     const herbName = quality + ' ' + name;
     this.addItem({
-      id: 'herb',
+      id: 'herb_' + name,
       imageFile: 'herb_' + name,
       imageColor: this.itemRepoService.colorByRank[qualityIndex],
       name: herbName,
       type: 'herb',
+      subtype: name,
       attribute: Herbs[nameIndex].attribute,
       value: value,
       description: 'Useful herbs. Can be used in creating pills or potions.',
     });
     if (this.autoSellOldHerbsEnabled) {
-      // sell any herb cheaper than what we just picked
+      // sell any herb of the same type cheaper than what we just picked
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.id === 'herb') {
+        if (itemStack.item && itemStack.item.type === 'herb' && itemStack.item.subtype === name) {
           if (itemStack.item.value < value && itemStack.item.name !== herbName) {
             this.sell(itemStack, itemStack.quantity);
           }
@@ -1124,6 +1098,7 @@ export class InventoryService {
     ) {
       let foodStack = null;
       let fed = false;
+      let highestValue = -1;
       for (const itemIterator of this.itemStacks) {
         if (itemIterator.item === null) {
           continue;
@@ -1132,22 +1107,26 @@ export class InventoryService {
           itemIterator.item!.type === 'food' &&
           this.autoUseEntries.find(item => item.name === itemIterator.item!.name)
         ) {
-          foodStack = itemIterator;
-          while (!this.bellyFull() && foodStack.quantity > 0) {
-            this.useItemStack(foodStack);
-            fed = true;
+          if (itemIterator.item!.value > highestValue) {
+            highestValue = itemIterator.item!.value;
+            foodStack = itemIterator;
           }
         }
-        if (this.bellyFull()) {
-          break;
-        }
       }
-      if (fed) {
-        this.noFood = false;
-      } else {
+      while (foodStack && foodStack.quantity > 0 && !this.bellyFull()) {
+        this.useItemStack(foodStack);
+        fed = true;
+      }
+
+      if (!fed) {
         // no food found, buy scraps automatically
-        this.noFood = true;
-        if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
+        if (
+          !this.hellService?.inHell &&
+          this.characterService.characterState.money > 0 &&
+          this.autoBuyFood &&
+          this.characterService.characterState.status.nutrition.value <=
+            this.characterService.characterState.status.nutrition.max * 0.2
+        ) {
           this.characterService.characterState.updateMoney(-1);
           this.characterService.characterState.status.nutrition.value++;
         }
@@ -1176,10 +1155,8 @@ export class InventoryService {
     }
     if (foodStack) {
       this.useItemStack(foodStack);
-      this.noFood = false;
     } else {
       // no food found, buy scraps automatically
-      this.noFood = true;
       if (!this.hellService?.inHell && this.characterService.characterState.money > 0 && this.autoBuyFood) {
         this.characterService.characterState.updateMoney(-1);
         this.characterService.characterState.status.nutrition.value++;
@@ -1223,7 +1200,7 @@ export class InventoryService {
 
   private eatFood(foodItem: Item, quantity = 1) {
     const value = foodItem.value;
-    this.characterService.characterState.status.nutrition.value += quantity + quantity * value * 0.05;
+    this.characterService.characterState.status.nutrition.value += quantity + quantity * value;
     this.characterService.characterState.healthBonusFood += quantity * value * 0.01;
     this.characterService.characterState.status.health.value += quantity * value * 0.01;
     this.characterService.characterState.status.stamina.value += quantity * value * 0.01;
@@ -1236,6 +1213,9 @@ export class InventoryService {
     }
     if (foodItem.subtype === 'meal') {
       this.characterService.characterState.status.stamina.max += (quantity * value) / 100;
+      if (this.characterService.characterState.status.nutrition.max < 200) {
+        this.characterService.characterState.status.nutrition.max += 0.1;
+      }
     }
 
     this.characterService.characterState.checkOverage();
@@ -1261,11 +1241,25 @@ export class InventoryService {
     if (this.autoReloadCraftInputs && !ignoreAutoReload) {
       const workstations = this.homeService?.workstations;
       if (workstations) {
-        for (const workstation of workstations) {
-          const inputSlot = workstation.inputs.find(inputItemStack => inputItemStack.item?.id === item.id);
-          if (inputSlot) {
-            inputSlot.quantity += quantity;
-            return -1;
+        for (let workstationIndex = 0; workstationIndex < workstations.length; workstationIndex++) {
+          const workstation = workstations[workstationIndex];
+          const inputSlotIndex = workstation.inputs.findIndex(
+            inputItemStack => inputItemStack.item?.type === item.type && inputItemStack.item?.subtype === item.subtype
+          );
+          const inputSlot = workstation.inputs[inputSlotIndex];
+          if (inputSlot && inputSlot.item) {
+            if (item.id === inputSlot.item.id) {
+              // same thing
+              inputSlot.quantity += quantity;
+              return -1;
+            } else if (item.type !== 'food' && item.value > inputSlot.item?.value) {
+              // it's an upgrade, add it to the inventory then swap it in
+              const newItemIndex = this.addItem(item, quantity, 0, true);
+              if (newItemIndex !== -1) {
+                this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputSlotIndex);
+              }
+              return -1;
+            }
           }
         }
       }
@@ -1525,6 +1519,38 @@ export class InventoryService {
   unAutoSell(itemName: string) {
     const index = this.autoSellEntries.findIndex(item => item.name === itemName);
     this.autoSellEntries.splice(index, 1);
+  }
+
+  usePouchItem(limit: number = -1) {
+    // use pouch items if needed
+    for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
+      const itemStack = this.characterService.characterState.itemPouches[i];
+      if (itemStack.item?.type === 'potion') {
+        // @ts-ignore
+        const effect: StatusType = itemStack.item.effect;
+        if (
+          this.characterService.characterState.status[effect].value <
+          this.characterService.characterState.status[effect].max
+        ) {
+          const amountToHeal =
+            this.characterService.characterState.status[effect].max -
+            this.characterService.characterState.status[effect].value;
+          const restoreAmount = itemStack.item.increaseAmount || 1;
+          let numberToUse = Math.ceil(amountToHeal / restoreAmount);
+          if (limit > 0 && numberToUse > limit) {
+            numberToUse = limit;
+          }
+          if (itemStack.quantity > numberToUse) {
+            this.characterService.characterState.status[effect].value =
+              this.characterService.characterState.status[effect].max;
+            itemStack.quantity -= numberToUse;
+          } else {
+            this.characterService.characterState.status[effect].value += restoreAmount * itemStack.quantity;
+            this.characterService.characterState.itemPouches[i] = this.getEmptyItemStack();
+          }
+        }
+      }
+    }
   }
 
   useItemStack(itemStack: ItemStack, quantity = 1): void {
@@ -1905,7 +1931,7 @@ export class InventoryService {
       );
     }
     // if we can, move the new item to the desired destination index
-    if (inventoryIndex !== destinationInventoryIndex && !this.itemStacks[destinationInventoryIndex]) {
+    if (inventoryIndex !== destinationInventoryIndex && !this.itemStacks[destinationInventoryIndex].item) {
       this.itemStacks[destinationInventoryIndex] = this.itemStacks[inventoryIndex];
       this.setItemEmptyStack(inventoryIndex);
     }

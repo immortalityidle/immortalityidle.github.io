@@ -6,7 +6,7 @@
     @for (item of itemRepoService.furniture; track item.id) {
       <div>
         <div class="itemSlot" tabindex="0"
-          tooltip="{{item.description}}"
+          tooltip="{{homeService.getFurnitureTooltip(item)}}"
           (click)="storeService.buyFurniture(item)">
           <div>{{item.name | titlecase}}</div>
           @if (homeService.ownedFurniture.includes(item.id)) {

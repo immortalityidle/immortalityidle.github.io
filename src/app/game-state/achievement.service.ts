@@ -581,13 +581,13 @@ export class AchievementService {
     {
       name: 'Real Housewives of Immortality',
       description:
-        'You acquired a very fine home and unlocked the ' + this.itemRepoService.items['autoBuyHomeManual'].name,
+        'You acquired a very fine home and will now start each life with additional stamina from the abundance available in your youth.<br>Did you just become the young master?',
       hint: 'Immortals value a good home.',
       check: () => {
         return this.homeService.homeValue >= HomeType.CourtyardHouse;
       },
       effect: () => {
-        this.storeService.unlockManual(this.itemRepoService.items['autoBuyHomeManual']);
+        this.characterService.characterState.startingStaminaBoost = true;
       },
       unlocked: false,
     },
@@ -597,7 +597,7 @@ export class AchievementService {
         'You set up some great furniture and can now better discern where furniture items should go to improve the flow of Qi in your home.',
       hint: 'Immortals have discerning taste in furnishings.',
       check: () => {
-        return this.characterService.characterState.fengshuiScore >= 10;
+        return this.characterService.characterState.fengshuiScore >= 5;
       },
       effect: () => {
         this.homeService.seeFurnitureEffects = true;
@@ -607,10 +607,10 @@ export class AchievementService {
     {
       name: "Don't Sell My Bed!",
       description:
-        'Your bloodline is so powerful that even the furniture in your bedroom will be preserved untouched until your next reincarnation.',
+        'Your taste in decor is so excellent that the furniture in your bedroom will be preserved untouched until your next reincarnation.',
       hint: 'Strong family bonds mean more heirlooms.',
       check: () => {
-        return this.characterService.characterState.bloodlineRank >= 6;
+        return this.characterService.characterState.fengshuiScore >= 10;
       },
       effect: () => {
         this.homeService.keepFurniture = true;
@@ -677,10 +677,11 @@ export class AchievementService {
     },
     {
       name: 'Junkie',
-      description: 'You took 131 pills and unlocked the ' + this.itemRepoService.items['autoPillManual'].name,
+      description:
+        'You took 88 pills in one lifetime and unlocked the ' + this.itemRepoService.items['autoPillManual'].name,
       hint: 'An aspiring immortal should take the red one.<br>Take it over and over.',
       check: () => {
-        return this.inventoryService.lifetimePillsUsed >= 131;
+        return this.inventoryService.lifetimePillsUsed >= 88;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoPillManual']);
@@ -1022,6 +1023,10 @@ export class AchievementService {
       },
       effect: () => {
         this.impossibleTaskService.impossibleTasksUnlocked = true;
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService.unlockPanel('impossibleTasksPanel');
       },
       unlocked: false,
     },

@@ -74,42 +74,6 @@ export class HomePanelComponent {
     }
   }
 
-  getFurnitureTooltip(furnitureIndex: number) {
-    const item = this.homeService.bedroomFurniture[furnitureIndex];
-    let tooltip = '';
-    if (item === null) {
-      if (this.homeService.seeFurnitureEffects) {
-        tooltip += 'This space facilitates the Feng Shui of your home when its furniture aligns with:';
-        for (const prop of this.homeService.baguaMap[furnitureIndex]) {
-          tooltip += '<br>' + this.titleCasePipe.transform(prop);
-        }
-        tooltip += '<br>';
-      }
-      if (this.homeService.openBedroomFurnitureSlots > 0) {
-        tooltip += 'Click to set which furniture should be placed here.';
-      }
-      return tooltip;
-    }
-    tooltip = item.description;
-    if (this.homeService.seeFurnitureEffects) {
-      tooltip += '<br>Feng Shui Properties:';
-      if (item.subtype) {
-        tooltip += '<br>' + this.titleCasePipe.transform(item.subtype);
-      }
-      if (item.color) {
-        tooltip += '<br>Color: ' + this.titleCasePipe.transform(item.color);
-      }
-      if (item.elements) {
-        tooltip += '<br>Elements: ';
-        for (const element of item.elements) {
-          tooltip += this.titleCasePipe.transform(element) + ', ';
-        }
-        tooltip = tooltip.substring(0, tooltip.length - 2);
-      }
-    }
-    return tooltip;
-  }
-
   inputDoubleClicked(workstation: Workstation, inputSlot: number) {
     if (workstation.inputs[inputSlot].item) {
       if (workstation.inputs[inputSlot].quantity > 0) {

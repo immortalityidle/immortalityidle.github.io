@@ -689,7 +689,7 @@ baguaMap = [
     },
     thickFur: {
       id: 'thickFur5',
-      imageFile: 'hide',
+      imageFile: 'hide5',
       imageColor: this.colorByRank[4],
       name: 'thick fur',
       type: 'hide',
@@ -2354,10 +2354,10 @@ baguaMap = [
       id: 'autoTroubleManual',
       name: 'Manual of Consistent Troublemaking',
       type: 'manual',
-      description: 'This manual teaches you to automatically look for trouble.',
+      description: 'This manual makes looking for trouble more effective, calling out an enemy every time.',
       value: 5e8,
       useLabel: 'Read',
-      useDescription: 'Permanently unlock automatic trouble in the battle panel.',
+      useDescription: 'Permanently improve Looking for Trouble.',
       useConsumes: true,
       use: () => {
         // check if battleService is injected yet, if not, inject it (circular dependency issues)
@@ -2597,6 +2597,7 @@ baguaMap = [
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoequipBestWeapon = true;
+        this.inventoryService.automergeEquipped = true;
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -2625,6 +2626,7 @@ baguaMap = [
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoequipBestArmor = true;
+        this.inventoryService.automergeEquipped = true;
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -2902,7 +2904,7 @@ baguaMap = [
       type: 'manual',
       description:
         'This manual teaches you to automatically reload crafting input items into workstations when you obtain them.',
-      value: 5e9,
+      value: 100e6,
       useLabel: 'Read',
       useDescription: 'Permanently unlock automatic crafting ingredient reloading.',
       useConsumes: true,

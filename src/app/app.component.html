@@ -30,12 +30,6 @@
         (click)="achievementsClicked()">
         military_tech
       </mat-icon>
-      @if (impossibleTaskService.impossibleTasksUnlocked) {
-        <mat-icon tooltip="Impossible Tasks" class="iconButton" aria-label="Impossible Tasks" aria-hidden="false"
-          (click)="impossibleTasksClicked()">
-          priority_high
-        </mat-icon>
-      }
       @if (characterService.characterState.ascensionUnlocked) {
         <span>
           <mat-icon tooltip="Ascension Techniques." class="iconButton" aria-label="Ascension" aria-hidden="false"
@@ -121,6 +115,8 @@
                     <app-farm-panel class="panelComponent" ></app-farm-panel>
                   } @else if (panelLayout.id === 'locationPanel'){
                     <app-location-panel class="panelComponent" ></app-location-panel>
+                  } @else if (panelLayout.id === 'impossibleTasksPanel'){
+                    <app-impossible-task-panel class="panelComponent" ></app-impossible-task-panel>
                   }
                 </div>
               </div>

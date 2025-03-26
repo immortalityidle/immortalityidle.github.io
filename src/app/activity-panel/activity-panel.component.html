@@ -11,19 +11,6 @@
     @if (!hellService.inHell) {
       <span tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
     }
-    @if (impossibleTaskService.activeTaskIndex >= 0) {
-      <span>
-        <div  class="progress-bar"
-          [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
-          [attr.max]="Math.floor(impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired)">
-          <span
-          [style.width.%]="100 *
-            impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress /
-            impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired">
-          </span>
-        </div>
-      </span>
-    }
     @if (hellService.inHell && hellService.currentHell >= 0 && !hellService.completedHellTasks.includes(hellService.currentHell)) {
       <span>
         <div  class="progress-bar"

@@ -109,6 +109,7 @@ export interface CharacterProperties {
   showLifeSummary: boolean;
   showTips: boolean;
   showUpdateAnimations: boolean;
+  startingStaminaBoost: boolean;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -134,6 +135,11 @@ export class Character {
         }
       }
     });
+
+    mainLoopService.doneReincarnatingSubject.subscribe(() => {
+      this.dead = false;
+    });
+
     this.attributeUpdates = {
       strength: 0,
       toughness: 0,
@@ -194,6 +200,7 @@ export class Character {
   moneyUpdates = 0;
   statusToFlash: string[] = [];
   fengshuiScore = 0;
+  startingStaminaBoost = false;
 
   attributes: AttributeObject = {
     strength: {
@@ -429,8 +436,13 @@ export class Character {
 
     this.status.health.value = 100;
     this.status.health.max = 100;
-    this.status.stamina.value = 100;
-    this.status.stamina.max = 100;
+    if (this.startingStaminaBoost) {
+      this.status.stamina.value = 1000;
+      this.status.stamina.max = 1000;
+    } else {
+      this.status.stamina.value = 100;
+      this.status.stamina.max = 100;
+    }
     this.status.nutrition.value = 30;
     this.status.nutrition.max = 30;
     if (this.qiUnlocked) {
@@ -813,6 +825,7 @@ export class Character {
       showLifeSummary: this.showLifeSummary,
       showTips: this.showTips,
       showUpdateAnimations: this.showUpdateAnimations,
+      startingStaminaBoost: this.startingStaminaBoost,
     };
   }
 
@@ -887,6 +900,7 @@ export class Character {
     this.showLifeSummary = properties.showLifeSummary ?? true;
     this.showTips = properties.showTips || false;
     this.showUpdateAnimations = properties.showUpdateAnimations ?? true;
+    this.startingStaminaBoost = properties.startingStaminaBoost || false;
 
     // add attributes that were added after release if needed
     if (!this.attributes.combatMastery) {

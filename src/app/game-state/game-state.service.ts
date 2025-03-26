@@ -185,6 +185,14 @@ export class GameStateService {
         'The locations you have available depend mostly on your speed, and will determine what activities you have available. You can select which locations you would prefer to find monsters in when you look for trouble.',
       unlocked: false,
     },
+    {
+      id: 'impossibleTasksPanel',
+      name: 'Impossible Tasks',
+      icon: 'priority_high',
+      panelHelp:
+        'The path to immortality runs through these impossible tasks. Only by completing them can you find the way to live forever.',
+      unlocked: false,
+    },
   ];
 
   constructor(

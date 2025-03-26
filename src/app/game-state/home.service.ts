@@ -8,6 +8,7 @@ import { HellService } from './hell.service';
 import { ActivityType } from './activity';
 import { ActivityService } from './activity.service';
 import { AttributeType } from './character';
+import { TitleCasePipe } from '@angular/common';
 
 export interface Home {
   name: string;
@@ -143,7 +144,7 @@ export class HomeService {
       cost: 100,
       costPerDay: 1,
       landRequired: 1,
-      maxInventory: 12,
+      maxInventory: 15,
       upgradeToTooltip:
         'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels and take up 1 land.<br>Land can be purchasd in the Regular People Shop.<br>The new home will restore 1 stamina and a bit of health each night.',
       consequence: () => {
@@ -163,7 +164,7 @@ export class HomeService {
       cost: 1000,
       costPerDay: 5,
       landRequired: 5,
-      maxInventory: 15,
+      maxInventory: 20,
       upgradeToTooltip:
         'Get a better home and stop the ruffians from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls.',
       consequence: () => {
@@ -183,7 +184,7 @@ export class HomeService {
       cost: 10000,
       costPerDay: 10,
       landRequired: 10,
-      maxInventory: 18,
+      maxInventory: 25,
       upgradeToTooltip:
         'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels and take up 10 land.<br>The new home will restore 5 stamina and a bit of health each night.',
       consequence: () => {
@@ -203,7 +204,7 @@ export class HomeService {
       cost: 100000,
       costPerDay: 20,
       landRequired: 20,
-      maxInventory: 20,
+      maxInventory: 30,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 100,000 taels and take up 20 land.<br>The new home will restore 10 stamina and 1 health and a bit of Qi each night (if unlocked).',
       consequence: () => {
@@ -224,7 +225,7 @@ export class HomeService {
       cost: 1000000,
       costPerDay: 50,
       landRequired: 50,
-      maxInventory: 24,
+      maxInventory: 35,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 1M taels and take up 50 land.<br>The new home will restore 15 stamina, 2 health, and a bit of Qi each night (if unlocked).',
       consequence: () => {
@@ -245,7 +246,7 @@ export class HomeService {
       cost: 1e7,
       costPerDay: 80,
       landRequired: 80,
-      maxInventory: 28,
+      maxInventory: 40,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 10m taels and take up 80 land.<br>The new home will restore 20 stamina, 3 health, and a bit of Qi each night.',
       consequence: () => {
@@ -266,7 +267,7 @@ export class HomeService {
       cost: 1e8,
       costPerDay: 100,
       landRequired: 100,
-      maxInventory: 30,
+      maxInventory: 50,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 100m taels and take up 100 land.<br>The new home will restore 25 stamina, 4 health, and a bit of Qi each night.',
       consequence: () => {
@@ -286,7 +287,7 @@ export class HomeService {
       cost: 1e9,
       costPerDay: 120,
       landRequired: 120,
-      maxInventory: 32,
+      maxInventory: 50,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 1B taels and take up 120 land.<br>The new home will restore 30 stamina, 5 health, and a bit of Qi each night.',
       consequence: () => {
@@ -306,7 +307,7 @@ export class HomeService {
       cost: 1e10,
       costPerDay: 150,
       landRequired: 150,
-      maxInventory: 36,
+      maxInventory: 55,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 10B taels and take up 150 land.<br>The new home will restore 35 stamina, 10 health, and 1 Qi each night.',
       consequence: () => {
@@ -326,7 +327,7 @@ export class HomeService {
       cost: 1e11,
       costPerDay: 150,
       landRequired: 150,
-      maxInventory: 40,
+      maxInventory: 60,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 100B taels and take up 150 land.<br>The new home will restore 40 stamina, 15 health, and 2 Qi each night.',
       consequence: () => {
@@ -346,7 +347,7 @@ export class HomeService {
       cost: 1e12,
       costPerDay: 180,
       landRequired: 180,
-      maxInventory: 50,
+      maxInventory: 65,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 1T taels and take up 180 land.<br>The new home will restore 50 stamina, 20 health, and 3 Qi each night.',
       consequence: () => {
@@ -366,7 +367,7 @@ export class HomeService {
       cost: 1e13,
       costPerDay: 500,
       landRequired: 500,
-      maxInventory: 60,
+      maxInventory: 70,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 10T taels and take up 500 land.<br>The new home will restore 100 stamina, 30 health, and 4 Qi each night.',
       consequence: () => {
@@ -428,7 +429,7 @@ export class HomeService {
       cost: 1e16,
       costPerDay: 1e6,
       landRequired: 1e6,
-      maxInventory: 125,
+      maxInventory: 110,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 10q taels and take up 1,000,000 land.<br>The new home will restore 500 stamina, 100 health, and 20 Qi each night.',
       consequence: () => {
@@ -449,7 +450,7 @@ export class HomeService {
       cost: 1e17,
       costPerDay: 1e7,
       landRequired: 1e7,
-      maxInventory: 150,
+      maxInventory: 120,
       upgradeToTooltip:
         'Get a better house.<br>A better home will cost 100q taels and take up 10,000,000 land.<br>The new home will restore 1000 stamina, 150 health, and 30 Qi each night.',
       consequence: () => {
@@ -709,9 +710,9 @@ export class HomeService {
     //1: Top Center: Fame, Fire, Red/Orange
     ['bed', 'trophy', 'fire', 'red', 'orange'],
     //2: Top Right: Love/Relationships, Earth, Pink/Red
-    ['bed', 'portrait', 'earth', 'red', 'pink'],
+    ['bed', 'portrait', 'animal', 'earth', 'red', 'pink'],
     //3: Center Left: Family/Health, Wood, Green/Blue
-    ['portrait', 'fitness', 'wood', 'green', 'blue'],
+    ['portrait', 'fitness', 'animal', 'wood', 'green', 'blue'],
     //4: Center: Health/Wellbeing, Earth, Yellow/Earth tones
     ['fitness', 'earth', 'yellow', 'brown'],
     //5: Center Right: Children/Creativity, Metal, White/Pastels
@@ -720,8 +721,8 @@ export class HomeService {
     ['books', 'spiritual', 'water', 'earth', 'blue', 'black', 'green'],
     //7: Bottom Center: Career, Water, Black
     ['water', 'black'],
-    //8: Bottom Left: Helpful People/Travel, Metal, Gray/White/Black
-    ['books', 'metal', 'gray', 'white', 'black'],
+    //8: Bottom Right: Helpful People/Travel, Metal, Gray/White/Black
+    ['books', 'animal', 'metal', 'gray', 'white', 'black'],
   ];
 
   homeValue!: HomeType;
@@ -740,7 +741,8 @@ export class HomeService {
     private inventoryService: InventoryService,
     private logService: LogService,
     private mainLoopService: MainLoopService,
-    private itemRepoService: ItemRepoService
+    private itemRepoService: ItemRepoService,
+    private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
@@ -1179,7 +1181,7 @@ export class HomeService {
         this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
       this.inventoryService.fixId(itemIndex);
     } else {
-      // nothing there now, just put the inventory item in the pouch
+      // nothing there now, just put the inventory item in the workstation
       this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex] =
         this.inventoryService.itemStacks[itemIndex];
       this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].id =
@@ -1272,9 +1274,14 @@ export class HomeService {
     );
     if (materialStack && materialStack.quantity >= 10) {
       let grade = (materialStack?.item?.value || 1) + workstation.power * 5;
-      grade += Math.log10(this.characterService.characterState.attributes.metalLore.value);
+      if (materialStack.item?.type === 'wood') {
+        grade += Math.log10(this.characterService.characterState.attributes.woodLore.value);
+      } else if (materialStack.item?.type === 'metal') {
+        grade += Math.log10(this.characterService.characterState.attributes.metalLore.value);
+      }
+
       grade += activityLevel;
-      if (gemStack && gemStack.quantity > 0) {
+      if (gemStack && gemStack.quantity > 0 && this.inventoryService.useSpiritGemUnlocked) {
         grade += gemStack?.item?.value || 1;
         gemStack.quantity--;
       }
@@ -1285,9 +1292,9 @@ export class HomeService {
       this.totalCrafts++;
       let item;
       if (workstation.triggerActivity === ActivityType.Leatherworking) {
-        item = this.inventoryService.generateArmor(Math.floor(grade / 10), this.inventoryService.randomArmorSlot());
+        item = this.inventoryService.generateArmor(grade, this.inventoryService.randomArmorSlot());
       } else {
-        item = this.inventoryService.generateWeapon(Math.floor(grade / 10), material);
+        item = this.inventoryService.generateWeapon(grade, material);
       }
       this.inventoryService.addItem(item);
       materialStack.quantity -= 10;
@@ -1300,7 +1307,6 @@ export class HomeService {
       return;
     }
     const usedIngredients: string[] = [];
-    const usedSubtypes: string[] = [];
     let totalValue = 0;
     let gemUsed = false;
     let pillMold = false;
@@ -1312,13 +1318,11 @@ export class HomeService {
       if (
         itemStack.item &&
         itemStack.item.type === 'herb' &&
-        !usedIngredients.includes(itemStack.item.id) &&
+        itemStack.item.subtype &&
+        !usedIngredients.includes(itemStack.item.subtype) &&
         itemStack.quantity > 0
       ) {
-        usedIngredients.push(itemStack.item.id);
-        if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
-          usedSubtypes.push(itemStack.item.subtype);
-        }
+        usedIngredients.push(itemStack.item.subtype);
         totalValue += itemStack.item.value;
         itemStack.quantity--;
         if (itemStack.item.attribute) {
@@ -1331,7 +1335,12 @@ export class HomeService {
       return;
     }
     for (const itemStack of workstation.inputs) {
-      if (itemStack.item && itemStack.item.type === 'gem' && itemStack.quantity > 0) {
+      if (
+        itemStack.item &&
+        itemStack.item.type === 'gem' &&
+        itemStack.quantity > 0 &&
+        this.inventoryService.useSpiritGemUnlocked
+      ) {
         gemUsed = true;
         itemStack.quantity--;
       } else if (itemStack.item && itemStack.item.type === 'pillMold' && itemStack.quantity > 0) {
@@ -1355,5 +1364,45 @@ export class HomeService {
     } else {
       this.inventoryService.generatePotion(totalValue);
     }
+  }
+
+  getFurnitureSlotTooltip(furnitureIndex: number) {
+    let tooltip = '';
+    if (this.seeFurnitureEffects) {
+      tooltip += 'This space facilitates the Feng Shui of your home when its furniture aligns with:';
+      for (const prop of this.baguaMap[furnitureIndex]) {
+        tooltip += '<br>' + this.titleCasePipe.transform(prop);
+      }
+      tooltip += '<br>';
+    }
+    if (this.openBedroomFurnitureSlots > 0) {
+      tooltip += 'Click to set which furniture should be placed here.';
+    }
+    if (this.bedroomFurniture[furnitureIndex]) {
+      tooltip += '<br><br>' + this.getFurnitureTooltip(this.bedroomFurniture[furnitureIndex]);
+    }
+    return tooltip;
+  }
+
+  getFurnitureTooltip(item: Item) {
+    let tooltip = '';
+    tooltip = item.description;
+    if (this.seeFurnitureEffects) {
+      tooltip += '<br>Feng Shui Properties:';
+      if (item.subtype) {
+        tooltip += '<br>' + this.titleCasePipe.transform(item.subtype);
+      }
+      if (item.color) {
+        tooltip += '<br>Color: ' + this.titleCasePipe.transform(item.color);
+      }
+      if (item.elements) {
+        tooltip += '<br>Elements: ';
+        for (const element of item.elements) {
+          tooltip += this.titleCasePipe.transform(element) + ', ';
+        }
+        tooltip = tooltip.substring(0, tooltip.length - 2);
+      }
+    }
+    return tooltip;
   }
 }

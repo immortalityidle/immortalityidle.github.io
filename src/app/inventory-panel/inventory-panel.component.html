@@ -2,12 +2,6 @@
   <h3 class="inventoryHeader">
     <div class="inventoryLabelColumn">
     </div>
-    <div>@if (inventoryService.noFood) {
-      <mat-icon class="noFood"
-        tooltip="{{hellService.inHell ? 'You have no food, and no one in hell sells any.' : inventoryService.autoBuyFood ? 'You have no food in your inventory. You will spend money on food each day to avoid starvation.' : 'You have no food in your inventory and have chosen not to buy food to prevent starvation.'}}">
-        soup_kitchen
-      </mat-icon>
-    }</div>
     <div>
       <mat-icon tooltip="Click to sort your inventory.<br>Shift-click to toggle autosort.<br>Ctrl-click to toggle descending."
         (click)="sortClicked($event)" class="iconButton" aria-label="Sort Inventory" aria-hidden="false" [ngClass]="{highlighted: inventoryService.autoSort, sortHighlight: inventoryService.descendingSort}">

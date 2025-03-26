@@ -39,6 +39,7 @@ export class MainLoopService {
   activityTickSubject = new Subject<number>();
   battleTickSubject = new Subject<number>();
   reincarnateSubject = new Subject<number>();
+  doneReincarnatingSubject = new Subject<number>();
 
   /**
    * Sends every 25ms if in foreground or every second if in background.
@@ -341,14 +342,15 @@ export class MainLoopService {
       this.battleTickSubject.next(1);
     } else {
       this.totalTicks++;
-      this.homeTickSubject.next(1);
       this.inventoryTickSubject.next(1);
       this.activityTickSubject.next(1);
+      this.homeTickSubject.next(1);
       this.tickSubject.next(1); // ticks autobuyer, character, followers, and hell
-      if (this.reincarnating) {
-        this.reincarnating = false;
-        this.reincarnateSubject.next(1);
-      }
+    }
+    if (this.reincarnating) {
+      this.reincarnateSubject.next(1);
+      this.reincarnating = false;
+      this.doneReincarnatingSubject.next(1);
     }
   }
 }

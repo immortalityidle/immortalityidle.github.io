@@ -35,16 +35,6 @@ export class BattlePanelComponent {
     // only update the picture for the enemy every long tick for performance
   }
 
-  autoTroubleChange(event: Event): void {
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.battleService.autoTroubleEnabled = event.target.checked;
-  }
-
-  godSlayersEnableChange(event: Event): void {
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.battleService.godSlayersEnabled = event.target.checked;
-  }
-
   battleOptions() {
     this.dialog.open(BattleOptionsPanelComponent, {
       width: '700px',

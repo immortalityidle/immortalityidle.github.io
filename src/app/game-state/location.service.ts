@@ -270,7 +270,7 @@ export class LocationService {
           if (logNewLocations) {
             this.logService.log(
               LogTopic.EVENT,
-              'You have expanded your available locations and can now explore the ' + this.locationMap[key].name
+              'You have expanded your available locations and can now explore ' + this.locationMap[key].name
             );
           }
         }

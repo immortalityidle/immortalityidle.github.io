@@ -40,7 +40,6 @@ export interface BattleProperties {
   godSlayerKills: number;
   totalKills: number;
   autoTroubleUnlocked: boolean;
-  autoTroubleEnabled: boolean;
   monthlyMonsterDay: number;
   qiShieldUnlocked: boolean;
   qiAttackUnlocked: boolean;
@@ -60,6 +59,7 @@ export interface BattleProperties {
   godSlayersEnabled: boolean;
   totalEnemies: number;
   troubleCounter: number;
+  battleMessageDismissed: boolean;
 }
 
 export interface Technique {
@@ -83,7 +83,6 @@ export class BattleService {
   kills: number;
   godSlayerKills: number;
   autoTroubleUnlocked = false;
-  autoTroubleEnabled = false;
   yearlyMonsterDay: number;
   enableQiShield = false;
   enableQiAttack = false;
@@ -105,6 +104,8 @@ export class BattleService {
   godSlayersEnabled = false;
   totalEnemies = 0;
   troubleCounter = 0;
+  battleMessageDismissed = false;
+
   techniques: Technique[] = [
     {
       name: 'Basic Strike',
@@ -147,7 +148,7 @@ export class BattleService {
         );
         this.addRuffian();
       }
-      if (this.yearlyMonsterDay >= 365 || this.autoTroubleEnabled) {
+      if (this.yearlyMonsterDay >= 365) {
         this.yearlyMonsterDay = 0;
         this.trouble();
       }
@@ -157,6 +158,7 @@ export class BattleService {
       if (this.characterService.characterState.dead) {
         return;
       }
+      this.inventoryService.usePouchItem(1);
 
       if (this.currentEnemy === null && this.enemies.length > 0) {
         this.currentEnemy = this.enemies[0];
@@ -197,7 +199,6 @@ export class BattleService {
       godSlayerKills: this.godSlayerKills,
       totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
-      autoTroubleEnabled: this.autoTroubleEnabled,
       monthlyMonsterDay: this.yearlyMonsterDay,
       qiShieldUnlocked: this.qiShieldUnlocked,
       qiAttackUnlocked: this.qiAttackUnlocked,
@@ -217,6 +218,7 @@ export class BattleService {
       godSlayersEnabled: this.godSlayersEnabled,
       totalEnemies: this.totalEnemies,
       troubleCounter: this.troubleCounter,
+      battleMessageDismissed: this.battleMessageDismissed,
     };
   }
 
@@ -226,7 +228,6 @@ export class BattleService {
     this.godSlayerKills = properties.godSlayerKills || 0;
     this.totalKills = properties.totalKills || 0;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
-    this.autoTroubleEnabled = properties.autoTroubleEnabled;
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
     this.enableQiShield = properties.enableQiShield;
     this.enableQiAttack = properties.enableQiAttack;
@@ -246,6 +247,7 @@ export class BattleService {
     this.godSlayersEnabled = properties.godSlayersEnabled || false;
     this.totalEnemies = properties.totalEnemies || 0;
     this.troubleCounter = properties.troubleCounter || 0;
+    this.battleMessageDismissed = properties.battleMessageDismissed || false;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -499,6 +501,13 @@ export class BattleService {
     }
   }
 
+  flee() {
+    this.handleEnemyTechniques();
+    this.handleEnemyTechniques();
+    this.handleEnemyTechniques();
+    this.clearEnemies();
+  }
+
   // generate a monster based on current trouble location and lifetime kills
   trouble() {
     if (this.enemies.length !== 0) {
@@ -547,7 +556,7 @@ export class BattleService {
 
     const monsterType = possibleMonsters[this.troubleCounter % possibleMonsters.length];
 
-    const killsToNextQualityRank = (monsterType.basePower + '').length * 5;
+    const killsToNextQualityRank = ((monsterType.basePower + '').length + 3) * 5;
     const modifier = (this.kills + 1) / killsToNextQualityRank;
 
     let qualityIndex = Math.floor(modifier);
@@ -558,7 +567,8 @@ export class BattleService {
 
     const monsterName = this.monsterQualities[qualityIndex] + ' ' + monsterType.name;
     const health = modifiedBasePower * 10;
-    const attackDefense = modifiedBasePower / 5;
+    const attack = modifiedBasePower / 5;
+    const defense = modifiedBasePower / 10;
     const loot: Item[] = [];
     if (monsterType.lootType) {
       const grade = Math.floor(Math.log2(modifiedBasePower + 2));
@@ -587,14 +597,14 @@ export class BattleService {
       baseName: monsterType.name,
       health: health,
       maxHealth: health,
-      defense: attackDefense,
+      defense: defense,
       loot: loot,
       techniques: [
         {
           name: 'Attack',
           ticks: 0,
           ticksRequired: 10,
-          baseDamage: attackDefense,
+          baseDamage: attack,
         },
       ],
     });

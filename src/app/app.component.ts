@@ -148,6 +148,7 @@ export class BigNumberPipe implements PipeTransform {
     forwardRef(() => PetsPanelComponent),
     forwardRef(() => FarmPanelComponent),
     forwardRef(() => LocationPanelComponent),
+    forwardRef(() => ImpossibleTaskPanelComponent),
     forwardRef(() => TooltipDirective),
   ],
 })
@@ -306,13 +307,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   achievementsClicked() {
     this.dialog.open(AchievementPanelComponent, {
-      data: { someField: 'foo' },
-      autoFocus: false,
-    });
-  }
-
-  impossibleTasksClicked() {
-    this.dialog.open(ImpossibleTaskPanelComponent, {
       data: { someField: 'foo' },
       autoFocus: false,
     });

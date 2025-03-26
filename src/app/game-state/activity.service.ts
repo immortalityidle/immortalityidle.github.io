@@ -3563,7 +3563,7 @@ export class ActivityService {
       consequence: [
         () => {
           this.tauntCounter++;
-          if (this.tauntCounter > 10) {
+          if (this.tauntCounter > 20 || this.battleService.autoTroubleUnlocked) {
             this.battleService.trouble();
             this.tauntCounter = 0;
           }
