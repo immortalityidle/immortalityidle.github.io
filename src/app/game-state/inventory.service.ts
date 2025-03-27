@@ -1216,6 +1216,9 @@ export class InventoryService {
       if (this.characterService.characterState.status.nutrition.max < 200) {
         this.characterService.characterState.status.nutrition.max += 0.1;
       }
+      if (foodItem.name.startsWith('Soul')) {
+        this.characterService.characterState.increaseAttribute('spirituality', 0.001);
+      }
     }
 
     this.characterService.characterState.checkOverage();
@@ -1243,22 +1246,25 @@ export class InventoryService {
       if (workstations) {
         for (let workstationIndex = 0; workstationIndex < workstations.length; workstationIndex++) {
           const workstation = workstations[workstationIndex];
-          const inputSlotIndex = workstation.inputs.findIndex(
-            inputItemStack => inputItemStack.item?.type === item.type && inputItemStack.item?.subtype === item.subtype
-          );
-          const inputSlot = workstation.inputs[inputSlotIndex];
-          if (inputSlot && inputSlot.item) {
-            if (item.id === inputSlot.item.id) {
-              // same thing
-              inputSlot.quantity += quantity;
-              return -1;
-            } else if (item.type !== 'food' && item.value > inputSlot.item?.value) {
-              // it's an upgrade, add it to the inventory then swap it in
-              const newItemIndex = this.addItem(item, quantity, 0, true);
-              if (newItemIndex !== -1) {
-                this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputSlotIndex);
+          for (let inputSlotIndex = 0; inputSlotIndex < workstation.inputs.length; inputSlotIndex++) {
+            const inputItemStack = workstation.inputs[inputSlotIndex];
+            if (
+              inputItemStack.quantity < this.maxStackSize &&
+              inputItemStack.item?.type === item.type &&
+              inputItemStack.item?.subtype === item.subtype
+            ) {
+              if (item.id === inputItemStack.item.id) {
+                // same thing
+                inputItemStack.quantity += quantity;
+                return -1;
+              } else if (item.type !== 'food' && item.value > inputItemStack.item?.value) {
+                // it's an upgrade, add it to the inventory then swap it in
+                const newItemIndex = this.addItem(item, quantity, 0, true);
+                if (newItemIndex !== -1) {
+                  this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputSlotIndex);
+                }
+                return -1;
               }
-              return -1;
             }
           }
         }

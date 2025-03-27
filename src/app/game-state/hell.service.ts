@@ -205,6 +205,7 @@ export class HellService {
               ticks: 0,
               ticksRequired: 10,
               baseDamage: 10,
+              unlocked: true,
             },
           ],
         });
@@ -432,6 +433,7 @@ export class HellService {
                 ticks: 0,
                 ticksRequired: 10,
                 baseDamage: 1e6,
+                unlocked: true,
               },
             ],
           });
@@ -474,6 +476,7 @@ export class HellService {
                 ticks: 0,
                 ticksRequired: 10,
                 baseDamage: 1e6,
+                unlocked: true,
               },
             ],
           });
@@ -922,6 +925,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6 + 1e4 * hellProgress,
+            unlocked: true,
           },
         ],
       });
@@ -942,6 +946,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6 + 1e4 * hellProgress,
+            unlocked: true,
           },
         ],
       });
@@ -959,6 +964,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6,
+            unlocked: true,
           },
         ],
       });
@@ -976,6 +982,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: this.characterService.characterState.attackPower,
+            unlocked: true,
           },
         ],
       });
@@ -993,6 +1000,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6,
+            unlocked: true,
           },
         ],
       });
@@ -1012,6 +1020,7 @@ export class HellService {
                 ticks: 0,
                 ticksRequired: 10,
                 baseDamage: 1e6,
+                unlocked: true,
               },
             ],
           });
@@ -1033,6 +1042,7 @@ export class HellService {
             baseDamage: 1e6,
             effect: 'feeder',
             hitTracker: 0,
+            unlocked: true,
           },
         ],
       });
@@ -1050,6 +1060,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6,
+            unlocked: true,
           },
         ],
       });
@@ -1067,6 +1078,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6,
+            unlocked: true,
           },
         ],
       });
@@ -1089,6 +1101,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1106,6 +1119,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e11,
+            unlocked: true,
           },
         ],
       });
@@ -1123,6 +1137,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1140,6 +1155,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1157,6 +1173,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1174,6 +1191,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1191,6 +1209,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1208,6 +1227,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1225,6 +1245,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1242,6 +1263,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1259,6 +1281,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1276,6 +1299,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1293,6 +1317,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1310,6 +1335,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1327,6 +1353,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1344,6 +1371,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1361,6 +1389,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1378,6 +1407,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e10,
+            unlocked: true,
           },
         ],
       });
@@ -1557,6 +1587,7 @@ export class HellService {
                     ticks: 0,
                     ticksRequired: 10,
                     baseDamage: 1e14,
+                    unlocked: true,
                   },
                 ],
               });
@@ -1573,6 +1604,7 @@ export class HellService {
                     ticks: 0,
                     ticksRequired: 10,
                     baseDamage: 5e13,
+                    unlocked: true,
                   },
                 ],
               });
@@ -1589,6 +1621,7 @@ export class HellService {
                     ticks: 0,
                     ticksRequired: 10,
                     baseDamage: 5e13,
+                    unlocked: true,
                   },
                 ],
               });
@@ -2080,6 +2113,7 @@ export class HellService {
                 ticks: 0,
                 ticksRequired: 10,
                 baseDamage: 100,
+                unlocked: true,
               },
             ],
           });

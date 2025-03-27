@@ -560,18 +560,10 @@ export class Character {
       this.statLifespan +
       this.spiritualityLifespan +
       this.magicLifespan;
-    let leftHand = 1;
-    let rightHand = 1;
     let head = 1;
     let body = 1;
     let legs = 1;
     let feet = 1;
-    if (this.equipment.leftHand) {
-      leftHand = this.equipment.leftHand.weaponStats?.baseDamage || 1;
-    }
-    if (this.equipment.rightHand) {
-      rightHand = this.equipment.rightHand.weaponStats?.baseDamage || 1;
-    }
     if (this.equipment.head) {
       head = this.equipment.head.armorStats?.defense || 1;
     }
@@ -585,7 +577,7 @@ export class Character {
       feet = this.equipment.feet.armorStats?.defense || 1;
     }
     const strengthPower = Math.sqrt(this.attributes.strength.value) || 1;
-    this.attackPower = Math.floor(strengthPower * Math.sqrt(rightHand * leftHand)) || 1;
+    this.attackPower = Math.floor(strengthPower) || 1;
     if (this.attributes.combatMastery.value > 1) {
       // multiply by log base 100 of combatMastery
       // Math.log(100)=4.605170185988092

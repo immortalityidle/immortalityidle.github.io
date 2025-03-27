@@ -70,6 +70,8 @@
     }
     @else {
       <div class="overflow" cdkDropList cdkDropListSortingDisabled>
+        <button class="buttonStyles" (click)="enableAllClick()">Enable All</button>
+        <button class="buttonStyles" (click)="disableAllClick()">Disable All</button>
         @if (characterService.characterState.qiUnlocked) {
           <table class="spiritActivityPanel" id="spiritActivity"
             (drop)="spiritActivityDrop($event)">

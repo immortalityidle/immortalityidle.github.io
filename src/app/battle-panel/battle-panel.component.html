@@ -16,25 +16,29 @@
           <span>Your Techniques</span>
         </div>
         @for (technique of battleService.techniques; track technique.name + technique.ticks) {
-          <div class="techniqueLine">
-            <div class="techniqueName">
-              <span>{{technique.name}}</span>
-            </div>
-            <div class="technique-bar"
-                [attr.value]="Math.floor(technique.ticks) | bigNumber"
-                [attr.max]="Math.floor(technique.ticksRequired) | bigNumber">
-                <span
-                  [style.width.%]="100 *
-                    Math.floor(technique.ticks) /
-                    Math.floor(technique.ticksRequired)">
-                </span>
+          @if (technique.unlocked){
+            <div class="techniqueLine">
+              <div class="techniqueName">
+                <span>{{technique.name}}</span>
               </div>
-          </div>
+              <div class="technique-bar"
+                  [attr.value]="Math.floor(technique.ticks) | bigNumber"
+                  [attr.max]="Math.floor(technique.ticksRequired) | bigNumber">
+                  <span
+                    [style.width.%]="100 *
+                      Math.floor(technique.ticks) /
+                      Math.floor(technique.ticksRequired)">
+                  </span>
+                </div>
+            </div>
+          }
         }
         <br>
-        <div>
-          <button (click)="battleService.flee()">Flee Like A Coward</button>
-        </div>
+        @if (battleService.enemies.length > 0){
+          <div>
+            <button (click)="battleService.flee()">Flee Like A Coward</button>
+          </div>
+        }
       </div>
       <div class="splitDiv">
         <div class="headerDiv">

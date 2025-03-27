@@ -69,6 +69,7 @@ export interface Technique {
   baseDamage: number;
   hitTracker?: number;
   effect?: string;
+  unlocked: boolean;
 }
 
 @Injectable({
@@ -106,12 +107,32 @@ export class BattleService {
   troubleCounter = 0;
   battleMessageDismissed = false;
 
+  rightHandTechniqueName = 'Right-Handed Weapon';
+  leftHandTechniqueName = 'Left-Handed Weapon';
+
   techniques: Technique[] = [
     {
       name: 'Basic Strike',
       ticksRequired: 10,
       ticks: 0,
       baseDamage: 1,
+      unlocked: true,
+    },
+    {
+      // don't mess with the index on this
+      name: this.rightHandTechniqueName,
+      ticksRequired: 6,
+      ticks: 0,
+      baseDamage: 2,
+      unlocked: false,
+    },
+    {
+      // don't mess with the index on this
+      name: this.leftHandTechniqueName,
+      ticksRequired: 8,
+      ticks: 0,
+      baseDamage: 2,
+      unlocked: false,
     },
   ];
 
@@ -177,6 +198,8 @@ export class BattleService {
           enemy.imageFile = 'assets/images/monsters/' + enemy.baseName + '.png';
         }
       }
+      this.techniques[1].unlocked = this.characterService.characterState.equipment.rightHand !== null;
+      this.techniques[2].unlocked = this.characterService.characterState.equipment.leftHand !== null;
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -333,18 +356,46 @@ export class BattleService {
 
   handleYourTechniques() {
     for (const technique of this.techniques) {
-      if (technique.ticks === technique.ticksRequired) {
-        this.youAttack(technique);
-        technique.ticks = 0;
-      } else {
-        technique.ticks++;
+      if (technique.unlocked) {
+        if (technique.ticks === technique.ticksRequired) {
+          this.youAttack(technique);
+          if (this.enemies.length === 0) {
+            // killed the last enemey in this encounter, reset all technique counters
+            for (const cleartechnique of this.techniques) {
+              cleartechnique.ticks = 0;
+            }
+            return;
+          }
+          technique.ticks = 0;
+        } else {
+          technique.ticks++;
+        }
       }
     }
   }
 
   youAttack(technique: Technique) {
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
-      let damage = this.characterService.characterState.attackPower * technique.baseDamage;
+      let attackPower = this.characterService.characterState.attackPower;
+      if (technique.name === this.rightHandTechniqueName) {
+        if (this.characterService.characterState.equipment.rightHand) {
+          attackPower =
+            Math.floor(
+              attackPower *
+                Math.sqrt(this.characterService.characterState.equipment.rightHand.weaponStats?.baseDamage || 1)
+            ) || 1;
+        }
+      } else if (technique.name === this.leftHandTechniqueName) {
+        if (this.characterService.characterState.equipment.leftHand) {
+          attackPower =
+            Math.floor(
+              attackPower *
+                Math.sqrt(this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 1)
+            ) || 1;
+        }
+      }
+
+      let damage = attackPower * technique.baseDamage;
       if (
         this.characterService.characterState.status.nutrition.value >
         this.characterService.characterState.status.nutrition.max * 0.8
@@ -364,7 +415,8 @@ export class BattleService {
         damage *= 2;
         this.characterService.characterState.status.qi.value -= 10;
       }
-      let blowthrough = false;
+      const blowthrough = false;
+      /*
       if (this.enableMetalFist && this.characterService.characterState.status.qi.value > 10000) {
         let metalMultiplier = Math.log(this.characterService.characterState.attributes.metalLore.value) / Math.log(50);
         if (metalMultiplier < 1) {
@@ -388,6 +440,7 @@ export class BattleService {
         this.characterService.characterState.status.qi.value -= 10000;
         blowthrough = true;
       }
+        */
       // TODO: tune this
       damage += damage * this.characterService.characterState.yinYangBalance;
 
@@ -605,6 +658,7 @@ export class BattleService {
           ticks: 0,
           ticksRequired: 10,
           baseDamage: attack,
+          unlocked: true,
         },
       ],
     });
@@ -624,6 +678,7 @@ export class BattleService {
           ticks: 0,
           ticksRequired: 8,
           baseDamage: 13,
+          unlocked: true,
         },
       ],
     });
@@ -644,6 +699,7 @@ export class BattleService {
           ticksRequired: 20,
           baseDamage: 1,
           effect: 'theft',
+          unlocked: true,
         },
       ],
     });
@@ -663,6 +719,7 @@ export class BattleService {
           ticks: 0,
           ticksRequired: 10,
           baseDamage: 3,
+          unlocked: true,
         },
       ],
     });
@@ -682,6 +739,7 @@ export class BattleService {
           ticks: 0,
           ticksRequired: 10,
           baseDamage: 1e7,
+          unlocked: true,
         },
       ],
     });
@@ -702,6 +760,7 @@ export class BattleService {
           ticks: 0,
           ticksRequired: 10,
           baseDamage: 3e8,
+          unlocked: true,
         },
       ],
     });
@@ -1013,6 +1072,13 @@ export class BattleService {
       lootType: ['gem', 'hide', 'meat'],
     },
     {
+      name: 'rakshasa',
+      description: '',
+      location: LocationType.LargeCity,
+      basePower: 6000,
+      lootType: ['gem', 'hide', 'money'],
+    },
+    {
       name: 'ghost',
       description: '',
       location: LocationType.Dungeon,
@@ -1095,13 +1161,6 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 50000,
       lootType: ['gem', 'hide'],
-    },
-    {
-      name: 'rakshasa',
-      description: '',
-      location: LocationType.LargeCity,
-      basePower: 60000,
-      lootType: ['gem', 'hide', 'money'],
     },
     {
       name: 'cavebear',

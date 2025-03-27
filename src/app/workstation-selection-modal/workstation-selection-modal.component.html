@@ -3,7 +3,7 @@
     <hr/>
     <div class="inventoryContainer">
       <div class="inventoryGrid">
-        @for (workstation of homeService.workstationsList; track workstation.id) {
+        @for (workstation of homeService.availableWorkstationsList; track workstation.id) {
           <div>
             <div class="itemSlot" (click)="slotClicked(workstation)" tabindex="0"
               tooltip="{{workstation.description}}">

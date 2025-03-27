@@ -22,6 +22,7 @@ export interface Home {
   consequence: () => void;
   maxFurniture: number;
   maxWorkstations: number;
+  maxWorkstationPower: number;
   daysToBuild: number;
 }
 
@@ -134,6 +135,7 @@ export class HomeService {
       },
       maxFurniture: 0,
       maxWorkstations: 0,
+      maxWorkstationPower: 0,
       daysToBuild: 1,
     },
     {
@@ -154,6 +156,7 @@ export class HomeService {
       },
       maxFurniture: 0,
       maxWorkstations: 0,
+      maxWorkstationPower: 0,
       daysToBuild: 1,
     },
     {
@@ -174,6 +177,7 @@ export class HomeService {
       },
       maxFurniture: 1,
       maxWorkstations: 0,
+      maxWorkstationPower: 0,
       daysToBuild: 1,
     },
     {
@@ -194,6 +198,7 @@ export class HomeService {
       },
       maxFurniture: 2,
       maxWorkstations: 0,
+      maxWorkstationPower: 0,
       daysToBuild: 10,
     },
     {
@@ -215,6 +220,7 @@ export class HomeService {
       },
       maxFurniture: 3,
       maxWorkstations: 1,
+      maxWorkstationPower: 0,
       daysToBuild: 30,
     },
     {
@@ -235,7 +241,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 4,
-      maxWorkstations: 1,
+      maxWorkstations: 2,
+      maxWorkstationPower: 0,
       daysToBuild: 90,
     },
     {
@@ -256,7 +263,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 5,
-      maxWorkstations: 1,
+      maxWorkstations: 3,
+      maxWorkstationPower: 0,
       daysToBuild: 180,
     },
     {
@@ -277,7 +285,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 6,
-      maxWorkstations: 2,
+      maxWorkstations: 3,
+      maxWorkstationPower: 0,
       daysToBuild: 365,
     },
     {
@@ -297,7 +306,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 7,
-      maxWorkstations: 2,
+      maxWorkstations: 4,
+      maxWorkstationPower: 0,
       daysToBuild: 3650,
     },
     {
@@ -317,7 +327,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 8,
-      maxWorkstations: 2,
+      maxWorkstations: 4,
+      maxWorkstationPower: 1,
       daysToBuild: 36500,
     },
     {
@@ -337,7 +348,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 9,
-      maxWorkstations: 3,
+      maxWorkstations: 5,
+      maxWorkstationPower: 1,
       daysToBuild: 365000,
     },
     {
@@ -357,7 +369,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 9,
-      maxWorkstations: 3,
+      maxWorkstations: 5,
+      maxWorkstationPower: 1,
       daysToBuild: 3650000,
     },
     {
@@ -377,7 +390,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 9,
-      maxWorkstations: 3,
+      maxWorkstations: 6,
+      maxWorkstationPower: 2,
       daysToBuild: 365e5,
     },
     {
@@ -397,7 +411,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 9,
-      maxWorkstations: 4,
+      maxWorkstations: 6,
+      maxWorkstationPower: 2,
       daysToBuild: 365e6,
     },
     {
@@ -418,7 +433,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 9,
-      maxWorkstations: 4,
+      maxWorkstations: 7,
+      maxWorkstationPower: 2,
       daysToBuild: 365e7,
     },
     {
@@ -439,7 +455,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 9,
-      maxWorkstations: 4,
+      maxWorkstations: 8,
+      maxWorkstationPower: 2,
       daysToBuild: 365e8,
     },
     {
@@ -460,7 +477,8 @@ export class HomeService {
         this.characterService.characterState.checkOverage();
       },
       maxFurniture: 9,
-      maxWorkstations: 5,
+      maxWorkstations: 9,
+      maxWorkstationPower: 2,
       daysToBuild: 365e9,
     },
   ];
@@ -702,6 +720,7 @@ export class HomeService {
       },
     },
   ];
+  availableWorkstationsList: Workstation[] = [];
 
   //Feng Shui Bagua map:
   baguaMap = [
@@ -817,6 +836,7 @@ export class HomeService {
       for (const furniturePiece of this.bedroomFurniture) {
         if (furniturePiece?.use) {
           furniturePiece?.use();
+          console.log('used', furniturePiece.name);
         }
       }
     }
@@ -958,6 +978,7 @@ export class HomeService {
       this.houseBuildingProgress = 0;
       this.upgrading = false;
     }
+    // TODO: bedroom furniture amd workstations need to go down the new cap, also refund land difference
     this.setCurrentHome(this.previousHome);
   }
 
@@ -1009,6 +1030,7 @@ export class HomeService {
     this.nextHome = this.getNextHome();
     this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
     this.inventoryService.changeMaxItems(this.home.maxInventory);
+    this.availableWorkstationsList = this.workstationsList.filter(ws => ws.power <= home.maxWorkstationPower);
     this.recalculateFengShui();
   }
 

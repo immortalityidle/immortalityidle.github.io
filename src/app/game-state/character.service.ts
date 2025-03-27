@@ -242,7 +242,6 @@ export class CharacterService {
       this.activityService = this.injector.get(ActivityService);
     }
     this.activityService.reloadActivities();
-    this.activityService.activityLoop.splice(0, this.activityService.activityLoop.length);
     this.forceRebirth = true;
     this.mainLoopService.tick();
   }

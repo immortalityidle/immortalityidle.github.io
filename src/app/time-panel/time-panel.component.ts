@@ -128,6 +128,18 @@ export class TimePanelComponent {
     }
   }
 
+  disableAllClick() {
+    for (const entry of this.activityService.activityLoop) {
+      entry.userDisabled = true;
+    }
+  }
+
+  enableAllClick() {
+    for (const entry of this.activityService.activityLoop) {
+      entry.userDisabled = false;
+    }
+  }
+
   removeSpiritActivity() {
     this.activityService.spiritActivity = null;
   }
