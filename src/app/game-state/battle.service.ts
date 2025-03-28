@@ -9,6 +9,7 @@ import { BigNumberPipe } from '../app.component';
 import { HomeService, HomeType } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
+import { AttributeType } from './character';
 
 export interface Enemy {
   name: string;
@@ -60,16 +61,22 @@ export interface BattleProperties {
   totalEnemies: number;
   troubleCounter: number;
   battleMessageDismissed: boolean;
+  techniques: Technique[];
+  techniqueDevelopmentCounter: number;
+  maxTechniques: number;
 }
 
 export interface Technique {
   name: string;
+  description?: string;
+  attribute?: AttributeType;
   ticks: number;
   ticksRequired: number;
   baseDamage: number;
   hitTracker?: number;
   effect?: string;
   unlocked: boolean;
+  familyTechnique?: boolean;
 }
 
 @Injectable({
@@ -106,6 +113,8 @@ export class BattleService {
   totalEnemies = 0;
   troubleCounter = 0;
   battleMessageDismissed = false;
+  techniqueDevelopmentCounter = 0;
+  maxTechniques = 3;
 
   rightHandTechniqueName = 'Right-Handed Weapon';
   leftHandTechniqueName = 'Left-Handed Weapon';
@@ -113,26 +122,32 @@ export class BattleService {
   techniques: Technique[] = [
     {
       name: 'Basic Strike',
+      description: 'A very simple strike that even the weakest mortal could perform.',
       ticksRequired: 10,
       ticks: 0,
       baseDamage: 1,
       unlocked: true,
+      attribute: 'strength',
     },
     {
       // don't mess with the index on this
       name: this.rightHandTechniqueName,
+      description: 'A strike from the weapon in your right hand.',
       ticksRequired: 6,
       ticks: 0,
       baseDamage: 2,
       unlocked: false,
+      attribute: 'strength',
     },
     {
       // don't mess with the index on this
       name: this.leftHandTechniqueName,
+      description: 'A strike from the weapon in your left hand.',
       ticksRequired: 8,
       ticks: 0,
       baseDamage: 2,
       unlocked: false,
+      attribute: 'strength',
     },
   ];
 
@@ -200,6 +215,14 @@ export class BattleService {
       }
       this.techniques[1].unlocked = this.characterService.characterState.equipment.rightHand !== null;
       this.techniques[2].unlocked = this.characterService.characterState.equipment.leftHand !== null;
+
+      if (
+        this.techniqueDevelopmentCounter > 20000 * Math.pow(10, this.techniques.length - 3) &&
+        this.techniques.length < this.maxTechniques
+      ) {
+        this.developNewTechnique();
+        this.techniqueDevelopmentCounter = 0;
+      }
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -242,6 +265,9 @@ export class BattleService {
       totalEnemies: this.totalEnemies,
       troubleCounter: this.troubleCounter,
       battleMessageDismissed: this.battleMessageDismissed,
+      techniques: this.techniques,
+      techniqueDevelopmentCounter: this.techniqueDevelopmentCounter,
+      maxTechniques: this.maxTechniques,
     };
   }
 
@@ -271,12 +297,95 @@ export class BattleService {
     this.totalEnemies = properties.totalEnemies || 0;
     this.troubleCounter = properties.troubleCounter || 0;
     this.battleMessageDismissed = properties.battleMessageDismissed || false;
+    if (properties.techniques) {
+      this.techniques = properties.techniques;
+    }
+    this.techniqueDevelopmentCounter = properties.techniqueDevelopmentCounter || 0;
+    this.maxTechniques = properties.maxTechniques || 3;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
           this.currentEnemy = enemy;
         }
       }
+    }
+  }
+
+  developNewTechnique() {
+    const prefixAdjectiveList = [
+      'Northern',
+      'Southern',
+      'Eastern',
+      'Western',
+      'Brutal',
+      'Devastating',
+      'Flowing',
+      'Fierce',
+      'Verdant',
+      'Stealthy',
+      "Dragon's",
+      'Devilish',
+      'Angelic',
+      'Fearsome',
+      'Ancient',
+      'Traditional',
+      'Lucky',
+    ];
+    const prefix = prefixAdjectiveList[Math.floor(Math.random() * prefixAdjectiveList.length)];
+    const attributeKeys = Object.keys(this.characterService.characterState.attackPower);
+
+    const attribute = attributeKeys[Math.floor(Math.random() * attributeKeys.length)] as AttributeType;
+    let attributePrefix = '';
+    if (attribute === 'strength') {
+      attributePrefix = 'Strong';
+    } else if (attribute === 'toughness') {
+      attributePrefix = 'Tough';
+    } else if (attribute === 'speed') {
+      attributePrefix = 'Swift';
+    } else if (attribute === 'intelligence') {
+      attributePrefix = 'Cunning';
+    } else if (attribute === 'charisma') {
+      attributePrefix = 'Charming';
+    } else if (attribute === 'spirituality') {
+      attributePrefix = 'Holy';
+    } else if (attribute === 'earthLore') {
+      attributePrefix = 'Stone';
+    } else if (attribute === 'metalLore') {
+      attributePrefix = 'Steel';
+    } else if (attribute === 'woodLore') {
+      attributePrefix = 'Oaken';
+    } else if (attribute === 'waterLore') {
+      attributePrefix = 'Icy';
+    } else if (attribute === 'fireLore') {
+      attributePrefix = 'Fiery';
+    }
+    const attackNouns = ['Fist', 'Strike', 'Kick', 'Blow', 'Slam', 'Slap', 'Smack', 'Pumelling', 'Barrage', 'Attack'];
+    const attackNoun = attackNouns[Math.floor(Math.random() * attackNouns.length)];
+    const ticksRequired = 5 + Math.floor(Math.random() * 10);
+    this.techniques.push({
+      name: prefix + ' ' + attributePrefix + ' ' + attackNoun,
+      description: 'A special family technique that can be passed to your descendants.',
+      ticksRequired: ticksRequired,
+      ticks: 0,
+      baseDamage: 1,
+      unlocked: true,
+      attribute: attribute,
+      familyTechnique: true,
+    });
+
+    this.logService.log(
+      LogTopic.EVENT,
+      'Enlightenment! Your combat experience has allowed you to develop a new family technique!'
+    );
+  }
+
+  forsakeTechnique(technique: Technique) {
+    if (!technique.familyTechnique) {
+      return;
+    }
+    const index = this.techniques.indexOf(technique);
+    if (index > 2) {
+      this.techniques.splice(index, 1);
     }
   }
 
@@ -358,6 +467,12 @@ export class BattleService {
     for (const technique of this.techniques) {
       if (technique.unlocked) {
         if (technique.ticks === technique.ticksRequired) {
+          if (this.techniques.length < this.maxTechniques) {
+            this.techniqueDevelopmentCounter++;
+          }
+          if (technique.familyTechnique) {
+            technique.baseDamage++;
+          }
           this.youAttack(technique);
           if (this.enemies.length === 0) {
             // killed the last enemey in this encounter, reset all technique counters
@@ -376,7 +491,10 @@ export class BattleService {
 
   youAttack(technique: Technique) {
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
-      let attackPower = this.characterService.characterState.attackPower;
+      let attackPower = this.characterService.characterState.attackPower['strength'] || 1;
+      if (technique.attribute) {
+        attackPower = this.characterService.characterState.attackPower[technique.attribute] || 1;
+      }
       if (technique.name === this.rightHandTechniqueName) {
         if (this.characterService.characterState.equipment.rightHand) {
           attackPower =
@@ -491,30 +609,37 @@ export class BattleService {
     }
     damage -= enemyHealth;
     if (this.currentEnemy.health <= 0) {
-      this.kills++;
-      this.totalKills++;
-      this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.currentEnemy.name);
-      if (this.currentEnemy.name === 'Death itself') {
-        this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
-      }
-      for (const item of this.currentEnemy.loot) {
-        const lootItem = this.itemRepoService.getItemById(item.id);
-        if (lootItem) {
-          this.inventoryService.addItem(lootItem);
-        } else {
-          // the item was generated, not part of the repo, so just add it instead of using the lookup
-          this.inventoryService.addItem(item);
-        }
-      }
-      this.defeatEffect(this.currentEnemy);
-      const index = this.enemies.indexOf(this.currentEnemy);
-      this.enemies.splice(index, 1);
-      this.currentEnemy = null;
+      this.killCurrentEnemy();
       return (damage - enemyHealth) / 2; // return half the damage left over
     } else {
       this.logService.log(LogTopic.COMBAT, customMessage);
       return 0;
     }
+  }
+
+  killCurrentEnemy() {
+    if (!this.currentEnemy) {
+      return;
+    }
+    this.kills++;
+    this.totalKills++;
+    this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.currentEnemy.name);
+    if (this.currentEnemy.name === 'Death itself') {
+      this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
+    }
+    for (const item of this.currentEnemy.loot) {
+      const lootItem = this.itemRepoService.getItemById(item.id);
+      if (lootItem) {
+        this.inventoryService.addItem(lootItem);
+      } else {
+        // the item was generated, not part of the repo, so just add it instead of using the lookup
+        this.inventoryService.addItem(item);
+      }
+    }
+    this.defeatEffect(this.currentEnemy);
+    const index = this.enemies.indexOf(this.currentEnemy);
+    this.enemies.splice(index, 1);
+    this.currentEnemy = null;
   }
 
   fight(enemy: Enemy) {

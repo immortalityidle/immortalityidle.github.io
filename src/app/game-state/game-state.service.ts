@@ -193,6 +193,14 @@ export class GameStateService {
         'The path to immortality runs through these impossible tasks. Only by completing them can you find the way to live forever.',
       unlocked: false,
     },
+    {
+      id: 'techniquePanel',
+      name: 'Combat Techniques',
+      icon: 'sports_martial_arts',
+      panelHelp:
+        'Developing unique family techniques is an essential part of a powerful bloodline and a useful step on your way to immortality.',
+      unlocked: false,
+    },
   ];
 
   constructor(

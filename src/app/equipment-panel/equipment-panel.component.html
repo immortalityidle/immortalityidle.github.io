@@ -65,8 +65,6 @@
       </div>
     </div>
     <div style="grid-area: stats;">
-      <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Attack Power.<br>Helps to determine the damage you will do when you hit a monster.<br>Based on your strength and weapons.{{character.righteousWrathUnlocked ? '<br>Doubled by the power of your righteous wrath.':''}}"><mat-icon>flare</mat-icon>{{character.attackPower | bigNumber}}</span>
-      <br/>
       <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Defense.<br>Reduces damage when a monster hits you.<br>Based on your toughness and armor.{{character.righteousWrathUnlocked ? '<br>Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
     </div>
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}" [ngClass]="getEffectClass('legs')"

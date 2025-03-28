@@ -86,7 +86,10 @@ export class CharacterService {
         this.hellService.currentHell === HellLevel.CrushingBoulder &&
         !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)
       ) {
-        this.characterState.attackPower = 1;
+        for (const keyString in this.characterState.attackPower) {
+          const key = keyString as AttributeType;
+          this.characterState.attackPower[key] = 1;
+        }
       }
       this.setLifespanTooltip();
     });

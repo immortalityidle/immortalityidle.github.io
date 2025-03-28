@@ -1031,6 +1031,37 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Ascended Techniques',
+      description:
+        'You have followed the path of immortality through your first ascension and can now start to develop special combat techniques that will be handed down through your family.',
+      hint: 'Ascension has its privileges.',
+      check: () => {
+        return (
+          this.characterService.soulCoreRank() >= 1 ||
+          this.characterService.meridianRank() >= 1 ||
+          this.characterService.characterState.bloodlineRank >= 1
+        );
+      },
+      effect: () => {
+        if (this.battleService.maxTechniques < 4) {
+          this.battleService.maxTechniques = 4;
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Bruce Is Proud of You',
+      description: 'You have developed your first family technique and unlocked the Combat Techniques Panel.',
+      hint: 'Train. Then train some more.',
+      check: () => {
+        return this.battleService.techniques.length > 3;
+      },
+      effect: () => {
+        this.gameStateService?.unlockPanel('techniquePanel');
+      },
+      unlocked: false,
+    },
+    {
       name: 'Sturdy Walls',
       description: 'You have built a home strong enough to endure for generations.',
       hint: 'Build back better.',

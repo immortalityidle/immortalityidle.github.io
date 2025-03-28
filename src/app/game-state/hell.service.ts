@@ -976,15 +976,7 @@ export class HellService {
         maxHealth: this.characterService.characterState.status.health.value,
         defense: this.characterService.characterState.defense,
         loot: [this.itemRepoService.items['mirrorShard']],
-        techniques: [
-          {
-            name: 'Attack',
-            ticks: 0,
-            ticksRequired: 10,
-            baseDamage: this.characterService.characterState.attackPower,
-            unlocked: true,
-          },
-        ],
+        techniques: this.battleService.techniques,
       });
     } else if (this.currentHell === HellLevel.CauldronsOfOil) {
       this.battleService.addEnemy({

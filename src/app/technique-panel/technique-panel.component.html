@@ -1,0 +1,26 @@
+<div class="locationsContainer">
+    <span>Your Techniques</span>
+    <br>
+    <div>
+      @for (technique of battleService.techniques; track technique) {
+        @if (technique.unlocked){
+          <div class="itemSlot techniqueEntry">
+            <div class="techniqueName">{{technique.name}}</div>
+            <div>{{technique.description}}</div>
+            @if (technique.attribute){
+                <div> Damage increases with {{technique.attribute | camelToTitle}}.</div>
+            }
+            <div>Activates every {{technique.ticksRequired}} combat ticks.</div>
+            <div>
+                @if (technique.familyTechnique){
+                    <button (click)="battleService.forsakeTechnique(technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
+                        Forsake This Technique
+                    </button>
+                }
+            </div>
+          </div>
+        }   
+      }
+    </div>
+  </div>
+    

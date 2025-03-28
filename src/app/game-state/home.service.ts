@@ -836,7 +836,6 @@ export class HomeService {
       for (const furniturePiece of this.bedroomFurniture) {
         if (furniturePiece?.use) {
           furniturePiece?.use();
-          console.log('used', furniturePiece.name);
         }
       }
     }
@@ -978,7 +977,14 @@ export class HomeService {
       this.houseBuildingProgress = 0;
       this.upgrading = false;
     }
-    // TODO: bedroom furniture amd workstations need to go down the new cap, also refund land difference
+    while (this.workstations.length > 0) {
+      this.removeWorkstation(this.workstations[0]);
+    }
+    for (let i = 0; i < this.bedroomFurniture.length; i++) {
+      this.setFurniture(null, i);
+    }
+    this.land += this.home.landRequired - this.previousHome.landRequired;
+
     this.setCurrentHome(this.previousHome);
   }
 

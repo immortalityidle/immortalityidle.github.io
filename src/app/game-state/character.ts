@@ -171,7 +171,19 @@ export class Character {
   bloodlineCost = 1000;
   bloodlineRank = 0;
   qiUnlocked = false;
-  attackPower = 0;
+  attackPower: { [key in AttributeType]?: number } = {
+    strength: 0,
+    toughness: 0,
+    speed: 0,
+    intelligence: 0,
+    charisma: 0,
+    spirituality: 0,
+    earthLore: 0,
+    metalLore: 0,
+    woodLore: 0,
+    waterLore: 0,
+    fireLore: 0,
+  };
   defense = 0;
   healthBonusFood = 0;
   healthBonusBath = 0;
@@ -576,15 +588,18 @@ export class Character {
     if (this.equipment.feet) {
       feet = this.equipment.feet.armorStats?.defense || 1;
     }
-    const strengthPower = Math.sqrt(this.attributes.strength.value) || 1;
-    this.attackPower = Math.floor(strengthPower) || 1;
-    if (this.attributes.combatMastery.value > 1) {
-      // multiply by log base 100 of combatMastery
-      // Math.log(100)=4.605170185988092
-      this.attackPower *= Math.log(this.attributes.combatMastery.value + 100) / 4.605170185988092;
-    }
-    if (this.righteousWrathUnlocked) {
-      this.attackPower *= 2;
+    for (const keyString in this.attackPower) {
+      const key = keyString as AttributeType;
+      const attributePower = Math.sqrt(this.attributes[key].value) || 1;
+      this.attackPower[key] = Math.floor(attributePower) || 1;
+      if (this.attributes.combatMastery.value > 1) {
+        // multiply by log base 100 of combatMastery
+        // Math.log(100)=4.605170185988092
+        this.attackPower[key] *= Math.log(this.attributes.combatMastery.value + 100) / 4.605170185988092;
+      }
+      if (this.righteousWrathUnlocked) {
+        this.attackPower[key] *= 2;
+      }
     }
     const toughnessDefense = Math.sqrt(this.attributes.toughness.value) || 1;
     this.defense = Math.floor(toughnessDefense * (head + body + legs + feet)) || 1;

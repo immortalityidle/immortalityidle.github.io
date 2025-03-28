@@ -125,7 +125,7 @@ export class StoreService {
     } else if (this.characterService.characterState.bloodlineRank === 5) {
       // Home
       this.bloodlineDescription =
-        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. You will keep your weapons, armor, and money with interest. ';
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. You will keep your weapons, armor, and money with interest.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.ForbiddenCity];
     } else if (this.characterService.characterState.bloodlineRank === 6) {
       // Entourage
