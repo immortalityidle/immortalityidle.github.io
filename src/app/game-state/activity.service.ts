@@ -1092,13 +1092,14 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100;
-          const metalValue = this.inventoryService.consume('metal');
+          const metalValue = this.inventoryService.checkFor('metal');
           if (
             this.homeService.hasWorkstation('anvil') &&
             metalValue >= 150 &&
             this.characterService.characterState.attributes.metalLore.value >= 1e9
           ) {
             this.forgeChainsCounter++;
+            this.inventoryService.consume('metal');
             if (this.forgeChainsCounter > 10) {
               this.logService.log(
                 LogTopic.CRAFTING,
@@ -1148,15 +1149,15 @@ export class ActivityService {
       description: ['Swim deep and attach one of your chains to the island, then pull.'],
       yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
-        'Uses 1,000,000 Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.',
+        'Uses nearly a million Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.',
       ],
       consequence: [
         () => {
           if (
-            this.characterService.characterState.status.stamina.value >= 1000000 &&
+            this.characterService.characterState.status.stamina.value >= 999000 &&
             this.inventoryService.consume('chain') > 0
           ) {
-            this.characterService.characterState.status.stamina.value -= 1000000;
+            this.characterService.characterState.status.stamina.value -= 999000;
             this.logService.log(
               LogTopic.EVENT,
               'You attach a chain to the island, and give your chains a long, strenuous tug.'
@@ -1174,7 +1175,7 @@ export class ActivityService {
               LogTopic.EVENT,
               'You strain yourself trying to lug the chain to an anchor point and collapse.'
             );
-            this.characterService.characterState.status.stamina.value -= 1000000;
+            this.characterService.characterState.status.stamina.value -= 999000;
             if (this.pauseOnImpossibleFail) {
               this.mainLoopService.pause = true;
             }
@@ -1193,7 +1194,7 @@ export class ActivityService {
       ],
       resourceUse: [
         {
-          stamina: 1000000,
+          stamina: 999000,
         },
       ],
       requirements: [{}],

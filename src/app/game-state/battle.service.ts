@@ -464,6 +464,9 @@ export class BattleService {
   }
 
   handleYourTechniques() {
+    if (this.enemies.length <= 0) {
+      return;
+    }
     for (const technique of this.techniques) {
       if (technique.unlocked) {
         if (technique.ticks === technique.ticksRequired) {

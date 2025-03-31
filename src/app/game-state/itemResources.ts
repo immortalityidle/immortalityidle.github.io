@@ -1,3 +1,4 @@
+import { LocationType } from './activity';
 import { Herb } from './inventory.service';
 
 // alphabetical list of weapons
@@ -555,118 +556,147 @@ export const Herbs: Herb[] = [
   {
     name: 'patchouli',
     attribute: 'toughness',
+    locations: [LocationType.SmallTown, LocationType.Forest, LocationType.Jungle],
   },
   {
     name: 'alangium',
     attribute: 'speed',
+    locations: [LocationType.Forest, LocationType.Jungle],
   },
   {
     name: 'lobelia',
     attribute: 'charisma',
+    locations: [LocationType.SmallTown, LocationType.Forest],
   },
   {
     name: 'lovage',
     attribute: 'charisma',
+    locations: [LocationType.Forest],
   },
   {
     name: 'anemone',
     attribute: 'intelligence',
+    locations: [LocationType.Forest],
   },
   {
     name: 'kudzu',
     attribute: 'strength',
+    locations: [LocationType.Forest, LocationType.SmallTown],
   },
   {
     name: 'marlberry',
     attribute: 'toughness',
+    locations: [LocationType.Beach, LocationType.SmallPond],
   },
   {
     name: 'aster',
     attribute: 'toughness',
+    locations: [LocationType.Forest, LocationType.SmallTown, LocationType.SmallPond],
   },
   {
     name: 'milkvetch',
     attribute: 'strength',
+    locations: [LocationType.Desert],
   },
   {
     name: 'safflower',
     attribute: 'strength',
+    locations: [LocationType.Desert],
   },
   {
     name: 'cinnamon',
     attribute: 'intelligence',
+    locations: [LocationType.Jungle],
   },
   {
     name: 'velvetleaf',
     attribute: 'toughness',
+    locations: [LocationType.Forest, LocationType.SmallTown],
   },
   {
     name: 'goldthread',
     attribute: 'charisma',
+    locations: [LocationType.SmallPond, LocationType.Forest, LocationType.MountainTops],
   },
   {
     name: 'lilac',
     attribute: 'intelligence',
+    locations: [LocationType.Forest, LocationType.SmallTown],
   },
   {
     name: 'jimson',
     attribute: 'speed',
+    locations: [LocationType.SmallTown, LocationType.Forest],
   },
   {
     name: 'dendrobium',
     attribute: 'charisma',
+    locations: [LocationType.Jungle, LocationType.MountainTops, LocationType.Forest],
   },
   {
     name: 'ephedra',
     attribute: 'speed',
+    locations: [LocationType.Desert],
   },
   {
     name: 'forsythia',
     attribute: 'speed',
+    locations: [LocationType.Forest, LocationType.LargeCity],
   },
   {
     name: 'honeylocust',
     attribute: 'toughness',
+    locations: [LocationType.SmallPond, LocationType.Forest],
   },
   {
     name: 'licorice',
     attribute: 'strength',
+    locations: [LocationType.SmallTown],
   },
   {
     name: 'holly',
     attribute: 'strength',
+    locations: [LocationType.Forest],
   },
   {
     name: 'motherwort',
     attribute: 'charisma',
+    locations: [LocationType.Forest, LocationType.SmallTown],
   },
   {
     name: 'arborvitae',
     attribute: 'intelligence',
+    locations: [LocationType.SmallPond, LocationType.Forest],
   },
   {
     name: 'snakeroot',
     attribute: 'intelligence',
+    locations: [LocationType.Forest],
   },
   {
     name: 'foxglove',
     attribute: 'toughness',
+    locations: [LocationType.SmallTown],
   },
   {
     name: 'stringbush',
     attribute: 'charisma',
+    locations: [LocationType.MountainTops],
   },
   {
     name: 'ginger',
     attribute: 'speed',
+    locations: [LocationType.Forest, LocationType.Jungle],
   },
   {
     name: 'ginkgo',
     attribute: 'intelligence',
+    locations: [LocationType.Forest, LocationType.SmallTown, LocationType.LargeCity, LocationType.Desert],
   },
   {
     name: 'ginseng',
     attribute: 'strength',
+    locations: [LocationType.MountainTops, LocationType.Forest],
   },
 ];
 

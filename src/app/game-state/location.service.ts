@@ -53,7 +53,7 @@ export class LocationService {
     },
     [LocationType.Forest]: {
       name: 'A Forest',
-      description: 'A forest where you can chop wood.',
+      description: 'A forest where you can chop wood or look for a wide variety of herbs.',
       unlock: () => {
         return this.characterService.characterState.attributes.speed.value > 200;
       },
@@ -81,7 +81,7 @@ export class LocationService {
     },
     [LocationType.Dungeon]: {
       name: 'A Creepy Dungeon',
-      description: 'The dark and dank dungeon full of monsters.',
+      description: 'This dark and dank dungeon is full of monsters.',
       unlock: () => {
         return this.characterService.characterState.attributes.speed.value > 200000;
       },
@@ -267,7 +267,7 @@ export class LocationService {
       if (!this.unlockedLocations.includes(key)) {
         if (this.locationMap[key].unlock()) {
           this.unlockedLocations.push(key);
-          if (logNewLocations) {
+          if (logNewLocations && key !== LocationType.Self && key !== LocationType.SmallTown) {
             this.logService.log(
               LogTopic.EVENT,
               'You have expanded your available locations and can now explore ' + this.locationMap[key].name

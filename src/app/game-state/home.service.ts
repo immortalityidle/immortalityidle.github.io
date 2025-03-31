@@ -708,7 +708,7 @@ export class HomeService {
     {
       id: 'Chef Kitchen',
       triggerActivity: ActivityType.Cooking,
-      power: 1,
+      power: 2,
       setupCost: 1000000,
       maintenanceCost: 1000,
       description:
@@ -1222,7 +1222,14 @@ export class HomeService {
     }
   }
 
-  cookFood(workstation: Workstation) {
+  chefsWork(workValue: number) {
+    const kitchens = this.workstations.filter(ws => ws.triggerActivity === ActivityType.Cooking);
+    for (const kitchen of kitchens) {
+      this.cookFood(kitchen, workValue / kitchens.length);
+    }
+  }
+
+  cookFood(workstation: Workstation, cookAmount: number = 1) {
     if (workstation.inputs.length < 2) {
       // inputs array not populated, bail out
       return;
@@ -1236,14 +1243,14 @@ export class HomeService {
         itemStack.item.type === 'food' &&
         itemStack.item.subtype !== 'meal' &&
         !usedIngredients.includes(itemStack.item.id) &&
-        itemStack.quantity > 0
+        itemStack.quantity >= cookAmount
       ) {
         usedIngredients.push(itemStack.item.id);
         if (itemStack.item.subtype && !usedSubtypes.includes(itemStack.item.subtype)) {
           usedSubtypes.push(itemStack.item.subtype);
         }
         totalValue += itemStack.item.value;
-        itemStack.quantity--;
+        itemStack.quantity -= cookAmount;
       }
     }
     if (totalValue < 1) {
@@ -1265,18 +1272,21 @@ export class HomeService {
     }
 
     this.totalCrafts++;
-    this.inventoryService.addItem({
-      id: foodName,
-      imageFile: imageFile,
-      name: foodName,
-      type: 'food',
-      subtype: 'meal',
-      value: totalValue,
-      description: 'A home-made meal that can nourish you much more than raw ingredients.',
-      useLabel: 'Eat',
-      useDescription: 'Fills your belly.',
-      useConsumes: true,
-    });
+    this.inventoryService.addItem(
+      {
+        id: foodName,
+        imageFile: imageFile,
+        name: foodName,
+        type: 'food',
+        subtype: 'meal',
+        value: totalValue,
+        description: 'A home-made meal that can nourish you much more than raw ingredients.',
+        useLabel: 'Eat',
+        useDescription: 'Fills your belly.',
+        useConsumes: true,
+      },
+      cookAmount
+    );
   }
 
   createEquipment(workstation: Workstation) {

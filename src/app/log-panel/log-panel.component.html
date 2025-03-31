@@ -7,13 +7,14 @@
   </h3>
   <div class="logBoxContainer">
     <div class="logBox">
-      @for (logMsg of logService.currentLog; track logMsg) {
+      @for (logMsg of logService.currentLog; track logMsg.message + logMsg.timestamp) {
         <div [ngClass]="logMsg.type" class="logEntryDiv">
           {{logMsg.message}}@if (logMsg.repeat) {
           <span> ({{logMsg.repeat}} times)</span>
         }
       </div>
-    }
+      }
+    </div>
   </div>
 </div>
-</div>
+<br>

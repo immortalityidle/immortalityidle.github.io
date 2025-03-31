@@ -98,6 +98,13 @@ export class FollowersService {
   onlyWantedFollowers = false;
 
   jobs: jobsType = {
+    chef: {
+      work: daysElapsed => {
+        this.homeService.chefsWork((this.jobs['chef'].totalPower / 100) * daysElapsed);
+      },
+      description: 'Chefs increase the output of your kitchens.',
+      totalPower: 0,
+    },
     builder: {
       work: daysElapsed => {
         this.homeService.nextHomeCostReduction += this.jobs['builder'].totalPower;
@@ -274,22 +281,15 @@ export class FollowersService {
       totalPower: 0,
     },
     scout: {
-      work: daysElapsed => {
-        // TODO: support jobs which really need to run every tick.
-        let totalPower = this.jobs['scout'].totalPower * daysElapsed;
-        if (this.hellService?.inHell) {
-          totalPower /= 10;
-        }
+      work: () => {
         this.battleService.trouble();
-        //this.battleService.tickCounter += totalPower;
       },
       description: 'Scouts help you track down and fight monsters faster.',
       totalPower: 0,
       runEachTick: true,
     },
     damned: {
-      work: daysElapsed => {
-        //this.battleService.tickCounter += this.jobs['damned'].totalPower * daysElapsed;
+      work: () => {
         this.battleService.trouble();
       },
       description:

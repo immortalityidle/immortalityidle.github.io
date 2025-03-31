@@ -98,9 +98,10 @@ export class LogService {
     setTimeout(() => this.fullLog(topic, LogType.Injury, message));
   }
 
-  fullLog(topic: LogTopic, type: LogType, message: string): void {
+  fullLog(topic: LogTopic, type: LogType, rawMessage: string): void {
     const log = this.logs[topic];
     const timestamp = Date.now();
+    const message = rawMessage.replace('<br>', '');
     if (this.isRepeat(message, timestamp, log)) {
       log[log.length - 1].repeat = (log[log.length - 1].repeat || 1) + 1;
     } else {

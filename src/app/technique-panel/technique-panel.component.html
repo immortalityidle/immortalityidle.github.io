@@ -1,12 +1,11 @@
-<div class="locationsContainer">
-    <span>Your Techniques</span>
-    <br>
+<div class="techniqueContainer">
     <div>
       @for (technique of battleService.techniques; track technique) {
         @if (technique.unlocked){
           <div class="itemSlot techniqueEntry">
             <div class="techniqueName">{{technique.name}}</div>
             <div>{{technique.description}}</div>
+            <div>Base Damage: {{technique.baseDamage}}</div>
             @if (technique.attribute){
                 <div> Damage increases with {{technique.attribute | camelToTitle}}.</div>
             }
@@ -23,4 +22,4 @@
       }
     </div>
   </div>
-    
+  <br>

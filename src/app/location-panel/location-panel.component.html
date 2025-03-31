@@ -6,7 +6,7 @@
       @if (location !== locationTypeSelf) {
         <div class="itemSlot locationEntry" (click)="locationClicked(location)">
           @if (locationService.troubleTarget === location){
-            <mat-icon tooltip="When you look for trouble, you will look for it here.">
+            <mat-icon tooltip="When you look for trouble or herbs, you will look for them here.">
               crisis_alert
             </mat-icon>
           }
@@ -17,4 +17,4 @@
     }
   </div>
 </div>
-  
+<br>

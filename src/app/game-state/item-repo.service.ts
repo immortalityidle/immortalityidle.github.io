@@ -2317,7 +2317,7 @@ baguaMap = [
       },
     },
     autoPillManual: {
-      id: 'autoPotionManual',
+      id: 'autoPillManual',
       name: 'Manual of Reckless Pill Consumption',
       type: 'manual',
       description: 'This manual teaches you to automatically use all pills.',

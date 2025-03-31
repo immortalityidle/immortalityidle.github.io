@@ -22,6 +22,8 @@ import {
 import { BigNumberPipe } from '../app.component';
 import { HellService } from './hell.service';
 import { HomeService } from './home.service';
+import { LocationType } from './activity';
+import { LocationService } from './location.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -87,6 +89,7 @@ export interface AutoItemEntry {
 export interface Herb {
   name: string;
   attribute: AttributeType;
+  locations: LocationType[];
 }
 
 export interface InventoryProperties {
@@ -141,6 +144,7 @@ export interface InventoryProperties {
   autoReloadCraftInputs: boolean;
   pillCounter: number;
   potionCounter: number;
+  herbCounter: number;
   gemsAcquired: number;
 }
 
@@ -150,6 +154,7 @@ export interface InventoryProperties {
 export class InventoryService {
   hellService?: HellService;
   homeService?: HomeService;
+  locationService?: LocationService;
   bigNumberPipe: BigNumberPipe;
   itemStacks: ItemStack[] = [];
   stashedItemStacks: ItemStack[] = [];
@@ -215,6 +220,7 @@ export class InventoryService {
   autoReloadCraftInputs = false;
   pillCounter = 0;
   potionCounter = 0;
+  herbCounter = 0;
   gemsAcquired = 0;
 
   constructor(
@@ -227,6 +233,7 @@ export class InventoryService {
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.homeService = this.injector.get(HomeService)));
+    setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.autoSellUnlocked = false;
     this.autoSellEntries = [];
@@ -394,6 +401,7 @@ export class InventoryService {
       autoReloadCraftInputs: this.autoReloadCraftInputs,
       pillCounter: this.pillCounter,
       potionCounter: this.potionCounter,
+      herbCounter: this.herbCounter,
       gemsAcquired: this.gemsAcquired,
     };
   }
@@ -462,6 +470,7 @@ export class InventoryService {
     this.autoReloadCraftInputs = properties.autoReloadCraftInputs || false;
     this.pillCounter = properties.pillCounter || 0;
     this.potionCounter = properties.potionCounter || 0;
+    this.herbCounter = properties.herbCounter || 0;
     this.gemsAcquired = properties.gemsAcquired || 0;
   }
 
@@ -785,38 +794,41 @@ export class InventoryService {
   }
 
   generateHerb(): void {
-    let grade = 0;
-    const maxGrade = Herbs.length * herbQuality.length;
-    const woodLore = this.characterService.characterState.attributes.woodLore.value;
-    grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * maxGrade); // 1e9 woodlore is maximum grade, adjust if necessary
-    let nameIndex = grade % Herbs.length;
-    let qualityIndex = Math.floor(grade / Herbs.length);
-    if (grade >= maxGrade) {
-      // maxed out
-      nameIndex = Herbs.length - 1;
-      qualityIndex = herbQuality.length - 1;
+    if (!this.locationService?.troubleTarget) {
+      // location isn't set, bail out
+      return;
     }
-    const name = Herbs[nameIndex].name;
-    const quality = herbQuality[qualityIndex];
-    const value = grade + 1;
-    const herbName = quality + ' ' + name;
+    const targetLocation = this.locationService.troubleTarget;
+    const filteredHerbs = Herbs.filter(herb => herb.locations.includes(targetLocation));
+    if (filteredHerbs.length === 0) {
+      // no herbs at this location, bail out
+      return;
+    }
+    const woodLore = this.characterService.characterState.attributes.woodLore.value;
+    let grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * herbQuality.length); // 1e9 woodlore is maximum grade, adjust if necessary
+    if (grade >= herbQuality.length) {
+      grade = herbQuality.length - 1;
+    }
+    const herb = filteredHerbs[this.herbCounter % filteredHerbs.length];
+    this.herbCounter++;
+
     this.addItem({
-      id: 'herb_' + name,
-      imageFile: 'herb_' + name,
-      imageColor: this.itemRepoService.colorByRank[qualityIndex],
-      name: herbName,
+      id: 'herb_' + herb.name + grade,
+      imageFile: 'herb_' + herb.name,
+      imageColor: this.itemRepoService.colorByRank[grade],
+      name: herbQuality[grade] + ' ' + herb.name,
       type: 'herb',
-      subtype: name,
-      attribute: Herbs[nameIndex].attribute,
-      value: value,
+      subtype: herb.name,
+      attribute: herb.attribute,
+      value: grade + 1,
       description: 'Useful herbs. Can be used in creating pills or potions.',
     });
     if (this.autoSellOldHerbsEnabled) {
       // sell any herb of the same type cheaper than what we just picked
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === 'herb' && itemStack.item.subtype === name) {
-          if (itemStack.item.value < value && itemStack.item.name !== herbName) {
+        if (itemStack.item && itemStack.item.type === 'herb' && itemStack.item.subtype === herb.name) {
+          if (itemStack.item.value < grade + 1 && itemStack.item.subtype === herb.name) {
             this.sell(itemStack, itemStack.quantity);
           }
         }
@@ -1257,7 +1269,10 @@ export class InventoryService {
                 // same thing
                 inputItemStack.quantity += quantity;
                 return -1;
-              } else if (item.type !== 'food' && item.value > inputItemStack.item?.value) {
+              } else if (
+                (item.type !== 'food' || item.name === inputItemStack.item.name) &&
+                item.value > inputItemStack.item?.value
+              ) {
                 // it's an upgrade, add it to the inventory then swap it in
                 const newItemIndex = this.addItem(item, quantity, 0, true);
                 if (newItemIndex !== -1) {
