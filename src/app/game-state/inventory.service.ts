@@ -793,7 +793,7 @@ export class InventoryService {
     });
   }
 
-  generateHerb(): void {
+  generateHerb(skipSnobbery: boolean = false): void {
     if (!this.locationService?.troubleTarget) {
       // location isn't set, bail out
       return;
@@ -823,7 +823,7 @@ export class InventoryService {
       value: grade + 1,
       description: 'Useful herbs. Can be used in creating pills or potions.',
     });
-    if (this.autoSellOldHerbsEnabled) {
+    if (this.autoSellOldHerbsEnabled && !skipSnobbery) {
       // sell any herb of the same type cheaper than what we just picked
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -933,7 +933,7 @@ export class InventoryService {
     }
   }
 
-  getOre(value: number = -1): Item {
+  getOre(value: number = -1, skipSnobbery: boolean = false): Item {
     let oreValue = value;
     if (value === -1) {
       const earthLore = this.characterService.characterState.attributes.earthLore.value;
@@ -947,7 +947,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldOreEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldOreEnabled && !this.hellService?.inHell && !skipSnobbery) {
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -959,7 +959,7 @@ export class InventoryService {
     return lastOre;
   }
 
-  getBar(oreValue: number): Item {
+  getBar(oreValue: number, skipSnobbery: boolean = false): Item {
     // metal bars should always be 10x the value of the associated ore
     const barValue = oreValue * 10;
 
@@ -972,7 +972,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell && !skipSnobbery) {
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -984,7 +984,7 @@ export class InventoryService {
     return lastMetal;
   }
 
-  getWood(): Item {
+  getWood(skipSnobbery: boolean = false): Item {
     const woodLore = this.characterService.characterState.attributes.woodLore.value;
     const woodvalue = Math.floor(Math.pow(woodLore / 1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
     let lastWood = this.itemRepoService.items['balsaLog'];
@@ -996,7 +996,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell && !skipSnobbery) {
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1008,7 +1008,7 @@ export class InventoryService {
     return lastWood;
   }
 
-  getHide(value: number = -1): Item {
+  getHide(value: number = -1, skipSnobbery: boolean = false): Item {
     let hideValue = value;
     if (hideValue === -1) {
       const animalHandling = this.characterService.characterState.attributes.animalHandling.value;
@@ -1024,7 +1024,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell) {
+    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell && !skipSnobbery) {
       // sell any hides cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1271,6 +1271,7 @@ export class InventoryService {
                 return -1;
               } else if (
                 (item.type !== 'food' || item.name === inputItemStack.item.name) &&
+                item.type !== 'gem' &&
                 item.value > inputItemStack.item?.value
               ) {
                 // it's an upgrade, add it to the inventory then swap it in

@@ -1453,13 +1453,17 @@ export class HellService {
     const newList: Activity[] = [];
     if (this.currentHell === -1) {
       // between hells now, choose which one to enter
+      /*
       this.activityService.activityHeader = 'The Gates of Hell';
       this.activityService.activityHeaderDescription =
         "The heavens have cast you down to the depths of hell.<br>You'll need to defeat every level to escape.";
+        */
       this.setEnterHellsArray(newList);
     } else {
+      /*
       this.activityService.activityHeader = this.hells[this.currentHell].name;
       this.activityService.activityHeaderDescription = this.hells[this.currentHell].description;
+      */
       const hell = this.hells[this.currentHell];
       for (const activity of hell.activities) {
         if (activity) {

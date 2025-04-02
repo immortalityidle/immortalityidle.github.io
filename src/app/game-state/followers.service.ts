@@ -131,6 +131,22 @@ export class FollowersService {
       totalPower: 0,
       runEachTick: true,
     },
+    fisher: {
+      work: daysElapsed => {
+        if (this.hellService?.inHell) {
+          if (this.jobs['fisher'].totalPower > 1000)
+            this.inventoryService.addItem(
+              this.itemRepoService.items['spiritCarp'],
+              Math.floor((this.jobs['fisher'].totalPower / 1000) * daysElapsed)
+            );
+          return;
+        }
+        this.inventoryService.addItem(this.itemRepoService.items['carp'], this.jobs['fisher'].totalPower * daysElapsed);
+      },
+      description: 'Fishers fish up delicious fish to contribute to your meals.',
+      totalPower: 0,
+      runEachTick: true,
+    },
     farmer: {
       work: daysElapsed => {
         this.farmService.workFields(this.jobs['farmer'].totalPower * daysElapsed);
@@ -139,6 +155,7 @@ export class FollowersService {
       totalPower: 0,
       runEachTick: true,
     },
+    // TODO: add miner follower
     weaponsmith: {
       work: daysElapsed => {
         let totalPower = this.jobs['weaponsmith'].totalPower;

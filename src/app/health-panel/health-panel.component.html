@@ -38,7 +38,7 @@
     </div>
     <div class="statusRow">
       <div class="statusCell health" tooltip="{{characterService.characterState.status.health.description}}">
-        <span>Health</span>
+        <div><span>Health</span></div>
         <div class="progress-bar" [ngClass]="flashHealth ? 'flash' : ''"
             [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) | bigNumber"
             [attr.max]="Math.floor(characterService.characterState.status.health.max) | bigNumber">
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="statusCell stamina" tooltip="{{characterService.characterState.status.stamina.description}}">
-        <span>Stamina</span>
+        <div><span>Stamina</span></div>
         <div class="progress-bar" [ngClass]="flashStamina ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.stamina.value < 0 ? 0 : characterService.characterState.status.stamina.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.stamina.max) | bigNumber">
@@ -61,7 +61,7 @@
 
       </div>
       <div class="statusCell nutrition" tooltip="{{characterService.characterState.status.nutrition.description}}">
-        <span>Nutrition</span>
+        <div><span>Nutrition</span></div>
         <div class="progress-bar" [ngClass]="flashNutrition ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.status.nutrition.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.nutrition.max) | bigNumber">
@@ -73,7 +73,7 @@
         </div>
       </div>
       <div class="statusCell qi" tooltip="{{characterService.characterState.status.qi.description}}">
-        <span>Qi</span>
+        <div><span>Qi</span></div>
         <div class="progress-bar" [ngClass]="flashNutrition ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.characterState.status.qi.value) | bigNumber"
           [attr.max]="Math.floor(characterService.characterState.status.qi.max) | bigNumber">

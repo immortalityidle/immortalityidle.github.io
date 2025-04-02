@@ -1,5 +1,4 @@
-<div class='darkMode'>
-  <h3>Impossible Tasks</h3>
+<div>
   <span>
     <input type="checkbox" (change)="pauseOnImpossibleFailChange($event)"
       id="pauseOnImpossibleFail" [checked]="activityService.pauseOnImpossibleFail"/>
@@ -7,17 +6,21 @@
   </span>
   <hr/>
   @if (impossibleTaskService.activeTaskIndex >= 0) {
-    <span>
-      <div  class="progress-bar"
-        [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
-        [attr.max]="Math.floor(impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired)">
-        <span
-        [style.width.%]="100 *
-          impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress /
-          impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired">
-        </span>
-      </div>
-    </span>
+    <div>
+      <span>Current Task: {{impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].name}}</span>
+      <span>
+        <div  class="progress-bar"
+          [attr.value]="Math.floor(impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress)"
+          [attr.max]="Math.floor(impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired)">
+          <span
+          [style.width.%]="100 *
+            impossibleTaskService.taskProgress[impossibleTaskService.activeTaskIndex].progress /
+            impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].progressRequired">
+          </span>
+        </div>
+      </span>
+    </div>
+    <br>
   }
 
   <div>

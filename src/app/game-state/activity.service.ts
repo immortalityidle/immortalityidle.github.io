@@ -43,7 +43,6 @@ export interface ActivityProperties {
   recruitingCounter: number;
   petRecruitingCounter: number;
   coreCultivationCounter: number;
-  forgeChainsCounter: number;
   researchWindCounter: number;
 }
 
@@ -74,8 +73,6 @@ export class ActivityService {
   activityDeath = false; // Simpler to just check a flag for the achievement.
   autoRestUnlocked = false;
   totalExhaustedDays = 0;
-  activityHeader = '';
-  activityHeaderDescription = '';
   hellService?: HellService;
   spiritActivityProgress = false;
   purifyGemsUnlocked = false;
@@ -96,7 +93,6 @@ export class ActivityService {
   pillMoldCounter = 0;
   pillBoxCounter = 0;
   pillPouchCounter = 0;
-  forgeChainsCounter = 0;
   researchWindCounter = 0;
   miningCounter = 0;
   huntingCounter = 0;
@@ -528,7 +524,6 @@ export class ActivityService {
       lifeActivities: this.lifeActivities,
       familySpecialty: this.familySpecialty,
       tauntCounter: this.tauntCounter,
-      forgeChainsCounter: this.forgeChainsCounter,
       researchWindCounter: this.researchWindCounter,
       miningCounter: this.miningCounter,
       huntingCounter: this.huntingCounter,
@@ -577,7 +572,6 @@ export class ActivityService {
       this.upgradeActivities(true);
     }
     this.tauntCounter = properties.tauntCounter;
-    this.forgeChainsCounter = properties.forgeChainsCounter;
     this.researchWindCounter = properties.researchWindCounter;
     this.miningCounter = properties.miningCounter;
     this.huntingCounter = properties.huntingCounter;
@@ -837,14 +831,6 @@ export class ActivityService {
 
   getActivityList(): Activity[] {
     const newList: Activity[] = [];
-    this.activityHeader = '';
-    this.activityHeaderDescription = '';
-    if (this.impossibleTaskService.activeTaskIndex >= 0) {
-      this.activityHeader =
-        'Do the impossible: ' + this.impossibleTaskService.tasks[this.impossibleTaskService.activeTaskIndex].name;
-      this.activityHeaderDescription =
-        this.impossibleTaskService.tasks[this.impossibleTaskService.activeTaskIndex].description;
-    }
 
     if (!this.hellService) {
       this.hellService = this.injector.get(HellService);
@@ -1092,42 +1078,6 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100;
-          const metalValue = this.inventoryService.checkFor('metal');
-          if (
-            this.homeService.hasWorkstation('anvil') &&
-            metalValue >= 150 &&
-            this.characterService.characterState.attributes.metalLore.value >= 1e9
-          ) {
-            this.forgeChainsCounter++;
-            this.inventoryService.consume('metal');
-            if (this.forgeChainsCounter > 10) {
-              this.logService.log(
-                LogTopic.CRAFTING,
-                'Your anvil gives off an ear-splitting ringing and echoes endlessly into the depths. The new chain glows with power!'
-              );
-              this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
-              this.forgeChainsCounter = 0;
-            } else {
-              this.logService.log(
-                LogTopic.CRAFTING,
-                'Your anvil rings and weakly echoes into the depths. You throw aside the useless dull chain.'
-              );
-            }
-          } else if (this.characterService.characterState.attributes.metalLore.value < 1e9) {
-            this.logService.injury(LogTopic.EVENT, 'You lack the necessary knowledge and cause a deadly explosion.');
-            this.characterService.characterState.status.health.value -=
-              this.characterService.characterState.status.health.max * 0.6;
-            if (this.pauseOnImpossibleFail) {
-              this.mainLoopService.pause = true;
-            }
-          } else {
-            this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong tools and materials and hurt yourself.');
-            this.characterService.characterState.status.health.value -=
-              this.characterService.characterState.status.health.max * 0.05;
-            if (this.pauseOnImpossibleFail) {
-              this.mainLoopService.pause = true;
-            }
-          }
         },
       ],
       resourceUse: [
@@ -1216,25 +1166,6 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100;
-          const oreValue = this.inventoryService.consume('ore', 200);
-          const builderPower = Math.floor((this.followerService.jobs['builder'].totalPower + 10) / 10);
-          if (oreValue >= 10) {
-            this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick'], builderPower);
-            this.logService.log(
-              LogTopic.CRAFTING,
-              'You and your followers made ' +
-                (1 + builderPower) +
-                ' ' +
-                this.itemRepoService.items['everlastingBrick'].name
-            );
-          } else {
-            this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong materials and hurt yourself.');
-            this.characterService.characterState.status.health.value -=
-              this.characterService.characterState.status.health.max * 0.05;
-            if (this.pauseOnImpossibleFail) {
-              this.mainLoopService.pause = true;
-            }
-          }
         },
       ],
       resourceUse: [
@@ -1261,22 +1192,6 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 1000;
-          let woodValue = 0;
-          woodValue = this.inventoryService.consume('wood', 200);
-          if (woodValue >= 11) {
-            this.inventoryService.addItem(this.itemRepoService.items['scaffolding']);
-            this.logService.log(LogTopic.CRAFTING, 'You made ' + this.itemRepoService.items['scaffolding'].name);
-          } else {
-            this.logService.injury(
-              LogTopic.EVENT,
-              'You fumble with the wrong materials, hurt yourself, and break your weak attempt at scaffolding.'
-            );
-            this.characterService.characterState.status.health.value -=
-              this.characterService.characterState.status.health.max * 0.05;
-            if (this.pauseOnImpossibleFail) {
-              this.mainLoopService.pause = true;
-            }
-          }
         },
       ],
       resourceUse: [
@@ -1303,25 +1218,6 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100;
-          const oreValue = this.inventoryService.consume('ore');
-          const builderPower = Math.floor((this.followerService.jobs['builder'].totalPower + 100) / 100);
-          if (this.homeService.hasWorkstation('cauldron') && oreValue >= 10) {
-            this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar'], builderPower);
-            this.logService.log(
-              LogTopic.CRAFTING,
-              'You and your followers made ' +
-                (1 + builderPower) +
-                ' ' +
-                this.itemRepoService.items['everlastingMortar'].name
-            );
-          } else {
-            this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong materials and hurt yourself.');
-            this.characterService.characterState.status.health.value -=
-              this.characterService.characterState.status.health.max * 0.05;
-            if (this.pauseOnImpossibleFail) {
-              this.mainLoopService.pause = true;
-            }
-          }
         },
       ],
       resourceUse: [

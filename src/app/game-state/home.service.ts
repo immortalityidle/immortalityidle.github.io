@@ -9,6 +9,7 @@ import { ActivityType } from './activity';
 import { ActivityService } from './activity.service';
 import { AttributeType } from './character';
 import { TitleCasePipe } from '@angular/common';
+import { FollowersService } from './followers.service';
 
 export interface Home {
   name: string;
@@ -49,14 +50,14 @@ export enum HomeType {
 export interface Workstation {
   name?: string;
   id: string;
-  triggerActivity: ActivityType;
+  triggerActivities: ActivityType[];
   power: number;
   setupCost: number;
   maintenanceCost: number;
   description: string;
   maxInputs: number;
   inputs: ItemStack[];
-  consequence: (workstation: Workstation) => void;
+  consequence: (workstation: Workstation, activityType: ActivityType) => void;
 }
 
 export interface HomeProperties {
@@ -86,6 +87,7 @@ export interface HomeProperties {
   workstations: Workstation[];
   totalCrafts: number;
   alchemyCounter: number;
+  forgeChainsCounter: number;
 }
 
 @Injectable({
@@ -94,6 +96,7 @@ export interface HomeProperties {
 export class HomeService {
   hellService?: HellService;
   activityService?: ActivityService;
+  followerService?: FollowersService;
   autoBuyLandUnlocked = false;
   autoBuyLandLimit = 5;
   autoBuyHomeUnlocked = false;
@@ -118,6 +121,7 @@ export class HomeService {
   workstations: Workstation[] = [];
   totalCrafts = 0;
   alchemyCounter = 0;
+  forgeChainsCounter = 0;
 
   homesList: Home[] = [
     {
@@ -486,7 +490,7 @@ export class HomeService {
   workstationsList: Workstation[] = [
     {
       id: 'Smelter',
-      triggerActivity: ActivityType.Smelting,
+      triggerActivities: [ActivityType.Smelting],
       power: 0,
       setupCost: 1000,
       maintenanceCost: 10,
@@ -511,8 +515,38 @@ export class HomeService {
       },
     },
     {
+      id: 'Superior Smelter',
+      triggerActivities: [ActivityType.Smelting, ActivityType.MakeBrick],
+      power: 0,
+      setupCost: 1000000,
+      maintenanceCost: 10000000,
+      description:
+        'An enormous smelter that will produce metal bars when you do Smelting, or possible make other things that require intense heat.<br>You will need to provide your own ore and fuel.',
+      maxInputs: 3,
+      inputs: [],
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        if (activityType === ActivityType.MakeBrick) {
+          this.makeBricks(workstation);
+          return;
+        }
+        if (workstation.inputs.length < 2) {
+          // inputs array not populated, bail out
+          return;
+        }
+        const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
+        const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
+
+        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity > 0) {
+          this.totalCrafts++;
+          this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
+          oreStack.quantity--;
+          fuelStack.quantity--;
+        }
+      },
+    },
+    {
       id: 'Basic Anvil',
-      triggerActivity: ActivityType.Blacksmithing,
+      triggerActivities: [ActivityType.Blacksmithing],
       power: 0,
       setupCost: 10000,
       maintenanceCost: 100,
@@ -520,13 +554,13 @@ export class HomeService {
         'A simple anvil that will let you craft your own equipment when you do Blacksmithing.<br>You will need to provide your own metal bars.',
       maxInputs: 1,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
       },
     },
     {
       id: 'Heavy Anvil',
-      triggerActivity: ActivityType.Blacksmithing,
+      triggerActivities: [ActivityType.Blacksmithing],
       power: 1,
       setupCost: 1000000,
       maintenanceCost: 1000,
@@ -534,13 +568,13 @@ export class HomeService {
         'A massive anvil that will let you craft more powerful equipment when you do Blacksmithing.<br>You will need to provide your own metal bars.',
       maxInputs: 2,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
       },
     },
     {
       id: 'Masterwork Anvil',
-      triggerActivity: ActivityType.Blacksmithing,
+      triggerActivities: [ActivityType.Blacksmithing, ActivityType.ForgeChains],
       power: 2,
       setupCost: 10000000,
       maintenanceCost: 10000,
@@ -548,13 +582,17 @@ export class HomeService {
         'An enchanted anvil that will let you craft extremely powerful equipment when you do Blacksmithing.<br>You will need to provide your own metal bars.',
       maxInputs: 3,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        if (activityType === ActivityType.ForgeChains) {
+          this.forgeChains(workstation);
+        } else {
+          this.createEquipment(workstation, activityType);
+        }
       },
     },
     {
       id: 'Basic Woodworking Bench',
-      triggerActivity: ActivityType.Woodworking,
+      triggerActivities: [ActivityType.Woodworking],
       power: 0,
       setupCost: 10000,
       maintenanceCost: 100,
@@ -562,13 +600,13 @@ export class HomeService {
         'A simple woodworking workbench that will let you craft your own equipment when you do Woodworking.<br>You will need to provide your own wood.',
       maxInputs: 1,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
       },
     },
     {
       id: 'Advanced Woodworking Bench',
-      triggerActivity: ActivityType.Woodworking,
+      triggerActivities: [ActivityType.Woodworking],
       power: 1,
       setupCost: 1000000,
       maintenanceCost: 1000,
@@ -576,13 +614,13 @@ export class HomeService {
         'A fully stocked woodworking workbench that will let you craft more powerful equipment when you do Woodworking.<br>You will need to provide your own wood.',
       maxInputs: 2,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
       },
     },
     {
       id: 'Masterwork Woodworking Bench',
-      triggerActivity: ActivityType.Woodworking,
+      triggerActivities: [ActivityType.Woodworking, ActivityType.MakeScaffold],
       power: 2,
       setupCost: 10000000,
       maintenanceCost: 10000,
@@ -590,13 +628,17 @@ export class HomeService {
         'An enchanted woodworking workbench that will let you craft extremely powerful equipment when you do Woodworking.<br>You will need to provide your own wood.',
       maxInputs: 3,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        if (activityType === ActivityType.MakeScaffold) {
+          this.makeScafold(workstation);
+        } else {
+          this.createEquipment(workstation, activityType);
+        }
       },
     },
     {
       id: 'Basic Leatherworking Station',
-      triggerActivity: ActivityType.Leatherworking,
+      triggerActivities: [ActivityType.Leatherworking],
       power: 0,
       setupCost: 10000,
       maintenanceCost: 100,
@@ -604,13 +646,13 @@ export class HomeService {
         'A simple leatherworking station that will let you craft your own equipment when you do Leatherworking.<br>You will need to provide your own hides.',
       maxInputs: 1,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
       },
     },
     {
       id: 'Advanced Leatherworking Station',
-      triggerActivity: ActivityType.Leatherworking,
+      triggerActivities: [ActivityType.Leatherworking],
       power: 1,
       setupCost: 1000000,
       maintenanceCost: 1000,
@@ -618,13 +660,13 @@ export class HomeService {
         'A fully stocked leatherworking station that will let you craft more powerful equipment when you do Leatherworking.<br>You will need to provide your own hides.',
       maxInputs: 2,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
       },
     },
     {
       id: 'Masterwork Leatherworking Station',
-      triggerActivity: ActivityType.Leatherworking,
+      triggerActivities: [ActivityType.Leatherworking],
       power: 2,
       setupCost: 10000000,
       maintenanceCost: 10000,
@@ -632,13 +674,13 @@ export class HomeService {
         'An enchanted leatherworking station that will let you craft extremely powerful equipment when you do Leatherworking.<br>You will need to provide your own hides.',
       maxInputs: 3,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.createEquipment(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
       },
     },
     {
       id: 'Basic Cauldron',
-      triggerActivity: ActivityType.Alchemy,
+      triggerActivities: [ActivityType.Alchemy],
       power: 0,
       setupCost: 10000,
       maintenanceCost: 100,
@@ -646,13 +688,13 @@ export class HomeService {
         'A simple cauldron for brewing potions and making pills when you do alchemy.<br>You will need to provide your own herbs.',
       maxInputs: 2,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.craftAlchemy(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.craftAlchemy(workstation, activityType);
       },
     },
     {
       id: 'Large Cauldron',
-      triggerActivity: ActivityType.Alchemy,
+      triggerActivities: [ActivityType.Alchemy],
       power: 1,
       setupCost: 1000000,
       maintenanceCost: 1000,
@@ -660,13 +702,13 @@ export class HomeService {
         'A large cauldron for brewing potions and making pills when you do alchemy.<br>You will need to provide your own herbs.',
       maxInputs: 4,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.craftAlchemy(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.craftAlchemy(workstation, activityType);
       },
     },
     {
       id: 'Enchanted Cauldron',
-      triggerActivity: ActivityType.Alchemy,
+      triggerActivities: [ActivityType.Alchemy, ActivityType.MakeMortar],
       power: 2,
       setupCost: 10000000,
       maintenanceCost: 10000,
@@ -674,26 +716,30 @@ export class HomeService {
         'An enchanted cauldron for brewing potions and making pills when you do alchemy.<br>You will need to provide your own herbs.',
       maxInputs: 6,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.craftAlchemy(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        if (activityType === ActivityType.MakeMortar) {
+          this.makeMortar(workstation);
+        } else {
+          this.craftAlchemy(workstation, activityType);
+        }
       },
     },
     {
       id: 'Cook Pot',
-      triggerActivity: ActivityType.Cooking,
+      triggerActivities: [ActivityType.Cooking],
       power: 0,
       setupCost: 100,
       maintenanceCost: 10,
       description: 'A simple cook pot to prepare meals.<br>You will need to provide your own ingredients.',
       maxInputs: 2,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.cookFood(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.cookFood(workstation, activityType);
       },
     },
     {
       id: 'Roasting Spit',
-      triggerActivity: ActivityType.Cooking,
+      triggerActivities: [ActivityType.Cooking],
       power: 1,
       setupCost: 10000,
       maintenanceCost: 100,
@@ -701,13 +747,13 @@ export class HomeService {
         'A simple spit to roast your foods, letting you add more variety to your diet.<br>You will need to provide your own ingredients.',
       maxInputs: 3,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.cookFood(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.cookFood(workstation, activityType);
       },
     },
     {
       id: 'Chef Kitchen',
-      triggerActivity: ActivityType.Cooking,
+      triggerActivities: [ActivityType.Cooking],
       power: 2,
       setupCost: 1000000,
       maintenanceCost: 1000,
@@ -715,8 +761,8 @@ export class HomeService {
         'A restaurant quality kitchen allowing you to make magnificent meals.<br>You will need to provide your own ingredients.',
       maxInputs: 5,
       inputs: [],
-      consequence: (workstation: Workstation) => {
-        this.cookFood(workstation);
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.cookFood(workstation, activityType);
       },
     },
   ];
@@ -765,6 +811,7 @@ export class HomeService {
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
+    setTimeout(() => (this.followerService = this.injector.get(FollowersService)));
     this.land = 0;
     this.landPrice = 100;
     this.setCurrentHome(this.homesList[0]);
@@ -889,6 +936,7 @@ export class HomeService {
       workstations: this.workstations,
       totalCrafts: this.totalCrafts,
       alchemyCounter: this.alchemyCounter,
+      forgeChainsCounter: this.forgeChainsCounter,
     };
   }
 
@@ -925,6 +973,7 @@ export class HomeService {
     this.seeFurnitureEffects = properties.keepHome;
     this.totalCrafts = properties.totalCrafts;
     this.alchemyCounter = properties.alchemyCounter || 0;
+    this.forgeChainsCounter = properties.forgeChainsCounter || 0;
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
@@ -1156,7 +1205,7 @@ export class HomeService {
       index: this.workstations.length,
       name: workstationId + ' #' + (existingSameWorkstations + 1),
       id: workstationId,
-      triggerActivity: workstationTemplate?.triggerActivity,
+      triggerActivities: workstationTemplate?.triggerActivities,
       power: workstationTemplate.power,
       setupCost: workstationTemplate.setupCost,
       maintenanceCost: workstationTemplate.maintenanceCost,
@@ -1174,8 +1223,8 @@ export class HomeService {
 
   triggerWorkstations(activityType: ActivityType) {
     for (const workstation of this.workstations) {
-      if (workstation.triggerActivity === activityType) {
-        workstation.consequence(workstation);
+      if (workstation.triggerActivities.includes(activityType)) {
+        workstation.consequence(workstation, activityType);
       }
     }
   }
@@ -1223,13 +1272,13 @@ export class HomeService {
   }
 
   chefsWork(workValue: number) {
-    const kitchens = this.workstations.filter(ws => ws.triggerActivity === ActivityType.Cooking);
+    const kitchens = this.workstations.filter(ws => ws.triggerActivities.includes(ActivityType.Cooking));
     for (const kitchen of kitchens) {
       this.cookFood(kitchen, workValue / kitchens.length);
     }
   }
 
-  cookFood(workstation: Workstation, cookAmount: number = 1) {
+  cookFood(workstation: Workstation, activityType: ActivityType, cookAmount: number = 1) {
     if (workstation.inputs.length < 2) {
       // inputs array not populated, bail out
       return;
@@ -1262,7 +1311,7 @@ export class HomeService {
     totalValue *= usedSubtypes.length;
     totalValue *= workstation.power + 1;
 
-    const cookingLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
+    const cookingLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     let imageFile = 'meal';
     let foodName = 'Menu Special #' + totalValue;
     if (cookingLevel > 0) {
@@ -1289,18 +1338,200 @@ export class HomeService {
     );
   }
 
-  createEquipment(workstation: Workstation) {
+  forgeChains(workstation: Workstation) {
+    const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'metal');
+
+    if (this.characterService.characterState.attributes.metalLore.value < 1e9) {
+      this.logService.injury(LogTopic.EVENT, 'You lack the necessary knowledge and cause a deadly explosion.');
+      this.characterService.characterState.status.health.value -=
+        this.characterService.characterState.status.health.max * 0.6;
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    if (!materialStack || materialStack.quantity < 10 || (materialStack.item?.value || 0) < 150) {
+      this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong tools and materials and hurt yourself.');
+      this.characterService.characterState.status.health.value -=
+        this.characterService.characterState.status.health.max * 0.05;
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 250) {
+      this.logService.injury(
+        LogTopic.EVENT,
+        "You think you have the right metal, but you'll need something to imbue it with additional strength."
+      );
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    this.forgeChainsCounter++;
+    materialStack.quantity -= 10;
+    gemStack.quantity -= 10;
+
+    if (this.forgeChainsCounter > 10) {
+      this.logService.log(
+        LogTopic.CRAFTING,
+        'Your anvil gives off an ear-splitting ringing and echoes endlessly into the depths. The new chain glows with power!'
+      );
+      this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
+      this.forgeChainsCounter = 0;
+    } else {
+      this.logService.log(
+        LogTopic.CRAFTING,
+        'Your anvil rings and weakly echoes into the depths. You throw aside the useless dull chain, but you think you are on the right track.'
+      );
+    }
+  }
+
+  makeMortar(workstation: Workstation) {
+    const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
+    if (!materialStack || (materialStack.item?.value || 0) < 10 || materialStack.quantity < 100) {
+      this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong materials and hurt yourself.');
+      this.characterService.characterState.status.health.value -=
+        this.characterService.characterState.status.health.max * 0.05;
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    const hideStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'hide');
+    if (!hideStack || hideStack.quantity < 10 || (hideStack.item?.value || 0) < 10) {
+      this.logService.injury(
+        LogTopic.EVENT,
+        "You think you have the right ore to make mortar, but you'll need something to give the mortar additional elasticity. Something strong, yet flexible."
+      );
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 300) {
+      this.logService.injury(
+        LogTopic.EVENT,
+        "You think you have the right materials to make mortar, but you'll need something to imbue the mixture with additional strength."
+      );
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+    const builderPower = Math.floor((this.followerService!.jobs['builder'].totalPower + 100) / 100);
+    if (builderPower < 10) {
+      this.logService.injury(
+        LogTopic.EVENT,
+        'You try mixing the cauldron of mortar, but lack the required experience with building materials to do it properly. You might need some help.'
+      );
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+    materialStack.quantity -= 100;
+    hideStack.quantity -= 10;
+    gemStack.quantity -= 10;
+    this.inventoryService.addItem(this.itemRepoService.items['everlastingMortar'], builderPower);
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'You and your followers made some ' + this.itemRepoService.items['everlastingMortar'].name
+    );
+  }
+
+  makeBricks(workstation: Workstation) {
+    const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
+    if (!materialStack || (materialStack.item?.value || 0) < 10 || materialStack.quantity < 200) {
+      this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong materials and hurt yourself.');
+      this.characterService.characterState.status.health.value -=
+        this.characterService.characterState.status.health.max * 0.05;
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
+    if (!fuelStack || (fuelStack.item?.value || 0) < 10 || fuelStack.quantity < 2000) {
+      this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong fuels and hurt yourself.');
+      this.characterService.characterState.status.health.value -=
+        this.characterService.characterState.status.health.max * 0.05;
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 300) {
+      this.logService.injury(
+        LogTopic.EVENT,
+        "You think you have the right ore to make bricks, but you'll need something to imbue the mixture with additional strength."
+      );
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    const builderPower = Math.floor((this.followerService!.jobs['builder'].totalPower + 100) / 100);
+    if (builderPower < 10) {
+      this.logService.injury(
+        LogTopic.EVENT,
+        'You try forming the bricks in your smelter, but lack the required experience with building materials to do it properly. You might need some help.'
+      );
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    materialStack.quantity -= 200;
+    fuelStack.quantity -= 2000;
+    gemStack.quantity -= 10;
+    this.inventoryService.addItem(this.itemRepoService.items['everlastingBrick'], builderPower);
+    this.logService.log(
+      LogTopic.CRAFTING,
+      'You and your followers baked a batch of ' + this.itemRepoService.items['everlastingBrick'].name + 's'
+    );
+  }
+
+  makeScafold(workstation: Workstation) {
+    const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'wood');
+    if (!materialStack || (materialStack.item?.value || 0) < 12 || materialStack.quantity < 200) {
+      this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong materials and hurt yourself.');
+      this.characterService.characterState.status.health.value -=
+        this.characterService.characterState.status.health.max * 0.05;
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+    materialStack.quantity -= 200;
+    this.inventoryService.addItem(this.itemRepoService.items['scaffolding']);
+    this.logService.log(LogTopic.CRAFTING, 'You made ' + this.itemRepoService.items['scaffolding'].name);
+  }
+
+  createEquipment(workstation: Workstation, activityType: ActivityType) {
     if (workstation.inputs.length < 1) {
       // inputs array not populated, bail out
       return;
     }
     let material = 'metal';
-    if (workstation.triggerActivity === ActivityType.Woodworking) {
+    if (activityType === ActivityType.Woodworking) {
       material = 'wood';
-    } else if (workstation.triggerActivity === ActivityType.Leatherworking) {
+    } else if (activityType === ActivityType.Leatherworking) {
       material = 'hide';
     }
-    const activityLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
+    const activityLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === material);
     // gems can be added for extra power
     const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
@@ -1329,7 +1560,7 @@ export class HomeService {
       }
       this.totalCrafts++;
       let item;
-      if (workstation.triggerActivity === ActivityType.Leatherworking) {
+      if (activityType === ActivityType.Leatherworking) {
         item = this.inventoryService.generateArmor(grade, this.inventoryService.randomArmorSlot());
       } else {
         item = this.inventoryService.generateWeapon(grade, material);
@@ -1339,7 +1570,7 @@ export class HomeService {
     }
   }
 
-  craftAlchemy(workstation: Workstation) {
+  craftAlchemy(workstation: Workstation, activityType: ActivityType) {
     if (workstation.inputs.length < 1) {
       // inputs array not populated, bail out
       return;
@@ -1350,7 +1581,7 @@ export class HomeService {
     let pillMold = false;
     let pillBox = false;
     let pillPouch = false;
-    const alchemyLevel = this.activityService?.getActivityByType(workstation.triggerActivity)?.level || 0;
+    const alchemyLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     let attribute: AttributeType = 'toughness';
     for (const itemStack of workstation.inputs) {
       if (

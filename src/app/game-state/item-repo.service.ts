@@ -624,7 +624,7 @@ baguaMap = [
       value: 50,
       description: 'Some delicious meat.',
       useLabel: 'Eat',
-      useDescription: 'Fills your belly. Can also improve your health and stamina.',
+      useDescription: 'Fills your belly and adds variety to your diet.',
       useConsumes: true,
     },
     spiritMeat: {
@@ -636,7 +636,7 @@ baguaMap = [
       value: 1000,
       description: 'Your hunters have performed a ritual burned offering of meat to send you this spiritual feast.',
       useLabel: 'Eat',
-      useDescription: 'Fills your belly. Can also improve your health and stamina.',
+      useDescription: 'Fills your belly and adds variety to your diet.',
       useConsumes: true,
     },
     carp: {
@@ -648,7 +648,19 @@ baguaMap = [
       value: 50,
       description: 'A common fish.',
       useLabel: 'Eat',
-      useDescription: 'Fills your belly. Might also improve your health and stamina.',
+      useDescription: 'Fills your belly and adds variety to your diet.',
+      useConsumes: true,
+    },
+    spiritCarp: {
+      id: 'spiritCarp',
+      imageFile: 'fish',
+      name: 'spirit carp',
+      type: 'food',
+      subtype: 'fish',
+      value: 1000,
+      description: 'Your fishers have performed a ritual burned offering of fish to send you this spiritual feast.',
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and adds variety to your diet.',
       useConsumes: true,
     },
     hide: {

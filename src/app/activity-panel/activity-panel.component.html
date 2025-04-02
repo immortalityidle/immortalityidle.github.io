@@ -8,9 +8,6 @@
         <button (click)="JoinTheGodsClick()">Join the Gods</button>
       </span>
     }
-    @if (!hellService.inHell) {
-      <span tooltip="{{activityService.activityHeaderDescription}}">{{activityService.activityHeader}} </span>
-    }
     @if (hellService.inHell && hellService.currentHell >= 0 && !hellService.completedHellTasks.includes(hellService.currentHell)) {
       <span>
         <div  class="progress-bar"
