@@ -1548,8 +1548,7 @@ export class InventoryService {
     for (let i = 0; i < this.characterService.characterState.itemPouches.length; i++) {
       const itemStack = this.characterService.characterState.itemPouches[i];
       if (itemStack.item?.type === 'potion') {
-        // @ts-ignore
-        const effect: StatusType = itemStack.item.effect;
+        const effect: StatusType = itemStack.item.effect as StatusType;
         if (
           this.characterService.characterState.status[effect].value <
           this.characterService.characterState.status[effect].max

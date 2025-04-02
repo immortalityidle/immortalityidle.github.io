@@ -445,7 +445,7 @@ export class HomeService {
       name: 'Seat of the Empire',
       type: HomeType.ImperialSeat,
       description:
-        "You've built quite an empire. Automatically restores 500 stamina, 100 health, and 20 Qi each night.",
+        "You've built quite a little empire for yourself. Automatically restores 500 stamina, 100 health, and 20 Qi each night.",
       cost: 1e16,
       costPerDay: 1e6,
       landRequired: 1e6,
@@ -467,7 +467,7 @@ export class HomeService {
       name: 'Godthrone',
       type: HomeType.Godthrone,
       description:
-        'The entire land kneels far beneath you. Automatically restores 1000 stamina, 150 health, and 30 Qi each night.',
+        'All in the land kneel far beneath you. Automatically restores 1000 stamina, 150 health, and 30 Qi each night.',
       cost: 1e17,
       costPerDay: 1e7,
       landRequired: 1e7,

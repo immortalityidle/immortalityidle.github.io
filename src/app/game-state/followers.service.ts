@@ -100,7 +100,7 @@ export class FollowersService {
   jobs: jobsType = {
     chef: {
       work: daysElapsed => {
-        this.homeService.chefsWork((this.jobs['chef'].totalPower / 100) * daysElapsed);
+        this.homeService.chefsWork(Math.floor(this.jobs['chef'].totalPower / 100) * daysElapsed);
       },
       description: 'Chefs increase the output of your kitchens.',
       totalPower: 0,
@@ -125,7 +125,10 @@ export class FollowersService {
             );
           return;
         }
-        this.inventoryService.addItem(this.itemRepoService.items['meat'], this.jobs['hunter'].totalPower * daysElapsed);
+        this.inventoryService.addItem(
+          this.itemRepoService.items['meat'],
+          Math.floor(this.jobs['hunter'].totalPower * daysElapsed)
+        );
       },
       description: 'Hunters collect meat and help you hunt for hides.',
       totalPower: 0,
@@ -141,7 +144,10 @@ export class FollowersService {
             );
           return;
         }
-        this.inventoryService.addItem(this.itemRepoService.items['carp'], this.jobs['fisher'].totalPower * daysElapsed);
+        this.inventoryService.addItem(
+          this.itemRepoService.items['carp'],
+          Math.floor(this.jobs['fisher'].totalPower * daysElapsed)
+        );
       },
       description: 'Fishers fish up delicious fish to contribute to your meals.',
       totalPower: 0,
@@ -149,13 +155,30 @@ export class FollowersService {
     },
     farmer: {
       work: daysElapsed => {
-        this.farmService.workFields(this.jobs['farmer'].totalPower * daysElapsed);
+        this.farmService.workFields(Math.floor(this.jobs['farmer'].totalPower * daysElapsed));
       },
       description: 'Farmers work your fields, helping your crops to grow.',
       totalPower: 0,
       runEachTick: true,
     },
-    // TODO: add miner follower
+    miner: {
+      work: daysElapsed => {
+        const power = Math.floor((this.jobs['miner'].totalPower * daysElapsed) / 100);
+        this.inventoryService.addItem(this.inventoryService.getOre(), power);
+      },
+      description: 'Miners gather ore for your crafting.',
+      totalPower: 0,
+      runEachTick: true,
+    },
+    lumberjack: {
+      work: daysElapsed => {
+        const power = Math.floor((this.jobs['lumberjack'].totalPower * daysElapsed) / 100);
+        this.inventoryService.addItem(this.inventoryService.getWood(), power);
+      },
+      description: 'lumberjack gather wood for your crafting.',
+      totalPower: 0,
+      runEachTick: true,
+    },
     weaponsmith: {
       work: daysElapsed => {
         let totalPower = this.jobs['weaponsmith'].totalPower;

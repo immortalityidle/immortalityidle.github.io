@@ -1332,12 +1332,12 @@ export class ActivityService {
       description: ['Delve deep into wind lore to understand how the neverending storm can be controlled.'],
       yinYangEffect: [YinYangEffect.None],
       consequenceDescription: [
-        'Uses 100 Stamina and Qi. Compile your research and if you have done enough you may produce a Tome of Wind Control.',
+        'Uses 1000 Stamina and Qi. Compile your research and if you have done enough you may produce a Tome of Wind Control.',
       ],
       consequence: [
         () => {
-          this.characterService.characterState.status.stamina.value -= 100;
-          this.characterService.characterState.status.qi.value -= 100;
+          this.characterService.characterState.status.stamina.value -= 1000;
+          this.characterService.characterState.status.qi.value -= 1000;
           if (
             this.characterService.characterState.status.stamina.value < 0 ||
             this.characterService.characterState.status.qi.value < 0
@@ -1360,8 +1360,8 @@ export class ActivityService {
       ],
       resourceUse: [
         {
-          stamina: 100,
-          qi: 100,
+          stamina: 1000,
+          qi: 1000,
         },
       ],
       requirements: [{}],
@@ -1377,14 +1377,28 @@ export class ActivityService {
       activityType: ActivityType.TameWinds,
       description: ['Use your research to tame the winds.'],
       yinYangEffect: [YinYangEffect.None],
-      consequenceDescription: ['Uses 100 Stamina. Use a Tome of Wind Control to tame the hurricane.'],
+      consequenceDescription: [
+        'Uses 10000 Stamina and Qi and an obscene amount of money. Use a Tome of Wind Control to tame the hurricane.',
+      ],
       consequence: [
         () => {
-          this.characterService.characterState.status.stamina.value -= 100;
+          this.characterService.characterState.status.stamina.value -= 10000;
+          this.characterService.characterState.status.qi.value -= 10000;
+          if (this.characterService.characterState.money < 1e18) {
+            this.logService.injury(
+              LogTopic.EVENT,
+              "You try to tame the winds, but without the proper funds you can't begin the magical ritual."
+            );
+            if (this.pauseOnImpossibleFail) {
+              this.mainLoopService.pause = true;
+            }
+          }
+          this.characterService.characterState.updateMoney(0 - 1e18);
           let value = 0;
           value = this.inventoryService.consume('windTome');
           if (value > 0) {
             this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].progress++;
+            this.logService.log(LogTopic.EVENT, 'You feel yourself drawing closer to mastery over the winds.');
             this.impossibleTaskService.checkCompletion();
             if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].complete) {
               this.logService.log(LogTopic.STORY, 'You acheived the impossible and tamed a hurricane.');
@@ -1404,7 +1418,8 @@ export class ActivityService {
       ],
       resourceUse: [
         {
-          stamina: 100,
+          stamina: 10000,
+          qi: 10000,
         },
       ],
       requirements: [{}],
@@ -1429,22 +1444,22 @@ export class ActivityService {
               LogTopic.EVENT,
               'Jumping off an impossibly tall tower ends about like you might expect. Your wounds may take a bit to heal, but at least you learned something.'
             );
-            this.characterService.characterState.status.health.value -= 1000;
+            this.characterService.characterState.status.health.value -= 10000;
           } else if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 4444) {
             this.logService.injury(
               LogTopic.EVENT,
               'You feel like you might have flown a litte bit, somewhere near the time you hit the ground.'
             );
-            this.characterService.characterState.status.health.value -= 500;
+            this.characterService.characterState.status.health.value -= 5000;
           } else if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 6666) {
             this.logService.injury(
               LogTopic.EVENT,
               'You definitely did better that time. You did some great flying but sticking the landing is still tricky.'
             );
-            this.characterService.characterState.status.health.value -= 100;
+            this.characterService.characterState.status.health.value -= 1000;
           } else {
             this.logService.injury(LogTopic.EVENT, 'Almost there! Perfect landings are so hard.');
-            this.characterService.characterState.status.health.value -= 10;
+            this.characterService.characterState.status.health.value -= 100;
           }
           this.impossibleTaskService.checkCompletion();
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].complete) {
@@ -1471,19 +1486,22 @@ export class ActivityService {
       location: LocationType.MountainTops,
       imageBaseName: 'offerfood',
       activityType: ActivityType.OfferDragonFood,
-      description: ['It turns out that dragons love peaches. Bring the dragon a bunch and he may be more friendly.'],
+      description: [
+        'It turns out that dragons love a well-prepared meal. Bring the dragon a bunch and he may be more friendly.',
+      ],
       yinYangEffect: [YinYangEffect.None],
-      consequenceDescription: ['You will need at least 1000 food for this to work.'],
+      consequenceDescription: ['You will need a great deal of fine food for this to work.'],
       consequence: [
         () => {
           let value = 0;
           value = this.inventoryService.consume('food', 1000);
-          if (value < 1) {
+          if (value < 50000) {
             this.logService.injury(
               LogTopic.EVENT,
               'The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.'
             );
-            this.characterService.characterState.status.health.value -= 1000;
+            this.characterService.characterState.status.health.value -=
+              this.characterService.characterState.status.health.max * 0.9;
             if (this.pauseOnImpossibleFail) {
               this.mainLoopService.pause = true;
             }
@@ -1491,6 +1509,10 @@ export class ActivityService {
           }
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 2000) {
             this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
+            this.logService.log(
+              LogTopic.EVENT,
+              "The dragon accepts your offering. You think. It eats the food anyway, and doesn't attack you while doing it."
+            );
           } else {
             this.logService.log(LogTopic.EVENT, "The dragon doesn't seem interested in any more food.");
           }
@@ -1510,21 +1532,35 @@ export class ActivityService {
       activityType: ActivityType.OfferDragonWealth,
       description: ['You have heard that dragons like treasure. Bring the dragon a bunch and he may be more friendly.'],
       yinYangEffect: [YinYangEffect.None],
-      consequenceDescription: ['You will need at least a billion taels for this to work.'],
+      consequenceDescription: ['You will need a vast hoard of taels for this to work.'],
       consequence: [
         () => {
-          if (this.characterService.characterState.money < 1e9) {
-            this.logService.injury(
+          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 1000) {
+            this.logService.log(
               LogTopic.EVENT,
-              'The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.'
+              "The dragon is offended by your very presence and viciously attacks you. You'll need to warm him up with different offerings before you try this again."
             );
-            this.characterService.characterState.status.health.value -= 1000;
+            this.characterService.characterState.status.health.value -=
+              this.characterService.characterState.status.health.max * 0.9;
             if (this.pauseOnImpossibleFail) {
               this.mainLoopService.pause = true;
             }
             return;
           }
-          this.characterService.characterState.updateMoney(1e9);
+
+          if (this.characterService.characterState.money < 1e21) {
+            this.logService.injury(
+              LogTopic.EVENT,
+              'The dragon is offended by your paltry offering and takes a swipe at you with its massive claw.'
+            );
+            this.characterService.characterState.status.health.value -=
+              this.characterService.characterState.status.health.max * 0.9;
+            if (this.pauseOnImpossibleFail) {
+              this.mainLoopService.pause = true;
+            }
+            return;
+          }
+          this.characterService.characterState.updateMoney(0 - 1e21);
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 4000) {
             this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
           } else {
@@ -1549,12 +1585,25 @@ export class ActivityService {
       consequenceDescription: ['The dragon probably likes you enough to talk to you now, right?'],
       consequence: [
         () => {
-          if (this.characterService.characterState.attributes.charisma.value < 1e10) {
+          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress < 1000) {
+            this.logService.log(
+              LogTopic.EVENT,
+              "The dragon is offended by your very presence and viciously attacks you. You'll need to warm him up with offerings before you try this again."
+            );
+            this.characterService.characterState.status.health.value -=
+              this.characterService.characterState.status.health.max * 0.9;
+            if (this.pauseOnImpossibleFail) {
+              this.mainLoopService.pause = true;
+            }
+            return;
+          }
+
+          if (this.characterService.characterState.attributes.charisma.value < 1e18) {
             this.logService.injury(
               LogTopic.EVENT,
               "The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first."
             );
-            this.characterService.characterState.status.health.value -= 1000;
+            this.characterService.characterState.status.health.value -= 10000;
             if (this.pauseOnImpossibleFail) {
               this.mainLoopService.pause = true;
             }
@@ -1588,13 +1637,13 @@ export class ActivityService {
       activityType: ActivityType.GatherArmies,
       description: ['Gather troops into armies. This will require vast amounts of food and money.'],
       yinYangEffect: [YinYangEffect.None],
-      consequenceDescription: ["You rule a country by now, right? If not, this isn't going to go well."],
+      consequenceDescription: ["You rule a province by now, right? If not, this isn't going to go well."],
       consequence: [
         () => {
           if (this.homeService.homeValue < HomeType.Capital) {
             this.logService.injury(
               LogTopic.EVENT,
-              "You don't even have your own kingdom? What were you thinking? The nearby rulers send their forces against you."
+              "You don't even have your own province? What were you thinking? The nearby nobles send their forces against you."
             );
             for (let i = 0; i < 3; i++) {
               this.battleService.addArmy();
@@ -1602,8 +1651,8 @@ export class ActivityService {
             return;
           }
           let value = 0;
-          value = this.inventoryService.consume('food', 10000);
-          if (value < 1) {
+          value = this.inventoryService.consume('food', 100000);
+          if (value < 10) {
             this.logService.injury(
               LogTopic.EVENT,
               "You don't have enough food to feed your army, so they revolt and fight you instead."
@@ -1614,7 +1663,7 @@ export class ActivityService {
             }
             return;
           }
-          if (this.characterService.characterState.money < 1e10) {
+          if (this.characterService.characterState.money < 1e22) {
             this.logService.injury(
               LogTopic.EVENT,
               "You don't have enough money to pay your army, so they revolt and fight you instead."
@@ -1625,7 +1674,7 @@ export class ActivityService {
             }
             return;
           }
-          this.characterService.characterState.updateMoney(1e10);
+          this.characterService.characterState.updateMoney(0 - 1e22);
           this.inventoryService.addItem(this.itemRepoService.items['army']);
         },
       ],
@@ -1659,7 +1708,7 @@ export class ActivityService {
             }
             this.logService.log(
               LogTopic.EVENT,
-              'Your armies failed you and you are forced to fight the enemy armies to a standstill.'
+              'Your armies failed you, and you are forced to fight the enemy armies to a standstill.'
             );
             if (this.pauseOnImpossibleFail) {
               this.mainLoopService.pause = true;
@@ -1690,11 +1739,11 @@ export class ActivityService {
       activityType: ActivityType.MoveStars,
       description: ['Extend your vast magical powers into the heavens and force the stars into alignment.'],
       yinYangEffect: [YinYangEffect.None],
-      consequenceDescription: ['Uses 1000 Stamina and Qi.'],
+      consequenceDescription: ['Uses 900,000 Stamina and 50,000 Qi.'],
       consequence: [
         () => {
-          this.characterService.characterState.status.stamina.value -= 1000;
-          this.characterService.characterState.status.qi.value -= 1000;
+          this.characterService.characterState.status.stamina.value -= 900000;
+          this.characterService.characterState.status.qi.value -= 50000;
           if (
             this.characterService.characterState.status.stamina.value >= 0 &&
             this.characterService.characterState.status.qi.value >= 0
@@ -1712,8 +1761,8 @@ export class ActivityService {
       ],
       resourceUse: [
         {
-          stamina: 1000,
-          qi: 1000,
+          stamina: 900000,
+          qi: 50000,
         },
       ],
       requirements: [{}],
