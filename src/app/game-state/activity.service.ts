@@ -1078,6 +1078,15 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100;
+          const workstation = this.homeService.workstations.find(ws =>
+            ws.triggerActivities.includes(ActivityType.ForgeChains)
+          );
+          if (workstation === undefined) {
+            this.logService.log(
+              LogTopic.EVENT,
+              "You think about forging chains, but you don't have the right workstation to even get started."
+            );
+          }
         },
       ],
       resourceUse: [
@@ -1166,6 +1175,15 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100;
+          const workstation = this.homeService.workstations.find(ws =>
+            ws.triggerActivities.includes(ActivityType.MakeBrick)
+          );
+          if (workstation === undefined) {
+            this.logService.log(
+              LogTopic.EVENT,
+              "You think about making bricks, but you don't have the right workstation to even get started."
+            );
+          }
         },
       ],
       resourceUse: [
@@ -1192,6 +1210,15 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 1000;
+          const workstation = this.homeService.workstations.find(ws =>
+            ws.triggerActivities.includes(ActivityType.MakeScaffold)
+          );
+          if (workstation === undefined) {
+            this.logService.log(
+              LogTopic.EVENT,
+              "You think about making a scaffold, but you don't have the right workstation to even get started."
+            );
+          }
         },
       ],
       resourceUse: [
@@ -1218,6 +1245,15 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100;
+          const workstation = this.homeService.workstations.find(ws =>
+            ws.triggerActivities.includes(ActivityType.MakeMortar)
+          );
+          if (workstation === undefined) {
+            this.logService.log(
+              LogTopic.EVENT,
+              "You think about making mortar, but you don't have the right workstation to even get started."
+            );
+          }
         },
       ],
       resourceUse: [
