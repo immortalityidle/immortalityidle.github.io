@@ -383,6 +383,20 @@ export class AchievementService {
       },
       unlocked: false,
     },
+
+    {
+      name: 'Arts and Crafts',
+      description:
+        'You have unlocked your very own workstations to create your own gear, meals, potions, and pills. You can now access the crafting panel.',
+      hint: 'You need a big house for this.',
+      check: () => {
+        return this.homeService.home.maxWorkstations > 0;
+      },
+      effect: () => {
+        this.gameStateService?.unlockPanel('craftingPanel');
+      },
+      unlocked: false,
+    },
     {
       name: 'Clang! Clang! Clang!',
       description:
@@ -1043,8 +1057,8 @@ export class AchievementService {
         );
       },
       effect: () => {
-        if (this.battleService.maxTechniques < 4) {
-          this.battleService.maxTechniques = 4;
+        if (this.battleService.maxFamilyTechniques < 1) {
+          this.battleService.maxFamilyTechniques = 1;
         }
       },
       unlocked: false,
@@ -1116,7 +1130,7 @@ export class AchievementService {
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
-        this.battleService.qiAttackUnlocked = true;
+        this.battleService.addQiAttack();
       },
       unlocked: false,
     },
@@ -1138,7 +1152,7 @@ export class AchievementService {
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
-        this.battleService.qiShieldUnlocked = true;
+        this.battleService.addQiShield();
       },
       unlocked: false,
     },

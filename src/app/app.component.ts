@@ -59,6 +59,7 @@ import { FarmPanelComponent } from './farm-panel/farm-panel.component';
 import { TooltipDirective } from './tooltip/tooltip.directive';
 import { LocationPanelComponent } from './location-panel/location-panel.component';
 import { TechniquePanelComponent } from './technique-panel/technique-panel.component';
+import { CraftingPanelComponent } from './crafting-panel/crafting-panel.component';
 
 @Pipe({ name: 'floor' })
 export class FloorPipe implements PipeTransform {
@@ -151,6 +152,7 @@ export class BigNumberPipe implements PipeTransform {
     forwardRef(() => LocationPanelComponent),
     forwardRef(() => ImpossibleTaskPanelComponent),
     forwardRef(() => TechniquePanelComponent),
+    forwardRef(() => CraftingPanelComponent),
     forwardRef(() => TooltipDirective),
   ],
 })

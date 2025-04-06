@@ -1,7 +1,7 @@
 import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
-import { BattleService } from '../game-state/battle.service';
+import { BattleService, Technique } from '../game-state/battle.service';
 import { CharacterService } from '../game-state/character.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { MainLoopService } from '../game-state/main-loop.service';
@@ -41,5 +41,10 @@ export class BattlePanelComponent {
       data: { someField: 'foo' },
       autoFocus: false,
     });
+  }
+
+  techniqueEnableChange(event: Event, technique: Technique) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    technique.disabled = !event.target.checked;
   }
 }

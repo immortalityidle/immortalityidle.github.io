@@ -1345,7 +1345,7 @@ baguaMap = [
       value: Infinity,
       description: 'The object of your obsession. Using this will make you immortal.',
       useLabel: 'Become Immortal',
-      useDescription: 'Become immortal and win the game.',
+      useDescription: 'Become immortal and win the first phase of the game.',
       useConsumes: true,
       use: () => {
         if (!this.impossibleTaskService) {
@@ -1394,7 +1394,7 @@ baguaMap = [
       description:
         "The key to Lord Yama's kingdom. With this key, you can use his portals to instantly travel anywhere.",
       useLabel: 'Create a portal back to the palace of the gods on Mount Penglai and claim your throne.',
-      useDescription: 'Become a god and win the game (again).',
+      useDescription: 'Become a god and win the second phase of the game.',
       useConsumes: true,
       use: () => {
         this.logService.injury(LogTopic.STORY, 'YOU HAVE ACHIEVED GODHOOD! YOU WILL RULE OVER THE UNIVERSE FOREVER!');
@@ -1632,7 +1632,7 @@ baguaMap = [
           LogTopic.STORY,
           'The Crown of Steam settles onto your head, then sinks in to become a part of your very soul. You learn to harness the intense heat of the Hell of Steamers in a powerful magical blast.'
         );
-        this.battleService.pyroclasmUnlocked = true;
+        this.battleService.addPyroclasm();
       },
     },
     hellCrownPillars: {
@@ -1659,7 +1659,7 @@ baguaMap = [
           LogTopic.STORY,
           'The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.'
         );
-        this.battleService.metalFistUnlocked = true;
+        this.battleService.addMetalFist();
       },
     },
     hellCrownMountainOfKnives: {
@@ -1711,7 +1711,7 @@ baguaMap = [
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.'
         );
-        this.battleService.iceShieldUnlocked = true;
+        this.battleService.addIceShield();
       },
     },
     hellCrownCauldronsOfOil: {
@@ -1931,7 +1931,7 @@ baguaMap = [
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.'
         );
-        this.battleService.fireShieldUnlocked = true;
+        this.battleService.addFireShield();
       },
     },
     hellCrownMills: {

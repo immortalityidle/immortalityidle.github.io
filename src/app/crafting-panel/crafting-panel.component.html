@@ -1,0 +1,63 @@
+<div class="craftingContainer overflow"  [ngClass]="{'hellDisabled': hellService.inHell}">
+  @if (homeService.home.maxWorkstations && (!hellService.inHell || homeService.hellHome)) {
+    <hr>
+    <div>
+      <span>Your Workstations</span>
+    </div>
+    <div>
+      @if (homeService.workstations.length < homeService.home.maxWorkstations){
+        <mat-icon (click)="addWorkstation()" class="iconButton" aria-label="Add Workstation" aria-hidden="false"
+          tooltip="Add a new Workstation">
+          hardware
+        </mat-icon>
+
+        <span> You can add {{homeService.home.maxWorkstations - homeService.workstations.length}} more workstations to this home</span>
+      }
+    </div>
+    @for (workstation of homeService.workstations; track workstation.name; let wsIndex = $index){
+      <div class="workstationContainer">
+        <div>
+          <mat-icon tooltip="{{workstation.description}}">
+            help
+          </mat-icon>
+          <span>{{workstation.name}}</span>
+          <mat-icon class="iconButton floatRight" tooltip="Remove this workstation"
+            (click)="homeService.removeWorkstation(workstation)">
+            close
+          </mat-icon>
+        </div>
+        <div>
+          <span>Costs {{workstation.maintenanceCost | bigNumber}} Taels per day to maintain</span>
+        </div>
+        <div>
+          <span>Inputs:</span>
+        </div>
+        <div class="inputsContainer" cdkDropList cdkDropListSortingDisabled>
+          @for (itemStack of workstation.inputs; track itemStack.id; let inputIndex = $index) {
+            <div>
+              <div id="wsInputIndex{{wsIndex}}_{{inputIndex}}" >
+                <div class="inputSlot" [tabindex]="itemStack?.item ? '0' : '-1'"
+                  cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
+                  [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
+                  (dblclick)="inputDoubleClicked(workstation, $index)"
+                  tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
+                  <div class="itemName textOverflow">
+                    @if (itemStack?.item?.imageFile){
+                      <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage"
+                        width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
+                    }
+                    @else {
+                      {{itemStack?.item?.name | titlecase}}
+                    }
+                  </div>
+                  <div class="itemQuantity">x{{itemStack?.quantity}}</div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>
+<br>

@@ -1687,8 +1687,8 @@ export class ActivityService {
             return;
           }
           let value = 0;
-          value = this.inventoryService.consume('food', 100000);
-          if (value < 10) {
+          value = this.inventoryService.consume('food', 100000, true);
+          if (value < 1) {
             this.logService.injury(
               LogTopic.EVENT,
               "You don't have enough food to feed your army, so they revolt and fight you instead."
@@ -1756,7 +1756,7 @@ export class ActivityService {
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheNation].complete) {
             this.logService.log(
               LogTopic.STORY,
-              'You did the impossible and conquered the nation! Under your wise rule all human suffering ceases.'
+              'You did the impossible and conquered the nation! You bring an end to cruelty and strife for all under your wise rule.'
             );
           }
         },

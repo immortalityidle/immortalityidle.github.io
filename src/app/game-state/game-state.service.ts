@@ -201,6 +201,13 @@ export class GameStateService {
         'Developing unique family techniques is an essential part of a powerful bloodline and a useful step on your way to immortality.',
       unlocked: false,
     },
+    {
+      id: 'craftingPanel',
+      name: 'Crafting',
+      icon: 'carpenter',
+      panelHelp: 'Creating weapons, armor, potions, and pills is an essential part of becoming an immortal.',
+      unlocked: false,
+    },
   ];
 
   constructor(

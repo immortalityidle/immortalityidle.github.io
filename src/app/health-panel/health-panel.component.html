@@ -20,10 +20,10 @@
   <div class="flexColumn">
     <div class="statusRow">
       <div class="statusCell">
-        <span>You are {{characterService.characterState.age / 365 | floor }} years</span>
+        <span>You are {{characterService.characterState.age / 365 | bigNumber }} years</span>
         @if (characterService.characterState.age < 10000 * 365) {
           <span>, {{characterService.characterState.age % 365 | number: '1.0-0'}} days</span>
-        } 
+        }
         <span> old.</span>
       </div>
       <div class="statusCell">
@@ -31,7 +31,7 @@
             <span>You expect to live forever.</span>
         }
         @else {
-          <span>You expect to live {{characterService.characterState.lifespan / 365 | number: '1.0-1'}} years.</span>
+          <span>You expect to live {{characterService.characterState.lifespan / 365 | bigNumber}} years.</span>
         }
         <mat-icon tooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
       </div>

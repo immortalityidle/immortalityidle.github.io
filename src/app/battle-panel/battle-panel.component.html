@@ -1,7 +1,6 @@
 <div class="battleContainer">
   <h3>
-    @if (battleService.qiShieldUnlocked || battleService.qiAttackUnlocked ||
-      battleService.pyroclasmUnlocked || battleService.fireShieldUnlocked) {
+    @if (false) {
       <span>
         <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">
           settings
@@ -19,6 +18,7 @@
           @if (technique.unlocked){
             <div class="techniqueLine">
               <div class="techniqueName">
+                <input type="checkbox" [checked]="!technique.disabled" (change)="techniqueEnableChange($event, technique)">
                 <span>{{technique.name}}</span>
               </div>
               <div class="technique-bar"

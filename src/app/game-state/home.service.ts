@@ -1459,8 +1459,17 @@ export class HomeService {
       return;
     }
 
-    const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
-    if (!fuelStack || (fuelStack.item?.value || 0) < 10 || fuelStack.quantity < 2000) {
+    const fuelStackIndex = workstation.inputs.findIndex(itemStack => itemStack.item?.subtype === 'fuel');
+    if (fuelStackIndex === -1) {
+      this.logService.injury(LogTopic.EVENT, 'Your brick-making smelter remains inert without fuel.');
+      if (this.activityService?.pauseOnImpossibleFail) {
+        this.mainLoopService.pause = true;
+      }
+      return;
+    }
+
+    const fuelStack = workstation.inputs[fuelStackIndex];
+    if (!fuelStack || (fuelStack.item?.value || 0) < 10) {
       this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong fuels and hurt yourself.');
       this.characterService.characterState.status.health.value -=
         this.characterService.characterState.status.health.max * 0.05;
@@ -1468,6 +1477,25 @@ export class HomeService {
         this.mainLoopService.pause = true;
       }
       return;
+    }
+
+    if (fuelStack.quantity < 2000) {
+      // pull in more fuel of the same id if inventory has it.
+      const fuelInventoryIndex = this.inventoryService.itemStacks.findIndex(
+        itemStack => itemStack?.item?.id === fuelStack.item?.id
+      );
+      if (fuelInventoryIndex !== -1) {
+        this.moveItemToWorkstation(fuelInventoryIndex, this.workstations.indexOf(workstation), fuelStackIndex);
+      }
+      if (fuelStack.quantity < 2000) {
+        // it's still too low on fuel
+        fuelStack.quantity = 0;
+        this.logService.injury(LogTopic.EVENT, 'Your smelter sputters out, lacking the vast amounts of fuel it needs.');
+        if (this.activityService?.pauseOnImpossibleFail) {
+          this.mainLoopService.pause = true;
+        }
+        return;
+      }
     }
 
     const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
@@ -1647,8 +1675,9 @@ export class HomeService {
     if (this.openBedroomFurnitureSlots > 0) {
       tooltip += 'Click to set which furniture should be placed here.';
     }
-    if (this.bedroomFurniture[furnitureIndex]) {
-      tooltip += '<br><br>' + this.getFurnitureTooltip(this.bedroomFurniture[furnitureIndex]);
+    const furnitureItem = this.bedroomFurniture[furnitureIndex];
+    if (furnitureItem) {
+      tooltip += '<br><br>' + this.getFurnitureTooltip(furnitureItem);
     }
     return tooltip;
   }

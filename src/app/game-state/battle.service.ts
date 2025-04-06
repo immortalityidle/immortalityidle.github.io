@@ -42,18 +42,6 @@ export interface BattleProperties {
   totalKills: number;
   autoTroubleUnlocked: boolean;
   monthlyMonsterDay: number;
-  qiShieldUnlocked: boolean;
-  qiAttackUnlocked: boolean;
-  pyroclasmUnlocked: boolean;
-  metalFistUnlocked: boolean;
-  fireShieldUnlocked: boolean;
-  iceShieldUnlocked: boolean;
-  enableQiShield: boolean;
-  enableQiAttack: boolean;
-  enablePyroclasm: boolean;
-  enableMetalFist: boolean;
-  enableFireShield: boolean;
-  enableIceShield: boolean;
   highestDamageTaken: number;
   highestDamageDealt: number;
   godSlayersUnlocked: boolean;
@@ -63,7 +51,8 @@ export interface BattleProperties {
   battleMessageDismissed: boolean;
   techniques: Technique[];
   techniqueDevelopmentCounter: number;
-  maxTechniques: number;
+  maxFamilyTechniques: number;
+  statusEffects: StatusEffect[];
 }
 
 export interface Technique {
@@ -77,6 +66,19 @@ export interface Technique {
   effect?: string;
   unlocked: boolean;
   familyTechnique?: boolean;
+  qiCost?: number;
+  staminaCost?: number;
+  healthCost?: number;
+  disabled?: boolean;
+  noAttack?: boolean;
+  statusEffect?: StatusEffect;
+}
+
+export interface StatusEffect {
+  name: string;
+  description?: string;
+  power: number;
+  ticksLeft: number;
 }
 
 @Injectable({
@@ -92,18 +94,6 @@ export class BattleService {
   godSlayerKills: number;
   autoTroubleUnlocked = false;
   yearlyMonsterDay: number;
-  enableQiShield = false;
-  enableQiAttack = false;
-  enablePyroclasm = false;
-  enableMetalFist = false;
-  enableFireShield = false;
-  enableIceShield = false;
-  qiShieldUnlocked = false;
-  qiAttackUnlocked = false;
-  pyroclasmUnlocked = false;
-  metalFistUnlocked = false;
-  fireShieldUnlocked = false;
-  iceShieldUnlocked = false;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
   totalKills = 0;
@@ -114,10 +104,17 @@ export class BattleService {
   troubleCounter = 0;
   battleMessageDismissed = false;
   techniqueDevelopmentCounter = 0;
-  maxTechniques = 3;
+  maxFamilyTechniques = 0;
+  statusEffects: StatusEffect[] = [];
 
   rightHandTechniqueName = 'Right-Handed Weapon';
   leftHandTechniqueName = 'Left-Handed Weapon';
+  qiAttackName = 'Qi Strike';
+  pyroclasmAttackName = 'Pyroclasm';
+  metalFistName = 'Metal Fist';
+  qiShieldName = 'Qi Shield';
+  fireShieldName = 'Fire Shield';
+  iceShieldName = 'Ice Shield';
 
   techniques: Technique[] = [
     {
@@ -183,6 +180,7 @@ export class BattleService {
           "Your increased wealth has attracted a ruffian who's looking to steal your money."
         );
         this.addRuffian();
+        return;
       }
       if (this.yearlyMonsterDay >= 365) {
         this.yearlyMonsterDay = 0;
@@ -198,6 +196,12 @@ export class BattleService {
 
       if (this.currentEnemy === null && this.enemies.length > 0) {
         this.currentEnemy = this.enemies[0];
+      }
+      for (let i = this.statusEffects.length - 1; i >= 0; i--) {
+        this.statusEffects[i].ticksLeft--;
+        if (this.statusEffects[i].ticksLeft <= 0) {
+          this.statusEffects.splice(i, 1);
+        }
       }
       this.handleYourTechniques();
       this.handleEnemyTechniques();
@@ -216,9 +220,10 @@ export class BattleService {
       this.techniques[1].unlocked = this.characterService.characterState.equipment.rightHand !== null;
       this.techniques[2].unlocked = this.characterService.characterState.equipment.leftHand !== null;
 
+      const familyTechniques = this.techniques.filter(technique => technique.familyTechnique === true);
       if (
-        this.techniqueDevelopmentCounter > 20000 * Math.pow(10, this.techniques.length - 3) &&
-        this.techniques.length < this.maxTechniques
+        this.techniqueDevelopmentCounter > 20000 * Math.pow(10, familyTechniques.length) &&
+        familyTechniques.length < this.maxFamilyTechniques
       ) {
         this.developNewTechnique();
         this.techniqueDevelopmentCounter = 0;
@@ -246,18 +251,6 @@ export class BattleService {
       totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
       monthlyMonsterDay: this.yearlyMonsterDay,
-      qiShieldUnlocked: this.qiShieldUnlocked,
-      qiAttackUnlocked: this.qiAttackUnlocked,
-      pyroclasmUnlocked: this.pyroclasmUnlocked,
-      metalFistUnlocked: this.metalFistUnlocked,
-      fireShieldUnlocked: this.fireShieldUnlocked,
-      iceShieldUnlocked: this.iceShieldUnlocked,
-      enableQiShield: this.enableQiShield,
-      enableQiAttack: this.enableQiAttack,
-      enablePyroclasm: this.enablePyroclasm,
-      enableMetalFist: this.enableMetalFist,
-      enableFireShield: this.enableFireShield,
-      enableIceShield: this.enableIceShield,
       highestDamageDealt: this.highestDamageDealt,
       highestDamageTaken: this.highestDamageTaken,
       godSlayersUnlocked: this.godSlayersUnlocked,
@@ -267,7 +260,8 @@ export class BattleService {
       battleMessageDismissed: this.battleMessageDismissed,
       techniques: this.techniques,
       techniqueDevelopmentCounter: this.techniqueDevelopmentCounter,
-      maxTechniques: this.maxTechniques,
+      maxFamilyTechniques: this.maxFamilyTechniques,
+      statusEffects: this.statusEffects,
     };
   }
 
@@ -278,18 +272,6 @@ export class BattleService {
     this.totalKills = properties.totalKills || 0;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
-    this.enableQiShield = properties.enableQiShield;
-    this.enableQiAttack = properties.enableQiAttack;
-    this.enablePyroclasm = properties.enablePyroclasm || false;
-    this.enableMetalFist = properties.enableMetalFist || false;
-    this.enableFireShield = properties.enableFireShield || false;
-    this.enableIceShield = properties.enableIceShield || false;
-    this.qiShieldUnlocked = properties.qiShieldUnlocked || false;
-    this.qiAttackUnlocked = properties.qiAttackUnlocked || false;
-    this.pyroclasmUnlocked = properties.pyroclasmUnlocked || false;
-    this.metalFistUnlocked = properties.metalFistUnlocked || false;
-    this.fireShieldUnlocked = properties.fireShieldUnlocked || false;
-    this.iceShieldUnlocked = properties.iceShieldUnlocked || false;
     this.highestDamageDealt = properties.highestDamageDealt || 0;
     this.highestDamageTaken = properties.highestDamageTaken || 0;
     this.godSlayersUnlocked = properties.godSlayersUnlocked || false;
@@ -301,7 +283,8 @@ export class BattleService {
       this.techniques = properties.techniques;
     }
     this.techniqueDevelopmentCounter = properties.techniqueDevelopmentCounter || 0;
-    this.maxTechniques = properties.maxTechniques || 3;
+    this.maxFamilyTechniques = properties.maxFamilyTechniques || 0;
+    this.statusEffects = properties.statusEffects || [];
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -389,6 +372,131 @@ export class BattleService {
     }
   }
 
+  addQiAttack() {
+    if (this.techniques.find(technique => technique.name === this.qiAttackName)) {
+      // already added, bail out
+      return;
+    }
+    this.techniques.push({
+      name: this.qiAttackName,
+      description: 'Focus your Qi into a concentrated blast. Each use of this ability requires 10 Qi.',
+      ticksRequired: 5,
+      ticks: 0,
+      baseDamage: 2,
+      unlocked: true,
+      attribute: 'intelligence',
+      qiCost: 10,
+    });
+  }
+
+  addPyroclasm() {
+    if (this.techniques.find(technique => technique.name === this.pyroclasmAttackName)) {
+      // already added, bail out
+      return;
+    }
+    this.techniques.push({
+      name: this.pyroclasmAttackName,
+      description:
+        "Focus your Qi and blast your enemies with heat so intense their children's children will get burned. Each use of this ability requires 10,000 Qi.",
+      ticksRequired: 20,
+      ticks: 0,
+      baseDamage: 100000,
+      unlocked: true,
+      attribute: 'fireLore',
+      qiCost: 10000,
+    });
+  }
+
+  addMetalFist() {
+    if (this.techniques.find(technique => technique.name === this.metalFistName)) {
+      // already added, bail out
+      return;
+    }
+    this.techniques.push({
+      name: this.metalFistName,
+      description:
+        'Focus your Qi and summon a massive metal fist to crush your enemy. Each use of this ability requires 10,000 Qi.',
+      ticksRequired: 20,
+      ticks: 0,
+      baseDamage: 100000,
+      unlocked: true,
+      attribute: 'metalLore',
+      qiCost: 10000,
+    });
+  }
+
+  addQiShield() {
+    if (this.techniques.find(technique => technique.name === this.qiShieldName)) {
+      // already added, bail out
+      return;
+    }
+    this.techniques.push({
+      name: this.qiShieldName,
+      description:
+        'Focus your Qi to form a protective shroud around your body, protecting you and decreasing the damage that you take. Each use of this ability requires 10 Qi.',
+      ticksRequired: 5,
+      ticks: 0,
+      baseDamage: 0,
+      unlocked: true,
+      attribute: 'intelligence',
+      qiCost: 10,
+      statusEffect: {
+        name: this.qiShieldName,
+        description: 'A shield of concentrated qi that reduces damage taken.',
+        ticksLeft: 5,
+        power: 1,
+      },
+    });
+  }
+
+  addFireShield() {
+    if (this.techniques.find(technique => technique.name === this.fireShieldName)) {
+      // already added, bail out
+      return;
+    }
+    this.techniques.push({
+      name: this.fireShieldName,
+      description:
+        'Bring forth your inner fire to form a blistering barrier around you. Each use of this ability requires 10,000 Qi.',
+      ticksRequired: 10,
+      ticks: 0,
+      baseDamage: 0,
+      unlocked: true,
+      attribute: 'fireLore',
+      qiCost: 10000,
+      statusEffect: {
+        name: this.fireShieldName,
+        description: 'A blazing shield tha harms your enemies.',
+        ticksLeft: 10,
+        power: 1,
+      },
+    });
+  }
+
+  addIceShield() {
+    if (this.techniques.find(technique => technique.name === this.iceShieldName)) {
+      // already added, bail out
+      return;
+    }
+    this.techniques.push({
+      name: this.iceShieldName,
+      description:
+        "Bring forth the ice inside you to form a freezing barrier around you that will stop your enemy's next attack. Each use of this ability requires 10,000 Qi.",
+      ticksRequired: 10,
+      ticks: 0,
+      baseDamage: 0,
+      unlocked: true,
+      attribute: 'waterLore',
+      qiCost: 10000,
+      statusEffect: {
+        name: this.iceShieldName,
+        description: 'A frozen shield that will negate damage from the next enemy attack.',
+        ticksLeft: 10,
+        power: 1,
+      },
+    });
+  }
+
   handleEnemyTechniques() {
     for (const enemy of this.enemies) {
       for (const technique of enemy.techniques) {
@@ -407,7 +515,6 @@ export class BattleService {
       this.skipEnemyAttack--;
       return;
     }
-    let toughnessIncrease = 0;
     let damage = technique.baseDamage;
     const defense = this.characterService.characterState.defense;
     // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
@@ -418,61 +525,58 @@ export class BattleService {
     if (damage < 0.3) {
       damage = 0.3;
     }
-    if (this.enableQiShield && this.characterService.characterState.status.qi.value > 10) {
-      damage /= 2;
-      this.characterService.characterState.status.qi.value -= 10;
-    }
-    let damageBack = false;
-    if (this.enableFireShield && this.characterService.characterState.status.qi.value > 10000) {
-      let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
-      if (fireDivisor < 1) {
-        fireDivisor = 1;
-      }
-      if (fireDivisor > 10) {
-        fireDivisor = 10;
-      }
-      damage /= fireDivisor;
-      this.characterService.characterState.status.qi.value -= 10000;
-      damageBack = true;
-    }
-    if (this.enableIceShield && this.characterService.characterState.status.qi.value > 10000) {
-      let waterDivisor = Math.log(this.characterService.characterState.attributes.waterLore.value) / Math.log(100);
-      if (waterDivisor < 1) {
-        waterDivisor = 1;
-      }
-      if (waterDivisor > 10) {
-        waterDivisor = 10;
-      }
-      damage /= waterDivisor;
-      this.characterService.characterState.status.qi.value -= 10000;
-      this.skipEnemyAttack++;
-    }
-    // reduce damage by up to half
-    // TODO: tune this
+
+    // Yin/Yang factor
     damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
-    this.logService.injury(LogTopic.COMBAT, 'Ow! You got hit for ' + this.bigNumberPipe.transform(damage) + ' damage');
-    if (damageBack) {
-      this.damageEnemy(damage, 'The flames of your shield strike back, damaging the enemy for ' + damage + ' damage.');
+
+    let damageBack = false;
+    for (let i = this.statusEffects.length - 1; i >= 0; i--) {
+      if (this.statusEffects[i].name === this.qiShieldName) {
+        damage /= 2;
+      } else if (this.statusEffects[i].name === this.fireShieldName) {
+        let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
+        if (fireDivisor < 1) {
+          fireDivisor = 1;
+        }
+        if (fireDivisor > 10) {
+          fireDivisor = 10;
+        }
+        damage /= fireDivisor;
+        this.characterService.characterState.status.qi.value -= 10000;
+        damageBack = true;
+      } else if (this.statusEffects[i].name === this.iceShieldName) {
+        damage = 0;
+        this.statusEffects.splice(i, 1);
+      }
+    }
+    if (damage > 0) {
+      this.logService.injury(
+        LogTopic.COMBAT,
+        'Ow! You got hit for ' + this.bigNumberPipe.transform(damage) + ' damage'
+      );
+      this.characterService.characterState.increaseAttribute('toughness', 0.01);
+      if (damageBack) {
+        this.damageEnemy(damage, 'Your shield strikes back, damaging the enemy for ' + damage + ' damage.');
+      }
     }
     if (damage > this.highestDamageTaken) {
       this.highestDamageTaken = damage;
     }
     this.characterService.characterState.status.health.value -= damage;
-    toughnessIncrease += 0.01;
     this.attackEffect(technique);
-    this.characterService.characterState.increaseAttribute('toughness', toughnessIncrease);
   }
 
   handleYourTechniques() {
     if (this.enemies.length <= 0) {
       return;
     }
+    let familyTechniquesCounter = 0;
     for (const technique of this.techniques) {
-      if (technique.unlocked) {
+      if (technique.familyTechnique) {
+        familyTechniquesCounter++;
+      }
+      if (technique.unlocked && !technique.disabled) {
         if (technique.ticks === technique.ticksRequired) {
-          if (this.techniques.length < this.maxTechniques) {
-            this.techniqueDevelopmentCounter++;
-          }
           if (technique.familyTechnique) {
             technique.baseDamage++;
           }
@@ -490,9 +594,42 @@ export class BattleService {
         }
       }
     }
+    if (familyTechniquesCounter < this.maxFamilyTechniques) {
+      this.techniqueDevelopmentCounter++;
+    }
   }
 
   youAttack(technique: Technique) {
+    if (technique.disabled) {
+      return;
+    }
+    if (technique.qiCost) {
+      if (this.characterService.characterState.status.qi.value < technique.qiCost) {
+        return;
+      }
+      this.characterService.characterState.status.qi.value -= technique.qiCost;
+    }
+    if (technique.staminaCost) {
+      if (this.characterService.characterState.status.stamina.value < technique.staminaCost) {
+        return;
+      }
+      this.characterService.characterState.status.stamina.value -= technique.staminaCost;
+    }
+    if (technique.healthCost) {
+      if (this.characterService.characterState.status.health.value <= technique.healthCost) {
+        return;
+      }
+      this.characterService.characterState.status.health.value -= technique.healthCost;
+    }
+    if (technique.statusEffect) {
+      this.statusEffects.push({
+        name: technique.statusEffect.name,
+        description: technique.statusEffect.description,
+        ticksLeft: technique.statusEffect.ticksLeft,
+        power: technique.statusEffect.power,
+      });
+    }
+
     if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
       let attackPower = this.characterService.characterState.attackPower['strength'] || 1;
       if (technique.attribute) {
@@ -532,13 +669,9 @@ export class BattleService {
       if (damage < 1) {
         damage = 1;
       }
-      if (this.enableQiAttack && this.characterService.characterState.status.qi.value > 10) {
-        damage *= 2;
-        this.characterService.characterState.status.qi.value -= 10;
-      }
-      const blowthrough = false;
-      /*
-      if (this.enableMetalFist && this.characterService.characterState.status.qi.value > 10000) {
+      let blowthrough = false;
+      if (technique.name === this.metalFistName) {
+        // TODO: tune this
         let metalMultiplier = Math.log(this.characterService.characterState.attributes.metalLore.value) / Math.log(50);
         if (metalMultiplier < 1) {
           metalMultiplier = 1;
@@ -547,9 +680,9 @@ export class BattleService {
           metalMultiplier = 100;
         }
         damage *= metalMultiplier;
-        this.characterService.characterState.status.qi.value -= 10000;
       }
-      if (this.enablePyroclasm && this.characterService.characterState.status.qi.value > 10000) {
+      if (technique.name === this.pyroclasmAttackName) {
+        // TODO: tune this
         let fireMultiplier = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
         if (fireMultiplier < 1) {
           fireMultiplier = 1;
@@ -558,17 +691,16 @@ export class BattleService {
           fireMultiplier = 10;
         }
         damage *= fireMultiplier;
-        this.characterService.characterState.status.qi.value -= 10000;
         blowthrough = true;
       }
-        */
-      // TODO: tune this
       damage += damage * this.characterService.characterState.yinYangBalance;
 
       if (damage > this.highestDamageDealt) {
         this.highestDamageDealt = damage;
       }
-
+      if (technique.attribute) {
+        this.characterService.characterState.increaseAttribute(technique.attribute, 0.01);
+      }
       this.applyWeaponEffect(this.characterService.characterState.equipment.leftHand, damage);
       this.applyWeaponEffect(this.characterService.characterState.equipment.rightHand, damage);
 

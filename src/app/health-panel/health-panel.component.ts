@@ -6,7 +6,7 @@ import { trigger, state, style, transition, animate, keyframes } from '@angular/
 import { HomeService } from '../game-state/home.service';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DecimalPipe } from '@angular/common';
-import { FloorPipe, BigNumberPipe } from '../app.component';
+import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
@@ -28,7 +28,6 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
     forwardRef(() => MatIcon),
     forwardRef(() => NgClass),
     forwardRef(() => DecimalPipe),
-    forwardRef(() => FloorPipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
   ],
