@@ -15,6 +15,13 @@
   @if (activityService.autoPauseUnlocked) {
     <div>
       <span>
+        <input type="checkbox" (change)="autoPauseThugs($event)"
+          id="autoBuyFood"  [checked]="homeService.thugPause">
+        <label for="autoBuyFood">Automatically pause if you can't afford your home.</label>
+      </span>
+    </div>
+    <div>
+      <span>
         @if (activityService.autoRestart) {
           <input type="checkbox" (change)="pauseBeforeDeath($event)" id="pauseBeforeDeath"
             [checked]="activityService.pauseBeforeDeath"/>

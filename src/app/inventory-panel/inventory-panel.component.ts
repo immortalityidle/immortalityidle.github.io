@@ -10,6 +10,8 @@ import { HomeService } from '../game-state/home.service';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { InventoryOptionsModalComponent } from '../inventory-options-modal/inventory-options-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -36,7 +38,8 @@ export class InventoryPanelComponent {
     private homeService: HomeService,
     public hellService: HellService,
     public mainLoopService: MainLoopService,
-    public gameStateService: GameStateService
+    public gameStateService: GameStateService,
+    public dialog: MatDialog
   ) {
     this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
   }
@@ -301,5 +304,13 @@ export class InventoryPanelComponent {
       }
     }
     return { 'border-color': 'white', border: 'solid 1px' };
+  }
+
+  optionsClicked() {
+    this.dialog.open(InventoryOptionsModalComponent, {
+      width: '700px',
+      data: { someField: 'foo' },
+      autoFocus: false,
+    });
   }
 }

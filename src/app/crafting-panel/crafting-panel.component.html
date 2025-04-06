@@ -1,8 +1,10 @@
 <div class="craftingContainer overflow"  [ngClass]="{'hellDisabled': hellService.inHell}">
   @if (homeService.home.maxWorkstations && (!hellService.inHell || homeService.hellHome)) {
-    <hr>
     <div>
       <span>Your Workstations</span>
+      <mat-icon  (click)="craftingOptions()" tooltip="Options" class="iconButton floatRight" aria-label="Crafting Options" aria-hidden="false">
+        settings
+      </mat-icon>
     </div>
     <div>
       @if (homeService.workstations.length < homeService.home.maxWorkstations){

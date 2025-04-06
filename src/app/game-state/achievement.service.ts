@@ -634,16 +634,17 @@ export class AchievementService {
     {
       //TODO: rework this
       name: 'Time to Buy a Tractor',
-      description: 'You plowed 888 fields and unlocked the ' + this.itemRepoService.items['autoFieldManual'].name,
+      description: 'You plowed 888 fields',
       hint: 'An aspiring immortal should have vast tracts of fertile land.',
       check: () => {
         return this.farmService.fields.length + this.farmService.extraFields >= 888;
       },
       effect: () => {
-        this.storeService.unlockManual(this.itemRepoService.items['autoFieldManual']);
+        //TODO: rework this
       },
       unlocked: false,
     },
+    /*
     {
       name: 'Industrial Revolution',
       description:
@@ -653,8 +654,7 @@ export class AchievementService {
       check: () => {
         return (
           this.homeService.autoBuyHomeUnlocked &&
-          this.homeService.autoBuyLandUnlocked &&
-          this.farmService.autoFieldUnlocked
+          this.homeService.autoBuyLandUnlocked
         );
       },
       effect: () => {
@@ -662,6 +662,7 @@ export class AchievementService {
       },
       unlocked: false,
     },
+    */
     {
       name: 'First Sip',
       description: 'You drank your first potions and unlocked a special equipment slot',

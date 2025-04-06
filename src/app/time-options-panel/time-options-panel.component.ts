@@ -1,6 +1,7 @@
 import { Component, forwardRef } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 import { MatIcon } from '@angular/material/icon';
+import { HomeService } from '../game-state/home.service';
 
 @Component({
   selector: 'app-time-options-panel',
@@ -9,7 +10,7 @@ import { MatIcon } from '@angular/material/icon';
   imports: [forwardRef(() => MatIcon)],
 })
 export class TimeOptionsPanelComponent {
-  constructor(public activityService: ActivityService) {}
+  constructor(public activityService: ActivityService, public homeService: HomeService) {}
 
   pauseOnDeath(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
@@ -19,5 +20,10 @@ export class TimeOptionsPanelComponent {
   pauseBeforeDeath(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.activityService.pauseBeforeDeath = event.target.checked;
+  }
+
+  autoPauseThugs(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.homeService.thugPause = !this.homeService.thugPause;
   }
 }

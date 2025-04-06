@@ -1,0 +1,261 @@
+<div class='darkMode optionsDiv'>
+  <span>Inventory Options</span>
+  <mat-tab-group>
+    @if (inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked ||
+      inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoEatUnlocked || inventoryService.autoBalanceUnlocked) {
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">Sales</span>
+        </ng-template>
+        @if (inventoryService.autoSellOldHerbs) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoSellOldHerbs($event)"
+                id="autosellOldHerbs"  [checked]="inventoryService.autoSellOldHerbsEnabled"/>
+              <label for="autosellOldHerbs">Automatically sell lower grade herbs than what current activities produce</label>
+            </span>
+          </div>
+        }
+        @if (inventoryService.autoSellOldWood) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoSellOldWood($event)"
+                id="autosellOldWood"  [checked]="inventoryService.autoSellOldWoodEnabled"/>
+              <label for="autosellOldWood">Automatically sell lower grade wood than what current activities produce</label>
+            </span>
+          </div>
+        }
+        @if (inventoryService.autoSellOldOre) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoSellOldOre($event)"
+                id="autosellOldOre"  [checked]="inventoryService.autoSellOldOreEnabled"/>
+              <label for="autosellOldOre">Automatically sell lower grade ore than what current activities produce</label>
+            </span>
+          </div>
+        }
+        @if (inventoryService.autoSellOldOre) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoSellOldBars($event)"
+                id="autoSellOldBars"  [checked]="inventoryService.autoSellOldBarsEnabled"/>
+              <label for="autoSellOldBars">Automatically sell lower grade bars than what current activities produce</label>
+            </span>
+          </div>
+        }
+        @if (inventoryService.autoSellOldHides) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoSellOldHides($event)"
+                id="autosellOldHides"  [checked]="inventoryService.autoSellOldHidesEnabled"/>
+              <label for="autosellOldHides">Automatically sell lower grade hides than what current activities produce</label>
+            </span>
+          </div>
+        }
+        @if (inventoryService.autoSellOldGemsUnlocked) {
+          <div  class="optionField">
+            <span>
+              <input type="checkbox" (change)="autoSellOldGems($event)"
+                id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
+              <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
+            </span>
+          </div>
+        }
+        @if (inventoryService.autoSellUnlocked) {
+          <div class="optionField">
+            <span>
+              Automatically Sold Items:
+            </span>
+            <div class="scrollingDiv">
+              @for (entry of inventoryService.autoSellEntries; track entry) {
+                <div>
+                  <span>
+                    - {{entry.name | titlecase}}
+                  </span>
+                  <span>
+                    - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
+                    <button (click)="inventoryService.unAutoSell(entry.name)">Stop Selling</button>
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        @if (inventoryService.autoUseUnlocked) {
+          <div class="optionField">
+            <span>Automatically Used Items:</span>
+            <div class="scrollingDiv">
+              @for (entry of inventoryService.autoUseEntries; track entry) {
+                @if (entry.type !== 'food'){
+                  <div>
+                    <span>
+                      - {{entry.name | titlecase}}
+                    </span>
+                    <span>
+                      - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
+                      <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
+                    </span>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+        @if (inventoryService.autoBalanceUnlocked) {
+          <div class="optionField">
+            <span>Automatically Balanced Items:</span>
+            <div class="scrollingDiv">
+              @for (balanceItem of inventoryService.autoBalanceItems; track balanceItem) {
+                <div>
+                  <span>
+                    -{{balanceItem.name | titlecase}}
+                    Use <input min="0" value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
+                    then Sell <input min="0" value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
+                    <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </mat-tab>
+    }
+    @if (inventoryService.autoEatUnlocked) {
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">Food</span>
+        </ng-template>
+        <div>
+          <span>
+            When wisely eaten food is available:
+          </span>
+        </div>
+        <div>
+          <span>
+            <input type="checkbox" (change)="autoEatNutritionChanged($event)"
+              id="autoEatNutrition"  [checked]="inventoryService.autoEatNutrition"/>
+            <label for="autoEatNutrition">Eat until nutrition is full</label>
+          </span>
+        </div>
+        <div>
+          <span>
+          <input type="checkbox" (change)="autoEatHealthChanged($event)"
+            id="autoEatHealth"  [checked]="inventoryService.autoEatHealth"/>
+          <label for="autoEatHealth">Eat until Health is full</label>
+        </span>
+      </div>
+      <div>
+        <span>
+        <input type="checkbox" (change)="autoEatStaminaChanged($event)"
+            id="autoEatStamina"  [checked]="inventoryService.autoEatStamina"/>
+          <label for="autoEatStamina">Eat until Stamina is full</label>
+        </span>
+      </div>
+      <div>
+        <span>
+          <input type="checkbox" (change)="autoEatQiChanged($event)"
+            id="autoEatQi"  [checked]="inventoryService.autoEatQi"/>
+          <label for="autoEatQi">Eat until Qi is full</label>
+        </span>
+      </div>
+      <div>
+        <span>
+          <input type="checkbox" (change)="autoEatAllChanged($event)"
+            id="autoEatAll"  [checked]="inventoryService.autoEatAll"/>
+          <label for="autoEatAll">Just eat it all!</label>
+        </span>
+      </div>
+      <div class="optionField">
+        <div>
+          <span>Wisely Eaten Foods:</span>
+          <div class="scrollingDiv">
+              @for (entry of inventoryService.autoUseEntries; track entry) {
+                @if (entry.type === 'food'){
+                  <div>
+                    <span>
+                      - {{entry.name | titlecase}}
+                    </span>
+                    <span>
+                      &nbsp;
+                      <button (click)="inventoryService.unAutoUse(entry.name)">Stop Wisely Eating</button>
+                    </span>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    }
+    @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || autoBuyerService.autoBuyerSettingsUnlocked) {
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">Auto-buy</span>
+        </ng-template>
+        @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked) {
+          @if (homeService.autoBuyLandUnlocked) {
+            <div class="optionField">
+              <span>
+                Automatically buy up to <input min="0" value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
+              </span>
+            </div>
+          }
+          @if (homeService.autoBuyHomeUnlocked) {
+            <div class="optionField">
+              <span>
+                Automatically upgrade your home up to a
+                <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
+                  @for (home of homeService.homesList; track home.name) {
+                    <option value="{{home.type}}"
+                      [selected]="homeService.autoBuyHomeLimit === home.type">
+                      {{home.name}}
+                    </option>
+                  }
+                </select>
+              </span>
+            </div>
+          }
+          <div class="optionField">
+            <span>
+              <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
+                id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
+              <label for="useAutoBuyReserve">Auto-buying should reserve </label>
+              <input min="0" value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels instead of 10 days worth of expenses
+            </span>
+          </div>
+        }
+        @if (autoBuyerService.autoBuyerSettingsUnlocked) {
+          <div class="optionField">
+            <span>
+              Auto-Buyer Options:
+              <table class="priorityTable">
+                <tr>
+                  <th colspan="3">Priority Order</th>
+                  <th>Enabled</th>
+                  <th>Wait For Finish</th>
+                </tr>
+                @for (setting of autoBuyerService.autoBuyerSettings; track setting; let index = $index; let first = $first; let last = $last) {
+                  <tr>
+                    <td>
+                      <button [disabled]="first" class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, true)">&#9650;</button>
+                    </td>
+                    <td>
+                      <button [disabled]="last"  class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, false)">&#9660;</button>
+                    </td>
+                    <td class="priorityTableNameColumn">{{setting.label}}</td>
+                    <td class="priorityTableCheckboxColumn">
+                      <input type="checkbox" (change)="autoBuySettingsEnabledChange($event, setting)" [checked]="setting.enabled"/>
+                    </td>
+                    <td class="priorityTableCheckboxColumn">
+                      <input type="checkbox" (change)="autoBuySettingsWaitForFinishChange($event, setting)" [checked]="setting.waitForFinish"/>
+                    </td>
+                  </tr>
+                }
+              </table>
+            </span>
+          </div>
+        }
+      </mat-tab>
+    }
+  </mat-tab-group>
+</div>

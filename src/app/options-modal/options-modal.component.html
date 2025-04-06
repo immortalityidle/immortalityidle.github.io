@@ -1,443 +1,92 @@
 <div class='darkMode optionsDiv'>
-  <span>Options</span>
-  <mat-tab-group>
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <span class="tab-label">Game</span>
-      </ng-template>
-      <div class="optionField">
-        <span tooltip="This game is much too hard and takes much too long to play to the end.<br>Click this to make it easier and allow you to rush through the game.<br>
-          Be warned:<br>you will forever be known as a cultivator who took the easy path to immortality.">
-          <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)">
-          <label for="easyMode" >Easy Mode</label>
-        </span>
-        @if (this.gameStateService.easyModeEver) {
-          <span>
-            &nbsp;&nbsp;Only starting your journey to immortality from the beginning again (Hard Reset) will prove you never took the easy path.
-          </span>
-        }
-      </div>
-      <div class="optionField">
-        <span>
-          <input type="checkbox" (change)="autoBuyFoodChange($event)"
-            id="autoBuyFood"  [checked]="inventoryService.autoBuyFood">
-          <label for="autoBuyFood">Automatically buy scraps each day if you have no food to avoid starvation.</label>
-        </span>
-      </div>
-      <div class="optionField">
-        <span>
-          <input type="checkbox" (change)="showLifeSummaryChange($event)"
-            id="showLifeSummary" [checked]="characterService.characterState.showLifeSummary">
-          <label for="showLifeSummary">Show a previous life summary at the start of each life</label>
-        </span>
-      </div>
-      <div class="optionField">
-        <span>
-          <input type="checkbox" (change)="showTipsChange($event)"
-            id="showTips" [checked]="characterService.characterState.showTips">
-          <label for="showTips">Include tips in the life summary. Warning, this can spoil the fun of discovering things for yourself.</label>
-        </span>
-      </div>
-      <div class="optionField">
-        <span>
-          <input type="checkbox" (change)="showUpdateAnimationsChange($event)"
-            id="showUpdateAnimations" [checked]="characterService.characterState.showUpdateAnimations">
-          <label for="showUpdateAnimations">Show animated updates when attributes or money values change.</label>
-        </span>
-      </div>
-      <div class="optionField">
-        <span>
-          <input type="checkbox" (change)="scientificNotationChange($event)"
-            id="scientificNotation"  [checked]="mainLoopService.scientificNotation">
-          <label for="scientificNotation">Turn on numbers with scientific notation.</label>&nbsp;
-          <span class="spaced warning">Changing this will save and reload immediately.</span>
-        </span>
-      </div>
-      <div class="optionField">
-        <span tooltip="Enable background music (this allows the game to run in the background without throttling on some browsers).">
-          <input type="checkbox" id="backgroundMusic" [checked]="mainLoopService.playMusic" (change)="playMusicChange($event)">
-          <label for="backgroundMusic" >Background Music (also improves background play) - <a href="/assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3" download>Rising Sun Beat by Shaolin Dub</a> (<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons License</a>)</label>
-        </span>
-      </div>
-      <div class="optionField">
-        <button tooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">
-          Reincarnate
-        </button>
-      </div>
-      <div class="optionField">
-        <button tooltip="Click to save your game now.
-          Shift-click for save options.
-          Ctrl-shift-click to load backup save."
-          (click)="saveClicked($event)">
-          Manual Save
-        </button>
-      </div>
-      <div class="optionField">
-        <span>
-          <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode"/>
-          <label for="darkMode">Dark Mode</label>
-        </span>
-      </div>
-      <div class="optionField">
-        <div>
-          <input type="file" id="importLayoutFile" #importLayoutFile (change)="importLayoutFileClick($event)" />
-          <button (click)="importLayoutFile.click()">Import Layout File</button>
-          <button (click)="exportLayoutFileClick()">Export Layout File</button>
-        </div>
-        <div>
-          <input type="file" id="importGameFile" #importGameFile (change)="importGameFileClick($event)" />
-          <button (click)="importGameFile.click()">Import Game File</button>
-          <button (click)="exportGameFileClick()">Export Game File</button>
-        </div>
-      </div>
-      <div class="optionField">
-        <button tooltip="Completely restart your journey toward immortality." class="warning" (click)="hardResetClicked($event)">Hard Reset</button>
-      </div>
-    </mat-tab>
-    @if (homeService.autoBuyLandUnlocked || farmService.autoFieldUnlocked || homeService.autoBuyHomeUnlocked) {
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">Home</span>
-        </ng-template>
-        @if (homeService.autoBuyLandUnlocked) {
-          <div class="optionField">
-            <span>
-              Automatically buy up to <input min="0" value="{{homeService.autoBuyLandLimit}}" type="number" class="inputBox" (change)="autoBuyLandLimitChanged($event)"/> land (including fields)
-            </span>
-          </div>
-        }
-        @if (farmService.autoFieldUnlocked) {
-          <div class="optionField">
-            <span>
-              Automatically plow up to <input min="0" value="{{farmService.autoFieldLimit}}" type="number" class="inputBox" (change)="autoFieldLimitChanged($event)"/> fields
-            </span>
-          </div>
-        }
-        @if (homeService.autoBuyHomeUnlocked) {
-          <div class="optionField">
-            <span>
-              Automatically upgrade your home up to a
-              <select name="homeList" id="homeList"  (change)="autoBuyHomeLimitChanged($event)">
-                @for (home of homeService.homesList; track home.name) {
-                  <option value="{{home.type}}"
-                    [selected]="homeService.autoBuyHomeLimit === home.type">
-                    {{home.name}}
-                  </option>
-                }
-              </select>
-            </span>
-          </div>
-        }
-        <div>
-          <span>
-            <input type="checkbox" (change)="autoPauseThugs($event)"
-              id="autoBuyFood"  [checked]="homeService.thugPause">
-            <label for="autoBuyFood">Automatically pause if thugs rough you up.</label>
-          </span>
-        </div>
-      </mat-tab>
+  <span>Game Options</span>
+  <hr>
+  <div class="optionField">
+    <span tooltip="This game is much too hard and takes much too long to play to the end.<br>Click this to make it easier and allow you to rush through the game.<br>
+      Be warned:<br>you will forever be known as a cultivator who took the easy path to immortality.">
+      <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)">
+      <label for="easyMode" >Easy Mode</label>
+    </span>
+    @if (this.gameStateService.easyModeEver) {
+      <span>
+        &nbsp;&nbsp;Only starting your journey to immortality from the beginning again (Hard Reset) will prove you never took the easy path.
+      </span>
     }
+  </div>
+  <div class="optionField">
+    <span>
+      <input type="checkbox" (change)="autoBuyFoodChange($event)"
+        id="autoBuyFood"  [checked]="inventoryService.autoBuyFood">
+      <label for="autoBuyFood">Automatically buy scraps each day if you have no food to avoid starvation.</label>
+    </span>
+  </div>
+  <div class="optionField">
+    <span>
+      <input type="checkbox" (change)="showLifeSummaryChange($event)"
+        id="showLifeSummary" [checked]="characterService.characterState.showLifeSummary">
+      <label for="showLifeSummary">Show a previous life summary at the start of each life</label>
+    </span>
+  </div>
+  <div class="optionField">
+    <span>
+      <input type="checkbox" (change)="showTipsChange($event)"
+        id="showTips" [checked]="characterService.characterState.showTips">
+      <label for="showTips">Include tips in the life summary. Warning, this can spoil the fun of discovering things for yourself.</label>
+    </span>
+  </div>
+  <div class="optionField">
+    <span>
+      <input type="checkbox" (change)="showUpdateAnimationsChange($event)"
+        id="showUpdateAnimations" [checked]="characterService.characterState.showUpdateAnimations">
+      <label for="showUpdateAnimations">Show animated updates when attributes or money values change.</label>
+    </span>
+  </div>
+  <div class="optionField">
+    <span>
+      <input type="checkbox" (change)="scientificNotationChange($event)"
+        id="scientificNotation"  [checked]="mainLoopService.scientificNotation">
+      <label for="scientificNotation">Turn on numbers with scientific notation.</label>&nbsp;
+      <span class="spaced warning">Changing this will save and reload immediately.</span>
+    </span>
+  </div>
+  <div class="optionField">
+    <span tooltip="Enable background music (this allows the game to run in the background without throttling on some browsers).">
+      <input type="checkbox" id="backgroundMusic" [checked]="mainLoopService.playMusic" (change)="playMusicChange($event)">
+      <label for="backgroundMusic" >Background Music (also improves background play) - <a href="/assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3" download>Rising Sun Beat by Shaolin Dub</a> (<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">Creative Commons License</a>)</label>
+    </span>
+  </div>
+  <div class="optionField">
+    <span>
+        <label for="autoSaveInterval">Change how often the game autosaves (in seconds) </label>
+        <input value="{{gameStateService.saveInterval}}" type="number" min="1" max="900" step="1"
+            (change)="autoSaveInterval($event)" id="autoSaveInterval">&nbsp;
+    </span>
+  </div>
 
-    @if (inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon || inventoryService.useSpiritGemUnlocked || inventoryService.autoPillUnlocked  || inventoryService.autoPotionUnlocked) {
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">Crafting</span>
-        </ng-template>
-        @if (inventoryService.autoPotionUnlocked) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoPotionChange($event)"
-                id="autoPotionEnable"  [checked]="inventoryService.autoPotionEnabled"/>
-              <label for="autoPotionEnable">Automatically consume potions when you make them</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoPillUnlocked) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoPillChange($event)"
-                id="autoPillEnable"  [checked]="inventoryService.autoPillEnabled"/>
-              <label for="autoPillEnable">Automatically consume pills when you make them</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoequipEnableChange($event)"
-                id="autoequipEnable"  [checked]="inventoryService.autoequipBestEnabled"/>
-              <label for="autoequipEnable">Automatically equip best equipment</label>
-            </span>
-          </div>
-        }
-        @if ((inventoryService.autoequipBestArmor && inventoryService.autoArmorMergeUnlocked) || (inventoryService.autoequipBestWeapon && inventoryService.autoWeaponMergeUnlocked)) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="automergeEquippedChange($event)"
-                id="automergeEquipped"  [checked]="inventoryService.automergeEquipped"/>
-              <label for="automergeEquipped">Automatically merge onto equipped equipment</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.useSpiritGemUnlocked) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="useSpiritGemWeaponsChange($event)"
-                id="useSpiritGemWeapons"  [checked]="inventoryService.useSpiritGemWeapons"/>
-              <label for="useSpiritGemWeapons">Use spirit gem when crafting weapons</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.useSpiritGemUnlocked) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="useSpiritGemPotionsChange($event)"
-                id="useSpiritGemPotions"  [checked]="inventoryService.useSpiritGemPotions"/>
-              <label for="useSpiritGemPotions">Use spirit gem when crafting potions</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.useSpiritGemUnlocked) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="useCheapestSpiritGemChange($event)"
-                id="useCheapestSpiritGem"  [checked]="inventoryService.useCheapestSpiritGem"/>
-              <label for="useCheapestSpiritGem">Use your lowest grade spirit gem instead of your highest</label>
-            </span>
-          </div>
-        }
-      </mat-tab>
-    }
-
-    @if (inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked ||
-      inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoEatUnlocked || inventoryService.autoBalanceUnlocked) {
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">Sales</span>
-        </ng-template>
-        @if (inventoryService.autoSellOldHerbs) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoSellOldHerbs($event)"
-                id="autosellOldHerbs"  [checked]="inventoryService.autoSellOldHerbsEnabled"/>
-              <label for="autosellOldHerbs">Automatically sell lower grade herbs than what current activities produce</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoSellOldWood) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoSellOldWood($event)"
-                id="autosellOldWood"  [checked]="inventoryService.autoSellOldWoodEnabled"/>
-              <label for="autosellOldWood">Automatically sell lower grade wood than what current activities produce</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoSellOldOre) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoSellOldOre($event)"
-                id="autosellOldOre"  [checked]="inventoryService.autoSellOldOreEnabled"/>
-              <label for="autosellOldOre">Automatically sell lower grade ore than what current activities produce</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoSellOldOre) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoSellOldBars($event)"
-                id="autoSellOldBars"  [checked]="inventoryService.autoSellOldBarsEnabled"/>
-              <label for="autoSellOldBars">Automatically sell lower grade bars than what current activities produce</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoSellOldHides) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoSellOldHides($event)"
-                id="autosellOldHides"  [checked]="inventoryService.autoSellOldHidesEnabled"/>
-              <label for="autosellOldHides">Automatically sell lower grade hides than what current activities produce</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoSellOldGemsUnlocked) {
-          <div  class="optionField">
-            <span>
-              <input type="checkbox" (change)="autoSellOldGems($event)"
-                id="autosellOldGems"  [checked]="inventoryService.autoSellOldGemsEnabled"/>
-              <label for="autosellOldGems">Automatically sell lower grade gems than what current monsters drop</label>
-            </span>
-          </div>
-        }
-        @if (inventoryService.autoSellUnlocked) {
-          <div class="optionField">
-            <span>
-              Automatically Sold Items:
-            </span>
-            <div class="scrollingDiv">
-              @for (entry of inventoryService.autoSellEntries; track entry) {
-                <div>
-                  <span>
-                    - {{entry.name | titlecase}}
-                  </span>
-                  <span>
-                    - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoSellReserveChange($event, entry)"/>&nbsp;
-                    <button (click)="inventoryService.unAutoSell(entry.name)">Stop Selling</button>
-                  </span>
-                </div>
-              }
-            </div>
-          </div>
-        }
-        @if (inventoryService.autoUseUnlocked) {
-          <div class="optionField">
-            <span>Automatically Used Items:</span>
-            <div class="scrollingDiv">
-              @for (entry of inventoryService.autoUseEntries; track entry) {
-                @if (entry.type !== 'food'){
-                  <div>
-                    <span>
-                      - {{entry.name | titlecase}}
-                    </span>
-                    <span>
-                      - Reserve &nbsp;<input min="0" value="{{entry.reserve}}" type="number" class="inputBox" (change)="autoUseReserveChange($event, entry)"/>&nbsp;
-                      <button (click)="inventoryService.unAutoUse(entry.name)">Stop Using</button>
-                    </span>
-                  </div>
-                }
-              }
-            </div>
-          </div>
-        }
-        @if (inventoryService.autoEatUnlocked) {
-          <div class="optionField">
-            <div>
-              <span>Wisely Eaten Foods:</span>
-              <div class="scrollingDiv">
-                  @for (entry of inventoryService.autoUseEntries; track entry) {
-                    @if (entry.type === 'food'){
-                      <div>
-                        <span>
-                          - {{entry.name | titlecase}}
-                        </span>
-                        <span>
-                          &nbsp;
-                          <button (click)="inventoryService.unAutoUse(entry.name)">Stop Wisely Eating</button>
-                        </span>
-                      </div>
-                    }
-                  }
-                </div>
-              </div>
-              <div>
-                <span>
-                  When wisely eaten food is available:
-                </span>
-              </div>
-              <div>
-                <span>
-                  <input type="checkbox" (change)="autoEatNutritionChanged($event)"
-                    id="autoEatNutrition"  [checked]="inventoryService.autoEatNutrition"/>
-                  <label for="autoEatNutrition">Eat until nutrition is full</label>
-                </span>
-              </div>
-              <div>
-                <span>
-                <input type="checkbox" (change)="autoEatHealthChanged($event)"
-                  id="autoEatHealth"  [checked]="inventoryService.autoEatHealth"/>
-                <label for="autoEatHealth">Eat until Health is full</label>
-              </span>
-            </div>
-            <div>
-              <span>
-              <input type="checkbox" (change)="autoEatStaminaChanged($event)"
-                  id="autoEatStamina"  [checked]="inventoryService.autoEatStamina"/>
-                <label for="autoEatStamina">Eat until Stamina is full</label>
-              </span>
-            </div>
-            <div>
-              <span>
-                <input type="checkbox" (change)="autoEatQiChanged($event)"
-                  id="autoEatQi"  [checked]="inventoryService.autoEatQi"/>
-                <label for="autoEatQi">Eat until Qi is full</label>
-              </span>
-            </div>
-            <div>
-              <span>
-                <input type="checkbox" (change)="autoEatAllChanged($event)"
-                  id="autoEatAll"  [checked]="inventoryService.autoEatAll"/>
-                <label for="autoEatAll">Just eat it all!</label>
-              </span>
-            </div>
-          </div>
-        }
-        @if (inventoryService.autoBalanceUnlocked) {
-          <div class="optionField">
-            <span>Automatically Balanced Items:</span>
-            <div class="scrollingDiv">
-              @for (balanceItem of inventoryService.autoBalanceItems; track balanceItem) {
-                <div>
-                  <span>
-                    -{{balanceItem.name | titlecase}}
-                    Use <input min="0" value="{{balanceItem.useNumber}}" type="number" class="inputBox" (change)="autoBalanceUseChanged($event, balanceItem)"/>
-                    then Sell <input min="0" value="{{balanceItem.sellNumber}}" type="number" class="inputBox" (change)="autoBalanceSellChanged($event, balanceItem)"/>
-                    <button (click)="inventoryService.unAutoBalance(balanceItem.name)">Stop Balancing</button>
-                  </span>
-                </div>
-              }
-            </div>
-          </div>
-        }
-      </mat-tab>
-    }
-
-    @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked || autoBuyerService.autoBuyerSettingsUnlocked) {
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">Auto-buy</span>
-        </ng-template>
-        @if (homeService.autoBuyLandUnlocked || homeService.autoBuyHomeUnlocked) {
-          <div class="optionField">
-            <span>
-              <input type="checkbox" (change)="useAutoBuyReserveChanged($event)"
-                id="useAutoBuyReserve"  [checked]="homeService.useAutoBuyReserve"/>
-              <label for="useAutoBuyReserve">Auto-buying should reserve </label>
-              <input min="0" value="{{homeService.autoBuyReserveAmount}}" type="number" class="inputBox" (change)="autoBuyReserveAmountChanged($event)"/> taels instead of 10 days worth of expenses
-            </span>
-          </div>
-        }
-        @if (autoBuyerService.autoBuyerSettingsUnlocked) {
-          <div class="optionField">
-            <span>
-              Auto-Buyer Options:
-              <table class="priorityTable">
-                <tr>
-                  <th colspan="3">Priority Order</th>
-                  <th>Enabled</th>
-                  <th>Wait For Finish</th>
-                </tr>
-                @for (setting of autoBuyerService.autoBuyerSettings; track setting; let index = $index; let first = $first; let last = $last) {
-                  <tr>
-                    <td>
-                      <button [disabled]="first" class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, true)">&#9650;</button>
-                    </td>
-                    <td>
-                      <button [disabled]="last"  class="reorderListButton" (click)="autoBuySettingsPriorityChanged(index, false)">&#9660;</button>
-                    </td>
-                    <td class="priorityTableNameColumn">{{setting.label}}</td>
-                    <td class="priorityTableCheckboxColumn">
-                      <input type="checkbox" (change)="autoBuySettingsEnabledChange($event, setting)" [checked]="setting.enabled"/>
-                    </td>
-                    <td class="priorityTableCheckboxColumn">
-                      <input type="checkbox" (change)="autoBuySettingsWaitForFinishChange($event, setting)" [checked]="setting.waitForFinish"/>
-                    </td>
-                  </tr>
-                }
-              </table>
-            </span>
-          </div>
-        }
-      </mat-tab>
-    }
-  </mat-tab-group>
+  <div class="optionField">
+    <button tooltip="Voluntarily end this life, allowing your current attributes to strengthen your aptitudes in the next life." (click)="rebirthClicked($event)">
+      Reincarnate
+    </button>
+  </div>
+  <div class="optionField">
+    <span>
+      <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode"/>
+      <label for="darkMode">Dark Mode</label>
+    </span>
+  </div>
+  <div class="optionField">
+    <div>
+      <input type="file" id="importLayoutFile" #importLayoutFile (change)="importLayoutFileClick($event)" />
+      <button (click)="importLayoutFile.click()">Import Layout File</button>
+      <button (click)="exportLayoutFileClick()">Export Layout File</button>
+    </div>
+    <div>
+      <input type="file" id="importGameFile" #importGameFile (change)="importGameFileClick($event)" />
+      <button (click)="importGameFile.click()">Import Game File</button>
+      <button (click)="exportGameFileClick()">Export Game File</button>
+    </div>
+  </div>
+  <div class="optionField">
+    <button tooltip="Completely restart your journey toward immortality." class="warning" (click)="hardResetClicked($event)">Hard Reset</button>
+  </div>
 </div>

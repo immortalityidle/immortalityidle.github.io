@@ -43,7 +43,7 @@
       </mat-icon>
     }
     @if (activityService.autoRestart) {
-      <mat-icon  (click)="timeOptions()" tooltip="Options" class="iconButton" aria-label="Time Options" aria-hidden="false">
+      <mat-icon  (click)="timeOptions()" tooltip="Options" class="iconButton floatRight" aria-label="Time Options" aria-hidden="false">
         settings
       </mat-icon>
     }
@@ -70,8 +70,8 @@
     }
     @else {
       <div class="overflow" cdkDropList cdkDropListSortingDisabled>
-        <button class="buttonStyles" (click)="enableAllClick()">Enable All</button>
-        <button class="buttonStyles" (click)="disableAllClick()">Disable All</button>
+        <button class="floatRight" (click)="enableAllClick()">Enable All</button>
+        <button class="floatRight" (click)="disableAllClick()">Disable All</button>
         @if (characterService.characterState.qiUnlocked) {
           <table class="spiritActivityPanel" id="spiritActivity"
             (drop)="spiritActivityDrop($event)">

@@ -1,0 +1,37 @@
+<div class='darkMode optionsDiv'>
+  <span>Crafting Options</span>
+  <hr>
+  @if (inventoryService.autoPotionUnlocked){
+    <div class="optionField">
+      <span>
+        <input type="checkbox" id="autoPotion" [checked]="inventoryService.autoPotionEnabled" (change)="autoPotionChange($event)">
+        <label for="autoPotion" >Automatically consume all potions</label>
+      </span>
+    </div>
+  }
+  @if (inventoryService.autoPillUnlocked){
+    <div class="optionField">
+      <span>
+        <input type="checkbox" id="autoPill" [checked]="inventoryService.autoPillEnabled" (change)="autoPillChange($event)">
+        <label for="autoPill" >Automatically consume all pills</label>
+      </span>
+    </div>
+  }
+  @if (inventoryService.autoequipBestArmor || inventoryService.autoequipBestWeapon){
+    <div class="optionField">
+      <span>
+        <input type="checkbox" id="autoequipEnable" [checked]="inventoryService.autoequipBestEnabled" (change)="autoequipEnableChange($event)">
+        <label for="autoequipEnable" >Automatically equip the best gear you have</label>
+      </span>
+    </div>
+  }
+  @if ((inventoryService.autoequipBestArmor && inventoryService.autoArmorMergeUnlocked) || (inventoryService.autoequipBestWeapon && inventoryService.autoWeaponMergeUnlocked)) {
+    <div  class="optionField">
+      <span>
+        <input type="checkbox" (change)="automergeEquippedChange($event)"
+          id="automergeEquipped"  [checked]="inventoryService.automergeEquipped"/>
+        <label for="automergeEquipped">Automatically merge onto equipped equipment</label>
+      </span>
+    </div>
+  }
+</div>

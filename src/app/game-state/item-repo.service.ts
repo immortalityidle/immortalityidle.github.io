@@ -2268,32 +2268,6 @@ baguaMap = [
         return this.autoBuyerService.autoBuyerSettingsUnlocked;
       },
     },
-    autoFieldManual: {
-      id: 'autoFieldManual',
-      name: 'Manual of Field Conversion',
-      type: 'manual',
-      description: 'This manual teaches you to automatically skip plowing actions when you have enough fields.',
-      value: 2000000,
-      useLabel: 'Read',
-      useDescription: 'Permanently unlock automatic field plowing.',
-      useConsumes: true,
-      use: () => {
-        if (!this.farmService) {
-          this.farmService = this.injector.get(FarmService);
-        }
-        this.farmService.autoFieldUnlocked = true;
-        this.logService.log(
-          LogTopic.EVENT,
-          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
-        );
-      },
-      owned: () => {
-        if (!this.farmService) {
-          this.farmService = this.injector.get(FarmService);
-        }
-        return this.farmService.autoFieldUnlocked;
-      },
-    },
     autoPotionManual: {
       id: 'autoPotionManual',
       name: 'Manual of Gluttonous Potion Consumption',

@@ -3,7 +3,6 @@ import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService, Workstation } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
-import { StoreService } from '../game-state/store.service';
 import { FollowersService } from '../game-state/followers.service';
 import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
@@ -14,6 +13,7 @@ import { InventoryService } from '../game-state/inventory.service';
 import { WorkstationSelectionModalComponent } from '../workstation-selection-modal/workstation-selection-modal.component';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { CraftingOptionsModalComponent } from '../crafting-options-modal/crafting-options-modal.component';
 
 @Component({
   selector: 'app-crafting-panel',
@@ -42,13 +42,18 @@ export class CraftingPanelComponent {
     public hellService: HellService,
     private inventoryService: InventoryService,
     public dialog: MatDialog,
-    private storeService: StoreService,
-    public gameStateService: GameStateService,
-    private bignumber: BigNumberPipe,
-    private titleCasePipe: TitleCasePipe
+    public gameStateService: GameStateService
   ) {
     this.character = characterService.characterState;
     this.Math = Math;
+  }
+
+  craftingOptions() {
+    this.dialog.open(CraftingOptionsModalComponent, {
+      width: '700px',
+      data: { someField: 'foo' },
+      autoFocus: false,
+    });
   }
 
   inputDoubleClicked(workstation: Workstation, inputSlot: number) {

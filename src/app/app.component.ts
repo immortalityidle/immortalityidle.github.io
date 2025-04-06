@@ -218,12 +218,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.mainLoopService.tickDivider = 1;
     }
   }
-  /*
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.compactType = window.matchMedia('(max-width: 700px)').matches ? 'vertical' : 'horizontal';
-  }
-*/
   constructor(
     private scroller: ViewportScroller,
     public mainLoopService: MainLoopService,
@@ -326,19 +320,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.gameStateService.savetoLocalStorage();
   }
 
-  /*
-  onBodyMouseMove(event: MouseEvent) {
-    if (this.gameStateService.dragging) {
-      return;
-    }
-    if (event.buttons !== 1) {
-      return;
-    }
-    const x = this.scroller.getScrollPosition()[0] - event.movementX;
-    const y = this.scroller.getScrollPosition()[1] - event.movementY;
-    this.scroller.scrollToPosition([x, y]);
-  }
-*/
   getPanel(layoutPanel: KtdGridLayoutItem) {
     for (const panel of this.gameStateService.panels) {
       if (panel.id === layoutPanel.id) {
@@ -363,5 +344,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   closePanelClick(index: number) {
     this.gameStateService.removeLayoutPanel(index);
+  }
+
+  saveClicked() {
+    this.gameStateService.savetoLocalStorage();
+    this.characterService.toast('Manual Save Complete');
   }
 }

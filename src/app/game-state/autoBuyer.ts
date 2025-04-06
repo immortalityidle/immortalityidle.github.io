@@ -98,7 +98,7 @@ export class HomeAutoBuyer extends AutoBuyer {
 
 export class LandAndFieldAutoBuyer extends AutoBuyer {
   shouldRun(): boolean {
-    return this.homeService.autoBuyLandUnlocked || this.farmService.autoFieldUnlocked;
+    return this.homeService.autoBuyLandUnlocked;
   }
 
   run(reserveAmount: number) {
@@ -115,22 +115,11 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
         this.homeService.buyLand(landRequired);
       }
     }
-
-    if (this.farmService.autoFieldUnlocked) {
-      const minFields = Math.min(
-        this.homeService.land,
-        this.farmService.autoFieldLimit - (this.farmService.fields.length + this.farmService.extraFields)
-      );
-
-      if (minFields > 0) {
-        this.farmService.plowPlot(minFields);
-      }
-    }
   }
 
   isBlocked(): boolean {
     // This autobuyer can be blocked if it needs more fields, but we haven't unlocked buying land yet
-    if (this.farmService.autoFieldUnlocked && !this.homeService.autoBuyLandUnlocked) {
+    if (!this.homeService.autoBuyLandUnlocked) {
       return (
         this.homeService.land === 0 &&
         this.farmService.fields.length + this.farmService.extraFields < this.farmService.autoFieldLimit
@@ -152,11 +141,6 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
         this.homeService.autoBuyLandLimit;
     }
 
-    let fieldsComplete = true;
-    if (this.farmService.autoFieldUnlocked) {
-      fieldsComplete = this.farmService.fields.length + this.farmService.extraFields >= this.farmService.autoFieldLimit;
-    }
-
-    return landComplete && fieldsComplete;
+    return landComplete;
   }
 }

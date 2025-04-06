@@ -19,7 +19,6 @@ export interface Field {
 
 export interface FarmProperties {
   fields: Field[];
-  autoFieldUnlocked: boolean;
   autoFieldLimit: number;
   mostFields: number;
   hellFood: boolean;
@@ -34,7 +33,6 @@ export interface FarmProperties {
 })
 export class FarmService {
   hellService?: HellService;
-  autoFieldUnlocked = false;
   autoFieldLimit = 0;
   fields: Field[] = [];
   extraFields = 0;
@@ -91,7 +89,6 @@ export class FarmService {
       autoFieldLimit: this.autoFieldLimit,
       mostFields: this.mostFields,
       hellFood: this.hellFood,
-      autoFieldUnlocked: this.autoFieldUnlocked,
       fallowPlots: this.fallowPlots,
       unlockedCrops: this.unlockedCrops,
     };
@@ -99,7 +96,6 @@ export class FarmService {
 
   setProperties(properties: FarmProperties) {
     this.fields = properties.fields;
-    this.autoFieldUnlocked = properties.autoFieldUnlocked || false;
     this.autoFieldLimit = properties.autoFieldLimit || 0;
     this.mostFields = properties.mostFields || 0;
     this.hellFood = properties.hellFood || false;
