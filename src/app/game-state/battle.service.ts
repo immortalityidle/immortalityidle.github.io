@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
-import { Equipment, InventoryService, Item } from '../game-state/inventory.service';
+import { InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from './main-loop.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { HellService } from './hell.service';
@@ -9,7 +9,7 @@ import { BigNumberPipe } from '../app.component';
 import { HomeService, HomeType } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
-import { AttributeType } from './character';
+import { AttributeType, StatusType } from './character';
 
 export interface Enemy {
   name: string;
@@ -23,6 +23,8 @@ export interface Enemy {
   imageFile?: string;
   techniques: Technique[];
   index?: number;
+  element?: string;
+  statusEffects?: StatusEffect[];
 }
 
 export interface EnemyTypes {
@@ -62,6 +64,7 @@ export interface Technique {
   ticks: number;
   ticksRequired: number;
   baseDamage: number;
+  extraMultiplier?: number;
   hitTracker?: number;
   effect?: string;
   unlocked: boolean;
@@ -116,6 +119,28 @@ export class BattleService {
   fireShieldName = 'Fire Shield';
   iceShieldName = 'Ice Shield';
 
+  fireElementEffectName = 'Fire Essence';
+  earthElementEffectName = 'Earth Essence';
+  metalElementEffectName = 'Metal Essence';
+  woodElementEffectName = 'Wood Essence';
+  waterElementEffectName = 'Water Essence';
+  corruptionEffectName = 'Corruption';
+  lifeEffectName = 'Life';
+  poisonEffectName = 'Poison';
+  doomEffectName = 'Doom';
+  explosiveEffectName = 'Explosions';
+  shieldingEffectName = 'Shielding';
+  piercingEffectName = 'Piercing';
+  hasteEffectName = 'Haste';
+  slowingEffectName = 'Slowing';
+  elementalFactor = 2;
+  // elemental logic:
+  // fire weakens metal and burns wood
+  // wood absorbs water and rootbinds earth
+  // water quenches fire and rusts metal
+  // metal cuts wood and breaks earth
+  // earth dams water and smothers fire
+
   techniques: Technique[] = [
     {
       name: 'Basic Strike',
@@ -125,6 +150,7 @@ export class BattleService {
       baseDamage: 1,
       unlocked: true,
       attribute: 'strength',
+      staminaCost: 1,
     },
     {
       // don't mess with the index on this
@@ -135,6 +161,7 @@ export class BattleService {
       baseDamage: 2,
       unlocked: false,
       attribute: 'strength',
+      staminaCost: 10,
     },
     {
       // don't mess with the index on this
@@ -145,6 +172,7 @@ export class BattleService {
       baseDamage: 2,
       unlocked: false,
       attribute: 'strength',
+      staminaCost: 10,
     },
   ];
 
@@ -192,16 +220,20 @@ export class BattleService {
       if (this.characterService.characterState.dead) {
         return;
       }
-      this.inventoryService.usePouchItem(1);
+
+      this.inventoryService.usePouchItem(1); // TODO: use cooldowns for this
+
+      for (const keyString in this.characterService.characterState.status) {
+        const key = keyString as StatusType;
+        const statusEntry = this.characterService.characterState.status[key];
+        if (statusEntry.battleTickRecovery) {
+          statusEntry.value += statusEntry.battleTickRecovery;
+        }
+      }
+      this.characterService.characterState.checkOverage();
 
       if (this.currentEnemy === null && this.enemies.length > 0) {
         this.currentEnemy = this.enemies[0];
-      }
-      for (let i = this.statusEffects.length - 1; i >= 0; i--) {
-        this.statusEffects[i].ticksLeft--;
-        if (this.statusEffects[i].ticksLeft <= 0) {
-          this.statusEffects.splice(i, 1);
-        }
       }
       this.handleYourTechniques();
       this.handleEnemyTechniques();
@@ -313,8 +345,23 @@ export class BattleService {
       'Ancient',
       'Traditional',
       'Lucky',
+      'Imprudent',
+      'Reckless',
+      'Wild',
     ];
     const prefix = prefixAdjectiveList[Math.floor(Math.random() * prefixAdjectiveList.length)];
+    let healthCost = 0;
+    let extraMultiplier = 1;
+    if (prefix === 'Imprudent') {
+      healthCost = 10;
+      extraMultiplier = 2;
+    } else if (prefix === 'Reckless') {
+      healthCost = 100;
+      extraMultiplier = 4;
+    } else if (prefix === 'Wild') {
+      healthCost = 1000;
+      extraMultiplier = 10;
+    }
     const attributeKeys = Object.keys(this.characterService.characterState.attackPower);
 
     const attribute = attributeKeys[Math.floor(Math.random() * attributeKeys.length)] as AttributeType;
@@ -345,8 +392,39 @@ export class BattleService {
     const attackNouns = ['Fist', 'Strike', 'Kick', 'Blow', 'Slam', 'Slap', 'Smack', 'Pumelling', 'Barrage', 'Attack'];
     const attackNoun = attackNouns[Math.floor(Math.random() * attackNouns.length)];
     const ticksRequired = 5 + Math.floor(Math.random() * 10);
+    const staminaCost = Math.max(Math.floor(Math.random() * 20) - 5, 0);
+    const qiCost = Math.max(Math.floor(Math.random() * 10) - 5, 0);
+    if (qiCost > 1) {
+      extraMultiplier += qiCost / 10;
+    }
+
+    const effects = [
+      this.fireElementEffectName,
+      this.earthElementEffectName,
+      this.fireElementEffectName,
+      this.earthElementEffectName,
+      this.metalElementEffectName,
+      this.woodElementEffectName,
+      this.waterElementEffectName,
+      this.poisonEffectName,
+      this.doomEffectName,
+      this.explosiveEffectName,
+      this.shieldingEffectName,
+      this.piercingEffectName,
+      this.hasteEffectName,
+      this.slowingEffectName,
+    ];
+
+    const effectIndex = Math.floor(Math.random() * effects.length * 5);
+    let effect = undefined;
+    let suffix = '';
+    if (effectIndex < effects.length) {
+      effect = effects[effectIndex];
+      suffix = ' of ' + effect;
+    }
+
     this.techniques.push({
-      name: prefix + ' ' + attributePrefix + ' ' + attackNoun,
+      name: prefix + ' ' + attributePrefix + ' ' + attackNoun + suffix,
       description: 'A special family technique that can be passed to your descendants.',
       ticksRequired: ticksRequired,
       ticks: 0,
@@ -354,6 +432,11 @@ export class BattleService {
       unlocked: true,
       attribute: attribute,
       familyTechnique: true,
+      staminaCost: staminaCost,
+      healthCost: healthCost,
+      qiCost: qiCost,
+      extraMultiplier: extraMultiplier,
+      effect: effect,
     });
 
     this.logService.log(
@@ -499,12 +582,29 @@ export class BattleService {
 
   handleEnemyTechniques() {
     for (const enemy of this.enemies) {
+      let slowingEffect = undefined;
+      if (enemy.statusEffects) {
+        for (let i = enemy.statusEffects.length - 1; i >= 0; i--) {
+          if (enemy.statusEffects[i].ticksLeft <= 0) {
+            enemy.statusEffects.splice(i, 1);
+          } else if (enemy.statusEffects[i].name === this.poisonEffectName) {
+            enemy.health -= enemy.health * 0.01;
+          } else if (enemy.statusEffects[i].name === this.slowingEffectName) {
+            slowingEffect = enemy.statusEffects[i];
+          }
+          enemy.statusEffects[i].ticksLeft--;
+        }
+      }
       for (const technique of enemy.techniques) {
         if (technique.ticks === technique.ticksRequired) {
           this.enemyAttack(technique);
           technique.ticks = 0;
         } else {
-          technique.ticks++;
+          if (slowingEffect) {
+            slowingEffect.ticksLeft -= 2;
+          } else {
+            technique.ticks++;
+          }
         }
       }
     }
@@ -516,22 +616,14 @@ export class BattleService {
       return;
     }
     let damage = technique.baseDamage;
-    const defense = this.characterService.characterState.defense;
-    // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
-    if (defense >= 1) {
-      damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
-    }
-    //Keep mice scary
-    if (damage < 0.3) {
-      damage = 0.3;
-    }
-
     // Yin/Yang factor
     damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
 
     let damageBack = false;
     for (let i = this.statusEffects.length - 1; i >= 0; i--) {
       if (this.statusEffects[i].name === this.qiShieldName) {
+        damage /= 2;
+      } else if (this.statusEffects[i].name === this.shieldingEffectName) {
         damage /= 2;
       } else if (this.statusEffects[i].name === this.fireShieldName) {
         let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
@@ -547,8 +639,18 @@ export class BattleService {
       } else if (this.statusEffects[i].name === this.iceShieldName) {
         damage = 0;
         this.statusEffects.splice(i, 1);
+      } else if (this.statusEffects[i].name === this.corruptionEffectName) {
+        damage *= 10;
       }
     }
+
+    const defense = this.characterService.characterState.defense;
+    // TODO: tune this
+    // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
+    if (defense >= 1) {
+      damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
+    }
+
     if (damage > 0) {
       this.logService.injury(
         LogTopic.COMBAT,
@@ -570,6 +672,16 @@ export class BattleService {
     if (this.enemies.length <= 0) {
       return;
     }
+    let hasteTicks = 0;
+    for (let i = this.statusEffects.length - 1; i >= 0; i--) {
+      this.statusEffects[i].ticksLeft--;
+      if (this.statusEffects[i].ticksLeft <= 0) {
+        this.statusEffects.splice(i, 1);
+      } else if (this.statusEffects[i].name === this.hasteEffectName) {
+        hasteTicks = this.statusEffects[i].power;
+      }
+    }
+
     let familyTechniquesCounter = 0;
     for (const technique of this.techniques) {
       if (technique.familyTechnique) {
@@ -586,11 +698,12 @@ export class BattleService {
             for (const cleartechnique of this.techniques) {
               cleartechnique.ticks = 0;
             }
+            this.statusEffects = [];
             return;
           }
           technique.ticks = 0;
         } else {
-          technique.ticks++;
+          technique.ticks += 1 + hasteTicks;
         }
       }
     }
@@ -600,6 +713,9 @@ export class BattleService {
   }
 
   youAttack(technique: Technique) {
+    if (!this.currentEnemy) {
+      return;
+    }
     if (technique.disabled) {
       return;
     }
@@ -635,7 +751,9 @@ export class BattleService {
       if (technique.attribute) {
         attackPower = this.characterService.characterState.attackPower[technique.attribute] || 1;
       }
+      let effect = technique.effect;
       if (technique.name === this.rightHandTechniqueName) {
+        effect = this.characterService.characterState.equipment.rightHand?.effect;
         if (this.characterService.characterState.equipment.rightHand) {
           attackPower =
             Math.floor(
@@ -644,6 +762,7 @@ export class BattleService {
             ) || 1;
         }
       } else if (technique.name === this.leftHandTechniqueName) {
+        effect = this.characterService.characterState.equipment.leftHand?.effect;
         if (this.characterService.characterState.equipment.leftHand) {
           attackPower =
             Math.floor(
@@ -654,6 +773,7 @@ export class BattleService {
       }
 
       let damage = attackPower * technique.baseDamage;
+      let defense = this.currentEnemy.defense;
       if (
         this.characterService.characterState.status.nutrition.value >
         this.characterService.characterState.status.nutrition.max * 0.8
@@ -661,7 +781,165 @@ export class BattleService {
         // tummy is mostly full, hit harder
         damage *= 1.2;
       }
-      const defense = this.currentEnemy.defense;
+
+      if (technique.extraMultiplier) {
+        damage *= technique.extraMultiplier;
+      }
+
+      // TODO: tune all of this
+      // apply effects
+      if (effect === this.corruptionEffectName) {
+        damage *= 10;
+        const corruptionEffect: StatusEffect = {
+          name: this.corruptionEffectName,
+          description: 'Your corruption has left you vulnerable.',
+          ticksLeft: 10,
+          power: 1,
+        };
+        const statusEffect = this.statusEffects.find(e => e.name === this.corruptionEffectName);
+        if (statusEffect) {
+          statusEffect.ticksLeft += corruptionEffect.ticksLeft;
+        } else {
+          this.statusEffects.push(corruptionEffect);
+        }
+      } else if (effect === this.lifeEffectName) {
+        const healAmount = damage * 0.01;
+        this.logService.log(LogTopic.COMBAT, 'Your attack healed you for ' + healAmount + ' as you struck the enemy.');
+        this.characterService.characterState.status.health.value += healAmount; // TODO: tune this
+        this.characterService.characterState.checkOverage();
+      } else if (effect === this.fireElementEffectName) {
+        if (this.currentEnemy.element) {
+          if (this.currentEnemy.element === 'metal' || this.currentEnemy.element === 'wood') {
+            damage *= this.elementalFactor;
+          } else if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'earth') {
+            damage /= this.elementalFactor;
+          }
+        }
+      } else if (effect === this.woodElementEffectName) {
+        if (this.currentEnemy.element) {
+          if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'earth') {
+            damage *= this.elementalFactor;
+          } else if (this.currentEnemy.element === 'metal' || this.currentEnemy.element === 'fire') {
+            damage /= this.elementalFactor;
+          }
+        }
+      } else if (effect === this.waterElementEffectName) {
+        if (this.currentEnemy.element) {
+          if (this.currentEnemy.element === 'fire' || this.currentEnemy.element === 'metal') {
+            damage *= this.elementalFactor;
+          } else if (this.currentEnemy.element === 'wood' || this.currentEnemy.element === 'earth') {
+            damage /= this.elementalFactor;
+          }
+        }
+      } else if (effect === this.metalElementEffectName) {
+        if (this.currentEnemy.element) {
+          if (this.currentEnemy.element === 'wood' || this.currentEnemy.element === 'earth') {
+            damage *= this.elementalFactor;
+          } else if (this.currentEnemy.element === 'fire' || this.currentEnemy.element === 'water') {
+            damage /= this.elementalFactor;
+          }
+        }
+      } else if (effect === this.earthElementEffectName) {
+        if (this.currentEnemy.element) {
+          if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'fire') {
+            damage *= this.elementalFactor;
+          } else if (this.currentEnemy.element === 'wood' || this.currentEnemy.element === 'metal') {
+            damage /= this.elementalFactor;
+          }
+        }
+      } else if (effect === this.poisonEffectName) {
+        const statusEffect: StatusEffect = {
+          name: this.poisonEffectName,
+          description: "Poison is sapping away at this creature's health.",
+          ticksLeft: 10,
+          power: 1,
+        };
+        if (this.currentEnemy.statusEffects) {
+          const poisonEffect = this.currentEnemy.statusEffects.find(e => e.name === this.poisonEffectName);
+          if (poisonEffect) {
+            poisonEffect.ticksLeft += statusEffect.ticksLeft;
+          } else {
+            this.currentEnemy.statusEffects.push(statusEffect);
+          }
+        } else {
+          this.currentEnemy.statusEffects = [statusEffect];
+        }
+      } else if (effect === this.doomEffectName) {
+        const statusEffect: StatusEffect = {
+          name: this.doomEffectName,
+          description: 'Doom is coming for this creature.',
+          ticksLeft: 1000,
+          power: 1,
+        };
+        if (this.currentEnemy.statusEffects) {
+          const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === this.doomEffectName);
+          if (doomEffect) {
+            doomEffect.power += doomEffect.power;
+            if (doomEffect.power > 3) {
+              damage *= doomEffect.power;
+            }
+          } else {
+            this.currentEnemy.statusEffects.push(statusEffect);
+          }
+        } else {
+          this.currentEnemy.statusEffects = [statusEffect];
+        }
+      } else if (effect === this.explosiveEffectName) {
+        damage *= 1000;
+        this.characterService.characterState.status.health.value -= damage;
+        // destroy the weapon
+        if (technique.name === this.rightHandTechniqueName) {
+          this.characterService.characterState.equipment.rightHand = null;
+        } else if (technique.name === this.leftHandTechniqueName) {
+          this.characterService.characterState.equipment.leftHand = null;
+        }
+      } else if (effect === this.shieldingEffectName) {
+        const shieldingEffect: StatusEffect = {
+          name: this.shieldingEffectName,
+          description: 'Your shielding technique is protecting you.',
+          ticksLeft: 10,
+          power: 1,
+        };
+        const statusEffect = this.statusEffects.find(e => e.name === this.corruptionEffectName);
+        if (statusEffect) {
+          statusEffect.ticksLeft += shieldingEffect.ticksLeft;
+        } else {
+          this.statusEffects.push(shieldingEffect);
+        }
+      } else if (effect === this.piercingEffectName) {
+        defense *= 0.5;
+      } else if (effect === this.hasteEffectName) {
+        const hasteEffect: StatusEffect = {
+          name: this.shieldingEffectName,
+          description: 'Your attacks strike more quickly, with less time between them.',
+          ticksLeft: 10,
+          power: 1,
+        };
+        const statusEffect = this.statusEffects.find(e => e.name === this.corruptionEffectName);
+        if (statusEffect) {
+          statusEffect.ticksLeft += hasteEffect.ticksLeft;
+        } else {
+          this.statusEffects.push(hasteEffect);
+        }
+      } else if (effect === this.slowingEffectName) {
+        const statusEffect: StatusEffect = {
+          name: this.doomEffectName,
+          description: 'Doom is coming for this creature.',
+          ticksLeft: 1000,
+          power: 1,
+        };
+        if (this.currentEnemy.statusEffects) {
+          const slowingEffect = this.currentEnemy.statusEffects.find(e => e.name === this.slowingEffectName);
+          if (slowingEffect) {
+            slowingEffect.ticksLeft += statusEffect.ticksLeft;
+          } else {
+            this.currentEnemy.statusEffects.push(statusEffect);
+          }
+        } else {
+          this.currentEnemy.statusEffects = [statusEffect];
+        }
+      }
+
       if (defense >= 1) {
         damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
       }
@@ -701,8 +979,6 @@ export class BattleService {
       if (technique.attribute) {
         this.characterService.characterState.increaseAttribute(technique.attribute, 0.01);
       }
-      this.applyWeaponEffect(this.characterService.characterState.equipment.leftHand, damage);
-      this.applyWeaponEffect(this.characterService.characterState.equipment.rightHand, damage);
 
       let overage = this.damageEnemy(damage);
       if (blowthrough) {
@@ -712,23 +988,6 @@ export class BattleService {
           overage = this.damageEnemy(overage);
         }
       }
-    }
-  }
-
-  applyWeaponEffect(weapon: Equipment | null, damage: number) {
-    if (!weapon) {
-      return;
-    }
-    if (weapon.weaponStats?.effect === 'corruption') {
-      // TODO: add a different corruption effect
-    } else if (weapon.weaponStats?.effect === 'life') {
-      const healAmount = damage * 0.01;
-      this.logService.log(
-        LogTopic.COMBAT,
-        'Your ' + weapon.name + ' healed you for ' + healAmount + ' as you struck the enemy.'
-      );
-      this.characterService.characterState.status.health.value += healAmount; // TODO: tune this
-      this.characterService.characterState.checkOverage();
     }
   }
 
@@ -879,7 +1138,7 @@ export class BattleService {
     const modifiedBasePower = monsterType.basePower * modifier;
 
     const monsterName = this.monsterQualities[qualityIndex] + ' ' + monsterType.name;
-    const health = modifiedBasePower * 10;
+    const health = modifiedBasePower * modifiedBasePower * 10;
     const attack = modifiedBasePower / 5;
     const defense = modifiedBasePower / 10;
     const loot: Item[] = [];

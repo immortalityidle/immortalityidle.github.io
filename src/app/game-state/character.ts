@@ -59,7 +59,9 @@ export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' |
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
 export type StatusType = 'health' | 'stamina' | 'qi' | 'nutrition';
-type CharacterStatus = { [key in StatusType]: { description: string; value: number; max: number } };
+type CharacterStatus = {
+  [key in StatusType]: { description: string; value: number; max: number; battleTickRecovery?: number };
+};
 
 export interface CharacterProperties {
   attributes: AttributeObject;
@@ -861,6 +863,7 @@ export class Character {
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
     if (!this.status.nutrition) {
+      // keep legacy saves from freaking out
       // @ts-ignore
       this.status.nutrition = properties.status.nourishment;
     }

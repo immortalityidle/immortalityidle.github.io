@@ -3693,6 +3693,7 @@ export class ActivityService {
       consequence: [
         () => {
           this.characterService.characterState.status.stamina.value -= 100000;
+          // TODO: fix this
           const value = this.inventoryService.consume('corruptionGem');
           if (value > 0) {
             // TODO: add more flavors of gems

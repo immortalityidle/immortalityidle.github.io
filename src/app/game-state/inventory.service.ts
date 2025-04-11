@@ -1887,9 +1887,8 @@ export class InventoryService {
     if (potion.effect) {
       effect = potion.effect;
     }
-    // TODO: make the type checking on the string conversion right
-    // @ts-ignore
-    this.characterService.characterState.status[effect].value += (potion.increaseAmount || 1) * quantity;
+    const statusKey = effect as StatusType;
+    this.characterService.characterState.status[statusKey].value += (potion.increaseAmount || 1) * quantity;
     this.characterService.characterState.checkOverage();
   }
 
@@ -1912,9 +1911,8 @@ export class InventoryService {
       if (pill.effect) {
         effect = pill.effect;
       }
-      // TODO: make the type checking on the string conversion right
-      // @ts-ignore
-      this.characterService.characterState.attributes[effect].value += (pill.increaseAmount || 1) * quantity;
+      const attributeKey = effect as AttributeType;
+      this.characterService.characterState.attributes[attributeKey].value += (pill.increaseAmount || 1) * quantity;
     }
     this.characterService.characterState.checkOverage();
   }

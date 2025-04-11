@@ -34,6 +34,14 @@
           }
         }
         <br>
+        @for (statusEffect of battleService.statusEffects; track statusEffect.name + statusEffect.ticksLeft) {
+          <div class="techniqueLine" tooltip="{{statusEffect.description}}">
+            <div class="techniqueName">
+              <span>{{statusEffect.name}} {{statusEffect.ticksLeft}}</span>
+            </div>
+          </div>
+        }
+        <br>
         @if (battleService.enemies.length > 0){
           <div>
             <button (click)="battleService.flee()">Flee Like A Coward</button>
@@ -86,6 +94,13 @@
                     </div>
                 </div>
               }
+              @for (statusEffect of enemy.statusEffects; track statusEffect.name + statusEffect.ticksLeft) {
+                <div class="techniqueLine" tooltip="{{statusEffect.description}}">
+                  <div class="techniqueName">
+                    <span>{{statusEffect.name}} {{statusEffect.ticksLeft}}</span>
+                  </div>
+                </div>
+              }              
             </div>
             <div class="splitDiv">
               @if (enemy.imageFile) {
