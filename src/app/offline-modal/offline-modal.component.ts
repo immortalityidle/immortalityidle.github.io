@@ -9,5 +9,5 @@ import { BigNumberPipe } from '../pipes';
   imports: [forwardRef(() => BigNumberPipe)],
 })
 export class OfflineModalComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { earnedTicks: number }) {}
+  constructor(@Inject(MAT_DIALOG_DATA) protected data: { earnedTicks: number }) {}
 }

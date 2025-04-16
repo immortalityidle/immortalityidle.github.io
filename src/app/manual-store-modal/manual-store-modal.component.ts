@@ -25,22 +25,13 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class ManualStoreModalComponent {
-  character: Character;
-  buyDisabled = true;
+  protected buyDisabled = true;
 
-  constructor(
-    public storeService: StoreService,
-    public characterService: CharacterService,
-    public homeService: HomeService,
-    public inventoryService: InventoryService,
-    public itemRepoService: ItemRepoService,
-    public gameStateService: GameStateService
-  ) {
-    this.character = characterService.characterState;
+  constructor(protected storeService: StoreService) {
     storeService.storeOpened = true;
   }
 
-  slotClicked(item: Item) {
+  protected slotClicked(item: Item) {
     if (this.storeService.selectedItem === item) {
       this.storeService.selectedItem = null;
       this.buyDisabled = true;

@@ -1,7 +1,4 @@
 import { Component, forwardRef } from '@angular/core';
-import { CharacterService } from '../game-state/character.service';
-import { GameStateService } from '../game-state/game-state.service';
-import { HomeService } from '../game-state/home.service';
 import { FarmService } from '../game-state/farm.service';
 import { MatIcon } from '@angular/material/icon';
 import { PercentPipe, TitleCasePipe } from '@angular/common';
@@ -21,24 +18,19 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class FarmPanelComponent {
-  constructor(
-    public homeService: HomeService,
-    public farmService: FarmService,
-    private characterService: CharacterService,
-    public gameStateService: GameStateService
-  ) {}
+  constructor(protected farmService: FarmService) {}
 
-  addFieldClicked(event: MouseEvent): void {
+  protected addFieldClicked(event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.farmService.addField();
   }
 
-  removeFieldClicked(event: MouseEvent, fieldIndex: number) {
+  protected removeFieldClicked(event: MouseEvent, fieldIndex: number) {
     this.farmService.removeField(fieldIndex);
   }
 
-  addPlotToFieldClicked(event: MouseEvent, fieldIndex: number) {
+  protected addPlotToFieldClicked(event: MouseEvent, fieldIndex: number) {
     event.preventDefault();
     event.stopPropagation();
     let quantity = 1;
@@ -53,7 +45,7 @@ export class FarmPanelComponent {
     this.farmService.assignFallowPlots(fieldIndex, quantity);
   }
 
-  removePlotFromFieldClicked(event: MouseEvent, fieldIndex: number) {
+  protected removePlotFromFieldClicked(event: MouseEvent, fieldIndex: number) {
     event.preventDefault();
     event.stopPropagation();
     let quantity = 1;
@@ -68,7 +60,7 @@ export class FarmPanelComponent {
     this.farmService.unassignPlots(fieldIndex, quantity);
   }
 
-  changeCropClicked(event: MouseEvent, fieldIndex: number) {
+  protected changeCropClicked(event: MouseEvent, fieldIndex: number) {
     this.farmService.changeCrop(fieldIndex);
   }
 }

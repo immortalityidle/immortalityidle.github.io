@@ -24,24 +24,9 @@ import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
   ],
 })
 export class PetsPanelComponent {
-  character: Character;
-  popupCounter = 0;
+  constructor(private dialog: MatDialog, protected followerService: FollowersService) {}
 
-  constructor(
-    public characterService: CharacterService,
-    public dialog: MatDialog,
-    public gameStateService: GameStateService,
-    public followerService: FollowersService
-  ) {
-    this.character = characterService.characterState;
-  }
-
-  // Preserve original property order
-  originalOrder = (): number => {
-    return 0;
-  };
-
-  followerOptionsClicked(): void {
+  protected followerOptionsClicked(): void {
     this.dialog.open(FollowerManagementPanelComponent, {
       width: '700px',
       data: { pets: true },
@@ -49,7 +34,7 @@ export class PetsPanelComponent {
     });
   }
 
-  dismissFollower(event: MouseEvent, follower: Follower) {
+  protected dismissFollower(event: MouseEvent, follower: Follower) {
     event.preventDefault();
     event.stopPropagation();
     if ((event.ctrlKey || event.metaKey) && this.followerService.autoDismissUnlocked) {

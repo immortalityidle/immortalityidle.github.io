@@ -18,13 +18,13 @@ import { CamelToTitlePipe } from '../pipes';
   ],
 })
 export class FollowerManagementPanelComponent {
-  changeAll = 0;
-  pets = false;
-  followerType = 'Follower';
-  followers: Follower[];
-  followerCap: number;
-  maxFollowerByType: { [key: string]: number };
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { pets: boolean }, public followerService: FollowersService) {
+  private changeAll = 0;
+  protected pets = false;
+  protected followerType: 'Follower' | 'Pet' = 'Follower';
+  protected followers: Follower[];
+  protected followerCap: number;
+  protected maxFollowerByType: { [key: string]: number };
+  constructor(@Inject(MAT_DIALOG_DATA) data: { pets: boolean }, protected followerService: FollowersService) {
     this.pets = data.pets;
     this.followers = followerService.followers;
     this.followerCap = followerService.followerCap;
@@ -37,7 +37,7 @@ export class FollowerManagementPanelComponent {
     }
   }
 
-  getTotalAssingments() {
+  protected getTotalAssingments() {
     let max = 0;
     for (const followerType in this.followerService.jobs) {
       if (
@@ -55,12 +55,12 @@ export class FollowerManagementPanelComponent {
     return max;
   }
 
-  changeAllChanged(event: Event) {
+  protected changeAllChanged(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.changeAll = parseInt(event.target.value);
   }
 
-  changeAllClicked() {
+  protected changeAllClicked() {
     for (const key in this.followerService.jobs) {
       if (this.pets && this.followerService.jobs[key].pet) {
         this.followerService.setMaxPets(key, this.changeAll);
@@ -70,7 +70,7 @@ export class FollowerManagementPanelComponent {
     }
   }
 
-  keepValueChanged(event: Event, job: string) {
+  protected keepValueChanged(event: Event, job: string) {
     if (!(event.target instanceof HTMLInputElement)) return;
     if (this.pets) {
       this.followerService.setMaxPets(job, parseInt(event.target.value));
@@ -79,17 +79,17 @@ export class FollowerManagementPanelComponent {
     }
   }
 
-  sortAscSwitch() {
+  protected sortAscSwitch() {
     this.followerService.sortAscending = !this.followerService.sortAscending;
   }
 
-  sortOrderChanged(event: Event) {
+  protected sortOrderChanged(event: Event) {
     if (!(event.target instanceof HTMLSelectElement)) return;
     this.followerService.sortField = event.target.value;
     this.followerService.sortFollowers(this.followerService.sortAscending, this.pets);
   }
 
-  dismissAllClicked() {
+  protected dismissAllClicked() {
     this.followerService.dismissAllFollowers(undefined, this.pets);
   }
 }

@@ -2,9 +2,6 @@ import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
 import { BattleService, Technique } from '../game-state/battle.service';
-import { CharacterService } from '../game-state/character.service';
-import { GameStateService } from '../game-state/game-state.service';
-import { MainLoopService } from '../game-state/main-loop.service';
 import { MatIcon } from '@angular/material/icon';
 import { TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
@@ -22,20 +19,11 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class BattlePanelComponent {
-  Math: Math;
+  protected Math = Math;
 
-  constructor(
-    public battleService: BattleService,
-    public characterService: CharacterService,
-    public gameStateService: GameStateService,
-    public mainLoopService: MainLoopService,
-    public dialog: MatDialog
-  ) {
-    this.Math = Math;
-    // only update the picture for the enemy every long tick for performance
-  }
+  constructor(protected battleService: BattleService, private dialog: MatDialog) {}
 
-  battleOptions() {
+  protected battleOptions() {
     this.dialog.open(BattleOptionsPanelComponent, {
       width: '700px',
       data: { someField: 'foo' },
@@ -43,7 +31,7 @@ export class BattlePanelComponent {
     });
   }
 
-  techniqueEnableChange(event: Event, technique: Technique) {
+  protected techniqueEnableChange(event: Event, technique: Technique) {
     if (!(event.target instanceof HTMLInputElement)) return;
     technique.disabled = !event.target.checked;
   }

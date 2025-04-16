@@ -88,52 +88,52 @@ export interface StatusEffect {
   providedIn: 'root',
 })
 export class BattleService {
-  bigNumberPipe: BigNumberPipe;
-  hellService?: HellService;
-  locationService?: LocationService;
+  private bigNumberPipe: BigNumberPipe;
+  private hellService?: HellService;
+  private locationService?: LocationService;
   enemies: Enemy[];
   currentEnemy: Enemy | null;
   kills: number;
   godSlayerKills: number;
   autoTroubleUnlocked = false;
-  yearlyMonsterDay: number;
+  private yearlyMonsterDay: number;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
   totalKills = 0;
-  skipEnemyAttack = 0;
+  private skipEnemyAttack = 0;
   godSlayersUnlocked = false;
   godSlayersEnabled = false;
   totalEnemies = 0;
-  troubleCounter = 0;
+  private troubleCounter = 0;
   battleMessageDismissed = false;
-  techniqueDevelopmentCounter = 0;
+  private techniqueDevelopmentCounter = 0;
   maxFamilyTechniques = 0;
   statusEffects: StatusEffect[] = [];
 
-  rightHandTechniqueName = 'Right-Handed Weapon';
-  leftHandTechniqueName = 'Left-Handed Weapon';
-  qiAttackName = 'Qi Strike';
-  pyroclasmAttackName = 'Pyroclasm';
-  metalFistName = 'Metal Fist';
-  qiShieldName = 'Qi Shield';
-  fireShieldName = 'Fire Shield';
-  iceShieldName = 'Ice Shield';
+  private rightHandTechniqueName = 'Right-Handed Weapon';
+  private leftHandTechniqueName = 'Left-Handed Weapon';
+  private qiAttackName = 'Qi Strike';
+  private pyroclasmAttackName = 'Pyroclasm';
+  private metalFistName = 'Metal Fist';
+  private qiShieldName = 'Qi Shield';
+  private fireShieldName = 'Fire Shield';
+  private iceShieldName = 'Ice Shield';
 
-  fireElementEffectName = 'Fire Essence';
-  earthElementEffectName = 'Earth Essence';
-  metalElementEffectName = 'Metal Essence';
-  woodElementEffectName = 'Wood Essence';
-  waterElementEffectName = 'Water Essence';
-  corruptionEffectName = 'Corruption';
-  lifeEffectName = 'Life';
-  poisonEffectName = 'Poison';
-  doomEffectName = 'Doom';
-  explosiveEffectName = 'Explosions';
-  shieldingEffectName = 'Shielding';
-  piercingEffectName = 'Piercing';
-  hasteEffectName = 'Haste';
-  slowingEffectName = 'Slowing';
-  elementalFactor = 2;
+  private fireElementEffectName = 'Fire Essence';
+  private earthElementEffectName = 'Earth Essence';
+  private metalElementEffectName = 'Metal Essence';
+  private woodElementEffectName = 'Wood Essence';
+  private waterElementEffectName = 'Water Essence';
+  private corruptionEffectName = 'Corruption';
+  private lifeEffectName = 'Life';
+  private poisonEffectName = 'Poison';
+  private doomEffectName = 'Doom';
+  private explosiveEffectName = 'Explosions';
+  private shieldingEffectName = 'Shielding';
+  private piercingEffectName = 'Piercing';
+  private hasteEffectName = 'Haste';
+  private slowingEffectName = 'Slowing';
+  private elementalFactor = 2;
   // elemental logic:
   // fire weakens metal and burns wood
   // wood absorbs water and rootbinds earth
@@ -267,7 +267,7 @@ export class BattleService {
     });
   }
 
-  reset() {
+  private reset() {
     this.clearEnemies();
     this.kills = 0;
     this.godSlayerKills = 0;
@@ -326,7 +326,7 @@ export class BattleService {
     }
   }
 
-  developNewTechnique() {
+  private developNewTechnique() {
     const prefixAdjectiveList = [
       'Northern',
       'Southern',
@@ -580,7 +580,7 @@ export class BattleService {
     });
   }
 
-  handleEnemyTechniques() {
+  private handleEnemyTechniques() {
     for (const enemy of this.enemies) {
       let slowingEffect = undefined;
       if (enemy.statusEffects) {
@@ -610,7 +610,7 @@ export class BattleService {
     }
   }
 
-  enemyAttack(technique: Technique) {
+  private enemyAttack(technique: Technique) {
     if (this.skipEnemyAttack > 0) {
       this.skipEnemyAttack--;
       return;
@@ -668,7 +668,7 @@ export class BattleService {
     this.attackEffect(technique);
   }
 
-  handleYourTechniques() {
+  private handleYourTechniques() {
     if (this.enemies.length <= 0) {
       return;
     }
@@ -712,7 +712,7 @@ export class BattleService {
     }
   }
 
-  youAttack(technique: Technique) {
+  private youAttack(technique: Technique) {
     if (!this.currentEnemy) {
       return;
     }
@@ -991,7 +991,7 @@ export class BattleService {
     }
   }
 
-  damageEnemy(damage: number, customMessage = ''): number {
+  private damageEnemy(damage: number, customMessage = ''): number {
     if (!this.currentEnemy) {
       return 0;
     }
@@ -1011,7 +1011,7 @@ export class BattleService {
     }
   }
 
-  killCurrentEnemy() {
+  private killCurrentEnemy() {
     if (!this.currentEnemy) {
       return;
     }
@@ -1183,7 +1183,7 @@ export class BattleService {
     });
   }
 
-  addMouse() {
+  private addMouse() {
     this.addEnemy({
       name: 'a gang of nasty mice',
       baseName: 'mouse',
@@ -1203,7 +1203,7 @@ export class BattleService {
     });
   }
 
-  addRuffian() {
+  private addRuffian() {
     this.addEnemy({
       name: 'a ruffian',
       baseName: 'ruffian',
@@ -1224,7 +1224,7 @@ export class BattleService {
     });
   }
 
-  addWolf() {
+  private addWolf() {
     this.addEnemy({
       name: 'a hungry wolf',
       baseName: 'wolf',
@@ -1285,7 +1285,7 @@ export class BattleService {
     });
   }
 
-  defeatEffect(enemy: Enemy) {
+  private defeatEffect(enemy: Enemy) {
     if (!enemy.defeatEffect) {
       return;
     }
@@ -1315,7 +1315,7 @@ export class BattleService {
     }
   }
 
-  attackEffect(technique: Technique) {
+  private attackEffect(technique: Technique) {
     if (!technique.effect) {
       return;
     }
@@ -1337,7 +1337,7 @@ export class BattleService {
     }
   }
 
-  monsterTypes: EnemyTypes[] = [
+  private monsterTypes: EnemyTypes[] = [
     {
       name: 'spider',
       description: '',
@@ -1907,7 +1907,7 @@ export class BattleService {
     },
   ];
 
-  monsterQualities = [
+  private monsterQualities = [
     'an infant',
     'a puny',
     'a tiny',

@@ -121,7 +121,7 @@ export class Character {
     private logService: LogService,
     private camelToTitlePipe: CamelToTitlePipe,
     private bigNumberPipe: BigNumberPipe,
-    public mainLoopService: MainLoopService,
+    mainLoopService: MainLoopService,
     private dialog: MatDialog
   ) {
     mainLoopService.frameSubject.subscribe(() => {
