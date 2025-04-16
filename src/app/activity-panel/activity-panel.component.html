@@ -5,7 +5,7 @@
   <div class="customHeader">
     @if (characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god) {
       <span>
-        <button (click)="JoinTheGodsClick()">Join the Gods</button>
+        <button (click)="joinTheGodsClick()">Join the Gods</button>
       </span>
     }
     @if (hellService.inHell && hellService.currentHell >= 0 && !hellService.completedHellTasks.includes(hellService.currentHell)) {

@@ -1,10 +1,8 @@
 import { Component, forwardRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { trigger, state, style, transition, animate, keyframes, AnimationEvent } from '@angular/animations';
-import { Character, AttributeType } from '../game-state/character';
+import { AttributeType } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
-import { GameStateService } from '../game-state/game-state.service';
 import { MatIcon } from '@angular/material/icon';
 import { KeyValuePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
@@ -38,33 +36,27 @@ export type AttributeUpdatesArrays = {
   ],
 })
 export class AttributesPanelComponent {
-  character: Character;
-  popupCounter = 0;
+  protected character = this.characterService.characterState;
+  private attributeUpdates: AttributeUpdatesArrays = {
+    strength: [],
+    toughness: [],
+    speed: [],
+    intelligence: [],
+    charisma: [],
+    spirituality: [],
+    earthLore: [],
+    metalLore: [],
+    woodLore: [],
+    waterLore: [],
+    fireLore: [],
+    animalHandling: [],
+    combatMastery: [],
+    magicMastery: [],
+  };
 
-  constructor(
-    public characterService: CharacterService,
-    public dialog: MatDialog,
-    public gameStateService: GameStateService,
-    public mainLoopService: MainLoopService
-  ) {
-    this.character = characterService.characterState;
-    this.attributeUpdates = {
-      strength: [],
-      toughness: [],
-      speed: [],
-      intelligence: [],
-      charisma: [],
-      spirituality: [],
-      earthLore: [],
-      metalLore: [],
-      woodLore: [],
-      waterLore: [],
-      fireLore: [],
-      animalHandling: [],
-      combatMastery: [],
-      magicMastery: [],
-    };
+  private popupCounter = 0;
 
+  constructor(private characterService: CharacterService, private mainLoopService: MainLoopService) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       if (this.popupCounter < 1) {
         this.popupCounter++;
@@ -81,21 +73,19 @@ export class AttributesPanelComponent {
     });
   }
 
-  attributeUpdates: AttributeUpdatesArrays;
-
   // Preserve original property order
-  originalOrder = (): number => {
+  protected originalOrder = (): number => {
     return 0;
   };
 
-  animationDoneEvent(event: AnimationEvent, key: string) {
+  protected animationDoneEvent(event: AnimationEvent, key: string) {
     const attributeType = key as AttributeType;
     while (this.attributeUpdates[attributeType].length > 0) {
       this.attributeUpdates[attributeType].pop();
     }
   }
 
-  getAttributeUpdates(key: string): number[] {
+  protected getAttributeUpdates(key: string): number[] {
     const attributeType = key as AttributeType;
     return this.attributeUpdates[attributeType];
   }
