@@ -9,8 +9,8 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-store-modal',
@@ -25,22 +25,13 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   ],
 })
 export class ManualStoreModalComponent {
-  character: Character;
-  buyDisabled = true;
+  protected buyDisabled = true;
 
-  constructor(
-    public storeService: StoreService,
-    public characterService: CharacterService,
-    public homeService: HomeService,
-    public inventoryService: InventoryService,
-    public itemRepoService: ItemRepoService,
-    public gameStateService: GameStateService
-  ) {
-    this.character = characterService.characterState;
+  constructor(protected storeService: StoreService) {
     storeService.storeOpened = true;
   }
 
-  slotClicked(item: Item) {
+  protected slotClicked(item: Item) {
     if (this.storeService.selectedItem === item) {
       this.storeService.selectedItem = null;
       this.buyDisabled = true;

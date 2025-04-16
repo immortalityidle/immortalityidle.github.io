@@ -6,9 +6,9 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { CharacterService } from '../game-state/character.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-store-modal',

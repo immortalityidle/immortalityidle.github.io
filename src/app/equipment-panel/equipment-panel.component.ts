@@ -6,8 +6,8 @@ import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-equipment-panel',
@@ -24,19 +24,17 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   ],
 })
 export class EquipmentPanelComponent {
-  character: Character;
-  dragPositionX = 0;
-  dragPositionY = 0;
+  protected character = this.characterService.characterState;
+  private dragPositionX = 0;
+  private dragPositionY = 0;
 
   constructor(
     private characterService: CharacterService,
-    public inventoryService: InventoryService,
-    public gameStateService: GameStateService
-  ) {
-    this.character = characterService.characterState;
-  }
+    private inventoryService: InventoryService,
+    private gameStateService: GameStateService
+  ) {}
 
-  slotDoubleClicked(slot: EquipmentPosition, event: MouseEvent): void {
+  protected slotDoubleClicked(slot: EquipmentPosition, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
     const item = this.characterService.characterState.equipment[slot];
@@ -48,7 +46,7 @@ export class EquipmentPanelComponent {
     }
   }
 
-  pouchDoubleClicked(index: number, event: MouseEvent): void {
+  protected pouchDoubleClicked(index: number, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
     const pouchItemStack = this.characterService.characterState.itemPouches[index];
@@ -60,7 +58,7 @@ export class EquipmentPanelComponent {
     }
   }
 
-  getSelectedItemSlot() {
+  protected getSelectedItemSlot() {
     const item = this.inventoryService.selectedItem?.item;
     if (!item || !instanceOfEquipment(item)) {
       return null;
@@ -68,21 +66,21 @@ export class EquipmentPanelComponent {
     return item?.slot;
   }
 
-  dragStart() {
+  protected dragStart() {
     this.gameStateService.dragging = true;
   }
 
-  dragEnd() {
+  protected dragEnd() {
     this.gameStateService.dragging = false;
   }
 
-  dragMoved(event: CdkDragMove) {
+  protected dragMoved(event: CdkDragMove) {
     this.dragPositionX = event.pointerPosition.x;
     this.dragPositionY = event.pointerPosition.y;
   }
 
   // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
-  dragReleased(event: CdkDragRelease) {
+  protected dragReleased(event: CdkDragRelease) {
     let x: number;
     let y: number;
     if (event.event instanceof MouseEvent) {
@@ -150,7 +148,7 @@ export class EquipmentPanelComponent {
     }
   }
 
-  getEffectClass(slot: string): string {
+  protected getEffectClass(slot: string): string {
     let effect;
     if (slot === 'leftHand' || slot === 'rightHand') {
       effect = this.character.equipment[slot]?.weaponStats?.effect;

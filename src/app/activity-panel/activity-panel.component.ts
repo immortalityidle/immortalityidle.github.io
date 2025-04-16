@@ -3,15 +3,12 @@ import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { Activity, ActivityType } from '../game-state/activity';
-import { Character } from '../game-state/character';
 import { HellService } from '../game-state/hell.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { JoinTheGodsText } from '../game-state/textResources';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
-import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
-import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
@@ -19,6 +16,7 @@ import { BattleService } from '../game-state/battle.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 
 @Component({
   selector: 'app-activity-panel',
@@ -34,31 +32,26 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   ],
 })
 export class ActivityPanelComponent {
-  camelToTitle = new CamelToTitlePipe();
-  character: Character;
-  Math: Math;
-  dragPositionX = 0;
-  dragPositionY = 0;
+  private camelToTitle = new CamelToTitlePipe();
+  protected Math = Math;
+  private dragPositionX = 0;
+  private dragPositionY = 0;
 
   constructor(
-    public gameStateService: GameStateService,
-    public activityService: ActivityService,
-    public characterService: CharacterService,
-    public hellService: HellService,
+    private gameStateService: GameStateService,
+    protected activityService: ActivityService,
+    protected characterService: CharacterService,
+    protected hellService: HellService,
     private inventoryService: InventoryService,
     private followerService: FollowersService,
-    public impossibleTaskService: ImpossibleTaskService,
-    public dialog: MatDialog,
+    private dialog: MatDialog,
     private bigNumberPipe: BigNumberPipe,
-    public mainLoopService: MainLoopService,
+    protected mainLoopService: MainLoopService,
     private logService: LogService,
-    public battleService: BattleService
-  ) {
-    this.Math = Math;
-    this.character = characterService.characterState;
-  }
+    protected battleService: BattleService
+  ) {}
 
-  JoinTheGodsClick() {
+  protected joinTheGodsClick() {
     if (
       !confirm(
         'Are you sure you are ready for this? You will need to leave all your money and most of your followers and possessions behind as you leave this mortal realm.'
@@ -80,7 +73,7 @@ export class ActivityPanelComponent {
     });
   }
 
-  scheduleActivity(activity: Activity, event: MouseEvent): void {
+  protected scheduleActivity(activity: Activity, event: MouseEvent): void {
     event.stopPropagation();
 
     if (activity.projectionOnly) {
@@ -107,7 +100,7 @@ export class ActivityPanelComponent {
     }
   }
 
-  doActivity(activity: Activity) {
+  protected doActivity(activity: Activity) {
     if (this.battleService.enemies.length > 0) {
       // in a battle, bail out
       return;
@@ -131,27 +124,27 @@ export class ActivityPanelComponent {
     this.activityService.immediateActivity = null;
   }
 
-  rightClick(activity: Activity, event: MouseEvent) {
+  protected rightClick(activity: Activity, event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.activityService.spiritActivity = activity.activityType;
   }
 
-  dragStart() {
+  protected dragStart() {
     this.gameStateService.dragging = true;
   }
 
-  dragEnd() {
+  protected dragEnd() {
     this.gameStateService.dragging = false;
   }
 
-  dragMoved(event: CdkDragMove) {
+  protected dragMoved(event: CdkDragMove) {
     this.dragPositionX = event.pointerPosition.x;
     this.dragPositionY = event.pointerPosition.y;
   }
 
   // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
-  dragReleased(event: CdkDragRelease) {
+  protected dragReleased(event: CdkDragRelease) {
     event.event.preventDefault();
     event.event.stopPropagation();
 
@@ -201,11 +194,11 @@ export class ActivityPanelComponent {
     }
   }
 
-  hellBoss() {
+  protected hellBoss() {
     this.hellService.fightHellBoss();
   }
 
-  getActivityTooltip(activity: Activity, doNow = false) {
+  protected getActivityTooltip(activity: Activity, doNow = false) {
     if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell) {
       return '';
     } else if (activity.unlocked) {
@@ -243,7 +236,7 @@ export class ActivityPanelComponent {
     }
   }
 
-  showActivity(event: MouseEvent, activity: Activity) {
+  protected showActivity(event: MouseEvent, activity: Activity) {
     event.stopPropagation();
     let bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
     bodyString += this.activityService.getYinYangDescription(activity.yinYangEffect[activity.level]);

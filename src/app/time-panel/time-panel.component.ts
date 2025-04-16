@@ -11,8 +11,8 @@ import { BattleService } from '../game-state/battle.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass, DecimalPipe } from '@angular/common';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-time-panel',

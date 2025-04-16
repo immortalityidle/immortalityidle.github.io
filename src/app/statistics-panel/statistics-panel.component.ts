@@ -12,7 +12,7 @@ import { StoreService } from '../game-state/store.service';
 import { ActivityType } from '../game-state/activity';
 import { FarmService } from '../game-state/farm.service';
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
-import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
+import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-statistics-panel',

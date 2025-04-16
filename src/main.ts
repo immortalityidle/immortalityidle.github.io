@@ -1,7 +1,7 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { environment } from './environments/environment';
 import { TitleCasePipe, CommonModule } from '@angular/common';
-import { BigNumberPipe, AppComponent } from './app/app.component';
+import { AppComponent } from './app/app.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { AppRoutingModule } from './app/app-routing.module';
@@ -12,6 +12,7 @@ import { KtdGridModule } from '@katoid/angular-grid-layout';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { BigNumberPipe } from './app/pipes';
 
 const materialModules = [MatDialogModule, MatIconModule, MatTabsModule];
 

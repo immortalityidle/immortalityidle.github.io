@@ -4,24 +4,23 @@ import { MainLoopService } from './main-loop.service';
 import { Character, AttributeType } from './character';
 import { ActivityService } from './activity.service';
 import { Subscription } from 'rxjs';
-import { BigNumberPipe } from '../app.component';
 import { HellLevel, HellService } from './hell.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { CamelToTitlePipe } from '../app.component';
+import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CharacterService {
-  camelToTitlePipe = new CamelToTitlePipe();
-  bigNumberPipe: BigNumberPipe;
-  activityService?: ActivityService;
+  private camelToTitlePipe = new CamelToTitlePipe();
+  private bigNumberPipe: BigNumberPipe;
+  private activityService?: ActivityService;
   characterState: Character;
   forceRebirth = false;
   fatherGift = false;
   lifespanTooltip = '';
-  hellService?: HellService;
+  private hellService?: HellService;
   private snackBar: MatSnackBar;
   private snackBarObservable?: Subscription;
 
@@ -29,7 +28,7 @@ export class CharacterService {
     private injector: Injector,
     private mainLoopService: MainLoopService,
     private logService: LogService,
-    public dialog: MatDialog
+    dialog: MatDialog
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     this.snackBar = this.injector.get(MatSnackBar);
@@ -176,13 +175,13 @@ export class CharacterService {
     return false;
   }
 
-  formatAge(): string {
+  private formatAge(): string {
     const years = Math.floor(this.characterState.age / 365);
     const days = this.characterState.age % 365;
     return years + ' years, ' + days + ' days';
   }
 
-  setLifespanTooltip() {
+  private setLifespanTooltip() {
     if (
       this.characterState.foodLifespan +
         this.characterState.alchemyLifespan +
@@ -229,7 +228,7 @@ export class CharacterService {
     }
   }
 
-  resetAptitudes() {
+  private resetAptitudes() {
     const keys = Object.keys(this.characterState.attributes) as AttributeType[];
     for (const key in keys) {
       const attribute = this.characterState.attributes[keys[key]];

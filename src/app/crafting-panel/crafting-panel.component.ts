@@ -1,10 +1,6 @@
 import { Component, forwardRef } from '@angular/core';
-import { Character } from '../game-state/character';
-import { CharacterService } from '../game-state/character.service';
 import { HomeService, Workstation } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
-import { FollowersService } from '../game-state/followers.service';
-import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { TitleCasePipe, NgClass } from '@angular/common';
@@ -14,6 +10,7 @@ import { WorkstationSelectionModalComponent } from '../workstation-selection-mod
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CraftingOptionsModalComponent } from '../crafting-options-modal/crafting-options-modal.component';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-crafting-panel',
@@ -30,25 +27,20 @@ import { CraftingOptionsModalComponent } from '../crafting-options-modal/craftin
   ],
 })
 export class CraftingPanelComponent {
-  character: Character;
-  Math: Math;
-  dragPositionX = 0;
-  dragPositionY = 0;
+  protected Math = Math;
+
+  private dragPositionX = 0;
+  private dragPositionY = 0;
 
   constructor(
-    public characterService: CharacterService,
-    public homeService: HomeService,
-    public followerService: FollowersService,
-    public hellService: HellService,
+    protected homeService: HomeService,
+    protected hellService: HellService,
     private inventoryService: InventoryService,
-    public dialog: MatDialog,
-    public gameStateService: GameStateService
-  ) {
-    this.character = characterService.characterState;
-    this.Math = Math;
-  }
+    private dialog: MatDialog,
+    private gameStateService: GameStateService
+  ) {}
 
-  craftingOptions() {
+  protected craftingOptions() {
     this.dialog.open(CraftingOptionsModalComponent, {
       width: '700px',
       data: { someField: 'foo' },
@@ -56,7 +48,7 @@ export class CraftingPanelComponent {
     });
   }
 
-  inputDoubleClicked(workstation: Workstation, inputSlot: number) {
+  protected inputDoubleClicked(workstation: Workstation, inputSlot: number) {
     const inputItem = workstation.inputs[inputSlot].item;
     if (inputItem) {
       if (workstation.inputs[inputSlot].quantity > 0) {
@@ -66,7 +58,7 @@ export class CraftingPanelComponent {
     }
   }
 
-  addWorkstation() {
+  protected addWorkstation() {
     this.dialog.open(WorkstationSelectionModalComponent, {
       width: '600px',
       data: { someField: 'foo' },
@@ -74,21 +66,21 @@ export class CraftingPanelComponent {
     });
   }
 
-  dragStart() {
+  protected dragStart() {
     this.gameStateService.dragging = true;
   }
 
-  dragEnd() {
+  protected dragEnd() {
     this.gameStateService.dragging = false;
   }
 
-  dragMoved(event: CdkDragMove) {
+  protected dragMoved(event: CdkDragMove) {
     this.dragPositionX = event.pointerPosition.x;
     this.dragPositionY = event.pointerPosition.y;
   }
 
   // this function feels super hacky and I kind of hate it, but it was the only way I could get the angular drag and drop stuff to do what I wanted
-  dragReleased(event: CdkDragRelease) {
+  protected dragReleased(event: CdkDragRelease) {
     let x: number;
     let y: number;
     if (event.event instanceof MouseEvent) {
