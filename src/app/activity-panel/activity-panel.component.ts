@@ -66,10 +66,11 @@ export class ActivityPanelComponent {
     });
     dialogRef.afterClosed().subscribe(() => {
       this.hellService.inHell = true;
+      this.hellService.moveToHell(-1);
       this.characterService.characterState.money = 0;
       this.inventoryService.stashInventory();
       this.followerService.hellPurge();
-      this.activityService.reloadActivities();
+      this.activityService.checkRequirements(true);
     });
   }
 

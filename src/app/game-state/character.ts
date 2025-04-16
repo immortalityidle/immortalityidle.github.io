@@ -738,14 +738,14 @@ export class Character {
   }
 
   checkOverage() {
-    if (this.healthBonusFood > 1900) {
-      this.healthBonusFood = 1900;
+    if (this.healthBonusFood > 19000) {
+      this.healthBonusFood = 19000;
     }
-    if (this.healthBonusBath > 8000) {
-      this.healthBonusBath = 8000;
+    if (this.healthBonusBath > 80000) {
+      this.healthBonusBath = 80000;
     }
-    let healthBonusMagicCap = 10000;
-    let healthBonusSoulCap = 20000;
+    let healthBonusMagicCap = 1000000;
+    let healthBonusSoulCap = 2000000;
     if (this.yinYangBoosted) {
       healthBonusMagicCap += 2 * this.yinYangBalance * healthBonusMagicCap;
       healthBonusSoulCap += 2 * this.yinYangBalance * healthBonusSoulCap;

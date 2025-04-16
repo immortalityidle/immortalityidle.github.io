@@ -243,7 +243,7 @@ export class CharacterService {
     if (!this.activityService) {
       this.activityService = this.injector.get(ActivityService);
     }
-    this.activityService.reloadActivities();
+    this.activityService.checkRequirements(true);
     this.forceRebirth = true;
     this.mainLoopService.tick();
   }

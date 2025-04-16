@@ -1428,7 +1428,6 @@ baguaMap = [
             ' lifetimes to claim your throne on Mount Penglai.'
         );
         this.characterService.characterState.god = true;
-        this.activityService.reloadActivities();
         this.gameStateService.unlockPanel('portalPanel');
       },
     },
@@ -1904,7 +1903,6 @@ baguaMap = [
           'The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.'
         );
         this.activityService.purifyGemsUnlocked = true;
-        this.activityService.reloadActivities();
       },
     },
     hellCrownFireMountain: {

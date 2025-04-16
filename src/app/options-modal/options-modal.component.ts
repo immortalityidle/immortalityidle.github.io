@@ -1,12 +1,12 @@
 import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivityService } from '../game-state/activity.service';
-import { AutoBuyerService, AutoBuyerSetting } from '../game-state/autoBuyer.service';
+import { AutoBuyerService } from '../game-state/autoBuyer.service';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { HomeService } from '../game-state/home.service';
-import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
+import { InventoryService } from '../game-state/inventory.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { environment } from '../../environments/environment';
 import { FarmService } from '../game-state/farm.service';
@@ -67,7 +67,6 @@ export class OptionsModalComponent {
         }
       }
       this.characterService.characterState.easyMode = true;
-      this.activityService.reloadActivities();
     }
   }
 

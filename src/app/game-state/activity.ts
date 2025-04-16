@@ -104,9 +104,11 @@ export interface Activity {
   discovered?: boolean;
   skipApprenticeshipLevel: number;
   lastIncome?: number;
-  resourceUse?: ActivityResource[];
+  resourceUse: ActivityResource[];
   projectionOnly?: boolean;
   portal?: boolean;
+  impossibleTaskIndex?: number;
+  hells?: number[];
 }
 
 export interface ActivityLoopEntry {

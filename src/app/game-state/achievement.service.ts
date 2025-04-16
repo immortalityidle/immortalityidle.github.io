@@ -1001,7 +1001,7 @@ export class AchievementService {
           this.characterService.characterState.status.qi.max = 1;
           this.characterService.characterState.status.qi.value = 1;
         }
-        this.activityService.reloadActivities();
+        this.activityService.checkRequirements(true);
       },
       unlocked: false,
     },
@@ -1258,7 +1258,7 @@ export class AchievementService {
         return this.characterService.characterState.immortal;
       },
       effect: () => {
-        this.activityService.reloadActivities();
+        this.activityService.checkRequirements(true);
       },
       unlocked: false,
     },

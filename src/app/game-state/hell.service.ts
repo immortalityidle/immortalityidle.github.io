@@ -6,7 +6,7 @@ import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
 import { Activity, ActivityType, LocationType, YinYangEffect } from './activity';
 import { FollowersService } from './followers.service';
-import { Equipment, InventoryService, Item } from './inventory.service';
+import { InventoryService, Item } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 
 export enum HellLevel {
@@ -89,760 +89,6 @@ export class HellService {
   fasterHellMoney = false;
   burnedMoney = 0;
 
-  burnMoney = {
-    level: 0,
-    name: ['Burn Money'],
-    location: LocationType.Hell,
-    activityType: ActivityType.BurnMoney,
-    description: ['Burn mortal realm money to receive hell money.'],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you some hell money.'],
-    consequence: [
-      () => {
-        if (this.characterService.characterState.money < 1e6) {
-          this.logService.log(
-            LogTopic.EVENT,
-            "You fail to burn the money that you don't have, and feel pretty dumb for trying."
-          );
-          return;
-        }
-        this.characterService.characterState.updateMoney(-1e6);
-        this.burnedMoney += 1e6;
-        if (this.fasterHellMoney) {
-          this.characterService.characterState.hellMoney += 10;
-        } else {
-          this.characterService.characterState.hellMoney++;
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 10,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  hellRecruiting = {
-    level: 0,
-    name: ['Recruiting the Damned'],
-    location: LocationType.Hell,
-    activityType: ActivityType.HellRecruiting,
-    description: ['Look for followers willing to help you.'],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100 Stamina and 1000 hell money. Gives you a small chance of finding a follower.'],
-    consequence: [
-      () => {
-        if (this.characterService.characterState.attributes.charisma.value < 1e6) {
-          this.logService.log(LogTopic.EVENT, 'You completely fail to catch the attention of any of the damned.');
-          return;
-        }
-        if (this.characterService.characterState.hellMoney < 1000) {
-          this.logService.injury(
-            LogTopic.EVENT,
-            "You don't have enough hell money. The damned souls around you team up with the demons to give you a beating."
-          );
-          this.characterService.characterState.status.health.value -=
-            this.characterService.characterState.status.health.max * 0.2;
-          if (this.characterService.characterState.status.health.value <= 0) {
-            this.beaten = true;
-          }
-          return;
-        }
-        this.characterService.characterState.status.stamina.value -= 100;
-        this.characterService.characterState.hellMoney -= 1000;
-        if (Math.random() < 0.01) {
-          this.followerService.generateFollower(false, 'damned');
-          this.logService.log(LogTopic.EVENT, 'Your recruiting efforts seem to infuriate the demons here.');
-        } else {
-          this.logService.log(
-            LogTopic.EVENT,
-            'You pass around some bribes but fail to find any interested followers today.'
-          );
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 100,
-      },
-    ],
-    requirements: [{}],
-    unlocked: false,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  rehabilitation = {
-    level: 0,
-    name: ['Rehabilitate Ruffian'],
-    location: LocationType.Hell,
-    activityType: ActivityType.Rehabilitation,
-    description: [
-      'You recognize a bunch of the ruffians here as people who used to beat and rob you in your past lives. Perhaps you can give them some some friendly rehabilitation. With your fists.',
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: [
-      'Uses 100 Stamina and 10 hell money as bait. Breaks a ruffian out of their basket and picks a fight with them.',
-    ],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 100;
-        this.battleService.addEnemy({
-          name: 'Ruffian',
-          baseName: 'deadruffian',
-          health: 100,
-          maxHealth: 100,
-          defense: 10,
-          defeatEffect: 'respawnDouble',
-          loot: [],
-          techniques: [
-            {
-              name: 'Attack',
-              ticks: 0,
-              ticksRequired: 10,
-              baseDamage: 10,
-              unlocked: true,
-            },
-          ],
-        });
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 100,
-      },
-    ],
-    requirements: [{}],
-    unlocked: false,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  honorAncestors = {
-    level: 0,
-    name: ['Honor Ancestors'],
-    location: LocationType.Hell,
-    activityType: ActivityType.HonorAncestors,
-    description: [
-      'You look around and realize that you have many family members and ancestors here. You should probably give them some credit for what they have done for you. And some money.',
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1 hell money.'],
-    consequence: [
-      () => {
-        if (this.characterService.characterState.hellMoney < 1) {
-          this.logService.log(
-            LogTopic.EVENT,
-            'Your ancestors are not impressed with your lack of financial offerings.'
-          );
-          return;
-        }
-        this.characterService.characterState.hellMoney--;
-        this.inventoryService.addItem(this.itemRepoService.items['tokenOfGratitude']);
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 10,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  copperMining = {
-    level: 0,
-    name: ['Copper Mining'],
-    location: LocationType.Hell,
-    activityType: ActivityType.CopperMining,
-    description: [
-      "The copper pillars here look like they're made of a decent grade of copper. It looks like you have enough slack in your chains to turn and break off some pieces.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 stamina and produces one copper bar.'],
-    consequence: [
-      () => {
-        if (this.characterService.characterState.attributes.strength.value < 1e24) {
-          this.logService.log(LogTopic.EVENT, "You try to crack into the pillar, but you're not strong enough.");
-          return;
-        }
-        this.characterService.characterState.status.stamina.value -= 100000;
-        this.inventoryService.addItem(this.itemRepoService.items['copperBar']);
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 100000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  forgeHammer = {
-    level: 0,
-    name: ['Forge Hammer'],
-    location: LocationType.Hell,
-    activityType: ActivityType.ForgeHammer,
-    description: [
-      'Shape a bar of copper into a hammer using your bare hands. This would be so much easier with an anvil and tools.',
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 stamina and produces the worst hammer in the world.'],
-    consequence: [
-      () => {
-        if (this.characterService.characterState.attributes.strength.value < 1e24) {
-          this.logService.log(
-            LogTopic.EVENT,
-            'Your weak muscles flinch at the very thought of trying to mold metal by hand.'
-          );
-          return;
-        }
-        this.characterService.characterState.status.stamina.value -= 100000;
-        if (this.inventoryService.consume('metal', 1) > 0) {
-          const newHammer: Equipment = {
-            id: 'weapon',
-            imageFile: 'copperHammer',
-            name: 'Copper Hammer',
-            type: 'equipment',
-            slot: 'rightHand',
-            value: 1,
-            weaponStats: {
-              baseDamage: 1,
-              material: 'metal',
-              baseName: 'hammer',
-            },
-            description: 'A crude copper hammer.',
-          };
-          this.inventoryService.addItem(newHammer);
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 100000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  climbMountain = {
-    level: 0,
-    name: ['Climb the Mountain'],
-    location: LocationType.Hell,
-    activityType: ActivityType.ClimbMountain,
-    description: [
-      "Take another step up the mountain. The path before you seems exceptionally jagged. Maybe you shouldn't have killed so very many little spiders.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 stamina and works off some of that murderous karma you have built up.'],
-    consequence: [
-      () => {
-        if (
-          this.characterService.characterState.attributes.strength.value < 1e24 ||
-          this.characterService.characterState.attributes.toughness.value < 1e24
-        ) {
-          this.logService.log(
-            LogTopic.EVENT,
-            'Your legs give out before you can take a single step up the mountain. Maybe if you were stronger and tougher you could climb.'
-          );
-          return;
-        }
-        this.characterService.characterState.status.stamina.value -= 1000;
-        this.mountainSteps++;
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 1000,
-      },
-    ],
-    requirements: [
-      {
-        strength: 1e24,
-        toughness: 1e24,
-      },
-    ],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  attackClimbers = {
-    level: 0,
-    name: ['Attack Climbers'],
-    location: LocationType.Hell,
-    activityType: ActivityType.AttackClimbers,
-    description: [
-      "The murderers on this mountain look pretty distracted. It wouldn't be hard to knock them down to the bottom.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Knock a climber off the mountain.'],
-    consequence: [
-      () => {
-        this.mountainSteps = 0;
-      },
-    ],
-    resourceUse: [{}],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  meltMountain = {
-    level: 0,
-    name: ['Melt the Mountain'],
-    location: LocationType.Hell,
-    activityType: ActivityType.MeltMountain,
-    description: [
-      "The mountain is far to slippery climb. The only way you're getting to the top is to bring the top down to you.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Focus your connection to fire and melt that sucker down.'],
-    consequence: [
-      () => {
-        if (this.characterService.characterState.attributes.fireLore.value < 1e16) {
-          this.logService.log(LogTopic.EVENT, "Your connection to fire isn't nearly as strong as you thought it was.");
-          return;
-        }
-
-        const numberSpawned = Math.log10(this.characterService.characterState.attributes.fireLore.value);
-        for (let i = 0; i < numberSpawned; i++) {
-          this.battleService.addEnemy({
-            name: 'Ice Golem',
-            baseName: 'icegolem',
-            health: 1e15,
-            maxHealth: 1e15,
-            defense: 1e6,
-            loot: [this.itemRepoService.items['iceCore']],
-            techniques: [
-              {
-                name: 'Attack',
-                ticks: 0,
-                ticksRequired: 10,
-                baseDamage: 1e6,
-                unlocked: true,
-              },
-            ],
-          });
-        }
-      },
-    ],
-    resourceUse: [{}],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  freezeMountain = {
-    level: 0,
-    name: ['Rock the Lava'],
-    location: LocationType.Hell,
-    activityType: ActivityType.FreezeMountain,
-    description: ['Swimming in lava is less fun that it seemed like it would be.'],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Focus your connection to water and turn that lava back to stone.'],
-    consequence: [
-      () => {
-        if (this.characterService.characterState.attributes.waterLore.value < 1e16) {
-          this.logService.log(LogTopic.EVENT, "Your connection to water isn't nearly as strong as you thought it was.");
-          return;
-        }
-        const numberSpawned = Math.log10(this.characterService.characterState.attributes.waterLore.value);
-        for (let i = 0; i < numberSpawned; i++) {
-          this.battleService.addEnemy({
-            name: 'Lava Golem',
-            baseName: 'lavagolem',
-            health: 1e15,
-            maxHealth: 1e15,
-            defense: 1e6,
-            loot: [this.itemRepoService.items['fireCore']],
-            techniques: [
-              {
-                name: 'Attack',
-                ticks: 0,
-                ticksRequired: 10,
-                baseDamage: 1e6,
-                unlocked: true,
-              },
-            ],
-          });
-        }
-      },
-    ],
-    resourceUse: [{}],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  healAnimals = {
-    level: 0,
-    name: ['Heal Animals'],
-    location: LocationType.Hell,
-    activityType: ActivityType.HealAnimals,
-    description: [
-      'You notice that not all the animals here are frenzied killers. Some of them are sick, wounded, and miserable. You resolve to do what good you can here.',
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 10,000 Qi and 10,000 stamina. Heals an animal.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 10000;
-        this.characterService.characterState.status.qi.value -= 10000;
-        this.animalsHealed++;
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 10000,
-        qi: 10000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  liftBoulder = {
-    level: 0,
-    name: ['Lift the Boulder Higher'],
-    location: LocationType.Hell,
-    activityType: ActivityType.LiftBoulder,
-    description: ['The boulder is heavy, but you are strong. See how high you can lift it.'],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 stamina.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 100000;
-        this.boulderHeight++;
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 10000,
-        qi: 10000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  swim = {
-    level: 0,
-    name: ['Swim Deeper into the Blood'],
-    location: LocationType.Hell,
-    activityType: ActivityType.Swim,
-    description: ['Swim down further into the crimson depths.'],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 2000 Stamina. Reduce health by 1000.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 2000;
-        this.characterService.characterState.status.health.value -= 1000;
-        this.swimDepth++;
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 2000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  searchForExit = {
-    level: 0,
-    name: ['Search for the Exit'],
-    location: LocationType.Hell,
-    activityType: ActivityType.SearchForExit,
-    description: [
-      "The lost souls here are searching for a way out, and they can't seem to see the portal you came in on. You could help them search for the exit they're seeking.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 200,000 Stamina.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 200000;
-        // TODO: tune this
-        if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
-          this.logService.log(
-            LogTopic.EVENT,
-            'You stumble around completely lost like the rest of the souls here. If only you were smarter.'
-          );
-          return;
-        }
-        const threshold =
-          Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001;
-        if (Math.random() < threshold) {
-          this.exitFound = true;
-          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)) {
-            this.hells[HellLevel.WrongfulDead].activities.push(this.teachTheWay);
-            this.activityService.reloadActivities();
-          }
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 200000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  teachTheWay = {
-    level: 0,
-    name: ['Teach the Way to the Exit'],
-    location: LocationType.HellOfWrongfulDead,
-    activityType: ActivityType.TeachTheWay,
-    description: ['Teach the other damned souls here the way out.'],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 200,000 Stamina.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 200000;
-        // TODO: tune this
-        if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
-          this.logService.log(LogTopic.EVENT, 'The damned souls completely ignore your attempts at instruction.');
-          return;
-        }
-        const numberTaught = Math.floor(
-          Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24)
-        );
-        this.soulsEscaped += numberTaught;
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 200000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  interrogate = {
-    level: 0,
-    name: ['Interrogate the Damned'],
-    location: LocationType.Hell,
-    activityType: ActivityType.Interrogate,
-    description: [
-      'Find out where the tomb looters here hid their stolen treasures. You might be able to reverse some of the damage they have done.',
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 Stamina.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 1000;
-        if (this.characterService.characterState.attributes.charisma.value <= 1e24) {
-          this.logService.log(LogTopic.EVENT, 'The damned here completely ignore you attempts.');
-          return;
-        }
-        const threshold = Math.log10(this.characterService.characterState.attributes.charisma.value - 1e24) * 0.00001;
-        if (Math.random() < threshold) {
-          this.inventoryService.addItem(this.itemRepoService.items['treasureMap']);
-        } else {
-          this.logService.log(
-            LogTopic.EVENT,
-            'You almost talk a soul into telling you where their treasure is hidden.'
-          );
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 1000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  recoverTreasure = {
-    level: 0,
-    name: ['Recover a Treasure'],
-    location: LocationType.Hell,
-    activityType: ActivityType.RecoverTreasure,
-    description: [
-      "Recover a stolen relic. You'll need all your wits to find it even if you have one the sketchy maps the damned can provide.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 Stamina.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 1000;
-        if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
-          this.logService.log(
-            LogTopic.EVENT,
-            "The puzzle your best puzzling but can't figure out how to even start on this relic."
-          );
-          return;
-        }
-        const threshold =
-          Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001;
-        if (Math.random() < threshold) {
-          if (this.inventoryService.consume('treasureMap') > 0) {
-            this.inventoryService.addItem(this.itemRepoService.items['stolenRelic']);
-          }
-        } else {
-          this.logService.log(
-            LogTopic.EVENT,
-            "You think you're getting close to figuring out where this relic is. If only you were more clever."
-          );
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 1000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  replaceTreasure = {
-    level: 0,
-    name: ['Replace a Treasure'],
-    location: LocationType.Hell,
-    activityType: ActivityType.ReplaceTreasure,
-    description: [
-      "Return a stolen relic to the tomb where it came from. You'll need to be quick to avoid the tomb's traps.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 Stamina.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 1000;
-        if (this.characterService.characterState.attributes.speed.value <= 1e24) {
-          this.logService.log(LogTopic.EVENT, 'You are too slow to even attempt replacing a treasure.');
-          return;
-        }
-        const threshold = Math.log10(this.characterService.characterState.attributes.speed.value - 1e24) * 0.00001;
-        if (Math.random() < threshold) {
-          if (this.inventoryService.consume('stolenRelic') > 0) {
-            this.relicsReturned++;
-          }
-        } else {
-          this.logService.log(
-            LogTopic.EVENT,
-            'You make a good effort to run through the tomb, but you fail. Try harder!'
-          );
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 1000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  endureTheMill = {
-    level: 0,
-    name: ['Endure the Mill'],
-    location: LocationType.Hell,
-    activityType: ActivityType.Endure,
-    description: [
-      "Trapped under the millstone like this, there's not much you can do but endure the punishment. Fortunately, you probably never went out looking for tiny spiders to squash, right?",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 stamina. Try not to give up. You can do this!'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 1000;
-        // TODO: tune this
-        const damage = Math.max(100000 - this.characterService.characterState.attributes.toughness.value / 1e23, 100);
-        this.characterService.characterState.status.health.value -= damage;
-        if (this.characterService.characterState.status.health.value <= 0) {
-          this.beaten = true;
-        } else {
-          this.timesCrushed++;
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 1000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
-  examineContracts = {
-    level: 0,
-    name: ['Examine Contracts'],
-    location: LocationType.Hell,
-    activityType: ActivityType.ExamineContracts,
-    description: [
-      "As if the saw-weilding demons weren't bad enough, this place is a haven for fiendish bureaucrats. Huge piles of paper containing the contracts, covenants, bylaws, stipulations, regulations, and heretofor unspecified legal nonsense for this hell. Maybe if you go through them carefully, you can find a loophole to get yourself an audience with the boss.",
-    ],
-    yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 500,000 stamina because hellish legalese is so incredibly boring.'],
-    consequence: [
-      () => {
-        this.characterService.characterState.status.stamina.value -= 500000;
-        if (this.characterService.characterState.attributes.intelligence.value <= 1e24) {
-          this.logService.log(LogTopic.EVENT, "You can't even begin to read the complex contracts.");
-          return;
-        }
-        const threshold =
-          Math.log10(this.characterService.characterState.attributes.intelligence.value - 1e24) * 0.00001;
-        if (Math.random() < threshold) {
-          this.contractsExamined++;
-        } else {
-          this.logService.log(LogTopic.EVENT, 'You very nearly make out the meaning of the scrawled contract.');
-        }
-      },
-    ],
-    resourceUse: [
-      {
-        stamina: 500000,
-      },
-    ],
-    requirements: [{}],
-    unlocked: true,
-    discovered: true,
-    skipApprenticeshipLevel: 0,
-  };
-
   constructor(
     private injector: Injector,
     private logService: LogService,
@@ -871,11 +117,7 @@ export class HellService {
         );
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
-        if (hell.exitEffect) {
-          hell.exitEffect();
-        }
-        this.currentHell = -1;
-        this.activityService.reloadActivities();
+        this.moveToHell(-1);
       }
       if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()) {
         hell.completeEffect();
@@ -898,9 +140,15 @@ export class HellService {
         }
       }
       this.inHell = false;
-      this.currentHell = -1;
-      this.activityService.reloadActivities();
+      this.moveToHell(-1);
     }
+  }
+
+  moveToHell(hellIndex: number) {
+    this.currentHell = hellIndex;
+    this.activityService.checkRequirements(true);
+    // TODO: trigger hell entrance and exit effects
+    // TODO: also update allowed activities and all that
   }
 
   trouble() {
@@ -1430,7 +678,6 @@ export class HellService {
 
   setProperties(properties: HellProperties) {
     this.inHell = properties.inHell || false;
-    this.currentHell = properties.currentHell ?? -1;
     this.completedHellTasks = properties.completedHellTasks || [];
     this.completedHellBosses = properties.completedHellBosses || [];
     this.mountainSteps = properties.mountainSteps || 0;
@@ -1446,7 +693,7 @@ export class HellService {
     this.atonedKills = properties.atonedKills || 0;
     this.fasterHellMoney = properties.fasterHellMoney || false;
     this.burnedMoney = properties.burnedMoney || 0;
-    this.activityService.reloadActivities();
+    this.moveToHell(properties.currentHell ?? -1);
   }
 
   getActivityList() {
@@ -1477,38 +724,9 @@ export class HellService {
           newList.push(activity);
         }
       }
-      newList.push(this.flee());
+      newList.push(this.activityService.escapeHell);
     }
     return newList;
-  }
-
-  flee(): Activity {
-    return {
-      level: 0,
-      location: LocationType.Self,
-      name: ['Escape from this hell'],
-      activityType: ActivityType.EscapeHell,
-      description: ["Return to the gates of Lord Yama's realm."],
-      yinYangEffect: [YinYangEffect.None],
-      consequenceDescription: [''],
-      consequence: [
-        () => {
-          this.battleService.enemies = [];
-          this.battleService.currentEnemy = null;
-          const leavingHell = this.hells[this.currentHell];
-          if (leavingHell.exitEffect) {
-            leavingHell.exitEffect();
-          }
-          this.currentHell = -1;
-          this.activityService.reloadActivities();
-        },
-      ],
-      requirements: [{}],
-      unlocked: true,
-      discovered: true,
-      skipApprenticeshipLevel: 0,
-      portal: true,
-    };
   }
 
   setEnterHellsArray(newList: Activity[]) {
@@ -1542,92 +760,18 @@ export class HellService {
         consequenceDescription: [consequenceDescription],
         consequence: [
           () => {
-            this.currentHell = hell.index;
-            const newHell = this.hells[hell.index];
-            if (newHell.entryEffect) {
-              newHell.entryEffect();
-            }
-            this.activityService.reloadActivities();
+            this.moveToHell(hell.index);
           },
         ],
         requirements: [{}],
         unlocked: true,
         skipApprenticeshipLevel: 0,
+        resourceUse: [],
         portal: true,
       });
     }
     if (allComplete) {
-      newList.push({
-        level: 0,
-        name: ['Challenge Lord Yama'],
-        location: LocationType.Hell,
-        activityType: ActivityType.FinishHell,
-        description: [
-          "You've had enough of this place and learned everything these hells can teach you. Your karmic debt is paid. Challenge Lord Yama to prove you deserve your rightful place in the heavens.",
-        ],
-        yinYangEffect: [YinYangEffect.None],
-        consequenceDescription: [''],
-        consequence: [
-          () => {
-            if (this.battleService.enemies.length === 0) {
-              this.battleService.addEnemy({
-                name: 'Lord Yama',
-                baseName: 'Yama',
-                health: 1e40,
-                maxHealth: 1e40,
-                defense: 1e18,
-                loot: [this.itemRepoService.items['portalKey']],
-                techniques: [
-                  {
-                    name: 'Attack',
-                    ticks: 0,
-                    ticksRequired: 10,
-                    baseDamage: 1e14,
-                    unlocked: true,
-                  },
-                ],
-              });
-              this.battleService.addEnemy({
-                name: 'Horse Face',
-                baseName: 'HorseFace',
-                health: 1e39,
-                maxHealth: 1e39,
-                defense: 5e17,
-                loot: [],
-                techniques: [
-                  {
-                    name: 'Attack',
-                    ticks: 0,
-                    ticksRequired: 10,
-                    baseDamage: 5e13,
-                    unlocked: true,
-                  },
-                ],
-              });
-              this.battleService.addEnemy({
-                name: 'Ox Head',
-                baseName: 'OxHead',
-                health: 1e39,
-                maxHealth: 1e39,
-                defense: 5e17,
-                loot: [],
-                techniques: [
-                  {
-                    name: 'Attack',
-                    ticks: 0,
-                    ticksRequired: 10,
-                    baseDamage: 5e13,
-                    unlocked: true,
-                  },
-                ],
-              });
-            }
-          },
-        ],
-        requirements: [{}],
-        unlocked: true,
-        skipApprenticeshipLevel: 0,
-      });
+      newList.push(this.activityService.FinishHell);
     }
   }
 
@@ -1660,10 +804,10 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.hellRecruiting,
+        this.activityService.hellRecruiting,
         this.activityService.TrainingFollowers,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "It's hard to talk with all these demons going for your mouth, but maybe if you can get some help from the other prisoners here you could take control of this place.",
       progress: () => {
         let totalPower = 0;
@@ -1707,7 +851,7 @@ export class HellService {
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "These demons don't seem content to just take your fingers. You'd better get ready to defend yourself.",
       progress: () => {
         return this.inventoryService.getQuantityByName('fingers');
@@ -1748,9 +892,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.honorAncestors,
+        this.activityService.honorAncestors,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'Heal your family bonds.',
       progress: () => {
         return this.inventoryService.getQuantityByName('token of gratitude');
@@ -1789,7 +933,7 @@ export class HellService {
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'Master yourself. All by yourself.',
       progress: () => {
         return this.inventoryService.getQuantityByName('mirror shard');
@@ -1842,9 +986,9 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
-        this.rehabilitation,
+        this.activityService.rehabilitation,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'There so many ruffians here that deserve some payback from you. I wonder if you can take them all on.',
       progress: () => {
         return this.battleService.enemies.length;
@@ -1887,10 +1031,10 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.copperMining,
-        this.forgeHammer,
+        this.activityService.copperMining,
+        this.activityService.forgeHammer,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       progress: () => {
         return this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0;
@@ -1930,9 +1074,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.climbMountain,
+        this.activityService.climbMountain,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "It seems you've accrued a lot of karma from all the killing you've done over your many lives. The bill is due.",
       progress: () => {
         return this.mountainSteps;
@@ -1973,9 +1117,9 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
-        this.meltMountain,
+        this.activityService.meltMountain,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'Burn it down!',
       progress: () => {
         return this.inventoryService.getQuantityByName('ice core');
@@ -2037,7 +1181,7 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "You'd need to be incredibly resilient to survive this place.",
       progress: () => {
         return this.inventoryService.getQuantityByName('ice core');
@@ -2068,9 +1212,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.healAnimals,
+        this.activityService.healAnimals,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'Look at those poor sick cows. And those other cows that for some reason are standing up on two legs and charging you with weapons.',
       progress: () => {
         return this.animalsHealed;
@@ -2130,9 +1274,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.liftBoulder,
+        this.activityService.liftBoulder,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "It's leg day. No, it's arm day. Must be both! Lift!",
       progress: () => {
         return this.boulderHeight;
@@ -2165,7 +1309,7 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'You begin to feel remorse for your gluttony across your many lives. Perhaps a nice, long fast would help you feel better. Hopefully you can keep the demons from spoonfeeding you their fiery concoction.',
       progress: () => {
         return this.daysFasted;
@@ -2191,8 +1335,8 @@ export class HellService {
           'You finally reach the bottom of the pool where you find a massive plug. When you pull it, the pool begins to drain, revealing the source of all this blood.'
         );
       },
-      activities: [this.swim],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      activities: [this.activityService.HellSwim],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'Not this again!',
       progress: () => {
         return this.swimDepth;
@@ -2211,8 +1355,8 @@ export class HellService {
       index: HellLevel.WrongfulDead,
       entryEffect: () => {
         if (this.exitFound) {
-          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)) {
-            this.hells[HellLevel.WrongfulDead].activities.push(this.teachTheWay);
+          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.activityService.teachTheWay)) {
+            this.hells[HellLevel.WrongfulDead].activities.push(this.activityService.teachTheWay);
           }
         }
       },
@@ -2233,9 +1377,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.searchForExit,
+        this.activityService.searchForExit,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "These people don't belong here. Get them out.",
       progress: () => {
         return this.soulsEscaped;
@@ -2264,9 +1408,14 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.interrogate,
+        this.activityService.interrogate,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney, this.recoverTreasure, this.replaceTreasure],
+      projectionActivities: [
+        this.activityService.OddJobs,
+        this.activityService.burnMoney,
+        this.activityService.recoverTreasure,
+        this.activityService.replaceTreasure,
+      ],
       hint: 'Unloot those tombs.',
       progress: () => {
         return this.relicsReturned;
@@ -2307,9 +1456,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.freezeMountain,
+        this.activityService.freezeMountain,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'How does this volcano stay so hot?',
       progress: () => {
         return this.inventoryService.getQuantityByName('fire core');
@@ -2332,7 +1481,7 @@ export class HellService {
           "Your karmic debt for all the oppression you've ever inflicted is paid off. Now you just need to show the strongest demon here not to pick on the weak."
         );
       },
-      activities: [this.endureTheMill],
+      activities: [this.activityService.endureTheMill],
       projectionActivities: [],
       hint: 'Just endure.',
       progress: () => {
@@ -2369,9 +1518,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.examineContracts,
+        this.activityService.examineContracts,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: 'You read legalese, right?',
       progress: () => {
         return this.contractsExamined;

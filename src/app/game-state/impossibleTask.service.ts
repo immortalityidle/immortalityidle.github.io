@@ -158,6 +158,8 @@ export class ImpossibleTaskService {
     mainLoopService: MainLoopService,
     private battleService: BattleService
   ) {
+    setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
+
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.nextTask >= this.tasks.length) {
         // all tasks done
@@ -206,10 +208,7 @@ export class ImpossibleTaskService {
       }
     }
     this.activeTaskIndex = -1;
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
+    this.activityService!.checkRequirements(true);
   }
 
   getProperties(): ImpossibleTaskProperties {
@@ -266,10 +265,6 @@ export class ImpossibleTaskService {
       this.activeTaskIndex = properties.activeTaskIndex;
     }
     this.markPriorCompletions();
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
   }
 
   checkCompletion() {
@@ -284,10 +279,7 @@ export class ImpossibleTaskService {
 
   startTask() {
     this.activeTaskIndex = this.nextTask;
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
-    }
-    this.activityService.reloadActivities();
+    this.activityService!.checkRequirements(true);
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
       this.battleService.addDeath();
     }
@@ -299,9 +291,12 @@ export class ImpossibleTaskService {
       this.taskProgress[this.activeTaskIndex].progress = 0;
     }
     this.activeTaskIndex = -1;
-    if (!this.activityService) {
-      this.activityService = this.injector.get(ActivityService);
+    for (let i = this.activityService!.activityLoop.length - 1; i >= 0; i--) {
+      const activity = this.activityService?.getActivityByType(this.activityService!.activityLoop[i].activity);
+      if (activity?.impossibleTaskIndex !== undefined) {
+        this.activityService!.activityLoop.splice(i, 1);
+      }
     }
-    this.activityService.reloadActivities();
+    this.activityService!.checkRequirements(true);
   }
 }
