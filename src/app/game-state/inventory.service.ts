@@ -19,11 +19,11 @@ import {
   ShoeNames,
   HelmetNames,
 } from './itemResources';
-import { BigNumberPipe } from '../app.component';
 import { HellService } from './hell.service';
 import { HomeService } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
+import { BigNumberPipe } from '../pipes';
 
 export interface WeaponStats {
   baseDamage: number;

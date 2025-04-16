@@ -7,8 +7,8 @@ import { FollowersService, Follower } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-pets-panel',

@@ -9,8 +9,8 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-store-modal',

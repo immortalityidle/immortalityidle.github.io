@@ -5,8 +5,8 @@ import { HomeService } from '../game-state/home.service';
 import { FarmService } from '../game-state/farm.service';
 import { MatIcon } from '@angular/material/icon';
 import { PercentPipe, TitleCasePipe } from '@angular/common';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-farm-panel',

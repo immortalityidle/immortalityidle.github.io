@@ -11,7 +11,6 @@ import { JoinTheGodsText } from '../game-state/textResources';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
-import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
@@ -19,6 +18,7 @@ import { BattleService } from '../game-state/battle.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 
 @Component({
   selector: 'app-activity-panel',

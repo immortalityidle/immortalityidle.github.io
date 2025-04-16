@@ -4,11 +4,10 @@ import { MainLoopService } from './main-loop.service';
 import { Character, AttributeType } from './character';
 import { ActivityService } from './activity.service';
 import { Subscription } from 'rxjs';
-import { BigNumberPipe } from '../app.component';
 import { HellLevel, HellService } from './hell.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { CamelToTitlePipe } from '../app.component';
+import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 
 @Injectable({
   providedIn: 'root',

@@ -9,8 +9,8 @@ import { Equipment, InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
-import { CamelToTitlePipe } from '../app.component';
 import { FarmService } from './farm.service';
+import { CamelToTitlePipe } from '../pipes';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 

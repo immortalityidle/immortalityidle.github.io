@@ -6,8 +6,8 @@ import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-equipment-panel',

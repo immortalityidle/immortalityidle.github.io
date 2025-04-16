@@ -4,8 +4,8 @@ import { GameStateService } from '../game-state/game-state.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { CharacterService } from '../game-state/character.service';
 import { TitleCasePipe } from '@angular/common';
-import { BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-workstation-selection-modal',

@@ -1,0 +1,119 @@
+<div class="healthContainer">
+    <div class="statusRow top">
+        <div class="yinYang"
+          tooltip="Yang: {{characterService.characterState.yang | bigNumber}}<br>
+          Yin: {{characterService.characterState.yin | bigNumber}}<br>
+          Your balance is {{healthService.balanceString}}.<br>
+          A proper balance of Yin and Yang will strengthen you in combat and allow you develop your aptitudes more effectively.">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 250 250" [style.fill]="healthService.yinColor">
+            <defs>
+              <filter id="f">
+                <feGaussianBlur stdDeviation="3.5"/>
+              </filter>
+            </defs>
+            <circle cx="125" cy="125" r="116.6" fill="#7f7f7f" opacity="0.5" filter="url(#f)"/>
+            <circle cx="125" cy="125" r="113.2" [style.fill]="healthService.yangColor"/>
+            <path d="m125,11.8 a56.6,56.6 0 0 1 0,113.2 56.6,56.6 0 0 0 0,113.2 113.2,113.2 0 0 0 0,-226.4"/>
+            <circle cx="125" cy="68.4" r="17.6" [style.fill]="healthService.yinColor"/>
+            <circle cx="125" cy="181.6" r="17.6" [style.fill]="healthService.yangColor"/>
+          </svg>
+        </div>
+        <div class="flexColumn">
+            <div class="statusCell">
+              <span>Age {{characterService.characterState.age / 365 | bigNumber }}</span>
+              @if (characterService.characterState.age < 10000 * 365) {
+                <span>.{{characterService.characterState.age % 365 | number: '1.0-0'}}</span>
+              }
+              <span> years old.</span>
+            </div>
+            <div class="statusCell">
+              @if (characterService.characterState.immortal) {
+                  <div>You expect to live forever.</div>
+              }
+              @else {
+                <div>You expect to live {{characterService.characterState.lifespan / 365 | bigNumber}} years.</div>
+              }
+              <mat-icon tooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
+            </div>
+        </div>
+        <div class="flexColumn">
+            <div class="moneyLabelColumn"><span>Wealth:</span></div>
+            <div class="moneyContainer">
+              <div class="moneyColumn">
+                <div>
+                  <span>{{characterService.characterState.money | bigNumber}} Taels</span>
+                  @for (update of this.healthService.moneyUpdates; track update) {
+                    <span class="popupText" [ngClass]="{'popupTextColor' : update > 0, 'popupTextNegativeColor' : update < 0}"
+                      [@popupText]=update (@popupText.done)="animationDoneEvent()">
+                        @if (update > 0) {
+                            <span>+</span>
+                        }
+                        {{update | bigNumber}}
+                    </span>
+                  }
+                </div>
+                @if (characterService.characterState.hellMoney > 0) {
+                  <div tooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.characterState.hellMoney | bigNumber}} Hell Money</div>
+                }
+                @if (homeService.land > 0) {
+                  <span>{{homeService.land | bigNumber}} Empty {{homeService.land === 1 ? "Plot" : "Plots"}} of Land</span>
+                }
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="statusRow">
+        <div class="status-column">
+            <div class="statusCell barCell health" tooltip="{{characterService.characterState.status.health.description}}">
+                <div><span>Health</span></div>
+                <div class="progress-bar" [ngClass]="healthService.flashHealth ? 'flash' : ''"
+                    [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) | bigNumber"
+                    [attr.max]="Math.floor(characterService.characterState.status.health.max) | bigNumber">
+                    <span [style.width.%]="100 *
+                        Math.floor(characterService.characterState.immortal && characterService.characterState.status.health.value < 0 ? 0 : characterService.characterState.status.health.value) /
+                        Math.floor(characterService.characterState.status.health.max)">
+                    </span>
+                </div>
+            </div>
+            <div class="statusCell barCell stamina" tooltip="{{characterService.characterState.status.stamina.description}}">
+                <div><span>Stamina</span></div>
+                <div class="progress-bar" [ngClass]="healthService.flashStamina ? 'flash' : ''"
+                    [attr.value]="Math.floor(characterService.characterState.immortal && characterService.characterState.status.stamina.value < 0 ? 0 : characterService.characterState.status.stamina.value) | bigNumber"
+                    [attr.max]="Math.floor(characterService.characterState.status.stamina.max) | bigNumber">
+                    <span [style.width.%]="100 *
+                        Math.floor(characterService.characterState.immortal && characterService.characterState.status.stamina.value < 0 ? 0 : characterService.characterState.status.stamina.value) /
+                        Math.floor(characterService.characterState.status.stamina.max)">
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-column">
+            <div class="statusCell barCell nutrition" tooltip="{{characterService.characterState.status.nutrition.description}}">
+                <div><span>Nutrition</span></div>
+                <div class="progress-bar" [ngClass]="healthService.flashNutrition ? 'flash' : ''"
+                    [attr.value]="Math.floor(characterService.characterState.status.nutrition.value) | bigNumber"
+                    [attr.max]="Math.floor(characterService.characterState.status.nutrition.max) | bigNumber">
+                    <span
+                        [style.width.%]="100 *
+                        Math.floor(characterService.characterState.status.nutrition.value) /
+                        Math.floor(characterService.characterState.status.nutrition.max)">
+                    </span>
+                </div>
+            </div>
+            <div class="statusCell barCell qi" tooltip="{{characterService.characterState.status.qi.description}}">
+                <div><span>Qi</span></div>
+                <div class="progress-bar" [ngClass]="healthService.flashNutrition ? 'flash' : ''"
+                    [attr.value]="Math.floor(characterService.characterState.status.qi.value) | bigNumber"
+                    [attr.max]="Math.floor(characterService.characterState.status.qi.max) | bigNumber">
+                    <span
+                    [style.width.%]="100 *
+                        Math.floor(characterService.characterState.status.qi.value) /
+                        Math.floor(characterService.characterState.status.qi.max)">
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  

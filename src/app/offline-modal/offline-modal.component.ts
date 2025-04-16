@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BigNumberPipe } from '../app.component';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-offline-modal',

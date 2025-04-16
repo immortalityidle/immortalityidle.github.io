@@ -7,8 +7,8 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { MatIcon } from '@angular/material/icon';
 import { KeyValuePipe } from '@angular/common';
-import { CamelToTitlePipe, BigNumberPipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 
 export type AttributeUpdatesArrays = {
   [key in AttributeType]: number[];

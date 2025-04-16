@@ -4,7 +4,6 @@ import { CharacterService } from '../game-state/character.service';
 import { HomeService, Workstation } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FollowersService } from '../game-state/followers.service';
-import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { TitleCasePipe, NgClass } from '@angular/common';
@@ -14,6 +13,7 @@ import { WorkstationSelectionModalComponent } from '../workstation-selection-mod
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CraftingOptionsModalComponent } from '../crafting-options-modal/crafting-options-modal.component';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-crafting-panel',

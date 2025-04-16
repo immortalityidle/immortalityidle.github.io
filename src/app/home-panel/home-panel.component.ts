@@ -5,7 +5,6 @@ import { HomeService } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
 import { StoreService } from '../game-state/store.service';
 import { FollowersService } from '../game-state/followers.service';
-import { BigNumberPipe } from '../app.component';
 import { HellService } from '../game-state/hell.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
@@ -13,6 +12,7 @@ import { TitleCasePipe, NgClass } from '@angular/common';
 import { InventoryService } from '../game-state/inventory.service';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-home-panel',

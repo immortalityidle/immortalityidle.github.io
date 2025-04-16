@@ -1,9 +1,9 @@
 import { Equipment, ItemStack } from './inventory.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { BigNumberPipe, CamelToTitlePipe } from '../app.component';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 
 export type CharacterAttribute = {
   [key: string]: number | undefined;
@@ -39,7 +39,7 @@ export type AttributeType =
   | 'combatMastery'
   | 'magicMastery';
 
-type AttributeObject = {
+export type AttributeObject = {
   [key in AttributeType]: {
     description: string;
     value: number;
@@ -59,7 +59,7 @@ export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' |
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
 export type StatusType = 'health' | 'stamina' | 'qi' | 'nutrition';
-type CharacterStatus = {
+export type CharacterStatus = {
   [key in StatusType]: { description: string; value: number; max: number; battleTickRecovery?: number };
 };
 

@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { ActivityService, ActivityProperties } from './activity.service';
 import { BattleService, BattleProperties } from './battle.service';
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService } from './achievement.service';
-import { CharacterProperties } from './character';
+import { AttributeObject, CharacterProperties, CharacterStatus, EquipmentSlots } from './character';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties } from './followers.service';
-import { HomeService, HomeProperties } from './home.service';
+import { HomeService, HomeProperties, HomeType } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
@@ -72,7 +72,7 @@ export class GameStateService {
   saveSlot = '';
   lockPanels = false;
   dragging = false;
-  layout: KtdGridLayout;
+  layout = signal<KtdGridLayout | undefined>(undefined);
   allPanelsUsed = false;
 
   panels: Panel[] = [
@@ -235,14 +235,14 @@ export class GameStateService {
         this.savetoLocalStorage();
       }
     });
-    this.layout = [];
+    this.layout.set([]);
     this.resetPanels();
   }
 
   resetPanels() {
     //if (window.matchMedia('(max-width: 700px)').matches) {
     // narrow viewport
-    this.layout = [
+    this.layout.set([
       {
         id: 'healthPanel',
         x: 0,
@@ -271,37 +271,41 @@ export class GameStateService {
         w: 98,
         h: 25,
       },
-    ];
+    ]);
     this.updateAllPanelsUsed();
   }
 
   changeLayoutPanel(index: number, backwardSearch: boolean = false) {
-    const newLayout = JSON.parse(JSON.stringify(this.layout));
+    const newLayout = JSON.parse(JSON.stringify(this.layout()));
     let panelIndex = 0;
-    for (let i = 0; i < this.panels.length; i++) {
-      if (this.panels[i].id === this.layout[index].id) {
-        panelIndex = i;
-      }
-    }
 
-    const panelId = this.getNextUnusedPanelId(panelIndex, backwardSearch);
-    if (panelId === '') {
-      // no unused panels, bail out
-      return;
+    const layout = this.layout();
+    if (layout) {
+      for (let i = 0; i < this.panels.length; i++) {
+        if (this.panels[i].id === layout[index].id) {
+          panelIndex = i;
+        }
+      }
+
+      const panelId = this.getNextUnusedPanelId(panelIndex, backwardSearch);
+      if (panelId === '') {
+        // no unused panels, bail out
+        return;
+      }
+      newLayout[index].id = panelId;
+      this.layout.set(newLayout);
     }
-    newLayout[index].id = panelId;
-    this.layout = newLayout;
   }
 
   removeLayoutPanel(index: number) {
-    const newLayout = JSON.parse(JSON.stringify(this.layout));
+    const newLayout = JSON.parse(JSON.stringify(this.layout()));
     newLayout.splice(index, 1);
-    this.layout = newLayout;
+    this.layout.set(newLayout);
     this.updateAllPanelsUsed();
   }
 
   addLayoutPanel(newPanelId = '', x = 0, y = 0, w = 30, h = 20) {
-    const newLayout = JSON.parse(JSON.stringify(this.layout));
+    const newLayout = JSON.parse(JSON.stringify(this.layout()));
     let panelId = newPanelId;
     if (newPanelId === '') {
       panelId = this.getNextUnusedPanelId(0);
@@ -318,17 +322,21 @@ export class GameStateService {
       w: w,
       h: h,
     });
-    this.layout = newLayout;
+    this.layout.set(newLayout);
     this.updateAllPanelsUsed();
   }
 
   getNextUnusedPanelId(startIndex: number, backwards: boolean = false) {
+    const layout = this.layout();
+    if (!layout) {
+      return this.panels[startIndex + 1].id;
+    }
     if (backwards) {
       for (let i = startIndex - 1; i >= 0; i--) {
         if (!this.panels[i].unlocked) {
           continue;
         }
-        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+        if (!layout.find(({ id }) => id === this.panels[i].id)) {
           return this.panels[i].id;
         }
       }
@@ -336,7 +344,7 @@ export class GameStateService {
         if (!this.panels[i].unlocked) {
           continue;
         }
-        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+        if (!layout.find(({ id }) => id === this.panels[i].id)) {
           return this.panels[i].id;
         }
       }
@@ -345,7 +353,7 @@ export class GameStateService {
         if (!this.panels[i].unlocked) {
           continue;
         }
-        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+        if (!layout.find(({ id }) => id === this.panels[i].id)) {
           return this.panels[i].id;
         }
       }
@@ -353,7 +361,7 @@ export class GameStateService {
         if (!this.panels[i].unlocked) {
           continue;
         }
-        if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+        if (!layout.find(({ id }) => id === this.panels[i].id)) {
           return this.panels[i].id;
         }
       }
@@ -363,11 +371,15 @@ export class GameStateService {
 
   updateAllPanelsUsed() {
     this.allPanelsUsed = true;
+    const layout = this.layout();
+    if (!layout) {
+      return;
+    }
     for (let i = 0; i < this.panels.length; i++) {
       if (!this.panels[i].unlocked) {
         continue;
       }
-      if (!this.layout.find(({ id }) => id === this.panels[i].id)) {
+      if (!layout.find(({ id }) => id === this.panels[i].id)) {
         this.allPanelsUsed = false;
         return;
       }
@@ -454,7 +466,7 @@ export class GameStateService {
     if (!layoutData || !layoutData.layout) {
       return;
     }
-    this.layout = layoutData.layout;
+    this.layout.set(layoutData.layout);
   }
 
   importGame(value: string) {
@@ -466,7 +478,8 @@ export class GameStateService {
       // it's a legacy save file
       gameStateSerialized = value;
     }
-    const gameState = JSON.parse(gameStateSerialized) as GameState;
+    const parsedGameState = JSON.parse(gameStateSerialized) as Partial<GameState>;
+    const gameState = this.validateGameState(parsedGameState);
     this.impossibleTaskService.setProperties(gameState.impossibleTasks);
     this.hellService.setProperties(gameState.hell || {});
     this.characterService.characterState.setProperties(gameState.character);
@@ -498,16 +511,504 @@ export class GameStateService {
     // Covers the case of followerCap showing 0 when loading in
     this.followersService.updateFollowerCap();
     if (gameState.layout) {
-      this.layout = gameState.layout;
+      this.layout.set(gameState.layout);
     }
     this.lockPanels = gameState.lockPanels ?? true;
     this.updateImportFlagKey();
     this.updateAllPanelsUsed();
   }
 
+  private validateGameState(gameState: Partial<GameState>): GameState {
+    return {
+      achievements: gameState.achievements ?? { unlockedAchievements: [] },
+      character: gameState.character ?? this.getEmptyCharacterProperties(),
+      inventory: gameState.inventory ?? this.getEmptyInventory(),
+      home: gameState.home ?? this.getEmptyHome(),
+      farm: gameState.farm ?? this.getEmptyFarm(),
+      activities: gameState.activities ?? this.getEmptyActivities(),
+      locations: gameState.locations ?? this.getEmptyLocations(),
+      battles: gameState.battles ?? this.getEmptyBattles(),
+      followers: gameState.followers ?? this.getEmptyFollowers(),
+      logs: gameState.logs ?? this.getEmptyLogs(),
+      autoBuy: gameState.autoBuy ?? this.getEmptyAutoBuy(),
+      mainLoop: gameState.mainLoop ?? this.getEmptyMainLoop(),
+      impossibleTasks: gameState.impossibleTasks ?? this.getEmptyImpossibleTasks(),
+      hell: gameState.hell ?? this.getEmptyHell(),
+      darkMode: gameState.darkMode ?? false,
+      gameStartTimestamp: 0,
+      saveInterval: 0,
+      easyModeEver: gameState.easyModeEver ?? false,
+      lockPanels: gameState.lockPanels ?? false,
+      layout: gameState.layout ?? [],
+    };
+  }
+  private getEmptyInventory(): InventoryProperties {
+    return {
+      itemStacks: [],
+      stashedItemStacks: [],
+      autoSellUnlocked: false,
+      autoSellEntries: [],
+      autoUseUnlocked: false,
+      autoEatUnlocked: false,
+      autoEatNutrition: false,
+      autoEatHealth: false,
+      autoEatStamina: false,
+      autoEatQi: false,
+      autoEatAll: false,
+      autoUseEntries: [],
+      autoBalanceUnlocked: false,
+      autoBalanceItems: [],
+      autoPotionUnlocked: false,
+      autoPillUnlocked: false,
+      autoPotionEnabled: false,
+      autoPillEnabled: false,
+      autoWeaponMergeUnlocked: false,
+      autoArmorMergeUnlocked: false,
+      useSpiritGemUnlocked: false,
+      useSpiritGemWeapons: false,
+      useSpiritGemPotions: false,
+      useCheapestSpiritGem: false,
+      autoSellOldHerbs: false,
+      autoSellOldWood: false,
+      autoSellOldOre: false,
+      autoSellOldHides: false,
+      autoSellOldHerbsEnabled: false,
+      autoSellOldWoodEnabled: false,
+      autoSellOldOreEnabled: false,
+      autoSellOldBarsEnabled: false,
+      autoSellOldHidesEnabled: false,
+      autoequipBestWeapon: false,
+      autoequipBestArmor: false,
+      autoequipBestEnabled: false,
+      maxStackSize: 0,
+      thrownAwayItems: 0,
+      autoSellOldGemsUnlocked: false,
+      autoSellOldGemsEnabled: false,
+      autoBuyFood: false,
+      automergeEquipped: false,
+      autoSort: false,
+      descendingSort: false,
+      divinePeachesUnlocked: false,
+      equipmentUnlocked: false,
+      equipmentCreated: 0,
+      totalItemsReceived: 0,
+      autoReloadCraftInputs: false,
+      pillCounter: 0,
+      potionCounter: 0,
+      herbCounter: 0,
+      gemsAcquired: 0,
+    };
+  }
+
+  private getEmptyHome(): HomeProperties {
+    return {
+      land: 0,
+      homeValue: HomeType.SquatterTent,
+      bedroomFurniture: [],
+      landPrice: 0,
+      autoBuyLandUnlocked: false,
+      autoBuyLandLimit: 0,
+      autoBuyHomeUnlocked: false,
+      autoBuyHomeLimit: HomeType.SquatterTent,
+      keepFurniture: false,
+      useAutoBuyReserve: false,
+      autoBuyReserveAmount: 0,
+      nextHomeCostReduction: 0,
+      houseBuildingProgress: 0,
+      upgrading: false,
+      ownedFurniture: [],
+      highestLand: 0,
+      highestLandPrice: 0,
+      bestHome: HomeType.SquatterTent,
+      thugPause: false,
+      hellHome: false,
+      homeUnlocked: false,
+      keepHome: false,
+      seeFurnitureEffects: false,
+      workstations: [],
+      totalCrafts: 0,
+      alchemyCounter: 0,
+      forgeChainsCounter: 0,
+    };
+  }
+
+  private getEmptyFarm(): FarmProperties {
+    return {
+      fields: [],
+      autoFieldLimit: 0,
+      mostFields: 0,
+      hellFood: false,
+      fallowPlots: 0,
+      unlockedCrops: [],
+    };
+  }
+
+  private getEmptyActivities(): ActivityProperties {
+    return {
+      autoRestart: false,
+      pauseOnDeath: false,
+      pauseBeforeDeath: false,
+      activityLoop: [],
+      unlockedActivities: [],
+      discoveredActivities: [],
+      openApprenticeships: 0,
+      spiritActivity: null,
+      completedApprenticeships: [],
+      currentApprenticeship: undefined,
+      savedActivityLoop: [],
+      savedActivityLoop2: [],
+      savedActivityLoop3: [],
+      autoPauseUnlocked: false,
+      autoRestUnlocked: false,
+      pauseOnImpossibleFail: false,
+      totalExhaustedDays: 0,
+      purifyGemsUnlocked: false,
+      lifeActivities: {},
+      familySpecialty: null,
+      miningCounter: 0,
+      huntingCounter: 0,
+      fishingCounter: 0,
+      tauntCounter: 0,
+      recruitingCounter: 0,
+      petRecruitingCounter: 0,
+      coreCultivationCounter: 0,
+      researchWindCounter: 0,
+    };
+  }
+
+  private getEmptyLocations(): LocationProperties {
+    return {
+      unlockedLocations: [],
+      troubleTarget: null,
+    };
+  }
+
+  private getEmptyBattles(): BattleProperties {
+    return {
+      enemies: [],
+      currentEnemy: null,
+      kills: 0,
+      godSlayerKills: 0,
+      totalKills: 0,
+      autoTroubleUnlocked: false,
+      monthlyMonsterDay: 0,
+      highestDamageTaken: 0,
+      highestDamageDealt: 0,
+      godSlayersUnlocked: false,
+      godSlayersEnabled: false,
+      totalEnemies: 0,
+      troubleCounter: 0,
+      battleMessageDismissed: false,
+      techniques: [],
+      techniqueDevelopmentCounter: 0,
+      maxFamilyTechniques: 0,
+      statusEffects: [],
+    };
+  }
+
+  private getEmptyFollowers(): FollowersProperties {
+    return {
+      followersUnlocked: false,
+      followers: [],
+      autoDismissUnlocked: false,
+      maxFollowerByType: {},
+      maxPetsByType: {},
+      sortField: '',
+      sortAscending: false,
+      totalRecruited: 0,
+      totalDied: 0,
+      totalDismissed: 0,
+      highestLevel: 0,
+      stashedFollowers: [],
+      stashedPets: [],
+      stashedFollowersMaxes: {},
+      stashedPetMaxes: {},
+      unlockedHiddenJobs: [],
+      autoReplaceUnlocked: false,
+      petsEnabled: false,
+      onlyWantedFollowers: false,
+      pets: [],
+    };
+  }
+
+  private getEmptyLogs(): LogProperties {
+    return {
+      logTopics: [],
+      storyLog: [],
+      startingStoryLogEntries: [],
+    };
+  }
+
+  private getEmptyAutoBuy(): AutoBuyerProperties {
+    return {
+      autoBuyerSettingsUnlocked: false,
+      autoBuyerSettings: [],
+    };
+  }
+
+  private getEmptyMainLoop(): MainLoopProperties {
+    return {
+      unlockFastSpeed: false,
+      unlockFasterSpeed: false,
+      unlockFastestSpeed: false,
+      unlockAgeSpeed: false,
+      unlockPlaytimeSpeed: false,
+      lastTime: 0,
+      tickDivider: 0,
+      offlineDivider: 0,
+      pause: false,
+      bankedTicks: 0,
+      totalTicks: 0,
+      useBankedTicks: false,
+      scientificNotation: false,
+      playMusic: false,
+      timeUnlocked: false,
+    };
+  }
+
+  private getEmptyImpossibleTasks(): ImpossibleTaskProperties {
+    return {
+      taskProgress: [],
+      impossibleTasksUnlocked: false,
+      activeTaskIndex: 0,
+    };
+  }
+
+  private getEmptyHell(): HellProperties {
+    return {
+      inHell: false,
+      currentHell: 0,
+      completedHellTasks: [],
+      completedHellBosses: [],
+      mountainSteps: 0,
+      animalsHealed: 0,
+      boulderHeight: 0,
+      daysFasted: 0,
+      swimDepth: 0,
+      exitFound: false,
+      soulsEscaped: 0,
+      relicsReturned: 0,
+      timesCrushed: 0,
+      contractsExamined: 0,
+      atonedKills: 0,
+      fasterHellMoney: false,
+      burnedMoney: 0,
+    };
+  }
+
+  private getEmptyCharacterProperties(): CharacterProperties {
+    return {
+      attributes: this.getEmptyAttributesObject(),
+      money: 0,
+      stashedMoney: 0,
+      hellMoney: 0,
+      equipment: this.getEmptyEquipmentSlots(),
+      stashedEquipment: this.getEmptyEquipmentSlots(),
+      itemPouches: [],
+      age: 0,
+      status: this.getEmptyCharacterStatus(),
+      baseLifespan: 0,
+      foodLifespan: 0,
+      alchemyLifespan: 0,
+      statLifespan: 0,
+      spiritualityLifespan: 0,
+      magicLifespan: 0,
+      attributeScalingLimit: 0,
+      attributeSoftCap: 0,
+      aptitudeGainDivider: 0,
+      condenseSoulCoreCost: 0,
+      reinforceMeridiansCost: 0,
+      bloodlineRank: 0,
+      qiUnlocked: false,
+      totalLives: 0,
+      healthBonusFood: 0,
+      healthBonusBath: 0,
+      healthBonusMagic: 0,
+      healthBonusSoul: 0,
+      empowermentFactor: 0,
+      immortal: false,
+      god: false,
+      easyMode: false,
+      highestMoney: 0,
+      highestAge: 0,
+      highestHealth: 0,
+      highestStamina: 0,
+      highestQi: 0,
+      highestAttributes: {},
+      yinYangBoosted: false,
+      yin: 0,
+      yang: 0,
+      righteousWrathUnlocked: false,
+      bonusMuscles: false,
+      bonusBrains: false,
+      bonusHealth: false,
+      showLifeSummary: false,
+      showTips: false,
+      showUpdateAnimations: false,
+      startingStaminaBoost: false,
+    };
+  }
+
+  private getEmptyEquipmentSlots(): EquipmentSlots {
+    return {
+      head: null,
+      feet: null,
+      body: null,
+      legs: null,
+      leftHand: null,
+      rightHand: null,
+    };
+  }
+
+  private getEmptyCharacterStatus(): CharacterStatus {
+    return {
+      health: {
+        description: '',
+        value: 0,
+        max: 0,
+        battleTickRecovery: undefined,
+      },
+      stamina: {
+        description: '',
+        value: 0,
+        max: 0,
+        battleTickRecovery: undefined,
+      },
+      qi: {
+        description: '',
+        value: 0,
+        max: 0,
+        battleTickRecovery: undefined,
+      },
+      nutrition: {
+        description: '',
+        value: 0,
+        max: 0,
+        battleTickRecovery: undefined,
+      },
+    };
+  }
+
+  private getEmptyAttributesObject(): AttributeObject {
+    return {
+      strength: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      toughness: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      speed: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      intelligence: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      charisma: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      spirituality: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      earthLore: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      metalLore: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      woodLore: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      waterLore: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      fireLore: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      animalHandling: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      combatMastery: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+      magicMastery: {
+        description: '',
+        value: 0,
+        lifeStartValue: 0,
+        aptitude: 0,
+        aptitudeMult: 0,
+        icon: '',
+      },
+    };
+  }
+
   getLayoutExport(): string {
     const layoutData = {
-      layout: this.layout,
+      layout: this.layout() ?? [],
       lockPanels: this.lockPanels,
     };
     return JSON.stringify(layoutData);
@@ -534,7 +1035,7 @@ export class GameStateService {
       saveInterval: this.saveInterval || 300,
       easyModeEver: this.easyModeEver,
       lockPanels: this.lockPanels,
-      layout: this.layout,
+      layout: this.layout() ?? [],
     };
     let gameStateString = JSON.stringify(gameState);
     gameStateString = 'iig' + btoa(encodeURIComponent(gameStateString));

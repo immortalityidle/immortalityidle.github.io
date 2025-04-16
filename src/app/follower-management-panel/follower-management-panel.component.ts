@@ -3,8 +3,8 @@ import { FollowersService, Follower } from '../game-state/followers.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
-import { CamelToTitlePipe } from '../app.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { CamelToTitlePipe } from '../pipes';
 
 @Component({
   selector: 'app-follower-management-panel',

@@ -1,7 +1,7 @@
 import { Component, forwardRef } from '@angular/core';
 import { BattleService } from '../game-state/battle.service';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
-import { CamelToTitlePipe } from '../app.component';
+import { CamelToTitlePipe } from '../pipes';
 
 @Component({
   selector: 'app-technique-panel',

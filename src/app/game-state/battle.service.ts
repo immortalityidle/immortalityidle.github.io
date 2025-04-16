@@ -5,11 +5,11 @@ import { InventoryService, Item } from '../game-state/inventory.service';
 import { MainLoopService } from './main-loop.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { HellService } from './hell.service';
-import { BigNumberPipe } from '../app.component';
 import { HomeService, HomeType } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
 import { AttributeType, StatusType } from './character';
+import { BigNumberPipe } from '../pipes';
 
 export interface Enemy {
   name: string;

@@ -6,7 +6,7 @@ import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { DecimalPipe } from '@angular/common';
-import { BigNumberPipe } from '../app.component';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-ascension-store-modal',
