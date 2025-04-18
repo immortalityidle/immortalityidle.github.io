@@ -1,6 +1,13 @@
 <div class="homeContainer overflow">
-  <div [ngClass]="{'hellDisabled': hellService.inHell}">
-    @if (!hellService.inHell || homeService.hellHome) {
+  @if (hellService.inHell && !homeService.hellHome) {
+    <div>
+      <span>
+        Your home is a distant memory, and can't help you here in hell.
+      </span>
+    </div>
+  }
+  @else {
+    <div>
       @if ((homeService.home.name !== homeService.nextHome.name)) {
         <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton floatRight" aria-label="Upgrade Home" aria-hidden="false"
           tooltip="{{homeService.nextHome.upgradeToTooltip}}">
@@ -20,17 +27,16 @@
         </div>
         <span style="margin-left: 4px;"></span>
       }
-    }
-    <div>
-      <span>
-        You live in a {{homeService.home.name}}
-      </span>
+
+      <div>
+        <span>
+          You live in a {{homeService.home.name}}
+        </span>
+      </div>
     </div>
-  </div>
-  <div class="homeInfo">
-    <span>{{homeService.home.description}}</span>
-  </div>
-  @if ((!hellService.inHell || homeService.hellHome)) {
+    <div class="homeInfo">
+      <span>{{homeService.home.description}}</span>
+    </div>
     <div>
       @if (!hellService.inHell && !characterService.characterState.god) {
         <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>

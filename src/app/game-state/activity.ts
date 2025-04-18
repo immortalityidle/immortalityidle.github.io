@@ -106,7 +106,6 @@ export interface Activity {
   lastIncome?: number;
   resourceUse: ActivityResource[];
   projectionOnly?: boolean;
-  portal?: boolean;
   impossibleTaskIndex?: number;
   hells?: number[];
 }
@@ -132,22 +131,4 @@ export enum LocationType {
   DeepSea = 'DeepSea',
   MountainTops = 'MountainTops',
   Hell = 'Hell',
-  HellOfTongueRipping = 'HellOfTongueRipping',
-  HellOfScissors = 'HellOfScissors',
-  HellOfTreesOfKnives = 'HellOfTreesOfKnives',
-  HellOfMirrors = 'HellOfMirrors',
-  HellOfSteamers = 'HellOfSteamers',
-  HellOfCopperPillars = 'HellOfCopperPillars',
-  HellOfMountainOfKnives = 'HellOfMountainOfKnives',
-  HellOfMountainOfIce = 'HellOfMountainOfIce',
-  HellOfCauldronsOfOil = 'HellOfCauldronsOfOil',
-  HellOfCattlePit = 'HellOfCattlePit',
-  HellOfCrushingBoulder = 'HellOfCrushingBoulder',
-  HellOfMortarsAndPestles = 'HellOfMortarsAndPestles',
-  HellOfBloodPool = 'HellOfBloodPool',
-  HellOfWrongfulDead = 'HellOfWrongfulDead',
-  HellOfHellOfDismemberment = 'HellOfHellOfDismemberment',
-  HellOfMountainOfFire = 'HellOfMountainOfFire',
-  HellOfMills = 'HellOfMills',
-  HellOfSaws = 'HellOfSaws',
 }

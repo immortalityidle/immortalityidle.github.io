@@ -3,7 +3,7 @@ import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { Activity, ActivityType } from '../game-state/activity';
-import { HellService } from '../game-state/hell.service';
+import { HellLevel, HellService } from '../game-state/hell.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { JoinTheGodsText } from '../game-state/textResources';
@@ -33,7 +33,6 @@ import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 })
 export class ActivityPanelComponent {
   private camelToTitle = new CamelToTitlePipe();
-  protected Math = Math;
   private dragPositionX = 0;
   private dragPositionY = 0;
 
@@ -51,6 +50,7 @@ export class ActivityPanelComponent {
     protected battleService: BattleService
   ) {}
 
+  // TODO: make this an activity
   protected joinTheGodsClick() {
     if (
       !confirm(
@@ -66,7 +66,7 @@ export class ActivityPanelComponent {
     });
     dialogRef.afterClosed().subscribe(() => {
       this.hellService.inHell = true;
-      this.hellService.moveToHell(-1);
+      this.hellService.moveToHell(HellLevel.Gates);
       this.characterService.characterState.money = 0;
       this.inventoryService.stashInventory();
       this.followerService.hellPurge();
@@ -193,10 +193,6 @@ export class ActivityPanelComponent {
         }
       }
     }
-  }
-
-  protected hellBoss() {
-    this.hellService.fightHellBoss();
   }
 
   protected getActivityTooltip(activity: Activity, doNow = false) {

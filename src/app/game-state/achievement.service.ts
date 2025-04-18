@@ -1339,6 +1339,18 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'The Pain Begins',
+      description: 'You have begun to work your way through hell.',
+      hint: 'You are not ready.',
+      check: () => {
+        return this.hellService.inHell;
+      },
+      effect: () => {
+        this.gameStateService?.unlockPanel('hellStatusPanel');
+      },
+      unlocked: false,
+    },
+    {
       name: 'Let It Burn',
       description: 'You have burned an insane amount of money.',
       hint: "You didn't want that money anyway.",

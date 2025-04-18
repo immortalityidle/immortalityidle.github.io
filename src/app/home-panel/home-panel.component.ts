@@ -6,7 +6,7 @@ import { StoreService } from '../game-state/store.service';
 import { FollowersService } from '../game-state/followers.service';
 import { HellService } from '../game-state/hell.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
-import { TitleCasePipe, NgClass } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
@@ -16,7 +16,6 @@ import { BigNumberPipe } from '../pipes';
   templateUrl: './home-panel.component.html',
   styleUrls: ['./home-panel.component.less', '../app.component.less'],
   imports: [
-    forwardRef(() => NgClass),
     forwardRef(() => MatIcon),
     forwardRef(() => TitleCasePipe),
     forwardRef(() => BigNumberPipe),

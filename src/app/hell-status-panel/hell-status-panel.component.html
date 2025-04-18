@@ -1,0 +1,34 @@
+<div class="activitiesContainer">
+  @if (!hellService.inHell) {
+    <div>
+        <span>
+            You are not in hell.
+        </span>
+    </div>
+  }
+  @else {
+    <div>
+        <span>
+            You are in the {{hellService.hells[hellService.currentHell].name}}
+        </span>
+    </div>
+    @if (hellService.currentHell > 0 && !hellService.completedHellTasks.includes(hellService.currentHell)) {
+        <span>
+        <div  class="progress-bar"
+            [attr.value]="Math.floor(hellService.hells[hellService.currentHell].progress())"
+            [attr.max]="Math.floor(hellService.hells[hellService.currentHell].progressMax())">
+            <span
+            [style.width.%]="100 *
+            hellService.hells[hellService.currentHell].progress() /
+            hellService.hells[hellService.currentHell].progressMax()">
+            </span>
+        </div>
+        </span>
+    }
+    @if (hellService.currentHell > 0 && hellService.completedHellTasks.includes(hellService.currentHell)) {
+        <span>
+        <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(hellService.currentHell) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
+        </span>
+    }
+  }
+</div>

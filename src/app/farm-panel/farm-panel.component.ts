@@ -4,6 +4,8 @@ import { MatIcon } from '@angular/material/icon';
 import { PercentPipe, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
+import { HomeService } from '../game-state/home.service';
+import { HellService } from '../game-state/hell.service';
 
 @Component({
   selector: 'app-farm-panel',
@@ -18,7 +20,11 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class FarmPanelComponent {
-  constructor(protected farmService: FarmService) {}
+  constructor(
+    protected farmService: FarmService,
+    protected homeService: HomeService,
+    protected hellService: HellService
+  ) {}
 
   protected addFieldClicked(event: MouseEvent): void {
     event.preventDefault();

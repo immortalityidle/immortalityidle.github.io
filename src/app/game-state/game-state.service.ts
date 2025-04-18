@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService } from './location.service';
+import { LocationType } from './activity';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -180,7 +181,7 @@ export class GameStateService {
     {
       id: 'locationPanel',
       name: 'Location',
-      icon: 'globe_asia',
+      icon: 'public',
       panelHelp:
         'The locations you have available depend mostly on your speed, and will determine what activities you have available. You can select which locations you would prefer to find monsters in when you look for trouble.',
       unlocked: false,
@@ -206,6 +207,13 @@ export class GameStateService {
       name: 'Crafting',
       icon: 'carpenter',
       panelHelp: 'Creating weapons, armor, potions, and pills is an essential part of becoming an immortal.',
+      unlocked: false,
+    },
+    {
+      id: 'hellStatusPanel',
+      name: 'Hell Progress',
+      icon: 'local_fire_department',
+      panelHelp: 'Your progress through the terrors of hell.',
       unlocked: false,
     },
   ];
@@ -679,7 +687,7 @@ export class GameStateService {
   private getEmptyLocations(): LocationProperties {
     return {
       unlockedLocations: [],
-      troubleTarget: null,
+      troubleTarget: LocationType.SmallTown,
     };
   }
 

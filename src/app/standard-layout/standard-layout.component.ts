@@ -40,6 +40,7 @@ import { OptionsModalComponent } from '../options-modal/options-modal.component'
 import { StoreModalComponent } from '../store-modal/store-modal.component';
 import { StoreService } from '../game-state/store.service';
 import { CharacterService } from '../game-state/character.service';
+import { HellStatusPanelComponent } from '../hell-status-panel/hell-status-panel.component';
 
 @Component({
   selector: 'app-standard-layout',
@@ -66,6 +67,7 @@ import { CharacterService } from '../game-state/character.service';
     forwardRef(() => ImpossibleTaskPanelComponent),
     forwardRef(() => TechniquePanelComponent),
     forwardRef(() => CraftingPanelComponent),
+    forwardRef(() => HellStatusPanelComponent),
     forwardRef(() => TooltipDirective),
   ],
   templateUrl: './standard-layout.component.html',

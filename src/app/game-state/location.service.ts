@@ -5,6 +5,7 @@ import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { LogService, LogTopic } from './log.service';
 import { LocationType } from './activity';
+import { HellService } from './hell.service';
 
 export interface LocationEntry {
   name: string;
@@ -14,14 +15,16 @@ export interface LocationEntry {
 
 export interface LocationProperties {
   unlockedLocations: LocationType[];
-  troubleTarget: LocationType | null;
+  troubleTarget: LocationType;
 }
+
+// TODO: lock locations for hells and some impossible tasks
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocationService {
-  troubleTarget: LocationType | null = LocationType.SmallTown;
+  troubleTarget: LocationType = LocationType.SmallTown;
   locationMap: { [key in LocationType]: LocationEntry } = {
     [LocationType.Self]: {
       name: 'Your Very Self',
@@ -111,133 +114,7 @@ export class LocationService {
     },
     [LocationType.Hell]: {
       name: 'Hell',
-      description: 'Hell',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfTongueRipping]: {
-      name: 'HellOfTongueRipping',
-      description: 'HellOfTongueRipping',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfScissors]: {
-      name: 'HellOfScissors',
-      description: 'HellOfScissors',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfTreesOfKnives]: {
-      name: 'HellOfTreesOfKnives',
-      description: 'HellOfTreesOfKnives',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfMirrors]: {
-      name: 'HellOfMirrors',
-      description: 'HellOfMirrors',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfSteamers]: {
-      name: 'HellOfSteamers',
-      description: 'HellOfSteamers',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfCopperPillars]: {
-      name: 'HellOfCopperPillars',
-      description: 'HellOfCopperPillars',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfMountainOfKnives]: {
-      name: 'HellOfMountainOfKnives',
-      description: 'HellOfMountainOfKnives',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfMountainOfIce]: {
-      name: 'HellOfMountainOfIce',
-      description: 'HellOfMountainOfIce',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfCauldronsOfOil]: {
-      name: 'HellOfCauldronsOfOil',
-      description: 'HellOfCauldronsOfOil',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfCattlePit]: {
-      name: 'HellOfCattlePit',
-      description: 'HellOfCattlePit',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfCrushingBoulder]: {
-      name: 'HellOfCrushingBoulder',
-      description: 'HellOfCrushingBoulder',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfMortarsAndPestles]: {
-      name: 'HellOfMortarsAndPestles',
-      description: 'HellOfMortarsAndPestles',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfBloodPool]: {
-      name: 'HellOfBloodPool',
-      description: 'HellOfBloodPool',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfWrongfulDead]: {
-      name: 'HellOfWrongfulDead',
-      description: 'HellOfWrongfulDead',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfHellOfDismemberment]: {
-      name: 'HellOfHellOfDismemberment',
-      description: 'HellOfHellOfDismemberment',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfMountainOfFire]: {
-      name: 'HellOfMountainOfFire',
-      description: 'HellOfMountainOfFire',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfMills]: {
-      name: 'HellOfMills',
-      description: 'HellOfMills',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.HellOfSaws]: {
-      name: 'HellOfSaws',
-      description: 'HellOfSaws',
+      description: 'The depths of Hell.',
       unlock: () => {
         return false;
       },
@@ -250,7 +127,8 @@ export class LocationService {
     private activityService: ActivityService,
     private mainLoopService: MainLoopService,
     private characterService: CharacterService,
-    private logService: LogService
+    private logService: LogService,
+    private hellService: HellService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       this.checkForUnlocks();
@@ -262,19 +140,39 @@ export class LocationService {
   }
 
   checkForUnlocks(logNewLocations: boolean = true) {
-    for (const keyString in LocationType) {
-      const key = keyString as LocationType;
-      if (!this.unlockedLocations.includes(key)) {
-        if (this.locationMap[key].unlock()) {
-          this.unlockedLocations.push(key);
-          if (logNewLocations && key !== LocationType.Self && key !== LocationType.SmallTown) {
-            this.logService.log(
-              LogTopic.EVENT,
-              'You have expanded your available locations and can now explore ' + this.locationMap[key].name
-            );
+    if (this.hellService.inHell) {
+      this.unlockedLocations = [LocationType.Hell];
+      this.troubleTarget = LocationType.Hell;
+    } else {
+      if (this.unlockedLocations.includes(LocationType.Hell)) {
+        this.unlockedLocations = [];
+      }
+      for (const keyString in LocationType) {
+        const key = keyString as LocationType;
+        if (!this.unlockedLocations.includes(key)) {
+          if (this.locationMap[key].unlock()) {
+            this.unlockedLocations.push(key);
+            if (logNewLocations && key !== LocationType.Self && key !== LocationType.SmallTown) {
+              this.logService.log(
+                LogTopic.EVENT,
+                'You have expanded your available locations and can now explore ' + this.locationMap[key].name
+              );
+            }
           }
         }
       }
+    }
+  }
+
+  setTroubleLocation(location: LocationType | null) {
+    if (location === null) {
+      if (this.hellService.inHell) {
+        this.troubleTarget = LocationType.Hell;
+      } else {
+        this.troubleTarget = LocationType.SmallTown;
+      }
+    } else {
+      this.troubleTarget = location;
     }
   }
 

@@ -17,9 +17,9 @@ export class LocationPanelComponent {
 
   locationClicked(location: LocationType) {
     if (this.locationService.troubleTarget === location) {
-      this.locationService.troubleTarget = null;
+      this.locationService.setTroubleLocation(null);
     } else {
-      this.locationService.troubleTarget = location;
+      this.locationService.setTroubleLocation(location);
     }
   }
 }

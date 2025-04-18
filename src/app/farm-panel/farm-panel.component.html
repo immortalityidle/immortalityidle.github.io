@@ -1,62 +1,72 @@
 <div class="farmContainer">
-  <div>
-    <span>
-      You can set up farm fields to grow various foods. Fields need to have plots assigned and regular farming work to be productive.
-    </span>
-  </div>
-  <div>
-    <span>
-      You have {{farmService.fallowPlots}} {{ farmService.fallowPlots === 1 ? 'plot': 'plots'}} of land laying fallow and ready to plant
-    </span>
-  </div>
-  <div>
-    <mat-icon  (click)="addFieldClicked($event)" tooltip="Set up a new field for growing crops." class="iconButton" 
-      aria-label="Set up a field" aria-hidden="false">
-      add
-    </mat-icon>
-  </div>
-  <div class="farmGrid">
-    @for (field of farmService.fields; track field; let index = $index) {
-      <div class="fieldSlot">
-        <div class="flexColumn flexColumnGrow">
-          <div>
-            <div>{{field.cropName | titlecase}} Field</div>
-            <div>{{field.plots}} Plots of Land</div>
-            <div>Harvest Quantity: {{field.yield}}</div>
-            <div>Days Until Next Harvest: {{field.daysToHarvest}}</div>
-            <div>Progress to next harvest: {{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}
+  @if (hellService.inHell && !homeService.hellHome) {
+    <div>
+      <span>
+        Your farm is a distant memory, and can't help you here in hell.
+      </span>
+    </div>
+  }
+  @else {
+
+    <div>
+      <span>
+        You can set up farm fields to grow various foods. Fields need to have plots assigned and regular farming work to be productive.
+      </span>
+    </div>
+    <div>
+      <span>
+        You have {{farmService.fallowPlots}} {{ farmService.fallowPlots === 1 ? 'plot': 'plots'}} of land laying fallow and ready to plant
+      </span>
+    </div>
+    <div>
+      <mat-icon  (click)="addFieldClicked($event)" tooltip="Set up a new field for growing crops." class="iconButton" 
+        aria-label="Set up a field" aria-hidden="false">
+        add
+      </mat-icon>
+    </div>
+    <div class="farmGrid">
+      @for (field of farmService.fields; track field; let index = $index) {
+        <div class="fieldSlot">
+          <div class="flexColumn flexColumnGrow">
+            <div>
+              <div>{{field.cropName | titlecase}} Field</div>
+              <div>{{field.plots}} Plots of Land</div>
+              <div>Harvest Quantity: {{field.yield}}</div>
+              <div>Days Until Next Harvest: {{field.daysToHarvest}}</div>
+              <div>Progress to next harvest: {{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}
+              </div>
             </div>
+            <div class="yieldText">
+              <span>Average harvest of {{field.averageYield | bigNumber}} per day.</span>
+            </div>
+            @if (field.imageFile){
+              <img src="assets/images/items/{{field.imageFile}}.png" class="itemImage"
+                width="32" height="32"/>
+            }
           </div>
-          <div class="yieldText">
-            <span>Average harvest of {{field.averageYield | bigNumber}} per day.</span>
-          </div>
-          @if (field.imageFile){
-            <img src="assets/images/items/{{field.imageFile}}.png" class="itemImage"
-              width="32" height="32"/>
-          }
-        </div>
-        <div class="flexColumn">
-          <mat-icon  (click)="removeFieldClicked($event, index)" tooltip="Clear this field and let its plots go fallow." class="iconButton" 
-            aria-label="Clear the field" aria-hidden="false">
-            close
-          </mat-icon>
-          <mat-icon  (click)="addPlotToFieldClicked($event, index)" tooltip="Assign a fallow plot to this field." class="iconButton" 
-            aria-label="Assign plot" aria-hidden="false">
-            add
-          </mat-icon>
-          <mat-icon  (click)="removePlotFromFieldClicked($event, index)" tooltip="Remove a plot from this field." class="iconButton" 
-            aria-label="Remove plot" aria-hidden="false">
-            remove
-          </mat-icon>
-          @if (farmService.unlockedCrops.length > 1){
-            <mat-icon  (click)="changeCropClicked($event, index)" tooltip="Change the kind of crop you are growing in this field." class="iconButton" 
-              aria-label="Change crop" aria-hidden="false">
-              grass
+          <div class="flexColumn">
+            <mat-icon  (click)="removeFieldClicked($event, index)" tooltip="Clear this field and let its plots go fallow." class="iconButton" 
+              aria-label="Clear the field" aria-hidden="false">
+              close
             </mat-icon>
-          }
+            <mat-icon  (click)="addPlotToFieldClicked($event, index)" tooltip="Assign a fallow plot to this field." class="iconButton" 
+              aria-label="Assign plot" aria-hidden="false">
+              add
+            </mat-icon>
+            <mat-icon  (click)="removePlotFromFieldClicked($event, index)" tooltip="Remove a plot from this field." class="iconButton" 
+              aria-label="Remove plot" aria-hidden="false">
+              remove
+            </mat-icon>
+            @if (farmService.unlockedCrops.length > 1){
+              <mat-icon  (click)="changeCropClicked($event, index)" tooltip="Change the kind of crop you are growing in this field." class="iconButton" 
+                aria-label="Change crop" aria-hidden="false">
+                grass
+              </mat-icon>
+            }
+          </div>
         </div>
-      </div>
-    }
-  </div>
+      }
+    </div>
+  }
 </div>
 <br>

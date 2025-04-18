@@ -10,6 +10,7 @@ import { InventoryService, Item } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 
 export enum HellLevel {
+  Gates,
   TongueRipping,
   Scissors,
   TreesOfKnives,
@@ -35,13 +36,14 @@ export interface Hell {
   description: string;
   index: number;
   entryEffect?: () => void;
+  setPortals: () => void;
   dailyEffect?: () => void;
   exitEffect?: () => void;
   completeEffect: () => void;
   progress: () => number;
   progressMax: () => number;
-  activities: (Activity | undefined)[];
-  projectionActivities: (Activity | undefined)[];
+  activities: Activity[];
+  projectionActivities: Activity[];
   hint: string;
   successCheck: () => boolean;
 }
@@ -71,7 +73,7 @@ export interface HellProperties {
 })
 export class HellService {
   inHell = false;
-  currentHell = -1;
+  currentHell = HellLevel.Gates;
   completedHellTasks: number[] = [];
   completedHellBosses: number[] = [];
   beaten = false;
@@ -101,7 +103,7 @@ export class HellService {
     private itemRepoService: ItemRepoService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.currentHell < 0) {
+      if (this.currentHell <= 0) {
         // not currently in a hell, bail out
         return;
       }
@@ -117,7 +119,7 @@ export class HellService {
         );
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
-        this.moveToHell(-1);
+        this.moveToHell(HellLevel.Gates);
       }
       if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()) {
         hell.completeEffect();
@@ -133,26 +135,35 @@ export class HellService {
   reset() {
     // reincarnation gets you out and back to the mortal realm
     if (this.inHell) {
-      if (this.currentHell > 0) {
+      if (this.currentHell >= 0) {
         const leavingHell = this.hells[this.currentHell];
         if (leavingHell.exitEffect) {
           leavingHell.exitEffect();
         }
       }
       this.inHell = false;
-      this.moveToHell(-1);
+      this.currentHell = HellLevel.Gates;
     }
   }
 
   moveToHell(hellIndex: number) {
+    if (this.currentHell >= 0) {
+      const currentHell = this.hells[this.currentHell];
+      if (currentHell.exitEffect) {
+        currentHell.exitEffect();
+      }
+    }
     this.currentHell = hellIndex;
+    const newHell = this.hells[this.currentHell];
+    if (newHell.entryEffect) {
+      newHell.entryEffect();
+    }
+    newHell.setPortals();
     this.activityService.checkRequirements(true);
-    // TODO: trigger hell entrance and exit effects
-    // TODO: also update allowed activities and all that
   }
 
   trouble() {
-    if (this.currentHell < 0) {
+    if (this.currentHell <= 0) {
       return;
     }
     // TODO: tune all of these values, and they should all scale up the longer you stay in/closer you get to finishing the hell
@@ -693,94 +704,86 @@ export class HellService {
     this.atonedKills = properties.atonedKills || 0;
     this.fasterHellMoney = properties.fasterHellMoney || false;
     this.burnedMoney = properties.burnedMoney || 0;
-    this.moveToHell(properties.currentHell ?? -1);
-  }
-
-  getActivityList() {
-    const newList: Activity[] = [];
-    if (this.currentHell === -1) {
-      // between hells now, choose which one to enter
-      /*
-      this.activityService.activityHeader = 'The Gates of Hell';
-      this.activityService.activityHeaderDescription =
-        "The heavens have cast you down to the depths of hell.<br>You'll need to defeat every level to escape.";
-        */
-      this.setEnterHellsArray(newList);
-    } else {
-      /*
-      this.activityService.activityHeader = this.hells[this.currentHell].name;
-      this.activityService.activityHeaderDescription = this.hells[this.currentHell].description;
-      */
-      const hell = this.hells[this.currentHell];
-      for (const activity of hell.activities) {
-        if (activity) {
-          activity.projectionOnly = false;
-          newList.push(activity);
-        }
-      }
-      for (const activity of hell.projectionActivities) {
-        if (activity) {
-          activity.projectionOnly = true;
-          newList.push(activity);
-        }
-      }
-      newList.push(this.activityService.escapeHell);
-    }
-    return newList;
-  }
-
-  setEnterHellsArray(newList: Activity[]) {
-    newList.push(this.activityService.Resting);
-    newList.push(this.activityService.CombatTraining);
-    newList.push(this.activityService.CoreCultivation);
-    newList.push(this.activityService.SoulCultivation);
-    newList.push(this.activityService.InfuseBody);
-    if (this.activityService.purifyGemsUnlocked) {
-      newList.push(this.activityService.PurifyGems);
-    }
-    newList.push(this.activityService.InfuseEquipment);
-    let allComplete = true;
-    for (const hell of this.hells) {
-      let consequenceDescription = '';
-      if (this.completedHellBosses.includes(hell.index)) {
-        consequenceDescription = 'You have proven your mastery over this hell.';
-      } else if (this.completedHellTasks.includes(hell.index)) {
-        consequenceDescription = 'The Lord of this Hell is available to challenge.';
-        allComplete = false;
-      } else {
-        allComplete = false;
-      }
-      newList.push({
-        level: 0,
-        name: [hell.name],
-        location: LocationType.Hell,
-        activityType: ActivityType.Hell + hell.index,
-        description: [hell.description],
-        yinYangEffect: [YinYangEffect.None],
-        consequenceDescription: [consequenceDescription],
-        consequence: [
-          () => {
-            this.moveToHell(hell.index);
-          },
-        ],
-        requirements: [{}],
-        unlocked: true,
-        skipApprenticeshipLevel: 0,
-        resourceUse: [],
-        portal: true,
-      });
-    }
-    if (allComplete) {
-      newList.push(this.activityService.FinishHell);
-    }
+    this.currentHell = properties.currentHell ?? HellLevel.Gates;
+    this.hells[this.currentHell].setPortals();
   }
 
   hells: Hell[] = [
+    {
+      name: 'Gates of Hell',
+      description: '',
+      index: HellLevel.Gates,
+      setPortals: () => {
+        this.activityService.portals = [];
+        let allComplete = true;
+        for (const hell of this.hells) {
+          if (hell.index === HellLevel.Gates) {
+            continue;
+          }
+          let consequenceDescription = '';
+          if (this.completedHellBosses.includes(hell.index)) {
+            consequenceDescription = 'You have proven your mastery over this hell.';
+          } else if (this.completedHellTasks.includes(hell.index)) {
+            consequenceDescription = 'The Lord of this Hell is available to challenge.';
+            allComplete = false;
+          } else {
+            allComplete = false;
+          }
+          this.activityService.portals.push({
+            level: 0,
+            name: [hell.name],
+            location: LocationType.Hell,
+            activityType: ActivityType.Hell + hell.index,
+            description: [hell.description],
+            yinYangEffect: [YinYangEffect.None],
+            consequenceDescription: [consequenceDescription],
+            consequence: [
+              () => {
+                this.moveToHell(hell.index);
+              },
+            ],
+            requirements: [{}],
+            unlocked: true,
+            skipApprenticeshipLevel: 0,
+            resourceUse: [],
+          });
+        }
+        if (allComplete) {
+          this.activityService.portals.push(this.activityService.FinishHell);
+        }
+      },
+      completeEffect: () => {
+        // TODO: unlock yama
+      },
+      activities: [
+        this.activityService.Resting,
+        this.activityService.CombatTraining,
+        this.activityService.CoreCultivation,
+        this.activityService.SoulCultivation,
+        this.activityService.InfuseBody,
+        this.activityService.PurifyGems,
+        this.activityService.InfuseEquipment,
+      ],
+      projectionActivities: [],
+      hint: '',
+      progress: () => {
+        return 0;
+      },
+      progressMax: () => {
+        return 1;
+      },
+      successCheck: () => {
+        return false;
+      },
+    },
     {
       name: 'Hell of Tongue-ripping',
       description:
         'Torment for gossips and everyone one who made trouble with their words. The demons here reach for your tongue to rip it out.',
       index: HellLevel.TongueRipping,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         this.followerService.stashFollowers();
       },
@@ -831,6 +834,9 @@ export class HellService {
       name: 'Hell of Scissors',
       description: 'Torment for those who ruin marriages. The demons here will cut your fingers right off.',
       index: HellLevel.Scissors,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         this.inventoryService.stashWeapons();
       },
@@ -868,6 +874,9 @@ export class HellService {
       description:
         'Torment for those who cause trouble between family members. The demons here will tie you to a tree made of sharp knives',
       index: HellLevel.TreesOfKnives,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         this.characterService.stashMoney();
       },
@@ -911,6 +920,9 @@ export class HellService {
       description:
         'Torment for those who escaped punishment for their crimes. The mirrors here shine with a terrifying glow.',
       index: HellLevel.Mirrors,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         this.followerService.stashFollowers();
       },
@@ -949,11 +961,15 @@ export class HellService {
       name: 'Hell of Steamers',
       description: 'Torment for hypocrites and ruffians. The steam baskets here are just the right size for you.',
       index: HellLevel.Steamers,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         this.inventoryService.stashWeapons();
         this.inventoryService.stashArmor();
       },
       exitEffect: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
         this.inventoryService.restoreWeapons();
         this.inventoryService.restoreArmor();
       },
@@ -1005,6 +1021,9 @@ export class HellService {
       description:
         'Torment for arsonists. The red-hot copper pillars you will be bound to remind you of all those times you played with fire.',
       index: HellLevel.CopperPillars,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         this.inventoryService.stashWeapons();
       },
@@ -1051,6 +1070,9 @@ export class HellService {
       description:
         'Torment for those who killed for pleasure. The mountain of sharp blades looks like it might be rough on footwear.',
       index: HellLevel.MountainOfKnives,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       dailyEffect: () => {
         let damage = this.battleService.totalKills / 100 - this.mountainSteps - this.atonedKills;
         this.atonedKills++;
@@ -1093,6 +1115,9 @@ export class HellService {
       name: 'Hell of the Mountain of Ice',
       description: 'Torment for adulterers and schemers. The chill wind blowing through the gate is so cold it burns.',
       index: HellLevel.MountainOfIce,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       completeEffect: () => {
         this.logService.log(
           LogTopic.STORY,
@@ -1135,6 +1160,9 @@ export class HellService {
       name: 'Hell of the Cauldrons of Oil',
       description: 'Torment for rapists and abusers. Next on the menu: deep fried immortal.',
       index: HellLevel.CauldronsOfOil,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       dailyEffect: () => {
         if (!this.completedHellTasks.includes(HellLevel.CauldronsOfOil)) {
           if (this.inventoryService.consume('iceCore') > 0) {
@@ -1200,6 +1228,9 @@ export class HellService {
       name: 'Hell of the Cattle Pit',
       description: 'Torment for animal abusers. The cows are looking a little restless.',
       index: HellLevel.CattlePit,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       completeEffect: () => {
         this.logService.log(
           LogTopic.STORY,
@@ -1231,6 +1262,12 @@ export class HellService {
       description:
         'Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them. Atlas had it easy compared to these people.',
       index: HellLevel.CrushingBoulder,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
+      entryEffect: () => {
+        this.boulderHeight = 0;
+      },
       dailyEffect: () => {
         if (this.boulderHeight > 100) {
           return;
@@ -1258,9 +1295,6 @@ export class HellService {
             ],
           });
         }
-      },
-      entryEffect: () => {
-        this.boulderHeight = 0;
       },
       completeEffect: () => {
         this.logService.log(
@@ -1293,6 +1327,9 @@ export class HellService {
       description:
         "Torment for food wasters. You didn't really need to eat all those peaches, did you? The diet here is pure hellfire.",
       index: HellLevel.MortarsAndPestles,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       dailyEffect: () => {
         this.daysFasted++;
       },
@@ -1326,6 +1363,9 @@ export class HellService {
       description:
         "Torment for those who disrespect others. The pool looks deep, but it's hard to tell with all that blood.",
       index: HellLevel.BloodPool,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         this.swimDepth = 0;
       },
@@ -1353,6 +1393,9 @@ export class HellService {
       description:
         "Torment for those who gave up their lives too early. Fortunately you've probably never done that. The pounding Rains of Pain and the blowing Winds of Sorrow give unrelenting misery to everyone here.",
       index: HellLevel.WrongfulDead,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       entryEffect: () => {
         if (this.exitFound) {
           if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.activityService.teachTheWay)) {
@@ -1396,6 +1439,9 @@ export class HellService {
       description:
         'Torment for tomb-raiders and grave-robbers. The demons here look awfully handy with those giant axes.',
       index: HellLevel.Dismemberment,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       completeEffect: () => {
         this.logService.log(
           LogTopic.STORY,
@@ -1433,6 +1479,9 @@ export class HellService {
       description:
         'Torment for thieves. The volcano where the poor souls are thrown looks a little toasty for comfort.',
       index: HellLevel.MountainOfFire,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       dailyEffect: () => {
         // take damage from the volcano
         if (this.inventoryService.consume('iceCore') < 0) {
@@ -1475,6 +1524,9 @@ export class HellService {
       description:
         "Torment for any who abused their power to oppress the weak. You don't look forward to being ground into immortal flour.",
       index: HellLevel.Mills,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       completeEffect: () => {
         this.logService.log(
           LogTopic.STORY,
@@ -1499,6 +1551,9 @@ export class HellService {
       description:
         "Torment for swindlers and business cheats. The demons sharpen their saws and grin at you. You wish now that you'd stayed out of politics.",
       index: HellLevel.Saws,
+      setPortals: () => {
+        this.activityService.portals = [this.activityService.escapeHell];
+      },
       dailyEffect: () => {
         if (this.contractsExamined <= 20000) {
           // saw damage

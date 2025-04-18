@@ -61,6 +61,7 @@ export class ActivityService {
   pauseOnDeath = true;
   pauseBeforeDeath = false;
   activities: Activity[];
+  portals: Activity[];
   openApprenticeships = 1;
   oddJobDays = 0;
   beggingDays = 0;
@@ -166,6 +167,7 @@ export class ActivityService {
       this.PetTraining,
       this.CombatTraining,
     ];
+    this.portals = [];
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
 
@@ -582,7 +584,6 @@ export class ActivityService {
   }
 
   setProperties(properties: ActivityProperties) {
-    //this.reloadActivities();
     this.completedApprenticeships = properties.completedApprenticeships || [];
     const unlockedActivities = properties.unlockedActivities || [ActivityType.OddJobs, ActivityType.Resting];
     const discoveredActivities = properties.discoveredActivities || [ActivityType.OddJobs, ActivityType.Resting];
@@ -626,10 +627,15 @@ export class ActivityService {
     this.recruitingCounter = properties.recruitingCounter;
     this.petRecruitingCounter = properties.petRecruitingCounter;
     this.coreCultivationCounter = properties.coreCultivationCounter;
+    this.checkRequirements(true);
   }
 
   meetsRequirements(activity: Activity): boolean {
-    if (this.locationService && !this.locationService.unlockedLocations.includes(activity.location)) {
+    if (
+      !this.hellService?.inHell &&
+      this.locationService &&
+      !this.locationService.unlockedLocations.includes(activity.location)
+    ) {
       return false;
     }
     if (this.meetsRequirementsByLevel(activity, activity.level)) {
@@ -4233,7 +4239,7 @@ export class ActivityService {
   teachTheWay: Activity = {
     level: 0,
     name: ['Teach the Way to the Exit'],
-    location: LocationType.HellOfWrongfulDead,
+    location: LocationType.Hell,
     activityType: ActivityType.TeachTheWay,
     description: ['Teach the other damned souls here the way out.'],
     yinYangEffect: [YinYangEffect.None],
@@ -4498,7 +4504,7 @@ export class ActivityService {
 
   escapeHell: Activity = {
     level: 0,
-    location: LocationType.Self,
+    location: LocationType.Hell,
     name: ['Escape from this hell'],
     activityType: ActivityType.EscapeHell,
     description: ["Return to the gates of Lord Yama's realm."],
@@ -4512,7 +4518,7 @@ export class ActivityService {
         if (leavingHell.exitEffect) {
           leavingHell.exitEffect();
         }
-        this.hellService!.moveToHell(-1);
+        this.hellService!.moveToHell(HellLevel.Gates);
       },
     ],
     requirements: [{}],
@@ -4520,7 +4526,6 @@ export class ActivityService {
     discovered: true,
     skipApprenticeshipLevel: 0,
     resourceUse: [],
-    portal: true,
   };
 
   FinishHell: Activity = {

@@ -3,7 +3,7 @@ import { HomeService, Workstation } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HellService } from '../game-state/hell.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { TitleCasePipe, NgClass } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { InventoryService } from '../game-state/inventory.service';
 import { WorkstationSelectionModalComponent } from '../workstation-selection-modal/workstation-selection-modal.component';
@@ -17,7 +17,6 @@ import { BigNumberPipe } from '../pipes';
   templateUrl: './crafting-panel.component.html',
   styleUrls: ['./crafting-panel.component.less', '../app.component.less'],
   imports: [
-    forwardRef(() => NgClass),
     forwardRef(() => MatIcon),
     forwardRef(() => CdkDropList),
     forwardRef(() => CdkDrag),
