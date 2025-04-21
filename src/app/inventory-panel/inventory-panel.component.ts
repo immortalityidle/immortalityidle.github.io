@@ -1,6 +1,6 @@
 import { Component, forwardRef } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
-import { EquipmentPosition } from '../game-state/character';
+import { EquipmentPosition } from '../game-state/character.service';
 import { InventoryService, ItemStack, instanceOfEquipment } from '../game-state/inventory.service';
 import { HellService } from '../game-state/hell.service';
 import { MainLoopService } from '../game-state/main-loop.service';
@@ -41,7 +41,7 @@ export class InventoryPanelComponent {
     public gameStateService: GameStateService,
     public dialog: MatDialog
   ) {
-    this.equipmentSlots = Object.keys(this.characterService.characterState.equipment);
+    this.equipmentSlots = Object.keys(this.characterService.equipment);
   }
 
   isFinite(value: number) {
@@ -240,7 +240,7 @@ export class InventoryPanelComponent {
       } else if (element.id.startsWith('equipmentSlot')) {
         const equipmentSlotString = element.id.substring('equipmentSlot'.length);
         const slot: EquipmentPosition = equipmentSlotString as EquipmentPosition;
-        if (!this.characterService.characterState.equipment[slot]) {
+        if (!this.characterService.equipment[slot]) {
           this.inventoryService.equip(itemStack);
           this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
         } else {

@@ -1,91 +1,91 @@
 <div class="equipmentContainer" cdkDropList cdkDropListSortingDisabled>
     <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-      [cdkDragData]="character.equipment.head" [cdkDragDisabled]="!character.equipment.head"    
+      [cdkDragData]="characterService.equipment.head" [cdkDragDisabled]="!characterService.equipment.head"    
       (dblclick)="slotDoubleClicked('head', $event)" tabindex="0"
       id="equipmentSlothead"
-      tooltip="{{(character.equipment.head !== null) ? (character.equipment.head.name | titlecase) + '.<br>' + (character.equipment.head.description) : ''}}">
-      @if (character.equipment.head?.imageFile){
+      tooltip="{{(characterService.equipment.head !== null) ? (characterService.equipment.head.name | titlecase) + '.<br>' + (characterService.equipment.head.description) : ''}}">
+      @if (characterService.equipment.head?.imageFile){
         <div>
-          <img src="assets/images/items/{{character.equipment.head?.imageFile}}.png" class="itemImage" 
-            width="48" height="48"  alt="{{character.equipment.head?.name | titlecase}}"/>
+          <img src="assets/images/items/{{characterService.equipment.head?.imageFile}}.png" class="itemImage" 
+            width="48" height="48"  alt="{{characterService.equipment.head?.name | titlecase}}"/>
         </div>
       }
       <div>
-        {{character.equipment.head?.name | titlecase}}
+        {{characterService.equipment.head?.name | titlecase}}
       </div>
     </div>
     <div style="grid-area: right;" class="itemSlot textOverflow"
       [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"  [ngClass]="getEffectClass('rightHand')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-      [cdkDragData]="character.equipment.rightHand" [cdkDragDisabled]="!character.equipment.rightHand"    
+      [cdkDragData]="characterService.equipment.rightHand" [cdkDragDisabled]="!characterService.equipment.rightHand"    
       (dblclick)="slotDoubleClicked('rightHand', $event)" tabindex="0"
       id="equipmentSlotrightHand"
-      tooltip="{{(character.equipment.rightHand !== null) ? (character.equipment.rightHand.name | titlecase) + '.<br>' + (character.equipment.rightHand.description) : ''}}">
-      @if (character.equipment.rightHand?.imageFile){
+      tooltip="{{(characterService.equipment.rightHand !== null) ? (characterService.equipment.rightHand.name | titlecase) + '.<br>' + (characterService.equipment.rightHand.description) : ''}}">
+      @if (characterService.equipment.rightHand?.imageFile){
         <div>
-          <img src="assets/images/items/{{character.equipment.rightHand?.imageFile}}.png" class="itemImage" 
-            width="48" height="48"  alt="{{character.equipment.rightHand?.name | titlecase}}"/>
+          <img src="assets/images/items/{{characterService.equipment.rightHand?.imageFile}}.png" class="itemImage" 
+            width="48" height="48"  alt="{{characterService.equipment.rightHand?.name | titlecase}}"/>
         </div>
       }
       <div>
-        {{character.equipment.rightHand?.name | titlecase}}
+        {{characterService.equipment.rightHand?.name | titlecase}}
       </div>
     </div>
     <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}" [ngClass]="getEffectClass('body')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-      [cdkDragData]="character.equipment.body" [cdkDragDisabled]="!character.equipment.body"    
+      [cdkDragData]="characterService.equipment.body" [cdkDragDisabled]="!characterService.equipment.body"    
       (dblclick)="slotDoubleClicked('body', $event)" tabindex="0"
       id="equipmentSlotbody"
-      tooltip="{{(character.equipment.body !== null) ? (character.equipment.body.name | titlecase) + '.<br>' + (character.equipment.body.description) : ''}}">
-      @if (character.equipment.body?.imageFile){
+      tooltip="{{(characterService.equipment.body !== null) ? (characterService.equipment.body.name | titlecase) + '.<br>' + (characterService.equipment.body.description) : ''}}">
+      @if (characterService.equipment.body?.imageFile){
         <div>
-          <img src="assets/images/items/{{character.equipment.body?.imageFile}}.png" class="itemImage" 
-            width="48" height="48"  alt="{{character.equipment.body?.name | titlecase}}"/>
+          <img src="assets/images/items/{{characterService.equipment.body?.imageFile}}.png" class="itemImage" 
+            width="48" height="48"  alt="{{characterService.equipment.body?.name | titlecase}}"/>
         </div>
       }
       <div>
-        {{character.equipment.body?.name | titlecase}}
+        {{characterService.equipment.body?.name | titlecase}}
       </div>
     </div>
     <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}" [ngClass]="getEffectClass('leftHand')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-      [cdkDragData]="character.equipment.leftHand" [cdkDragDisabled]="!character.equipment.leftHand"    
+      [cdkDragData]="characterService.equipment.leftHand" [cdkDragDisabled]="!characterService.equipment.leftHand"    
       (dblclick)="slotDoubleClicked('leftHand', $event)" tabindex="0"
       id="equipmentSlotleftHand"
-      tooltip="{{(character.equipment.leftHand !== null) ? (character.equipment.leftHand.name | titlecase) + '.<br>' + (character.equipment.leftHand.description) : ''}}">
-      @if (character.equipment.leftHand?.imageFile){
+      tooltip="{{(characterService.equipment.leftHand !== null) ? (characterService.equipment.leftHand.name | titlecase) + '.<br>' + (characterService.equipment.leftHand.description) : ''}}">
+      @if (characterService.equipment.leftHand?.imageFile){
         <div>
-          <img src="assets/images/items/{{character.equipment.leftHand?.imageFile}}.png" class="itemImage" 
-            width="48" height="48"  alt="{{character.equipment.leftHand?.name | titlecase}}"/>
+          <img src="assets/images/items/{{characterService.equipment.leftHand?.imageFile}}.png" class="itemImage" 
+            width="48" height="48"  alt="{{characterService.equipment.leftHand?.name | titlecase}}"/>
         </div>
       }
       <div>
-        {{character.equipment.leftHand?.name | titlecase}}
+        {{characterService.equipment.leftHand?.name | titlecase}}
       </div>
     </div>
     <div style="grid-area: stats;">
-      <span tabindex="0" [ngClass]="{'highlightSpan': character.righteousWrathUnlocked}" tooltip="Defense.<br>Reduces damage when a monster hits you.<br>Based on your toughness and armor.{{character.righteousWrathUnlocked ? '<br>Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{character.defense | bigNumber}}</span>
+      <span tabindex="0" [ngClass]="{'highlightSpan': characterService.righteousWrathUnlocked}" tooltip="Defense.<br>Reduces damage when a monster hits you.<br>Based on your toughness and armor.{{characterService.righteousWrathUnlocked ? '<br>Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{characterService.defense | bigNumber}}</span>
     </div>
     <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}" [ngClass]="getEffectClass('legs')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-      [cdkDragData]="character.equipment.legs" [cdkDragDisabled]="!character.equipment.legs"    
+      [cdkDragData]="characterService.equipment.legs" [cdkDragDisabled]="!characterService.equipment.legs"    
       (dblclick)="slotDoubleClicked('legs', $event)" tabindex="0"
       id="equipmentSlotlegs"
-      tooltip="{{(character.equipment.legs !== null) ? (character.equipment.legs.name | titlecase) + '.<br>' + (character.equipment.legs.description) : ''}}">
-      @if (character.equipment.legs?.imageFile){
+      tooltip="{{(characterService.equipment.legs !== null) ? (characterService.equipment.legs.name | titlecase) + '.<br>' + (characterService.equipment.legs.description) : ''}}">
+      @if (characterService.equipment.legs?.imageFile){
         <div>
-          <img src="assets/images/items/{{character.equipment.legs?.imageFile}}.png" class="itemImage" 
-            width="48" height="48"  alt="{{character.equipment.legs?.name | titlecase}}"/>
+          <img src="assets/images/items/{{characterService.equipment.legs?.imageFile}}.png" class="itemImage" 
+            width="48" height="48"  alt="{{characterService.equipment.legs?.name | titlecase}}"/>
         </div>
       }
       <div>
-        {{character.equipment.legs?.name | titlecase}}
+        {{characterService.equipment.legs?.name | titlecase}}
       </div>
     </div>
     <div style="grid-area: pouch;">
       <div class="pouchGrid" cdkDropList cdkDropListSortingDisabled>
-        @for (itemStack of character.itemPouches; track itemStack.id;) {
+        @for (itemStack of characterService.itemPouches; track itemStack.id;) {
           <div>
             <div id="pouchIndex{{$index}}" >
               <div class="pouchSlot" [tabindex]="itemStack?.item ? '0' : '-1'" 
@@ -113,18 +113,18 @@
     </div>
     <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}" [ngClass]="getEffectClass('feet')"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-      [cdkDragData]="character.equipment.feet" [cdkDragDisabled]="!character.equipment.feet"    
+      [cdkDragData]="characterService.equipment.feet" [cdkDragDisabled]="!characterService.equipment.feet"    
       (dblclick)="slotDoubleClicked('feet', $event)" tabindex="0"
       id="equipmentSlotfeet"
-      tooltip="{{(character.equipment.feet !== null) ? (character.equipment.feet.name | titlecase) + '.<br>' + (character.equipment.feet.description) : ''}}">
-      @if (character.equipment.feet?.imageFile){
+      tooltip="{{(characterService.equipment.feet !== null) ? (characterService.equipment.feet.name | titlecase) + '.<br>' + (characterService.equipment.feet.description) : ''}}">
+      @if (characterService.equipment.feet?.imageFile){
         <div>
-          <img src="assets/images/items/{{character.equipment.feet?.imageFile}}.png" class="itemImage" 
-            width="48" height="48"  alt="{{character.equipment.feet?.name | titlecase}}"/>
+          <img src="assets/images/items/{{characterService.equipment.feet?.imageFile}}.png" class="itemImage" 
+            width="48" height="48"  alt="{{characterService.equipment.feet?.name | titlecase}}"/>
         </div>
       }
       <div>
-        {{character.equipment.feet?.name | titlecase}}
+        {{characterService.equipment.feet?.name | titlecase}}
       </div>
   </div>
 </div>

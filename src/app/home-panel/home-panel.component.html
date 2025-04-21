@@ -38,7 +38,7 @@
       <span>{{homeService.home.description}}</span>
     </div>
     <div>
-      @if (!hellService.inHell && !characterService.characterState.god) {
+      @if (!hellService.inHell && !characterService.god) {
         <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
       }
 
@@ -62,7 +62,7 @@
               {{homeService.bedroomFurniture[2]?.name | titlecase}}
             </td>
             <td>
-              <span tooltip="The Feng Shui of your home can improve your health and wealth.">Feng Shui Score: {{characterService.characterState.fengshuiScore}}</span>
+              <span tooltip="The Feng Shui of your home can improve your health and wealth.">Feng Shui Score: {{characterService.fengshuiScore}}</span>
             </td>
           </tr>
           <tr>

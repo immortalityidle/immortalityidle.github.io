@@ -1,6 +1,6 @@
 <h3 class="activitiesHeader">
   <div class="customHeader">
-    @if (characterService.characterState.immortal && !hellService.inHell && !characterService.characterState.god) {
+    @if (characterService.immortal && !hellService.inHell && !characterService.god) {
       <span>
         <button (click)="joinTheGodsClick()">Join the Gods</button>
       </span>

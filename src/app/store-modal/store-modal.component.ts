@@ -70,9 +70,9 @@ export class StoreModalComponent {
       this.landItem.value = this.homeService.landPrice;
     } else {
       const price = quantity * item.value * 2;
-      if (this.characterService.characterState.money > price) {
+      if (this.characterService.money > price) {
         this.inventoryService.addItem(item, quantity);
-        this.characterService.characterState.updateMoney(0 - price);
+        this.characterService.updateMoney(0 - price);
       }
     }
   }

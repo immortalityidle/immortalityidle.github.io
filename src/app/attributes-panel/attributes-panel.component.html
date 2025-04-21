@@ -4,8 +4,8 @@
       <div class='attributeLine'>
         <span>Attribute</span>
       </div>
-      @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
-        @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
+      @for (attribute of characterService.attributes | keyvalue: originalOrder; track attribute) {
+        @if ((attribute.value.value !== 0 || characterService.highestAttributes[attribute.key])) {
           <div class='attributeLine' tooltip="{{attribute.value.description}}">
             <mat-icon>{{attribute.value.icon}}</mat-icon>
             <span>
@@ -19,8 +19,8 @@
       <div class='attributeLine'>
         <span>Aptitude &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       </div>
-      @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
-        @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
+      @for (attribute of characterService.attributes | keyvalue: originalOrder; track attribute) {
+        @if ((attribute.value.value !== 0 || characterService.highestAttributes[attribute.key])) {
           <div class='attributeLine' tooltip="Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.aptitudeMult | bigNumber}}.">
             <span>
               {{attribute.value.aptitude| bigNumber}}
@@ -33,8 +33,8 @@
       <div class='attributeLine'>
         <span>Value</span>
       </div>
-      @for (attribute of character.attributes | keyvalue: originalOrder; track attribute) {
-        @if ((attribute.value.value !== 0 || character.highestAttributes[attribute.key])) {
+      @for (attribute of characterService.attributes | keyvalue: originalOrder; track attribute) {
+        @if ((attribute.value.value !== 0 || characterService.highestAttributes[attribute.key])) {
           <div class='attributeLine'>
             <span>
               {{attribute.value.value | bigNumber}}

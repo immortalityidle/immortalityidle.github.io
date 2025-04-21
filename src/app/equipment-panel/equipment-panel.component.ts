@@ -1,6 +1,5 @@
 import { Component, forwardRef } from '@angular/core';
-import { Character, EquipmentPosition } from '../game-state/character';
-import { CharacterService } from '../game-state/character.service';
+import { CharacterService, EquipmentPosition } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
@@ -24,12 +23,11 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class EquipmentPanelComponent {
-  protected character = this.characterService.characterState;
   private dragPositionX = 0;
   private dragPositionY = 0;
 
   constructor(
-    private characterService: CharacterService,
+    public characterService: CharacterService,
     private inventoryService: InventoryService,
     private gameStateService: GameStateService
   ) {}
@@ -37,11 +35,11 @@ export class EquipmentPanelComponent {
   protected slotDoubleClicked(slot: EquipmentPosition, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    const item = this.characterService.characterState.equipment[slot];
+    const item = this.characterService.equipment[slot];
     // check for existence and make sure there's an empty slot for it
     if (item && this.inventoryService.openInventorySlots() > 0) {
       this.inventoryService.addItem(item as Item);
-      this.characterService.characterState.equipment[slot] = null;
+      this.characterService.equipment[slot] = null;
       this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
   }
@@ -49,11 +47,11 @@ export class EquipmentPanelComponent {
   protected pouchDoubleClicked(index: number, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    const pouchItemStack = this.characterService.characterState.itemPouches[index];
+    const pouchItemStack = this.characterService.itemPouches[index];
     // check for existence and make sure there's an empty slot for it
     if (pouchItemStack && pouchItemStack.item && this.inventoryService.openInventorySlots() > 0) {
       this.inventoryService.addItem(pouchItemStack.item, pouchItemStack.quantity);
-      this.characterService.characterState.itemPouches[index] = this.inventoryService.getEmptyItemStack();
+      this.characterService.itemPouches[index] = this.inventoryService.getEmptyItemStack();
       this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
   }
@@ -120,27 +118,27 @@ export class EquipmentPanelComponent {
               // clear out the destination slot and merge
               this.inventoryService.setItemEmptyStack(destinationItemIndex);
               this.inventoryService.mergeEquipment(destinationItemStack.item, sourceItem, destinationItemIndex);
-              this.characterService.characterState.equipment[destinationItemStack.item.slot] = null;
+              this.characterService.equipment[destinationItemStack.item.slot] = null;
             } else if (destinationItemStack.item.name === sourceItem.item?.name) {
-              const pouchIndex = this.character.itemPouches.indexOf(sourceItem);
+              const pouchIndex = this.characterService.itemPouches.indexOf(sourceItem);
               if (pouchIndex !== -1) {
                 destinationItemStack.quantity += sourceItem.quantity;
                 this.inventoryService.fixId(destinationItemIndex);
-                this.character.itemPouches[pouchIndex] = this.inventoryService.getEmptyItemStack();
+                this.characterService.itemPouches[pouchIndex] = this.inventoryService.getEmptyItemStack();
               }
             }
           } else {
             if (sourceItem.quantity) {
               // it's a pouch stack
-              const pouchIndex = this.character.itemPouches.indexOf(sourceItem);
+              const pouchIndex = this.characterService.itemPouches.indexOf(sourceItem);
               if (pouchIndex !== -1) {
                 this.inventoryService.addItem(sourceItem.item, sourceItem.quantity, destinationItemIndex);
-                this.character.itemPouches[pouchIndex] = this.inventoryService.getEmptyItemStack();
+                this.characterService.itemPouches[pouchIndex] = this.inventoryService.getEmptyItemStack();
               }
             } else {
               this.inventoryService.addItem(sourceItem as Item, 1, destinationItemIndex);
               const equipmentSlot: EquipmentPosition = sourceItem.slot as EquipmentPosition;
-              this.characterService.characterState.equipment[equipmentSlot] = null;
+              this.characterService.equipment[equipmentSlot] = null;
             }
           }
         }
@@ -151,9 +149,9 @@ export class EquipmentPanelComponent {
   protected getEffectClass(slot: string): string {
     let effect;
     if (slot === 'leftHand' || slot === 'rightHand') {
-      effect = this.character.equipment[slot]?.weaponStats?.effect;
+      effect = this.characterService.equipment[slot]?.weaponStats?.effect;
     } else if (slot === 'head' || slot === 'body' || slot === 'legs' || slot === 'feet') {
-      effect = this.character.equipment[slot]?.armorStats?.effect;
+      effect = this.characterService.equipment[slot]?.armorStats?.effect;
     }
     if (effect) {
       return 'effect' + effect;

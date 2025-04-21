@@ -91,7 +91,7 @@ export class AchievementService {
         'You earned your first few taels by working hard.<br>Maybe you should invest in some land and a better home.',
       hint: 'Make some money.',
       check: () => {
-        return this.characterService.characterState.money >= 100;
+        return this.characterService.money >= 100;
       },
       effect: () => {
         this.homeService.homeUnlocked = true;
@@ -163,12 +163,12 @@ export class AchievementService {
       check: () => {
         return (
           this.inventoryService.equipmentCreated > 0 ||
-          this.characterService.characterState.equipment.head !== null ||
-          this.characterService.characterState.equipment.body !== null ||
-          this.characterService.characterState.equipment.leftHand !== null ||
-          this.characterService.characterState.equipment.rightHand !== null ||
-          this.characterService.characterState.equipment.legs !== null ||
-          this.characterService.characterState.equipment.feet !== null
+          this.characterService.equipment.head !== null ||
+          this.characterService.equipment.body !== null ||
+          this.characterService.equipment.leftHand !== null ||
+          this.characterService.equipment.rightHand !== null ||
+          this.characterService.equipment.legs !== null ||
+          this.characterService.equipment.feet !== null
         );
       },
       effect: () => {
@@ -230,7 +230,7 @@ export class AchievementService {
       description: 'You can now grow cabbage in your farm. Watch out for kids running by when you sell them.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 2;
+        return this.characterService.attributes.woodLore.value > 2;
       },
       effect: () => {
         this.farmService.unlockCrop('cabbage');
@@ -242,7 +242,7 @@ export class AchievementService {
       description: 'You can now grow beans in your farm.',
       hint: "They're not really a fruit.",
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 5;
+        return this.characterService.attributes.woodLore.value > 5;
       },
       effect: () => {
         this.farmService.unlockCrop('beans');
@@ -254,7 +254,7 @@ export class AchievementService {
       description: 'You can now grow broccoli in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 10;
+        return this.characterService.attributes.woodLore.value > 10;
       },
       effect: () => {
         this.farmService.unlockCrop('broccoli');
@@ -266,7 +266,7 @@ export class AchievementService {
       description: 'You can now grow calabash in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 50;
+        return this.characterService.attributes.woodLore.value > 50;
       },
       effect: () => {
         this.farmService.unlockCrop('calabash');
@@ -278,7 +278,7 @@ export class AchievementService {
       description: 'You can now grow taro in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 100;
+        return this.characterService.attributes.woodLore.value > 100;
       },
       effect: () => {
         this.farmService.unlockCrop('taro');
@@ -290,7 +290,7 @@ export class AchievementService {
       description: 'You can now grow pears in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 1000;
+        return this.characterService.attributes.woodLore.value > 1000;
       },
       effect: () => {
         this.farmService.unlockCrop('pear');
@@ -302,7 +302,7 @@ export class AchievementService {
       description: 'You can now grow melons in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 10000;
+        return this.characterService.attributes.woodLore.value > 10000;
       },
       effect: () => {
         this.farmService.unlockCrop('melon');
@@ -314,7 +314,7 @@ export class AchievementService {
       description: 'You can now grow plums in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 1e6;
+        return this.characterService.attributes.woodLore.value > 1e6;
       },
       effect: () => {
         this.farmService.unlockCrop('plum');
@@ -326,7 +326,7 @@ export class AchievementService {
       description: 'You can now grow apricot in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 1e9;
+        return this.characterService.attributes.woodLore.value > 1e9;
       },
       effect: () => {
         this.farmService.unlockCrop('apricot');
@@ -338,7 +338,7 @@ export class AchievementService {
       description: 'You can now grow peaches in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.characterState.attributes.woodLore.value > 1e12;
+        return this.characterService.attributes.woodLore.value > 1e12;
       },
       effect: () => {
         this.farmService.unlockCrop('peach');
@@ -467,7 +467,7 @@ export class AchievementService {
       description: 'You got a taste of those sweet, sweet empowerment pills and want more.',
       hint: 'Master of all.',
       check: () => {
-        return this.characterService.characterState.empowermentFactor > 1;
+        return this.characterService.empowermentFactor > 1;
       },
       effect: () => {
         //TODO: Create a downside to taking empowerment pills, maybe post-Death
@@ -481,7 +481,7 @@ export class AchievementService {
         "You got every last drop you could out of those pills and now you feel nothing from them.<br>At least they didn't kill you or do lasting harm, right?",
       hint: 'D.A.R.E.',
       check: () => {
-        return this.characterService.characterState.empowermentFactor >= 1953.65;
+        return this.characterService.empowermentFactor >= 1953.65;
       },
       effect: () => {
         //TODO: Create a downside to taking HUGE NUMBERS of empowerment pills, maybe in Hell?
@@ -601,7 +601,7 @@ export class AchievementService {
         return this.homeService.homeValue >= HomeType.CourtyardHouse;
       },
       effect: () => {
-        this.characterService.characterState.startingStaminaBoost = true;
+        this.characterService.startingStaminaBoost = true;
       },
       unlocked: false,
     },
@@ -611,7 +611,7 @@ export class AchievementService {
         'You set up some great furniture and can now better discern where furniture items should go to improve the flow of Qi in your home.',
       hint: 'Immortals have discerning taste in furnishings.',
       check: () => {
-        return this.characterService.characterState.fengshuiScore >= 5;
+        return this.characterService.fengshuiScore >= 5;
       },
       effect: () => {
         this.homeService.seeFurnitureEffects = true;
@@ -624,7 +624,7 @@ export class AchievementService {
         'Your taste in decor is so excellent that the furniture in your bedroom will be preserved untouched until your next reincarnation.',
       hint: 'Strong family bonds mean more heirlooms.',
       check: () => {
-        return this.characterService.characterState.fengshuiScore >= 10;
+        return this.characterService.fengshuiScore >= 10;
       },
       effect: () => {
         this.homeService.keepFurniture = true;
@@ -671,9 +671,9 @@ export class AchievementService {
         return this.inventoryService.lifetimePotionsUsed >= 1;
       },
       effect: () => {
-        if (this.characterService.characterState.itemPouches.length < 1) {
+        if (this.characterService.itemPouches.length < 1) {
           // open up an item pouch slot if one isn't open yet
-          this.characterService.characterState.itemPouches.push(this.inventoryService.getEmptyItemStack());
+          this.characterService.itemPouches.push(this.inventoryService.getEmptyItemStack());
         }
       },
       unlocked: false,
@@ -723,10 +723,10 @@ export class AchievementService {
       hint: 'Left and right.',
       check: () => {
         if (
-          this.characterService.characterState.equipment?.rightHand?.weaponStats &&
-          this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 60 &&
-          this.characterService.characterState.equipment?.leftHand?.weaponStats &&
-          this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 60
+          this.characterService.equipment?.rightHand?.weaponStats &&
+          this.characterService.equipment?.rightHand?.weaponStats.baseDamage >= 60 &&
+          this.characterService.equipment?.leftHand?.weaponStats &&
+          this.characterService.equipment?.leftHand?.weaponStats.baseDamage >= 60
         ) {
           return true;
         }
@@ -745,14 +745,14 @@ export class AchievementService {
       hint: 'Suit up.',
       check: () => {
         if (
-          this.characterService.characterState.equipment?.head?.armorStats &&
-          this.characterService.characterState.equipment?.head?.armorStats.defense >= 60 &&
-          this.characterService.characterState.equipment?.body?.armorStats &&
-          this.characterService.characterState.equipment?.body?.armorStats.defense >= 60 &&
-          this.characterService.characterState.equipment?.legs?.armorStats &&
-          this.characterService.characterState.equipment?.legs?.armorStats.defense >= 60 &&
-          this.characterService.characterState.equipment?.feet?.armorStats &&
-          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 60
+          this.characterService.equipment?.head?.armorStats &&
+          this.characterService.equipment?.head?.armorStats.defense >= 60 &&
+          this.characterService.equipment?.body?.armorStats &&
+          this.characterService.equipment?.body?.armorStats.defense >= 60 &&
+          this.characterService.equipment?.legs?.armorStats &&
+          this.characterService.equipment?.legs?.armorStats.defense >= 60 &&
+          this.characterService.equipment?.feet?.armorStats &&
+          this.characterService.equipment?.feet?.armorStats.defense >= 60
         ) {
           return true;
         }
@@ -783,8 +783,8 @@ export class AchievementService {
       hint: 'An aspiring immortal should take the red one. Take it over and over.',
       check: () => {
         return (
-          this.characterService.characterState.attributes.woodLore.value > 1024 &&
-          this.characterService.characterState.attributes.waterLore.value > 1024
+          this.characterService.attributes.woodLore.value > 1024 &&
+          this.characterService.attributes.waterLore.value > 1024
         );
       },
       effect: () => {
@@ -800,8 +800,8 @@ export class AchievementService {
       hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
-          this.characterService.characterState.attributes.woodLore.value > 1024 &&
-          this.characterService.characterState.attributes.intelligence.value > 1024
+          this.characterService.attributes.woodLore.value > 1024 &&
+          this.characterService.attributes.intelligence.value > 1024
         );
       },
       effect: () => {
@@ -818,8 +818,8 @@ export class AchievementService {
       hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
-          this.characterService.characterState.attributes.metalLore.value > 1024 &&
-          this.characterService.characterState.attributes.earthLore.value > 1024
+          this.characterService.attributes.metalLore.value > 1024 &&
+          this.characterService.attributes.earthLore.value > 1024
         );
       },
       effect: () => {
@@ -836,8 +836,8 @@ export class AchievementService {
       hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
-          this.characterService.characterState.attributes.animalHandling.value > 1024 &&
-          this.characterService.characterState.attributes.speed.value > 1024
+          this.characterService.attributes.animalHandling.value > 1024 &&
+          this.characterService.attributes.speed.value > 1024
         );
       },
       effect: () => {
@@ -863,7 +863,7 @@ export class AchievementService {
         'Your family has unlocked the secrets of compound interest.<br>You probably never have to worry about money again.',
       hint: 'Family first. Especially in matters of money.',
       check: () => {
-        return this.characterService.characterState.bloodlineRank >= 4;
+        return this.characterService.bloodlineRank >= 4;
       },
       effect: () => {
         /* intentionally empty */
@@ -876,7 +876,7 @@ export class AchievementService {
         "You filled up your purse, your wall safe, the box under your bed, and a giant money pit in the backyard.<br>You just can't hold any more money.",
       hint: 'How rich can you get?',
       check: () => {
-        return this.characterService.characterState.money >= this.characterService.characterState.maxMoney - 1e21; //not exactly max in case this gets checked at a bad time
+        return this.characterService.money >= this.characterService.maxMoney - 1e21; //not exactly max in case this gets checked at a bad time
       },
       effect: () => {
         /* intentionally empty */
@@ -888,7 +888,7 @@ export class AchievementService {
       description: "You've gone through four cycles of reincarnation and come to understand the value of grandfathers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
-        return this.characterService.characterState.totalLives > 4;
+        return this.characterService.totalLives > 4;
       },
       effect: () => {
         this.homeService.grandfatherTent = true;
@@ -924,7 +924,7 @@ export class AchievementService {
       description: "You've developed spirituality and come to understand the value of grandmothers.",
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
-        return this.characterService.characterState.attributes.spirituality.value > 0;
+        return this.characterService.attributes.spirituality.value > 0;
       },
       effect: () => {
         this.inventoryService.grandmotherGift = true;
@@ -939,10 +939,10 @@ export class AchievementService {
       hint: 'Power level 10,000!',
       check: () => {
         if (
-          this.characterService.characterState.equipment?.rightHand?.weaponStats &&
-          this.characterService.characterState.equipment?.rightHand?.weaponStats.baseDamage >= 8888 &&
-          this.characterService.characterState.equipment?.leftHand?.weaponStats &&
-          this.characterService.characterState.equipment?.leftHand?.weaponStats.baseDamage >= 8888
+          this.characterService.equipment?.rightHand?.weaponStats &&
+          this.characterService.equipment?.rightHand?.weaponStats.baseDamage >= 8888 &&
+          this.characterService.equipment?.leftHand?.weaponStats &&
+          this.characterService.equipment?.leftHand?.weaponStats.baseDamage >= 8888
         ) {
           return true;
         }
@@ -961,14 +961,14 @@ export class AchievementService {
       hint: "Don't hurt me!",
       check: () => {
         if (
-          this.characterService.characterState.equipment?.head?.armorStats &&
-          this.characterService.characterState.equipment?.head?.armorStats.defense >= 8888 &&
-          this.characterService.characterState.equipment?.body?.armorStats &&
-          this.characterService.characterState.equipment?.body?.armorStats.defense >= 8888 &&
-          this.characterService.characterState.equipment?.legs?.armorStats &&
-          this.characterService.characterState.equipment?.legs?.armorStats.defense >= 8888 &&
-          this.characterService.characterState.equipment?.feet?.armorStats &&
-          this.characterService.characterState.equipment?.feet?.armorStats.defense >= 8888
+          this.characterService.equipment?.head?.armorStats &&
+          this.characterService.equipment?.head?.armorStats.defense >= 8888 &&
+          this.characterService.equipment?.body?.armorStats &&
+          this.characterService.equipment?.body?.armorStats.defense >= 8888 &&
+          this.characterService.equipment?.legs?.armorStats &&
+          this.characterService.equipment?.legs?.armorStats.defense >= 8888 &&
+          this.characterService.equipment?.feet?.armorStats &&
+          this.characterService.equipment?.feet?.armorStats.defense >= 8888
         ) {
           return true;
         }
@@ -985,21 +985,21 @@ export class AchievementService {
         'Enlightenment!<br>You have achieved a permanent and deep understanding of elemental balance with your high, balanced levels of lore in each of the five elements.<br>Qi is now unlocked for all future lives.',
       hint: 'Seek the balance of the dao.',
       check: () => {
-        const fireLore = this.characterService.characterState.attributes.fireLore.value;
-        const earthLore = this.characterService.characterState.attributes.earthLore.value;
-        const woodLore = this.characterService.characterState.attributes.woodLore.value;
-        const waterLore = this.characterService.characterState.attributes.waterLore.value;
-        const metalLore = this.characterService.characterState.attributes.metalLore.value; //Reduce the bulk
+        const fireLore = this.characterService.attributes.fireLore.value;
+        const earthLore = this.characterService.attributes.earthLore.value;
+        const woodLore = this.characterService.attributes.woodLore.value;
+        const waterLore = this.characterService.attributes.waterLore.value;
+        const metalLore = this.characterService.attributes.metalLore.value; //Reduce the bulk
 
         const lowValue = Math.min(metalLore, waterLore, woodLore, earthLore, fireLore);
         const highValue = Math.max(metalLore, waterLore, woodLore, earthLore, fireLore);
         return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
-        this.characterService.characterState.qiUnlocked = true;
-        if (this.characterService.characterState.status.qi.max === 0) {
-          this.characterService.characterState.status.qi.max = 1;
-          this.characterService.characterState.status.qi.value = 1;
+        this.characterService.qiUnlocked = true;
+        if (this.characterService.status.qi.max === 0) {
+          this.characterService.status.qi.max = 1;
+          this.characterService.status.qi.value = 1;
         }
         this.activityService.checkRequirements(true);
       },
@@ -1013,7 +1013,7 @@ export class AchievementService {
         return (
           this.characterService.soulCoreRank() >= 1 &&
           this.characterService.meridianRank() >= 1 &&
-          this.characterService.characterState.bloodlineRank >= 1
+          this.characterService.bloodlineRank >= 1
         );
       },
       effect: () => {
@@ -1033,7 +1033,7 @@ export class AchievementService {
         return (
           this.characterService.soulCoreRank() >= 9 &&
           this.characterService.meridianRank() >= 9 &&
-          this.characterService.characterState.bloodlineRank >= 5
+          this.characterService.bloodlineRank >= 5
         );
       },
       effect: () => {
@@ -1054,7 +1054,7 @@ export class AchievementService {
         return (
           this.characterService.soulCoreRank() >= 1 ||
           this.characterService.meridianRank() >= 1 ||
-          this.characterService.characterState.bloodlineRank >= 1
+          this.characterService.bloodlineRank >= 1
         );
       },
       effect: () => {
@@ -1093,12 +1093,10 @@ export class AchievementService {
       description: 'You have established an empire that will never fall, and a bloodline that will always inherit it.',
       hint: 'Bloodline Empire.',
       check: () => {
-        return (
-          this.homeService.home.type >= HomeType.Capital && this.characterService.characterState.bloodlineRank >= 7
-        );
+        return this.homeService.home.type >= HomeType.Capital && this.characterService.bloodlineRank >= 7;
       },
       effect: () => {
-        this.characterService.characterState.imperial = true;
+        this.characterService.imperial = true;
       },
       unlocked: false,
     },
@@ -1107,7 +1105,7 @@ export class AchievementService {
       description: 'You have broken past human limits and improve constantly! What new fate awaits you?',
       hint: '999',
       check: () => {
-        return this.characterService.characterState.bloodlineRank >= 9;
+        return this.characterService.bloodlineRank >= 9;
       },
       effect: () => {
         /* intentionally empty */
@@ -1120,11 +1118,11 @@ export class AchievementService {
         'You have balanced your powerful mind and body and unlocked the ability to use your Qi to strike down your enemies.',
       hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
-        const speed = this.characterService.characterState.attributes.speed.value;
-        const toughness = this.characterService.characterState.attributes.toughness.value;
-        const charisma = this.characterService.characterState.attributes.charisma.value;
-        const intelligence = this.characterService.characterState.attributes.intelligence.value;
-        const strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
+        const speed = this.characterService.attributes.speed.value;
+        const toughness = this.characterService.attributes.toughness.value;
+        const charisma = this.characterService.attributes.charisma.value;
+        const intelligence = this.characterService.attributes.intelligence.value;
+        const strength = this.characterService.attributes.strength.value; //Reduce the bulk
 
         const lowValue = Math.min(speed, toughness, charisma, intelligence, strength);
         const highValue = Math.max(speed, toughness, charisma, intelligence, strength);
@@ -1141,12 +1139,12 @@ export class AchievementService {
         'You have balanced your powerful spirit with your mind and body.<br>You unlocked the ability to use your Qi to protect yourself.',
       hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
-        const spirituality = this.characterService.characterState.attributes.spirituality.value;
-        const speed = this.characterService.characterState.attributes.speed.value;
-        const toughness = this.characterService.characterState.attributes.toughness.value;
-        const charisma = this.characterService.characterState.attributes.charisma.value;
-        const intelligence = this.characterService.characterState.attributes.intelligence.value;
-        const strength = this.characterService.characterState.attributes.strength.value; //Reduce the bulk
+        const spirituality = this.characterService.attributes.spirituality.value;
+        const speed = this.characterService.attributes.speed.value;
+        const toughness = this.characterService.attributes.toughness.value;
+        const charisma = this.characterService.attributes.charisma.value;
+        const intelligence = this.characterService.attributes.intelligence.value;
+        const strength = this.characterService.attributes.strength.value; //Reduce the bulk
 
         const lowValue = Math.min(speed, toughness, charisma, intelligence, strength, spirituality);
         const highValue = Math.max(speed, toughness, charisma, intelligence, strength, spirituality);
@@ -1189,10 +1187,10 @@ export class AchievementService {
       description: 'You have developed enough spirituality to ascend.',
       hint: 'Only with spiritual development can you ascend to higher states.',
       check: () => {
-        return this.characterService.characterState.attributes.spirituality.value >= 10;
+        return this.characterService.attributes.spirituality.value >= 10;
       },
       effect: () => {
-        this.characterService.characterState.ascensionUnlocked = true;
+        this.characterService.ascensionUnlocked = true;
       },
       unlocked: false,
     },
@@ -1202,7 +1200,7 @@ export class AchievementService {
         'You have lived many lives and unlocked the ' + this.itemRepoService.items['autoPauseSettingsManual'].name,
       hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
       check: () => {
-        return this.characterService.characterState.totalLives >= 48 && this.mainLoopService.totalTicks > 18250;
+        return this.characterService.totalLives >= 48 && this.mainLoopService.totalTicks > 18250;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoPauseSettingsManual']);
@@ -1230,7 +1228,7 @@ export class AchievementService {
         this.itemRepoService.items['autoRestManual'].name,
       hint: "There's no time to rest, cultivating is life.",
       check: () => {
-        return this.activityService.activityDeath || this.characterService.characterState.immortal;
+        return this.activityService.activityDeath || this.characterService.immortal;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoRestManual']);
@@ -1243,7 +1241,7 @@ export class AchievementService {
         'You have lived to be 300 years old and unlocked the ' + this.itemRepoService.items['ageSpeedManual'].name,
       hint: 'One step to becoming immortal is to live longer.',
       check: () => {
-        return this.characterService.characterState.age > 300 * 365;
+        return this.characterService.age > 300 * 365;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['ageSpeedManual']);
@@ -1255,7 +1253,7 @@ export class AchievementService {
       description: 'Congratulations! You are now immortal.',
       hint: 'Name of the game.',
       check: () => {
-        return this.characterService.characterState.immortal;
+        return this.characterService.immortal;
       },
       effect: () => {
         this.activityService.checkRequirements(true);
@@ -1296,8 +1294,8 @@ export class AchievementService {
       description: 'You have crafted the mightiest stick.<br>Grandmother would be so proud.',
       hint: 'The best stick.',
       check: () => {
-        if (this.characterService.characterState.equipment.leftHand?.name === "Grandmother's Walking Stick") {
-          if ((this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 0) > 1e9) {
+        if (this.characterService.equipment.leftHand?.name === "Grandmother's Walking Stick") {
+          if ((this.characterService.equipment.leftHand.weaponStats?.baseDamage || 0) > 1e9) {
             return true;
           }
         }
@@ -1370,9 +1368,9 @@ export class AchievementService {
         return this.inventoryService.divinePeachesUnlocked;
       },
       effect: () => {
-        if (this.characterService.characterState.itemPouches.length < 2) {
+        if (this.characterService.itemPouches.length < 2) {
           // open up an item pouch slot if one isn't open yet
-          this.characterService.characterState.itemPouches.push(this.inventoryService.getEmptyItemStack());
+          this.characterService.itemPouches.push(this.inventoryService.getEmptyItemStack());
         }
       },
       unlocked: false,
@@ -1382,7 +1380,7 @@ export class AchievementService {
       description: "A new threat has emerged, more powerful than anything you've ever faced.",
       hint: 'Godhood comes with issues.',
       check: () => {
-        return this.characterService.characterState.god;
+        return this.characterService.god;
       },
       effect: () => {
         this.battleService.godSlayersUnlocked = true;

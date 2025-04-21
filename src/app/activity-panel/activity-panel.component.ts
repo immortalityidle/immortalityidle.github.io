@@ -67,7 +67,7 @@ export class ActivityPanelComponent {
     dialogRef.afterClosed().subscribe(() => {
       this.hellService.inHell = true;
       this.hellService.moveToHell(HellLevel.Gates);
-      this.characterService.characterState.money = 0;
+      this.characterService.money = 0;
       this.inventoryService.stashInventory();
       this.followerService.hellPurge();
       this.activityService.checkRequirements(true);
@@ -112,7 +112,7 @@ export class ActivityPanelComponent {
     }
     const failedStatus = this.activityService.checkResourceUse(activity);
     if (failedStatus !== '') {
-      this.characterService.characterState.flashStatus(failedStatus);
+      this.characterService.flashStatus(failedStatus);
       this.logService.log(
         LogTopic.EVENT,
         "You don't meet the requirements to do " + activity.name[activity.level] + ' right now.'
@@ -203,7 +203,7 @@ export class ActivityPanelComponent {
         return 'Spend a day doing this activity';
       } else {
         let projectionString = '';
-        if (this.characterService.characterState.qiUnlocked) {
+        if (this.characterService.qiUnlocked) {
           projectionString = '<br>Right-click to set this as your spriritual projection activity';
         }
         return (

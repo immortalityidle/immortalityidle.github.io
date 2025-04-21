@@ -22,8 +22,8 @@ export class WorkstationSelectionModalComponent {
   ) {}
 
   slotClicked(workstation: Workstation) {
-    if (this.characterService.characterState.money > workstation.setupCost) {
-      this.characterService.characterState.updateMoney(0 - workstation.setupCost);
+    if (this.characterService.money > workstation.setupCost) {
+      this.characterService.updateMoney(0 - workstation.setupCost);
       this.homeService.addWorkstation(workstation.id);
       this.dialogRef.close();
     }

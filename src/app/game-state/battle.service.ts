@@ -8,7 +8,7 @@ import { HellService } from './hell.service';
 import { HomeService, HomeType } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
-import { AttributeType, StatusType } from './character';
+import { AttributeType, StatusType } from './character.service';
 import { BigNumberPipe } from '../pipes';
 
 export interface Enemy {
@@ -217,20 +217,20 @@ export class BattleService {
     });
 
     mainLoopService.battleTickSubject.subscribe(() => {
-      if (this.characterService.characterState.dead) {
+      if (this.characterService.dead) {
         return;
       }
 
       this.inventoryService.usePouchItem(1); // TODO: use cooldowns for this
 
-      for (const keyString in this.characterService.characterState.status) {
+      for (const keyString in this.characterService.status) {
         const key = keyString as StatusType;
-        const statusEntry = this.characterService.characterState.status[key];
+        const statusEntry = this.characterService.status[key];
         if (statusEntry.battleTickRecovery) {
           statusEntry.value += statusEntry.battleTickRecovery;
         }
       }
-      this.characterService.characterState.checkOverage();
+      this.characterService.checkOverage();
 
       if (this.currentEnemy === null && this.enemies.length > 0) {
         this.currentEnemy = this.enemies[0];
@@ -249,8 +249,8 @@ export class BattleService {
           enemy.imageFile = 'assets/images/monsters/' + enemy.baseName + '.png';
         }
       }
-      this.techniques[1].unlocked = this.characterService.characterState.equipment.rightHand !== null;
-      this.techniques[2].unlocked = this.characterService.characterState.equipment.leftHand !== null;
+      this.techniques[1].unlocked = this.characterService.equipment.rightHand !== null;
+      this.techniques[2].unlocked = this.characterService.equipment.leftHand !== null;
 
       const familyTechniques = this.techniques.filter(technique => technique.familyTechnique === true);
       if (
@@ -362,7 +362,7 @@ export class BattleService {
       healthCost = 1000;
       extraMultiplier = 10;
     }
-    const attributeKeys = Object.keys(this.characterService.characterState.attackPower);
+    const attributeKeys = Object.keys(this.characterService.attackPower);
 
     const attribute = attributeKeys[Math.floor(Math.random() * attributeKeys.length)] as AttributeType;
     let attributePrefix = '';
@@ -617,7 +617,7 @@ export class BattleService {
     }
     let damage = technique.baseDamage;
     // Yin/Yang factor
-    damage -= damage * (this.characterService.characterState.yinYangBalance / 2);
+    damage -= damage * (this.characterService.yinYangBalance / 2);
 
     let damageBack = false;
     for (let i = this.statusEffects.length - 1; i >= 0; i--) {
@@ -626,7 +626,7 @@ export class BattleService {
       } else if (this.statusEffects[i].name === this.shieldingEffectName) {
         damage /= 2;
       } else if (this.statusEffects[i].name === this.fireShieldName) {
-        let fireDivisor = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
+        let fireDivisor = Math.log(this.characterService.attributes.fireLore.value) / Math.log(100);
         if (fireDivisor < 1) {
           fireDivisor = 1;
         }
@@ -634,7 +634,7 @@ export class BattleService {
           fireDivisor = 10;
         }
         damage /= fireDivisor;
-        this.characterService.characterState.status.qi.value -= 10000;
+        this.characterService.status.qi.value -= 10000;
         damageBack = true;
       } else if (this.statusEffects[i].name === this.iceShieldName) {
         damage = 0;
@@ -644,7 +644,7 @@ export class BattleService {
       }
     }
 
-    const defense = this.characterService.characterState.defense;
+    const defense = this.characterService.defense;
     // TODO: tune this
     // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
     if (defense >= 1) {
@@ -656,7 +656,7 @@ export class BattleService {
         LogTopic.COMBAT,
         'Ow! You got hit for ' + this.bigNumberPipe.transform(damage) + ' damage'
       );
-      this.characterService.characterState.increaseAttribute('toughness', 0.01);
+      this.characterService.increaseAttribute('toughness', 0.01);
       if (damageBack) {
         this.damageEnemy(damage, 'Your shield strikes back, damaging the enemy for ' + damage + ' damage.');
       }
@@ -664,7 +664,7 @@ export class BattleService {
     if (damage > this.highestDamageTaken) {
       this.highestDamageTaken = damage;
     }
-    this.characterService.characterState.status.health.value -= damage;
+    this.characterService.status.health.value -= damage;
     this.attackEffect(technique);
   }
 
@@ -720,22 +720,22 @@ export class BattleService {
       return;
     }
     if (technique.qiCost) {
-      if (this.characterService.characterState.status.qi.value < technique.qiCost) {
+      if (this.characterService.status.qi.value < technique.qiCost) {
         return;
       }
-      this.characterService.characterState.status.qi.value -= technique.qiCost;
+      this.characterService.status.qi.value -= technique.qiCost;
     }
     if (technique.staminaCost) {
-      if (this.characterService.characterState.status.stamina.value < technique.staminaCost) {
+      if (this.characterService.status.stamina.value < technique.staminaCost) {
         return;
       }
-      this.characterService.characterState.status.stamina.value -= technique.staminaCost;
+      this.characterService.status.stamina.value -= technique.staminaCost;
     }
     if (technique.healthCost) {
-      if (this.characterService.characterState.status.health.value <= technique.healthCost) {
+      if (this.characterService.status.health.value <= technique.healthCost) {
         return;
       }
-      this.characterService.characterState.status.health.value -= technique.healthCost;
+      this.characterService.status.health.value -= technique.healthCost;
     }
     if (technique.statusEffect) {
       this.statusEffects.push({
@@ -746,38 +746,33 @@ export class BattleService {
       });
     }
 
-    if (this.currentEnemy && this.characterService.characterState.status.health.value > 0) {
-      let attackPower = this.characterService.characterState.attackPower['strength'] || 1;
+    if (this.currentEnemy && this.characterService.status.health.value > 0) {
+      let attackPower = this.characterService.attackPower['strength'] || 1;
       if (technique.attribute) {
-        attackPower = this.characterService.characterState.attackPower[technique.attribute] || 1;
+        attackPower = this.characterService.attackPower[technique.attribute] || 1;
       }
       let effect = technique.effect;
       if (technique.name === this.rightHandTechniqueName) {
-        effect = this.characterService.characterState.equipment.rightHand?.effect;
-        if (this.characterService.characterState.equipment.rightHand) {
+        effect = this.characterService.equipment.rightHand?.effect;
+        if (this.characterService.equipment.rightHand) {
           attackPower =
             Math.floor(
-              attackPower *
-                Math.sqrt(this.characterService.characterState.equipment.rightHand.weaponStats?.baseDamage || 1)
+              attackPower * Math.sqrt(this.characterService.equipment.rightHand.weaponStats?.baseDamage || 1)
             ) || 1;
         }
       } else if (technique.name === this.leftHandTechniqueName) {
-        effect = this.characterService.characterState.equipment.leftHand?.effect;
-        if (this.characterService.characterState.equipment.leftHand) {
+        effect = this.characterService.equipment.leftHand?.effect;
+        if (this.characterService.equipment.leftHand) {
           attackPower =
             Math.floor(
-              attackPower *
-                Math.sqrt(this.characterService.characterState.equipment.leftHand.weaponStats?.baseDamage || 1)
+              attackPower * Math.sqrt(this.characterService.equipment.leftHand.weaponStats?.baseDamage || 1)
             ) || 1;
         }
       }
 
       let damage = attackPower * technique.baseDamage;
       let defense = this.currentEnemy.defense;
-      if (
-        this.characterService.characterState.status.nutrition.value >
-        this.characterService.characterState.status.nutrition.max * 0.8
-      ) {
+      if (this.characterService.status.nutrition.value > this.characterService.status.nutrition.max * 0.8) {
         // tummy is mostly full, hit harder
         damage *= 1.2;
       }
@@ -805,8 +800,8 @@ export class BattleService {
       } else if (effect === this.lifeEffectName) {
         const healAmount = damage * 0.01;
         this.logService.log(LogTopic.COMBAT, 'Your attack healed you for ' + healAmount + ' as you struck the enemy.');
-        this.characterService.characterState.status.health.value += healAmount; // TODO: tune this
-        this.characterService.characterState.checkOverage();
+        this.characterService.status.health.value += healAmount; // TODO: tune this
+        this.characterService.checkOverage();
       } else if (effect === this.fireElementEffectName) {
         if (this.currentEnemy.element) {
           if (this.currentEnemy.element === 'metal' || this.currentEnemy.element === 'wood') {
@@ -886,12 +881,12 @@ export class BattleService {
         }
       } else if (effect === this.explosiveEffectName) {
         damage *= 1000;
-        this.characterService.characterState.status.health.value -= damage;
+        this.characterService.status.health.value -= damage;
         // destroy the weapon
         if (technique.name === this.rightHandTechniqueName) {
-          this.characterService.characterState.equipment.rightHand = null;
+          this.characterService.equipment.rightHand = null;
         } else if (technique.name === this.leftHandTechniqueName) {
-          this.characterService.characterState.equipment.leftHand = null;
+          this.characterService.equipment.leftHand = null;
         }
       } else if (effect === this.shieldingEffectName) {
         const shieldingEffect: StatusEffect = {
@@ -950,7 +945,7 @@ export class BattleService {
       let blowthrough = false;
       if (technique.name === this.metalFistName) {
         // TODO: tune this
-        let metalMultiplier = Math.log(this.characterService.characterState.attributes.metalLore.value) / Math.log(50);
+        let metalMultiplier = Math.log(this.characterService.attributes.metalLore.value) / Math.log(50);
         if (metalMultiplier < 1) {
           metalMultiplier = 1;
         }
@@ -961,7 +956,7 @@ export class BattleService {
       }
       if (technique.name === this.pyroclasmAttackName) {
         // TODO: tune this
-        let fireMultiplier = Math.log(this.characterService.characterState.attributes.fireLore.value) / Math.log(100);
+        let fireMultiplier = Math.log(this.characterService.attributes.fireLore.value) / Math.log(100);
         if (fireMultiplier < 1) {
           fireMultiplier = 1;
         }
@@ -971,13 +966,13 @@ export class BattleService {
         damage *= fireMultiplier;
         blowthrough = true;
       }
-      damage += damage * this.characterService.characterState.yinYangBalance;
+      damage += damage * this.characterService.yinYangBalance;
 
       if (damage > this.highestDamageDealt) {
         this.highestDamageDealt = damage;
       }
       if (technique.attribute) {
-        this.characterService.characterState.increaseAttribute(technique.attribute, 0.01);
+        this.characterService.increaseAttribute(technique.attribute, 0.01);
       }
 
       let overage = this.damageEnemy(damage);
@@ -1325,15 +1320,15 @@ export class BattleService {
       } else {
         // force feed on third hit
         this.hellService.daysFasted = 0;
-        const damage = this.characterService.characterState.status.health.value / 4;
+        const damage = this.characterService.status.health.value / 4;
         this.logService.injury(
           LogTopic.COMBAT,
           'The hellfire burns as it goes down, damaging you for ' + damage + ' extra damage.'
         );
-        this.characterService.characterState.status.health.value -= damage;
+        this.characterService.status.health.value -= damage;
       }
     } else if (technique.effect === 'theft') {
-      this.characterService.characterState.updateMoney(0 - this.characterService.characterState.money / 10);
+      this.characterService.updateMoney(0 - this.characterService.money / 10);
     }
   }
 

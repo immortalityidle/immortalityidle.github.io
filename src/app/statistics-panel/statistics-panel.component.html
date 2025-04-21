@@ -120,7 +120,7 @@
           Total lives lived:
         </td>
         <td>
-          {{characterService.characterState.totalLives}}
+          {{characterService.totalLives}}
         </td>
       </tr>
       <tr>
@@ -272,7 +272,7 @@
           Most money:
         </td>
         <td>
-          {{characterService.characterState.highestMoney | bigNumber}}
+          {{characterService.highestMoney | bigNumber}}
         </td>
       </tr>
       <tr>
@@ -280,10 +280,10 @@
           Oldest age:
         </td>
         <td>
-          {{characterService.yearify(characterService.characterState.highestAge)}}
+          {{characterService.yearify(characterService.highestAge)}}
         </td>
       </tr>
-      @for (highest of characterService.characterState.highestAttributes | keyvalue; track highest) {
+      @for (highest of characterService.highestAttributes | keyvalue; track highest) {
         <tr >
           <td>
             Highest {{highest.key | camelToTitle }}
@@ -298,7 +298,7 @@
           Highest health:
         </td>
         <td>
-          {{characterService.characterState.highestHealth}}
+          {{characterService.highestHealth}}
         </td>
       </tr>
       <tr>
@@ -306,7 +306,7 @@
           Highest stamina:
         </td>
         <td>
-          {{characterService.characterState.highestStamina}}
+          {{characterService.highestStamina}}
         </td>
       </tr>
       <tr>
@@ -314,7 +314,7 @@
           Highest qi:
         </td>
         <td>
-          {{characterService.characterState.highestQi}}
+          {{characterService.highestQi}}
         </td>
       </tr>
       <tr>

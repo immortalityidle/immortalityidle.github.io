@@ -1,4 +1,4 @@
-import { CharacterAttribute, StatusType } from '../game-state/character';
+import { CharacterAttribute, StatusType } from './character.service';
 
 export enum YinYangEffect {
   Yin,

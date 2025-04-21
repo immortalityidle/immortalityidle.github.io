@@ -86,7 +86,7 @@ baguaMap = [
         'A tattered, gray cotton blanket.<br>Not much, but it could keep you warm at night.<br>Increases daily stamina recovery by 1.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value++;
+        this.characterService.status.stamina.value++;
       },
     },
     {
@@ -101,9 +101,9 @@ baguaMap = [
         'A thin mat woven from brown reeds.<br>Increases daily stamina recovery by 1 and restores a bit of health.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 1;
-        this.characterService.characterState.status.health.value += 0.1;
-        this.characterService.characterState.checkOverage();
+        this.characterService.status.stamina.value += 1;
+        this.characterService.status.health.value += 0.1;
+        this.characterService.checkOverage();
       },
     },
     {
@@ -117,9 +117,9 @@ baguaMap = [
         'A fine bed with a red silk cover.<br>The curtains keep the mosquitoes off you during the night.<br>Increases daily stamina recovery by 2 and restores a bit of health.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 2;
-        this.characterService.characterState.status.health.value += 0.2;
-        this.characterService.characterState.checkOverage();
+        this.characterService.status.stamina.value += 2;
+        this.characterService.status.health.value += 0.2;
+        this.characterService.checkOverage();
       },
     },
     {
@@ -134,9 +134,9 @@ baguaMap = [
         'A bed built over a small clay oven. Keeps you toasty on even the coldest nights.<br>Increases daily stamina recovery by 5 and improves health recovery.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value += 5;
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.checkOverage();
+        this.characterService.status.stamina.value += 5;
+        this.characterService.status.health.value += 1;
+        this.characterService.checkOverage();
       },
     },
     {
@@ -151,8 +151,8 @@ baguaMap = [
         "A solid board with iron nails poking upwards.<br>You won't sleep as well, but it is certain to toughen you up.",
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.status.stamina.value -= 1;
-        this.characterService.characterState.increaseAttribute('toughness', 0.1);
+        this.characterService.status.stamina.value -= 1;
+        this.characterService.increaseAttribute('toughness', 0.1);
       },
     },
     {
@@ -166,7 +166,7 @@ baguaMap = [
       description: 'A simple gray bucket of water that lets you splash your face clean.<br>Increases charisma.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.01);
+        this.characterService.increaseAttribute('charisma', 0.01);
       },
     },
     {
@@ -180,7 +180,7 @@ baguaMap = [
       description: 'A clay wash basin with a rag to clean yourself.<br>Increases charisma.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.05);
+        this.characterService.increaseAttribute('charisma', 0.05);
       },
     },
     {
@@ -195,9 +195,9 @@ baguaMap = [
         'A tall and narrow wooden tub where you can squat and bathe.<br>Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.1);
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.checkOverage();
+        this.characterService.increaseAttribute('charisma', 0.1);
+        this.characterService.status.health.value += 1;
+        this.characterService.checkOverage();
       },
     },
     {
@@ -212,9 +212,9 @@ baguaMap = [
         'A luxurious bronze tub where you can get sparkling clean.<br>Increases charisma and health recovery.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.2);
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.checkOverage();
+        this.characterService.increaseAttribute('charisma', 0.2);
+        this.characterService.status.health.value += 1;
+        this.characterService.checkOverage();
       },
     },
     {
@@ -228,11 +228,11 @@ baguaMap = [
       description: 'A luxurious tub with its own heating stove.<br>Good for your health and beauty.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('charisma', 0.2);
-        this.characterService.characterState.status.stamina.value += 5;
-        this.characterService.characterState.status.health.value += 1;
-        this.characterService.characterState.healthBonusBath++;
-        this.characterService.characterState.checkOverage();
+        this.characterService.increaseAttribute('charisma', 0.2);
+        this.characterService.status.stamina.value += 5;
+        this.characterService.status.health.value += 1;
+        this.characterService.healthBonusBath++;
+        this.characterService.checkOverage();
       },
     },
     {
@@ -244,7 +244,7 @@ baguaMap = [
       description: 'An bookshelf to read and expand your mind.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('intelligence', 0.01);
+        this.characterService.increaseAttribute('intelligence', 0.01);
       },
     },
     {
@@ -257,8 +257,8 @@ baguaMap = [
         "A quiet shrine for contemplative prayer.<br>You won't be able to use this unless you have some innate spirituality.",
       useConsumes: false,
       use: () => {
-        if (this.characterService.characterState.attributes.spirituality.value > 0) {
-          this.characterService.characterState.increaseAttribute('spirituality', 0.001);
+        if (this.characterService.attributes.spirituality.value > 0) {
+          this.characterService.increaseAttribute('spirituality', 0.001);
         }
       },
     },
@@ -271,7 +271,7 @@ baguaMap = [
       description: 'A kennel that comes with a faithful hunting dog.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('animalHandling', 0.01);
+        this.characterService.increaseAttribute('animalHandling', 0.01);
       },
     },
     {
@@ -283,8 +283,8 @@ baguaMap = [
       description: 'A training dummy for practicing martial arts.',
       useConsumes: false,
       use: () => {
-        this.characterService.characterState.increaseAttribute('strength', 0.001);
-        this.characterService.characterState.increaseAttribute('speed', 0.001);
+        this.characterService.increaseAttribute('strength', 0.001);
+        this.characterService.increaseAttribute('speed', 0.001);
       },
     },
     {
@@ -1378,10 +1378,10 @@ baguaMap = [
             'You took ' +
               this.mainLoopService.totalTicks +
               ' days over ' +
-              this.characterService.characterState.totalLives +
+              this.characterService.totalLives +
               ' lifetimes to overcome death.'
           );
-          this.characterService.characterState.immortal = true;
+          this.characterService.immortal = true;
         }
       },
     },
@@ -1424,10 +1424,10 @@ baguaMap = [
           'You took ' +
             this.mainLoopService.totalTicks +
             ' days over ' +
-            this.characterService.characterState.totalLives +
+            this.characterService.totalLives +
             ' lifetimes to claim your throne on Mount Penglai.'
         );
-        this.characterService.characterState.god = true;
+        this.characterService.god = true;
         this.gameStateService.unlockPanel('portalPanel');
       },
     },
@@ -1603,7 +1603,7 @@ baguaMap = [
           LogTopic.STORY,
           'The Crown of Mirrors settles onto your head, then sinks in to become a part of your very soul. A deep understanding of combat based on your many battles with yourself reveals itself in a moment of enlightenment.'
         );
-        this.characterService.characterState.attributes.combatMastery.value += 1;
+        this.characterService.attributes.combatMastery.value += 1;
         this.activityService.CombatTraining.unlocked = true;
       },
     },
@@ -1683,7 +1683,7 @@ baguaMap = [
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you. Bonuses for Yin and Yang balance are greatly increased.'
         );
-        this.characterService.characterState.yinYangBoosted = true;
+        this.characterService.yinYangBoosted = true;
       },
     },
     hellCrownMountainOfIce: {
@@ -1735,7 +1735,7 @@ baguaMap = [
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.'
         );
-        this.characterService.characterState.righteousWrathUnlocked = true;
+        this.characterService.righteousWrathUnlocked = true;
       },
     },
     hellCrownCattlePit: {
@@ -1790,7 +1790,7 @@ baguaMap = [
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.'
         );
-        this.characterService.characterState.bonusMuscles = true;
+        this.characterService.bonusMuscles = true;
       },
     },
     hellCrownMortarsAndPestles: {
@@ -1875,7 +1875,7 @@ baguaMap = [
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.'
         );
-        this.characterService.characterState.bonusBrains = true;
+        this.characterService.bonusBrains = true;
       },
     },
     hellCrownDismemberment: {
@@ -1953,7 +1953,7 @@ baguaMap = [
           LogTopic.STORY,
           'The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.'
         );
-        this.characterService.characterState.bonusHealth = true;
+        this.characterService.bonusHealth = true;
       },
     },
     hellCrownSaws: {

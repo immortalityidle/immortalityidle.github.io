@@ -51,7 +51,7 @@ export class HomeAutoBuyer extends AutoBuyer {
     if (!this.homeService.upgrading) {
       //try to buy as much land as needed.
       const landRequired = Math.min(
-        this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
+        this.homeService.calculateAffordableLand(this.characterService.money - reserveAmount),
         this.homeService.nextHome.landRequired - this.homeService.land
       );
       if (landRequired > 0) {
@@ -62,7 +62,7 @@ export class HomeAutoBuyer extends AutoBuyer {
       const nnHome = this.homeService.getHomeFromValue(this.homeService.nextHome.type + 1);
       if (nnHome && nnHome.landRequired > this.homeService.land) {
         const landRequired = Math.min(
-          this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
+          this.homeService.calculateAffordableLand(this.characterService.money - reserveAmount),
           nnHome.landRequired - this.homeService.land
         );
         if (landRequired > 0) {
@@ -72,7 +72,7 @@ export class HomeAutoBuyer extends AutoBuyer {
     }
 
     if (!this.homeService.upgrading && this.homeService.land >= this.homeService.nextHome.landRequired) {
-      if (this.characterService.characterState.money >= this.homeService.nextHomeCost + reserveAmount) {
+      if (this.characterService.money >= this.homeService.nextHomeCost + reserveAmount) {
         this.homeService.upgradeToNextHome();
       }
     }
@@ -104,10 +104,10 @@ export class LandAndFieldAutoBuyer extends AutoBuyer {
   run(reserveAmount: number) {
     if (
       this.homeService.autoBuyLandUnlocked &&
-      this.characterService.characterState.money >= this.homeService.landPrice + reserveAmount
+      this.characterService.money >= this.homeService.landPrice + reserveAmount
     ) {
       const landRequired = Math.min(
-        this.homeService.calculateAffordableLand(this.characterService.characterState.money - reserveAmount),
+        this.homeService.calculateAffordableLand(this.characterService.money - reserveAmount),
         this.homeService.autoBuyLandLimit -
           (this.homeService.land + this.farmService.fields.length + this.farmService.extraFields)
       );

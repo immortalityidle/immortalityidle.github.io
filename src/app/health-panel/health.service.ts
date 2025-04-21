@@ -21,27 +21,27 @@ export class HealthService {
 
   constructor() {
     this.mainLoopService.longTickSubject.subscribe(() => {
-      this.flashHealth = this.characterService.characterState.statusToFlash.includes('health');
-      this.flashStamina = this.characterService.characterState.statusToFlash.includes('stamina');
-      this.flashQi = this.characterService.characterState.statusToFlash.includes('qi');
-      this.flashNutrition = this.characterService.characterState.statusToFlash.includes('nutrition');
-      this.characterService.characterState.statusToFlash = [];
+      this.flashHealth = this.characterService.statusToFlash.includes('health');
+      this.flashStamina = this.characterService.statusToFlash.includes('stamina');
+      this.flashQi = this.characterService.statusToFlash.includes('qi');
+      this.flashNutrition = this.characterService.statusToFlash.includes('nutrition');
+      this.characterService.statusToFlash = [];
       if (this.popupCounter < 1) {
         this.popupCounter++;
         return;
       }
       this.popupCounter = 0;
-      if (this.characterService.characterState.moneyUpdates !== 0) {
-        this.moneyUpdates.push(this.characterService.characterState.moneyUpdates);
-        this.characterService.characterState.moneyUpdates = 0;
+      if (this.characterService.moneyUpdates !== 0) {
+        this.moneyUpdates.push(this.characterService.moneyUpdates);
+        this.characterService.moneyUpdates = 0;
       }
       this.updateYinYang();
     });
   }
 
   private updateYinYang() {
-    let yang = this.characterService.characterState.yang;
-    let yin = this.characterService.characterState.yin;
+    let yang = this.characterService.yang;
+    let yin = this.characterService.yin;
     if (yin < 1) {
       yin = 1;
     }

@@ -4,7 +4,7 @@
   <div class="optionField">
     <span tooltip="This game is much too hard and takes much too long to play to the end.<br>Click this to make it easier and allow you to rush through the game.<br>
       Be warned:<br>you will forever be known as a cultivator who took the easy path to immortality.">
-      <input type="checkbox" id="easyMode" [checked]="characterService.characterState.easyMode" (change)="easyModeChange($event)">
+      <input type="checkbox" id="easyMode" [checked]="characterService.easyMode" (change)="easyModeChange($event)">
       <label for="easyMode" >Easy Mode</label>
     </span>
     @if (this.gameStateService.easyModeEver) {
@@ -23,21 +23,21 @@
   <div class="optionField">
     <span>
       <input type="checkbox" (change)="showLifeSummaryChange($event)"
-        id="showLifeSummary" [checked]="characterService.characterState.showLifeSummary">
+        id="showLifeSummary" [checked]="characterService.showLifeSummary">
       <label for="showLifeSummary">Show a previous life summary at the start of each life</label>
     </span>
   </div>
   <div class="optionField">
     <span>
       <input type="checkbox" (change)="showTipsChange($event)"
-        id="showTips" [checked]="characterService.characterState.showTips">
+        id="showTips" [checked]="characterService.showTips">
       <label for="showTips">Include tips in the life summary. Warning, this can spoil the fun of discovering things for yourself.</label>
     </span>
   </div>
   <div class="optionField">
     <span>
       <input type="checkbox" (change)="showUpdateAnimationsChange($event)"
-        id="showUpdateAnimations" [checked]="characterService.characterState.showUpdateAnimations">
+        id="showUpdateAnimations" [checked]="characterService.showUpdateAnimations">
       <label for="showUpdateAnimations">Show animated updates when attributes or money values change.</label>
     </span>
   </div>

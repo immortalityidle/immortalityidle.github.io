@@ -27,28 +27,25 @@ export class LifeSummaryComponent {
     this.causeOfDeath = data.causeOfDeath;
     this.attributeGains = data.attributeGains;
     this.tip = '';
-    if (this.characterService.characterState.age < 25 * 365) {
+    if (this.characterService.age < 25 * 365) {
       this.tip =
         'Life for an aspiring immortal can be brutal in the beginning. You may need to swallow your pride and do whatever is necessary to survive. A better home goes a long way toward keeping you safe.';
-    } else if (
-      this.characterService.characterState.age < 35 * 365 &&
-      this.characterService.characterState.attributes.intelligence.value < 200
-    ) {
+    } else if (this.characterService.age < 35 * 365 && this.characterService.attributes.intelligence.value < 200) {
       this.tip =
         'Life for an aspiring immortal can be frustratingly short. Perhaps increasing your intelligence might open up new avenues for extending your life.';
-    } else if (this.characterService.characterState.age < 140 * 365) {
+    } else if (this.characterService.age < 140 * 365) {
       this.tip =
         'Life for an aspiring immortal can be frustratingly short. Farming some healthy food might give you just what you need.';
     } else if (
       this.activityService.completedApprenticeships.length < 4 &&
-      this.characterService.characterState.attributes.spirituality.value <= 0
+      this.characterService.attributes.spirituality.value <= 0
     ) {
       this.tip =
         'Blacksmithing, alchemy, woodworking, and leatherworking are all essential trades for an aspiring immortal. You should master them all.';
-    } else if (this.characterService.characterState.attributes.spirituality.value <= 0) {
+    } else if (this.characterService.attributes.spirituality.value <= 0) {
       this.tip =
         "Balance is important to aspiring immortals. You'll need to develop all of your attributes if you want to progress in your journey.";
-    } else if (this.characterService.characterState.attributes.spirituality.value <= 10) {
+    } else if (this.characterService.attributes.spirituality.value <= 10) {
       this.tip =
         'Developing your spirituality is essential. Focusing on your spiritual development will help you on your way to immortality.';
     } else if (!this.inventoryService.autoWeaponMergeUnlocked) {
@@ -58,16 +55,16 @@ export class LifeSummaryComponent {
       this.tip =
         'Your quest toward immortality will require battling mighty foes. Reliable armor will be critical to surviving.';
     } else if (
-      this.characterService.characterState.bloodlineRank < 1 ||
+      this.characterService.bloodlineRank < 1 ||
       this.characterService.soulCoreRank() < 1 ||
       this.characterService.meridianRank() < 1
     ) {
       this.tip =
         "Ascension provides a pathway to the power you'll need to achieve immortality. Each ascension technique benefits you in unique and important ways.";
-    } else if (!this.characterService.characterState.qiUnlocked) {
+    } else if (!this.characterService.qiUnlocked) {
       this.tip =
         'Magic will be required for your journey to immortality. Only by balancing your mastery of the five elements will you be able to access magical powers.';
-    } else if (this.characterService.characterState.status.stamina.max < 200) {
+    } else if (this.characterService.status.stamina.max < 200) {
       this.tip =
         'Building up your stamina requires protein. Hunting of fishing can provide you with the food that you need to take on more challenging tasks.';
     } else if (this.followerSerivce.followers.length < 5) {
@@ -78,7 +75,7 @@ export class LifeSummaryComponent {
         "Your followers are too weak to give you the help you need. Perhaps its time to return to politics to build up the charm you'll need to train them to be stronger.";
     } else if (!this.impossibleTaskService.impossibleTasksUnlocked) {
       this.tip = 'Ascensions are the key to your progress now. Push forward!';
-    } else if (!this.characterService.characterState.immortal) {
+    } else if (!this.characterService.immortal) {
       this.tip =
         "You're so close now. If you could only manage to do the impossible, you know you would achieve immortality.";
     }
@@ -86,6 +83,6 @@ export class LifeSummaryComponent {
 
   showLifeSummaryChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.characterService.characterState.showLifeSummary = event.target.checked;
+    this.characterService.showLifeSummary = event.target.checked;
   }
 }

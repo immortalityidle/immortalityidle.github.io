@@ -4,7 +4,7 @@ import { BattleService, BattleProperties } from './battle.service';
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService } from './achievement.service';
-import { AttributeObject, CharacterProperties, CharacterStatus, EquipmentSlots } from './character';
+import { AttributeObject, CharacterProperties, CharacterStatus, EquipmentSlots } from './character.service';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties } from './followers.service';
 import { HomeService, HomeProperties, HomeType } from './home.service';
@@ -490,7 +490,7 @@ export class GameStateService {
     const gameState = this.validateGameState(parsedGameState);
     this.impossibleTaskService.setProperties(gameState.impossibleTasks);
     this.hellService.setProperties(gameState.hell || {});
-    this.characterService.characterState.setProperties(gameState.character);
+    this.characterService.setProperties(gameState.character);
     this.homeService.setProperties(gameState.home);
     this.farmService.setProperties(gameState.farm);
     this.inventoryService.setProperties(gameState.inventory);
@@ -1027,7 +1027,7 @@ export class GameStateService {
       achievements: this.achievementService.getProperties(),
       impossibleTasks: this.impossibleTaskService.getProperties(),
       hell: this.hellService.getProperties(),
-      character: this.characterService.characterState.getProperties(),
+      character: this.characterService.getProperties(),
       inventory: this.inventoryService.getProperties(),
       home: this.homeService.getProperties(),
       farm: this.farmService.getProperties(),

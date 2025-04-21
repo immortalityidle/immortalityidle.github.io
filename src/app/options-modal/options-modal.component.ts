@@ -54,9 +54,9 @@ export class OptionsModalComponent {
     if (!(event.target instanceof HTMLInputElement)) return;
     event.preventDefault();
     event.stopPropagation();
-    if (this.characterService.characterState.easyMode) {
+    if (this.characterService.easyMode) {
       //coming back from easy mode
-      this.characterService.characterState.easyMode = false;
+      this.characterService.easyMode = false;
     } else {
       if (!this.gameStateService.easyModeEver) {
         if (confirm('This will enable easy mode and mark your save permanently. Are you sure?')) {
@@ -66,7 +66,7 @@ export class OptionsModalComponent {
           return;
         }
       }
-      this.characterService.characterState.easyMode = true;
+      this.characterService.easyMode = true;
     }
   }
 
@@ -83,17 +83,17 @@ export class OptionsModalComponent {
 
   showLifeSummaryChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.characterService.characterState.showLifeSummary = event.target.checked;
+    this.characterService.showLifeSummary = event.target.checked;
   }
 
   showTipsChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.characterService.characterState.showTips = event.target.checked;
+    this.characterService.showTips = event.target.checked;
   }
 
   showUpdateAnimationsChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
-    this.characterService.characterState.showUpdateAnimations = event.target.checked;
+    this.characterService.showUpdateAnimations = event.target.checked;
   }
 
   scientificNotationChange(event: Event) {

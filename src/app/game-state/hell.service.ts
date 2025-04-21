@@ -42,6 +42,8 @@ export interface Hell {
   completeEffect: () => void;
   progress: () => number;
   progressMax: () => number;
+  progressCache: number;
+  progressMaxCache: number;
   activities: Activity[];
   projectionActivities: Activity[];
   hint: string;
@@ -129,6 +131,13 @@ export class HellService {
 
     mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
+    });
+
+    mainLoopService.longTickSubject.subscribe(() => {
+      for (const hell of this.hells) {
+        hell.progressCache = hell.progress();
+        hell.progressMaxCache = hell.progressMax();
+      }
     });
   }
 
@@ -231,9 +240,9 @@ export class HellService {
       this.battleService.addEnemy({
         name: 'Your Reflection',
         baseName: 'mirror',
-        health: this.characterService.characterState.status.health.value,
-        maxHealth: this.characterService.characterState.status.health.value,
-        defense: this.characterService.characterState.defense,
+        health: this.characterService.status.health.value,
+        maxHealth: this.characterService.status.health.value,
+        defense: this.characterService.defense,
         loot: [this.itemRepoService.items['mirrorShard']],
         techniques: this.battleService.techniques,
       });
@@ -711,7 +720,8 @@ export class HellService {
   hells: Hell[] = [
     {
       name: 'Gates of Hell',
-      description: '',
+      description:
+        "The gates of Lord Yama's realm.<br>An array of frightening gates allow you to select the various hells and their challenges.<br>If you are overwhelmed by these horrors, you can always escape back to the mortal realm through reincarnation.",
       index: HellLevel.Gates,
       setPortals: () => {
         this.activityService.portals = [];
@@ -753,7 +763,7 @@ export class HellService {
         }
       },
       completeEffect: () => {
-        // TODO: unlock yama
+        // Yama's reward drops from killing him
       },
       activities: [
         this.activityService.Resting,
@@ -767,19 +777,25 @@ export class HellService {
       projectionActivities: [],
       hint: '',
       progress: () => {
-        return 0;
+        if (this.characterService.god) {
+          return 1;
+        } else {
+          return 0;
+        }
       },
       progressMax: () => {
         return 1;
       },
       successCheck: () => {
-        return false;
+        return this.characterService.god;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Tongue-ripping',
       description:
-        'Torment for gossips and everyone one who made trouble with their words. The demons here reach for your tongue to rip it out.',
+        'Torment for gossips and everyone one who made trouble with their words.<br>The demons here reach for your tongue to rip it out.',
       index: HellLevel.TongueRipping,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -790,7 +806,7 @@ export class HellService {
       dailyEffect: () => {
         // This might be a stupid way to nerf charisma. Consider other alternatives.
         const reducer = 0.9;
-        this.characterService.characterState.attributes.charisma.value *= reducer;
+        this.characterService.attributes.charisma.value *= reducer;
       },
       exitEffect: () => {
         this.followerService.restoreFollowers();
@@ -829,10 +845,12 @@ export class HellService {
         }
         return totalPower > 5000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Scissors',
-      description: 'Torment for those who ruin marriages. The demons here will cut your fingers right off.',
+      description: 'Torment for those who ruin marriages.<br>The demons here will cut your fingers right off.',
       index: HellLevel.Scissors,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -846,7 +864,7 @@ export class HellService {
       completeEffect: () => {
         this.logService.log(
           LogTopic.STORY,
-          'Using nothing but the strength of your body and mind, you have seized control of the Hell of Scissors. Now all that remains is to defeat its lord.'
+          'Using nothing but the strength of your body and mind, you have seized control of the Hell of Scissors.<br>Now all that remains is to defeat its lord.'
         );
       },
       activities: [
@@ -868,11 +886,13 @@ export class HellService {
       successCheck: () => {
         return this.inventoryService.getQuantityByName('fingers') >= 100;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Trees of Knives',
       description:
-        'Torment for those who cause trouble between family members. The demons here will tie you to a tree made of sharp knives',
+        'Torment for those who cause trouble between family members.<br>The demons here will tie you to a tree made of sharp knives',
       index: HellLevel.TreesOfKnives,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -882,9 +902,9 @@ export class HellService {
       },
       dailyEffect: () => {
         // lose 10% of your health every day
-        const damage = this.characterService.characterState.status.health.value * 0.1;
+        const damage = this.characterService.status.health.value * 0.1;
         this.logService.injury(LogTopic.COMBAT, 'The knives dig into your flesh, causing ' + damage + ' damage.');
-        this.characterService.characterState.status.health.value -= damage;
+        this.characterService.status.health.value -= damage;
       },
       exitEffect: () => {
         this.characterService.restoreMoney();
@@ -914,11 +934,13 @@ export class HellService {
       successCheck: () => {
         return this.inventoryService.getQuantityByName('token of gratitude') >= 10000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Mirrors',
       description:
-        'Torment for those who escaped punishment for their crimes. The mirrors here shine with a terrifying glow.',
+        'Torment for those who escaped punishment for their crimes.<br>The mirrors here shine with a terrifying glow.',
       index: HellLevel.Mirrors,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -956,10 +978,12 @@ export class HellService {
       successCheck: () => {
         return this.inventoryService.getQuantityByName('mirror shard') >= 1000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Steamers',
-      description: 'Torment for hypocrites and ruffians. The steam baskets here are just the right size for you.',
+      description: 'Torment for hypocrites and ruffians.<br>The steam baskets here are just the right size for you.',
       index: HellLevel.Steamers,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -976,16 +1000,16 @@ export class HellService {
       dailyEffect: () => {
         // take damage from the steam and get robbed by ruffians
         if (this.inventoryService.consume('iceCore') < 0) {
-          const damage = this.characterService.characterState.status.health.value * 0.05;
+          const damage = this.characterService.status.health.value * 0.05;
           this.logService.injury(LogTopic.COMBAT, 'The steam cooks your skin, causing ' + damage + ' damage.');
-          this.characterService.characterState.status.health.value -= damage;
+          this.characterService.status.health.value -= damage;
         }
         if (Math.random() < 0.2) {
           this.logService.log(
             LogTopic.EVENT,
             "As if the constant scalding steam isn't enough, one of these ruffians stole some money! Why does this feel so familiar?"
           );
-          this.characterService.characterState.hellMoney -= this.characterService.characterState.hellMoney * 0.1;
+          this.characterService.hellMoney -= this.characterService.hellMoney * 0.1;
         }
       },
       completeEffect: () => {
@@ -1015,11 +1039,13 @@ export class HellService {
       successCheck: () => {
         return this.battleService.enemies.length > 100; // tune this
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Copper Pillars',
       description:
-        'Torment for arsonists. The red-hot copper pillars you will be bound to remind you of all those times you played with fire.',
+        'Torment for arsonists.<br>The red-hot copper pillars you will be bound to remind you of all those times you played with fire.',
       index: HellLevel.CopperPillars,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1033,8 +1059,8 @@ export class HellService {
       dailyEffect: () => {
         // take damage from the pillar
         if (this.inventoryService.consume('iceCore') < 0) {
-          const damage = Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
-          this.characterService.characterState.status.health.value -= damage;
+          const damage = Math.max(this.characterService.status.health.value * 0.1, 20);
+          this.characterService.status.health.value -= damage;
           this.logService.injury(LogTopic.COMBAT, 'The heat of the pillars burns you for ' + damage + ' damage.');
         }
       },
@@ -1056,19 +1082,21 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       progress: () => {
-        return this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0;
+        return this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0;
       },
       progressMax: () => {
         return 100;
       },
       successCheck: () => {
-        return (this.characterService.characterState.equipment.rightHand?.weaponStats?.baseDamage || 0) > 100; // tune this
+        return (this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0) > 100; // tune this
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Mountain of Knives',
       description:
-        'Torment for those who killed for pleasure. The mountain of sharp blades looks like it might be rough on footwear.',
+        'Torment for those who killed for pleasure.<br>The mountain of sharp blades looks like it might be rough on footwear.',
       index: HellLevel.MountainOfKnives,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1079,7 +1107,7 @@ export class HellService {
         if (damage < 0) {
           damage = 0;
         }
-        this.characterService.characterState.status.health.value -= damage;
+        this.characterService.status.health.value -= damage;
         if (damage > 0) {
           this.logService.injury(LogTopic.COMBAT, "The mountain's blades shred you for " + damage + ' damage.');
         }
@@ -1110,10 +1138,13 @@ export class HellService {
         // let's just say that 99% of our kills were justified and we didn't enjoy them one bit. Still gotta pay for the other 1%.
         return this.mountainSteps >= this.battleService.totalKills / 100;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Mountain of Ice',
-      description: 'Torment for adulterers and schemers. The chill wind blowing through the gate is so cold it burns.',
+      description:
+        'Torment for adulterers and schemers.<br>The chill wind blowing through the gate is so cold it burns.',
       index: HellLevel.MountainOfIce,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1128,12 +1159,12 @@ export class HellService {
         // TODO: tune this
         const damage = 1000;
         if (this.inventoryService.consume('fireCore') < 0) {
-          this.characterService.characterState.status.health.value -= damage;
+          this.characterService.status.health.value -= damage;
           this.logService.injury(LogTopic.COMBAT, "The mountain's ice freezes you for " + damage + ' damage.');
         }
         // This might be a stupid way to nerf fireLore. Consider other alternatives.
         const reducer = 0.9;
-        this.characterService.characterState.attributes.fireLore.value *= reducer;
+        this.characterService.attributes.fireLore.value *= reducer;
       },
       activities: [
         this.activityService.Resting,
@@ -1155,10 +1186,12 @@ export class HellService {
       successCheck: () => {
         return this.inventoryService.getQuantityByName('ice core') >= 10000; // TODO: tune this
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Cauldrons of Oil',
-      description: 'Torment for rapists and abusers. Next on the menu: deep fried immortal.',
+      description: 'Torment for rapists and abusers.<br>Next on the menu: deep fried immortal.',
       index: HellLevel.CauldronsOfOil,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1170,29 +1203,29 @@ export class HellService {
               LogTopic.EVENT,
               'The ice cores you brought in with you make the oil sputter and pop, baking you in a cloud of superheated steam.'
             );
-            this.characterService.characterState.status.health.value -= 100000;
+            this.characterService.status.health.value -= 100000;
             return;
           }
           // take damage from the oil
-          const damage = Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+          const damage = Math.max(this.characterService.status.health.value * 0.1, 20);
           this.logService.injury(LogTopic.COMBAT, 'The oil scorches you, causing ' + damage + ' damage.');
-          this.characterService.characterState.status.health.value -= damage;
+          this.characterService.status.health.value -= damage;
         }
         // chance to drop weapon
         if (Math.random() < 0.1) {
           this.logService.injury(LogTopic.COMBAT, 'Your weapons slip from your oily hands.');
           this.inventoryService.autoequipBestEnabled = false;
-          let item = this.characterService.characterState.equipment.rightHand;
+          let item = this.characterService.equipment.rightHand;
           // check for existence and make sure there's an empty slot for it
           if (item) {
             this.inventoryService.addItem(item as Item);
-            this.characterService.characterState.equipment.rightHand = null;
+            this.characterService.equipment.rightHand = null;
           }
-          item = this.characterService.characterState.equipment.leftHand;
+          item = this.characterService.equipment.leftHand;
           // check for existence and make sure there's an empty slot for it
           if (item) {
             this.inventoryService.addItem(item as Item);
-            this.characterService.characterState.equipment.leftHand = null;
+            this.characterService.equipment.leftHand = null;
           }
         }
       },
@@ -1220,13 +1253,15 @@ export class HellService {
       successCheck: () => {
         return (
           this.inventoryService.getQuantityByName('ice core') >= 1000 &&
-          this.characterService.characterState.status.health.value > 100000
+          this.characterService.status.health.value > 100000
         );
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Cattle Pit',
-      description: 'Torment for animal abusers. The cows are looking a little restless.',
+      description: 'Torment for animal abusers.<br>The cows are looking a little restless.',
       index: HellLevel.CattlePit,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1256,11 +1291,13 @@ export class HellService {
       successCheck: () => {
         return this.animalsHealed > 1000000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Crushing Boulder',
       description:
-        'Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them. Atlas had it easy compared to these people.',
+        'Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them.<br>Atlas had it easy compared to these people.',
       index: HellLevel.CrushingBoulder,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1274,7 +1311,7 @@ export class HellService {
         }
         // TODO: tune this
         const damage = 500;
-        this.characterService.characterState.status.health.value -= damage;
+        this.characterService.status.health.value -= damage;
         this.logService.injury(LogTopic.COMBAT, 'The boulder crushes you for ' + damage + ' damage.');
         if (Math.random() < 0.1) {
           this.battleService.addEnemy({
@@ -1321,11 +1358,13 @@ export class HellService {
       successCheck: () => {
         return this.boulderHeight > 1000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Mortars and Pestles',
       description:
-        "Torment for food wasters. You didn't really need to eat all those peaches, did you? The diet here is pure hellfire.",
+        "Torment for food wasters.<br>You didn't really need to eat all those peaches, did you?<br>The diet here is pure hellfire.",
       index: HellLevel.MortarsAndPestles,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1357,11 +1396,13 @@ export class HellService {
       successCheck: () => {
         return this.daysFasted > 1000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Blood Pool',
       description:
-        "Torment for those who disrespect others. The pool looks deep, but it's hard to tell with all that blood.",
+        "Torment for those who disrespect others.<br>The pool looks deep, but it's hard to tell with all that blood.",
       index: HellLevel.BloodPool,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1387,11 +1428,13 @@ export class HellService {
       successCheck: () => {
         return this.swimDepth > 10000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Wrongful Dead',
       description:
-        "Torment for those who gave up their lives too early. Fortunately you've probably never done that. The pounding Rains of Pain and the blowing Winds of Sorrow give unrelenting misery to everyone here.",
+        "Torment for those who gave up their lives too early.<br>Fortunately you've probably never done that.<br>The pounding Rains of Pain and the blowing Winds of Sorrow give unrelenting misery to everyone here.",
       index: HellLevel.WrongfulDead,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1405,8 +1448,8 @@ export class HellService {
       },
       dailyEffect: () => {
         this.logService.injury(LogTopic.COMBAT, 'The constant storm saps you of 500 health and 100 stamina.');
-        this.characterService.characterState.status.health.value -= 500;
-        this.characterService.characterState.status.stamina.value -= 100;
+        this.characterService.status.health.value -= 500;
+        this.characterService.status.stamina.value -= 100;
       },
       completeEffect: () => {
         this.logService.log(
@@ -1433,11 +1476,13 @@ export class HellService {
       successCheck: () => {
         return this.soulsEscaped > 1000000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Dismemberment',
       description:
-        'Torment for tomb-raiders and grave-robbers. The demons here look awfully handy with those giant axes.',
+        'Torment for tomb-raiders and grave-robbers.<br>The demons here look awfully handy with those giant axes.',
       index: HellLevel.Dismemberment,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1473,11 +1518,13 @@ export class HellService {
         // TODO: tune this
         return this.relicsReturned > 10000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of the Mountain of Fire',
       description:
-        'Torment for thieves. The volcano where the poor souls are thrown looks a little toasty for comfort.',
+        'Torment for thieves.<br>The volcano where the poor souls are thrown looks a little toasty for comfort.',
       index: HellLevel.MountainOfFire,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1485,12 +1532,12 @@ export class HellService {
       dailyEffect: () => {
         // take damage from the volcano
         if (this.inventoryService.consume('iceCore') < 0) {
-          const damage = Math.max(this.characterService.characterState.status.health.value * 0.1, 20);
+          const damage = Math.max(this.characterService.status.health.value * 0.1, 20);
           this.logService.injury(
             LogTopic.COMBAT,
             'The oppressive heat of the volcano burns you for ' + damage + ' damage.'
           );
-          this.characterService.characterState.status.health.value -= damage;
+          this.characterService.status.health.value -= damage;
         }
       },
       completeEffect: () => {
@@ -1518,11 +1565,13 @@ export class HellService {
       successCheck: () => {
         return this.inventoryService.getQuantityByName('fire core') >= 10000; // TODO: tune this
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Mills',
       description:
-        "Torment for any who abused their power to oppress the weak. You don't look forward to being ground into immortal flour.",
+        "Torment for any who abused their power to oppress the weak.<br>You don't look forward to being ground into immortal flour.",
       index: HellLevel.Mills,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1540,16 +1589,18 @@ export class HellService {
         return this.timesCrushed;
       },
       progressMax: () => {
-        return this.characterService.characterState.totalLives * 100;
+        return this.characterService.totalLives * 100;
       },
       successCheck: () => {
-        return this.timesCrushed > this.characterService.characterState.totalLives * 100;
+        return this.timesCrushed > this.characterService.totalLives * 100;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
     {
       name: 'Hell of Saws',
       description:
-        "Torment for swindlers and business cheats. The demons sharpen their saws and grin at you. You wish now that you'd stayed out of politics.",
+        "Torment for swindlers and business cheats.<br>The demons sharpen their saws and grin at you.<br>You wish now that you'd stayed out of politics.",
       index: HellLevel.Saws,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
@@ -1558,7 +1609,7 @@ export class HellService {
         if (this.contractsExamined <= 20000) {
           // saw damage
           this.logService.injury(LogTopic.COMBAT, 'The saws tear into your flesh, causing 100 damage.');
-          this.characterService.characterState.status.health.value -= 100;
+          this.characterService.status.health.value -= 100;
         }
       },
       completeEffect: () => {
@@ -1587,6 +1638,8 @@ export class HellService {
         // TODO: tune this
         return this.contractsExamined > 20000;
       },
+      progressCache: 0,
+      progressMaxCache: 1,
     },
   ];
 }

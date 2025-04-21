@@ -1,4 +1,4 @@
-<div class="activitiesContainer">
+<div class="hellStatusContainer">
   @if (!hellService.inHell) {
     <div>
         <span>
@@ -31,4 +31,31 @@
         </span>
     }
   }
+  <div>
+    <table>
+      @for (hell of hellService.hells; track hell.name + hell.progress) {
+        <tr>
+        <td>
+            <span>
+            <mat-icon tooltip="{{hell.description}}">
+                help
+            </mat-icon>
+            {{hell.name}}
+            </span>
+        </td>
+        <td>
+            <div class="progress-bar" style="height:20px;"
+            [attr.value]="Math.floor(hell.progressCache)"
+            [attr.max]="Math.floor(hell.progressMaxCache)">
+            <span
+                    [style.width.%]="100 *
+                    hell.progressCache /
+                    hell.progressMaxCache">
+            </span>
+            </div>
+        </td>
+        </tr>
+      }
+    </table>
+  </div>
 </div>

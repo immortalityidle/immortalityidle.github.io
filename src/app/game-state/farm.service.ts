@@ -75,7 +75,7 @@ export class FarmService {
   }
 
   tick() {
-    if (this.characterService.characterState.dead) {
+    if (this.characterService.dead) {
       return;
     }
     if (!this.hellService?.inHell || this.hellFood) {

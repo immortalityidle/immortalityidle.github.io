@@ -1,7 +1,6 @@
 import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FollowerManagementPanelComponent } from '../follower-management-panel/follower-management-panel.component';
-import { Character } from '../game-state/character';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService, Follower } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
@@ -24,7 +23,6 @@ import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
   ],
 })
 export class FollowersPanelComponent {
-  character: Character;
   popupCounter = 0;
 
   constructor(
@@ -32,9 +30,7 @@ export class FollowersPanelComponent {
     public dialog: MatDialog,
     public gameStateService: GameStateService,
     public followerService: FollowersService
-  ) {
-    this.character = characterService.characterState;
-  }
+  ) {}
 
   // Preserve original property order
   originalOrder = (): number => {

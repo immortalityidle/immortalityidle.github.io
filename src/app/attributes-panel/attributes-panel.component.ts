@@ -1,6 +1,6 @@
 import { Component, forwardRef } from '@angular/core';
 import { trigger, state, style, transition, animate, keyframes, AnimationEvent } from '@angular/animations';
-import { AttributeType } from '../game-state/character';
+import { AttributeType } from '../game-state/character.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { MatIcon } from '@angular/material/icon';
@@ -36,7 +36,6 @@ export type AttributeUpdatesArrays = {
   ],
 })
 export class AttributesPanelComponent {
-  protected character = this.characterService.characterState;
   private attributeUpdates: AttributeUpdatesArrays = {
     strength: [],
     toughness: [],
@@ -56,18 +55,18 @@ export class AttributesPanelComponent {
 
   private popupCounter = 0;
 
-  constructor(private characterService: CharacterService, private mainLoopService: MainLoopService) {
+  constructor(public characterService: CharacterService, private mainLoopService: MainLoopService) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       if (this.popupCounter < 1) {
         this.popupCounter++;
         return;
       }
       this.popupCounter = 0;
-      for (const key in this.character.attributeUpdates) {
+      for (const key in this.characterService.attributeUpdates) {
         const attributeType = key as AttributeType;
-        if (this.character.attributeUpdates[attributeType] !== 0) {
-          this.attributeUpdates[attributeType].push(this.character.attributeUpdates[attributeType]);
-          this.character.attributeUpdates[attributeType] = 0;
+        if (this.characterService.attributeUpdates[attributeType] !== 0) {
+          this.attributeUpdates[attributeType].push(this.characterService.attributeUpdates[attributeType]);
+          this.characterService.attributeUpdates[attributeType] = 0;
         }
       }
     });

@@ -1,10 +1,7 @@
 import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FollowerManagementPanelComponent } from '../follower-management-panel/follower-management-panel.component';
-import { Character } from '../game-state/character';
-import { CharacterService } from '../game-state/character.service';
 import { FollowersService, Follower } from '../game-state/followers.service';
-import { GameStateService } from '../game-state/game-state.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';

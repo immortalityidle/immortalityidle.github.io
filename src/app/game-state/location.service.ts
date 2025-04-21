@@ -44,49 +44,49 @@ export class LocationService {
       name: 'A Large City',
       description: 'A bustling city. A thriving hub of crafts and trades.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 50;
+        return this.characterService.attributes.speed.value > 50;
       },
     },
     [LocationType.SmallPond]: {
       name: 'A Lake',
       description: 'A freshwater lake ideal for fishing.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 100;
+        return this.characterService.attributes.speed.value > 100;
       },
     },
     [LocationType.Forest]: {
       name: 'A Forest',
       description: 'A forest where you can chop wood or look for a wide variety of herbs.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 200;
+        return this.characterService.attributes.speed.value > 200;
       },
     },
     [LocationType.Mine]: {
       name: 'A Mine',
       description: 'A mine where you can find coal or metal ores.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 500;
+        return this.characterService.attributes.speed.value > 500;
       },
     },
     [LocationType.Desert]: {
       name: 'A Desert',
       description: 'A sandy desert wasteland.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 2000;
+        return this.characterService.attributes.speed.value > 2000;
       },
     },
     [LocationType.Jungle]: {
       name: 'A Jungle',
       description: 'A lush tropical jungle.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 10000;
+        return this.characterService.attributes.speed.value > 10000;
       },
     },
     [LocationType.Dungeon]: {
       name: 'A Creepy Dungeon',
       description: 'This dark and dank dungeon is full of monsters.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 200000;
+        return this.characterService.attributes.speed.value > 200000;
       },
     },
     [LocationType.Beach]: {
@@ -94,7 +94,7 @@ export class LocationService {
       description:
         'A beautiful beach where you can definitely relax without worrying about any monsters creeping from the waves to murder you.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 1e6;
+        return this.characterService.attributes.speed.value > 1e6;
       },
     },
 
@@ -102,14 +102,14 @@ export class LocationService {
       name: 'The Deep Sea',
       description: 'The depths of the sea.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 1e8;
+        return this.characterService.attributes.speed.value > 1e8;
       },
     },
     [LocationType.MountainTops]: {
       name: 'The Mountain Tops',
       description: 'The tops of the highest mountains.',
       unlock: () => {
-        return this.characterService.characterState.attributes.speed.value > 1e10;
+        return this.characterService.attributes.speed.value > 1e10;
       },
     },
     [LocationType.Hell]: {

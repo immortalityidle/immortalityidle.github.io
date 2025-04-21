@@ -318,7 +318,7 @@ export class MainLoopService {
     if (this.characterService && this.unlockAgeSpeed && this.tickDivider < 40) {
       // don't do this on slow speed
       // 73000 is 200 years. reaches 2x at 600 years, 3x at 1600, 4x at 3000. Caps at 12600
-      ticksPassed *= Math.min(8, Math.sqrt(1 + this.characterService.characterState.age / 73000));
+      ticksPassed *= Math.min(8, Math.sqrt(1 + this.characterService.age / 73000));
     }
     if (this.unlockPlaytimeSpeed && this.tickDivider < 40) {
       // don't do this on slow speed

@@ -3,7 +3,6 @@ import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { Activity } from '../game-state/activity';
-import { Character } from '../game-state/character';
 import { HellService } from '../game-state/hell.service';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,7 +19,6 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   imports: [forwardRef(() => NgClass), forwardRef(() => MatIcon), forwardRef(() => TooltipDirective)],
 })
 export class PortalPanelComponent {
-  character: Character;
   Math: Math;
   dragPositionX = 0;
   dragPositionY = 0;
@@ -35,7 +33,6 @@ export class PortalPanelComponent {
     public mainLoopService: MainLoopService
   ) {
     this.Math = Math;
-    this.character = characterService.characterState;
   }
 
   doActivity(activity: Activity) {
