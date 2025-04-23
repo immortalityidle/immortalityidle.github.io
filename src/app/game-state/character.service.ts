@@ -379,7 +379,7 @@ export class CharacterService {
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
-    setTimeout(() => (this.achievementService = this.injector.get(this.achievementService)));
+    setTimeout(() => (this.achievementService = this.injector.get(AchievementService)));
 
     this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
