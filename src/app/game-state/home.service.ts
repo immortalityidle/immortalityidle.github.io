@@ -65,13 +65,8 @@ export interface HomeProperties {
   homeValue: HomeType;
   bedroomFurniture: (Item | null)[];
   landPrice: number;
-  autoBuyLandUnlocked: boolean;
-  autoBuyLandLimit: number;
-  autoBuyHomeUnlocked: boolean;
-  autoBuyHomeLimit: HomeType;
   keepFurniture: boolean;
-  useAutoBuyReserve: boolean;
-  autoBuyReserveAmount: number;
+  keepWorkstationInputs: boolean;
   nextHomeCostReduction: number;
   houseBuildingProgress: number;
   upgrading: boolean;
@@ -97,13 +92,8 @@ export class HomeService {
   hellService?: HellService;
   activityService?: ActivityService;
   followerService?: FollowersService;
-  autoBuyLandUnlocked = false;
-  autoBuyLandLimit = 5;
-  autoBuyHomeUnlocked = false;
-  autoBuyHomeLimit: HomeType = 2;
   keepFurniture = false;
-  useAutoBuyReserve = false;
-  autoBuyReserveAmount = 0;
+  keepWorkstationInputs = false;
   land: number;
   landPrice: number;
   ownedFurniture: string[] = [];
@@ -914,13 +904,8 @@ export class HomeService {
       bedroomFurniture: this.bedroomFurniture,
       land: this.land,
       landPrice: this.landPrice,
-      autoBuyLandUnlocked: this.autoBuyLandUnlocked,
-      autoBuyLandLimit: this.autoBuyLandLimit,
-      autoBuyHomeUnlocked: this.autoBuyHomeUnlocked,
-      autoBuyHomeLimit: this.autoBuyHomeLimit,
       keepFurniture: this.keepFurniture,
-      useAutoBuyReserve: this.useAutoBuyReserve,
-      autoBuyReserveAmount: this.autoBuyReserveAmount,
+      keepWorkstationInputs: this.keepWorkstationInputs,
       nextHomeCostReduction: this.nextHomeCostReduction,
       houseBuildingProgress: this.houseBuildingProgress,
       upgrading: this.upgrading,
@@ -944,13 +929,8 @@ export class HomeService {
     this.land = properties.land;
     this.landPrice = properties.landPrice;
     this.setCurrentHome(this.homesList[properties.homeValue]);
-    this.autoBuyLandUnlocked = properties.autoBuyLandUnlocked || false;
-    this.autoBuyLandLimit = properties.autoBuyLandLimit || 0;
-    this.autoBuyHomeUnlocked = properties.autoBuyHomeUnlocked || false;
-    this.autoBuyHomeLimit = properties.autoBuyHomeLimit || 3;
     this.keepFurniture = properties.keepFurniture || false;
-    this.useAutoBuyReserve = properties.useAutoBuyReserve || false;
-    this.autoBuyReserveAmount = properties.autoBuyReserveAmount || 0;
+    this.keepWorkstationInputs = properties.keepWorkstationInputs || false;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
     this.upgrading = properties.upgrading || false;
@@ -1054,6 +1034,12 @@ export class HomeService {
   reset() {
     if (!this.keepHome) {
       this.setCurrentHome(this.homesList[0]);
+    } else if (!this.keepWorkstationInputs) {
+      for (const workstation of this.workstations) {
+        for (const wsinput of workstation.inputs) {
+          wsinput.quantity = 0;
+        }
+      }
     }
     if (!this.keepFurniture) {
       for (let i = 0; i < this.bedroomFurniture.length; i++) {

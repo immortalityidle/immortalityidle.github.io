@@ -1,7 +1,5 @@
 import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivityService } from '../game-state/activity.service';
-import { AutoBuyerService } from '../game-state/autoBuyer.service';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
@@ -26,9 +24,7 @@ export class OptionsModalComponent {
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
     public followerService: FollowersService,
-    public autoBuyerService: AutoBuyerService,
     public mainLoopService: MainLoopService,
-    private activityService: ActivityService,
     public dialog: MatDialog
   ) {}
 

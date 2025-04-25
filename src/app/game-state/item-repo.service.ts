@@ -8,7 +8,6 @@ import { HomeService } from './home.service';
 import { InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
-import { AutoBuyerService } from './autoBuyer.service';
 import { GameStateService } from './game-state.service';
 import { HellLevel, HellService } from './hell.service';
 import { FarmService } from './farm.service';
@@ -24,7 +23,6 @@ export class ItemRepoService {
   battleService?: BattleService;
   impossibleTaskService?: ImpossibleTaskService;
   followerService?: FollowersService;
-  autoBuyerService?: AutoBuyerService;
   gameStateService?: GameStateService;
   hellService?: HellService;
 
@@ -2188,84 +2186,6 @@ baguaMap = [
         return this.inventoryService.autoBalanceUnlocked;
       },
     },
-    autoBuyLandManual: {
-      id: 'autoBuyLandManual',
-      name: 'Manual of Land Acquisition',
-      type: 'manual',
-      description: 'This manual teaches you to automatically purchase land.',
-      value: 2000000,
-      useLabel: 'Read',
-      useDescription: 'Permanently unlock automatic land purchasing.',
-      useConsumes: true,
-      use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoBuyLandUnlocked = true;
-        this.logService.log(
-          LogTopic.EVENT,
-          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
-        );
-      },
-      owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        return this.homeService.autoBuyLandUnlocked;
-      },
-    },
-    autoBuyHomeManual: {
-      id: 'autoBuyHomeManual',
-      name: 'Manual of Home Improvement',
-      type: 'manual',
-      description: 'This manual teaches you to automatically upgrade your home.',
-      value: 1e7,
-      useLabel: 'Read',
-      useDescription: 'Permanently unlock automatic home upgrades.',
-      useConsumes: true,
-      use: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        this.homeService.autoBuyHomeUnlocked = true;
-        this.logService.log(
-          LogTopic.EVENT,
-          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
-        );
-      },
-      owned: () => {
-        if (!this.homeService) {
-          this.homeService = this.injector.get(HomeService);
-        }
-        return this.homeService.autoBuyHomeUnlocked;
-      },
-    },
-    autoBuyerSettingsManual: {
-      id: 'autoBuySettingsManual',
-      name: 'Manual of Customized Automation',
-      type: 'manual',
-      description: 'This manual teaches you to customize the order and behavior of auto-buying.',
-      value: 1e9,
-      useLabel: 'Read',
-      useDescription: 'Permanently unlock auto-buying customization',
-      useConsumes: true,
-      use: () => {
-        if (!this.autoBuyerService) {
-          this.autoBuyerService = this.injector.get(AutoBuyerService);
-        }
-        this.autoBuyerService.autoBuyerSettingsUnlocked = true;
-        this.logService.log(
-          LogTopic.EVENT,
-          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
-        );
-      },
-      owned: () => {
-        if (!this.autoBuyerService) {
-          this.autoBuyerService = this.injector.get(AutoBuyerService);
-        }
-        return this.autoBuyerService.autoBuyerSettingsUnlocked;
-      },
-    },
     autoPotionManual: {
       id: 'autoPotionManual',
       name: 'Manual of Gluttonous Potion Consumption',
@@ -2332,6 +2252,28 @@ baguaMap = [
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoPillUnlocked;
+      },
+    },
+    basicHealthRegenerationManual: {
+      id: 'basicHealthRegenerationManual',
+      name: 'Manual of Basic Health Regeration',
+      type: 'manual',
+      description: 'This manual teaches you to automatically recover a small amount of health during your battles.',
+      value: 1e10,
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock gives you a small amount of health each time tick during your battles.',
+      useConsumes: true,
+      use: () => {
+        if (this.characterService.status.health.battleTickRecovery < 1) {
+          this.characterService.status.health.battleTickRecovery = 1;
+        }
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        return this.characterService.status.health.battleTickRecovery >= 1;
       },
     },
     autoTroubleManual: {

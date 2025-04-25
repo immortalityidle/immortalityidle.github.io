@@ -581,14 +581,13 @@ export class AchievementService {
     },
     {
       name: 'Land Rush',
-      description:
-        'You owned 520 plots of land and unlocked the ' + this.itemRepoService.items['autoBuyLandManual'].name,
+      description: 'Your vast tracts of land make you the envy of all your neighbors',
       hint: 'Immortals are known for their vast real estate holdings.',
       check: () => {
         return this.homeService.land >= 520;
       },
       effect: () => {
-        this.storeService.unlockManual(this.itemRepoService.items['autoBuyLandManual']);
+        // blank
       },
       unlocked: false,
     },
@@ -632,37 +631,35 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      //TODO: rework this
       name: 'Time to Buy a Tractor',
-      description: 'You plowed 888 fields',
+      description:
+        'You plowed 888 fields and unlocked the ' + this.itemRepoService.items['basicHealthRegenerationManual'].name,
       hint: 'An aspiring immortal should have vast tracts of fertile land.',
       check: () => {
         return this.farmService.fields.length + this.farmService.extraFields >= 888;
       },
       effect: () => {
-        //TODO: rework this
+        this.storeService.unlockManual(this.itemRepoService.items['basicHealthRegenerationManual']);
       },
       unlocked: false,
     },
-    /*
     {
       name: 'Industrial Revolution',
-      description:
-        "You've found all the basic autobuyers and unlocked the " +
-        this.itemRepoService.items['autoBuyerSettingsManual'].name,
-      hint: 'Become really, really lazy',
+      description: "You've mastered many professions. Good job!",
+      hint: 'Hard work has many rewards.',
       check: () => {
         return (
-          this.homeService.autoBuyHomeUnlocked &&
-          this.homeService.autoBuyLandUnlocked
+          this.activityService.completedApprenticeships.includes(ActivityType.Blacksmithing) &&
+          this.activityService.completedApprenticeships.includes(ActivityType.Alchemy) &&
+          this.activityService.completedApprenticeships.includes(ActivityType.Leatherworking) &&
+          this.activityService.completedApprenticeships.includes(ActivityType.Woodworking)
         );
       },
       effect: () => {
-        this.storeService.unlockManual(this.itemRepoService.items['autoBuyerSettingsManual']);
+        // blank
       },
       unlocked: false,
     },
-    */
     {
       name: 'First Sip',
       description: 'You drank your first potions and unlocked a special equipment slot',
@@ -1022,6 +1019,18 @@ export class AchievementService {
           this.gameStateService = this.injector.get(GameStateService);
         }
         this.gameStateService?.unlockPanel('followersPanel');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Preserved Ingredients',
+      description: "Your family has learned to keep their ancestors' workstations exactly as they left them.",
+      hint: "A good family knows not to touch Grandpa's herb stash.",
+      check: () => {
+        return this.characterService.bloodlineRank >= 6;
+      },
+      effect: () => {
+        this.homeService.keepWorkstationInputs = true;
       },
       unlocked: false,
     },

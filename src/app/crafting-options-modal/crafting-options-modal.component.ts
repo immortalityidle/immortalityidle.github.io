@@ -5,7 +5,6 @@ import { CharacterService } from '../game-state/character.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { FollowersService } from '../game-state/followers.service';
-import { AutoBuyerService } from '../game-state/autoBuyer.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -23,7 +22,6 @@ export class CraftingOptionsModalComponent {
     public inventoryService: InventoryService,
     public gameStateService: GameStateService,
     public followerService: FollowersService,
-    public autoBuyerService: AutoBuyerService,
     public mainLoopService: MainLoopService,
     public dialog: MatDialog
   ) {}

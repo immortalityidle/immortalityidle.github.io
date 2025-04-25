@@ -226,9 +226,7 @@ export class BattleService {
       for (const keyString in this.characterService.status) {
         const key = keyString as StatusType;
         const statusEntry = this.characterService.status[key];
-        if (statusEntry.battleTickRecovery) {
-          statusEntry.value += statusEntry.battleTickRecovery;
-        }
+        statusEntry.value += statusEntry.battleTickRecovery;
       }
       this.characterService.checkOverage();
 

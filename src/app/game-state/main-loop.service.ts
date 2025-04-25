@@ -345,7 +345,7 @@ export class MainLoopService {
       this.inventoryTickSubject.next(1);
       this.activityTickSubject.next(1);
       this.homeTickSubject.next(1);
-      this.tickSubject.next(1); // ticks autobuyer, character, followers, and hell
+      this.tickSubject.next(1); // ticks character, followers, and hell
     }
     if (this.reincarnating) {
       this.reincarnateSubject.next(1);

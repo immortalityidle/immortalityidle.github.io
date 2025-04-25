@@ -66,7 +66,7 @@ export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
 export type StatusType = 'health' | 'stamina' | 'qi' | 'nutrition';
 export type CharacterStatus = {
-  [key in StatusType]: { description: string; value: number; max: number; battleTickRecovery?: number };
+  [key in StatusType]: { description: string; value: number; max: number; battleTickRecovery: number };
 };
 
 export interface CharacterProperties {
@@ -310,23 +310,27 @@ export class CharacterService {
       description: 'Physical well-being. Take too much damage and you will die.',
       value: 100,
       max: 100,
+      battleTickRecovery: 0,
     },
     stamina: {
       description:
         'Physical energy to accomplish tasks. Most activities use stamina, and if you let yourself run down you could get sick and have to stay in bed for a few days.',
       value: 100,
       max: 100,
+      battleTickRecovery: 1,
     },
     qi: {
       description: 'Magical energy required for mysterious spiritual activities.',
       value: 0,
       max: 0,
+      battleTickRecovery: 0,
     },
     nutrition: {
       description:
         'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend some money on cheap scraps each day.',
       value: 30,
       max: 30,
+      battleTickRecovery: 0,
     },
   };
   money = 0;
@@ -1204,11 +1208,6 @@ export class CharacterService {
 
     this.age = properties.age || INITIAL_AGE;
     this.status = properties.status;
-    if (!this.status.nutrition) {
-      // keep legacy saves from freaking out
-      // @ts-ignore
-      this.status.nutrition = properties.status.nourishment;
-    }
     this.baseLifespan = properties.baseLifespan;
     this.foodLifespan = properties.foodLifespan || 0;
     this.alchemyLifespan = properties.alchemyLifespan || 0;
