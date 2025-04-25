@@ -1,62 +1,42 @@
 :root {
-  --bodyText: black;
-  --bodyBackground: #C4E9CC; //#efefef;
-  --panelHeader: #a4c9fC;
-  --panelBackground: #e9f7ec; //#fcfcfc;
-  --panelBorder: #a4c9aC; //#121212;
-  --tableDividerColor: #a4c9aC;
-  --itemSlotColor: rgb(252, 252, 239);
-  --itemSlotHighlight: #d8deff;
-  --storeButtonColor: #fdfffc;
-  --storeButtonDisabledColor: #555555;
-  --progressBackgroundColor: #efefef;
-  --healthColor: red;
-  --staminaColor: lightgreen;
-  --nutritionColor: yellow;
-  --qiColor: lightblue;
-  --buttonColor: #fdfffc;
-  --buttonBorder: #a4c9aC;
-  --dialogBackground: #333333;
-  --disabledText: #555555;
-  --textHighlight: green;
-  --buttonHighlightBg: gold;
-  --disabledActivity: white;
-  --lifeEffectColor: #00aa08;
-  --corruptionEffectColor: #aa0008;
-  --popupTextColor: darkgreen;  
-}
-:root .darkMode{
-  --bodyText: #cacaca;
-  --bodyBackground: #000000;
-  --panelHeader: #444444;
-  --panelBackground: #222222;
-  --panelBorder: #5a5a5a;
-  --tableDividerColor: #aaaaaa;
-  --itemSlotColor: #373737;
-  --itemSlotHighlight: #004444;
-  --storeButtonColor: #777777;
-  --storeButtonDisabledColor: #3b3b3b;
-  --progressBackgroundColor: #3b3b3b;
-  --healthColor: red;
-  --staminaColor: lightgreen;
-  --nutritionColor: yellow;
-  --qiColor: #195061;
-  --buttonColor: #373737;
-  --buttonBorder: #999999;
-  --dialogBackground: #333333;
-  --disabledText: #999999;
-  --textHighlight: green;
-  --buttonHighlightBg: blue;
-  --disabledActivity: #5a5a5a;
-  --lifeEffectColor: #00aa08;
-  --corruptionEffectColor: #ff2228;
-  --popupTextColor: #AAFFFF;
+  color-scheme: light;
+  --bodyText: light-dark(black, #cacaca);
+  --bodyBackground: light-dark(#C4E9CC, #000000); //#efefef;
+  --panelHeader: light-dark(#a4c9fC, #444444);
+  --panelBackground: light-dark(#e9f7ec, #222222); //#fcfcfc;
+  --panelBorder: light-dark(#a4c9aC, #5a5a5a); //#121212;
+  --tableDividerColor: light-dark(#a4c9aC, #aaaaaa);
+  --itemSlotColor: light-dark(#fcfcef, #373737);
+  --itemSlotHighlight: light-dark(#d8deff, #004444);
+  --storeButtonColor: light-dark(#fdfffc, #040404);
+  --storeButtonDisabledColor: light-dark(#555555, #3b3b3b);
+  --progressBackgroundColor: light-dark(#efefef, #3b3b3b);
+  --healthColor: light-dark(red, red);
+  --staminaColor: light-dark(lightgreen, lightgreen);
+  --nutritionColor: light-dark(yellow, yellow);
+  --qiColor: light-dark(lightblue, #195061);
+  --buttonColor: light-dark(#fdfffc, #373737);
+  --buttonBorder: light-dark(#a4c9aC, #999999);
+  --dialogBackground: light-dark(#333333, #333333);
+  --disabledText: light-dark(#555555, #999999);
+  --textHighlight: light-dark(green, green);
+  --buttonHighlightBg: light-dark(gold, blue);
+  --disabledActivity: light-dark(white, #5a5a5a);
+  --lifeEffectColor: light-dark(#00aa08, #00aa08);
+  --corruptionEffectColor: light-dark(#aa0008, #ff2228);
+  --popupTextColor: light-dark(darkgreen, #AAFFFF); 
+  
+  --yin-yang-size: 40px;
+
+  .darkMode {
+    color-scheme: dark;
+  }
 }
 
 
 html { 
-  height: 100%;
-  width: 100%;
+  height: 100dvh;
+  width: 100dvw;
   overscroll-behavior: none;
   display: flex;
 }
@@ -289,4 +269,8 @@ button:disabled {
 .grid-item-content {
   align-items: normal !important;
   justify-content: left !important;
+}
+
+.label {
+  color: light-dark(#666666, #666666);
 }

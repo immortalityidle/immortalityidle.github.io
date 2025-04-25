@@ -1,0 +1,130 @@
+<div class="dropAccepter" id="activityDropDiv">
+  <h6>
+    <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
+      [checked]="mainLoopService.useBankedTicks"/>
+    <label for="useSavedTicks">Use banked time to accelerate reality (10x). {{mainLoopService.bankedTicks | bigNumber}} time ticks left.</label>
+  </h6>
+  @if (battleService.enemies.length > 0 && !battleService.battleMessageDismissed) {
+    <div>
+      <span class="battleWarning">BATTLING!!!</span>
+    </div>
+    <div>
+      <span>Your schedule will resume when the battle is over.</span>
+    </div>
+    <div>
+      <span>Days will not pass, but your perception of time will influence the speed of the battle.</span>
+    </div>
+    <div>
+      <button (click)="battleService.battleMessageDismissed = true">Got it. Now let me see my schedule anyway during battles.</button>
+    </div>
+  }
+  @else {
+    <div class="overflow" cdkDropList cdkDropListSortingDisabled>
+      <button (click)="enableAllClick()">Enable All</button>
+      <button (click)="disableAllClick()">Disable All</button>
+      @if (characterService.qiUnlocked) {
+        <table class="spiritActivityPanel" id="spiritActivity"
+          >
+          <tr>
+            <td class="spiritProjectionLabel" tooltip="You can project your spiritual self to take on a second activity while your physical body continues its work.<br>Whatever activity you drop here will be completed each day as long as you have enough Qi to support the effort.<br>Requires 5 Qi per day in addition to the regular requirements of the activity.">
+              Spiritual Projection
+            </td>
+          </tr>
+          @if (activityService.spiritActivity !== null) {
+            <tr>
+              <td>{{activityService.getActivityName(activityService.spiritActivity)}}</td>
+              <td>
+                <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">
+                  <span></span>
+                </div>
+              </td>
+              <td>
+                <mat-icon tooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
+              </td>
+            </tr>
+          }
+        </table>
+      }
+
+    <table>
+      @for (entry of activityService.activityLoop; track entry; let indexOfelement = $index) {
+        @if (activityService.getActivityName(entry.activity) !== '') {
+          <tr id="activityLoopIndex{{indexOfelement}}">
+            <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex0{{indexOfelement}}">
+              <mat-icon (click)="showActivity($event, entry.activity)"
+                tooltip="What is this activity?<br>Click to learn all about it!"
+                aria-label="Help" aria-hidden="false">
+                help
+              </mat-icon>
+              {{activityService.getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
+            </td>
+            <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex1{{indexOfelement}}">
+              <div class="progress-bar">
+                <span
+                  [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled || entry.userDisabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
+                </span>
+              </div>
+            </td>
+            <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex2{{indexOfelement}}">
+              <mat-icon tooltip="Spend fewer days on this.<br>Shift- or Ctrl-click to remove 10x<br>Shift-Ctrl-click to remove 100x"
+                (click)="onMinusClick(entry, $event)" class="iconButton" aria-label="Remove Days" aria-hidden="false">remove</mat-icon>
+              <mat-icon tooltip="Spend more days on this.<br>Shift- or Ctrl-click to add 10x<br>Shift-Ctrl-click to add 100x"
+                (click)="onPlusClick(entry, $event)" class="iconButton" aria-label="Add Days" aria-hidden="false">add</mat-icon>
+              <mat-icon tooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton" aria-label="Disable Activity" aria-hidden="false">cancel</mat-icon>
+              <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
+            </td>
+          </tr>
+        }
+      }
+    </table>
+  </div>
+}
+</div>
+<div class="btn-row">
+  <div>
+    <mat-icon (click)="pauseClick()" [ngClass]="{'iconActive': this.mainLoopService.pause}"
+    tooltip="Pause the game.<br>
+      Hotkey: Alt-0 to pause or spacebar to toggle.<br>
+      Clicking this again while paused will step time forward a single day.<br>
+      When paused, you can also advance one day by pressing the Enter key." class="iconButton" aria-label="Pause" aria-hidden="false">
+      pause
+    </mat-icon>
+
+    <mat-icon (click)="slowClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 40 && !this.mainLoopService.pause)}"
+      tooltip="Slow Game Speed (1 day/sec).<br>
+      Hotkey: Alt-1" class="iconButton" aria-label="Slow Speed" aria-hidden="false">
+      slow_motion_video
+    </mat-icon>
+    <mat-icon (click)="standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"
+      tooltip="Standard Game Speed ({{mainLoopService.getTPS(10) | number: '1.0-2'}} days/sec).<br>
+      Hotkey: Alt-2" class="iconButton" aria-label="Standard Speed" aria-hidden="false">
+      play_arrow
+    </mat-icon>
+    @if (mainLoopService.unlockFastSpeed) {
+      <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 5 && !this.mainLoopService.pause)}"
+      (click)="fastClick()" tooltip="Fast Game Speed ({{mainLoopService.getTPS(5) | number: '1.0-2'}} days/sec).<br>
+      Hotkey: Alt-3" class="iconButton" aria-label="Fast Speed" aria-hidden="false">
+        fast_forward
+      </mat-icon>
+    }
+    @if (mainLoopService.unlockFasterSpeed) {
+      <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 2 && !this.mainLoopService.pause)}"
+      (click)="fasterClick()" tooltip="Faster Game Speed ({{mainLoopService.getTPS(2) | number: '1.0-2'}} days/sec).<br>
+      Hotkey: Alt-4" class="iconButton" aria-label="Faster Speed" aria-hidden="false">
+        skip_next
+      </mat-icon>
+    }
+    @if (mainLoopService.unlockFastestSpeed) {
+      <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 1 && !this.mainLoopService.pause)}"
+      (click)="fastestClick()" tooltip="Fastest Game Speed ({{mainLoopService.getTPS(1) | number: '1.0-2'}} days/sec).<br>
+      Hotkey: Alt-5" class="iconButton" aria-label="Fastest Speed" aria-hidden="false">
+        bolt
+      </mat-icon>
+    }
+  </div>
+  @if (activityService.autoRestart) {
+    <mat-icon  (click)="timeOptions()" tooltip="Options" class="iconButton" aria-label="Time Options" aria-hidden="false">
+      settings
+    </mat-icon>
+  }
+</div>

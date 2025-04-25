@@ -1,4 +1,4 @@
-<h3 class="activitiesHeader">
+<!-- <h3 class="activitiesHeader">
   <div class="customHeader">
     @if (characterService.immortal && !hellService.inHell && !characterService.god) {
       <span>
@@ -6,7 +6,7 @@
       </span>
     }
   </div>
-</h3>
+</h3> -->
 <div class="activitiesContainer">
   <!-- draggable="true" (dragstart)="drag(activity, $event)" -->
   <div class="overflow">
@@ -21,7 +21,7 @@
                 <span>{{activity.name[activity.level]}}</span>
               </div>
               <div class="activityButtons">
-                <span class='floatRight'>
+                <span>
                   <mat-icon class="iconButton" (click)="activityPanelService.showActivity($event, activity)"
                     tooltip="What is this activity?<br>Click to learn all about it!"
                     aria-label="Help" aria-hidden="false">
@@ -37,8 +37,6 @@
         @if (activity.discovered || activity.unlocked) {
           <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"
             [tabindex]="0"
-            cdkDrag [cdkDragDisabled]="!activity.unlocked" [cdkDragData]="activity.activityType"
-            (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
             (click)="activityPanelService.doActivity(activity)" >
             <div class="activityLabel" tooltip="{{activityPanelService.getActivityTooltip(activity, true)}}" >
               <span>{{activity.name[activity.level]}}</span>
@@ -53,7 +51,7 @@
                   </mat-icon>
                 }
               </span>
-              <span class='floatRight'>
+              <span>
                 @if (activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)) {
                   <mat-icon
                     tooltip="This activity requires that you go through an apprenticeship.<br>You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn.<br>Once you've started, other trades may be closed off until your next life."
@@ -86,6 +84,4 @@
       }
     </div>
   </div>
-
 </div>
-<br>

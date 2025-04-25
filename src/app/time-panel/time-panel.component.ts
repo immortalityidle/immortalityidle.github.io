@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 import { ActivityLoopEntry, ActivityType } from '../game-state/activity';
 import { CharacterService } from '../game-state/character.service';
@@ -29,20 +29,18 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class TimePanelComponent {
+  protected activityService = inject(ActivityService);
+  protected battleService = inject(BattleService);
+  protected characterService = inject(CharacterService);
+  protected mainLoopService = inject(MainLoopService);
+
   unlockFastSpeed = false;
   unlockFasterSpeed = false;
   unlockFastestSpeed = false;
   dragPositionX = 0;
   dragPositionY = 0;
 
-  constructor(
-    public mainLoopService: MainLoopService,
-    public activityService: ActivityService,
-    public characterService: CharacterService,
-    public gameStateService: GameStateService,
-    public battleService: BattleService,
-    public dialog: MatDialog
-  ) {}
+  constructor(private gameStateService: GameStateService, private dialog: MatDialog) {}
 
   pauseClick() {
     if (this.mainLoopService.pause) {

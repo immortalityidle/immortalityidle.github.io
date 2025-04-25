@@ -7,6 +7,7 @@ import { NgClass, DecimalPipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { HealthService } from './health.service';
 import { BigNumberPipe } from '../pipes';
+import { YinYangComponent } from './yin-yang/yin-yang.component';
 
 @Component({
   selector: 'app-health-panel',
@@ -29,6 +30,7 @@ import { BigNumberPipe } from '../pipes';
     forwardRef(() => DecimalPipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
+    YinYangComponent,
   ],
 })
 export class HealthPanelComponent {

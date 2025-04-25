@@ -7,10 +7,11 @@ import { HomeService } from 'src/app/game-state/home.service';
 import { HealthService } from 'src/app/health-panel/health.service';
 import { BigNumberPipe } from 'src/app/pipes';
 import { TooltipDirective } from 'src/app/tooltip/tooltip.directive';
+import { YinYangComponent } from '../../health-panel/yin-yang/yin-yang.component';
 
 @Component({
   selector: 'app-mobile-health',
-  imports: [BigNumberPipe, CommonModule, MatIconModule, TooltipDirective],
+  imports: [BigNumberPipe, CommonModule, MatIconModule, TooltipDirective, YinYangComponent],
   templateUrl: './mobile-health.component.html',
   styleUrl: './mobile-health.component.less',
   animations: [
@@ -31,6 +32,8 @@ export class MobileHealthComponent {
   protected homeService = inject(HomeService);
 
   protected Math = Math;
+
+  protected isCollapsed = false;
 
   protected animationDoneEvent() {
     while (this.healthService.moneyUpdates.length > 0) {

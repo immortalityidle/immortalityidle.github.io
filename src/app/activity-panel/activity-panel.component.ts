@@ -1,22 +1,18 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
-import { Activity, ActivityType } from '../game-state/activity';
-import { HellLevel, HellService } from '../game-state/hell.service';
-import { TextPanelComponent } from '../text-panel/text-panel.component';
+import { Activity } from '../game-state/activity';
+import { HellService } from '../game-state/hell.service';
 import { MatDialog } from '@angular/material/dialog';
-import { JoinTheGodsText } from '../game-state/textResources';
-import { InventoryService } from '../game-state/inventory.service';
-import { FollowersService } from '../game-state/followers.service';
 import { MainLoopService } from '../game-state/main-loop.service';
-import { LogService, LogTopic } from '../game-state/log.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { BattleService } from '../game-state/battle.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
-import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
+import { BigNumberPipe } from '../pipes';
+import { ActivityPanelService } from './activity-panel.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -32,47 +28,19 @@ import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
   ],
 })
 export class ActivityPanelComponent {
-  private camelToTitle = new CamelToTitlePipe();
+  protected Math = Math;
+
+  protected activityService = inject(ActivityService);
+  protected activityPanelService = inject(ActivityPanelService);
+  protected battleService = inject(BattleService);
+  protected characterService = inject(CharacterService);
+  protected hellService = inject(HellService);
+  protected mainLoopService = inject(MainLoopService);
+
   private dragPositionX = 0;
   private dragPositionY = 0;
 
-  constructor(
-    private gameStateService: GameStateService,
-    protected activityService: ActivityService,
-    protected characterService: CharacterService,
-    protected hellService: HellService,
-    private inventoryService: InventoryService,
-    private followerService: FollowersService,
-    private dialog: MatDialog,
-    private bigNumberPipe: BigNumberPipe,
-    protected mainLoopService: MainLoopService,
-    private logService: LogService,
-    protected battleService: BattleService
-  ) {}
-
-  // TODO: make this an activity
-  protected joinTheGodsClick() {
-    if (
-      !confirm(
-        'Are you sure you are ready for this? You will need to leave all your money and most of your followers and possessions behind as you leave this mortal realm.'
-      )
-    ) {
-      return;
-    }
-    const dialogRef = this.dialog.open(TextPanelComponent, {
-      width: '700px',
-      data: { titleText: 'Joining the Gods', bodyText: JoinTheGodsText },
-      autoFocus: false,
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.hellService.inHell = true;
-      this.hellService.moveToHell(HellLevel.Gates);
-      this.characterService.money = 0;
-      this.inventoryService.stashInventory();
-      this.followerService.hellPurge();
-      this.activityService.checkRequirements(true);
-    });
-  }
+  constructor(private gameStateService: GameStateService, private dialog: MatDialog) {}
 
   protected scheduleActivity(activity: Activity, event: MouseEvent): void {
     event.stopPropagation();
@@ -99,30 +67,6 @@ export class ActivityPanelComponent {
         repeatTimes: repeat,
       });
     }
-  }
-
-  protected doActivity(activity: Activity) {
-    if (this.battleService.enemies.length > 0) {
-      // in a battle, bail out
-      return;
-    }
-    if (!this.activityService.meetsRequirements(activity)) {
-      this.logService.log(LogTopic.EVENT, activity.name[activity.level] + ' is unavailable now.');
-      return;
-    }
-    const failedStatus = this.activityService.checkResourceUse(activity);
-    if (failedStatus !== '') {
-      this.characterService.flashStatus(failedStatus);
-      this.logService.log(
-        LogTopic.EVENT,
-        "You don't meet the requirements to do " + activity.name[activity.level] + ' right now.'
-      );
-      return;
-    }
-
-    this.activityService.immediateActivity = activity;
-    this.mainLoopService.tick();
-    this.activityService.immediateActivity = null;
   }
 
   protected rightClick(activity: Activity, event: MouseEvent) {
@@ -193,63 +137,5 @@ export class ActivityPanelComponent {
         }
       }
     }
-  }
-
-  protected getActivityTooltip(activity: Activity, doNow = false) {
-    if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell) {
-      return '';
-    } else if (activity.unlocked) {
-      if (doNow) {
-        return 'Spend a day doing this activity';
-      } else {
-        let projectionString = '';
-        if (this.characterService.qiUnlocked) {
-          projectionString = '<br>Right-click to set this as your spriritual projection activity';
-        }
-        return (
-          'Add this activity to your schedule<br>Shift- or Ctrl-click to repeat it 10x<br>Shift-Ctrl-click to repeat it 100x<br>Alt-click to add it to the top' +
-          projectionString
-        );
-      }
-    } else {
-      let tooltipText = [
-        'This activity is locked until you have the attributes required for it. You will need:<br>',
-        ...Object.entries(activity.requirements[0]).map(entry =>
-          entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
-        ),
-      ]
-        .filter(line => line)
-        .join('<br>');
-      if (activity.landRequirements) {
-        tooltipText += '<br>Land: ' + activity.landRequirements;
-      }
-      if (activity.fallowLandRequirements) {
-        tooltipText += '<br>Fallow Land: ' + activity.fallowLandRequirements;
-      }
-      if (activity.farmedLandRequirements) {
-        tooltipText += '<br>Farmed Land: ' + activity.farmedLandRequirements;
-      }
-      return tooltipText;
-    }
-  }
-
-  protected showActivity(event: MouseEvent, activity: Activity) {
-    event.stopPropagation();
-    let bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
-    bodyString += this.activityService.getYinYangDescription(activity.yinYangEffect[activity.level]);
-    if (activity.projectionOnly) {
-      bodyString +=
-        '\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.';
-    }
-
-    const dialogProperties = { titleText: activity.name[activity.level], bodyText: bodyString, imageFile: '' };
-    if (activity.imageBaseName) {
-      dialogProperties.imageFile = 'assets/images/activities/' + activity.imageBaseName + activity.level + '.png';
-    }
-    this.dialog.open(TextPanelComponent, {
-      width: '400px',
-      data: dialogProperties,
-      autoFocus: false,
-    });
   }
 }
