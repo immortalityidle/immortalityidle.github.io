@@ -55,6 +55,8 @@ export interface BattleProperties {
   techniqueDevelopmentCounter: number;
   maxFamilyTechniques: number;
   statusEffects: StatusEffect[];
+  potionCooldown: number;
+  potionThreshold: number;
 }
 
 export interface Technique {
@@ -109,9 +111,11 @@ export class BattleService {
   private techniqueDevelopmentCounter = 0;
   maxFamilyTechniques = 0;
   statusEffects: StatusEffect[] = [];
+  potionCooldown = 20;
+  potionThreshold = 0.5;
 
-  private rightHandTechniqueName = 'Right-Handed Weapon';
-  private leftHandTechniqueName = 'Left-Handed Weapon';
+  public rightHandTechniqueName = 'Right-Handed Weapon';
+  public leftHandTechniqueName = 'Left-Handed Weapon';
   private qiAttackName = 'Qi Strike';
   private pyroclasmAttackName = 'Pyroclasm';
   private metalFistName = 'Metal Fist';
@@ -221,7 +225,7 @@ export class BattleService {
         return;
       }
 
-      this.inventoryService.usePouchItem(1); // TODO: use cooldowns for this
+      this.usePouchItems();
 
       for (const keyString in this.characterService.status) {
         const key = keyString as StatusType;
@@ -270,6 +274,11 @@ export class BattleService {
     this.kills = 0;
     this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
+    for (const itemStack of this.characterService.itemPouches) {
+      if (itemStack.item) {
+        itemStack.item.cooldown = 0;
+      }
+    }
   }
 
   getProperties(): BattleProperties {
@@ -292,35 +301,65 @@ export class BattleService {
       techniqueDevelopmentCounter: this.techniqueDevelopmentCounter,
       maxFamilyTechniques: this.maxFamilyTechniques,
       statusEffects: this.statusEffects,
+      potionCooldown: this.potionCooldown,
+      potionThreshold: this.potionThreshold,
     };
   }
 
   setProperties(properties: BattleProperties) {
     this.enemies = properties.enemies;
     this.kills = properties.kills;
-    this.godSlayerKills = properties.godSlayerKills || 0;
-    this.totalKills = properties.totalKills || 0;
+    this.godSlayerKills = properties.godSlayerKills;
+    this.totalKills = properties.totalKills;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
     this.yearlyMonsterDay = properties.monthlyMonsterDay;
-    this.highestDamageDealt = properties.highestDamageDealt || 0;
-    this.highestDamageTaken = properties.highestDamageTaken || 0;
-    this.godSlayersUnlocked = properties.godSlayersUnlocked || false;
-    this.godSlayersEnabled = properties.godSlayersEnabled || false;
-    this.totalEnemies = properties.totalEnemies || 0;
-    this.troubleCounter = properties.troubleCounter || 0;
-    this.battleMessageDismissed = properties.battleMessageDismissed || false;
-    if (properties.techniques) {
-      this.techniques = properties.techniques;
-    }
-    this.techniqueDevelopmentCounter = properties.techniqueDevelopmentCounter || 0;
-    this.maxFamilyTechniques = properties.maxFamilyTechniques || 0;
-    this.statusEffects = properties.statusEffects || [];
+    this.highestDamageDealt = properties.highestDamageDealt;
+    this.highestDamageTaken = properties.highestDamageTaken;
+    this.godSlayersUnlocked = properties.godSlayersUnlocked;
+    this.godSlayersEnabled = properties.godSlayersEnabled;
+    this.totalEnemies = properties.totalEnemies;
+    this.troubleCounter = properties.troubleCounter;
+    this.battleMessageDismissed = properties.battleMessageDismissed;
+    this.techniques = properties.techniques;
+    this.techniqueDevelopmentCounter = properties.techniqueDevelopmentCounter;
+    this.maxFamilyTechniques = properties.maxFamilyTechniques;
+    this.statusEffects = properties.statusEffects;
+    this.potionCooldown = properties.potionCooldown;
+    this.potionThreshold = properties.potionThreshold;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
           this.currentEnemy = enemy;
         }
       }
+    }
+  }
+
+  usePouchItems() {
+    // use pouch items if needed
+    let potionTaken = false;
+    for (let i = 0; i < this.characterService.itemPouches.length; i++) {
+      const itemStack = this.characterService.itemPouches[i];
+      if (!itemStack || !itemStack.item || itemStack.quantity === 0 || itemStack.item?.type !== 'potion') {
+        continue;
+      }
+      if ((itemStack.item?.cooldown || 0) <= 0) {
+        const effect: StatusType = itemStack.item.effect as StatusType;
+        if (
+          this.characterService.status[effect].value <
+          this.characterService.status[effect].max * this.potionThreshold
+        ) {
+          this.characterService.status[effect].value += itemStack.item.increaseAmount || 1;
+          itemStack.quantity--;
+          itemStack.item.cooldown = this.potionCooldown;
+          potionTaken = true;
+        }
+      } else {
+        itemStack!.item!.cooldown = (itemStack.item?.cooldown || 0) - 1;
+      }
+    }
+    if (potionTaken) {
+      this.characterService.checkOverage();
     }
   }
 
@@ -1027,6 +1066,13 @@ export class BattleService {
     const index = this.enemies.indexOf(this.currentEnemy);
     this.enemies.splice(index, 1);
     this.currentEnemy = null;
+    if (this.enemies.length === 0) {
+      for (const itemStack of this.characterService.itemPouches) {
+        if (itemStack.item) {
+          itemStack.item.cooldown = 0;
+        }
+      }
+    }
   }
 
   fight(enemy: Enemy) {

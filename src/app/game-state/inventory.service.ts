@@ -59,6 +59,7 @@ export interface Item {
   imageColor?: string;
   pouchable?: boolean;
   increaseAmount?: number;
+  cooldown?: number;
 }
 
 export interface Equipment extends Item {
@@ -107,15 +108,12 @@ export interface InventoryProperties {
   autoUseEntries: AutoItemEntry[];
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
-  autoPotionUnlocked: boolean;
   autoPillUnlocked: boolean;
-  autoPotionEnabled: boolean;
   autoPillEnabled: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
-  useSpiritGemPotions: boolean;
   useCheapestSpiritGem: boolean;
   autoSellOldHerbs: boolean;
   autoSellOldWood: boolean;
@@ -173,9 +171,7 @@ export class InventoryService {
   autoUseEntries: AutoItemEntry[];
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
-  autoPotionUnlocked: boolean;
   autoPillUnlocked: boolean;
-  autoPotionEnabled: boolean;
   autoPillEnabled: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
@@ -246,9 +242,7 @@ export class InventoryService {
     this.autoEatAll = false;
     this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
-    this.autoPotionUnlocked = false;
     this.autoPillUnlocked = false;
-    this.autoPotionEnabled = false;
     this.autoPillEnabled = false;
     this.autoWeaponMergeUnlocked = false;
     this.autoArmorMergeUnlocked = false;
@@ -333,7 +327,6 @@ export class InventoryService {
     }
     this.characterService.status.nutrition.value--; // tick the day's hunger
     this.eatDailyMeal();
-    this.usePouchItem();
 
     if (this.mergeCounter >= 20) {
       if (this.autoWeaponMergeUnlocked) {
@@ -364,15 +357,12 @@ export class InventoryService {
       autoUseEntries: this.autoUseEntries,
       autoBalanceUnlocked: this.autoBalanceUnlocked,
       autoBalanceItems: this.autoBalanceItems,
-      autoPotionUnlocked: this.autoPotionUnlocked,
       autoPillUnlocked: this.autoPillUnlocked,
-      autoPotionEnabled: this.autoPotionEnabled,
       autoPillEnabled: this.autoPillEnabled,
       autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked,
       autoArmorMergeUnlocked: this.autoArmorMergeUnlocked,
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
       useSpiritGemWeapons: this.useSpiritGemWeapons,
-      useSpiritGemPotions: this.useSpiritGemPotions,
       useCheapestSpiritGem: this.useCheapestSpiritGem,
       autoSellOldHerbs: this.autoSellOldHerbs,
       autoSellOldWood: this.autoSellOldWood,
@@ -428,15 +418,12 @@ export class InventoryService {
     this.autoUseEntries = properties.autoUseEntries || [];
     this.autoBalanceUnlocked = properties.autoBalanceUnlocked || false;
     this.autoBalanceItems = properties.autoBalanceItems;
-    this.autoPotionUnlocked = properties.autoPotionUnlocked || false;
     this.autoPillUnlocked = properties.autoPillUnlocked || false;
-    this.autoPotionEnabled = properties.autoPotionUnlocked || this.autoPotionUnlocked;
     this.autoPillEnabled = properties.autoPillUnlocked || this.autoPillUnlocked;
     this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked || false;
     this.autoArmorMergeUnlocked = properties.autoArmorMergeUnlocked || false;
     this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked || false;
     this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
-    this.useSpiritGemPotions = properties.useSpiritGemPotions;
     this.useCheapestSpiritGem = properties.useCheapestSpiritGem || false;
     this.autoSellOldHerbs = properties.autoSellOldHerbs || false;
     this.autoSellOldWood = properties.autoSellOldWood || false;
@@ -697,14 +684,14 @@ export class InventoryService {
   generatePotion(grade: number): void {
     this.potionCounter++;
     let effect = 'health';
-    let restoreAmount = grade;
+    let restoreAmount = grade * grade;
     if (this.characterService.qiUnlocked) {
       const potionType = this.potionCounter % 3;
       if (potionType === 0) {
         effect = 'stamina';
       } else if (potionType === 1) {
         effect = 'qi';
-        restoreAmount = Math.floor(grade / 10);
+        restoreAmount = Math.floor(restoreAmount / 10);
       }
     } else {
       const potionType = this.potionCounter % 2;
@@ -713,7 +700,7 @@ export class InventoryService {
       }
     }
 
-    const name = 'Potion of ' + this.titleCasePipe.transform(effect) + ' +' + restoreAmount;
+    const name = this.titleCasePipe.transform(effect) + ' Potion + ' + restoreAmount;
     this.logService.log(
       LogTopic.CRAFTING,
       'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.'
@@ -721,7 +708,7 @@ export class InventoryService {
 
     this.addItem({
       name: name,
-      imageFile: 'potion',
+      imageFile: effect + 'potion',
       id: 'potion',
       type: 'potion',
       value: grade,
@@ -1238,7 +1225,6 @@ export class InventoryService {
     if (item.type === 'gem') {
       this.gemsAcquired++;
     }
-    //TODO: pouch items need to go straight there when acquired (maybe a manual for that?)
 
     if (this.autoReloadCraftInputs && !ignoreAutoReload) {
       const workstations = this.homeService?.workstations;
@@ -1272,6 +1258,39 @@ export class InventoryService {
           }
         }
       }
+    }
+
+    if (item.type === 'potion' && !ignoreAutoReload) {
+      console.log('adding', item);
+      // check for same type of potion in item pouches
+      let existingPotionStack = this.characterService.itemPouches.find(
+        itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
+      );
+      if (!existingPotionStack) {
+        console.log("couldn't find it in the pouches");
+        // not there, check the inventory slots
+        existingPotionStack = this.itemStacks.find(
+          itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
+        );
+      }
+      if (existingPotionStack) {
+        console.log('existing stack, adding it');
+        const totalPower =
+          (item.increaseAmount || 0) * quantity +
+          (existingPotionStack.item!.increaseAmount || 0) * existingPotionStack.quantity;
+        existingPotionStack.quantity += quantity;
+        const restoreAmount = Math.floor(totalPower / existingPotionStack.quantity);
+        existingPotionStack.item!.increaseAmount = restoreAmount;
+        existingPotionStack.item!.name = this.titleCasePipe.transform(item.effect) + ' Potion + ' + restoreAmount;
+        return -1;
+      }
+      console.log("couldn't stack it, making new stack");
+      // couldn't stack the potion, let it fall through and get treated like a normal item
+    }
+
+    if (this.autoPillEnabled && item.type === 'pill') {
+      this.useItem(item, quantity);
+      return -1;
     }
 
     for (const balanceItem of this.autoBalanceItems) {
@@ -1340,14 +1359,6 @@ export class InventoryService {
       }
     }
 
-    if (this.autoPotionEnabled && item.type === 'potion') {
-      this.useItem(item, quantity);
-      return -1;
-    }
-    if (this.autoPillEnabled && item.type === 'pill') {
-      this.useItem(item, quantity);
-      return -1;
-    }
     if (item.type !== 'food') {
       // food has its own autouse handling in eatDailyMeal()
       for (const entry of this.autoUseEntries) {
@@ -1528,31 +1539,6 @@ export class InventoryService {
   unAutoSell(itemName: string) {
     const index = this.autoSellEntries.findIndex(item => item.name === itemName);
     this.autoSellEntries.splice(index, 1);
-  }
-
-  usePouchItem(limit: number = -1) {
-    // use pouch items if needed
-    for (let i = 0; i < this.characterService.itemPouches.length; i++) {
-      const itemStack = this.characterService.itemPouches[i];
-      if (itemStack.item?.type === 'potion') {
-        const effect: StatusType = itemStack.item.effect as StatusType;
-        if (this.characterService.status[effect].value < this.characterService.status[effect].max) {
-          const amountToHeal = this.characterService.status[effect].max - this.characterService.status[effect].value;
-          const restoreAmount = itemStack.item.increaseAmount || 1;
-          let numberToUse = Math.ceil(amountToHeal / restoreAmount);
-          if (limit > 0 && numberToUse > limit) {
-            numberToUse = limit;
-          }
-          if (itemStack.quantity > numberToUse) {
-            this.characterService.status[effect].value = this.characterService.status[effect].max;
-            itemStack.quantity -= numberToUse;
-          } else {
-            this.characterService.status[effect].value += restoreAmount * itemStack.quantity;
-            this.characterService.itemPouches[i] = this.getEmptyItemStack();
-          }
-        }
-      }
-    }
   }
 
   useItemStack(itemStack: ItemStack, quantity = 1): void {

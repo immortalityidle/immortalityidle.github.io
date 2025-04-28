@@ -677,13 +677,16 @@ export class AchievementService {
     },
     {
       name: 'Guzzler',
-      description: 'You drank 88 potions and unlocked the ' + this.itemRepoService.items['autoPotionManual'].name,
+      description: 'You drank 888 potions and unlocked a second potion slot.',
       hint: 'Glug, glug, glug.',
       check: () => {
         return this.inventoryService.lifetimePotionsUsed >= 88;
       },
       effect: () => {
-        this.storeService.unlockManual(this.itemRepoService.items['autoPotionManual']);
+        if (this.characterService.itemPouches.length < 2) {
+          // open up an item pouch slot if one isn't open yet
+          this.characterService.itemPouches.push(this.inventoryService.getEmptyItemStack());
+        }
       },
       unlocked: false,
     },
@@ -1377,7 +1380,7 @@ export class AchievementService {
         return this.inventoryService.divinePeachesUnlocked;
       },
       effect: () => {
-        if (this.characterService.itemPouches.length < 2) {
+        if (this.characterService.itemPouches.length < 3) {
           // open up an item pouch slot if one isn't open yet
           this.characterService.itemPouches.push(this.inventoryService.getEmptyItemStack());
         }

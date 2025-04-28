@@ -1,14 +1,6 @@
 <div class='darkMode optionsDiv'>
   <span>Crafting Options</span>
   <hr>
-  @if (inventoryService.autoPotionUnlocked){
-    <div class="optionField">
-      <span>
-        <input type="checkbox" id="autoPotion" [checked]="inventoryService.autoPotionEnabled" (change)="autoPotionChange($event)">
-        <label for="autoPotion" >Automatically consume all potions</label>
-      </span>
-    </div>
-  }
   @if (inventoryService.autoPillUnlocked){
     <div class="optionField">
       <span>

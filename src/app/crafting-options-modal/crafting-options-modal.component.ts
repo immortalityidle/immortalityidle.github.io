@@ -26,11 +26,6 @@ export class CraftingOptionsModalComponent {
     public dialog: MatDialog
   ) {}
 
-  autoPotionChange(event: Event): void {
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.inventoryService.autoPotionEnabled = event.target.checked;
-  }
-
   autoPillChange(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoPillEnabled = event.target.checked;

@@ -50,7 +50,7 @@ export class EquipmentPanelComponent {
     const pouchItemStack = this.characterService.itemPouches[index];
     // check for existence and make sure there's an empty slot for it
     if (pouchItemStack && pouchItemStack.item && this.inventoryService.openInventorySlots() > 0) {
-      this.inventoryService.addItem(pouchItemStack.item, pouchItemStack.quantity);
+      this.inventoryService.addItem(pouchItemStack.item, pouchItemStack.quantity, 0, true);
       this.characterService.itemPouches[index] = this.inventoryService.getEmptyItemStack();
       this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }

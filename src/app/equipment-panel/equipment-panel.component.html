@@ -88,7 +88,7 @@
         @for (itemStack of characterService.itemPouches; track itemStack.id;) {
           <div>
             <div id="pouchIndex{{$index}}" >
-              <div class="pouchSlot" [tabindex]="itemStack?.item ? '0' : '-1'" 
+              <div class="pouchSlot"  [ngClass]="{'cooldown': (itemStack?.item?.cooldown || 0) > 0}" [tabindex]="itemStack?.item ? '0' : '-1'" 
                 cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
                 [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
                 (dblclick)="pouchDoubleClicked($index, $event)"
@@ -102,9 +102,7 @@
                     {{itemStack?.item?.name | titlecase}}
                   }
                 </div>
-                @if ((itemStack?.quantity || 0) > 1) {
-                  <div class="itemQuantity">x{{itemStack?.quantity}}</div>
-                }
+                <div class="itemQuantity">x{{(itemStack?.quantity || 0) | bigNumber}}</div>
               </div>
             </div>
           </div>

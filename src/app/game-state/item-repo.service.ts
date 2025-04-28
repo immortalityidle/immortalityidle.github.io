@@ -2186,40 +2186,6 @@ baguaMap = [
         return this.inventoryService.autoBalanceUnlocked;
       },
     },
-    autoPotionManual: {
-      id: 'autoPotionManual',
-      name: 'Manual of Gluttonous Potion Consumption',
-      type: 'manual',
-      description: 'This manual teaches you to automatically use all potions.',
-      value: 2e8,
-      useLabel: 'Read',
-      useDescription: 'Permanently unlock auto-drinking all potions.',
-      useConsumes: true,
-      use: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        this.inventoryService.autoPotionUnlocked = true;
-        this.inventoryService.autoPotionEnabled = true;
-        for (let index = this.inventoryService.autoUseEntries.length - 1; index >= 0; index--) {
-          if (this.inventoryService.autoUseEntries[index].name.includes('Potion')) {
-            this.inventoryService.autoUseEntries.splice(index, 1);
-          }
-        }
-        this.logService.log(
-          LogTopic.EVENT,
-          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
-        );
-      },
-      owned: () => {
-        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
-        if (!this.inventoryService) {
-          this.inventoryService = this.injector.get(InventoryService);
-        }
-        return this.inventoryService.autoPotionUnlocked;
-      },
-    },
     autoPillManual: {
       id: 'autoPillManual',
       name: 'Manual of Reckless Pill Consumption',

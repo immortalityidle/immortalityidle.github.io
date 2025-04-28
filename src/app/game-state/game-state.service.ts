@@ -11,7 +11,7 @@ import { HomeService, HomeProperties, HomeType } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
-import { HellProperties, HellService } from './hell.service';
+import { HellLevel, HellProperties, HellService } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
@@ -562,15 +562,12 @@ export class GameStateService {
       autoUseEntries: props?.autoUseEntries || [],
       autoBalanceUnlocked: props?.autoBalanceUnlocked || false,
       autoBalanceItems: props?.autoBalanceItems || [],
-      autoPotionUnlocked: props?.autoPotionUnlocked || false,
       autoPillUnlocked: props?.autoPillUnlocked || false,
-      autoPotionEnabled: props?.autoPotionEnabled || false,
       autoPillEnabled: props?.autoPillEnabled || false,
       autoWeaponMergeUnlocked: props?.autoWeaponMergeUnlocked || false,
       autoArmorMergeUnlocked: props?.autoArmorMergeUnlocked || false,
       useSpiritGemUnlocked: props?.useSpiritGemUnlocked || false,
       useSpiritGemWeapons: props?.useSpiritGemWeapons || false,
-      useSpiritGemPotions: props?.useSpiritGemPotions || false,
       useCheapestSpiritGem: props?.useCheapestSpiritGem || false,
       autoSellOldHerbs: props?.autoSellOldHerbs || false,
       autoSellOldWood: props?.autoSellOldWood || false,
@@ -584,7 +581,7 @@ export class GameStateService {
       autoequipBestWeapon: props?.autoequipBestWeapon || false,
       autoequipBestArmor: props?.autoequipBestArmor || false,
       autoequipBestEnabled: props?.autoequipBestEnabled || false,
-      maxStackSize: props?.maxStackSize || 0,
+      maxStackSize: props?.maxStackSize || 100,
       thrownAwayItems: props?.thrownAwayItems || 0,
       autoSellOldGemsUnlocked: props?.autoSellOldGemsUnlocked || false,
       autoSellOldGemsEnabled: props?.autoSellOldGemsEnabled || false,
@@ -698,10 +695,45 @@ export class GameStateService {
       totalEnemies: props?.totalEnemies || 0,
       troubleCounter: props?.troubleCounter || 0,
       battleMessageDismissed: props?.battleMessageDismissed || false,
-      techniques: props?.techniques || [],
+      techniques: props?.techniques || [
+        {
+          name: 'Basic Strike',
+          description: 'A very simple strike that even the weakest mortal could perform.',
+          ticksRequired: 10,
+          ticks: 0,
+          baseDamage: 1,
+          unlocked: true,
+          attribute: 'strength',
+          staminaCost: 1,
+        },
+        {
+          // don't mess with the index on this
+          name: this.battleService.rightHandTechniqueName,
+          description: 'A strike from the weapon in your right hand.',
+          ticksRequired: 6,
+          ticks: 0,
+          baseDamage: 2,
+          unlocked: false,
+          attribute: 'strength',
+          staminaCost: 10,
+        },
+        {
+          // don't mess with the index on this
+          name: this.battleService.leftHandTechniqueName,
+          description: 'A strike from the weapon in your left hand.',
+          ticksRequired: 8,
+          ticks: 0,
+          baseDamage: 2,
+          unlocked: false,
+          attribute: 'strength',
+          staminaCost: 10,
+        },
+      ],
       techniqueDevelopmentCounter: props?.techniqueDevelopmentCounter || 0,
       maxFamilyTechniques: props?.maxFamilyTechniques || 0,
       statusEffects: props?.statusEffects || [],
+      potionCooldown: props?.potionCooldown || 20,
+      potionThreshold: props?.potionThreshold || 0.5,
     };
   }
 
@@ -767,9 +799,14 @@ export class GameStateService {
   }
 
   private getHellProperties(props: HellProperties | undefined): HellProperties {
+    let currentHell = props?.currentHell || HellLevel.Gates;
+    if (currentHell < 0) {
+      currentHell = HellLevel.Gates;
+    }
+
     return {
       inHell: props?.inHell || false,
-      currentHell: props?.currentHell || 0,
+      currentHell: currentHell,
       completedHellTasks: props?.completedHellTasks || [],
       completedHellBosses: props?.completedHellBosses || [],
       mountainSteps: props?.mountainSteps || 0,
