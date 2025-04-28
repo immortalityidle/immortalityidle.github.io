@@ -138,7 +138,7 @@ export class LogService {
   }
 
   setProperties(properties: LogProperties) {
-    this.logs[LogTopic.STORY] = properties.storyLog || [];
+    this.logs[LogTopic.STORY] = properties.storyLog;
     properties.logTopics.forEach(topic => {
       this.topicProperties[LogTopic[topic]].enabled = true;
     });

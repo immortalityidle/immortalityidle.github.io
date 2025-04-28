@@ -125,7 +125,7 @@ export class MainLoopService {
     this.unlockAgeSpeed = properties.unlockAgeSpeed;
     this.unlockPlaytimeSpeed = properties.unlockPlaytimeSpeed;
     this.tickDivider = properties.tickDivider;
-    this.offlineDivider = properties.offlineDivider || 10;
+    this.offlineDivider = properties.offlineDivider;
     this.lastTime = properties.lastTime;
     const newTime = new Date().getTime();
     if (newTime - this.lastTime > 168 * 60 * 60 * 1000) {
@@ -137,11 +137,11 @@ export class MainLoopService {
     }
     this.bankedTicks = properties.bankedTicks + this.earnedTicks;
     this.lastTime = newTime;
-    this.totalTicks = properties.totalTicks || 0;
-    this.useBankedTicks = properties.useBankedTicks ?? true;
-    this.scientificNotation = properties.scientificNotation || false;
+    this.totalTicks = properties.totalTicks;
+    this.useBankedTicks = properties.useBankedTicks;
+    this.scientificNotation = properties.scientificNotation;
     this.playMusic = properties.playMusic;
-    this.timeUnlocked = properties.timeUnlocked || false;
+    this.timeUnlocked = properties.timeUnlocked;
     if (this.gameLoading) {
       this.pause = true;
       this.gameLoading = false;

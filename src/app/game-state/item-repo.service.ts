@@ -2242,6 +2242,28 @@ baguaMap = [
         return this.characterService.status.health.battleTickRecovery >= 1;
       },
     },
+    basicQiRegenerateManual: {
+      id: 'basicQiRegenerateManual',
+      name: 'Manual of Basic Qi Regeration',
+      type: 'manual',
+      description: 'This manual teaches you to automatically recover a small amount of Qi during your battles.',
+      value: 1e15,
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock gives you a small amount of Qi each time tick during your battles.',
+      useConsumes: true,
+      use: () => {
+        if (this.characterService.status.qi.battleTickRecovery < 1) {
+          this.characterService.status.qi.battleTickRecovery = 1;
+        }
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        return this.characterService.status.qi.battleTickRecovery >= 1;
+      },
+    },
     autoTroubleManual: {
       id: 'autoTroubleManual',
       name: 'Manual of Consistent Troublemaking',

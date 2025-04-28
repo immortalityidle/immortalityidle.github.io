@@ -641,30 +641,26 @@ export class FollowersService {
   }
 
   setProperties(properties: FollowersProperties) {
-    this.followers = properties.followers || [];
-    this.pets = properties.pets || [];
-    this.stashedFollowers = properties.stashedFollowers || [];
-    this.stashedPets = properties.stashedPets || [];
-    this.followersUnlocked = properties.followersUnlocked || false;
-    this.autoDismissUnlocked = properties.autoDismissUnlocked || false;
-    this.maxFollowerByType = properties.maxFollowerByType || {};
-    this.maxPetsByType = properties.maxPetsByType || {};
-    this.stashedFollowersMaxes = properties.stashedFollowersMaxes || {};
-    this.stashedPetMaxes = properties.stashedPetMaxes || {};
-    this.sortField = properties.sortField || 'Job';
-    if (properties.sortAscending === undefined) {
-      this.sortAscending = true;
-    } else {
-      this.sortAscending = properties.sortAscending;
-    }
-    this.totalRecruited = properties.totalRecruited || 0;
-    this.totalDied = properties.totalDied || 0;
-    this.totalDismissed = properties.totalDismissed || 0;
-    this.highestLevel = properties.highestLevel || 0;
-    this.unlockedHiddenJobs = properties.unlockedHiddenJobs || [];
-    this.autoReplaceUnlocked = properties.autoReplaceUnlocked || false;
-    this.petsEnabled = properties.petsEnabled || false;
-    this.onlyWantedFollowers = properties.onlyWantedFollowers || false;
+    this.followers = properties.followers;
+    this.pets = properties.pets;
+    this.stashedFollowers = properties.stashedFollowers;
+    this.stashedPets = properties.stashedPets;
+    this.followersUnlocked = properties.followersUnlocked;
+    this.autoDismissUnlocked = properties.autoDismissUnlocked;
+    this.maxFollowerByType = properties.maxFollowerByType;
+    this.maxPetsByType = properties.maxPetsByType;
+    this.stashedFollowersMaxes = properties.stashedFollowersMaxes;
+    this.stashedPetMaxes = properties.stashedPetMaxes;
+    this.sortField = properties.sortField;
+    this.sortAscending = properties.sortAscending;
+    this.totalRecruited = properties.totalRecruited;
+    this.totalDied = properties.totalDied;
+    this.totalDismissed = properties.totalDismissed;
+    this.highestLevel = properties.highestLevel;
+    this.unlockedHiddenJobs = properties.unlockedHiddenJobs;
+    this.autoReplaceUnlocked = properties.autoReplaceUnlocked;
+    this.petsEnabled = properties.petsEnabled;
+    this.onlyWantedFollowers = properties.onlyWantedFollowers;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }

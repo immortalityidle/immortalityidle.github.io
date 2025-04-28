@@ -1006,6 +1006,20 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Qi Infused',
+      description:
+        'You have saturated your body with qi energy and unlocked the ' +
+        this.itemRepoService.items['basicQiRegenerateManual'].name,
+      hint: "You'll need to infuse every last cell",
+      check: () => {
+        return this.characterService.healthBonusMagic >= 1000000;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['basicQiRegenerateManual']);
+      },
+      unlocked: false,
+    },
+    {
       name: 'Sect Leader',
       description: 'You have become powerful enough that you may now start attracting followers.',
       hint: 'Ascension has its privileges.',
