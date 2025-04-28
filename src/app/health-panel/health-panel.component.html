@@ -1,22 +1,5 @@
 <div class="healthContainer">
-  <div class="yinYang"
-    tooltip="Yang: {{characterService.yang | bigNumber}}<br>
-    Yin: {{characterService.yin | bigNumber}}<br>
-    Your balance is {{healthService.balanceString}}.<br>
-    A proper balance of Yin and Yang will strengthen you in combat and allow you develop your aptitudes more effectively.">
-    <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 1250 1250" [style.fill]="healthService.yinColor">
-      <defs>
-        <filter id="f">
-          <feGaussianBlur stdDeviation="3.5"/>
-        </filter>
-      </defs>
-      <circle cx="125" cy="125" r="116.6" fill="#7f7f7f" opacity="0.5" filter="url(#f)"/>
-      <circle cx="125" cy="125" r="113.2" [style.fill]="healthService.yangColor"/>
-      <path d="m125,11.8 a56.6,56.6 0 0 1 0,113.2 56.6,56.6 0 0 0 0,113.2 113.2,113.2 0 0 0 0,-226.4"/>
-      <circle cx="125" cy="68.4" r="17.6" [style.fill]="healthService.yinColor"/>
-      <circle cx="125" cy="181.6" r="17.6" [style.fill]="healthService.yangColor"/>
-    </svg>
-  </div>
+  <app-yin-yang />
   <div class="flexColumn">
     <div class="statusRow">
       <div class="statusCell">

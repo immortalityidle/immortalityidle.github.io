@@ -1,0 +1,116 @@
+@import (reference) "../../../styles.less";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+td {
+  font-size: 12px;
+  padding-left: 6px;
+  padding-right: 2px;
+  position: relative;
+  border-bottom: 1px solid var(--tableDividerColor);
+}
+
+td:not(:last-child):before {
+  content: "";
+  position: absolute;
+  width: 1px;
+  background: var(--tableDividerColor);
+  right: 0;
+  top: 10%;
+  bottom: 10%;
+}
+
+.activitiesHeader {
+  display: flex;
+}
+
+.activitiesContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  overflow: auto;
+}
+
+.activityGrid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 3px 0;
+  gap: 3px;
+  overflow-anchor: none;
+}
+
+.activitySlot {
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid var(--panelBorder);
+  padding: 2px;
+  border-spacing: 0px;
+  cursor: pointer;
+  background-color: var(--itemSlotColor);
+  color: var(--bodyText);
+  box-sizing: border-box;
+  width: calc((100vw / 2) - 6px);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+button {
+  font-size: 12px;
+  min-width: 130px;
+}
+
+.noWrap {
+  white-space: nowrap;
+  width:100%;
+}
+
+.standardHeader{
+  flex: 1;
+  white-space: nowrap;
+}
+
+.customHeader{
+  flex: 4;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+.projectionOnly {
+  border: 1px solid var(--itemSlotHighlight);
+  background-color: var(--qiColor);
+}
+
+.lockedActivity {
+  background-color: var(--disabledActivity);
+}
+
+.activityButton {
+  white-space: normal;
+  max-width: 150px;
+}
+
+.progress-bar {
+  height: 24px;
+  vertical-align: -0.7em;
+  font-size: 11px;
+  width: 100px;
+}
+
+.activityLabel {
+  font-size: 120%;
+  flex-grow: 1;
+}
+
+.activityButtons {
+  flex-grow: 0;
+  display: flex;
+  justify-content: space-between;
+}
+

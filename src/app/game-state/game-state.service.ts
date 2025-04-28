@@ -1060,7 +1060,7 @@ export class GameStateService {
 
   getDeploymentFlavor() {
     let href = window.location.href;
-    if (href === 'http://localhost:4200/') {
+    if (href === 'http://localhost:4200/' || href.includes('devtunnels.ms')) {
       // development, use the standard save
       return '';
     } else if (href === 'https://immortalityidle.github.io/' || href === 'https://immortalityidle.github.io/old/') {
