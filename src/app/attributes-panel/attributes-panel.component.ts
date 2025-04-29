@@ -1,6 +1,6 @@
 import { Component, forwardRef } from '@angular/core';
-import { trigger, state, style, transition, animate, keyframes, AnimationEvent } from '@angular/animations';
-import { AttributeType } from '../game-state/character.service';
+import { trigger, state, style, transition, animate, AnimationEvent } from '@angular/animations';
+import { AttributeObject, AttributeType } from '../game-state/character.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { MatIcon } from '@angular/material/icon';
@@ -17,15 +17,7 @@ export type AttributeUpdatesArrays = {
   templateUrl: './attributes-panel.component.html',
   styleUrls: ['./attributes-panel.component.less', '../app.component.less'],
   animations: [
-    trigger('popupText', [
-      state('in', style({ position: 'fixed' })),
-      transition(':leave', [
-        animate(
-          1000,
-          keyframes([style({ transform: 'translate(0%, 0%)' }), style({ transform: 'translate(100%, -150%)' })])
-        ),
-      ]),
-    ]),
+    trigger('popupText', [state('in', style({})), transition(':leave', [animate('800ms', style({ opacity: 0 }))])]),
   ],
   imports: [
     forwardRef(() => MatIcon),
@@ -51,9 +43,18 @@ export class AttributesPanelComponent {
     animalHandling: [],
     combatMastery: [],
     magicMastery: [],
+    performance: [],
+    smithing: [],
+    alchemy: [],
+    woodwork: [],
+    leatherwork: [],
+    formationMastery: [],
   };
 
   private popupCounter = 0;
+  protected groups = ['baseAttributes', 'lores', 'skills'];
+
+  protected attributesByGroup: { [key: string]: { [key: string]: AttributeObject } };
 
   constructor(public characterService: CharacterService, private mainLoopService: MainLoopService) {
     this.mainLoopService.longTickSubject.subscribe(() => {
@@ -70,6 +71,33 @@ export class AttributesPanelComponent {
         }
       }
     });
+    this.attributesByGroup = {
+      baseAttributes: {
+        strength: this.characterService.attributes.strength,
+        speed: this.characterService.attributes.speed,
+        toughness: this.characterService.attributes.toughness,
+        charisma: this.characterService.attributes.charisma,
+        intelligence: this.characterService.attributes.intelligence,
+        spirituality: this.characterService.attributes.spirituality,
+      },
+      lores: {
+        fireLore: this.characterService.attributes.fireLore,
+        woodLore: this.characterService.attributes.woodLore,
+        earthLore: this.characterService.attributes.earthLore,
+        metalLore: this.characterService.attributes.metalLore,
+        waterLore: this.characterService.attributes.waterLore,
+      },
+      skills: {
+        performance: this.characterService.attributes.performance,
+        smithing: this.characterService.attributes.smithing,
+        woodwork: this.characterService.attributes.woodwork,
+        leatherwork: this.characterService.attributes.leatherwork,
+        alchemy: this.characterService.attributes.alchemy,
+        animalHandling: this.characterService.attributes.animalHandling,
+        combatMastery: this.characterService.attributes.combatMastery,
+        magicMastery: this.characterService.attributes.magicMastery,
+      },
+    };
   }
 
   // Preserve original property order

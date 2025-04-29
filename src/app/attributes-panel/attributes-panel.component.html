@@ -1,52 +1,49 @@
 <div class="attributesContainer">
   <div class="attributesTable">
-    <div class="attributeColumn">
-      <div class='attributeLine'>
-        <span>Attribute</span>
+    <div class='attributeLine'>
+      <div class="attributeColumn">
+        <span></span>
       </div>
-      @for (attribute of characterService.attributes | keyvalue: originalOrder; track attribute) {
-        @if ((attribute.value.value !== 0 || characterService.highestAttributes[attribute.key])) {
-          <div class='attributeLine' tooltip="{{attribute.value.description}}">
-            <mat-icon>{{attribute.value.icon}}</mat-icon>
-            <span>
-              {{attribute.key | camelToTitle}}:
-            </span>
-          </div>
-        }
-      }
-    </div>
-    <div class="attributeColumn">
-      <div class='attributeLine'>
-        <span>Aptitude &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <div class='attributeColumn'>
+        <span>Aptitude</span>
       </div>
-      @for (attribute of characterService.attributes | keyvalue: originalOrder; track attribute) {
-        @if ((attribute.value.value !== 0 || characterService.highestAttributes[attribute.key])) {
-          <div class='attributeLine' tooltip="Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.aptitudeMult | bigNumber}}.">
-            <span>
-              {{attribute.value.aptitude| bigNumber}}
-            </span>
-          </div>
-        }
-      }
-    </div>
-    <div class="attributeColumn growColumn">
-      <div class='attributeLine'>
+      <div class='attributeColumn'>
         <span>Value</span>
       </div>
-      @for (attribute of characterService.attributes | keyvalue: originalOrder; track attribute) {
+    </div>
+    @for(group of groups; track group){
+      <div class='attributeLine'>
+        <span>
+          {{group | camelToTitle}}
+        </span>
+      </div>
+      @for (attribute of attributesByGroup[group] | keyvalue: originalOrder; track attribute) {
         @if ((attribute.value.value !== 0 || characterService.highestAttributes[attribute.key])) {
           <div class='attributeLine'>
-            <span>
-              {{attribute.value.value | bigNumber}}
-            </span>
-            @for (update of getAttributeUpdates(attribute.key); track update) {
-              <span class="popupText"
-              [@popupText]=update (@popupText.done)="animationDoneEvent($event, attribute.key)">+{{update | bigNumber}}</span>
-            }
+            <div class='attributeColumn' tooltip="{{attribute.value.description}}">
+              <mat-icon>{{attribute.value.icon}}</mat-icon>
+              <span>
+                {{attribute.key | camelToTitle}}
+              </span>
+            </div>
+            <div class='attributeColumn' tooltip="Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.aptitudeMult | bigNumber}}.">
+              <span>
+                {{attribute.value.aptitude| bigNumber}}
+              </span>
+            </div>
+            <div class='attributeColumn'>
+              <span>
+                {{attribute.value.value | bigNumber}}
+              </span>
+              @for (update of getAttributeUpdates(attribute.key); track update) {
+                <span class="popupText"
+                [@popupText]=update (@popupText.done)="animationDoneEvent($event, attribute.key)">+{{update | bigNumber}}</span>
+              }
+            </div>
           </div>
         }
       }
-    </div>
-
+    }
   </div>
 </div>
+<br>

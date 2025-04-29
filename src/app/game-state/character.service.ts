@@ -24,9 +24,15 @@ export type CharacterAttribute = {
   woodLore?: number;
   waterLore?: number;
   fireLore?: number;
-  animalHandling?: number;
   combatMastery?: number;
   magicMastery?: number;
+  animalHandling?: number;
+  performance?: number;
+  smithing?: number;
+  alchemy?: number;
+  woodwork?: number;
+  leatherwork?: number;
+  formationMastery?: number;
 };
 
 export type AttributeType =
@@ -41,19 +47,27 @@ export type AttributeType =
   | 'woodLore'
   | 'waterLore'
   | 'fireLore'
-  | 'animalHandling'
   | 'combatMastery'
-  | 'magicMastery';
+  | 'animalHandling'
+  | 'magicMastery'
+  | 'performance'
+  | 'smithing'
+  | 'alchemy'
+  | 'woodwork'
+  | 'leatherwork'
+  | 'formationMastery';
 
 export type AttributeObject = {
-  [key in AttributeType]: {
-    description: string;
-    value: number;
-    lifeStartValue: number;
-    aptitude: number;
-    aptitudeMult: number;
-    icon: string;
-  };
+  description: string;
+  value: number;
+  lifeStartValue: number;
+  aptitude: number;
+  aptitudeMult: number;
+  icon: string;
+};
+
+export type AttributesObject = {
+  [key in AttributeType]: AttributeObject;
 };
 
 export type AttributeUpdates = {
@@ -70,7 +84,7 @@ export type CharacterStatus = {
 };
 
 export interface CharacterProperties {
-  attributes: AttributeObject;
+  attributes: AttributesObject;
   money: number;
   stashedMoney: number;
   hellMoney: number;
@@ -191,7 +205,7 @@ export class CharacterService {
   statusToFlash: string[] = [];
   fengshuiScore = 0;
   startingStaminaBoost = false;
-  attributes: AttributeObject = {
+  attributes: AttributesObject = {
     strength: {
       description: 'An immortal must have raw physical power.',
       value: 1,
@@ -238,7 +252,7 @@ export class CharacterService {
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: 'auto_awesome',
+      icon: 'self_improvement',
     },
     earthLore: {
       description: 'Understanding the earth and how to draw power and materials from it.',
@@ -254,7 +268,7 @@ export class CharacterService {
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: 'hardware',
+      icon: 'view_module',
     },
     woodLore: {
       description: 'Understanding plants and how to grow and care for them.',
@@ -280,14 +294,6 @@ export class CharacterService {
       aptitudeMult: 1,
       icon: 'local_fire_department',
     },
-    animalHandling: {
-      description: 'Skill in working with animals and monsters.',
-      value: 0,
-      lifeStartValue: 0,
-      aptitude: 1,
-      aptitudeMult: 1,
-      icon: 'pets',
-    },
     combatMastery: {
       description: 'Mastery of combat skills.',
       value: 0,
@@ -302,7 +308,63 @@ export class CharacterService {
       lifeStartValue: 0,
       aptitude: 1,
       aptitudeMult: 1,
-      icon: 'self_improvement',
+      icon: 'auto_awesome',
+    },
+    animalHandling: {
+      description: 'Skill in working with animals and monsters.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'cruelty_free',
+    },
+    performance: {
+      description: 'Skill in manipulating others with your voice.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'record_voice_over',
+    },
+    smithing: {
+      description: 'Skill with the forge and anvil.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'hardware',
+    },
+    alchemy: {
+      description: 'Mastery of potions and pills.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'emoji_food_beverage',
+    },
+    woodwork: {
+      description: 'Skill with saws and chisels.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'carpenter',
+    },
+    leatherwork: {
+      description: 'Skill shaping hides into useful items.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'pets',
+    },
+    formationMastery: {
+      description: 'Experience creating formation flags.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'flag',
     },
   };
   status: CharacterStatus = {
@@ -479,6 +541,12 @@ export class CharacterService {
       animalHandling: 0,
       combatMastery: 0,
       magicMastery: 0,
+      performance: 0,
+      smithing: 0,
+      alchemy: 0,
+      woodwork: 0,
+      leatherwork: 0,
+      formationMastery: 0,
     };
   }
 
@@ -1187,8 +1255,8 @@ export class CharacterService {
   setProperties(properties: CharacterProperties): void {
     this.attributes = properties.attributes;
     this.money = properties.money;
-    this.stashedMoney = properties.stashedMoney || 0;
-    this.hellMoney = properties.hellMoney || 0;
+    this.stashedMoney = properties.stashedMoney;
+    this.hellMoney = properties.hellMoney;
     if (this.money > this.maxMoney) {
       this.money = this.maxMoney;
     }
@@ -1196,24 +1264,16 @@ export class CharacterService {
       this.hellMoney = this.maxMoney;
     }
     this.equipment = properties.equipment;
-    this.stashedEquipment = properties.stashedEquipment || {
-      head: null,
-      body: null,
-      leftHand: null,
-      rightHand: null,
-      legs: null,
-      feet: null,
-    };
-    this.itemPouches = properties.itemPouches || [];
-
-    this.age = properties.age || INITIAL_AGE;
+    this.stashedEquipment = properties.stashedEquipment;
+    this.itemPouches = properties.itemPouches;
+    this.age = properties.age;
     this.status = properties.status;
     this.baseLifespan = properties.baseLifespan;
-    this.foodLifespan = properties.foodLifespan || 0;
-    this.alchemyLifespan = properties.alchemyLifespan || 0;
-    this.statLifespan = properties.statLifespan || 0;
-    this.spiritualityLifespan = properties.spiritualityLifespan || 0;
-    this.magicLifespan = properties.magicLifespan || 0;
+    this.foodLifespan = properties.foodLifespan;
+    this.alchemyLifespan = properties.alchemyLifespan;
+    this.statLifespan = properties.statLifespan;
+    this.spiritualityLifespan = properties.spiritualityLifespan;
+    this.magicLifespan = properties.magicLifespan;
     this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
     // This is derived to avoid save issues. Calculate rank and subtract from power to reduce the exponential aptitude divider.
     this.aptitudeGainDivider =
@@ -1225,55 +1285,34 @@ export class CharacterService {
     this.attributeSoftCap = properties.attributeSoftCap;
     this.bloodlineRank = properties.bloodlineRank;
     this.bloodlineCost = 1000 * Math.pow(100, this.bloodlineRank); // This is derived to avoid save issues.
-    this.qiUnlocked = properties.qiUnlocked || false;
-    this.totalLives = properties.totalLives || 1;
-    this.healthBonusFood = properties.healthBonusFood || 0;
-    this.healthBonusBath = properties.healthBonusBath || 0;
-    this.healthBonusMagic = properties.healthBonusMagic || 0;
-    this.healthBonusSoul = properties.healthBonusSoul || 0;
-    this.empowermentFactor = properties.empowermentFactor || 1;
-    this.immortal = properties.immortal || false;
-    this.god = properties.god || false;
-    this.easyMode = properties.easyMode || false;
-    this.highestMoney = properties.highestMoney || 0;
-    this.highestAge = properties.highestAge || 0;
-    this.highestHealth = properties.highestHealth || 0;
-    this.highestStamina = properties.highestStamina || 0;
-    this.highestQi = properties.highestQi || 0;
-    this.highestAttributes = properties.highestAttributes || {};
-    this.yinYangBoosted = properties.yinYangBoosted || false;
-    this.yin = properties.yin || 1;
-    this.yang = properties.yang || 1;
-    this.righteousWrathUnlocked = properties.righteousWrathUnlocked || false;
-    this.bonusMuscles = properties.bonusMuscles || false;
-    this.bonusBrains = properties.bonusBrains || false;
-    this.bonusHealth = properties.bonusHealth || false;
-    this.showLifeSummary = properties.showLifeSummary ?? true;
-    this.showTips = properties.showTips || false;
-    this.showUpdateAnimations = properties.showUpdateAnimations ?? true;
-    this.startingStaminaBoost = properties.startingStaminaBoost || false;
+    this.qiUnlocked = properties.qiUnlocked;
+    this.totalLives = properties.totalLives;
+    this.healthBonusFood = properties.healthBonusFood;
+    this.healthBonusBath = properties.healthBonusBath;
+    this.healthBonusMagic = properties.healthBonusMagic;
+    this.healthBonusSoul = properties.healthBonusSoul;
+    this.empowermentFactor = properties.empowermentFactor;
+    this.immortal = properties.immortal;
+    this.god = properties.god;
+    this.easyMode = properties.easyMode;
+    this.highestMoney = properties.highestMoney;
+    this.highestAge = properties.highestAge;
+    this.highestHealth = properties.highestHealth;
+    this.highestStamina = properties.highestStamina;
+    this.highestQi = properties.highestQi;
+    this.highestAttributes = properties.highestAttributes;
+    this.yinYangBoosted = properties.yinYangBoosted;
+    this.yin = properties.yin;
+    this.yang = properties.yang;
+    this.righteousWrathUnlocked = properties.righteousWrathUnlocked;
+    this.bonusMuscles = properties.bonusMuscles;
+    this.bonusBrains = properties.bonusBrains;
+    this.bonusHealth = properties.bonusHealth;
+    this.showLifeSummary = properties.showLifeSummary;
+    this.showTips = properties.showTips;
+    this.showUpdateAnimations = properties.showUpdateAnimations;
+    this.startingStaminaBoost = properties.startingStaminaBoost;
 
-    // add attributes that were added after release if needed
-    if (!this.attributes.combatMastery) {
-      this.attributes.combatMastery = {
-        description: 'Mastery of combat skills.',
-        value: 0,
-        lifeStartValue: 0,
-        aptitude: 1,
-        aptitudeMult: 1,
-        icon: 'sports_martial_arts',
-      };
-    }
-    if (!this.attributes.magicMastery) {
-      this.attributes.magicMastery = {
-        description: 'Mastery of magical skills.',
-        value: 0,
-        lifeStartValue: 0,
-        aptitude: 1,
-        aptitudeMult: 1,
-        icon: 'self_improvement',
-      };
-    }
     this.recalculateDerivedStats();
   }
 }

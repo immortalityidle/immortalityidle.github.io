@@ -51,15 +51,15 @@ span {
   margin-left: 4px;
   margin-right: 4px;
   display: flex;
+  flex-direction: column;
 }
 
 .attributeColumn {
   margin-left: 2px;
   margin-right: 2px;
-}
-
-.growColumn {
   flex-grow: 1;
+  flex-basis: 0;
+  overflow: hidden;
 }
 
 .attributeLine {
@@ -67,6 +67,8 @@ span {
   margin-top: 2px;
   padding-bottom: 2px;
   border-bottom: 1px var(--tableDividerColor) solid;
+  display: flex;
+  flex-direction: row;
 }
 
 .attributeValueCell {
@@ -74,9 +76,11 @@ span {
 }
 
 .popupText {
-  position: absolute;
+  position: relative;
   transform: translateZ(0);
   color: var(--popupTextColor);
   z-index: 10000;
   font-size: x-small;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform        : translate3d(0, 0, 0);  
 }
