@@ -3,40 +3,40 @@
     <div class="top-line">
       <span class="gameTitle">
         Immortality Idle 2
-        <span class="versionNumber" (click)="changelogClicked()">{{gameStateService.isExperimental ? "Experimental" : "v" + applicationVersion}}</span>
+        <span class="versionNumber" (click)="commonButtonsService.changelogClicked()">{{gameStateService.isExperimental ? "Experimental" : "v" + applicationVersion}}</span>
       </span>
       <span>
-        <mat-icon tooltip="Confused?<br>Click here for a tutorial." class="iconButton" (click)="tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
+        <mat-icon tooltip="Confused?<br>Click here for a tutorial." class="iconButton" (click)="commonButtonsService.tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
           help
         </mat-icon>
-        <mat-icon tooltip="Statistics!" class="iconButton" (click)="statisticsClicked()">
+        <mat-icon tooltip="Statistics!" class="iconButton" (click)="commonButtonsService.statisticsClicked()">
           format_list_numbered_rtl
         </mat-icon>
         <mat-icon tooltip="Regular People Shop<br>A store that sells regular stuff for regular mortals.<br>You are destined for immortality, but you might want some stuff from here anyway." class="iconButton" aria-label="Store" aria-hidden="false"
-          (click)="storeClicked()">
+          (click)="commonButtonsService.storeClicked()">
           store
         </mat-icon>
         <mat-icon tooltip="Manuals Shop<br>A store that sells special manuals for aspiring immortals." class="iconButton" aria-label="Manual Store" aria-hidden="false"
           [ngClass]="{highlighted: storeService.isManualAvailable()}"
-          (click)="manualStoreClicked()">
+          (click)="commonButtonsService.manualStoreClicked()">
           local_library
         </mat-icon>
         <mat-icon tooltip="Game Options" class="iconButton" aria-label="Options" aria-hidden="false"
-          (click)="optionsClicked()">
+          (click)="commonButtonsService.optionsClicked()">
           settings
         </mat-icon>
         <mat-icon tooltip="Achievements!" class="iconButton" aria-label="Achievements" aria-hidden="false"
-          (click)="achievementsClicked()">
+          (click)="commonButtonsService.achievementsClicked()">
           military_tech
         </mat-icon>
         @if (characterService.ascensionUnlocked) {
           <mat-icon tooltip="Ascension Techniques." class="iconButton" aria-label="Ascension" aria-hidden="false"
-            (click)="ascensionStoreClicked()">
+            (click)="commonButtonsService.ascensionStoreClicked()">
             keyboard_double_arrow_up
           </mat-icon>
         }
         <mat-icon tooltip="Save<br>The game autosaves every few minutes, but click here if you want to manually save the game right now." class="iconButton" aria-label="Save" aria-hidden="false"
-          (click)="saveClicked()">
+          (click)="commonButtonsService.saveClicked()">
           save
         </mat-icon>
       </span>

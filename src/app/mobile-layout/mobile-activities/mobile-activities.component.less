@@ -36,9 +36,8 @@ td:not(:last-child):before {
 }
 
 .activityGrid {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 3px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 3px;
   overflow-anchor: none;
 }
@@ -54,7 +53,6 @@ td:not(:last-child):before {
   color: var(--bodyText);
   box-sizing: border-box;
   width: calc((100vw / 2) - 6px);
-  height: fit-content;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -114,3 +112,6 @@ button {
   justify-content: space-between;
 }
 
+.activity-btn-group {
+  display: flex;
+}

@@ -1,5 +1,23 @@
-<app-mobile-health />
-<div class="main-part">
-    <app-mobile-activities class="grow" />
-    <app-mobile-time class="grow" />
-</div>
+<mat-drawer-container class="drawer-container">
+    <mat-drawer #drawer mode="over">
+        <app-mobile-drawer />
+    </mat-drawer>
+    <mat-drawer-content class="drawer-content">
+        <div class="app-bar">
+            <button mat-icon-button (click)="drawer.toggle()">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <div class="app-title">
+                Immortality Idle
+            </div>
+        </div>
+        <app-mobile-health />
+        <div class="main-part">
+            <app-mobile-activities class="grow" />
+            <app-mobile-time class="grow" />
+        </div>
+        <app-mobile-time-buttons />
+    </mat-drawer-content>
+</mat-drawer-container>
+  
+

@@ -9,7 +9,6 @@ import { CharacterService } from 'src/app/game-state/character.service';
 import { MainLoopService } from 'src/app/game-state/main-loop.service';
 import { BigNumberPipe } from 'src/app/pipes';
 import { TextPanelComponent } from 'src/app/text-panel/text-panel.component';
-import { TimeOptionsPanelComponent } from 'src/app/time-options-panel/time-options-panel.component';
 import { TooltipDirective } from 'src/app/tooltip/tooltip.directive';
 
 @Component({
@@ -25,47 +24,6 @@ export class MobileTimeComponent {
   protected readonly characterService = inject(CharacterService);
   protected readonly mainLoopService = inject(MainLoopService);
   private dialog = inject(MatDialog);
-
-  pauseClick() {
-    if (this.mainLoopService.pause) {
-      this.mainLoopService.tick();
-    } else {
-      this.mainLoopService.pause = true;
-    }
-  }
-
-  slowClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 40;
-  }
-
-  standardClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 10;
-  }
-
-  fastClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 5;
-  }
-
-  fasterClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 2;
-  }
-
-  fastestClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 1;
-  }
-
-  timeOptions() {
-    this.dialog.open(TimeOptionsPanelComponent, {
-      width: '700px',
-      data: { someField: 'foo' },
-      autoFocus: false,
-    });
-  }
 
   onPlusClick(entry: ActivityLoopEntry, event: MouseEvent): void {
     event.preventDefault();

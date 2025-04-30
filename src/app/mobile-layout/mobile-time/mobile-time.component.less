@@ -31,6 +31,7 @@ table td:nth-child(3) {
 
 mat-icon {
   height: 32px;
+  min-width: 32px;
   width: 32px;
   font-size: 32px;
   margin-top: 4px;
@@ -41,17 +42,12 @@ mat-icon {
 }
 
 .progress-bar {
-  width: 60px;
+  width: 100%;
 }
 
 label {
   font-size: 10px;
   vertical-align: top;
-}
-
-.iconActive {
-  color: var(--panelBackground);
-  background: var(--bodyText);
 }
 
 h6 {
@@ -98,7 +94,14 @@ input {
   font-size: x-large;
 }
 
-.btn-row {
+.schedule-grid {
+  display: grid;
+  grid-template-columns: min-content 1fr min-content;
+  gap: 4px;
+}
+
+.grid-cell {
   display: flex;
-  justify-content: space-between;
+  white-space: nowrap;
+  align-items: center;
 }
