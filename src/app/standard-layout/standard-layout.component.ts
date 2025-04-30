@@ -28,19 +28,11 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CommonModule } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
 import { GameStateService } from '../game-state/game-state.service';
-import { MatDialog } from '@angular/material/dialog';
-import { ChangelogPanelComponent } from '../changelog-panel/changelog-panel.component';
 import { environment } from 'src/environments/environment';
-import { TutorialPanelComponent } from '../tutorial-panel/tutorial-panel.component';
-import { AchievementPanelComponent } from '../achievement-panel/achievement-panel.component';
-import { StatisticsPanelComponent } from '../statistics-panel/statistics-panel.component';
-import { AscensionStoreModalComponent } from '../ascension-store-modal/ascension-store-modal.component';
-import { ManualStoreModalComponent } from '../manual-store-modal/manual-store-modal.component';
-import { OptionsModalComponent } from '../options-modal/options-modal.component';
-import { StoreModalComponent } from '../store-modal/store-modal.component';
 import { StoreService } from '../game-state/store.service';
 import { CharacterService } from '../game-state/character.service';
 import { HellStatusPanelComponent } from '../hell-status-panel/hell-status-panel.component';
+import { CommonButtonsService } from '../common-buttons.service';
 
 @Component({
   selector: 'app-standard-layout',
@@ -74,7 +66,7 @@ import { HellStatusPanelComponent } from '../hell-status-panel/hell-status-panel
   styleUrl: './standard-layout.component.less',
 })
 export class StandardLayoutComponent {
-  private readonly dialog = inject(MatDialog);
+  protected readonly commonButtonsService = inject(CommonButtonsService);
   protected readonly gameStateService = inject(GameStateService);
   protected readonly storeService = inject(StoreService);
   protected readonly characterService = inject(CharacterService);
@@ -85,55 +77,6 @@ export class StandardLayoutComponent {
   protected applicationVersion = environment.appVersion;
   protected compactType: 'vertical' | 'horizontal' | null = 'vertical';
   protected gridGap = 4;
-
-  protected changelogClicked() {
-    this.dialog.open(ChangelogPanelComponent, {
-      autoFocus: false,
-    });
-  }
-
-  protected tutorialClicked() {
-    this.dialog.open(TutorialPanelComponent, {
-      autoFocus: false,
-    });
-  }
-
-  protected storeClicked(): void {
-    this.dialog.open(StoreModalComponent, {
-      autoFocus: false,
-    });
-  }
-
-  protected manualStoreClicked(): void {
-    this.dialog.open(ManualStoreModalComponent, {
-      autoFocus: false,
-    });
-  }
-
-  protected optionsClicked(): void {
-    this.dialog.open(OptionsModalComponent, {
-      autoFocus: false,
-    });
-  }
-
-  protected ascensionStoreClicked() {
-    this.storeService.updateAscensions();
-    this.dialog.open(AscensionStoreModalComponent, {
-      autoFocus: false,
-    });
-  }
-
-  protected statisticsClicked() {
-    this.dialog.open(StatisticsPanelComponent, {
-      autoFocus: false,
-    });
-  }
-
-  protected achievementsClicked() {
-    this.dialog.open(AchievementPanelComponent, {
-      autoFocus: false,
-    });
-  }
 
   protected lockPanelsToggle() {
     this.gameStateService.lockPanels = !this.gameStateService.lockPanels;
@@ -169,10 +112,5 @@ export class StandardLayoutComponent {
 
   protected closePanelClick(index: number) {
     this.gameStateService.removeLayoutPanel(index);
-  }
-
-  protected saveClicked() {
-    this.gameStateService.savetoLocalStorage();
-    this.characterService.toast('Manual Save Complete');
   }
 }
