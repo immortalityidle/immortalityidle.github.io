@@ -1414,6 +1414,30 @@ export class AchievementService {
       },
       unlocked: false,
     },
+    {
+      name: 'You Like Me!',
+      description: 'You clicked the credits button. Hurray!',
+      hint: 'Who made this thing?',
+      check: () => {
+        return this.gameStateService!.creditsClicked;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'You Really Like Me!',
+      description: 'You clicked the support link and saw my first book. Thanks!',
+      hint: 'Do you really, really?',
+      check: () => {
+        return this.gameStateService!.supportClicked;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {

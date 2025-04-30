@@ -31,7 +31,12 @@ export class OptionsModalComponent {
   hardResetClicked(event: Event): void {
     event.preventDefault();
     if (confirm('This will reset everything permanently. Are you sure?')) {
-      this.gameStateService.hardReset();
+      const value = prompt(
+        'For real, this will reset the whole game as if you\'ve never played it. If you\'re really sure, type "RESET" to start all the way over.'
+      );
+      if (value?.toLowerCase() === 'reset') {
+        this.gameStateService.hardReset();
+      }
     }
   }
 

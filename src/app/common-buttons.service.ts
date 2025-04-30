@@ -11,6 +11,7 @@ import { AchievementPanelComponent } from './achievement-panel/achievement-panel
 import { StoreService } from './game-state/store.service';
 import { GameStateService } from './game-state/game-state.service';
 import { CharacterService } from './game-state/character.service';
+import { CreditsModalComponent } from './credits-modal/credits-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -69,8 +70,16 @@ export class CommonButtonsService {
       autoFocus: false,
     });
   }
+
   saveClicked() {
     this.gameStateService.savetoLocalStorage();
     this.characterService.toast('Manual Save Complete');
+  }
+
+  creditsClicked() {
+    this.gameStateService.creditsClicked = true;
+    this.dialog.open(CreditsModalComponent, {
+      autoFocus: false,
+    });
   }
 }

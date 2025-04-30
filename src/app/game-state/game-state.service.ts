@@ -41,6 +41,8 @@ interface GameState {
   easyModeEver: boolean;
   lockPanels: boolean;
   layout: KtdGridLayout;
+  creditsClicked: boolean;
+  supportClicked: boolean;
 }
 
 declare global {
@@ -73,6 +75,8 @@ export class GameStateService {
   dragging = false;
   layout = signal<KtdGridLayout | undefined>(undefined);
   allPanelsUsed = false;
+  creditsClicked = false;
+  supportClicked = false;
 
   panels: Panel[] = [
     {
@@ -518,6 +522,8 @@ export class GameStateService {
       this.layout.set(gameState.layout);
     }
     this.lockPanels = gameState.lockPanels ?? true;
+    this.creditsClicked = gameState.creditsClicked || false;
+    this.supportClicked = gameState.supportClicked || false;
     this.updateImportFlagKey();
     this.updateAllPanelsUsed();
   }
@@ -543,6 +549,8 @@ export class GameStateService {
       easyModeEver: gameState.easyModeEver ?? false,
       lockPanels: gameState.lockPanels ?? false,
       layout: gameState.layout ?? [],
+      creditsClicked: gameState.creditsClicked || false,
+      supportClicked: gameState.supportClicked || false,
     };
     return returnValue;
   }
@@ -1109,6 +1117,8 @@ export class GameStateService {
       easyModeEver: this.easyModeEver,
       lockPanels: this.lockPanels,
       layout: this.layout() ?? [],
+      creditsClicked: this.creditsClicked,
+      supportClicked: this.supportClicked,
     };
     let gameStateString = JSON.stringify(gameState);
     gameStateString = 'iig' + btoa(encodeURIComponent(gameStateString));
