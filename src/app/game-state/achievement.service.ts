@@ -1091,6 +1091,43 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Blazing Blood',
+      description: 'Your ascensions have led you to the secrets of maintaining a second family combat technique.',
+      hint: 'A strong family knows many techniques.',
+      check: () => {
+        return (
+          this.characterService.soulCoreRank() >= 5 &&
+          this.characterService.meridianRank() >= 5 &&
+          this.characterService.bloodlineRank >= 5
+        );
+      },
+      effect: () => {
+        if (this.battleService.maxFamilyTechniques < 2) {
+          this.battleService.maxFamilyTechniques = 2;
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Dragon Blood',
+      description:
+        'Your ascensions have led you to the secrets of maintaining a third family combat technique.<br>Your descendants will curse you for all the training they will have to do.',
+      hint: 'An awe-inspiring family knows many techniques.',
+      check: () => {
+        return (
+          this.characterService.soulCoreRank() >= 9 &&
+          this.characterService.meridianRank() >= 9 &&
+          this.characterService.bloodlineRank >= 8
+        );
+      },
+      effect: () => {
+        if (this.battleService.maxFamilyTechniques < 3) {
+          this.battleService.maxFamilyTechniques = 3;
+        }
+      },
+      unlocked: false,
+    },
+    {
       name: 'Bruce Is Proud of You',
       description: 'You have developed your first family technique and unlocked the Combat Techniques Panel.',
       hint: 'Train. Then train some more.',

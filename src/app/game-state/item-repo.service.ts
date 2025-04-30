@@ -965,6 +965,15 @@ baguaMap = [
       value: 16,
       description: 'A divine quality log.',
     },
+    coal: {
+      id: 'coal',
+      imageFile: 'coal',
+      name: 'coal',
+      type: 'coal',
+      subtype: 'fuel',
+      value: 1,
+      description: 'A chunk of coal.<br>Handy as fuel.',
+    },
     copperOre: {
       id: 'copperOre',
       imageFile: 'ore',

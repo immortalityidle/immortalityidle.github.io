@@ -2739,6 +2739,9 @@ export class ActivityService {
         this.characterService.increaseAttribute('strength', 0.1);
         this.characterService.increaseAttribute('earthLore', 0.05);
         this.miningCounter++;
+        if (this.miningCounter % 2 === 1) {
+          this.inventoryService.addItem(this.itemRepoService.items['coal']);
+        }
         if (this.miningCounter > 5) {
           this.miningCounter = 0;
           this.inventoryService.addItem(this.inventoryService.getOre());

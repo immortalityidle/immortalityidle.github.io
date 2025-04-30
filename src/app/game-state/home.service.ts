@@ -496,11 +496,11 @@ export class HomeService {
         const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
         const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
 
-        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity > 0) {
+        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity > 5) {
           this.totalCrafts++;
           this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
           oreStack.quantity--;
-          fuelStack.quantity--;
+          fuelStack.quantity -= 5;
         }
       },
     },

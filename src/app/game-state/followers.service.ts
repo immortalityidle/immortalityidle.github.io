@@ -170,6 +170,15 @@ export class FollowersService {
       totalPower: 0,
       runEachTick: true,
     },
+    coaldigger: {
+      work: daysElapsed => {
+        const power = Math.floor((this.jobs['coaldigger'].totalPower * daysElapsed) / 100);
+        this.inventoryService.addItem(this.itemRepoService.items['coal'], power);
+      },
+      description: 'Coaldiggers gather coal for your crafting.',
+      totalPower: 0,
+      runEachTick: true,
+    },
     lumberjack: {
       work: daysElapsed => {
         const power = Math.floor((this.jobs['lumberjack'].totalPower * daysElapsed) / 100);
