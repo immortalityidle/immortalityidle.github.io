@@ -5,23 +5,23 @@
 }
 // This is ugly hackery to make the tabs vertical, but Material is dumb for not supporting this out of the box. 
 // Will need updates when Material decides to change tags.
-:host /deep/ .mat-mdc-tab-group {
+:host ::ng-deep .mat-mdc-tab-group {
     flex-direction: row;
 }
-:host /deep/ .mat-mdc-tab-header {
+:host ::ng-deep .mat-mdc-tab-header {
     border-bottom: none;
 }
-:host /deep/ .mat-mdc-tab-header-pagination {
+:host ::ng-deep .mat-mdc-tab-header-pagination {
     display: none !important;
 }
-:host /deep/ .mat-mdc-tab-labels {
+:host ::ng-deep .mat-mdc-tab-labels {
     flex-direction: column;
 }
-:host /deep/ .mat-mdc-ink-bar {
+:host ::ng-deep .mat-mdc-ink-bar {
     height: 100%;
     left: 98% !important;
 }
-:host /deep/ .mat-mdc-tab-body-wrapper {
+:host ::ng-deep .mat-mdc-tab-body-wrapper {
     flex: 1 1 auto;
 }
 

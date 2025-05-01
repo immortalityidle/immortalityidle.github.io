@@ -1337,11 +1337,45 @@ export class AchievementService {
     },
     {
       name: 'Yes We Can!',
-      description: 'You found him.',
+      description: 'You found Bob the Builder.',
       hint: 'Can we fix it?',
       check: () => {
         for (const follower of this.followerService.followers) {
           if ((follower.name === 'Robert' || follower.name === 'Bob') && follower.job === 'builder') {
+            return true;
+          }
+        }
+        return false;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'The Old Soulsmith',
+      description: "She's retired from soulsmithing and just goes fishing now. Also, go reread Cradle.",
+      hint: "Lindon's soulsmithing tutor.",
+      check: () => {
+        for (const follower of this.followerService.followers) {
+          if (follower.name === 'Gesha' && follower.job === 'fisher') {
+            return true;
+          }
+        }
+        return false;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: "They're Grrrrreat",
+      description: 'You have made an animal friend who can provide you with a tasty breakfast.',
+      hint: "You'll need to find a very special pet.",
+      check: () => {
+        for (const follower of this.followerService.pets) {
+          if ((follower.name === 'Tony' || follower.name === 'Antonio') && follower.job === 'tiger') {
             return true;
           }
         }
@@ -1379,23 +1413,6 @@ export class AchievementService {
       },
       effect: () => {
         this.homeService.smoothFarming = true;
-      },
-      unlocked: false,
-    },
-    {
-      name: "They're Great",
-      description: 'You have made a friend who can provide you with a tasty breakfast.',
-      hint: "You'll need to find a very special pet.",
-      check: () => {
-        for (const follower of this.followerService.pets) {
-          if ((follower.name === 'Tony' || follower.name === 'Antonio') && follower.job === 'tiger') {
-            return true;
-          }
-        }
-        return false;
-      },
-      effect: () => {
-        // no effect, it's just for fun
       },
       unlocked: false,
     },

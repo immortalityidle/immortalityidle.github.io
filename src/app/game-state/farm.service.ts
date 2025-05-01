@@ -15,6 +15,7 @@ export interface Field {
   originalDaysToHarvest: number;
   averageYield: number;
   imageFile?: string;
+  upkeepCost: number;
 }
 
 export interface FarmProperties {
@@ -44,6 +45,7 @@ export class FarmService {
   consecutiveHarvests = 0;
   fallowPlots = 0;
   unlockedCrops = ['rice'];
+  maxFields = 30;
 
   constructor(
     private injector: Injector,
@@ -80,6 +82,11 @@ export class FarmService {
     }
     if (!this.hellService?.inHell || this.hellFood) {
       this.ageFields();
+      let upkeepCosts = 0;
+      for (const field of this.fields) {
+        upkeepCosts += field.upkeepCost || 0;
+      }
+      this.characterService.updateMoney(0 - upkeepCosts);
     }
   }
 
@@ -172,6 +179,9 @@ export class FarmService {
   }
 
   addField() {
+    if (this.fields.length >= this.maxFields) {
+      return;
+    }
     const cropItem = this.inventoryService.farmFoodList[0];
     this.fields.push({
       cropName: cropItem.id,
@@ -182,6 +192,7 @@ export class FarmService {
       originalDaysToHarvest: 180 + cropItem.value,
       averageYield: 0,
       imageFile: cropItem.imageFile,
+      upkeepCost: 0,
     });
   }
 
@@ -206,6 +217,7 @@ export class FarmService {
     this.fields[fieldIndex].plots += quantity;
     this.farmedPlots += quantity;
     this.fallowPlots -= quantity;
+    this.updateFieldUpkeep(fieldIndex);
   }
 
   /**
@@ -219,6 +231,7 @@ export class FarmService {
     this.fields[fieldIndex].plots -= quantity;
     this.farmedPlots -= quantity;
     this.fallowPlots += quantity;
+    this.updateFieldUpkeep(fieldIndex);
   }
 
   ageFields() {
@@ -255,5 +268,20 @@ export class FarmService {
     if (!this.unlockedCrops.includes(cropName)) {
       this.unlockedCrops.push(cropName);
     }
+  }
+
+  updateFieldUpkeep(index: number) {
+    const field = this.fields[index];
+    let upkeep = 0;
+    if (field.plots > 10) {
+      upkeep += field.plots - 10;
+    }
+    if (field.plots > 100) {
+      upkeep += Math.pow(field.plots - 100, 2);
+    }
+    if (field.plots > 1000) {
+      upkeep += Math.pow(2, field.plots - 1000);
+    }
+    field.upkeepCost = upkeep;
   }
 }

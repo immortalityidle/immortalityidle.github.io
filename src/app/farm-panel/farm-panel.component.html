@@ -19,10 +19,12 @@
       </span>
     </div>
     <div>
-      <mat-icon  (click)="addFieldClicked($event)" tooltip="Set up a new field for growing crops." class="iconButton" 
-        aria-label="Set up a field" aria-hidden="false">
-        add
-      </mat-icon>
+      @if (farmService.fields.length < farmService.maxFields){
+        <mat-icon  (click)="addFieldClicked($event)" tooltip="Set up a new field for growing crops." class="iconButton" 
+          aria-label="Set up a field" aria-hidden="false">
+          add
+        </mat-icon>
+      }
     </div>
     <div class="farmGrid">
       @for (field of farmService.fields; track field; let index = $index) {
@@ -33,8 +35,8 @@
               <div>{{field.plots}} Plots of Land</div>
               <div>Harvest Quantity: {{field.yield}}</div>
               <div>Days Until Next Harvest: {{field.daysToHarvest}}</div>
-              <div>Progress to next harvest: {{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}
-              </div>
+              <div>Progress to next harvest: {{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}</div>
+              <div>Upkeep Cost: {{field.upkeepCost | bigNumber}}</div>
             </div>
             <div class="yieldText">
               <span>Average harvest of {{field.averageYield | bigNumber}} per day.</span>
