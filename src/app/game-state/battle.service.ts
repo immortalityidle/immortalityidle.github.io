@@ -1184,7 +1184,7 @@ export class BattleService {
     if (monsterType.lootType) {
       const grade = Math.floor(Math.log2(modifiedBasePower + 2));
       if (monsterType.lootType.includes('gem')) {
-        loot.push(this.inventoryService.generateSpiritGem(grade));
+        loot.push(this.inventoryService.generateSpiritGem(grade, monsterType.element));
       }
       if (monsterType.lootType.includes('hide')) {
         loot.push(this.inventoryService.getHide(grade));
@@ -1410,6 +1410,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 8,
+      element: 'fire',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1417,6 +1418,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 10,
+      element: 'fire',
       lootType: ['gem', 'money'],
     },
     {
@@ -1431,6 +1433,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 15,
+      element: 'earth',
       lootType: ['gem', 'money'],
     },
     {
@@ -1445,6 +1448,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 20,
+      element: 'water',
       lootType: ['gem', 'money'],
     },
     {
@@ -1480,6 +1484,7 @@ export class BattleService {
       description: '',
       location: LocationType.Jungle,
       basePower: 100,
+      element: 'metal',
       lootType: ['gem', 'hide', 'fruit'],
     },
     {
@@ -1487,6 +1492,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 200,
+      element: 'water',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1508,6 +1514,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 500,
+      element: 'water',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1515,6 +1522,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 600,
+      element: 'water',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1529,6 +1537,7 @@ export class BattleService {
       description: '',
       location: LocationType.Mine,
       basePower: 800,
+      element: 'earth',
       lootType: ['gem', 'money'],
     },
     {
@@ -1543,6 +1552,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 1000,
+      element: 'water',
       lootType: ['gem'],
     },
     {
@@ -1550,6 +1560,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 1200,
+      element: 'water',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1557,6 +1568,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 1300,
+      element: 'earth',
       lootType: ['gem', 'ore'],
     },
     {
@@ -1592,6 +1604,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 2100,
+      element: 'earth',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1620,6 +1633,7 @@ export class BattleService {
       description: '',
       location: LocationType.Jungle,
       basePower: 4000,
+      element: 'wood',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1634,6 +1648,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 6000,
+      element: 'wood',
       lootType: ['gem', 'hide', 'money'],
     },
     {
@@ -1648,6 +1663,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 8000,
+      element: 'wood',
       lootType: ['gem', 'money'],
     },
     {
@@ -1655,6 +1671,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 9000,
+      element: 'fire',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1683,6 +1700,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 15000,
+      element: 'wood',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1690,6 +1708,7 @@ export class BattleService {
       description: '',
       location: LocationType.Dungeon,
       basePower: 18000,
+      element: 'earth',
       lootType: ['gem', 'hide', 'money'],
     },
     {
@@ -1697,6 +1716,7 @@ export class BattleService {
       description: '',
       location: LocationType.Beach,
       basePower: 20000,
+      element: 'water',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1725,6 +1745,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 70000,
+      element: 'earth',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1732,6 +1753,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 80000,
+      element: 'metal',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1746,6 +1768,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 120000,
+      element: 'wood',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1767,6 +1790,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 180000,
+      element: 'fire',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1774,6 +1798,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 200000,
+      element: 'fire',
       lootType: ['gem', 'hide', 'ore'],
     },
     {
@@ -1788,6 +1813,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 300000,
+      element: 'wood',
       lootType: ['gem', 'money'],
     },
     {
@@ -1795,6 +1821,7 @@ export class BattleService {
       description: '',
       location: LocationType.Dungeon,
       basePower: 400000,
+      element: 'wood',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1802,6 +1829,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 500000,
+      element: 'water',
       lootType: ['gem', 'money'],
     },
     {
@@ -1809,6 +1837,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 600000,
+      element: 'metal',
       lootType: ['gem', 'money'],
     },
     {
@@ -1823,6 +1852,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 800000,
+      element: 'wood',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1851,6 +1881,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 3000000,
+      element: 'earth',
       lootType: ['gem', 'hide', 'meat', 'ore'],
     },
     {
@@ -1858,6 +1889,7 @@ export class BattleService {
       description: '',
       location: LocationType.Dungeon,
       basePower: 5000000,
+      element: 'metal',
       lootType: ['gem', 'money'],
     },
     {
@@ -1886,6 +1918,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 20000000,
+      element: 'water',
       lootType: ['gem', 'hide', 'meat'],
     },
     {
@@ -1907,6 +1940,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 60000000,
+      element: 'earth',
       lootType: ['gem', 'money'],
     },
     {
@@ -1914,6 +1948,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 80000000,
+      element: 'water',
       lootType: ['gem', 'hide'],
     },
     {
@@ -1928,6 +1963,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 200000000,
+      element: 'metal',
       lootType: ['gem', 'money', 'ore'],
     },
     {
@@ -1935,6 +1971,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 500000000,
+      element: 'water',
       lootType: ['gem', 'hide', 'meat'],
     },
     {

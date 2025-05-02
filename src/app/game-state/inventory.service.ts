@@ -826,7 +826,7 @@ export class InventoryService {
     }
     return {
       id: 'spiritGemGrade' + grade,
-      imageFile: 'spiritGem',
+      imageFile: flavor + 'Gem',
       name: flavor + ' gem grade ' + grade,
       type: 'gem',
       subtype: flavor,
@@ -1006,12 +1006,16 @@ export class InventoryService {
         lastHide = item;
       }
     }
-
     if (this.autoSellOldHidesEnabled && !this.hellService?.inHell && !skipSnobbery) {
       // sell any hides cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === 'hide' && itemStack.item.value < lastHide.value) {
+        if (
+          itemStack.item &&
+          itemStack.item.id !== lastHide.id &&
+          itemStack.item.type === 'hide' &&
+          itemStack.item.value < lastHide.value
+        ) {
           this.sell(itemStack, itemStack.quantity);
         }
       }
@@ -1257,20 +1261,17 @@ export class InventoryService {
     }
 
     if (item.type === 'potion' && !ignoreAutoReload) {
-      console.log('adding', item);
       // check for same type of potion in item pouches
       let existingPotionStack = this.characterService.itemPouches.find(
         itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
       );
       if (!existingPotionStack) {
-        console.log("couldn't find it in the pouches");
         // not there, check the inventory slots
         existingPotionStack = this.itemStacks.find(
           itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
         );
       }
       if (existingPotionStack) {
-        console.log('existing stack, adding it');
         const totalPower =
           (item.increaseAmount || 0) * quantity +
           (existingPotionStack.item!.increaseAmount || 0) * existingPotionStack.quantity;
@@ -1280,7 +1281,6 @@ export class InventoryService {
         existingPotionStack.item!.name = this.titleCasePipe.transform(item.effect) + ' Potion + ' + restoreAmount;
         return -1;
       }
-      console.log("couldn't stack it, making new stack");
       // couldn't stack the potion, let it fall through and get treated like a normal item
     }
 
