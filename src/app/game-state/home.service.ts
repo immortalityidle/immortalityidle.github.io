@@ -1300,11 +1300,14 @@ export class HomeService {
     const cookingLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     let imageFile = 'meal';
     let foodName = 'Menu Special #' + totalValue;
+    let pouchable = false;
     if (cookingLevel > 0) {
       totalValue *= 4;
       imageFile = 'soulfood';
       foodName = 'Soul Food Special #' + totalValue;
+      pouchable = true;
     }
+    const effect = 'meal' + totalValue;
 
     this.totalCrafts++;
     this.inventoryService.addItem(
@@ -1319,6 +1322,8 @@ export class HomeService {
         useLabel: 'Eat',
         useDescription: 'Fills your belly.',
         useConsumes: true,
+        pouchable: pouchable,
+        effect: effect,
       },
       cookAmount
     );

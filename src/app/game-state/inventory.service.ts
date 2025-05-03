@@ -144,6 +144,7 @@ export interface InventoryProperties {
   potionCounter: number;
   herbCounter: number;
   gemsAcquired: number;
+  foodEatenToday: number;
 }
 
 @Injectable({
@@ -218,6 +219,8 @@ export class InventoryService {
   potionCounter = 0;
   herbCounter = 0;
   gemsAcquired = 0;
+  foodEatenToday = 0;
+  maxFoodPerDay = 10; // cap at 10 meals in a day seems reasonable, maybe tune this
 
   constructor(
     private injector: Injector,
@@ -326,6 +329,7 @@ export class InventoryService {
       return;
     }
     this.characterService.status.nutrition.value--; // tick the day's hunger
+    this.foodEatenToday = 0;
     this.eatDailyMeal();
 
     if (this.mergeCounter >= 20) {
@@ -393,6 +397,7 @@ export class InventoryService {
       potionCounter: this.potionCounter,
       herbCounter: this.herbCounter,
       gemsAcquired: this.gemsAcquired,
+      foodEatenToday: this.foodEatenToday,
     };
   }
 
@@ -455,6 +460,7 @@ export class InventoryService {
     this.potionCounter = properties.potionCounter;
     this.herbCounter = properties.herbCounter;
     this.gemsAcquired = properties.gemsAcquired;
+    this.foodEatenToday = properties.foodEatenToday;
   }
 
   farmFoodList = [
@@ -1160,6 +1166,9 @@ export class InventoryService {
   }
 
   bellyFull() {
+    if (this.foodEatenToday >= this.maxFoodPerDay) {
+      return true;
+    }
     if (this.autoEatAll) {
       return false;
     }
@@ -1184,7 +1193,13 @@ export class InventoryService {
     return true;
   }
 
-  private eatFood(foodItem: Item, quantity = 1) {
+  public eatFood(foodItem: Item, quantity = 1) {
+    if (this.foodEatenToday > this.maxFoodPerDay) {
+      return 0;
+    }
+    if (quantity > this.maxFoodPerDay - this.foodEatenToday) {
+      quantity = this.maxFoodPerDay - this.foodEatenToday;
+    }
     const value = foodItem.value;
     this.characterService.status.nutrition.value += quantity + quantity * value;
     this.characterService.healthBonusFood += quantity * value * 0.01;
@@ -1206,8 +1221,9 @@ export class InventoryService {
         this.characterService.increaseAttribute('spirituality', 0.001);
       }
     }
-
+    this.foodEatenToday += quantity;
     this.characterService.checkOverage();
+    return quantity;
   }
 
   /**
@@ -1260,28 +1276,31 @@ export class InventoryService {
       }
     }
 
-    if (item.type === 'potion' && !ignoreAutoReload) {
+    if (item.pouchable && !ignoreAutoReload) {
       // check for same type of potion in item pouches
-      let existingPotionStack = this.characterService.itemPouches.find(
+      let existingStack = this.characterService.itemPouches.find(
         itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
       );
-      if (!existingPotionStack) {
+      if (!existingStack) {
         // not there, check the inventory slots
-        existingPotionStack = this.itemStacks.find(
+        existingStack = this.itemStacks.find(
           itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
         );
       }
-      if (existingPotionStack) {
-        const totalPower =
-          (item.increaseAmount || 0) * quantity +
-          (existingPotionStack.item!.increaseAmount || 0) * existingPotionStack.quantity;
-        existingPotionStack.quantity += quantity;
-        const restoreAmount = Math.floor(totalPower / existingPotionStack.quantity);
-        existingPotionStack.item!.increaseAmount = restoreAmount;
-        existingPotionStack.item!.name = this.titleCasePipe.transform(item.effect) + ' Potion + ' + restoreAmount;
+      if (existingStack) {
+        if (item.type === 'potion') {
+          const totalPower =
+            (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
+          existingStack.quantity += quantity;
+          const restoreAmount = Math.floor(totalPower / existingStack.quantity);
+          existingStack.item!.increaseAmount = restoreAmount;
+          existingStack.item!.name = this.titleCasePipe.transform(item.effect) + ' Potion + ' + restoreAmount;
+        } else {
+          existingStack.quantity += quantity;
+        }
         return -1;
       }
-      // couldn't stack the potion, let it fall through and get treated like a normal item
+      // couldn't stack it, let it fall through and get treated like a normal item
     }
 
     if (this.autoPillEnabled && item.type === 'pill') {
@@ -1365,8 +1384,8 @@ export class InventoryService {
             numberToUse = quantity;
           }
           if (numberToUse > 0) {
-            this.useItem(item, quantity);
-            quantity -= numberToUse;
+            const numberUsed = this.useItem(item, quantity);
+            quantity -= numberUsed;
             if (quantity === 0) {
               return -1;
             }
@@ -1547,9 +1566,9 @@ export class InventoryService {
     if (quantity > itemStack.quantity) {
       quantity = itemStack.quantity;
     }
-    this.useItem(itemStack.item, quantity);
+    const numberUsed = this.useItem(itemStack.item, quantity);
     if (itemStack.item.useConsumes) {
-      itemStack.quantity -= quantity;
+      itemStack.quantity -= numberUsed;
       if (itemStack.quantity <= 0) {
         const index = this.itemStacks.indexOf(itemStack);
         this.setItemEmptyStack(index);
@@ -1559,14 +1578,14 @@ export class InventoryService {
     }
   }
 
-  useItem(item: Item, quantity = 1): void {
+  // use the items, return the number of items actually used
+  useItem(item: Item, quantity = 1): number {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     if (item.type === 'food') {
       this.lifetimeUsedFood++;
-      this.eatFood(item, quantity);
-      return;
+      return this.eatFood(item, quantity);
     } else {
       this.lifetimeUsedItems++;
     }
@@ -1582,6 +1601,7 @@ export class InventoryService {
         }
       }
     }
+    return quantity;
   }
 
   autoUse(item: Item) {

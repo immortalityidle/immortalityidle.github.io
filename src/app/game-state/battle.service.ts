@@ -57,6 +57,9 @@ export interface BattleProperties {
   statusEffects: StatusEffect[];
   potionCooldown: number;
   potionThreshold: number;
+  foodCooldown: number;
+  foodThresholdStatusType: StatusType;
+  foodThreshold: number;
 }
 
 export interface Technique {
@@ -113,6 +116,9 @@ export class BattleService {
   statusEffects: StatusEffect[] = [];
   potionCooldown = 20;
   potionThreshold = 0.5;
+  foodCooldown = 60;
+  foodThresholdStatusType: StatusType = 'health';
+  foodThreshold = 0.5;
 
   public rightHandTechniqueName = 'Right-Handed Weapon';
   public leftHandTechniqueName = 'Left-Handed Weapon';
@@ -303,6 +309,9 @@ export class BattleService {
       statusEffects: this.statusEffects,
       potionCooldown: this.potionCooldown,
       potionThreshold: this.potionThreshold,
+      foodCooldown: this.foodCooldown,
+      foodThresholdStatusType: this.foodThresholdStatusType,
+      foodThreshold: this.foodThreshold,
     };
   }
 
@@ -326,6 +335,9 @@ export class BattleService {
     this.statusEffects = properties.statusEffects;
     this.potionCooldown = properties.potionCooldown;
     this.potionThreshold = properties.potionThreshold;
+    this.foodCooldown = properties.foodCooldown;
+    this.foodThresholdStatusType = properties.foodThresholdStatusType;
+    this.foodThreshold = properties.foodThreshold;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -337,28 +349,40 @@ export class BattleService {
 
   usePouchItems() {
     // use pouch items if needed
-    let potionTaken = false;
+    let itemUsed = false;
     for (let i = 0; i < this.characterService.itemPouches.length; i++) {
       const itemStack = this.characterService.itemPouches[i];
-      if (!itemStack || !itemStack.item || itemStack.quantity === 0 || itemStack.item?.type !== 'potion') {
+      if (!itemStack || !itemStack.item || itemStack.quantity === 0 || !itemStack.item?.pouchable) {
         continue;
       }
-      if ((itemStack.item?.cooldown || 0) <= 0) {
-        const effect: StatusType = itemStack.item.effect as StatusType;
-        if (
-          this.characterService.status[effect].value <
-          this.characterService.status[effect].max * this.potionThreshold
-        ) {
-          this.characterService.status[effect].value += itemStack.item.increaseAmount || 1;
-          itemStack.quantity--;
-          itemStack.item.cooldown = this.potionCooldown;
-          potionTaken = true;
+      if ((itemStack.item.cooldown || 0) <= 0) {
+        if (itemStack.item.type === 'potion') {
+          const effect: StatusType = itemStack.item.effect as StatusType;
+          if (
+            this.characterService.status[effect].value <
+            this.characterService.status[effect].max * this.potionThreshold
+          ) {
+            this.characterService.status[effect].value += itemStack.item.increaseAmount || 1;
+            itemStack.quantity--;
+            itemStack.item.cooldown = this.potionCooldown;
+            itemUsed = true;
+          }
+        } else if (itemStack.item.type === 'food') {
+          if (
+            this.characterService.status[this.foodThresholdStatusType].value <
+            this.characterService.status[this.foodThresholdStatusType].max * this.foodThreshold
+          ) {
+            this.inventoryService.eatFood(itemStack.item, 1);
+            itemStack.quantity--;
+            itemStack.item.cooldown = this.foodCooldown;
+            itemUsed = true;
+          }
         }
       } else {
         itemStack!.item!.cooldown = (itemStack.item?.cooldown || 0) - 1;
       }
     }
-    if (potionTaken) {
+    if (itemUsed) {
       this.characterService.checkOverage();
     }
   }

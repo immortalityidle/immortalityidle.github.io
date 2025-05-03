@@ -606,6 +606,7 @@ export class GameStateService {
       potionCounter: props?.potionCounter || 0,
       herbCounter: props?.herbCounter || 0,
       gemsAcquired: props?.gemsAcquired || 0,
+      foodEatenToday: props?.foodEatenToday || 0,
     };
   }
 
@@ -742,6 +743,9 @@ export class GameStateService {
       statusEffects: props?.statusEffects || [],
       potionCooldown: props?.potionCooldown || 20,
       potionThreshold: props?.potionThreshold || 0.5,
+      foodCooldown: props?.foodCooldown || 60,
+      foodThresholdStatusType: props?.foodThresholdStatusType || 'health',
+      foodThreshold: props?.foodThreshold || 0.5,
     };
   }
 
