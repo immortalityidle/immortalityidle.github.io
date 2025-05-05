@@ -480,12 +480,13 @@ export class GameStateService {
 
   importGame(value: string) {
     let gameStateSerialized: string;
+    // TODO: stop supporting legacy game file imports
     if (value.substring(0, 3) === 'iig') {
       // it's a new save file
       gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
-      // it's a legacy save file
-      gameStateSerialized = value;
+      // file isn't one this game created, bail out
+      return;
     }
     const parsedGameState = JSON.parse(gameStateSerialized) as Partial<GameState>;
     const gameState = this.validateGameState(parsedGameState);
@@ -693,6 +694,7 @@ export class GameStateService {
       enemies: props?.enemies || [],
       currentEnemy: props?.currentEnemy || null,
       kills: props?.kills || 0,
+      killsByLocation: props?.killsByLocation || {},
       godSlayerKills: props?.godSlayerKills || 0,
       totalKills: props?.totalKills || 0,
       autoTroubleUnlocked: props?.autoTroubleUnlocked || false,
@@ -742,10 +744,10 @@ export class GameStateService {
       maxFamilyTechniques: props?.maxFamilyTechniques || 0,
       statusEffects: props?.statusEffects || [],
       potionCooldown: props?.potionCooldown || 20,
-      potionThreshold: props?.potionThreshold || 0.5,
+      potionThreshold: props?.potionThreshold || 50,
       foodCooldown: props?.foodCooldown || 60,
       foodThresholdStatusType: props?.foodThresholdStatusType || 'health',
-      foodThreshold: props?.foodThreshold || 0.5,
+      foodThreshold: props?.foodThreshold || 50,
     };
   }
 
@@ -1017,16 +1019,16 @@ export class GameStateService {
         },
         qi: {
           description: 'Magical energy required for mysterious spiritual activities.',
-          value: props?.status.qi.value || 0,
-          max: props?.status.qi.max || 0,
-          battleTickRecovery: props?.status.qi.battleTickRecovery || 0,
+          value: props?.status?.qi?.value || 0,
+          max: props?.status?.qi?.max || 0,
+          battleTickRecovery: props?.status?.qi?.battleTickRecovery || 0,
         },
         nutrition: {
           description:
             'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend some money on cheap scraps each day.',
-          value: props?.status.nutrition.value || 30,
-          max: props?.status.nutrition.max || 30,
-          battleTickRecovery: props?.status.nutrition.battleTickRecovery || 0,
+          value: props?.status?.nutrition?.value || 30,
+          max: props?.status?.nutrition?.max || 30,
+          battleTickRecovery: props?.status?.nutrition?.battleTickRecovery || 0,
         },
       },
       money: props?.money || 0,

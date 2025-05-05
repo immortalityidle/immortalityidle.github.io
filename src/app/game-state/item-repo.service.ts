@@ -273,6 +273,18 @@ baguaMap = [
       },
     },
     {
+      id: 'cormorantCage',
+      name: 'cormorant cage',
+      type: 'furniture',
+      subtype: 'animal',
+      value: 1000000,
+      description: 'A cage holding a trained cormorant that can help you with fishing.',
+      useConsumes: false,
+      use: () => {
+        this.characterService.increaseAttribute('animalHandling', 0.01);
+      },
+    },
+    {
       id: 'wingChunDummy',
       name: 'wing-chun dummy',
       type: 'furniture',

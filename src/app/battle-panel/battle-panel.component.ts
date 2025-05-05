@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
+import { CharacterService } from '../game-state/character.service';
 
 @Component({
   selector: 'app-battle-panel',
@@ -21,7 +22,11 @@ import { BigNumberPipe } from '../pipes';
 export class BattlePanelComponent {
   protected Math = Math;
 
-  constructor(protected battleService: BattleService, private dialog: MatDialog) {}
+  constructor(
+    protected battleService: BattleService,
+    protected characterService: CharacterService,
+    private dialog: MatDialog
+  ) {}
 
   protected battleOptions() {
     this.dialog.open(BattleOptionsPanelComponent, {

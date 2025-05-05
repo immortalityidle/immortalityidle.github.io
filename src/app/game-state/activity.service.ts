@@ -2863,7 +2863,11 @@ export class ActivityService {
         this.characterService.increaseAttribute('animalHandling', 0.02);
         this.characterService.increaseAttribute('waterLore', 0.01);
         this.fishingCounter++;
-        if (this.fishingCounter > 10) {
+        let counterSatisfied = 10;
+        if (this.homeService.bedroomFurniture.find(item => item?.id === 'cormorantCage')) {
+          counterSatisfied = 5;
+        }
+        if (this.fishingCounter > counterSatisfied) {
           this.fishingCounter = 0;
           this.inventoryService.addItem(this.itemRepoService.items['carp']);
         }

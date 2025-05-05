@@ -1,5 +1,19 @@
 <div class='darkMode'>
   <span>Battle Options</span>
   <hr/>
-
+  <div>
+    <span tooltip='Drink potions in your equipment pouches when the status they restore gets below this percentage.'>Potion Threshold
+      <input min="0" value="{{battleService.potionThreshold}}" type="number" class="inputBox" (change)="potionThresholdChange($event)"/>%
+    </span>
+  </div>
+  <div>
+    <span tooltip='Eat Soul Food in your equipment pouches when the selected status gets below this percentage.<br>You are limited to eating {{inventoryService.maxFoodPerDay}} food per day.'>Pouch Food Threshold
+      <mat-select class="selectFoodStatus" [(value)]="battleService.foodThresholdStatusType">
+        <mat-option value="health">Health</mat-option>
+        <mat-option value="stamina">Stamina</mat-option>
+        <mat-option value="qi">Qi</mat-option>
+      </mat-select>
+      <input min="0" value="{{battleService.foodThreshold}}" type="number" class="inputBox" (change)="foodThresholdChange($event)"/>%
+    </span>
+  </div>
 </div>

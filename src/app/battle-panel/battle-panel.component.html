@@ -1,8 +1,8 @@
 <div class="battleContainer">
   <h3>
-    @if (false) {
+    @if (characterService.itemPouches.length > 0) {
       <span>
-        <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton" aria-label="Battle Settings" aria-hidden="false">
+        <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton rightAligned" aria-label="Battle Settings" aria-hidden="false">
           settings
         </mat-icon>
       </span>

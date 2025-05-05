@@ -60,6 +60,7 @@ export interface BattleProperties {
   foodCooldown: number;
   foodThresholdStatusType: StatusType;
   foodThreshold: number;
+  killsByLocation: { [key: string]: number };
 }
 
 export interface Technique {
@@ -99,6 +100,7 @@ export class BattleService {
   enemies: Enemy[];
   currentEnemy: Enemy | null;
   kills: number;
+  killsByLocation: { [key: string]: number } = {};
   godSlayerKills: number;
   autoTroubleUnlocked = false;
   private yearlyMonsterDay: number;
@@ -115,10 +117,10 @@ export class BattleService {
   maxFamilyTechniques = 0;
   statusEffects: StatusEffect[] = [];
   potionCooldown = 20;
-  potionThreshold = 0.5;
+  potionThreshold = 50;
   foodCooldown = 60;
   foodThresholdStatusType: StatusType = 'health';
-  foodThreshold = 0.5;
+  foodThreshold = 50;
 
   public rightHandTechniqueName = 'Right-Handed Weapon';
   public leftHandTechniqueName = 'Left-Handed Weapon';
@@ -292,6 +294,7 @@ export class BattleService {
       enemies: this.enemies,
       currentEnemy: this.currentEnemy,
       kills: this.kills,
+      killsByLocation: this.killsByLocation,
       godSlayerKills: this.godSlayerKills,
       totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
@@ -318,6 +321,7 @@ export class BattleService {
   setProperties(properties: BattleProperties) {
     this.enemies = properties.enemies;
     this.kills = properties.kills;
+    this.killsByLocation = properties.killsByLocation;
     this.godSlayerKills = properties.godSlayerKills;
     this.totalKills = properties.totalKills;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
@@ -360,7 +364,7 @@ export class BattleService {
           const effect: StatusType = itemStack.item.effect as StatusType;
           if (
             this.characterService.status[effect].value <
-            this.characterService.status[effect].max * this.potionThreshold
+            this.characterService.status[effect].max * (this.potionThreshold / 100)
           ) {
             this.characterService.status[effect].value += itemStack.item.increaseAmount || 1;
             itemStack.quantity--;
@@ -370,7 +374,7 @@ export class BattleService {
         } else if (itemStack.item.type === 'food') {
           if (
             this.characterService.status[this.foodThresholdStatusType].value <
-            this.characterService.status[this.foodThresholdStatusType].max * this.foodThreshold
+            this.characterService.status[this.foodThresholdStatusType].max * (this.foodThreshold / 100)
           ) {
             this.inventoryService.eatFood(itemStack.item, 1);
             itemStack.quantity--;
@@ -1073,6 +1077,8 @@ export class BattleService {
     }
     this.kills++;
     this.totalKills++;
+    this.killsByLocation[this.locationService!.troubleTarget] =
+      (this.killsByLocation[this.locationService!.troubleTarget] || 0) + 1;
     this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.currentEnemy.name);
     if (this.currentEnemy.name === 'Death itself') {
       this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
@@ -1161,14 +1167,7 @@ export class BattleService {
 
     this.troubleCounter++;
 
-    let targetLocation = this.locationService.troubleTarget;
-    if (!targetLocation) {
-      const locationIndex = (this.troubleCounter % this.locationService.unlockedLocations.length) - 1;
-      targetLocation = this.locationService.unlockedLocations[locationIndex + 1];
-    }
-    if (!targetLocation) {
-      return;
-    }
+    const targetLocation = this.locationService.troubleTarget;
     /*
     if (this.godSlayersEnabled) {
       const index = this.godSlayerKills % this.monsterTypes.length;
@@ -1192,7 +1191,7 @@ export class BattleService {
     const monsterType = possibleMonsters[this.troubleCounter % possibleMonsters.length];
 
     const killsToNextQualityRank = ((monsterType.basePower + '').length + 3) * 5;
-    const modifier = (this.kills + 1) / killsToNextQualityRank;
+    const modifier = ((this.killsByLocation[targetLocation] || 0) + 1) / killsToNextQualityRank;
 
     let qualityIndex = Math.floor(modifier);
     if (qualityIndex >= this.monsterQualities.length) {
