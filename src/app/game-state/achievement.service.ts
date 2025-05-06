@@ -1040,6 +1040,21 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Animal Friend',
+      description: 'You have found your first pet and unlocked the Pets panel.',
+      hint: 'Not all followers are humans.',
+      check: () => {
+        return this.followerService.pets.length > 0;
+      },
+      effect: () => {
+        if (!this.gameStateService) {
+          this.gameStateService = this.injector.get(GameStateService);
+        }
+        this.gameStateService.unlockPanel('petsPanel');
+      },
+      unlocked: false,
+    },
+    {
       name: 'Preserved Ingredients',
       description: "Your family has learned to keep their ancestors' workstations exactly as they left them.",
       hint: "A good family knows not to touch Grandpa's herb stash.",

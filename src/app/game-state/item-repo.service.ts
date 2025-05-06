@@ -1763,7 +1763,8 @@ baguaMap = [
       name: 'Cow Crown',
       type: 'hellcrown',
       value: Infinity,
-      description: 'Now you are the Cow Emperor. Using this will let you understand animals.',
+      description:
+        'Now you are the Cow Emperor. Using this will let you understand animals, making your pets much more effective.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
@@ -1781,11 +1782,7 @@ baguaMap = [
           LogTopic.STORY,
           "The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before."
         );
-        this.followerService.unlockElementalPets();
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService.unlockPanel('petsPanel');
+        this.followerService.petsBoosted = true;
       },
     },
     hellCrownCrushingBoulder: {

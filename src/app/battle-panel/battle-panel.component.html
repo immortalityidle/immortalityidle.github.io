@@ -14,6 +14,13 @@
         <div class="headerDiv">
           <span>Your Techniques</span>
         </div>
+        @if (battleService.activeFormation !== ''){
+          <div>
+            <span>
+              {{battleService.activeFormation | titlecase}} formation active for {{battleService.formationDuration}} ticks
+            </span>
+          </div>
+        }
         @for (technique of battleService.techniques; track technique.name + technique.ticks) {
           @if (technique.unlocked){
             <div class="techniqueLine">

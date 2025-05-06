@@ -24,6 +24,7 @@ import { HomeService } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
 import { BigNumberPipe } from '../pipes';
+import { BattleService } from './battle.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -153,6 +154,7 @@ export interface InventoryProperties {
 export class InventoryService {
   hellService?: HellService;
   homeService?: HomeService;
+  battleService?: BattleService;
   locationService?: LocationService;
   bigNumberPipe: BigNumberPipe;
   itemStacks: ItemStack[] = [];
@@ -232,6 +234,7 @@ export class InventoryService {
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.homeService = this.injector.get(HomeService)));
+    setTimeout(() => (this.battleService = this.injector.get(BattleService)));
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.autoSellUnlocked = false;
@@ -1053,6 +1056,36 @@ export class InventoryService {
     };
   }
 
+  generateFormationKit(value: number): Item {
+    const formationTypes = ['power', 'defense', 'survival', 'greed', 'repulsion', 'stealth'];
+    const formationDescriptions = [
+      'When used, this formation increases your attack power.',
+      'When used, this formation increases your defense when attacked.',
+      'When used, this formation allows you to survive a single killing blow.',
+      'When used, this formation increases the amount of loot you get from killing your enemies.',
+      'When used, this formation prevents random monsters from attacking you.<br>If you go looking, you can still find trouble.',
+      'When used, this formation allows you to strike your enemy once before they prepare to strike you.',
+    ];
+    const index = Math.floor(Math.random() * formationTypes.length);
+    const formationType = formationTypes[index];
+    const descriptionSuffix = formationDescriptions[index];
+    return {
+      id: formationType + 'FormationKit',
+      imageFile: formationType + 'FormationKit', // TODO: make icons for these
+      name: formationType + ' formation kit',
+      type: 'formationKit',
+      subtype: formationType,
+      effect: formationType,
+      value: value,
+      useConsumes: true,
+      pouchable: true,
+      useDescription: 'Activate this formation',
+      useLabel: 'Use',
+      description:
+        'A kit containing formation flags and other essentials for creating a formation.<br>' + descriptionSuffix,
+    };
+  }
+
   reset(): void {
     this.selectedItem = this.getEmptyItemStack();
     this.lifetimeUsedItems = 0;
@@ -1295,6 +1328,12 @@ export class InventoryService {
           const restoreAmount = Math.floor(totalPower / existingStack.quantity);
           existingStack.item!.increaseAmount = restoreAmount;
           existingStack.item!.name = this.titleCasePipe.transform(item.effect) + ' Potion + ' + restoreAmount;
+        } else if (item.type === 'formationKit') {
+          const totalValue =
+            (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
+          existingStack.quantity += quantity;
+          const newValue = Math.floor(totalValue / existingStack.quantity);
+          existingStack.item!.value = newValue;
         } else {
           existingStack.quantity += quantity;
         }
@@ -1593,6 +1632,8 @@ export class InventoryService {
       this.usePotion(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
     } else if (item.type === 'pill') {
       this.usePill(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
+    } else if (item.type === 'formationKit') {
+      quantity = this.useFormationKit(item);
     } else if (item.use) {
       item.use(quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
       if (item.type === 'food') {
@@ -1898,6 +1939,23 @@ export class InventoryService {
       this.characterService.attributes[attributeKey].value += (pill.increaseAmount || 1) * quantity;
     }
     this.characterService.checkOverage();
+  }
+
+  useFormationKit(item: Item): number {
+    if (item.type !== 'formationKit' || !item.effect) {
+      // wrong item, bail out
+      return 0;
+    }
+    if (this.battleService!.formationCooldown > 0) {
+      // on cooldown, bail out
+      return 0;
+    }
+    this.battleService!.activeFormation = item.effect;
+    this.battleService!.formationDuration = item.value;
+    this.battleService!.formationCooldown = item.value * 2;
+    this.battleService!.formationPower = item.value;
+
+    return 1;
   }
 
   /** Returns the number of open inventory slots. */

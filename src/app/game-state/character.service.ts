@@ -55,7 +55,8 @@ export type AttributeType =
   | 'alchemy'
   | 'woodwork'
   | 'leatherwork'
-  | 'formationMastery';
+  | 'formationMastery'
+  | 'cooking';
 
 export type AttributeObject = {
   description: string;
@@ -366,6 +367,14 @@ export class CharacterService {
       aptitudeMult: 1,
       icon: 'flag',
     },
+    cooking: {
+      description: 'Mastery of the wok and other kitchen essentials.',
+      value: 0,
+      lifeStartValue: 0,
+      aptitude: 1,
+      aptitudeMult: 1,
+      icon: 'soup_kitchen',
+    },
   };
   status: CharacterStatus = {
     health: {
@@ -547,6 +556,7 @@ export class CharacterService {
       woodwork: 0,
       leatherwork: 0,
       formationMastery: 0,
+      cooking: 0,
     };
   }
 

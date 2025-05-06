@@ -134,24 +134,25 @@ export class ActivityService {
       this.ConquerTheNation,
       this.MoveStars,
       this.Resting,
-      this.OddJobs,
       this.Begging,
       this.Cooking,
-      this.Burning,
-      this.Taunting,
+      this.Blacksmithing,
+      this.Woodworking,
+      this.Leatherworking,
+      this.Alchemy,
+      this.FormationCreation,
       this.Plowing,
       this.Clearing,
       this.Farming,
       this.Mining,
       this.Smelting,
-      this.Blacksmithing,
       this.ChopWood,
-      this.Woodworking,
       this.Hunting,
-      this.Leatherworking,
       this.Fishing,
       this.GatherHerbs,
-      this.Alchemy,
+      this.Taunting,
+      this.Burning,
+      this.OddJobs,
       this.BodyCultivation,
       this.MindCultivation,
       this.BalanceChi,
@@ -1909,6 +1910,7 @@ export class ActivityService {
       () => {
         this.characterService.increaseAttribute('charisma', 0.05);
         this.characterService.increaseAttribute('intelligence', 0.1);
+        this.characterService.increaseAttribute('cooking', 0.1);
         this.characterService.status.stamina.value -= 10;
         let money =
           5 +
@@ -1927,6 +1929,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('charisma', 0.5);
         this.characterService.increaseAttribute('intelligence', 1);
         this.characterService.increaseAttribute('spirituality', 0.001);
+        this.characterService.increaseAttribute('cooking', 0.1);
         this.characterService.status.stamina.value -= 10;
       },
     ],
@@ -1945,8 +1948,10 @@ export class ActivityService {
       },
       {
         charisma: 10000,
+        speed: 10000,
         intelligence: 20000,
         spirituality: 10,
+        cooking: 1000,
       },
     ],
     unlocked: false,
@@ -2597,6 +2602,111 @@ export class ActivityService {
         toughness: 10000,
         animalHandling: 100,
         leatherwork: 1000000,
+      },
+    ],
+    unlocked: false,
+    skipApprenticeshipLevel: 2,
+  };
+
+  FormationCreation: Activity = {
+    level: 0,
+    name: [
+      'Apprentice Formation Creation',
+      'Journeyman Formation Creation',
+      'Formation Creation',
+      'Master Formation Creation',
+    ],
+    location: LocationType.SmallTown,
+    imageBaseName: 'formationCreation',
+    activityType: ActivityType.FormationCreation,
+    description: [
+      'Work under a formation master to learn the basics of creating formation flags, talismans, arrays, and other essential parts of kits that can help you in battle.<br><br>This requires expertise in many other professions before you can even begin to practice it.',
+      'Practice the essentials in creating formation flags, talismans, arrays, and other parts of kits that can help you in battle.<br><br>This requires expertise in many other professions.',
+      'Work on your own in creating formation flags, talismans, arrays, and other essential parts of kits that can help you in battle.<br><br>This requires expertise in many other professions.',
+      'Masterfully create formation flags, talismans, arrays, and other essential parts of kits that can help you in battle.',
+    ],
+    yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
+    consequenceDescription: [
+      'Uses 100 Stamina. If you have a formation workstation, you can make some weak formations kits.',
+      'Uses 200 Stamina. If you have a formation workstation, you can make some simple formations kits.',
+      'Uses 500 Stamina. If you have a formation workstation, you can make some formations kits.',
+      'Uses 1000 Stamina. If you have a formation workstation, you can make some excellent formations kits.',
+    ],
+    consequence: [
+      () => {
+        this.checkApprenticeship(ActivityType.FormationCreation);
+        this.characterService.increaseAttribute('formationMastery', 0.1);
+        this.characterService.status.stamina.value -= 100;
+        this.characterService.yin++;
+        this.characterService.yang++;
+      },
+      () => {
+        this.checkApprenticeship(ActivityType.FormationCreation);
+        this.characterService.increaseAttribute('formationMastery', 0.1);
+        this.characterService.status.stamina.value -= 200;
+        this.characterService.yin++;
+        this.characterService.yang++;
+      },
+      () => {
+        this.checkApprenticeship(ActivityType.FormationCreation);
+        this.characterService.increaseAttribute('formationMastery', 0.1);
+        this.characterService.status.stamina.value -= 500;
+        this.characterService.yin++;
+        this.characterService.yang++;
+      },
+      () => {
+        this.checkApprenticeship(ActivityType.FormationCreation);
+        this.characterService.increaseAttribute('formationMastery', 0.1);
+        this.characterService.status.stamina.value -= 1000;
+        this.characterService.yin++;
+        this.characterService.yang++;
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 100,
+      },
+      {
+        stamina: 200,
+      },
+      {
+        stamina: 500,
+      },
+      {
+        stamina: 1000,
+      },
+    ],
+    requirements: [
+      {
+        smithing: 100,
+        cooking: 100,
+        alchemy: 100,
+        woodwork: 100,
+        leatherwork: 100,
+      },
+      {
+        smithing: 10000,
+        cooking: 10000,
+        alchemy: 10000,
+        woodwork: 10000,
+        leatherwork: 10000,
+        formationMastery: 1000,
+      },
+      {
+        smithing: 1000000,
+        cooking: 1000000,
+        alchemy: 1000000,
+        woodwork: 1000000,
+        leatherwork: 1000000,
+        formationMastery: 10000,
+      },
+      {
+        smithing: 100000000,
+        cooking: 100000000,
+        alchemy: 100000000,
+        woodwork: 100000000,
+        leatherwork: 100000000,
+        formationMastery: 100000,
       },
     ],
     unlocked: false,
@@ -3454,7 +3564,7 @@ export class ActivityService {
           return;
         }
         this.characterService.increaseAttribute('animalHandling', 1);
-        if (this.followerService.followersUnlocked && this.followerService.petsEnabled) {
+        if (this.followerService.followersUnlocked) {
           this.petRecruitingCounter++;
           if (this.petRecruitingCounter > 100) {
             this.petRecruitingCounter = 0;

@@ -61,6 +61,10 @@ export interface BattleProperties {
   foodThresholdStatusType: StatusType;
   foodThreshold: number;
   killsByLocation: { [key: string]: number };
+  activeFormation: string;
+  formationDuration: number;
+  formationCooldown: number;
+  formationPower: number;
 }
 
 export interface Technique {
@@ -121,6 +125,10 @@ export class BattleService {
   foodCooldown = 60;
   foodThresholdStatusType: StatusType = 'health';
   foodThreshold = 50;
+  activeFormation = '';
+  formationDuration = 0;
+  formationCooldown = 0;
+  formationPower = 0;
 
   public rightHandTechniqueName = 'Right-Handed Weapon';
   public leftHandTechniqueName = 'Left-Handed Weapon';
@@ -224,8 +232,11 @@ export class BattleService {
       }
       if (this.yearlyMonsterDay >= 365) {
         this.yearlyMonsterDay = 0;
-        this.trouble();
+        if (this.activeFormation !== 'repulsion') {
+          this.trouble();
+        }
       }
+      this.ageFormation();
     });
 
     mainLoopService.battleTickSubject.subscribe(() => {
@@ -246,10 +257,13 @@ export class BattleService {
         this.currentEnemy = this.enemies[0];
       }
       this.handleYourTechniques();
-      this.handleEnemyTechniques();
+      if (this.activeFormation === 'stealth') {
+        this.handleEnemyTechniques();
+      }
       if (this.characterService.checkForDeath()) {
         this.clearEnemies();
       }
+      this.ageFormation();
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -275,6 +289,19 @@ export class BattleService {
     mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+  }
+
+  ageFormation() {
+    if (this.formationDuration > 0) {
+      this.formationDuration--;
+      if (this.formationDuration <= 0) {
+        this.activeFormation = '';
+        this.formationPower = 0;
+      }
+    }
+    if (this.formationCooldown > 0) {
+      this.formationCooldown--;
+    }
   }
 
   private reset() {
@@ -315,6 +342,10 @@ export class BattleService {
       foodCooldown: this.foodCooldown,
       foodThresholdStatusType: this.foodThresholdStatusType,
       foodThreshold: this.foodThreshold,
+      activeFormation: this.activeFormation,
+      formationDuration: this.formationDuration,
+      formationCooldown: this.formationCooldown,
+      formationPower: this.formationPower,
     };
   }
 
@@ -342,6 +373,10 @@ export class BattleService {
     this.foodCooldown = properties.foodCooldown;
     this.foodThresholdStatusType = properties.foodThresholdStatusType;
     this.foodThreshold = properties.foodThreshold;
+    this.activeFormation = properties.activeFormation;
+    this.formationDuration = properties.formationDuration;
+    this.formationCooldown = properties.formationCooldown;
+    this.formationPower = properties.formationPower;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -709,7 +744,13 @@ export class BattleService {
       }
     }
 
-    const defense = this.characterService.defense;
+    let defense = this.characterService.defense;
+
+    if (this.activeFormation === 'defense') {
+      const formationPowerString = this.formationPower + '';
+      defense *= Math.ceil(formationPowerString.length / 2);
+    }
+
     // TODO: tune this
     // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
     if (defense >= 1) {
@@ -731,6 +772,12 @@ export class BattleService {
     }
     this.characterService.status.health.value -= damage;
     this.attackEffect(technique);
+    if (this.activeFormation === 'survival' && this.characterService.status.health.value <= 0) {
+      this.activeFormation = '';
+      this.formationDuration = 0;
+      this.formationPower = 0;
+      this.characterService.status.health.value = 1;
+    }
   }
 
   private handleYourTechniques() {
@@ -758,6 +805,10 @@ export class BattleService {
             technique.baseDamage++;
           }
           this.youAttack(technique);
+          if (this.activeFormation === 'stealth') {
+            this.activeFormation = '';
+            this.formationDuration = 0;
+          }
           if (this.enemies.length === 0) {
             // killed the last enemey in this encounter, reset all technique counters
             for (const cleartechnique of this.techniques) {
@@ -1000,6 +1051,11 @@ export class BattleService {
         }
       }
 
+      if (this.activeFormation === 'power') {
+        const formationPowerString = this.formationPower + '';
+        damage *= Math.ceil(formationPowerString.length / 2);
+      }
+
       if (defense >= 1) {
         damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
       }
@@ -1085,11 +1141,16 @@ export class BattleService {
     }
     for (const item of this.currentEnemy.loot) {
       const lootItem = this.itemRepoService.getItemById(item.id);
+      let quantity = 1;
+      if (this.activeFormation === 'greed') {
+        const formationPowerString = this.formationPower + '';
+        quantity += Math.ceil(formationPowerString.length / 3);
+      }
       if (lootItem) {
-        this.inventoryService.addItem(lootItem);
+        this.inventoryService.addItem(lootItem, quantity);
       } else {
         // the item was generated, not part of the repo, so just add it instead of using the lookup
-        this.inventoryService.addItem(item);
+        this.inventoryService.addItem(item, quantity);
       }
     }
     this.defeatEffect(this.currentEnemy);

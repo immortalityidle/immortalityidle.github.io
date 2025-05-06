@@ -112,6 +112,8 @@ export class HomeService {
   totalCrafts = 0;
   alchemyCounter = 0;
   forgeChainsCounter = 0;
+  //TODO: put the counters on the workstations, and display progress
+  //TODO: counter for more things, espeicially formations
 
   homesList: Home[] = [
     {
@@ -753,6 +755,48 @@ export class HomeService {
       inputs: [],
       consequence: (workstation: Workstation, activityType: ActivityType) => {
         this.cookFood(workstation, activityType);
+      },
+    },
+    {
+      id: 'Basic Formation Workstation',
+      triggerActivities: [ActivityType.FormationCreation],
+      power: 1,
+      setupCost: 1000000,
+      maintenanceCost: 1000,
+      description:
+        'A simple workspace where you can assemple flags, talismans, arrays, and other items and assemble them into kits that can support you in battle.',
+      maxInputs: 3,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createFormationKit(workstation);
+      },
+    },
+    {
+      id: 'Advanced Formation Workstation',
+      triggerActivities: [ActivityType.FormationCreation],
+      power: 2,
+      setupCost: 100000000,
+      maintenanceCost: 10000,
+      description:
+        'Am advanced workspace where you can assemple flags, talismans, arrays, and other items and assemble them into kits that can support you in battle.',
+      maxInputs: 4,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createFormationKit(workstation);
+      },
+    },
+    {
+      id: 'Masterwork Formation Workstation',
+      triggerActivities: [ActivityType.FormationCreation],
+      power: 3,
+      setupCost: 1000000000,
+      maintenanceCost: 100000,
+      description:
+        'A workspace where you can assemple the most powerful flags, talismans, arrays, and other items and assemble them into kits that can support you in battle.',
+      maxInputs: 5,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.createFormationKit(workstation);
       },
     },
   ];
@@ -1645,6 +1689,42 @@ export class HomeService {
       this.inventoryService.generatePill(totalValue, attribute);
     } else {
       this.inventoryService.generatePotion(totalValue);
+    }
+  }
+
+  createFormationKit(workstation: Workstation) {
+    const woodStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'wood' && itemStack.quantity >= 10);
+    const hideStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'hide' && itemStack.quantity >= 10);
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem' && itemStack.quantity >= 10);
+
+    if (!woodStack || !hideStack || !gemStack) {
+      return;
+    }
+    const metalStack = workstation.inputs.find(
+      itemStack => itemStack.item?.type === 'metal' && itemStack.quantity >= 10
+    );
+    const alchemyStack = workstation.inputs.find(
+      itemStack =>
+        (itemStack.item?.type === 'potion' || itemStack.item?.type === 'pill' || itemStack.item?.type === 'herb') &&
+        itemStack.quantity >= 10
+    );
+    let formationPower =
+      (woodStack.item?.value || 0) +
+      (hideStack.item?.value || 0) +
+      (gemStack.item?.value || 0) +
+      (metalStack?.item?.value || 0) +
+      (alchemyStack?.item?.value || 0);
+    formationPower *= workstation.power;
+    formationPower = Math.floor(formationPower);
+    this.inventoryService.addItem(this.inventoryService.generateFormationKit(formationPower));
+    woodStack.quantity -= 10;
+    hideStack.quantity -= 10;
+    gemStack.quantity -= 10;
+    if (metalStack) {
+      metalStack.quantity -= 10;
+    }
+    if (alchemyStack) {
+      alchemyStack.quantity -= 10;
     }
   }
 

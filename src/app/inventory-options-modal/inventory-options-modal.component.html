@@ -162,7 +162,7 @@
         <span>
           <input type="checkbox" (change)="autoEatAllChanged($event)"
             id="autoEatAll"  [checked]="inventoryService.autoEatAll"/>
-          <label for="autoEatAll">Just eat it all!</label>
+          <label for="autoEatAll">Eat all you can! (Your stomach can handle up to {{inventoryService.maxFoodPerDay}} meals per day)</label>
         </span>
       </div>
       <div class="optionField">

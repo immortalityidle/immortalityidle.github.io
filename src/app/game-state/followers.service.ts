@@ -43,7 +43,7 @@ export interface FollowersProperties {
   stashedPetMaxes: { [key: string]: number };
   unlockedHiddenJobs: string[];
   autoReplaceUnlocked: boolean;
-  petsEnabled: boolean;
+  petsBoosted: boolean;
   onlyWantedFollowers: boolean;
   pets: Follower[];
 }
@@ -94,7 +94,7 @@ export class FollowersService {
   hellService?: HellService;
   unlockedHiddenJobs: string[] = [];
   autoReplaceUnlocked = false;
-  petsEnabled = false;
+  petsBoosted = false;
   onlyWantedFollowers = false;
 
   jobs: jobsType = {
@@ -398,46 +398,61 @@ export class FollowersService {
     },
     snake: {
       work: daysElapsed => {
-        this.characterService.increaseAttribute('fireLore', this.jobs['snake'].totalPower * daysElapsed);
+        let power = this.jobs['snake'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 0.01;
+        }
+        this.characterService.increaseAttribute('fireLore', power * daysElapsed);
       },
       description: 'A fiery serpent. Snakes understand fire and can teach you the hidden secrets of the flames.',
-      hidden: true,
       pet: true,
       totalPower: 0,
     },
     tiger: {
       work: daysElapsed => {
-        this.characterService.increaseAttribute('woodLore', this.jobs['tiger'].totalPower * daysElapsed);
+        let power = this.jobs['tiger'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 0.01;
+        }
+        this.characterService.increaseAttribute('woodLore', power * daysElapsed);
       },
       description: 'Tigers know the secrets of the jungle and can teach you the deepest mysteries of Wood Lore.',
-      hidden: true,
       pet: true,
       totalPower: 0,
     },
     ox: {
       work: daysElapsed => {
-        this.characterService.increaseAttribute('earthLore', this.jobs['ox'].totalPower * daysElapsed);
+        let power = this.jobs['ox'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 0.01;
+        }
+        this.characterService.increaseAttribute('earthLore', power * daysElapsed);
       },
       description: 'Oxen connect deeply to the earth and can teach you their secret understanding.',
-      hidden: true,
       pet: true,
       totalPower: 0,
     },
     monkey: {
       work: daysElapsed => {
-        this.characterService.increaseAttribute('metalLore', this.jobs['monkey'].totalPower * daysElapsed);
+        let power = this.jobs['monkey'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 0.01;
+        }
+        this.characterService.increaseAttribute('metalLore', power * daysElapsed);
       },
       description: 'Monkeys know more about metal than the greatest of human blacksmiths.',
-      hidden: true,
       pet: true,
       totalPower: 0,
     },
     pig: {
       work: daysElapsed => {
-        this.characterService.increaseAttribute('waterLore', this.jobs['pig'].totalPower * daysElapsed);
+        let power = this.jobs['pig'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 0.01;
+        }
+        this.characterService.increaseAttribute('waterLore', power * daysElapsed);
       },
       description: 'Pigs understand the secrets of water and can teach them to you.',
-      hidden: true,
       pet: true,
       totalPower: 0,
     },
@@ -644,7 +659,7 @@ export class FollowersService {
       highestLevel: this.highestLevel,
       unlockedHiddenJobs: this.unlockedHiddenJobs,
       autoReplaceUnlocked: this.autoReplaceUnlocked,
-      petsEnabled: this.petsEnabled,
+      petsBoosted: this.petsBoosted,
       onlyWantedFollowers: this.onlyWantedFollowers,
     };
   }
@@ -668,7 +683,7 @@ export class FollowersService {
     this.highestLevel = properties.highestLevel;
     this.unlockedHiddenJobs = properties.unlockedHiddenJobs;
     this.autoReplaceUnlocked = properties.autoReplaceUnlocked;
-    this.petsEnabled = properties.petsEnabled;
+    this.petsBoosted = properties.petsBoosted;
     this.onlyWantedFollowers = properties.onlyWantedFollowers;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
@@ -936,14 +951,5 @@ export class FollowersService {
       }
     }
     this.updateFollowerTotalPower();
-  }
-
-  unlockElementalPets() {
-    this.petsEnabled = true;
-    this.unlockJob('snake');
-    this.unlockJob('tiger');
-    this.unlockJob('ox');
-    this.unlockJob('monkey');
-    this.unlockJob('pig');
   }
 }

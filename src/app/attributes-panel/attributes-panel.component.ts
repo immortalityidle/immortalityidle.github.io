@@ -49,6 +49,7 @@ export class AttributesPanelComponent {
     woodwork: [],
     leatherwork: [],
     formationMastery: [],
+    cooking: [],
   };
 
   private popupCounter = 0;
@@ -89,10 +90,12 @@ export class AttributesPanelComponent {
       },
       skills: {
         performance: this.characterService.attributes.performance,
+        cooking: this.characterService.attributes.cooking,
         smithing: this.characterService.attributes.smithing,
         woodwork: this.characterService.attributes.woodwork,
         leatherwork: this.characterService.attributes.leatherwork,
         alchemy: this.characterService.attributes.alchemy,
+        formationMastery: this.characterService.attributes.formationMastery,
         animalHandling: this.characterService.attributes.animalHandling,
         combatMastery: this.characterService.attributes.combatMastery,
         magicMastery: this.characterService.attributes.magicMastery,

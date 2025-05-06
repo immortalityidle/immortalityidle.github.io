@@ -652,7 +652,7 @@ export class GameStateService {
   private getActivitiesProperties(props: ActivityProperties | undefined): ActivityProperties {
     return {
       autoRestart: props?.autoRestart || false,
-      pauseOnDeath: props?.pauseOnDeath || true,
+      pauseOnDeath: props?.pauseOnDeath ?? true,
       pauseBeforeDeath: props?.pauseBeforeDeath || false,
       activityLoop: props?.activityLoop || [],
       unlockedActivities: props?.unlockedActivities || [],
@@ -748,6 +748,10 @@ export class GameStateService {
       foodCooldown: props?.foodCooldown || 60,
       foodThresholdStatusType: props?.foodThresholdStatusType || 'health',
       foodThreshold: props?.foodThreshold || 50,
+      activeFormation: props?.activeFormation || '',
+      formationCooldown: props?.formationCooldown || 0,
+      formationDuration: props?.formationDuration || 0,
+      formationPower: props?.formationPower || 0,
     };
   }
 
@@ -770,7 +774,7 @@ export class GameStateService {
       stashedPetMaxes: props?.stashedPetMaxes || {},
       unlockedHiddenJobs: props?.unlockedHiddenJobs || [],
       autoReplaceUnlocked: props?.autoReplaceUnlocked || false,
-      petsEnabled: props?.petsEnabled || false,
+      petsBoosted: props?.petsBoosted || false,
       onlyWantedFollowers: props?.onlyWantedFollowers || false,
       pets: props?.pets || [],
     };
@@ -1001,6 +1005,14 @@ export class GameStateService {
           aptitude: props?.attributes?.formationMastery?.aptitude || 1,
           aptitudeMult: props?.attributes?.formationMastery?.aptitudeMult || 1,
           icon: 'flag',
+        },
+        cooking: {
+          description: 'Mastery of the wok and other kitchen essentials.',
+          value: props?.attributes?.cooking?.value || 0,
+          lifeStartValue: props?.attributes?.cooking?.lifeStartValue || 0,
+          aptitude: props?.attributes?.cooking?.aptitude || 1,
+          aptitudeMult: props?.attributes?.cooking?.aptitudeMult || 1,
+          icon: 'soup_kitchen',
         },
       },
       status: {
