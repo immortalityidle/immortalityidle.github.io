@@ -452,7 +452,7 @@ export class HomeService {
       },
       maxFurniture: 9,
       maxWorkstations: 8,
-      maxWorkstationPower: 2,
+      maxWorkstationPower: 3,
       daysToBuild: 365e8,
     },
     {
@@ -474,7 +474,7 @@ export class HomeService {
       },
       maxFurniture: 9,
       maxWorkstations: 9,
-      maxWorkstationPower: 2,
+      maxWorkstationPower: 3,
       daysToBuild: 365e9,
     },
   ];

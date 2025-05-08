@@ -215,6 +215,7 @@ export class BattleService {
     this.yearlyMonsterDay = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
+      this.ageFormation();
       this.yearlyMonsterDay++;
       if (this.homeService.homeValue === HomeType.SquatterTent && this.yearlyMonsterDay > 100) {
         this.yearlyMonsterDay = 0;
@@ -232,14 +233,27 @@ export class BattleService {
       }
       if (this.yearlyMonsterDay >= 365) {
         this.yearlyMonsterDay = 0;
+        if (this.activeFormation === '') {
+          // let repulsion formations trigger before a trouble fight starts
+          const repulsionFormationStack = this.characterService.itemPouches.find(
+            itemStack =>
+              itemStack.item?.type === 'formationKit' &&
+              itemStack.item?.effect === 'repulsion' &&
+              itemStack.quantity > 0
+          );
+          if (repulsionFormationStack && repulsionFormationStack.item) {
+            repulsionFormationStack.quantity--;
+            this.inventoryService.useItem(repulsionFormationStack.item);
+          }
+        }
         if (this.activeFormation !== 'repulsion') {
           this.trouble();
         }
       }
-      this.ageFormation();
     });
 
     mainLoopService.battleTickSubject.subscribe(() => {
+      this.ageFormation();
       if (this.characterService.dead) {
         return;
       }
@@ -257,13 +271,12 @@ export class BattleService {
         this.currentEnemy = this.enemies[0];
       }
       this.handleYourTechniques();
-      if (this.activeFormation === 'stealth') {
+      if (this.activeFormation !== 'stealth') {
         this.handleEnemyTechniques();
       }
       if (this.characterService.checkForDeath()) {
         this.clearEnemies();
       }
-      this.ageFormation();
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -294,13 +307,14 @@ export class BattleService {
   ageFormation() {
     if (this.formationDuration > 0) {
       this.formationDuration--;
-      if (this.formationDuration <= 0) {
-        this.activeFormation = '';
-        this.formationPower = 0;
-      }
     }
     if (this.formationCooldown > 0) {
       this.formationCooldown--;
+    }
+    if (this.formationDuration <= 0) {
+      this.activeFormation = '';
+      this.formationPower = 0;
+      this.formationDuration = 0;
     }
   }
 
@@ -394,7 +408,10 @@ export class BattleService {
       if (!itemStack || !itemStack.item || itemStack.quantity === 0 || !itemStack.item?.pouchable) {
         continue;
       }
-      if ((itemStack.item.cooldown || 0) <= 0) {
+      if (this.activeFormation === '' && itemStack.item.type === 'formationKit' && itemStack.quantity > 0) {
+        itemStack.quantity--;
+        this.inventoryService.useItem(itemStack.item);
+      } else if ((itemStack.item.cooldown || 0) <= 0) {
         if (itemStack.item.type === 'potion') {
           const effect: StatusType = itemStack.item.effect as StatusType;
           if (
