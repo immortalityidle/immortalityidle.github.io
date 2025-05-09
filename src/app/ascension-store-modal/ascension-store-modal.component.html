@@ -20,7 +20,7 @@
           <br>
           @if (storeService.soulCoreRank < 9) {
             <span>
-              Next rank requires {{characterService.condenseSoulCoreCost | bigNumber}} spirituality and a grade {{storeService.soulCoreRank + 12}} spirit gem.
+              Next rank requires {{characterService.condenseSoulCoreCost | bigNumber}} spirituality and a grade {{storeService.soulCoreRank + 12}} spirit gem{{storeService.soulCoreRank > 2 ? ' of each element' : ''}}.
             </span>
           }
           @else {
@@ -41,7 +41,7 @@
           <br>
             @if (storeService.meridianRank < 9) {
             <span>
-              Next rank requires {{characterService.reinforceMeridiansCost | bigNumber}} spirituality and a grade {{storeService.meridianRank + 16}} spirit gem.
+              Next rank requires {{characterService.reinforceMeridiansCost | bigNumber}} spirituality and a grade {{storeService.meridianRank + 16}} spirit gem{{storeService.meridianRank > 2 ? ' of each element' : ''}}.
             </span>
           }
           @else {

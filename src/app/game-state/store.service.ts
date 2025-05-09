@@ -157,8 +157,8 @@ export class StoreService {
       this.logService.injury(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
-    if (this.inventoryService.checkFor('gem') < (this.soulCoreRank + 12) * 10) {
-      this.logService.injury(LogTopic.EVENT, "You don't have the gem required to ascend.");
+    if (this.gemRequirementsMet(this.soulCoreRank + 12, this.soulCoreRank > 2)) {
+      this.logService.injury(LogTopic.EVENT, "You don't have the gems required to ascend.");
       return;
     }
     this.characterService.condenseSoulCore();
@@ -174,8 +174,8 @@ export class StoreService {
       this.logService.injury(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
-    if (this.inventoryService.checkFor('gem') < (this.meridianRank + 16) * 10) {
-      this.logService.injury(LogTopic.EVENT, "You don't have the gem required to ascend.");
+    if (this.gemRequirementsMet(this.meridianRank + 16, this.soulCoreRank > 2)) {
+      this.logService.injury(LogTopic.EVENT, "You don't have the gems required to ascend.");
       return;
     }
 
@@ -198,5 +198,50 @@ export class StoreService {
     }
     this.characterService.upgradeBloodline();
     this.dialog.closeAll();
+  }
+
+  gemRequirementsMet(gemLevel: number, allElements: boolean): boolean {
+    const minimumGemValue = gemLevel * 10;
+    if (allElements) {
+      const metalGemStack = this.inventoryService.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === 'gem' &&
+          itemStack.item.subtype === 'metal' &&
+          itemStack.item.value >= minimumGemValue
+      );
+      const earthGemStack = this.inventoryService.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === 'gem' &&
+          itemStack.item.subtype === 'earth' &&
+          itemStack.item.value >= minimumGemValue
+      );
+      const waterGemStack = this.inventoryService.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === 'gem' &&
+          itemStack.item.subtype === 'water' &&
+          itemStack.item.value >= minimumGemValue
+      );
+      const fireGemStack = this.inventoryService.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === 'gem' && itemStack.item.subtype === 'fire' && itemStack.item.value >= minimumGemValue
+      );
+      const woodGemStack = this.inventoryService.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === 'gem' && itemStack.item.subtype === 'wood' && itemStack.item.value >= minimumGemValue
+      );
+      return (
+        metalGemStack !== undefined &&
+        earthGemStack !== undefined &&
+        waterGemStack !== undefined &&
+        fireGemStack !== undefined &&
+        woodGemStack !== undefined
+      );
+    } else {
+      const gemStack = this.inventoryService.itemStacks.find(
+        itemStack => itemStack.item?.type === 'gem' && itemStack.item.value >= minimumGemValue
+      );
+      return gemStack !== undefined;
+    }
+    return false;
   }
 }

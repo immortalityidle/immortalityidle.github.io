@@ -321,6 +321,7 @@ export class BattleService {
   private reset() {
     this.clearEnemies();
     this.kills = 0;
+    this.killsByLocation = {};
     this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
     for (const itemStack of this.characterService.itemPouches) {
