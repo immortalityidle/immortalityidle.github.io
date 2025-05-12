@@ -65,22 +65,29 @@ export interface Panel {
 export class GameStateService {
   lastSaved = new Date().getTime();
   isDarkMode = false;
-  isImport = false;
   isExperimental = window.location.href.includes('experimental');
   gameStartTimestamp = new Date().getTime();
   easyModeEver = false;
   saveInterval = 300; //In seconds
-  saveSlot = '';
   lockPanels = false;
   dragging = false;
   layout = signal<KtdGridLayout | undefined>(undefined);
   allPanelsUsed = false;
   creditsClicked = false;
   supportClicked = false;
+  hardResetting = false;
 
   panels: Panel[] = [
     {
       id: 'timePanel',
+      name: 'Time',
+      icon: 'timer',
+      panelHelp:
+        'Control the flow of time, stopping and starting it as you see fit. What an immense power!<br>Time will automatically pause if you have no activities on your schedule that you can perform.',
+      unlocked: false,
+    },
+    {
+      id: 'schedulePanel',
       name: 'Schedule',
       icon: 'calendar_month',
       panelHelp:
@@ -314,7 +321,16 @@ export class GameStateService {
   }
 
   addLayoutPanel(newPanelId = '', x = 0, y = 0, w = 30, h = 20) {
-    const newLayout = JSON.parse(JSON.stringify(this.layout()));
+    const currentLayout = this.layout();
+    if (currentLayout && newPanelId === '') {
+      // sanity check that the panel getting added isn't already in the layout
+      const existingPanel = currentLayout.find(panel => panel.id === newPanelId);
+      if (existingPanel) {
+        // already there, bail out
+        return;
+      }
+    }
+    const newLayout = JSON.parse(JSON.stringify(currentLayout));
     let panelId = newPanelId;
     if (newPanelId === '') {
       panelId = this.getNextUnusedPanelId(0);
@@ -413,60 +429,24 @@ export class GameStateService {
     this.savetoLocalStorage();
   }
 
-  /**
-   *
-   * @param isImport Leave undefined to load flag, boolean to change save to that boolean.
-   */
-  updateImportFlagKey(isImport?: boolean) {
-    // A new key to avoid saving backups over mains, and mains over backups.
-    if (isImport !== undefined) {
-      this.isImport = isImport;
-      const data = JSON.stringify(this.isImport);
-      window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + 'isImport', data);
-    } else {
-      const data = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + 'isImport');
-      if (data) {
-        this.isImport = JSON.parse(data);
-      }
-    }
-  }
-
   savetoLocalStorage(): void {
-    const saveCopy = window.localStorage.getItem(
-      LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot
-    );
-    if (saveCopy) {
-      window.localStorage.setItem(
-        'BACKUP' + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot,
-        saveCopy
-      );
+    if (this.hardResetting) {
+      return;
     }
-    window.localStorage.setItem(
-      LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot,
-      this.getGameExport()
-    );
+    window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(), this.getGameExport());
     this.lastSaved = new Date().getTime();
   }
 
-  loadFromLocalStorage(backup = false): boolean {
-    this.getSaveFile();
-    const backupStr = backup ? 'BACKUP' : '';
-    const gameStateSerialized = window.localStorage.getItem(
-      backupStr + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot
-    );
+  loadFromLocalStorage(): boolean {
+    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
     if (!gameStateSerialized) {
       return false;
     }
     this.importGame(gameStateSerialized);
-    if (this.isImport) {
-      this.characterService.toast('Load Successful');
-      this.updateImportFlagKey(false);
-    } else {
-      this.dialog.open(OfflineModalComponent, {
-        data: { earnedTicks: this.mainLoopService.earnedTicks },
-        autoFocus: false,
-      });
-    }
+    this.dialog.open(OfflineModalComponent, {
+      data: { earnedTicks: this.mainLoopService.earnedTicks },
+      autoFocus: false,
+    });
     return true;
   }
 
@@ -525,7 +505,6 @@ export class GameStateService {
     this.lockPanels = gameState.lockPanels ?? true;
     this.creditsClicked = gameState.creditsClicked || false;
     this.supportClicked = gameState.supportClicked || false;
-    this.updateImportFlagKey();
     this.updateAllPanelsUsed();
   }
 
@@ -661,9 +640,7 @@ export class GameStateService {
       spiritActivity: props?.spiritActivity || null,
       completedApprenticeships: props?.completedApprenticeships || [],
       currentApprenticeship: props?.currentApprenticeship || undefined,
-      savedActivityLoop: props?.savedActivityLoop || [],
-      savedActivityLoop2: props?.savedActivityLoop2 || [],
-      savedActivityLoop3: props?.savedActivityLoop3 || [],
+      savedActivityLoops: props?.savedActivityLoops || [],
       autoPauseUnlocked: props?.autoPauseUnlocked || false,
       autoRestUnlocked: props?.autoRestUnlocked || false,
       pauseOnImpossibleFail: props?.pauseOnImpossibleFail || false,
@@ -752,6 +729,7 @@ export class GameStateService {
       formationCooldown: props?.formationCooldown || 0,
       formationDuration: props?.formationDuration || 0,
       formationPower: props?.formationPower || 0,
+      battlesUnlocked: props?.battlesUnlocked || false,
     };
   }
 
@@ -888,8 +866,8 @@ export class GameStateService {
         },
         spirituality: {
           description: 'An immortal must find deep connections to the divine.',
-          value: props?.attributes.spirituality.value || 1,
-          lifeStartValue: props?.attributes.spirituality.lifeStartValue || 1,
+          value: props?.attributes.spirituality.value || 0,
+          lifeStartValue: props?.attributes.spirituality.lifeStartValue || 0,
           aptitude: props?.attributes.spirituality.aptitude || 1,
           aptitudeMult: props?.attributes.spirituality.aptitudeMult || 1,
           icon: 'self_improvement',
@@ -1144,31 +1122,18 @@ export class GameStateService {
   }
 
   hardReset(): void {
-    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor() + this.saveSlot);
-    // eslint-disable-next-line no-self-assign
-    window.location.href = window.location.href;
+    this.hardResetting = true;
+    window.localStorage.removeItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
+    const gameStateSerialized = window.localStorage.getItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor());
+    if (gameStateSerialized) {
+      console.error("Game state didn't clear");
+    }
+    setTimeout(() => (window.window.location.href = window.location.href), 500);
   }
 
   rebirth(): void {
     this.characterService.forceRebirth = true;
     this.mainLoopService.pause = false;
-  }
-
-  setSaveFile() {
-    window.localStorage.setItem(
-      'saveSlotFor' + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(),
-      this.saveSlot
-    );
-  }
-
-  getSaveFile() {
-    const saveString = window.localStorage.getItem(
-      'saveSlotFor' + LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor()
-    );
-    if (!saveString) {
-      return;
-    }
-    this.saveSlot = saveString;
   }
 
   getDeploymentFlavor() {

@@ -33,6 +33,7 @@ import { StoreService } from '../game-state/store.service';
 import { CharacterService } from '../game-state/character.service';
 import { HellStatusPanelComponent } from '../hell-status-panel/hell-status-panel.component';
 import { CommonButtonsService } from '../common-buttons.service';
+import { SchedulePanelComponent } from '../schedule-panel/schedule-panel.component';
 
 @Component({
   selector: 'app-standard-layout',
@@ -43,6 +44,7 @@ import { CommonButtonsService } from '../common-buttons.service';
     forwardRef(() => KtdGridItemComponent),
     forwardRef(() => KtdGridDragHandle),
     forwardRef(() => TimePanelComponent),
+    forwardRef(() => SchedulePanelComponent),
     forwardRef(() => AttributesPanelComponent),
     forwardRef(() => HealthPanelComponent),
     forwardRef(() => ActivityPanelComponent),

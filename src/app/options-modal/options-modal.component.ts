@@ -118,7 +118,6 @@ export class OptionsModalComponent {
           mainLoopService.importing = true;
           gameStateService.importGame(Reader.result);
           gameStateService.savetoLocalStorage();
-          gameStateService.updateImportFlagKey(true);
           // refresh the page
           setTimeout(() => {
             window.location.reload();

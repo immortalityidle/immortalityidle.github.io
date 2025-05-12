@@ -95,6 +95,8 @@
                 <div class="grid-item-content">
                   @if (panelLayout.id === 'timePanel'){
                     <app-time-panel class="panelComponent"></app-time-panel>
+                  } @else if (panelLayout.id === 'schedulePanel'){
+                    <app-schedule-panel class="panelComponent"></app-schedule-panel>
                   } @else if (panelLayout.id === 'attributesPanel'){
                     <app-attributes-panel class="panelComponent"></app-attributes-panel>
                   } @else if (panelLayout.id === 'healthPanel'){

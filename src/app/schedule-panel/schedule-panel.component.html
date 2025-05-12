@@ -1,0 +1,97 @@
+<div class="dropAccepter" id="activityDropDiv">
+  @if (battleService.enemies.length > 0 && !battleService.battleMessageDismissed) {
+    <div>
+        <span class="battleWarning">BATTLING!!!</span>
+    </div>
+    <div>
+        <span>Your schedule will resume when the battle is over.</span>
+    </div>
+    <div>
+        <span>Days will not pass, but your perception of time will decide the speed of the battle.</span>
+    </div>
+    <div>
+        <button (click)="battleService.battleMessageDismissed = true">Got it. Now let me see my schedule anyway during battles.</button>
+    </div>
+  }
+  @else {
+    <div class="overflow" cdkDropList cdkDropListSortingDisabled>
+        <div class="headerDiv">
+          @if (activityService.activityLoop.length !== 0){
+            <button class="headerButton" (click)="enableAllClick()">Enable All Activities</button>
+            <button class="headerButton" (click)="disableAllClick()">Disable All Activities</button>
+          }
+          <mat-icon  (click)="scheduleOptions()" tooltip="Schedule Options" class="iconButton floatRight" aria-label="Schedule Options" aria-hidden="false">
+            settings
+          </mat-icon>
+        </div>
+        @if (characterService.qiUnlocked) {
+        <table class="spiritActivityPanel" id="spiritActivity"
+            (drop)="spiritActivityDrop($event)">
+            <tr>
+            <td class="spiritProjectionLabel" tooltip="You can project your spiritual self to take on a second activity while your physical body continues its work.<br>Whatever activity you drop here will be completed each day as long as you have enough Qi to support the effort.<br>Requires 5 Qi per day in addition to the regular requirements of the activity.">
+                Spiritual Projection
+            </td>
+            </tr>
+            @if (activityService.spiritActivity !== null) {
+            <tr>
+                <td>{{activityService.getActivityName(activityService.spiritActivity)}}</td>
+                <td>
+                <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">
+                    <span></span>
+                </div>
+                </td>
+                <td>
+                <mat-icon tooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
+                </td>
+            </tr>
+            }
+        </table>
+        }
+
+    <table>
+        @if (activityService.activityLoop.length === 0) {
+        <tr>
+            <td>
+            Add activities from the Activities panel or drag them here
+            </td>
+        </tr>
+        }
+        @else {
+        @for (entry of activityService.activityLoop; track entry; let indexOfelement = $index) {
+            @if (activityService.getActivityName(entry.activity) !== '') {
+            <tr id="activityLoopIndex{{indexOfelement}}"
+                cdkDrag [cdkDragData]="indexOfelement"
+                (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)" cdkDragPreviewClass="currentRow">
+                <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex0{{indexOfelement}}">
+                <mat-icon (click)="showActivity($event, entry.activity)"
+                    tooltip="What is this activity?<br>Click to learn all about it!"
+                    aria-label="Help" aria-hidden="false">
+                    help
+                </mat-icon>
+                {{activityService.getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
+                </td>
+                <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex1{{indexOfelement}}">
+                <div class="progress-bar">
+                    <span
+                    [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled || entry.userDisabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
+                    </span>
+                </div>
+                </td>
+                <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex2{{indexOfelement}}">
+                <mat-icon tooltip="Spend fewer days on this.<br>Shift- or Ctrl-click to remove 10x<br>Shift-Ctrl-click to remove 100x"
+                    (click)="onMinusClick(entry, $event)" class="iconButton" aria-label="Remove Days" aria-hidden="false">remove</mat-icon>
+                <mat-icon tooltip="Spend more days on this.<br>Shift- or Ctrl-click to add 10x<br>Shift-Ctrl-click to add 100x"
+                    (click)="onPlusClick(entry, $event)" class="iconButton" aria-label="Add Days" aria-hidden="false">add</mat-icon>
+                <mat-icon tooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton" aria-label="Disable Activity" aria-hidden="false">cancel</mat-icon>
+                <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
+                </td>
+            </tr>
+            }
+        }
+        }
+      </table>
+    </div>
+  }
+</div>
+<br>
+  

@@ -65,6 +65,7 @@ export interface BattleProperties {
   formationDuration: number;
   formationCooldown: number;
   formationPower: number;
+  battlesUnlocked: boolean;
 }
 
 export interface Technique {
@@ -129,6 +130,7 @@ export class BattleService {
   formationDuration = 0;
   formationCooldown = 0;
   formationPower = 0;
+  battlesUnlocked = false;
 
   public rightHandTechniqueName = 'Right-Handed Weapon';
   public leftHandTechniqueName = 'Left-Handed Weapon';
@@ -361,6 +363,7 @@ export class BattleService {
       formationDuration: this.formationDuration,
       formationCooldown: this.formationCooldown,
       formationPower: this.formationPower,
+      battlesUnlocked: this.battlesUnlocked,
     };
   }
 
@@ -392,6 +395,7 @@ export class BattleService {
     this.formationDuration = properties.formationDuration;
     this.formationCooldown = properties.formationCooldown;
     this.formationPower = properties.formationPower;
+    this.battlesUnlocked = properties.battlesUnlocked;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {

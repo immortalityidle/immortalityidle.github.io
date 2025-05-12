@@ -30,50 +30,25 @@
       </span>
     </div>
   }
-  <div class="saveButtonBar">
-    <div class="saveButtonGroup">
-      <div class="saveButton" tooltip="Save your current schedule of actviities (Schedule #1)." (click)="activityService.saveActivityLoop()">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 1" aria-hidden="false">
-          content_paste
-        </mat-icon>
-        <div class="saveSlot">1</div>
-      </div>
-      <div class="saveButton" tooltip="Save your current schedule of actviities (Schedule #2)." (click)="activityService.saveActivityLoop(2)">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 2" aria-hidden="false">
-          content_paste
-        </mat-icon>
-        <div class="saveSlot">2</div>
-      </div>
-      <div class="saveButton" tooltip="Save your current schedule of actviities (Schedule #3)." (click)="activityService.saveActivityLoop(3)">
-        <mat-icon class="iconButton saveIcon" aria-label="Save Schedule 3" aria-hidden="false">
-          content_paste
-        </mat-icon>
-        <div class="saveSlot">3</div>
-      </div>
-    </div>
-    <div class="saveButtonGroup">
-      <div class="saveButton" tooltip="Load your saved schedule of actviities (Schedule #1). Note that activities that you cannot do right now will not be loaded."  (click)="activityService.loadActivityLoop()">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 1" aria-hidden="false">
-          content_paste_go
-        </mat-icon>
-        <div class="saveSlot">1</div>
-      </div>
-      <div class="saveButton" tooltip="Load your saved schedule of actviities (Schedule #2). Note that activities that you cannot do right now will not be loaded." (click)="activityService.loadActivityLoop(2)">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 2" aria-hidden="false">
-          content_paste_go
-        </mat-icon>
-        <div class="saveSlot">2</div>
-      </div>
-      <div class="saveButton" tooltip="Load your saved schedule of actviities (Schedule #3). Note that activities that you cannot do right now will not be loaded." (click)="activityService.loadActivityLoop(3)">
-        <mat-icon class="iconButton saveIcon" aria-label="Load Schedule 3" aria-hidden="false">
-          content_paste_go
-        </mat-icon>
-        <div class="saveSlot">3</div>
-      </div>
-    </div>
-    <mat-icon tooltip="Clear your current schedule."
-      class="iconButton saveIcon" aria-label="Clear Schedule" aria-hidden="false" (click)="activityService.activityLoop = []">
-      delete_sweep
-    </mat-icon>
+  <div>
+    <button class="saveButton" tooltip="Save your current schedule of actviities." (click)="saveActivityLoop()">
+      Save Schedule
+    </button>
+    <input min="0" value="{{inputSave}}" type="text" class="inputBox" (change)="inputSaveChange($event)"/>
+  </div>
+  <div>
+    <button class="saveButton" tooltip="Load your saved schedule of actviities." (click)="loadActivityLoop()">
+      Load Saved Schedule
+    </button>
+    <mat-select class="selectSave" [(value)]="selectedLoad">
+      @for (entry of activityService.savedActivityLoops; track entry.name){
+        <mat-option value="{{entry.name}}">{{entry.name}}</mat-option>
+      }
+    </mat-select>
+  </div>
+  <div>
+    <button class="saveButton" tooltip="Clear your current schedule of actviities." (click)="activityService.activityLoop = []">
+      Clear Schedule
+    </button>
   </div>
 </div>

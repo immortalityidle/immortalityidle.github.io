@@ -118,6 +118,11 @@ export interface ActivityLoopEntry {
   userDisabled?: boolean;
 }
 
+export interface SavedActivityLoop {
+  name: string;
+  activities: ActivityLoopEntry[];
+}
+
 export enum LocationType {
   Self = 'Self',
   SmallTown = 'SmallTown',

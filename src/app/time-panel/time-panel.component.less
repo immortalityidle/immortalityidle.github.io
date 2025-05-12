@@ -1,25 +1,7 @@
 @import (reference) "../../styles.less";
 
-.dropAccepter {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-table {
-  width: 100%;
-}
-
-td {
-  border-bottom: 1px var(--tableDividerColor) solid;
-  white-space: nowrap;
-  font-size: 12px;
-}
-
-table td:nth-child(3) {
-  text-align: end;
+.timeContainer {
+  color: var(--bodyText);
 }
 
 mat-icon {
@@ -33,38 +15,9 @@ mat-icon {
   vertical-align: middle;
 }
 
-.progress-bar {
-  width: 60px;
-}
-
-label {
-  font-size: 10px;
-  vertical-align: top;
-}
-
 .iconActive {
   color: var(--panelBackground);
   background: var(--bodyText);
-}
-
-h6 {
-  margin-bottom: 0px;
-  margin-top: -8px;
-}
-
-.spiritActivityPanel {
-  border: 1px solid var(--itemSlotHighlight);
-  width: 100%;
-  background-color: var(--qiColor);
-}
-
-.spiritProjectionLabel {
-  font-size: x-small;
-  border-bottom: none;
-}
-
-.currentRow {
-  background-color: var(--itemSlotColor);
 }
 
 .disabled {
@@ -75,23 +28,15 @@ input {
   vertical-align: middle;
 }
 
-.overflow {
-  overflow: auto;
-}
-
 .spaceLeft {
-margin-left: 16px;
-}
-
-.disabledSchedule * {
-  background-color: var(--disabledActivity);
-}
-
-.battleWarning {
-  color: var(--healthColor);
-  font-size: x-large;
+  margin-left: 16px;
 }
 
 .floatRight {
   float: right;
+}
+
+label {
+  font-size: small;
+  vertical-align: text-top;
 }

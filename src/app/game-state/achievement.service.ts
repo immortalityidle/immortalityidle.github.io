@@ -56,6 +56,9 @@ export class AchievementService {
     private locationService: LocationService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
+      if (!this.gameStateService) {
+        this.gameStateService = this.injector.get(GameStateService);
+      }
       for (const achievement of this.achievements) {
         if (!this.unlockedAchievements.includes(achievement.name)) {
           if (achievement.check()) {
@@ -77,11 +80,10 @@ export class AchievementService {
       },
       effect: () => {
         this.mainLoopService.timeUnlocked = true;
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService.unlockPanel('timePanel');
-        this.gameStateService.addLayoutPanel('timePanel');
+        this.gameStateService!.unlockPanel('timePanel');
+        this.gameStateService!.addLayoutPanel('timePanel', 0, 8, 30, 6);
+        this.gameStateService!.unlockPanel('schedulePanel');
+        this.gameStateService!.addLayoutPanel('schedulePanel', 0, 14, 30, 14);
       },
       unlocked: false,
     },
@@ -95,11 +97,8 @@ export class AchievementService {
       },
       effect: () => {
         this.homeService.homeUnlocked = true;
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService?.unlockPanel('homePanel');
-        this.gameStateService.addLayoutPanel('homePanel', 68, 15, 30, 20);
+        this.gameStateService!.unlockPanel('homePanel');
+        this.gameStateService!.addLayoutPanel('homePanel', 68, 15, 30, 20);
       },
       unlocked: false,
     },
@@ -173,10 +172,7 @@ export class AchievementService {
       },
       effect: () => {
         this.inventoryService.equipmentUnlocked = true;
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService?.unlockPanel('equipmentPanel');
+        this.gameStateService!.unlockPanel('equipmentPanel');
       },
       unlocked: false,
     },
@@ -188,10 +184,7 @@ export class AchievementService {
         return this.inventoryService.totalItemsReceived > 0;
       },
       effect: () => {
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService?.unlockPanel('inventoryPanel');
+        this.gameStateService!.unlockPanel('inventoryPanel');
       },
       unlocked: false,
     },
@@ -203,11 +196,9 @@ export class AchievementService {
         return this.battleService.totalEnemies > 0;
       },
       effect: () => {
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService?.unlockPanel('battlePanel');
-        this.gameStateService.addLayoutPanel('battlePanel', 68, 35, 30, 20);
+        this.battleService.battlesUnlocked = true;
+        this.gameStateService!.unlockPanel('battlePanel');
+        this.gameStateService!.addLayoutPanel('battlePanel', 68, 35, 30, 20);
       },
       unlocked: false,
     },
@@ -1032,10 +1023,7 @@ export class AchievementService {
       },
       effect: () => {
         this.followerService.followersUnlocked = true;
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService?.unlockPanel('followersPanel');
+        this.gameStateService!.unlockPanel('followersPanel');
       },
       unlocked: false,
     },
@@ -1047,10 +1035,7 @@ export class AchievementService {
         return this.followerService.pets.length > 0;
       },
       effect: () => {
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService.unlockPanel('petsPanel');
+        this.gameStateService!.unlockPanel('petsPanel');
       },
       unlocked: false,
     },
@@ -1079,10 +1064,7 @@ export class AchievementService {
       },
       effect: () => {
         this.impossibleTaskService.impossibleTasksUnlocked = true;
-        if (!this.gameStateService) {
-          this.gameStateService = this.injector.get(GameStateService);
-        }
-        this.gameStateService.unlockPanel('impossibleTasksPanel');
+        this.gameStateService!.unlockPanel('impossibleTasksPanel');
       },
       unlocked: false,
     },
@@ -1510,9 +1492,6 @@ export class AchievementService {
   ];
 
   unlockAchievement(achievement: Achievement, newAchievement: boolean) {
-    if (!this.gameStateService) {
-      this.gameStateService = this.injector.get(GameStateService);
-    }
     if (newAchievement) {
       this.unlockedAchievements.push(achievement.name);
       this.logService.log(LogTopic.STORY, achievement.description);
@@ -1535,6 +1514,9 @@ export class AchievementService {
   }
 
   setProperties(properties: AchievementProperties) {
+    if (!this.gameStateService) {
+      this.gameStateService = this.injector.get(GameStateService);
+    }
     this.unlockedAchievements = properties.unlockedAchievements || [];
     for (const achievement of this.achievements) {
       if (this.unlockedAchievements.includes(achievement.name)) {

@@ -1936,7 +1936,7 @@ export class InventoryService {
         effect = pill.effect;
       }
       const attributeKey = effect as AttributeType;
-      this.characterService.attributes[attributeKey].value += (pill.increaseAmount || 1) * quantity;
+      this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity);
     }
     this.characterService.checkOverage();
   }

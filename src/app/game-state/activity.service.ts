@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable, Injector } from '@angular/core';
 import { BattleService } from './battle.service';
-import { Activity, ActivityLoopEntry, ActivityType, LocationType, YinYangEffect } from '../game-state/activity';
+import {
+  Activity,
+  ActivityLoopEntry,
+  ActivityType,
+  LocationType,
+  SavedActivityLoop,
+  YinYangEffect,
+} from '../game-state/activity';
 import { AttributeType, CharacterAttribute, StatusType } from '../game-state/character.service';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService, HomeType } from '../game-state/home.service';
@@ -26,9 +33,7 @@ export interface ActivityProperties {
   spiritActivity: ActivityType | null;
   completedApprenticeships: ActivityType[];
   currentApprenticeship: ActivityType | undefined;
-  savedActivityLoop: ActivityLoopEntry[];
-  savedActivityLoop2: ActivityLoopEntry[];
-  savedActivityLoop3: ActivityLoopEntry[];
+  savedActivityLoops: SavedActivityLoop[];
   autoPauseUnlocked: boolean;
   autoRestUnlocked: boolean;
   pauseOnImpossibleFail: boolean;
@@ -51,9 +56,7 @@ export interface ActivityProperties {
 })
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
-  savedActivityLoop: ActivityLoopEntry[] = [];
-  savedActivityLoop2: ActivityLoopEntry[] = [];
-  savedActivityLoop3: ActivityLoopEntry[] = [];
+  savedActivityLoops: SavedActivityLoop[] = [];
   spiritActivity: ActivityType | null = null;
   autoRestart = false;
   autoPauseUnlocked = false;
@@ -562,9 +565,7 @@ export class ActivityService {
       spiritActivity: this.spiritActivity,
       completedApprenticeships: this.completedApprenticeships,
       currentApprenticeship: this.currentApprenticeship,
-      savedActivityLoop: this.savedActivityLoop,
-      savedActivityLoop2: this.savedActivityLoop2,
-      savedActivityLoop3: this.savedActivityLoop3,
+      savedActivityLoops: this.savedActivityLoops,
       autoRestUnlocked: this.autoRestUnlocked,
       pauseOnImpossibleFail: this.pauseOnImpossibleFail,
       totalExhaustedDays: this.totalExhaustedDays,
@@ -601,9 +602,7 @@ export class ActivityService {
     this.spiritActivity = properties.spiritActivity ?? null;
     this.openApprenticeships = properties.openApprenticeships || 0;
     this.currentApprenticeship = properties.currentApprenticeship;
-    this.savedActivityLoop = properties.savedActivityLoop || [];
-    this.savedActivityLoop2 = properties.savedActivityLoop2 || [];
-    this.savedActivityLoop3 = properties.savedActivityLoop3 || [];
+    this.savedActivityLoops = properties.savedActivityLoops;
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
     this.purifyGemsUnlocked = properties.purifyGemsUnlocked || false;
     this.lifeActivities = properties.lifeActivities;
@@ -858,25 +857,25 @@ export class ActivityService {
       this.checkRequirements(true);
     }
   }
-  saveActivityLoop(index = 1) {
-    if (index === 1) {
-      this.savedActivityLoop = JSON.parse(JSON.stringify(this.activityLoop));
-    } else if (index === 2) {
-      this.savedActivityLoop2 = JSON.parse(JSON.stringify(this.activityLoop));
-    } else if (index === 3) {
-      this.savedActivityLoop3 = JSON.parse(JSON.stringify(this.activityLoop));
+
+  saveActivityLoop(saveName: string = '') {
+    const loop = this.savedActivityLoops.find(entry => entry.name === saveName);
+    if (loop) {
+      loop.activities = JSON.parse(JSON.stringify(this.activityLoop));
+    } else {
+      this.savedActivityLoops.push({
+        name: saveName,
+        activities: JSON.parse(JSON.stringify(this.activityLoop)),
+      });
     }
   }
 
-  loadActivityLoop(index = 1) {
-    if (index === 1) {
-      this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop));
-    } else if (index === 2) {
-      this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop2));
-    } else if (index === 3) {
-      this.activityLoop = JSON.parse(JSON.stringify(this.savedActivityLoop3));
+  loadActivityLoop(saveName: string) {
+    const loop = this.savedActivityLoops.find(entry => entry.name === saveName);
+    if (loop) {
+      this.activityLoop = JSON.parse(JSON.stringify(loop.activities));
+      this.checkRequirements(true);
     }
-    this.checkRequirements(true);
   }
 
   Swim: Activity = {
