@@ -8,17 +8,12 @@ import { HomeService } from '../game-state/home.service';
 import { InventoryService, BalanceItem, AutoItemEntry } from '../game-state/inventory.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { FarmService } from '../game-state/farm.service';
-import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
 import { TitleCasePipe } from '@angular/common';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-inventory-options-modal',
-  imports: [
-    forwardRef(() => TitleCasePipe),
-    forwardRef(() => MatTabGroup),
-    forwardRef(() => MatTab),
-    forwardRef(() => MatTabLabel),
-  ],
+  imports: [forwardRef(() => TitleCasePipe), forwardRef(() => MatTabGroup), forwardRef(() => MatTab)],
   templateUrl: './inventory-options-modal.component.html',
   styleUrl: './inventory-options-modal.component.less',
 })

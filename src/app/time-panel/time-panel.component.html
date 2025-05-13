@@ -39,11 +39,6 @@
         bolt
       </mat-icon>
     }
-    @if (activityService.autoRestart) {
-      <mat-icon  (click)="timeOptions()" tooltip="Options" class="iconButton floatRight" aria-label="Time Options" aria-hidden="false">
-        settings
-      </mat-icon>
-    }
   </div>
   <div>
     <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"

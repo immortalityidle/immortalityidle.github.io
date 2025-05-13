@@ -123,6 +123,12 @@ export interface SavedActivityLoop {
   activities: ActivityLoopEntry[];
 }
 
+export interface LoopChangeTrigger {
+  attribute: string;
+  value: number;
+  scheduleName: string;
+}
+
 export enum LocationType {
   Self = 'Self',
   SmallTown = 'SmallTown',

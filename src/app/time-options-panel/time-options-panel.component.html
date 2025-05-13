@@ -1,54 +1,106 @@
 <div class='darkMode'>
   <span>Schedule Options</span>
-  <hr/>
-  <div>
-    <span>
-      @if (activityService.autoRestart) {
-        <input type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
-          [checked]="activityService.pauseOnDeath"/>
+  <mat-tab-group>
+    <mat-tab label="Auto-Pause">
+      <div>
+        <span>
+          @if (activityService.autoRestart) {
+            <input type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
+              [checked]="activityService.pauseOnDeath"/>
+          }
+          @if (activityService.autoRestart) {
+            <label for="pauseOnDeath">Pause on Death</label>
+          }
+        </span>
+      </div>
+      @if (activityService.autoPauseUnlocked) {
+        <div>
+          <span>
+            <input type="checkbox" (change)="autoPauseThugs($event)"
+              id="autoBuyFood"  [checked]="homeService.thugPause">
+            <label for="autoBuyFood">Automatically pause if you can't afford your home.</label>
+          </span>
+        </div>
+        <div>
+          <span>
+            @if (activityService.autoRestart) {
+              <input type="checkbox" (change)="pauseBeforeDeath($event)" id="pauseBeforeDeath"
+                [checked]="activityService.pauseBeforeDeath"/>
+              <label for="pauseBeforeDeath">Pause Before Death - This will pause one day before the end of your expected lifespan.</label>
+            }
+          </span>
+        </div>
       }
-      @if (activityService.autoRestart) {
-        <label for="pauseOnDeath">Pause on Death</label>
-      }
-    </span>
-  </div>
-  @if (activityService.autoPauseUnlocked) {
-    <div>
-      <span>
-        <input type="checkbox" (change)="autoPauseThugs($event)"
-          id="autoBuyFood"  [checked]="homeService.thugPause">
-        <label for="autoBuyFood">Automatically pause if you can't afford your home.</label>
-      </span>
-    </div>
-    <div>
-      <span>
-        @if (activityService.autoRestart) {
-          <input type="checkbox" (change)="pauseBeforeDeath($event)" id="pauseBeforeDeath"
-            [checked]="activityService.pauseBeforeDeath"/>
-          <label for="pauseBeforeDeath">Pause Before Death - This will pause one day before the end of your expected lifespan.</label>
-        }
-      </span>
-    </div>
-  }
-  <div>
-    <button class="saveButton" tooltip="Save your current schedule of actviities." (click)="saveActivityLoop()">
-      Save Schedule
-    </button>
-    <input min="0" value="{{inputSave}}" type="text" class="inputBox" (change)="inputSaveChange($event)"/>
-  </div>
-  <div>
-    <button class="saveButton" tooltip="Load your saved schedule of actviities." (click)="loadActivityLoop()">
-      Load Saved Schedule
-    </button>
-    <mat-select class="selectSave" [(value)]="selectedLoad">
+    </mat-tab>
+    <mat-tab label="Saved Schedules">
+      <div>
+        <button class="saveButton" tooltip="Save your current schedule of actviities." (click)="saveActivityLoop()">
+          Save Current Schedule
+        </button>
+        <span class="spacedSpan">as</span>
+        <input min="0" value="{{inputSave}}" type="text" class="inputBox" (change)="inputSaveChange($event)"/>
+      </div>
+      <div>
+        <button class="saveButton" tooltip="Clear your current schedule of actviities." (click)="activityService.activityLoop = []">
+          Clear Current Schedule
+        </button>
+      </div>
       @for (entry of activityService.savedActivityLoops; track entry.name){
-        <mat-option value="{{entry.name}}">{{entry.name}}</mat-option>
+        <div class="optionsRow">
+          <span class="grower">{{entry.name}}</span>
+          <button class="saveButton" tooltip="Load this saved schedule of actviities." (click)="loadActivityLoop(entry.name)">
+            Load
+          </button>
+          <button class="saveButton" tooltip="Remove this saved schedule of actviities." (click)="removeActivityLoop(entry.name)">
+            Remove
+          </button>
+        </div>
       }
-    </mat-select>
-  </div>
-  <div>
-    <button class="saveButton" tooltip="Clear your current schedule of actviities." (click)="activityService.activityLoop = []">
-      Clear Schedule
-    </button>
-  </div>
+    </mat-tab>
+    <mat-tab label="Schedule Triggers">
+      @if (activityService.savedActivityLoops.length === 0){
+        <div>
+          <span>
+            No saved schedules to trigger
+          </span>
+        </div>
+      }
+      @else {
+        <button class="saveButton" tooltip="Add a trigger to change schedules automatically.<br>Triggers are activated in order, once per lifetime, as the selected attributes reach the chosen values." (click)="addTrigger()">
+          Add a Trigger
+        </button>
+        @for (trigger of activityService.loopChangeTriggers; track trigger){
+          @if ($index === 0){
+            <div class="optionsRow">
+              <span class="spacedSpan">On rebirth, load</span>
+              <mat-select class="selectSave" [(value)]="trigger.scheduleName">
+                @for (entry of activityService.savedActivityLoops; track entry.name){
+                  <mat-option value="{{entry.name}}">{{entry.name}}</mat-option>
+                }
+              </mat-select>
+            </div>
+          }
+          @else {
+            <div class="optionsRow">
+              <span class="spacedSpan">When</span>
+              <mat-select class="selectSave" [(value)]="trigger.attribute">
+                @for (attribute of attributeKeys; track attribute){
+                  <mat-option value="{{attribute}}">{{attribute | camelToTitle}}</mat-option>
+                }
+              </mat-select>
+              <span class="spacedSpan"> reaches </span>
+              <input min="0" value="{{trigger.value}}" type="number" class="smallInputBox" (change)="triggerValueChange($event, trigger)"/>
+              <span class="spacedSpan"> then load </span>
+              <mat-select class="selectSave" [(value)]="trigger.scheduleName">
+                @for (entry of activityService.savedActivityLoops; track entry.name){
+                  <mat-option value="{{entry.name}}">{{entry.name}}</mat-option>
+                }
+              </mat-select>
+      
+            </div>
+          }
+        }
+      }
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -2,18 +2,35 @@ import { Component, forwardRef } from '@angular/core';
 import { ActivityService } from '../game-state/activity.service';
 import { HomeService } from '../game-state/home.service';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { LoopChangeTrigger } from '../game-state/activity';
+import { CharacterService } from '../game-state/character.service';
+import { CamelToTitlePipe } from '../pipes';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-time-options-panel',
   templateUrl: './time-options-panel.component.html',
   styleUrls: ['./time-options-panel.component.less', '../app.component.less'],
-  imports: [forwardRef(() => MatSelectModule)],
+  imports: [
+    forwardRef(() => MatSelectModule),
+    forwardRef(() => MatTabGroup),
+    forwardRef(() => MatTab),
+    forwardRef(() => CamelToTitlePipe),
+    forwardRef(() => TooltipDirective),
+  ],
 })
 export class TimeOptionsPanelComponent {
-  selectedLoad = '';
   inputSave = 'Saved Schedule #1';
+  attributeKeys: string[];
 
-  constructor(public activityService: ActivityService, public homeService: HomeService) {}
+  constructor(
+    public activityService: ActivityService,
+    public homeService: HomeService,
+    public characterService: CharacterService
+  ) {
+    this.attributeKeys = Object.keys(this.characterService.attributes);
+  }
 
   pauseOnDeath(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
@@ -36,11 +53,27 @@ export class TimeOptionsPanelComponent {
   }
 
   saveActivityLoop() {
-    console.log('saving as' + this.inputSave);
     this.activityService.saveActivityLoop(this.inputSave);
   }
 
-  loadActivityLoop() {
-    this.activityService.loadActivityLoop(this.selectedLoad);
+  loadActivityLoop(saveName: string) {
+    this.activityService.loadActivityLoop(saveName);
+  }
+
+  removeActivityLoop(saveName: string) {
+    this.activityService.removeActivityLoop(saveName);
+  }
+
+  triggerValueChange(event: Event, trigger: LoopChangeTrigger) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    trigger.value = parseInt(event.target.value);
+  }
+
+  addTrigger() {
+    this.activityService.loopChangeTriggers.push({
+      attribute: 'strength',
+      value: 100,
+      scheduleName: '',
+    });
   }
 }

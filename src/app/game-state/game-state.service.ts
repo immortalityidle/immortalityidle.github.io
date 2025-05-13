@@ -641,6 +641,8 @@ export class GameStateService {
       completedApprenticeships: props?.completedApprenticeships || [],
       currentApprenticeship: props?.currentApprenticeship || undefined,
       savedActivityLoops: props?.savedActivityLoops || [],
+      loopChangeTriggers: props?.loopChangeTriggers || [],
+      triggerIndex: props?.triggerIndex || 0,
       autoPauseUnlocked: props?.autoPauseUnlocked || false,
       autoRestUnlocked: props?.autoRestUnlocked || false,
       pauseOnImpossibleFail: props?.pauseOnImpossibleFail || false,

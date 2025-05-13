@@ -3,10 +3,7 @@
   <mat-tab-group>
     @if (inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked ||
       inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoEatUnlocked || inventoryService.autoBalanceUnlocked) {
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">Sales</span>
-        </ng-template>
+      <mat-tab label="Sales">
         @if (inventoryService.autoSellOldHerbs) {
           <div  class="optionField">
             <span>
@@ -121,10 +118,7 @@
       </mat-tab>
     }
     @if (inventoryService.autoEatUnlocked) {
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span class="tab-label">Food</span>
-        </ng-template>
+      <mat-tab label="Food">
         <div>
           <span>
             When wisely eaten food is available:

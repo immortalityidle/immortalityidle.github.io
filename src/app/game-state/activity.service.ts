@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Injectable, Injector } from '@angular/core';
 import { BattleService } from './battle.service';
 import {
@@ -6,6 +5,7 @@ import {
   ActivityLoopEntry,
   ActivityType,
   LocationType,
+  LoopChangeTrigger,
   SavedActivityLoop,
   YinYangEffect,
 } from '../game-state/activity';
@@ -34,6 +34,8 @@ export interface ActivityProperties {
   completedApprenticeships: ActivityType[];
   currentApprenticeship: ActivityType | undefined;
   savedActivityLoops: SavedActivityLoop[];
+  loopChangeTriggers: LoopChangeTrigger[];
+  triggerIndex: number;
   autoPauseUnlocked: boolean;
   autoRestUnlocked: boolean;
   pauseOnImpossibleFail: boolean;
@@ -57,6 +59,8 @@ export interface ActivityProperties {
 export class ActivityService {
   activityLoop: ActivityLoopEntry[] = [];
   savedActivityLoops: SavedActivityLoop[] = [];
+  loopChangeTriggers: LoopChangeTrigger[] = [];
+  triggerIndex = 0;
   spiritActivity: ActivityType | null = null;
   autoRestart = false;
   autoPauseUnlocked = false;
@@ -329,7 +333,6 @@ export class ActivityService {
         }
         return;
       }
-
       if (this.immediateActivity) {
         let activity = this.immediateActivity;
         if (this.autoRestUnlocked && this.checkResourceUse(activity) !== '') {
@@ -352,6 +355,8 @@ export class ActivityService {
         }
         return;
       }
+
+      this.checkTriggers();
 
       // TODO: at high tick speeds, don't call the consequences here, instead figure out a set of counters, then do the consequences as a batch
 
@@ -460,6 +465,17 @@ export class ActivityService {
     this.checkRequirements(true);
   }
 
+  checkTriggers() {
+    if (this.triggerIndex < this.loopChangeTriggers.length) {
+      const trigger = this.loopChangeTriggers[this.triggerIndex];
+      const attribute = trigger.attribute as AttributeType;
+      if (this.characterService.attributes[attribute].value >= trigger.value) {
+        this.triggerIndex++;
+        this.loadActivityLoop(trigger.scheduleName);
+      }
+    }
+  }
+
   checkExhaustion() {
     if (this.characterService.status.stamina.value < 0) {
       // take 5 days to recover, regain stamina, restart loop
@@ -566,6 +582,8 @@ export class ActivityService {
       completedApprenticeships: this.completedApprenticeships,
       currentApprenticeship: this.currentApprenticeship,
       savedActivityLoops: this.savedActivityLoops,
+      loopChangeTriggers: this.loopChangeTriggers,
+      triggerIndex: this.triggerIndex,
       autoRestUnlocked: this.autoRestUnlocked,
       pauseOnImpossibleFail: this.pauseOnImpossibleFail,
       totalExhaustedDays: this.totalExhaustedDays,
@@ -603,6 +621,8 @@ export class ActivityService {
     this.openApprenticeships = properties.openApprenticeships || 0;
     this.currentApprenticeship = properties.currentApprenticeship;
     this.savedActivityLoops = properties.savedActivityLoops;
+    this.loopChangeTriggers = properties.loopChangeTriggers;
+    this.triggerIndex = properties.triggerIndex;
     this.autoRestUnlocked = properties.autoRestUnlocked || false;
     this.purifyGemsUnlocked = properties.purifyGemsUnlocked || false;
     this.lifeActivities = properties.lifeActivities;
@@ -822,6 +842,12 @@ export class ActivityService {
     }
     this.currentTickCount = 0;
     this.currentIndex = 0;
+    this.triggerIndex = 0;
+    if (this.loopChangeTriggers.length > 0) {
+      // trigger entry 0 is special, it always loads on rebirth regardless of attribute values
+      this.loadActivityLoop(this.loopChangeTriggers[0].scheduleName);
+      this.triggerIndex++;
+    }
   }
 
   getActivityByType(activityType: ActivityType): Activity | null {
@@ -875,6 +901,20 @@ export class ActivityService {
     if (loop) {
       this.activityLoop = JSON.parse(JSON.stringify(loop.activities));
       this.checkRequirements(true);
+      this.currentIndex = 0;
+    }
+  }
+
+  removeActivityLoop(saveName: string) {
+    const loopIndex = this.savedActivityLoops.findIndex(entry => entry.name === saveName);
+    if (loopIndex >= 0) {
+      this.savedActivityLoops.splice(loopIndex, 1);
+    }
+    // also clear any triggers that used that schedule
+    for (let i = this.loopChangeTriggers.length - 1; i >= 0; i--) {
+      if (this.loopChangeTriggers[i].scheduleName === saveName) {
+        this.loopChangeTriggers.splice(i, 1);
+      }
     }
   }
 
