@@ -14,27 +14,27 @@
       slow_motion_video
     </mat-icon>
     <mat-icon (click)="standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"
-      tooltip="Standard Game Speed ({{mainLoopService.getTPS(10) | number: '1.0-2'}} days/sec).<br>
+      tooltip="Standard Game Speed.<br>
       Hotkey: Alt-2" class="iconButton" aria-label="Standard Speed" aria-hidden="false">
       play_arrow
     </mat-icon>
     @if (mainLoopService.unlockFastSpeed) {
       <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 5 && !this.mainLoopService.pause)}"
-      (click)="fastClick()" tooltip="Fast Game Speed ({{mainLoopService.getTPS(5) | number: '1.0-2'}} days/sec).<br>
+      (click)="fastClick()" tooltip="Fast Game Speed.<br>
       Hotkey: Alt-3" class="iconButton" aria-label="Fast Speed" aria-hidden="false">
         fast_forward
       </mat-icon>
     }
     @if (mainLoopService.unlockFasterSpeed) {
       <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 2 && !this.mainLoopService.pause)}"
-      (click)="fasterClick()" tooltip="Faster Game Speed ({{mainLoopService.getTPS(2) | number: '1.0-2'}} days/sec).<br>
+      (click)="fasterClick()" tooltip="Faster Game Speed.<br>
       Hotkey: Alt-4" class="iconButton" aria-label="Faster Speed" aria-hidden="false">
         skip_next
       </mat-icon>
     }
     @if (mainLoopService.unlockFastestSpeed) {
       <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 1 && !this.mainLoopService.pause)}"
-      (click)="fastestClick()" tooltip="Fastest Game Speed ({{mainLoopService.getTPS(1) | number: '1.0-2'}} days/sec).<br>
+      (click)="fastestClick()" tooltip="Fastest Game Speed.<br>
       Hotkey: Alt-5" class="iconButton" aria-label="Fastest Speed" aria-hidden="false">
         bolt
       </mat-icon>
@@ -43,6 +43,6 @@
   <div>
     <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
       [checked]="mainLoopService.useBankedTicks"/>
-    <label for="useSavedTicks">Use banked time to accelerate reality (10x). {{mainLoopService.bankedTicks | bigNumber}} time ticks left.</label>
+    <label for="useSavedTicks">Use banked time to accelerate reality. {{mainLoopService.bankedDays | bigNumber}} banked days left.</label>
   </div>
 </div>
