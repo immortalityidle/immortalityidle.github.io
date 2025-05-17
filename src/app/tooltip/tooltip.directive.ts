@@ -53,9 +53,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
   @HostListener('touchstart', ['$event'])
   // @ts-ignore
   show(event) {
-    event.stopPropagation();
-    // @ts-ignore
-    this.timeoutId = setTimeout(() => {
+    this.timeoutId = window.setTimeout(() => {
       if (this.text.trim().length !== 0) {
         const tooltipRef: ComponentRef<TooltipComponent> = this.overlayRef.attach(
           new ComponentPortal(TooltipComponent)
@@ -76,7 +74,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
   @HostListener('unload')
   hide() {
     if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
+      window.clearTimeout(this.timeoutId);
     }
 
     this.overlayRef.detach();
