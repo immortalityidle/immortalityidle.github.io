@@ -785,8 +785,6 @@ export class GameStateService {
       scientificNotation: props?.scientificNotation || false,
       playMusic: props?.playMusic || false,
       timeUnlocked: props?.timeUnlocked || false,
-      daysSinceLongTick: props?.daysSinceLongTick || 0,
-      daysSinceYearOrLongTick: props?.daysSinceYearOrLongTick || 0,
     };
   }
 

@@ -1,11 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
-import { Subject } from 'rxjs';
+import { throttleTime, map, bufferCount, Subject, OperatorFunction } from 'rxjs';
 import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
+import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { BattleService } from './battle.service';
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
+const BACKGROUND_TICK_INTERVAL_MS = 1000;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean;
@@ -23,8 +25,6 @@ export interface MainLoopProperties {
   scientificNotation: boolean;
   playMusic: boolean;
   timeUnlocked: boolean;
-  daysSinceLongTick: number;
-  daysSinceYearOrLongTick: number;
 }
 
 @Injectable({
@@ -40,6 +40,11 @@ export class MainLoopService {
   battleTickSubject = new Subject<number>();
   reincarnateSubject = new Subject<number>();
   doneReincarnatingSubject = new Subject<number>();
+
+  /**
+   * Sends every 25ms if in foreground or every second if in background.
+   */
+  frameSubject = new Subject<boolean>();
 
   /**
    * Only emits every 500ms and returns number of days that elapsed since
@@ -76,10 +81,6 @@ export class MainLoopService {
   importing = false;
   gameLoading = true;
   reincarnating = false;
-  daysSinceLongTick = 0;
-  daysSinceYearOrLongTick = 0;
-  bankedDays = 0;
-  lastUsedTickTime = 0;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
@@ -106,8 +107,6 @@ export class MainLoopService {
       scientificNotation: this.scientificNotation,
       playMusic: this.playMusic,
       timeUnlocked: this.timeUnlocked,
-      daysSinceLongTick: this.daysSinceLongTick,
-      daysSinceYearOrLongTick: this.daysSinceYearOrLongTick,
     };
   }
 
@@ -129,7 +128,13 @@ export class MainLoopService {
     this.offlineDivider = properties.offlineDivider;
     this.lastTime = properties.lastTime;
     const newTime = new Date().getTime();
-    this.earnedTicks = (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
+    if (newTime - this.lastTime > 168 * 60 * 60 * 1000) {
+      // to diminish effects of forgetting about the game for a year and coming back with basically infinite ticks
+      this.earnedTicks =
+        (3 * 168 * 60 * 60 * 1000 + newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider * 4);
+    } else {
+      this.earnedTicks = (newTime - this.lastTime) / (TICK_INTERVAL_MS * this.offlineDivider);
+    }
     this.bankedTicks = properties.bankedTicks + this.earnedTicks;
     this.lastTime = newTime;
     this.totalTicks = properties.totalTicks;
@@ -137,8 +142,6 @@ export class MainLoopService {
     this.scientificNotation = properties.scientificNotation;
     this.playMusic = properties.playMusic;
     this.timeUnlocked = properties.timeUnlocked;
-    this.daysSinceLongTick = properties.daysSinceLongTick;
-    this.daysSinceYearOrLongTick = properties.daysSinceYearOrLongTick;
     if (this.gameLoading) {
       this.pause = true;
       this.gameLoading = false;
@@ -162,50 +165,179 @@ export class MainLoopService {
     }
     this.playAudio();
 
-    setTimeout(() => this.handleTimeout(), TICK_INTERVAL_MS);
-    setTimeout(() => this.handleLongTickTimeout(), LONG_TICK_INTERVAL_MS);
-  }
+    type CancelFunc = () => void;
+    const customSetInterval = (func: () => void, time: number): CancelFunc => {
+      let isCancelled = false;
+      let currentTimeout: CancelFunc = () => {
+        // do nothing.
+      };
+      const cancelFunc = () => {
+        isCancelled = true;
+        if (currentTimeout !== null) {
+          currentTimeout();
+        }
+      };
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const cancelFuncForSetTimeout = (timeoutKey: any) => () => clearTimeout(timeoutKey);
 
-  handleLongTickTimeout() {
-    this.bankedDays = Math.floor(this.bankedTicks / this.tickDivider);
-    this.longTickSubject.next(this.daysSinceLongTick);
-    this.daysSinceLongTick = 0;
-    this.yearOrLongTickSubject.next(this.daysSinceYearOrLongTick);
-    this.daysSinceYearOrLongTick = 0;
-    setTimeout(() => this.handleLongTickTimeout(), LONG_TICK_INTERVAL_MS);
-  }
+      const timeoutFunc = () => {
+        if (isCancelled) {
+          return;
+        }
 
-  handleTimeout() {
-    const newTime = new Date().getTime();
-    const timeDiff = newTime - this.lastTime;
-    this.lastTime = newTime;
-    this.bankedTicks += timeDiff / TICK_INTERVAL_MS;
+        const startTime = new Date();
+        func();
+        const endTime = new Date();
+        const executionTime = endTime.getTime() - startTime.getTime();
+        const timeToWait = time - executionTime;
 
-    let ticksToDo = 0;
-    if (this.useBankedTicks && !this.pause) {
-      ticksToDo = Math.floor(this.bankedTicks / this.tickDivider);
-      if (ticksToDo > 10) {
-        ticksToDo = 10;
+        if (isCancelled) {
+          return;
+        }
+        if (timeToWait <= 0) {
+          currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, 0));
+        } else {
+          currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, timeToWait));
+        }
+      };
+
+      currentTimeout = cancelFuncForSetTimeout(setTimeout(timeoutFunc, time));
+      return cancelFunc;
+    };
+
+    const scheduleInterval = (func: () => void, desiredTime: number) => {
+      if (desiredTime >= BACKGROUND_TICK_INTERVAL_MS) {
+        customSetInterval(func, desiredTime);
       }
-      this.bankedTicks -= ticksToDo * this.tickDivider;
-    } else if (!this.pause && this.lastUsedTickTime < newTime - this.tickDivider * TICK_INTERVAL_MS) {
-      this.bankedTicks -= this.tickDivider;
-      ticksToDo = 1;
+
+      const backgroundTimeTicks = Math.floor(BACKGROUND_TICK_INTERVAL_MS / desiredTime);
+
+      let cancelCurrentTimer = () => {
+        // do nothing.
+      };
+      const documentVisibilityChanged = () => {
+        cancelCurrentTimer();
+
+        if (document.hidden) {
+          cancelCurrentTimer = customSetInterval(() => {
+            for (let i = 0; i < backgroundTimeTicks; i++) {
+              func();
+            }
+          }, BACKGROUND_TICK_INTERVAL_MS);
+        } else {
+          cancelCurrentTimer = customSetInterval(func, desiredTime);
+        }
+      };
+
+      documentVisibilityChanged();
+      document.addEventListener('visibilitychange', documentVisibilityChanged);
+    };
+
+    const trackTicksOp: OperatorFunction<any, number> = observable => {
+      return observable.pipe(
+        map(() => this.totalTicks),
+        bufferCount(2, 1),
+        map(totalTicksArr => totalTicksArr[1] - totalTicksArr[0])
+      );
+    };
+
+    this.frameSubject.pipe(throttleTime(LONG_TICK_INTERVAL_MS), trackTicksOp).subscribe(this.longTickSubject);
+
+    let lastFireTime = Date.now();
+    let lastFireDay = this.totalTicks;
+    this.tickSubject.subscribe(() => {
+      const currentTime = Date.now();
+      if (currentTime - lastFireTime > LONG_TICK_INTERVAL_MS || this.totalTicks - lastFireDay <= 365) {
+        this.yearOrLongTickSubject.next(this.totalTicks - lastFireDay);
+        lastFireTime = currentTime;
+        lastFireDay = this.totalTicks;
+      }
+    });
+
+    scheduleInterval(() => {
+      this.frameSubject.next(true);
+    }, TICK_INTERVAL_MS);
+
+    scheduleInterval(() => {
+      if (this.importing) {
+        return;
+      }
+      const tickInterval = document.hidden ? BACKGROUND_TICK_INTERVAL_MS : TICK_INTERVAL_MS;
+      const newTime = new Date().getTime();
+      const timeDiff = newTime - this.lastTime;
+      this.lastTime = newTime;
+      // this should be around 1, but may vary based on browser throttling
+      let ticksPassed = timeDiff / TICK_INTERVAL_MS;
+      if (this.pause) {
+        this.bankedTicks += ticksPassed / this.offlineDivider; // offlineDivider currently either 10 or 2.
+      } else if (timeDiff > 900 * 1000) {
+        // away for over 15 mins, push to offline ticks and display gains.
+        const earnedTicks = ticksPassed / this.offlineDivider;
+        this.bankedTicks += earnedTicks;
+        this.dialog.open(OfflineModalComponent, {
+          data: { earnedTicks: earnedTicks },
+          autoFocus: false,
+        });
+      } else {
+        const currentTPS = (this.getTPS(this.tickDivider) / 1000) * TICK_INTERVAL_MS;
+        const topTPS = (this.getTPS(this.topDivider) / 1000) * TICK_INTERVAL_MS;
+        let usedBanked = false;
+        if (this.bankedTicks > 0 && this.useBankedTicks && this.tickDivider < 40) {
+          // don't use banked ticks on slow speed
+          //using banked ticks makes time happen 10 times faster
+          let bankedPassed = ticksPassed * 10 * (currentTPS / topTPS); // reduce usage rate if going slower than max
+          if (bankedPassed > this.bankedTicks) {
+            // Check for not enough bankedTicks, usually for large timeDiff.
+            bankedPassed = this.bankedTicks;
+          }
+          this.bankedTicks -= bankedPassed;
+          ticksPassed *= 11; // Include the normal tick
+          usedBanked = true;
+        }
+        ticksPassed *= currentTPS;
+
+        this.tickCount += ticksPassed;
+        let tickTime = new Date().getTime();
+        while (!this.pause && this.tickCount >= 1 && tickTime < tickInterval + newTime) {
+          this.tick();
+          this.tickCount--;
+          tickTime = new Date().getTime();
+        }
+        if (this.tickCount >= 1) {
+          if (usedBanked) {
+            this.bankedTicks += (this.tickCount / (currentTPS * 11)) * (10 * (currentTPS / topTPS));
+          }
+          this.tickCount = 0;
+        }
+      }
+    }, TICK_INTERVAL_MS);
+  }
+
+  getTPS(div: number) {
+    let ticksPassed = 1000 / TICK_INTERVAL_MS;
+    if (this.characterService && this.unlockAgeSpeed && this.tickDivider < 40) {
+      // don't do this on slow speed
+      // 73000 is 200 years. reaches 2x at 600 years, 3x at 1600, 4x at 3000. Caps at 12600
+      ticksPassed *= Math.min(8, Math.sqrt(1 + this.characterService.age / 73000));
     }
-    for (let i = 0; i < ticksToDo; i++) {
-      this.tick();
-      this.lastUsedTickTime = newTime;
+    if (this.unlockPlaytimeSpeed && this.tickDivider < 40) {
+      // don't do this on slow speed
+      ticksPassed *= Math.pow(1 + this.totalTicks / (2000 * 365), 0.3);
     }
-    setTimeout(() => this.handleTimeout(), TICK_INTERVAL_MS);
+    ticksPassed /= div;
+    // make non-max speeds a bit more potent at high speeds
+    const TICKSPEED_CAP = 40;
+    if (div > 1 && ticksPassed > TICKSPEED_CAP) {
+      if (div >= 10) {
+        ticksPassed = TICKSPEED_CAP;
+      } else {
+        ticksPassed = TICKSPEED_CAP + (ticksPassed - TICKSPEED_CAP) / div;
+      }
+    }
+    return ticksPassed;
   }
 
   tick() {
-    this.daysSinceLongTick++;
-    this.daysSinceYearOrLongTick++;
-    if (this.daysSinceYearOrLongTick >= 365) {
-      this.yearOrLongTickSubject.next(this.daysSinceYearOrLongTick);
-      this.daysSinceYearOrLongTick = 0;
-    }
     if (this.battleService && this.battleService.enemies.length > 0) {
       this.battleTickSubject.next(1);
     } else {

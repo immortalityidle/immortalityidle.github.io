@@ -500,21 +500,9 @@ export class CharacterService {
         this.highestQi = this.status.qi.value;
       }
 
-      const keys = Object.keys(this.attributes) as AttributeType[];
-      for (const key in keys) {
-        this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
-        if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
-          this.attributes[keys[key]].aptitudeMult *= 1000;
-        }
-        if ((keys[key] === 'intelligence' || keys[key] === 'charisma') && this.bonusBrains) {
-          this.attributes[keys[key]].aptitudeMult *= 1000;
-        }
-      }
-
       if (this.dead) {
         return;
       }
-
       this.recalculateDerivedStats();
       if (
         this.hellService?.inHell &&
@@ -527,6 +515,20 @@ export class CharacterService {
         }
       }
       this.setLifespanTooltip();
+    });
+
+    mainLoopService.frameSubject.subscribe(() => {
+      this.empowermentMult = this.getEmpowermentMult();
+      const keys = Object.keys(this.attributes) as AttributeType[];
+      for (const key in keys) {
+        this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
+        if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
+          this.attributes[keys[key]].aptitudeMult *= 1000;
+        }
+        if ((keys[key] === 'intelligence' || keys[key] === 'charisma') && this.bonusBrains) {
+          this.attributes[keys[key]].aptitudeMult *= 1000;
+        }
+      }
     });
 
     mainLoopService.doneReincarnatingSubject.subscribe(() => {
@@ -1036,7 +1038,6 @@ export class CharacterService {
       // calculate yin/yang balance bonus, 1 for perfect balance, 0 at worst
       this.yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
     }
-    this.empowermentMult = this.getEmpowermentMult();
   }
 
   getEmpowermentMult(): number {

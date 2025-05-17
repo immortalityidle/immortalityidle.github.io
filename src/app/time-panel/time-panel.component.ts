@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from '../game-state/game-state.service';
 import { BattleService } from '../game-state/battle.service';
 import { MatIcon } from '@angular/material/icon';
-import { NgClass } from '@angular/common';
+import { NgClass, DecimalPipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
 
@@ -18,6 +18,7 @@ import { BigNumberPipe } from '../pipes';
   imports: [
     forwardRef(() => MatIcon),
     forwardRef(() => NgClass),
+    forwardRef(() => DecimalPipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
   ],

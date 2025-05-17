@@ -2,7 +2,7 @@
   <h6>
     <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
       [checked]="mainLoopService.useBankedTicks"/>
-    <label for="useSavedTicks">Use banked time to accelerate reality. {{mainLoopService.bankedDays | bigNumber}} banked days left.</label>
+    <label for="useSavedTicks">Use banked time to accelerate reality (10x). {{mainLoopService.bankedTicks | bigNumber}} time ticks left.</label>
   </h6>
   @if (battleService.enemies.length > 0 && !battleService.battleMessageDismissed) {
     <div>

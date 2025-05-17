@@ -72,7 +72,7 @@ export class LogService {
   longTickCounter = 0;
 
   constructor(mainLoopService: MainLoopService) {
-    mainLoopService.tickSubject.subscribe(() => {
+    mainLoopService.frameSubject.subscribe(() => {
       this.updateLogTopics();
     });
 

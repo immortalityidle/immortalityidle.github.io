@@ -1270,7 +1270,7 @@ export class AchievementService {
     {
       name: 'Breaks are Good',
       description:
-        "You have collected two hour's worth of banked time and unlocked the " +
+        "You have collected two hour's worth of offline ticks and unlocked the " +
         this.itemRepoService.items['bankedTicksEfficiencyManual'].name,
       hint: 'Take a day off from cultivating.', //it takes 20h to get
       check: () => {
