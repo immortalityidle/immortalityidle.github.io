@@ -3,6 +3,10 @@ import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overla
 import { ComponentPortal } from '@angular/cdk/portal';
 import { TooltipComponent } from './tooltip.component';
 
+// We want this at the module level, so that it's a shared property with all tooltips, then we
+// can make it so only the first tooltip in the stack is shown.
+let tooltipShown = false;
+
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[tooltip]',
@@ -51,8 +55,12 @@ export class TooltipDirective implements OnInit, OnDestroy {
 
   @HostListener('mouseover', ['$event'])
   @HostListener('touchstart', ['$event'])
-  // @ts-ignore
-  show(event) {
+  show() {
+    if (tooltipShown) {
+      return;
+    }
+    tooltipShown = true;
+
     this.timeoutId = window.setTimeout(() => {
       if (this.text.trim().length !== 0) {
         const tooltipRef: ComponentRef<TooltipComponent> = this.overlayRef.attach(
@@ -73,6 +81,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
   @HostListener('invalid')
   @HostListener('unload')
   hide() {
+    tooltipShown = false;
     if (this.timeoutId) {
       window.clearTimeout(this.timeoutId);
     }
