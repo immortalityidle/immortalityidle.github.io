@@ -201,6 +201,9 @@ THE SOFTWARE.
 @katoid/angular-grid-layout
 MIT
 
+embla-carousel
+MIT
+
 rxjs
 Apache-2.0
                                Apache License
