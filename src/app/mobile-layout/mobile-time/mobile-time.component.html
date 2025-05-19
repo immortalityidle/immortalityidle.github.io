@@ -47,7 +47,7 @@
       }
 
     <div class="schedule-grid">
-      @for (entry of activityService.activityLoop; track entry; let indexOfelement = $index) {
+      @for (entry of activityService.activityLoop; track entry.activity; let indexOfelement = $index) {
         @if (activityService.getActivityName(entry.activity) !== '') {
           <div class="grid-cell"
             [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex0{{indexOfelement}}">
@@ -56,18 +56,19 @@
               aria-label="Help" aria-hidden="false">
               help
             </mat-icon>
-            {{activityService.getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
-          </div>
-          <div class="grid-cell"
-            [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex1{{indexOfelement}}">
-            <div class="progress-bar">
-              <span
-                [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled || entry.userDisabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
-              </span>
+            <div class="activity-title-and-bar">
+              <div>
+                {{activityService.getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
+              </div>
+              <div class="progress-bar">
+                <span
+                  [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled || entry.userDisabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
+                </span>
+              </div>
             </div>
           </div>
           <div class="grid-cell"
-            [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex2{{indexOfelement}}">
+            [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex1{{indexOfelement}}">
             <mat-icon tooltip="Spend fewer days on this.<br>Shift- or Ctrl-click to remove 10x<br>Shift-Ctrl-click to remove 100x"
               (click)="onMinusClick(entry, $event)" class="iconButton" aria-label="Remove Days" aria-hidden="false">remove</mat-icon>
             <mat-icon tooltip="Spend more days on this.<br>Shift- or Ctrl-click to add 10x<br>Shift-Ctrl-click to add 100x"

@@ -13,8 +13,9 @@
         </div>
         <app-mobile-health />
         <div class="main-part">
-            <app-mobile-activities class="grow" />
-            <app-mobile-time class="grow" />
+            <app-mobile-widget-carousel class="grow" [carouselName]="'carousel1'" [startWidget]="'activities'" />
+            <mat-divider />
+            <app-mobile-widget-carousel class="grow" [carouselName]="'carousel2'" [startWidget]="'time'" />
         </div>
         <app-mobile-time-buttons />
     </mat-drawer-content>
