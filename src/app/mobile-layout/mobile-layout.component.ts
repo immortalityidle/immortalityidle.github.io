@@ -4,6 +4,7 @@ import { MobileTimeButtonsComponent } from './mobile-time-buttons/mobile-time-bu
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 import { MobileDrawerComponent } from './mobile-drawer/mobile-drawer.component';
 import { MobileWidgetCarouselComponent } from './mobile-widget-carousel/mobile-widget-carousel.component';
 
@@ -12,6 +13,7 @@ import { MobileWidgetCarouselComponent } from './mobile-widget-carousel/mobile-w
   imports: [
     MatSidenavModule,
     MatButtonModule,
+    MatDividerModule,
     MatIconModule,
     MobileHealthComponent,
     MobileTimeButtonsComponent,

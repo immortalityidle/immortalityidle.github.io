@@ -8,9 +8,8 @@ describe('MobileWidgetCarouselComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MobileWidgetCarouselComponent]
-    })
-    .compileComponents();
+      imports: [MobileWidgetCarouselComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MobileWidgetCarouselComponent);
     component = fixture.componentInstance;

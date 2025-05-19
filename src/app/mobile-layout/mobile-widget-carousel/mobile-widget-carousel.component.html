@@ -1,9 +1,23 @@
 <div class="embla__container">
-    <app-mobile-activities class="embla__slide" />
-    <app-mobile-time class="embla__slide" />
-    <app-attributes-panel class="embla__slide" />
-    <app-battle-panel class="embla__slide" />
-    <app-home-panel class="embla__slide" />
-    <app-inventory-panel class="embla__slide" />
-    <app-log-panel class="embla__slide" />
+    @if (otherCarouselSelection() !== 'activities') {
+        <app-mobile-activities class="embla__slide" />
+    }
+    @if (otherCarouselSelection() !== 'time') {
+        <app-mobile-time class="embla__slide" />
+    }
+    @if (otherCarouselSelection() !== 'attributes') {
+        <app-attributes-panel class="embla__slide" />
+    }
+    @if (otherCarouselSelection() !== 'battle') {
+        <app-battle-panel class="embla__slide" />
+    }
+    @if (otherCarouselSelection() !== 'home') {
+        <app-home-panel class="embla__slide" />
+    }
+    @if (otherCarouselSelection() !== 'inventory') {
+        <app-inventory-panel class="embla__slide" />
+    }
+    @if (otherCarouselSelection() !== 'log') {
+        <app-log-panel class="embla__slide" />
+    }
 </div>
