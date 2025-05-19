@@ -96,7 +96,7 @@ input {
 
 .schedule-grid {
   display: grid;
-  grid-template-columns: min-content 1fr min-content;
+  grid-template-columns: auto min-content;
   gap: 4px;
 }
 
@@ -104,4 +104,10 @@ input {
   display: flex;
   white-space: nowrap;
   align-items: center;
+}
+
+.activity-title-and-bar {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
