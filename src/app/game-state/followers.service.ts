@@ -170,12 +170,12 @@ export class FollowersService {
       totalPower: 0,
       runEachTick: true,
     },
-    coaldigger: {
+    coalDigger: {
       work: daysElapsed => {
-        const power = Math.floor((this.jobs['coaldigger'].totalPower * daysElapsed) / 100);
+        const power = Math.floor((this.jobs['coalDigger'].totalPower * daysElapsed) / 100);
         this.inventoryService.addItem(this.itemRepoService.items['coal'], power);
       },
-      description: 'Coaldiggers gather coal for your crafting.',
+      description: 'Coal Diggers gather coal for your crafting.',
       totalPower: 0,
       runEachTick: true,
     },
@@ -184,7 +184,7 @@ export class FollowersService {
         const power = Math.floor((this.jobs['lumberjack'].totalPower * daysElapsed) / 100);
         this.inventoryService.addItem(this.inventoryService.getWood(), power);
       },
-      description: 'lumberjack gather wood for your crafting.',
+      description: 'Lumberjacks gather wood for your crafting.',
       totalPower: 0,
       runEachTick: true,
     },
@@ -334,6 +334,16 @@ export class FollowersService {
         this.battleService.trouble();
       },
       description: 'Scouts help you track down and fight monsters faster.',
+      totalPower: 0,
+      runEachTick: true,
+    },
+    monsterHunter: {
+      work: daysElapsed => {
+        const quantity = 1 + Math.floor((this.jobs['monsterHunter'].totalPower * daysElapsed) / 10);
+        const grade = 1 + Math.floor(Math.log(quantity));
+        this.inventoryService.addItem(this.inventoryService.generateSpiritGem(grade), quantity);
+      },
+      description: 'Monster Hunters take on low level monsters for you and offer you some of the gems they gather.',
       totalPower: 0,
       runEachTick: true,
     },

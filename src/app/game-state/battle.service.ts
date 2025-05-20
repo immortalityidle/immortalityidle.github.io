@@ -10,6 +10,7 @@ import { LocationType } from './activity';
 import { LocationService } from './location.service';
 import { AttributeType, StatusType } from './character.service';
 import { BigNumberPipe } from '../pipes';
+import { TitleCasePipe } from '@angular/common';
 
 export interface Enemy {
   name: string;
@@ -205,7 +206,8 @@ export class BattleService {
     private itemRepoService: ItemRepoService,
     private inventoryService: InventoryService,
     private homeService: HomeService,
-    mainLoopService: MainLoopService
+    mainLoopService: MainLoopService,
+    private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
@@ -719,7 +721,7 @@ export class BattleService {
       }
       for (const technique of enemy.techniques) {
         if (technique.ticks === technique.ticksRequired) {
-          this.enemyAttack(technique);
+          this.enemyAttack(technique, this.titleCasePipe.transform(enemy.name));
           technique.ticks = 0;
         } else {
           if (slowingEffect) {
@@ -732,7 +734,7 @@ export class BattleService {
     }
   }
 
-  private enemyAttack(technique: Technique) {
+  private enemyAttack(technique: Technique, enemyName: string) {
     if (this.skipEnemyAttack > 0) {
       this.skipEnemyAttack--;
       return;
@@ -776,17 +778,17 @@ export class BattleService {
     // TODO: tune this
     // The curve slopes nicely at 20k. No reason, just relative comparison. Higher for gentler slope, closer to 1 for sharper.
     if (defense >= 1) {
-      damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
+      damage = damage / (Math.pow(defense, 0.5) + Math.pow(1000000, (-damage + defense) / defense));
     }
 
     if (damage > 0) {
       this.logService.injury(
         LogTopic.COMBAT,
-        'Ow! You got hit for ' + this.bigNumberPipe.transform(damage) + ' damage'
+        'Ow! ' + enemyName + ' hit you for ' + this.bigNumberPipe.transform(damage) + ' damage'
       );
       this.characterService.increaseAttribute('toughness', 0.01);
       if (damageBack) {
-        this.damageEnemy(damage, 'Your shield strikes back, damaging the enemy for ' + damage + ' damage.');
+        this.damageEnemy(damage, 'Your shield strikes back! ' + enemyName + ' receives ' + damage + ' damage.');
       }
     }
     if (damage > this.highestDamageTaken) {

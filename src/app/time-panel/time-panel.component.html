@@ -40,9 +40,9 @@
       </mat-icon>
     }
   </div>
-  <div>
+  <div tooltip="Banked time accrues slowly as you play or more quickly when you pause or take a break.<br>You can use banked time to make each moment feel as though ten have passed.">
     <input type="checkbox" (change)="useSavedTicks($event)" id="useSavedTicks"
       [checked]="mainLoopService.useBankedTicks"/>
-    <label for="useSavedTicks">Use banked time to accelerate reality. {{mainLoopService.bankedDays | bigNumber}} banked days left.</label>
+    <label for="useSavedTicks" >Use banked time to accelerate reality. {{mainLoopService.bankedTicks | bigNumber}} banked moments left.</label>
   </div>
 </div>

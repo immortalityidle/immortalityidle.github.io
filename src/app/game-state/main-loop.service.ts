@@ -78,7 +78,6 @@ export class MainLoopService {
   reincarnating = false;
   daysSinceLongTick = 0;
   daysSinceYearOrLongTick = 0;
-  bankedDays = 0;
   lastUsedTickTime = 0;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
@@ -167,7 +166,6 @@ export class MainLoopService {
   }
 
   handleLongTickTimeout() {
-    this.bankedDays = Math.floor(this.bankedTicks / this.tickDivider);
     this.longTickSubject.next(this.daysSinceLongTick);
     this.daysSinceLongTick = 0;
     this.yearOrLongTickSubject.next(this.daysSinceYearOrLongTick);
@@ -182,7 +180,7 @@ export class MainLoopService {
     this.bankedTicks += timeDiff / TICK_INTERVAL_MS;
 
     let ticksToDo = 0;
-    if (this.useBankedTicks && !this.pause) {
+    if (this.useBankedTicks && !this.pause && this.tickDivider < 40) {
       ticksToDo = Math.floor(this.bankedTicks / this.tickDivider);
       if (ticksToDo > 10) {
         ticksToDo = 10;
