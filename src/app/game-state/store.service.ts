@@ -150,15 +150,15 @@ export class StoreService {
 
   condenseSoulCore() {
     if (this.soulCoreRank >= 9) {
-      this.logService.injury(LogTopic.EVENT, "You can't condense your soul core any further.");
+      this.logService.log(LogTopic.EVENT, "You can't condense your soul core any further.");
       return;
     }
     if (this.characterService.attributes.spirituality.value < this.characterService.condenseSoulCoreCost) {
-      this.logService.injury(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
+      this.logService.log(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
-    if (this.gemRequirementsMet(this.soulCoreRank + 12, this.soulCoreRank > 2)) {
-      this.logService.injury(LogTopic.EVENT, "You don't have the gems required to ascend.");
+    if (!this.gemRequirementsMet(this.soulCoreRank + 12, this.soulCoreRank > 2)) {
+      this.logService.log(LogTopic.EVENT, "You don't have the gems required to ascend.");
       return;
     }
     this.characterService.condenseSoulCore();
@@ -167,15 +167,15 @@ export class StoreService {
 
   reinforceMeridians() {
     if (this.meridianRank >= 9) {
-      this.logService.injury(LogTopic.EVENT, "You can't reinforce your meridians any further.");
+      this.logService.log(LogTopic.EVENT, "You can't reinforce your meridians any further.");
       return;
     }
     if (this.characterService.attributes.spirituality.value < this.characterService.reinforceMeridiansCost) {
-      this.logService.injury(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
+      this.logService.log(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
-    if (this.gemRequirementsMet(this.meridianRank + 16, this.soulCoreRank > 2)) {
-      this.logService.injury(LogTopic.EVENT, "You don't have the gems required to ascend.");
+    if (!this.gemRequirementsMet(this.meridianRank + 16, this.soulCoreRank > 2)) {
+      this.logService.log(LogTopic.EVENT, "You don't have the gems required to ascend.");
       return;
     }
 
@@ -185,15 +185,15 @@ export class StoreService {
 
   upgradeBloodline() {
     if (this.characterService.attributes.spirituality.value < this.characterService.bloodlineCost) {
-      this.logService.injury(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
+      this.logService.log(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
     if (this.characterService.bloodlineRank >= 9) {
-      this.logService.injury(LogTopic.EVENT, "You can't enhance your bloodline any further.");
+      this.logService.log(LogTopic.EVENT, "You can't enhance your bloodline any further.");
       return;
     }
     if (this.homeService.home.type < this.bloodLineHomeRequirement.type) {
-      this.logService.injury(LogTopic.EVENT, "You don't have a powerful enough home to ascend.");
+      this.logService.log(LogTopic.EVENT, "You don't have a powerful enough home to ascend.");
       return;
     }
     this.characterService.upgradeBloodline();
