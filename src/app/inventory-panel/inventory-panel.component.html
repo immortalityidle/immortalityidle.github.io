@@ -125,15 +125,15 @@
 
   <div class="overflow">
     <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
-      @for (itemStack of inventoryService.itemStacks; track itemStack.id;) {
+      @for (itemStack of inventoryService.itemStacks; track itemStack.id; let idx = $index) {
         <div>
           <div id="itemIndex{{$index}}" >
             <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)"
               cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
               [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
               (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
-              [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem)}"
-              tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
+              [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem), 'heirloomSlot' : (idx < inventoryService.heirloomSlots)}"
+              tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : idx < inventoryService.heirloomSlots ? 'This slot can preserve an heirloom item for your next reincarnation.' : ''}}">
               <div class="itemName textOverflow">
                 @if (itemStack?.item?.imageFile){
                   <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage"

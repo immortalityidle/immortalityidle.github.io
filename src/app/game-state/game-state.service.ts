@@ -587,6 +587,7 @@ export class GameStateService {
       herbCounter: props?.herbCounter || 0,
       gemsAcquired: props?.gemsAcquired || 0,
       foodEatenToday: props?.foodEatenToday || 0,
+      heirloomSlots: props?.heirloomSlots || 0,
     };
   }
 

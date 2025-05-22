@@ -146,6 +146,7 @@ export interface InventoryProperties {
   herbCounter: number;
   gemsAcquired: number;
   foodEatenToday: number;
+  heirloomSlots: number;
 }
 
 @Injectable({
@@ -223,6 +224,7 @@ export class InventoryService {
   gemsAcquired = 0;
   foodEatenToday = 0;
   maxFoodPerDay = 10; // cap at 10 meals in a day seems reasonable, maybe tune this
+  heirloomSlots = 0;
 
   constructor(
     private injector: Injector,
@@ -401,6 +403,7 @@ export class InventoryService {
       herbCounter: this.herbCounter,
       gemsAcquired: this.gemsAcquired,
       foodEatenToday: this.foodEatenToday,
+      heirloomSlots: this.heirloomSlots,
     };
   }
 
@@ -464,6 +467,7 @@ export class InventoryService {
     this.herbCounter = properties.herbCounter;
     this.gemsAcquired = properties.gemsAcquired;
     this.foodEatenToday = properties.foodEatenToday;
+    this.heirloomSlots = properties.heirloomSlots;
   }
 
   farmFoodList = [
@@ -1094,9 +1098,13 @@ export class InventoryService {
     this.lifetimePotionsUsed = 0;
     this.lifetimePillsUsed = 0;
     this.lifetimeGemsSold = 0;
-    this.itemStacks = [];
+    const newItemStacks: ItemStack[] = [];
+    for (let i = 0; i < this.heirloomSlots; i++) {
+      newItemStacks.push(this.itemStacks[i]);
+    }
+    this.itemStacks = newItemStacks;
     this.stashedItemStacks = [];
-    this.changeMaxItems(10);
+    this.changeMaxItems(this.homeService!.home.maxInventory);
 
     if (this.grandmotherGift) {
       const stick: Equipment = {
@@ -1228,6 +1236,7 @@ export class InventoryService {
 
   public eatFood(foodItem: Item, quantity = 1) {
     if (this.foodEatenToday > this.maxFoodPerDay) {
+      this.logService.log(LogTopic.EVENT, 'Your stomach is too full to handle any more food today');
       return 0;
     }
     if (quantity > this.maxFoodPerDay - this.foodEatenToday) {

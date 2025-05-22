@@ -1096,7 +1096,6 @@ export class HomeService {
       this.upgrading = false;
       this.houseBuildingProgress = 1;
     }
-    this.inventoryService.changeMaxItems(this.home.maxInventory);
     this.nextHomeCostReduction = 0;
 
     if (this.keepHome) {

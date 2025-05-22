@@ -337,7 +337,7 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      name: '',
+      name: 'Sweeter Still',
       description: 'You can now grow Divine Peaches in your farm.',
       hint: 'Descend to the depths and bring back the sweetest fruit.',
       check: () => {
@@ -1145,6 +1145,36 @@ export class AchievementService {
       },
       effect: () => {
         this.homeService.keepHome = true;
+      },
+      unlocked: false,
+    },
+    {
+      name: "Don't Sell My Stuff!",
+      description:
+        'Your descendants have so much respect for you that they will preserve one stack of items for your next reincarnation.',
+      hint: 'Strong family bonds have advantages.',
+      check: () => {
+        return this.characterService.bloodlineRank >= 3;
+      },
+      effect: () => {
+        if (this.inventoryService.heirloomSlots < 1) {
+          this.inventoryService.heirloomSlots = 1;
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Mine Forever',
+      description:
+        'Your descendants have so much respect for you that they will preserve three stacks of items for your next reincarnation.',
+      hint: 'Strong family bonds have advantages.',
+      check: () => {
+        return this.characterService.bloodlineRank >= 5;
+      },
+      effect: () => {
+        if (this.inventoryService.heirloomSlots < 3) {
+          this.inventoryService.heirloomSlots = 3;
+        }
       },
       unlocked: false,
     },
