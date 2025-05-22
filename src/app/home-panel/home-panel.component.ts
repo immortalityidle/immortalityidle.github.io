@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { HomeService } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,17 +6,19 @@ import { StoreService } from '../game-state/store.service';
 import { FollowersService } from '../game-state/followers.service';
 import { HellService } from '../game-state/hell.service';
 import { FurnitureStoreModalComponent } from '../furniture-store-modal/furniture-store-modal.component';
-import { TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-home-panel',
   templateUrl: './home-panel.component.html',
   styleUrls: ['./home-panel.component.less', '../app.component.less'],
   imports: [
-    forwardRef(() => MatIcon),
+    CommonModule,
+    MatIcon,
     forwardRef(() => TitleCasePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
@@ -24,6 +26,8 @@ import { BigNumberPipe } from '../pipes';
 })
 export class HomePanelComponent {
   protected Math = Math;
+
+  protected appService = inject(AppService);
 
   constructor(
     protected characterService: CharacterService,
