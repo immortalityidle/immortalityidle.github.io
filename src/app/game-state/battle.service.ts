@@ -50,7 +50,6 @@ export interface BattleProperties {
   godSlayersUnlocked: boolean;
   godSlayersEnabled: boolean;
   totalEnemies: number;
-  troubleCounter: number;
   battleMessageDismissed: boolean;
   techniques: Technique[];
   techniqueDevelopmentCounter: number;
@@ -96,6 +95,37 @@ export interface StatusEffect {
   ticksLeft: number;
 }
 
+export const LOOT_TYPE_GEM = 'gem';
+export const LOOT_TYPE_MONEY = 'money';
+export const LOOT_TYPE_HIDE = 'hide';
+export const LOOT_TYPE_FRUIT = 'fruit';
+export const LOOT_TYPE_MEAT = 'meat';
+export const LOOT_TYPE_ORE = 'ore';
+
+export const RIGHT_HAND_TECHNIQUE = 'Right-Handed Weapon';
+export const LEFT_HAND_TECHNIQUE = 'Left-Handed Weapon';
+export const QI_ATTACK = 'Qi Strike';
+export const PYROCLASM_ATTACK = 'Pyroclasm';
+export const METAL_FIST_ATTACK = 'Metal Fist';
+export const QI_SHIELD = 'Qi Shield';
+export const FIRE_SHIELD = 'Fire Shield';
+export const ICE_SHIELD = 'Ice Shield';
+
+export const ELEMENT_EFFECT_FIRE = 'Fire Essence';
+export const ELEMENT_EFFECT_EARTH = 'Earth Essence';
+export const ELEMENT_EFFECT_METAL = 'Metal Essence';
+export const ELEMENT_EFFECT_WOOD = 'Wood Essence';
+export const ELEMENT_EFFECT_WATER = 'Water Essence';
+export const EFFECT_CORRUPTION = 'Corruption';
+export const EFFECT_LIFE = 'Life';
+export const EFFECT_POISON = 'Poison';
+export const EFFECT_DOOM = 'Doom';
+export const EFFECT_EXPLOSIVE = 'Explosions';
+export const EFFECT_SHIELDING = 'Shielding';
+export const EFFECT_PIERCING = 'Piercing';
+export const EFFECT_HASTE = 'Haste';
+export const EFFECT_SLOW = 'Slowing';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -117,7 +147,6 @@ export class BattleService {
   godSlayersUnlocked = false;
   godSlayersEnabled = false;
   totalEnemies = 0;
-  private troubleCounter = 0;
   battleMessageDismissed = false;
   private techniqueDevelopmentCounter = 0;
   maxFamilyTechniques = 0;
@@ -132,30 +161,8 @@ export class BattleService {
   formationCooldown = 0;
   formationPower = 0;
   battlesUnlocked = false;
+  lores: AttributeType[] = ['metalLore', 'earthLore', 'waterLore', 'fireLore', 'woodLore'];
 
-  public rightHandTechniqueName = 'Right-Handed Weapon';
-  public leftHandTechniqueName = 'Left-Handed Weapon';
-  private qiAttackName = 'Qi Strike';
-  private pyroclasmAttackName = 'Pyroclasm';
-  private metalFistName = 'Metal Fist';
-  private qiShieldName = 'Qi Shield';
-  private fireShieldName = 'Fire Shield';
-  private iceShieldName = 'Ice Shield';
-
-  private fireElementEffectName = 'Fire Essence';
-  private earthElementEffectName = 'Earth Essence';
-  private metalElementEffectName = 'Metal Essence';
-  private woodElementEffectName = 'Wood Essence';
-  private waterElementEffectName = 'Water Essence';
-  private corruptionEffectName = 'Corruption';
-  private lifeEffectName = 'Life';
-  private poisonEffectName = 'Poison';
-  private doomEffectName = 'Doom';
-  private explosiveEffectName = 'Explosions';
-  private shieldingEffectName = 'Shielding';
-  private piercingEffectName = 'Piercing';
-  private hasteEffectName = 'Haste';
-  private slowingEffectName = 'Slowing';
   private elementalFactor = 2;
   // elemental logic:
   // fire weakens metal and burns wood
@@ -177,7 +184,7 @@ export class BattleService {
     },
     {
       // don't mess with the index on this
-      name: this.rightHandTechniqueName,
+      name: RIGHT_HAND_TECHNIQUE,
       description: 'A strike from the weapon in your right hand.',
       ticksRequired: 6,
       ticks: 0,
@@ -188,7 +195,7 @@ export class BattleService {
     },
     {
       // don't mess with the index on this
-      name: this.leftHandTechniqueName,
+      name: LEFT_HAND_TECHNIQUE,
       description: 'A strike from the weapon in your left hand.',
       ticksRequired: 8,
       ticks: 0,
@@ -350,7 +357,6 @@ export class BattleService {
       godSlayersUnlocked: this.godSlayersUnlocked,
       godSlayersEnabled: this.godSlayersEnabled,
       totalEnemies: this.totalEnemies,
-      troubleCounter: this.troubleCounter,
       battleMessageDismissed: this.battleMessageDismissed,
       techniques: this.techniques,
       techniqueDevelopmentCounter: this.techniqueDevelopmentCounter,
@@ -382,7 +388,6 @@ export class BattleService {
     this.godSlayersUnlocked = properties.godSlayersUnlocked;
     this.godSlayersEnabled = properties.godSlayersEnabled;
     this.totalEnemies = properties.totalEnemies;
-    this.troubleCounter = properties.troubleCounter;
     this.battleMessageDismissed = properties.battleMessageDismissed;
     this.techniques = properties.techniques;
     this.techniqueDevelopmentCounter = properties.techniqueDevelopmentCounter;
@@ -523,20 +528,18 @@ export class BattleService {
     }
 
     const effects = [
-      this.fireElementEffectName,
-      this.earthElementEffectName,
-      this.fireElementEffectName,
-      this.earthElementEffectName,
-      this.metalElementEffectName,
-      this.woodElementEffectName,
-      this.waterElementEffectName,
-      this.poisonEffectName,
-      this.doomEffectName,
-      this.explosiveEffectName,
-      this.shieldingEffectName,
-      this.piercingEffectName,
-      this.hasteEffectName,
-      this.slowingEffectName,
+      ELEMENT_EFFECT_FIRE,
+      ELEMENT_EFFECT_EARTH,
+      ELEMENT_EFFECT_METAL,
+      ELEMENT_EFFECT_WOOD,
+      ELEMENT_EFFECT_WATER,
+      EFFECT_POISON,
+      EFFECT_DOOM,
+      EFFECT_EXPLOSIVE,
+      EFFECT_SHIELDING,
+      EFFECT_PIERCING,
+      EFFECT_HASTE,
+      EFFECT_SLOW,
     ];
 
     const effectIndex = Math.floor(Math.random() * effects.length * 5);
@@ -580,12 +583,12 @@ export class BattleService {
   }
 
   addQiAttack() {
-    if (this.techniques.find(technique => technique.name === this.qiAttackName)) {
+    if (this.techniques.find(technique => technique.name === QI_ATTACK)) {
       // already added, bail out
       return;
     }
     this.techniques.push({
-      name: this.qiAttackName,
+      name: QI_ATTACK,
       description: 'Focus your Qi into a concentrated blast. Each use of this ability requires 10 Qi.',
       ticksRequired: 5,
       ticks: 0,
@@ -597,12 +600,12 @@ export class BattleService {
   }
 
   addPyroclasm() {
-    if (this.techniques.find(technique => technique.name === this.pyroclasmAttackName)) {
+    if (this.techniques.find(technique => technique.name === PYROCLASM_ATTACK)) {
       // already added, bail out
       return;
     }
     this.techniques.push({
-      name: this.pyroclasmAttackName,
+      name: PYROCLASM_ATTACK,
       description:
         "Focus your Qi and blast your enemies with heat so intense their children's children will get burned. Each use of this ability requires 10,000 Qi.",
       ticksRequired: 20,
@@ -615,12 +618,12 @@ export class BattleService {
   }
 
   addMetalFist() {
-    if (this.techniques.find(technique => technique.name === this.metalFistName)) {
+    if (this.techniques.find(technique => technique.name === METAL_FIST_ATTACK)) {
       // already added, bail out
       return;
     }
     this.techniques.push({
-      name: this.metalFistName,
+      name: METAL_FIST_ATTACK,
       description:
         'Focus your Qi and summon a massive metal fist to crush your enemy. Each use of this ability requires 10,000 Qi.',
       ticksRequired: 20,
@@ -633,12 +636,12 @@ export class BattleService {
   }
 
   addQiShield() {
-    if (this.techniques.find(technique => technique.name === this.qiShieldName)) {
+    if (this.techniques.find(technique => technique.name === QI_SHIELD)) {
       // already added, bail out
       return;
     }
     this.techniques.push({
-      name: this.qiShieldName,
+      name: QI_SHIELD,
       description:
         'Focus your Qi to form a protective shroud around your body, protecting you and decreasing the damage that you take. Each use of this ability requires 10 Qi.',
       ticksRequired: 5,
@@ -648,7 +651,7 @@ export class BattleService {
       attribute: 'intelligence',
       qiCost: 10,
       statusEffect: {
-        name: this.qiShieldName,
+        name: QI_SHIELD,
         description: 'A shield of concentrated qi that reduces damage taken.',
         ticksLeft: 5,
         power: 1,
@@ -657,12 +660,12 @@ export class BattleService {
   }
 
   addFireShield() {
-    if (this.techniques.find(technique => technique.name === this.fireShieldName)) {
+    if (this.techniques.find(technique => technique.name === FIRE_SHIELD)) {
       // already added, bail out
       return;
     }
     this.techniques.push({
-      name: this.fireShieldName,
+      name: FIRE_SHIELD,
       description:
         'Bring forth your inner fire to form a blistering barrier around you. Each use of this ability requires 10,000 Qi.',
       ticksRequired: 10,
@@ -672,7 +675,7 @@ export class BattleService {
       attribute: 'fireLore',
       qiCost: 10000,
       statusEffect: {
-        name: this.fireShieldName,
+        name: FIRE_SHIELD,
         description: 'A blazing shield tha harms your enemies.',
         ticksLeft: 10,
         power: 1,
@@ -681,12 +684,12 @@ export class BattleService {
   }
 
   addIceShield() {
-    if (this.techniques.find(technique => technique.name === this.iceShieldName)) {
+    if (this.techniques.find(technique => technique.name === ICE_SHIELD)) {
       // already added, bail out
       return;
     }
     this.techniques.push({
-      name: this.iceShieldName,
+      name: ICE_SHIELD,
       description:
         "Bring forth the ice inside you to form a freezing barrier around you that will stop your enemy's next attack. Each use of this ability requires 10,000 Qi.",
       ticksRequired: 10,
@@ -696,7 +699,7 @@ export class BattleService {
       attribute: 'waterLore',
       qiCost: 10000,
       statusEffect: {
-        name: this.iceShieldName,
+        name: ICE_SHIELD,
         description: 'A frozen shield that will negate damage from the next enemy attack.',
         ticksLeft: 10,
         power: 1,
@@ -711,9 +714,9 @@ export class BattleService {
         for (let i = enemy.statusEffects.length - 1; i >= 0; i--) {
           if (enemy.statusEffects[i].ticksLeft <= 0) {
             enemy.statusEffects.splice(i, 1);
-          } else if (enemy.statusEffects[i].name === this.poisonEffectName) {
+          } else if (enemy.statusEffects[i].name === EFFECT_POISON) {
             enemy.health -= enemy.health * 0.01;
-          } else if (enemy.statusEffects[i].name === this.slowingEffectName) {
+          } else if (enemy.statusEffects[i].name === EFFECT_SLOW) {
             slowingEffect = enemy.statusEffects[i];
           }
           enemy.statusEffects[i].ticksLeft--;
@@ -745,11 +748,11 @@ export class BattleService {
 
     let damageBack = false;
     for (let i = this.statusEffects.length - 1; i >= 0; i--) {
-      if (this.statusEffects[i].name === this.qiShieldName) {
+      if (this.statusEffects[i].name === QI_SHIELD) {
         damage /= 2;
-      } else if (this.statusEffects[i].name === this.shieldingEffectName) {
+      } else if (this.statusEffects[i].name === EFFECT_SHIELDING) {
         damage /= 2;
-      } else if (this.statusEffects[i].name === this.fireShieldName) {
+      } else if (this.statusEffects[i].name === FIRE_SHIELD) {
         let fireDivisor = Math.log(this.characterService.attributes.fireLore.value) / Math.log(100);
         if (fireDivisor < 1) {
           fireDivisor = 1;
@@ -760,10 +763,10 @@ export class BattleService {
         damage /= fireDivisor;
         this.characterService.status.qi.value -= 10000;
         damageBack = true;
-      } else if (this.statusEffects[i].name === this.iceShieldName) {
+      } else if (this.statusEffects[i].name === ICE_SHIELD) {
         damage = 0;
         this.statusEffects.splice(i, 1);
-      } else if (this.statusEffects[i].name === this.corruptionEffectName) {
+      } else if (this.statusEffects[i].name === EFFECT_CORRUPTION) {
         damage *= 10;
       }
     }
@@ -813,7 +816,7 @@ export class BattleService {
       this.statusEffects[i].ticksLeft--;
       if (this.statusEffects[i].ticksLeft <= 0) {
         this.statusEffects.splice(i, 1);
-      } else if (this.statusEffects[i].name === this.hasteEffectName) {
+      } else if (this.statusEffects[i].name === EFFECT_HASTE) {
         hasteTicks = this.statusEffects[i].power;
       }
     }
@@ -889,10 +892,14 @@ export class BattleService {
     if (this.currentEnemy && this.characterService.status.health.value > 0) {
       let attackPower = this.characterService.attackPower['strength'] || 1;
       if (technique.attribute) {
-        attackPower = this.characterService.attackPower[technique.attribute] || 1;
+        if (this.lores.includes(technique.attribute)) {
+          attackPower += (this.characterService.attackPower[technique.attribute] || 1) * 100;
+        } else {
+          attackPower = this.characterService.attackPower[technique.attribute] || 1;
+        }
       }
       let effect = technique.effect;
-      if (technique.name === this.rightHandTechniqueName) {
+      if (technique.name === RIGHT_HAND_TECHNIQUE) {
         effect = this.characterService.equipment.rightHand?.effect;
         if (this.characterService.equipment.rightHand) {
           attackPower =
@@ -900,7 +907,7 @@ export class BattleService {
               attackPower * Math.sqrt(this.characterService.equipment.rightHand.weaponStats?.baseDamage || 1)
             ) || 1;
         }
-      } else if (technique.name === this.leftHandTechniqueName) {
+      } else if (technique.name === LEFT_HAND_TECHNIQUE) {
         effect = this.characterService.equipment.leftHand?.effect;
         if (this.characterService.equipment.leftHand) {
           attackPower =
@@ -923,26 +930,26 @@ export class BattleService {
 
       // TODO: tune all of this
       // apply effects
-      if (effect === this.corruptionEffectName) {
+      if (effect === EFFECT_CORRUPTION) {
         damage *= 10;
         const corruptionEffect: StatusEffect = {
-          name: this.corruptionEffectName,
+          name: EFFECT_CORRUPTION,
           description: 'Your corruption has left you vulnerable.',
           ticksLeft: 10,
           power: 1,
         };
-        const statusEffect = this.statusEffects.find(e => e.name === this.corruptionEffectName);
+        const statusEffect = this.statusEffects.find(e => e.name === EFFECT_CORRUPTION);
         if (statusEffect) {
           statusEffect.ticksLeft += corruptionEffect.ticksLeft;
         } else {
           this.statusEffects.push(corruptionEffect);
         }
-      } else if (effect === this.lifeEffectName) {
+      } else if (effect === EFFECT_LIFE) {
         const healAmount = damage * 0.01;
         this.logService.log(LogTopic.COMBAT, 'Your attack healed you for ' + healAmount + ' as you struck the enemy.');
         this.characterService.status.health.value += healAmount; // TODO: tune this
         this.characterService.checkOverage();
-      } else if (effect === this.fireElementEffectName) {
+      } else if (effect === ELEMENT_EFFECT_FIRE) {
         if (this.currentEnemy.element) {
           if (this.currentEnemy.element === 'metal' || this.currentEnemy.element === 'wood') {
             damage *= this.elementalFactor;
@@ -950,7 +957,7 @@ export class BattleService {
             damage /= this.elementalFactor;
           }
         }
-      } else if (effect === this.woodElementEffectName) {
+      } else if (effect === ELEMENT_EFFECT_WOOD) {
         if (this.currentEnemy.element) {
           if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'earth') {
             damage *= this.elementalFactor;
@@ -958,7 +965,7 @@ export class BattleService {
             damage /= this.elementalFactor;
           }
         }
-      } else if (effect === this.waterElementEffectName) {
+      } else if (effect === ELEMENT_EFFECT_WATER) {
         if (this.currentEnemy.element) {
           if (this.currentEnemy.element === 'fire' || this.currentEnemy.element === 'metal') {
             damage *= this.elementalFactor;
@@ -966,7 +973,7 @@ export class BattleService {
             damage /= this.elementalFactor;
           }
         }
-      } else if (effect === this.metalElementEffectName) {
+      } else if (effect === ELEMENT_EFFECT_METAL) {
         if (this.currentEnemy.element) {
           if (this.currentEnemy.element === 'wood' || this.currentEnemy.element === 'earth') {
             damage *= this.elementalFactor;
@@ -974,7 +981,7 @@ export class BattleService {
             damage /= this.elementalFactor;
           }
         }
-      } else if (effect === this.earthElementEffectName) {
+      } else if (effect === ELEMENT_EFFECT_EARTH) {
         if (this.currentEnemy.element) {
           if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'fire') {
             damage *= this.elementalFactor;
@@ -982,15 +989,15 @@ export class BattleService {
             damage /= this.elementalFactor;
           }
         }
-      } else if (effect === this.poisonEffectName) {
+      } else if (effect === EFFECT_POISON) {
         const statusEffect: StatusEffect = {
-          name: this.poisonEffectName,
+          name: EFFECT_POISON,
           description: "Poison is sapping away at this creature's health.",
           ticksLeft: 10,
           power: 1,
         };
         if (this.currentEnemy.statusEffects) {
-          const poisonEffect = this.currentEnemy.statusEffects.find(e => e.name === this.poisonEffectName);
+          const poisonEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_POISON);
           if (poisonEffect) {
             poisonEffect.ticksLeft += statusEffect.ticksLeft;
           } else {
@@ -999,15 +1006,15 @@ export class BattleService {
         } else {
           this.currentEnemy.statusEffects = [statusEffect];
         }
-      } else if (effect === this.doomEffectName) {
+      } else if (effect === EFFECT_DOOM) {
         const statusEffect: StatusEffect = {
-          name: this.doomEffectName,
+          name: EFFECT_DOOM,
           description: 'Doom is coming for this creature.',
           ticksLeft: 1000,
           power: 1,
         };
         if (this.currentEnemy.statusEffects) {
-          const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === this.doomEffectName);
+          const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_DOOM);
           if (doomEffect) {
             doomEffect.power += doomEffect.power;
             if (doomEffect.power > 3) {
@@ -1019,52 +1026,52 @@ export class BattleService {
         } else {
           this.currentEnemy.statusEffects = [statusEffect];
         }
-      } else if (effect === this.explosiveEffectName) {
+      } else if (effect === EFFECT_EXPLOSIVE) {
         damage *= 1000;
         this.characterService.status.health.value -= damage;
         // destroy the weapon
-        if (technique.name === this.rightHandTechniqueName) {
+        if (technique.name === RIGHT_HAND_TECHNIQUE) {
           this.characterService.equipment.rightHand = null;
-        } else if (technique.name === this.leftHandTechniqueName) {
+        } else if (technique.name === LEFT_HAND_TECHNIQUE) {
           this.characterService.equipment.leftHand = null;
         }
-      } else if (effect === this.shieldingEffectName) {
+      } else if (effect === EFFECT_SHIELDING) {
         const shieldingEffect: StatusEffect = {
-          name: this.shieldingEffectName,
+          name: EFFECT_SHIELDING,
           description: 'Your shielding technique is protecting you.',
           ticksLeft: 10,
           power: 1,
         };
-        const statusEffect = this.statusEffects.find(e => e.name === this.corruptionEffectName);
+        const statusEffect = this.statusEffects.find(e => e.name === EFFECT_CORRUPTION);
         if (statusEffect) {
           statusEffect.ticksLeft += shieldingEffect.ticksLeft;
         } else {
           this.statusEffects.push(shieldingEffect);
         }
-      } else if (effect === this.piercingEffectName) {
+      } else if (effect === EFFECT_PIERCING) {
         defense *= 0.5;
-      } else if (effect === this.hasteEffectName) {
+      } else if (effect === EFFECT_HASTE) {
         const hasteEffect: StatusEffect = {
-          name: this.shieldingEffectName,
+          name: EFFECT_HASTE,
           description: 'Your attacks strike more quickly, with less time between them.',
           ticksLeft: 10,
           power: 1,
         };
-        const statusEffect = this.statusEffects.find(e => e.name === this.corruptionEffectName);
+        const statusEffect = this.statusEffects.find(e => e.name === EFFECT_HASTE);
         if (statusEffect) {
           statusEffect.ticksLeft += hasteEffect.ticksLeft;
         } else {
           this.statusEffects.push(hasteEffect);
         }
-      } else if (effect === this.slowingEffectName) {
+      } else if (effect === EFFECT_SLOW) {
         const statusEffect: StatusEffect = {
-          name: this.doomEffectName,
+          name: EFFECT_SLOW,
           description: 'Doom is coming for this creature.',
           ticksLeft: 1000,
           power: 1,
         };
         if (this.currentEnemy.statusEffects) {
-          const slowingEffect = this.currentEnemy.statusEffects.find(e => e.name === this.slowingEffectName);
+          const slowingEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_SLOW);
           if (slowingEffect) {
             slowingEffect.ticksLeft += statusEffect.ticksLeft;
           } else {
@@ -1088,7 +1095,7 @@ export class BattleService {
         damage = 1;
       }
       let blowthrough = false;
-      if (technique.name === this.metalFistName) {
+      if (technique.name === METAL_FIST_ATTACK) {
         // TODO: tune this
         let metalMultiplier = Math.log(this.characterService.attributes.metalLore.value) / Math.log(50);
         if (metalMultiplier < 1) {
@@ -1099,7 +1106,7 @@ export class BattleService {
         }
         damage *= metalMultiplier;
       }
-      if (technique.name === this.pyroclasmAttackName) {
+      if (technique.name === PYROCLASM_ATTACK) {
         // TODO: tune this
         let fireMultiplier = Math.log(this.characterService.attributes.fireLore.value) / Math.log(100);
         if (fireMultiplier < 1) {
@@ -1250,8 +1257,6 @@ export class BattleService {
       return;
     }
 
-    this.troubleCounter++;
-
     const targetLocation = this.locationService.troubleTarget;
     /*
     if (this.godSlayersEnabled) {
@@ -1273,7 +1278,7 @@ export class BattleService {
      */
     const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
 
-    const monsterType = possibleMonsters[this.troubleCounter % possibleMonsters.length];
+    const monsterType = possibleMonsters[this.killsByLocation[targetLocation] % possibleMonsters.length];
 
     const killsToNextQualityRank = ((monsterType.basePower + '').length + 3) * 5;
     const modifier = ((this.killsByLocation[targetLocation] || 0) + 1) / killsToNextQualityRank;
@@ -1291,22 +1296,22 @@ export class BattleService {
     const loot: Item[] = [];
     if (monsterType.lootType) {
       const grade = Math.floor(Math.log2(modifiedBasePower + 2));
-      if (monsterType.lootType.includes('gem')) {
+      if (monsterType.lootType.includes(LOOT_TYPE_GEM)) {
         loot.push(this.inventoryService.generateSpiritGem(grade, monsterType.element));
       }
-      if (monsterType.lootType.includes('hide')) {
+      if (monsterType.lootType.includes(LOOT_TYPE_HIDE)) {
         loot.push(this.inventoryService.getHide(grade));
       }
-      if (monsterType.lootType.includes('ore')) {
+      if (monsterType.lootType.includes(LOOT_TYPE_ORE)) {
         loot.push(this.inventoryService.getOre(grade));
       }
-      if (monsterType.lootType.includes('fruit')) {
+      if (monsterType.lootType.includes(LOOT_TYPE_FRUIT)) {
         loot.push(this.itemRepoService.items['pear']);
       }
-      if (monsterType.lootType.includes('meat')) {
+      if (monsterType.lootType.includes(LOOT_TYPE_MEAT)) {
         loot.push(this.inventoryService.getWildMeat(grade));
       }
-      if (monsterType.lootType.includes('money')) {
+      if (monsterType.lootType.includes(LOOT_TYPE_MONEY)) {
         loot.push(this.inventoryService.getCoinPurse(Math.floor(modifiedBasePower)));
       }
     }
@@ -1490,28 +1495,28 @@ export class BattleService {
       description: '',
       location: LocationType.SmallTown,
       basePower: 1,
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'rat',
       description: '',
       location: LocationType.SmallTown,
       basePower: 2,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'scorpion',
       description: '',
       location: LocationType.Desert,
       basePower: 3,
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'lizard',
       description: '',
       location: LocationType.Desert,
       basePower: 5,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'snake',
@@ -1519,7 +1524,7 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 8,
       element: 'fire',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'jack-o-lantern',
@@ -1527,14 +1532,14 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 10,
       element: 'fire',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'redcap',
       description: '',
       location: LocationType.SmallTown,
       basePower: 12,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'gnome',
@@ -1542,14 +1547,14 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 15,
       element: 'earth',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'gremlin',
       description: '',
       location: LocationType.SmallTown,
       basePower: 18,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'imp',
@@ -1557,35 +1562,35 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 20,
       element: 'water',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'ooze',
       description: '',
       location: LocationType.Forest,
       basePower: 30,
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'jackalope',
       description: '',
       location: LocationType.Desert,
       basePower: 40,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'pixie',
       description: '',
       location: LocationType.Forest,
       basePower: 50,
-      lootType: ['gem', 'fruit'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_FRUIT],
     },
     {
       name: 'goblin',
       description: '',
       location: LocationType.Forest,
       basePower: 100,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'monkey',
@@ -1593,7 +1598,7 @@ export class BattleService {
       location: LocationType.Jungle,
       basePower: 100,
       element: 'metal',
-      lootType: ['gem', 'hide', 'fruit'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_FRUIT],
     },
     {
       name: 'boar',
@@ -1601,21 +1606,21 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 200,
       element: 'water',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'skeleton',
       description: '',
       location: LocationType.Mine,
       basePower: 300,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'zombie',
       description: '',
       location: LocationType.Dungeon,
       basePower: 400,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'kelpie',
@@ -1623,7 +1628,7 @@ export class BattleService {
       location: LocationType.SmallPond,
       basePower: 500,
       element: 'water',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'bunyip',
@@ -1631,14 +1636,14 @@ export class BattleService {
       location: LocationType.SmallPond,
       basePower: 600,
       element: 'water',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'hobgoblin',
       description: '',
       location: LocationType.LargeCity,
       basePower: 700,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'kobold',
@@ -1646,14 +1651,14 @@ export class BattleService {
       location: LocationType.Mine,
       basePower: 800,
       element: 'earth',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'chupacabra',
       description: '',
       location: LocationType.Desert,
       basePower: 900,
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'siren',
@@ -1661,7 +1666,7 @@ export class BattleService {
       location: LocationType.SmallPond,
       basePower: 1000,
       element: 'water',
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'crocodile',
@@ -1669,7 +1674,7 @@ export class BattleService {
       location: LocationType.SmallPond,
       basePower: 1200,
       element: 'water',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'golem',
@@ -1677,35 +1682,35 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 1300,
       element: 'earth',
-      lootType: ['gem', 'ore'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ORE],
     },
     {
       name: 'incubus',
       description: '',
       location: LocationType.LargeCity,
       basePower: 1400,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'succubus',
       description: '',
       location: LocationType.LargeCity,
       basePower: 1500,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'jackal',
       description: '',
       location: LocationType.Desert,
       basePower: 1800,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'boogeyman',
       description: '',
       location: LocationType.LargeCity,
       basePower: 2000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'basilisk',
@@ -1713,28 +1718,28 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 2100,
       element: 'earth',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'mogwai',
       description: '',
       location: LocationType.LargeCity,
       basePower: 2500,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'ghoul',
       description: '',
       location: LocationType.Dungeon,
       basePower: 3000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'orc',
       description: '',
       location: LocationType.LargeCity,
       basePower: 1000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'tiger',
@@ -1742,14 +1747,14 @@ export class BattleService {
       location: LocationType.Jungle,
       basePower: 4000,
       element: 'wood',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'hippo',
       description: '',
       location: LocationType.SmallPond,
       basePower: 5000,
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'rakshasa',
@@ -1757,14 +1762,14 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 6000,
       element: 'wood',
-      lootType: ['gem', 'hide', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MONEY],
     },
     {
       name: 'ghost',
       description: '',
       location: LocationType.Dungeon,
       basePower: 5000,
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'centaur',
@@ -1772,7 +1777,7 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 8000,
       element: 'wood',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'hellhound',
@@ -1780,28 +1785,28 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 9000,
       element: 'fire',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'troll',
       description: '',
       location: LocationType.Dungeon,
       basePower: 10000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'werewolf',
       description: '',
       location: LocationType.Forest,
       basePower: 11000,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'ogre',
       description: '',
       location: LocationType.Dungeon,
       basePower: 12000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'manticore',
@@ -1809,7 +1814,7 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 15000,
       element: 'wood',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'minotaur',
@@ -1817,7 +1822,7 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 18000,
       element: 'earth',
-      lootType: ['gem', 'hide', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MONEY],
     },
     {
       name: 'merlion',
@@ -1825,28 +1830,28 @@ export class BattleService {
       location: LocationType.Beach,
       basePower: 20000,
       element: 'water',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'mummy',
       description: '',
       location: LocationType.Desert,
       basePower: 30000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'landshark',
       description: '',
       location: LocationType.Beach,
       basePower: 40000,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'bugbear',
       description: '',
       location: LocationType.Forest,
       basePower: 50000,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'cavebear',
@@ -1854,7 +1859,7 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 70000,
       element: 'earth',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'yeti',
@@ -1862,14 +1867,14 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 80000,
       element: 'metal',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'dreameater',
       description: '',
       location: LocationType.Dungeon,
       basePower: 100000,
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'unicorn',
@@ -1877,21 +1882,21 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 120000,
       element: 'wood',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'banshee',
       description: '',
       location: LocationType.Dungeon,
       basePower: 140000,
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'harpy',
       description: '',
       location: LocationType.MountainTops,
       basePower: 150000,
-      lootType: ['gem'],
+      lootType: [LOOT_TYPE_GEM],
     },
     {
       name: 'phoenix',
@@ -1899,7 +1904,7 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 180000,
       element: 'fire',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'sphinx',
@@ -1907,14 +1912,14 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 200000,
       element: 'fire',
-      lootType: ['gem', 'hide', 'ore'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_ORE],
     },
     {
       name: 'oni',
       description: '',
       location: LocationType.Dungeon,
       basePower: 300000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'leshy',
@@ -1922,7 +1927,7 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 300000,
       element: 'wood',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'chimaera',
@@ -1930,7 +1935,7 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 400000,
       element: 'wood',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'undine',
@@ -1938,7 +1943,7 @@ export class BattleService {
       location: LocationType.DeepSea,
       basePower: 500000,
       element: 'water',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'cyclops',
@@ -1946,14 +1951,14 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 600000,
       element: 'metal',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'nyuk',
       description: '',
       location: LocationType.Dungeon,
       basePower: 700000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'wendigo',
@@ -1961,28 +1966,28 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 800000,
       element: 'wood',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'behemoth',
       description: '',
       location: LocationType.Desert,
       basePower: 800000,
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'dinosaur',
       description: '',
       location: LocationType.Jungle,
       basePower: 1000000,
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'wyvern',
       description: '',
       location: LocationType.MountainTops,
       basePower: 2000000,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'doomworm',
@@ -1990,7 +1995,7 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 3000000,
       element: 'earth',
-      lootType: ['gem', 'hide', 'meat', 'ore'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT, LOOT_TYPE_ORE],
     },
     {
       name: 'lich',
@@ -1998,28 +2003,28 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 5000000,
       element: 'metal',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'thunderbird',
       description: '',
       location: LocationType.MountainTops,
       basePower: 8000000,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'vampire',
       description: '',
       location: LocationType.Dungeon,
       basePower: 10000000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'beholder',
       description: '',
       location: LocationType.Dungeon,
       basePower: 15000000,
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'hydra',
@@ -2027,21 +2032,21 @@ export class BattleService {
       location: LocationType.DeepSea,
       basePower: 20000000,
       element: 'water',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'roc',
       description: '',
       location: LocationType.MountainTops,
       basePower: 40000000,
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'wyrm',
       description: '',
       location: LocationType.MountainTops,
       basePower: 50000000,
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'giant',
@@ -2049,7 +2054,7 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 60000000,
       element: 'earth',
-      lootType: ['gem', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
       name: 'kraken',
@@ -2057,14 +2062,14 @@ export class BattleService {
       location: LocationType.DeepSea,
       basePower: 80000000,
       element: 'water',
-      lootType: ['gem', 'hide'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
       name: 'pazuzu',
       description: '',
       location: LocationType.MountainTops,
       basePower: 100000000,
-      lootType: ['gem', 'hide', 'money'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MONEY],
     },
     {
       name: 'titan',
@@ -2072,7 +2077,7 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 200000000,
       element: 'metal',
-      lootType: ['gem', 'money', 'ore'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY, LOOT_TYPE_ORE],
     },
     {
       name: 'leviathan',
@@ -2080,14 +2085,14 @@ export class BattleService {
       location: LocationType.DeepSea,
       basePower: 500000000,
       element: 'water',
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
       name: 'stormbringer',
       description: '',
       location: LocationType.MountainTops,
       basePower: 1000000000,
-      lootType: ['gem', 'hide', 'meat'],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
   ];
 

@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { ActivityService, ActivityProperties } from './activity.service';
-import { BattleService, BattleProperties } from './battle.service';
+import { BattleService, BattleProperties, RIGHT_HAND_TECHNIQUE, LEFT_HAND_TECHNIQUE } from './battle.service';
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService } from './achievement.service';
@@ -684,7 +684,6 @@ export class GameStateService {
       godSlayersUnlocked: props?.godSlayersUnlocked || false,
       godSlayersEnabled: props?.godSlayersEnabled || false,
       totalEnemies: props?.totalEnemies || 0,
-      troubleCounter: props?.troubleCounter || 0,
       battleMessageDismissed: props?.battleMessageDismissed || false,
       techniques: props?.techniques || [
         {
@@ -699,7 +698,7 @@ export class GameStateService {
         },
         {
           // don't mess with the index on this
-          name: this.battleService.rightHandTechniqueName,
+          name: RIGHT_HAND_TECHNIQUE,
           description: 'A strike from the weapon in your right hand.',
           ticksRequired: 6,
           ticks: 0,
@@ -710,7 +709,7 @@ export class GameStateService {
         },
         {
           // don't mess with the index on this
-          name: this.battleService.leftHandTechniqueName,
+          name: LEFT_HAND_TECHNIQUE,
           description: 'A strike from the weapon in your left hand.',
           ticksRequired: 8,
           ticks: 0,
