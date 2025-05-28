@@ -18,7 +18,7 @@
         </span>
       </div>
       @for (attribute of attributesByGroup[group] | keyvalue: originalOrder; track attribute) {
-        @if ((attribute.value.value !== 0 || characterService.highestAttributes[attribute.key])) {
+        @if ((attribute.value.displayValue() !== 0 || characterService.highestAttributes[attribute.key])) {
           <div class='attributeLine'>
             <div class='attributeColumn' tooltip="{{attribute.value.description}}">
               <mat-icon>{{attribute.value.icon}}</mat-icon>
@@ -26,14 +26,14 @@
                 {{attribute.key | camelToTitle}}
               </span>
             </div>
-            <div class='attributeColumn' tooltip="Your aptitude of {{attribute.value.aptitude | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.aptitudeMult | bigNumber}}.">
+            <div class='attributeColumn' tooltip="Your aptitude of {{attribute.value.displayAptitude() | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.displayAptitude() | bigNumber}}.">
               <span>
-                {{attribute.value.aptitude| bigNumber}}
+                {{attribute.value.displayAptitude()| bigNumber}}
               </span>
             </div>
             <div class='attributeColumn'>
               <span>
-                {{attribute.value.value | bigNumber}}
+                {{attribute.value.displayValue() | bigNumber}}
               </span>
               @for (update of getAttributeUpdates(attribute.key); track update) {
                 <span class="popupText"

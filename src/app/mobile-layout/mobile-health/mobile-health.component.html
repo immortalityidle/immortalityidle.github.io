@@ -13,13 +13,13 @@
                     <div class="statusCell age">
                         <mat-icon tooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
                         <div>
-                            @if(characterService.age < ageBreakpoint) {
-                                <span>Age {{Math.floor(characterService.age / 365) }}</span>
+                            @if(characterService.displayAge() < ageBreakpoint) {
+                                <span>Age {{Math.floor(characterService.displayAge() / 365) }}</span>
                             } @else {
-                                <span>Age {{characterService.age / 365 | bigNumber }}</span>
+                                <span>Age {{characterService.displayAge() / 365 | bigNumber }}</span>
                             }
-                            @if (characterService.age < ageBreakpoint) {
-                                <span>.{{characterService.age % 365 | number: '1.0-0'}}</span>
+                            @if (characterService.displayAge() < ageBreakpoint) {
+                                <span>.{{characterService.displayAge() % 365 | number: '1.0-0'}}</span>
                             }
                             <span> years old.</span>
                         </div>
@@ -29,26 +29,26 @@
                             <div>You expect to live forever.</div>
                         }
                         @else {
-                            <div>You expect to live {{characterService.lifespan / 365 | bigNumber}} years.</div>
+                            <div>You expect to live {{characterService.displayLifespan() / 365 | bigNumber}} years.</div>
                         }
                     </div>
                 } @else {
                     <span>
-                        @if(characterService.age < ageBreakpoint) {
-                            {{Math.floor(characterService.age / 365)}}
+                        @if(characterService.displayAge() < ageBreakpoint) {
+                            {{Math.floor(characterService.displayAge() / 365)}}
                             /
                             @if (characterService.immortal) {
                                 Forever
                             } @else {
-                                {{characterService.lifespan / 365 | bigNumber}}
+                                {{characterService.displayLifespan() / 365 | bigNumber}}
                             }
                         } @else {
-                            {{characterService.age / 365 | bigNumber }}
+                            {{characterService.displayAge() / 365 | bigNumber }}
                             /
                             @if (characterService.immortal) {
                                 Forever
                             } @else {
-                                {{characterService.lifespan / 365 | bigNumber}}
+                                {{characterService.displayLifespan() / 365 | bigNumber}}
                             }
                         }
                     </span>
@@ -70,7 +70,7 @@
                                     {{update | bigNumber}}
                                 </span>
                             }
-                            <span>{{characterService.money | bigNumber}} Taels</span>
+                            <span>{{characterService.displayMoney() | bigNumber}} Taels</span>
                         </div>
                         @if (characterService.hellMoney > 0) {
                             <div tooltip="Money accepted as legal tender in hell." class="moneyColumn">
@@ -92,11 +92,11 @@
                     <div class="label">Health</div>
                 }
                 <div class="progress-bar" [ngClass]="healthService.flashHealth ? 'flash' : ''"
-                    [attr.value]="Math.floor(characterService.immortal && characterService.status.health.value < 0 ? 0 : characterService.status.health.value) | bigNumber"
-                    [attr.max]="Math.floor(characterService.status.health.max) | bigNumber">
+                    [attr.value]="Math.floor(characterService.immortal && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) | bigNumber"
+                    [attr.max]="Math.floor(characterService.status.health.displayMax()) | bigNumber">
                     <span [style.width.%]="100 *
-                        Math.floor(characterService.immortal && characterService.status.health.value < 0 ? 0 : characterService.status.health.value) /
-                        Math.floor(characterService.status.health.max)">
+                        Math.floor(characterService.immortal && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) /
+                        Math.floor(characterService.status.health.displayMax())">
                     </span>
                 </div>
             </div>
@@ -105,11 +105,11 @@
                     <div class="label">Stamina</div>
                 }
                 <div class="progress-bar" [ngClass]="healthService.flashStamina ? 'flash' : ''"
-                    [attr.value]="Math.floor(characterService.immortal && characterService.status.stamina.value < 0 ? 0 : characterService.status.stamina.value) | bigNumber"
-                    [attr.max]="Math.floor(characterService.status.stamina.max) | bigNumber">
+                    [attr.value]="Math.floor(characterService.immortal && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) | bigNumber"
+                    [attr.max]="Math.floor(characterService.status.stamina.displayMax()) | bigNumber">
                     <span [style.width.%]="100 *
-                        Math.floor(characterService.immortal && characterService.status.stamina.value < 0 ? 0 : characterService.status.stamina.value) /
-                        Math.floor(characterService.status.stamina.max)">
+                        Math.floor(characterService.immortal && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) /
+                        Math.floor(characterService.status.stamina.displayMax())">
                     </span>
                 </div>
             </div>
@@ -121,12 +121,12 @@
                     <div class="label">Nutrition</div>
                 }
                 <div class="progress-bar" [ngClass]="healthService.flashNutrition ? 'flash' : ''"
-                    [attr.value]="Math.floor(characterService.status.nutrition.value) | bigNumber"
-                    [attr.max]="Math.floor(characterService.status.nutrition.max) | bigNumber">
+                    [attr.value]="Math.floor(characterService.status.nutrition.displayValue()) | bigNumber"
+                    [attr.max]="Math.floor(characterService.status.nutrition.displayMax()) | bigNumber">
                     <span
                         [style.width.%]="100 *
-                        Math.floor(characterService.status.nutrition.value) /
-                        Math.floor(characterService.status.nutrition.max)">
+                        Math.floor(characterService.status.nutrition.displayValue()) /
+                        Math.floor(characterService.status.nutrition.displayMax())">
                     </span>
                 </div>
             </div>
@@ -135,12 +135,12 @@
                     <div class="label">Qi</div>
                 }
                 <div class="progress-bar" [ngClass]="healthService.flashNutrition ? 'flash' : ''"
-                    [attr.value]="Math.floor(characterService.status.qi.value) | bigNumber"
-                    [attr.max]="Math.floor(characterService.status.qi.max) | bigNumber">
+                    [attr.value]="Math.floor(characterService.status.qi.displayValue()) | bigNumber"
+                    [attr.max]="Math.floor(characterService.status.qi.displayMax()) | bigNumber">
                     <span
                     [style.width.%]="100 *
-                        Math.floor(characterService.status.qi.value) /
-                        Math.floor(characterService.status.qi.max)">
+                        Math.floor(characterService.status.qi.displayValue()) /
+                        Math.floor(characterService.status.qi.displayMax())">
                     </span>
                 </div>
             </div>

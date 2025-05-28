@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
@@ -61,8 +61,10 @@ export type AttributeType =
 export type AttributeObject = {
   description: string;
   value: number;
+  displayValue: WritableSignal<number>;
   lifeStartValue: number;
   aptitude: number;
+  displayAptitude: WritableSignal<number>;
   aptitudeMult: number;
   icon: string;
 };
@@ -81,7 +83,14 @@ export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
 
 export type StatusType = 'health' | 'stamina' | 'qi' | 'nutrition';
 export type CharacterStatus = {
-  [key in StatusType]: { description: string; value: number; max: number; battleTickRecovery: number };
+  [key in StatusType]: {
+    description: string;
+    value: number;
+    displayValue: WritableSignal<number>;
+    max: number;
+    displayMax: WritableSignal<number>;
+    battleTickRecovery: number;
+  };
 };
 
 export interface CharacterProperties {
@@ -210,168 +219,210 @@ export class CharacterService {
     strength: {
       description: 'An immortal must have raw physical power.',
       value: 1,
+      displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'fitness_center',
     },
     toughness: {
       description: 'An immortal must develop resilience to endure hardship.',
       value: 1,
+      displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'castle',
     },
     speed: {
       description: 'An immortal must be quick of foot and hand.',
       value: 1,
+      displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'directions_run',
     },
     intelligence: {
       description: 'An immortal must understand the workings of the universe.',
       value: 1,
+      displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'local_library',
     },
     charisma: {
       description: 'An immortal must influence the hearts and minds of others.',
       value: 1,
+      displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'forum',
     },
     spirituality: {
       description: 'An immortal must find deep connections to the divine.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'self_improvement',
     },
     earthLore: {
       description: 'Understanding the earth and how to draw power and materials from it.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'landslide',
     },
     metalLore: {
       description: 'Understanding metals and how to forge and use them.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'view_module',
     },
     woodLore: {
       description: 'Understanding plants and how to grow and care for them.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'forest',
     },
     waterLore: {
       description: 'Understanding potions and pills and how to make and use them.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'emoji_food_beverage',
     },
     fireLore: {
       description: 'Burn! Burn! BURN!!!',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'local_fire_department',
     },
     combatMastery: {
       description: 'Mastery of combat skills.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'sports_martial_arts',
     },
     magicMastery: {
       description: 'Mastery of magical skills.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'auto_awesome',
     },
     animalHandling: {
       description: 'Skill in working with animals and monsters.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'cruelty_free',
     },
     performance: {
       description: 'Skill in manipulating others with your voice.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'record_voice_over',
     },
     smithing: {
       description: 'Skill with the forge and anvil.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'hardware',
     },
     alchemy: {
       description: 'Mastery of potions and pills.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'emoji_food_beverage',
     },
     woodwork: {
       description: 'Skill with saws and chisels.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'carpenter',
     },
     leatherwork: {
       description: 'Skill shaping hides into useful items.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'pets',
     },
     formationMastery: {
       description: 'Experience creating formation flags.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'flag',
     },
     cooking: {
       description: 'Mastery of the wok and other kitchen essentials.',
       value: 0,
+      displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
+      displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'soup_kitchen',
     },
@@ -380,35 +431,45 @@ export class CharacterService {
     health: {
       description: 'Physical well-being. Take too much damage and you will die.',
       value: 100,
+      displayValue: signal<number>(100),
       max: 100,
+      displayMax: signal<number>(100),
       battleTickRecovery: 0,
     },
     stamina: {
       description:
         'Physical energy to accomplish tasks. Most activities use stamina, and if you let yourself run down you could get sick and have to stay in bed for a few days.',
       value: 100,
+      displayValue: signal<number>(100),
       max: 100,
+      displayMax: signal<number>(100),
       battleTickRecovery: 1,
     },
     qi: {
       description: 'Magical energy required for mysterious spiritual activities.',
       value: 0,
+      displayValue: signal<number>(0),
       max: 0,
+      displayMax: signal<number>(0),
       battleTickRecovery: 0,
     },
     nutrition: {
       description:
         'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend some money on cheap scraps each day.',
       value: 30,
+      displayValue: signal<number>(30),
       max: 30,
+      displayMax: signal<number>(30),
       battleTickRecovery: 0,
     },
   };
   money = 0;
+  displayMoney = signal<number>(this.money);
   stashedMoney = 0;
   hellMoney = 0;
   // age in days
   age = INITIAL_AGE;
+  displayAge = signal<number>(this.age);
   baseLifespan = 30 * 365;
   foodLifespan = 0; // bonus to lifespan based on food you've eaten
   alchemyLifespan = 0; // bonus to lifespan based on pills you've eaten
@@ -422,6 +483,7 @@ export class CharacterService {
     this.statLifespan +
     this.spiritualityLifespan +
     this.magicLifespan;
+  displayLifespan = signal<number>(this.lifespan);
   equipment: EquipmentSlots = {
     head: null,
     body: null,
@@ -460,6 +522,25 @@ export class CharacterService {
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
 
     let prevTotalTicks = this.mainLoopService.totalTicks;
+
+    mainLoopService.displayValueTickSubject.subscribe(() => {
+      this.displayMoney.set(this.money);
+      this.displayAge.set(this.age);
+      this.displayLifespan.set(this.lifespan);
+      const statusKeys = Object.keys(this.status);
+      for (const key of statusKeys) {
+        const statusKey = key as StatusType;
+        this.status[statusKey].displayValue.set(this.status[statusKey].value);
+        this.status[statusKey].displayMax.set(this.status[statusKey].max);
+      }
+      const attributeKeys = Object.keys(this.attributes);
+      for (const key of attributeKeys) {
+        const attributeKey = key as AttributeType;
+        this.attributes[attributeKey].displayValue.set(this.attributes[attributeKey].value);
+        this.attributes[attributeKey].displayAptitude.set(this.attributes[attributeKey].aptitude);
+      }
+    });
+
     mainLoopService.longTickSubject.subscribe(elapsedDays => {
       const currentTotalTicks = this.mainLoopService.totalTicks;
       const daysPerExtraDay = 3650;
