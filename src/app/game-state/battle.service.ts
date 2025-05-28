@@ -35,6 +35,7 @@ export interface EnemyTypes {
   element?: string;
   basePower: number;
   lootType?: string[];
+  techniques?: Technique[];
 }
 
 export interface BattleProperties {
@@ -724,7 +725,7 @@ export class BattleService {
       }
       for (const technique of enemy.techniques) {
         if (technique.ticks === technique.ticksRequired) {
-          this.enemyAttack(technique, this.titleCasePipe.transform(enemy.name));
+          this.enemyAttack(technique, enemy);
           technique.ticks = 0;
         } else {
           if (slowingEffect) {
@@ -737,7 +738,7 @@ export class BattleService {
     }
   }
 
-  private enemyAttack(technique: Technique, enemyName: string) {
+  private enemyAttack(technique: Technique, enemy: Enemy) {
     if (this.skipEnemyAttack > 0) {
       this.skipEnemyAttack--;
       return;
@@ -783,7 +784,7 @@ export class BattleService {
     if (defense >= 1) {
       damage = damage / (Math.pow(defense, 0.5) + Math.pow(1000000, (-damage + defense) / defense));
     }
-
+    const enemyName = this.titleCasePipe.transform(enemy.name);
     if (damage > 0) {
       this.logService.injury(
         LogTopic.COMBAT,
@@ -798,7 +799,27 @@ export class BattleService {
       this.highestDamageTaken = damage;
     }
     this.characterService.status.health.value -= damage;
-    this.attackEffect(technique);
+    if (technique.effect) {
+      if (technique.effect === 'feeder' && this.hellService) {
+        if (technique.hitTracker !== undefined && technique.hitTracker < 2) {
+          technique.hitTracker++;
+        } else {
+          // force feed on third hit
+          this.hellService.daysFasted = 0;
+          const damage = this.characterService.status.health.value / 4;
+          this.logService.injury(
+            LogTopic.COMBAT,
+            'The hellfire burns as it goes down, damaging you for ' + damage + ' extra damage.'
+          );
+          this.characterService.status.health.value -= damage;
+        }
+      } else if (technique.effect === 'theft') {
+        this.characterService.updateMoney(0 - this.characterService.money / 10);
+      } else if (technique.effect === EFFECT_LIFE) {
+        enemy.health += damage * 0.1;
+      }
+    }
+
     if (this.activeFormation === 'survival' && this.characterService.status.health.value <= 0) {
       this.activeFormation = '';
       this.formationDuration = 0;
@@ -1146,7 +1167,11 @@ export class BattleService {
     this.currentEnemy.health = Math.floor(this.currentEnemy.health - damage);
     if (customMessage === '') {
       customMessage =
-        'You attack ' + this.currentEnemy.name + ' for ' + this.bigNumberPipe.transform(damage) + ' damage';
+        'You attack ' +
+        this.titleCasePipe.transform(this.currentEnemy.name) +
+        ' for ' +
+        this.bigNumberPipe.transform(damage) +
+        ' damage';
     }
     damage -= enemyHealth;
     if (this.currentEnemy.health <= 0) {
@@ -1166,7 +1191,7 @@ export class BattleService {
     this.totalKills++;
     this.killsByLocation[this.locationService!.troubleTarget] =
       (this.killsByLocation[this.locationService!.troubleTarget] || 0) + 1;
-    this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.currentEnemy.name);
+    this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
     if (this.currentEnemy.name === 'Death itself') {
       this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
     }
@@ -1203,7 +1228,7 @@ export class BattleService {
 
   addEnemy(enemy: Enemy) {
     this.totalEnemies++;
-    this.logService.log(LogTopic.COMBAT, 'A new enemy comes to battle: ' + enemy.name);
+    this.logService.log(LogTopic.COMBAT, 'A new enemy comes to battle: ' + this.titleCasePipe.transform(enemy.name));
 
     // check to see if we already have an enemy with the same name
     let highestIndex = 0;
@@ -1278,7 +1303,7 @@ export class BattleService {
      */
     const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
 
-    const monsterType = possibleMonsters[this.killsByLocation[targetLocation] % possibleMonsters.length];
+    const monsterType = possibleMonsters[(this.killsByLocation[targetLocation] || 0) % possibleMonsters.length];
 
     const killsToNextQualityRank = ((monsterType.basePower + '').length + 3) * 5;
     const modifier = ((this.killsByLocation[targetLocation] || 0) + 1) / killsToNextQualityRank;
@@ -1316,6 +1341,27 @@ export class BattleService {
       }
     }
 
+    const techniques: Technique[] = [];
+    if (monsterType.techniques) {
+      for (const templateTechnique of monsterType.techniques) {
+        techniques.push({
+          name: templateTechnique.name,
+          ticks: templateTechnique.ticks,
+          ticksRequired: templateTechnique.ticksRequired,
+          baseDamage: attack * templateTechnique.baseDamage,
+          unlocked: templateTechnique.unlocked,
+        });
+      }
+    } else {
+      techniques.push({
+        name: 'Attack',
+        ticks: 0,
+        ticksRequired: 10,
+        baseDamage: attack,
+        unlocked: true,
+      });
+    }
+
     this.addEnemy({
       name: monsterName,
       baseName: monsterType.name,
@@ -1323,15 +1369,7 @@ export class BattleService {
       maxHealth: health,
       defense: defense,
       loot: loot,
-      techniques: [
-        {
-          name: 'Attack',
-          ticks: 0,
-          ticksRequired: 10,
-          baseDamage: attack,
-          unlocked: true,
-        },
-      ],
+      techniques: techniques,
     });
   }
 
@@ -1443,7 +1481,10 @@ export class BattleService {
     }
     if (enemy.defeatEffect === 'respawnDouble') {
       // add two more of the same enemy
-      this.logService.log(LogTopic.COMBAT, 'They just keep coming! Two more ' + enemy.name + ' appear!');
+      this.logService.log(
+        LogTopic.COMBAT,
+        'They just keep coming! Two more ' + this.titleCasePipe.transform(enemy.name) + ' appear!'
+      );
       this.addEnemy({
         name: enemy.name,
         baseName: enemy.baseName,
@@ -1464,28 +1505,6 @@ export class BattleService {
         loot: enemy.loot,
         techniques: enemy.techniques,
       });
-    }
-  }
-
-  private attackEffect(technique: Technique) {
-    if (!technique.effect) {
-      return;
-    }
-    if (technique.effect === 'feeder' && this.hellService) {
-      if (technique.hitTracker !== undefined && technique.hitTracker < 2) {
-        technique.hitTracker++;
-      } else {
-        // force feed on third hit
-        this.hellService.daysFasted = 0;
-        const damage = this.characterService.status.health.value / 4;
-        this.logService.injury(
-          LogTopic.COMBAT,
-          'The hellfire burns as it goes down, damaging you for ' + damage + ' extra damage.'
-        );
-        this.characterService.status.health.value -= damage;
-      }
-    } else if (technique.effect === 'theft') {
-      this.characterService.updateMoney(0 - this.characterService.money / 10);
     }
   }
 
@@ -1496,6 +1515,15 @@ export class BattleService {
       location: LocationType.SmallTown,
       basePower: 1,
       lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Sting',
+          ticks: 0,
+          ticksRequired: 15,
+          baseDamage: 1,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'rat',
@@ -1503,6 +1531,15 @@ export class BattleService {
       location: LocationType.SmallTown,
       basePower: 2,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      techniques: [
+        {
+          name: 'Gnaw',
+          ticks: 0,
+          ticksRequired: 12,
+          baseDamage: 1,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'scorpion',
@@ -1510,6 +1547,22 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 3,
       lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Sting',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: 3,
+          unlocked: true,
+        },
+        {
+          name: 'Claw Snap',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.1,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'lizard',
@@ -1540,6 +1593,15 @@ export class BattleService {
       location: LocationType.SmallTown,
       basePower: 12,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Poke',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.2,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'gnome',
@@ -1570,6 +1632,23 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 30,
       lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Blorp',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Consume',
+          ticks: 0,
+          ticksRequired: 30,
+          baseDamage: 2,
+          effect: EFFECT_LIFE,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'jackalope',
@@ -1607,6 +1686,15 @@ export class BattleService {
       basePower: 200,
       element: 'water',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      techniques: [
+        {
+          name: 'Charge',
+          ticks: 0,
+          ticksRequired: 60,
+          baseDamage: 5,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'skeleton',
@@ -1667,6 +1755,15 @@ export class BattleService {
       basePower: 1000,
       element: 'water',
       lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Drowning Call',
+          ticks: 0,
+          ticksRequired: 100,
+          baseDamage: 100,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'crocodile',
@@ -1683,6 +1780,15 @@ export class BattleService {
       basePower: 1300,
       element: 'earth',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ORE],
+      techniques: [
+        {
+          name: 'Stomp',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: 3,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'incubus',
@@ -1697,6 +1803,16 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 1500,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Seduction',
+          ticks: 0,
+          ticksRequired: 50,
+          baseDamage: 10,
+          effect: EFFECT_LIFE,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'jackal',
@@ -1733,6 +1849,23 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 3000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Claw',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Devour',
+          ticks: 0,
+          ticksRequired: 30,
+          baseDamage: 2,
+          effect: EFFECT_LIFE,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'orc',
@@ -1770,6 +1903,22 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 5000,
       lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Haunt',
+          ticks: 0,
+          ticksRequired: 2,
+          baseDamage: 0.1,
+          unlocked: true,
+        },
+        {
+          name: 'Shriek',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 1.2,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'centaur',
@@ -1793,6 +1942,23 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 10000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Club Swipe',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Regrowth Bite',
+          ticks: 0,
+          ticksRequired: 30,
+          baseDamage: 2,
+          effect: EFFECT_LIFE,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'werewolf',
@@ -1807,6 +1973,15 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 12000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Smash',
+          ticks: 0,
+          ticksRequired: 15,
+          baseDamage: 0.8,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'manticore',
@@ -1875,6 +2050,15 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 100000,
       lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Nightmare',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'unicorn',
@@ -1944,6 +2128,22 @@ export class BattleService {
       basePower: 500000,
       element: 'water',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Splash',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Drown',
+          ticks: 0,
+          ticksRequired: 600,
+          baseDamage: 1000,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'cyclops',
@@ -1952,6 +2152,15 @@ export class BattleService {
       basePower: 600000,
       element: 'metal',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Clobber',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: 2,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'nyuk',
@@ -1996,6 +2205,15 @@ export class BattleService {
       basePower: 3000000,
       element: 'earth',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT, LOOT_TYPE_ORE],
+      techniques: [
+        {
+          name: 'Swallow',
+          ticks: 0,
+          ticksRequired: 200,
+          baseDamage: 1000,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'lich',
@@ -2004,6 +2222,30 @@ export class BattleService {
       basePower: 5000000,
       element: 'metal',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Magic Missile',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Fireball',
+          ticks: 0,
+          ticksRequired: 40,
+          baseDamage: 8,
+          unlocked: true,
+        },
+        {
+          name: 'Lifesteal',
+          ticks: 0,
+          ticksRequired: 40,
+          baseDamage: 8,
+          effect: EFFECT_LIFE,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'thunderbird',
@@ -2011,6 +2253,22 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 8000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      techniques: [
+        {
+          name: 'Zap',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Thunderbolt',
+          ticks: 0,
+          ticksRequired: 40,
+          baseDamage: 8,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'vampire',
@@ -2018,6 +2276,16 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 10000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Blood Drain',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 0.2,
+          effect: EFFECT_LIFE,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'beholder',
@@ -2025,6 +2293,22 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 15000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Gaze',
+          ticks: 0,
+          ticksRequired: 4,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Magic Blast',
+          ticks: 0,
+          ticksRequired: 25,
+          baseDamage: 3,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'hydra',
@@ -2033,6 +2317,15 @@ export class BattleService {
       basePower: 20000000,
       element: 'water',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      techniques: [
+        {
+          name: 'Chomp!',
+          ticks: 0,
+          ticksRequired: 3,
+          baseDamage: 1,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'roc',
@@ -2055,6 +2348,15 @@ export class BattleService {
       basePower: 60000000,
       element: 'earth',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Stomp',
+          ticks: 0,
+          ticksRequired: 50,
+          baseDamage: 10,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'kraken',
@@ -2063,6 +2365,22 @@ export class BattleService {
       basePower: 80000000,
       element: 'water',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      techniques: [
+        {
+          name: 'Strangulation',
+          ticks: 0,
+          ticksRequired: 2,
+          baseDamage: 0.1,
+          unlocked: true,
+        },
+        {
+          name: 'Tentacle Lash',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 1,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'pazuzu',
@@ -2070,6 +2388,15 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 100000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Swift Strike',
+          ticks: 0,
+          ticksRequired: 5,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'titan',
@@ -2078,6 +2405,15 @@ export class BattleService {
       basePower: 200000000,
       element: 'metal',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY, LOOT_TYPE_ORE],
+      techniques: [
+        {
+          name: 'Gigastomp',
+          ticks: 0,
+          ticksRequired: 100,
+          baseDamage: 100,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'leviathan',
@@ -2086,6 +2422,22 @@ export class BattleService {
       basePower: 500000000,
       element: 'water',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      techniques: [
+        {
+          name: 'Wave Slap',
+          ticks: 0,
+          ticksRequired: 8,
+          baseDamage: 1,
+          unlocked: true,
+        },
+        {
+          name: 'Tsunami',
+          ticks: 0,
+          ticksRequired: 1000,
+          baseDamage: 100,
+          unlocked: true,
+        },
+      ],
     },
     {
       name: 'stormbringer',
@@ -2093,6 +2445,22 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 1000000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      techniques: [
+        {
+          name: 'Storm Strike',
+          ticks: 0,
+          ticksRequired: 5,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Hurrican Force',
+          ticks: 0,
+          ticksRequired: 100,
+          baseDamage: 10,
+          unlocked: true,
+        },
+      ],
     },
   ];
 
