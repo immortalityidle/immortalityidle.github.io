@@ -201,6 +201,8 @@ export class CharacterService {
   yinYangBoosted = false;
   yin = 1;
   yang = 1;
+  displayYin = signal<number>(1);
+  displayYang = signal<number>(1);
   yinYangBalance = 0;
   righteousWrathUnlocked = false;
   bonusMuscles = false;
@@ -527,6 +529,8 @@ export class CharacterService {
       this.displayMoney.set(this.money);
       this.displayAge.set(this.age);
       this.displayLifespan.set(this.lifespan);
+      this.displayYin.set(this.yin);
+      this.displayYang.set(this.yang);
       const statusKeys = Object.keys(this.status);
       for (const key of statusKeys) {
         const statusKey = key as StatusType;

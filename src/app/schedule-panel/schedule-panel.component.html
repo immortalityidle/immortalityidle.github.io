@@ -62,7 +62,7 @@
             <tr id="activityLoopIndex{{indexOfelement}}"
                 cdkDrag [cdkDragData]="indexOfelement"
                 (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)" cdkDragPreviewClass="currentRow">
-                <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex0{{indexOfelement}}">
+                <td [ngClass]="{'currentRow': indexOfelement === activityService.displayCurrentIndex(), 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex0{{indexOfelement}}">
                 <mat-icon (click)="showActivity($event, entry.activity)"
                     tooltip="What is this activity?<br>Click to learn all about it!"
                     aria-label="Help" aria-hidden="false">
@@ -70,14 +70,14 @@
                 </mat-icon>
                 {{activityService.getActivityName(entry.activity)}} ({{entry.repeatTimes}} {{(entry.repeatTimes === 1) ? "day" : "days"}})
                 </td>
-                <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex1{{indexOfelement}}">
+                <td [ngClass]="{'currentRow': indexOfelement === activityService.displayCurrentIndex(), 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex1{{indexOfelement}}">
                 <div class="progress-bar">
                     <span
-                    [style.width.%]="100 * (indexOfelement !== activityService.currentIndex || entry.disabled || entry.userDisabled ? entry.repeatTimes : activityService.currentTickCount) / entry.repeatTimes">
+                    [style.width.%]="100 * (indexOfelement !== activityService.displayCurrentIndex() || entry.disabled || entry.userDisabled ? entry.repeatTimes : activityService.displayCurrentTickCount()) / entry.repeatTimes">
                     </span>
                 </div>
                 </td>
-                <td [ngClass]="{'currentRow': indexOfelement === activityService.currentIndex, 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex2{{indexOfelement}}">
+                <td [ngClass]="{'currentRow': indexOfelement === activityService.displayCurrentIndex(), 'disabled': entry.disabled || entry.userDisabled || battleService.enemies.length > 0}" id="activityLoopIndex2{{indexOfelement}}">
                 <mat-icon tooltip="Spend fewer days on this.<br>Shift- or Ctrl-click to remove 10x<br>Shift-Ctrl-click to remove 100x"
                     (click)="onMinusClick(entry, $event)" class="iconButton" aria-label="Remove Days" aria-hidden="false">remove</mat-icon>
                 <mat-icon tooltip="Spend more days on this.<br>Shift- or Ctrl-click to add 10x<br>Shift-Ctrl-click to add 100x"

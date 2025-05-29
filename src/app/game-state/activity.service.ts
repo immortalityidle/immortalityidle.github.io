@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal } from '@angular/core';
 import { BattleService } from './battle.service';
 import {
   Activity,
@@ -74,7 +74,9 @@ export class ActivityService {
   beggingDays = 0;
   completedApprenticeships: ActivityType[] = [];
   currentIndex = 0;
+  displayCurrentIndex = signal<number>(0);
   currentTickCount = 0;
+  displayCurrentTickCount = signal<number>(0);
   exhaustionDays = 0;
   currentLoopEntry?: ActivityLoopEntry = undefined;
   currentApprenticeship: ActivityType | undefined = undefined;
@@ -192,6 +194,10 @@ export class ActivityService {
       }
       this.upgradeActivities(false);
       this.checkRequirements(false);
+    });
+    mainLoopService.displayValueTickSubject.subscribe(() => {
+      this.displayCurrentIndex.set(this.currentIndex);
+      this.displayCurrentTickCount.set(this.currentTickCount);
     });
 
     const trainingActionTemplate = (attribute: number, trainingDays: number, follower: Follower): boolean => {
