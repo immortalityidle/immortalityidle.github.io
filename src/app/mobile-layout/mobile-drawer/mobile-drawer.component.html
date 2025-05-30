@@ -1,56 +1,50 @@
-<div class="menu-item">
-    <mat-icon tooltip="Confused?<br>Click here for a tutorial." class="iconButton" (click)="commonButtonsService.tutorialClicked()" aria-label="Tutorial" aria-hidden="false">
+<div class="menu-item" (click)="commonButtonsService.tutorialClicked()">
+    <mat-icon tooltip="Confused?<br>Click here for a tutorial." class="iconButton" aria-label="Tutorial" aria-hidden="false">
         help
     </mat-icon>
     Tutorial
 </div>    
-<div class="menu-item">
-    <mat-icon tooltip="Statistics!" class="iconButton" (click)="commonButtonsService.statisticsClicked()">
+<div class="menu-item" (click)="commonButtonsService.statisticsClicked()">
+    <mat-icon tooltip="Statistics!" class="iconButton" aria-label="Statistics" aria-hidden="false">
         format_list_numbered_rtl
     </mat-icon>
     Statistics
 </div>
-<div class="menu-item">
-    <mat-icon tooltip="Regular People Shop<br>A store that sells regular stuff for regular mortals.<br>You are destined for immortality, but you might want some stuff from here anyway." class="iconButton" aria-label="Store" aria-hidden="false"
-        (click)="commonButtonsService.storeClicked()">
+<div class="menu-item" (click)="commonButtonsService.storeClicked()">
+    <mat-icon tooltip="Regular People Shop<br>A store that sells regular stuff for regular mortals.<br>You are destined for immortality, but you might want some stuff from here anyway." class="iconButton" aria-label="Store" aria-hidden="false">
         store
     </mat-icon>
     Regular People Shop
 </div>
-<div class="menu-item">
+<div class="menu-item" (click)="commonButtonsService.manualStoreClicked()">
     <mat-icon tooltip="Manuals Shop<br>A store that sells special manuals for aspiring immortals." class="iconButton" aria-label="Manual Store" aria-hidden="false"
-        [ngClass]="{highlighted: storeService.isManualAvailable()}"
-        (click)="commonButtonsService.manualStoreClicked()">
+        [ngClass]="{highlighted: storeService.isManualAvailable()}">
         local_library
     </mat-icon>
     Manuals Shop
 </div>
-<div class="menu-item">
-    <mat-icon tooltip="Game Options" class="iconButton" aria-label="Options" aria-hidden="false"
-        (click)="commonButtonsService.optionsClicked()">
+<div class="menu-item" (click)="commonButtonsService.optionsClicked()">
+    <mat-icon tooltip="Game Options" class="iconButton" aria-label="Options" aria-hidden="false">
         settings
     </mat-icon>
     Game Options
 </div>
-<div class="menu-item">
-    <mat-icon tooltip="Achievements!" class="iconButton" aria-label="Achievements" aria-hidden="false"
-        (click)="commonButtonsService.achievementsClicked()">
+<div class="menu-item" (click)="commonButtonsService.achievementsClicked()">
+    <mat-icon tooltip="Achievements!" class="iconButton" aria-label="Achievements" aria-hidden="false">
         military_tech
     </mat-icon>
     Achievements
 </div>
 @if (characterService.ascensionUnlocked) {
-    <div class="menu-item">
-        <mat-icon tooltip="Ascension Techniques." class="iconButton" aria-label="Ascension" aria-hidden="false"
-        (click)="commonButtonsService.ascensionStoreClicked()">
+    <div class="menu-item" (click)="commonButtonsService.ascensionStoreClicked()">
+        <mat-icon tooltip="Ascension Techniques." class="iconButton" aria-label="Ascension" aria-hidden="false">
         keyboard_double_arrow_up
     </mat-icon>
     Ascension Techniques
 </div>
 }
-<div class="menu-item">
-    <mat-icon tooltip="Save<br>The game autosaves every few minutes, but click here if you want to manually save the game right now." class="iconButton" aria-label="Save" aria-hidden="false"
-        (click)="commonButtonsService.saveClicked()">
+<div class="menu-item" (click)="commonButtonsService.saveClicked()">
+    <mat-icon tooltip="Save<br>The game autosaves every few minutes, but click here if you want to manually save the game right now." class="iconButton" aria-label="Save" aria-hidden="false">
         save
     </mat-icon>
     Save

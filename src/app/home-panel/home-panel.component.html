@@ -8,18 +8,6 @@
   }
   @else {
     <div>
-      @if ((homeService.home.name !== homeService.nextHome.name)) {
-        <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton floatRight" aria-label="Upgrade Home" aria-hidden="false"
-          tooltip="{{homeService.nextHome.upgradeToTooltip}}">
-          add_home
-        </mat-icon>
-      }
-      @if ((homeService.home.name !== homeService.previousHome.name)) {
-        <mat-icon (click)="homeService.downgradeHome()" class="iconButton floatRight" aria-label="Downgrade Home" aria-hidden="false"
-          tooltip="Is your new home too expensive? Downgrade to your previous home.">
-          keyboard_double_arrow_down
-        </mat-icon>
-      }
       @if (homeService.upgrading) {
         <div class="progress-bar" tooltip="Upgrading your home."
           [attr.value]=buildTimeYears()>
@@ -28,10 +16,26 @@
         <span style="margin-left: 4px;"></span>
       }
 
-      <div>
+      <div class="home-row">
         <span>
           You live in a {{homeService.home.name}}
         </span>
+        <div class="icon-group">
+          @if ((homeService.home.name !== homeService.previousHome.name)) {
+            <mat-icon (click)="homeService.downgradeHome()" class="iconButton" aria-label="Downgrade Home" aria-hidden="false"
+              tooltip="Is your new home too expensive? Downgrade to your previous home."
+              [ngClass]="{mobile: appService.isMobile()}">
+              keyboard_double_arrow_down
+            </mat-icon>
+          }
+          @if ((homeService.home.name !== homeService.nextHome.name)) {
+            <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton" aria-label="Upgrade Home" aria-hidden="false"
+              tooltip="{{homeService.nextHome.upgradeToTooltip}}"
+              [ngClass]="{mobile: appService.isMobile()}">
+              add_home
+            </mat-icon>
+          }
+        </div>
       </div>
     </div>
     <div class="homeInfo">

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener, signal, viewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, viewChild, inject } from '@angular/core';
 import { GameStateService } from './game-state/game-state.service';
 import { MainLoopService } from './game-state/main-loop.service';
 import { CharacterService } from './game-state/character.service';
@@ -10,6 +10,7 @@ import { debounceTime } from 'rxjs/operators';
 import { FarmService } from './game-state/farm.service';
 import { MobileLayoutComponent } from './mobile-layout/mobile-layout.component';
 import { StandardLayoutComponent } from './standard-layout/standard-layout.component';
+import { AppService } from './app.service';
 
 const mobileBreakpoint = 500;
 
@@ -20,10 +21,11 @@ const mobileBreakpoint = 500;
   imports: [MobileLayoutComponent, StandardLayoutComponent],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  protected appService = inject(AppService);
+
   protected standardLayout = viewChild(StandardLayoutComponent);
   protected mobileLayout = viewChild(MobileLayoutComponent);
 
-  protected isMobile = signal<boolean>(false);
   private resizeSubscription?: Subscription;
 
   @HostListener('document:keydown', ['$event'])
@@ -95,12 +97,12 @@ export class AppComponent implements OnInit, OnDestroy {
         }
 
         if (this.isMobileWidth()) {
-          this.isMobile.set(true);
+          this.appService.isMobile.set(true);
         } else {
-          this.isMobile.set(false);
+          this.appService.isMobile.set(false);
         }
       });
-    this.isMobile.set(this.isMobileWidth());
+    this.appService.isMobile.set(this.isMobileWidth());
   }
 
   ngOnDestroy() {
