@@ -26,7 +26,7 @@
                 {{attribute.key | camelToTitle}}
               </span>
             </div>
-            <div class='attributeColumn' tooltip="Your aptitude of {{attribute.value.displayAptitude() | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.displayAptitude() | bigNumber}}.">
+            <div class='attributeColumn' tooltip="Your aptitude of {{attribute.value.displayAptitude() | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.aptitudeMult | bigNumber}}.">
               <span>
                 {{attribute.value.displayAptitude()| bigNumber}}
               </span>
