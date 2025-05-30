@@ -47,7 +47,7 @@ export class ActivityPanelService {
     dialogRef.afterClosed().subscribe(() => {
       this.hellService.inHell = true;
       this.hellService.moveToHell(HellLevel.Gates);
-      this.characterService.money = 0;
+      this.characterService.updateMoney(0, true);
       this.inventoryService.stashInventory();
       this.followersService.hellPurge();
       this.activityService.checkRequirements(true);

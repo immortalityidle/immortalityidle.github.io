@@ -73,10 +73,6 @@ export type AttributesObject = {
   [key in AttributeType]: AttributeObject;
 };
 
-export type AttributeUpdates = {
-  [key in AttributeType]: number;
-};
-
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
 
 export type EquipmentSlots = { [key in EquipmentPosition]: Equipment | null };
@@ -212,7 +208,6 @@ export class CharacterService {
   showTips = false;
   showUpdateAnimations = true;
   dialogRef: MatDialogRef<LifeSummaryComponent> | null = null;
-  attributeUpdates: AttributeUpdates;
   moneyUpdates = 0;
   statusToFlash: string[] = [];
   fengshuiScore = 0;
@@ -617,30 +612,6 @@ export class CharacterService {
     mainLoopService.doneReincarnatingSubject.subscribe(() => {
       this.dead = false;
     });
-
-    this.attributeUpdates = {
-      strength: 0,
-      toughness: 0,
-      speed: 0,
-      intelligence: 0,
-      charisma: 0,
-      spirituality: 0,
-      earthLore: 0,
-      metalLore: 0,
-      woodLore: 0,
-      waterLore: 0,
-      fireLore: 0,
-      animalHandling: 0,
-      combatMastery: 0,
-      magicMastery: 0,
-      performance: 0,
-      smithing: 0,
-      alchemy: 0,
-      woodwork: 0,
-      leatherwork: 0,
-      formationMastery: 0,
-      cooking: 0,
-    };
   }
 
   checkForDeath(): boolean {
@@ -882,11 +853,11 @@ export class CharacterService {
 
   stashMoney() {
     this.stashedMoney = this.money;
-    this.money = 0;
+    this.updateMoney(0, true);
   }
 
   restoreMoney() {
-    this.money = this.stashedMoney;
+    this.updateMoney(this.stashedMoney, true);
     this.stashedMoney = 0;
   }
 
@@ -999,17 +970,17 @@ export class CharacterService {
 
     if (this.money < 0) {
       //sanity check that we're not persisting/growing debt at higher bloodline levels
-      this.money = 0;
+      this.updateMoney(0, true);
     }
     if (this.bloodlineRank < 3) {
-      this.money = 0;
+      this.updateMoney(0, true);
     } else if (this.bloodlineRank < 4) {
-      this.money = this.money / 8;
+      this.updateMoney(this.money / 8, true);
     } else {
-      this.money = 4 * this.money;
+      this.updateMoney(4 * this.money, true);
     }
     if (this.money > this.maxMoney) {
-      this.money = this.maxMoney;
+      this.updateMoney(this.maxMoney, true);
     }
     this.hellMoney = 0;
     this.recalculateDerivedStats();
@@ -1063,7 +1034,7 @@ export class CharacterService {
         Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
       bonusFactor;
     if (this.money > this.maxMoney) {
-      this.money = this.maxMoney;
+      this.updateMoney(this.maxMoney, true);
     }
     if (this.hellMoney > this.maxMoney) {
       this.hellMoney = this.maxMoney;
@@ -1186,11 +1157,18 @@ export class CharacterService {
     return c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
   }
 
-  updateMoney(amount: number) {
-    const multiplier = 1 + this.fengshuiScore / 100;
-    this.money += amount * multiplier;
-    if (this.showUpdateAnimations) {
-      this.moneyUpdates += amount;
+  updateMoney(amount: number, justSetIt = false) {
+    if (justSetIt) {
+      if (this.showUpdateAnimations) {
+        this.moneyUpdates = amount - this.money;
+      }
+      this.money = amount;
+    } else {
+      const multiplier = 1 + this.fengshuiScore / 100;
+      this.money += amount * multiplier;
+      if (this.showUpdateAnimations) {
+        this.moneyUpdates += amount;
+      }
     }
   }
 
@@ -1210,9 +1188,6 @@ export class CharacterService {
     this.attributes[attribute].value += increaseAmount;
     if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;
-    }
-    if (this.showUpdateAnimations) {
-      this.attributeUpdates[attribute] += increaseAmount;
     }
     return increaseAmount;
   }
@@ -1286,7 +1261,7 @@ export class CharacterService {
       this.status.qi.value = this.status.qi.max;
     }
     if (this.money > this.maxMoney) {
-      this.money = this.maxMoney;
+      this.updateMoney(this.maxMoney, true);
     }
     if (this.hellMoney > this.maxMoney) {
       this.hellMoney = this.maxMoney;
@@ -1348,11 +1323,11 @@ export class CharacterService {
 
   setProperties(properties: CharacterProperties): void {
     this.attributes = properties.attributes;
-    this.money = properties.money;
+    this.updateMoney(properties.money, true);
     this.stashedMoney = properties.stashedMoney;
     this.hellMoney = properties.hellMoney;
     if (this.money > this.maxMoney) {
-      this.money = this.maxMoney;
+      this.updateMoney(this.maxMoney, true);
     }
     if (this.hellMoney > this.maxMoney) {
       this.hellMoney = this.maxMoney;

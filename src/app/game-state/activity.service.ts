@@ -357,7 +357,7 @@ export class ActivityService {
         }
         this.handleSpiritActivity();
         if (this.characterService.money > this.characterService.maxMoney) {
-          this.characterService.money = this.characterService.maxMoney;
+          this.characterService.updateMoney(this.characterService.maxMoney, true);
         }
         return;
       }
@@ -463,7 +463,7 @@ export class ActivityService {
       }
       this.handleSpiritActivity();
       if (this.characterService.money > this.characterService.maxMoney) {
-        this.characterService.money = this.characterService.maxMoney;
+        this.characterService.updateMoney(this.characterService.maxMoney, true);
       }
     });
 
@@ -3059,7 +3059,7 @@ export class ActivityService {
         const moneyCost = this.characterService.increaseAttribute('fireLore', 0.1);
         this.characterService.updateMoney(0 - moneyCost);
         if (this.characterService.money < 0) {
-          this.characterService.money = 0;
+          this.characterService.updateMoney(0, true);
         }
         this.characterService.yang++;
       },

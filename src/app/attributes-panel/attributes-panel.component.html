@@ -17,7 +17,7 @@
           {{group | camelToTitle}}
         </span>
       </div>
-      @for (attribute of attributesByGroup[group] | keyvalue: originalOrder; track attribute) {
+      @for (attribute of attributesByGroup[group] | keyvalue: originalOrder; track attribute.key + attribute.value.displayValue()) {
         @if ((attribute.value.displayValue() !== 0 || characterService.highestAttributes[attribute.key])) {
           <div class='attributeLine'>
             <div class='attributeColumn' tooltip="{{attribute.value.description}}">
@@ -35,10 +35,6 @@
               <span>
                 {{attribute.value.displayValue() | bigNumber}}
               </span>
-              @for (update of getAttributeUpdates(attribute.key); track update) {
-                <span class="popupText"
-                [@popupText]=update (@popupText.done)="animationDoneEvent($event, attribute.key)">+{{update | bigNumber}}</span>
-              }
             </div>
           </div>
         }

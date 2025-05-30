@@ -935,7 +935,7 @@ export class HomeService {
           this.mainLoopService.pause = true;
         }
         this.characterService.status.health.value -= 20;
-        this.characterService.money = 0;
+        this.characterService.updateMoney(0, true);
       } else {
         this.characterService.updateMoney(0 - totalCost);
       }
@@ -1056,7 +1056,7 @@ export class HomeService {
     for (let i = 0; i < this.bedroomFurniture.length; i++) {
       this.setFurniture(null, i);
     }
-    this.land += this.home.landRequired - this.previousHome.landRequired;
+    this.land += this.home.landRequired;
 
     this.setCurrentHome(this.previousHome);
   }
