@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CharacterService } from './character.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -68,6 +68,7 @@ export class MainLoopService {
   unlockPlaytimeSpeed = false;
   lastTime: number = new Date().getTime();
   bankedTicks = 0;
+  displayBankedTicks = signal<number>(0);
   offlineDivider = 10;
   characterService?: CharacterService;
   useBankedTicks = true;
@@ -179,6 +180,7 @@ export class MainLoopService {
     this.daysSinceLongTick = 0;
     this.yearOrLongTickSubject.next(this.daysSinceYearOrLongTick);
     this.daysSinceYearOrLongTick = 0;
+    this.displayBankedTicks.set(this.bankedTicks);
     setTimeout(() => this.handleLongTickTimeout(), LONG_TICK_INTERVAL_MS);
   }
 
