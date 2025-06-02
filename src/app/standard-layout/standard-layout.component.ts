@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, viewChild } from '@angular/core';
+import { Component, forwardRef, inject, viewChild, DOCUMENT } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import {
   KtdGridComponent,
@@ -26,7 +26,7 @@ import { TechniquePanelComponent } from '../technique-panel/technique-panel.comp
 import { TimePanelComponent } from '../time-panel/time-panel.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CommonModule } from '@angular/common';
-import { DOCUMENT } from '@angular/common';
+
 import { GameStateService } from '../game-state/game-state.service';
 import { environment } from 'src/environments/environment';
 import { StoreService } from '../game-state/store.service';

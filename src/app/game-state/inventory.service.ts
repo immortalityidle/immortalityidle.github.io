@@ -1052,7 +1052,7 @@ export class InventoryService {
   getCoinPurse(value: number): Item {
     return {
       id: 'coinPurse',
-      imageFile: 'pillPouch', // TODO: make a different icon for this
+      imageFile: 'coinPurse',
       name: 'coin purse',
       type: 'sellable',
       value: value,
