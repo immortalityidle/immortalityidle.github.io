@@ -3329,15 +3329,8 @@ export class ActivityService {
     consequenceDescription: ['Uses 200 Stamina and 10 Qi. An advanced magical technique.'],
     consequence: [
       () => {
-        if (!this.characterService.qiUnlocked) {
-          return;
-        }
         this.characterService.status.stamina.value -= 200;
         this.characterService.status.qi.value -= 10;
-        const gemValue = this.inventoryService.consume('gem', 1, this.inventoryService.useCheapestSpiritGem);
-        if (gemValue > 0 && this.characterService.status.qi.value >= 0) {
-          this.inventoryService.upgradeEquppedEquipment(Math.floor(Math.pow(gemValue / 10, 2.4)));
-        }
         this.characterService.yang++;
         this.characterService.yin++;
       },

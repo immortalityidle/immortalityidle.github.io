@@ -645,32 +645,6 @@ export class InventoryService {
       this.bigNumberPipe.transform(armor.armorStats.defense);
   }
 
-  upgradeEquppedEquipment(value: number) {
-    const upgradables = [];
-    if (this.characterService.equipment.leftHand) {
-      upgradables.push(this.characterService.equipment.leftHand);
-    }
-    if (this.characterService.equipment.rightHand) {
-      upgradables.push(this.characterService.equipment.rightHand);
-    }
-    if (this.characterService.equipment.head) {
-      upgradables.push(this.characterService.equipment.head);
-    }
-    if (this.characterService.equipment.body) {
-      upgradables.push(this.characterService.equipment.body);
-    }
-    if (this.characterService.equipment.legs) {
-      upgradables.push(this.characterService.equipment.legs);
-    }
-    if (this.characterService.equipment.feet) {
-      upgradables.push(this.characterService.equipment.feet);
-    }
-    if (upgradables.length > 0) {
-      const equipment = upgradables[Math.floor(Math.random() * upgradables.length)];
-      this.upgradeEquipment(equipment, value);
-    }
-  }
-
   upgradeEquipment(equipment: Equipment, value: number, newEffect = 'spirit') {
     if (equipment.armorStats) {
       equipment.armorStats.defense += Math.max(Math.sqrt(value), 1000) * value;

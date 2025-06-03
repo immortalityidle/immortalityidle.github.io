@@ -10,7 +10,7 @@ import { WorkstationSelectionModalComponent } from '../workstation-selection-mod
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CraftingOptionsModalComponent } from '../crafting-options-modal/crafting-options-modal.component';
-import { BigNumberPipe } from '../pipes';
+import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 
 @Component({
   selector: 'app-crafting-panel',
@@ -21,6 +21,7 @@ import { BigNumberPipe } from '../pipes';
     forwardRef(() => CdkDropList),
     forwardRef(() => CdkDrag),
     forwardRef(() => TitleCasePipe),
+    forwardRef(() => CamelToTitlePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
   ],

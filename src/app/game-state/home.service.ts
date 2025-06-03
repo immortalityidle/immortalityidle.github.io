@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { CharacterService } from './character.service';
+import { CharacterService, EquipmentPosition } from './character.service';
 import { InventoryService, Item, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
@@ -57,6 +57,7 @@ export interface Workstation {
   description: string;
   maxInputs: number;
   inputs: ItemStack[];
+  equipmentSlot?: EquipmentPosition;
   consequence: (workstation: Workstation, activityType: ActivityType) => void;
 }
 
@@ -799,6 +800,50 @@ export class HomeService {
         this.createFormationKit(workstation);
       },
     },
+    {
+      id: 'Simple Infusion Station',
+      triggerActivities: [ActivityType.InfuseEquipment],
+      power: 0,
+      setupCost: 100000000,
+      maintenanceCost: 10000,
+      description: 'A workspace where you can infuse your equipment with the power and attributes of your gems.',
+      maxInputs: 1,
+      inputs: [],
+      equipmentSlot: 'head',
+      consequence: (workstation: Workstation) => {
+        this.infuseEquipment(workstation);
+      },
+    },
+    {
+      id: 'Advanced Infusion Station',
+      triggerActivities: [ActivityType.InfuseEquipment],
+      power: 1,
+      setupCost: 1000000000,
+      maintenanceCost: 100000,
+      description:
+        'A more powerful workspace where you can infuse your equipment with the power and attributes of your gems.',
+      maxInputs: 1,
+      inputs: [],
+      equipmentSlot: 'head',
+      consequence: (workstation: Workstation) => {
+        this.infuseEquipment(workstation);
+      },
+    },
+    {
+      id: 'Masterwork Infusion Station',
+      triggerActivities: [ActivityType.InfuseEquipment],
+      power: 2,
+      setupCost: 10000000000,
+      maintenanceCost: 1000000,
+      description:
+        'A more powerful workspace where you can infuse your equipment with the power and attributes of your gems.',
+      maxInputs: 1,
+      inputs: [],
+      equipmentSlot: 'head',
+      consequence: (workstation: Workstation) => {
+        this.infuseEquipment(workstation);
+      },
+    },
   ];
   availableWorkstationsList: Workstation[] = [];
 
@@ -1241,6 +1286,7 @@ export class HomeService {
       description: workstationTemplate.description,
       maxInputs: workstationTemplate.maxInputs,
       inputs: emptyInputs,
+      equipmentSlot: workstationTemplate.equipmentSlot,
       consequence: workstationTemplate.consequence,
     };
 
@@ -1274,18 +1320,30 @@ export class HomeService {
         this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
         return;
       }
-      // swap the workstation item with the inventory item
-      const temp = this.inventoryService.itemStacks[itemIndex];
-      this.inventoryService.itemStacks[itemIndex] =
-        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex];
-      this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex] = temp;
-      this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].id =
-        destinationWorkstationIndex +
-        '_' +
-        destinationInputIndex +
-        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item!.name +
-        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
-      this.inventoryService.fixId(itemIndex);
+      if (this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity === 0) {
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex] =
+          this.inventoryService.itemStacks[itemIndex];
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].id =
+          destinationWorkstationIndex +
+          '_' +
+          destinationInputIndex +
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item!.name +
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
+        this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+      } else {
+        // swap the workstation item with the inventory item
+        const temp = this.inventoryService.itemStacks[itemIndex];
+        this.inventoryService.itemStacks[itemIndex] =
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex];
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex] = temp;
+        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].id =
+          destinationWorkstationIndex +
+          '_' +
+          destinationInputIndex +
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item!.name +
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
+        this.inventoryService.fixId(itemIndex);
+      }
     } else {
       // nothing there now, just put the inventory item in the workstation
       this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex] =
@@ -1725,6 +1783,36 @@ export class HomeService {
     if (alchemyStack) {
       alchemyStack.quantity -= 10;
     }
+  }
+
+  infuseEquipment(workstation: Workstation) {
+    if (!workstation.equipmentSlot) {
+      return;
+    }
+    const equipmentItem = this.characterService.equipment[workstation.equipmentSlot];
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem' && itemStack.quantity > 0);
+    const gemValue = gemStack?.item?.value || 0;
+    if (gemValue > 0 && equipmentItem) {
+      this.inventoryService.upgradeEquipment(
+        equipmentItem,
+        Math.pow((gemValue * (1 + workstation.power)) / 10, 2.4),
+        gemStack?.item?.subtype
+      );
+      gemStack!.quantity--;
+    }
+  }
+
+  changeWorkstationEquipmentSlot(workstation: Workstation) {
+    if (!workstation.equipmentSlot) {
+      return;
+    }
+    const slots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
+    let index = slots.indexOf(workstation.equipmentSlot);
+    index++;
+    if (index >= slots.length) {
+      index = 0;
+    }
+    workstation.equipmentSlot = slots[index];
   }
 
   getFurnitureSlotTooltip(furnitureIndex: number) {

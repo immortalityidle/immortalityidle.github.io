@@ -66,6 +66,21 @@
                 </div>
               </div>
             }
+            @if (workstation.equipmentSlot){
+              <div class="equipmentSlot">
+                <div>
+                  <span>Currently Infusing: </span>
+                </div>
+                <div>
+                  <span>{{workstation.equipmentSlot | camelToTitle}} Equipment</span>
+                  <mat-icon (click)="homeService.changeWorkstationEquipmentSlot(workstation)" tooltip="Change Equipment Slot" 
+                    class="iconButton equipmentSlot" aria-label="Change Equipment Slot" aria-hidden="false">
+                    change_circle
+                  </mat-icon>
+
+                </div>
+              </div>
+            }
           </div>
         </div>
       }
