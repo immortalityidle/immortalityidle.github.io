@@ -1700,7 +1700,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you. Bonuses for Yin and Yang balance are greatly increased.'
+          'The Crown of the Knife Mountain settles onto your head, then sinks in to become a part of your very soul. Having balanced your karmic debt, you begin to see the balance in all the world around you. Bonuses for Yin and Yang balance are greatly increased.'
         );
         this.characterService.yinYangBoosted = true;
       },
@@ -1727,7 +1727,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.'
+          'The Crown of Ice settles onto your head, then sinks in to become a part of your very soul. The deep freezing from the mountain has given you a new idea for how to defend yourself.'
         );
         this.battleService.addIceShield();
       },
@@ -1752,7 +1752,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.'
+          'The Cauldron Crown settles onto your head, then sinks in to become a part of your very soul. A new resolve awakens in you to protect the defenseless from those that would abuse them.'
         );
         this.characterService.righteousWrathUnlocked = true;
       },
@@ -1780,7 +1780,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          "The crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before."
+          'The Cow Crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you\'ve never felt before.'
         );
         this.followerService.petsBoosted = true;
       },
@@ -1804,7 +1804,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.'
+          'The Boulder Crown settles onto your head, then sinks in to become a part of your very soul. Your muscles swell with new power.'
         );
         this.characterService.bonusMuscles = true;
       },
@@ -1835,7 +1835,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.'
+          'The Gluttonous Crown settles onto your head, then sinks in to become a part of your very soul. You come to a deep appreciation of the value and importance of food.'
         );
         this.farmService.hellFood = true;
         this.inventoryService.divinePeachesUnlocked = true;
@@ -1864,7 +1864,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.'
+          'The Blood Crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.'
         );
         this.homeService.hellHome = true;
       },
@@ -1889,7 +1889,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.'
+          'The Hollow Crown settles onto your head, then sinks in to become a part of your very soul. Your mind suddenly expands with endless new possibilities.'
         );
         this.characterService.bonusBrains = true;
       },
@@ -1916,7 +1916,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.'
+          'The Crown of Limbs settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.'
         );
         this.activityService.purifyGemsUnlocked = true;
       },
@@ -1943,7 +1943,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.'
+          'The Lava Crown settles onto your head, then sinks in to become a part of your very soul. The intense heat of the volcano has strengthened your inner fire, allowing you to form a barrier to protect you and harm your enemies.'
         );
         this.battleService.addFireShield();
       },
@@ -1967,7 +1967,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.'
+          'The Millstone Crown settles onto your head, then sinks in to become a part of your very soul. The intense pressure of the mill has strengthened your skin and bones allowing you to increase your total health dramatically.'
         );
         this.characterService.bonusHealth = true;
       },
@@ -1995,7 +1995,7 @@ baguaMap = [
 
         this.logService.log(
           LogTopic.STORY,
-          'The crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.'
+          'The Saw Crown settles onto your head, then sinks in to become a part of your very soul. You can now recruit followers that put their swindling and cheating to good use.'
         );
         this.followerService.unlockJob('banker');
       },
