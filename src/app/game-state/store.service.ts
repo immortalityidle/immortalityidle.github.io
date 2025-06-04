@@ -174,7 +174,7 @@ export class StoreService {
       this.logService.log(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
-    if (!this.gemRequirementsMet(this.meridianRank + 16, this.soulCoreRank > 2)) {
+    if (!this.gemRequirementsMet(this.meridianRank + 16, this.meridianRank > 2)) {
       this.logService.log(LogTopic.EVENT, "You don't have the gems required to ascend.");
       return;
     }
