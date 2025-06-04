@@ -1780,7 +1780,7 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The Cow Crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you\'ve never felt before.'
+          "The Cow Crown settles onto your head, then sinks in to become a part of your very soul. You find a new and deep connection to animals that you've never felt before."
         );
         this.followerService.petsBoosted = true;
       },
@@ -2146,6 +2146,66 @@ baguaMap = [
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.autoEatUnlocked;
+      },
+    },
+    basicGluttonyManual: {
+      id: 'basicGluttonyManual',
+      name: 'Manual of Unwise Food Consumption',
+      type: 'manual',
+      description: 'This manual teaches you how to stuff more food into your belly each day.',
+      value: 10000000,
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock a higher limit on your daily food intake.',
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        if (this.inventoryService.maxFoodPerDay < 20) {
+          this.inventoryService.maxFoodPerDay = 20;
+        }
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.maxFoodPerDay >= 20;
+      },
+    },
+    advancedGluttonyManual: {
+      id: 'advancedGluttonyManual',
+      name: 'Manual of Obscene Gluttony',
+      type: 'manual',
+      description: 'This manual teaches you how to stuff even more food into your belly each day.',
+      value: 1000000000,
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock a higher limit on your daily food intake.',
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        if (this.inventoryService.maxFoodPerDay < 40) {
+          this.inventoryService.maxFoodPerDay = 40;
+        }
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.maxFoodPerDay >= 40;
       },
     },
     autoUseManual: {

@@ -493,6 +493,34 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Eat Like Goku',
+      description:
+        "You've eaten way more than you should have for 8888 days and unlocked the " +
+        this.itemRepoService.items['basicGluttonyManual'].name,
+      hint: 'Better than dumpster diving.',
+      check: () => {
+        return this.inventoryService.daysGorged >= 8888;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['basicGluttonyManual']);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Eat Like Luffy',
+      description:
+        "You've eaten way more than you should have for 88888888 days and unlocked the " +
+        this.itemRepoService.items['advancedGluttonyManual'].name,
+      hint: 'Better than dumpster diving.',
+      check: () => {
+        return this.inventoryService.daysGorged >= 88888888;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['advancedGluttonyManual']);
+      },
+      unlocked: false,
+    },
+    {
       name: 'This Sparks Joy',
       description: 'You used 888 items and unlocked the ' + this.itemRepoService.items['autoUseManual'].name,
       hint: 'Immortals should know the potential of the things they use.',

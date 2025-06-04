@@ -588,6 +588,7 @@ export class GameStateService {
       gemsAcquired: props?.gemsAcquired || 0,
       foodEatenToday: props?.foodEatenToday || 0,
       heirloomSlots: props?.heirloomSlots || 0,
+      daysGorged: props?.daysGorged || 0,
     };
   }
 

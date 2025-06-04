@@ -147,6 +147,7 @@ export interface InventoryProperties {
   gemsAcquired: number;
   foodEatenToday: number;
   heirloomSlots: number;
+  daysGorged: number;
 }
 
 @Injectable({
@@ -223,8 +224,9 @@ export class InventoryService {
   herbCounter = 0;
   gemsAcquired = 0;
   foodEatenToday = 0;
-  maxFoodPerDay = 10; // cap at 10 meals in a day seems reasonable, maybe tune this
+  maxFoodPerDay = 10;
   heirloomSlots = 0;
+  daysGorged = 0;
 
   constructor(
     private injector: Injector,
@@ -348,6 +350,9 @@ export class InventoryService {
     } else {
       this.mergeCounter++;
     }
+    if (this.foodEatenToday === this.maxFoodPerDay) {
+      this.daysGorged++;
+    }
   }
 
   getProperties(): InventoryProperties {
@@ -404,6 +409,7 @@ export class InventoryService {
       gemsAcquired: this.gemsAcquired,
       foodEatenToday: this.foodEatenToday,
       heirloomSlots: this.heirloomSlots,
+      daysGorged: this.daysGorged,
     };
   }
 
@@ -468,6 +474,7 @@ export class InventoryService {
     this.gemsAcquired = properties.gemsAcquired;
     this.foodEatenToday = properties.foodEatenToday;
     this.heirloomSlots = properties.heirloomSlots;
+    this.daysGorged = properties.daysGorged;
   }
 
   farmFoodList = [
@@ -2076,10 +2083,6 @@ export class InventoryService {
     if (!equippedItem) {
       return;
     }
-    if (itemToMerge.type === 'gem' && equippedItem) {
-      this.gemifyEquipment(sourceItemIndex, equippedItem);
-      return;
-    }
     if (!instanceOfEquipment(itemToMerge)) {
       return;
     }
@@ -2213,26 +2216,6 @@ export class InventoryService {
     }
     this.stashedItemStacks = [];
   }
-
-  gemifyEquipment(gemIndex: number, equipment: Equipment) {
-    const gemStack = this.itemStacks[gemIndex];
-    const gem = this.itemStacks[gemIndex]?.item;
-    if (gemStack && gem && gem.type === 'gem') {
-      const gemFlavor = gem.type.substring(0, gem.type.length - 3);
-      // TODO: add gemFlavor effects
-      this.upgradeEquipment(equipment, Math.floor(Math.pow(gem.value / 10, 2.4)), gemFlavor);
-      this.updateArmorDescription(equipment);
-      if (gemStack.quantity > 1) {
-        gemStack.quantity--;
-        this.fixId(gemIndex);
-      } else {
-        this.setItemEmptyStack(gemIndex);
-      }
-      this.characterService.yang++;
-      this.characterService.yin++;
-    }
-  }
-
   removeItemStack(itemStack: ItemStack) {
     const index = this.itemStacks.indexOf(itemStack);
     this.thrownAwayItems += itemStack.quantity;
