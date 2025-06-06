@@ -105,6 +105,7 @@ export interface CharacterProperties {
   statLifespan: number;
   spiritualityLifespan: number;
   magicLifespan: number;
+  hygieneLifespan: number;
   attributeScalingLimit: number;
   attributeSoftCap: number;
   aptitudeGainDivider: number;
@@ -152,7 +153,7 @@ export class CharacterService {
   private achievementService?: AchievementService;
   forceRebirth = false;
   fatherGift = false;
-  lifespanTooltip = '';
+  lifespanTooltip = signal<string>('');
   private hellService?: HellService;
   private snackBar: MatSnackBar;
   private snackBarObservable?: Subscription;
@@ -472,6 +473,7 @@ export class CharacterService {
   alchemyLifespan = 0; // bonus to lifespan based on pills you've eaten
   statLifespan = 0; // bonus to lifespan based on base stat aptitudes
   spiritualityLifespan = 0; // bonus to lifespan based on spirituality
+  hygieneLifespan = 0; // bonus to lifespan based good hygiene
   magicLifespan = 0;
   lifespan =
     this.baseLifespan +
@@ -479,7 +481,8 @@ export class CharacterService {
     this.alchemyLifespan +
     this.statLifespan +
     this.spiritualityLifespan +
-    this.magicLifespan;
+    this.magicLifespan +
+    this.hygieneLifespan;
   displayLifespan = signal<number>(this.lifespan);
   equipment: EquipmentSlots = {
     head: null,
@@ -703,7 +706,7 @@ export class CharacterService {
       this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan <=
       0
     ) {
-      this.lifespanTooltip = 'You have done nothing to extend your lifespan.';
+      this.lifespanTooltip.set('You have done nothing to extend your lifespan.');
       return;
     }
     let tooltip = 'Your base lifespan of ' + this.yearify(this.baseLifespan) + ' is extended by';
@@ -728,7 +731,10 @@ export class CharacterService {
     if (this.magicLifespan > 0) {
       tooltip += '<br>Magic: ' + this.yearify(this.magicLifespan);
     }
-    this.lifespanTooltip = tooltip;
+    if (this.hygieneLifespan > 0) {
+      tooltip += '<br>Hygiene: ' + this.yearify(this.hygieneLifespan);
+    }
+    this.lifespanTooltip.set(tooltip);
   }
 
   yearify(value: number) {
@@ -1285,6 +1291,7 @@ export class CharacterService {
       statLifespan: this.statLifespan,
       spiritualityLifespan: this.spiritualityLifespan,
       magicLifespan: this.magicLifespan,
+      hygieneLifespan: this.hygieneLifespan,
       attributeScalingLimit: this.attributeScalingLimit,
       attributeSoftCap: this.attributeSoftCap,
       aptitudeGainDivider: this.aptitudeGainDivider,
@@ -1343,6 +1350,7 @@ export class CharacterService {
     this.statLifespan = properties.statLifespan;
     this.spiritualityLifespan = properties.spiritualityLifespan;
     this.magicLifespan = properties.magicLifespan;
+    this.hygieneLifespan = properties.hygieneLifespan;
     this.condenseSoulCoreCost = properties.condenseSoulCoreCost;
     // This is derived to avoid save issues. Calculate rank and subtract from power to reduce the exponential aptitude divider.
     this.aptitudeGainDivider =

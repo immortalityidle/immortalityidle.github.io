@@ -20,40 +20,6 @@ export class MobileTimeButtonsComponent {
   private readonly dialog = inject(MatDialog);
   protected readonly mainLoopService = inject(MainLoopService);
 
-  // TODO: Probably need a common service for these and the standard layout
-  protected pauseClick() {
-    if (this.mainLoopService.pause) {
-      this.mainLoopService.tick();
-    } else {
-      this.mainLoopService.pause = true;
-    }
-  }
-
-  protected slowClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 40;
-  }
-
-  protected standardClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 10;
-  }
-
-  protected fastClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 5;
-  }
-
-  protected fasterClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 2;
-  }
-
-  protected fastestClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 1;
-  }
-
   protected timeOptions() {
     this.dialog.open(TimeOptionsPanelComponent, {
       width: '700px',

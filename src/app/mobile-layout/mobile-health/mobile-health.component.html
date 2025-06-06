@@ -11,7 +11,7 @@
                 @let ageBreakpoint = 10_000 * 365;
                 @if (!isCollapsed) {
                     <div class="statusCell age">
-                        <mat-icon tooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
+                        <mat-icon tooltip="{{characterService.lifespanTooltip()}}">timer</mat-icon>
                         <div>
                             @if(characterService.displayAge() < ageBreakpoint) {
                                 <span>Age {{Math.floor(characterService.displayAge() / 365) }}</span>

@@ -230,4 +230,57 @@ export class MainLoopService {
       this.doneReincarnatingSubject.next(1);
     }
   }
+
+  pauseClick() {
+    if (this.pause) {
+      this.tick();
+    } else {
+      this.pause = true;
+    }
+  }
+
+  slowClick() {
+    if (this.tickDivider === 40 && !this.pause) {
+      this.pause = true;
+    } else {
+      this.pause = false;
+      this.tickDivider = 40;
+    }
+  }
+
+  standardClick() {
+    if (this.tickDivider === 10 && !this.pause) {
+      this.pause = true;
+    } else {
+      this.pause = false;
+      this.tickDivider = 10;
+    }
+  }
+
+  fastClick() {
+    if (this.tickDivider === 5 && !this.pause) {
+      this.pause = true;
+    } else {
+      this.pause = false;
+      this.tickDivider = 5;
+    }
+  }
+
+  fasterClick() {
+    if (this.tickDivider === 2 && !this.pause) {
+      this.pause = true;
+    } else {
+      this.pause = false;
+      this.tickDivider = 2;
+    }
+  }
+
+  fastestClick() {
+    if (this.tickDivider === 1 && !this.pause) {
+      this.pause = true;
+    } else {
+      this.pause = false;
+      this.tickDivider = 1;
+    }
+  }
 }

@@ -12,6 +12,7 @@ import { BattleService } from '../game-state/battle.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
+import { LocationService } from '../game-state/location.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class ActivityPanelService {
   private inventoryService = inject(InventoryService);
   private logService = inject(LogService);
   private mainLoopService = inject(MainLoopService);
+  private locationService = inject(LocationService);
 
   private camelToTitle = new CamelToTitlePipe();
 
@@ -112,6 +114,10 @@ export class ActivityPanelService {
       if (activity.farmedLandRequirements) {
         tooltipText += '<br>Farmed Land: ' + activity.farmedLandRequirements;
       }
+      if (!this.locationService.unlockedLocations.includes(activity.location)) {
+        tooltipText += '<br>Access to ' + this.camelToTitle.transform(activity.location);
+      }
+
       return tooltipText;
     }
   }

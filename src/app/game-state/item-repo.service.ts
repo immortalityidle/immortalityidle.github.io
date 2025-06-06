@@ -165,6 +165,9 @@ baguaMap = [
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('charisma', 0.01);
+        if (this.characterService.hygieneLifespan < 30) {
+          this.characterService.hygieneLifespan += 0.01;
+        }
       },
     },
     {
@@ -179,6 +182,9 @@ baguaMap = [
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('charisma', 0.05);
+        if (this.characterService.hygieneLifespan < 60) {
+          this.characterService.hygieneLifespan += 0.05;
+        }
       },
     },
     {
@@ -196,6 +202,9 @@ baguaMap = [
         this.characterService.increaseAttribute('charisma', 0.1);
         this.characterService.status.health.value += 1;
         this.characterService.checkOverage();
+        if (this.characterService.hygieneLifespan < 120) {
+          this.characterService.hygieneLifespan += 0.1;
+        }
       },
     },
     {
@@ -213,6 +222,9 @@ baguaMap = [
         this.characterService.increaseAttribute('charisma', 0.2);
         this.characterService.status.health.value += 1;
         this.characterService.checkOverage();
+        if (this.characterService.hygieneLifespan < 180) {
+          this.characterService.hygieneLifespan += 0.2;
+        }
       },
     },
     {
@@ -231,6 +243,9 @@ baguaMap = [
         this.characterService.status.health.value += 1;
         this.characterService.healthBonusBath++;
         this.characterService.checkOverage();
+        if (this.characterService.hygieneLifespan < 365) {
+          this.characterService.hygieneLifespan += 0.3;
+        }
       },
     },
     {

@@ -1,6 +1,6 @@
 <div class="timeContainer">
   <div>
-    <mat-icon (click)="pauseClick()" [ngClass]="{'iconActive': this.mainLoopService.pause}"
+    <mat-icon (click)="mainLoopService.pauseClick()" [ngClass]="{'iconActive': this.mainLoopService.pause}"
       tooltip="Pause the game.<br>
       Hotkey: Alt-0 to pause or spacebar to toggle.<br>
       Clicking this again while paused will step time forward a single day.<br>
@@ -8,33 +8,33 @@
       pause
     </mat-icon>
 
-    <mat-icon (click)="slowClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 40 && !this.mainLoopService.pause)}"
+    <mat-icon (click)="mainLoopService.slowClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 40 && !this.mainLoopService.pause)}"
       tooltip="Slow Game Speed (1 day/sec).<br>
       Hotkey: Alt-1" class="iconButton" aria-label="Slow Speed" aria-hidden="false">
       slow_motion_video
     </mat-icon>
-    <mat-icon (click)="standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"
+    <mat-icon (click)="mainLoopService.standardClick()" [ngClass]="{'iconActive': (mainLoopService.tickDivider === 10 && !this.mainLoopService.pause)}"
       tooltip="Standard Game Speed.<br>
       Hotkey: Alt-2" class="iconButton" aria-label="Standard Speed" aria-hidden="false">
       play_arrow
     </mat-icon>
     @if (mainLoopService.unlockFastSpeed) {
       <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 5 && !this.mainLoopService.pause)}"
-      (click)="fastClick()" tooltip="Fast Game Speed.<br>
+      (click)="mainLoopService.fastClick()" tooltip="Fast Game Speed.<br>
       Hotkey: Alt-3" class="iconButton" aria-label="Fast Speed" aria-hidden="false">
         fast_forward
       </mat-icon>
     }
     @if (mainLoopService.unlockFasterSpeed) {
       <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 2 && !this.mainLoopService.pause)}"
-      (click)="fasterClick()" tooltip="Faster Game Speed.<br>
+      (click)="mainLoopService.fasterClick()" tooltip="Faster Game Speed.<br>
       Hotkey: Alt-4" class="iconButton" aria-label="Faster Speed" aria-hidden="false">
         skip_next
       </mat-icon>
     }
     @if (mainLoopService.unlockFastestSpeed) {
       <mat-icon [ngClass]="{'iconActive': (mainLoopService.tickDivider === 1 && !this.mainLoopService.pause)}"
-      (click)="fastestClick()" tooltip="Fastest Game Speed.<br>
+      (click)="mainLoopService.fastestClick()" tooltip="Fastest Game Speed.<br>
       Hotkey: Alt-5" class="iconButton" aria-label="Fastest Speed" aria-hidden="false">
         bolt
       </mat-icon>

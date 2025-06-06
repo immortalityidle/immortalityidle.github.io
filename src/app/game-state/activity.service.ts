@@ -660,6 +660,7 @@ export class ActivityService {
       this.locationService &&
       !this.locationService.unlockedLocations.includes(activity.location)
     ) {
+      activity.unlocked = false;
       return false;
     }
     if (this.meetsRequirementsByLevel(activity, activity.level)) {

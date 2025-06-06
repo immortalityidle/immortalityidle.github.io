@@ -1103,6 +1103,7 @@ export class GameStateService {
       statLifespan: props?.statLifespan || 0,
       spiritualityLifespan: props?.spiritualityLifespan || 0,
       magicLifespan: props?.magicLifespan || 0,
+      hygieneLifespan: props?.hygieneLifespan || 0,
       attributeScalingLimit: props?.attributeScalingLimit || 10,
       attributeSoftCap: props?.attributeSoftCap || 100000,
       aptitudeGainDivider: props?.aptitudeGainDivider || 5 * Math.pow(1.5, 9),

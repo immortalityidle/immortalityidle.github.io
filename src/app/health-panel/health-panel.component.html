@@ -16,7 +16,7 @@
         @else {
           <span>You expect to live {{characterService.displayLifespan() / 365 | bigNumber}} years.</span>
         }
-        <mat-icon tooltip="{{characterService.lifespanTooltip}}">timer</mat-icon>
+        <mat-icon tooltip="{{characterService.lifespanTooltip()}}">timer</mat-icon>
       </div>
     </div>
     <div class="statusRow">
