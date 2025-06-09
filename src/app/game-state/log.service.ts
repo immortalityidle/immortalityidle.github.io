@@ -72,8 +72,8 @@ export class LogService {
   longTickCounter = 0;
 
   constructor(mainLoopService: MainLoopService) {
-    mainLoopService.tickSubject.subscribe(() => {
-      this.updateLogTopics();
+    mainLoopService.logTickSubject.subscribe(() => {
+      setTimeout(() => this.updateLogTopics());
     });
 
     mainLoopService.longTickSubject.subscribe(() => {

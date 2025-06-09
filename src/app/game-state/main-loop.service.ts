@@ -41,6 +41,7 @@ export class MainLoopService {
   battleTickSubject = new Subject<number>();
   reincarnateSubject = new Subject<number>();
   doneReincarnatingSubject = new Subject<number>();
+  logTickSubject = new Subject<number>();
 
   /**
    * Only emits every 500ms and returns number of days that elapsed since
@@ -83,6 +84,7 @@ export class MainLoopService {
   daysSinceLongTick = 0;
   daysSinceYearOrLongTick = 0;
   lastUsedTickTime = 0;
+  autopauseTriggered = false;
 
   constructor(private injector: Injector, public dialog: MatDialog) {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
@@ -202,8 +204,14 @@ export class MainLoopService {
       ticksToDo = 1;
     }
     for (let i = 0; i < ticksToDo; i++) {
-      this.tick();
-      this.lastUsedTickTime = newTime;
+      if (this.pause) {
+        // some autopause stuff might make us pause in the middle of this loop, refund the unused ticks back to the bank
+        this.bankedTicks += (ticksToDo - 1) * this.tickDivider;
+        break;
+      } else {
+        this.tick();
+        this.lastUsedTickTime = newTime;
+      }
     }
     setTimeout(() => this.handleTimeout(), TICK_INTERVAL_MS);
   }
@@ -219,10 +227,17 @@ export class MainLoopService {
       this.battleTickSubject.next(1);
     } else {
       this.totalTicks++;
-      this.inventoryTickSubject.next(1);
       this.activityTickSubject.next(1);
+      if (this.autopauseTriggered) {
+        // autopause might have triggered, if so, don't do the rest of the tick
+        this.autopauseTriggered = false;
+        this.logTickSubject.next(1);
+        return;
+      }
+      this.inventoryTickSubject.next(1);
       this.homeTickSubject.next(1);
       this.tickSubject.next(1); // ticks character, followers, and hell
+      this.logTickSubject.next(1);
     }
     if (this.reincarnating) {
       this.reincarnateSubject.next(1);

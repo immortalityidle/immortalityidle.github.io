@@ -660,6 +660,7 @@ export class GameStateService {
       petRecruitingCounter: props?.petRecruitingCounter || 0,
       coreCultivationCounter: props?.coreCultivationCounter || 0,
       researchWindCounter: props?.researchWindCounter || 0,
+      beforeDeathPauseUsed: props?.beforeDeathPauseUsed || false,
     };
   }
 

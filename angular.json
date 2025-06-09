@@ -21,7 +21,7 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": {
-              "base": "docs"
+              "base": "build"
             },
             "index": "src/index.html",
             "polyfills": [

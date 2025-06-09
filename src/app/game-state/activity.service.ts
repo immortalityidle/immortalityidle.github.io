@@ -51,6 +51,7 @@ export interface ActivityProperties {
   petRecruitingCounter: number;
   coreCultivationCounter: number;
   researchWindCounter: number;
+  beforeDeathPauseUsed: boolean;
 }
 
 @Injectable({
@@ -67,6 +68,7 @@ export class ActivityService {
   pauseOnImpossibleFail = true;
   pauseOnDeath = true;
   pauseBeforeDeath = false;
+  beforeDeathPauseUsed = false;
   activities: Activity[];
   portals: Activity[];
   openApprenticeships = 1;
@@ -320,11 +322,15 @@ export class ActivityService {
       }
       if (
         this.pauseBeforeDeath &&
+        !this.beforeDeathPauseUsed &&
         this.characterService.age >= this.characterService.lifespan - 1 &&
         !this.characterService.immortal
       ) {
-        this.logService.injury(LogTopic.EVENT, 'The end of your natural life is imminent. Game paused.');
+        this.logService.log(LogTopic.EVENT, 'The end of your natural life is imminent. Game paused.');
         this.mainLoopService.pause = true;
+        this.beforeDeathPauseUsed = true;
+        this.mainLoopService.autopauseTriggered = true;
+        return;
       }
       if (this.exhaustionDays > 0) {
         this.totalExhaustedDays++;
@@ -604,6 +610,7 @@ export class ActivityService {
       recruitingCounter: this.recruitingCounter,
       petRecruitingCounter: this.petRecruitingCounter,
       coreCultivationCounter: this.coreCultivationCounter,
+      beforeDeathPauseUsed: this.beforeDeathPauseUsed,
     };
   }
 
@@ -622,6 +629,7 @@ export class ActivityService {
     this.autoPauseUnlocked = properties.autoPauseUnlocked || false;
     this.pauseOnDeath = properties.pauseOnDeath;
     this.pauseBeforeDeath = properties.pauseBeforeDeath || false;
+    this.beforeDeathPauseUsed = properties.beforeDeathPauseUsed;
     this.activityLoop = properties.activityLoop;
     this.spiritActivity = properties.spiritActivity ?? null;
     this.openApprenticeships = properties.openApprenticeships || 0;
@@ -805,6 +813,7 @@ export class ActivityService {
   }
 
   reset(): void {
+    this.beforeDeathPauseUsed = false;
     // determine family specialty
     let highest = 0;
     for (const key in this.lifeActivities) {
