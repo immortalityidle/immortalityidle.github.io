@@ -720,7 +720,7 @@ export class ActivityService {
     const resourceUse = activity.resourceUse[level];
     for (const keyString in resourceUse) {
       const key = keyString as StatusType;
-      const requiredMax = activity.resourceUse[level][key] || Infinity;
+      const requiredMax = activity.resourceUse[level][key] || 0;
       if (this.characterService.status[key].max <= requiredMax) {
         return false;
       }
