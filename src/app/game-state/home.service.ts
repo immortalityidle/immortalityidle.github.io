@@ -10,6 +10,7 @@ import { ActivityService } from './activity.service';
 import { AttributeType } from './character.service';
 import { TitleCasePipe } from '@angular/common';
 import { FollowersService } from './followers.service';
+import { LOOT_TYPE_GEM } from './battle.service';
 
 export interface Home {
   name: string;
@@ -1450,7 +1451,7 @@ export class HomeService {
       }
       return;
     }
-    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
     if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 250) {
       this.logService.injury(
         LogTopic.EVENT,
@@ -1504,7 +1505,7 @@ export class HomeService {
       return;
     }
 
-    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
     if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 300) {
       this.logService.injury(
         LogTopic.EVENT,
@@ -1585,7 +1586,7 @@ export class HomeService {
       }
     }
 
-    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
     if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 300) {
       this.logService.injury(
         LogTopic.EVENT,
@@ -1648,7 +1649,7 @@ export class HomeService {
     const activityLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === material);
     // gems can be added for extra power
-    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem');
+    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
     // wood or leather can be added for extra power
     const extraStack = workstation.inputs.find(
       itemStack =>
@@ -1720,7 +1721,7 @@ export class HomeService {
     for (const itemStack of workstation.inputs) {
       if (
         itemStack.item &&
-        itemStack.item.type === 'gem' &&
+        itemStack.item.type === LOOT_TYPE_GEM &&
         itemStack.quantity > 0 &&
         this.inventoryService.useSpiritGemUnlocked
       ) {
@@ -1752,7 +1753,9 @@ export class HomeService {
   createFormationKit(workstation: Workstation) {
     const woodStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'wood' && itemStack.quantity >= 10);
     const hideStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'hide' && itemStack.quantity >= 10);
-    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem' && itemStack.quantity >= 10);
+    const gemStack = workstation.inputs.find(
+      itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.quantity >= 10
+    );
 
     if (!woodStack || !hideStack || !gemStack) {
       return;
@@ -1790,7 +1793,9 @@ export class HomeService {
       return;
     }
     const equipmentItem = this.characterService.equipment[workstation.equipmentSlot];
-    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'gem' && itemStack.quantity > 0);
+    const gemStack = workstation.inputs.find(
+      itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.quantity > 0
+    );
     const gemValue = gemStack?.item?.value || 0;
     if (gemValue > 0 && equipmentItem) {
       this.inventoryService.upgradeEquipment(

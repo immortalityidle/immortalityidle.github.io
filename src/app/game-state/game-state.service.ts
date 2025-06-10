@@ -734,6 +734,8 @@ export class GameStateService {
       formationDuration: props?.formationDuration || 0,
       formationPower: props?.formationPower || 0,
       battlesUnlocked: props?.battlesUnlocked || false,
+      pouchPotionsUsed: props?.pouchPotionsUsed || 0,
+      pouchFoodUsed: props?.pouchFoodUsed || 0,
     };
   }
 

@@ -5,6 +5,7 @@ import { InventoryService, Item } from '../game-state/inventory.service';
 import { HomeService, HomeType, Home } from '../game-state/home.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { MatDialog } from '@angular/material/dialog';
+import { LOOT_TYPE_GEM } from './battle.service';
 
 @Injectable({
   providedIn: 'root',
@@ -205,29 +206,33 @@ export class StoreService {
     if (allElements) {
       const metalGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
-          itemStack.item?.type === 'gem' &&
+          itemStack.item?.type === LOOT_TYPE_GEM &&
           itemStack.item.subtype === 'metal' &&
           itemStack.item.value >= minimumGemValue
       );
       const earthGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
-          itemStack.item?.type === 'gem' &&
+          itemStack.item?.type === LOOT_TYPE_GEM &&
           itemStack.item.subtype === 'earth' &&
           itemStack.item.value >= minimumGemValue
       );
       const waterGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
-          itemStack.item?.type === 'gem' &&
+          itemStack.item?.type === LOOT_TYPE_GEM &&
           itemStack.item.subtype === 'water' &&
           itemStack.item.value >= minimumGemValue
       );
       const fireGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
-          itemStack.item?.type === 'gem' && itemStack.item.subtype === 'fire' && itemStack.item.value >= minimumGemValue
+          itemStack.item?.type === LOOT_TYPE_GEM &&
+          itemStack.item.subtype === 'fire' &&
+          itemStack.item.value >= minimumGemValue
       );
       const woodGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
-          itemStack.item?.type === 'gem' && itemStack.item.subtype === 'wood' && itemStack.item.value >= minimumGemValue
+          itemStack.item?.type === LOOT_TYPE_GEM &&
+          itemStack.item.subtype === 'wood' &&
+          itemStack.item.value >= minimumGemValue
       );
       return (
         metalGemStack !== undefined &&
@@ -238,7 +243,7 @@ export class StoreService {
       );
     } else {
       const gemStack = this.inventoryService.itemStacks.find(
-        itemStack => itemStack.item?.type === 'gem' && itemStack.item.value >= minimumGemValue
+        itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value >= minimumGemValue
       );
       return gemStack !== undefined;
     }

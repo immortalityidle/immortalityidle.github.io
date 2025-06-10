@@ -497,7 +497,7 @@ export class AchievementService {
       description:
         "You've eaten way more than you should have for 8888 days and unlocked the " +
         this.itemRepoService.items['basicGluttonyManual'].name,
-      hint: 'Better than dumpster diving.',
+      hint: "You'll get a tummyache.",
       check: () => {
         return this.inventoryService.daysGorged >= 8888;
       },
@@ -511,12 +511,25 @@ export class AchievementService {
       description:
         "You've eaten way more than you should have for 88888888 days and unlocked the " +
         this.itemRepoService.items['advancedGluttonyManual'].name,
-      hint: 'Better than dumpster diving.',
+      hint: "No, don't eat that much, you'll get sick for sure.",
       check: () => {
         return this.inventoryService.daysGorged >= 88888888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['advancedGluttonyManual']);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Snack Time!',
+      description:
+        "You stopped in the middle of battle and sat down for a meal 8888 times. Seriously? You couldn't wait until the fight was over to eat? Well, now you get to do it more often.",
+      hint: 'Meals on the go.',
+      check: () => {
+        return this.battleService.pouchFoodUsed >= 8888;
+      },
+      effect: () => {
+        this.battleService.foodCooldown = 40;
       },
       unlocked: false,
     },
@@ -706,6 +719,18 @@ export class AchievementService {
           // open up an item pouch slot if one isn't open yet
           this.characterService.itemPouches.push(this.inventoryService.getEmptyItemStack());
         }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Emergency Swig',
+      description: 'You drank 8888 equipped potions and reduced your potion cooldown.',
+      hint: "It's just for medicinal use, I promise. I can stop whenever I want.",
+      check: () => {
+        return this.battleService.pouchPotionsUsed >= 8888;
+      },
+      effect: () => {
+        this.battleService.potionCooldown = 10;
       },
       unlocked: false,
     },

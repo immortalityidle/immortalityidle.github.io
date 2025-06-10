@@ -24,19 +24,17 @@ import { HomeService } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
 import { BigNumberPipe } from '../pipes';
-import { BattleService } from './battle.service';
+import { BattleService, LOOT_TYPE_GEM } from './battle.service';
 
 export interface WeaponStats {
   baseDamage: number;
   material: string;
   baseName?: string;
-  effect?: string;
 }
 
 export interface ArmorStats {
   defense: number;
   baseName?: string;
-  effect?: string;
 }
 
 export interface Item {
@@ -511,7 +509,7 @@ export class InventoryService {
     for (let key = 0; key < this.itemStacks.length; key++) {
       const itemStack = this.itemStacks[key];
       if (itemStack.item) {
-        if (itemStack.item.type === 'gem') {
+        if (itemStack.item.type === LOOT_TYPE_GEM) {
           gemStacks.push(itemStack);
         } else if (itemStack.item.type === 'equipment') {
           equipStacks.push(itemStack);
@@ -607,11 +605,11 @@ export class InventoryService {
       type: 'equipment',
       slot: slot,
       value: grade,
+      effect: effect,
       weaponStats: {
         baseDamage: damage,
         material: material,
         baseName: baseName,
-        effect: effect,
       },
       description:
         'A unique weapon made of ' +
@@ -626,8 +624,8 @@ export class InventoryService {
       return;
     }
     let effectString = '';
-    if (weapon.weaponStats.effect) {
-      effectString = ' and imbued with the power of ' + weapon.weaponStats.effect;
+    if (weapon.effect) {
+      effectString = ' and imbued with the power of ' + weapon.effect;
     }
     weapon.description =
       'A unique weapon made of ' +
@@ -642,8 +640,8 @@ export class InventoryService {
       return;
     }
     let effectString = '';
-    if (armor.armorStats.effect) {
-      effectString = ' and imbued with the power of ' + armor.armorStats.effect;
+    if (armor.effect) {
+      effectString = ' and imbued with the power of ' + armor.effect;
     }
     armor.description =
       'A unique piece of armor ' +
@@ -656,12 +654,12 @@ export class InventoryService {
     if (equipment.armorStats) {
       equipment.armorStats.defense += Math.max(Math.sqrt(value), 1000) * value;
       if (newEffect !== 'spirit') {
-        equipment.armorStats.effect = newEffect;
+        equipment.effect = newEffect;
       }
     } else if (equipment.weaponStats) {
       equipment.weaponStats.baseDamage += Math.max(Math.sqrt(value), 1000) * value;
       if (newEffect !== 'spirit') {
-        equipment.weaponStats.effect = newEffect;
+        equipment.effect = newEffect;
       }
     }
     equipment.value += value;
@@ -822,7 +820,7 @@ export class InventoryService {
       id: 'spiritGemGrade' + grade,
       imageFile: flavor + 'Gem',
       name: flavor + ' gem grade ' + grade,
-      type: 'gem',
+      type: LOOT_TYPE_GEM,
       subtype: flavor,
       value: grade * 10,
       description: description,
@@ -886,10 +884,10 @@ export class InventoryService {
       type: 'equipment',
       slot: slot,
       value: grade,
+      effect: effect,
       armorStats: {
         defense: defense,
         baseName: baseName,
-        effect: effect,
       },
       description:
         'A unique piece of armor that you made.<br>Drag and drop onto similar armor to merge them into something better.<br>nDefense: ' +
@@ -1261,7 +1259,7 @@ export class InventoryService {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.totalItemsReceived += quantity;
-    if (item.type === 'gem') {
+    if (item.type === LOOT_TYPE_GEM) {
       this.gemsAcquired++;
     }
 
@@ -1283,7 +1281,7 @@ export class InventoryService {
                 return -1;
               } else if (
                 (item.type !== 'food' || item.name === inputItemStack.item.name) &&
-                item.type !== 'gem' &&
+                item.type !== LOOT_TYPE_GEM &&
                 item.value > inputItemStack.item?.value
               ) {
                 // it's an upgrade, add it to the inventory then swap it in
@@ -1423,11 +1421,11 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldGemsEnabled && item.type === 'gem' && !this.hellService?.inHell) {
+    if (this.autoSellOldGemsEnabled && item.type === LOOT_TYPE_GEM && !this.hellService?.inHell) {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === 'gem' && itemStack.item.value < item.value) {
+        if (itemStack.item && itemStack.item.type === LOOT_TYPE_GEM && itemStack.item.value < item.value) {
           this.characterService.updateMoney(itemStack.item.value * itemStack.quantity);
           this.setItemEmptyStack(i);
         }
@@ -1531,7 +1529,7 @@ export class InventoryService {
       return;
     }
     this.lifetimeSoldItems += quantity;
-    if (itemStack.item.type === 'gem') {
+    if (itemStack.item.type === LOOT_TYPE_GEM) {
       this.lifetimeGemsSold += quantity;
     }
     const index = this.itemStacks.indexOf(itemStack);
@@ -1972,12 +1970,12 @@ export class InventoryService {
           item1.value + item2.value,
           item1.weaponStats?.material + '',
           item1.weaponStats?.baseName,
-          item1.weaponStats?.effect
+          item1.effect
         )
       );
     } else {
       inventoryIndex = this.addItem(
-        this.generateArmor(item1.value + item2.value, item1.slot, item1.armorStats?.baseName, item1.armorStats?.effect)
+        this.generateArmor(item1.value + item2.value, item1.slot, item1.armorStats?.baseName, item1.effect)
       );
     }
     // if we can, move the new item to the desired destination index
@@ -2097,14 +2095,14 @@ export class InventoryService {
         equippedItem.value + itemToMerge.value,
         itemToMerge.weaponStats?.material + '',
         equippedItem.weaponStats?.baseName,
-        equippedItem.weaponStats?.effect
+        equippedItem.effect
       );
     } else {
       newItem = this.generateArmor(
         equippedItem.value + itemToMerge.value,
         slot,
         equippedItem.armorStats?.baseName,
-        equippedItem.armorStats?.effect
+        equippedItem.effect
       );
     }
     this.characterService.equipment[slot] = newItem;
@@ -2146,7 +2144,7 @@ export class InventoryService {
       if (!itemIterator.item) {
         continue;
       }
-      if (itemIterator.item.type === 'gem' && itemIterator.quantity >= 10 - power) {
+      if (itemIterator.item.type === LOOT_TYPE_GEM && itemIterator.quantity >= 10 - power) {
         this.mergeSpiritGem(itemIterator, power);
         return;
       }
@@ -2200,7 +2198,7 @@ export class InventoryService {
   stashInventory() {
     for (let i = 0; i < this.itemStacks.length; i++) {
       const item = this.itemStacks[i]?.item;
-      if (item && item.type !== 'food' && item.type !== 'gem') {
+      if (item && item.type !== 'food' && item.type !== LOOT_TYPE_GEM) {
         this.stashedItemStacks.push(this.itemStacks[i]);
         this.setItemEmptyStack(i);
       }

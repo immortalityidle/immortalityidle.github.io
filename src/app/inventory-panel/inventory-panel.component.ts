@@ -12,6 +12,7 @@ import { NgClass, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { InventoryOptionsModalComponent } from '../inventory-options-modal/inventory-options-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { LOOT_TYPE_GEM } from '../game-state/battle.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -31,6 +32,7 @@ export class InventoryPanelComponent {
   instanceOfEquipment = instanceOfEquipment;
   dragPositionX = 0;
   dragPositionY = 0;
+  gem_type = LOOT_TYPE_GEM;
 
   constructor(
     public inventoryService: InventoryService,

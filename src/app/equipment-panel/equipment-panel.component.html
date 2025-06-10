@@ -1,5 +1,5 @@
 <div class="equipmentContainer" cdkDropList cdkDropListSortingDisabled>
-    <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}" [ngClass]="getEffectClass('head')"
+    <div style="grid-area: head;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'head'}"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="characterService.equipment.head" [cdkDragDisabled]="!characterService.equipment.head"    
       (dblclick)="slotDoubleClicked('head', $event)" tabindex="0"
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div style="grid-area: right;" class="itemSlot textOverflow"
-      [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"  [ngClass]="getEffectClass('rightHand')"
+      [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'rightHand'}"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="characterService.equipment.rightHand" [cdkDragDisabled]="!characterService.equipment.rightHand"    
       (dblclick)="slotDoubleClicked('rightHand', $event)" tabindex="0"
@@ -32,7 +32,7 @@
         {{characterService.equipment.rightHand?.name | titlecase}}
       </div>
     </div>
-    <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}" [ngClass]="getEffectClass('body')"
+    <div style="grid-area: body;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'body'}"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="characterService.equipment.body" [cdkDragDisabled]="!characterService.equipment.body"    
       (dblclick)="slotDoubleClicked('body', $event)" tabindex="0"
@@ -48,7 +48,7 @@
         {{characterService.equipment.body?.name | titlecase}}
       </div>
     </div>
-    <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}" [ngClass]="getEffectClass('leftHand')"
+    <div style="grid-area: left;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'leftHand'}"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="characterService.equipment.leftHand" [cdkDragDisabled]="!characterService.equipment.leftHand"    
       (dblclick)="slotDoubleClicked('leftHand', $event)" tabindex="0"
@@ -67,7 +67,7 @@
     <div style="grid-area: stats;">
       <span tabindex="0" [ngClass]="{'highlightSpan': characterService.righteousWrathUnlocked}" tooltip="Defense.<br>Reduces damage when a monster hits you.<br>Based on your toughness and armor.{{characterService.righteousWrathUnlocked ? '<br>Doubled by the power of your righteous wrath.':''}}"><mat-icon>shield</mat-icon>{{characterService.defense | bigNumber}}</span>
     </div>
-    <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}" [ngClass]="getEffectClass('legs')"
+    <div style="grid-area: legs;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'legs'}"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="characterService.equipment.legs" [cdkDragDisabled]="!characterService.equipment.legs"    
       (dblclick)="slotDoubleClicked('legs', $event)" tabindex="0"
@@ -109,7 +109,7 @@
         }
       </div>
     </div>
-    <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}" [ngClass]="getEffectClass('feet')"
+    <div style="grid-area: feet;" class="itemSlot textOverflow" [ngClass]="{'highlightSlot': getSelectedItemSlot() === 'feet'}"
       cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
       [cdkDragData]="characterService.equipment.feet" [cdkDragDisabled]="!characterService.equipment.feet"    
       (dblclick)="slotDoubleClicked('feet', $event)" tabindex="0"

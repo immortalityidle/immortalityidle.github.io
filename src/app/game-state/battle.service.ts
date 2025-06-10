@@ -67,6 +67,8 @@ export interface BattleProperties {
   formationCooldown: number;
   formationPower: number;
   battlesUnlocked: boolean;
+  pouchPotionsUsed: number;
+  pouchFoodUsed: number;
 }
 
 export interface Technique {
@@ -163,6 +165,8 @@ export class BattleService {
   formationPower = 0;
   battlesUnlocked = false;
   lores: AttributeType[] = ['metalLore', 'earthLore', 'waterLore', 'fireLore', 'woodLore'];
+  pouchPotionsUsed = 0;
+  pouchFoodUsed = 0;
 
   private elementalFactor = 2;
   // elemental logic:
@@ -373,6 +377,8 @@ export class BattleService {
       formationCooldown: this.formationCooldown,
       formationPower: this.formationPower,
       battlesUnlocked: this.battlesUnlocked,
+      pouchPotionsUsed: this.pouchPotionsUsed,
+      pouchFoodUsed: this.pouchFoodUsed,
     };
   }
 
@@ -404,6 +410,8 @@ export class BattleService {
     this.formationCooldown = properties.formationCooldown;
     this.formationPower = properties.formationPower;
     this.battlesUnlocked = properties.battlesUnlocked;
+    this.pouchPotionsUsed = properties.pouchPotionsUsed;
+    this.pouchFoodUsed = properties.pouchFoodUsed;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -434,6 +442,7 @@ export class BattleService {
             this.characterService.status[effect].value += itemStack.item.increaseAmount || 1;
             itemStack.quantity--;
             itemStack.item.cooldown = this.potionCooldown;
+            this.pouchPotionsUsed++;
             itemUsed = true;
           }
         } else if (itemStack.item.type === 'food') {
@@ -444,6 +453,7 @@ export class BattleService {
             this.inventoryService.eatFood(itemStack.item, 1);
             itemStack.quantity--;
             itemStack.item.cooldown = this.foodCooldown;
+            this.pouchFoodUsed++;
             itemUsed = true;
           }
         }

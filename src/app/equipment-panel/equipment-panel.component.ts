@@ -145,17 +145,4 @@ export class EquipmentPanelComponent {
       }
     }
   }
-
-  protected getEffectClass(slot: string): string {
-    let effect;
-    if (slot === 'leftHand' || slot === 'rightHand') {
-      effect = this.characterService.equipment[slot]?.weaponStats?.effect;
-    } else if (slot === 'head' || slot === 'body' || slot === 'legs' || slot === 'feet') {
-      effect = this.characterService.equipment[slot]?.armorStats?.effect;
-    }
-    if (effect) {
-      return 'effect' + effect;
-    }
-    return '';
-  }
 }

@@ -3,7 +3,7 @@ import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
-import { BattleService } from './battle.service';
+import { BattleService, EFFECT_CORRUPTION } from './battle.service';
 import { Activity, ActivityType, LocationType, YinYangEffect } from './activity';
 import { FollowersService } from './followers.service';
 import { InventoryService, Item } from './inventory.service';
@@ -186,7 +186,7 @@ export class HellService {
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         defense: 1e8 + 1e7 * hellProgress,
-        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), 'corruption')],
+        loot: [this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), EFFECT_CORRUPTION)],
         techniques: [
           {
             name: 'Attack',
@@ -205,7 +205,7 @@ export class HellService {
         maxHealth: 1e15 + 1e14 * hellProgress,
         defense: 1e8 + 1e7 * hellProgress,
         loot: [
-          this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), 'corruption'),
+          this.inventoryService.generateSpiritGem(Math.floor(Math.log2(hellProgress + 2)), EFFECT_CORRUPTION),
           this.itemRepoService.items['fingers'],
         ],
         techniques: [
@@ -225,7 +225,7 @@ export class HellService {
         health: 1e6,
         maxHealth: 1e6,
         defense: 1e6,
-        loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        loot: [this.inventoryService.generateSpiritGem(25, EFFECT_CORRUPTION)],
         techniques: [
           {
             name: 'Attack',
@@ -253,7 +253,7 @@ export class HellService {
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         defense: 1e8,
-        loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        loot: [this.inventoryService.generateSpiritGem(25, EFFECT_CORRUPTION)],
         techniques: [
           {
             name: 'Attack',
@@ -273,7 +273,7 @@ export class HellService {
             health: 1e20 + 1e19 * hellProgress,
             maxHealth: 1e20 + 1e19 * hellProgress,
             defense: 1e8,
-            loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+            loot: [this.inventoryService.generateSpiritGem(25, EFFECT_CORRUPTION)],
             techniques: [
               {
                 name: 'Attack',
@@ -293,7 +293,7 @@ export class HellService {
         health: 1e6,
         maxHealth: 1e6,
         defense: 1e6,
-        loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        loot: [this.inventoryService.generateSpiritGem(25, EFFECT_CORRUPTION)],
         techniques: [
           {
             name: 'Force Feeding',
@@ -313,7 +313,7 @@ export class HellService {
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         defense: 1e8,
-        loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        loot: [this.inventoryService.generateSpiritGem(25, EFFECT_CORRUPTION)],
         techniques: [
           {
             name: 'Attack',
@@ -331,7 +331,7 @@ export class HellService {
         health: 1e20 + 1e19 * hellProgress,
         maxHealth: 1e20 + 1e19 * hellProgress,
         defense: 1e8,
-        loot: [this.inventoryService.generateSpiritGem(25, 'corruption')],
+        loot: [this.inventoryService.generateSpiritGem(25, EFFECT_CORRUPTION)],
         techniques: [
           {
             name: 'Attack',

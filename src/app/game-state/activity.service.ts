@@ -1,5 +1,5 @@
 import { Injectable, Injector, signal } from '@angular/core';
-import { BattleService } from './battle.service';
+import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM } from './battle.service';
 import {
   Activity,
   ActivityLoopEntry,
@@ -3684,17 +3684,27 @@ export class ActivityService {
     location: LocationType.Self,
     imageBaseName: 'purifyinggems',
     activityType: ActivityType.PurifyGems,
-    description: ['Purify corrupted spirit gems into something more useful.'],
+    description: ['Purify corrupted spirit gems into life gems.'],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: ['Uses 100000 Stamina and a corrupted spirit gem.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100000;
-        // TODO: fix this
-        const value = this.inventoryService.consume('corruptionGem');
-        if (value > 0) {
-          // TODO: add more flavors of gems
-          this.inventoryService.addItem(this.inventoryService.generateSpiritGem(value / 10, 'life'));
+        const corruptedGemStackIndex = this.inventoryService.itemStacks.findIndex(
+          itemStack =>
+            itemStack.item?.type === LOOT_TYPE_GEM &&
+            itemStack.item.subtype === EFFECT_CORRUPTION &&
+            itemStack.quantity >= 1
+        );
+        if (corruptedGemStackIndex !== -1) {
+          const corruptedGemStack = this.inventoryService.itemStacks[corruptedGemStackIndex];
+          corruptedGemStack.quantity--;
+          if (corruptedGemStack.quantity === 0) {
+            this.inventoryService.setItemEmptyStack(corruptedGemStackIndex);
+          }
+          this.inventoryService.addItem(
+            this.inventoryService.generateSpiritGem(corruptedGemStack!.item!.value / 5, 'life')
+          );
         }
       },
     ],
@@ -3705,7 +3715,6 @@ export class ActivityService {
     ],
     requirements: [
       {
-        //TODO: tune this
         spirituality: 1e24,
       },
     ],
