@@ -103,6 +103,30 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Bigger Earner',
+      description: 'You earned your first million taels! Do you feel rich yet?',
+      hint: 'Make some more money.',
+      check: () => {
+        return this.characterService.money >= 1000000;
+      },
+      effect: () => {
+        // no effect
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Biggest Earner',
+      description: 'You earned your first trillion taels! Your greed knows no bounds.',
+      hint: 'Make even more money.',
+      check: () => {
+        return this.characterService.money >= 1000000000000;
+      },
+      effect: () => {
+        // no effect
+      },
+      unlocked: false,
+    },
+    {
       name: 'Bookworm',
       description:
         'You opened the manuals shop and unlocked the ' + this.itemRepoService.items['restartActivityManual'].name,
@@ -756,6 +780,30 @@ export class AchievementService {
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoTroubleManual']);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Monster Hunter',
+      description: 'You tracked down and killed 20  different kinds of monsters. Good job!',
+      hint: 'An aspiring immortal bravely faces down many kinds of foes.',
+      check: () => {
+        return Object.keys(this.battleService.killsByMonster).length >= 20;
+      },
+      effect: () => {
+        // no effect
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Monster Exterminator',
+      description: 'You tracked down and killed 40  different kinds of monsters. Good job!',
+      hint: "It's almost like pokemon, but with less catching.",
+      check: () => {
+        return Object.keys(this.battleService.killsByMonster).length >= 40;
+      },
+      effect: () => {
+        // no effect
       },
       unlocked: false,
     },
@@ -1566,6 +1614,30 @@ export class AchievementService {
       hint: 'Do you really, really?',
       check: () => {
         return this.gameStateService!.supportClicked;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Going Meta',
+      description: 'You earned 50 achievements. Good job!',
+      hint: 'Can you get one for having lots?',
+      check: () => {
+        return this.unlockAchievement.length >= 50;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Meta Meta',
+      description: 'You earned 100 achievements. Good job!',
+      hint: 'Can you get more for having more?',
+      check: () => {
+        return this.unlockAchievement.length >= 100;
       },
       effect: () => {
         // no effect, it's just for fun

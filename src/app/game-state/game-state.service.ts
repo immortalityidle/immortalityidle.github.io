@@ -677,6 +677,7 @@ export class GameStateService {
       currentEnemy: props?.currentEnemy || null,
       kills: props?.kills || 0,
       killsByLocation: props?.killsByLocation || {},
+      killsByMonster: props?.killsByMonster || {},
       godSlayerKills: props?.godSlayerKills || 0,
       totalKills: props?.totalKills || 0,
       autoTroubleUnlocked: props?.autoTroubleUnlocked || false,

@@ -62,6 +62,7 @@ export interface BattleProperties {
   foodThresholdStatusType: StatusType;
   foodThreshold: number;
   killsByLocation: { [key: string]: number };
+  killsByMonster: { [key: string]: number };
   activeFormation: string;
   formationDuration: number;
   formationCooldown: number;
@@ -140,6 +141,7 @@ export class BattleService {
   currentEnemy: Enemy | null;
   kills: number;
   killsByLocation: { [key: string]: number } = {};
+  killsByMonster: { [key: string]: number } = {};
   godSlayerKills: number;
   autoTroubleUnlocked = false;
   private yearlyMonsterDay: number;
@@ -353,6 +355,7 @@ export class BattleService {
       currentEnemy: this.currentEnemy,
       kills: this.kills,
       killsByLocation: this.killsByLocation,
+      killsByMonster: this.killsByMonster,
       godSlayerKills: this.godSlayerKills,
       totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
@@ -386,6 +389,7 @@ export class BattleService {
     this.enemies = properties.enemies;
     this.kills = properties.kills;
     this.killsByLocation = properties.killsByLocation;
+    this.killsByMonster = properties.killsByMonster;
     this.godSlayerKills = properties.godSlayerKills;
     this.totalKills = properties.totalKills;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
@@ -1201,6 +1205,7 @@ export class BattleService {
     this.totalKills++;
     this.killsByLocation[this.locationService!.troubleTarget] =
       (this.killsByLocation[this.locationService!.troubleTarget] || 0) + 1;
+    this.killsByMonster[this.currentEnemy.baseName] = (this.killsByMonster[this.currentEnemy.baseName] || 0) + 1;
     this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
     if (this.currentEnemy.name === 'Death itself') {
       this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
