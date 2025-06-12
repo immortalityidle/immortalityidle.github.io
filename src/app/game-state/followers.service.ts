@@ -331,9 +331,9 @@ export class FollowersService {
     },
     scout: {
       work: () => {
-        this.battleService.trouble();
+        this.battleService.yearlyMonsterDay += this.jobs['scout'].totalPower;
       },
-      description: 'Scouts help you track down and fight monsters faster.',
+      description: 'Scouts help you track down and get in fights with monsters faster.',
       totalPower: 0,
       runEachTick: true,
     },

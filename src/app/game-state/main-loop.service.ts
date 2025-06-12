@@ -217,15 +217,16 @@ export class MainLoopService {
   }
 
   tick() {
-    this.daysSinceLongTick++;
-    this.daysSinceYearOrLongTick++;
-    if (this.daysSinceYearOrLongTick >= 365) {
-      this.yearOrLongTickSubject.next(this.daysSinceYearOrLongTick);
-      this.daysSinceYearOrLongTick = 0;
-    }
     if (this.battleService && this.battleService.enemies.length > 0) {
       this.battleTickSubject.next(1);
     } else {
+      this.daysSinceLongTick++;
+      this.daysSinceYearOrLongTick++;
+      if (this.daysSinceYearOrLongTick >= 365) {
+        this.yearOrLongTickSubject.next(this.daysSinceYearOrLongTick);
+        this.daysSinceYearOrLongTick = 0;
+      }
+
       this.totalTicks++;
       this.activityTickSubject.next(1);
       if (this.autopauseTriggered) {

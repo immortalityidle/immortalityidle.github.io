@@ -144,7 +144,7 @@ export class BattleService {
   killsByMonster: { [key: string]: number } = {};
   godSlayerKills: number;
   autoTroubleUnlocked = false;
-  private yearlyMonsterDay: number;
+  yearlyMonsterDay: number;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
   totalKills = 0;
@@ -249,6 +249,7 @@ export class BattleService {
         this.addRuffian();
         return;
       }
+
       if (this.yearlyMonsterDay >= 365) {
         this.yearlyMonsterDay = 0;
         if (this.activeFormation === '') {

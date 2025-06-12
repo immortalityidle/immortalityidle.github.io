@@ -3465,21 +3465,22 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100;
+        if (!this.followerService.followersUnlocked) {
+          this.logService.log(
+            LogTopic.FOLLOWER,
+            'Every potential follower ignores your recruiting efforts after sensing your low cultivation.'
+          );
+          return;
+        }
         if (this.characterService.money <= 1000000) {
+          this.logService.log(LogTopic.FOLLOWER, "You don't have the funds required to recruit anyone.");
           return;
         }
         this.characterService.updateMoney(-1000000);
-        if (this.followerService.followersUnlocked && this.characterService.money > 0) {
-          this.recruitingCounter++;
-          if (this.recruitingCounter > 100) {
-            this.recruitingCounter = 0;
-            this.followerService.generateFollower();
-          }
-        } else {
-          this.logService.injury(
-            LogTopic.EVENT,
-            'All of your potential followers ignore your recruiting efforts after sensing your low cultivation.'
-          );
+        this.recruitingCounter++;
+        if (this.recruitingCounter > 100) {
+          this.recruitingCounter = 0;
+          this.followerService.generateFollower();
         }
         this.characterService.yang++;
       },
