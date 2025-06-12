@@ -14,42 +14,40 @@
         <div class="headerDiv">
           <span>Your Techniques</span>
         </div>
-        @if (battleService.activeFormation !== ''){
+        @if (battleService.displayActiveFormation() !== ''){
           <div>
             <span>
-              {{battleService.activeFormation | titlecase}} formation active for {{battleService.formationDuration}} ticks
+              {{battleService.displayActiveFormation() | titlecase}} formation active for {{battleService.displayFormationDuration()}} ticks
             </span>
           </div>
         }
-        @for (technique of battleService.techniques; track technique.name + technique.ticks) {
-          @if (technique.unlocked){
+        @for (technique of battleService.displayTechniques; track technique.trackField()) {
+          @if (technique.unlocked()){
             <div class="techniqueLine">
               <div class="techniqueName">
-                <input type="checkbox" [checked]="!technique.disabled" (change)="techniqueEnableChange($event, technique)">
-                <span>{{technique.name}}</span>
+                <input type="checkbox" [checked]="!technique.disabled()" (change)="techniqueEnableChange($event, $index)">
+                <span>{{technique.name()}}</span>
               </div>
               <div class="technique-bar"
-                  [attr.value]="Math.floor(technique.ticks) | bigNumber"
-                  [attr.max]="Math.floor(technique.ticksRequired) | bigNumber">
+                  [attr.value]="technique.ticks() | bigNumber"
+                  [attr.max]="technique.ticksRequired() | bigNumber">
                   <span
-                    [style.width.%]="100 *
-                      Math.floor(technique.ticks) /
-                      Math.floor(technique.ticksRequired)">
+                    [style.width.%]="technique.ticksPercentage()">
                   </span>
                 </div>
             </div>
           }
         }
         <br>
-        @for (statusEffect of battleService.statusEffects; track statusEffect.name + statusEffect.ticksLeft) {
-          <div class="techniqueLine" tooltip="{{statusEffect.description}}">
+        @for (statusEffect of battleService.displayStatusEffects; track statusEffect.trackField()) {
+          <div class="techniqueLine" tooltip="{{statusEffect.description()}}">
             <div class="techniqueName">
-              <span>{{statusEffect.name}} {{statusEffect.ticksLeft}}</span>
+              <span>{{statusEffect.name()}} {{statusEffect.ticksLeft()}}</span>
             </div>
           </div>
         }
         <br>
-        @if (battleService.enemies.length > 0){
+        @if (battleService.displayEnemies.length > 0){
           <div>
             <button (click)="battleService.flee()">Flee Like A Coward</button>
           </div>
@@ -59,60 +57,51 @@
         <div class="headerDiv">
           <span>Your Enemies</span>
         </div>
-        @for (enemy of battleService.enemies; track enemy.name) {
+        @for (enemy of battleService.displayEnemies; track enemy.name()) {
           <div>
-              @if (battleService.currentEnemy !== enemy) {
-                <button (click)="battleService.fight(enemy)">Fight</button>
-              }
-              @else {
-                <span>Fighting </span>
-              }
-            <span class="enemyName">{{enemy.name | titlecase}}</span>
+            <span>Fighting </span>
+            <span class="enemyName">{{enemy.name() | titlecase}}</span>
           </div>
           <div class="columnDiv">
             <div class="splitDiv">
               <div>
-                <span tooltip="Defense"><mat-icon>shield</mat-icon>{{enemy.defense | bigNumber}}</span>
+                <span tooltip="Defense"><mat-icon>shield</mat-icon>{{enemy.defense() | bigNumber}}</span>
               </div>
               <div class="health">
                 <div class="progress-bar"
-                  [attr.value]="Math.floor(enemy.health) | bigNumber"
-                  [attr.max]="Math.floor(enemy.maxHealth) | bigNumber">
+                  [attr.value]="enemy.health() | bigNumber"
+                  [attr.max]="enemy.maxHealth() | bigNumber">
                   <span
-                    [style.width.%]="100 *
-                      Math.floor(enemy.health) /
-                      Math.floor(enemy.maxHealth)">
+                    [style.width.%]="enemy.healthPercentage()">
                   </span>
                 </div>
               </div>
-              @for (technique of enemy.techniques; track technique.name + technique.ticks) {
+              @for (technique of enemy.techniques; track technique.trackField()) {
                 <div class="techniqueLine">
                   <div class="techniqueName">
-                    <span>{{technique.name}}</span>
+                    <span>{{technique.name()}}</span>
                   </div>
                   <div class="technique-bar"
-                      [attr.value]="Math.floor(technique.ticks) | bigNumber"
-                      [attr.max]="Math.floor(technique.ticksRequired) | bigNumber">
+                      [attr.value]="technique.ticks() | bigNumber"
+                      [attr.max]="technique.ticksRequired() | bigNumber">
                       <span
-                        [style.width.%]="100 *
-                          Math.floor(technique.ticks) /
-                          Math.floor(technique.ticksRequired)">
+                        [style.width.%]="technique.ticksPercentage()">
                       </span>
                     </div>
                 </div>
               }
-              @for (statusEffect of enemy.statusEffects; track statusEffect.name + statusEffect.ticksLeft) {
-                <div class="techniqueLine" tooltip="{{statusEffect.description}}">
+              @for (statusEffect of enemy.statusEffects; track statusEffect.trackField()) {
+                <div class="techniqueLine" tooltip="{{statusEffect.description()}}">
                   <div class="techniqueName">
-                    <span>{{statusEffect.name}} {{statusEffect.ticksLeft}}</span>
+                    <span>{{statusEffect.name()}} {{statusEffect.ticksLeft()}}</span>
                   </div>
                 </div>
               }              
             </div>
             <div class="splitDiv">
-              @if (enemy.imageFile) {
+              @if (battleService.enemyImageFile() !== '') {
                 <div>
-                  <img class="monsterImage" src="{{enemy.imageFile}}" alt="A Monster!" width="80" height="100"/>
+                  <img class="monsterImage" src="{{battleService.enemyImageFile()}}" alt="A Monster!" width="80" height="100"/>
                 </div>
               }
             </div>

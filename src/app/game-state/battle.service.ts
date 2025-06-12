@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, Item } from '../game-state/inventory.service';
@@ -21,11 +21,20 @@ export interface Enemy {
   loot: Item[];
   unique?: boolean;
   defeatEffect?: string;
-  imageFile?: string;
   techniques: Technique[];
   index?: number;
   element?: string;
   statusEffects?: StatusEffect[];
+}
+
+export interface DisplayEnemy {
+  name: WritableSignal<string>;
+  health: WritableSignal<number>;
+  maxHealth: WritableSignal<number>;
+  healthPercentage: WritableSignal<number>;
+  defense: WritableSignal<number>;
+  techniques: DisplayTechnique[];
+  statusEffects: DisplayStatusEffect[];
 }
 
 export interface EnemyTypes {
@@ -92,11 +101,29 @@ export interface Technique {
   statusEffect?: StatusEffect;
 }
 
+export interface DisplayTechnique {
+  name: WritableSignal<string>;
+  description?: WritableSignal<string>;
+  ticks: WritableSignal<number>;
+  ticksRequired: WritableSignal<number>;
+  ticksPercentage: WritableSignal<number>;
+  trackField: WritableSignal<string>;
+  disabled: WritableSignal<boolean>;
+  unlocked: WritableSignal<boolean>;
+}
+
 export interface StatusEffect {
   name: string;
   description?: string;
   power: number;
   ticksLeft: number;
+}
+
+export interface DisplayStatusEffect {
+  name: WritableSignal<string>;
+  description: WritableSignal<string>;
+  ticksLeft: WritableSignal<number>;
+  trackField: WritableSignal<string>;
 }
 
 export const LOOT_TYPE_GEM = 'gem';
@@ -138,6 +165,7 @@ export class BattleService {
   private hellService?: HellService;
   private locationService?: LocationService;
   enemies: Enemy[];
+  displayEnemies: DisplayEnemy[] = [];
   currentEnemy: Enemy | null;
   kills: number;
   killsByLocation: { [key: string]: number } = {};
@@ -156,6 +184,7 @@ export class BattleService {
   private techniqueDevelopmentCounter = 0;
   maxFamilyTechniques = 0;
   statusEffects: StatusEffect[] = [];
+  displayStatusEffects: DisplayStatusEffect[] = [];
   potionCooldown = 20;
   potionThreshold = 50;
   foodCooldown = 60;
@@ -163,12 +192,15 @@ export class BattleService {
   foodThreshold = 50;
   activeFormation = '';
   formationDuration = 0;
+  displayActiveFormation = signal<string>('');
+  displayFormationDuration = signal<number>(0);
   formationCooldown = 0;
   formationPower = 0;
   battlesUnlocked = false;
   lores: AttributeType[] = ['metalLore', 'earthLore', 'waterLore', 'fireLore', 'woodLore'];
   pouchPotionsUsed = 0;
   pouchFoodUsed = 0;
+  enemyImageFile = signal<string>('');
 
   private elementalFactor = 2;
   // elemental logic:
@@ -212,6 +244,7 @@ export class BattleService {
       staminaCost: 10,
     },
   ];
+  displayTechniques: DisplayTechnique[] = [];
 
   constructor(
     private injector: Injector,
@@ -299,12 +332,130 @@ export class BattleService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
-      // only update the picture files on each long tick for performance
-      for (const enemy of this.enemies) {
-        if (!enemy.imageFile) {
-          enemy.imageFile = 'assets/images/monsters/' + enemy.baseName + '.png';
+      if (this.currentEnemy) {
+        this.enemyImageFile.set('assets/images/monsters/' + this.currentEnemy.baseName + '.png');
+      } else {
+        this.enemyImageFile.set('');
+      }
+
+      while (this.displayEnemies.length > this.enemies.length) {
+        this.displayEnemies.splice(0, 1);
+      }
+      for (let i = 0; i < this.enemies.length; i++) {
+        const enemy = this.enemies[i];
+        if (this.displayEnemies.length <= i) {
+          this.displayEnemies.push({
+            name: signal<string>(enemy.name),
+            health: signal<number>(enemy.health),
+            maxHealth: signal<number>(enemy.maxHealth),
+            healthPercentage: signal<number>(Math.floor((100 * enemy.health) / enemy.maxHealth)),
+            defense: signal<number>(enemy.defense),
+            techniques: [],
+            statusEffects: [],
+          });
+        } else {
+          this.displayEnemies[i].name.set(enemy.name);
+          this.displayEnemies[i].health.set(enemy.health);
+          this.displayEnemies[i].maxHealth.set(enemy.maxHealth);
+          this.displayEnemies[i].healthPercentage.set(Math.floor((100 * enemy.health) / enemy.maxHealth));
+          this.displayEnemies[i].defense.set(enemy.defense);
+        }
+        while (this.displayEnemies[i].techniques.length > enemy.techniques.length) {
+          this.displayEnemies[i].techniques.splice(0, 1);
+        }
+        for (let j = 0; j < enemy.techniques.length; j++) {
+          const technique = enemy.techniques[j];
+          if (this.displayEnemies[i].techniques.length <= j) {
+            this.displayEnemies[i].techniques.push({
+              name: signal<string>(technique.name),
+              ticks: signal<number>(technique.ticks),
+              ticksRequired: signal<number>(technique.ticksRequired),
+              ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
+              trackField: signal<string>(technique.name + technique.ticks),
+              disabled: signal<boolean>(technique.disabled || false),
+              unlocked: signal<boolean>(technique.unlocked),
+            });
+          } else {
+            this.displayEnemies[i].techniques[j].name.set(technique.name);
+            this.displayEnemies[i].techniques[j].ticks.set(technique.ticks);
+            this.displayEnemies[i].techniques[j].ticksRequired.set(technique.ticksRequired);
+            this.displayEnemies[i].techniques[j].ticksPercentage.set(
+              Math.floor((100 * technique.ticks) / technique.ticksRequired)
+            );
+            this.displayEnemies[i].techniques[j].trackField.set(technique.name + technique.ticks);
+            this.displayEnemies[i].techniques[j].disabled.set(technique.disabled || false);
+            this.displayEnemies[i].techniques[j].unlocked.set(technique.unlocked);
+          }
+        }
+        while (this.displayEnemies[i].statusEffects.length > (enemy.statusEffects?.length || 0)) {
+          this.displayEnemies[i].statusEffects.splice(0, 1);
+        }
+        if (enemy.statusEffects) {
+          for (let j = 0; j < enemy.statusEffects.length; j++) {
+            const statusEffect = enemy.statusEffects[j];
+            if (this.displayEnemies[i].statusEffects.length <= j) {
+              this.displayEnemies[i].statusEffects.push({
+                name: signal<string>(statusEffect.name),
+                description: signal<string>(statusEffect.description || ''),
+                ticksLeft: signal<number>(statusEffect.ticksLeft),
+                trackField: signal<string>(statusEffect.name + statusEffect.ticksLeft),
+              });
+            } else {
+              this.displayEnemies[i].statusEffects[j].name.set(statusEffect.name);
+              this.displayEnemies[i].statusEffects[j].description.set(statusEffect.description || '');
+              this.displayEnemies[i].statusEffects[j].ticksLeft.set(statusEffect.ticksLeft);
+              this.displayEnemies[i].statusEffects[j].trackField.set(statusEffect.name + statusEffect.ticksLeft);
+            }
+          }
         }
       }
+
+      while (this.displayTechniques.length > this.techniques.length) {
+        this.displayTechniques.splice(3, 1); // splice them off starting where the family techniques should start
+      }
+      for (let i = 0; i < this.techniques.length; i++) {
+        const technique = this.techniques[i];
+        if (this.displayTechniques.length <= i) {
+          this.displayTechniques.push({
+            name: signal<string>(technique.name),
+            ticks: signal<number>(technique.ticks),
+            ticksRequired: signal<number>(technique.ticksRequired),
+            ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
+            trackField: signal<string>(technique.name + technique.ticks),
+            disabled: signal<boolean>(technique.disabled || false),
+            unlocked: signal<boolean>(technique.unlocked),
+          });
+        } else {
+          this.displayTechniques[i].name.set(technique.name);
+          this.displayTechniques[i].ticks.set(technique.ticks);
+          this.displayTechniques[i].ticksRequired.set(technique.ticksRequired);
+          this.displayTechniques[i].ticksPercentage.set(Math.floor((100 * technique.ticks) / technique.ticksRequired));
+          this.displayTechniques[i].trackField.set(technique.name + technique.ticks);
+          this.displayTechniques[i].disabled.set(technique.disabled || false);
+          this.displayTechniques[i].unlocked.set(technique.unlocked);
+        }
+      }
+
+      while (this.displayStatusEffects.length > this.statusEffects.length) {
+        this.displayStatusEffects.splice(0, 1);
+      }
+      for (let i = 0; i < this.statusEffects.length; i++) {
+        const statusEffect = this.statusEffects[i];
+        if (this.displayStatusEffects.length <= i) {
+          this.displayStatusEffects.push({
+            name: signal<string>(statusEffect.name),
+            description: signal<string>(statusEffect.description || ''),
+            ticksLeft: signal<number>(statusEffect.ticksLeft),
+            trackField: signal<string>(statusEffect.name + statusEffect.ticksLeft),
+          });
+        } else {
+          this.displayStatusEffects[i].name.set(statusEffect.name);
+          this.displayStatusEffects[i].description.set(statusEffect.description || '');
+          this.displayStatusEffects[i].ticksLeft.set(statusEffect.ticksLeft);
+          this.displayStatusEffects[i].trackField.set(statusEffect.name + statusEffect.ticksLeft);
+        }
+      }
+
       this.techniques[1].unlocked = this.characterService.equipment.rightHand !== null;
       this.techniques[2].unlocked = this.characterService.equipment.leftHand !== null;
 
@@ -1236,10 +1387,6 @@ export class BattleService {
         }
       }
     }
-  }
-
-  fight(enemy: Enemy) {
-    this.currentEnemy = enemy;
   }
 
   addEnemy(enemy: Enemy) {

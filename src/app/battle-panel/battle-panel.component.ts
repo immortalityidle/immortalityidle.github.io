@@ -1,7 +1,7 @@
 import { Component, forwardRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
-import { BattleService, Technique } from '../game-state/battle.service';
+import { BattleService } from '../game-state/battle.service';
 import { MatIcon } from '@angular/material/icon';
 import { TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
@@ -36,8 +36,8 @@ export class BattlePanelComponent {
     });
   }
 
-  protected techniqueEnableChange(event: Event, technique: Technique) {
+  protected techniqueEnableChange(event: Event, techniqueIndex: number) {
     if (!(event.target instanceof HTMLInputElement)) return;
-    technique.disabled = !event.target.checked;
+    this.battleService.techniques[techniqueIndex].disabled = !event.target.checked;
   }
 }

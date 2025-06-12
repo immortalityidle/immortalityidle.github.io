@@ -8,7 +8,7 @@
     <span>This Life's Activities</span>
     <br>
     <table>
-      @for (activityType of activityService.lifeActivities | keyvalue: originalOrder; track activityType){
+      @for (activityType of activityService.lifeActivities | keyvalue: originalOrder; track activityType.key){
       <tr>
         <td>
           Days of {{getActivityName(activityType.key) | camelToTitle}}
@@ -291,7 +291,7 @@
           {{characterService.yearify(characterService.highestAge)}}
         </td>
       </tr>
-      @for (highest of characterService.highestAttributes | keyvalue; track highest) {
+      @for (highest of characterService.highestAttributes | keyvalue; track highest.key) {
         <tr >
           <td>
             Highest {{highest.key | camelToTitle }}
