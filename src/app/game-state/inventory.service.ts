@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { EquipmentPosition, AttributeType, StatusType } from './character.service';
@@ -71,6 +71,24 @@ export interface ItemStack {
   item?: Item | null;
   quantity: number;
   id: string;
+}
+
+export interface DisplayItemStack {
+  name: WritableSignal<string>;
+  description: WritableSignal<string>;
+  imageFile: WritableSignal<string>;
+  imageColor: WritableSignal<string>;
+  quantity: WritableSignal<number>;
+  type: WritableSignal<string>;
+  value: WritableSignal<number>;
+  stackValue: WritableSignal<number>;
+  useLabel: WritableSignal<string>;
+  useDescription: WritableSignal<string>;
+  pouchable: WritableSignal<boolean>;
+  sellable: WritableSignal<boolean>;
+  equipment: WritableSignal<boolean>;
+  id: WritableSignal<string>;
+  tooltip: WritableSignal<string>;
 }
 
 export interface BalanceItem {
@@ -158,10 +176,28 @@ export class InventoryService {
   locationService?: LocationService;
   bigNumberPipe: BigNumberPipe;
   itemStacks: ItemStack[] = [];
+  displayItemStacks: DisplayItemStack[] = [];
   stashedItemStacks: ItemStack[] = [];
   maxItems = 10;
   maxStackSize = 100;
   selectedItem: ItemStack = this.getEmptyItemStack();
+  displaySelectedItem: DisplayItemStack = {
+    name: signal<string>(''),
+    description: signal<string>(''),
+    imageFile: signal<string>(''),
+    imageColor: signal<string>('white'),
+    quantity: signal<number>(0),
+    type: signal<string>(''),
+    value: signal<number>(0),
+    stackValue: signal<number>(0),
+    useLabel: signal<string>(''),
+    useDescription: signal<string>(''),
+    pouchable: signal<boolean>(false),
+    sellable: signal<boolean>(false),
+    equipment: signal<boolean>(false),
+    id: signal<string>(''),
+    tooltip: signal<string>(''),
+  };
   autoSellUnlocked: boolean;
   autoSellEntries: AutoItemEntry[];
   autoUseUnlocked: boolean;
@@ -322,6 +358,7 @@ export class InventoryService {
       if (this.autoSort) {
         this.sortInventory();
       }
+      this.updateDisplayValues();
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -350,6 +387,111 @@ export class InventoryService {
     }
     if (this.foodEatenToday === this.maxFoodPerDay) {
       this.daysGorged++;
+    }
+  }
+
+  updateDisplayValues() {
+    if (this.selectedItem.item) {
+      this.displaySelectedItem.name.set(this.selectedItem.item.name);
+      this.displaySelectedItem.description.set(this.selectedItem.item.description);
+      if (this.selectedItem.item.imageFile) {
+        this.displaySelectedItem.imageFile.set('assets/images/items/' + this.selectedItem.item.imageFile + '.png');
+      } else {
+        this.displaySelectedItem.imageFile.set('');
+      }
+      this.displaySelectedItem.quantity.set(this.selectedItem.quantity);
+      this.displaySelectedItem.type.set(this.selectedItem.item.type);
+      this.displaySelectedItem.value.set(this.selectedItem.item.value);
+      this.displaySelectedItem.stackValue.set(this.selectedItem.item.value * this.selectedItem.quantity);
+      this.displaySelectedItem.useLabel.set(this.selectedItem.item.useLabel || '');
+      this.displaySelectedItem.useDescription.set(this.selectedItem.item.useDescription || '');
+      this.displaySelectedItem.pouchable.set(this.selectedItem.item.pouchable || false);
+      this.displaySelectedItem.sellable.set(isFinite(this.selectedItem.item.value));
+      this.displaySelectedItem.equipment.set(instanceOfEquipment(this.selectedItem.item!));
+      this.displaySelectedItem.id.set(this.selectedItem.id);
+    } else {
+      this.displaySelectedItem.name.set('');
+      this.displaySelectedItem.description.set('');
+      this.displaySelectedItem.imageFile.set('');
+      this.displaySelectedItem.quantity.set(0);
+      this.displaySelectedItem.type.set('');
+      this.displaySelectedItem.value.set(0);
+      this.displaySelectedItem.stackValue.set(0);
+      this.displaySelectedItem.useLabel.set('');
+      this.displaySelectedItem.useDescription.set('');
+      this.displaySelectedItem.pouchable.set(false);
+      this.displaySelectedItem.sellable.set(false);
+      this.displaySelectedItem.equipment.set(false);
+      this.displaySelectedItem.id.set('');
+    }
+    for (let i = 0; i < this.itemStacks.length; i++) {
+      if (this.displayItemStacks.length <= i) {
+        this.displayItemStacks.push({
+          name: signal<string>(''),
+          description: signal<string>(''),
+          imageFile: signal<string>(''),
+          imageColor: signal<string>('white'),
+          quantity: signal<number>(0),
+          type: signal<string>(''),
+          value: signal<number>(0),
+          stackValue: signal<number>(0),
+          useLabel: signal<string>(''),
+          useDescription: signal<string>(''),
+          pouchable: signal<boolean>(false),
+          sellable: signal<boolean>(false),
+          equipment: signal<boolean>(false),
+          id: signal<string>(''),
+          tooltip: signal<string>(''),
+        });
+      }
+      const itemStack = this.itemStacks[i];
+      if (itemStack.item) {
+        this.displayItemStacks[i].name.set(itemStack.item.name);
+        this.displayItemStacks[i].description.set(itemStack.item.description);
+        if (itemStack.item.imageFile) {
+          this.displayItemStacks[i].imageFile.set('assets/images/items/' + itemStack.item.imageFile + '.png');
+        } else {
+          this.displayItemStacks[i].imageFile.set('');
+        }
+        if (itemStack.item.imageColor) {
+          this.displayItemStacks[i].imageColor.set(itemStack.item.imageColor);
+        } else {
+          this.displayItemStacks[i].imageColor.set('white');
+        }
+        this.displayItemStacks[i].quantity.set(itemStack.quantity);
+        this.displayItemStacks[i].type.set(itemStack.item.type);
+        this.displayItemStacks[i].value.set(itemStack.item.value);
+        this.displayItemStacks[i].stackValue.set(itemStack.item.value * itemStack.quantity);
+        this.displayItemStacks[i].useLabel.set(itemStack.item.useLabel || '');
+        this.displayItemStacks[i].useDescription.set(itemStack.item.useDescription || '');
+        this.displayItemStacks[i].pouchable.set(itemStack.item.pouchable || false);
+        this.displayItemStacks[i].sellable.set(isFinite(itemStack.item.value));
+        this.displayItemStacks[i].equipment.set(instanceOfEquipment(itemStack.item!));
+        this.displayItemStacks[i].id.set(itemStack.id);
+        this.displayItemStacks[i].tooltip.set(
+          this.titleCasePipe.transform(itemStack.item.name) + '.<br>' + itemStack?.item?.description
+        );
+      } else {
+        this.displayItemStacks[i].name.set('');
+        this.displayItemStacks[i].description.set('');
+        this.displayItemStacks[i].imageFile.set('');
+        this.displayItemStacks[i].imageColor.set('white');
+        this.displayItemStacks[i].quantity.set(0);
+        this.displayItemStacks[i].type.set('');
+        this.displayItemStacks[i].value.set(0);
+        this.displayItemStacks[i].stackValue.set(0);
+        this.displayItemStacks[i].useLabel.set('');
+        this.displayItemStacks[i].useDescription.set('');
+        this.displayItemStacks[i].pouchable.set(false);
+        this.displayItemStacks[i].sellable.set(false);
+        this.displayItemStacks[i].equipment.set(false);
+        this.displayItemStacks[i].id.set(itemStack.id);
+        if (i < this.heirloomSlots) {
+          this.displayItemStacks[i].tooltip.set('This slot can preserve an heirloom item for your next reincarnation.');
+        } else {
+          this.displayItemStacks[i].tooltip.set('');
+        }
+      }
     }
   }
 

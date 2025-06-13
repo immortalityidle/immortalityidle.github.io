@@ -148,5 +148,6 @@ export class CraftingPanelComponent {
         }
       }
     }
+    this.inventoryService.updateDisplayValues();
   }
 }

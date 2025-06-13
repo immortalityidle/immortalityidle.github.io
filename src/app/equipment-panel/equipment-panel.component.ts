@@ -42,6 +42,7 @@ export class EquipmentPanelComponent {
       this.characterService.equipment[slot] = null;
       this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   protected pouchDoubleClicked(index: number, event: MouseEvent): void {
@@ -54,6 +55,7 @@ export class EquipmentPanelComponent {
       this.characterService.itemPouches[index] = this.inventoryService.getEmptyItemStack();
       this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   protected getSelectedItemSlot() {
@@ -144,5 +146,6 @@ export class EquipmentPanelComponent {
         }
       }
     }
+    this.inventoryService.updateDisplayValues();
   }
 }

@@ -11,71 +11,71 @@
         settings
       </mat-icon>
 
-      @if (inventoryService.selectedItem.item) {
+      @if (inventoryService.displaySelectedItem.name() !== '') {
         <span class="inventoryButtons">
-          @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
+          @if (inventoryService.displaySelectedItem.sellable() && !hellService.inHell) {
             <mat-icon (click)="sell(1)" class="iconButton" aria-label="Sell" aria-hidden="false"
-              tooltip="Sell one {{inventoryService.selectedItem.item!.name}} for {{inventoryService.selectedItem.item!.value}} taels.<br>Right-click items to sell.">
+              tooltip="Sell one {{inventoryService.displaySelectedItem.name()}} for {{inventoryService.displaySelectedItem.value()}} taels.<br>Right-click items to sell.">
               attach_money
             </mat-icon>
           }
-          @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
+          @if (inventoryService.displaySelectedItem.sellable() && !hellService.inHell) {
             <mat-icon  (click)="sellStack()" class="iconButton" aria-label="Sell Stack" aria-hidden="false"
-              tooltip="Sell all the {{inventoryService.selectedItem.item!.name}}(s) in this inventory slot for {{inventoryService.selectedItem.item!.value * inventoryService.selectedItem.quantity}} taels.<br>Shift-right-click items to sell the stack.">
+              tooltip="Sell all the {{inventoryService.displaySelectedItem.name()}}(s) in this inventory slot for {{inventoryService.displaySelectedItem.stackValue()}} taels.<br>Shift-right-click items to sell the stack.">
               paid
             </mat-icon>
           }
-          @if (isFinite(inventoryService.selectedItem.item!.value) && !hellService.inHell) {
+          @if (inventoryService.displaySelectedItem.sellable() && !hellService.inHell) {
             <mat-icon (click)="sellAll()" class="iconButton" aria-label="Sell All" aria-hidden="false"
-              tooltip="Sell all the {{inventoryService.selectedItem.item!.name}}(s) in the whole inventory.">
+              tooltip="Sell all the {{inventoryService.displaySelectedItem.name()}}(s) in the whole inventory.">
               shopping_basket
             </mat-icon>
           }
-          @if (inventoryService.autoSellUnlocked && isFinite(inventoryService.selectedItem.item!.value) && !instanceOfEquipment(inventoryService.selectedItem.item!) && !hellService.inHell) {
+          @if (inventoryService.autoSellUnlocked && inventoryService.displaySelectedItem.sellable() && !inventoryService.displaySelectedItem.equipment() && !hellService.inHell) {
             <mat-icon class="iconButton" (click)="autoSell()"
               tooltip="Automatically sell this kind of item whenever you get one.<br>You can change this in the options menu later if you change your mind.<br>Ctrl-right-click items to autosell.">
               currency_exchange
             </mat-icon>
           }
-          @if ((inventoryService.selectedItem.item!.useLabel !== undefined)) {
+          @if ((inventoryService.displaySelectedItem.useLabel() !== '')) {
             <mat-icon (click)="use($event)" class="iconButton" aria-label="Use" aria-hidden="false"
-              tooltip="{{inventoryService.selectedItem.item!.useLabel}}.<br>{{inventoryService.selectedItem.item!.useDescription}}<br>Shift-click items to use them.<br>Shift-click or Ctrl-click this button to use more of them.">
+              tooltip="{{inventoryService.displaySelectedItem.useLabel()}}.<br>{{inventoryService.displaySelectedItem.useDescription()}}<br>Shift-click items to use them.<br>Shift-click or Ctrl-click this button to use more of them.">
               auto_awesome
             </mat-icon>
           }
-          @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.selectedItem.item.type !== 'food' && inventoryService.autoUseUnlocked)) {
+          @if ((inventoryService.displaySelectedItem.useLabel() !== '' && inventoryService.displaySelectedItem.type() !== 'food' && inventoryService.autoUseUnlocked)) {
             <mat-icon
               (click)="autoUse()" class="iconButton" aria-label="Auto Use" aria-hidden="false"
-              tooltip="Auto-{{inventoryService.selectedItem.item!.useLabel}}.<br>{{inventoryService.selectedItem.item!.useDescription}}<br>You can change this in the options menu later if you change your mind.<br>Ctrl-click items to auto-use.">
+              tooltip="Auto-{{inventoryService.displaySelectedItem.useLabel()}}.<br>{{inventoryService.displaySelectedItem.useDescription()}}<br>You can change this in the options menu later if you change your mind.<br>Ctrl-click items to auto-use.">
               auto_mode
             </mat-icon>
           }
-          @if ((inventoryService.selectedItem.item.type === 'food' && inventoryService.autoEatUnlocked)) {
+          @if ((inventoryService.displaySelectedItem.type() === 'food' && inventoryService.autoEatUnlocked)) {
             <mat-icon
               (click)="autoUse()" class="iconButton" aria-label="Auto Eat" aria-hidden="false"
-              tooltip="Wisely {{inventoryService.selectedItem.item!.useLabel}}.<br>Automatically eat appropriate amounts of this food.<br>You can change settings for this in the options menu.">
+              tooltip="Wisely {{inventoryService.displaySelectedItem.useLabel()}}.<br>Automatically eat appropriate amounts of this food.<br>You can change settings for this in the options menu.">
               auto_mode
             </mat-icon>
           }
-          @if ((inventoryService.selectedItem.item!.useLabel !== undefined && inventoryService.selectedItem.item.type !== 'food' && inventoryService.autoBalanceUnlocked && isFinite(inventoryService.selectedItem.item!.value)) && !hellService.inHell) {
+          @if ((inventoryService.displaySelectedItem.useLabel() !== '' && inventoryService.displaySelectedItem.type() !== 'food' && inventoryService.autoBalanceUnlocked && inventoryService.displaySelectedItem.sellable()) && !hellService.inHell) {
             <mat-icon
               class="iconButton" aria-label="Balance" aria-hidden="false" (click)="autoBalance()" tooltip="Balance between automatically using and selling this item.<br>You can change this in the options menu later if you change your mind.">
               balance
             </mat-icon>
           }
-          @if ((inventoryService.selectedItem.item!.type === 'equipment' || inventoryService.selectedItem.item!.pouchable)) {
+          @if ((inventoryService.displaySelectedItem.type() === 'equipment' || inventoryService.displaySelectedItem.pouchable())) {
             <mat-icon (click)="equip()" class="iconButton" aria-label="Equip" aria-hidden="false"
               tooltip="Equip this.<br>Double-click weapons or armor to equip.">
               shield
             </mat-icon>
           }
-          @if ((inventoryService.selectedItem.item!.type === gem_type)) {
+          @if ((inventoryService.displaySelectedItem.type() === gem_type)) {
             <mat-icon (click)="mergeSpiritGem()"  class="iconButton" aria-label="Merge Gem" aria-hidden="false"
               tooltip="Merge 10 of these into a higher grade gem.">
               diamond
             </mat-icon>
           }
-          @if (isFinite(inventoryService.selectedItem.item!.value)) {
+          @if (inventoryService.displaySelectedItem.sellable()) {
             <mat-icon (click)="throwAway()"  class="iconButton" aria-label="Throw Away" aria-hidden="false"
               tooltip="Throw this stack of items away.">
               delete
@@ -87,10 +87,10 @@
   </h3>
 
   <div class="selectedItemBox">
-    @if (inventoryService.selectedItem.item){
+    @if (inventoryService.displaySelectedItem.name() !== ''){
       <div>
-        @if (inventoryService.selectedItem.item.imageFile){
-          <img src="assets/images/items/{{inventoryService.selectedItem.item.imageFile}}.png" class="itemImage"
+        @if (inventoryService.displaySelectedItem.imageFile()){
+          <img src="{{inventoryService.displaySelectedItem.imageFile()}}" class="itemImage"
             [style]="getStyle(inventoryService.selectedItem)"
             width="48" height="48"/>
         }
@@ -98,11 +98,11 @@
       <div class='selectedItemText'>
         <div class='selectedItemName'>
           <span>
-            {{inventoryService.selectedItem.item.name | titlecase}}
+            {{inventoryService.displaySelectedItem.name() | titlecase}}
           </span>
         </div>
         <div class='selectedItemTextBody'>
-          <span [innerHTML]="inventoryService.selectedItem.item.description">
+          <span [innerHTML]="inventoryService.displaySelectedItem.description()">
           </span>
         </div>
       </div>
@@ -125,27 +125,27 @@
 
   <div class="overflow">
     <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
-      @for (itemStack of inventoryService.itemStacks; track itemStack.id; let idx = $index) {
+      @for (displayItemStack of inventoryService.displayItemStacks; track displayItemStack.id(); let idx = $index) {
         <div>
           <div id="itemIndex{{$index}}" >
-            <div class="itemSlot" [tabindex]="itemStack?.item ? '0' : '-1'" (mousedown)="slotClicked(itemStack, $event)"
+            <div class="itemSlot" [tabindex]="displayItemStack.name() === '' ? '-1' : '0'" (mousedown)="slotClicked(idx, $event)"
               cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-              [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
-              (dblclick)="slotDoubleClicked(itemStack, $event)" (contextmenu)="slotRightClicked(itemStack, $event)"
-              [ngClass]="{'selectedItem': (itemStack && itemStack === inventoryService.selectedItem), 'heirloomSlot' : (idx < inventoryService.heirloomSlots)}"
-              tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : idx < inventoryService.heirloomSlots ? 'This slot can preserve an heirloom item for your next reincarnation.' : ''}}">
+              [cdkDragData]="idx" [cdkDragDisabled]="displayItemStack.name() === ''"
+              (dblclick)="slotDoubleClicked(idx, $event)" (contextmenu)="slotRightClicked(idx, $event)"
+              [ngClass]="{'selectedItem': (displayItemStack.id() !=='' && displayItemStack.id() === inventoryService.displaySelectedItem.id()), 'heirloomSlot' : (idx < inventoryService.heirloomSlots)}"
+              tooltip="{{displayItemStack.tooltip()}}">
               <div class="itemName textOverflow">
-                @if (itemStack?.item?.imageFile){
-                  <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage"
-                    [style.border-color]="itemStack?.item?.imageColor ? itemStack?.item?.imageColor : 'white'"
-                    width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
+                @if (displayItemStack.imageFile() !== ''){
+                  <img src="{{displayItemStack.imageFile()}}" class="itemImage"
+                    [style.border-color]="displayItemStack.imageColor()"
+                    width="48" height="48"  alt="{{displayItemStack.name() | titlecase}}"/>
                 }
                 @else {
-                  {{itemStack?.item?.name | titlecase}}
+                  {{displayItemStack.name() | titlecase}}
                 }
               </div>
-              @if ((itemStack?.quantity || 0) > 1) {
-                <div class="itemQuantity">x{{itemStack?.quantity}}</div>
+              @if ((displayItemStack.quantity() || 0) > 1) {
+                <div class="itemQuantity">x{{displayItemStack.quantity()}}</div>
               }
             </div>
           </div>

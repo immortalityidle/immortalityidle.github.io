@@ -46,12 +46,9 @@ export class InventoryPanelComponent {
     this.equipmentSlots = Object.keys(this.characterService.equipment);
   }
 
-  isFinite(value: number) {
-    return Number.isFinite(value);
-  }
-
-  slotClicked(item: ItemStack, event: MouseEvent): void {
+  slotClicked(index: number, event: MouseEvent): void {
     event.stopPropagation();
+    const item = this.inventoryService.itemStacks[index];
     if (event.shiftKey || event.altKey) {
       let oldSelected = null;
       if (oldSelected !== item) {
@@ -70,21 +67,25 @@ export class InventoryPanelComponent {
         this.inventoryService.selectedItem = item;
       }
     }
+    this.inventoryService.updateDisplayValues();
   }
 
-  slotDoubleClicked(item: ItemStack, event: MouseEvent): void {
+  slotDoubleClicked(index: number, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
+    const item = this.inventoryService.itemStacks[index];
     this.inventoryService.selectedItem = item;
     if (this.inventoryService.selectedItem) {
       this.inventoryService.equip(this.inventoryService.selectedItem);
       this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
+    this.inventoryService.updateDisplayValues();
   }
 
-  slotRightClicked(item: ItemStack, event: MouseEvent) {
+  slotRightClicked(index: number, event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
+    const item = this.inventoryService.itemStacks[index];
     this.inventoryService.selectedItem = item;
     if (event.ctrlKey || event.metaKey) {
       this.autoSell();
@@ -93,6 +94,7 @@ export class InventoryPanelComponent {
     } else {
       this.sell(1);
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   sortClicked(event: MouseEvent) {
@@ -111,12 +113,14 @@ export class InventoryPanelComponent {
     if (this.inventoryService.selectedItem?.item) {
       this.inventoryService.sellAll(this.inventoryService.selectedItem.item);
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   sellStack() {
     if (this.inventoryService.selectedItem) {
       this.sell(this.inventoryService.selectedItem.quantity);
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   sell(quantity: number): void {
@@ -163,6 +167,7 @@ export class InventoryPanelComponent {
       this.inventoryService.equip(this.inventoryService.selectedItem);
       this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   mergeSpiritGem() {
@@ -174,6 +179,7 @@ export class InventoryPanelComponent {
         this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
       }
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   dragStart() {
@@ -203,15 +209,7 @@ export class InventoryPanelComponent {
       return;
     }
 
-    let sourceItemIndex = -1;
-    for (let i = 0; i < this.inventoryService.itemStacks.length; i++) {
-      if (event.source.data === this.inventoryService.itemStacks[i]) {
-        sourceItemIndex = i;
-      }
-    }
-    if (sourceItemIndex === -1) {
-      return;
-    }
+    const sourceItemIndex = event.source.data;
     const itemStack = this.inventoryService.itemStacks[sourceItemIndex];
     if (!itemStack.item) {
       return;
@@ -253,6 +251,7 @@ export class InventoryPanelComponent {
         }
       }
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   mergeOrSwapStacks(sourceIndex: number, destIndex: number) {
@@ -285,6 +284,7 @@ export class InventoryPanelComponent {
         this.inventoryService.itemStacks[sourceIndex] = destItemStack;
       }
     }
+    this.inventoryService.updateDisplayValues();
   }
 
   throwAway() {
