@@ -589,6 +589,7 @@ export class GameStateService {
       foodEatenToday: props?.foodEatenToday || 0,
       heirloomSlots: props?.heirloomSlots || 0,
       daysGorged: props?.daysGorged || 0,
+      maxFoodPerDay: props?.maxFoodPerDay || 10,
     };
   }
 

@@ -164,6 +164,7 @@ export interface InventoryProperties {
   foodEatenToday: number;
   heirloomSlots: number;
   daysGorged: number;
+  maxFoodPerDay: number;
 }
 
 @Injectable({
@@ -550,6 +551,7 @@ export class InventoryService {
       foodEatenToday: this.foodEatenToday,
       heirloomSlots: this.heirloomSlots,
       daysGorged: this.daysGorged,
+      maxFoodPerDay: this.maxFoodPerDay,
     };
   }
 
@@ -615,6 +617,7 @@ export class InventoryService {
     this.foodEatenToday = properties.foodEatenToday;
     this.heirloomSlots = properties.heirloomSlots;
     this.daysGorged = properties.daysGorged;
+    this.maxFoodPerDay = properties.maxFoodPerDay;
   }
 
   farmFoodList = [
