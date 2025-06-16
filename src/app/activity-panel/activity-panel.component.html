@@ -1,6 +1,6 @@
 <h3 class="activitiesHeader">
   <div class="customHeader">
-    @if (characterService.immortal && !hellService.inHell && !characterService.god) {
+    @if (characterService.immortal() && !hellService.inHell() && !characterService.god()) {
       <span>
         <button (click)="activityPanelService.joinTheGodsClick()">Join the Gods</button>
       </span>
@@ -11,7 +11,7 @@
   <!-- draggable="true" (dragstart)="drag(activity, $event)" -->
   <div class="overflow">
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
-      @if (hellService.inHell){
+      @if (hellService.inHell()){
         @for (activity of activityService.portals; track activity; let indexOfelement = $index) {
           @if (activity.discovered || activity.unlocked) {
             <div class="activitySlot" [ngClass]="{'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"

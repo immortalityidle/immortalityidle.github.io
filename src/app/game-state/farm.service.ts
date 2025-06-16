@@ -80,7 +80,7 @@ export class FarmService {
     if (this.characterService.dead) {
       return;
     }
-    if (!this.hellService?.inHell || this.hellFood) {
+    if (!this.hellService?.inHell() || this.hellFood) {
       this.ageFields();
       let upkeepCosts = 0;
       for (const field of this.fields) {
@@ -239,7 +239,7 @@ export class FarmService {
     let harvested = false;
     for (const field of this.fields) {
       let fieldYield = 0;
-      if (!this.hellService?.inHell && field.plots > 0) {
+      if (!this.hellService?.inHell() && field.plots > 0) {
         if (field.daysToHarvest <= 0) {
           fieldYield = field.yield;
           totalDailyYield += fieldYield;

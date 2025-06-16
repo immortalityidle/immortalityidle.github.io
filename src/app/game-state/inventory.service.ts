@@ -199,17 +199,17 @@ export class InventoryService {
     id: signal<string>(''),
     tooltip: signal<string>(''),
   };
-  autoSellUnlocked: boolean;
+  autoSellUnlocked = signal<boolean>(false);
   autoSellEntries: AutoItemEntry[];
-  autoUseUnlocked: boolean;
-  autoEatUnlocked: boolean;
+  autoUseUnlocked = signal<boolean>(false);
+  autoEatUnlocked = signal<boolean>(false);
   autoEatNutrition: boolean;
   autoEatHealth: boolean;
   autoEatStamina: boolean;
   autoEatQi: boolean;
   autoEatAll: boolean;
   autoUseEntries: AutoItemEntry[];
-  autoBalanceUnlocked: boolean;
+  autoBalanceUnlocked = signal<boolean>(false);
   autoBalanceItems: BalanceItem[];
   autoPillUnlocked: boolean;
   autoPillEnabled: boolean;
@@ -245,8 +245,8 @@ export class InventoryService {
   autoSellOldGemsEnabled: boolean;
   autoBuyFood = true;
   automergeEquipped = false;
-  autoSort = false;
-  descendingSort = false;
+  autoSortEnabled = signal<boolean>(false);
+  descendingSort = signal<boolean>(false);
   divinePeachesUnlocked = false;
   equipmentUnlocked = false;
   equipmentCreated = 0;
@@ -260,7 +260,7 @@ export class InventoryService {
   gemsAcquired = 0;
   foodEatenToday = 0;
   maxFoodPerDay = 10;
-  heirloomSlots = 0;
+  heirloomSlots = signal<number>(0);
   daysGorged = 0;
 
   constructor(
@@ -276,16 +276,12 @@ export class InventoryService {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
-    this.autoSellUnlocked = false;
     this.autoSellEntries = [];
-    this.autoUseUnlocked = false;
-    this.autoEatUnlocked = false;
     this.autoEatNutrition = true;
     this.autoEatHealth = false;
     this.autoEatStamina = false;
     this.autoEatQi = false;
     this.autoEatAll = false;
-    this.autoBalanceUnlocked = false;
     this.autoBalanceItems = [];
     this.autoPillUnlocked = false;
     this.autoPillEnabled = false;
@@ -356,7 +352,7 @@ export class InventoryService {
         }
       }
 
-      if (this.autoSort) {
+      if (this.autoSortEnabled()) {
         this.sortInventory();
       }
       this.updateDisplayValues();
@@ -400,6 +396,12 @@ export class InventoryService {
       } else {
         this.displaySelectedItem.imageFile.set('');
       }
+      if (this.selectedItem.item.imageColor) {
+        this.displaySelectedItem.imageColor.set(this.selectedItem.item.imageColor);
+      } else {
+        this.displaySelectedItem.imageColor.set('white');
+      }
+
       this.displaySelectedItem.quantity.set(this.selectedItem.quantity);
       this.displaySelectedItem.type.set(this.selectedItem.item.type);
       this.displaySelectedItem.value.set(this.selectedItem.item.value);
@@ -487,7 +489,7 @@ export class InventoryService {
         this.displayItemStacks[i].sellable.set(false);
         this.displayItemStacks[i].equipment.set(false);
         this.displayItemStacks[i].id.set(itemStack.id);
-        if (i < this.heirloomSlots) {
+        if (i < this.heirloomSlots()) {
           this.displayItemStacks[i].tooltip.set('This slot can preserve an heirloom item for your next reincarnation.');
         } else {
           this.displayItemStacks[i].tooltip.set('');
@@ -500,17 +502,17 @@ export class InventoryService {
     return {
       itemStacks: this.itemStacks,
       stashedItemStacks: this.stashedItemStacks,
-      autoSellUnlocked: this.autoSellUnlocked,
+      autoSellUnlocked: this.autoSellUnlocked(),
       autoSellEntries: this.autoSellEntries,
-      autoUseUnlocked: this.autoUseUnlocked,
-      autoEatUnlocked: this.autoEatUnlocked,
+      autoUseUnlocked: this.autoUseUnlocked(),
+      autoEatUnlocked: this.autoEatUnlocked(),
       autoEatNutrition: this.autoEatNutrition,
       autoEatHealth: this.autoEatHealth,
       autoEatStamina: this.autoEatStamina,
       autoEatQi: this.autoEatQi,
       autoEatAll: this.autoEatAll,
       autoUseEntries: this.autoUseEntries,
-      autoBalanceUnlocked: this.autoBalanceUnlocked,
+      autoBalanceUnlocked: this.autoBalanceUnlocked(),
       autoBalanceItems: this.autoBalanceItems,
       autoPillUnlocked: this.autoPillUnlocked,
       autoPillEnabled: this.autoPillEnabled,
@@ -537,8 +539,8 @@ export class InventoryService {
       autoSellOldGemsEnabled: this.autoSellOldGemsEnabled,
       autoBuyFood: this.autoBuyFood,
       automergeEquipped: this.automergeEquipped,
-      autoSort: this.autoSort,
-      descendingSort: this.descendingSort,
+      autoSort: this.autoSortEnabled(),
+      descendingSort: this.descendingSort(),
       divinePeachesUnlocked: this.divinePeachesUnlocked,
       equipmentUnlocked: this.equipmentUnlocked,
       equipmentCreated: this.equipmentCreated,
@@ -549,7 +551,7 @@ export class InventoryService {
       herbCounter: this.herbCounter,
       gemsAcquired: this.gemsAcquired,
       foodEatenToday: this.foodEatenToday,
-      heirloomSlots: this.heirloomSlots,
+      heirloomSlots: this.heirloomSlots(),
       daysGorged: this.daysGorged,
       maxFoodPerDay: this.maxFoodPerDay,
     };
@@ -565,17 +567,17 @@ export class InventoryService {
       }
     }
     this.stashedItemStacks = properties.stashedItemStacks;
-    this.autoSellUnlocked = properties.autoSellUnlocked;
+    this.autoSellUnlocked.set(properties.autoSellUnlocked);
     this.autoSellEntries = properties.autoSellEntries;
-    this.autoUseUnlocked = properties.autoUseUnlocked;
-    this.autoEatUnlocked = properties.autoEatUnlocked;
+    this.autoUseUnlocked.set(properties.autoUseUnlocked);
+    this.autoEatUnlocked.set(properties.autoEatUnlocked);
     this.autoEatNutrition = properties.autoEatNutrition;
     this.autoEatHealth = properties.autoEatHealth;
     this.autoEatStamina = properties.autoEatStamina;
     this.autoEatQi = properties.autoEatQi;
     this.autoEatAll = properties.autoEatAll;
     this.autoUseEntries = properties.autoUseEntries;
-    this.autoBalanceUnlocked = properties.autoBalanceUnlocked;
+    this.autoBalanceUnlocked.set(properties.autoBalanceUnlocked);
     this.autoBalanceItems = properties.autoBalanceItems;
     this.autoPillUnlocked = properties.autoPillUnlocked;
     this.autoPillEnabled = properties.autoPillUnlocked;
@@ -602,8 +604,8 @@ export class InventoryService {
     this.autoSellOldGemsEnabled = properties.autoSellOldGemsEnabled;
     this.autoBuyFood = properties.autoBuyFood;
     this.automergeEquipped = properties.automergeEquipped;
-    this.autoSort = properties.autoSort;
-    this.descendingSort = properties.descendingSort;
+    this.autoSortEnabled.set(properties.autoSort);
+    this.descendingSort.set(properties.descendingSort);
     this.divinePeachesUnlocked = properties.divinePeachesUnlocked;
     this.updateFarmFoodList();
     this.equipmentUnlocked = properties.equipmentUnlocked;
@@ -615,7 +617,7 @@ export class InventoryService {
     this.herbCounter = properties.herbCounter;
     this.gemsAcquired = properties.gemsAcquired;
     this.foodEatenToday = properties.foodEatenToday;
-    this.heirloomSlots = properties.heirloomSlots;
+    this.heirloomSlots.set(properties.heirloomSlots);
     this.daysGorged = properties.daysGorged;
     this.maxFoodPerDay = properties.maxFoodPerDay;
   }
@@ -1067,7 +1069,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldOreEnabled && !this.hellService?.inHell && !skipSnobbery) {
+    if (this.autoSellOldOreEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any ore cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1092,7 +1094,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell && !skipSnobbery) {
+    if (this.autoSellOldBarsEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any metal cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1116,7 +1118,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell && !skipSnobbery) {
+    if (this.autoSellOldWoodEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any wood cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1143,7 +1145,7 @@ export class InventoryService {
         lastHide = item;
       }
     }
-    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell && !skipSnobbery) {
+    if (this.autoSellOldHidesEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any hides cheaper than what we just got
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1223,7 +1225,7 @@ export class InventoryService {
     this.lifetimePillsUsed = 0;
     this.lifetimeGemsSold = 0;
     const newItemStacks: ItemStack[] = [];
-    for (let i = 0; i < this.heirloomSlots; i++) {
+    for (let i = 0; i < this.heirloomSlots(); i++) {
       newItemStacks.push(this.itemStacks[i]);
     }
     this.itemStacks = newItemStacks;
@@ -1269,7 +1271,7 @@ export class InventoryService {
 
   eatDailyMeal(): void {
     if (
-      this.autoEatUnlocked &&
+      this.autoEatUnlocked() &&
       (this.autoEatNutrition || this.autoEatHealth || this.autoEatStamina || this.autoEatQi || this.autoEatAll)
     ) {
       let foodStack = null;
@@ -1297,7 +1299,7 @@ export class InventoryService {
       if (!fed) {
         // no food found, buy scraps automatically
         if (
-          !this.hellService?.inHell &&
+          !this.hellService?.inHell() &&
           this.characterService.money > 0 &&
           this.autoBuyFood &&
           this.characterService.status.nutrition.value <= this.characterService.status.nutrition.max * 0.2
@@ -1329,7 +1331,7 @@ export class InventoryService {
       this.useItemStack(foodStack);
     } else {
       // no food found, buy scraps automatically
-      if (!this.hellService?.inHell && this.characterService.money > 0 && this.autoBuyFood) {
+      if (!this.hellService?.inHell() && this.characterService.money > 0 && this.autoBuyFood) {
         this.characterService.updateMoney(-1);
         this.characterService.status.nutrition.value++;
       }
@@ -1489,7 +1491,7 @@ export class InventoryService {
     for (const balanceItem of this.autoBalanceItems) {
       if (balanceItem.name === item.name) {
         // can't sell in hell, use it all
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           this.useItem(item, quantity * balanceItem.useNumber);
           return -1;
         }
@@ -1572,7 +1574,7 @@ export class InventoryService {
       }
     }
 
-    if (this.autoSellOldGemsEnabled && item.type === LOOT_TYPE_GEM && !this.hellService?.inHell) {
+    if (this.autoSellOldGemsEnabled && item.type === LOOT_TYPE_GEM && !this.hellService?.inHell()) {
       //clear out any old gems of lesser value
       for (let i = 0; i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
@@ -1583,7 +1585,7 @@ export class InventoryService {
       }
     }
     for (const entry of this.autoSellEntries) {
-      if (entry.name === item.name && !this.hellService?.inHell) {
+      if (entry.name === item.name && !this.hellService?.inHell()) {
         let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
         if (numberToSell > quantity) {
           // don't worry about selling more than the incoming quantity here
@@ -1651,7 +1653,7 @@ export class InventoryService {
     }
 
     // if we're here we didn't find a slot for anything/everything.
-    if (this.autoSellUnlocked && !this.hellService?.inHell) {
+    if (this.autoSellUnlocked() && !this.hellService?.inHell()) {
       this.logService.log(
         LogTopic.EVENT,
         "You don't have enough room for the " + this.titleCasePipe.transform(item.name) + ' so you sell it.'
@@ -1676,7 +1678,7 @@ export class InventoryService {
       return;
     }
     // can't sell in hell
-    if (this.hellService?.inHell) {
+    if (this.hellService?.inHell()) {
       return;
     }
     this.lifetimeSoldItems += quantity;
@@ -1696,7 +1698,7 @@ export class InventoryService {
 
   sellAll(item: Item) {
     // can't sell in hell
-    if (this.hellService?.inHell) {
+    if (this.hellService?.inHell()) {
       return;
     }
 
@@ -1715,7 +1717,7 @@ export class InventoryService {
       // don't sell infinitely valuable things.
       return;
     }
-    if (!this.autoSellUnlocked) {
+    if (!this.autoSellUnlocked()) {
       return;
     }
     if (instanceOfEquipment(item)) {
@@ -1785,7 +1787,7 @@ export class InventoryService {
   }
 
   autoUse(item: Item) {
-    if ((!this.autoUseUnlocked && item.type !== 'food') || (!this.autoEatUnlocked && item.type === 'food')) {
+    if ((!this.autoUseUnlocked() && item.type !== 'food') || (!this.autoEatUnlocked() && item.type === 'food')) {
       return;
     }
     if (item.type !== 'potion' && item.type !== 'pill' && item.type !== 'food' && !item.use) {
@@ -2268,7 +2270,7 @@ export class InventoryService {
       return;
     }
     stack.quantity -= 10 - power;
-    this.addItem(this.generateSpiritGem(stack.item.value / 10 + 1));
+    this.addItem(this.generateSpiritGem(stack.item.value / 10 + 1, stack.item.subtype));
     // go find the stack and remove it or update the id
     for (let i = 0; i < this.itemStacks.length; i++) {
       if (this.itemStacks[i] === stack) {

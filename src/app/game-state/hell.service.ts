@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
@@ -74,7 +74,7 @@ export interface HellProperties {
   providedIn: 'root',
 })
 export class HellService {
-  inHell = false;
+  inHell = signal<boolean>(false);
   currentHell = HellLevel.Gates;
   completedHellTasks: number[] = [];
   completedHellBosses: number[] = [];
@@ -143,14 +143,14 @@ export class HellService {
 
   reset() {
     // reincarnation gets you out and back to the mortal realm
-    if (this.inHell) {
+    if (this.inHell()) {
       if (this.currentHell >= 0) {
         const leavingHell = this.hells[this.currentHell];
         if (leavingHell.exitEffect) {
           leavingHell.exitEffect();
         }
       }
-      this.inHell = false;
+      this.inHell.set(false);
       this.currentHell = HellLevel.Gates;
     }
   }
@@ -676,7 +676,7 @@ export class HellService {
 
   getProperties(): HellProperties {
     return {
-      inHell: this.inHell,
+      inHell: this.inHell(),
       currentHell: this.currentHell,
       completedHellTasks: this.completedHellTasks,
       completedHellBosses: this.completedHellBosses,
@@ -697,7 +697,7 @@ export class HellService {
   }
 
   setProperties(properties: HellProperties) {
-    this.inHell = properties.inHell || false;
+    this.inHell.set(properties.inHell);
     this.completedHellTasks = properties.completedHellTasks || [];
     this.completedHellBosses = properties.completedHellBosses || [];
     this.mountainSteps = properties.mountainSteps || 0;
@@ -777,7 +777,7 @@ export class HellService {
       projectionActivities: [],
       hint: '',
       progress: () => {
-        if (this.characterService.god) {
+        if (this.characterService.god()) {
           return 1;
         } else {
           return 0;
@@ -787,7 +787,7 @@ export class HellService {
         return 1;
       },
       successCheck: () => {
-        return this.characterService.god;
+        return this.characterService.god();
       },
       progressCache: 0,
       progressMaxCache: 1,

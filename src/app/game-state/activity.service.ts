@@ -190,7 +190,7 @@ export class ActivityService {
     mainLoopService.longTickSubject.subscribe(daysElapsed => {
       if (
         this.characterService.bloodlineRank >= 9 &&
-        !(this.hellService?.inHell && this.hellService.currentHell === HellLevel.TreesOfKnives)
+        !(this.hellService?.inHell() && this.hellService.currentHell === HellLevel.TreesOfKnives)
       ) {
         this.characterService.increaseAptitudeDaily(daysElapsed);
       }
@@ -324,7 +324,7 @@ export class ActivityService {
         this.pauseBeforeDeath &&
         !this.beforeDeathPauseUsed &&
         this.characterService.age >= this.characterService.lifespan - 1 &&
-        !this.characterService.immortal
+        !this.characterService.immortal()
       ) {
         this.logService.log(LogTopic.EVENT, 'The end of your natural life is imminent. Game paused.');
         this.mainLoopService.pause = true;
@@ -664,7 +664,7 @@ export class ActivityService {
 
   meetsRequirements(activity: Activity): boolean {
     if (
-      !this.hellService?.inHell &&
+      !this.hellService?.inHell() &&
       this.locationService &&
       !this.locationService.unlockedLocations.includes(activity.location)
     ) {
@@ -754,7 +754,7 @@ export class ActivityService {
         continue;
       }
       activity.projectionOnly = false;
-      if (this.hellService?.inHell) {
+      if (this.hellService?.inHell()) {
         const hell = this.hellService?.hells[this.hellService.currentHell];
         if (hell?.activities.includes(activity)) {
           activity.discovered = true;
@@ -850,7 +850,7 @@ export class ActivityService {
     }
     if (this.autoRestart) {
       this.checkRequirements(true);
-      if (this.pauseOnDeath && !this.characterService.immortal) {
+      if (this.pauseOnDeath && !this.characterService.immortal()) {
         this.mainLoopService.pause = true;
       }
     } else {

@@ -2,7 +2,7 @@
   <span>Inventory Options</span>
   <mat-tab-group>
     @if (inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked ||
-      inventoryService.autoSellUnlocked || inventoryService.autoUseUnlocked || inventoryService.autoEatUnlocked || inventoryService.autoBalanceUnlocked) {
+      inventoryService.autoSellUnlocked() || inventoryService.autoUseUnlocked() || inventoryService.autoEatUnlocked() || inventoryService.autoBalanceUnlocked()) {
       <mat-tab label="Sales">
         @if (inventoryService.autoSellOldHerbs) {
           <div  class="optionField">
@@ -58,7 +58,7 @@
             </span>
           </div>
         }
-        @if (inventoryService.autoSellUnlocked) {
+        @if (inventoryService.autoSellUnlocked()) {
           <div class="optionField">
             <span>
               Automatically Sold Items:
@@ -78,7 +78,7 @@
             </div>
           </div>
         }
-        @if (inventoryService.autoUseUnlocked) {
+        @if (inventoryService.autoUseUnlocked()) {
           <div class="optionField">
             <span>Automatically Used Items:</span>
             <div class="scrollingDiv">
@@ -98,7 +98,7 @@
             </div>
           </div>
         }
-        @if (inventoryService.autoBalanceUnlocked) {
+        @if (inventoryService.autoBalanceUnlocked()) {
           <div class="optionField">
             <span>Automatically Balanced Items:</span>
             <div class="scrollingDiv">
@@ -117,7 +117,7 @@
         }
       </mat-tab>
     }
-    @if (inventoryService.autoEatUnlocked) {
+    @if (inventoryService.autoEatUnlocked()) {
       <mat-tab label="Food">
         <div>
           <span>

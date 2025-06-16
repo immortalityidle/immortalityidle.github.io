@@ -10,7 +10,7 @@
         <span> old.</span>
       </div>
       <div class="statusCell">
-        @if (characterService.immortal) {
+        @if (characterService.immortal()) {
             <span>You expect to live forever.</span>
         }
         @else {
@@ -23,10 +23,10 @@
       <div class="statusCell health" tooltip="{{characterService.status.health.description}}">
         <div><span>Health</span></div>
         <div class="progress-bar" [ngClass]="healthService.flashHealth ? 'flash' : ''"
-            [attr.value]="Math.floor(characterService.immortal && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) | bigNumber"
+            [attr.value]="Math.floor(characterService.immortal() && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) | bigNumber"
             [attr.max]="Math.floor(characterService.status.health.displayMax()) | bigNumber">
           <span [style.width.%]="100 *
-              Math.floor(characterService.immortal && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) /
+              Math.floor(characterService.immortal() && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) /
               Math.floor(characterService.status.health.displayMax())">
           </span>
         </div>
@@ -34,10 +34,10 @@
       <div class="statusCell stamina" tooltip="{{characterService.status.stamina.description}}">
         <div><span>Stamina</span></div>
         <div class="progress-bar" [ngClass]="healthService.flashStamina ? 'flash' : ''"
-          [attr.value]="Math.floor(characterService.immortal && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) | bigNumber"
+          [attr.value]="Math.floor(characterService.immortal() && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) | bigNumber"
           [attr.max]="Math.floor(characterService.status.stamina.displayMax()) | bigNumber">
           <span [style.width.%]="100 *
-              Math.floor(characterService.immortal && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) /
+              Math.floor(characterService.immortal() && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) /
               Math.floor(characterService.status.stamina.displayMax())">
           </span>
         </div>

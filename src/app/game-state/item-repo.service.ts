@@ -1415,7 +1415,7 @@ baguaMap = [
               this.characterService.totalLives +
               ' lifetimes to overcome death.'
           );
-          this.characterService.immortal = true;
+          this.characterService.immortal.set(true);
         }
       },
     },
@@ -1435,7 +1435,7 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        this.hellService.inHell = false;
+        this.hellService.inHell.set(false);
         if (!this.gameStateService) {
           this.gameStateService = this.injector.get(GameStateService);
         }
@@ -1461,7 +1461,7 @@ baguaMap = [
             this.characterService.totalLives +
             ' lifetimes to claim your throne on Mount Penglai.'
         );
-        this.characterService.god = true;
+        this.characterService.god.set(true);
         this.gameStateService.unlockPanel('portalPanel');
       },
     },
@@ -2121,7 +2121,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.inventoryService.autoSellUnlocked = true;
+        this.inventoryService.autoSellUnlocked.set(true);
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -2132,7 +2132,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        return this.inventoryService.autoSellUnlocked;
+        return this.inventoryService.autoSellUnlocked();
       },
     },
     autoEatManual: {
@@ -2149,7 +2149,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.inventoryService.autoEatUnlocked = true;
+        this.inventoryService.autoEatUnlocked.set(true);
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -2160,7 +2160,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        return this.inventoryService.autoEatUnlocked;
+        return this.inventoryService.autoEatUnlocked();
       },
     },
     basicGluttonyManual: {
@@ -2237,7 +2237,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.inventoryService.autoUseUnlocked = true;
+        this.inventoryService.autoUseUnlocked.set(true);
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -2248,7 +2248,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        return this.inventoryService.autoUseUnlocked;
+        return this.inventoryService.autoUseUnlocked();
       },
     },
     autoBalanceManual: {
@@ -2265,7 +2265,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.inventoryService.autoBalanceUnlocked = true;
+        this.inventoryService.autoBalanceUnlocked.set(true);
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -2276,7 +2276,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        return this.inventoryService.autoBalanceUnlocked;
+        return this.inventoryService.autoBalanceUnlocked();
       },
     },
     autoPillManual: {

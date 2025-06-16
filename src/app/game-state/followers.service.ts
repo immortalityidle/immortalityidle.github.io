@@ -117,7 +117,7 @@ export class FollowersService {
     },
     hunter: {
       work: daysElapsed => {
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           if (this.jobs['hunter'].totalPower > 1000)
             this.inventoryService.addItem(
               this.itemRepoService.items['spiritMeat'],
@@ -136,7 +136,7 @@ export class FollowersService {
     },
     fisher: {
       work: daysElapsed => {
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           if (this.jobs['fisher'].totalPower > 1000)
             this.inventoryService.addItem(
               this.itemRepoService.items['spiritCarp'],
@@ -191,7 +191,7 @@ export class FollowersService {
     weaponsmith: {
       work: daysElapsed => {
         let totalPower = this.jobs['weaponsmith'].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         const rightHand = this.characterService.equipment.rightHand;
@@ -212,7 +212,7 @@ export class FollowersService {
     armorer: {
       work: daysElapsed => {
         let totalPower = this.jobs['armorer'].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         const improveArmor = (armor: Equipment): Equipment => ({
@@ -247,7 +247,7 @@ export class FollowersService {
     brawler: {
       work: daysElapsed => {
         let totalPower = this.jobs['brawler'].totalPower * daysElapsed;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('strength', totalPower);
@@ -258,7 +258,7 @@ export class FollowersService {
     sprinter: {
       work: daysElapsed => {
         let totalPower = this.jobs['sprinter'].totalPower * daysElapsed;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('speed', totalPower);
@@ -269,7 +269,7 @@ export class FollowersService {
     trainer: {
       work: daysElapsed => {
         let totalPower = this.jobs['trainer'].totalPower * daysElapsed;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('toughness', totalPower);
@@ -280,7 +280,7 @@ export class FollowersService {
     tutor: {
       work: daysElapsed => {
         let totalPower = this.jobs['tutor'].totalPower * daysElapsed;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('intelligence', totalPower);
@@ -291,7 +291,7 @@ export class FollowersService {
     mediator: {
       work: daysElapsed => {
         let totalPower = this.jobs['mediator'].totalPower * daysElapsed;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('charisma', totalPower);
@@ -302,7 +302,7 @@ export class FollowersService {
     priest: {
       work: daysElapsed => {
         let totalPower = this.jobs['priest'].totalPower * daysElapsed;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('spirituality', totalPower);
@@ -313,7 +313,7 @@ export class FollowersService {
     gemologist: {
       work: daysElapsed => {
         let gemmerPower = this.jobs['gemologist'].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           gemmerPower /= 10;
         }
         gemmerPower = Math.floor(gemmerPower / 50);
@@ -393,7 +393,7 @@ export class FollowersService {
     banker: {
       work: daysElapsed => {
         let totalPower = this.jobs['banker'].totalPower;
-        if (this.hellService?.inHell) {
+        if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
         for (let i = 0; i < daysElapsed; i++) {
@@ -504,7 +504,7 @@ export class FollowersService {
       if (this.characterService.dead) {
         return;
       }
-      if (this.characterService.age % 18250 === 0 && !this.hellService?.inHell) {
+      if (this.characterService.age % 18250 === 0 && !this.hellService?.inHell()) {
         // another 50xth birthday, you get a follower
         this.generateFollower();
       }
@@ -554,7 +554,7 @@ export class FollowersService {
           this.logService.injury(LogTopic.FOLLOWER, 'Your follower ' + follower.name + ' passed away from old age.');
         }
         this.updateFollowerTotalPower();
-      } else if (this.characterService.money < listToHandle[i].cost * daysElapsed && !this.hellService?.inHell) {
+      } else if (this.characterService.money < listToHandle[i].cost * daysElapsed && !this.hellService?.inHell()) {
         // quit from not being paid
         this.totalDismissed++;
         this.logService.injury(
@@ -565,7 +565,7 @@ export class FollowersService {
         );
         listToHandle.splice(i, 1);
         this.updateFollowerTotalPower();
-      } else if (!this.hellService?.inHell) {
+      } else if (!this.hellService?.inHell()) {
         this.characterService.updateMoney(0 - listToHandle[i].cost * daysElapsed);
       }
     }

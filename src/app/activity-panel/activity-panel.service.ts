@@ -47,7 +47,7 @@ export class ActivityPanelService {
       autoFocus: false,
     });
     dialogRef.afterClosed().subscribe(() => {
-      this.hellService.inHell = true;
+      this.hellService.inHell.set(true);
       this.hellService.moveToHell(HellLevel.Gates);
       this.characterService.updateMoney(0, true);
       this.inventoryService.stashInventory();

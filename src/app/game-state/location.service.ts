@@ -140,7 +140,7 @@ export class LocationService {
   }
 
   checkForUnlocks(logNewLocations: boolean = true) {
-    if (this.hellService.inHell) {
+    if (this.hellService.inHell()) {
       this.unlockedLocations = [LocationType.Hell];
       this.troubleTarget = LocationType.Hell;
     } else {
@@ -166,7 +166,7 @@ export class LocationService {
 
   setTroubleLocation(location: LocationType | null) {
     if (location === null) {
-      if (this.hellService.inHell) {
+      if (this.hellService.inHell()) {
         this.troubleTarget = LocationType.Hell;
       } else {
         this.troubleTarget = LocationType.SmallTown;

@@ -1271,8 +1271,8 @@ export class AchievementService {
         return this.characterService.bloodlineRank >= 3;
       },
       effect: () => {
-        if (this.inventoryService.heirloomSlots < 1) {
-          this.inventoryService.heirloomSlots = 1;
+        if (this.inventoryService.heirloomSlots() < 1) {
+          this.inventoryService.heirloomSlots.set(1);
         }
       },
       unlocked: false,
@@ -1286,8 +1286,8 @@ export class AchievementService {
         return this.characterService.bloodlineRank >= 5;
       },
       effect: () => {
-        if (this.inventoryService.heirloomSlots < 3) {
-          this.inventoryService.heirloomSlots = 3;
+        if (this.inventoryService.heirloomSlots() < 3) {
+          this.inventoryService.heirloomSlots.set(3);
         }
       },
       unlocked: false,
@@ -1432,7 +1432,7 @@ export class AchievementService {
         this.itemRepoService.items['autoRestManual'].name,
       hint: "There's no time to rest, cultivating is life.",
       check: () => {
-        return this.activityService.activityDeath || this.characterService.immortal;
+        return this.activityService.activityDeath || this.characterService.immortal();
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['autoRestManual']);
@@ -1457,7 +1457,7 @@ export class AchievementService {
       description: 'Congratulations! You are now immortal.',
       hint: 'Name of the game.',
       check: () => {
-        return this.characterService.immortal;
+        return this.characterService.immortal();
       },
       effect: () => {
         this.activityService.checkRequirements(true);
@@ -1562,7 +1562,7 @@ export class AchievementService {
       description: 'You have begun to work your way through hell.',
       hint: 'You are not ready.',
       check: () => {
-        return this.hellService.inHell;
+        return this.hellService.inHell();
       },
       effect: () => {
         this.gameStateService?.unlockPanel('hellStatusPanel');
@@ -1601,7 +1601,7 @@ export class AchievementService {
       description: "A new threat has emerged, more powerful than anything you've ever faced.",
       hint: 'Godhood comes with issues.',
       check: () => {
-        return this.characterService.god;
+        return this.characterService.god();
       },
       effect: () => {
         this.battleService.godSlayersUnlocked = true;

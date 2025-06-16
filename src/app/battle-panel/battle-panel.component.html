@@ -1,12 +1,10 @@
 <div class="battleContainer">
   <h3>
-    @if (characterService.itemPouches.length > 0) {
-      <span>
-        <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton rightAligned" aria-label="Battle Settings" aria-hidden="false">
-          settings
-        </mat-icon>
-      </span>
-    }
+    <span>
+      <mat-icon  (click)="battleOptions()" tooltip="Options" class="iconButton rightAligned" aria-label="Battle Settings" aria-hidden="false">
+        settings
+      </mat-icon>
+    </span>
   </h3>
   <div>
     <div class="columnDiv">
@@ -47,7 +45,7 @@
           </div>
         }
         <br>
-        @if (battleService.displayEnemies.length > 0){
+        @if (battleService.enemiesPresent()){
           <div>
             <button (click)="battleService.flee()">Flee Like A Coward</button>
           </div>

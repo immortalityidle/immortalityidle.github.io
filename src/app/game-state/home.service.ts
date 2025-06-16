@@ -958,7 +958,7 @@ export class HomeService {
     if (this.nextHomeCost < 0) {
       this.nextHomeCost = 0;
     }
-    if (!this.hellService?.inHell || this.hellHome) {
+    if (!this.hellService?.inHell() || this.hellHome) {
       this.home.consequence();
       for (const furniturePiece of this.bedroomFurniture) {
         if (furniturePiece?.use) {
@@ -966,7 +966,7 @@ export class HomeService {
         }
       }
     }
-    if (!this.hellService?.inHell && !this.characterService.god) {
+    if (!this.hellService?.inHell() && !this.characterService.god()) {
       let totalCost = 0;
       for (const workstation of this.workstations) {
         totalCost += workstation.maintenanceCost;
@@ -1139,11 +1139,14 @@ export class HomeService {
       this.ownedFurniture = [];
     }
     if (this.characterService.bloodlineRank < 7) {
+      if (this.upgrading) {
+        // refund the land used in the upgrade so land prices come out right
+        this.land += this.nextHome.landRequired;
+      }
       this.upgrading = false;
       this.houseBuildingProgress = 1;
     }
     this.nextHomeCostReduction = 0;
-
     if (this.keepHome) {
       // reduce land price to account for lost land, but not land that you are keeping as farms
       this.landPrice -= 10 * (this.land - 1);

@@ -1,7 +1,7 @@
 import { Component, forwardRef } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character.service';
-import { InventoryService, ItemStack, instanceOfEquipment } from '../game-state/inventory.service';
+import { InventoryService, instanceOfEquipment } from '../game-state/inventory.service';
 import { HellService } from '../game-state/hell.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { GameStateService } from '../game-state/game-state.service';
@@ -101,9 +101,9 @@ export class InventoryPanelComponent {
     event.preventDefault();
     event.stopPropagation();
     if (event.ctrlKey || event.metaKey) {
-      this.inventoryService.descendingSort = !this.inventoryService.descendingSort;
+      this.inventoryService.descendingSort.set(!this.inventoryService.descendingSort());
     } else if (event.shiftKey || event.altKey) {
-      this.inventoryService.autoSort = !this.inventoryService.autoSort;
+      this.inventoryService.autoSortEnabled.set(!this.inventoryService.autoSortEnabled());
     } else {
       this.inventoryService.sortInventory();
     }
@@ -291,18 +291,6 @@ export class InventoryPanelComponent {
     if (this.inventoryService.selectedItem) {
       this.inventoryService.removeItemStack(this.inventoryService.selectedItem);
     }
-  }
-
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  getStyle(itemStack: ItemStack): { [klass: string]: any } {
-    if (itemStack) {
-      if (itemStack.item) {
-        if (itemStack.item.imageColor) {
-          return { 'border-color': itemStack.item.imageColor, border: 'solid 1px' };
-        }
-      }
-    }
-    return { 'border-color': 'white', border: 'solid 1px' };
   }
 
   optionsClicked() {

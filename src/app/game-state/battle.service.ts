@@ -79,6 +79,7 @@ export interface BattleProperties {
   battlesUnlocked: boolean;
   pouchPotionsUsed: number;
   pouchFoodUsed: number;
+  timesFled: number;
 }
 
 export interface Technique {
@@ -201,6 +202,8 @@ export class BattleService {
   pouchPotionsUsed = 0;
   pouchFoodUsed = 0;
   enemyImageFile = signal<string>('');
+  enemiesPresent = signal<boolean>(false);
+  timesFled = 0;
 
   private elementalFactor = 2;
   // elemental logic:
@@ -467,6 +470,7 @@ export class BattleService {
         this.developNewTechnique();
         this.techniqueDevelopmentCounter = 0;
       }
+      this.enemiesPresent.set(this.enemies.length > 0);
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -534,6 +538,7 @@ export class BattleService {
       battlesUnlocked: this.battlesUnlocked,
       pouchPotionsUsed: this.pouchPotionsUsed,
       pouchFoodUsed: this.pouchFoodUsed,
+      timesFled: this.timesFled,
     };
   }
 
@@ -568,6 +573,7 @@ export class BattleService {
     this.battlesUnlocked = properties.battlesUnlocked;
     this.pouchPotionsUsed = properties.pouchPotionsUsed;
     this.pouchFoodUsed = properties.pouchFoodUsed;
+    this.timesFled = properties.timesFled;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -1203,8 +1209,8 @@ export class BattleService {
         if (this.currentEnemy.statusEffects) {
           const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_DOOM);
           if (doomEffect) {
-            doomEffect.power += doomEffect.power;
-            if (doomEffect.power > 3) {
+            doomEffect.power += doomEffect.power * 0.2;
+            if (doomEffect.power > 2) {
               damage *= doomEffect.power;
             }
           } else {
@@ -1423,6 +1429,7 @@ export class BattleService {
   }
 
   flee() {
+    this.timesFled++;
     this.handleEnemyTechniques();
     this.handleEnemyTechniques();
     this.handleEnemyTechniques();
@@ -1434,7 +1441,7 @@ export class BattleService {
     if (this.enemies.length !== 0) {
       return;
     }
-    if (this.hellService && this.hellService.inHell) {
+    if (this.hellService && this.hellService.inHell()) {
       // let hellService handle the trouble while we're in hell
       this.hellService.trouble();
       return;

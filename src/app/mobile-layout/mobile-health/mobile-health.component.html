@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <div class="statusCell">
-                        @if (characterService.immortal) {
+                        @if (characterService.immortal()) {
                             <div>You expect to live forever.</div>
                         }
                         @else {
@@ -37,7 +37,7 @@
                         @if(characterService.displayAge() < ageBreakpoint) {
                             {{Math.floor(characterService.displayAge() / 365)}}
                             /
-                            @if (characterService.immortal) {
+                            @if (characterService.immortal()) {
                                 Forever
                             } @else {
                                 {{characterService.displayLifespan() / 365 | bigNumber}}
@@ -45,7 +45,7 @@
                         } @else {
                             {{characterService.displayAge() / 365 | bigNumber }}
                             /
-                            @if (characterService.immortal) {
+                            @if (characterService.immortal()) {
                                 Forever
                             } @else {
                                 {{characterService.displayLifespan() / 365 | bigNumber}}
@@ -92,10 +92,10 @@
                     <div class="label">Health</div>
                 }
                 <div class="progress-bar" [ngClass]="healthService.flashHealth ? 'flash' : ''"
-                    [attr.value]="Math.floor(characterService.immortal && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) | bigNumber"
+                    [attr.value]="Math.floor(characterService.immortal() && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) | bigNumber"
                     [attr.max]="Math.floor(characterService.status.health.displayMax()) | bigNumber">
                     <span [style.width.%]="100 *
-                        Math.floor(characterService.immortal && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) /
+                        Math.floor(characterService.immortal() && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) /
                         Math.floor(characterService.status.health.displayMax())">
                     </span>
                 </div>
@@ -105,10 +105,10 @@
                     <div class="label">Stamina</div>
                 }
                 <div class="progress-bar" [ngClass]="healthService.flashStamina ? 'flash' : ''"
-                    [attr.value]="Math.floor(characterService.immortal && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) | bigNumber"
+                    [attr.value]="Math.floor(characterService.immortal() && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) | bigNumber"
                     [attr.max]="Math.floor(characterService.status.stamina.displayMax()) | bigNumber">
                     <span [style.width.%]="100 *
-                        Math.floor(characterService.immortal && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) /
+                        Math.floor(characterService.immortal() && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) /
                         Math.floor(characterService.status.stamina.displayMax())">
                     </span>
                 </div>

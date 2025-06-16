@@ -1,5 +1,5 @@
 <div class="homeContainer overflow">
-  @if (hellService.inHell && !homeService.hellHome) {
+  @if (hellService.inHell() && !homeService.hellHome) {
     <div>
       <span>
         Your home is a distant memory, and can't help you here in hell.
@@ -42,11 +42,11 @@
       <span>{{homeService.home.description}}</span>
     </div>
     <div>
-      @if (!hellService.inHell && !characterService.god) {
+      @if (!hellService.inHell() && !characterService.god()) {
         <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
       }
 
-      @if (homeService.home.maxFurniture > 0 && (!hellService.inHell || homeService.hellHome)) {
+      @if (homeService.home.maxFurniture > 0 && (!hellService.inHell() || homeService.hellHome)) {
         <hr>
         <div>
           <span>Your Bedroom</span>

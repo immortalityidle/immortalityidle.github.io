@@ -738,6 +738,7 @@ export class GameStateService {
       battlesUnlocked: props?.battlesUnlocked || false,
       pouchPotionsUsed: props?.pouchPotionsUsed || 0,
       pouchFoodUsed: props?.pouchFoodUsed || 0,
+      timesFled: props?.timesFled || 0,
     };
   }
 

@@ -75,7 +75,7 @@ export class LifeSummaryComponent {
         "Your followers are too weak to give you the help you need. Perhaps its time to return to politics to build up the charm you'll need to train them to be stronger.";
     } else if (!this.impossibleTaskService.impossibleTasksUnlocked) {
       this.tip = 'Ascensions are the key to your progress now. Push forward!';
-    } else if (!this.characterService.immortal) {
+    } else if (!this.characterService.immortal()) {
       this.tip =
         "You're so close now. If you could only manage to do the impossible, you know you would achieve immortality.";
     }

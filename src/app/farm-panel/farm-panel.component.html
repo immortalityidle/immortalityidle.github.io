@@ -1,5 +1,5 @@
 <div class="farmContainer">
-  @if (hellService.inHell && !homeService.hellHome) {
+  @if (hellService.inHell() && !homeService.hellHome) {
     <div>
       <span>
         Your farm is a distant memory, and can't help you here in hell.

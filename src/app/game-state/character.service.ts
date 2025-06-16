@@ -192,8 +192,8 @@ export class CharacterService {
   empowermentFactor = 1;
   empowermentMult = 1;
   imperial = false;
-  immortal = false;
-  god = false;
+  immortal = signal<boolean>(false);
+  god = signal<boolean>(false);
   easyMode = false;
   ascensionUnlocked = false;
   yinYangBoosted = false;
@@ -602,7 +602,7 @@ export class CharacterService {
 
       this.recalculateDerivedStats();
       if (
-        this.hellService?.inHell &&
+        this.hellService?.inHell() &&
         this.hellService.currentHell === HellLevel.CrushingBoulder &&
         !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)
       ) {
@@ -623,7 +623,7 @@ export class CharacterService {
     let deathMessage = '';
     if (this.forceRebirth) {
       deathMessage = 'You release your soul from your body at the age of ' + this.formatAge() + '.';
-    } else if (this.age >= this.lifespan && !this.immortal) {
+    } else if (this.age >= this.lifespan && !this.immortal()) {
       deathMessage =
         'You reach the end of your natural life and pass away from natural causes at the age of ' +
         this.formatAge() +
@@ -643,26 +643,26 @@ export class CharacterService {
         }
         this.increaseAttribute('spirituality', 0.1);
         if (this.status.health.value <= 0) {
-          if (!this.immortal) {
+          if (!this.immortal()) {
             deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
-          } else if (this.hellService?.inHell) {
+          } else if (this.hellService?.inHell()) {
             this.hellService.beaten = true;
           }
         }
-      } else if (!this.immortal) {
+      } else if (!this.immortal()) {
         deathMessage = 'You starve to death at the age of ' + this.formatAge() + '.';
       }
-    } else if (this.status.health.value <= 0 && !this.immortal) {
+    } else if (this.status.health.value <= 0 && !this.immortal()) {
       if (this.activityService!.activityDeath) {
         deathMessage = 'You die from overwork at the age of ' + this.formatAge() + '.';
       } else {
         deathMessage = 'You succumb to your wounds and die at the age of ' + this.formatAge() + '.';
       }
-    } else if (this.immortal && this.status.health.value < 0) {
+    } else if (this.immortal() && this.status.health.value < 0) {
       this.status.health.value = 0;
     }
     if (deathMessage !== '') {
-      if (!this.immortal) {
+      if (!this.immortal()) {
         this.logService.injury(LogTopic.EVENT, deathMessage);
         if (!this.forceRebirth) {
           this.logService.log(
@@ -678,7 +678,7 @@ export class CharacterService {
       this.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
       this.mainLoopService.reincarnating = true;
       this.forceRebirth = false;
-      if (this.immortal) {
+      if (this.immortal()) {
         this.logService.log(LogTopic.EVENT, 'You are born anew, still an immortal but with the fresh vigor of youth.');
       } else {
         this.logService.log(
@@ -712,7 +712,7 @@ export class CharacterService {
       return;
     }
     let tooltip = 'Your base lifespan of ' + this.yearify(this.baseLifespan) + ' is extended by';
-    if (this.immortal) {
+    if (this.immortal()) {
       tooltip =
         'You are immortal. If you had remained mortal, your base lifespan of ' +
         this.yearify(this.baseLifespan) +
@@ -1308,8 +1308,8 @@ export class CharacterService {
       healthBonusMagic: this.healthBonusMagic,
       healthBonusSoul: this.healthBonusSoul,
       empowermentFactor: this.empowermentFactor,
-      immortal: this.immortal,
-      god: this.god,
+      immortal: this.immortal(),
+      god: this.god(),
       easyMode: this.easyMode,
       highestMoney: this.highestMoney,
       highestAge: this.highestAge,
@@ -1373,8 +1373,8 @@ export class CharacterService {
     this.healthBonusMagic = properties.healthBonusMagic;
     this.healthBonusSoul = properties.healthBonusSoul;
     this.empowermentFactor = properties.empowermentFactor;
-    this.immortal = properties.immortal;
-    this.god = properties.god;
+    this.immortal.set(properties.immortal);
+    this.god.set(properties.god);
     this.easyMode = properties.easyMode;
     this.highestMoney = properties.highestMoney;
     this.highestAge = properties.highestAge;
