@@ -139,6 +139,7 @@ export interface CharacterProperties {
   showTips: boolean;
   showUpdateAnimations: boolean;
   startingStaminaBoost: boolean;
+  keepPouchItems: boolean;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -507,6 +508,7 @@ export class CharacterService {
   highestStamina = 0;
   highestQi = 0;
   highestAttributes: { [key: string]: number } = {};
+  keepPouchItems = false;
 
   constructor(
     private injector: Injector,
@@ -879,6 +881,7 @@ export class CharacterService {
       this.snackBarObservable?.unsubscribe();
     });
   }
+
   // reset everything but increase aptitudes
   reincarnate(causeOfDeath: string): void {
     this.totalLives++;
@@ -1325,6 +1328,7 @@ export class CharacterService {
       showTips: this.showTips,
       showUpdateAnimations: this.showUpdateAnimations,
       startingStaminaBoost: this.startingStaminaBoost,
+      keepPouchItems: this.keepPouchItems,
     };
   }
 
@@ -1389,6 +1393,7 @@ export class CharacterService {
     this.showTips = properties.showTips;
     this.showUpdateAnimations = properties.showUpdateAnimations;
     this.startingStaminaBoost = properties.startingStaminaBoost;
+    this.keepPouchItems = properties.keepPouchItems;
 
     this.recalculateDerivedStats();
   }

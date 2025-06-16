@@ -134,7 +134,7 @@ export class EquipmentPanelComponent {
               // it's a pouch stack
               const pouchIndex = this.characterService.itemPouches.indexOf(sourceItem);
               if (pouchIndex !== -1) {
-                this.inventoryService.addItem(sourceItem.item, sourceItem.quantity, destinationItemIndex);
+                this.inventoryService.addItem(sourceItem.item, sourceItem.quantity, destinationItemIndex, true);
                 this.characterService.itemPouches[pouchIndex] = this.inventoryService.getEmptyItemStack();
               }
             } else {

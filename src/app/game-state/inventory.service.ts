@@ -1228,6 +1228,12 @@ export class InventoryService {
     }
     this.itemStacks = newItemStacks;
     this.stashedItemStacks = [];
+    if (!this.characterService.keepPouchItems) {
+      for (let i = 0; i < this.characterService.itemPouches.length; i++) {
+        this.characterService.itemPouches[i] = this.getEmptyItemStack();
+      }
+    }
+
     this.changeMaxItems(this.homeService!.home.maxInventory);
 
     if (this.grandmotherGift) {

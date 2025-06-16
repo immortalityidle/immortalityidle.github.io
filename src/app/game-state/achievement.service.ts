@@ -1250,6 +1250,19 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Dusty Potions',
+      description:
+        'Your descendants have so much respect for you that they will preserve all your equipped potions for when you are reborn.',
+      hint: 'You think this is still safe to drink?',
+      check: () => {
+        return this.characterService.bloodlineRank >= 2 && this.characterService.itemPouches.length > 0;
+      },
+      effect: () => {
+        this.characterService.keepPouchItems = true;
+      },
+      unlocked: false,
+    },
+    {
       name: "Don't Sell My Stuff!",
       description:
         'Your descendants have so much respect for you that they will preserve one stack of items for your next reincarnation.',

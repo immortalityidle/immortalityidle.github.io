@@ -1745,6 +1745,7 @@ export class HomeService {
     } else if ((gemUsed || alchemyLevel > 2) && this.alchemyCounter > 10) {
       this.alchemyCounter = 0;
       this.inventoryService.generatePill(totalValue, attribute);
+      this.inventoryService.generatePotion(totalValue);
     } else {
       this.inventoryService.generatePotion(totalValue);
     }
