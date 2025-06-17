@@ -1,10 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
-import { LogService } from './log.service';
-import { CharacterService } from '../game-state/character.service';
-import { ItemRepoService } from '../game-state/item-repo.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
+import { LocationService } from './location.service';
+import { LocationType } from './activity';
+import { LogService, LogTopic } from './log.service';
+import { CamelToTitlePipe } from '../pipes';
 
 export enum ImpossibleTaskType {
   Swim,
@@ -23,6 +24,7 @@ export interface ImpossibleTask {
   description: string;
   taskType: ImpossibleTaskType;
   progressRequired: number;
+  location?: LocationType;
 }
 
 export interface ImpossibleTaskProgress {
@@ -40,7 +42,10 @@ export interface ImpossibleTaskProperties {
   providedIn: 'root',
 })
 export class ImpossibleTaskService {
+  private camelToTitle = new CamelToTitlePipe();
+
   activityService?: ActivityService;
+  locationService?: LocationService;
   impossibleTasksUnlocked = false;
   activeTaskIndex = -1;
   nextTask = 0;
@@ -52,6 +57,7 @@ export class ImpossibleTaskService {
         "You find a scrap in an ancient text that leads you to believe that the secret of immortality lies buried deep beneath the ocean's currents.",
       taskType: ImpossibleTaskType.Swim,
       progressRequired: 400000,
+      location: LocationType.DeepSea,
     },
     {
       name: 'Raise an island from the sea',
@@ -59,6 +65,7 @@ export class ImpossibleTaskService {
         "At the bottom of the ocean you find a sunken island full of mystical wonders. Some of them will certainly help you in your quest for immortality, but they look too fragile to move by themselves. You'll need to pull the entire island to the surface.",
       taskType: ImpossibleTaskType.RaiseIsland,
       progressRequired: 777,
+      location: LocationType.Beach,
     },
     {
       name: 'Build a tower past the heavens',
@@ -87,6 +94,7 @@ export class ImpossibleTaskService {
         "You fly far and wide across the world and finally find an ancient dragon. You'll need to convince it to speak with you to get any secrets from it.",
       taskType: ImpossibleTaskType.BefriendDragon,
       progressRequired: 5000,
+      location: LocationType.MountainTops,
     },
     {
       name: 'Conquer the nation',
@@ -101,6 +109,7 @@ export class ImpossibleTaskService {
         "The dragon smiles approvingly and teaches you the secrets of drawing power from the heavens. You could perform the ritual to achieve immortality now if the stars were properly aligned, but that won't happen again for billions of years. Maybe you could help it along.",
       taskType: ImpossibleTaskType.RearrangeTheStars,
       progressRequired: 10000,
+      location: LocationType.MountainTops,
     },
     {
       name: 'Overcome death itself',
@@ -152,13 +161,12 @@ export class ImpossibleTaskService {
 
   constructor(
     private injector: Injector,
-    private logService: LogService,
-    private characterService: CharacterService,
-    private itemRepoService: ItemRepoService,
     mainLoopService: MainLoopService,
-    private battleService: BattleService
+    private battleService: BattleService,
+    private logService: LogService
   ) {
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
+    setTimeout(() => (this.locationService = this.injector.get(LocationService)));
 
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.nextTask >= this.tasks.length) {
@@ -278,6 +286,19 @@ export class ImpossibleTaskService {
   }
 
   startTask() {
+    const location = this.tasks[this.nextTask].location;
+    if (location) {
+      if (!this.locationService!.unlockedLocations.includes(location)) {
+        this.logService.log(
+          LogTopic.EVENT,
+          'You need access to ' + this.camelToTitle.transform(location) + ' to begin this task.'
+        );
+        return;
+      }
+      this.locationService!.setTroubleLocation(location);
+      this.locationService!.locationLocked = true;
+    }
+
     this.activeTaskIndex = this.nextTask;
     this.activityService!.checkRequirements(true);
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
@@ -286,6 +307,7 @@ export class ImpossibleTaskService {
   }
 
   stopTask() {
+    this.locationService!.locationLocked = false;
     if (this.activeTaskIndex === ImpossibleTaskType.Swim) {
       // back to the surface with you!
       this.taskProgress[this.activeTaskIndex].progress = 0;

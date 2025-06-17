@@ -1,4 +1,4 @@
-import { Injectable, Injector, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
@@ -94,7 +94,6 @@ export class HellService {
   burnedMoney = 0;
 
   constructor(
-    private injector: Injector,
     private logService: LogService,
     private characterService: CharacterService,
     mainLoopService: MainLoopService,

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Injectable, Injector } from '@angular/core';
-import { ActivityService } from './activity.service';
+import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { LogService, LogTopic } from './log.service';
@@ -16,6 +15,7 @@ export interface LocationEntry {
 export interface LocationProperties {
   unlockedLocations: LocationType[];
   troubleTarget: LocationType;
+  locationLocked: boolean;
 }
 
 // TODO: lock locations for hells and some impossible tasks
@@ -121,10 +121,9 @@ export class LocationService {
     },
   };
   unlockedLocations: LocationType[] = [];
+  locationLocked = false;
 
   constructor(
-    private injector: Injector,
-    private activityService: ActivityService,
     private mainLoopService: MainLoopService,
     private characterService: CharacterService,
     private logService: LogService,
@@ -165,6 +164,10 @@ export class LocationService {
   }
 
   setTroubleLocation(location: LocationType | null) {
+    if (this.locationLocked) {
+      this.logService.log(LogTopic.EVENT, "You can't select a new location now.");
+      return;
+    }
     if (location === null) {
       if (this.hellService.inHell()) {
         this.troubleTarget = LocationType.Hell;
@@ -180,12 +183,13 @@ export class LocationService {
     return {
       unlockedLocations: this.unlockedLocations,
       troubleTarget: this.troubleTarget,
+      locationLocked: this.locationLocked,
     };
   }
 
   setProperties(properties: LocationProperties) {
     this.unlockedLocations = properties.unlockedLocations;
     this.troubleTarget = properties.troubleTarget;
+    this.locationLocked = properties.locationLocked;
   }
 }
-/* eslint-enable @typescript-eslint/ban-ts-comment */

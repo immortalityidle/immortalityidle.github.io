@@ -669,6 +669,7 @@ export class GameStateService {
     return {
       unlockedLocations: props?.unlockedLocations || [],
       troubleTarget: props?.troubleTarget || LocationType.SmallTown,
+      locationLocked: props?.locationLocked || false,
     };
   }
 

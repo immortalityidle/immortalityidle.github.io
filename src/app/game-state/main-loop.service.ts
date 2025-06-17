@@ -1,7 +1,6 @@
 import { Injectable, Injector, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CharacterService } from './character.service';
-import { MatDialog } from '@angular/material/dialog';
 import { BattleService } from './battle.service';
 
 const TICK_INTERVAL_MS = 25;
@@ -41,7 +40,6 @@ export class MainLoopService {
   battleTickSubject = new Subject<number>();
   reincarnateSubject = new Subject<number>();
   doneReincarnatingSubject = new Subject<number>();
-  logTickSubject = new Subject<number>();
 
   /**
    * Only emits every 500ms and returns number of days that elapsed since
@@ -86,7 +84,7 @@ export class MainLoopService {
   lastUsedTickTime = 0;
   autopauseTriggered = false;
 
-  constructor(private injector: Injector, public dialog: MatDialog) {
+  constructor(private injector: Injector) {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
 
     this.audio = new Audio('./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3');
@@ -232,13 +230,11 @@ export class MainLoopService {
       if (this.autopauseTriggered) {
         // autopause might have triggered, if so, don't do the rest of the tick
         this.autopauseTriggered = false;
-        this.logTickSubject.next(1);
         return;
       }
       this.inventoryTickSubject.next(1);
       this.homeTickSubject.next(1);
       this.tickSubject.next(1); // ticks character, followers, and hell
-      this.logTickSubject.next(1);
     }
     if (this.reincarnating) {
       this.reincarnateSubject.next(1);

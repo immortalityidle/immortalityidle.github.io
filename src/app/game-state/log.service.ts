@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 
-const LOG_MERGE_INTERVAL_MS = 5000;
 type AllTopicProperties = { [key: string]: TopicProperties };
 
 export enum LogType {
@@ -14,7 +13,7 @@ export interface Log {
   type: LogType;
   topic: LogTopic;
   timestamp: number;
-  repeat?: number;
+  repeat: number;
 }
 
 export interface LogProperties {
@@ -72,10 +71,6 @@ export class LogService {
   longTickCounter = 0;
 
   constructor(mainLoopService: MainLoopService) {
-    mainLoopService.logTickSubject.subscribe(() => {
-      setTimeout(() => this.updateLogTopics());
-    });
-
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.startingStoryLogEntries.length > 0) {
         if (this.longTickCounter > 10) {
@@ -87,6 +82,7 @@ export class LogService {
         this.log(LogTopic.STORY, this.startingStoryLogEntries[0]);
         this.startingStoryLogEntries.splice(0, 1);
       }
+      setTimeout(() => this.updateLogTopics());
     });
   }
 
@@ -102,28 +98,21 @@ export class LogService {
     const log = this.logs[topic];
     const timestamp = Date.now();
     const message = rawMessage.replace('<br>', ' ');
-    if (this.isRepeat(message, timestamp, log)) {
-      log[log.length - 1].repeat = (log[log.length - 1].repeat || 1) + 1;
-    } else {
+    if (log.length === 0 || message !== log[log.length - 1].message) {
       log.push({
         message: message,
         type: type,
         topic: topic,
         timestamp: timestamp,
+        repeat: 1,
       });
+    } else {
+      log[log.length - 1].repeat++;
     }
 
     if (!this.topicProperties[topic].enabled) {
       this.topicProperties[topic].hasNewMessages = true;
     }
-  }
-
-  isRepeat(message: string, timestamp: number, log: Log[]): boolean {
-    return (
-      log.length > 0 &&
-      timestamp - log[log.length - 1].timestamp <= LOG_MERGE_INTERVAL_MS &&
-      message === log[log.length - 1].message
-    );
   }
 
   getProperties(): LogProperties {

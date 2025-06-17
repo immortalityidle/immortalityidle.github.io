@@ -752,6 +752,9 @@ export class ActivityService {
         activity.unlocked = activity.impossibleTaskIndex === this.impossibleTaskService.activeTaskIndex;
         activity.discovered = activity.impossibleTaskIndex === this.impossibleTaskService.activeTaskIndex;
         continue;
+      } else if (this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.Swim) {
+        activity.unlocked = false;
+        continue;
       }
       activity.projectionOnly = false;
       if (this.hellService?.inHell()) {
@@ -1985,7 +1988,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 1);
         this.characterService.increaseAttribute('spirituality', 0.001);
         this.characterService.increaseAttribute('cooking', 0.1);
-        this.characterService.status.stamina.value -= 10;
+        this.characterService.status.stamina.value -= 90;
       },
     ],
     resourceUse: [
@@ -2547,9 +2550,11 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 0.1);
         this.characterService.increaseAttribute('toughness', 0.1);
         this.characterService.status.stamina.value -= 20;
-        let money =
-          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-          this.characterService.attributes.animalHandling.value;
+        let money = Math.log2(
+          this.characterService.attributes.speed.value +
+            this.characterService.attributes.toughness.value +
+            this.characterService.attributes.animalHandling.value
+        );
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
@@ -2566,9 +2571,11 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 0.2);
         this.characterService.increaseAttribute('toughness', 0.2);
         this.characterService.status.stamina.value -= 20;
-        let money =
-          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-          this.characterService.attributes.animalHandling.value * 2;
+        let money = Math.log2(
+          this.characterService.attributes.speed.value +
+            this.characterService.attributes.toughness.value +
+            this.characterService.attributes.animalHandling.value * 2
+        );
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
@@ -2584,9 +2591,11 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 0.5);
         this.characterService.increaseAttribute('toughness', 0.5);
         this.characterService.status.stamina.value -= 20;
-        let money =
-          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-          this.characterService.attributes.animalHandling.value * 5;
+        let money = Math.log2(
+          this.characterService.attributes.speed.value +
+            this.characterService.attributes.toughness.value +
+            this.characterService.attributes.animalHandling.value * 5
+        );
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
@@ -2602,9 +2611,11 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 1);
         this.characterService.increaseAttribute('toughness', 1);
         this.characterService.status.stamina.value -= 40;
-        let money =
-          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-          this.characterService.attributes.animalHandling.value * 10;
+        let money = Math.log2(
+          this.characterService.attributes.speed.value +
+            this.characterService.attributes.toughness.value +
+            this.characterService.attributes.animalHandling.value * 10
+        );
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
