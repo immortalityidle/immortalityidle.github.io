@@ -78,6 +78,9 @@
                   <mat-option value="{{entry.name}}">{{entry.name}}</mat-option>
                 }
               </mat-select>
+              <mat-icon class="iconButton" tooltip="Remove this schedule trigger." (click)="removeTrigger(trigger)">
+                close
+              </mat-icon>
             </div>
           }
           @else {
@@ -99,7 +102,6 @@
               <mat-icon class="iconButton" tooltip="Remove this schedule trigger." (click)="removeTrigger(trigger)">
                 close
               </mat-icon>
-      
             </div>
           }
         }
