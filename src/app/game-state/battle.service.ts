@@ -125,6 +125,7 @@ export interface DisplayStatusEffect {
   description: WritableSignal<string>;
   ticksLeft: WritableSignal<number>;
   trackField: WritableSignal<string>;
+  imageFile: WritableSignal<string>;
 }
 
 export const LOOT_TYPE_GEM = 'gem';
@@ -156,7 +157,7 @@ export const EFFECT_EXPLOSIVE = 'Explosions';
 export const EFFECT_SHIELDING = 'Shielding';
 export const EFFECT_PIERCING = 'Piercing';
 export const EFFECT_HASTE = 'Haste';
-export const EFFECT_SLOW = 'Slowing';
+export const EFFECT_SLOW = 'Slow';
 
 @Injectable({
   providedIn: 'root',
@@ -402,12 +403,16 @@ export class BattleService {
                 description: signal<string>(statusEffect.description || ''),
                 ticksLeft: signal<number>(statusEffect.ticksLeft),
                 trackField: signal<string>(statusEffect.name + statusEffect.ticksLeft),
+                imageFile: signal<string>('assets/images/effects/' + statusEffect.name.replace(' ', '_') + '.png'),
               });
             } else {
               this.displayEnemies[i].statusEffects[j].name.set(statusEffect.name);
               this.displayEnemies[i].statusEffects[j].description.set(statusEffect.description || '');
               this.displayEnemies[i].statusEffects[j].ticksLeft.set(statusEffect.ticksLeft);
               this.displayEnemies[i].statusEffects[j].trackField.set(statusEffect.name + statusEffect.ticksLeft);
+              this.displayEnemies[i].statusEffects[j].imageFile.set(
+                'assets/images/effects/' + statusEffect.name.replace(' ', '_') + '.png'
+              );
             }
           }
         }
@@ -450,12 +455,16 @@ export class BattleService {
             description: signal<string>(statusEffect.description || ''),
             ticksLeft: signal<number>(statusEffect.ticksLeft),
             trackField: signal<string>(statusEffect.name + statusEffect.ticksLeft),
+            imageFile: signal<string>('assets/images/effects/' + statusEffect.name.replace(' ', '_') + '.png'),
           });
         } else {
           this.displayStatusEffects[i].name.set(statusEffect.name);
           this.displayStatusEffects[i].description.set(statusEffect.description || '');
           this.displayStatusEffects[i].ticksLeft.set(statusEffect.ticksLeft);
           this.displayStatusEffects[i].trackField.set(statusEffect.name + statusEffect.ticksLeft);
+          this.displayStatusEffects[i].imageFile.set(
+            'assets/images/effects/' + statusEffect.name.replace(' ', '_') + '.png'
+          );
         }
       }
 
@@ -887,12 +896,14 @@ export class BattleService {
         for (let i = enemy.statusEffects.length - 1; i >= 0; i--) {
           if (enemy.statusEffects[i].ticksLeft <= 0) {
             enemy.statusEffects.splice(i, 1);
-          } else if (enemy.statusEffects[i].name === EFFECT_POISON) {
-            enemy.health -= enemy.health * 0.01;
-          } else if (enemy.statusEffects[i].name === EFFECT_SLOW) {
-            slowingEffect = enemy.statusEffects[i];
+          } else {
+            if (enemy.statusEffects[i].name === EFFECT_POISON) {
+              enemy.health -= enemy.health * 0.01;
+            } else if (enemy.statusEffects[i].name === EFFECT_SLOW) {
+              slowingEffect = enemy.statusEffects[i];
+            }
+            enemy.statusEffects[i].ticksLeft--;
           }
-          enemy.statusEffects[i].ticksLeft--;
         }
       }
       for (const technique of enemy.techniques) {

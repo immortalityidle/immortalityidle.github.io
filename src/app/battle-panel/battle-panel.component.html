@@ -89,9 +89,10 @@
                 </div>
               }
               @for (statusEffect of enemy.statusEffects; track statusEffect.trackField()) {
-                <div class="techniqueLine" tooltip="{{statusEffect.description()}}">
-                  <div class="techniqueName">
-                    <span>{{statusEffect.name()}} {{statusEffect.ticksLeft()}}</span>
+                <div class="techniqueLine" tooltip="{{statusEffect.name()}}<br>{{statusEffect.description()}}">
+                  <div class="statusRow">
+                    <img class="monsterImage" src="{{statusEffect.imageFile()}}" alt="{{statusEffect.name()}}" width="24" height="24"/>
+                    <span class="statusText">{{statusEffect.ticksLeft()}} ticks left</span>
                   </div>
                 </div>
               }              
