@@ -1435,9 +1435,9 @@ export class InventoryService {
               } else if (
                 (item.type !== 'food' || item.name === inputItemStack.item.name) &&
                 item.type !== LOOT_TYPE_GEM &&
-                item.value > inputItemStack.item?.value
+                (item.value > inputItemStack.item?.value || inputItemStack.quantity < 10)
               ) {
-                // it's an upgrade, add it to the inventory then swap it in
+                // add it to the inventory then swap it in
                 const newItemIndex = this.addItem(item, quantity, 0, true);
                 if (newItemIndex !== -1) {
                   this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputSlotIndex);
@@ -1741,7 +1741,7 @@ export class InventoryService {
       return;
     }
     if (quantity < 1) {
-      quantity = 1; //handle potential 0 and negatives just in case
+      return;
     }
     if (quantity > itemStack.quantity) {
       quantity = itemStack.quantity;
@@ -1765,7 +1765,14 @@ export class InventoryService {
     }
     if (item.type === 'food') {
       this.lifetimeUsedFood++;
-      return this.eatFood(item, quantity);
+      const eaten = this.eatFood(item, quantity);
+      if (eaten < quantity) {
+        this.logService.log(
+          LogTopic.EVENT,
+          "You try to stuff all that food in your face, but you've eaten too much and can't."
+        );
+      }
+      return eaten;
     } else {
       this.lifetimeUsedItems++;
     }

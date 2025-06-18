@@ -7,12 +7,14 @@ import { LoopChangeTrigger } from '../game-state/activity';
 import { CharacterService } from '../game-state/character.service';
 import { CamelToTitlePipe } from '../pipes';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-time-options-panel',
   templateUrl: './time-options-panel.component.html',
   styleUrls: ['./time-options-panel.component.less', '../app.component.less'],
   imports: [
+    forwardRef(() => MatIcon),
     forwardRef(() => MatSelectModule),
     forwardRef(() => MatTabGroup),
     forwardRef(() => MatTab),
@@ -67,6 +69,11 @@ export class TimeOptionsPanelComponent {
   triggerValueChange(event: Event, trigger: LoopChangeTrigger) {
     if (!(event.target instanceof HTMLInputElement)) return;
     trigger.value = parseInt(event.target.value);
+  }
+
+  removeTrigger(trigger: LoopChangeTrigger) {
+    const index = this.activityService.loopChangeTriggers.indexOf(trigger);
+    this.activityService.loopChangeTriggers.splice(index, 1);
   }
 
   addTrigger() {

@@ -2550,18 +2550,16 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 0.1);
         this.characterService.increaseAttribute('toughness', 0.1);
         this.characterService.status.stamina.value -= 20;
-        let money = Math.log2(
-          this.characterService.attributes.speed.value +
-            this.characterService.attributes.toughness.value +
-            this.characterService.attributes.animalHandling.value
-        );
+        let money =
+          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
+          this.characterService.attributes.earthLore.value;
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
 
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
-        this.characterService.increaseAttribute('animalHandling', 0.001);
+        this.characterService.increaseAttribute('earthLore', 0.001);
         this.characterService.increaseAttribute('leatherwork', 0.1);
         this.characterService.yin++;
         this.characterService.yang++;
@@ -2571,17 +2569,15 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 0.2);
         this.characterService.increaseAttribute('toughness', 0.2);
         this.characterService.status.stamina.value -= 20;
-        let money = Math.log2(
-          this.characterService.attributes.speed.value +
-            this.characterService.attributes.toughness.value +
-            this.characterService.attributes.animalHandling.value * 2
-        );
+        let money =
+          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
+          this.characterService.attributes.earthLore.value * 2;
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
-        this.characterService.increaseAttribute('animalHandling', 0.002);
+        this.characterService.increaseAttribute('earthLore', 0.005);
         this.characterService.increaseAttribute('leatherwork', 0.1);
         this.characterService.yin++;
         this.characterService.yang++;
@@ -2591,17 +2587,15 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 0.5);
         this.characterService.increaseAttribute('toughness', 0.5);
         this.characterService.status.stamina.value -= 20;
-        let money = Math.log2(
-          this.characterService.attributes.speed.value +
-            this.characterService.attributes.toughness.value +
-            this.characterService.attributes.animalHandling.value * 5
-        );
+        let money =
+          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
+          this.characterService.attributes.earthLore.value * 5;
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
-        this.characterService.increaseAttribute('animalHandling', 0.003);
+        this.characterService.increaseAttribute('earthLore', 0.02);
         this.characterService.increaseAttribute('leatherwork', 0.1);
         this.characterService.yin++;
         this.characterService.yang++;
@@ -2611,17 +2605,15 @@ export class ActivityService {
         this.characterService.increaseAttribute('speed', 1);
         this.characterService.increaseAttribute('toughness', 1);
         this.characterService.status.stamina.value -= 40;
-        let money = Math.log2(
-          this.characterService.attributes.speed.value +
-            this.characterService.attributes.toughness.value +
-            this.characterService.attributes.animalHandling.value * 10
-        );
+        let money =
+          Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
+          this.characterService.attributes.earthLore.value * 10;
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
-        this.characterService.increaseAttribute('animalHandling', 0.1);
+        this.characterService.increaseAttribute('earthLore', 0.6);
         this.characterService.increaseAttribute('leatherwork', 0.1);
         this.pillPouchCounter++;
         if (this.pillPouchCounter > 1000) {
@@ -2654,19 +2646,19 @@ export class ActivityService {
       {
         speed: 800,
         toughness: 800,
-        animalHandling: 1,
+        earthLore: 1,
         leatherwork: 100,
       },
       {
         speed: 2000,
         toughness: 2000,
-        animalHandling: 10,
+        earthLore: 10,
         leatherwork: 10000,
       },
       {
         speed: 10000,
         toughness: 10000,
-        animalHandling: 100,
+        earthLore: 100,
         leatherwork: 1000000,
       },
     ],
