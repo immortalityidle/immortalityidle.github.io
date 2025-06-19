@@ -33,7 +33,7 @@ export class LifeSummaryComponent {
     } else if (this.characterService.age < 35 * 365 && this.characterService.attributes.intelligence.value < 200) {
       this.tip =
         'Life for an aspiring immortal can be frustratingly short. Perhaps increasing your intelligence might open up new avenues for extending your life.';
-    } else if (this.characterService.age < 140 * 365) {
+    } else if (this.characterService.age < 50 * 365) {
       this.tip =
         'Life for an aspiring immortal can be frustratingly short. Farming some healthy food might give you just what you need.';
     } else if (
@@ -66,13 +66,13 @@ export class LifeSummaryComponent {
         'Magic will be required for your journey to immortality. Only by balancing your mastery of the five elements will you be able to access magical powers.';
     } else if (this.characterService.status.stamina.max < 200) {
       this.tip =
-        'Building up your stamina requires protein. Hunting of fishing can provide you with the food that you need to take on more challenging tasks.';
+        'Building up your stamina requires proper meals. Cooking food can provide you the nourishment you need to take on more challenging tasks.';
     } else if (this.followerSerivce.followers.length < 5) {
       this.tip =
-        "Recruiting more followers will help you advance toward immortality. Perhaps its time to return to politics to build up the charm you'll need to recruit.";
+        "Recruiting more followers will help you advance toward immortality. Perhaps its time to build up the charm you'll need to recruit them.";
     } else if (this.followerSerivce.highestLevel <= 1) {
       this.tip =
-        "Your followers are too weak to give you the help you need. Perhaps its time to return to politics to build up the charm you'll need to train them to be stronger.";
+        "Your followers are too weak to give you the help you need. Perhaps its time to build up the charm you'll need to train them to be stronger.";
     } else if (!this.impossibleTaskService.impossibleTasksUnlocked) {
       this.tip = 'Ascensions are the key to your progress now. Push forward!';
     } else if (!this.characterService.immortal()) {

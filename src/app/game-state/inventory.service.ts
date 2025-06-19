@@ -916,15 +916,29 @@ export class InventoryService {
   }
 
   generateHerb(skipSnobbery: boolean = false): void {
-    if (!this.locationService?.troubleTarget) {
-      // location isn't set, bail out
-      return;
+    const herb = this.getHerb();
+    this.addItem(herb);
+    if (this.autoSellOldHerbsEnabled && !skipSnobbery) {
+      // sell any herb of the same type cheaper than what we just picked
+      for (let i = 0; i < this.itemStacks.length; i++) {
+        const itemStack = this.itemStacks[i];
+        if (itemStack.item && itemStack.item.type === 'herb' && itemStack.item.subtype === herb.name) {
+          if (itemStack.item.value < herb.value && itemStack.item.subtype === herb.name) {
+            this.sell(itemStack, itemStack.quantity);
+          }
+        }
+      }
     }
-    const targetLocation = this.locationService.troubleTarget;
-    const filteredHerbs = Herbs.filter(herb => herb.locations.includes(targetLocation));
+  }
+
+  getHerb(): Item {
+    let targetLocation = LocationType.SmallTown;
+    if (this.locationService?.troubleTarget) {
+      targetLocation = this.locationService.troubleTarget;
+    }
+    let filteredHerbs = Herbs.filter(herb => herb.locations.includes(targetLocation));
     if (filteredHerbs.length === 0) {
-      // no herbs at this location, bail out
-      return;
+      filteredHerbs = Herbs.filter(herb => herb.locations.includes(LocationType.SmallTown));
     }
     const woodLore = this.characterService.attributes.woodLore.value;
     let grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * herbQuality.length); // 1e9 woodlore is maximum grade, adjust if necessary
@@ -934,7 +948,7 @@ export class InventoryService {
     const herb = filteredHerbs[this.herbCounter % filteredHerbs.length];
     this.herbCounter++;
 
-    this.addItem({
+    return {
       id: 'herb_' + herb.name + grade,
       imageFile: 'herb_' + herb.name,
       imageColor: this.itemRepoService.colorByRank[grade],
@@ -944,18 +958,7 @@ export class InventoryService {
       attribute: herb.attribute,
       value: grade + 1,
       description: 'Useful herbs. Can be used in creating pills or potions.',
-    });
-    if (this.autoSellOldHerbsEnabled && !skipSnobbery) {
-      // sell any herb of the same type cheaper than what we just picked
-      for (let i = 0; i < this.itemStacks.length; i++) {
-        const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === 'herb' && itemStack.item.subtype === herb.name) {
-          if (itemStack.item.value < grade + 1 && itemStack.item.subtype === herb.name) {
-            this.sell(itemStack, itemStack.quantity);
-          }
-        }
-      }
-    }
+    };
   }
 
   generateSpiritGem(grade: number, flavor = 'spirit'): Item {

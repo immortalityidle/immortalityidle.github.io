@@ -217,6 +217,7 @@ export class ImpossibleTaskService {
     }
     this.activeTaskIndex = -1;
     this.activityService!.checkRequirements(true);
+    this.locationService!.locationLocked = false;
   }
 
   getProperties(): ImpossibleTaskProperties {

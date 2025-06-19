@@ -1,5 +1,5 @@
 <div class="craftingContainer overflow">
-  @if (hellService.inHell() && !homeService.hellHome) {
+  @if (hellService.inHell() && !homeService.hellHome()) {
     <div>
       <span>
         Your crafting stations are a distant memory, and can't help you here in hell.
@@ -8,7 +8,7 @@
   }
   @else {
 
-    @if (homeService.home.maxWorkstations && (!hellService.inHell() || homeService.hellHome)) {
+    @if (homeService.home.maxWorkstations && (!hellService.inHell() || homeService.hellHome())) {
       <div>
         <span>Your Workstations</span>
         <mat-icon  (click)="craftingOptions()" tooltip="Options" class="iconButton floatRight" aria-label="Crafting Options" aria-hidden="false">

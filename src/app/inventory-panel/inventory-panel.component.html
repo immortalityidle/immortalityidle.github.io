@@ -90,7 +90,7 @@
     @if (inventoryService.displaySelectedItem.name() !== ''){
       <div>
         @if (inventoryService.displaySelectedItem.imageFile()){
-          <img src="{{inventoryService.displaySelectedItem.imageFile()}}" class="itemImage"
+          <img ngSrc="{{inventoryService.displaySelectedItem.imageFile()}}" class="itemImage" priority
             [style.border-color]="inventoryService.displaySelectedItem.imageColor()"
             width="48" height="48"/>
         }
@@ -136,7 +136,7 @@
               tooltip="{{displayItemStack.tooltip()}}">
               <div class="itemName textOverflow">
                 @if (displayItemStack.imageFile() !== ''){
-                  <img src="{{displayItemStack.imageFile()}}" class="itemImage"
+                  <img ngSrc="{{displayItemStack.imageFile()}}" class="itemImage" priority
                     [style.border-color]="displayItemStack.imageColor()"
                     width="48" height="48"  alt="{{displayItemStack.name() | titlecase}}"/>
                 }

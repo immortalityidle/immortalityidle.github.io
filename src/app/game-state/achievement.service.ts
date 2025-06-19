@@ -692,7 +692,7 @@ export class AchievementService {
         'You plowed 888 fields and unlocked the ' + this.itemRepoService.items['basicHealthRegenerationManual'].name,
       hint: 'An aspiring immortal should have vast tracts of fertile land.',
       check: () => {
-        return this.farmService.fields.length + this.farmService.extraFields >= 888;
+        return this.farmService.mostFields >= 888;
       },
       effect: () => {
         this.storeService.unlockManual(this.itemRepoService.items['basicHealthRegenerationManual']);

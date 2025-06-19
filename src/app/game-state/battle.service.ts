@@ -2380,6 +2380,30 @@ export class BattleService {
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
+      name: 'infernomancer',
+      description: '',
+      location: LocationType.Dungeon,
+      basePower: 2500000,
+      element: 'fire',
+      techniques: [
+        {
+          name: 'Scorch',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Fireball',
+          ticks: 0,
+          ticksRequired: 40,
+          baseDamage: 8,
+          unlocked: true,
+        },
+      ],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+    },
+    {
       name: 'doomworm',
       description: '',
       location: LocationType.Desert,
@@ -2412,7 +2436,7 @@ export class BattleService {
           unlocked: true,
         },
         {
-          name: 'Fireball',
+          name: 'Lightning Blast',
           ticks: 0,
           ticksRequired: 40,
           baseDamage: 8,

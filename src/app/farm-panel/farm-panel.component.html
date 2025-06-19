@@ -1,5 +1,5 @@
 <div class="farmContainer">
-  @if (hellService.inHell() && !homeService.hellHome) {
+  @if (hellService.inHell() && !homeService.hellHome()) {
     <div>
       <span>
         Your farm is a distant memory, and can't help you here in hell.
@@ -15,11 +15,11 @@
     </div>
     <div>
       <span>
-        You have {{farmService.fallowPlots}} {{ farmService.fallowPlots === 1 ? 'plot': 'plots'}} of land laying fallow and ready to plant
+        You have {{farmService.displayFallowPlots()}} {{ farmService.displayFallowPlots() === 1 ? 'plot': 'plots'}} of land laying fallow and ready to plant
       </span>
     </div>
     <div>
-      @if (farmService.fields.length < farmService.maxFields){
+      @if (farmService.displayAddFields()){
         <mat-icon  (click)="addFieldClicked($event)" tooltip="Set up a new field for growing crops." class="iconButton" 
           aria-label="Set up a field" aria-hidden="false">
           add
@@ -27,22 +27,22 @@
       }
     </div>
     <div class="farmGrid">
-      @for (field of farmService.fields; track field; let index = $index) {
+      @for (field of farmService.displayFields; track field.trackField(); let index = $index) {
         <div class="fieldSlot">
           <div class="flexColumn flexColumnGrow">
             <div>
-              <div>{{field.cropName | titlecase}} Field</div>
-              <div>{{field.plots}} Plots of Land</div>
-              <div>Harvest Quantity: {{field.yield}}</div>
-              <div>Days Until Next Harvest: {{field.daysToHarvest}}</div>
-              <div>Progress to next harvest: {{(field.originalDaysToHarvest - field.daysToHarvest) / field.originalDaysToHarvest | percent}}</div>
-              <div>Upkeep Cost: {{field.upkeepCost | bigNumber}}</div>
+              <div>{{field.cropName() | titlecase}} Field</div>
+              <div>{{field.plots()}} Plots of Land</div>
+              <div>Harvest Quantity: {{field.yield()}}</div>
+              <div>Days Until Next Harvest: {{field.daysToHarvest()}}</div>
+              <div>Progress to next harvest: {{field.progressToHarvest() | percent}}</div>
+              <div>Upkeep Cost: {{field.upkeepCost() | bigNumber}}</div>
             </div>
             <div class="yieldText">
-              <span>Average harvest of {{field.averageYield | bigNumber}} per day.</span>
+              <span>Average harvest of {{field.averageYield() | bigNumber}} per day.</span>
             </div>
-            @if (field.imageFile){
-              <img src="assets/images/items/{{field.imageFile}}.png" class="itemImage"
+            @if (field.imageFile() !== ''){
+              <img [ngSrc]="field.imageFile()" class="itemImage" priority
                 width="32" height="32"/>
             }
           </div>

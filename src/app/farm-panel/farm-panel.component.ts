@@ -1,7 +1,7 @@
 import { Component, forwardRef } from '@angular/core';
 import { FarmService } from '../game-state/farm.service';
 import { MatIcon } from '@angular/material/icon';
-import { PercentPipe, TitleCasePipe } from '@angular/common';
+import { NgOptimizedImage, PercentPipe, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
 import { HomeService } from '../game-state/home.service';
@@ -17,6 +17,7 @@ import { HellService } from '../game-state/hell.service';
     forwardRef(() => TitleCasePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => NgOptimizedImage),
   ],
 })
 export class FarmPanelComponent {

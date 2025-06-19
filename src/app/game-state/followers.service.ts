@@ -188,6 +188,15 @@ export class FollowersService {
       totalPower: 0,
       runEachTick: true,
     },
+    herbalist: {
+      work: daysElapsed => {
+        const power = Math.floor((this.jobs['herbalist'].totalPower * daysElapsed) / 100);
+        this.inventoryService.addItem(this.inventoryService.getHerb(), power);
+      },
+      description: 'Herbalists gather herbs for your crafting.',
+      totalPower: 0,
+      runEachTick: true,
+    },
     weaponsmith: {
       work: daysElapsed => {
         let totalPower = this.jobs['weaponsmith'].totalPower;

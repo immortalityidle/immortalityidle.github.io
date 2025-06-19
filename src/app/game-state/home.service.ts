@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService, EquipmentPosition } from './character.service';
@@ -103,7 +103,7 @@ export class HomeService {
   houseBuildingProgress = 1;
   upgrading = false;
   thugPause = false;
-  hellHome = false;
+  hellHome = signal<boolean>(false);
   homeUnlocked = false;
   smoothFarming = false;
   keepHome = false;
@@ -958,7 +958,7 @@ export class HomeService {
     if (this.nextHomeCost < 0) {
       this.nextHomeCost = 0;
     }
-    if (!this.hellService?.inHell() || this.hellHome) {
+    if (!this.hellService?.inHell() || this.hellHome()) {
       this.home.consequence();
       for (const furniturePiece of this.bedroomFurniture) {
         if (furniturePiece?.use) {
@@ -1004,7 +1004,7 @@ export class HomeService {
       highestLandPrice: this.highestLandPrice,
       bestHome: this.bestHome,
       thugPause: this.thugPause,
-      hellHome: this.hellHome,
+      hellHome: this.hellHome(),
       homeUnlocked: this.homeUnlocked,
       keepHome: this.keepHome,
       seeFurnitureEffects: this.seeFurnitureEffects,
@@ -1037,7 +1037,7 @@ export class HomeService {
     this.highestLandPrice = properties.highestLandPrice || 100;
     this.bestHome = properties.bestHome || 0;
     this.thugPause = properties.thugPause || false;
-    this.hellHome = properties.hellHome || false;
+    this.hellHome.set(properties.hellHome || false);
     this.homeUnlocked = properties.homeUnlocked || false;
     this.keepHome = properties.keepHome;
     this.seeFurnitureEffects = properties.keepHome;

@@ -1881,7 +1881,7 @@ baguaMap = [
           LogTopic.STORY,
           'The Blood Crown settles onto your head, then sinks in to become a part of your very soul. Your bloodline becomes so powerful that the benefits of your ancestral home now apply even when you are no longer in the mortal realm.'
         );
-        this.homeService.hellHome = true;
+        this.homeService.hellHome.set(true);
       },
     },
     hellCrownWrongfulDead: {

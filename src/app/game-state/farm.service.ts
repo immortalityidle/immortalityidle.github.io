@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { InventoryService } from './inventory.service';
@@ -16,6 +16,18 @@ export interface Field {
   averageYield: number;
   imageFile?: string;
   upkeepCost: number;
+}
+
+export interface DisplayField {
+  trackField: WritableSignal<string>;
+  cropName: WritableSignal<string>;
+  plots: WritableSignal<number>;
+  yield: WritableSignal<number>;
+  daysToHarvest: WritableSignal<number>;
+  progressToHarvest: WritableSignal<number>;
+  upkeepCost: WritableSignal<number>;
+  averageYield: WritableSignal<number>;
+  imageFile: WritableSignal<string>;
 }
 
 export interface FarmProperties {
@@ -36,6 +48,7 @@ export class FarmService {
   hellService?: HellService;
   autoFieldLimit = 0;
   fields: Field[] = [];
+  displayFields: DisplayField[] = [];
   extraFields = 0;
   hellFood = false;
   smoothFarming = false;
@@ -44,6 +57,8 @@ export class FarmService {
   mostFields = 0;
   consecutiveHarvests = 0;
   fallowPlots = 0;
+  displayFallowPlots = signal<number>(0);
+  displayAddFields = signal<boolean>(false);
   unlockedCrops = ['rice'];
   maxFields = 30;
 
@@ -68,6 +83,40 @@ export class FarmService {
       }
       if (totalPlots > this.mostFields) {
         this.mostFields = totalPlots;
+      }
+
+      this.displayFallowPlots.set(this.fallowPlots);
+      this.displayAddFields.set(this.fields.length < this.maxFields);
+      while (this.displayFields.length < this.fields.length) {
+        this.displayFields.push({
+          trackField: signal<string>(''),
+          cropName: signal<string>(''),
+          plots: signal<number>(0),
+          yield: signal<number>(0),
+          daysToHarvest: signal<number>(0),
+          progressToHarvest: signal<number>(0),
+          upkeepCost: signal<number>(0),
+          averageYield: signal<number>(0),
+          imageFile: signal<string>(''),
+        });
+      }
+      while (this.displayFields.length > this.fields.length) {
+        this.displayFields.pop();
+      }
+      for (let i = 0; i < this.fields.length; i++) {
+        this.displayFields[i].trackField.set(
+          i + this.fields[i].cropName + this.fields[i].daysToHarvest + this.fields[i].averageYield
+        );
+        this.displayFields[i].cropName.set(this.fields[i].cropName);
+        this.displayFields[i].plots.set(this.fields[i].plots);
+        this.displayFields[i].yield.set(this.fields[i].yield);
+        this.displayFields[i].daysToHarvest.set(this.fields[i].daysToHarvest);
+        this.displayFields[i].progressToHarvest.set(
+          (this.fields[i].originalDaysToHarvest - this.fields[i].daysToHarvest) / this.fields[i].originalDaysToHarvest
+        );
+        this.displayFields[i].upkeepCost.set(this.fields[i].upkeepCost);
+        this.displayFields[i].averageYield.set(this.fields[i].averageYield);
+        this.displayFields[i].imageFile.set('assets/images/items/' + this.fields[i].imageFile + '.png');
       }
     });
 
