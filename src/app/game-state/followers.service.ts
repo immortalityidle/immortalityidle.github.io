@@ -100,7 +100,7 @@ export class FollowersService {
   jobs: jobsType = {
     chef: {
       work: daysElapsed => {
-        this.homeService.chefsWork(Math.floor(this.jobs['chef'].totalPower / 100) * daysElapsed);
+        this.homeService.chefsWork(1 + Math.floor(this.jobs['chef'].totalPower / 100) * daysElapsed);
       },
       description: 'Chefs increase the output of your kitchens.',
       totalPower: 0,
@@ -121,13 +121,13 @@ export class FollowersService {
           if (this.jobs['hunter'].totalPower > 1000)
             this.inventoryService.addItem(
               this.itemRepoService.items['spiritMeat'],
-              Math.floor((this.jobs['hunter'].totalPower / 1000) * daysElapsed)
+              1 + Math.floor((this.jobs['hunter'].totalPower / 1000) * daysElapsed)
             );
           return;
         }
         this.inventoryService.addItem(
           this.itemRepoService.items['meat'],
-          Math.floor(this.jobs['hunter'].totalPower * daysElapsed)
+          1 + Math.floor(this.jobs['hunter'].totalPower * daysElapsed)
         );
       },
       description: 'Hunters collect meat and help you hunt for hides.',
@@ -140,13 +140,13 @@ export class FollowersService {
           if (this.jobs['fisher'].totalPower > 1000)
             this.inventoryService.addItem(
               this.itemRepoService.items['spiritCarp'],
-              Math.floor((this.jobs['fisher'].totalPower / 1000) * daysElapsed)
+              1 + Math.floor((this.jobs['fisher'].totalPower / 1000) * daysElapsed)
             );
           return;
         }
         this.inventoryService.addItem(
           this.itemRepoService.items['carp'],
-          Math.floor(this.jobs['fisher'].totalPower * daysElapsed)
+          1 + Math.floor(this.jobs['fisher'].totalPower * daysElapsed)
         );
       },
       description: 'Fishers fish up delicious fish to contribute to your meals.',
@@ -155,7 +155,7 @@ export class FollowersService {
     },
     farmer: {
       work: daysElapsed => {
-        this.farmService.workFields(Math.floor(this.jobs['farmer'].totalPower * daysElapsed));
+        this.farmService.workFields(1 + Math.floor(this.jobs['farmer'].totalPower * daysElapsed));
       },
       description: 'Farmers work your fields, helping your crops to grow.',
       totalPower: 0,
@@ -163,7 +163,7 @@ export class FollowersService {
     },
     miner: {
       work: daysElapsed => {
-        const power = Math.floor((this.jobs['miner'].totalPower * daysElapsed) / 100);
+        const power = 1 + Math.floor((this.jobs['miner'].totalPower * daysElapsed) / 100);
         this.inventoryService.addItem(this.inventoryService.getOre(), power);
       },
       description: 'Miners gather ore for your crafting.',
@@ -172,7 +172,7 @@ export class FollowersService {
     },
     coalDigger: {
       work: daysElapsed => {
-        const power = Math.floor((this.jobs['coalDigger'].totalPower * daysElapsed) / 100);
+        const power = 1 + Math.floor((this.jobs['coalDigger'].totalPower * daysElapsed) / 100);
         this.inventoryService.addItem(this.itemRepoService.items['coal'], power);
       },
       description: 'Coal Diggers gather coal for your crafting.',
@@ -181,7 +181,7 @@ export class FollowersService {
     },
     lumberjack: {
       work: daysElapsed => {
-        const power = Math.floor((this.jobs['lumberjack'].totalPower * daysElapsed) / 100);
+        const power = 1 + Math.floor((this.jobs['lumberjack'].totalPower * daysElapsed) / 100);
         this.inventoryService.addItem(this.inventoryService.getWood(), power);
       },
       description: 'Lumberjacks gather wood for your crafting.',
@@ -190,8 +190,8 @@ export class FollowersService {
     },
     herbalist: {
       work: daysElapsed => {
-        const power = Math.floor((this.jobs['herbalist'].totalPower * daysElapsed) / 100);
-        this.inventoryService.addItem(this.inventoryService.getHerb(), power);
+        const power = 1 + Math.floor((this.jobs['herbalist'].totalPower * daysElapsed) / 100);
+        this.inventoryService.generateHerb(false, power);
       },
       description: 'Herbalists gather herbs for your crafting.',
       totalPower: 0,
@@ -206,12 +206,12 @@ export class FollowersService {
         const rightHand = this.characterService.equipment.rightHand;
         const leftHand = this.characterService.equipment.leftHand;
         if (rightHand && rightHand.weaponStats) {
-          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
-          rightHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
+          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
+          rightHand.value += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
         }
         if (leftHand && leftHand.weaponStats) {
-          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
-          leftHand.value += Math.ceil(Math.pow(Math.floor(totalPower / 10), 2)) * daysElapsed;
+          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
+          leftHand.value += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
         }
       },
       description:
@@ -230,10 +230,10 @@ export class FollowersService {
             ? {
                 ...armor.armorStats,
                 defense:
-                  armor.armorStats?.defense + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
+                  armor.armorStats?.defense + Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
               }
             : undefined,
-          value: armor.value + Math.ceil(Math.pow(Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
+          value: armor.value + Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
         });
         const equipment = this.characterService.equipment; // Too many long names, reduced and referenced
         if (equipment.head && equipment.head.armorStats) {
@@ -325,9 +325,9 @@ export class FollowersService {
         if (this.hellService?.inHell()) {
           gemmerPower /= 10;
         }
-        gemmerPower = Math.floor(gemmerPower / 50);
-        if (gemmerPower > 4) {
-          gemmerPower = 4;
+        gemmerPower = 1 + Math.floor(gemmerPower / 50);
+        if (gemmerPower > 8) {
+          gemmerPower = 8;
         }
 
         // Don't run each tick and just do loop manually here since it is better for cache.
@@ -381,7 +381,7 @@ export class FollowersService {
     moneyBurner: {
       work: daysElapsed => {
         let burnerPower = this.jobs['moneyBurner'].totalPower;
-        burnerPower = Math.floor(burnerPower / 50);
+        burnerPower = 1 + Math.floor(burnerPower / 50);
         if (burnerPower > 10) {
           burnerPower = 10;
         } else if (burnerPower < 1) {

@@ -25,6 +25,7 @@ export interface Enemy {
   index?: number;
   element?: string;
   statusEffects?: StatusEffect[];
+  immunities?: string[];
 }
 
 export interface DisplayEnemy {
@@ -1194,41 +1195,52 @@ export class BattleService {
           }
         }
       } else if (effect === EFFECT_POISON) {
-        const statusEffect: StatusEffect = {
-          name: EFFECT_POISON,
-          description: "Poison is sapping away at this creature's health.",
-          ticksLeft: 10,
-          power: 1,
-        };
-        if (this.currentEnemy.statusEffects) {
-          const poisonEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_POISON);
-          if (poisonEffect) {
-            poisonEffect.ticksLeft += statusEffect.ticksLeft;
-          } else {
-            this.currentEnemy.statusEffects.push(statusEffect);
-          }
+        if (this.currentEnemy.immunities && this.currentEnemy.immunities.includes(EFFECT_POISON)) {
+          this.logService.log(
+            LogTopic.COMBAT,
+            'Your ' + EFFECT_POISON + " effect is blocked by your enemy's immunity."
+          );
         } else {
-          this.currentEnemy.statusEffects = [statusEffect];
-        }
-      } else if (effect === EFFECT_DOOM) {
-        const statusEffect: StatusEffect = {
-          name: EFFECT_DOOM,
-          description: 'Doom is coming for this creature.',
-          ticksLeft: 1000,
-          power: 1,
-        };
-        if (this.currentEnemy.statusEffects) {
-          const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_DOOM);
-          if (doomEffect) {
-            doomEffect.power += doomEffect.power * 0.2;
-            if (doomEffect.power > 2) {
-              damage *= doomEffect.power;
+          const statusEffect: StatusEffect = {
+            name: EFFECT_POISON,
+            description: "Poison is sapping away at this creature's health.",
+            ticksLeft: 10,
+            power: 1,
+          };
+          if (this.currentEnemy.statusEffects) {
+            const poisonEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_POISON);
+            if (poisonEffect) {
+              poisonEffect.ticksLeft += statusEffect.ticksLeft;
+            } else {
+              this.currentEnemy.statusEffects.push(statusEffect);
             }
           } else {
-            this.currentEnemy.statusEffects.push(statusEffect);
+            this.currentEnemy.statusEffects = [statusEffect];
           }
+        }
+      } else if (effect === EFFECT_DOOM) {
+        if (this.currentEnemy.immunities && this.currentEnemy.immunities.includes(EFFECT_DOOM)) {
+          this.logService.log(LogTopic.COMBAT, 'Your ' + EFFECT_DOOM + " effect is blocked by your enemy's immunity.");
         } else {
-          this.currentEnemy.statusEffects = [statusEffect];
+          const statusEffect: StatusEffect = {
+            name: EFFECT_DOOM,
+            description: 'Doom is coming for this creature.',
+            ticksLeft: 1000,
+            power: 1,
+          };
+          if (this.currentEnemy.statusEffects) {
+            const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_DOOM);
+            if (doomEffect) {
+              doomEffect.power += doomEffect.power * 0.2;
+              if (doomEffect.power > 2) {
+                damage *= doomEffect.power;
+              }
+            } else {
+              this.currentEnemy.statusEffects.push(statusEffect);
+            }
+          } else {
+            this.currentEnemy.statusEffects = [statusEffect];
+          }
         }
       } else if (effect === EFFECT_EXPLOSIVE) {
         damage *= 1000;
@@ -1639,20 +1651,35 @@ export class BattleService {
     this.addEnemy({
       name: 'Death itself',
       baseName: 'death',
-      health: 1e24,
-      maxHealth: 1e24,
-      defense: 3e8,
+      health: 1e30,
+      maxHealth: 1e30,
+      defense: 3e12,
       loot: [this.itemRepoService.items['immortality']],
       unique: true,
       techniques: [
         {
-          name: 'Attack',
+          name: 'Scythe Strike',
           ticks: 0,
           ticksRequired: 10,
-          baseDamage: 3e8,
+          baseDamage: 3e10,
+          unlocked: true,
+        },
+        {
+          name: 'Death Glare',
+          ticks: 0,
+          ticksRequired: 25,
+          baseDamage: 1e12,
+          unlocked: true,
+        },
+        {
+          name: 'Absolute Destruction',
+          ticks: 0,
+          ticksRequired: 3000,
+          baseDamage: 5e50,
           unlocked: true,
         },
       ],
+      immunities: [EFFECT_DOOM, EFFECT_POISON],
     });
   }
 

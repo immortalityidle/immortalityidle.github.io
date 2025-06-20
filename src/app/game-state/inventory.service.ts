@@ -915,23 +915,7 @@ export class InventoryService {
     });
   }
 
-  generateHerb(skipSnobbery: boolean = false): void {
-    const herb = this.getHerb();
-    this.addItem(herb);
-    if (this.autoSellOldHerbsEnabled && !skipSnobbery) {
-      // sell any herb of the same type cheaper than what we just picked
-      for (let i = 0; i < this.itemStacks.length; i++) {
-        const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === 'herb' && itemStack.item.subtype === herb.name) {
-          if (itemStack.item.value < herb.value && itemStack.item.subtype === herb.name) {
-            this.sell(itemStack, itemStack.quantity);
-          }
-        }
-      }
-    }
-  }
-
-  getHerb(): Item {
+  generateHerb(skipSnobbery: boolean = false, quantity = 1): void {
     let targetLocation = LocationType.SmallTown;
     if (this.locationService?.troubleTarget) {
       targetLocation = this.locationService.troubleTarget;
@@ -947,18 +931,30 @@ export class InventoryService {
     }
     const herb = filteredHerbs[this.herbCounter % filteredHerbs.length];
     this.herbCounter++;
-
-    return {
-      id: 'herb_' + herb.name + grade,
-      imageFile: 'herb_' + herb.name,
-      imageColor: this.itemRepoService.colorByRank[grade],
-      name: herbQuality[grade] + ' ' + herb.name,
-      type: 'herb',
-      subtype: herb.name,
-      attribute: herb.attribute,
-      value: grade + 1,
-      description: 'Useful herbs. Can be used in creating pills or potions.',
-    };
+    this.addItem(
+      {
+        id: 'herb_' + herb.name + grade,
+        imageFile: 'herb_' + herb.name,
+        imageColor: this.itemRepoService.colorByRank[grade],
+        name: herbQuality[grade] + ' ' + herb.name,
+        type: 'herb',
+        subtype: herb.name,
+        attribute: herb.attribute,
+        value: grade + 1,
+        description: 'Useful herbs. Can be used in creating pills or potions.',
+      },
+      quantity
+    );
+    if (this.autoSellOldHerbsEnabled && !skipSnobbery) {
+      // sell any herb of the same type that are cheaper than what we just picked
+      const oldHerbStack = this.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === 'herb' && itemStack.item.subtype === herb.name && itemStack.item.value < grade + 1
+      );
+      if (oldHerbStack) {
+        this.sell(oldHerbStack, oldHerbStack.quantity);
+      }
+    }
   }
 
   generateSpiritGem(grade: number, flavor = 'spirit'): Item {
