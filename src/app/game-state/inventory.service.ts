@@ -2191,7 +2191,7 @@ export class InventoryService {
     let destinationItem: Equipment | null = null;
     let sourceItem: Equipment | null = null;
     let lastdestinationIndex = -1;
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       let item = this.itemStacks[i]?.item;
       if (item) {
         if (instanceOfEquipment(item)) {

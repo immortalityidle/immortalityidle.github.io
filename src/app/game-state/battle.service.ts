@@ -907,10 +907,15 @@ export class BattleService {
           }
         }
       }
+      let attackTriggered = false;
       for (const technique of enemy.techniques) {
         if (technique.ticks === technique.ticksRequired) {
-          this.enemyAttack(technique, enemy);
-          technique.ticks = 0;
+          if (!attackTriggered) {
+            // a mercy to the player: no more than one attack will fire per enemy per tick
+            this.enemyAttack(technique, enemy);
+            technique.ticks = 0;
+            attackTriggered = true;
+          }
         } else {
           if (slowingEffect) {
             slowingEffect.ticksLeft -= 2;
