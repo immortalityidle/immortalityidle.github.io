@@ -1319,9 +1319,18 @@ export class HomeService {
         this.inventoryService.itemStacks[itemIndex].item?.name
       ) {
         // same item type, dump the quantity into the workstation
-        this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity +=
-          this.inventoryService.itemStacks[itemIndex].quantity;
-        this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+        const maxAdditionalQuantity =
+          this.inventoryService.maxStackSize -
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
+        if (this.inventoryService.itemStacks[itemIndex].quantity < maxAdditionalQuantity) {
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity +=
+            this.inventoryService.itemStacks[itemIndex].quantity;
+          this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+        } else {
+          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity +=
+            maxAdditionalQuantity;
+          this.inventoryService.itemStacks[itemIndex].quantity -= maxAdditionalQuantity;
+        }
         return;
       }
       if (this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity === 0) {
@@ -1470,10 +1479,10 @@ export class HomeService {
     materialStack.quantity -= 10;
     gemStack.quantity -= 10;
 
-    if (this.forgeChainsCounter > 10) {
+    if (this.forgeChainsCounter >= 10) {
       this.logService.log(
         LogTopic.CRAFTING,
-        'Your anvil gives off an ear-splitting ringing and echoes endlessly into the depths. The new chain glows with power!'
+        'Your anvil gives off an ear-splitting ring and echoes endlessly into the depths. The new chain glows with power!'
       );
       this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
       this.forgeChainsCounter = 0;

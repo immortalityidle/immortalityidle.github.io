@@ -163,8 +163,10 @@ export class FollowersService {
     },
     miner: {
       work: daysElapsed => {
-        const power = 1 + Math.floor((this.jobs['miner'].totalPower * daysElapsed) / 100);
-        this.inventoryService.addItem(this.inventoryService.getOre(), power);
+        const workers = this.followers.filter(follower => follower.job === 'miner');
+        for (const worker of workers) {
+          this.inventoryService.addItem(this.inventoryService.getOre(Math.ceil(worker.power / 6)), daysElapsed / 2);
+        }
       },
       description: 'Miners gather ore for your crafting.',
       totalPower: 0,
@@ -181,8 +183,10 @@ export class FollowersService {
     },
     lumberjack: {
       work: daysElapsed => {
-        const power = 1 + Math.floor((this.jobs['lumberjack'].totalPower * daysElapsed) / 100);
-        this.inventoryService.addItem(this.inventoryService.getWood(), power);
+        const workers = this.followers.filter(follower => follower.job === 'lumberjack');
+        for (const worker of workers) {
+          this.inventoryService.addItem(this.inventoryService.getWood(Math.ceil(worker.power / 6)), daysElapsed / 2);
+        }
       },
       description: 'Lumberjacks gather wood for your crafting.',
       totalPower: 0,
@@ -190,8 +194,10 @@ export class FollowersService {
     },
     herbalist: {
       work: daysElapsed => {
-        const power = 1 + Math.floor((this.jobs['herbalist'].totalPower * daysElapsed) / 100);
-        this.inventoryService.generateHerb(false, power);
+        const workers = this.followers.filter(follower => follower.job === 'herbalist');
+        for (const worker of workers) {
+          this.inventoryService.generateHerb(Math.ceil(worker.power / 6), false, daysElapsed / 2);
+        }
       },
       description: 'Herbalists gather herbs for your crafting.',
       totalPower: 0,
@@ -348,9 +354,13 @@ export class FollowersService {
     },
     monsterHunter: {
       work: daysElapsed => {
-        const quantity = 1 + Math.floor((this.jobs['monsterHunter'].totalPower * daysElapsed) / 10);
-        const grade = 1 + Math.floor(Math.log(quantity));
-        this.inventoryService.addItem(this.inventoryService.generateSpiritGem(grade), quantity);
+        const workers = this.followers.filter(follower => follower.job === 'monsterHunter');
+        for (const worker of workers) {
+          this.inventoryService.addItem(
+            this.inventoryService.generateSpiritGem(Math.ceil(worker.power / 8)),
+            daysElapsed / 2
+          );
+        }
       },
       description: 'Monster Hunters take on low level monsters for you and offer you some of the gems they gather.',
       totalPower: 0,

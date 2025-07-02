@@ -915,7 +915,7 @@ export class InventoryService {
     });
   }
 
-  generateHerb(skipSnobbery: boolean = false, quantity = 1): void {
+  generateHerb(grade: number = -1, skipSnobbery: boolean = false, quantity = 1): void {
     let targetLocation = LocationType.SmallTown;
     if (this.locationService?.troubleTarget) {
       targetLocation = this.locationService.troubleTarget;
@@ -925,7 +925,9 @@ export class InventoryService {
       filteredHerbs = Herbs.filter(herb => herb.locations.includes(LocationType.SmallTown));
     }
     const woodLore = this.characterService.attributes.woodLore.value;
-    let grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * herbQuality.length); // 1e9 woodlore is maximum grade, adjust if necessary
+    if (grade === -1) {
+      grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * herbQuality.length); // 1e9 woodlore is maximum grade, adjust if necessary
+    }
     if (grade >= herbQuality.length) {
       grade = herbQuality.length - 1;
     }
@@ -1105,9 +1107,11 @@ export class InventoryService {
     return lastMetal;
   }
 
-  getWood(skipSnobbery: boolean = false): Item {
+  getWood(woodvalue: number = -1, skipSnobbery: boolean = false): Item {
     const woodLore = this.characterService.attributes.woodLore.value;
-    const woodvalue = Math.floor(Math.pow(woodLore / 1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
+    if (woodvalue === -1) {
+      woodvalue = Math.floor(Math.pow(woodLore / 1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
+    }
     let lastWood = this.itemRepoService.items['balsaLog'];
 
     for (const key in this.itemRepoService.items) {
