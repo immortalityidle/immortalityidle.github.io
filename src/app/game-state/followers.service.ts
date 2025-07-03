@@ -203,6 +203,17 @@ export class FollowersService {
       totalPower: 0,
       runEachTick: true,
     },
+    skinner: {
+      work: daysElapsed => {
+        const workers = this.followers.filter(follower => follower.job === 'skinner');
+        for (const worker of workers) {
+          this.inventoryService.addItem(this.inventoryService.getHide(Math.ceil(worker.power / 6)), daysElapsed / 2);
+        }
+      },
+      description: 'Skinners gether hides for your crafting.',
+      totalPower: 0,
+      runEachTick: true,
+    },
     weaponsmith: {
       work: daysElapsed => {
         let totalPower = this.jobs['weaponsmith'].totalPower;
