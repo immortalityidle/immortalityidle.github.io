@@ -11,6 +11,7 @@ import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { CamelToTitlePipe } from '../pipes';
+import { ActivityType } from './activity';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -46,6 +47,7 @@ export interface FollowersProperties {
   petsBoosted: boolean;
   onlyWantedFollowers: boolean;
   pets: Follower[];
+  leftoverMetallurgy: number;
 }
 
 export interface FollowerReserve {
@@ -96,6 +98,7 @@ export class FollowersService {
   autoReplaceUnlocked = false;
   petsBoosted = false;
   onlyWantedFollowers = false;
+  leftoverMetallurgy = 0;
 
   jobs: jobsType = {
     chef: {
@@ -172,6 +175,16 @@ export class FollowersService {
       totalPower: 0,
       runEachTick: true,
     },
+    metallurgist: {
+      work: daysElapsed => {
+        const totalPower = this.jobs['metallurgist'].totalPower * daysElapsed + this.leftoverMetallurgy;
+        this.homeService.triggerWorkstations(ActivityType.Smelting, Math.floor(totalPower / 100));
+        this.leftoverMetallurgy = totalPower % 100;
+      },
+      description: 'Metallurgists operate your smelting workstations, turning ores into refined metals.',
+      totalPower: 0,
+      runEachTick: true,
+    },
     coalDigger: {
       work: daysElapsed => {
         const power = 1 + Math.floor((this.jobs['coalDigger'].totalPower * daysElapsed) / 100);
@@ -210,7 +223,7 @@ export class FollowersService {
           this.inventoryService.addItem(this.inventoryService.getHide(Math.ceil(worker.power / 6)), daysElapsed / 2);
         }
       },
-      description: 'Skinners gether hides for your crafting.',
+      description: 'Skinners gather hides for your crafting.',
       totalPower: 0,
       runEachTick: true,
     },
@@ -701,6 +714,7 @@ export class FollowersService {
       autoReplaceUnlocked: this.autoReplaceUnlocked,
       petsBoosted: this.petsBoosted,
       onlyWantedFollowers: this.onlyWantedFollowers,
+      leftoverMetallurgy: this.leftoverMetallurgy,
     };
   }
 
@@ -725,6 +739,7 @@ export class FollowersService {
     this.autoReplaceUnlocked = properties.autoReplaceUnlocked;
     this.petsBoosted = properties.petsBoosted;
     this.onlyWantedFollowers = properties.onlyWantedFollowers;
+    this.leftoverMetallurgy = properties.leftoverMetallurgy;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }

@@ -1300,10 +1300,13 @@ export class HomeService {
     this.workstations.push(newWorkstation);
   }
 
-  triggerWorkstations(activityType: ActivityType) {
-    for (const workstation of this.workstations) {
-      if (workstation.triggerActivities.includes(activityType)) {
-        workstation.consequence(workstation, activityType);
+  triggerWorkstations(activityType: ActivityType, numberOfTriggers: number = 1) {
+    for (let i = 0; i < numberOfTriggers; i++) {
+      // TODO: optimize this
+      for (const workstation of this.workstations) {
+        if (workstation.triggerActivities.includes(activityType)) {
+          workstation.consequence(workstation, activityType);
+        }
       }
     }
   }
@@ -1464,7 +1467,7 @@ export class HomeService {
       return;
     }
     const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
-    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 250) {
+    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 200) {
       this.logService.injury(
         LogTopic.EVENT,
         "You think you have the right metal, but you'll need something to imbue it with additional strength."
@@ -1518,7 +1521,7 @@ export class HomeService {
     }
 
     const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
-    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 300) {
+    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 250) {
       this.logService.injury(
         LogTopic.EVENT,
         "You think you have the right materials to make mortar, but you'll need something to imbue the mixture with additional strength."

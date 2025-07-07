@@ -61,6 +61,7 @@ export type AttributeType =
 export type AttributeObject = {
   description: string;
   value: number;
+  displayKey: WritableSignal<string>;
   displayValue: WritableSignal<number>;
   lifeStartValue: number;
   aptitude: number;
@@ -218,6 +219,7 @@ export class CharacterService {
     strength: {
       description: 'An immortal must have raw physical power.',
       value: 1,
+      displayKey: signal<string>('strength'),
       displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
@@ -228,6 +230,7 @@ export class CharacterService {
     toughness: {
       description: 'An immortal must develop resilience to endure hardship.',
       value: 1,
+      displayKey: signal<string>('toughness'),
       displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
@@ -238,6 +241,7 @@ export class CharacterService {
     speed: {
       description: 'An immortal must be quick of foot and hand.',
       value: 1,
+      displayKey: signal<string>('speed'),
       displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
@@ -248,6 +252,7 @@ export class CharacterService {
     intelligence: {
       description: 'An immortal must understand the workings of the universe.',
       value: 1,
+      displayKey: signal<string>('intelligence'),
       displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
@@ -258,6 +263,7 @@ export class CharacterService {
     charisma: {
       description: 'An immortal must influence the hearts and minds of others.',
       value: 1,
+      displayKey: signal<string>('charisma'),
       displayValue: signal<number>(1),
       lifeStartValue: 1,
       aptitude: 1,
@@ -268,6 +274,7 @@ export class CharacterService {
     spirituality: {
       description: 'An immortal must find deep connections to the divine.',
       value: 0,
+      displayKey: signal<string>('spirituality'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -278,6 +285,7 @@ export class CharacterService {
     earthLore: {
       description: 'Understanding the earth and how to draw power and materials from it.',
       value: 0,
+      displayKey: signal<string>('earthLore'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -288,6 +296,7 @@ export class CharacterService {
     metalLore: {
       description: 'Understanding metals and how to forge and use them.',
       value: 0,
+      displayKey: signal<string>('metalLore'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -298,6 +307,7 @@ export class CharacterService {
     woodLore: {
       description: 'Understanding plants and how to grow and care for them.',
       value: 0,
+      displayKey: signal<string>('woodLore'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -308,6 +318,7 @@ export class CharacterService {
     waterLore: {
       description: 'Understanding potions and pills and how to make and use them.',
       value: 0,
+      displayKey: signal<string>('waterLore'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -318,6 +329,7 @@ export class CharacterService {
     fireLore: {
       description: 'Burn! Burn! BURN!!!',
       value: 0,
+      displayKey: signal<string>('fireLore'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -328,6 +340,7 @@ export class CharacterService {
     combatMastery: {
       description: 'Mastery of combat skills.',
       value: 0,
+      displayKey: signal<string>('combatMastery'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -338,6 +351,7 @@ export class CharacterService {
     magicMastery: {
       description: 'Mastery of magical skills.',
       value: 0,
+      displayKey: signal<string>('magicMastery'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -348,6 +362,7 @@ export class CharacterService {
     animalHandling: {
       description: 'Skill in working with animals and monsters.',
       value: 0,
+      displayKey: signal<string>('animalHandling'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -358,6 +373,7 @@ export class CharacterService {
     performance: {
       description: 'Skill in manipulating others with your voice.',
       value: 0,
+      displayKey: signal<string>('performance'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -368,6 +384,7 @@ export class CharacterService {
     smithing: {
       description: 'Skill with the forge and anvil.',
       value: 0,
+      displayKey: signal<string>('smithing'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -378,6 +395,7 @@ export class CharacterService {
     alchemy: {
       description: 'Mastery of potions and pills.',
       value: 0,
+      displayKey: signal<string>('alchemy'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -388,6 +406,7 @@ export class CharacterService {
     woodwork: {
       description: 'Skill with saws and chisels.',
       value: 0,
+      displayKey: signal<string>('woodwork'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -398,6 +417,7 @@ export class CharacterService {
     leatherwork: {
       description: 'Skill shaping hides into useful items.',
       value: 0,
+      displayKey: signal<string>('leatherwork'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -408,6 +428,7 @@ export class CharacterService {
     formationMastery: {
       description: 'Experience creating formation flags.',
       value: 0,
+      displayKey: signal<string>('formationMastery'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -418,6 +439,7 @@ export class CharacterService {
     cooking: {
       description: 'Mastery of the wok and other kitchen essentials.',
       value: 0,
+      displayKey: signal<string>('cooking'),
       displayValue: signal<number>(0),
       lifeStartValue: 0,
       aptitude: 1,
@@ -705,7 +727,12 @@ export class CharacterService {
 
   private setLifespanTooltip() {
     if (
-      this.foodLifespan + this.alchemyLifespan + this.statLifespan + this.spiritualityLifespan + this.magicLifespan <=
+      this.foodLifespan +
+        this.alchemyLifespan +
+        this.statLifespan +
+        this.spiritualityLifespan +
+        this.magicLifespan +
+        this.hygieneLifespan <=
       0
     ) {
       this.lifespanTooltip.set('You have done nothing to extend your lifespan.');
@@ -963,6 +990,7 @@ export class CharacterService {
     this.alchemyLifespan = 0;
     this.spiritualityLifespan = 0;
     this.magicLifespan = 0;
+    this.hygieneLifespan = 0;
     let totalAptitude = 0;
     totalAptitude +=
       this.attributes.strength.aptitude +
@@ -1059,7 +1087,8 @@ export class CharacterService {
       this.alchemyLifespan +
       this.statLifespan +
       this.spiritualityLifespan +
-      this.magicLifespan;
+      this.magicLifespan +
+      this.hygieneLifespan;
     let head = 1;
     let body = 1;
     let legs = 1;

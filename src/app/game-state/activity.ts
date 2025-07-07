@@ -142,5 +142,6 @@ export enum LocationType {
   Beach = 'Beach',
   DeepSea = 'DeepSea',
   MountainTops = 'MountainTops',
+  AshenCrater = 'AshenCrater',
   Hell = 'Hell',
 }

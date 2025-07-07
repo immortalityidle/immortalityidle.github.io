@@ -21,9 +21,8 @@ export class CamelToTitlePipe implements PipeTransform {
    * @returns {string}
    */
   transform(value: string): string {
-    value = value.split(/(?=[A-Z])/).join(' ');
-    value = value[0].toUpperCase() + value.slice(1);
-    return value;
+    const result = value.replace(/([A-Z])/g, ' $1');
+    return result.charAt(0).toUpperCase() + result.slice(1);
   }
 }
 

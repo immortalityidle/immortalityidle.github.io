@@ -112,6 +112,14 @@ export class LocationService {
         return this.characterService.attributes.speed.value > 1e10;
       },
     },
+    [LocationType.AshenCrater]: {
+      name: 'The Ashen Crater',
+      description:
+        'A huge empty hole in the ground, covered in gray ash and smoke. The ground here is scorching, with glowing red cracks revealing fire just under the surface.',
+      unlock: () => {
+        return this.characterService.attributes.speed.value > 1e12;
+      },
+    },
     [LocationType.Hell]: {
       name: 'Hell',
       description: 'The depths of Hell.',

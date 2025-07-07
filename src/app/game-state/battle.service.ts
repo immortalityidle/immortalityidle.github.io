@@ -9,8 +9,10 @@ import { HomeService, HomeType } from './home.service';
 import { LocationType } from './activity';
 import { LocationService } from './location.service';
 import { AttributeType, StatusType } from './character.service';
-import { BigNumberPipe } from '../pipes';
+import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 import { TitleCasePipe } from '@angular/common';
+
+import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 
 export interface Enemy {
   name: string;
@@ -167,6 +169,9 @@ export class BattleService {
   private bigNumberPipe: BigNumberPipe;
   private hellService?: HellService;
   private locationService?: LocationService;
+  private impossibleTaskService?: ImpossibleTaskService;
+  private camelToTitle = new CamelToTitlePipe();
+
   enemies: Enemy[];
   displayEnemies: DisplayEnemy[] = [];
   currentEnemy: Enemy | null;
@@ -263,6 +268,7 @@ export class BattleService {
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
+    setTimeout(() => (this.impossibleTaskService = this.injector.get(ImpossibleTaskService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.enemies = [];
     this.currentEnemy = null;
@@ -1287,7 +1293,7 @@ export class BattleService {
       } else if (effect === EFFECT_SLOW) {
         const statusEffect: StatusEffect = {
           name: EFFECT_SLOW,
-          description: 'Doom is coming for this creature.',
+          description: 'This creature is slowed.',
           ticksLeft: 1000,
           power: 1,
         };
@@ -1462,6 +1468,13 @@ export class BattleService {
     this.handleEnemyTechniques();
     this.handleEnemyTechniques();
     this.clearEnemies();
+
+    if (this.impossibleTaskService && this.impossibleTaskService.activeTaskIndex === ImpossibleTaskType.Swim) {
+      this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress -= 100;
+      if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress < 0) {
+        this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress = 0;
+      }
+    }
   }
 
   // generate a monster based on current trouble location and lifetime kills
@@ -1511,8 +1524,7 @@ export class BattleService {
       qualityIndex = this.monsterQualities.length - 1;
     }
     const modifiedBasePower = monsterType.basePower * modifier;
-
-    const monsterName = this.monsterQualities[qualityIndex] + ' ' + monsterType.name;
+    const monsterName = this.monsterQualities[qualityIndex] + ' ' + this.camelToTitle.transform(monsterType.name);
     const health = modifiedBasePower * modifiedBasePower * 10;
     const attack = modifiedBasePower / 5;
     const defense = modifiedBasePower / 10;
@@ -2695,6 +2707,103 @@ export class BattleService {
           ticks: 0,
           ticksRequired: 100,
           baseDamage: 10,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'lavaLeech',
+      description: 'A disgusting creature that sucks the heat and life out of anything it grabs.',
+      element: 'fire',
+      location: LocationType.AshenCrater,
+      basePower: 4000000000,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      techniques: [
+        {
+          name: 'Heatstealer',
+          ticks: 0,
+          ticksRequired: 5,
+          baseDamage: 0.5,
+          unlocked: true,
+        },
+        {
+          name: 'Lava Spew',
+          ticks: 0,
+          ticksRequired: 40,
+          baseDamage: 4,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'emberHound',
+      description: 'A huge black dog made of smoke and ash, with red eyes and flames leaking from its mouth.',
+      element: 'fire',
+      location: LocationType.AshenCrater,
+      basePower: 10000000000,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      techniques: [
+        {
+          name: 'Bite',
+          ticks: 0,
+          ticksRequired: 8,
+          baseDamage: 0.8,
+          unlocked: true,
+        },
+        {
+          name: 'Flame Breath',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: 2,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'magmaGolem',
+      description:
+        'A giant creature made of molten rock and lava. Some say it was created to guard the wealth of a legendary cultivator now long forgotten.',
+      element: 'fire',
+      location: LocationType.AshenCrater,
+      basePower: 20000000000,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ORE, LOOT_TYPE_MONEY],
+      techniques: [
+        {
+          name: 'Crushing Blow',
+          ticks: 0,
+          ticksRequired: 25,
+          baseDamage: 2.5,
+          unlocked: true,
+        },
+        {
+          name: 'Magma Stomp',
+          ticks: 0,
+          ticksRequired: 50,
+          baseDamage: 8,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'ashSerpent',
+      description: 'A huge snake-like monster that hides under the ash. Its body is covered in blazing scales.',
+      element: 'fire',
+      location: LocationType.AshenCrater,
+      basePower: 50000000000,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      techniques: [
+        {
+          name: 'Blazing Strike',
+          ticks: 0,
+          ticksRequired: 4,
+          baseDamage: 0.4,
+          unlocked: true,
+        },
+        {
+          name: 'Crushing Constriction',
+          ticks: 0,
+          ticksRequired: 100,
+          baseDamage: 20,
           unlocked: true,
         },
       ],

@@ -128,7 +128,7 @@
       @for (displayItemStack of inventoryService.displayItemStacks; track displayItemStack.id(); let idx = $index) {
         <div>
           <div id="itemIndex{{$index}}" >
-            <div class="itemSlot" [tabindex]="displayItemStack.name() === '' ? '-1' : '0'" (mousedown)="slotClicked(idx, $event)"
+            <div class="itemSlot" [tabindex]="displayItemStack.name() === '' ? '-1' : '0'" (click)="slotClicked(idx, $event)"
               cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
               [cdkDragData]="idx" [cdkDragDisabled]="displayItemStack.name() === ''"
               (dblclick)="slotDoubleClicked(idx, $event)" (contextmenu)="slotRightClicked(idx, $event)"

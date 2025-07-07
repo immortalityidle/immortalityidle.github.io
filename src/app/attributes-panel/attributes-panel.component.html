@@ -17,13 +17,13 @@
           {{group | camelToTitle}}
         </span>
       </div>
-      @for (attribute of attributesByGroup[group] | keyvalue: originalOrder; track attribute.key + attribute.value.displayValue()) {
+      @for (attribute of attributesByGroup[group] | keyvalue: originalOrder; track attribute.value.displayKey() + attribute.value.displayValue()) {
         @if ((attribute.value.displayValue() !== 0 || characterService.highestAttributes[attribute.key])) {
           <div class='attributeLine'>
             <div class='attributeColumn' tooltip="{{attribute.value.description}}">
               <mat-icon>{{attribute.value.icon}}</mat-icon>
               <span>
-                {{attribute.key | camelToTitle}}
+                {{attribute.value.displayKey() | camelToTitle}}
               </span>
             </div>
             <div class='attributeColumn' tooltip="Your aptitude of {{attribute.value.displayAptitude() | bigNumber}} multiplies your {{attribute.key | camelToTitle}} gains by {{attribute.value.aptitudeMult | bigNumber}}.">

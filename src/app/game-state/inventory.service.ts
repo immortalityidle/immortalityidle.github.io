@@ -1411,8 +1411,8 @@ export class InventoryService {
    * @returns first itemStack position, -1 if not applicable
    */
   addItem(item: Item, quantity = 1, inventoryIndex = 0, ignoreAutoReload: boolean = false): number {
-    if (quantity < 1) {
-      quantity = 1; //handle potential 0 and negatives just in case
+    if (quantity === 0) {
+      return -1;
     }
     this.totalItemsReceived += quantity;
     if (item.type === LOOT_TYPE_GEM) {
