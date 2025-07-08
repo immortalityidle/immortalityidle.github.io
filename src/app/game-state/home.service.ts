@@ -1602,7 +1602,7 @@ export class HomeService {
     }
 
     const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
-    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 300) {
+    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 250) {
       this.logService.injury(
         LogTopic.EVENT,
         "You think you have the right ore to make bricks, but you'll need something to imbue the mixture with additional strength."

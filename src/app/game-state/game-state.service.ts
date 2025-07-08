@@ -455,6 +455,13 @@ export class GameStateService {
     if (!layoutData || !layoutData.layout) {
       return;
     }
+    // clear out layout entries for panels that don't exist or are not unlocked
+    for (let i = layoutData.layout.length - 1; i >= 0; i--) {
+      const panel = this.panels.find(({ id }) => id === layoutData.layout[i].id);
+      if (!panel || !panel.unlocked) {
+        layoutData.layout.splice(i, 1);
+      }
+    }
     this.layout.set(layoutData.layout);
   }
 
@@ -628,6 +635,7 @@ export class GameStateService {
       hellFood: props?.hellFood || false,
       fallowPlots: props?.fallowPlots || 0,
       unlockedCrops: props?.unlockedCrops || [],
+      consecutiveHarvests: props?.consecutiveHarvests || 0,
     };
   }
 
@@ -897,7 +905,7 @@ export class GameStateService {
           value: props?.attributes.spirituality.value || 0,
           lifeStartValue: props?.attributes.spirituality.lifeStartValue || 0,
           aptitude: props?.attributes.spirituality.aptitude || 1,
-          displayKey: signal<string>(''),
+          displayKey: signal<string>('spirituality'),
           displayValue: signal<number>(0),
           displayAptitude: signal<number>(0),
           aptitudeMult: props?.attributes.spirituality.aptitudeMult || 1,

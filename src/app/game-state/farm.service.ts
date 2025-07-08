@@ -37,6 +37,7 @@ export interface FarmProperties {
   hellFood: boolean;
   fallowPlots: number;
   unlockedCrops: string[];
+  consecutiveHarvests: number;
 }
 
 // TODO: add growing herbs
@@ -147,6 +148,7 @@ export class FarmService {
       hellFood: this.hellFood,
       fallowPlots: this.fallowPlots,
       unlockedCrops: this.unlockedCrops,
+      consecutiveHarvests: this.consecutiveHarvests,
     };
   }
 
@@ -157,6 +159,7 @@ export class FarmService {
     this.hellFood = properties.hellFood || false;
     this.fallowPlots = properties.fallowPlots;
     this.unlockedCrops = properties.unlockedCrops;
+    this.consecutiveHarvests = properties.consecutiveHarvests;
     this.farmedPlots = 0;
     for (const field of this.fields) {
       this.farmedPlots += field.plots;

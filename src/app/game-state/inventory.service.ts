@@ -1411,6 +1411,7 @@ export class InventoryService {
    * @returns first itemStack position, -1 if not applicable
    */
   addItem(item: Item, quantity = 1, inventoryIndex = 0, ignoreAutoReload: boolean = false): number {
+    quantity = Math.floor(quantity); // whole numbers of items only
     if (quantity === 0) {
       return -1;
     }
