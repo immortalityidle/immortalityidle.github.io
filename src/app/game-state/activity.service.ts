@@ -6,6 +6,8 @@ import {
   ActivityType,
   LocationType,
   LoopChangeTrigger,
+  Realm,
+  RealmNames,
   SavedActivityLoop,
   YinYangEffect,
 } from '../game-state/activity';
@@ -18,7 +20,7 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { Follower, FollowersService } from './followers.service';
-import { HellLevel, HellService } from './hell.service';
+import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService } from './location.service';
 
@@ -52,6 +54,7 @@ export interface ActivityProperties {
   coreCultivationCounter: number;
   researchWindCounter: number;
   beforeDeathPauseUsed: boolean;
+  currentRealm: Realm;
 }
 
 @Injectable({
@@ -113,6 +116,8 @@ export class ActivityService {
   coreCultivationCounter = 0;
   locationService?: LocationService;
   hellService?: HellService;
+  currentRealm = Realm.MortalRealm;
+  currentRealmDisplay = signal<string>(RealmNames[Realm.MortalRealm]);
 
   constructor(
     private injector: Injector,
@@ -190,7 +195,7 @@ export class ActivityService {
     mainLoopService.longTickSubject.subscribe(daysElapsed => {
       if (
         this.characterService.bloodlineRank >= 9 &&
-        !(this.hellService?.inHell() && this.hellService.currentHell === HellLevel.TreesOfKnives)
+        !(this.hellService?.inHell() && this.currentRealm === Realm.TreesOfKnives)
       ) {
         this.characterService.increaseAptitudeDaily(daysElapsed);
       }
@@ -200,6 +205,7 @@ export class ActivityService {
     mainLoopService.displayValueTickSubject.subscribe(() => {
       this.displayCurrentIndex.set(this.currentIndex);
       this.displayCurrentTickCount.set(this.currentTickCount);
+      this.currentRealmDisplay.set(RealmNames[this.currentRealm]);
     });
 
     const trainingActionTemplate = (attribute: number, trainingDays: number, follower: Follower): boolean => {
@@ -611,6 +617,7 @@ export class ActivityService {
       petRecruitingCounter: this.petRecruitingCounter,
       coreCultivationCounter: this.coreCultivationCounter,
       beforeDeathPauseUsed: this.beforeDeathPauseUsed,
+      currentRealm: this.currentRealm,
     };
   }
 
@@ -660,6 +667,7 @@ export class ActivityService {
     this.petRecruitingCounter = properties.petRecruitingCounter;
     this.coreCultivationCounter = properties.coreCultivationCounter;
     this.checkRequirements(true);
+    this.currentRealm = properties.currentRealm;
   }
 
   meetsRequirements(activity: Activity): boolean {
@@ -758,7 +766,7 @@ export class ActivityService {
       }
       activity.projectionOnly = false;
       if (this.hellService?.inHell()) {
-        const hell = this.hellService?.hells[this.hellService.currentHell];
+        const hell = this.hellService?.hells[this.currentRealm];
         if (hell?.activities.includes(activity)) {
           activity.discovered = true;
           this.meetsRequirements(activity);
@@ -4232,8 +4240,8 @@ export class ActivityService {
         if (Math.random() < threshold) {
           this.hellService!.exitFound = true;
           /*
-          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.teachTheWay)) {
-            this.hells[HellLevel.WrongfulDead].activities.push(this.teachTheWay);
+          if (!this.hells[Realm.WrongfulDead].activities.includes(this.teachTheWay)) {
+            this.hells[Realm.WrongfulDead].activities.push(this.teachTheWay);
             this.reloadActivities();
           }
             */
@@ -4525,11 +4533,11 @@ export class ActivityService {
       () => {
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
-        const leavingHell = this.hellService!.hells[this.hellService!.currentHell];
+        const leavingHell = this.hellService!.hells[this.currentRealm];
         if (leavingHell.exitEffect) {
           leavingHell.exitEffect();
         }
-        this.hellService!.moveToHell(HellLevel.Gates);
+        this.hellService!.moveToHell(Realm.Gates);
       },
     ],
     requirements: [{}],

@@ -102,9 +102,13 @@ export class MobileTimeComponent {
         '\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.';
     }
 
-    const dialogProperties = { titleText: activity.name[activity.level], bodyText: bodyString, imageFile: '' };
+    const dialogProperties = {
+      titleText: activity.name[activity.level],
+      bodyTextArray: [bodyString],
+      imageFiles: [''],
+    };
     if (activity.imageBaseName) {
-      dialogProperties.imageFile = 'assets/images/activities/' + activity.imageBaseName + activity.level + '.png';
+      dialogProperties.imageFiles = ['assets/images/activities/' + activity.imageBaseName + activity.level + '.png'];
     }
     this.dialog.open(TextPanelComponent, {
       width: '400px',

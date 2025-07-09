@@ -11,12 +11,18 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { CamelToTitlePipe } from '../pipes';
 
 @Component({
   selector: 'app-portal-panel',
   templateUrl: './portal-panel.component.html',
   styleUrls: ['./portal-panel.component.less', '../app.component.less'],
-  imports: [forwardRef(() => NgClass), forwardRef(() => MatIcon), forwardRef(() => TooltipDirective)],
+  imports: [
+    forwardRef(() => NgClass),
+    forwardRef(() => MatIcon),
+    forwardRef(() => TooltipDirective),
+    forwardRef(() => CamelToTitlePipe),
+  ],
 })
 export class PortalPanelComponent {
   Math: Math;
@@ -43,9 +49,13 @@ export class PortalPanelComponent {
     event.stopPropagation();
     const bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
 
-    const dialogProperties = { titleText: activity.name[activity.level], bodyText: bodyString, imageFile: '' };
+    const dialogProperties = {
+      titleText: activity.name[activity.level],
+      bodyTextArray: [bodyString],
+      imageFiles: [''],
+    };
     if (activity.imageBaseName) {
-      dialogProperties.imageFile = 'assets/images/activities/' + activity.imageBaseName + activity.level + '.png';
+      dialogProperties.imageFiles = ['assets/images/activities/' + activity.imageBaseName + activity.level + '.png'];
     }
     this.dialog.open(TextPanelComponent, {
       width: '400px',

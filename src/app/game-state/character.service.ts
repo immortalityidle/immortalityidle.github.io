@@ -3,13 +3,14 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
 import { Subscription } from 'rxjs';
-import { HellLevel, HellService } from './hell.service';
+import { HellService } from './hell.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { AchievementService } from './achievement.service';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { Equipment, ItemStack } from './inventory.service';
+import { Realm } from './activity';
 
 export type CharacterAttribute = {
   [key: string]: number | undefined;
@@ -624,9 +625,8 @@ export class CharacterService {
 
       this.recalculateDerivedStats();
       if (
-        this.hellService?.inHell() &&
-        this.hellService.currentHell === HellLevel.CrushingBoulder &&
-        !this.hellService.completedHellTasks.includes(HellLevel.CrushingBoulder)
+        this.activityService!.currentRealm === Realm.CrushingBoulder &&
+        !this.hellService!.completedHellTasks.includes(Realm.CrushingBoulder)
       ) {
         for (const keyString in this.attackPower) {
           const key = keyString as AttributeType;

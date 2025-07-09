@@ -44,9 +44,15 @@
           contact_page
         </mat-icon>
       </span>
-      <span class="discordLink">
+      <span class="topText">
         <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" tooltip="Have questions?<br>Try the Immortality Idle Discord.">Discord</a>
       </span>
+      @if (characterService.immortal() && !hellService.inHell() && !characterService.god()) {
+        <span class="topText">
+          <button (click)="gameStateService.joinTheGodsClick()">Join the Gods</button>
+        </span>
+      }
+
       <span class="floatRight">
         <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
         <label for="lockPanels">Lock panels in place</label>

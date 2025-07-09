@@ -9,25 +9,25 @@
   @else {
     <div>
         <span>
-            You are in the {{hellService.hells[hellService.currentHell].name}}
+            You are in the {{hellService.hells[activityService.currentRealm].name}}
         </span>
     </div>
-    @if (hellService.currentHell > 0 && !hellService.completedHellTasks.includes(hellService.currentHell)) {
+    @if (activityService.currentRealm > 0 && !hellService.completedHellTasks.includes(activityService.currentRealm)) {
         <span>
         <div  class="progress-bar"
-            [attr.value]="Math.floor(hellService.hells[hellService.currentHell].progress())"
-            [attr.max]="Math.floor(hellService.hells[hellService.currentHell].progressMax())">
+            [attr.value]="Math.floor(hellService.hells[activityService.currentRealm].progress())"
+            [attr.max]="Math.floor(hellService.hells[activityService.currentRealm].progressMax())">
             <span
             [style.width.%]="100 *
-            hellService.hells[hellService.currentHell].progress() /
-            hellService.hells[hellService.currentHell].progressMax()">
+            hellService.hells[activityService.currentRealm].progress() /
+            hellService.hells[activityService.currentRealm].progressMax()">
             </span>
         </div>
         </span>
     }
-    @if (hellService.currentHell > 0 && hellService.completedHellTasks.includes(hellService.currentHell)) {
+    @if (activityService.currentRealm > 0 && hellService.completedHellTasks.includes(activityService.currentRealm)) {
         <span>
-        <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(hellService.currentHell) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
+        <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(activityService.currentRealm) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
         </span>
     }
   }

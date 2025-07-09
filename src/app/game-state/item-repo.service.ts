@@ -9,8 +9,9 @@ import { InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { GameStateService } from './game-state.service';
-import { HellLevel, HellService } from './hell.service';
+import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
+import { Realm } from './activity';
 
 @Injectable({
   providedIn: 'root',
@@ -1426,7 +1427,7 @@ baguaMap = [
       type: 'portalKey',
       value: Infinity,
       description:
-        "The key to Lord Yama's kingdom. With this key, you can use his portals to instantly travel anywhere.",
+        "The key to Lord Yama's kingdom. With this key, you can use his portals to travel back to the mortal realm and even to higher realms of existence.",
       useLabel: 'Create a portal back to the palace of the gods on Mount Penglai and claim your throne.',
       useDescription: 'Become a god and win the second phase of the game.',
       useConsumes: true,
@@ -1445,6 +1446,8 @@ baguaMap = [
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
+        this.activityService.currentRealm = Realm.DivineRealm;
+
         this.logService.log(
           LogTopic.STORY,
           'You started your journey on ' +
@@ -1462,7 +1465,6 @@ baguaMap = [
             ' lifetimes to claim your throne on Mount Penglai.'
         );
         this.characterService.god.set(true);
-        this.gameStateService.unlockPanel('portalPanel');
       },
     },
     fingers: {
@@ -1539,8 +1541,8 @@ baguaMap = [
         if (!this.followerService) {
           this.followerService = this.injector.get(FollowersService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.TongueRipping)) {
-          this.hellService.completedHellBosses.push(HellLevel.TongueRipping);
+        if (!this.hellService.completedHellBosses.includes(Realm.TongueRipping)) {
+          this.hellService.completedHellBosses.push(Realm.TongueRipping);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1567,8 +1569,8 @@ baguaMap = [
         if (!this.followerService) {
           this.followerService = this.injector.get(FollowersService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Scissors)) {
-          this.hellService.completedHellBosses.push(HellLevel.Scissors);
+        if (!this.hellService.completedHellBosses.includes(Realm.Scissors)) {
+          this.hellService.completedHellBosses.push(Realm.Scissors);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1599,8 +1601,8 @@ baguaMap = [
         if (!this.followerService) {
           this.followerService = this.injector.get(FollowersService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.TreesOfKnives)) {
-          this.hellService.completedHellBosses.push(HellLevel.TreesOfKnives);
+        if (!this.hellService.completedHellBosses.includes(Realm.TreesOfKnives)) {
+          this.hellService.completedHellBosses.push(Realm.TreesOfKnives);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1630,8 +1632,8 @@ baguaMap = [
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Mirrors)) {
-          this.hellService.completedHellBosses.push(HellLevel.Mirrors);
+        if (!this.hellService.completedHellBosses.includes(Realm.Mirrors)) {
+          this.hellService.completedHellBosses.push(Realm.Mirrors);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1658,8 +1660,8 @@ baguaMap = [
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Steamers)) {
-          this.hellService.completedHellBosses.push(HellLevel.Steamers);
+        if (!this.hellService.completedHellBosses.includes(Realm.Steamers)) {
+          this.hellService.completedHellBosses.push(Realm.Steamers);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1685,8 +1687,8 @@ baguaMap = [
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CopperPillars)) {
-          this.hellService.completedHellBosses.push(HellLevel.CopperPillars);
+        if (!this.hellService.completedHellBosses.includes(Realm.CopperPillars)) {
+          this.hellService.completedHellBosses.push(Realm.CopperPillars);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1710,8 +1712,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfKnives)) {
-          this.hellService.completedHellBosses.push(HellLevel.MountainOfKnives);
+        if (!this.hellService.completedHellBosses.includes(Realm.MountainOfKnives)) {
+          this.hellService.completedHellBosses.push(Realm.MountainOfKnives);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1734,8 +1736,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfIce)) {
-          this.hellService.completedHellBosses.push(HellLevel.MountainOfIce);
+        if (!this.hellService.completedHellBosses.includes(Realm.MountainOfIce)) {
+          this.hellService.completedHellBosses.push(Realm.MountainOfIce);
         }
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
@@ -1762,8 +1764,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CauldronsOfOil)) {
-          this.hellService.completedHellBosses.push(HellLevel.CauldronsOfOil);
+        if (!this.hellService.completedHellBosses.includes(Realm.CauldronsOfOil)) {
+          this.hellService.completedHellBosses.push(Realm.CauldronsOfOil);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1787,8 +1789,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CattlePit)) {
-          this.hellService.completedHellBosses.push(HellLevel.CattlePit);
+        if (!this.hellService.completedHellBosses.includes(Realm.CattlePit)) {
+          this.hellService.completedHellBosses.push(Realm.CattlePit);
         }
         if (!this.followerService) {
           this.followerService = this.injector.get(FollowersService);
@@ -1814,8 +1816,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.CrushingBoulder)) {
-          this.hellService.completedHellBosses.push(HellLevel.CrushingBoulder);
+        if (!this.hellService.completedHellBosses.includes(Realm.CrushingBoulder)) {
+          this.hellService.completedHellBosses.push(Realm.CrushingBoulder);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1839,8 +1841,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MortarsAndPestles)) {
-          this.hellService.completedHellBosses.push(HellLevel.MortarsAndPestles);
+        if (!this.hellService.completedHellBosses.includes(Realm.MortarsAndPestles)) {
+          this.hellService.completedHellBosses.push(Realm.MortarsAndPestles);
         }
         if (!this.farmService) {
           this.farmService = this.injector.get(FarmService);
@@ -1871,8 +1873,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.BloodPool)) {
-          this.hellService.completedHellBosses.push(HellLevel.BloodPool);
+        if (!this.hellService.completedHellBosses.includes(Realm.BloodPool)) {
+          this.hellService.completedHellBosses.push(Realm.BloodPool);
         }
         if (!this.homeService) {
           this.homeService = this.injector.get(HomeService);
@@ -1899,8 +1901,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.WrongfulDead)) {
-          this.hellService.completedHellBosses.push(HellLevel.WrongfulDead);
+        if (!this.hellService.completedHellBosses.includes(Realm.WrongfulDead)) {
+          this.hellService.completedHellBosses.push(Realm.WrongfulDead);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -1923,8 +1925,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Dismemberment)) {
-          this.hellService.completedHellBosses.push(HellLevel.Dismemberment);
+        if (!this.hellService.completedHellBosses.includes(Realm.Dismemberment)) {
+          this.hellService.completedHellBosses.push(Realm.Dismemberment);
         }
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
@@ -1950,8 +1952,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.MountainOfFire)) {
-          this.hellService.completedHellBosses.push(HellLevel.MountainOfFire);
+        if (!this.hellService.completedHellBosses.includes(Realm.MountainOfFire)) {
+          this.hellService.completedHellBosses.push(Realm.MountainOfFire);
         }
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
@@ -1977,8 +1979,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Mills)) {
-          this.hellService.completedHellBosses.push(HellLevel.Mills);
+        if (!this.hellService.completedHellBosses.includes(Realm.Mills)) {
+          this.hellService.completedHellBosses.push(Realm.Mills);
         }
         this.logService.log(
           LogTopic.STORY,
@@ -2001,8 +2003,8 @@ baguaMap = [
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
         }
-        if (!this.hellService.completedHellBosses.includes(HellLevel.Saws)) {
-          this.hellService.completedHellBosses.push(HellLevel.Saws);
+        if (!this.hellService.completedHellBosses.includes(Realm.Saws)) {
+          this.hellService.completedHellBosses.push(Realm.Saws);
         }
         if (!this.followerService) {
           this.followerService = this.injector.get(FollowersService);

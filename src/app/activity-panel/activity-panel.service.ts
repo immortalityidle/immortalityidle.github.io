@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
-import { joinTheGodsText } from '../game-state/textResources';
-import { HellLevel, HellService } from '../game-state/hell.service';
+import { HellService } from '../game-state/hell.service';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
@@ -31,30 +30,6 @@ export class ActivityPanelService {
   private locationService = inject(LocationService);
 
   private camelToTitle = new CamelToTitlePipe();
-
-  // TODO: Make this an activity
-  public joinTheGodsClick() {
-    if (
-      !confirm(
-        'Are you sure you are ready for this? You will need to leave all your money and most of your followers and possessions behind as you leave this mortal realm.'
-      )
-    ) {
-      return;
-    }
-    const dialogRef = this.dialog.open(TextPanelComponent, {
-      width: '700px',
-      data: { titleText: 'Joining the Gods', bodyText: joinTheGodsText },
-      autoFocus: false,
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.hellService.inHell.set(true);
-      this.hellService.moveToHell(HellLevel.Gates);
-      this.characterService.updateMoney(0, true);
-      this.inventoryService.stashInventory();
-      this.followersService.hellPurge();
-      this.activityService.checkRequirements(true);
-    });
-  }
 
   public doActivity(activity: Activity) {
     if (this.battleService.enemies.length > 0) {
@@ -131,9 +106,13 @@ export class ActivityPanelService {
         '\n\nThis activity can only be performed by a spiritual projection of yourself back in the mortal realm.';
     }
 
-    const dialogProperties = { titleText: activity.name[activity.level], bodyText: bodyString, imageFile: '' };
+    const dialogProperties = {
+      titleText: activity.name[activity.level],
+      bodyTextArray: [bodyString],
+      imageFiles: [''],
+    };
     if (activity.imageBaseName) {
-      dialogProperties.imageFile = 'assets/images/activities/' + activity.imageBaseName + activity.level + '.png';
+      dialogProperties.imageFiles = ['assets/images/activities/' + activity.imageBaseName + activity.level + '.png'];
     }
     this.dialog.open(TextPanelComponent, {
       width: '400px',

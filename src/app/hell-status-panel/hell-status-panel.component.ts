@@ -2,6 +2,7 @@ import { Component, forwardRef } from '@angular/core';
 import { HellService } from '../game-state/hell.service';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { ActivityService } from '../game-state/activity.service';
 
 @Component({
   selector: 'app-hell-status-panel',
@@ -12,7 +13,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 export class HellStatusPanelComponent {
   protected Math = Math;
 
-  constructor(protected hellService: HellService) {}
+  constructor(protected hellService: HellService, protected activityService: ActivityService) {}
 
   protected hellBoss() {
     this.hellService.fightHellBoss();

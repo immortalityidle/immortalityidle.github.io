@@ -1,9 +1,5 @@
 <h3 class="portalsHeader">
-  @if (hellService.inHell()) {
-    <!--
-    <span>Current Location: {{activityService.activityHeader}} </span>
-    -->
-  }
+  <span>Current Realm: {{activityService.currentRealmDisplay() | camelToTitle}} </span>
 </h3>
 <div class="portalsContainer">
   <div class="overflow">

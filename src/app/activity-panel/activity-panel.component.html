@@ -1,38 +1,7 @@
-<h3 class="activitiesHeader">
-  <div class="customHeader">
-    @if (characterService.immortal() && !hellService.inHell() && !characterService.god()) {
-      <span>
-        <button (click)="activityPanelService.joinTheGodsClick()">Join the Gods</button>
-      </span>
-    }
-  </div>
-</h3>
 <div class="activitiesContainer">
   <!-- draggable="true" (dragstart)="drag(activity, $event)" -->
   <div class="overflow">
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
-      @if (hellService.inHell()){
-        @for (activity of activityService.portals; track activity; let indexOfelement = $index) {
-          @if (activity.discovered || activity.unlocked) {
-            <div class="activitySlot" [ngClass]="{'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"
-              [tabindex]="0"
-              (click)="activityPanelService.doActivity(activity)" >
-              <div class="activityLabel" tooltip="{{activityPanelService.getActivityTooltip(activity, true)}}">
-                <span>{{activity.name[activity.level]}}</span>
-              </div>
-              <div class="activityButtons">
-                <span class='floatRight'>
-                  <mat-icon class="iconButton" (click)="activityPanelService.showActivity($event, activity)"
-                    tooltip="What is this activity?<br>Click to learn all about it!"
-                    aria-label="Help" aria-hidden="false">
-                    help
-                  </mat-icon>
-                </span>
-              </div>
-            </div>
-          }
-        }      
-      }
       @for (activity of activityService.activities; track activity; let indexOfelement = $index) {
         @if (activity.discovered || activity.unlocked) {
           <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"

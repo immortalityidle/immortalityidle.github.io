@@ -34,6 +34,7 @@ import { CharacterService } from '../game-state/character.service';
 import { HellStatusPanelComponent } from '../hell-status-panel/hell-status-panel.component';
 import { CommonButtonsService } from '../common-buttons.service';
 import { SchedulePanelComponent } from '../schedule-panel/schedule-panel.component';
+import { HellService } from '../game-state/hell.service';
 
 @Component({
   selector: 'app-standard-layout',
@@ -70,6 +71,7 @@ import { SchedulePanelComponent } from '../schedule-panel/schedule-panel.compone
 export class StandardLayoutComponent {
   protected readonly commonButtonsService = inject(CommonButtonsService);
   protected readonly gameStateService = inject(GameStateService);
+  protected readonly hellService = inject(HellService);
   protected readonly storeService = inject(StoreService);
   protected readonly characterService = inject(CharacterService);
   protected readonly document: Document = inject(DOCUMENT);

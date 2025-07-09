@@ -4,32 +4,10 @@ import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
 import { BattleService, EFFECT_CORRUPTION } from './battle.service';
-import { Activity, ActivityType, LocationType, YinYangEffect } from './activity';
+import { Activity, ActivityType, LocationType, Realm, YinYangEffect } from './activity';
 import { FollowersService } from './followers.service';
 import { InventoryService, Item } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
-
-export enum HellLevel {
-  Gates,
-  TongueRipping,
-  Scissors,
-  TreesOfKnives,
-  Mirrors,
-  Steamers,
-  CopperPillars,
-  MountainOfKnives,
-  MountainOfIce,
-  CauldronsOfOil,
-  CattlePit,
-  CrushingBoulder,
-  MortarsAndPestles,
-  BloodPool,
-  WrongfulDead,
-  Dismemberment,
-  MountainOfFire,
-  Mills,
-  Saws,
-}
 
 export interface Hell {
   name: string;
@@ -52,7 +30,6 @@ export interface Hell {
 
 export interface HellProperties {
   inHell: boolean;
-  currentHell: number;
   completedHellTasks: number[];
   completedHellBosses: number[];
   mountainSteps: number;
@@ -75,7 +52,6 @@ export interface HellProperties {
 })
 export class HellService {
   inHell = signal<boolean>(false);
-  currentHell = HellLevel.Gates;
   completedHellTasks: number[] = [];
   completedHellBosses: number[] = [];
   beaten = false;
@@ -92,6 +68,7 @@ export class HellService {
   atonedKills = 0;
   fasterHellMoney = false;
   burnedMoney = 0;
+  hellBossBaseHealth = 1e36;
 
   constructor(
     private logService: LogService,
@@ -104,11 +81,11 @@ export class HellService {
     private itemRepoService: ItemRepoService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
-      if (this.currentHell <= 0) {
+      if (this.activityService.currentRealm >= this.hells.length) {
         // not currently in a hell, bail out
         return;
       }
-      const hell = this.hells[this.currentHell];
+      const hell = this.hells[this.activityService.currentRealm];
       if (hell.dailyEffect) {
         hell.dailyEffect();
       }
@@ -120,11 +97,11 @@ export class HellService {
         );
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
-        this.moveToHell(HellLevel.Gates);
+        this.moveToHell(Realm.Gates);
       }
-      if (!this.completedHellTasks.includes(this.currentHell) && hell.successCheck()) {
+      if (!this.completedHellTasks.includes(this.activityService.currentRealm) && hell.successCheck()) {
         hell.completeEffect();
-        this.completedHellTasks.push(this.currentHell);
+        this.completedHellTasks.push(this.activityService.currentRealm);
       }
     });
 
@@ -142,27 +119,25 @@ export class HellService {
 
   reset() {
     // reincarnation gets you out and back to the mortal realm
-    if (this.inHell()) {
-      if (this.currentHell >= 0) {
-        const leavingHell = this.hells[this.currentHell];
-        if (leavingHell.exitEffect) {
-          leavingHell.exitEffect();
-        }
+    if (this.inHell() && this.activityService.currentRealm < this.hells.length) {
+      const leavingHell = this.hells[this.activityService.currentRealm];
+      if (leavingHell.exitEffect) {
+        leavingHell.exitEffect();
       }
-      this.inHell.set(false);
-      this.currentHell = HellLevel.Gates;
     }
+    this.inHell.set(false);
+    this.activityService.currentRealm = Realm.MortalRealm;
   }
 
   moveToHell(hellIndex: number) {
-    if (this.currentHell >= 0) {
-      const currentHell = this.hells[this.currentHell];
+    if (this.inHell() && this.activityService.currentRealm < this.hells.length) {
+      const currentHell = this.hells[this.activityService.currentRealm];
       if (currentHell.exitEffect) {
         currentHell.exitEffect();
       }
     }
-    this.currentHell = hellIndex;
-    const newHell = this.hells[this.currentHell];
+    this.activityService.currentRealm = hellIndex;
+    const newHell = this.hells[this.activityService.currentRealm];
     if (newHell.entryEffect) {
       newHell.entryEffect();
     }
@@ -171,12 +146,12 @@ export class HellService {
   }
 
   trouble() {
-    if (this.currentHell <= 0) {
+    if (this.activityService.currentRealm >= this.hells.length) {
       return;
     }
     // TODO: tune all of these values, and they should all scale up the longer you stay in/closer you get to finishing the hell
-    const hellProgress = this.hells[this.currentHell].progress();
-    if (this.currentHell === HellLevel.TongueRipping) {
+    const hellProgress = this.hells[this.activityService.currentRealm].progress();
+    if (this.activityService.currentRealm === Realm.TongueRipping) {
       // monsters get stronger the more you've recruited/trained
       // tinker with stats/growth
       this.battleService.addEnemy({
@@ -196,7 +171,7 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Scissors) {
+    } else if (this.activityService.currentRealm === Realm.Scissors) {
       this.battleService.addEnemy({
         name: 'Scissors Demon',
         baseName: 'scissorsdemon',
@@ -217,7 +192,7 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.TreesOfKnives) {
+    } else if (this.activityService.currentRealm === Realm.TreesOfKnives) {
       this.battleService.addEnemy({
         name: 'Hungry Crow',
         baseName: 'crow',
@@ -235,7 +210,7 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Mirrors) {
+    } else if (this.activityService.currentRealm === Realm.Mirrors) {
       this.battleService.addEnemy({
         name: 'Your Reflection',
         baseName: 'mirror',
@@ -245,7 +220,7 @@ export class HellService {
         loot: [this.itemRepoService.items['mirrorShard']],
         techniques: this.battleService.techniques,
       });
-    } else if (this.currentHell === HellLevel.CauldronsOfOil) {
+    } else if (this.activityService.currentRealm === Realm.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: 'Oiled Demon',
         baseName: 'oileddemon',
@@ -263,7 +238,7 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.CattlePit) {
+    } else if (this.activityService.currentRealm === Realm.CattlePit) {
       if (this.animalsHealed <= 1000000) {
         for (let i = 0; i < 10; i++) {
           this.battleService.addEnemy({
@@ -285,7 +260,7 @@ export class HellService {
           });
         }
       }
-    } else if (this.currentHell === HellLevel.MortarsAndPestles) {
+    } else if (this.activityService.currentRealm === Realm.MortarsAndPestles) {
       this.battleService.addEnemy({
         name: 'Force Feeder',
         baseName: 'forcefeeder',
@@ -305,7 +280,7 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Dismemberment) {
+    } else if (this.activityService.currentRealm === Realm.Dismemberment) {
       this.battleService.addEnemy({
         name: 'Axe Demon',
         baseName: 'axedemon',
@@ -323,7 +298,7 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Saws) {
+    } else if (this.activityService.currentRealm === Realm.Saws) {
       this.battleService.addEnemy({
         name: 'Saw Demon',
         baseName: 'sawdemon',
@@ -346,12 +321,12 @@ export class HellService {
 
   fightHellBoss() {
     // TODO: tune stats
-    if (this.currentHell === HellLevel.TongueRipping) {
+    if (this.activityService.currentRealm === Realm.TongueRipping) {
       this.battleService.addEnemy({
         name: 'Gorbolash the Gossip Gasher',
         baseName: 'Gorbolash',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTongueRippers']],
         techniques: [
@@ -364,12 +339,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Scissors) {
+    } else if (this.activityService.currentRealm === Realm.Scissors) {
       this.battleService.addEnemy({
         name: 'Malgorath the Marriage Masher',
         baseName: 'Malgorath',
-        health: 1e27,
-        maxHealth: 1e27,
+        health: this.hellBossBaseHealth * 0.001,
+        maxHealth: this.hellBossBaseHealth * 0.001,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownScissors']],
         techniques: [
@@ -382,12 +357,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.TreesOfKnives) {
+    } else if (this.activityService.currentRealm === Realm.TreesOfKnives) {
       this.battleService.addEnemy({
         name: 'Flamgolus the Family Flayer',
         baseName: 'Flamgolus',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownTreesOfKnives']],
         techniques: [
@@ -400,12 +375,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Mirrors) {
+    } else if (this.activityService.currentRealm === Realm.Mirrors) {
       this.battleService.addEnemy({
         name: 'Myorshuggath the Mirror Master',
         baseName: 'Myorshuggath',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMirrors']],
         techniques: [
@@ -418,12 +393,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Steamers) {
+    } else if (this.activityService.currentRealm === Realm.Steamers) {
       this.battleService.addEnemy({
         name: 'Stactolus the Steamer',
         baseName: 'Stactolus',
-        health: 1e27,
-        maxHealth: 1e27,
+        health: this.hellBossBaseHealth * 0.001,
+        maxHealth: this.hellBossBaseHealth * 0.001,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSteamers']],
         techniques: [
@@ -436,12 +411,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.CopperPillars) {
+    } else if (this.activityService.currentRealm === Realm.CopperPillars) {
       this.battleService.addEnemy({
         name: 'Ignificor the Forever Burning',
         baseName: 'Ignificor',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownPillars']],
         techniques: [
@@ -454,12 +429,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.MountainOfKnives) {
+    } else if (this.activityService.currentRealm === Realm.MountainOfKnives) {
       this.battleService.addEnemy({
         name: 'Malignus the Murderer Muncher',
         baseName: 'Malignus',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfKnives']],
         techniques: [
@@ -472,12 +447,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.MountainOfIce) {
+    } else if (this.activityService.currentRealm === Realm.MountainOfIce) {
       this.battleService.addEnemy({
         name: 'The Cheat',
         baseName: 'Cheat',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMountainOfIce']],
         techniques: [
@@ -490,12 +465,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.CauldronsOfOil) {
+    } else if (this.activityService.currentRealm === Realm.CauldronsOfOil) {
       this.battleService.addEnemy({
         name: 'Nestor the Molestor',
         baseName: 'Nestor',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCauldronsOfOil']],
         techniques: [
@@ -508,12 +483,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.CattlePit) {
+    } else if (this.activityService.currentRealm === Realm.CattlePit) {
       this.battleService.addEnemy({
         name: 'The Cow Emperor',
         baseName: 'CowEmperor',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCattlePit']],
         techniques: [
@@ -526,12 +501,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.CrushingBoulder) {
+    } else if (this.activityService.currentRealm === Realm.CrushingBoulder) {
       this.battleService.addEnemy({
         name: 'The Crusher',
         baseName: 'Crusher',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownCrushingBoulder']],
         techniques: [
@@ -544,12 +519,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.MortarsAndPestles) {
+    } else if (this.activityService.currentRealm === Realm.MortarsAndPestles) {
       this.battleService.addEnemy({
         name: 'Glorbulskath the Gluttonous',
         baseName: 'Glorbulskath',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMortarsAndPestles']],
         techniques: [
@@ -562,12 +537,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.BloodPool) {
+    } else if (this.activityService.currentRealm === Realm.BloodPool) {
       this.battleService.addEnemy({
         name: 'Gnarlyathor the Ever-Bleeding',
         baseName: 'Gnarlyathor',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownBloodPool']],
         techniques: [
@@ -580,12 +555,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.WrongfulDead) {
+    } else if (this.activityService.currentRealm === Realm.WrongfulDead) {
       this.battleService.addEnemy({
         name: 'Azoth-Raketh the Storm Master',
         baseName: 'Azoth-Raketh',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownWrongfulDead']],
         techniques: [
@@ -598,12 +573,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Dismemberment) {
+    } else if (this.activityService.currentRealm === Realm.Dismemberment) {
       this.battleService.addEnemy({
         name: 'Druskall the Dismemberer',
         baseName: 'Druskall',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownDismemberment']],
         techniques: [
@@ -616,12 +591,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.MountainOfFire) {
+    } else if (this.activityService.currentRealm === Realm.MountainOfFire) {
       this.battleService.addEnemy({
         name: 'Magmar the Lava King',
         baseName: 'Magmar',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownFireMountain']],
         techniques: [
@@ -634,12 +609,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Mills) {
+    } else if (this.activityService.currentRealm === Realm.Mills) {
       this.battleService.addEnemy({
         name: 'Grimstone The Human Grinder',
         baseName: 'Grimstone',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownMills']],
         techniques: [
@@ -652,12 +627,12 @@ export class HellService {
           },
         ],
       });
-    } else if (this.currentHell === HellLevel.Saws) {
+    } else if (this.activityService.currentRealm === Realm.Saws) {
       this.battleService.addEnemy({
         name: 'Crognaslark the Corrupter',
         baseName: 'Crognaslark',
-        health: 1e30,
-        maxHealth: 1e30,
+        health: this.hellBossBaseHealth,
+        maxHealth: this.hellBossBaseHealth,
         defense: 1e12,
         loot: [this.itemRepoService.items['hellCrownSaws']],
         techniques: [
@@ -676,7 +651,6 @@ export class HellService {
   getProperties(): HellProperties {
     return {
       inHell: this.inHell(),
-      currentHell: this.currentHell,
       completedHellTasks: this.completedHellTasks,
       completedHellBosses: this.completedHellBosses,
       mountainSteps: this.mountainSteps,
@@ -712,8 +686,10 @@ export class HellService {
     this.atonedKills = properties.atonedKills || 0;
     this.fasterHellMoney = properties.fasterHellMoney || false;
     this.burnedMoney = properties.burnedMoney || 0;
-    this.currentHell = properties.currentHell ?? HellLevel.Gates;
-    this.hells[this.currentHell].setPortals();
+    if (this.hells.length > this.activityService.currentRealm) {
+      // don't set hell portals for realms outside of the hells
+      this.hells[this.activityService.currentRealm].setPortals();
+    }
   }
 
   hells: Hell[] = [
@@ -721,12 +697,12 @@ export class HellService {
       name: 'Gates of Hell',
       description:
         "The gates of Lord Yama's realm.<br>An array of frightening gates allow you to select the various hells and their challenges.<br>If you are overwhelmed by these horrors, you can always escape back to the mortal realm through reincarnation.",
-      index: HellLevel.Gates,
+      index: Realm.Gates,
       setPortals: () => {
         this.activityService.portals = [];
         let allComplete = true;
         for (const hell of this.hells) {
-          if (hell.index === HellLevel.Gates) {
+          if (hell.index === Realm.Gates) {
             continue;
           }
           let consequenceDescription = '';
@@ -795,7 +771,7 @@ export class HellService {
       name: 'Hell of Tongue-ripping',
       description:
         'Torment for gossips and everyone one who made trouble with their words.<br>The demons here reach for your tongue to rip it out.',
-      index: HellLevel.TongueRipping,
+      index: Realm.TongueRipping,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -850,7 +826,7 @@ export class HellService {
     {
       name: 'Hell of Scissors',
       description: 'Torment for those who ruin marriages.<br>The demons here will cut your fingers right off.',
-      index: HellLevel.Scissors,
+      index: Realm.Scissors,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -892,7 +868,7 @@ export class HellService {
       name: 'Hell of Trees of Knives',
       description:
         'Torment for those who cause trouble between family members.<br>The demons here will tie you to a tree made of sharp knives',
-      index: HellLevel.TreesOfKnives,
+      index: Realm.TreesOfKnives,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -940,7 +916,7 @@ export class HellService {
       name: 'Hell of Mirrors',
       description:
         'Torment for those who escaped punishment for their crimes.<br>The mirrors here shine with a terrifying glow.',
-      index: HellLevel.Mirrors,
+      index: Realm.Mirrors,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -983,7 +959,7 @@ export class HellService {
     {
       name: 'Hell of Steamers',
       description: 'Torment for hypocrites and ruffians.<br>The steam baskets here are just the right size for you.',
-      index: HellLevel.Steamers,
+      index: Realm.Steamers,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1045,7 +1021,7 @@ export class HellService {
       name: 'Hell of Copper Pillars',
       description:
         'Torment for arsonists.<br>The red-hot copper pillars you will be bound to remind you of all those times you played with fire.',
-      index: HellLevel.CopperPillars,
+      index: Realm.CopperPillars,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1096,7 +1072,7 @@ export class HellService {
       name: 'Hell of the Mountain of Knives',
       description:
         'Torment for those who killed for pleasure.<br>The mountain of sharp blades looks like it might be rough on footwear.',
-      index: HellLevel.MountainOfKnives,
+      index: Realm.MountainOfKnives,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1144,7 +1120,7 @@ export class HellService {
       name: 'Hell of the Mountain of Ice',
       description:
         'Torment for adulterers and schemers.<br>The chill wind blowing through the gate is so cold it burns.',
-      index: HellLevel.MountainOfIce,
+      index: Realm.MountainOfIce,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1191,12 +1167,12 @@ export class HellService {
     {
       name: 'Hell of the Cauldrons of Oil',
       description: 'Torment for rapists and abusers.<br>Next on the menu: deep fried immortal.',
-      index: HellLevel.CauldronsOfOil,
+      index: Realm.CauldronsOfOil,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
       dailyEffect: () => {
-        if (!this.completedHellTasks.includes(HellLevel.CauldronsOfOil)) {
+        if (!this.completedHellTasks.includes(Realm.CauldronsOfOil)) {
           if (this.inventoryService.consume('iceCore') > 0) {
             this.logService.injury(
               LogTopic.EVENT,
@@ -1261,7 +1237,7 @@ export class HellService {
     {
       name: 'Hell of the Cattle Pit',
       description: 'Torment for animal abusers.<br>The cows are looking a little restless.',
-      index: HellLevel.CattlePit,
+      index: Realm.CattlePit,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1297,7 +1273,7 @@ export class HellService {
       name: 'Hell of the Crushing Boulder',
       description:
         'Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them.<br>Atlas had it easy compared to these people.',
-      index: HellLevel.CrushingBoulder,
+      index: Realm.CrushingBoulder,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1364,7 +1340,7 @@ export class HellService {
       name: 'Hell of Mortars and Pestles',
       description:
         "Torment for food wasters.<br>You didn't really need to eat all those peaches, did you?<br>The diet here is pure hellfire.",
-      index: HellLevel.MortarsAndPestles,
+      index: Realm.MortarsAndPestles,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1402,7 +1378,7 @@ export class HellService {
       name: 'Hell of the Blood Pool',
       description:
         "Torment for those who disrespect others.<br>The pool looks deep, but it's hard to tell with all that blood.",
-      index: HellLevel.BloodPool,
+      index: Realm.BloodPool,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1434,14 +1410,14 @@ export class HellService {
       name: 'Hell of the Wrongful Dead',
       description:
         "Torment for those who gave up their lives too early.<br>Fortunately you've probably never done that.<br>The pounding Rains of Pain and the blowing Winds of Sorrow give unrelenting misery to everyone here.",
-      index: HellLevel.WrongfulDead,
+      index: Realm.WrongfulDead,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
       entryEffect: () => {
         if (this.exitFound) {
-          if (!this.hells[HellLevel.WrongfulDead].activities.includes(this.activityService.teachTheWay)) {
-            this.hells[HellLevel.WrongfulDead].activities.push(this.activityService.teachTheWay);
+          if (!this.hells[Realm.WrongfulDead].activities.includes(this.activityService.teachTheWay)) {
+            this.hells[Realm.WrongfulDead].activities.push(this.activityService.teachTheWay);
           }
         }
       },
@@ -1482,7 +1458,7 @@ export class HellService {
       name: 'Hell of Dismemberment',
       description:
         'Torment for tomb-raiders and grave-robbers.<br>The demons here look awfully handy with those giant axes.',
-      index: HellLevel.Dismemberment,
+      index: Realm.Dismemberment,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1524,7 +1500,7 @@ export class HellService {
       name: 'Hell of the Mountain of Fire',
       description:
         'Torment for thieves.<br>The volcano where the poor souls are thrown looks a little toasty for comfort.',
-      index: HellLevel.MountainOfFire,
+      index: Realm.MountainOfFire,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1571,7 +1547,7 @@ export class HellService {
       name: 'Hell of Mills',
       description:
         "Torment for any who abused their power to oppress the weak.<br>You don't look forward to being ground into immortal flour.",
-      index: HellLevel.Mills,
+      index: Realm.Mills,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },
@@ -1600,7 +1576,7 @@ export class HellService {
       name: 'Hell of Saws',
       description:
         "Torment for swindlers and business cheats.<br>The demons sharpen their saws and grin at you.<br>You wish now that you'd stayed out of politics.",
-      index: HellLevel.Saws,
+      index: Realm.Saws,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
       },

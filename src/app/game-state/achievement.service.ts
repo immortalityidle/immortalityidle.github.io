@@ -1566,6 +1566,9 @@ export class AchievementService {
       },
       effect: () => {
         this.gameStateService?.unlockPanel('hellStatusPanel');
+        this.gameStateService!.addLayoutPanel('hellStatusPanel', 0, 14, 30, 14);
+        this.gameStateService?.unlockPanel('portalPanel');
+        this.gameStateService!.addLayoutPanel('portalPanel', 0, 14, 30, 14);
       },
       unlocked: false,
     },

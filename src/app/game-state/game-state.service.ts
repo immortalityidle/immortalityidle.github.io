@@ -11,13 +11,15 @@ import { HomeService, HomeProperties, HomeType } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
-import { HellLevel, HellProperties, HellService } from './hell.service';
+import { HellProperties, HellService } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService } from './location.service';
-import { LocationType } from './activity';
+import { LocationType, Realm } from './activity';
+import { joinTheGodsText } from '../game-state/textResources';
+import { TextPanelComponent } from '../text-panel/text-panel.component';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -640,6 +642,12 @@ export class GameStateService {
   }
 
   private getActivitiesProperties(props: ActivityProperties | undefined): ActivityProperties {
+    let realm: Realm = props?.currentRealm || Realm.MortalRealm;
+    if (this.hellService.inHell() && this.activityService.currentRealm >= this.hellService.hells.length) {
+      // handle the transition case where the old save data had us in hell
+      realm = Realm.Gates;
+    }
+
     return {
       autoRestart: props?.autoRestart || false,
       pauseOnDeath: props?.pauseOnDeath ?? true,
@@ -670,6 +678,7 @@ export class GameStateService {
       coreCultivationCounter: props?.coreCultivationCounter || 0,
       researchWindCounter: props?.researchWindCounter || 0,
       beforeDeathPauseUsed: props?.beforeDeathPauseUsed || false,
+      currentRealm: realm,
     };
   }
 
@@ -816,14 +825,8 @@ export class GameStateService {
   }
 
   private getHellProperties(props: HellProperties | undefined): HellProperties {
-    let currentHell = props?.currentHell || HellLevel.Gates;
-    if (currentHell < 0) {
-      currentHell = HellLevel.Gates;
-    }
-
     return {
       inHell: props?.inHell || false,
-      currentHell: currentHell,
       completedHellTasks: props?.completedHellTasks || [],
       completedHellBosses: props?.completedHellBosses || [],
       mountainSteps: props?.mountainSteps || 0,
@@ -1243,5 +1246,28 @@ export class GameStateService {
       return href.substring(href.lastIndexOf('/') + 1); //return the deployed branch so that the saves can be different for each branch
     }
     throw new Error('Hey, someone stole this game!'); // mess with whoever is hosting the game somewhere else and doesn't know enough javascript to fix this.
+  }
+
+  public joinTheGodsClick() {
+    if (
+      !confirm(
+        'Are you sure you are ready for this? You will need to leave all your money and most of your followers and possessions behind as you leave this mortal realm.'
+      )
+    ) {
+      return;
+    }
+    const dialogRef = this.dialog.open(TextPanelComponent, {
+      width: '700px',
+      data: { titleText: 'Joining the Gods', bodyTextArray: joinTheGodsText },
+      autoFocus: false,
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.hellService.inHell.set(true);
+      this.hellService.moveToHell(Realm.Gates);
+      this.characterService.updateMoney(0, true);
+      this.inventoryService.stashInventory();
+      this.followersService.hellPurge();
+      this.activityService.checkRequirements(true);
+    });
   }
 }

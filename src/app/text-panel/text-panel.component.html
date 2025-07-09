@@ -2,11 +2,19 @@
   <h3>{{titleText}}</h3>
   <hr/>
   <div class="textDiv">
-    <span innerHTML="{{ bodyText }}"></span>
+    <span innerHTML="{{ bodyTextArray[pageIndex] }}"></span>
   </div>
-  @if (imageFile !== '') {
+  @if (currentImageFile !== '') {
     <div class="imageDiv">
-      <img src='{{imageFile}}' alt="An activity image goes here" width="160" height="200"/>
+      <img src='{{imageFiles[pageIndex]}}' width="160" height="200"/>
     </div>
   }
+  <div class="navigationDiv">
+  @if (pageIndex > 0) {
+    <button (click)="previousClick()">Previous</button>
+  }
+  @if (pageIndex < bodyTextArray.length - 1) {
+    <button (click)="nextClick()">Next</button>
+  }
+  </div>
 </div>

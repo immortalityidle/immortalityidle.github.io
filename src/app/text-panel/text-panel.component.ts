@@ -9,12 +9,44 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class TextPanelComponent {
   titleText = '';
-  bodyText = '';
-  imageFile = '';
+  bodyTextArray: string[] = [];
+  imageFiles: string[] = [];
+  pageIndex = 0;
+  currentImageFile = '';
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { titleText: string; bodyText: string; imageFile: string }) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA)
+    public data: { titleText: string; bodyTextArray: string[]; imageFiles: string[] }
+  ) {
     this.titleText = data.titleText;
-    this.bodyText = data.bodyText;
-    this.imageFile = data.imageFile;
+    this.bodyTextArray = data.bodyTextArray;
+    this.imageFiles = data.imageFiles || [];
+    if (this.imageFiles.length > 0) {
+      this.currentImageFile = this.imageFiles[0];
+    } else {
+      this.currentImageFile = '';
+    }
+  }
+
+  nextClick() {
+    if (this.pageIndex < this.bodyTextArray.length - 1) {
+      this.pageIndex++;
+      if (this.imageFiles.length > this.pageIndex) {
+        this.currentImageFile = this.imageFiles[this.pageIndex];
+      } else {
+        this.currentImageFile = '';
+      }
+    }
+  }
+
+  previousClick() {
+    if (this.pageIndex > 0) {
+      this.pageIndex--;
+      if (this.imageFiles.length > this.pageIndex) {
+        this.currentImageFile = this.imageFiles[this.pageIndex];
+      } else {
+        this.currentImageFile = '';
+      }
+    }
   }
 }
