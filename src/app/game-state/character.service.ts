@@ -1217,12 +1217,8 @@ export class CharacterService {
   }
 
   increaseAttribute(attribute: AttributeType, amount: number): number {
-    let increaseAmount = amount * this.attributes[attribute].aptitudeMult;
-    increaseAmount = increaseAmount * ((this.achievementService!.unlockedAchievements.length * 2) / 100);
-    // sanity check that gain is never less than base gain
-    if (increaseAmount < amount) {
-      increaseAmount = amount;
-    }
+    let increaseAmount = amount * (1 + this.achievementService!.unlockedAchievements.length * 0.02); // 2% bonus per achievement
+    increaseAmount *= this.attributes[attribute].aptitudeMult;
     this.attributes[attribute].value += increaseAmount;
     if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
       this.highestAttributes[attribute] = this.attributes[attribute].value;

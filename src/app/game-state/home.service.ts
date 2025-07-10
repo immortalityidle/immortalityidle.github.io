@@ -105,7 +105,6 @@ export class HomeService {
   thugPause = false;
   hellHome = signal<boolean>(false);
   homeUnlocked = false;
-  smoothFarming = false;
   keepHome = false;
   bedroomFurniture: (Item | null)[] = [null, null, null, null, null, null, null, null, null];
   openBedroomFurnitureSlots = 0;

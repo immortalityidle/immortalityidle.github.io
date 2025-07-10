@@ -304,9 +304,9 @@ export class FarmService {
         }
       }
       field.averageYield = (field.averageYield * 364 + fieldYield) / 365;
-      if (this.smoothFarming && !harvested && this.fields.length > 0 && field.averageYield > 0.5) {
+      if (this.smoothFarming && !harvested && field.plots > 0 && field.averageYield > 0.25) {
         // smooth farming bonus crops on a day when no crops are harvested
-        this.inventoryService.addItem(this.itemRepoService.items[field.cropName], Math.round(field.averageYield));
+        this.inventoryService.addItem(this.itemRepoService.items[field.cropName], Math.floor(field.averageYield) || 1);
       }
     }
     if (totalDailyYield > 0 || this.smoothFarming) {

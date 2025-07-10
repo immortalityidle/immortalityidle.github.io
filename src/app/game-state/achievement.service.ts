@@ -1553,7 +1553,7 @@ export class AchievementService {
         return this.farmService.consecutiveHarvests >= 30;
       },
       effect: () => {
-        this.homeService.smoothFarming = true;
+        this.farmService.smoothFarming = true;
       },
       unlocked: false,
     },
