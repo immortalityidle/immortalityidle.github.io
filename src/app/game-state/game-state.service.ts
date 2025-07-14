@@ -3,7 +3,7 @@ import { ActivityService, ActivityProperties } from './activity.service';
 import { BattleService, BattleProperties, RIGHT_HAND_TECHNIQUE, LEFT_HAND_TECHNIQUE } from './battle.service';
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
-import { AchievementProperties, AchievementService } from './achievement.service';
+import { AchievementProperties, AchievementService, MEMORY_JOIN_THE_GODS } from './achievement.service';
 import { CharacterProperties } from './character.service';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties } from './followers.service';
@@ -18,8 +18,6 @@ import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService } from './location.service';
 import { LocationType, Realm } from './activity';
-import { joinTheGodsText } from '../game-state/textResources';
-import { TextPanelComponent } from '../text-panel/text-panel.component';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -465,6 +463,7 @@ export class GameStateService {
       }
     }
     this.layout.set(layoutData.layout);
+    this.updateAllPanelsUsed();
   }
 
   importGame(value: string) {
@@ -519,7 +518,7 @@ export class GameStateService {
 
   private validateGameState(gameState: Partial<GameState>): GameState {
     const returnValue = {
-      achievements: gameState.achievements ?? { unlockedAchievements: [] },
+      achievements: this.getAchievementProperties(gameState.achievements),
       character: this.getCharacterProperties(gameState.character),
       inventory: this.getInventoryProperties(gameState.inventory),
       home: this.getHomeProperties(gameState.home),
@@ -543,6 +542,14 @@ export class GameStateService {
     };
     return returnValue;
   }
+
+  private getAchievementProperties(props: AchievementProperties | undefined): AchievementProperties {
+    return {
+      unlockedAchievements: props?.unlockedAchievements || [],
+      unlockedMemories: props?.unlockedMemories || [],
+    };
+  }
+
   private getInventoryProperties(props: InventoryProperties | undefined): InventoryProperties {
     return {
       itemStacks: props?.itemStacks || [],
@@ -642,12 +649,6 @@ export class GameStateService {
   }
 
   private getActivitiesProperties(props: ActivityProperties | undefined): ActivityProperties {
-    let realm: Realm = props?.currentRealm || Realm.MortalRealm;
-    if (this.hellService.inHell() && this.activityService.currentRealm >= this.hellService.hells.length) {
-      // handle the transition case where the old save data had us in hell
-      realm = Realm.Gates;
-    }
-
     return {
       autoRestart: props?.autoRestart || false,
       pauseOnDeath: props?.pauseOnDeath ?? true,
@@ -678,7 +679,9 @@ export class GameStateService {
       coreCultivationCounter: props?.coreCultivationCounter || 0,
       researchWindCounter: props?.researchWindCounter || 0,
       beforeDeathPauseUsed: props?.beforeDeathPauseUsed || false,
-      currentRealm: realm,
+      currentRealm: props?.currentRealm ?? Realm.MortalRealm,
+      beggingDays: props?.beggingDays || 0,
+      oddJobDays: props?.oddJobDays || 0,
     };
   }
 
@@ -1256,12 +1259,7 @@ export class GameStateService {
     ) {
       return;
     }
-    const dialogRef = this.dialog.open(TextPanelComponent, {
-      width: '700px',
-      data: { titleText: 'Joining the Gods', bodyTextArray: joinTheGodsText },
-      autoFocus: false,
-    });
-    dialogRef.afterClosed().subscribe(() => {
+    this.achievementService.triggerMemory(MEMORY_JOIN_THE_GODS, () => {
       this.hellService.inHell.set(true);
       this.hellService.moveToHell(Realm.Gates);
       this.characterService.updateMoney(0, true);

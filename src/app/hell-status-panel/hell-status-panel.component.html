@@ -1,5 +1,5 @@
 <div class="hellStatusContainer">
-  @if (!hellService.inHell()) {
+  @if (!hellService.inHell() || !hellService.hells[activityService.currentRealm]) {
     <div>
         <span>
             You are not stuck in hell.

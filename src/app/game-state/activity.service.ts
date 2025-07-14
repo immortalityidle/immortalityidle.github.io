@@ -55,6 +55,8 @@ export interface ActivityProperties {
   researchWindCounter: number;
   beforeDeathPauseUsed: boolean;
   currentRealm: Realm;
+  oddJobDays: number;
+  beggingDays: number;
 }
 
 @Injectable({
@@ -586,7 +588,6 @@ export class ActivityService {
         discoveredActivities.push(activity.activityType);
       }
     }
-
     return {
       autoRestart: this.autoRestart,
       autoPauseUnlocked: this.autoPauseUnlocked,
@@ -618,6 +619,8 @@ export class ActivityService {
       coreCultivationCounter: this.coreCultivationCounter,
       beforeDeathPauseUsed: this.beforeDeathPauseUsed,
       currentRealm: this.currentRealm,
+      oddJobDays: this.oddJobDays,
+      beggingDays: this.beggingDays,
     };
   }
 
@@ -666,6 +669,8 @@ export class ActivityService {
     this.recruitingCounter = properties.recruitingCounter;
     this.petRecruitingCounter = properties.petRecruitingCounter;
     this.coreCultivationCounter = properties.coreCultivationCounter;
+    this.oddJobDays = properties.oddJobDays;
+    this.beggingDays = properties.beggingDays;
     this.checkRequirements(true);
     this.currentRealm = properties.currentRealm;
   }

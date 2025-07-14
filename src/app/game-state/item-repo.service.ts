@@ -1446,8 +1446,6 @@ baguaMap = [
         if (!this.battleService) {
           this.battleService = this.injector.get(BattleService);
         }
-        this.activityService.currentRealm = Realm.DivineRealm;
-
         this.logService.log(
           LogTopic.STORY,
           'You started your journey on ' +

@@ -15,6 +15,8 @@ import { FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService } from './location.service';
+import { MatDialog } from '@angular/material/dialog';
+import { TextPanelComponent } from '../text-panel/text-panel.component';
 
 export interface Achievement {
   name: string;
@@ -29,6 +31,20 @@ export interface Achievement {
 
 export interface AchievementProperties {
   unlockedAchievements: string[];
+  unlockedMemories: string[];
+}
+
+export const MEMORY_SPIRITUALITY = 'Sprituality';
+export const MEMORY_ASCENSION = 'Ascension';
+export const MEMORY_QI_UNLOCKED = 'QiUnlocked';
+export const MEMORY_IMPOSSIBLE_TASKS = 'ImpossibleTasks';
+export const MEMORY_JOIN_THE_GODS = 'JoinTheGods';
+export const MEMORY_HELL_COMPLETION = 'HellCompletion';
+
+export interface Memory {
+  title: string;
+  text: string[];
+  imageBaseName: string;
 }
 
 @Injectable({
@@ -37,6 +53,68 @@ export interface AchievementProperties {
 export class AchievementService {
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
+  unlockedMemories: string[] = [];
+
+  memories: { [key: string]: Memory } = {
+    [MEMORY_SPIRITUALITY]: {
+      title: 'A Spiritual Awakening',
+      text: [
+        'A stirring deep in the center of your being has begun, the start of your path to spirituality.<br><br>You find that your resting has become more than mere relaxing to refresh your mind and body.<br><br>Your newfound capacity for contemplation, reflection, and clearing your mind has unlocked a powerful new path in your development toward immortality.',
+      ],
+      imageBaseName: 'spirituality',
+    },
+    [MEMORY_ASCENSION]: {
+      title: 'Ascension',
+      text: [
+        'Your whole lifetime has been building up to this moment.<br><br>You have overcome fierce monsters, honed your abilities, and prepared your spirit to ascend to powers your past lives could only dream of.<br><br>You close your eyes and embrace your destiny.',
+      ],
+      imageBaseName: 'ascension',
+    },
+    [MEMORY_QI_UNLOCKED]: {
+      title: 'The Power of Qi',
+      text: [
+        'A tingle begins in your fingertips.<br><br>You feel the flow of Qi, a power that has always resided inside of you but was, until now, beyond your conscious control.<br><br>The power concentrates until if fills your hand, ready to be unleashed.<br><br>You have a great deal of training to do before you can make effective use of this power against your foes, but the door to unleashing your inner strength is finally unlocked.',
+      ],
+      imageBaseName: 'qiUnlocked',
+    },
+    [MEMORY_IMPOSSIBLE_TASKS]: {
+      title: 'Impossible Tasks',
+      text: [
+        "You are finally ready to seek out true immortality.<br><br>Your consummate searching has yielded your first clue: a scrap in an ancient text that leads you to believe that the secret of immortality lies in the ruins of an ancient civilization buried deep beneath the ocean's currents.",
+      ],
+      imageBaseName: 'impossibleTasks',
+    },
+    [MEMORY_JOIN_THE_GODS]: {
+      title: 'Joining the Gods',
+      text: [
+        'You ascend into the heavens, wind roaring past as your body cleaves through the sky like a blade.<br><br>The mortal world fades beneath your feet—villages, mountains, rivers—all growing smaller as you rise above the realm of men.<br><br>Over the Kunlun mountains, past sacred Mount Tai, and beyond the icy breath of the Jade Peaks, you cross the edge of the world itself.<br><br>The sea opens up before you like a mirror of the sky, and in the far distance, Mount Penglai emerges—an immortal isle shrouded in mist and crowned with golden light.',
+        "Above the snowy slopes of Penglai, the mountain peak splits the clouds like a divine spear.<br><br>Atop it stands the legendary Golden Palace, radiant as the sun, its high walls wreathed in drifting silk-clouds and surrounded by a forest unlike any you've seen.<br><br>Jewels hang like fruit from crystalline branches, and fragrant blossoms pulse with the qi of eternity.<br><br>The orchard is said to bear fruits of eternal youth, yet despite your years of cultivation, you cannot help but feel a small pang of inadequacy.<br><br>Your own peaches never shone so brightly.<br><br>No matter how carefully you tended your land, they were never this... divine.<br><br>You suppress the feeling.<br><br>You are immortal now.<br><br>You have crossed the threshold few dare even to dream of.<br><br>You belong here — don’t you?",
+        'You pass beneath the golden arch and step into a vast courtyard paved with polished stone.<br><br>The divine pressure here weighs heavy on your shoulders, more profound than anything the mortal world ever offered.<br><br>Seated before you are the gods themselves—an assembly of beings who rule the celestial realms.<br><br>The Eight Immortals recline in ease, each holding their sacred artifact, laughing at jokes older than dynasties.<br><br>Nuwa and Fuxi speak in low, gentle tones.<br><br>The Queen Mother of the West exchanges rare smiles with Caishen, god of wealth, clad in silks finer than mortal imagination.<br><br>And at the heart of them all—on the highest of the golden thrones—sits the Jade Emperor, Shangti, expression unreadable.',
+        'Shangti claps his hands.<br><br>"Ah. The young upstart who has caused such noise in the mortal realm has finally arrived."',
+        'Every divine eye turns toward you, and though none speak, their silence speaks volumes.<br><br>Their gazes are not kind.<br><br>Their stares are not welcoming.',
+        'You nod respectfully and step closer, the celestial qi around you thickening.<br><br>Among the countless golden thrones, one—off to the side—is conspicuously empty.<br><br>Your eyes rest on it for just a moment too long. A seat waiting to be claimed, perhaps?<br><br>Or a reminder of what you have not yet earned?',
+        '"I suppose you feel you deserve a place here now, do you?<br><br>Fight a few monsters.<br><br>Improve yourself a little.<br><br>Conquer your fellow mortals.<br><br>And suddenly, you think you\'re a god?"',
+        'You prepare to speak, to recount the years of pain and meditation, the near-death battles, the countless nights spent perfecting your meridians and soul core beneath the stars.<br><br>But before you can utter a word, another voice cuts through the air like a thunderclap.',
+        '"Nonsense!<br><br>This upstart destroyed one of my finest servants and committed myriad sins that still scream from the lower realms.<br><br>A karmic debt weighs heavy and no price has been paid."',
+        '"And what do you propose, Lord Yama?<br><br>The child has shown the strength to ascend and the determination to rise.<br><br>That empty throne will not remain empty forever."',
+        '"Send the upstart to my domain.<br><br>Let the eighteen hells purge the karmic debt.<br><br>If this child is to sit among us, the price must be paid in fire, blade, sorrow, and shadow."',
+        'Another god speaks out from the nearby mountains.<br><br>"Lord Yama\'s proposal seems fair.<br><br>The child has power, yes — but no balance.<br><br>The yin and yang within are a storm.<br><br>A few millennia under Yama\'s watch will do the upstart good, granting temperence... or the peace of utter destruction. Either way, the problem is resolved."',
+        'Whispers and nods ripple through the gathering.<br><br>The weight of judgment hangs in the air, and no voice rises in protest.',
+        '"Your words are wise, as always, Pan Gu."<br><br>The Jade Emperor turns to face you again.<br><br>"Let the upstart be cast into the eighteen hells.<br><br>Should the experience teach wisdom rather than despair, then we shall welcome the child as one of us."',
+        'Before you can voice a word of protest, the Emperor lifts a single hand.<br><br>The space around you fractures like glass struck by divine force.<br><br>Light and sound vanish.<br><br>You fall — not through space, but through reality itself.',
+        'You awaken—or perhaps arrive—in a vast, empty stone chamber.<br><br>The air is cold, dry, silent.<br><br>Above, darkness.<br><br>Below, the faint shimmer of runes etched into stone.<br><br>Around you stand eighteen open gates, each one a maw leading to a different hell.<br><br>You can feel them calling to you.<br><br>Testing you.<br><br>Daring you.',
+        'You hear the Jade Emperor\'s voice one last time.<br><br>"If you are worthy, you will return. If not, you will serve as a warning to those who think mere strength makes a god."<br><br>It looks like you have a new challenge ahead: Escape this underworld and prove your worth to the gods.<br><br>You brace yourself for the horrors you will face as you step through the first portal.',
+      ],
+      imageBaseName: 'joinTheGods',
+    },
+    [MEMORY_HELL_COMPLETION]: {
+      title: 'Hell Vanquished!',
+      text: [
+        'Lord Yama lies defeated before you, unable to stand against your strength.<br><br>He bows in acknowledgement of your growth in both character and prowess.<br><br>"Take this key, child."<br><br>Lord Yama hands you a glowing artifact.<br><br>"The portals will answer to you now. You may return now to the Divine Realm to claim your rightful place. Welcome home, young upstart, and may the heavens continue to smile upon you."<br><br>',
+      ],
+      imageBaseName: 'hellCompletion',
+    },
+  };
 
   constructor(
     private mainLoopService: MainLoopService,
@@ -53,7 +131,8 @@ export class AchievementService {
     private followerService: FollowersService,
     private impossibleTaskService: ImpossibleTaskService,
     private hellService: HellService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private dialog: MatDialog
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       if (!this.gameStateService) {
@@ -223,6 +302,26 @@ export class AchievementService {
         this.battleService.battlesUnlocked = true;
         this.gameStateService!.unlockPanel('battlePanel');
         this.gameStateService!.addLayoutPanel('battlePanel', 68, 35, 30, 20);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Spiritual Awakening',
+      description: 'You have honed your mind and body enough to begin meditating to develop your spirit.',
+      hint: 'An aspiring immortal needs to develop all the basic attributes.',
+      check: () => {
+        return (
+          this.characterService.attributes.strength.value >= 1000 &&
+          this.characterService.attributes.speed.value >= 1000 &&
+          this.characterService.attributes.charisma.value >= 1000 &&
+          this.characterService.attributes.intelligence.value >= 1000 &&
+          this.characterService.attributes.toughness.value >= 1000
+        );
+      },
+      effect: () => {
+        if (!this.unlockedMemories.includes(MEMORY_SPIRITUALITY)) {
+          this.triggerMemory(MEMORY_SPIRITUALITY);
+        }
       },
       unlocked: false,
     },
@@ -1013,10 +1112,10 @@ export class AchievementService {
     },
     {
       name: "Grandma's Stick",
-      description: "You've developed spirituality and come to understand the value of grandmothers.",
-      hint: "Just keep playing. I'm sure this will come to an aspiring immortal eventually.",
+      description: "You've developed enough spirituality to come to understand the value of grandmothers.",
+      hint: "You'll need to meditate on this one to figure it out.",
       check: () => {
-        return this.characterService.attributes.spirituality.value > 0;
+        return this.characterService.attributes.spirituality.value > 1;
       },
       effect: () => {
         this.inventoryService.grandmotherGift = true;
@@ -1088,6 +1187,9 @@ export class AchievementService {
         return lowValue >= 1000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
+        if (!this.unlockedMemories.includes(MEMORY_QI_UNLOCKED)) {
+          this.triggerMemory(MEMORY_QI_UNLOCKED);
+        }
         this.characterService.qiUnlocked = true;
         if (this.characterService.status.qi.max === 0) {
           this.characterService.status.qi.max = 1;
@@ -1164,6 +1266,9 @@ export class AchievementService {
         );
       },
       effect: () => {
+        if (!this.unlockedMemories.includes(MEMORY_IMPOSSIBLE_TASKS)) {
+          this.triggerMemory(MEMORY_IMPOSSIBLE_TASKS);
+        }
         this.impossibleTaskService.impossibleTasksUnlocked = true;
         this.gameStateService!.unlockPanel('impossibleTasksPanel');
       },
@@ -1182,6 +1287,9 @@ export class AchievementService {
         );
       },
       effect: () => {
+        if (!this.unlockedMemories.includes(MEMORY_ASCENSION)) {
+          this.triggerMemory(MEMORY_ASCENSION);
+        }
         if (this.battleService.maxFamilyTechniques < 1) {
           this.battleService.maxFamilyTechniques = 1;
         }
@@ -1600,15 +1708,17 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      name: 'Rise of the God Slayers',
-      description: "A new threat has emerged, more powerful than anything you've ever faced.",
-      hint: 'Godhood comes with issues.',
+      name: 'Deity',
+      description:
+        'You have conquered the trials of the eighteen hells and emerged as worthy to claim a throne in the Divine Realm.',
+      hint: 'Godhood awaits you.',
       check: () => {
         return this.characterService.god();
       },
       effect: () => {
-        this.battleService.godSlayersUnlocked = true;
-        this.battleService.godSlayersEnabled = true;
+        if (!this.unlockedMemories.includes(MEMORY_HELL_COMPLETION)) {
+          this.triggerMemory(MEMORY_HELL_COMPLETION);
+        }
       },
       unlocked: false,
     },
@@ -1678,9 +1788,30 @@ export class AchievementService {
     }
   }
 
+  triggerMemory(memoryName: string, triggerFunction: (() => void) | null = null) {
+    const memory = this.memories[memoryName];
+    const imageFiles = [];
+    for (let i = 0; i < memory.text.length; i++) {
+      imageFiles.push('assets/images/memories/' + memory.imageBaseName + i + '.png');
+    }
+
+    const dialogRef = this.dialog.open(TextPanelComponent, {
+      width: '700px',
+      data: { titleText: memory.title, bodyTextArray: memory.text, imageFiles: imageFiles },
+      autoFocus: false,
+    });
+    if (triggerFunction) {
+      dialogRef.afterClosed().subscribe(triggerFunction);
+    }
+    if (!this.unlockedMemories.includes(memoryName)) {
+      this.unlockedMemories.push(memoryName);
+    }
+  }
+
   getProperties(): AchievementProperties {
     return {
       unlockedAchievements: this.unlockedAchievements,
+      unlockedMemories: this.unlockedMemories,
     };
   }
 
@@ -1688,7 +1819,8 @@ export class AchievementService {
     if (!this.gameStateService) {
       this.gameStateService = this.injector.get(GameStateService);
     }
-    this.unlockedAchievements = properties.unlockedAchievements || [];
+    this.unlockedMemories = properties.unlockedMemories;
+    this.unlockedAchievements = properties.unlockedAchievements;
     for (const achievement of this.achievements) {
       if (this.unlockedAchievements.includes(achievement.name)) {
         this.unlockAchievement(achievement, false);
