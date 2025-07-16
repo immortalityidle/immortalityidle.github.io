@@ -151,6 +151,10 @@ export class LocationService {
       this.unlockedLocations = [LocationType.Hell];
       this.troubleTarget = LocationType.Hell;
     } else {
+      if (this.troubleTarget === LocationType.Hell) {
+        // we're out of hell, make sure trouble target isn't set there anymore
+        this.troubleTarget = LocationType.SmallTown;
+      }
       if (this.unlockedLocations.includes(LocationType.Hell)) {
         this.unlockedLocations = [];
       }

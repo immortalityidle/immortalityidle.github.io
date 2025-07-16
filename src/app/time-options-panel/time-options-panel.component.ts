@@ -25,6 +25,7 @@ import { MatIcon } from '@angular/material/icon';
 export class TimeOptionsPanelComponent {
   inputSave = 'Saved Schedule #1';
   attributeKeys: string[];
+  statusMaxes: string[];
 
   constructor(
     public activityService: ActivityService,
@@ -32,6 +33,7 @@ export class TimeOptionsPanelComponent {
     public characterService: CharacterService
   ) {
     this.attributeKeys = Object.keys(this.characterService.attributes);
+    this.statusMaxes = Object.keys(this.characterService.status);
   }
 
   pauseOnDeath(event: Event) {

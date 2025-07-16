@@ -2,7 +2,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
-import { CharacterService } from './character.service';
+import { AttributeType, CharacterService, StatusType } from './character.service';
 import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
 import { Equipment, InventoryService } from './inventory.service';
@@ -32,6 +32,12 @@ export interface FollowersProperties {
   autoDismissUnlocked: boolean;
   maxFollowerByType: { [key: string]: number };
   maxPetsByType: { [key: string]: number };
+  savedFollowerAssignments: SavedAssignments[];
+  savedPetAssignments: SavedAssignments[];
+  followerTriggers: AssignmentTrigger[];
+  petTriggers: AssignmentTrigger[];
+  followerTriggerIndex: number;
+  petTriggerIndex: number;
   sortField: string;
   sortAscending: boolean;
   totalRecruited: number;
@@ -50,9 +56,15 @@ export interface FollowersProperties {
   leftoverMetallurgy: number;
 }
 
-export interface FollowerReserve {
-  job: string;
-  reserve: number;
+export interface SavedAssignments {
+  name: string;
+  assignments: { [key: string]: number }[];
+}
+
+export interface AssignmentTrigger {
+  attribute: string;
+  value: number;
+  savedAssignmentsName: string;
 }
 
 type jobsType = {
@@ -81,6 +93,12 @@ export class FollowersService {
   autoDismissUnlocked = false;
   maxFollowerByType: { [key: string]: number } = {};
   maxPetsByType: { [key: string]: number } = {};
+  savedFollowerAssignments: SavedAssignments[] = [];
+  savedPetAssignments: SavedAssignments[] = [];
+  followerTriggers: AssignmentTrigger[] = [];
+  petTriggers: AssignmentTrigger[] = [];
+  followerTriggerIndex = 0;
+  petTriggerIndex = 0;
   stashedFollowersMaxes: { [key: string]: number } = {};
   stashedPetMaxes: { [key: string]: number } = {};
   followerCap = 0;
@@ -538,6 +556,8 @@ export class FollowersService {
       this.followersWorks(daysElapsed);
       this.sortFollowers(this.sortAscending, true);
       this.sortFollowers(this.sortAscending, false);
+
+      this.checkTriggers();
     });
 
     mainLoopService.tickSubject.subscribe(() => {
@@ -552,7 +572,6 @@ export class FollowersService {
         this.generateFollower();
       }
 
-      // When called without days argument, we will only process followers like hunters which need to go every tick.
       this.followersWorks();
 
       this.followersMaxed =
@@ -690,6 +709,19 @@ export class FollowersService {
     }
     this.followersRecruited = 0;
     this.updateFollowerTotalPower();
+
+    this.followerTriggerIndex = 0;
+    if (this.followerTriggers.length > 0) {
+      // trigger entry 0 is special, it always loads on rebirth regardless of attribute values
+      this.loadSavedAssignments(this.followerTriggers[0].savedAssignmentsName, false);
+      this.followerTriggerIndex++;
+    }
+    this.petTriggerIndex = 0;
+    if (this.petTriggers.length > 0) {
+      // trigger entry 0 is special, it always loads on rebirth regardless of attribute values
+      this.loadSavedAssignments(this.petTriggers[0].savedAssignmentsName, true);
+      this.petTriggerIndex++;
+    }
   }
 
   getProperties(): FollowersProperties {
@@ -702,6 +734,12 @@ export class FollowersService {
       autoDismissUnlocked: this.autoDismissUnlocked,
       maxFollowerByType: this.maxFollowerByType,
       maxPetsByType: this.maxPetsByType,
+      savedFollowerAssignments: this.savedFollowerAssignments,
+      savedPetAssignments: this.savedPetAssignments,
+      followerTriggers: this.followerTriggers,
+      petTriggers: this.petTriggers,
+      followerTriggerIndex: this.followerTriggerIndex,
+      petTriggerIndex: this.petTriggerIndex,
       stashedFollowersMaxes: this.stashedFollowersMaxes,
       stashedPetMaxes: this.stashedPetMaxes,
       sortField: this.sortField,
@@ -727,6 +765,12 @@ export class FollowersService {
     this.autoDismissUnlocked = properties.autoDismissUnlocked;
     this.maxFollowerByType = properties.maxFollowerByType;
     this.maxPetsByType = properties.maxPetsByType;
+    this.savedFollowerAssignments = properties.savedFollowerAssignments;
+    this.savedPetAssignments = properties.savedPetAssignments;
+    this.followerTriggers = properties.followerTriggers;
+    this.petTriggers = properties.petTriggers;
+    this.followerTriggerIndex = properties.followerTriggerIndex;
+    this.petTriggerIndex = properties.petTriggerIndex;
     this.stashedFollowersMaxes = properties.stashedFollowersMaxes;
     this.stashedPetMaxes = properties.stashedPetMaxes;
     this.sortField = properties.sortField;
@@ -1006,5 +1050,118 @@ export class FollowersService {
       }
     }
     this.updateFollowerTotalPower();
+  }
+
+  saveAssignments(saveName: string, pets: boolean) {
+    let savedAssignments;
+    let currentAssignments;
+    if (pets) {
+      savedAssignments = this.savedPetAssignments;
+      currentAssignments = this.maxPetsByType;
+    } else {
+      savedAssignments = this.savedFollowerAssignments;
+      currentAssignments = this.maxFollowerByType;
+    }
+
+    const assignmentSet = savedAssignments.find(entry => entry.name === saveName);
+
+    if (assignmentSet) {
+      assignmentSet.assignments = JSON.parse(JSON.stringify(currentAssignments));
+    } else {
+      savedAssignments.push({
+        name: saveName,
+        assignments: JSON.parse(JSON.stringify(currentAssignments)),
+      });
+    }
+  }
+
+  loadSavedAssignments(saveName: string, pets: boolean) {
+    if (pets) {
+      const assignmentSet = this.savedPetAssignments.find(entry => entry.name === saveName);
+      if (assignmentSet) {
+        this.maxPetsByType = JSON.parse(JSON.stringify(assignmentSet.assignments));
+      }
+    } else {
+      const assignmentSet = this.savedFollowerAssignments.find(entry => entry.name === saveName);
+      if (assignmentSet) {
+        this.maxFollowerByType = JSON.parse(JSON.stringify(assignmentSet.assignments));
+      }
+    }
+  }
+
+  removeSavedAssignments(saveName: string, pets: boolean) {
+    if (pets) {
+      const assignmentSetIndex = this.savedPetAssignments.findIndex(entry => entry.name === saveName);
+      if (assignmentSetIndex >= 0) {
+        this.savedPetAssignments.splice(assignmentSetIndex, 1);
+      }
+      // also clear any triggers that used that schedule
+      for (let i = this.followerTriggers.length - 1; i >= 0; i--) {
+        if (this.followerTriggers[i].savedAssignmentsName === saveName) {
+          this.followerTriggers.splice(i, 1);
+        }
+      }
+    } else {
+      const assignmentSetIndex = this.savedFollowerAssignments.findIndex(entry => entry.name === saveName);
+      if (assignmentSetIndex >= 0) {
+        this.savedFollowerAssignments.splice(assignmentSetIndex, 1);
+      }
+      // also clear any triggers that used that schedule
+      for (let i = this.petTriggers.length - 1; i >= 0; i--) {
+        if (this.petTriggers[i].savedAssignmentsName === saveName) {
+          this.petTriggers.splice(i, 1);
+        }
+      }
+    }
+  }
+
+  checkTriggers() {
+    if (this.followerTriggerIndex < this.followerTriggers.length) {
+      const trigger = this.followerTriggers[this.followerTriggerIndex];
+      if (trigger.attribute === 'money') {
+        if (this.characterService.money >= trigger.value) {
+          this.followerTriggerIndex++;
+          this.loadSavedAssignments(trigger.savedAssignmentsName, false);
+        }
+        return;
+      }
+      const attribute = trigger.attribute as AttributeType;
+      if (this.characterService.attributes[attribute]) {
+        if (this.characterService.attributes[attribute].value >= trigger.value) {
+          this.followerTriggerIndex++;
+          this.loadSavedAssignments(trigger.savedAssignmentsName, false);
+        }
+        return;
+      }
+      const status = trigger.attribute as StatusType;
+      if (this.characterService.status[status].max >= trigger.value) {
+        this.followerTriggerIndex++;
+        this.loadSavedAssignments(trigger.savedAssignmentsName, false);
+      }
+    }
+
+    if (this.petTriggerIndex < this.petTriggers.length) {
+      const trigger = this.petTriggers[this.petTriggerIndex];
+      if (trigger.attribute === 'money') {
+        if (this.characterService.money >= trigger.value) {
+          this.petTriggerIndex++;
+          this.loadSavedAssignments(trigger.savedAssignmentsName, true);
+        }
+        return;
+      }
+      const attribute = trigger.attribute as AttributeType;
+      if (this.characterService.attributes[attribute]) {
+        if (this.characterService.attributes[attribute].value >= trigger.value) {
+          this.petTriggerIndex++;
+          this.loadSavedAssignments(trigger.savedAssignmentsName, true);
+        }
+        return;
+      }
+      const status = trigger.attribute as StatusType;
+      if (this.characterService.status[status].max >= trigger.value) {
+        this.petTriggerIndex++;
+        this.loadSavedAssignments(trigger.savedAssignmentsName, true);
+      }
+    }
   }
 }

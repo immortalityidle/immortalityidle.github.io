@@ -1,10 +1,14 @@
 import { Component, forwardRef, Inject } from '@angular/core';
-import { FollowersService, Follower } from '../game-state/followers.service';
+import { FollowersService, Follower, SavedAssignments, AssignmentTrigger } from '../game-state/followers.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CamelToTitlePipe } from '../pipes';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { CharacterService } from '../game-state/character.service';
 
 @Component({
   selector: 'app-follower-management-panel',
@@ -15,6 +19,10 @@ import { CamelToTitlePipe } from '../pipes';
     forwardRef(() => KeyValuePipe),
     forwardRef(() => CamelToTitlePipe),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => MatTabGroup),
+    forwardRef(() => MatTab),
+    forwardRef(() => MatIcon),
+    forwardRef(() => MatSelectModule),
   ],
 })
 export class FollowerManagementPanelComponent {
@@ -24,16 +32,33 @@ export class FollowerManagementPanelComponent {
   protected followers: Follower[];
   protected followerCap: number;
   protected maxFollowerByType: { [key: string]: number };
-  constructor(@Inject(MAT_DIALOG_DATA) data: { pets: boolean }, protected followerService: FollowersService) {
+  inputSave = 'Saved Assignments #1';
+  savedAssignments: SavedAssignments[];
+  triggers: AssignmentTrigger[];
+  attributeKeys: string[];
+  statusMaxes: string[];
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) data: { pets: boolean },
+    protected followerService: FollowersService,
+    private characterService: CharacterService
+  ) {
+    this.attributeKeys = Object.keys(this.characterService.attributes);
+    this.statusMaxes = Object.keys(this.characterService.status);
+
     this.pets = data.pets;
     this.followers = followerService.followers;
     this.followerCap = followerService.followerCap;
     this.maxFollowerByType = followerService.maxFollowerByType;
+    this.savedAssignments = followerService.savedFollowerAssignments;
+    this.triggers = followerService.followerTriggers;
     if (this.pets) {
       this.followerType = 'Pet';
       this.followers = followerService.pets;
       this.followerCap = followerService.petsCap;
       this.maxFollowerByType = followerService.maxPetsByType;
+      this.savedAssignments = followerService.savedPetAssignments;
+      this.triggers = followerService.petTriggers;
     }
   }
 
@@ -91,5 +116,53 @@ export class FollowerManagementPanelComponent {
 
   protected dismissAllClicked() {
     this.followerService.dismissAllFollowers(undefined, this.pets);
+  }
+
+  protected saveAssignments() {
+    this.followerService.saveAssignments(this.inputSave, this.pets);
+    this.updateFollowerVariables();
+  }
+
+  inputSaveChange(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inputSave = event.target.value;
+  }
+
+  loadAssignments(saveName: string) {
+    this.followerService.loadSavedAssignments(saveName, this.pets);
+    this.updateFollowerVariables();
+  }
+
+  removeAssignments(saveName: string) {
+    this.followerService.removeSavedAssignments(saveName, this.pets);
+    this.updateFollowerVariables();
+  }
+
+  updateFollowerVariables() {
+    if (this.pets) {
+      this.savedAssignments = this.followerService.savedPetAssignments;
+      this.maxFollowerByType = this.followerService.maxPetsByType;
+    } else {
+      this.savedAssignments = this.followerService.savedFollowerAssignments;
+      this.maxFollowerByType = this.followerService.maxFollowerByType;
+    }
+  }
+
+  triggerValueChange(event: Event, trigger: AssignmentTrigger) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    trigger.value = parseInt(event.target.value);
+  }
+
+  removeTrigger(trigger: AssignmentTrigger) {
+    const index = this.triggers.indexOf(trigger);
+    this.triggers.splice(index, 1);
+  }
+
+  addTrigger() {
+    this.triggers.push({
+      attribute: 'strength',
+      value: 100,
+      savedAssignmentsName: '',
+    });
   }
 }

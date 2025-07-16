@@ -1,43 +1,124 @@
 <div class="darkMode">
   <h3>Manage {{followerType}}s</h3>
   <hr />
-  <div class="topInfo">
-    <span>
-      You are currently supporting {{followers.length}} {{followerType}}(s). You can support up to {{followerCap}}.
-    </span>
-    <span>
-      <button (click)="dismissAllClicked()">Dismiss All {{followerType}}s</button>
-    </span>
-  </div>
-  <div class="topInfo"><span tooltip="Set a number to change all of the limits to.">Set limit on all to <input min="0" max="1000" value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> {{followerType}}(s). <button (click)="changeAllClicked()">Change All</button></span></div>
-  <div class="topInfo">
-    <span>
-      Sort followers by
-      <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
-        <option [selected]="followerService.sortField === 'Name'">Name</option>
-        <option [selected]="followerService.sortField === 'Job'" value="Job">Type</option>
-        <option [selected]="followerService.sortField === 'Age'">Age</option>
-        <option [selected]="followerService.sortField === 'Power'">Power</option>
-        <option [selected]="followerService.sortField === 'Remaining Life'">Remaining Life</option>
-      </select>
-      <span>
-        <input type="checkbox" id="followerSort"  [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
-        <label for="followerSort">Sort Ascending</label>
-      </span>
-    </span></div>
-    <div class="scrollingDiv">
-      <table>
-        @for (job of followerService.jobs | keyvalue; track job) {
-          @if (!job.value.hidden && (job.value.pet === pets || (!job.value.pet && !pets))) {
-            <tr >
-              <td>{{job.key | camelToTitle}}</td>
-              <td>{{job.value.description}}</td>
-              <td tooltip="This value will only apply to new {{followerType}}s.<br>You'll have to dismiss current {{followerType}}s yourself.">Keep up to <input min="0" max="1000" value="{{maxFollowerByType[job.key] === undefined ? 1000 : maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
-            </tr>
+  <mat-tab-group>
+    <mat-tab label="Assignments">
+      <div class="topInfo">
+        <span>
+          You are currently supporting {{followers.length}} {{followerType}}(s). You can support up to {{followerCap}}.
+        </span>
+        <span>
+          <button (click)="dismissAllClicked()">Dismiss All {{followerType}}s</button>
+        </span>
+      </div>
+      <div class="topInfo"><span tooltip="Set a number to change all of the limits to.">Set limit on all to <input min="0" max="1000" value="0" type="number" class="inputBox" (change)="changeAllChanged($event)"> {{followerType}}(s). <button (click)="changeAllClicked()">Change All</button></span></div>
+      <div class="topInfo">
+        <span>
+          Sort followers by
+          <select name="sortOrder" id="sortOrder"  (change)="sortOrderChanged($event)">
+            <option [selected]="followerService.sortField === 'Name'">Name</option>
+            <option [selected]="followerService.sortField === 'Job'" value="Job">Type</option>
+            <option [selected]="followerService.sortField === 'Age'">Age</option>
+            <option [selected]="followerService.sortField === 'Power'">Power</option>
+            <option [selected]="followerService.sortField === 'Remaining Life'">Remaining Life</option>
+          </select>
+          <span>
+            <input type="checkbox" id="followerSort"  [checked]="this.followerService.sortAscending" (change)="sortAscSwitch()">
+            <label for="followerSort">Sort Ascending</label>
+          </span>
+        </span>
+      </div>
+      <div class="scrollingDiv">
+        <table>
+          @for (job of followerService.jobs | keyvalue; track job) {
+            @if (!job.value.hidden && (job.value.pet === pets || (!job.value.pet && !pets))) {
+              <tr >
+                <td>{{job.key | camelToTitle}}</td>
+                <td>{{job.value.description}}</td>
+                <td tooltip="This value will only apply to new {{followerType}}s.<br>You'll have to dismiss current {{followerType}}s yourself.">Keep up to <input min="0" max="1000" value="{{maxFollowerByType[job.key] === undefined ? 1000 : maxFollowerByType[job.key]}}" type="number" class="inputBox" (change)="keepValueChanged($event, job.key)"/></td>
+              </tr>
+            }
+          }
+        </table>
+      </div>
+      <br/>
+      <span>Total assignments: {{getTotalAssingments()}}</span>
+    </mat-tab>
+    <mat-tab label="Saved Assignments">
+      <div>
+        <button class="saveButton" tooltip="Save your current set of assignments." (click)="saveAssignments()">
+          Save Current Assignments
+        </button>
+        <span class="spacedSpan">as</span>
+        <input min="0" value="{{inputSave}}" type="text" class="inputBox" (change)="inputSaveChange($event)"/>
+      </div>
+      @for (entry of savedAssignments; track entry.name){
+        <div class="optionsRow">
+          <span class="grower">{{entry.name}}</span>
+          <button class="saveButton" tooltip="Load this saved set of assignments." (click)="loadAssignments(entry.name)">
+            Load
+          </button>
+          <button class="saveButton" tooltip="Remove this saved set of assignments." (click)="removeAssignments(entry.name)">
+            Remove
+          </button>
+        </div>
+      }
+    </mat-tab>
+    <mat-tab label="Assignments Triggers">
+      @if (savedAssignments.length === 0){
+        <div>
+          <span>
+            No saved assignments to trigger
+          </span>
+        </div>
+      }
+      @else {
+        <button class="saveButton" tooltip="Add a trigger to change assignments automatically.<br>Triggers are activated in order, once per lifetime, as the selected attributes reach the chosen values." (click)="addTrigger()">
+          Add a Trigger
+        </button>
+        @for (trigger of triggers; track trigger){
+          @if ($index === 0){
+            <div class="optionsRow">
+              <span class="spacedSpan">On rebirth, load</span>
+              <mat-select class="selectSave" [(value)]="trigger.savedAssignmentsName">
+                @for (entry of savedAssignments; track entry.name){
+                  <mat-option value="{{entry.name}}">{{entry.name}}</mat-option>
+                }
+              </mat-select>
+              <mat-icon class="iconButton" tooltip="Remove this assignment trigger." (click)="removeTrigger(trigger)">
+                close
+              </mat-icon>
+            </div>
+          }
+          @else {
+            <div class="optionsRow">
+              <span class="spacedSpan">When</span>
+              <mat-select class="selectSave" [(value)]="trigger.attribute">
+                @for (attribute of attributeKeys; track attribute){
+                  <mat-option value="{{attribute}}">{{attribute | camelToTitle}}</mat-option>
+                }
+                @for (statusMax of statusMaxes; track statusMax){
+                  <mat-option value="{{statusMax}}">Max {{statusMax | camelToTitle}}</mat-option>
+                }
+                <mat-option value="money">Money</mat-option>
+              </mat-select>
+              <span class="spacedSpan"> reaches </span>
+              <input min="0" value="{{trigger.value}}" type="number" class="smallInputBox" (change)="triggerValueChange($event, trigger)"/>
+              <span class="spacedSpan"> then load </span>
+              <mat-select class="selectSave" [(value)]="trigger.savedAssignmentsName">
+                @for (entry of savedAssignments; track entry.name){
+                  <mat-option value="{{entry.name}}">{{entry.name}}</mat-option>
+                }
+              </mat-select>
+              <mat-icon class="iconButton" tooltip="Remove this assignment trigger." (click)="removeTrigger(trigger)">
+                close
+              </mat-icon>
+            </div>
           }
         }
-      </table>
-    </div>
-    <br/>
-    <span>Total assignments: {{getTotalAssingments()}}</span>
-  </div>
+      }
+
+    </mat-tab>
+  </mat-tab-group>
+
+</div>

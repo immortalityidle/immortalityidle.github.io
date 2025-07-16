@@ -488,8 +488,23 @@ export class ActivityService {
   checkTriggers() {
     if (this.triggerIndex < this.loopChangeTriggers.length) {
       const trigger = this.loopChangeTriggers[this.triggerIndex];
+      if (trigger.attribute === 'money') {
+        if (this.characterService.money >= trigger.value) {
+          this.triggerIndex++;
+          this.loadActivityLoop(trigger.scheduleName);
+        }
+        return;
+      }
       const attribute = trigger.attribute as AttributeType;
-      if (this.characterService.attributes[attribute].value >= trigger.value) {
+      if (this.characterService.attributes[attribute]) {
+        if (this.characterService.attributes[attribute].value >= trigger.value) {
+          this.triggerIndex++;
+          this.loadActivityLoop(trigger.scheduleName);
+        }
+        return;
+      }
+      const status = trigger.attribute as StatusType;
+      if (this.characterService.status[status].max >= trigger.value) {
         this.triggerIndex++;
         this.loadActivityLoop(trigger.scheduleName);
       }

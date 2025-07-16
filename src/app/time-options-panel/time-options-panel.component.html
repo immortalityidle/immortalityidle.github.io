@@ -90,6 +90,10 @@
                 @for (attribute of attributeKeys; track attribute){
                   <mat-option value="{{attribute}}">{{attribute | camelToTitle}}</mat-option>
                 }
+                @for (statusMax of statusMaxes; track statusMax){
+                  <mat-option value="{{statusMax}}">Max {{statusMax | camelToTitle}}</mat-option>
+                }
+                <mat-option value="money">Money</mat-option>
               </mat-select>
               <span class="spacedSpan"> reaches </span>
               <input min="0" value="{{trigger.value}}" type="number" class="smallInputBox" (change)="triggerValueChange($event, trigger)"/>
