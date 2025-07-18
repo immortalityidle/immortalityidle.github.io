@@ -306,11 +306,16 @@ export class FarmService {
       field.averageYield = (field.averageYield * 364 + fieldYield) / 365;
       if (this.smoothFarming && !harvested && field.plots > 0 && field.averageYield > 0.25) {
         // smooth farming bonus crops on a day when no crops are harvested
-        this.inventoryService.addItem(this.itemRepoService.items[field.cropName], Math.floor(field.averageYield) || 1);
+        const smoothFarmingYield = Math.floor(field.averageYield) || 1;
+        totalDailyYield += smoothFarmingYield;
+        this.inventoryService.addItem(this.itemRepoService.items[field.cropName], smoothFarmingYield);
       }
     }
-    if (totalDailyYield > 0 || this.smoothFarming) {
+    if (totalDailyYield > 0) {
       this.consecutiveHarvests++;
+      if (this.consecutiveHarvests >= 30) {
+        this.smoothFarming = true;
+      }
     } else {
       this.consecutiveHarvests = 0;
     }

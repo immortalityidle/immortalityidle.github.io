@@ -38,6 +38,7 @@ export const MEMORY_SPIRITUALITY = 'Sprituality';
 export const MEMORY_ASCENSION = 'Ascension';
 export const MEMORY_QI_UNLOCKED = 'QiUnlocked';
 export const MEMORY_IMPOSSIBLE_TASKS = 'ImpossibleTasks';
+export const MEMORY_IMMORTALITY = 'Immortality';
 export const MEMORY_JOIN_THE_GODS = 'JoinTheGods';
 export const MEMORY_HELL_COMPLETION = 'HellCompletion';
 
@@ -83,6 +84,13 @@ export class AchievementService {
         "You are finally ready to seek out true immortality.<br><br>Your consummate searching has yielded your first clue: a scrap in an ancient text that leads you to believe that the secret of immortality lies in the ruins of an ancient civilization buried deep beneath the ocean's currents.",
       ],
       imageBaseName: 'impossibleTasks',
+    },
+    [MEMORY_IMMORTALITY]: {
+      title: 'Immortality',
+      text: [
+        'The essence of immortality flows into your core, infusing your soul with the power to defy death in all its forms.<br><br>You are no longer subject to disease, dying of your injuries, or the infirmities of old age.<br><br>You are no longer trapped in the continual cylce of reincarnation, though you feel you could still give up your current life and be reborn in a new immortal body should you so choose.<br><br>The distant outline of Mount Penglai, the home of the gods, catches your eye.<br><br>Now that you are immortal, could you dare to claim a place of your own there?',
+      ],
+      imageBaseName: 'immortality',
     },
     [MEMORY_JOIN_THE_GODS]: {
       title: 'Joining the Gods',
@@ -1568,6 +1576,9 @@ export class AchievementService {
         return this.characterService.immortal();
       },
       effect: () => {
+        if (!this.unlockedMemories.includes(MEMORY_IMMORTALITY)) {
+          this.triggerMemory(MEMORY_IMMORTALITY);
+        }
         this.activityService.checkRequirements(true);
       },
       unlocked: false,
@@ -1658,10 +1669,11 @@ export class AchievementService {
         'You have harvested crops every day for a month and can now count on more regular and reliable harvests.',
       hint: 'Farm-fresh produce every day would be lovely.',
       check: () => {
-        return this.farmService.consecutiveHarvests >= 30;
+        return this.farmService.smoothFarming;
       },
       effect: () => {
-        this.farmService.smoothFarming = true;
+        // the reward is already received in the smoothFarming variable.
+        // Did this one differently due to the risk of qualifying for the achievement then losing it before the check tick fired.
       },
       unlocked: false,
     },
