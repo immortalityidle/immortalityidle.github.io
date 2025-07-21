@@ -35,6 +35,7 @@ import { HellStatusPanelComponent } from '../hell-status-panel/hell-status-panel
 import { CommonButtonsService } from '../common-buttons.service';
 import { SchedulePanelComponent } from '../schedule-panel/schedule-panel.component';
 import { HellService } from '../game-state/hell.service';
+import { AchievementService } from '../game-state/achievement.service';
 
 @Component({
   selector: 'app-standard-layout',
@@ -74,6 +75,7 @@ export class StandardLayoutComponent {
   protected readonly hellService = inject(HellService);
   protected readonly storeService = inject(StoreService);
   protected readonly characterService = inject(CharacterService);
+  protected readonly achievementService = inject(AchievementService);
   protected readonly document: Document = inject(DOCUMENT);
 
   public grid = viewChild.required(KtdGridComponent);

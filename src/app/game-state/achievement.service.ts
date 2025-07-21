@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from './character.service';
 import { InventoryService } from './inventory.service';
@@ -17,6 +17,7 @@ import { FarmService } from './farm.service';
 import { LocationService } from './location.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
+import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
 
 export interface Achievement {
   name: string;
@@ -55,6 +56,7 @@ export class AchievementService {
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
   unlockedMemories: string[] = [];
+  memoriesUnlocked = signal<boolean>(false);
 
   memories: { [key: string]: Memory } = {
     [MEMORY_SPIRITUALITY]: {
@@ -1817,7 +1819,15 @@ export class AchievementService {
     }
     if (!this.unlockedMemories.includes(memoryName)) {
       this.unlockedMemories.push(memoryName);
+      this.memoriesUnlocked.set(true);
     }
+  }
+
+  reviewMemories() {
+    this.dialog.open(MemoriesPanelComponent, {
+      data: {},
+      autoFocus: false,
+    });
   }
 
   getProperties(): AchievementProperties {
@@ -1832,6 +1842,9 @@ export class AchievementService {
       this.gameStateService = this.injector.get(GameStateService);
     }
     this.unlockedMemories = properties.unlockedMemories;
+    if (this.unlockedMemories.length > 0) {
+      this.memoriesUnlocked.set(true);
+    }
     this.unlockedAchievements = properties.unlockedAchievements;
     for (const achievement of this.achievements) {
       if (this.unlockedAchievements.includes(achievement.name)) {

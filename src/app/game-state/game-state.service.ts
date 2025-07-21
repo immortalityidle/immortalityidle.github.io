@@ -836,6 +836,7 @@ export class GameStateService {
   private getHellProperties(props: HellProperties | undefined): HellProperties {
     return {
       inHell: props?.inHell || false,
+      hellUnlocked: props?.hellUnlocked || false,
       completedHellTasks: props?.completedHellTasks || [],
       completedHellBosses: props?.completedHellBosses || [],
       mountainSteps: props?.mountainSteps || 0,
@@ -1110,18 +1111,18 @@ export class GameStateService {
         qi: {
           description: 'Magical energy required for mysterious spiritual activities.',
           value: props?.status?.qi?.value || 0,
-          displayValue: signal<number>(props?.status.qi.value || 0),
+          displayValue: signal<number>(props?.status.qi?.value || 0),
           max: props?.status?.qi?.max || 0,
-          displayMax: signal<number>(props?.status.qi.value || 0),
+          displayMax: signal<number>(props?.status.qi?.value || 0),
           battleTickRecovery: props?.status?.qi?.battleTickRecovery || 0,
         },
         nutrition: {
           description:
             'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend some money on cheap scraps each day.',
           value: props?.status?.nutrition?.value || 30,
-          displayValue: signal<number>(props?.status.nutrition.value || 30),
+          displayValue: signal<number>(props?.status.nutrition?.value || 30),
           max: props?.status?.nutrition?.max || 30,
-          displayMax: signal<number>(props?.status.nutrition.value || 30),
+          displayMax: signal<number>(props?.status.nutrition?.value || 30),
           battleTickRecovery: props?.status?.nutrition?.battleTickRecovery || 0,
         },
       },
@@ -1266,12 +1267,7 @@ export class GameStateService {
       return;
     }
     this.achievementService.triggerMemory(MEMORY_JOIN_THE_GODS, () => {
-      this.hellService.inHell.set(true);
-      this.hellService.moveToHell(Realm.Gates);
-      this.characterService.updateMoney(0, true);
-      this.inventoryService.stashInventory();
-      this.followersService.hellPurge();
-      this.activityService.checkRequirements(true);
+      this.hellService.enterTheHells();
     });
   }
 }

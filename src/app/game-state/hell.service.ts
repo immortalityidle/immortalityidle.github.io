@@ -30,6 +30,7 @@ export interface Hell {
 
 export interface HellProperties {
   inHell: boolean;
+  hellUnlocked: boolean;
   completedHellTasks: number[];
   completedHellBosses: number[];
   mountainSteps: number;
@@ -52,6 +53,7 @@ export interface HellProperties {
 })
 export class HellService {
   inHell = signal<boolean>(false);
+  hellUnlocked = signal<boolean>(false);
   completedHellTasks: number[] = [];
   completedHellBosses: number[] = [];
   beaten = false;
@@ -75,7 +77,7 @@ export class HellService {
     private characterService: CharacterService,
     mainLoopService: MainLoopService,
     private activityService: ActivityService,
-    private followerService: FollowersService,
+    private followersService: FollowersService,
     private battleService: BattleService,
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService
@@ -126,7 +128,18 @@ export class HellService {
       }
     }
     this.inHell.set(false);
+    this.activityService.portals = [this.activityService.returnToHell];
     this.activityService.currentRealm = Realm.MortalRealm;
+  }
+
+  enterTheHells() {
+    this.inHell.set(true);
+    this.hellUnlocked.set(true);
+    this.moveToHell(Realm.Gates);
+    this.characterService.updateMoney(0, true);
+    this.inventoryService.stashInventory();
+    this.followersService.hellPurge();
+    this.activityService.checkRequirements(true);
   }
 
   moveToHell(hellIndex: number) {
@@ -651,6 +664,7 @@ export class HellService {
   getProperties(): HellProperties {
     return {
       inHell: this.inHell(),
+      hellUnlocked: this.hellUnlocked(),
       completedHellTasks: this.completedHellTasks,
       completedHellBosses: this.completedHellBosses,
       mountainSteps: this.mountainSteps,
@@ -671,6 +685,7 @@ export class HellService {
 
   setProperties(properties: HellProperties) {
     this.inHell.set(properties.inHell);
+    this.hellUnlocked.set(properties.hellUnlocked);
     this.completedHellTasks = properties.completedHellTasks || [];
     this.completedHellBosses = properties.completedHellBosses || [];
     this.mountainSteps = properties.mountainSteps || 0;
@@ -686,10 +701,6 @@ export class HellService {
     this.atonedKills = properties.atonedKills || 0;
     this.fasterHellMoney = properties.fasterHellMoney || false;
     this.burnedMoney = properties.burnedMoney || 0;
-    if (this.hells.length > this.activityService.currentRealm) {
-      // don't set hell portals for realms outside of the hells
-      this.hells[this.activityService.currentRealm].setPortals();
-    }
   }
 
   hells: Hell[] = [
@@ -776,7 +787,7 @@ export class HellService {
         this.activityService.portals = [this.activityService.escapeHell];
       },
       entryEffect: () => {
-        this.followerService.stashFollowers();
+        this.followersService.stashFollowers();
       },
       dailyEffect: () => {
         // This might be a stupid way to nerf charisma. Consider other alternatives.
@@ -784,7 +795,7 @@ export class HellService {
         this.characterService.attributes.charisma.value *= reducer;
       },
       exitEffect: () => {
-        this.followerService.restoreFollowers();
+        this.followersService.restoreFollowers();
       },
       completeEffect: () => {
         this.logService.log(
@@ -801,11 +812,11 @@ export class HellService {
         this.activityService.hellRecruiting,
         this.activityService.TrainingFollowers,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "It's hard to talk with all these demons going for your mouth, but maybe if you can get some help from the other prisoners here you could take control of this place.",
       progress: () => {
         let totalPower = 0;
-        for (const follower of this.followerService.followers) {
+        for (const follower of this.followersService.followers) {
           totalPower += follower.power;
         }
         return totalPower;
@@ -815,7 +826,7 @@ export class HellService {
       },
       successCheck: () => {
         let totalPower = 0;
-        for (const follower of this.followerService.followers) {
+        for (const follower of this.followersService.followers) {
           totalPower += follower.power;
         }
         return totalPower > 5000;
@@ -850,7 +861,7 @@ export class HellService {
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "These demons don't seem content to just take your fingers. You'd better get ready to defend yourself.",
       progress: () => {
         return this.inventoryService.getQuantityByName('fingers');
@@ -896,9 +907,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.honorAncestors,
+        this.activityService.HonorAncestors,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Heal your family bonds.',
       progress: () => {
         return this.inventoryService.getQuantityByName('token of gratitude');
@@ -921,10 +932,10 @@ export class HellService {
         this.activityService.portals = [this.activityService.escapeHell];
       },
       entryEffect: () => {
-        this.followerService.stashFollowers();
+        this.followersService.stashFollowers();
       },
       exitEffect: () => {
-        this.followerService.restoreFollowers();
+        this.followersService.restoreFollowers();
       },
       completeEffect: () => {
         this.inventoryService.consume('mirrorShard', 1000);
@@ -942,7 +953,7 @@ export class HellService {
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Master yourself. All by yourself.',
       progress: () => {
         return this.inventoryService.getQuantityByName('mirror shard');
@@ -1001,9 +1012,9 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
-        this.activityService.rehabilitation,
+        this.activityService.Rehabilitation,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'There so many ruffians here that deserve some payback from you. I wonder if you can take them all on.',
       progress: () => {
         return this.battleService.enemies.length;
@@ -1051,10 +1062,10 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.copperMining,
-        this.activityService.forgeHammer,
+        this.activityService.CopperMining,
+        this.activityService.ForgeHammer,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       progress: () => {
         return this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0;
@@ -1099,9 +1110,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.climbMountain,
+        this.activityService.ClimbMountain,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "It seems you've accrued a lot of karma from all the killing you've done over your many lives. The bill is due.",
       progress: () => {
         return this.mountainSteps;
@@ -1148,9 +1159,9 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
         this.activityService.Taunting,
-        this.activityService.meltMountain,
+        this.activityService.MeltMountain,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Burn it down!',
       progress: () => {
         return this.inventoryService.getQuantityByName('ice core');
@@ -1217,7 +1228,7 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "You'd need to be incredibly resilient to survive this place.",
       progress: () => {
         return this.inventoryService.getQuantityByName('ice core');
@@ -1253,9 +1264,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.healAnimals,
+        this.activityService.HealAnimals,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Look at those poor sick cows. And those other cows that for some reason are standing up on two legs and charging you with weapons.',
       progress: () => {
         return this.animalsHealed;
@@ -1320,9 +1331,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.liftBoulder,
+        this.activityService.LiftBoulder,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "It's leg day. No, it's arm day. Must be both! Lift!",
       progress: () => {
         return this.boulderHeight;
@@ -1360,7 +1371,7 @@ export class HellService {
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'You begin to feel remorse for your gluttony across your many lives. Perhaps a nice, long fast would help you feel better. Hopefully you can keep the demons from spoonfeeding you their fiery concoction.',
       progress: () => {
         return this.daysFasted;
@@ -1392,7 +1403,7 @@ export class HellService {
         );
       },
       activities: [this.activityService.HellSwim],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Not this again!',
       progress: () => {
         return this.swimDepth;
@@ -1416,8 +1427,8 @@ export class HellService {
       },
       entryEffect: () => {
         if (this.exitFound) {
-          if (!this.hells[Realm.WrongfulDead].activities.includes(this.activityService.teachTheWay)) {
-            this.hells[Realm.WrongfulDead].activities.push(this.activityService.teachTheWay);
+          if (!this.hells[Realm.WrongfulDead].activities.includes(this.activityService.TeachTheWay)) {
+            this.hells[Realm.WrongfulDead].activities.push(this.activityService.TeachTheWay);
           }
         }
       },
@@ -1438,9 +1449,10 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.searchForExit,
+        this.activityService.SearchForExit,
+        this.activityService.TeachTheWay,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "These people don't belong here. Get them out.",
       progress: () => {
         return this.soulsEscaped;
@@ -1474,13 +1486,13 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.interrogate,
+        this.activityService.Interrogate,
       ],
       projectionActivities: [
         this.activityService.OddJobs,
-        this.activityService.burnMoney,
-        this.activityService.recoverTreasure,
-        this.activityService.replaceTreasure,
+        this.activityService.BurnMoney,
+        this.activityService.RecoverTreasure,
+        this.activityService.ReplaceTreasure,
       ],
       hint: 'Unloot those tombs.',
       progress: () => {
@@ -1527,9 +1539,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.freezeMountain,
+        this.activityService.FreezeMountain,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'How does this volcano stay so hot?',
       progress: () => {
         return this.inventoryService.getQuantityByName('fire core');
@@ -1557,7 +1569,7 @@ export class HellService {
           "Your karmic debt for all the oppression you've ever inflicted is paid off. Now you just need to show the strongest demon here not to pick on the weak."
         );
       },
-      activities: [this.activityService.endureTheMill],
+      activities: [this.activityService.EndureTheMill],
       projectionActivities: [],
       hint: 'Just endure.',
       progress: () => {
@@ -1599,9 +1611,9 @@ export class HellService {
         this.activityService.BodyCultivation,
         this.activityService.CoreCultivation,
         this.activityService.SoulCultivation,
-        this.activityService.examineContracts,
+        this.activityService.ExamineContracts,
       ],
-      projectionActivities: [this.activityService.OddJobs, this.activityService.burnMoney],
+      projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'You read legalese, right?',
       progress: () => {
         return this.contractsExamined;

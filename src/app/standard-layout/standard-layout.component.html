@@ -35,6 +35,12 @@
             keyboard_double_arrow_up
           </mat-icon>
         }
+        @if (achievementService.memoriesUnlocked()) {
+          <mat-icon tooltip="Review Your Memories" class="iconButton" aria-label="Memories" aria-hidden="false"
+            (click)="achievementService.reviewMemories()">
+            psychology
+          </mat-icon>
+        }
         <mat-icon tooltip="Save<br>The game autosaves every few minutes, but click here if you want to manually save the game right now." class="iconButton" aria-label="Save" aria-hidden="false"
           (click)="commonButtonsService.saveClicked()">
           save
@@ -47,7 +53,7 @@
       <span class="topText">
         <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" tooltip="Have questions?<br>Try the Immortality Idle Discord.">Discord</a>
       </span>
-      @if (characterService.immortal() && !hellService.inHell() && !characterService.god()) {
+      @if (characterService.immortal() && !hellService.inHell() && !hellService.hellUnlocked() && !characterService.god()) {
         <span class="topText">
           <button (click)="gameStateService.joinTheGodsClick()">Join the Gods</button>
         </span>

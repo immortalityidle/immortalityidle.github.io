@@ -1,0 +1,15 @@
+<div class='darkMode'>
+  <h3>Memories</h3>
+  <hr/>
+  <div>
+  @for(memory of achievementService.unlockedMemories; track memory){
+    <div class="memory">
+        <span>
+            <button (click)="achievementService.triggerMemory(memory)">
+                {{memory | camelToTitle}}
+            </button>
+        </span>
+    </div>
+  }
+  </div>
+</div>

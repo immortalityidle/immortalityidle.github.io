@@ -55,6 +55,7 @@ export enum ActivityType {
   MoveStars,
   Taunting,
   EscapeHell,
+  ReturnToHell,
   HellRecruiting,
   BurnMoney,
   HonorAncestors,

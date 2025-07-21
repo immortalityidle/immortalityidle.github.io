@@ -135,6 +135,25 @@ export class ActivityService {
     private impossibleTaskService: ImpossibleTaskService
   ) {
     this.activities = [
+      this.BurnMoney,
+      this.HonorAncestors,
+      this.Rehabilitation,
+      this.CopperMining,
+      this.ForgeHammer,
+      this.ClimbMountain,
+      this.AttackClimbers,
+      this.MeltMountain,
+      this.HealAnimals,
+      this.LiftBoulder,
+      this.SearchForExit,
+      this.TeachTheWay,
+      this.Interrogate,
+      this.RecoverTreasure,
+      this.ReplaceTreasure,
+      this.EndureTheMill,
+      this.FreezeMountain,
+      this.ExamineContracts,
+
       this.Swim,
       this.ForgeChains,
       this.AttachChains,
@@ -688,6 +707,13 @@ export class ActivityService {
     this.beggingDays = properties.beggingDays;
     this.checkRequirements(true);
     this.currentRealm = properties.currentRealm;
+    if (!this.hellService) {
+      this.hellService = this.injector.get(HellService);
+    }
+    if (this.currentRealm < this.hellService.hells.length) {
+      // set hell portals for the realm if needed
+      this.hellService.hells[this.currentRealm].setPortals();
+    }
   }
 
   meetsRequirements(activity: Activity): boolean {
@@ -773,7 +799,6 @@ export class ActivityService {
   }
 
   checkRequirements(squelchLogs: boolean): void {
-    // TODO: add hell task checking
     for (const activity of this.activities) {
       if (activity.impossibleTaskIndex !== undefined) {
         // impossible task activities only care if you are on the task
@@ -3754,7 +3779,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  burnMoney: Activity = {
+  BurnMoney: Activity = {
     level: 0,
     name: ['Burn Money'],
     location: LocationType.Hell,
@@ -3840,7 +3865,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  rehabilitation: Activity = {
+  Rehabilitation: Activity = {
     level: 0,
     name: ['Rehabilitate Ruffian'],
     location: LocationType.Hell,
@@ -3886,7 +3911,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  honorAncestors: Activity = {
+  HonorAncestors: Activity = {
     level: 0,
     name: ['Honor Ancestors'],
     location: LocationType.Hell,
@@ -3920,7 +3945,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  copperMining: Activity = {
+  CopperMining: Activity = {
     level: 0,
     name: ['Copper Mining'],
     location: LocationType.Hell,
@@ -3951,7 +3976,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  forgeHammer: Activity = {
+  ForgeHammer: Activity = {
     level: 0,
     name: ['Forge Hammer'],
     location: LocationType.Hell,
@@ -4001,7 +4026,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  climbMountain: Activity = {
+  ClimbMountain: Activity = {
     level: 0,
     name: ['Climb the Mountain'],
     location: LocationType.Hell,
@@ -4043,7 +4068,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  attackClimbers: Activity = {
+  AttackClimbers: Activity = {
     level: 0,
     name: ['Attack Climbers'],
     location: LocationType.Hell,
@@ -4065,7 +4090,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  meltMountain: Activity = {
+  MeltMountain: Activity = {
     level: 0,
     name: ['Melt the Mountain'],
     location: LocationType.Hell,
@@ -4111,7 +4136,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  freezeMountain: Activity = {
+  FreezeMountain: Activity = {
     level: 0,
     name: ['Rock the Lava'],
     location: LocationType.Hell,
@@ -4154,7 +4179,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  healAnimals: Activity = {
+  HealAnimals: Activity = {
     level: 0,
     name: ['Heal Animals'],
     location: LocationType.Hell,
@@ -4183,7 +4208,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  liftBoulder: Activity = {
+  LiftBoulder: Activity = {
     level: 0,
     name: ['Lift the Boulder Higher'],
     location: LocationType.Hell,
@@ -4235,7 +4260,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  searchForExit: Activity = {
+  SearchForExit: Activity = {
     level: 0,
     name: ['Search for the Exit'],
     location: LocationType.Hell,
@@ -4259,12 +4284,6 @@ export class ActivityService {
         const threshold = Math.log10(this.characterService.attributes.intelligence.value - 1e24) * 0.00001;
         if (Math.random() < threshold) {
           this.hellService!.exitFound = true;
-          /*
-          if (!this.hells[Realm.WrongfulDead].activities.includes(this.teachTheWay)) {
-            this.hells[Realm.WrongfulDead].activities.push(this.teachTheWay);
-            this.reloadActivities();
-          }
-            */
         }
       },
     ],
@@ -4279,17 +4298,23 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  teachTheWay: Activity = {
+  TeachTheWay: Activity = {
     level: 0,
     name: ['Teach the Way to the Exit'],
     location: LocationType.Hell,
     activityType: ActivityType.TeachTheWay,
-    description: ['Teach the other damned souls here the way out.'],
+    description: ["If you've discovered the way to the exit, you could teach the other damned souls here the way out."],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: ['Uses 200,000 Stamina.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 200000;
+
+        if (!this.hellService!.exitFound) {
+          this.logService.log(LogTopic.EVENT, "You fail miserably at teaching a way you don't know yourself.");
+          return;
+        }
+
         // TODO: tune this
         if (this.characterService.attributes.charisma.value <= 1e24) {
           this.logService.log(LogTopic.EVENT, 'The damned souls completely ignore your attempts at instruction.');
@@ -4310,7 +4335,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  interrogate: Activity = {
+  Interrogate: Activity = {
     level: 0,
     name: ['Interrogate the Damned'],
     location: LocationType.Hell,
@@ -4349,7 +4374,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  recoverTreasure: Activity = {
+  RecoverTreasure: Activity = {
     level: 0,
     name: ['Recover a Treasure'],
     location: LocationType.Hell,
@@ -4393,7 +4418,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  replaceTreasure: Activity = {
+  ReplaceTreasure: Activity = {
     level: 0,
     name: ['Replace a Treasure'],
     location: LocationType.Hell,
@@ -4434,7 +4459,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  endureTheMill: Activity = {
+  EndureTheMill: Activity = {
     level: 0,
     name: ['Endure the Mill'],
     location: LocationType.Hell,
@@ -4468,7 +4493,7 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
-  examineContracts: Activity = {
+  ExamineContracts: Activity = {
     level: 0,
     name: ['Examine Contracts'],
     location: LocationType.Hell,
@@ -4558,6 +4583,26 @@ export class ActivityService {
           leavingHell.exitEffect();
         }
         this.hellService!.moveToHell(Realm.Gates);
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  returnToHell: Activity = {
+    level: 0,
+    location: LocationType.Hell,
+    name: ["Return to Lord Yama's Realm"],
+    activityType: ActivityType.ReturnToHell,
+    description: ["Return to Lord Yama's Realm and face the trials of the 18 hells."],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.hellService?.enterTheHells();
       },
     ],
     requirements: [{}],
