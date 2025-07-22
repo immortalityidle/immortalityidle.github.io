@@ -824,6 +824,10 @@ export class ActivityService {
           activity.discovered = false;
         }
         continue;
+      } else if (activity.location === LocationType.Hell) {
+        activity.unlocked = false;
+        activity.discovered = false;
+        continue;
       }
       if (this.meetsRequirements(activity) && !activity.unlocked) {
         if (!squelchLogs) {

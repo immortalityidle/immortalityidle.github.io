@@ -153,7 +153,6 @@ export class FollowersService {
       },
       description: 'Hunters collect meat and help you hunt for hides.',
       totalPower: 0,
-      runEachTick: true,
     },
     fisher: {
       work: daysElapsed => {
@@ -172,7 +171,6 @@ export class FollowersService {
       },
       description: 'Fishers fish up delicious fish to contribute to your meals.',
       totalPower: 0,
-      runEachTick: true,
     },
     farmer: {
       work: daysElapsed => {
@@ -191,7 +189,6 @@ export class FollowersService {
       },
       description: 'Miners gather ore for your crafting.',
       totalPower: 0,
-      runEachTick: true,
     },
     metallurgist: {
       work: daysElapsed => {
@@ -210,7 +207,6 @@ export class FollowersService {
       },
       description: 'Coal Diggers gather coal for your crafting.',
       totalPower: 0,
-      runEachTick: true,
     },
     lumberjack: {
       work: daysElapsed => {
@@ -221,7 +217,6 @@ export class FollowersService {
       },
       description: 'Lumberjacks gather wood for your crafting.',
       totalPower: 0,
-      runEachTick: true,
     },
     herbalist: {
       work: daysElapsed => {
@@ -232,7 +227,6 @@ export class FollowersService {
       },
       description: 'Herbalists gather herbs for your crafting.',
       totalPower: 0,
-      runEachTick: true,
     },
     skinner: {
       work: daysElapsed => {
@@ -243,7 +237,6 @@ export class FollowersService {
       },
       description: 'Skinners gather hides for your crafting.',
       totalPower: 0,
-      runEachTick: true,
     },
     weaponsmith: {
       work: daysElapsed => {
@@ -406,7 +399,6 @@ export class FollowersService {
       },
       description: 'Monster Hunters take on low level monsters for you and offer you some of the gems they gather.',
       totalPower: 0,
-      runEachTick: true,
     },
     damned: {
       work: () => {

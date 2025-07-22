@@ -1260,10 +1260,30 @@ export class InventoryService {
       this.addItem(stick);
     }
 
-    if (this.characterService.bloodlineRank >= 6) {
-      return; // Skip the rice gift, thematically inappropriate
-    }
-    if (this.motherGift) {
+    if (this.characterService.bloodlineRank >= 6 && this.motherGift) {
+      this.logService.log(
+        LogTopic.EVENT,
+        'Your mother throws you an elaborate feast as you prepare to make your way in the world. You pack a few of the leftovers to take with you.'
+      );
+      const totalValue = this.characterService.bloodlineRank * 100;
+      this.addItem(
+        {
+          id: 'Soul Food Special #' + totalValue,
+          imageFile: 'soulfood',
+          name: 'Soul Food Special #' + totalValue,
+          type: 'food',
+          subtype: 'meal',
+          value: totalValue,
+          description: 'A home-made meal that can nourish you much more than raw ingredients.',
+          useLabel: 'Eat',
+          useDescription: 'Fills your belly.',
+          useConsumes: true,
+          pouchable: true,
+          effect: 'meal' + totalValue,
+        },
+        300
+      );
+    } else if (this.motherGift) {
       this.logService.log(
         LogTopic.EVENT,
         'Your mother gives you three big bags of rice as you prepare to make your way in the world.'
@@ -1370,7 +1390,7 @@ export class InventoryService {
   }
 
   public eatFood(foodItem: Item, quantity = 1) {
-    if (this.foodEatenToday > this.maxFoodPerDay) {
+    if (this.foodEatenToday >= this.maxFoodPerDay) {
       this.logService.log(LogTopic.EVENT, 'Your stomach is too full to handle any more food today');
       return 0;
     }
@@ -1768,9 +1788,9 @@ export class InventoryService {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     if (item.type === 'food') {
-      this.lifetimeUsedFood++;
       const eaten = this.eatFood(item, quantity);
-      if (eaten < quantity) {
+      this.lifetimeUsedFood += eaten;
+      if (eaten < quantity && quantity > 1) {
         this.logService.log(
           LogTopic.EVENT,
           "You try to stuff all that food in your face, but you've eaten too much and can't."
