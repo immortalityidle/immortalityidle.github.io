@@ -1038,7 +1038,7 @@ export class InventoryService {
         baseName: baseName,
       },
       description:
-        'A unique piece of armor that you made.<br>Drag and drop onto similar armor to merge them into something better.<br>nDefense: ' +
+        'A unique piece of armor that you made.<br>Drag and drop onto similar armor to merge them into something better.<br>Defense: ' +
         this.bigNumberPipe.transform(defense),
     };
   }
