@@ -53,7 +53,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
     this.overlayRef = this.overlay.create({ positionStrategy });
   }
 
-  @HostListener('mouseover', ['$event'])
+  @HostListener('mouseenter', ['$event'])
   @HostListener('touchstart', ['$event'])
   show() {
     if (tooltipShown) {

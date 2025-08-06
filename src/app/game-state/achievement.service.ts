@@ -37,6 +37,7 @@ export interface AchievementProperties {
 
 export const MEMORY_SPIRITUALITY = 'Sprituality';
 export const MEMORY_ASCENSION = 'Ascension';
+export const MEMORY_FOLLOWERS = 'Followers';
 export const MEMORY_QI_UNLOCKED = 'QiUnlocked';
 export const MEMORY_IMPOSSIBLE_TASKS = 'ImpossibleTasks';
 export const MEMORY_IMMORTALITY = 'Immortality';
@@ -72,6 +73,13 @@ export class AchievementService {
         'Your whole lifetime has been building up to this moment.<br><br>You have overcome fierce monsters, honed your abilities, and prepared your spirit to ascend to powers your past lives could only dream of.<br><br>You close your eyes and embrace your destiny.',
       ],
       imageBaseName: 'ascension',
+    },
+    [MEMORY_FOLLOWERS]: {
+      title: 'A Follower Appears',
+      text: [
+        "You glance behind you and see someone you didn't expect.<br><br>A disciple?<br><br>It seems that your path to immortality has inspired others to follow in your footsteps.<br><br>You will do your best to continue to serve as a beacon of enlightenment, and perhaps if you are persuasive enough you can even find others that want to join you on your spiritual journey.",
+      ],
+      imageBaseName: 'followers',
     },
     [MEMORY_QI_UNLOCKED]: {
       title: 'The Power of Qi',
@@ -1237,6 +1245,10 @@ export class AchievementService {
       effect: () => {
         this.followerService.followersUnlocked = true;
         this.gameStateService!.unlockPanel('followersPanel');
+        if (!this.unlockedMemories.includes(MEMORY_FOLLOWERS)) {
+          this.followerService.generateFollower();
+          this.triggerMemory(MEMORY_FOLLOWERS);
+        }
       },
       unlocked: false,
     },
