@@ -53,7 +53,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
     this.overlayRef = this.overlay.create({ positionStrategy });
   }
 
-  @HostListener('mouseenter', ['$event'])
+  @HostListener('mouseover', ['$event'])
   @HostListener('touchstart', ['$event'])
   show() {
     if (tooltipShown) {
@@ -61,6 +61,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
     }
     tooltipShown = true;
 
+    window.clearTimeout(this.timeoutId);
     this.timeoutId = window.setTimeout(() => {
       if (this.text.trim().length !== 0) {
         const tooltipRef: ComponentRef<TooltipComponent> = this.overlayRef.attach(
