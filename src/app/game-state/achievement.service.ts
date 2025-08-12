@@ -1393,9 +1393,9 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      name: "Don't Sell My Stuff!",
+      name: 'Storage Ring',
       description:
-        'Your descendants have so much respect for you that they will preserve one stack of items for your next reincarnation.',
+        'Your family has acquired a storage ring that can preserve one stack of items for your next reincarnation.',
       hint: 'Strong family bonds have advantages.',
       check: () => {
         return this.characterService.bloodlineRank >= 3;
@@ -1408,9 +1408,9 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      name: 'Mine Forever',
+      name: 'Bigger on the Inside',
       description:
-        'Your descendants have so much respect for you that they will preserve three stacks of items for your next reincarnation.',
+        'Your storage ring has improved to be able to preserve three stacks of items for your next reincarnation.',
       hint: 'Strong family bonds have advantages.',
       check: () => {
         return this.characterService.bloodlineRank >= 5;

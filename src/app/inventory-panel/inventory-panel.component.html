@@ -124,33 +124,77 @@
   </div>
 
   <div class="overflow">
+    @if (inventoryService.heirloomSlots() > 0){
+      <div>
+        <span tooltip="Items in your storage ring can be preserved for your next reincarnation.<br>They also are not used automatically like normal items, so you may need to move them into your inventory if you need to use them now.">
+          Storage Ring
+        </span>
+      </div>
+      <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
+        @for (displayItemStack of inventoryService.displayItemStacks; track displayItemStack.id(); let idx = $index) {
+          @if (idx < inventoryService.heirloomSlots()){
+            <div>
+              <div id="itemIndex{{$index}}" >
+                <div class="itemSlot" [tabindex]="displayItemStack.name() === '' ? '-1' : '0'" (click)="slotClicked(idx, $event)"
+                  cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
+                  [cdkDragData]="idx" [cdkDragDisabled]="displayItemStack.name() === ''"
+                  (dblclick)="slotDoubleClicked(idx, $event)" (contextmenu)="slotRightClicked(idx, $event)"
+                  [ngClass]="{'selectedItem': (displayItemStack.id() !=='' && displayItemStack.id() === inventoryService.displaySelectedItem.id())}"
+                  tooltip="{{displayItemStack.tooltip()}}">
+                  <div class="itemName textOverflow">
+                    @if (displayItemStack.imageFile() !== ''){
+                      <img ngSrc="{{displayItemStack.imageFile()}}" class="itemImage" priority
+                        [style.border-color]="displayItemStack.imageColor()"
+                        width="48" height="48"  alt="{{displayItemStack.name() | titlecase}}"/>
+                    }
+                    @else {
+                      {{displayItemStack.name() | titlecase}}
+                    }
+                  </div>
+                  @if ((displayItemStack.quantity() || 0) > 1) {
+                    <div class="itemQuantity">x{{displayItemStack.quantity()}}</div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+      <div>
+        <span>
+          Inventory
+        </span>
+      </div>
+    }
+
     <div class="inventoryGrid" cdkDropList cdkDropListSortingDisabled>
       @for (displayItemStack of inventoryService.displayItemStacks; track displayItemStack.id(); let idx = $index) {
-        <div>
-          <div id="itemIndex{{$index}}" >
-            <div class="itemSlot" [tabindex]="displayItemStack.name() === '' ? '-1' : '0'" (click)="slotClicked(idx, $event)"
-              cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
-              [cdkDragData]="idx" [cdkDragDisabled]="displayItemStack.name() === ''"
-              (dblclick)="slotDoubleClicked(idx, $event)" (contextmenu)="slotRightClicked(idx, $event)"
-              [ngClass]="{'selectedItem': (displayItemStack.id() !=='' && displayItemStack.id() === inventoryService.displaySelectedItem.id()), 'heirloomSlot' : (idx < inventoryService.heirloomSlots())}"
-              tooltip="{{displayItemStack.tooltip()}}">
-              <div class="itemName textOverflow">
-                @if (displayItemStack.imageFile() !== ''){
-                  <img ngSrc="{{displayItemStack.imageFile()}}" class="itemImage" priority
-                    [style.border-color]="displayItemStack.imageColor()"
-                    width="48" height="48"  alt="{{displayItemStack.name() | titlecase}}"/>
-                }
-                @else {
-                  {{displayItemStack.name() | titlecase}}
+        @if (idx >= inventoryService.heirloomSlots()){
+          <div>
+            <div id="itemIndex{{$index}}" >
+              <div class="itemSlot" [tabindex]="displayItemStack.name() === '' ? '-1' : '0'" (click)="slotClicked(idx, $event)"
+                cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
+                [cdkDragData]="idx" [cdkDragDisabled]="displayItemStack.name() === ''"
+                (dblclick)="slotDoubleClicked(idx, $event)" (contextmenu)="slotRightClicked(idx, $event)"
+                [ngClass]="{'selectedItem': (displayItemStack.id() !=='' && displayItemStack.id() === inventoryService.displaySelectedItem.id())}"
+                tooltip="{{displayItemStack.tooltip()}}">
+                <div class="itemName textOverflow">
+                  @if (displayItemStack.imageFile() !== ''){
+                    <img ngSrc="{{displayItemStack.imageFile()}}" class="itemImage" priority
+                      [style.border-color]="displayItemStack.imageColor()"
+                      width="48" height="48"  alt="{{displayItemStack.name() | titlecase}}"/>
+                  }
+                  @else {
+                    {{displayItemStack.name() | titlecase}}
+                  }
+                </div>
+                @if ((displayItemStack.quantity() || 0) > 1) {
+                  <div class="itemQuantity">x{{displayItemStack.quantity()}}</div>
                 }
               </div>
-              @if ((displayItemStack.quantity() || 0) > 1) {
-                <div class="itemQuantity">x{{displayItemStack.quantity()}}</div>
-              }
             </div>
           </div>
-        </div>
-
+        }
       }
   </div>
 </div>

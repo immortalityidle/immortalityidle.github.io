@@ -6,7 +6,7 @@ import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService, MEMORY_JOIN_THE_GODS } from './achievement.service';
 import { CharacterProperties } from './character.service';
 import { CharacterService } from './character.service';
-import { FollowersService, FollowersProperties } from './followers.service';
+import { FollowersService, FollowersProperties, HQType } from './followers.service';
 import { HomeService, HomeProperties, HomeType } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
@@ -792,6 +792,11 @@ export class GameStateService {
       onlyWantedFollowers: props?.onlyWantedFollowers || false,
       pets: props?.pets || [],
       leftoverMetallurgy: props?.leftoverMetallurgy || 0,
+      followerTrainingIndex: props?.followerTrainingIndex || 0,
+      petTrainingIndex: props?.petTrainingIndex || 0,
+      maxFollowerLevel: props?.maxFollowerLevel || 100,
+      sectName: props?.sectName || 'Verdant Waters Sect',
+      hq: props?.hq || HQType.GatheringField,
     };
   }
 

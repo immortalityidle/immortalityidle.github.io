@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Injectable, Injector } from '@angular/core';
+import { inject, Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { AttributeType, CharacterService, StatusType } from './character.service';
@@ -10,20 +9,50 @@ import { ItemRepoService } from './item-repo.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
-import { CamelToTitlePipe } from '../pipes';
+import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { ActivityType } from './activity';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
+export enum HQType {
+  GatheringField,
+  MeetingHut,
+  SimpleSchool,
+  TrainingCenter,
+  EliteAcademy,
+  SectCompound,
+  SprawlingCampus,
+  FortifiedStronghold,
+  MightyCitadel,
+}
+
+export interface HQ {
+  name: string;
+  description: string;
+  moneyPerDay: number;
+  gemsPerDay: number;
+  maxFollowerIncrease: number;
+  maxLevelIncrease: number;
+  experiencePerDay: number;
+  upgradeMoneyCost: number;
+  upgradeLandCost: number;
+  upgradeTooltip: string;
+  administratorsRequired: number;
+  administratorLevel: number;
+  inputs: number;
+}
+
 export interface Follower {
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | WritableSignal<number> | undefined;
   name: string;
   age: number;
   lifespan: number;
   job: string;
   power: number;
+  displayPower: WritableSignal<number>;
   cost: number;
   pet?: boolean;
+  experience: number;
 }
 
 export interface FollowersProperties {
@@ -54,6 +83,11 @@ export interface FollowersProperties {
   onlyWantedFollowers: boolean;
   pets: Follower[];
   leftoverMetallurgy: number;
+  followerTrainingIndex: number;
+  petTrainingIndex: number;
+  maxFollowerLevel: number;
+  sectName: string;
+  hq: HQType;
 }
 
 export interface SavedAssignments {
@@ -83,6 +117,7 @@ type jobsType = {
 })
 export class FollowersService {
   camelToTitle = new CamelToTitlePipe();
+  bigNumberPipe = inject(BigNumberPipe);
   followersUnlocked = false;
   followerLifespanDoubled = false; // achievement
   followers: Follower[] = [];
@@ -117,6 +152,192 @@ export class FollowersService {
   petsBoosted = false;
   onlyWantedFollowers = false;
   leftoverMetallurgy = 0;
+  followerTrainingIndex = 0;
+  petTrainingIndex = 0;
+  maxFollowerLevel = 100;
+  sectName = this.generateSectName();
+  hq = HQType.GatheringField;
+
+  hqs: HQ[] = [
+    {
+      name: 'Gathering Field',
+      description: "An empty field where your followers can gather.<br>It provides no benefits, but it's free.",
+      moneyPerDay: 0,
+      gemsPerDay: 0,
+      maxFollowerIncrease: 0,
+      maxLevelIncrease: 0,
+      experiencePerDay: 0,
+      upgradeTooltip: 'Upgrade for 100 Taels and 10 land.',
+      upgradeMoneyCost: 100,
+      upgradeLandCost: 10,
+      administratorsRequired: 0,
+      administratorLevel: 0,
+      inputs: 0,
+    },
+    {
+      name: 'Meeting Hut',
+      description: 'A small hut where your followers can rest.<br>Costs 10 Taels per day.',
+      moneyPerDay: 10,
+      gemsPerDay: 0,
+      maxFollowerIncrease: 1,
+      maxLevelIncrease: 1,
+      experiencePerDay: 1,
+      upgradeTooltip:
+        'Upgrade for 10000 Taels and 100 land.<br>The next headquarters will require an administrator follower.',
+      upgradeMoneyCost: 10000,
+      upgradeLandCost: 100,
+      administratorsRequired: 0,
+      administratorLevel: 0,
+      inputs: 0,
+    },
+    {
+      name: 'Simple School',
+      description:
+        'A simple school where your followers can rest and train.<br>Costs 1,000 Taels and one spirit gem per day.<br>Requires an administrator follower to run it.',
+      moneyPerDay: 1000,
+      gemsPerDay: 1,
+      maxFollowerIncrease: 2,
+      maxLevelIncrease: 5,
+      experiencePerDay: 5,
+      upgradeTooltip: 'Upgrade for 1,000,000 Taels and 1000 land.',
+      upgradeMoneyCost: 1000000,
+      upgradeLandCost: 1000,
+      administratorsRequired: 1,
+      administratorLevel: 0,
+      inputs: 1,
+    },
+    {
+      name: 'Training Center',
+      description:
+        'A school where your followers rest and train.<br>Costs 100,000 Taels and 10 spirit gems per day.<br>Requires a level 10 administrator follower to run it.',
+      moneyPerDay: 100000,
+      gemsPerDay: 10,
+      maxFollowerIncrease: 10,
+      maxLevelIncrease: 10,
+      experiencePerDay: 10,
+      upgradeTooltip:
+        'Upgrade for ' +
+        this.bigNumberPipe.transform(100000000) +
+        ' Taels and ' +
+        this.bigNumberPipe.transform(10000) +
+        ' land',
+      upgradeMoneyCost: 100000000,
+      upgradeLandCost: 10000,
+      administratorsRequired: 1,
+      administratorLevel: 10,
+      inputs: 1,
+    },
+    {
+      name: 'Elite Academy',
+      description:
+        'An elite school where your followers rest and train.<br>Costs ' +
+        this.bigNumberPipe.transform(1e10) +
+        ' Taels and 100 spirit gems per day.<br>Requires a level 20 administrator follower to run it.',
+      moneyPerDay: 1e10,
+      gemsPerDay: 100,
+      maxFollowerIncrease: 10,
+      maxLevelIncrease: 20,
+      experiencePerDay: 50,
+      upgradeTooltip:
+        'Upgrade for ' +
+        this.bigNumberPipe.transform(1e12) +
+        ' Taels and ' +
+        this.bigNumberPipe.transform(1e6) +
+        ' land',
+      upgradeMoneyCost: 1e12,
+      upgradeLandCost: 1e6,
+      administratorsRequired: 1,
+      administratorLevel: 20,
+      inputs: 1,
+    },
+    {
+      name: 'Sect Compound',
+      description:
+        'An elaborate compound where your followers rest and train.<br>Costs ' +
+        this.bigNumberPipe.transform(1e13) +
+        ' Taels and 200 spirit gems per day.<br>Requires a level 50 administrator follower to run it.',
+      moneyPerDay: 1e13,
+      gemsPerDay: 200,
+      maxFollowerIncrease: 15,
+      maxLevelIncrease: 30,
+      experiencePerDay: 100,
+      upgradeTooltip:
+        'Upgrade for ' +
+        this.bigNumberPipe.transform(1e15) +
+        ' Taels and ' +
+        this.bigNumberPipe.transform(1e7) +
+        ' land',
+      upgradeMoneyCost: 1e15,
+      upgradeLandCost: 1e7,
+      administratorsRequired: 1,
+      administratorLevel: 50,
+      inputs: 2,
+    },
+    {
+      name: 'Sprawling Campus',
+      description:
+        'A huge campus where your followers rest and train.<br>Costs ' +
+        this.bigNumberPipe.transform(1e16) +
+        ' Taels and 300 spirit gems per day.<br>Requires a level 100 administrator follower to run it.',
+      moneyPerDay: 1e16,
+      gemsPerDay: 300,
+      maxFollowerIncrease: 20,
+      maxLevelIncrease: 50,
+      experiencePerDay: 200,
+      upgradeTooltip:
+        'Upgrade for ' +
+        this.bigNumberPipe.transform(1e18) +
+        ' Taels and ' +
+        this.bigNumberPipe.transform(1e8) +
+        ' land',
+      upgradeMoneyCost: 1e18,
+      upgradeLandCost: 1e8,
+      administratorsRequired: 1,
+      administratorLevel: 100,
+      inputs: 2,
+    },
+    {
+      name: 'Fortified Stronghold',
+      description:
+        'A powerful fortress where your followers rest and train.<br>Costs ' +
+        this.bigNumberPipe.transform(1e20) +
+        ' Taels and 500 spirit gems per day.<br>Requires 2 level 100 administrators to run it.',
+      moneyPerDay: 1e20,
+      gemsPerDay: 500,
+      maxFollowerIncrease: 30,
+      maxLevelIncrease: 80,
+      experiencePerDay: 300,
+      upgradeTooltip:
+        'Upgrade for ' +
+        this.bigNumberPipe.transform(1e24) +
+        ' Taels and ' +
+        this.bigNumberPipe.transform(1e9) +
+        ' land',
+      upgradeMoneyCost: 1e24,
+      upgradeLandCost: 1e9,
+      administratorsRequired: 2,
+      administratorLevel: 100,
+      inputs: 3,
+    },
+    {
+      name: 'Mighty Citadel',
+      description:
+        'An immense citidel where your followers rest and train.<br>Costs ' +
+        this.bigNumberPipe.transform(1e26) +
+        ' Taels and 800 spirit gems per day.<br>Requires 4 level 100 administrators to run it.',
+      moneyPerDay: 1e26,
+      gemsPerDay: 800,
+      maxFollowerIncrease: 50,
+      maxLevelIncrease: 100,
+      experiencePerDay: 500,
+      upgradeTooltip: '',
+      upgradeMoneyCost: 0,
+      upgradeLandCost: 0,
+      administratorsRequired: 4,
+      administratorLevel: 100,
+      inputs: 4,
+    },
+  ];
 
   jobs: jobsType = {
     chef: {
@@ -459,6 +680,14 @@ export class FollowersService {
       hidden: true,
       totalPower: 0,
     },
+    administrator: {
+      work: () => {
+        /* do nothing, just like in real life */
+      },
+      description: 'Administrators are required to operate complex organizations to their fullest.',
+      hidden: false,
+      totalPower: 0,
+    },
     snake: {
       work: daysElapsed => {
         let power = this.jobs['snake'].totalPower;
@@ -566,6 +795,8 @@ export class FollowersService {
 
       this.followersWorks();
 
+      this.hqWorks();
+
       this.followersMaxed =
         this.followers.length < this.followerCap ? (this.followersMaxed = 'UNMAXED') : (this.followersMaxed = 'MAXED');
       this.petsMaxed = this.pets.length < this.petsCap ? (this.petsMaxed = 'UNMAXED') : (this.petsMaxed = 'MAXED');
@@ -579,6 +810,14 @@ export class FollowersService {
   yearTickFollowers(listToHandle: Follower[], daysElapsed: number) {
     for (let i = listToHandle.length - 1; i >= 0; i--) {
       const follower = listToHandle[i];
+
+      // level up follower
+      while (follower.experience > follower.power * 1000) {
+        follower.experience -= follower.power * 1000;
+        follower.power++;
+        this.logService.log(LogTopic.FOLLOWER, follower.name + ' gains additional power as a ' + follower.job);
+      }
+
       follower.age += daysElapsed;
       if (follower.age >= listToHandle[i].lifespan) {
         // follower aged off
@@ -631,7 +870,8 @@ export class FollowersService {
       this.homeService.homeValue * 3 +
       this.characterService.meridianRank() +
       this.characterService.soulCoreRank() +
-      this.characterService.bloodlineRank;
+      this.characterService.bloodlineRank +
+      this.hqs[this.hq].maxFollowerIncrease;
     this.petsCap = Math.round(
       1 +
         this.characterService.meridianRank() / 10 +
@@ -692,6 +932,39 @@ export class FollowersService {
     }
   }
 
+  hqWorks() {
+    // check if requirements are met
+    if (this.characterService.money < this.hqs[this.hq].moneyPerDay) {
+      return;
+    }
+    if (this.inventoryService.checkFor('gem', this.hqs[this.hq].gemsPerDay) === -1) {
+      return;
+    }
+    const administrators = this.followers.filter(follower => follower.job === 'administrator');
+    let adminsAtLevel = 0;
+    for (const admin of administrators) {
+      if (admin.power >= this.hqs[this.hq].administratorLevel) {
+        adminsAtLevel++;
+      }
+    }
+    if (adminsAtLevel < this.hqs[this.hq].administratorsRequired) {
+      return;
+    }
+
+    // requirements are met, pay costs
+    this.characterService.updateMoney(0 - this.hqs[this.hq].moneyPerDay);
+    this.inventoryService.consume('gem', this.hqs[this.hq].gemsPerDay, true);
+
+    // get the benefits
+    for (const follower of this.followers) {
+      follower.experience += this.hqs[this.hq].experiencePerDay;
+    }
+
+    /*
+  inputs: number;
+  */
+  }
+
   reset() {
     if (this.characterService.bloodlineRank >= 7) {
       this.logService.log(LogTopic.FOLLOWER, 'Your imperial entourage rejoins you as you set out.');
@@ -745,6 +1018,11 @@ export class FollowersService {
       petsBoosted: this.petsBoosted,
       onlyWantedFollowers: this.onlyWantedFollowers,
       leftoverMetallurgy: this.leftoverMetallurgy,
+      followerTrainingIndex: this.followerTrainingIndex,
+      petTrainingIndex: this.petTrainingIndex,
+      maxFollowerLevel: this.maxFollowerLevel,
+      sectName: this.sectName,
+      hq: this.hq,
     };
   }
 
@@ -776,6 +1054,11 @@ export class FollowersService {
     this.petsBoosted = properties.petsBoosted;
     this.onlyWantedFollowers = properties.onlyWantedFollowers;
     this.leftoverMetallurgy = properties.leftoverMetallurgy;
+    this.followerTrainingIndex = properties.followerTrainingIndex;
+    this.petTrainingIndex = properties.petTrainingIndex;
+    this.maxFollowerLevel = properties.maxFollowerLevel;
+    this.sectName = properties.sectName;
+    this.hq = properties.hq;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }
@@ -886,8 +1169,10 @@ export class FollowersService {
       lifespan: Math.min(this.characterService.lifespan / lifespanDivider, 365000), // cap follower lifespan at 1000 years
       job: job,
       power: 1,
+      displayPower: signal<number>(1),
       cost: 100,
       pet: pet,
+      experience: 0,
     };
     followersList.push(follower);
     this.sortFollowers(this.sortAscending, pet);
@@ -1155,5 +1440,157 @@ export class FollowersService {
         this.loadSavedAssignments(trigger.savedAssignmentsName, true);
       }
     }
+  }
+
+  trainFollower(experience: number, pet: boolean) {
+    let followerList = this.followers;
+    let followerLabel = 'followers';
+    let index = this.followerTrainingIndex;
+    if (pet) {
+      followerList = this.pets;
+      followerLabel = 'pets';
+      index = this.petTrainingIndex;
+    }
+
+    if (followerList.length === 0) {
+      this.logService.log(LogTopic.FOLLOWER, 'You fail to train any ' + followerLabel + " because you don't have any.");
+      return;
+    }
+
+    if (index >= followerList.length) {
+      index = 0;
+    }
+    const startingIndex = index;
+    while (followerList[index].power >= this.maxFollowerLevel) {
+      if (index >= followerList.length) {
+        index = 0;
+      }
+      index++;
+      if (index === startingIndex) {
+        this.logService.log(LogTopic.FOLLOWER, 'All of your ' + followerLabel + ' are fully trained.');
+        return;
+      }
+    }
+    followerList[index].experience = Math.floor((followerList[index].experience || 0) + experience);
+    if (pet) {
+      this.petTrainingIndex = ++index;
+    } else {
+      this.followerTrainingIndex = ++index;
+    }
+  }
+
+  generateSectName(): string {
+    const adjectives = [
+      'Verdant',
+      'Green',
+      'Azure',
+      'Peaceful',
+      'Vermillion',
+      'Bold',
+      'Purple',
+      'Delicate',
+      'Scarlet',
+      'Screaming',
+      'Cultivating',
+      'Immortal',
+      'Spirit',
+      'Clear',
+      'Unbound',
+      'Boundless',
+      'Moon',
+      'Sunbright',
+      'Midnight',
+      'Floating',
+      'Golden',
+      'Silver',
+      'Shining',
+      'Dancing',
+      'Glowing',
+      'Sleeping',
+      'Divided',
+      'Ethereal',
+      'Foolish',
+      'Flowing',
+    ];
+    const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const nouns = [
+      'Waters',
+      'Lotus',
+      'Orchid',
+      'Mountain',
+      'Butterfly',
+      'Mantis',
+      'Demon',
+      'Blade',
+      'Starlight',
+      'Ruins',
+      'Cloud',
+      'Incense',
+      'Islands',
+      'Storm',
+      'Dream',
+      'River',
+      'Wisdom',
+      'Heart',
+      'Sun',
+      'Mist',
+      'Raven',
+      'Eagle',
+      'Hawk',
+      'Koi',
+      'Tiger',
+      'Phoenix',
+      'Mandate',
+      'Commandment',
+      'Shield',
+    ];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    const organizations = [
+      'Sect',
+      'Court',
+      'Temple',
+      'Society',
+      'Syndicate',
+      'Crew',
+      'Church',
+      'Club',
+      'Fellowship',
+      'Faction',
+      'Movement',
+      'Order',
+    ];
+    const organization = organizations[Math.floor(Math.random() * organizations.length)];
+    if (Math.random() > 0.5) {
+      return adjective + ' ' + noun + ' ' + organization;
+    } else {
+      return organization + ' of the ' + adjective + ' ' + noun;
+    }
+  }
+
+  renameSect() {
+    this.sectName = this.generateSectName();
+  }
+
+  upgradeHQ() {
+    if (this.characterService.money < this.hqs[this.hq].upgradeMoneyCost) {
+      this.logService.log(LogTopic.EVENT, "You don't have enough money to upgrade your headquarters.");
+      return;
+    }
+    if (this.homeService.land < this.hqs[this.hq].upgradeLandCost) {
+      this.logService.log(LogTopic.EVENT, "You don't have enough land to upgrade your headquarters.");
+      return;
+    }
+    this.characterService.money -= this.hqs[this.hq].upgradeMoneyCost;
+    this.homeService.land -= this.hqs[this.hq].upgradeLandCost;
+    this.hq++;
+    this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
+    this.updateFollowerCap();
+  }
+
+  downgradeHQ() {
+    this.homeService.land += this.hqs[this.hq].upgradeLandCost;
+    this.hq--;
+    this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
+    this.updateFollowerCap();
   }
 }

@@ -489,11 +489,7 @@ export class InventoryService {
         this.displayItemStacks[i].sellable.set(false);
         this.displayItemStacks[i].equipment.set(false);
         this.displayItemStacks[i].id.set(itemStack.id);
-        if (i < this.heirloomSlots()) {
-          this.displayItemStacks[i].tooltip.set('This slot can preserve an heirloom item for your next reincarnation.');
-        } else {
-          this.displayItemStacks[i].tooltip.set('');
-        }
+        this.displayItemStacks[i].tooltip.set('');
       }
     }
   }
@@ -653,7 +649,7 @@ export class InventoryService {
     const tempStacks: ItemStack[] = [];
     const gemStacks: ItemStack[] = [];
     const equipStacks: ItemStack[] = [];
-    for (let key = 0; key < this.itemStacks.length; key++) {
+    for (let key = this.heirloomSlots(); key < this.itemStacks.length; key++) {
       const itemStack = this.itemStacks[key];
       if (itemStack.item) {
         if (itemStack.item.type === LOOT_TYPE_GEM) {
@@ -682,8 +678,10 @@ export class InventoryService {
       gemStacks.sort((b, a) => b.quantity - a.quantity);
       gemStacks.sort((b, a) => b.item!.value - a.item!.value);
     }
-    const emptySlots = this.itemStacks.length - tempStacks.length - gemStacks.length - equipStacks.length;
-    this.itemStacks = tempStacks;
+    const emptySlots =
+      this.itemStacks.length - this.heirloomSlots() - tempStacks.length - gemStacks.length - equipStacks.length;
+    this.itemStacks.splice(this.heirloomSlots());
+    this.itemStacks.push(...tempStacks);
     this.itemStacks.push(...equipStacks);
     this.itemStacks.push(...gemStacks);
     for (let i = 0; i < emptySlots; i++) {
@@ -950,8 +948,11 @@ export class InventoryService {
     if (this.autoSellOldHerbsEnabled && !skipSnobbery) {
       // sell any herb of the same type that are cheaper than what we just picked
       const oldHerbStack = this.itemStacks.find(
-        itemStack =>
-          itemStack.item?.type === 'herb' && itemStack.item.subtype === herb.name && itemStack.item.value < grade + 1
+        (itemStack, index) =>
+          index >= this.heirloomSlots() &&
+          itemStack.item?.type === 'herb' &&
+          itemStack.item.subtype === herb.name &&
+          itemStack.item.value < grade + 1
       );
       if (oldHerbStack) {
         this.sell(oldHerbStack, oldHerbStack.quantity);
@@ -1072,7 +1073,7 @@ export class InventoryService {
 
     if (this.autoSellOldOreEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any ore cheaper than what we just got
-      for (let i = 0; i < this.itemStacks.length; i++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (itemStack.item && itemStack.item.type === 'ore' && itemStack.item.value < lastOre.value) {
           this.sell(itemStack, itemStack.quantity);
@@ -1097,7 +1098,7 @@ export class InventoryService {
 
     if (this.autoSellOldBarsEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any metal cheaper than what we just got
-      for (let i = 0; i < this.itemStacks.length; i++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (itemStack.item && itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value) {
           this.sell(itemStack, itemStack.quantity);
@@ -1123,7 +1124,7 @@ export class InventoryService {
 
     if (this.autoSellOldWoodEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any wood cheaper than what we just got
-      for (let i = 0; i < this.itemStacks.length; i++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (itemStack.item && itemStack.item.type === 'wood' && itemStack.item.value < lastWood.value) {
           this.sell(itemStack, itemStack.quantity);
@@ -1150,7 +1151,7 @@ export class InventoryService {
     }
     if (this.autoSellOldHidesEnabled && !this.hellService?.inHell() && !skipSnobbery) {
       // sell any hides cheaper than what we just got
-      for (let i = 0; i < this.itemStacks.length; i++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (
           itemStack.item &&
@@ -1300,7 +1301,8 @@ export class InventoryService {
       let foodStack = null;
       let fed = false;
       let highestValue = -1;
-      for (const itemIterator of this.itemStacks) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+        const itemIterator = this.itemStacks[i];
         if (itemIterator.item === null) {
           continue;
         }
@@ -1341,7 +1343,8 @@ export class InventoryService {
 
     let foodStack = null;
     let foodValue = 0;
-    for (const itemIterator of this.itemStacks) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+      const itemIterator = this.itemStacks[i];
       if (itemIterator.item === null) {
         continue;
       }
@@ -1482,7 +1485,8 @@ export class InventoryService {
       if (!existingStack) {
         // not there, check the inventory slots
         existingStack = this.itemStacks.find(
-          itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
+          (itemStack, index) =>
+            index < this.heirloomSlots() && itemStack.item?.type === item.type && itemStack.item.effect === item.effect
         );
       }
       if (existingStack) {
@@ -1600,7 +1604,7 @@ export class InventoryService {
 
     if (this.autoSellOldGemsEnabled && item.type === LOOT_TYPE_GEM && !this.hellService?.inHell()) {
       //clear out any old gems of lesser value
-      for (let i = 0; i < this.itemStacks.length; i++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (itemStack.item && itemStack.item.type === LOOT_TYPE_GEM && itemStack.item.value < item.value) {
           this.characterService.updateMoney(itemStack.item.value * itemStack.quantity);
@@ -1628,7 +1632,7 @@ export class InventoryService {
     let firstStack = -1;
     if (item.type !== 'equipment') {
       // try to stack the new item with existing items
-      for (let i = 0; i < this.itemStacks.length; i++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemIterator = this.itemStacks[i];
         if (!itemIterator.item) {
           continue;
@@ -1661,7 +1665,11 @@ export class InventoryService {
     }
 
     // couldn't stack it all, make a new stack
-    for (let i = inventoryIndex; i < this.itemStacks.length; i++) {
+    let startIndex = inventoryIndex;
+    if (startIndex < this.heirloomSlots()) {
+      startIndex = this.heirloomSlots();
+    }
+    for (let i = startIndex; i < this.itemStacks.length; i++) {
       if (!this.itemStacks[i].item) {
         if (firstStack === -1) {
           firstStack = i;
@@ -1726,7 +1734,8 @@ export class InventoryService {
       return;
     }
 
-    for (const itemIterator of this.itemStacks) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+      const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
         continue;
       }
@@ -1830,7 +1839,7 @@ export class InventoryService {
     }
     if (item.useConsumes && item.type !== 'food') {
       // use all the ones you have now
-      for (let i = 0; i < this.itemStacks.length; i++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
         if (!itemStack.item) {
           continue;
@@ -1917,7 +1926,7 @@ export class InventoryService {
       weapon = false;
       equippedPower = this.characterService.equipment[slot]?.armorStats?.defense || 0;
     }
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (itemIterator.item) {
         const item = itemIterator.item;
@@ -1946,7 +1955,7 @@ export class InventoryService {
     }
 
     let itemIndex = -1;
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
         continue;
@@ -1997,7 +2006,7 @@ export class InventoryService {
     }
     let itemIndex = -1;
     let numberConsumed = 0;
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
         continue;
@@ -2029,11 +2038,14 @@ export class InventoryService {
     return numberConsumed;
   }
 
-  checkFor(itemType: string): number {
+  checkFor(itemType: string, quantity = 1): number {
     let itemValue = -1;
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
+        continue;
+      }
+      if (itemIterator.quantity < quantity) {
         continue;
       }
       if (itemIterator.item.type === itemType) {
@@ -2047,7 +2059,7 @@ export class InventoryService {
 
   getQuantityByName(itemName: string): number {
     let itemCount = 0;
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
         continue;
@@ -2061,7 +2073,7 @@ export class InventoryService {
 
   getQuantityByType(itemType: string): number {
     let itemCount = 0;
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
         continue;
@@ -2133,7 +2145,8 @@ export class InventoryService {
   /** Returns the number of open inventory slots. */
   openInventorySlots() {
     let openSlots = 0;
-    for (const itemIterator of this.itemStacks) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+      const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
         openSlots++;
       }
@@ -2303,7 +2316,7 @@ export class InventoryService {
     stack.quantity -= 10 - power;
     this.addItem(this.generateSpiritGem(stack.item.value / 10 + 1, stack.item.subtype));
     // go find the stack and remove it or update the id
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       if (this.itemStacks[i] === stack) {
         if (stack.quantity === 0) {
           this.setItemEmptyStack(i);
@@ -2323,7 +2336,7 @@ export class InventoryService {
     if (power < 0) {
       power = 0;
     }
-    for (let i = 0; i < this.itemStacks.length; i++) {
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
         continue;
@@ -2398,6 +2411,7 @@ export class InventoryService {
     }
     this.stashedItemStacks = [];
   }
+
   removeItemStack(itemStack: ItemStack) {
     const index = this.itemStacks.indexOf(itemStack);
     this.thrownAwayItems += itemStack.quantity;

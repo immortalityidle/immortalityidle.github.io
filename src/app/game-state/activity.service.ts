@@ -19,7 +19,7 @@ import { ItemRepoService } from '../game-state/item-repo.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
-import { Follower, FollowersService } from './followers.service';
+import { FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService } from './location.service';
@@ -92,8 +92,6 @@ export class ActivityService {
   totalExhaustedDays = 0;
   spiritActivityProgress = false;
   purifyGemsUnlocked = false;
-  private trainingFollowersDays = 0;
-  private trainingPetsDays = 0;
   immediateActivity: Activity | null = null;
   lifeActivities: { [key in ActivityType]?: number } = {};
   familySpecialty: ActivityType | null = null;
@@ -227,116 +225,6 @@ export class ActivityService {
       this.displayCurrentIndex.set(this.currentIndex);
       this.displayCurrentTickCount.set(this.currentTickCount);
       this.currentRealmDisplay.set(RealmNames[this.currentRealm]);
-    });
-
-    const trainingActionTemplate = (attribute: number, trainingDays: number, follower: Follower): boolean => {
-      let upgraded = false;
-
-      const getDailyUpgradeChance = () =>
-        (1 - Math.pow(follower.power / 100, 0.55)) /
-        (36500000 / (3650 + follower.age * Math.log2(attribute / 1e10 + 1)));
-
-      const getProbUpgradeAfterDayFunc = () => {
-        const dailyFailureChance = 1 - getDailyUpgradeChance();
-        return (days: number) => (days > 0 ? Math.pow(dailyFailureChance, days) : 1);
-      };
-
-      let availableDays = trainingDays;
-      while (availableDays > 0) {
-        const getProbUpgradeAfterDay = getProbUpgradeAfterDayFunc();
-        const chance = Math.random();
-        if (chance < getProbUpgradeAfterDay(availableDays)) {
-          availableDays = 0;
-          break;
-        }
-
-        upgraded = true;
-
-        // Use logarithm to calculate exact day upgrade happens
-        // rolledChance < dailyFailureChance^days -> log chance / log dailyFailureChance < days
-        const daysNeeded = Math.max(1, Math.ceil(Math.log(chance) / Math.log(1 - getDailyUpgradeChance())));
-
-        availableDays -= daysNeeded;
-
-        // Softcap the increase
-        follower.power++;
-        if (follower.power > this.followerService.highestLevel) {
-          this.followerService.highestLevel = follower.power;
-        }
-        follower.cost = 100 * follower.power;
-        this.logService.log(LogTopic.FOLLOWER, follower.name + ' gains additional power as a ' + follower.job);
-      }
-
-      return upgraded;
-    };
-
-    mainLoopService.yearOrLongTickSubject.subscribe(() => {
-      if (!(this.trainingFollowersDays + this.trainingPetsDays > 0 && this.followerService.followersUnlocked)) {
-        return;
-      }
-
-      if (this.followerService.followersUnlocked) {
-        let allFollowersMaxed = true;
-        let allPetsMaxed = true;
-        let anyUpgraded = false;
-
-        for (const follower of this.followerService.followers) {
-          const attribute = this.characterService.attributes.charisma.value;
-          const trainingDays = this.trainingFollowersDays;
-
-          if (follower.power >= 100) {
-            follower.power = 100;
-            continue;
-          } else {
-            allFollowersMaxed = false;
-          }
-
-          if (trainingDays === 0) {
-            continue;
-          }
-
-          anyUpgraded ||= trainingActionTemplate(attribute, trainingDays, follower);
-        }
-
-        for (const follower of this.followerService.pets) {
-          const attribute = this.characterService.attributes.animalHandling.value;
-          const trainingDays = this.trainingPetsDays;
-
-          if (follower.power >= 100) {
-            follower.power = 100;
-            continue;
-          } else {
-            allPetsMaxed = false;
-          }
-
-          if (trainingDays === 0) {
-            continue;
-          }
-
-          anyUpgraded ||= trainingActionTemplate(attribute, trainingDays, follower);
-        }
-
-        if (allFollowersMaxed && this.trainingFollowersDays) {
-          this.logService.log(
-            LogTopic.FOLLOWER,
-            'You try to train your followers, but they are all already as powerful as they can be. You pat them each on the back and tell them they are great.'
-          );
-        }
-
-        if (allPetsMaxed && this.trainingPetsDays) {
-          this.logService.log(
-            LogTopic.FOLLOWER,
-            'You try to train your pets, but they are all already as powerful as they can be. You give them all belly rubs and tell them they are great.'
-          );
-        }
-
-        if (anyUpgraded) {
-          this.followerService.updateFollowerTotalPower();
-        }
-      }
-
-      this.trainingFollowersDays = 0;
-      this.trainingPetsDays = 0;
     });
 
     mainLoopService.activityTickSubject.subscribe(() => {
@@ -3585,12 +3473,12 @@ export class ActivityService {
     description: ['Train your followers to make them more powerful.'],
     yinYangEffect: [YinYangEffect.Yang],
     consequenceDescription: [
-      'Uses 1000 Stamina. Gives you a small chance for each follower of increasing their power. They might learn more if you are a better leader.',
+      'Uses 1000 Stamina. Gives one of your followers some experience. They might learn more if you are a better leader.',
     ],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
-        this.trainingFollowersDays++;
+        this.followerService.trainFollower(10 * Math.log10(this.characterService.attributes.charisma.value), false);
         this.characterService.yang++;
       },
     ],
@@ -3738,7 +3626,10 @@ export class ActivityService {
           return;
         }
         this.characterService.increaseAttribute('animalHandling', 1);
-        this.trainingPetsDays++;
+        this.followerService.trainFollower(
+          10 * Math.log10(this.characterService.attributes.animalHandling.value),
+          true
+        );
         this.characterService.yang++;
       },
     ],
