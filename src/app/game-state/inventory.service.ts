@@ -1945,116 +1945,48 @@ export class InventoryService {
     }
   }
 
-  consume(consumeType: string, quantity = 1, cheapest = false): number {
-    if (quantity < 0) {
-      quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
-    }
-    let itemValue = -1;
-    if (cheapest) {
-      itemValue = Infinity;
-    }
-
-    let itemIndex = -1;
-    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
-      const itemIterator = this.itemStacks[i];
-      if (!itemIterator.item) {
-        continue;
-      }
-      if (itemIterator.item.type === consumeType) {
+  consume(consumedThing: string, quantity = 1, cheapest = false, checkOnly = false): number {
+    const filteredItemStacks = this.itemStacks
+      .slice(this.heirloomSlots())
+      .filter(itemStack => itemStack.item?.type === consumedThing)
+      .sort((a, b) => {
         if (cheapest) {
-          if (itemValue > itemIterator.item.value) {
-            itemValue = itemIterator.item.value;
-            itemIndex = i;
-          }
+          return a.item!.value - b.item!.value;
         } else {
-          if (itemValue < itemIterator.item.value) {
-            itemValue = itemIterator.item.value;
-            itemIndex = i;
-          }
+          return b.item!.value - a.item!.value;
         }
-      }
+      });
+    let totalQuantity = 0;
+    filteredItemStacks.forEach(itemStack => (totalQuantity += itemStack.quantity));
+    if (totalQuantity < quantity) {
+      // not enough of the item, bail out
+      return -1;
+    } else if (checkOnly) {
+      return filteredItemStacks[0].item!.value;
     }
-    if (itemIndex >= 0) {
-      const itemIterator = this.itemStacks[itemIndex];
-      if (itemIterator.item) {
-        const minQuantity = Math.min(itemIterator.quantity, quantity);
-        itemIterator.quantity -= minQuantity;
-        quantity -= minQuantity;
-        if (itemIterator.quantity <= 0) {
-          //remove the stack if empty
-          this.setItemEmptyStack(itemIndex);
-        } else {
-          this.fixId(itemIndex);
-        }
-      }
-    }
-    if (quantity > 0 && itemIndex >= 0) {
-      // we didn't have enough in the stack we consumed to meet the quantity, consume another
-      itemValue = this.consume(consumeType, quantity);
-    }
-    if (cheapest && itemValue === Infinity) {
-      // return -1 for not found
-      itemValue = -1;
-    }
-
-    return itemValue;
-  }
-
-  consumeById(consumeId: string, quantity = 1) {
-    if (quantity < 0) {
-      quantity = 0; //handle potential negatives just in case. 0 is okay to do an item check without consuming.
-    }
-    let itemIndex = -1;
-    let numberConsumed = 0;
-    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
-      const itemIterator = this.itemStacks[i];
-      if (!itemIterator.item) {
-        continue;
-      }
-      if (itemIterator.item.id === consumeId) {
-        itemIndex = i;
-      }
-    }
-    if (itemIndex < 0) {
-      return 0;
-    }
-    const itemIterator = this.itemStacks[itemIndex];
-    if (itemIterator.item) {
-      const minQuantity = Math.min(itemIterator.quantity, quantity);
-      itemIterator.quantity -= minQuantity;
-      quantity -= minQuantity;
-      numberConsumed += minQuantity;
-      if (itemIterator.quantity <= 0) {
-        //remove the stack if empty
-        this.setItemEmptyStack(itemIndex);
+    let returnValue = -1;
+    for (const itemStack of filteredItemStacks) {
+      if (itemStack.quantity >= quantity) {
+        itemStack.quantity -= quantity;
+        returnValue = itemStack.item!.value;
+        quantity = 0;
       } else {
-        this.fixId(itemIndex);
+        quantity -= itemStack.quantity;
+        itemStack.quantity = 0;
+      }
+      if (itemStack.quantity === 0) {
+        const index = this.itemStacks.indexOf(itemStack);
+        this.setItemEmptyStack(index);
+      }
+      if (quantity === 0) {
+        break;
       }
     }
-    if (quantity > 0 && itemIndex >= 0) {
-      // we didn't have enough in the stack we consumed to meet the quantity, consume another
-      numberConsumed += this.consumeById(consumeId, quantity);
-    }
-    return numberConsumed;
+    return returnValue;
   }
 
   checkFor(itemType: string, quantity = 1): number {
-    let itemValue = -1;
-    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
-      const itemIterator = this.itemStacks[i];
-      if (!itemIterator.item) {
-        continue;
-      }
-      if (itemIterator.quantity < quantity) {
-        continue;
-      }
-      if (itemIterator.item.type === itemType) {
-        if (itemValue < itemIterator.item.value) {
-          itemValue = itemIterator.item.value;
-        }
-      }
-    }
-    return itemValue;
+    return this.consume(itemType, quantity, false, true);
   }
 
   getQuantityByName(itemName: string): number {

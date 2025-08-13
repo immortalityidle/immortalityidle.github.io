@@ -232,9 +232,9 @@ export class FollowersService {
       description:
         'An elite school where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e10) +
-        ' Taels and 100 spirit gems per day.<br>Requires a level 20 administrator follower to run it.',
+        ' Taels and 25 spirit gems per day.<br>Requires a level 20 administrator follower to run it.',
       moneyPerDay: 1e10,
-      gemsPerDay: 100,
+      gemsPerDay: 25,
       maxFollowerIncrease: 10,
       maxLevelIncrease: 20,
       experiencePerDay: 50,
@@ -255,9 +255,9 @@ export class FollowersService {
       description:
         'An elaborate compound where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e13) +
-        ' Taels and 200 spirit gems per day.<br>Requires a level 50 administrator follower to run it.',
+        ' Taels and 50 spirit gems per day.<br>Requires a level 50 administrator follower to run it.',
       moneyPerDay: 1e13,
-      gemsPerDay: 200,
+      gemsPerDay: 50,
       maxFollowerIncrease: 15,
       maxLevelIncrease: 30,
       experiencePerDay: 100,
@@ -278,9 +278,9 @@ export class FollowersService {
       description:
         'A huge campus where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e16) +
-        ' Taels and 300 spirit gems per day.<br>Requires a level 100 administrator follower to run it.',
+        ' Taels and 80 spirit gems per day.<br>Requires a level 100 administrator follower to run it.',
       moneyPerDay: 1e16,
-      gemsPerDay: 300,
+      gemsPerDay: 80,
       maxFollowerIncrease: 20,
       maxLevelIncrease: 50,
       experiencePerDay: 200,
@@ -301,9 +301,9 @@ export class FollowersService {
       description:
         'A powerful fortress where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e20) +
-        ' Taels and 500 spirit gems per day.<br>Requires 2 level 100 administrators to run it.',
+        ' Taels and 120 spirit gems per day.<br>Requires 2 level 100 administrators to run it.',
       moneyPerDay: 1e20,
-      gemsPerDay: 500,
+      gemsPerDay: 120,
       maxFollowerIncrease: 30,
       maxLevelIncrease: 80,
       experiencePerDay: 300,
@@ -324,9 +324,9 @@ export class FollowersService {
       description:
         'An immense citidel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
-        ' Taels and 800 spirit gems per day.<br>Requires 4 level 100 administrators to run it.',
+        ' Taels and 150 spirit gems per day.<br>Requires 4 level 100 administrators to run it.',
       moneyPerDay: 1e26,
-      gemsPerDay: 800,
+      gemsPerDay: 150,
       maxFollowerIncrease: 50,
       maxLevelIncrease: 100,
       experiencePerDay: 500,
@@ -815,7 +815,10 @@ export class FollowersService {
       while (follower.experience > follower.power * 1000) {
         follower.experience -= follower.power * 1000;
         follower.power++;
-        this.logService.log(LogTopic.FOLLOWER, follower.name + ' gains additional power as a ' + follower.job);
+        this.logService.log(
+          LogTopic.FOLLOWER,
+          follower.name + ' gains additional power as a ' + this.camelToTitle.transform(follower.job)
+        );
       }
 
       follower.age += daysElapsed;
