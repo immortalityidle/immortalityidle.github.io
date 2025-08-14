@@ -1591,8 +1591,8 @@ export class FollowersService {
   }
 
   downgradeHQ() {
-    this.homeService.land += this.hqs[this.hq].upgradeLandCost;
     this.hq--;
+    this.homeService.land += this.hqs[this.hq].upgradeLandCost;
     this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
   }
