@@ -810,17 +810,6 @@ export class FollowersService {
   yearTickFollowers(listToHandle: Follower[], daysElapsed: number) {
     for (let i = listToHandle.length - 1; i >= 0; i--) {
       const follower = listToHandle[i];
-
-      // level up follower
-      while (follower.experience > follower.power * 1000) {
-        follower.experience -= follower.power * 1000;
-        follower.power++;
-        this.logService.log(
-          LogTopic.FOLLOWER,
-          follower.name + ' gains additional power as a ' + this.camelToTitle.transform(follower.job)
-        );
-      }
-
       follower.age += daysElapsed;
       if (follower.age >= listToHandle[i].lifespan) {
         // follower aged off
@@ -1474,11 +1463,27 @@ export class FollowersService {
         return;
       }
     }
-    followerList[index].experience = Math.floor((followerList[index].experience || 0) + experience);
+    const follower = followerList[index];
+    follower.experience = Math.floor((follower.experience || 0) + experience);
+    // level up follower
+    let levelGained = false;
+    while (follower.experience > follower.power * 1000) {
+      follower.experience -= follower.power * 1000;
+      follower.power++;
+      levelGained = true;
+      this.logService.log(
+        LogTopic.FOLLOWER,
+        follower.name + ' gains additional power as a ' + this.camelToTitle.transform(follower.job)
+      );
+    }
     if (pet) {
       this.petTrainingIndex = ++index;
     } else {
       this.followerTrainingIndex = ++index;
+    }
+
+    if (levelGained) {
+      this.updateFollowerTotalPower();
     }
   }
 
