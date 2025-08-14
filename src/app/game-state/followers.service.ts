@@ -950,6 +950,7 @@ export class FollowersService {
     // get the benefits
     for (const follower of this.followers) {
       follower.experience += this.hqs[this.hq].experiencePerDay;
+      this.levelUp(follower);
     }
 
     /*
@@ -1465,24 +1466,22 @@ export class FollowersService {
     }
     const follower = followerList[index];
     follower.experience = Math.floor((follower.experience || 0) + experience);
-    // level up follower
-    let levelGained = false;
-    while (follower.experience > follower.power * 1000) {
-      follower.experience -= follower.power * 1000;
-      follower.power++;
-      levelGained = true;
-      this.logService.log(
-        LogTopic.FOLLOWER,
-        follower.name + ' gains additional power as a ' + this.camelToTitle.transform(follower.job)
-      );
-    }
+    this.levelUp(follower);
     if (pet) {
       this.petTrainingIndex = ++index;
     } else {
       this.followerTrainingIndex = ++index;
     }
+  }
 
-    if (levelGained) {
+  levelUp(follower: Follower) {
+    while (follower.experience > follower.power * 1000) {
+      follower.experience -= follower.power * 1000;
+      follower.power++;
+      this.logService.log(
+        LogTopic.FOLLOWER,
+        follower.name + ' gains additional power as a ' + this.camelToTitle.transform(follower.job)
+      );
       this.updateFollowerTotalPower();
     }
   }
