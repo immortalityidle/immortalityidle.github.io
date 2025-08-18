@@ -84,7 +84,7 @@ export class AchievementService {
     [MEMORY_QI_UNLOCKED]: {
       title: 'The Power of Qi',
       text: [
-        'A tingle begins in your fingertips.<br><br>You feel the flow of Qi, a power that has always resided inside of you but was, until now, beyond your conscious control.<br><br>The power concentrates until if fills your hand, ready to be unleashed.<br><br>You have a great deal of training to do before you can make effective use of this power against your foes, but the door to unleashing your inner strength is finally unlocked.',
+        'A tingle begins in your fingertips.<br><br>You feel the flow of Qi, a power that has always resided inside of you but was, until now, beyond your conscious control.<br><br>The power concentrates until it fills your hand, ready to be unleashed.<br><br>You have a great deal of training to do before you can make effective use of this power against your foes, but the door to unleashing your inner strength is finally unlocked.',
       ],
       imageBaseName: 'qiUnlocked',
     },

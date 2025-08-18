@@ -11,7 +11,6 @@ import { BattleService } from '../game-state/battle.service';
 import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
-import { BigNumberPipe } from '../pipes';
 import { ActivityPanelService } from './activity-panel.service';
 
 @Component({
@@ -23,7 +22,6 @@ import { ActivityPanelService } from './activity-panel.service';
     forwardRef(() => CdkDrag),
     forwardRef(() => NgClass),
     forwardRef(() => MatIcon),
-    forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
   ],
 })

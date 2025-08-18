@@ -1,85 +1,57 @@
-<!-- <h3 class="activitiesHeader">
-  <div class="customHeader">
-    @if (characterService.immortal() && !hellService.inHell() && !characterService.god()) {
-      <span>
-        <button (click)="activityPanelService.joinTheGodsClick()">Join the Gods</button>
-      </span>
-    }
-  </div>
-</h3> -->
 <div class="activitiesContainer">
-  <!-- draggable="true" (dragstart)="drag(activity, $event)" -->
   <div class="overflow">
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
-      @if (hellService.inHell()){
-        @for (activity of activityService.portals; track activity; let indexOfelement = $index) {
-          @if (activity.discovered || activity.unlocked) {
-            <div class="activitySlot" [ngClass]="{'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"
-              [tabindex]="0"
-              (click)="activityPanelService.doActivity(activity)" >
-              <div class="activityLabel" tooltip="{{activityPanelService.getActivityTooltip(activity, true)}}">
-                <span>{{activity.name[activity.level]}}</span>
-              </div>
-              <div class="activityButtons">
-                <mat-icon class="iconButton" (click)="activityPanelService.showActivity($event, activity)"
-                  tooltip="What is this activity?<br>Click to learn all about it!"
-                  aria-label="Help" aria-hidden="false">
-                  help
-                </mat-icon>
-              </div>
-            </div>
-          }
-        }      
-      }
-      @for (activity of activityService.activities; track activity; let indexOfelement = $index) {
-        @if (activity.discovered || activity.unlocked) {
-          <div class="activitySlot" [ngClass]="{'projectionOnly': activity.projectionOnly, 'lockedActivity': (!activity.unlocked || battleService.enemies.length > 0)}"
+      @for (displayActivity of activityService.displayActivities; track displayActivity.trackField(); let indexOfelement = $index) {
+        @if (displayActivity.displayed()) {
+          <div class="activitySlot" [ngClass]="{'projectionOnly': displayActivity.projectionOnly(), 'lockedActivity': displayActivity.locked()}"
             [tabindex]="0"
-            (click)="activityPanelService.doActivity(activity)" >
-            <div class="activityLabel" tooltip="{{activityPanelService.getActivityTooltip(activity, true)}}" >
-              <span>{{activity.name[activity.level]}}</span>
+            (click)="activityPanelService.doActivity(displayActivity.activity)" >
+            <div class="activityLabel" tooltip="{{displayActivity.tooltip()}}" >
+              <span>{{displayActivity.name()}}</span>
             </div>
             <div class="activityButtons">
-              <div class="activity-btn-group">
+              <span>
                 @if (mainLoopService.timeUnlocked) {
-                  <mat-icon class="iconButton" (click)="scheduleActivity(activity, $event)"
-                    (contextmenu)="rightClick(activity, $event)" tooltip="{{activityPanelService.getActivityTooltip(activity)}}"
+                  <mat-icon class="iconButton" (click)="scheduleActivity(displayActivity.activity, $event)"
+                    (contextmenu)="rightClick(displayActivity.activity, $event)" tooltip="{{displayActivity.scheduleTooltip()}}"
                     aria-label="Schedule this activity" aria-hidden="false">
                     event
                   </mat-icon>
                 }
-              </div>
-              <div class="activity-btn-group">
-                @if (activity.skipApprenticeshipLevel > 0 && !activityService.completedApprenticeships.includes(activity.activityType)) {
+              </span>
+              <span class='floatRight'>
+                @if (displayActivity.apprenticeshipRequired()) {
                   <mat-icon
                     tooltip="This activity requires that you go through an apprenticeship.<br>You can only do one apprenticeship in each lifetime, so choose carefully what trade you want to learn.<br>Once you've started, other trades may be closed off until your next life."
                     aria-label="Requires an apprenticeship" aria-hidden="false">
                     model_training
                   </mat-icon>
                 }
-                @if (activityService.familySpecialty === activity.activityType) {
+                @if (displayActivity.familySpecialty()) {
                   <mat-icon
                     tooltip="This activity is a family specialty, and you will do it better than you could if your ancestors hadn't practiced this so much."
                     aria-label="Family Specialty" aria-hidden="false">
                     supervisor_account
                   </mat-icon>
                 }
-                @if (activity.lastIncome && activity.lastIncome > 0) {
-                  <mat-icon tooltip="Exactly how much will you make doing this job?<br>It can depend on your attributes, but the last time you did this job you made<br>{{activity.lastIncome | bigNumber}} taels."
+                @if (displayActivity.displayLastIncome()) {
+                  <mat-icon tooltip="{{displayActivity.lastIncomeString()}}"
                     aria-label="Earns money" aria-hidden="false">
                     attach_money
                   </mat-icon>
                 }
-                <mat-icon class="iconButton" (click)="activityPanelService.showActivity($event, activity)"
+                <mat-icon class="iconButton" (click)="activityPanelService.showActivity($event, displayActivity.activity)"
                   tooltip="What is this activity?<br>Click to learn all about it!"
                   aria-label="Help" aria-hidden="false">
                   help
                 </mat-icon>
-              </div>
+              </span>
             </div>
           </div>
         }
       }
     </div>
   </div>
+
 </div>
+<br>

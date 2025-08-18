@@ -1956,6 +1956,9 @@ export class InventoryService {
           return b.item!.value - a.item!.value;
         }
       });
+    if (filteredItemStacks.length === 0) {
+      return -1;
+    }
     let totalQuantity = 0;
     filteredItemStacks.forEach(itemStack => (totalQuantity += itemStack.quantity));
     if (totalQuantity < quantity) {

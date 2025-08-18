@@ -1,4 +1,4 @@
-import { Injectable, Injector, signal } from '@angular/core';
+import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM } from './battle.service';
 import {
   Activity,
@@ -23,6 +23,7 @@ import { FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService } from './location.service';
+import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -59,10 +60,28 @@ export interface ActivityProperties {
   beggingDays: number;
 }
 
+export interface DisplayActivity {
+  trackField: WritableSignal<string>;
+  name: WritableSignal<string>;
+  displayed: WritableSignal<boolean>;
+  projectionOnly: WritableSignal<boolean>;
+  locked: WritableSignal<boolean>;
+  activityType: WritableSignal<ActivityType>;
+  tooltip: WritableSignal<string>;
+  scheduleTooltip: WritableSignal<string>;
+  apprenticeshipRequired: WritableSignal<boolean>;
+  familySpecialty: WritableSignal<boolean>;
+  displayLastIncome: WritableSignal<boolean>;
+  lastIncomeString: WritableSignal<string>;
+  activity: Activity;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ActivityService {
+  camelToTitle = new CamelToTitlePipe();
+  bigNumberPipe: BigNumberPipe;
   activityLoop: ActivityLoopEntry[] = [];
   savedActivityLoops: SavedActivityLoop[] = [];
   loopChangeTriggers: LoopChangeTrigger[] = [];
@@ -75,6 +94,7 @@ export class ActivityService {
   pauseBeforeDeath = false;
   beforeDeathPauseUsed = false;
   activities: Activity[];
+  displayActivities: DisplayActivity[] = [];
   portals: Activity[];
   openApprenticeships = 1;
   oddJobDays = 0;
@@ -132,6 +152,7 @@ export class ActivityService {
     private followerService: FollowersService,
     private impossibleTaskService: ImpossibleTaskService
   ) {
+    this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.activities = [
       this.BurnMoney,
       this.HonorAncestors,
@@ -206,6 +227,7 @@ export class ActivityService {
     this.portals = [];
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
+    setTimeout(() => this.updateDisplayValues());
 
     mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
@@ -220,11 +242,8 @@ export class ActivityService {
       }
       this.upgradeActivities(false);
       this.checkRequirements(false);
-    });
-    mainLoopService.displayValueTickSubject.subscribe(() => {
-      this.displayCurrentIndex.set(this.currentIndex);
-      this.displayCurrentTickCount.set(this.currentTickCount);
-      this.currentRealmDisplay.set(RealmNames[this.currentRealm]);
+
+      this.updateDisplayValues();
     });
 
     mainLoopService.activityTickSubject.subscribe(() => {
@@ -390,6 +409,98 @@ export class ActivityService {
 
     this.upgradeActivities(true);
     this.checkRequirements(true);
+  }
+
+  updateDisplayValues() {
+    this.displayCurrentIndex.set(this.currentIndex);
+    this.displayCurrentTickCount.set(this.currentTickCount);
+    this.currentRealmDisplay.set(RealmNames[this.currentRealm]);
+    for (let i = 0; i < this.activities.length; i++) {
+      const activity = this.activities[i];
+      if (this.displayActivities.length <= i) {
+        this.displayActivities.push({
+          trackField: signal<string>(''),
+          name: signal<string>(''),
+          displayed: signal<boolean>(false),
+          projectionOnly: signal<boolean>(false),
+          locked: signal<boolean>(false),
+          activityType: signal(activity.activityType),
+          tooltip: signal<string>(''),
+          scheduleTooltip: signal<string>(''),
+          apprenticeshipRequired: signal<boolean>(false),
+          familySpecialty: signal<boolean>(false),
+          displayLastIncome: signal<boolean>(false),
+          lastIncomeString: signal<string>(''),
+          activity: activity,
+        });
+      }
+      const displayActivity = this.displayActivities[i];
+      displayActivity.trackField.set(
+        '' + activity.activityType + activity.level + activity.lastIncome + activity.unlocked + activity.discovered
+      );
+      displayActivity.displayed.set(activity.discovered || activity.unlocked);
+      displayActivity.name.set(activity.name[activity.level]);
+      displayActivity.projectionOnly.set(activity.projectionOnly || false);
+      displayActivity.locked.set(!activity.unlocked && this.battleService.enemies.length > 0);
+      displayActivity.tooltip.set(this.getActivityTooltip(activity, true));
+      displayActivity.scheduleTooltip.set(this.getActivityTooltip(activity, false));
+      displayActivity.apprenticeshipRequired.set(
+        activity.skipApprenticeshipLevel > 0 && !this.completedApprenticeships.includes(activity.activityType)
+      );
+      displayActivity.familySpecialty.set(this.familySpecialty === activity.activityType);
+      if (activity.lastIncome && activity.lastIncome > 0) {
+        displayActivity.displayLastIncome.set(true);
+      } else {
+        displayActivity.displayLastIncome.set(false);
+      }
+      displayActivity.lastIncomeString.set(
+        'Exactly how much will you make doing this job?<br>It can depend on your attributes, but the last time you did this job you made<br>' +
+          this.bigNumberPipe.transform(activity.lastIncome || 0) +
+          ' taels.'
+      );
+    }
+  }
+
+  getActivityTooltip(activity: Activity, doNow: boolean) {
+    if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell) {
+      return '';
+    } else if (activity.unlocked) {
+      if (doNow) {
+        return 'Spend a day doing this activity';
+      } else {
+        let projectionString = '';
+        if (this.characterService.qiUnlocked) {
+          projectionString = '<br>Right-click to set this as your spriritual projection activity';
+        }
+        return (
+          'Add this activity to your schedule<br>Shift- or Ctrl-click to repeat it 10x<br>Shift-Ctrl-click to repeat it 100x<br>Alt-click to add it to the top' +
+          projectionString
+        );
+      }
+    } else {
+      let tooltipText = [
+        'This activity is locked until you have the attributes required for it. You will need:<br>',
+        ...Object.entries(activity.requirements[0]).map(entry =>
+          entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
+        ),
+      ]
+        .filter(line => line)
+        .join('<br>');
+      if (activity.landRequirements) {
+        tooltipText += '<br>Land: ' + activity.landRequirements;
+      }
+      if (activity.fallowLandRequirements) {
+        tooltipText += '<br>Fallow Land: ' + activity.fallowLandRequirements;
+      }
+      if (activity.farmedLandRequirements) {
+        tooltipText += '<br>Farmed Land: ' + activity.farmedLandRequirements;
+      }
+      if (!this.locationService!.unlockedLocations.includes(activity.location)) {
+        tooltipText += '<br>Access to ' + this.camelToTitle.transform(activity.location);
+      }
+
+      return tooltipText;
+    }
   }
 
   checkTriggers() {

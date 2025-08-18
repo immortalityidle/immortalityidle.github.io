@@ -548,7 +548,20 @@ export class CharacterService {
 
     let prevTotalTicks = this.mainLoopService.totalTicks;
 
-    mainLoopService.displayValueTickSubject.subscribe(() => {
+    mainLoopService.longTickSubject.subscribe(elapsedDays => {
+      const currentTotalTicks = this.mainLoopService.totalTicks;
+      const daysPerExtraDay = 3650;
+
+      let extraDays = Math.floor(elapsedDays / daysPerExtraDay);
+      if (prevTotalTicks % daysPerExtraDay > currentTotalTicks % daysPerExtraDay) {
+        extraDays++;
+      }
+
+      if (extraDays > 0) {
+        this.increaseBaseLifespan(extraDays, 70); //bonus day for living another 10 years, capped at 70 years
+      }
+
+      prevTotalTicks = currentTotalTicks;
       this.displayMoney.set(this.money);
       this.displayAge.set(this.age);
       this.displayLifespan.set(this.lifespan);
@@ -566,22 +579,6 @@ export class CharacterService {
         this.attributes[attributeKey].displayValue.set(this.attributes[attributeKey].value);
         this.attributes[attributeKey].displayAptitude.set(this.attributes[attributeKey].aptitude);
       }
-    });
-
-    mainLoopService.longTickSubject.subscribe(elapsedDays => {
-      const currentTotalTicks = this.mainLoopService.totalTicks;
-      const daysPerExtraDay = 3650;
-
-      let extraDays = Math.floor(elapsedDays / daysPerExtraDay);
-      if (prevTotalTicks % daysPerExtraDay > currentTotalTicks % daysPerExtraDay) {
-        extraDays++;
-      }
-
-      if (extraDays > 0) {
-        this.increaseBaseLifespan(extraDays, 70); //bonus day for living another 10 years, capped at 70 years
-      }
-
-      prevTotalTicks = currentTotalTicks;
     });
 
     mainLoopService.tickSubject.subscribe(() => {

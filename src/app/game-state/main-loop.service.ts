@@ -5,7 +5,6 @@ import { BattleService } from './battle.service';
 
 const TICK_INTERVAL_MS = 25;
 const LONG_TICK_INTERVAL_MS = 500;
-const DISPLAY_VALUE_INTERVAL_MS = 250;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean;
@@ -46,8 +45,6 @@ export class MainLoopService {
    * the previous tick of longTickSubject
    */
   longTickSubject = new Subject<number>();
-
-  displayValueTickSubject = new Subject<void>();
 
   /**
    * Updates every year or every long tick, whichever comes first.
@@ -167,12 +164,6 @@ export class MainLoopService {
 
     setTimeout(() => this.handleTimeout(), TICK_INTERVAL_MS);
     setTimeout(() => this.handleLongTickTimeout(), LONG_TICK_INTERVAL_MS);
-    setTimeout(() => this.handleDisplayValueTickTimeout(), DISPLAY_VALUE_INTERVAL_MS);
-  }
-
-  handleDisplayValueTickTimeout() {
-    this.displayValueTickSubject.next();
-    setTimeout(() => this.handleDisplayValueTickTimeout(), DISPLAY_VALUE_INTERVAL_MS);
   }
 
   handleLongTickTimeout() {

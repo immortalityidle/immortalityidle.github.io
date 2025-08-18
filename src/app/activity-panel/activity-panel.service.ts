@@ -1,17 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
-import { HellService } from '../game-state/hell.service';
 import { CharacterService } from '../game-state/character.service';
-import { InventoryService } from '../game-state/inventory.service';
-import { FollowersService } from '../game-state/followers.service';
 import { ActivityService } from '../game-state/activity.service';
-import { Activity, ActivityType } from '../game-state/activity';
+import { Activity } from '../game-state/activity';
 import { BattleService } from '../game-state/battle.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { MainLoopService } from '../game-state/main-loop.service';
-import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
-import { LocationService } from '../game-state/location.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,17 +14,10 @@ import { LocationService } from '../game-state/location.service';
 export class ActivityPanelService {
   private activityService = inject(ActivityService);
   private battleService = inject(BattleService);
-  private bigNumberPipe = inject(BigNumberPipe);
   private dialog = inject(MatDialog);
   private characterService = inject(CharacterService);
-  private followersService = inject(FollowersService);
-  private hellService = inject(HellService);
-  private inventoryService = inject(InventoryService);
   private logService = inject(LogService);
   private mainLoopService = inject(MainLoopService);
-  private locationService = inject(LocationService);
-
-  private camelToTitle = new CamelToTitlePipe();
 
   public doActivity(activity: Activity) {
     if (this.battleService.enemies.length > 0) {
@@ -53,48 +41,6 @@ export class ActivityPanelService {
     this.activityService.immediateActivity = activity;
     this.mainLoopService.tick();
     this.activityService.immediateActivity = null;
-  }
-
-  public getActivityTooltip(activity: Activity, doNow = false) {
-    if (activity.activityType >= ActivityType.Hell || activity.activityType === ActivityType.EscapeHell) {
-      return '';
-    } else if (activity.unlocked) {
-      if (doNow) {
-        return 'Spend a day doing this activity';
-      } else {
-        let projectionString = '';
-        if (this.characterService.qiUnlocked) {
-          projectionString = '<br>Right-click to set this as your spriritual projection activity';
-        }
-        return (
-          'Add this activity to your schedule<br>Shift- or Ctrl-click to repeat it 10x<br>Shift-Ctrl-click to repeat it 100x<br>Alt-click to add it to the top' +
-          projectionString
-        );
-      }
-    } else {
-      let tooltipText = [
-        'This activity is locked until you have the attributes required for it. You will need:<br>',
-        ...Object.entries(activity.requirements[0]).map(entry =>
-          entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
-        ),
-      ]
-        .filter(line => line)
-        .join('<br>');
-      if (activity.landRequirements) {
-        tooltipText += '<br>Land: ' + activity.landRequirements;
-      }
-      if (activity.fallowLandRequirements) {
-        tooltipText += '<br>Fallow Land: ' + activity.fallowLandRequirements;
-      }
-      if (activity.farmedLandRequirements) {
-        tooltipText += '<br>Farmed Land: ' + activity.farmedLandRequirements;
-      }
-      if (!this.locationService.unlockedLocations.includes(activity.location)) {
-        tooltipText += '<br>Access to ' + this.camelToTitle.transform(activity.location);
-      }
-
-      return tooltipText;
-    }
   }
 
   public showActivity(event: MouseEvent, activity: Activity) {

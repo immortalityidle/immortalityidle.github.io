@@ -9,11 +9,10 @@ import { TooltipDirective } from 'src/app/tooltip/tooltip.directive';
 import { MainLoopService } from 'src/app/game-state/main-loop.service';
 import { BattleService } from 'src/app/game-state/battle.service';
 import { Activity } from 'src/app/game-state/activity';
-import { BigNumberPipe } from 'src/app/pipes';
 
 @Component({
   selector: 'app-mobile-activities',
-  imports: [CommonModule, MatIconModule, TooltipDirective, BigNumberPipe],
+  imports: [CommonModule, MatIconModule, TooltipDirective],
   templateUrl: './mobile-activities.component.html',
   styleUrl: './mobile-activities.component.less',
 })
