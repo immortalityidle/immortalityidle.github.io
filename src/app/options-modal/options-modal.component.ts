@@ -82,6 +82,11 @@ export class OptionsModalComponent {
     this.mainLoopService.playAudio();
   }
 
+  playMusicChangeVolume(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.mainLoopService.audio.volume = parseFloat(event.target.value);
+  }
+
   showLifeSummaryChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.characterService.showLifeSummary = event.target.checked;

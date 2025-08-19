@@ -56,6 +56,12 @@
     </span>
   </div>
   <div class="optionField">
+    <span tooltip="Set volume for background music.">
+      <input type="range" id="backgroundMusicVolume" min="0" max="1" step="0.01" [value]="mainLoopService.audio.volume" (change)="playMusicChangeVolume($event)">
+      <label for="backgroundMusicVolume" >Background Music Volume</label>
+    </span>
+  </div>
+  <div class="optionField">
     <span>
         <label for="autoSaveInterval">Change how often the game autosaves (in seconds) </label>
         <input value="{{gameStateService.saveInterval}}" type="number" min="1" max="900" step="1"

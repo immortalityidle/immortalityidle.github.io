@@ -36,6 +36,7 @@ import { CommonButtonsService } from '../common-buttons.service';
 import { SchedulePanelComponent } from '../schedule-panel/schedule-panel.component';
 import { HellService } from '../game-state/hell.service';
 import { AchievementService } from '../game-state/achievement.service';
+import { MainLoopService } from '../game-state/main-loop.service';
 
 @Component({
   selector: 'app-standard-layout',
@@ -72,6 +73,7 @@ import { AchievementService } from '../game-state/achievement.service';
 export class StandardLayoutComponent {
   protected readonly commonButtonsService = inject(CommonButtonsService);
   protected readonly gameStateService = inject(GameStateService);
+  protected readonly mainLoopService = inject(MainLoopService);
   protected readonly hellService = inject(HellService);
   protected readonly storeService = inject(StoreService);
   protected readonly characterService = inject(CharacterService);

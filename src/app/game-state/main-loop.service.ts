@@ -24,6 +24,8 @@ export interface MainLoopProperties {
   timeUnlocked: boolean;
   daysSinceLongTick: number;
   daysSinceYearOrLongTick: number;
+  audioTrack: number;
+  audioVolume: number;
 }
 
 @Injectable({
@@ -80,13 +82,41 @@ export class MainLoopService {
   daysSinceYearOrLongTick = 0;
   lastUsedTickTime = 0;
   autopauseTriggered = false;
+  nowPlaying = '';
+  audioTracks = [
+    'Sir Bastion - Chaos Of The West',
+    'Sir Bastion - Cultivation Life',
+    'Sir Bastion - Cultivators Lament',
+    "Sir Bastion - Cultivator's Melancholy",
+    'Sir Bastion - Defiance of Fate',
+    'Sir Bastion - Defy The Heavens',
+    'Sir Bastion - Face Tribulation Lightning',
+    'Sir Bastion - Immortal Kingdom',
+    "Sir Bastion - I've Learned to Fly",
+    'Sir Bastion - Journey of 1000 Lives',
+    'Sir Bastion - Mortal Longings',
+    'Sir Bastion - Mountain In The Sky',
+    'Sir Bastion - My Immortal Path',
+    'Sir Bastion - Taught by A Dragon',
+    'Sir Bastion - The Dragon Dance',
+    'Sir Bastion - The Endless Path',
+    "Sir Bastion - Young Immortal's Throne",
+    'Shaolin Dub - Rising Sun Beat',
+    'Shaolin Dub - Kick Dis',
+    'Shaolin Dub - Conquests',
+    'Shaolin Dub - Slap Trap',
+  ];
+  audioTrackIndex = 0;
 
   constructor(private injector: Injector) {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
 
-    this.audio = new Audio('./assets/music/Shaolin-Dub-Rising-Sun-Beat.mp3');
+    this.audio = new Audio(this.audioTracks[0]);
+    this.nowPlaying = this.audioTracks[0];
     this.audio.volume = 0.2;
-    this.audio.loop = true;
+    this.audio.addEventListener('ended', () => {
+      this.nextTrack();
+    });
   }
 
   getProperties(): MainLoopProperties {
@@ -108,6 +138,8 @@ export class MainLoopService {
       timeUnlocked: this.timeUnlocked,
       daysSinceLongTick: this.daysSinceLongTick,
       daysSinceYearOrLongTick: this.daysSinceYearOrLongTick,
+      audioTrack: this.audioTrackIndex,
+      audioVolume: this.audio.volume,
     };
   }
 
@@ -145,11 +177,16 @@ export class MainLoopService {
     } else {
       this.pause = properties.pause;
     }
+    this.audio.volume = properties.audioVolume;
+    this.audioTrackIndex = properties.audioTrack;
+    this.playAudio();
   }
 
   // audio also helps avoid getting deprioritized in the background.
   playAudio() {
     if (this.playMusic) {
+      this.audio.src = './assets/music/' + this.audioTracks[this.audioTrackIndex] + '.mp3';
+      this.nowPlaying = this.audioTracks[this.audioTrackIndex];
       this.audio.play();
     } else {
       this.audio.pause();
@@ -160,7 +197,6 @@ export class MainLoopService {
     if (!this.characterService) {
       this.characterService = this.injector.get(CharacterService);
     }
-    this.playAudio();
 
     setTimeout(() => this.handleTimeout(), TICK_INTERVAL_MS);
     setTimeout(() => this.handleLongTickTimeout(), LONG_TICK_INTERVAL_MS);
@@ -285,5 +321,21 @@ export class MainLoopService {
       this.pause = false;
       this.tickDivider = 1;
     }
+  }
+
+  previousTrack() {
+    this.audioTrackIndex--;
+    if (this.audioTrackIndex < 0) {
+      this.audioTrackIndex = this.audioTracks.length - 1;
+    }
+    this.playAudio();
+  }
+
+  nextTrack() {
+    this.audioTrackIndex++;
+    if (this.audioTrackIndex >= this.audioTracks.length) {
+      this.audioTrackIndex = 0;
+    }
+    this.playAudio();
   }
 }

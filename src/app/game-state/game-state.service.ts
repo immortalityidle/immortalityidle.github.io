@@ -827,6 +827,8 @@ export class GameStateService {
       timeUnlocked: props?.timeUnlocked || false,
       daysSinceLongTick: props?.daysSinceLongTick || 0,
       daysSinceYearOrLongTick: props?.daysSinceYearOrLongTick || 0,
+      audioTrack: props?.audioTrack || 0,
+      audioVolume: props?.audioVolume || 0.2,
     };
   }
 

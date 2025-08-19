@@ -59,6 +59,29 @@
         </span>
       }
 
+      @if (mainLoopService.playMusic){
+        <span class="musicSpan">
+          <mat-icon>
+            music_note
+          </mat-icon>
+          <mat-icon tooltip="Previous Track" class="iconButton" aria-label="Previous Track" aria-hidden="false"
+            (click)="mainLoopService.previousTrack()">
+            skip_previous
+          </mat-icon>
+          {{mainLoopService.nowPlaying}}
+          <mat-icon tooltip="Next Track" class="iconButton" aria-label="Next Track" aria-hidden="false"
+            (click)="mainLoopService.nextTrack()">
+            skip_next
+          </mat-icon>
+          <mat-icon tooltip="Turn Music Off" class="iconButton" aria-label="Turn Music Off" aria-hidden="false"
+            (click)="mainLoopService.playMusic = false; mainLoopService.playAudio();">
+            close
+          </mat-icon>
+
+        </span>
+      }
+      
+
       <span class="floatRight">
         <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
         <label for="lockPanels">Lock panels in place</label>
