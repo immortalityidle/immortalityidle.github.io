@@ -31,6 +31,8 @@ export interface HQ {
   description: string;
   moneyPerDay: number;
   gemsPerDay: number;
+  foodPerDay: number;
+  mealsRequired: boolean;
   maxFollowerIncrease: number;
   maxLevelIncrease: number;
   experiencePerDay: number;
@@ -88,6 +90,7 @@ export interface FollowersProperties {
   maxFollowerLevel: number;
   sectName: string;
   hq: HQType;
+  hqUnlocked: boolean;
 }
 
 export interface SavedAssignments {
@@ -157,13 +160,17 @@ export class FollowersService {
   maxFollowerLevel = 100;
   sectName = this.generateSectName();
   hq = HQType.GatheringField;
+  hqUnlocked = false;
 
   hqs: HQ[] = [
     {
       name: 'Gathering Field',
-      description: "An empty field where your followers can gather.<br>It provides no benefits, but it's free.",
+      description:
+        "An empty field where your followers can gather.<br>Your followers need to supply their own meals.<br>It provides no benefits, but it's free.",
       moneyPerDay: 0,
       gemsPerDay: 0,
+      foodPerDay: 0,
+      mealsRequired: false,
       maxFollowerIncrease: 0,
       maxLevelIncrease: 0,
       experiencePerDay: 0,
@@ -176,9 +183,12 @@ export class FollowersService {
     },
     {
       name: 'Meeting Hut',
-      description: 'A small hut where your followers can rest.<br>Costs 10 Taels per day.',
+      description:
+        'A small hut where your followers can rest.<br>Costs 10 Taels per day and one food item per follower.',
       moneyPerDay: 10,
       gemsPerDay: 0,
+      foodPerDay: 1,
+      mealsRequired: false,
       maxFollowerIncrease: 1,
       maxLevelIncrease: 1,
       experiencePerDay: 1,
@@ -193,9 +203,11 @@ export class FollowersService {
     {
       name: 'Simple School',
       description:
-        'A simple school where your followers can rest and train.<br>Costs 1,000 Taels and one spirit gem per day.<br>Requires an administrator follower to run it.',
+        'A simple school where your followers can rest and train.<br>Costs 1,000 Taels, one food item per follower, and one spirit gem per day.<br>Requires an administrator follower to run it.',
       moneyPerDay: 1000,
       gemsPerDay: 1,
+      foodPerDay: 1,
+      mealsRequired: false,
       maxFollowerIncrease: 2,
       maxLevelIncrease: 5,
       experiencePerDay: 5,
@@ -209,9 +221,11 @@ export class FollowersService {
     {
       name: 'Training Center',
       description:
-        'A school where your followers rest and train.<br>Costs 100,000 Taels and 10 spirit gems per day.<br>Requires a level 10 administrator follower to run it.',
+        'A school where your followers rest and train.<br>Costs 100,000 Taels, two food items per follower, and 10 spirit gems per day.<br>Requires a level 10 administrator follower to run it.',
       moneyPerDay: 100000,
       gemsPerDay: 10,
+      foodPerDay: 2,
+      mealsRequired: false,
       maxFollowerIncrease: 10,
       maxLevelIncrease: 10,
       experiencePerDay: 10,
@@ -232,9 +246,11 @@ export class FollowersService {
       description:
         'An elite school where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e10) +
-        ' Taels and 25 spirit gems per day.<br>Requires a level 20 administrator follower to run it.',
+        ' Taels, three food items per follower, and 25 spirit gems per day.<br>Requires a level 20 administrator follower to run it.',
       moneyPerDay: 1e10,
       gemsPerDay: 25,
+      foodPerDay: 3,
+      mealsRequired: false,
       maxFollowerIncrease: 10,
       maxLevelIncrease: 20,
       experiencePerDay: 50,
@@ -255,9 +271,11 @@ export class FollowersService {
       description:
         'An elaborate compound where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e13) +
-        ' Taels and 50 spirit gems per day.<br>Requires a level 50 administrator follower to run it.',
+        ' Taels, one proper meal per follower, and 50 spirit gems per day.<br>Requires a level 50 administrator follower to run it.',
       moneyPerDay: 1e13,
       gemsPerDay: 50,
+      foodPerDay: 1,
+      mealsRequired: true,
       maxFollowerIncrease: 15,
       maxLevelIncrease: 30,
       experiencePerDay: 100,
@@ -278,9 +296,11 @@ export class FollowersService {
       description:
         'A huge campus where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e16) +
-        ' Taels and 80 spirit gems per day.<br>Requires a level 100 administrator follower to run it.',
+        ' Taels, two proper meals per follower, and 80 spirit gems per day.<br>Requires a level 100 administrator follower to run it.',
       moneyPerDay: 1e16,
       gemsPerDay: 80,
+      foodPerDay: 2,
+      mealsRequired: true,
       maxFollowerIncrease: 20,
       maxLevelIncrease: 50,
       experiencePerDay: 200,
@@ -301,9 +321,11 @@ export class FollowersService {
       description:
         'A powerful fortress where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e20) +
-        ' Taels and 120 spirit gems per day.<br>Requires 2 level 100 administrators to run it.',
+        ' Taels, three proper meals per follower, and 120 spirit gems per day.<br>Requires 2 level 100 administrators to run it.',
       moneyPerDay: 1e20,
       gemsPerDay: 120,
+      foodPerDay: 3,
+      mealsRequired: true,
       maxFollowerIncrease: 30,
       maxLevelIncrease: 80,
       experiencePerDay: 300,
@@ -324,9 +346,11 @@ export class FollowersService {
       description:
         'An immense citidel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
-        ' Taels and 150 spirit gems per day.<br>Requires 4 level 100 administrators to run it.',
+        ' Taels, five meals per follower, and 150 spirit gems per day.<br>Requires 4 level 100 administrators to run it.',
       moneyPerDay: 1e26,
       gemsPerDay: 150,
+      foodPerDay: 5,
+      mealsRequired: true,
       maxFollowerIncrease: 50,
       maxLevelIncrease: 100,
       experiencePerDay: 500,
@@ -794,7 +818,6 @@ export class FollowersService {
       }
 
       this.followersWorks();
-
       this.hqWorks();
 
       this.followersMaxed =
@@ -862,8 +885,11 @@ export class FollowersService {
       this.homeService.homeValue * 3 +
       this.characterService.meridianRank() +
       this.characterService.soulCoreRank() +
-      this.characterService.bloodlineRank +
-      this.hqs[this.hq].maxFollowerIncrease;
+      this.characterService.bloodlineRank;
+    if (this.hqUnlocked) {
+      this.followerCap += this.hqs[this.hq].maxFollowerIncrease;
+    }
+
     this.petsCap = Math.round(
       1 +
         this.characterService.meridianRank() / 10 +
@@ -926,10 +952,26 @@ export class FollowersService {
 
   hqWorks() {
     // check if requirements are met
+    if (!this.hqUnlocked) {
+      return;
+    }
     if (this.characterService.money < this.hqs[this.hq].moneyPerDay) {
       return;
     }
-    if (this.inventoryService.checkFor('gem', this.hqs[this.hq].gemsPerDay) === -1) {
+    let foodSubType = '';
+    if (this.hqs[this.hq].mealsRequired) {
+      foodSubType = 'meal';
+    }
+    if (
+      this.hqs[this.hq].foodPerDay > 0 &&
+      this.inventoryService.checkFor('food', this.hqs[this.hq].foodPerDay * this.followers.length, foodSubType) === -1
+    ) {
+      return;
+    }
+    if (
+      this.hqs[this.hq].gemsPerDay > 0 &&
+      this.inventoryService.checkFor('gem', this.hqs[this.hq].gemsPerDay) === -1
+    ) {
       return;
     }
     const administrators = this.followers.filter(follower => follower.job === 'administrator');
@@ -945,7 +987,12 @@ export class FollowersService {
 
     // requirements are met, pay costs
     this.characterService.updateMoney(0 - this.hqs[this.hq].moneyPerDay);
-    this.inventoryService.consume('gem', this.hqs[this.hq].gemsPerDay, true);
+    if (this.hqs[this.hq].gemsPerDay > 0) {
+      this.inventoryService.consume('gem', this.hqs[this.hq].gemsPerDay, true);
+    }
+    if (this.hqs[this.hq].foodPerDay > 0) {
+      this.inventoryService.consume('gem', this.hqs[this.hq].gemsPerDay, true, false, foodSubType);
+    }
 
     // get the benefits
     for (const follower of this.followers) {
@@ -1016,6 +1063,7 @@ export class FollowersService {
       maxFollowerLevel: this.maxFollowerLevel,
       sectName: this.sectName,
       hq: this.hq,
+      hqUnlocked: this.hqUnlocked,
     };
   }
 
@@ -1052,6 +1100,7 @@ export class FollowersService {
     this.maxFollowerLevel = properties.maxFollowerLevel;
     this.sectName = properties.sectName;
     this.hq = properties.hq;
+    this.hqUnlocked = properties.hqUnlocked;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }

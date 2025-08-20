@@ -441,7 +441,7 @@ export class ActivityService {
       displayActivity.displayed.set(activity.discovered || activity.unlocked);
       displayActivity.name.set(activity.name[activity.level]);
       displayActivity.projectionOnly.set(activity.projectionOnly || false);
-      displayActivity.locked.set(!activity.unlocked && this.battleService.enemies.length > 0);
+      displayActivity.locked.set(!activity.unlocked || this.battleService.enemies.length > 0);
       displayActivity.tooltip.set(this.getActivityTooltip(activity, true));
       displayActivity.scheduleTooltip.set(this.getActivityTooltip(activity, false));
       displayActivity.apprenticeshipRequired.set(

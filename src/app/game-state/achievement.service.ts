@@ -35,9 +35,11 @@ export interface AchievementProperties {
   unlockedMemories: string[];
 }
 
+export const MEMORY_HOME = 'Home';
 export const MEMORY_SPIRITUALITY = 'Sprituality';
 export const MEMORY_ASCENSION = 'Ascension';
 export const MEMORY_FOLLOWERS = 'Followers';
+export const MEMORY_SECT = 'Sect';
 export const MEMORY_QI_UNLOCKED = 'QiUnlocked';
 export const MEMORY_IMPOSSIBLE_TASKS = 'ImpossibleTasks';
 export const MEMORY_IMMORTALITY = 'Immortality';
@@ -60,6 +62,13 @@ export class AchievementService {
   memoriesUnlocked = signal<boolean>(false);
 
   memories: { [key: string]: Memory } = {
+    [MEMORY_HOME]: {
+      title: 'An Ancestral Home',
+      text: [
+        "It's a simple home, but one that you can pass down to your descendants.<br><br>Your future reincarnations will be born as the heirs to this home, giving you a permanent place to anchor your journey toward immortality.",
+      ],
+      imageBaseName: 'home',
+    },
     [MEMORY_SPIRITUALITY]: {
       title: 'A Spiritual Awakening',
       text: [
@@ -80,6 +89,13 @@ export class AchievementService {
         "You glance behind you and see someone you didn't expect.<br><br>A disciple?<br><br>It seems that your path to immortality has inspired others to follow in your footsteps.<br><br>You will do your best to continue to serve as a beacon of enlightenment, and perhaps if you are persuasive enough you can even find others that want to join you on your spiritual journey.",
       ],
       imageBaseName: 'followers',
+    },
+    [MEMORY_SECT]: {
+      title: 'A Sect Emerges',
+      text: [
+        "Your followers are becoming more numerous and more organized.<br><br>You decide that it's time to find a place for them to gather.<br><br>A simple field will do at first, but in your mind's eye you can look forward to it become a great institution of disciples dedicated to following your example.<br><br>You will need to provide them with essentials like funds and spirit gems, but perhaps with some time and effort your followers could even begin to share the burden of training and help each other to advance.",
+      ],
+      imageBaseName: 'sect',
     },
     [MEMORY_QI_UNLOCKED]: {
       title: 'The Power of Qi',
@@ -1232,7 +1248,7 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      name: 'Sect Leader',
+      name: 'First Disciple',
       description: 'You have become powerful enough that you may now start attracting followers.',
       hint: 'Ascension has its privileges.',
       check: () => {
@@ -1248,6 +1264,21 @@ export class AchievementService {
         if (!this.unlockedMemories.includes(MEMORY_FOLLOWERS)) {
           this.followerService.generateFollower();
           this.triggerMemory(MEMORY_FOLLOWERS);
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'A Sect of Your Own',
+      description: 'Your following is growing and can now get organized.',
+      hint: "You'll need to start with a small, dedicated group.",
+      check: () => {
+        return this.followerService.followers.length >= 10;
+      },
+      effect: () => {
+        this.followerService.hqUnlocked = true;
+        if (!this.unlockedMemories.includes(MEMORY_SECT)) {
+          this.triggerMemory(MEMORY_SECT);
         }
       },
       unlocked: false,
@@ -1376,6 +1407,9 @@ export class AchievementService {
       },
       effect: () => {
         this.homeService.keepHome = true;
+        if (!this.unlockedMemories.includes(MEMORY_HOME)) {
+          this.triggerMemory(MEMORY_HOME);
+        }
       },
       unlocked: false,
     },

@@ -1,9 +1,11 @@
 <div>
-  <span class="headerLine">
-    {{followerService.sectName}}
-  </span>
+  @if (followerService.hqUnlocked){
+    <span class="headerLine">
+      {{followerService.sectName}}
+    </span>
+  }
   <span [ngClass]="followerService.followersMaxed">
-    &nbsp;({{followerService.followers.length}} / {{followerService.followerCap}} Members)
+    &nbsp;({{followerService.followers.length}} / {{followerService.followerCap}} Followers)
   </span>
   @if (followerService.autoDismissUnlocked) {
     <mat-icon class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Followers" aria-hidden="false"
@@ -11,28 +13,32 @@
       settings
     </mat-icon>
   }
-  <mat-icon class="iconButton optionsIcon" (click)="followerService.renameSect()" aria-label="Rename your Sect" aria-hidden="false"
-    tooltip="Rename your Sect">
-    change_circle
-  </mat-icon>
-</div>
-<div>
-  <span class="headerLine" [tooltip]="followerService.hqs[followerService.hq].description">
-    Headquarters: {{followerService.hqs[followerService.hq].name}}
-  </span>
-  @if (followerService.hqs[followerService.hq].upgradeMoneyCost !== 0) {
-    <mat-icon class="iconButton optionsIcon" (click)="followerService.upgradeHQ()" aria-label="Upgrade Headquarters" aria-hidden="false"
-      [tooltip]="followerService.hqs[followerService.hq].upgradeTooltip">
-      keyboard_double_arrow_up
-    </mat-icon>
-  }
-  @if (followerService.hq !== 0) {
-    <mat-icon class="iconButton optionsIcon" (click)="followerService.downgradeHQ()" aria-label="Downgrade Headquarters" aria-hidden="false"
-      tooltip="Downgrade Headquarters">
-      keyboard_double_arrow_down
+  @if (followerService.hqUnlocked){
+    <mat-icon class="iconButton optionsIcon" (click)="followerService.renameSect()" aria-label="Rename your Sect" aria-hidden="false"
+      tooltip="Rename your Sect">
+      change_circle
     </mat-icon>
   }
 </div>
+@if (followerService.hqUnlocked){
+  <div>
+    <span class="headerLine" [tooltip]="followerService.hqs[followerService.hq].description">
+      Headquarters: {{followerService.hqs[followerService.hq].name}}
+    </span>
+    @if (followerService.hqs[followerService.hq].upgradeMoneyCost !== 0) {
+      <mat-icon class="iconButton optionsIcon" (click)="followerService.upgradeHQ()" aria-label="Upgrade Headquarters" aria-hidden="false"
+        [tooltip]="followerService.hqs[followerService.hq].upgradeTooltip">
+        keyboard_double_arrow_up
+      </mat-icon>
+    }
+    @if (followerService.hq !== 0) {
+      <mat-icon class="iconButton optionsIcon" (click)="followerService.downgradeHQ()" aria-label="Downgrade Headquarters" aria-hidden="false"
+        tooltip="Downgrade Headquarters">
+        keyboard_double_arrow_down
+      </mat-icon>
+    }
+  </div>
+}
 <div>
   <hr>
 </div>
@@ -46,7 +52,7 @@
         <span class="followerCell">Age</span>
       </div>
     @for (follower of followerService.followers; track follower) {
-      <div class="followerLine" tooltip="{{follower.name}}<br>is a level {{follower.power}} {{follower.job | titlecase}}.<br>{{followerService.jobs[follower.job].description}}<br>
+      <div class="followerLine" tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}.<br>{{followerService.jobs[follower.job].description}}<br>
         {{follower.name}} has followed you for {{follower.age / 365 | bigNumber}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | bigNumber}} more years.<br>Daily cost: {{follower.cost | bigNumber}}">
         <span class="followerName followerCell">
           {{follower.name | titlecase}}
@@ -61,7 +67,7 @@
           {{follower.experience || 0}} / {{follower.power * 1000}}
         </span>
         <span class="followerCell" >
-          {{follower.age / 365 | bigNumber}} / {{follower.lifespan / 365 | bigNumber}}
+          {{(follower.age / 365) + 18 | bigNumber}} / {{(follower.lifespan / 365) + 18 | bigNumber}}
         </span>
         <mat-icon class="smallerIcon"
           aria-label="Dismiss Follower" aria-hidden="false"

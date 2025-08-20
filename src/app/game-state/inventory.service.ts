@@ -1945,10 +1945,12 @@ export class InventoryService {
     }
   }
 
-  consume(consumedThing: string, quantity = 1, cheapest = false, checkOnly = false): number {
+  consume(consumedThing: string, quantity = 1, cheapest = false, checkOnly = false, subtype = ''): number {
     const filteredItemStacks = this.itemStacks
       .slice(this.heirloomSlots())
-      .filter(itemStack => itemStack.item?.type === consumedThing)
+      .filter(
+        itemStack => itemStack.item?.type === consumedThing && (subtype === '' || itemStack.item.subtype === subtype)
+      )
       .sort((a, b) => {
         if (cheapest) {
           return a.item!.value - b.item!.value;
@@ -1988,8 +1990,8 @@ export class InventoryService {
     return returnValue;
   }
 
-  checkFor(itemType: string, quantity = 1): number {
-    return this.consume(itemType, quantity, false, true);
+  checkFor(itemType: string, quantity = 1, subtype = ''): number {
+    return this.consume(itemType, quantity, false, true, subtype);
   }
 
   getQuantityByName(itemName: string): number {
