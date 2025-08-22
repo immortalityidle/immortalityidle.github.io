@@ -13,6 +13,7 @@ import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 import { TitleCasePipe } from '@angular/common';
 
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
+import { FollowersService } from './followers.service';
 
 export interface Enemy {
   name: string;
@@ -168,6 +169,7 @@ export const EFFECT_SLOW = 'Slow';
 export class BattleService {
   private bigNumberPipe: BigNumberPipe;
   private hellService?: HellService;
+  private followerService?: FollowersService;
   private locationService?: LocationService;
   private impossibleTaskService?: ImpossibleTaskService;
   private camelToTitle = new CamelToTitlePipe();
@@ -267,6 +269,7 @@ export class BattleService {
     private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
+    setTimeout(() => (this.followerService = this.injector.get(FollowersService)));
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
     setTimeout(() => (this.impossibleTaskService = this.injector.get(ImpossibleTaskService)));
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
@@ -1475,6 +1478,8 @@ export class BattleService {
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].progress = 0;
       }
     }
+    this.logService.log(LogTopic.COMBAT, 'You have fled from battle like a coward. How shameful.');
+    this.followerService!.dismissYoungestFollower();
   }
 
   // generate a monster based on current trouble location and lifetime kills

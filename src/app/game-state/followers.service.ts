@@ -34,6 +34,7 @@ export interface HQ {
   foodPerDay: number;
   mealsRequired: boolean;
   maxFollowerIncrease: number;
+  bonusFreeFollowers: number;
   maxLevelIncrease: number;
   experiencePerDay: number;
   upgradeMoneyCost: number;
@@ -172,6 +173,7 @@ export class FollowersService {
       foodPerDay: 0,
       mealsRequired: false,
       maxFollowerIncrease: 0,
+      bonusFreeFollowers: 0,
       maxLevelIncrease: 0,
       experiencePerDay: 0,
       upgradeTooltip: 'Upgrade for 100 Taels and 10 land.',
@@ -190,6 +192,7 @@ export class FollowersService {
       foodPerDay: 1,
       mealsRequired: false,
       maxFollowerIncrease: 1,
+      bonusFreeFollowers: 0,
       maxLevelIncrease: 1,
       experiencePerDay: 1,
       upgradeTooltip:
@@ -209,6 +212,7 @@ export class FollowersService {
       foodPerDay: 1,
       mealsRequired: false,
       maxFollowerIncrease: 2,
+      bonusFreeFollowers: 1,
       maxLevelIncrease: 5,
       experiencePerDay: 5,
       upgradeTooltip: 'Upgrade for 1,000,000 Taels and 1000 land.',
@@ -227,6 +231,7 @@ export class FollowersService {
       foodPerDay: 2,
       mealsRequired: false,
       maxFollowerIncrease: 10,
+      bonusFreeFollowers: 1,
       maxLevelIncrease: 10,
       experiencePerDay: 10,
       upgradeTooltip:
@@ -252,6 +257,7 @@ export class FollowersService {
       foodPerDay: 3,
       mealsRequired: false,
       maxFollowerIncrease: 10,
+      bonusFreeFollowers: 2,
       maxLevelIncrease: 20,
       experiencePerDay: 50,
       upgradeTooltip:
@@ -277,6 +283,7 @@ export class FollowersService {
       foodPerDay: 1,
       mealsRequired: true,
       maxFollowerIncrease: 15,
+      bonusFreeFollowers: 2,
       maxLevelIncrease: 30,
       experiencePerDay: 100,
       upgradeTooltip:
@@ -302,6 +309,7 @@ export class FollowersService {
       foodPerDay: 2,
       mealsRequired: true,
       maxFollowerIncrease: 20,
+      bonusFreeFollowers: 3,
       maxLevelIncrease: 50,
       experiencePerDay: 200,
       upgradeTooltip:
@@ -327,6 +335,7 @@ export class FollowersService {
       foodPerDay: 3,
       mealsRequired: true,
       maxFollowerIncrease: 30,
+      bonusFreeFollowers: 4,
       maxLevelIncrease: 80,
       experiencePerDay: 300,
       upgradeTooltip:
@@ -352,6 +361,7 @@ export class FollowersService {
       foodPerDay: 5,
       mealsRequired: true,
       maxFollowerIncrease: 50,
+      bonusFreeFollowers: 5,
       maxLevelIncrease: 100,
       experiencePerDay: 500,
       upgradeTooltip: '',
@@ -813,8 +823,10 @@ export class FollowersService {
         return;
       }
       if (this.characterService.age % 18250 === 0 && !this.hellService?.inHell()) {
-        // another 50xth birthday, you get a follower
-        this.generateFollower();
+        // another 50xth birthday, you get bonus followers
+        for (let i = 0; i < 1 + this.hqs[this.hq].bonusFreeFollowers; i++) {
+          this.generateFollower();
+        }
       }
 
       this.followersWorks();
@@ -1270,6 +1282,15 @@ export class FollowersService {
   }
 
   dismissFollower(follower: Follower) {
+    this.logService.log(
+      LogTopic.FOLLOWER,
+      follower.name +
+        ' (level ' +
+        follower.power +
+        ' ' +
+        this.camelToTitle.transform(follower.job) +
+        ') has left your service.'
+    );
     this.totalDismissed++;
     if (follower.pet) {
       const index = this.pets.indexOf(follower);
@@ -1648,5 +1669,18 @@ export class FollowersService {
     this.homeService.land += this.hqs[this.hq].upgradeLandCost;
     this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
+  }
+
+  dismissYoungestFollower() {
+    if (this.followers.length === 0) {
+      return;
+    }
+    let youngestFollower = this.followers[0];
+    for (let i = 0; i < this.followers.length; i++) {
+      if (this.followers[i].age < youngestFollower.age) {
+        youngestFollower = this.followers[i];
+      }
+    }
+    this.dismissFollower(youngestFollower);
   }
 }
