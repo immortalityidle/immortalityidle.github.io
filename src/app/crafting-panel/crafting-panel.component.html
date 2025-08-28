@@ -67,17 +67,30 @@
               </div>
             }
             @if (workstation.equipmentSlot){
-              <div class="equipmentSlot">
+              <div class="product">
                 <div>
                   <span>Currently Infusing: </span>
                 </div>
                 <div>
-                  <span>{{workstation.equipmentSlot | camelToTitle}} Equipment</span>
                   <mat-icon (click)="homeService.changeWorkstationEquipmentSlot(workstation)" tooltip="Change Equipment Slot" 
-                    class="iconButton equipmentSlot" aria-label="Change Equipment Slot" aria-hidden="false">
+                    class="iconButton" aria-label="Change Equipment Slot" aria-hidden="false">
                     change_circle
                   </mat-icon>
-
+                  <span class="product">{{workstation.equipmentSlot | camelToTitle}} Equipment</span>
+                </div>
+              </div>
+            } 
+            @if (workstation.alchemyProduct){
+              <div class="product">
+                <div>
+                  <span>Currently Creating: </span>
+                </div>
+                <div>
+                  <mat-icon (click)="homeService.changeWorkstationAlchemyProduct(workstation)" tooltip="Change Product" 
+                    class="iconButton" aria-label="Change Product" aria-hidden="false">
+                    change_circle
+                  </mat-icon>
+                  <span class="product">{{workstation.alchemyProduct | camelToTitle}}</span>
                 </div>
               </div>
             }

@@ -7,7 +7,6 @@ import { ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
 import { ActivityType } from './activity';
 import { ActivityService } from './activity.service';
-import { AttributeType } from './character.service';
 import { TitleCasePipe } from '@angular/common';
 import { FollowersService } from './followers.service';
 import { LOOT_TYPE_GEM } from './battle.service';
@@ -59,6 +58,8 @@ export interface Workstation {
   maxInputs: number;
   inputs: ItemStack[];
   equipmentSlot?: EquipmentPosition;
+  alchemyProduct?: string;
+  productCounter?: number;
   consequence: (workstation: Workstation, activityType: ActivityType) => void;
 }
 
@@ -83,7 +84,6 @@ export interface HomeProperties {
   seeFurnitureEffects: boolean;
   workstations: Workstation[];
   totalCrafts: number;
-  alchemyCounter: number;
   forgeChainsCounter: number;
 }
 
@@ -111,8 +111,8 @@ export class HomeService {
   seeFurnitureEffects = false;
   workstations: Workstation[] = [];
   totalCrafts = 0;
-  alchemyCounter = 0;
   forgeChainsCounter = 0;
+  pillCraftsRequired = 5;
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, espeicially formations
 
@@ -684,6 +684,7 @@ export class HomeService {
       consequence: (workstation: Workstation, activityType: ActivityType) => {
         this.craftAlchemy(workstation, activityType);
       },
+      alchemyProduct: 'potions',
     },
     {
       id: 'Large Cauldron',
@@ -698,6 +699,7 @@ export class HomeService {
       consequence: (workstation: Workstation, activityType: ActivityType) => {
         this.craftAlchemy(workstation, activityType);
       },
+      alchemyProduct: 'potions',
     },
     {
       id: 'Enchanted Cauldron',
@@ -716,6 +718,7 @@ export class HomeService {
           this.craftAlchemy(workstation, activityType);
         }
       },
+      alchemyProduct: 'potions',
     },
     {
       id: 'Cook Pot',
@@ -1010,7 +1013,6 @@ export class HomeService {
       seeFurnitureEffects: this.seeFurnitureEffects,
       workstations: this.workstations,
       totalCrafts: this.totalCrafts,
-      alchemyCounter: this.alchemyCounter,
       forgeChainsCounter: this.forgeChainsCounter,
     };
   }
@@ -1042,7 +1044,6 @@ export class HomeService {
     this.keepHome = properties.keepHome;
     this.seeFurnitureEffects = properties.keepHome;
     this.totalCrafts = properties.totalCrafts;
-    this.alchemyCounter = properties.alchemyCounter || 0;
     this.forgeChainsCounter = properties.forgeChainsCounter || 0;
     this.workstations = [];
     for (const workstation of properties.workstations) {
@@ -1292,10 +1293,13 @@ export class HomeService {
       inputs: emptyInputs,
       equipmentSlot: workstationTemplate.equipmentSlot,
       consequence: workstationTemplate.consequence,
+      alchemyProduct: workstationTemplate.alchemyProduct,
     };
 
     if (copyWorkstation) {
       newWorkstation.inputs = copyWorkstation.inputs;
+      newWorkstation.equipmentSlot = copyWorkstation.equipmentSlot;
+      newWorkstation.alchemyProduct = copyWorkstation.alchemyProduct;
     }
     this.workstations.push(newWorkstation);
   }
@@ -1719,65 +1723,222 @@ export class HomeService {
       // inputs array not populated, bail out
       return;
     }
-    const usedIngredients: string[] = [];
     let totalValue = 0;
-    let gemUsed = false;
-    let pillMold = false;
-    let pillBox = false;
-    let pillPouch = false;
     const alchemyLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
-    let attribute: AttributeType = 'toughness';
-    for (const itemStack of workstation.inputs) {
-      if (
-        itemStack.item &&
-        itemStack.item.type === 'herb' &&
-        itemStack.item.subtype &&
-        !usedIngredients.includes(itemStack.item.subtype) &&
-        itemStack.quantity > 0
-      ) {
-        usedIngredients.push(itemStack.item.subtype);
-        totalValue += itemStack.item.value;
-        itemStack.quantity--;
-        if (itemStack.item.attribute) {
-          attribute = itemStack.item.attribute;
+    this.totalCrafts++;
+    workstation.productCounter = (workstation.productCounter || 0) + 1;
+    const herbStacks = workstation.inputs.filter((itemStack, index, array) => {
+      for (let i = 0; i < index; i++) {
+        if (array[i].item?.subtype === itemStack.item?.subtype) {
+          return false;
         }
       }
-    }
-    if (totalValue < 1) {
-      // didn't find any usable ingredients
-      return;
-    }
-    for (const itemStack of workstation.inputs) {
-      if (
-        itemStack.item &&
-        itemStack.item.type === LOOT_TYPE_GEM &&
-        itemStack.quantity > 0 &&
-        this.inventoryService.useSpiritGemUnlocked
-      ) {
-        gemUsed = true;
-        itemStack.quantity--;
-      } else if (itemStack.item && itemStack.item.type === 'pillMold' && itemStack.quantity > 0) {
-        pillMold = true;
-        itemStack.quantity--;
-      } else if (itemStack.item && itemStack.item.type === 'pillBox' && itemStack.quantity > 0) {
-        pillBox = true;
-        itemStack.quantity--;
-      } else if (itemStack.item && itemStack.item.type === 'pillPouch' && itemStack.quantity > 0) {
-        pillPouch = true;
+      return (
+        itemStack.item?.type === 'herb' && itemStack.item.subtype && itemStack.item.attribute && itemStack.quantity > 0
+      );
+    });
+    const gemStack = workstation.inputs.find(
+      itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.quantity > 0
+    );
+
+    if (workstation.alchemyProduct === 'attribute pills') {
+      if (workstation.productCounter < this.pillCraftsRequired) {
+        return;
+      }
+      workstation.productCounter = 0;
+      const moldStack = workstation.inputs.find(
+        itemStack => itemStack.item?.type === 'pillMold' && itemStack.quantity > 0
+      );
+      const boxStack = workstation.inputs.find(
+        itemStack => itemStack.item?.type === 'pillBox' && itemStack.quantity > 0
+      );
+      const pouchStack = workstation.inputs.find(
+        itemStack => itemStack.item?.type === 'pillPouch' && itemStack.quantity > 0
+      );
+
+      if (moldStack && boxStack && pouchStack && (gemStack || alchemyLevel > 2)) {
+        this.inventoryService.generateEmpowermentPill();
+        moldStack.quantity--;
+        boxStack.quantity--;
+        pouchStack.quantity--;
+        if (gemStack) {
+          gemStack.quantity--;
+        }
+      } else {
+        const attributeMap: { [key: string]: number } = {};
+        let highestAttribute = '';
+        let secondHighestAttribute = '';
+
+        for (const itemStack of herbStacks) {
+          const attribute = itemStack.item!.attribute!;
+          if (attributeMap[attribute]) {
+            attributeMap[attribute]++;
+          } else {
+            attributeMap[attribute] = 1;
+          }
+          if (
+            !attributeMap[highestAttribute] ||
+            (attribute !== highestAttribute && attributeMap[attribute] >= attributeMap[highestAttribute])
+          ) {
+            secondHighestAttribute = highestAttribute;
+            highestAttribute = attribute;
+          }
+        }
+        for (const itemStack of herbStacks) {
+          if (itemStack.item!.attribute === highestAttribute || itemStack.item!.attribute === secondHighestAttribute) {
+            totalValue += itemStack.item!.value;
+            itemStack.quantity--;
+          }
+        }
+        if (totalValue < 1) {
+          // didn't find any usable ingredients
+          return;
+        }
+        let multiplier = 1;
+        if (gemStack) {
+          gemStack.quantity--;
+          multiplier += 1 + Math.log2(gemStack.item!.value / 10);
+        }
+
+        if (secondHighestAttribute !== '') {
+          multiplier += attributeMap[secondHighestAttribute] * attributeMap[secondHighestAttribute];
+        }
+        multiplier += attributeMap[highestAttribute] * attributeMap[highestAttribute];
+        totalValue = Math.ceil(totalValue * multiplier);
+        const grade = Math.ceil(totalValue / 10);
+        const pillNameBase = this.getPillName(highestAttribute, secondHighestAttribute);
+        const pillName = this.getPillPrefix(grade) + ' ' + pillNameBase;
+        this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + pillName + '. Keep up the good work.');
+        let attributesString = highestAttribute;
+        let effectString = highestAttribute;
+        if (secondHighestAttribute !== '') {
+          attributesString += ' and ' + secondHighestAttribute;
+          effectString += ',' + secondHighestAttribute;
+        }
+
+        this.inventoryService.addItem({
+          name: pillName,
+          imageFile: pillNameBase,
+          id: 'pill',
+          type: 'pill',
+          value: grade * 10,
+          description: 'A magical pill that increases your ' + attributesString,
+          useLabel: 'Swallow',
+          useDescription: 'Use to increase your attributes.',
+          useConsumes: true,
+          effect: effectString,
+          increaseAmount: grade,
+        });
+      }
+    } else if (workstation.alchemyProduct === 'longevity pills') {
+      if (workstation.productCounter < this.pillCraftsRequired * 10) {
+        return;
+      }
+      if (alchemyLevel < 3 && !gemStack) {
+        return;
+      }
+      workstation.productCounter = 0;
+      let totalValue = 0;
+
+      for (const itemStack of herbStacks) {
+        totalValue += itemStack.item!.value;
         itemStack.quantity--;
       }
-    }
-    this.totalCrafts++;
-    this.alchemyCounter++;
-    if (gemUsed && pillMold && pillBox && pillPouch) {
-      this.inventoryService.generateEmpowermentPill();
-    } else if ((gemUsed || alchemyLevel > 2) && this.alchemyCounter > 10) {
-      this.alchemyCounter = 0;
-      this.inventoryService.generatePill(totalValue, attribute);
-      this.inventoryService.generatePotion(totalValue);
+      if (totalValue < 1) {
+        // didn't find any usable ingredients
+        return;
+      }
+      if (alchemyLevel >= 3 && gemStack) {
+        totalValue += gemStack.item!.value;
+      }
+
+      const grade = Math.ceil(totalValue / 10);
+      const pillName = this.getPillPrefix(grade) + ' Everflowing Fountain Pill';
+      this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + pillName + '. Keep up the good work.');
+      this.inventoryService.addItem({
+        name: pillName,
+        imageFile: 'longevitypill',
+        id: 'pill',
+        type: 'pill',
+        value: grade * 10,
+        description: 'A magical pill that increases your lifespan.',
+        useLabel: 'Swallow',
+        useDescription: 'Use to increase your lifespan',
+        useConsumes: true,
+        effect: 'longevity',
+        increaseAmount: grade,
+      });
     } else {
+      for (const itemStack of herbStacks) {
+        totalValue += itemStack.item!.value;
+        itemStack.quantity--;
+      }
+      if (totalValue < 1) {
+        // didn't find any usable ingredients
+        return;
+      }
+
       this.inventoryService.generatePotion(totalValue);
     }
+  }
+
+  getPillPrefix(grade: number): string {
+    if (grade < 10) {
+      return 'Weak';
+    } else if (grade < 100) {
+      return 'Simple';
+    } else if (grade < 1000) {
+      return 'Potent';
+    } else if (grade < 1e6) {
+      return 'Powerful';
+    } else if (grade < 1e12) {
+      return 'Amazing';
+    }
+    return 'Heavenly';
+  }
+
+  getPillName(attr1: string, attr2: string): string {
+    if ((attr1 === 'strength' && attr2 === 'toughness') || (attr2 === 'strength' && attr1 === 'toughness')) {
+      return 'Fatty Ox Belly Pill';
+    } else if ((attr1 === 'strength' && attr2 === 'speed') || (attr2 === 'strength' && attr1 === 'speed')) {
+      return 'Seven Jumping Crickets Pill';
+    } else if (
+      (attr1 === 'strength' && attr2 === 'intelligence') ||
+      (attr2 === 'strength' && attr1 === 'intelligence')
+    ) {
+      return 'Bulging Root Stem Pill';
+    } else if ((attr1 === 'strength' && attr2 === 'charisma') || (attr2 === 'strength' && attr1 === 'charisma')) {
+      return 'Glistening Five Oils Pill';
+    } else if ((attr1 === 'toughness' && attr2 === 'speed') || (attr2 === 'toughness' && attr1 === 'speed')) {
+      return 'Charging Horns Pill';
+    } else if (
+      (attr1 === 'toughness' && attr2 === 'intelligence') ||
+      (attr2 === 'toughness' && attr1 === 'intelligence')
+    ) {
+      return 'Gleaming Diamond Pill';
+    } else if ((attr1 === 'toughness' && attr2 === 'charisma') || (attr2 === 'toughness' && attr1 === 'charisma')) {
+      return 'Shining Citadel Pill';
+    } else if ((attr1 === 'speed' && attr2 === 'intelligence') || (attr2 === 'speed' && attr1 === 'intelligence')) {
+      return 'Racing Viper Pill';
+    } else if ((attr1 === 'speed' && attr2 === 'charisma') || (attr2 === 'speed' && attr1 === 'charisma')) {
+      return 'Bright Rabbit Tail Pill';
+    } else if (
+      (attr1 === 'intelligence' && attr2 === 'charisma') ||
+      (attr2 === 'intelligence' && attr1 === 'charisma')
+    ) {
+      return 'Brilliant Jade Owl Pill';
+    } else if (attr1 === 'strength') {
+      return 'Hulking Gorilla Pill';
+    } else if (attr1 === 'toughness') {
+      return 'Cantankerous Tortoise Pill';
+    } else if (attr1 === 'speed') {
+      return 'Six Winds Pill';
+    } else if (attr1 === 'intelligence') {
+      return 'Amber Dream Pill';
+    } else if (attr1 === 'charisma') {
+      return 'Glowing Fox Skin Pill';
+    }
+    return 'Unknown Mystery Pill';
   }
 
   createFormationKit(workstation: Workstation) {
@@ -1848,6 +2009,20 @@ export class HomeService {
       index = 0;
     }
     workstation.equipmentSlot = slots[index];
+  }
+
+  changeWorkstationAlchemyProduct(workstation: Workstation) {
+    if (!workstation.alchemyProduct) {
+      return;
+    }
+    const alchemyLevel = this.activityService?.getActivityByType(ActivityType.Alchemy)?.level || 0;
+    if (workstation.alchemyProduct === 'potions') {
+      workstation.alchemyProduct = 'attribute pills';
+    } else if (workstation.alchemyProduct === 'pills' && alchemyLevel >= 2) {
+      workstation.alchemyProduct = 'longevity pills';
+    } else {
+      workstation.alchemyProduct = 'potions';
+    }
   }
 
   getFurnitureSlotTooltip(furnitureIndex: number) {

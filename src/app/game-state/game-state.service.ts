@@ -598,7 +598,6 @@ export class GameStateService {
       equipmentCreated: props?.equipmentCreated || 0,
       totalItemsReceived: props?.totalItemsReceived || 0,
       autoReloadCraftInputs: props?.autoReloadCraftInputs || false,
-      pillCounter: props?.pillCounter || 0,
       potionCounter: props?.potionCounter || 0,
       herbCounter: props?.herbCounter || 0,
       gemsAcquired: props?.gemsAcquired || 0,
@@ -631,7 +630,6 @@ export class GameStateService {
       seeFurnitureEffects: props?.seeFurnitureEffects || false,
       workstations: props?.workstations || [],
       totalCrafts: props?.totalCrafts || 0,
-      alchemyCounter: props?.alchemyCounter || 0,
       forgeChainsCounter: props?.forgeChainsCounter || 0,
     };
   }

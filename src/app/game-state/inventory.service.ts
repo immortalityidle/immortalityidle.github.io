@@ -157,7 +157,6 @@ export interface InventoryProperties {
   equipmentCreated: number;
   totalItemsReceived: number;
   autoReloadCraftInputs: boolean;
-  pillCounter: number;
   potionCounter: number;
   herbCounter: number;
   gemsAcquired: number;
@@ -254,7 +253,6 @@ export class InventoryService {
   emptyIdPrefix = Date.now() + '';
   totalItemsReceived = 0;
   autoReloadCraftInputs = false;
-  pillCounter = 0;
   potionCounter = 0;
   herbCounter = 0;
   gemsAcquired = 0;
@@ -542,7 +540,6 @@ export class InventoryService {
       equipmentCreated: this.equipmentCreated,
       totalItemsReceived: this.totalItemsReceived,
       autoReloadCraftInputs: this.autoReloadCraftInputs,
-      pillCounter: this.pillCounter,
       potionCounter: this.potionCounter,
       herbCounter: this.herbCounter,
       gemsAcquired: this.gemsAcquired,
@@ -576,7 +573,7 @@ export class InventoryService {
     this.autoBalanceUnlocked.set(properties.autoBalanceUnlocked);
     this.autoBalanceItems = properties.autoBalanceItems;
     this.autoPillUnlocked = properties.autoPillUnlocked;
-    this.autoPillEnabled = properties.autoPillUnlocked;
+    this.autoPillEnabled = properties.autoPillEnabled;
     this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked;
     this.autoArmorMergeUnlocked = properties.autoArmorMergeUnlocked;
     this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked;
@@ -608,7 +605,6 @@ export class InventoryService {
     this.equipmentCreated = properties.equipmentCreated;
     this.totalItemsReceived = properties.totalItemsReceived;
     this.autoReloadCraftInputs = properties.autoReloadCraftInputs;
-    this.pillCounter = properties.pillCounter;
     this.potionCounter = properties.potionCounter;
     this.herbCounter = properties.herbCounter;
     this.gemsAcquired = properties.gemsAcquired;
@@ -878,38 +874,6 @@ export class InventoryService {
       useConsumes: true,
       effect: effect,
       increaseAmount: 1,
-    });
-  }
-
-  generatePill(grade: number, attribute: AttributeType): void {
-    this.pillCounter++;
-    let effect: string = attribute;
-    if (this.pillCounter > 10) {
-      this.pillCounter = 0;
-      effect = 'longevity';
-    }
-
-    const description = 'A powerful pill that increases your ' + effect + '.';
-    const useDescription = 'Use to increase your ' + effect;
-    const value = grade * 10;
-    const name = this.titleCasePipe.transform(effect) + ' Pill ' + ' +' + grade;
-    const imageFileName = 'pill';
-    this.logService.log(
-      LogTopic.CRAFTING,
-      'Alchemy Success! Created a ' + this.titleCasePipe.transform(name) + '. Keep up the good work.'
-    );
-    this.addItem({
-      name: name,
-      imageFile: imageFileName,
-      id: 'pill',
-      type: 'pill',
-      value: value,
-      description: description,
-      useLabel: 'Swallow',
-      useDescription: useDescription,
-      useConsumes: true,
-      effect: effect,
-      increaseAmount: grade,
     });
   }
 
@@ -1514,6 +1478,19 @@ export class InventoryService {
     if (this.autoPillEnabled && item.type === 'pill') {
       this.useItem(item, quantity);
       return -1;
+    } else if (item.type === 'pill') {
+      // see if we can merge it into another stack of the same kind of pill
+      const existingStack = this.itemStacks.find(
+        (itemStack, index) =>
+          index < this.heirloomSlots() && itemStack.item?.type === item.type && itemStack.item.name === item.name
+      );
+      if (existingStack) {
+        const totalPower =
+          (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
+        existingStack.quantity += quantity;
+        existingStack.item!.increaseAmount = Math.floor(totalPower / existingStack.quantity);
+        return -1;
+      }
     }
 
     for (const balanceItem of this.autoBalanceItems) {
@@ -2056,8 +2033,16 @@ export class InventoryService {
       if (pill.effect) {
         effect = pill.effect;
       }
-      const attributeKey = effect as AttributeType;
-      this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity);
+      if (effect.includes(',')) {
+        const effectArray = effect.split(',');
+        for (const attr of effectArray) {
+          const attributeKey = attr as AttributeType;
+          this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity);
+        }
+      } else {
+        const attributeKey = effect as AttributeType;
+        this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity);
+      }
     }
     this.characterService.checkOverage();
   }
