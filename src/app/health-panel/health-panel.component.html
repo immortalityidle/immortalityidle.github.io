@@ -3,9 +3,12 @@
   <div class="flexColumn">
     <div class="statusRow">
       <div class="statusCell">
-        <span>You are {{characterService.displayAge() / 365 | bigNumber }} years</span>
-        @if (characterService.displayAge() < 10000 * 365) {
+        @if (characterService.displayAge() < 1000 * 365) {
+          <span>You are {{characterService.displayAge() / 365 | number: '1.0-0' }} years</span>
           <span>, {{characterService.displayAge() % 365 | number: '1.0-0'}} days</span>
+        }
+        @else {
+          <span>You are {{characterService.displayAge() / 365 | bigNumber }} years</span>
         }
         <span> old.</span>
       </div>

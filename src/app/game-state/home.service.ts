@@ -1851,6 +1851,9 @@ export class HomeService {
       if (alchemyLevel >= 3 && gemStack) {
         totalValue += gemStack.item!.value;
       }
+      if (gemStack) {
+        gemStack!.quantity--;
+      }
 
       const grade = Math.ceil(totalValue / 10);
       const pillName = this.getPillPrefix(grade) + ' Everflowing Fountain Pill';
@@ -2018,7 +2021,7 @@ export class HomeService {
     const alchemyLevel = this.activityService?.getActivityByType(ActivityType.Alchemy)?.level || 0;
     if (workstation.alchemyProduct === 'potions') {
       workstation.alchemyProduct = 'attribute pills';
-    } else if (workstation.alchemyProduct === 'pills' && alchemyLevel >= 2) {
+    } else if (workstation.alchemyProduct === 'attribute pills' && alchemyLevel >= 2) {
       workstation.alchemyProduct = 'longevity pills';
     } else {
       workstation.alchemyProduct = 'potions';

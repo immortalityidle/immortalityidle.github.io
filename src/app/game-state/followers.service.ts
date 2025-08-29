@@ -4,7 +4,7 @@ import { MainLoopService } from './main-loop.service';
 import { AttributeType, CharacterService, StatusType } from './character.service';
 import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
-import { Equipment, InventoryService } from './inventory.service';
+import { Equipment, InventoryService, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { BattleService } from './battle.service';
 import { HellService } from './hell.service';
@@ -91,7 +91,9 @@ export interface FollowersProperties {
   maxFollowerLevel: number;
   sectName: string;
   hq: HQType;
+  hqInputs: ItemStack[];
   hqUnlocked: boolean;
+  giftRecipientCounter: number;
 }
 
 export interface SavedAssignments {
@@ -162,6 +164,8 @@ export class FollowersService {
   sectName = this.generateSectName();
   hq = HQType.GatheringField;
   hqUnlocked = false;
+  hqInputs: ItemStack[] = [];
+  giftRecipientCounter = 0;
 
   hqs: HQ[] = [
     {
@@ -1011,10 +1015,21 @@ export class FollowersService {
       follower.experience += this.hqs[this.hq].experiencePerDay;
       this.levelUp(follower);
     }
-
-    /*
-  inputs: number;
-  */
+    this.giftRecipientCounter++;
+    if (this.giftRecipientCounter >= this.followers.length) {
+      this.giftRecipientCounter = 0;
+    }
+    for (const input of this.hqInputs) {
+      if (input.item && input.quantity > 0) {
+        if (input.item.type === 'pill') {
+          if (input.item.effect === 'longevity') {
+            this.followers[this.giftRecipientCounter].lifespan += input.item.increaseAmount || 1;
+          } else {
+            this.followers[this.giftRecipientCounter].experience += input.item.increaseAmount || 1;
+          }
+        }
+      }
+    }
   }
 
   reset() {
@@ -1075,7 +1090,9 @@ export class FollowersService {
       maxFollowerLevel: this.maxFollowerLevel,
       sectName: this.sectName,
       hq: this.hq,
+      hqInputs: this.hqInputs,
       hqUnlocked: this.hqUnlocked,
+      giftRecipientCounter: this.giftRecipientCounter,
     };
   }
 
@@ -1113,6 +1130,8 @@ export class FollowersService {
     this.sectName = properties.sectName;
     this.hq = properties.hq;
     this.hqUnlocked = properties.hqUnlocked;
+    this.hqInputs = properties.hqInputs;
+    this.giftRecipientCounter = properties.giftRecipientCounter;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
   }
@@ -1217,10 +1236,12 @@ export class FollowersService {
       LogTopic.FOLLOWER,
       'A new ' + this.camelToTitle.transform(job) + ' has come to learn at your feet.'
     );
+    // cap follower lifespan at 1000 years, minimum 18 years of service
+    const lifespan = Math.min(Math.max(this.characterService.lifespan / lifespanDivider, 18 * 365), 365000);
     const follower = {
       name: this.generateFollowerName(),
       age: 0,
-      lifespan: Math.min(this.characterService.lifespan / lifespanDivider, 365000), // cap follower lifespan at 1000 years
+      lifespan: lifespan,
       job: job,
       power: 1,
       displayPower: signal<number>(1),
@@ -1662,6 +1683,10 @@ export class FollowersService {
     this.hq++;
     this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
+
+    while (this.hqInputs.length < this.hqs[this.hq].inputs) {
+      this.hqInputs.push(this.inventoryService.getEmptyItemStack());
+    }
   }
 
   downgradeHQ() {
@@ -1669,6 +1694,14 @@ export class FollowersService {
     this.homeService.land += this.hqs[this.hq].upgradeLandCost;
     this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
+    const inputStacks = this.hqInputs;
+    while (inputStacks.length >= this.hqs[this.hq].inputs) {
+      const lastInputStack = inputStacks[inputStacks.length - 1];
+      if (lastInputStack.item) {
+        this.inventoryService.addItem(lastInputStack.item, lastInputStack.quantity);
+      }
+      inputStacks.splice(inputStacks.length - 1);
+    }
   }
 
   dismissYoungestFollower() {
@@ -1682,5 +1715,53 @@ export class FollowersService {
       }
     }
     this.dismissFollower(youngestFollower);
+  }
+
+  moveItemToInput(itemIndex: number, destinationInputIndex: number) {
+    if (!this.inventoryService.itemStacks[itemIndex].item) {
+      // no item to move, bail out
+      return;
+    }
+    if (this.hqInputs[destinationInputIndex].item) {
+      if (this.hqInputs[destinationInputIndex].item?.name === this.inventoryService.itemStacks[itemIndex].item?.name) {
+        // same item type, dump the quantity into the workstation
+        const maxAdditionalQuantity =
+          this.inventoryService.maxStackSize - this.hqInputs[destinationInputIndex].quantity;
+        if (this.inventoryService.itemStacks[itemIndex].quantity < maxAdditionalQuantity) {
+          this.hqInputs[destinationInputIndex].quantity += this.inventoryService.itemStacks[itemIndex].quantity;
+          this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+        } else {
+          this.hqInputs[destinationInputIndex].quantity += maxAdditionalQuantity;
+          this.inventoryService.itemStacks[itemIndex].quantity -= maxAdditionalQuantity;
+        }
+        return;
+      }
+      if (this.hqInputs[destinationInputIndex].quantity === 0) {
+        this.hqInputs[destinationInputIndex] = this.inventoryService.itemStacks[itemIndex];
+        this.hqInputs[destinationInputIndex].id =
+          destinationInputIndex +
+          this.hqInputs[destinationInputIndex].item!.name +
+          this.hqInputs[destinationInputIndex].quantity;
+        this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+      } else {
+        // swap the workstation item with the inventory item
+        const temp = this.inventoryService.itemStacks[itemIndex];
+        this.inventoryService.itemStacks[itemIndex] = this.hqInputs[destinationInputIndex];
+        this.hqInputs[destinationInputIndex] = temp;
+        this.hqInputs[destinationInputIndex].id =
+          destinationInputIndex +
+          this.hqInputs[destinationInputIndex].item!.name +
+          this.hqInputs[destinationInputIndex].quantity;
+        this.inventoryService.fixId(itemIndex);
+      }
+    } else {
+      // nothing there now, just put the inventory item in the workstation
+      this.hqInputs[destinationInputIndex] = this.inventoryService.itemStacks[itemIndex];
+      this.hqInputs[destinationInputIndex].id =
+        destinationInputIndex +
+        this.hqInputs[destinationInputIndex].item!.name +
+        this.hqInputs[destinationInputIndex].quantity;
+      this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+    }
   }
 }

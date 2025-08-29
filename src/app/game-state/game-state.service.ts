@@ -795,7 +795,9 @@ export class GameStateService {
       maxFollowerLevel: props?.maxFollowerLevel || 100,
       sectName: props?.sectName || 'Verdant Waters Sect',
       hq: props?.hq || HQType.GatheringField,
+      hqInputs: props?.hqInputs || [],
       hqUnlocked: props?.hqUnlocked || false,
+      giftRecipientCounter: props?.giftRecipientCounter || 0,
     };
   }
 

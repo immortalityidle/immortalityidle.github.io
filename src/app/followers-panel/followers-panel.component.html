@@ -38,6 +38,35 @@
       </mat-icon>
     }
   </div>
+  @if (followerService.hqs[followerService.hq].inputs > 0){
+    <div>
+      <span tooltip="As the master of this sect, you can bestow generous gifts on your followers to aid them in their development.">Generous Gifts:</span>
+    </div>
+    <div class="inputsContainer" cdkDropList cdkDropListSortingDisabled>
+      @for (itemStack of followerService.hqInputs; track itemStack.id; let inputIndex = $index) {
+        <div>
+          <div id="sectInputIndex_{{inputIndex}}" >
+            <div class="inputSlot" [tabindex]="itemStack?.item ? '0' : '-1'"
+              cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
+              [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
+              (dblclick)="inputDoubleClicked($index)"
+              tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
+              <div class="itemName textOverflow">
+                @if (itemStack?.item?.imageFile){
+                  <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage"
+                    width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
+                }
+                @else {
+                  {{itemStack?.item?.name | titlecase}}
+                }
+              </div>
+              <div class="itemQuantity">x{{itemStack?.quantity}}</div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
 }
 <div>
   <hr>

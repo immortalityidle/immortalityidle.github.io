@@ -13,6 +13,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { InventoryOptionsModalComponent } from '../inventory-options-modal/inventory-options-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LOOT_TYPE_GEM } from '../game-state/battle.service';
+import { FollowersService } from '../game-state/followers.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -39,6 +40,7 @@ export class InventoryPanelComponent {
     public inventoryService: InventoryService,
     public characterService: CharacterService,
     private homeService: HomeService,
+    private followersService: FollowersService,
     public hellService: HellService,
     public mainLoopService: MainLoopService,
     public gameStateService: GameStateService,
@@ -238,6 +240,15 @@ export class InventoryPanelComponent {
         const destinationWorkstationIndex = parseInt(indexParts[0]);
         const destinationInputIndex = parseInt(indexParts[1]);
         this.homeService.moveItemToWorkstation(sourceItemIndex, destinationWorkstationIndex, destinationInputIndex);
+      } else if (element.id.startsWith('sectInputIndex')) {
+        //id="sectInputIndex_{{inputIndex}}"
+        const indexParts = element.id.split('_');
+        if (indexParts.length !== 2) {
+          // didn't get two parts, bail out
+          return;
+        }
+        const destinationInputIndex = parseInt(indexParts[1]);
+        this.followersService.moveItemToInput(sourceItemIndex, destinationInputIndex);
       } else if (element.id.startsWith('equipmentSlot')) {
         const equipmentSlotString = element.id.substring('equipmentSlot'.length);
         const slot: EquipmentPosition = equipmentSlotString as EquipmentPosition;
