@@ -1134,6 +1134,7 @@ export class FollowersService {
     this.giftRecipientCounter = properties.giftRecipientCounter;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
+    this.updateHQInputs();
   }
 
   unlockJob(job: string) {
@@ -1683,10 +1684,7 @@ export class FollowersService {
     this.hq++;
     this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
-
-    while (this.hqInputs.length < this.hqs[this.hq].inputs) {
-      this.hqInputs.push(this.inventoryService.getEmptyItemStack());
-    }
+    this.updateHQInputs();
   }
 
   downgradeHQ() {
@@ -1694,8 +1692,16 @@ export class FollowersService {
     this.homeService.land += this.hqs[this.hq].upgradeLandCost;
     this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
+    this.updateHQInputs();
+  }
+
+  updateHQInputs() {
     const inputStacks = this.hqInputs;
-    while (inputStacks.length >= this.hqs[this.hq].inputs) {
+    while (inputStacks.length < this.hqs[this.hq].inputs) {
+      inputStacks.push(this.inventoryService.getEmptyItemStack());
+    }
+
+    while (inputStacks.length > this.hqs[this.hq].inputs) {
       const lastInputStack = inputStacks[inputStacks.length - 1];
       if (lastInputStack.item) {
         this.inventoryService.addItem(lastInputStack.item, lastInputStack.quantity);

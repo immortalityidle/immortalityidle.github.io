@@ -1799,11 +1799,12 @@ export class HomeService {
           gemStack.quantity--;
           multiplier += 1 + Math.log2(gemStack.item!.value / 10);
         }
-
-        if (secondHighestAttribute !== '') {
+        multiplier += attributeMap[highestAttribute] * attributeMap[highestAttribute];
+        if (secondHighestAttribute === '') {
+          multiplier *= 2.5;
+        } else {
           multiplier += attributeMap[secondHighestAttribute] * attributeMap[secondHighestAttribute];
         }
-        multiplier += attributeMap[highestAttribute] * attributeMap[highestAttribute];
         totalValue = Math.ceil(totalValue * multiplier);
         const grade = Math.ceil(totalValue / 10);
         const pillNameBase = this.getPillName(highestAttribute, secondHighestAttribute);
