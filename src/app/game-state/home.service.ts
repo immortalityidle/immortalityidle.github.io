@@ -981,7 +981,7 @@ export class HomeService {
         );
         if (this.thugPause) {
           this.logService.log(LogTopic.EVENT, 'Game paused (you can change this in the schedule options).');
-          this.mainLoopService.pause = true;
+          this.mainLoopService.togglePause(true);
         }
         this.characterService.status.health.value -= 20;
         this.characterService.updateMoney(0, true);
@@ -1458,7 +1458,7 @@ export class HomeService {
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.6;
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1468,7 +1468,7 @@ export class HomeService {
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1480,7 +1480,7 @@ export class HomeService {
       );
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1511,7 +1511,7 @@ export class HomeService {
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1524,7 +1524,7 @@ export class HomeService {
       );
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1537,7 +1537,7 @@ export class HomeService {
       );
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1549,7 +1549,7 @@ export class HomeService {
       );
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1570,7 +1570,7 @@ export class HomeService {
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1580,7 +1580,7 @@ export class HomeService {
       this.logService.injury(LogTopic.EVENT, 'Your brick-making smelter remains inert without fuel.');
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1591,7 +1591,7 @@ export class HomeService {
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1610,7 +1610,7 @@ export class HomeService {
         this.logService.injury(LogTopic.EVENT, 'Your smelter sputters out, lacking the vast amounts of fuel it needs.');
         if (this.activityService?.pauseOnImpossibleFail) {
           this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-          this.mainLoopService.pause = true;
+          this.mainLoopService.togglePause(true);
         }
         return;
       }
@@ -1624,7 +1624,7 @@ export class HomeService {
       );
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1637,7 +1637,7 @@ export class HomeService {
       );
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }
@@ -1659,7 +1659,7 @@ export class HomeService {
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
       if (this.activityService?.pauseOnImpossibleFail) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-        this.mainLoopService.pause = true;
+        this.mainLoopService.togglePause(true);
       }
       return;
     }

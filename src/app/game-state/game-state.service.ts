@@ -1248,7 +1248,7 @@ export class GameStateService {
 
   rebirth(): void {
     this.characterService.forceRebirth = true;
-    this.mainLoopService.pause = false;
+    this.mainLoopService.togglePause(true);
   }
 
   getDeploymentFlavor() {

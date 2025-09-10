@@ -39,39 +39,6 @@ export class SchedulePanelComponent {
 
   constructor(private gameStateService: GameStateService, private dialog: MatDialog) {}
 
-  pauseClick() {
-    if (this.mainLoopService.pause) {
-      this.mainLoopService.tick();
-    } else {
-      this.mainLoopService.pause = true;
-    }
-  }
-
-  slowClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 40;
-  }
-
-  standardClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 10;
-  }
-
-  fastClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 5;
-  }
-
-  fasterClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 2;
-  }
-
-  fastestClick() {
-    this.mainLoopService.pause = false;
-    this.mainLoopService.tickDivider = 1;
-  }
-
   scheduleOptions() {
     this.dialog.open(TimeOptionsPanelComponent, {
       width: '700px',

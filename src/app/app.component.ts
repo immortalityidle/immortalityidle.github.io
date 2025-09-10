@@ -31,40 +31,35 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.code === 'Space') {
-      this.mainLoopService.pause = !this.mainLoopService.pause;
+      this.mainLoopService.togglePause();
       event.preventDefault();
     } else if ((event.code === 'Enter' || event.code === 'NumpadEnter') && this.mainLoopService.pause) {
       this.mainLoopService.tick();
       event.preventDefault();
     } else if ((event.altKey || event.metaKey) && (event.code === 'Digit0' || event.code === 'Numpad0')) {
-      this.mainLoopService.pause = true;
+      this.mainLoopService.pauseClick();
     } else if ((event.altKey || event.metaKey) && (event.code === 'Digit1' || event.code === 'Numpad1')) {
-      this.mainLoopService.pause = false;
-      this.mainLoopService.tickDivider = 40;
+      this.mainLoopService.slowClick();
     } else if ((event.altKey || event.metaKey) && (event.code === 'Digit2' || event.code === 'Numpad2')) {
-      this.mainLoopService.pause = false;
-      this.mainLoopService.tickDivider = 10;
+      this.mainLoopService.standardClick();
     } else if (
       (event.altKey || event.metaKey) &&
       (event.code === 'Digit3' || event.code === 'Numpad3') &&
       this.mainLoopService.unlockFastSpeed
     ) {
-      this.mainLoopService.pause = false;
-      this.mainLoopService.tickDivider = 5;
+      this.mainLoopService.fastClick();
     } else if (
       (event.altKey || event.metaKey) &&
       (event.code === 'Digit4' || event.code === 'Numpad4') &&
       this.mainLoopService.unlockFasterSpeed
     ) {
-      this.mainLoopService.pause = false;
-      this.mainLoopService.tickDivider = 2;
+      this.mainLoopService.fasterClick();
     } else if (
       (event.altKey || event.metaKey) &&
       (event.code === 'Digit5' || event.code === 'Numpad5') &&
       this.mainLoopService.unlockFastestSpeed
     ) {
-      this.mainLoopService.pause = false;
-      this.mainLoopService.tickDivider = 1;
+      this.mainLoopService.fastestClick();
     }
   }
 

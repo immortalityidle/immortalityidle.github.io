@@ -4,7 +4,6 @@ import { CharacterService } from './character.service';
 import { BattleService } from './battle.service';
 
 const TICK_INTERVAL_MS = 25;
-const LONG_TICK_INTERVAL_MS = 500;
 
 export interface MainLoopProperties {
   unlockFastSpeed: boolean;
@@ -32,6 +31,8 @@ export interface MainLoopProperties {
   providedIn: 'root',
 })
 export class MainLoopService {
+  longTickIntervalMS = 100;
+
   battleService?: BattleService;
 
   tickSubject = new Subject<number>();
@@ -199,7 +200,7 @@ export class MainLoopService {
     }
 
     setTimeout(() => this.handleTimeout(), TICK_INTERVAL_MS);
-    setTimeout(() => this.handleLongTickTimeout(), LONG_TICK_INTERVAL_MS);
+    setTimeout(() => this.handleLongTickTimeout(), this.longTickIntervalMS);
   }
 
   handleLongTickTimeout() {
@@ -208,7 +209,7 @@ export class MainLoopService {
     this.yearOrLongTickSubject.next(this.daysSinceYearOrLongTick);
     this.daysSinceYearOrLongTick = 0;
     this.displayBankedTicks.set(this.bankedTicks);
-    setTimeout(() => this.handleLongTickTimeout(), LONG_TICK_INTERVAL_MS);
+    setTimeout(() => this.handleLongTickTimeout(), this.longTickIntervalMS);
   }
 
   handleTimeout() {
@@ -270,11 +271,31 @@ export class MainLoopService {
     }
   }
 
+  togglePause(pauseIt: boolean | null = null) {
+    if (pauseIt !== null) {
+      this.pause = !pauseIt;
+    }
+    if (this.pause) {
+      this.pause = false;
+      if (this.tickDivider === 1) {
+        this.longTickIntervalMS = 500;
+      } else if (this.tickDivider === 2) {
+        this.longTickIntervalMS = 250;
+      } else {
+        this.longTickIntervalMS = 100;
+      }
+    } else {
+      this.pause = true;
+      this.longTickIntervalMS = 100;
+    }
+  }
+
   pauseClick() {
     if (this.pause) {
       this.tick();
     } else {
       this.pause = true;
+      this.longTickIntervalMS = 100;
     }
   }
 
@@ -285,6 +306,7 @@ export class MainLoopService {
       this.pause = false;
       this.tickDivider = 40;
     }
+    this.longTickIntervalMS = 100;
   }
 
   standardClick() {
@@ -294,6 +316,7 @@ export class MainLoopService {
       this.pause = false;
       this.tickDivider = 10;
     }
+    this.longTickIntervalMS = 100;
   }
 
   fastClick() {
@@ -303,14 +326,17 @@ export class MainLoopService {
       this.pause = false;
       this.tickDivider = 5;
     }
+    this.longTickIntervalMS = 100;
   }
 
   fasterClick() {
     if (this.tickDivider === 2 && !this.pause) {
       this.pause = true;
+      this.longTickIntervalMS = 100;
     } else {
       this.pause = false;
       this.tickDivider = 2;
+      this.longTickIntervalMS = 250;
     }
   }
 
@@ -320,6 +346,7 @@ export class MainLoopService {
     } else {
       this.pause = false;
       this.tickDivider = 1;
+      this.longTickIntervalMS = 500;
     }
   }
 
