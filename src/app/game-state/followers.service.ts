@@ -1570,6 +1570,9 @@ export class FollowersService {
     while (follower.experience > follower.power * 1000) {
       follower.experience -= follower.power * 1000;
       follower.power++;
+      if (follower.power > this.highestLevel) {
+        this.highestLevel = follower.power;
+      }
       this.logService.log(
         LogTopic.FOLLOWER,
         follower.name + ' gains additional power as a ' + this.camelToTitle.transform(follower.job)
