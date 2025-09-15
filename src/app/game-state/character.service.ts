@@ -752,7 +752,7 @@ export class CharacterService {
       tooltip += '<br>Basic Attributes: ' + this.yearify(this.statLifespan);
     }
     if (this.spiritualityLifespan > 0) {
-      tooltip += '<br>Spirituality: ' + this.yearify(this.spiritualityLifespan);
+      tooltip += '<br>Spirituality and Balance: ' + this.yearify(this.spiritualityLifespan);
     }
     if (this.magicLifespan > 0) {
       tooltip += '<br>Magic: ' + this.yearify(this.magicLifespan);

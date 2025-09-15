@@ -1027,6 +1027,7 @@ export class FollowersService {
           } else {
             this.followers[this.giftRecipientCounter].experience += input.item.increaseAmount || 1;
           }
+          input.quantity--;
         }
       }
     }
