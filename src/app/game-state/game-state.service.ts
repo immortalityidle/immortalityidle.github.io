@@ -680,6 +680,7 @@ export class GameStateService {
       currentRealm: props?.currentRealm ?? Realm.MortalRealm,
       beggingDays: props?.beggingDays || 0,
       oddJobDays: props?.oddJobDays || 0,
+      incomeMultiplier: props?.incomeMultiplier || 1,
     };
   }
 
@@ -688,6 +689,7 @@ export class GameStateService {
       unlockedLocations: props?.unlockedLocations || [],
       troubleTarget: props?.troubleTarget || LocationType.SmallTown,
       locationLocked: props?.locationLocked || false,
+      distanceMultiplier: props?.distanceMultiplier || 1,
     };
   }
 

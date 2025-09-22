@@ -58,6 +58,7 @@ export interface ActivityProperties {
   currentRealm: Realm;
   oddJobDays: number;
   beggingDays: number;
+  incomeMultiplier: number;
 }
 
 export interface DisplayActivity {
@@ -138,6 +139,7 @@ export class ActivityService {
   hellService?: HellService;
   currentRealm = Realm.MortalRealm;
   currentRealmDisplay = signal<string>(RealmNames[Realm.MortalRealm]);
+  incomeMultiplier = 1;
 
   constructor(
     private injector: Injector,
@@ -654,6 +656,7 @@ export class ActivityService {
       currentRealm: this.currentRealm,
       oddJobDays: this.oddJobDays,
       beggingDays: this.beggingDays,
+      incomeMultiplier: this.incomeMultiplier,
     };
   }
 
@@ -704,6 +707,7 @@ export class ActivityService {
     this.coreCultivationCounter = properties.coreCultivationCounter;
     this.oddJobDays = properties.oddJobDays;
     this.beggingDays = properties.beggingDays;
+    this.incomeMultiplier = properties.incomeMultiplier;
     this.checkRequirements(true);
     this.currentRealm = properties.currentRealm;
     if (!this.hellService) {
@@ -1282,13 +1286,13 @@ export class ActivityService {
           return;
         }
         value = 0;
-        value = this.inventoryService.consume('mortar', 100);
+        value = this.inventoryService.consume('mortar', 400);
         if (value < 1) {
           this.logService.injury(
             LogTopic.EVENT,
-            'You try building without enough mortar, but it ends in a disaster and you are badly hurt.'
+            'You try building without enough mortar, but it ends in a disaster and you are hurt.'
           );
-          this.characterService.status.health.value -= this.characterService.status.health.max * 0.2;
+          this.characterService.status.health.value -= this.characterService.status.health.value * 0.2;
           if (this.pauseOnImpossibleFail) {
             this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
             this.mainLoopService.togglePause(true);
@@ -1296,13 +1300,13 @@ export class ActivityService {
           return;
         }
         value = 0;
-        value = this.inventoryService.consume('brick', 1000);
+        value = this.inventoryService.consume('brick', 200);
         if (value < 1) {
           this.logService.injury(
             LogTopic.EVENT,
-            'You try building without enough bricks, but it ends in a disaster and you are badly hurt.'
+            'You try building without enough bricks, but it ends in a disaster and you are hurt.'
           );
-          this.characterService.status.health.value -= this.characterService.status.health.max * 0.2;
+          this.characterService.status.health.value -= this.characterService.status.health.value * 0.2;
           if (this.pauseOnImpossibleFail) {
             this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
             this.mainLoopService.togglePause(true);
@@ -2123,6 +2127,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Blacksmithing) {
           money += money * 0.2;
         }
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.1);
@@ -2144,7 +2149,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Blacksmithing) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.2);
@@ -2168,7 +2173,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Blacksmithing) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.3);
@@ -2192,7 +2197,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Blacksmithing) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.5);
@@ -2316,7 +2321,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Alchemy) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.05);
@@ -2334,7 +2339,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Alchemy) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.1);
@@ -2352,7 +2357,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Alchemy) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.15);
@@ -2370,7 +2375,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Alchemy) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.2);
@@ -2484,7 +2489,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Woodworking) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.001);
@@ -2504,7 +2509,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Woodworking) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.005);
@@ -2525,6 +2530,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Woodworking) {
           money += money * 0.2;
         }
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.02);
@@ -2544,7 +2550,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Woodworking) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.6);
@@ -2629,7 +2635,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
-
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.001);
@@ -2648,6 +2654,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.005);
@@ -2666,6 +2673,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.02);
@@ -2684,6 +2692,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Leatherworking) {
           money += money * 0.2;
         }
+        money *= this.incomeMultiplier;
         this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.6);

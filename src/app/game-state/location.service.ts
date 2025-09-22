@@ -16,6 +16,7 @@ export interface LocationProperties {
   unlockedLocations: LocationType[];
   troubleTarget: LocationType;
   locationLocked: boolean;
+  distanceMultiplier: number;
 }
 
 // TODO: lock locations for hells and some impossible tasks
@@ -25,6 +26,7 @@ export interface LocationProperties {
 })
 export class LocationService {
   troubleTarget: LocationType = LocationType.SmallTown;
+  distanceMultiplier = 1;
   locationMap: { [key in LocationType]: LocationEntry } = {
     [LocationType.Self]: {
       name: 'Your Very Self',
@@ -44,49 +46,49 @@ export class LocationService {
       name: 'A Large City',
       description: 'A bustling city. A thriving hub of crafts and trades.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 50;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 50;
       },
     },
     [LocationType.SmallPond]: {
       name: 'A Lake',
       description: 'A freshwater lake ideal for fishing.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 100;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 100;
       },
     },
     [LocationType.Forest]: {
       name: 'A Forest',
       description: 'A forest where you can chop wood or look for a wide variety of herbs.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 200;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 200;
       },
     },
     [LocationType.Mine]: {
       name: 'A Mine',
       description: 'A mine where you can find coal or metal ores.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 500;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 500;
       },
     },
     [LocationType.Desert]: {
       name: 'A Desert',
       description: 'A sandy desert wasteland.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 2000;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 2000;
       },
     },
     [LocationType.Jungle]: {
       name: 'A Jungle',
       description: 'A lush tropical jungle.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 10000;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 10000;
       },
     },
     [LocationType.Dungeon]: {
       name: 'A Creepy Dungeon',
       description: 'This dark and dank dungeon is full of monsters.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 200000;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 200000;
       },
     },
     [LocationType.Beach]: {
@@ -94,7 +96,7 @@ export class LocationService {
       description:
         'A beautiful beach where you can definitely relax without worrying about any monsters creeping from the waves to murder you.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 1e6;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e6;
       },
     },
 
@@ -102,14 +104,14 @@ export class LocationService {
       name: 'The Deep Sea',
       description: 'The depths of the sea.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 1e8;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e8;
       },
     },
     [LocationType.MountainTops]: {
       name: 'The Mountain Tops',
       description: 'The tops of the highest mountains.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 1e10;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e10;
       },
     },
     [LocationType.AshenCrater]: {
@@ -117,7 +119,7 @@ export class LocationService {
       description:
         'A huge empty hole in the ground, covered in gray ash and smoke. The ground here is scorching, with glowing red cracks revealing fire just under the surface.',
       unlock: () => {
-        return this.characterService.attributes.speed.value > 1e12;
+        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e14;
       },
     },
     [LocationType.Hell]: {
@@ -196,6 +198,7 @@ export class LocationService {
       unlockedLocations: this.unlockedLocations,
       troubleTarget: this.troubleTarget,
       locationLocked: this.locationLocked,
+      distanceMultiplier: this.distanceMultiplier,
     };
   }
 
@@ -203,5 +206,6 @@ export class LocationService {
     this.unlockedLocations = properties.unlockedLocations;
     this.troubleTarget = properties.troubleTarget;
     this.locationLocked = properties.locationLocked;
+    this.distanceMultiplier = properties.distanceMultiplier;
   }
 }

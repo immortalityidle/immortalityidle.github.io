@@ -10,7 +10,7 @@ import { BattleService } from './battle.service';
 import { GameStateService } from './game-state.service';
 import { ActivityService } from './activity.service';
 import { ActivityType } from './activity';
-import { ImpossibleTaskService } from './impossibleTask.service';
+import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
@@ -107,7 +107,7 @@ export class AchievementService {
     [MEMORY_IMPOSSIBLE_TASKS]: {
       title: 'Impossible Tasks',
       text: [
-        "You are finally ready to seek out true immortality.<br><br>Your consummate searching has yielded your first clue: a scrap in an ancient text that leads you to believe that the secret of immortality lies in the ruins of an ancient civilization buried deep beneath the ocean's currents.",
+        "You are finally ready to seek out true immortality.<br><br>Your consummate searching has yielded your first clue: a scrap in an ancient text that leads you to believe that the secret of immortality lies in the ruins of an ancient civilization buried deep beneath the ocean's currents.<br><br>Reaching it is clearly impossible.<br><br>It simply can't be done.<br><br>You should give up now.",
       ],
       imageBaseName: 'impossibleTasks',
     },
@@ -1800,6 +1800,109 @@ export class AchievementService {
       hint: 'Do you really, really?',
       check: () => {
         return this.gameStateService!.supportClicked;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Deep Diver',
+      description: 'You made it to the bottom of the ocean? Impossible!',
+      hint: 'Hold your breath and hope for the best. Watch out for monsters.',
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].complete;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Heave Ho!',
+      description: 'You pulled a sunken island up from the bottom of the sea? Impossible!',
+      hint: "It's down there too deep, just leave it alone.",
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Too Tall',
+      description:
+        "You built a tower that ascends above the clouds? Impossible! The tower's prominence makes it a powerful trade hub. Income from professions is increased.",
+      hint: "Give up, you'll never get it that high.",
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].complete;
+      },
+      effect: () => {
+        if (this.activityService.incomeMultiplier < 5) {
+          this.activityService.incomeMultiplier = 5;
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Just Learn Their Name',
+      description: 'You tamed the winds themselves? Impossible!',
+      hint: 'Finish that book, Patrick!',
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].complete;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Up, Up, and Away',
+      description: 'You learned to fly? Impossible!',
+      hint: "Just jump, you'll probably be fine.",
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].complete;
+      },
+      effect: () => {
+        if (this.locationService.distanceMultiplier < 10) {
+          this.locationService.distanceMultiplier = 10;
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Insatiable',
+      description: "You befriended a dragon? Impossible! The dragon's greed might have rubbed off on you.",
+      hint: 'Everyone loves food and treasure.',
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].complete;
+      },
+      effect: () => {
+        if (this.activityService.incomeMultiplier < 10) {
+          this.activityService.incomeMultiplier = 10;
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Conqueror',
+      description: 'You conquered the entire nation? Impossible!',
+      hint: "You'll need more than just your own strength to cover this much territory.",
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheNation].complete;
+      },
+      effect: () => {
+        // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: "Ranni's Ending",
+      description: 'You rearranged the stars themselves? Impossible!',
+      hint: 'Can the power of your Qi reach the heavens above?',
+      check: () => {
+        return this.impossibleTaskService.taskProgress[ImpossibleTaskType.RearrangeTheStars].complete;
       },
       effect: () => {
         // no effect, it's just for fun
