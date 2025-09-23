@@ -1247,7 +1247,7 @@ export class ActivityService {
     imageBaseName: 'buildtower',
     activityType: ActivityType.BuildTower,
     description: [
-      'Assemble 1000 bricks, 100 barrels of mortar, and your scaffolding to construct the next level of your tower. You will need a lot of expert help for this.',
+      'Assemble bricks, mortar, and scaffolding to construct the next level of your tower. You will need a lot of expert help for this.',
     ],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
