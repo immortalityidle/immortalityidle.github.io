@@ -1971,6 +1971,55 @@ export class InventoryService {
     return this.consume(itemType, quantity, false, true, subtype);
   }
 
+  // consume items of the consumedThing type until the value is met, returning the actual value consumed or -1 if there's not enough
+  consumeByValue(consumedThing: string, value: number, checkOnly = false, subtype = ''): number {
+    const filteredItemStacks = this.itemStacks
+      .slice(this.heirloomSlots())
+      .filter(
+        itemStack =>
+          itemStack.item?.type === consumedThing &&
+          itemStack.quantity > 0 &&
+          (subtype === '' || itemStack.item.subtype === subtype)
+      )
+      .sort((a, b) => {
+        return a.item!.value - b.item!.value;
+      });
+    if (filteredItemStacks.length === 0) {
+      return -1;
+    }
+    let totalValue = 0;
+    filteredItemStacks.forEach(itemStack => (totalValue += itemStack.item!.value * itemStack.quantity));
+    if (totalValue < value) {
+      // not enough value available of the item, bail out
+      return -1;
+    } else if (checkOnly) {
+      return totalValue;
+    }
+    totalValue = 0;
+    for (const itemStack of filteredItemStacks) {
+      if (totalValue + itemStack.item!.value * itemStack.quantity >= value) {
+        // there's enough in  this stack to cover the required value, figure out how many of them to consume
+        while (totalValue < value) {
+          totalValue += itemStack.item!.value;
+          itemStack.quantity--;
+        }
+        if (itemStack.quantity === 0) {
+          const index = this.itemStacks.indexOf(itemStack);
+          this.setItemEmptyStack(index);
+        }
+      } else {
+        totalValue += itemStack.item!.value * itemStack.quantity;
+        const index = this.itemStacks.indexOf(itemStack);
+        this.setItemEmptyStack(index);
+      }
+    }
+    return totalValue;
+  }
+
+  checkForByValue(itemType: string, value: number, subtype = ''): number {
+    return this.consumeByValue(itemType, value, true, subtype);
+  }
+
   getQuantityByName(itemName: string): number {
     let itemCount = 0;
     for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {

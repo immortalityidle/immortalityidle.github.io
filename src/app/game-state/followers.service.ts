@@ -229,7 +229,7 @@ export class FollowersService {
     {
       name: 'Training Center',
       description:
-        'A school where your followers rest and train.<br>Costs 100,000 Taels, two food items per follower, and 10 spirit gems per day.<br>Requires a level 10 administrator follower to run it.',
+        'A school where your followers rest and train.<br>Costs 100,000 Taels, two food items per follower, and 10 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 10 administrator follower to run it.',
       moneyPerDay: 100000,
       gemsPerDay: 10,
       foodPerDay: 2,
@@ -255,9 +255,9 @@ export class FollowersService {
       description:
         'An elite school where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e10) +
-        ' Taels, three food items per follower, and 25 spirit gems per day.<br>Requires a level 20 administrator follower to run it.',
+        ' Taels, three food items per follower, and 40 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 20 administrator follower to run it.',
       moneyPerDay: 1e10,
-      gemsPerDay: 25,
+      gemsPerDay: 40,
       foodPerDay: 3,
       mealsRequired: false,
       maxFollowerIncrease: 10,
@@ -281,9 +281,9 @@ export class FollowersService {
       description:
         'An elaborate compound where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e13) +
-        ' Taels, one proper meal per follower, and 50 spirit gems per day.<br>Requires a level 50 administrator follower to run it.',
+        ' Taels, one proper meal per follower, and 100 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 50 administrator follower to run it.',
       moneyPerDay: 1e13,
-      gemsPerDay: 50,
+      gemsPerDay: 100,
       foodPerDay: 1,
       mealsRequired: true,
       maxFollowerIncrease: 15,
@@ -307,9 +307,9 @@ export class FollowersService {
       description:
         'A huge campus where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e16) +
-        ' Taels, two proper meals per follower, and 80 spirit gems per day.<br>Requires a level 100 administrator follower to run it.',
+        ' Taels, two proper meals per follower, and 200 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 100 administrator follower to run it.',
       moneyPerDay: 1e16,
-      gemsPerDay: 80,
+      gemsPerDay: 200,
       foodPerDay: 2,
       mealsRequired: true,
       maxFollowerIncrease: 20,
@@ -333,9 +333,9 @@ export class FollowersService {
       description:
         'A powerful fortress where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e20) +
-        ' Taels, three proper meals per follower, and 120 spirit gems per day.<br>Requires 2 level 100 administrators to run it.',
+        ' Taels, three proper meals per follower, and 500 spirit gems per day (higher quality gems can count as more than one).<br>Requires 2 level 100 administrators to run it.',
       moneyPerDay: 1e20,
-      gemsPerDay: 120,
+      gemsPerDay: 500,
       foodPerDay: 3,
       mealsRequired: true,
       maxFollowerIncrease: 30,
@@ -359,9 +359,9 @@ export class FollowersService {
       description:
         'An immense citidel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
-        ' Taels, five meals per follower, and 150 spirit gems per day.<br>Requires 4 level 100 administrators to run it.',
+        ' Taels, five meals per follower, and 1000 spirit gems per day (higher quality gems can count as more than one).<br>Requires 4 level 100 administrators to run it.',
       moneyPerDay: 1e26,
-      gemsPerDay: 150,
+      gemsPerDay: 1000,
       foodPerDay: 5,
       mealsRequired: true,
       maxFollowerIncrease: 50,
@@ -986,7 +986,7 @@ export class FollowersService {
     }
     if (
       this.hqs[this.hq].gemsPerDay > 0 &&
-      this.inventoryService.checkFor('gem', this.hqs[this.hq].gemsPerDay) === -1
+      this.inventoryService.checkForByValue('gem', this.hqs[this.hq].gemsPerDay * 10) === -1
     ) {
       return;
     }
@@ -1004,10 +1004,10 @@ export class FollowersService {
     // requirements are met, pay costs
     this.characterService.updateMoney(0 - this.hqs[this.hq].moneyPerDay);
     if (this.hqs[this.hq].gemsPerDay > 0) {
-      this.inventoryService.consume('gem', this.hqs[this.hq].gemsPerDay, true);
+      this.inventoryService.consumeByValue('gem', this.hqs[this.hq].gemsPerDay * 10);
     }
     if (this.hqs[this.hq].foodPerDay > 0) {
-      this.inventoryService.consume('gem', this.hqs[this.hq].gemsPerDay, true, false, foodSubType);
+      this.inventoryService.consume('food', this.hqs[this.hq].foodPerDay, true, false, foodSubType);
     }
 
     // get the benefits
