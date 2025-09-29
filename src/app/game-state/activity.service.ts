@@ -1017,7 +1017,7 @@ export class ActivityService {
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.Swim].complete) {
           this.logService.log(
             LogTopic.STORY,
-            'Your preparations were worthwhile! You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found a mythical sunken island.'
+            'You dove all the way to the bottom of the ocean, through a hidden tunnel that led impossibly deep, and found the mythical sunken island.'
           );
         }
       },
@@ -1094,7 +1094,7 @@ export class ActivityService {
             if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RaiseIsland].complete) {
               this.logService.log(
                 LogTopic.STORY,
-                'With a mighty pull of 777 chains, the island comes loose. You haul it to the surface.'
+                'With a mighty pull on the chains, the island comes loose. You haul it to the surface.'
               );
             }
           } else {
@@ -1315,9 +1315,6 @@ export class ActivityService {
         }
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].progress++;
         this.impossibleTaskService.checkCompletion();
-        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BuildTower].complete) {
-          this.logService.log(LogTopic.STORY, 'You have acheived the impossible and built a tower beyond the heavens.');
-        }
       },
     ],
     resourceUse: [
@@ -1404,9 +1401,6 @@ export class ActivityService {
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].progress++;
           this.logService.log(LogTopic.EVENT, 'You feel yourself drawing closer to mastery over the winds.');
           this.impossibleTaskService.checkCompletion();
-          if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.TameWinds].complete) {
-            this.logService.log(LogTopic.STORY, 'You acheived the impossible and tamed a hurricane.');
-          }
         } else {
           this.logService.injury(
             LogTopic.EVENT,
@@ -1470,7 +1464,7 @@ export class ActivityService {
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].complete) {
           this.logService.log(
             LogTopic.STORY,
-            'You mastered flight! You can go anywhere in the world now, even where the ancient dragons live.'
+            'Your mastery of flight could take you far, even to where ancient dragons live.'
           );
         }
       },
@@ -1606,7 +1600,7 @@ export class ActivityService {
           return;
         }
 
-        if (this.characterService.attributes.charisma.value < 1e18) {
+        if (this.characterService.attributes.charisma.value < 1e17) {
           this.logService.injury(
             LogTopic.EVENT,
             "The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first."
@@ -1627,9 +1621,6 @@ export class ActivityService {
         }
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].progress++;
         this.impossibleTaskService.checkCompletion();
-        if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.BefriendDragon].complete) {
-          this.logService.log(LogTopic.STORY, 'You did the impossible and made friends with a dragon!');
-        }
       },
     ],
     resourceUse: [{}],
@@ -1734,7 +1725,7 @@ export class ActivityService {
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.ConquerTheNation].complete) {
           this.logService.log(
             LogTopic.STORY,
-            'You did the impossible and conquered the nation! You bring an end to cruelty and strife for all under your wise rule.'
+            'You conquered the nation! You will surely bring an end to cruelty and strife for all under your wise rule.'
           );
         }
       },
@@ -1765,7 +1756,7 @@ export class ActivityService {
           if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.RearrangeTheStars].complete) {
             this.logService.log(
               LogTopic.STORY,
-              'You did the impossible and rearranged the stars themselves. You are so near to achieving immortality you can almost taste it. It tastes like peaches.'
+              'You are so near to achieving immortality you can almost taste it. It tastes like peaches.'
             );
           }
         }

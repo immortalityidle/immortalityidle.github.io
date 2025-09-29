@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
 import { BattleService } from '../game-state/battle.service';
 import { MatIcon } from '@angular/material/icon';
-import { TitleCasePipe } from '@angular/common';
+import { NgOptimizedImage, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
 import { CharacterService } from '../game-state/character.service';
@@ -17,6 +17,7 @@ import { CharacterService } from '../game-state/character.service';
     forwardRef(() => TitleCasePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => NgOptimizedImage),
   ],
 })
 export class BattlePanelComponent {

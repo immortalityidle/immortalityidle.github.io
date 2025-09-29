@@ -5,7 +5,7 @@ import { InventoryService, Item } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { CharacterService } from '../game-state/character.service';
-import { NgClass, TitleCasePipe } from '@angular/common';
+import { NgClass, NgOptimizedImage, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { BigNumberPipe } from '../pipes';
@@ -19,6 +19,7 @@ import { BigNumberPipe } from '../pipes';
     forwardRef(() => TitleCasePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => NgOptimizedImage),
   ],
 })
 export class StoreModalComponent {

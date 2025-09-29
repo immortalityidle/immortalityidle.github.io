@@ -91,7 +91,7 @@
               @for (statusEffect of enemy.statusEffects; track statusEffect.trackField()) {
                 <div class="techniqueLine" tooltip="{{statusEffect.name()}}<br>{{statusEffect.description()}}">
                   <div class="statusRow">
-                    <img class="monsterImage" src="{{statusEffect.imageFile()}}" alt="{{statusEffect.name()}}" width="24" height="24"/>
+                    <img class="monsterImage" ngSrc="{{statusEffect.imageFile()}}" alt="{{statusEffect.name()}}" width="24" height="24" priority/>
                     <span class="statusText">{{statusEffect.ticksLeft()}} ticks left</span>
                   </div>
                 </div>
@@ -100,7 +100,7 @@
             <div class="splitDiv">
               @if (battleService.enemyImageFile() !== '') {
                 <div>
-                  <img class="monsterImage" src="{{battleService.enemyImageFile()}}" alt="A Monster!" width="80" height="100"/>
+                  <img class="monsterImage" ngSrc="{{battleService.enemyImageFile()}}" alt="A Monster!" width="80" height="100" priority/>
                 </div>
               }
             </div>

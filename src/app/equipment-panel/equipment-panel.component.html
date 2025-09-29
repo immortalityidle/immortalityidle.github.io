@@ -7,7 +7,7 @@
       tooltip="{{(characterService.equipment.head !== null) ? (characterService.equipment.head.name | titlecase) + '.<br>' + (characterService.equipment.head.description) : ''}}">
       @if (characterService.equipment.head?.imageFile){
         <div>
-          <img src="assets/images/items/{{characterService.equipment.head?.imageFile}}.png" class="itemImage" 
+          <img ngSrc="assets/images/items/{{characterService.equipment.head?.imageFile}}.png" class="itemImage" priority
             width="48" height="48"  alt="{{characterService.equipment.head?.name | titlecase}}"/>
         </div>
       }
@@ -24,7 +24,7 @@
       tooltip="{{(characterService.equipment.rightHand !== null) ? (characterService.equipment.rightHand.name | titlecase) + '.<br>' + (characterService.equipment.rightHand.description) : ''}}">
       @if (characterService.equipment.rightHand?.imageFile){
         <div>
-          <img src="assets/images/items/{{characterService.equipment.rightHand?.imageFile}}.png" class="itemImage" 
+          <img ngSrc="assets/images/items/{{characterService.equipment.rightHand?.imageFile}}.png" class="itemImage" priority 
             width="48" height="48"  alt="{{characterService.equipment.rightHand?.name | titlecase}}"/>
         </div>
       }
@@ -40,7 +40,7 @@
       tooltip="{{(characterService.equipment.body !== null) ? (characterService.equipment.body.name | titlecase) + '.<br>' + (characterService.equipment.body.description) : ''}}">
       @if (characterService.equipment.body?.imageFile){
         <div>
-          <img src="assets/images/items/{{characterService.equipment.body?.imageFile}}.png" class="itemImage" 
+          <img ngSrc="assets/images/items/{{characterService.equipment.body?.imageFile}}.png" class="itemImage" priority 
             width="48" height="48"  alt="{{characterService.equipment.body?.name | titlecase}}"/>
         </div>
       }
@@ -56,7 +56,7 @@
       tooltip="{{(characterService.equipment.leftHand !== null) ? (characterService.equipment.leftHand.name | titlecase) + '.<br>' + (characterService.equipment.leftHand.description) : ''}}">
       @if (characterService.equipment.leftHand?.imageFile){
         <div>
-          <img src="assets/images/items/{{characterService.equipment.leftHand?.imageFile}}.png" class="itemImage" 
+          <img ngSrc="assets/images/items/{{characterService.equipment.leftHand?.imageFile}}.png" class="itemImage" priority 
             width="48" height="48"  alt="{{characterService.equipment.leftHand?.name | titlecase}}"/>
         </div>
       }
@@ -75,7 +75,7 @@
       tooltip="{{(characterService.equipment.legs !== null) ? (characterService.equipment.legs.name | titlecase) + '.<br>' + (characterService.equipment.legs.description) : ''}}">
       @if (characterService.equipment.legs?.imageFile){
         <div>
-          <img src="assets/images/items/{{characterService.equipment.legs?.imageFile}}.png" class="itemImage" 
+          <img ngSrc="assets/images/items/{{characterService.equipment.legs?.imageFile}}.png" class="itemImage" priority 
             width="48" height="48"  alt="{{characterService.equipment.legs?.name | titlecase}}"/>
         </div>
       }
@@ -95,7 +95,7 @@
                 tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
                 <div class="itemName textOverflow">
                   @if (itemStack?.item?.imageFile){
-                    <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" 
+                    <img ngSrc="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" priority 
                       width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
                   }
                   @else {
@@ -117,7 +117,7 @@
       tooltip="{{(characterService.equipment.feet !== null) ? (characterService.equipment.feet.name | titlecase) + '.<br>' + (characterService.equipment.feet.description) : ''}}">
       @if (characterService.equipment.feet?.imageFile){
         <div>
-          <img src="assets/images/items/{{characterService.equipment.feet?.imageFile}}.png" class="itemImage" 
+          <img ngSrc="assets/images/items/{{characterService.equipment.feet?.imageFile}}.png" class="itemImage" priority
             width="48" height="48"  alt="{{characterService.equipment.feet?.name | titlecase}}"/>
         </div>
       }

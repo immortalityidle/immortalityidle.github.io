@@ -3,7 +3,7 @@ import { CharacterService, EquipmentPosition } from '../game-state/character.ser
 import { InventoryService, instanceOfEquipment, Item } from '../game-state/inventory.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
-import { NgClass, TitleCasePipe } from '@angular/common';
+import { NgClass, NgOptimizedImage, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
@@ -20,6 +20,7 @@ import { BigNumberPipe } from '../pipes';
     forwardRef(() => TitleCasePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => NgOptimizedImage),
   ],
 })
 export class EquipmentPanelComponent {

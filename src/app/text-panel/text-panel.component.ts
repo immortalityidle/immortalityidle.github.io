@@ -1,4 +1,5 @@
-import { Component, Inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import { Component, forwardRef, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -6,6 +7,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   template: 'passed in {{ data.name }}',
   templateUrl: './text-panel.component.html',
   styleUrls: ['./text-panel.component.less', '../app.component.less'],
+  imports: [forwardRef(() => NgOptimizedImage)],
 })
 export class TextPanelComponent {
   titleText = '';

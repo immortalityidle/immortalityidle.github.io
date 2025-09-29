@@ -53,7 +53,7 @@
               tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
               <div class="itemName textOverflow">
                 @if (itemStack?.item?.imageFile){
-                  <img src="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage"
+                  <img ngSrc="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" priority
                     width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
                 }
                 @else {

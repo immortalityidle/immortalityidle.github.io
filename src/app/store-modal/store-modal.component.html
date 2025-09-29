@@ -9,7 +9,7 @@
             tooltip="{{landItem.description}}">
             <div>
               @if (landItem.imageFile){
-                <img src="assets/images/items/{{landItem.imageFile}}.png" class="itemImage"
+                <img ngSrc="assets/images/items/{{landItem.imageFile}}.png" class="itemImage" priority
                   width="48" height="48" />
               }
             </div>
@@ -25,7 +25,7 @@
               tooltip="{{item.description}}">
               <div>
                 @if (item.imageFile){
-                  <img src="assets/images/items/{{item.imageFile}}.png" class="itemImage"
+                  <img ngSrc="assets/images/items/{{item.imageFile}}.png" class="itemImage" priority
                     width="48" height="48" />
                 }
               </div>

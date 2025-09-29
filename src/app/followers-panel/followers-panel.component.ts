@@ -4,7 +4,7 @@ import { FollowerManagementPanelComponent } from '../follower-management-panel/f
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService, Follower } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { NgClass, TitleCasePipe } from '@angular/common';
+import { NgClass, NgOptimizedImage, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
@@ -24,6 +24,7 @@ import { CdkDrag, CdkDragMove, CdkDragRelease, CdkDropList } from '@angular/cdk/
     forwardRef(() => CamelToTitlePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => NgOptimizedImage),
   ],
 })
 export class FollowersPanelComponent {
