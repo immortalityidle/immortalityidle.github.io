@@ -4,6 +4,7 @@
   <br>
   <div class="inventoryGrid">
     @for (item of itemRepoService.furniture; track item.id) {
+      @if (!item.locked) {
       <div>
         <div class="itemSlot" tabindex="0"
           tooltip="{{homeService.getFurnitureTooltip(item)}}"
@@ -13,10 +14,11 @@
             <div>OWNED</div>
           } 
           @else {
-            <div>$ {{item.value | number: '1.0-0'}}</div>
+            <div>$ {{item.value | bigNumber}}</div>
           }
         </div>
       </div>
+      }
     }
   </div>
 

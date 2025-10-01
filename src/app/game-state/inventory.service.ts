@@ -59,6 +59,7 @@ export interface Item {
   pouchable?: boolean;
   increaseAmount?: number;
   cooldown?: number;
+  locked?: boolean;
 }
 
 export interface Equipment extends Item {
@@ -164,6 +165,7 @@ export interface InventoryProperties {
   heirloomSlots: number;
   daysGorged: number;
   maxFoodPerDay: number;
+  unlockedFurniture: string[];
 }
 
 @Injectable({
@@ -260,6 +262,7 @@ export class InventoryService {
   maxFoodPerDay = 10;
   heirloomSlots = signal<number>(0);
   daysGorged = 0;
+  unlockedFurniture: string[] = [];
 
   constructor(
     private injector: Injector,
@@ -547,6 +550,7 @@ export class InventoryService {
       heirloomSlots: this.heirloomSlots(),
       daysGorged: this.daysGorged,
       maxFoodPerDay: this.maxFoodPerDay,
+      unlockedFurniture: this.unlockedFurniture,
     };
   }
 
@@ -612,6 +616,16 @@ export class InventoryService {
     this.heirloomSlots.set(properties.heirloomSlots);
     this.daysGorged = properties.daysGorged;
     this.maxFoodPerDay = properties.maxFoodPerDay;
+    this.unlockedFurniture = properties.unlockedFurniture;
+    for (const furniture of this.itemRepoService.furniture) {
+      if (furniture.locked !== undefined) {
+        if (this.unlockedFurniture.includes(furniture.name)) {
+          furniture.locked = false;
+        } else {
+          furniture.locked = true;
+        }
+      }
+    }
   }
 
   farmFoodList = [
@@ -1254,6 +1268,43 @@ export class InventoryService {
         'Your mother gives you three big bags of rice as you prepare to make your way in the world.'
       );
       this.addItem(this.itemRepoService.items['rice'], 300);
+    }
+
+    if (this.characterService.totalLives > 5) {
+      this.unlockFurniture('purple ancestor portrait');
+    }
+    if (this.characterService.totalLives > 10) {
+      this.unlockFurniture('green ancestor portrait');
+    }
+    if (this.characterService.totalLives > 15) {
+      this.unlockFurniture('red ancestor portrait');
+    }
+    if (this.characterService.totalLives > 20) {
+      this.unlockFurniture('orange ancestor portrait');
+    }
+    if (this.characterService.totalLives > 25) {
+      this.unlockFurniture('pink ancestor portrait');
+    }
+    if (this.characterService.totalLives > 30) {
+      this.unlockFurniture('blue ancestor portrait');
+    }
+    if (this.characterService.totalLives > 35) {
+      this.unlockFurniture('yellow ancestor portrait');
+    }
+    if (this.characterService.totalLives > 40) {
+      this.unlockFurniture('brown ancestor portrait');
+    }
+    if (this.characterService.totalLives > 45) {
+      this.unlockFurniture('white ancestor portrait');
+    }
+    if (this.characterService.totalLives > 50) {
+      this.unlockFurniture('pastel ancestor portrait');
+    }
+    if (this.characterService.totalLives > 55) {
+      this.unlockFurniture('black ancestor portrait');
+    }
+    if (this.characterService.totalLives > 60) {
+      this.unlockFurniture('gray ancestor portrait');
     }
   }
 
@@ -2462,6 +2513,18 @@ export class InventoryService {
         this.characterService.itemPouches[pouchIndex].quantity;
       this.itemStacks[itemIndex] = this.getEmptyItemStack();
     }
+  }
+
+  unlockFurniture(furnitureToUnlock: string) {
+    if (this.unlockedFurniture.includes(furnitureToUnlock)) {
+      return;
+    }
+    const furnitureItem = this.itemRepoService.furniture.find(item => item.name === furnitureToUnlock);
+    if (furnitureItem) {
+      furnitureItem.locked = false;
+      this.characterService.toast('New furniture is available: ' + this.titleCasePipe.transform(furnitureToUnlock));
+    }
+    this.unlockedFurniture.push(furnitureToUnlock);
   }
 }
 

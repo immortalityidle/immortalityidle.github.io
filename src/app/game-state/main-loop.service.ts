@@ -219,15 +219,19 @@ export class MainLoopService {
     this.bankedTicks += timeDiff / TICK_INTERVAL_MS;
 
     let ticksToDo = 0;
-    if (this.useBankedTicks && !this.pause && this.tickDivider < 40) {
-      ticksToDo = Math.floor(this.bankedTicks / this.tickDivider);
-      if (ticksToDo > 10) {
-        ticksToDo = 10;
+    if (!this.pause && this.lastUsedTickTime < newTime - this.tickDivider * TICK_INTERVAL_MS) {
+      if (this.useBankedTicks && this.tickDivider < 40) {
+        ticksToDo = Math.floor(20 / this.tickDivider);
+        if (this.bankedTicks > this.tickDivider * ticksToDo) {
+          this.bankedTicks -= this.tickDivider * ticksToDo;
+        } else {
+          ticksToDo = 1;
+          this.bankedTicks -= this.tickDivider;
+        }
+      } else {
+        this.bankedTicks -= this.tickDivider;
+        ticksToDo = 1;
       }
-      this.bankedTicks -= ticksToDo * this.tickDivider;
-    } else if (!this.pause && this.lastUsedTickTime < newTime - this.tickDivider * TICK_INTERVAL_MS) {
-      this.bankedTicks -= this.tickDivider;
-      ticksToDo = 1;
     }
     for (let i = 0; i < ticksToDo; i++) {
       if (this.pause) {

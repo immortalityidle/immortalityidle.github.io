@@ -29,6 +29,7 @@ export interface Enemy {
   element?: string;
   statusEffects?: StatusEffect[];
   immunities?: string[];
+  unlocksFurniture?: string;
 }
 
 export interface DisplayEnemy {
@@ -49,6 +50,7 @@ export interface EnemyTypes {
   basePower: number;
   lootType?: string[];
   techniques?: Technique[];
+  unlocksFurniture?: string;
 }
 
 export interface BattleProperties {
@@ -1585,6 +1587,7 @@ export class BattleService {
       defense: defense,
       loot: loot,
       techniques: techniques,
+      unlocksFurniture: monsterType.unlocksFurniture,
     });
   }
 
@@ -1706,6 +1709,9 @@ export class BattleService {
   }
 
   private defeatEffect(enemy: Enemy) {
+    if (enemy.unlocksFurniture) {
+      this.inventoryService.unlockFurniture(enemy.unlocksFurniture);
+    }
     if (!enemy.defeatEffect) {
       return;
     }
@@ -1793,6 +1799,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Scorpion in Amber',
     },
     {
       name: 'lizard',
@@ -1847,6 +1854,7 @@ export class BattleService {
       location: LocationType.SmallTown,
       basePower: 18,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      unlocksFurniture: 'Ugly Portrait',
     },
     {
       name: 'imp',
@@ -1908,6 +1916,7 @@ export class BattleService {
       basePower: 100,
       element: 'metal',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_FRUIT],
+      unlocksFurniture: 'Lucky Paw',
     },
     {
       name: 'boar',
@@ -1970,6 +1979,7 @@ export class BattleService {
       basePower: 800,
       element: 'earth',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      unlocksFurniture: 'Candle',
     },
     {
       name: 'chupacabra',
@@ -1994,6 +2004,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Alluring Beauty',
     },
     {
       name: 'crocodile',
@@ -2043,6 +2054,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Seductive Beauty',
     },
     {
       name: 'jackal',
@@ -2072,6 +2084,7 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 2500,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      unlocksFurniture: 'Cuteness Portrait',
     },
     {
       name: 'ghoul',
@@ -2118,6 +2131,7 @@ export class BattleService {
       location: LocationType.SmallPond,
       basePower: 5000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      unlocksFurniture: 'Hippo Tusk Artwork',
     },
     {
       name: 'rakshasa',
@@ -2126,6 +2140,7 @@ export class BattleService {
       basePower: 6000,
       element: 'wood',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MONEY],
+      unlocksFurniture: 'Scholarly Texts',
     },
     {
       name: 'ghost',
@@ -2149,6 +2164,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Ephemeral Essence',
     },
     {
       name: 'centaur',
@@ -2189,6 +2205,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Troll Tusk Trophy',
     },
     {
       name: 'werewolf',
@@ -2250,6 +2267,7 @@ export class BattleService {
       location: LocationType.Beach,
       basePower: 40000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      unlocksFurniture: 'Leg Day Trainer',
     },
     {
       name: 'bugbear',
@@ -2265,6 +2283,7 @@ export class BattleService {
       basePower: 70000,
       element: 'earth',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      unlocksFurniture: 'Bearskin Rug',
     },
     {
       name: 'yeti',
@@ -2297,6 +2316,7 @@ export class BattleService {
       basePower: 120000,
       element: 'wood',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      unlocksFurniture: 'Ivory Horn',
     },
     {
       name: 'banshee',
@@ -2304,6 +2324,7 @@ export class BattleService {
       location: LocationType.Dungeon,
       basePower: 140000,
       lootType: [LOOT_TYPE_GEM],
+      unlocksFurniture: 'Wailing Beauty',
     },
     {
       name: 'harpy',
@@ -2319,6 +2340,7 @@ export class BattleService {
       basePower: 180000,
       element: 'fire',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      unlocksFurniture: 'Phoenix Down Mattress',
     },
     {
       name: 'sphinx',
@@ -2374,6 +2396,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Beauty of the Depths',
     },
     {
       name: 'cyclops',
@@ -2406,6 +2429,7 @@ export class BattleService {
       basePower: 800000,
       element: 'wood',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      unlocksFurniture: 'Altar of Nature',
     },
     {
       name: 'behemoth',
@@ -2420,6 +2444,7 @@ export class BattleService {
       location: LocationType.Jungle,
       basePower: 1000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
+      unlocksFurniture: 'Dino Tooth Dagger',
     },
     {
       name: 'wyvern',
@@ -2451,6 +2476,7 @@ export class BattleService {
         },
       ],
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
+      unlocksFurniture: 'Blazing Grimoire',
     },
     {
       name: 'doomworm',
@@ -2468,6 +2494,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Doom Vault',
     },
     {
       name: 'lich',
@@ -2500,6 +2527,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Dark Grimoire',
     },
     {
       name: 'thunderbird',
@@ -2563,6 +2591,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Eyestalk Hatstand',
     },
     {
       name: 'hydra',
@@ -2692,6 +2721,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Altar of the Depths',
     },
     {
       name: 'stormbringer',
@@ -2715,6 +2745,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Storm Shower',
     },
     {
       name: 'lavaLeech',
@@ -2812,6 +2843,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      unlocksFurniture: 'Ashen Scale Vault',
     },
   ];
 

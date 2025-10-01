@@ -322,6 +322,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a purple robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -335,6 +336,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a green robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -348,6 +350,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a red robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -361,6 +364,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing an orange robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -374,6 +378,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a pink robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -387,6 +392,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a blue robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -400,6 +406,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a yellow robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -413,6 +420,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a brown robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -426,6 +434,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a white robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -439,6 +448,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a pastel robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -452,6 +462,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a black robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -465,6 +476,7 @@ baguaMap = [
       value: 1e7,
       description: 'A fine portrait of one of your ancestors wearing a gray robe.',
       useConsumes: false,
+      locked: true,
       use: () => {
         // just decorative
       },
@@ -475,10 +487,452 @@ baguaMap = [
       type: 'furniture',
       subtype: 'trophy',
       value: 1e6,
-      description: 'A hunting trophy from a monster you fought in a previous life.',
+      description: 'A simple hunting trophy.',
       useConsumes: false,
       use: () => {
         // just decorative
+      },
+    },
+    {
+      id: 'scorpionInAmber',
+      name: 'Scorpion in Amber',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'orange',
+      elements: ['wood', 'earth'],
+      increaseAmount: 1,
+      value: 1e4,
+      description: 'A trophy made from a small monster you defeated. Could brighten up your home.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'uglyPortrait',
+      name: 'Ugly Portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'green',
+      increaseAmount: 1,
+      value: 1e5,
+      description: 'A picture of an ugly creature that you defeated.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'luckyPaw',
+      name: 'Lucky Paw',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'brown',
+      elements: ['metal'],
+      increaseAmount: 2,
+      value: 1e6,
+      description:
+        'A desicated paw from a monkey you defeated. This will certainly bring you lots of luck. Maybe you should make a wish.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'candle',
+      name: 'Candle',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'yellow',
+      elements: ['fire'],
+      increaseAmount: 2,
+      value: 1e2,
+      description: 'A candle taken from a kobold. He told you not to take it, but you took it.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'alluringBeauty',
+      name: 'Alluring Beauty',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'blue',
+      elements: ['water'],
+      increaseAmount: 3,
+      value: 1e7,
+      description:
+        "You can't get the image of that siren out of your mind. Maybe if you commission a portrait of her you'll get it out of your system.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'seductiveBeauty',
+      name: 'Seductive Beauty',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'white',
+      increaseAmount: 5,
+      value: 5e7,
+      description: "Pale skin, red lips. You almost wish you hadn't defeated her.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'cutePortrait',
+      name: 'Cute Portrait',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'brown',
+      elements: ['wood'],
+      increaseAmount: 4,
+      value: 1e8,
+      description: 'So cute, so fuzzy, so little. So dead now.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'hippoTuskArtwork',
+      name: 'Hippo Tusk Artwork',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'yellow',
+      elements: ['water', 'wood', 'earth'],
+      increaseAmount: 5,
+      value: 1e4,
+      description: 'Artful arrangement of the yellowed tusks of a hippo with other knickknacks from your adventures.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'scholarlyTexts',
+      name: 'Scholarly Texts',
+      type: 'furniture',
+      subtype: 'books',
+      color: 'pastel',
+      increaseAmount: 5,
+      value: 1e8,
+      description:
+        'A colorful collection of scholarly textbooks arranged on a custom-made shelf. Who knew some monsters were readers?',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.increaseAttribute('intelligence', 0.05);
+      },
+    },
+    {
+      id: 'ephemeralEssence',
+      name: 'Ephemeral Essence',
+      type: 'furniture',
+      subtype: 'spiritual',
+      color: 'gray',
+      increaseAmount: 10,
+      value: 1e9,
+      description:
+        "The faded essence of a defeated spirit. It doesn't do much, but it shimmers when the light hits it just right.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'trollTuskTrophy',
+      name: 'Troll Tusk Trophy',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'black',
+      elements: ['wood', 'earth', 'metal'],
+      increaseAmount: 6,
+      value: 1e5,
+      description: 'Artful arrangement of the blackened tusks of a troll with other knickknacks from your adventures.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'legDayTrainer',
+      name: 'Leg Day Trainer',
+      type: 'furniture',
+      subtype: 'fitness',
+      color: 'blue',
+      elements: ['water', 'metal'],
+      increaseAmount: 5,
+      value: 1e10,
+      description:
+        "How did that walking shark get such massive quads? You don't know, but you're determined to find out.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.increaseAttribute('strength', 0.01);
+        this.characterService.increaseAttribute('speed', 0.01);
+      },
+    },
+    {
+      id: 'bearskinRug',
+      name: 'Bearskin Rug',
+      type: 'furniture',
+      subtype: 'animal',
+      color: 'brown',
+      elements: ['wood'],
+      increaseAmount: 8,
+      value: 1e10,
+      description: 'The perfectly preserved hide and head of a massive bear.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'ivoryHorn',
+      name: 'Ivory Horn',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'white',
+      elements: ['wood'],
+      increaseAmount: 12,
+      value: 1e11,
+      description:
+        "An irredescently beautiful horn taken from a unicorn who didn't mind its own business and mounted on a golden stand.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'wailingBeauty',
+      name: 'Wailing Beauty',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'gray',
+      increaseAmount: 20,
+      value: 1e12,
+      description: 'Her voice still haunts your dreams.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'phoenixDownMattress',
+      name: 'Phoenix Down Mattress',
+      type: 'furniture',
+      subtype: 'bed',
+      color: 'red',
+      elements: ['fire'],
+      increaseAmount: 15,
+      value: 1e14,
+      description:
+        'The softest bed you can imagine, with magical restorative properties to ensure your sleep is perfect.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.status.stamina.value += 10;
+        this.characterService.status.health.value += 2;
+        this.characterService.checkOverage();
+      },
+    },
+    {
+      id: 'beautyOfTheDepths',
+      name: 'Beauty of the Depths',
+      type: 'furniture',
+      subtype: 'portrait',
+      color: 'pink',
+      elements: ['water'],
+      increaseAmount: 25,
+      value: 1e16,
+      description:
+        "There she was, the queen under the sea. If she hadn't tried to kill you, you might have fallen in love.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'altarOfNature',
+      name: 'Altar of Nature',
+      type: 'furniture',
+      subtype: 'spiritual',
+      color: 'green',
+      elements: ['wood'],
+      increaseAmount: 20,
+      value: 1e18,
+      description:
+        "A sacred shrine guarded by the most powerful creatures in the forest. You can move it to your home, but it won't be cheap.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        if (this.characterService.attributes.spirituality.value > 0) {
+          this.characterService.increaseAttribute('spirituality', 0.005);
+        }
+      },
+    },
+    {
+      id: 'dinoToothDagger',
+      name: 'Dino Tooth Dagger',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'white',
+      increaseAmount: 25,
+      value: 1e16,
+      description: "It's too brittle to be any good for combat, but it sure looks cool.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'blazingGrimoire',
+      name: 'Blazing Grimoire',
+      type: 'furniture',
+      subtype: 'books',
+      color: 'purple',
+      elements: ['fire'],
+      increaseAmount: 28,
+      value: 1e17,
+      description:
+        'This book burning in purple flame is too hot to touch, let alone read. It might make a nice conversation piece at parties though, if you invest in a fireproof shelf for it.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'Doom Vault',
+      name: 'Doom Vault',
+      type: 'furniture',
+      subtype: 'safe',
+      color: 'orange',
+      elements: ['earth', 'metal'],
+      increaseAmount: 30,
+      value: 1e18,
+      description:
+        'A vault made from the nearly indestructable hide of a doomworm. Seems to almost magically increase your wealth.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.updateMoney(1e6);
+      },
+    },
+    {
+      id: 'darkGrimoire',
+      name: 'Dark Grimoire',
+      type: 'furniture',
+      subtype: 'books',
+      color: 'black',
+      elements: ['metal'],
+      increaseAmount: 32,
+      value: 1e20,
+      description: "Don't read this. Just don't. No matter how much it calls to you, just leave it on the shelf.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.increaseAttribute('intelligence', 5);
+        this.characterService.yin += 100;
+        if (this.characterService.yang > 100) {
+          this.characterService.yang -= 100;
+        }
+      },
+    },
+    {
+      id: 'eyestalkHatstand',
+      name: 'Eyestalk Hatstand',
+      type: 'furniture',
+      subtype: 'trophy',
+      color: 'red',
+      increaseAmount: 35,
+      value: 1e19,
+      description:
+        "You propbably shouldn't have used the disintegrating eye for this, your hats keep disappearing now.",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        // just decorative
+      },
+    },
+    {
+      id: 'altarOfTheDepths',
+      name: 'Altar of the Depths',
+      type: 'furniture',
+      subtype: 'spiritual',
+      color: 'blue',
+      elements: ['water'],
+      increaseAmount: 40,
+      value: 1e22,
+      description:
+        'A mystical altar found buried in the depths of the sea. The cost of bringing it home would be breathtaking.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        if (this.characterService.attributes.spirituality.value > 0) {
+          this.characterService.increaseAttribute('spirituality', 0.02);
+        }
+      },
+    },
+    {
+      id: 'stormShower',
+      name: 'Storm Shower',
+      type: 'furniture',
+      subtype: 'bath',
+      color: 'white',
+      elements: ['water'],
+      increaseAmount: 40,
+      value: 1e22,
+      description:
+        "With the right (and very expensive) setup, the stormbringer's heart can be harnessed for your daily bathing. Neat!",
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.increaseAttribute('charisma', 0.5);
+        this.characterService.status.stamina.value += 10;
+        this.characterService.status.health.value += 2;
+        this.characterService.healthBonusBath += 5;
+        this.characterService.checkOverage();
+        if (this.characterService.hygieneLifespan < 10950) {
+          this.characterService.hygieneLifespan += 5;
+        }
+      },
+    },
+    {
+      id: 'ashenScaleVault',
+      name: 'Ashen Scale Vault',
+      type: 'furniture',
+      subtype: 'safe',
+      color: 'black',
+      elements: ['fire', 'earth', 'metal'],
+      increaseAmount: 40,
+      value: 1e23,
+      description:
+        'A vault made from unbreakable scales. Crazy expensive, but seems to magically increase your wealth.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.updateMoney(1e12);
       },
     },
   ];

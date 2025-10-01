@@ -605,6 +605,7 @@ export class GameStateService {
       heirloomSlots: props?.heirloomSlots || 0,
       daysGorged: props?.daysGorged || 0,
       maxFoodPerDay: props?.maxFoodPerDay || 10,
+      unlockedFurniture: props?.unlockedFurniture || [],
     };
   }
 
@@ -1251,6 +1252,7 @@ export class GameStateService {
   rebirth(): void {
     this.characterService.forceRebirth = true;
     this.mainLoopService.togglePause(true);
+    this.mainLoopService.tick();
   }
 
   getDeploymentFlavor() {

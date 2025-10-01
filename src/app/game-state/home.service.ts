@@ -1230,20 +1230,26 @@ export class HomeService {
     for (let i = 0; i < this.bedroomFurniture.length; i++) {
       const furnitureItem = this.bedroomFurniture[i];
       if (furnitureItem) {
+        let increase = 0;
         this.openBedroomFurnitureSlots--;
         if (this.baguaMap[i].includes(furnitureItem.subtype || '')) {
-          fengshuiScore += 1;
+          increase++;
         }
         if (this.baguaMap[i].includes(furnitureItem.color || '')) {
-          fengshuiScore += 1;
+          increase++;
         }
         if (furnitureItem.elements) {
           for (const element of furnitureItem.elements) {
             if (this.baguaMap[i].includes(element)) {
-              fengshuiScore += 1;
+              increase++;
             }
           }
         }
+        let multiplier = 1;
+        if (furnitureItem.increaseAmount) {
+          multiplier = furnitureItem.increaseAmount;
+        }
+        fengshuiScore += increase * multiplier;
       }
     }
     this.characterService.fengshuiScore = fengshuiScore;

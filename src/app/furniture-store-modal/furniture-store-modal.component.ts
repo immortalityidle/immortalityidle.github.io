@@ -5,14 +5,15 @@ import { HomeService } from '../game-state/home.service';
 import { InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { DecimalPipe, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-furniture-store-modal',
   templateUrl: './furniture-store-modal.component.html',
   styleUrls: ['./furniture-store-modal.component.less'],
-  imports: [forwardRef(() => DecimalPipe), forwardRef(() => TitleCasePipe), forwardRef(() => TooltipDirective)],
+  imports: [forwardRef(() => TitleCasePipe), forwardRef(() => TooltipDirective), forwardRef(() => BigNumberPipe)],
 })
 export class FurnitureStoreModalComponent {
   buyDisabled = true;
