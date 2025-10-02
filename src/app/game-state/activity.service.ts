@@ -1794,8 +1794,8 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 0.02);
         this.characterService.increaseAttribute('charisma', 0.02);
         this.characterService.status.stamina.value -= 5;
-        this.characterService.updateMoney(3);
-        this.OddJobs.lastIncome = 3;
+        const money = this.characterService.updateMoney(3);
+        this.OddJobs.lastIncome = money;
         this.oddJobDays++;
       },
     ],
@@ -1937,7 +1937,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Begging.lastIncome = money;
         this.beggingDays++;
         this.characterService.yang++;
@@ -1950,7 +1950,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Begging.lastIncome = money;
         this.beggingDays++;
         this.characterService.yang++;
@@ -1963,7 +1963,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Begging.lastIncome = money;
         this.beggingDays++;
         this.characterService.yang++;
@@ -1976,7 +1976,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Begging.lastIncome = money;
         this.beggingDays++;
         this.characterService.yang++;
@@ -2048,7 +2048,7 @@ export class ActivityService {
         if (this.familySpecialty === ActivityType.Cooking) {
           money += money * 0.2;
         }
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Cooking.lastIncome = money;
       },
       () => {
@@ -2119,7 +2119,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.1);
         this.characterService.yin++;
@@ -2141,7 +2141,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.2);
         this.characterService.increaseAttribute('fireLore', 0.02);
@@ -2165,7 +2165,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.3);
         this.characterService.increaseAttribute('fireLore', 0.05);
@@ -2189,7 +2189,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.5);
         this.characterService.increaseAttribute('fireLore', 0.1);
@@ -2313,7 +2313,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.05);
         this.characterService.increaseAttribute('waterLore', 0.1);
@@ -2331,7 +2331,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.1);
         this.characterService.increaseAttribute('waterLore', 0.2);
@@ -2349,7 +2349,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.15);
         this.characterService.increaseAttribute('waterLore', 0.3);
@@ -2367,7 +2367,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.2);
         this.characterService.increaseAttribute('waterLore', 0.6);
@@ -2481,7 +2481,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.001);
         this.characterService.yang++;
@@ -2501,7 +2501,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.005);
         this.characterService.yang++;
@@ -2522,7 +2522,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.02);
         this.characterService.yang++;
@@ -2542,7 +2542,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Woodworking.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.6);
         this.pillBoxCounter++;
@@ -2627,7 +2627,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.001);
         this.characterService.increaseAttribute('leatherwork', 0.1);
@@ -2646,7 +2646,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.005);
         this.characterService.increaseAttribute('leatherwork', 0.1);
@@ -2665,7 +2665,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.02);
         this.characterService.increaseAttribute('leatherwork', 0.1);
@@ -2684,7 +2684,7 @@ export class ActivityService {
           money += money * 0.2;
         }
         money *= this.incomeMultiplier;
-        this.characterService.updateMoney(money);
+        money = this.characterService.updateMoney(money);
         this.Leatherworking.lastIncome = money;
         this.characterService.increaseAttribute('earthLore', 0.6);
         this.characterService.increaseAttribute('leatherwork', 0.1);
@@ -4573,8 +4573,8 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 0.02);
         this.characterService.increaseAttribute('charisma', 0.02);
         this.characterService.status.stamina.value -= 5;
-        this.characterService.updateMoney(3);
-        this.OddJobs.lastIncome = 3;
+        const money = this.characterService.updateMoney(3);
+        this.OddJobs.lastIncome = money;
         this.oddJobDays++;
       },
     ],

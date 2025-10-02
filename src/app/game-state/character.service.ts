@@ -1192,19 +1192,21 @@ export class CharacterService {
     return c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
   }
 
-  updateMoney(amount: number, justSetIt = false) {
+  updateMoney(amount: number, justSetIt = false): number {
     if (justSetIt) {
       if (this.showUpdateAnimations) {
         this.moneyUpdates = amount - this.money;
       }
       this.money = amount;
     } else {
-      const multiplier = 1 + this.fengshuiScore / 100;
-      this.money += amount * multiplier;
+      const multiplier = 1 + Math.pow(this.fengshuiScore, 1.5) / 100;
+      amount *= multiplier;
+      this.money += amount;
       if (this.showUpdateAnimations) {
         this.moneyUpdates += amount;
       }
     }
+    return amount;
   }
 
   flashStatus(statusToFlash: string) {
