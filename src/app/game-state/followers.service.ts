@@ -85,7 +85,7 @@ export interface FollowersProperties {
   petsBoosted: boolean;
   onlyWantedFollowers: boolean;
   pets: Follower[];
-  leftoverMetallurgy: number;
+  leftoverWork: { [key: string]: number };
   followerTrainingIndex: number;
   petTrainingIndex: number;
   maxFollowerLevel: number;
@@ -157,7 +157,7 @@ export class FollowersService {
   autoReplaceUnlocked = false;
   petsBoosted = false;
   onlyWantedFollowers = false;
-  leftoverMetallurgy = 0;
+  leftoverWork: { [key: string]: number } = {};
   followerTrainingIndex = 0;
   petTrainingIndex = 0;
   maxFollowerLevel = 100;
@@ -380,7 +380,17 @@ export class FollowersService {
   jobs: jobsType = {
     chef: {
       work: daysElapsed => {
-        this.homeService.chefsWork(1 + Math.floor(this.jobs['chef'].totalPower / 100) * daysElapsed);
+        const workPower = this.jobs['chef'].totalPower * daysElapsed + (this.leftoverWork['chef'] || 0);
+        this.homeService.chefsWork(Math.floor(workPower / 100));
+        this.leftoverWork['chef'] = workPower % 100;
+        console.log(
+          'chefs worked, workPower = ' +
+            workPower +
+            ' leftover=' +
+            this.leftoverWork['chef'] +
+            ' daysElapsed=' +
+            daysElapsed
+        );
       },
       description: 'Chefs increase the output of your kitchens.',
       totalPower: 0,
@@ -397,43 +407,35 @@ export class FollowersService {
     },
     hunter: {
       work: daysElapsed => {
+        const workPower = this.jobs['hunter'].totalPower * daysElapsed + (this.leftoverWork['hunter'] || 0);
         if (this.hellService?.inHell()) {
-          if (this.jobs['hunter'].totalPower > 1000)
-            this.inventoryService.addItem(
-              this.itemRepoService.items['spiritMeat'],
-              1 + Math.floor((this.jobs['hunter'].totalPower / 1000) * daysElapsed)
-            );
+          this.inventoryService.addItem(this.itemRepoService.items['spiritMeat'], Math.floor(workPower / 1000));
+          this.leftoverWork['hunter'] = workPower % 1000;
           return;
         }
-        this.inventoryService.addItem(
-          this.itemRepoService.items['meat'],
-          1 + Math.floor(this.jobs['hunter'].totalPower * daysElapsed)
-        );
+        this.inventoryService.addItem(this.itemRepoService.items['meat'], Math.floor(workPower / 10) * daysElapsed);
+        this.leftoverWork['hunter'] = workPower % 10;
       },
       description: 'Hunters collect meat and help you hunt for hides.',
       totalPower: 0,
     },
     fisher: {
       work: daysElapsed => {
+        const workPower = this.jobs['fisher'].totalPower * daysElapsed + (this.leftoverWork['fisher'] || 0);
         if (this.hellService?.inHell()) {
-          if (this.jobs['fisher'].totalPower > 1000)
-            this.inventoryService.addItem(
-              this.itemRepoService.items['spiritCarp'],
-              1 + Math.floor((this.jobs['fisher'].totalPower / 1000) * daysElapsed)
-            );
+          this.inventoryService.addItem(this.itemRepoService.items['spiritCarp'], Math.floor(workPower / 1000));
+          this.leftoverWork['fisher'] = workPower % 1000;
           return;
         }
-        this.inventoryService.addItem(
-          this.itemRepoService.items['carp'],
-          1 + Math.floor(this.jobs['fisher'].totalPower * daysElapsed)
-        );
+        this.inventoryService.addItem(this.itemRepoService.items['carp'], Math.floor(workPower / 10) * daysElapsed);
+        this.leftoverWork['fisher'] = workPower % 10;
       },
       description: 'Fishers fish up delicious fish to contribute to your meals.',
       totalPower: 0,
     },
     farmer: {
       work: daysElapsed => {
-        this.farmService.workFields(1 + Math.floor(this.jobs['farmer'].totalPower * daysElapsed));
+        this.farmService.workFields(Math.floor(this.jobs['farmer'].totalPower * daysElapsed));
       },
       description: 'Farmers work your fields, helping your crops to grow.',
       totalPower: 0,
@@ -443,7 +445,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'miner');
         for (const worker of workers) {
-          this.inventoryService.addItem(this.inventoryService.getOre(Math.ceil(worker.power / 6)), daysElapsed / 2);
+          this.inventoryService.addItem(this.inventoryService.getOre(Math.ceil(worker.power / 6)), daysElapsed);
         }
       },
       description: 'Miners gather ore for your crafting.',
@@ -451,9 +453,9 @@ export class FollowersService {
     },
     metallurgist: {
       work: daysElapsed => {
-        const totalPower = this.jobs['metallurgist'].totalPower * daysElapsed + this.leftoverMetallurgy;
-        this.homeService.triggerWorkstations(ActivityType.Smelting, Math.floor(totalPower / 100));
-        this.leftoverMetallurgy = totalPower % 100;
+        const workPower = this.jobs['metallurgist'].totalPower * daysElapsed + (this.leftoverWork['metallurgist'] || 0);
+        this.homeService.triggerWorkstations(ActivityType.Smelting, Math.floor(workPower / 100));
+        this.leftoverWork['metallurgist'] = workPower % 100;
       },
       description: 'Metallurgists operate your smelting workstations, turning ores into refined metals.',
       totalPower: 0,
@@ -461,8 +463,9 @@ export class FollowersService {
     },
     coalDigger: {
       work: daysElapsed => {
-        const power = 1 + Math.floor((this.jobs['coalDigger'].totalPower * daysElapsed) / 100);
-        this.inventoryService.addItem(this.itemRepoService.items['coal'], power);
+        const workPower = this.jobs['coalDigger'].totalPower * daysElapsed + (this.leftoverWork['coalDigger'] || 0);
+        this.inventoryService.addItem(this.itemRepoService.items['coal'], Math.floor(workPower / 100));
+        this.leftoverWork['coalDigger'] = workPower % 100;
       },
       description: 'Coal Diggers gather coal for your crafting.',
       totalPower: 0,
@@ -471,7 +474,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'lumberjack');
         for (const worker of workers) {
-          this.inventoryService.addItem(this.inventoryService.getWood(Math.ceil(worker.power / 6)), daysElapsed / 2);
+          this.inventoryService.addItem(this.inventoryService.getWood(Math.ceil(worker.power / 6)), daysElapsed);
         }
       },
       description: 'Lumberjacks gather wood for your crafting.',
@@ -481,7 +484,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'herbalist');
         for (const worker of workers) {
-          this.inventoryService.generateHerb(Math.ceil(worker.power / 6), false, daysElapsed / 2);
+          this.inventoryService.generateHerb(Math.ceil(worker.power / 6), false, daysElapsed);
         }
       },
       description: 'Herbalists gather herbs for your crafting.',
@@ -491,7 +494,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'skinner');
         for (const worker of workers) {
-          this.inventoryService.addItem(this.inventoryService.getHide(Math.ceil(worker.power / 6)), daysElapsed / 2);
+          this.inventoryService.addItem(this.inventoryService.getHide(Math.ceil(worker.power / 6)), daysElapsed);
         }
       },
       description: 'Skinners gather hides for your crafting.',
@@ -499,20 +502,22 @@ export class FollowersService {
     },
     weaponsmith: {
       work: daysElapsed => {
-        let totalPower = this.jobs['weaponsmith'].totalPower;
+        const workPower = this.jobs['weaponsmith'].totalPower * daysElapsed + (this.leftoverWork['weaponsmith'] || 0);
+        let divider = 10;
         if (this.hellService?.inHell()) {
-          totalPower /= 10;
+          divider *= 10;
         }
         const rightHand = this.characterService.equipment.rightHand;
         const leftHand = this.characterService.equipment.leftHand;
         if (rightHand && rightHand.weaponStats) {
-          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
-          rightHand.value += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
+          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+          rightHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * daysElapsed;
         }
         if (leftHand && leftHand.weaponStats) {
-          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
-          leftHand.value += Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2)) * daysElapsed;
+          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+          leftHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * daysElapsed;
         }
+        this.leftoverWork['weaponsmith'] = workPower % divider;
       },
       description:
         'Weaponsmiths help you take care of your currently equipped weapons, adding power to them each day. Higher levels can also help improve them.',
@@ -520,20 +525,20 @@ export class FollowersService {
     },
     armorer: {
       work: daysElapsed => {
-        let totalPower = this.jobs['armorer'].totalPower;
+        const workPower = this.jobs['armorer'].totalPower * daysElapsed + (this.leftoverWork['armorer'] || 0);
+        let divider = 10;
         if (this.hellService?.inHell()) {
-          totalPower /= 10;
+          divider *= 10;
         }
         const improveArmor = (armor: Equipment): Equipment => ({
           ...armor,
           armorStats: armor.armorStats
             ? {
                 ...armor.armorStats,
-                defense:
-                  armor.armorStats?.defense + Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
+                defense: armor.armorStats?.defense + Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2),
               }
             : undefined,
-          value: armor.value + Math.ceil(Math.pow(1 + Math.floor(totalPower / 10), 2) / 2) * daysElapsed,
+          value: armor.value + Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2),
         });
         const equipment = this.characterService.equipment; // Too many long names, reduced and referenced
         if (equipment.head && equipment.head.armorStats) {
@@ -548,6 +553,7 @@ export class FollowersService {
         if (equipment.feet && equipment.feet.armorStats) {
           equipment.feet = improveArmor(equipment.feet);
         }
+        this.leftoverWork['armorer'] = workPower % divider;
       },
       description:
         'Armorers help you take care of your currently equipped pieces of armor, adding defense to them each day. Higher levels can also help improve them.',
@@ -621,19 +627,17 @@ export class FollowersService {
     },
     gemologist: {
       work: daysElapsed => {
-        let gemmerPower = this.jobs['gemologist'].totalPower;
+        const workPower = this.jobs['gemologist'].totalPower * daysElapsed + (this.leftoverWork['gemologist'] || 0);
+        let divisor = 50;
         if (this.hellService?.inHell()) {
-          gemmerPower /= 10;
+          divisor *= 10;
         }
-        gemmerPower = 1 + Math.floor(gemmerPower / 50);
-        if (gemmerPower > 8) {
-          gemmerPower = 8;
+        this.leftoverWork['gemologist'] = workPower % divisor;
+        const gemmerPower = Math.floor(workPower / divisor);
+        if (gemmerPower === 0) {
+          return;
         }
-
-        // Don't run each tick and just do loop manually here since it is better for cache.
-        for (let i = 0; i < daysElapsed; i++) {
-          this.inventoryService.mergeAnySpiritGem(gemmerPower);
-        }
+        this.inventoryService.mergeAnySpiritGem(gemmerPower);
       },
       description: 'Gemologists combine spirit gems into higher grades.',
       totalPower: 0,
@@ -652,7 +656,7 @@ export class FollowersService {
         for (const worker of workers) {
           this.inventoryService.addItem(
             this.inventoryService.generateSpiritGem(Math.ceil(worker.power / 8)),
-            daysElapsed / 2
+            daysElapsed
           );
         }
       },
@@ -670,11 +674,12 @@ export class FollowersService {
     },
     prophet: {
       work: daysElapsed => {
-        for (let i = 0; i < daysElapsed; i++) {
-          if (Math.random() < this.jobs['prophet'].totalPower * 0.00001) {
-            this.generateFollower();
-          }
+        let workPower = this.jobs['prophet'].totalPower * daysElapsed + (this.leftoverWork['prophet'] || 0);
+        while (workPower > 100000) {
+          this.generateFollower();
+          workPower -= 100000;
         }
+        this.leftoverWork['prophet'] = workPower;
       },
       description:
         'Prophets are dedicated to spreading the word of your greatness. Prophets can even find other followers for you if you are out of the mortal realm.',
@@ -683,20 +688,18 @@ export class FollowersService {
     },
     moneyBurner: {
       work: daysElapsed => {
-        let burnerPower = this.jobs['moneyBurner'].totalPower;
-        burnerPower = 1 + Math.floor(burnerPower / 50);
-        if (burnerPower > 10) {
-          burnerPower = 10;
-        } else if (burnerPower < 1) {
-          burnerPower = 1;
+        const workPower = this.jobs['moneyBurner'].totalPower * daysElapsed + (this.leftoverWork['moneyBurner'] || 0);
+        const burnerPower = Math.floor(workPower / 50);
+        this.leftoverWork['moneyBurner'] = workPower % 50;
+        if (burnerPower === 0) {
+          return;
         }
-        const hellMoneyCost = 1e6 / burnerPower;
-        let newHellMoney = daysElapsed;
-        if (this.characterService.money < hellMoneyCost * newHellMoney) {
-          newHellMoney = Math.floor(this.characterService.money / hellMoneyCost);
+        const cost = 1e6 * burnerPower;
+        if (this.characterService.money < cost) {
+          return;
         }
-        this.characterService.updateMoney(0 - newHellMoney * hellMoneyCost);
-        this.characterService.hellMoney += newHellMoney;
+        this.characterService.updateMoney(0 - cost);
+        this.characterService.hellMoney += burnerPower;
       },
       description: 'Money Burners dedicate themselves to burning mortal money to produce hell money.',
       hidden: true,
@@ -1085,7 +1088,7 @@ export class FollowersService {
       autoReplaceUnlocked: this.autoReplaceUnlocked,
       petsBoosted: this.petsBoosted,
       onlyWantedFollowers: this.onlyWantedFollowers,
-      leftoverMetallurgy: this.leftoverMetallurgy,
+      leftoverWork: this.leftoverWork,
       followerTrainingIndex: this.followerTrainingIndex,
       petTrainingIndex: this.petTrainingIndex,
       maxFollowerLevel: this.maxFollowerLevel,
@@ -1124,7 +1127,7 @@ export class FollowersService {
     this.autoReplaceUnlocked = properties.autoReplaceUnlocked;
     this.petsBoosted = properties.petsBoosted;
     this.onlyWantedFollowers = properties.onlyWantedFollowers;
-    this.leftoverMetallurgy = properties.leftoverMetallurgy;
+    this.leftoverWork = properties.leftoverWork;
     this.followerTrainingIndex = properties.followerTrainingIndex;
     this.petTrainingIndex = properties.petTrainingIndex;
     this.maxFollowerLevel = properties.maxFollowerLevel;

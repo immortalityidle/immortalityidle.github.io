@@ -792,7 +792,7 @@ export class GameStateService {
       petsBoosted: props?.petsBoosted || false,
       onlyWantedFollowers: props?.onlyWantedFollowers || false,
       pets: props?.pets || [],
-      leftoverMetallurgy: props?.leftoverMetallurgy || 0,
+      leftoverWork: props?.leftoverWork || {},
       followerTrainingIndex: props?.followerTrainingIndex || 0,
       petTrainingIndex: props?.petTrainingIndex || 0,
       maxFollowerLevel: props?.maxFollowerLevel || 100,

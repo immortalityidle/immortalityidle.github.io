@@ -2328,14 +2328,14 @@ export class InventoryService {
     this.setItemEmptyStack(sourceItemIndex);
   }
 
-  mergeSpiritGem(stack: ItemStack, power = 0) {
+  mergeSpiritGem(stack: ItemStack) {
     if (!stack.item) {
       return;
     }
-    if (stack.quantity < 10 - power) {
+    if (stack.quantity < 10) {
       return;
     }
-    stack.quantity -= 10 - power;
+    stack.quantity -= 10;
     this.addItem(this.generateSpiritGem(stack.item.value / 10 + 1, stack.item.subtype));
     // go find the stack and remove it or update the id
     for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
@@ -2350,22 +2350,14 @@ export class InventoryService {
     }
   }
 
-  mergeAnySpiritGem(power = 0) {
-    const meridianRank = this.characterService.meridianRank();
-    if (power > meridianRank - 5) {
-      power = meridianRank - 5;
-    }
-    if (power < 0) {
-      power = 0;
-    }
-    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
-      const itemIterator = this.itemStacks[i];
-      if (!itemIterator.item) {
-        continue;
-      }
-      if (itemIterator.item.type === LOOT_TYPE_GEM && itemIterator.quantity >= 10 - power) {
-        this.mergeSpiritGem(itemIterator, power);
-        return;
+  mergeAnySpiritGem(power: number) {
+    for (let j = 0; j < power; j++) {
+      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+        const itemIterator = this.itemStacks[i];
+        if (itemIterator.item?.type === LOOT_TYPE_GEM && itemIterator.quantity >= 10) {
+          this.mergeSpiritGem(itemIterator);
+          break;
+        }
       }
     }
   }
