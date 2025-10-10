@@ -88,7 +88,9 @@
       </span>
       @if(!gameStateService.allPanelsUsed){
         <span class="floatRight">
-          <button (click)="gameStateService.addLayoutPanel()">Add New Panel</button>
+          <button (click)="gameStateService.addLayoutPanel()"
+            [ngClass]="{highlighted: gameStateService.newPanelAvailable()}"
+          >Add New Panel</button>
         </span>
       }
     </div>

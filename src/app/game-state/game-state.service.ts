@@ -76,6 +76,7 @@ export class GameStateService {
   creditsClicked = false;
   supportClicked = false;
   hardResetting = false;
+  newPanelAvailable = signal<boolean>(false);
 
   panels: Panel[] = [
     {
@@ -349,6 +350,7 @@ export class GameStateService {
     });
     this.layout.set(newLayout);
     this.updateAllPanelsUsed();
+    this.newPanelAvailable.set(false);
   }
 
   getNextUnusedPanelId(startIndex: number, backwards: boolean = false) {
@@ -414,6 +416,9 @@ export class GameStateService {
   unlockPanel(panelId: string) {
     const panel = this.panels.find(({ id }) => id === panelId);
     if (panel) {
+      if (!panel.unlocked) {
+        this.newPanelAvailable.set(true);
+      }
       panel.unlocked = true;
     }
     this.updateAllPanelsUsed();
@@ -514,6 +519,7 @@ export class GameStateService {
     this.creditsClicked = gameState.creditsClicked || false;
     this.supportClicked = gameState.supportClicked || false;
     this.updateAllPanelsUsed();
+    this.newPanelAvailable.set(false);
   }
 
   private validateGameState(gameState: Partial<GameState>): GameState {
@@ -606,6 +612,7 @@ export class GameStateService {
       daysGorged: props?.daysGorged || 0,
       maxFoodPerDay: props?.maxFoodPerDay || 10,
       unlockedFurniture: props?.unlockedFurniture || [],
+      herbalUnderstanding: props?.herbalUnderstanding || false,
     };
   }
 
@@ -632,6 +639,7 @@ export class GameStateService {
       workstations: props?.workstations || [],
       totalCrafts: props?.totalCrafts || 0,
       forgeChainsCounter: props?.forgeChainsCounter || 0,
+      pillsMade: props?.pillsMade || 0,
     };
   }
 

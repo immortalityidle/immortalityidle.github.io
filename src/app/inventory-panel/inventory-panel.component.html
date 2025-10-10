@@ -81,6 +81,12 @@
               delete
             </mat-icon>
           }
+          @if (inventoryService.displaySelectedItem.quantity() > 1) {
+            <mat-icon (click)="splitStack()"  class="iconButton" aria-label="Split Stack" aria-hidden="false"
+              tooltip="Split this stack of items.">
+              call_split
+            </mat-icon>
+          }
         </span>
       }
     </div>

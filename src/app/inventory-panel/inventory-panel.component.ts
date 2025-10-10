@@ -305,6 +305,10 @@ export class InventoryPanelComponent {
     }
   }
 
+  splitStack() {
+    this.inventoryService.splitItemStack(this.inventoryService.selectedItem);
+  }
+
   optionsClicked() {
     this.dialog.open(InventoryOptionsModalComponent, {
       width: '700px',

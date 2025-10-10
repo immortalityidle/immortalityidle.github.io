@@ -85,6 +85,7 @@ export interface HomeProperties {
   workstations: Workstation[];
   totalCrafts: number;
   forgeChainsCounter: number;
+  pillsMade: number;
 }
 
 @Injectable({
@@ -113,6 +114,7 @@ export class HomeService {
   totalCrafts = 0;
   forgeChainsCounter = 0;
   pillCraftsRequired = 5;
+  pillsMade = 0;
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, espeicially formations
 
@@ -1014,6 +1016,7 @@ export class HomeService {
       workstations: this.workstations,
       totalCrafts: this.totalCrafts,
       forgeChainsCounter: this.forgeChainsCounter,
+      pillsMade: this.pillsMade,
     };
   }
 
@@ -1045,6 +1048,7 @@ export class HomeService {
     this.seeFurnitureEffects = properties.keepHome;
     this.totalCrafts = properties.totalCrafts;
     this.forgeChainsCounter = properties.forgeChainsCounter || 0;
+    this.pillsMade = properties.pillsMade;
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
@@ -1836,6 +1840,7 @@ export class HomeService {
           effect: effectString,
           increaseAmount: grade,
         });
+        this.pillsMade++;
       }
     } else if (workstation.alchemyProduct === 'longevity pills') {
       if (workstation.productCounter < this.pillCraftsRequired * 10) {

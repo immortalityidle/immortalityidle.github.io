@@ -2767,6 +2767,35 @@ baguaMap = [
         return this.inventoryService.autoPillUnlocked;
       },
     },
+    herbalUnderstandingManual: {
+      id: 'herbalUnderstandingManual',
+      name: 'Manual of Herbal Understanding',
+      type: 'manual',
+      description:
+        'This manual teaches you to see the properties of every new herb you gather and how it can be used in alchemy.',
+      value: 1e9,
+      useLabel: 'Read',
+      useDescription: 'Permanently unlock improved tooltips for herbs.',
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        this.inventoryService.herbalUnderstanding = true;
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.herbalUnderstanding;
+      },
+    },
     basicHealthRegenerationManual: {
       id: 'basicHealthRegenerationManual',
       name: 'Manual of Basic Health Regeration',

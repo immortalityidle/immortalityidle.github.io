@@ -905,6 +905,20 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Pharmacologist',
+      description:
+        'You have made enough pills to study the properties of the herbs you use to make them. You can now read the ' +
+        this.itemRepoService.items['herbalUnderstandingManual'].name,
+      hint: 'An aspiring immortal should make wise use of herbal medicine.',
+      check: () => {
+        return this.homeService.pillsMade >= 888;
+      },
+      effect: () => {
+        this.storeService.unlockManual(this.itemRepoService.items['herbalUnderstandingManual']);
+      },
+      unlocked: false,
+    },
+    {
       name: 'Monster Slayer',
       description: 'You fought 131 monsters and unlocked the ' + this.itemRepoService.items['autoTroubleManual'].name,
       hint: 'An aspiring immortal bravely faces down their foes.',

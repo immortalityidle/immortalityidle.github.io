@@ -166,6 +166,7 @@ export interface InventoryProperties {
   daysGorged: number;
   maxFoodPerDay: number;
   unlockedFurniture: string[];
+  herbalUnderstanding: boolean;
 }
 
 @Injectable({
@@ -263,6 +264,7 @@ export class InventoryService {
   heirloomSlots = signal<number>(0);
   daysGorged = 0;
   unlockedFurniture: string[] = [];
+  herbalUnderstanding = false;
 
   constructor(
     private injector: Injector,
@@ -551,6 +553,7 @@ export class InventoryService {
       daysGorged: this.daysGorged,
       maxFoodPerDay: this.maxFoodPerDay,
       unlockedFurniture: this.unlockedFurniture,
+      herbalUnderstanding: this.herbalUnderstanding,
     };
   }
 
@@ -617,6 +620,7 @@ export class InventoryService {
     this.daysGorged = properties.daysGorged;
     this.maxFoodPerDay = properties.maxFoodPerDay;
     this.unlockedFurniture = properties.unlockedFurniture;
+    this.herbalUnderstanding = properties.herbalUnderstanding;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -909,6 +913,10 @@ export class InventoryService {
     }
     const herb = filteredHerbs[this.herbCounter % filteredHerbs.length];
     this.herbCounter++;
+    let extraDescription = '';
+    if (this.herbalUnderstanding) {
+      extraDescription = '<br>Can be used to produce pills that increase your ' + herb.attribute + '.';
+    }
     this.addItem(
       {
         id: 'herb_' + herb.name + grade,
@@ -919,7 +927,7 @@ export class InventoryService {
         subtype: herb.name,
         attribute: herb.attribute,
         value: grade + 1,
-        description: 'Useful herbs. Can be used in creating pills or potions.',
+        description: 'Useful herbs.<br>Can be used in creating pills or potions.' + extraDescription,
       },
       quantity
     );
@@ -1448,245 +1456,260 @@ export class InventoryService {
    * @param inventoryIndex the first inventory slot to try to put the item in
    * @returns first itemStack position, -1 if not applicable
    */
-  addItem(item: Item, quantity = 1, inventoryIndex = 0, ignoreAutoReload: boolean = false): number {
-    quantity = Math.floor(quantity); // whole numbers of items only
-    if (quantity === 0) {
-      return -1;
-    }
-    this.totalItemsReceived += quantity;
-    if (item.type === LOOT_TYPE_GEM) {
-      this.gemsAcquired++;
-    }
+  addItem(
+    item: Item,
+    quantity = 1,
+    inventoryIndex = 0,
+    ignoreAutoReload: boolean = false,
+    skipStacking = false
+  ): number {
+    let firstStack = -1;
 
-    if (this.autoReloadCraftInputs && !ignoreAutoReload) {
-      const workstations = this.homeService?.workstations;
-      if (workstations) {
-        for (let workstationIndex = 0; workstationIndex < workstations.length; workstationIndex++) {
-          const workstation = workstations[workstationIndex];
-          for (let inputSlotIndex = 0; inputSlotIndex < workstation.inputs.length; inputSlotIndex++) {
-            const inputItemStack = workstation.inputs[inputSlotIndex];
-            if (
-              inputItemStack.quantity < this.maxStackSize &&
-              inputItemStack.item?.type === item.type &&
-              inputItemStack.item?.subtype === item.subtype
-            ) {
-              if (item.id === inputItemStack.item.id) {
-                // same thing
-                inputItemStack.quantity += quantity;
-                return -1;
-              } else if (
-                (item.type !== 'food' || item.name === inputItemStack.item.name) &&
-                item.type !== LOOT_TYPE_GEM &&
-                (item.value > inputItemStack.item?.value || inputItemStack.quantity < 10)
+    if (!skipStacking) {
+      quantity = Math.floor(quantity); // whole numbers of items only
+      if (quantity === 0) {
+        return -1;
+      }
+      this.totalItemsReceived += quantity;
+      if (item.type === LOOT_TYPE_GEM) {
+        this.gemsAcquired++;
+      }
+
+      if (this.autoReloadCraftInputs && !ignoreAutoReload) {
+        const workstations = this.homeService?.workstations;
+        if (workstations) {
+          for (let workstationIndex = 0; workstationIndex < workstations.length; workstationIndex++) {
+            const workstation = workstations[workstationIndex];
+            for (let inputSlotIndex = 0; inputSlotIndex < workstation.inputs.length; inputSlotIndex++) {
+              const inputItemStack = workstation.inputs[inputSlotIndex];
+              if (
+                inputItemStack.quantity < this.maxStackSize &&
+                inputItemStack.item?.type === item.type &&
+                inputItemStack.item?.subtype === item.subtype
               ) {
-                // add it to the inventory then swap it in
-                const newItemIndex = this.addItem(item, quantity, 0, true);
-                if (newItemIndex !== -1) {
-                  this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputSlotIndex);
+                if (item.id === inputItemStack.item.id) {
+                  // same thing
+                  inputItemStack.quantity += quantity;
+                  inputItemStack.item.description = item.description;
+                  return -1;
+                } else if (
+                  (item.type !== 'food' || item.name === inputItemStack.item.name) &&
+                  item.type !== LOOT_TYPE_GEM &&
+                  (item.value > inputItemStack.item?.value || inputItemStack.quantity < 10)
+                ) {
+                  // add it to the inventory then swap it in
+                  const newItemIndex = this.addItem(item, quantity, 0, true);
+                  if (newItemIndex !== -1) {
+                    this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputSlotIndex);
+                  }
+                  return -1;
                 }
+              }
+            }
+          }
+        }
+      }
+
+      if (item.pouchable && !ignoreAutoReload) {
+        // check for same type of potion in item pouches
+        let existingStack = this.characterService.itemPouches.find(
+          itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
+        );
+        if (!existingStack) {
+          // not there, check the inventory slots
+          existingStack = this.itemStacks.find(
+            (itemStack, index) =>
+              index < this.heirloomSlots() &&
+              itemStack.item?.type === item.type &&
+              itemStack.item.effect === item.effect
+          );
+        }
+        if (existingStack) {
+          if (item.type === 'potion') {
+            const totalPower =
+              (item.increaseAmount || 0) * quantity +
+              (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
+            existingStack.quantity += quantity;
+            const restoreAmount = Math.floor(totalPower / existingStack.quantity);
+            existingStack.item!.increaseAmount = restoreAmount;
+            existingStack.item!.name = this.titleCasePipe.transform(item.effect) + ' Potion + ' + restoreAmount;
+          } else if (item.type === 'formationKit') {
+            const totalValue =
+              (item.increaseAmount || 0) * quantity +
+              (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
+            existingStack.quantity += quantity;
+            const newValue = Math.floor(totalValue / existingStack.quantity);
+            existingStack.item!.value = newValue;
+          } else {
+            existingStack.quantity += quantity;
+          }
+          return -1;
+        }
+        // couldn't stack it, let it fall through and get treated like a normal item
+      }
+
+      if (this.autoPillEnabled && item.type === 'pill') {
+        this.useItem(item, quantity);
+        return -1;
+      } else if (item.type === 'pill') {
+        // see if we can merge it into another stack of the same kind of pill
+        const existingStack = this.itemStacks.find(
+          (itemStack, index) =>
+            index < this.heirloomSlots() && itemStack.item?.type === item.type && itemStack.item.name === item.name
+        );
+        if (existingStack) {
+          const totalPower =
+            (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
+          existingStack.quantity += quantity;
+          existingStack.item!.increaseAmount = Math.floor(totalPower / existingStack.quantity);
+          return -1;
+        }
+      }
+
+      for (const balanceItem of this.autoBalanceItems) {
+        if (balanceItem.name === item.name) {
+          // can't sell in hell, use it all
+          if (this.hellService?.inHell()) {
+            this.useItem(item, quantity * balanceItem.useNumber);
+            return -1;
+          }
+
+          if (balanceItem.useNumber < 1) {
+            if (balanceItem.sellNumber < 1) {
+              break; // dump to inventory if user enters balance numbers under 1
+            } else {
+              this.characterService.updateMoney(item.value * quantity); // Sell it all
+              return -1;
+            }
+          } else if (balanceItem.sellNumber < 1) {
+            this.useItem(item, quantity * balanceItem.useNumber); // Use it all
+            return -1;
+          }
+          let modulo = quantity % (balanceItem.useNumber + balanceItem.sellNumber);
+          quantity -= modulo;
+          while (modulo > 0) {
+            // Use the modulo first
+            if (balanceItem.index < balanceItem.useNumber) {
+              if (modulo + balanceItem.index <= balanceItem.useNumber) {
+                this.useItem(item, modulo);
+                balanceItem.index += modulo;
+                break;
+              } else {
+                this.useItem(item, balanceItem.useNumber - balanceItem.index);
+                modulo -= balanceItem.useNumber - balanceItem.index;
+                balanceItem.index = balanceItem.useNumber;
+              }
+            }
+            if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
+              // sell the item
+              if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
+                this.characterService.updateMoney(item.value * modulo);
+                balanceItem.index += modulo;
+                break;
+              } else {
+                this.characterService.updateMoney(
+                  item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index)
+                );
+                modulo -= balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index;
+                balanceItem.index = 0;
+              }
+            }
+            if (balanceItem.index >= balanceItem.useNumber + balanceItem.sellNumber) {
+              balanceItem.index -= balanceItem.useNumber + balanceItem.sellNumber;
+            }
+          }
+          if (quantity) {
+            quantity /= balanceItem.useNumber + balanceItem.sellNumber;
+            this.useItem(item, quantity * balanceItem.useNumber);
+            this.characterService.updateMoney(item.value * quantity);
+            quantity = 0;
+          }
+          if (quantity < 1) {
+            // Sanity check, spill out what should be impossible excess to inventory as though balance were disabled.
+            return -1;
+          }
+          break;
+        }
+      }
+
+      if (item.type !== 'food') {
+        // food has its own autouse handling in eatDailyMeal()
+        for (const entry of this.autoUseEntries) {
+          if (entry.name === item.name) {
+            let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
+            if (numberToUse > quantity) {
+              // don't worry about using more than the incoming quantity here
+              numberToUse = quantity;
+            }
+            if (numberToUse > 0) {
+              const numberUsed = this.useItem(item, quantity);
+              quantity -= numberUsed;
+              if (quantity === 0) {
                 return -1;
               }
             }
           }
         }
       }
-    }
 
-    if (item.pouchable && !ignoreAutoReload) {
-      // check for same type of potion in item pouches
-      let existingStack = this.characterService.itemPouches.find(
-        itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
-      );
-      if (!existingStack) {
-        // not there, check the inventory slots
-        existingStack = this.itemStacks.find(
-          (itemStack, index) =>
-            index < this.heirloomSlots() && itemStack.item?.type === item.type && itemStack.item.effect === item.effect
-        );
+      if (this.autoSellOldGemsEnabled && item.type === LOOT_TYPE_GEM && !this.hellService?.inHell()) {
+        //clear out any old gems of lesser value
+        for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+          const itemStack = this.itemStacks[i];
+          if (itemStack.item && itemStack.item.type === LOOT_TYPE_GEM && itemStack.item.value < item.value) {
+            this.characterService.updateMoney(itemStack.item.value * itemStack.quantity);
+            this.setItemEmptyStack(i);
+          }
+        }
       }
-      if (existingStack) {
-        if (item.type === 'potion') {
-          const totalPower =
-            (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
-          existingStack.quantity += quantity;
-          const restoreAmount = Math.floor(totalPower / existingStack.quantity);
-          existingStack.item!.increaseAmount = restoreAmount;
-          existingStack.item!.name = this.titleCasePipe.transform(item.effect) + ' Potion + ' + restoreAmount;
-        } else if (item.type === 'formationKit') {
-          const totalValue =
-            (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
-          existingStack.quantity += quantity;
-          const newValue = Math.floor(totalValue / existingStack.quantity);
-          existingStack.item!.value = newValue;
-        } else {
-          existingStack.quantity += quantity;
-        }
-        return -1;
-      }
-      // couldn't stack it, let it fall through and get treated like a normal item
-    }
-
-    if (this.autoPillEnabled && item.type === 'pill') {
-      this.useItem(item, quantity);
-      return -1;
-    } else if (item.type === 'pill') {
-      // see if we can merge it into another stack of the same kind of pill
-      const existingStack = this.itemStacks.find(
-        (itemStack, index) =>
-          index < this.heirloomSlots() && itemStack.item?.type === item.type && itemStack.item.name === item.name
-      );
-      if (existingStack) {
-        const totalPower =
-          (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
-        existingStack.quantity += quantity;
-        existingStack.item!.increaseAmount = Math.floor(totalPower / existingStack.quantity);
-        return -1;
-      }
-    }
-
-    for (const balanceItem of this.autoBalanceItems) {
-      if (balanceItem.name === item.name) {
-        // can't sell in hell, use it all
-        if (this.hellService?.inHell()) {
-          this.useItem(item, quantity * balanceItem.useNumber);
-          return -1;
-        }
-
-        if (balanceItem.useNumber < 1) {
-          if (balanceItem.sellNumber < 1) {
-            break; // dump to inventory if user enters balance numbers under 1
-          } else {
-            this.characterService.updateMoney(item.value * quantity); // Sell it all
-            return -1;
+      for (const entry of this.autoSellEntries) {
+        if (entry.name === item.name && !this.hellService?.inHell()) {
+          let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
+          if (numberToSell > quantity) {
+            // don't worry about selling more than the incoming quantity here
+            numberToSell = quantity;
           }
-        } else if (balanceItem.sellNumber < 1) {
-          this.useItem(item, quantity * balanceItem.useNumber); // Use it all
-          return -1;
-        }
-        let modulo = quantity % (balanceItem.useNumber + balanceItem.sellNumber);
-        quantity -= modulo;
-        while (modulo > 0) {
-          // Use the modulo first
-          if (balanceItem.index < balanceItem.useNumber) {
-            if (modulo + balanceItem.index <= balanceItem.useNumber) {
-              this.useItem(item, modulo);
-              balanceItem.index += modulo;
-              break;
-            } else {
-              this.useItem(item, balanceItem.useNumber - balanceItem.index);
-              modulo -= balanceItem.useNumber - balanceItem.index;
-              balanceItem.index = balanceItem.useNumber;
-            }
-          }
-          if (balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
-            // sell the item
-            if (modulo + balanceItem.index < balanceItem.useNumber + balanceItem.sellNumber) {
-              this.characterService.updateMoney(item.value * modulo);
-              balanceItem.index += modulo;
-              break;
-            } else {
-              this.characterService.updateMoney(
-                item.value * (balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index)
-              );
-              modulo -= balanceItem.useNumber + balanceItem.sellNumber - balanceItem.index;
-              balanceItem.index = 0;
-            }
-          }
-          if (balanceItem.index >= balanceItem.useNumber + balanceItem.sellNumber) {
-            balanceItem.index -= balanceItem.useNumber + balanceItem.sellNumber;
-          }
-        }
-        if (quantity) {
-          quantity /= balanceItem.useNumber + balanceItem.sellNumber;
-          this.useItem(item, quantity * balanceItem.useNumber);
-          this.characterService.updateMoney(item.value * quantity);
-          quantity = 0;
-        }
-        if (quantity < 1) {
-          // Sanity check, spill out what should be impossible excess to inventory as though balance were disabled.
-          return -1;
-        }
-        break;
-      }
-    }
-
-    if (item.type !== 'food') {
-      // food has its own autouse handling in eatDailyMeal()
-      for (const entry of this.autoUseEntries) {
-        if (entry.name === item.name) {
-          let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;
-          if (numberToUse > quantity) {
-            // don't worry about using more than the incoming quantity here
-            numberToUse = quantity;
-          }
-          if (numberToUse > 0) {
-            const numberUsed = this.useItem(item, quantity);
-            quantity -= numberUsed;
+          if (numberToSell > 0) {
+            this.characterService.updateMoney(item.value * numberToSell);
+            quantity -= numberToSell;
             if (quantity === 0) {
               return -1;
             }
           }
         }
       }
-    }
 
-    if (this.autoSellOldGemsEnabled && item.type === LOOT_TYPE_GEM && !this.hellService?.inHell()) {
-      //clear out any old gems of lesser value
-      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
-        const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === LOOT_TYPE_GEM && itemStack.item.value < item.value) {
-          this.characterService.updateMoney(itemStack.item.value * itemStack.quantity);
-          this.setItemEmptyStack(i);
-        }
-      }
-    }
-    for (const entry of this.autoSellEntries) {
-      if (entry.name === item.name && !this.hellService?.inHell()) {
-        let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
-        if (numberToSell > quantity) {
-          // don't worry about selling more than the incoming quantity here
-          numberToSell = quantity;
-        }
-        if (numberToSell > 0) {
-          this.characterService.updateMoney(item.value * numberToSell);
-          quantity -= numberToSell;
-          if (quantity === 0) {
-            return -1;
+      if (item.type !== 'equipment') {
+        // try to stack the new item with existing items
+        for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+          const itemIterator = this.itemStacks[i];
+          if (!itemIterator.item) {
+            continue;
           }
-        }
-      }
-    }
-
-    let firstStack = -1;
-    if (item.type !== 'equipment') {
-      // try to stack the new item with existing items
-      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
-        const itemIterator = this.itemStacks[i];
-        if (!itemIterator.item) {
-          continue;
-        }
-        if (itemIterator.item.name === item.name) {
-          if (itemIterator.quantity + quantity <= this.maxStackSize) {
-            // it matches an existing item and there's room in the stack for everything, add it to the stack and bail out
-            itemIterator.quantity += quantity;
-            // adjust values if different
-            if (itemIterator.item.value !== item.value) {
-              const totalValue = itemIterator.item.value * itemIterator.quantity + item.value * quantity;
-              const totalQuantity = quantity + itemIterator.quantity;
-              itemIterator.item.value = Math.round(totalValue / totalQuantity);
+          if (itemIterator.item.name === item.name) {
+            if (itemIterator.quantity + quantity <= this.maxStackSize) {
+              // it matches an existing item and there's room in the stack for everything, add it to the stack and bail out
+              itemIterator.quantity += quantity;
+              itemIterator.item.description = item.description;
+              // adjust values if different
+              if (itemIterator.item.value !== item.value) {
+                const totalValue = itemIterator.item.value * itemIterator.quantity + item.value * quantity;
+                const totalQuantity = quantity + itemIterator.quantity;
+                itemIterator.item.value = Math.round(totalValue / totalQuantity);
+              }
+              if (firstStack === -1) {
+                firstStack = i;
+              }
+              this.fixId(i);
+              return firstStack;
+            } else {
+              if (firstStack === -1) {
+                firstStack = i;
+              }
+              quantity -= this.maxStackSize - itemIterator.quantity;
+              itemIterator.quantity = this.maxStackSize;
+              this.fixId(i);
             }
-            if (firstStack === -1) {
-              firstStack = i;
-            }
-            this.fixId(i);
-            return firstStack;
-          } else {
-            if (firstStack === -1) {
-              firstStack = i;
-            }
-            quantity -= this.maxStackSize - itemIterator.quantity;
-            itemIterator.quantity = this.maxStackSize;
-            this.fixId(i);
           }
         }
       }
@@ -2517,6 +2540,18 @@ export class InventoryService {
       this.characterService.toast('New furniture is available: ' + this.titleCasePipe.transform(furnitureToUnlock));
     }
     this.unlockedFurniture.push(furnitureToUnlock);
+  }
+
+  splitItemStack(stackToSplit: ItemStack) {
+    if (!stackToSplit.item) {
+      return;
+    }
+    if (stackToSplit.quantity < 2) {
+      return;
+    }
+    const half = Math.floor(stackToSplit.quantity / 2);
+    this.addItem(stackToSplit.item, half, 0, false, true);
+    stackToSplit.quantity -= half;
   }
 }
 
