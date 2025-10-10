@@ -905,7 +905,7 @@ export class AchievementService {
       unlocked: false,
     },
     {
-      name: 'Pharmacologist',
+      name: 'Pharmacist',
       description:
         'You have made enough pills to study the properties of the herbs you use to make them. You can now read the ' +
         this.itemRepoService.items['herbalUnderstandingManual'].name,
