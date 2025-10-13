@@ -60,6 +60,7 @@ export interface Item {
   increaseAmount?: number;
   cooldown?: number;
   locked?: boolean;
+  shopable: boolean;
 }
 
 export interface Equipment extends Item {
@@ -167,6 +168,7 @@ export interface InventoryProperties {
   maxFoodPerDay: number;
   unlockedFurniture: string[];
   herbalUnderstanding: boolean;
+  soldGoods: { [key: string]: number };
 }
 
 @Injectable({
@@ -265,6 +267,7 @@ export class InventoryService {
   daysGorged = 0;
   unlockedFurniture: string[] = [];
   herbalUnderstanding = false;
+  soldGoods: { [key: string]: number } = {};
 
   constructor(
     private injector: Injector,
@@ -554,6 +557,7 @@ export class InventoryService {
       maxFoodPerDay: this.maxFoodPerDay,
       unlockedFurniture: this.unlockedFurniture,
       herbalUnderstanding: this.herbalUnderstanding,
+      soldGoods: this.soldGoods,
     };
   }
 
@@ -621,6 +625,7 @@ export class InventoryService {
     this.maxFoodPerDay = properties.maxFoodPerDay;
     this.unlockedFurniture = properties.unlockedFurniture;
     this.herbalUnderstanding = properties.herbalUnderstanding;
+    this.soldGoods = properties.soldGoods;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -765,6 +770,7 @@ export class InventoryService {
       slot: slot,
       value: grade,
       effect: effect,
+      shopable: false,
       weaponStats: {
         baseDamage: damage,
         material: material,
@@ -866,6 +872,7 @@ export class InventoryService {
       pouchable: true,
       effect: effect,
       increaseAmount: restoreAmount,
+      shopable: false,
     });
   }
 
@@ -892,6 +899,7 @@ export class InventoryService {
       useConsumes: true,
       effect: effect,
       increaseAmount: 1,
+      shopable: false,
     });
   }
 
@@ -906,7 +914,7 @@ export class InventoryService {
     }
     const woodLore = this.characterService.attributes.woodLore.value;
     if (grade === -1) {
-      grade = Math.floor(Math.pow(woodLore / 1e9, 0.26) * herbQuality.length); // 1e9 woodlore is maximum grade, adjust if necessary
+      grade = Math.floor(Math.pow(woodLore / 1e12, 0.16) * herbQuality.length);
     }
     if (grade >= herbQuality.length) {
       grade = herbQuality.length - 1;
@@ -926,8 +934,9 @@ export class InventoryService {
         type: 'herb',
         subtype: herb.name,
         attribute: herb.attribute,
-        value: grade + 1,
+        value: grade * 10,
         description: 'Useful herbs.<br>Can be used in creating pills or potions.' + extraDescription,
+        shopable: false,
       },
       quantity
     );
@@ -959,6 +968,7 @@ export class InventoryService {
       subtype: flavor,
       value: grade * 10,
       description: description,
+      shopable: false,
     };
   }
 
@@ -1027,6 +1037,7 @@ export class InventoryService {
       description:
         'A unique piece of armor that you made.<br>Drag and drop onto similar armor to merge them into something better.<br>Defense: ' +
         this.bigNumberPipe.transform(defense),
+      shopable: false,
     };
   }
 
@@ -1045,9 +1056,12 @@ export class InventoryService {
 
   getOre(value: number = -1, skipSnobbery: boolean = false): Item {
     let oreValue = value;
+    const earthLore = this.characterService.attributes.earthLore.value;
     if (value === -1) {
-      const earthLore = this.characterService.attributes.earthLore.value;
-      oreValue = Math.floor(Math.pow(earthLore / 1e9, 0.15) * 16); // 1e9 earthlore is maximum value (16), adjust if necessary
+      oreValue = Math.floor(Math.pow(earthLore / 1e12, 0.15) * 800);
+    } else {
+      const valueScale = value / 100;
+      oreValue = Math.floor(Math.pow((earthLore * valueScale) / 1e12, 0.15) * 800);
     }
     let lastOre = this.itemRepoService.items['copperOre'];
     for (const key in this.itemRepoService.items) {
@@ -1094,16 +1108,20 @@ export class InventoryService {
     return lastMetal;
   }
 
-  getWood(woodvalue: number = -1, skipSnobbery: boolean = false): Item {
+  getWood(value: number = -1, skipSnobbery: boolean = false): Item {
     const woodLore = this.characterService.attributes.woodLore.value;
-    if (woodvalue === -1) {
-      woodvalue = Math.floor(Math.pow(woodLore / 1e9, 0.15) * 16); // 1e9 woodlore is maximum value (16), adjust if necessary;
+    let woodValue;
+    if (value === -1) {
+      woodValue = Math.floor(Math.pow(woodLore / 1e12, 0.15) * 800);
+    } else {
+      const valueScale = value / 100;
+      woodValue = Math.floor(Math.pow((woodLore * valueScale) / 1e12, 0.15) * 800);
     }
     let lastWood = this.itemRepoService.items['balsaLog'];
 
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
-      if (item.type === 'wood' && item.value > lastWood.value && item.value <= woodvalue) {
+      if (item.type === 'wood' && item.value > lastWood.value && item.value <= woodValue) {
         lastWood = item;
       }
     }
@@ -1121,10 +1139,13 @@ export class InventoryService {
   }
 
   getHide(value: number = -1, skipSnobbery: boolean = false): Item {
-    let hideValue = value;
+    let hideValue;
+    const animalHandling = this.characterService.attributes.animalHandling.value;
     if (hideValue === -1) {
-      const animalHandling = this.characterService.attributes.animalHandling.value;
-      hideValue = Math.floor(Math.pow(animalHandling / 1e9, 0.15) * 16);
+      hideValue = Math.floor(Math.pow(animalHandling / 1e12, 0.15) * 800);
+    } else {
+      const valueScale = value / 100;
+      hideValue = Math.floor(Math.pow((animalHandling * valueScale) / 1e12, 0.15) * 800);
     }
 
     let lastHide = this.itemRepoService.items['hide'];
@@ -1162,6 +1183,7 @@ export class InventoryService {
       subtype: 'wildMeat',
       value: 100 * grade,
       description: 'Meat from a wild beast',
+      shopable: false,
     };
   }
 
@@ -1173,6 +1195,7 @@ export class InventoryService {
       type: 'sellable',
       value: value,
       description: 'A purse with strange coins. You could probably sell this.',
+      shopable: false,
     };
   }
 
@@ -1203,6 +1226,7 @@ export class InventoryService {
       useLabel: 'Use',
       description:
         'A kit containing formation flags and other essentials for creating a formation.<br>' + descriptionSuffix,
+      shopable: false,
     };
   }
 
@@ -1243,6 +1267,7 @@ export class InventoryService {
         },
         description:
           "Your grandmother's walking stick.<br>Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: 10",
+        shopable: false,
       };
       this.addItem(stick);
     }
@@ -1267,6 +1292,7 @@ export class InventoryService {
           useConsumes: true,
           pouchable: true,
           effect: 'meal' + totalValue,
+          shopable: false,
         },
         300
       );
@@ -1776,6 +1802,9 @@ export class InventoryService {
       itemStack.quantity -= quantity;
       this.fixIdByStack(itemStack);
       this.characterService.updateMoney(quantity * itemStack.item.value);
+    }
+    if (itemStack.item.shopable) {
+      this.soldGoods[itemStack.item.id] = (this.soldGoods[itemStack.item.id] || 0) + quantity;
     }
   }
 

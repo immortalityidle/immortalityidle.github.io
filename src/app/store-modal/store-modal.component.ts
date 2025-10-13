@@ -33,6 +33,7 @@ export class StoreModalComponent {
     value: 100,
     type: 'land',
     imageFile: 'land',
+    shopable: false,
   };
 
   constructor(
@@ -70,7 +71,7 @@ export class StoreModalComponent {
       this.homeService.buyLand(quantity);
       this.landItem.value = this.homeService.landPrice;
     } else {
-      const price = quantity * item.value * 2;
+      const price = quantity * item.value * 10;
       if (this.characterService.money > price) {
         this.inventoryService.addItem(item, quantity);
         this.characterService.updateMoney(0 - price);

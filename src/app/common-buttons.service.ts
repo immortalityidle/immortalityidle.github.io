@@ -36,12 +36,14 @@ export class CommonButtonsService {
 
   storeClicked(): void {
     this.dialog.open(StoreModalComponent, {
+      width: '600px',
       autoFocus: false,
     });
   }
 
   manualStoreClicked(): void {
     this.dialog.open(ManualStoreModalComponent, {
+      width: '600px',
       autoFocus: false,
     });
   }

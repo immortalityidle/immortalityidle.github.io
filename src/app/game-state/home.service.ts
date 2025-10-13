@@ -1455,6 +1455,7 @@ export class HomeService {
         useConsumes: true,
         pouchable: pouchable,
         effect: effect,
+        shopable: false,
       },
       cookAmount
     );
@@ -1527,7 +1528,7 @@ export class HomeService {
     }
 
     const hideStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'hide');
-    if (!hideStack || hideStack.quantity < 10 || (hideStack.item?.value || 0) < 10) {
+    if (!hideStack || hideStack.quantity < 10 || (hideStack.item?.value || 0) < 100) {
       this.logService.injury(
         LogTopic.EVENT,
         "You think you have the right ore to make mortar, but you'll need something to give the mortar additional elasticity. Something strong, yet flexible."
@@ -1796,7 +1797,7 @@ export class HomeService {
         }
         for (const itemStack of herbStacks) {
           if (itemStack.item!.attribute === highestAttribute || itemStack.item!.attribute === secondHighestAttribute) {
-            totalValue += itemStack.item!.value;
+            totalValue += itemStack.item!.value * 0.5;
             itemStack.quantity--;
           }
         }
@@ -1839,6 +1840,7 @@ export class HomeService {
           useConsumes: true,
           effect: effectString,
           increaseAmount: grade,
+          shopable: false,
         });
         this.pillsMade++;
       }
@@ -1853,7 +1855,7 @@ export class HomeService {
       let totalValue = 0;
 
       for (const itemStack of herbStacks) {
-        totalValue += itemStack.item!.value;
+        totalValue += itemStack.item!.value * 0.5;
         itemStack.quantity--;
       }
       if (totalValue < 1) {
@@ -1882,10 +1884,11 @@ export class HomeService {
         useConsumes: true,
         effect: 'longevity',
         increaseAmount: grade,
+        shopable: false,
       });
     } else {
       for (const itemStack of herbStacks) {
-        totalValue += itemStack.item!.value;
+        totalValue += itemStack.item!.value * 0.5;
         itemStack.quantity--;
       }
       if (totalValue < 1) {
@@ -1975,10 +1978,10 @@ export class HomeService {
         itemStack.quantity >= 10
     );
     let formationPower =
-      (woodStack.item?.value || 0) +
-      (hideStack.item?.value || 0) +
+      (woodStack.item?.value || 0) * 0.1 +
+      (hideStack.item?.value || 0) * 0.1 +
       (gemStack.item?.value || 0) +
-      (metalStack?.item?.value || 0) +
+      (metalStack?.item?.value || 0) * 0.1 +
       (alchemyStack?.item?.value || 0);
     formationPower *= workstation.power;
     formationPower = Math.floor(formationPower);

@@ -72,7 +72,7 @@ baguaMap = [
 ];
 */
 
-  furniture = [
+  furniture: Item[] = [
     {
       id: 'blanket',
       name: 'Cotton Blanket',
@@ -87,6 +87,7 @@ baguaMap = [
       use: () => {
         this.characterService.status.stamina.value++;
       },
+      shopable: false,
     },
     {
       id: 'mat',
@@ -104,6 +105,7 @@ baguaMap = [
         this.characterService.status.health.value += 0.1;
         this.characterService.checkOverage();
       },
+      shopable: false,
     },
     {
       id: 'canopyBed',
@@ -120,6 +122,7 @@ baguaMap = [
         this.characterService.status.health.value += 0.2;
         this.characterService.checkOverage();
       },
+      shopable: false,
     },
     {
       id: 'heatedBed',
@@ -137,6 +140,7 @@ baguaMap = [
         this.characterService.status.health.value += 1;
         this.characterService.checkOverage();
       },
+      shopable: false,
     },
     {
       id: 'bedOfNails',
@@ -153,6 +157,7 @@ baguaMap = [
         this.characterService.status.stamina.value -= 1;
         this.characterService.increaseAttribute('toughness', 0.1);
       },
+      shopable: false,
     },
     {
       id: 'waterBucket',
@@ -170,6 +175,7 @@ baguaMap = [
           this.characterService.hygieneLifespan += 0.02;
         }
       },
+      shopable: false,
     },
     {
       id: 'washBasin',
@@ -187,6 +193,7 @@ baguaMap = [
           this.characterService.hygieneLifespan += 0.1;
         }
       },
+      shopable: false,
     },
     {
       id: 'woodenTub',
@@ -207,6 +214,7 @@ baguaMap = [
           this.characterService.hygieneLifespan += 0.5;
         }
       },
+      shopable: false,
     },
     {
       id: 'bronzeTub',
@@ -227,6 +235,7 @@ baguaMap = [
           this.characterService.hygieneLifespan += 0.8;
         }
       },
+      shopable: false,
     },
     {
       id: 'heatedTub',
@@ -248,6 +257,7 @@ baguaMap = [
           this.characterService.hygieneLifespan += 1;
         }
       },
+      shopable: false,
     },
     {
       id: 'bookshelf',
@@ -260,6 +270,7 @@ baguaMap = [
       use: () => {
         this.characterService.increaseAttribute('intelligence', 0.01);
       },
+      shopable: false,
     },
     {
       id: 'prayerShrine',
@@ -275,6 +286,7 @@ baguaMap = [
           this.characterService.increaseAttribute('spirituality', 0.001);
         }
       },
+      shopable: false,
     },
     {
       id: 'dogKennel',
@@ -287,6 +299,7 @@ baguaMap = [
       use: () => {
         this.characterService.increaseAttribute('animalHandling', 0.01);
       },
+      shopable: false,
     },
     {
       id: 'cormorantCage',
@@ -299,6 +312,7 @@ baguaMap = [
       use: () => {
         this.characterService.increaseAttribute('animalHandling', 0.01);
       },
+      shopable: false,
     },
     {
       id: 'wingChunDummy',
@@ -312,6 +326,7 @@ baguaMap = [
         this.characterService.increaseAttribute('strength', 0.001);
         this.characterService.increaseAttribute('speed', 0.001);
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitPurple',
@@ -326,6 +341,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitGreen',
@@ -340,6 +356,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitRed',
@@ -354,6 +371,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitOrange',
@@ -368,6 +386,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitPink',
@@ -382,6 +401,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitBlue',
@@ -396,6 +416,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitYellow',
@@ -410,6 +431,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitBrown',
@@ -424,6 +446,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitWhite',
@@ -438,6 +461,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitPastel',
@@ -452,6 +476,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitBlack',
@@ -466,6 +491,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ancestorPortraitGray',
@@ -480,6 +506,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'trophy',
@@ -492,6 +519,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'scorpionInAmber',
@@ -508,6 +536,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'uglyPortrait',
@@ -523,6 +552,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'luckyPaw',
@@ -540,6 +570,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'candle',
@@ -556,6 +587,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'alluringBeauty',
@@ -573,6 +605,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'seductiveBeauty',
@@ -588,6 +621,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'cutePortrait',
@@ -604,6 +638,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'hippoTuskArtwork',
@@ -620,6 +655,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'scholarlyTexts',
@@ -636,6 +672,7 @@ baguaMap = [
       use: () => {
         this.characterService.increaseAttribute('intelligence', 0.05);
       },
+      shopable: false,
     },
     {
       id: 'ephemeralEssence',
@@ -652,6 +689,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'trollTuskTrophy',
@@ -668,6 +706,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'legDayTrainer',
@@ -686,6 +725,7 @@ baguaMap = [
         this.characterService.increaseAttribute('strength', 0.01);
         this.characterService.increaseAttribute('speed', 0.01);
       },
+      shopable: false,
     },
     {
       id: 'bearskinRug',
@@ -702,6 +742,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'ivoryHorn',
@@ -719,6 +760,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'wailingBeauty',
@@ -734,6 +776,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'phoenixDownMattress',
@@ -753,6 +796,7 @@ baguaMap = [
         this.characterService.status.health.value += 2;
         this.characterService.checkOverage();
       },
+      shopable: false,
     },
     {
       id: 'beautyOfTheDepths',
@@ -770,6 +814,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'altarOfNature',
@@ -789,6 +834,7 @@ baguaMap = [
           this.characterService.increaseAttribute('spirituality', 0.005);
         }
       },
+      shopable: false,
     },
     {
       id: 'dinoToothDagger',
@@ -804,6 +850,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'blazingGrimoire',
@@ -821,6 +868,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'Doom Vault',
@@ -838,6 +886,7 @@ baguaMap = [
       use: () => {
         this.characterService.updateMoney(1e6);
       },
+      shopable: false,
     },
     {
       id: 'darkGrimoire',
@@ -858,6 +907,7 @@ baguaMap = [
           this.characterService.yang -= 100;
         }
       },
+      shopable: false,
     },
     {
       id: 'eyestalkHatstand',
@@ -874,6 +924,7 @@ baguaMap = [
       use: () => {
         // just decorative
       },
+      shopable: false,
     },
     {
       id: 'altarOfTheDepths',
@@ -893,6 +944,7 @@ baguaMap = [
           this.characterService.increaseAttribute('spirituality', 0.02);
         }
       },
+      shopable: false,
     },
     {
       id: 'stormShower',
@@ -917,6 +969,7 @@ baguaMap = [
           this.characterService.hygieneLifespan += 5;
         }
       },
+      shopable: false,
     },
     {
       id: 'ashenScaleVault',
@@ -934,6 +987,7 @@ baguaMap = [
       use: () => {
         this.characterService.updateMoney(1e12);
       },
+      shopable: false,
     },
   ];
 
@@ -949,6 +1003,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly.',
       useConsumes: true,
+      shopable: true,
     },
     cabbage: {
       id: 'cabbage',
@@ -961,6 +1016,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy.',
       useConsumes: true,
+      shopable: true,
     },
     beans: {
       id: 'beans',
@@ -973,6 +1029,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     broccoli: {
       id: 'broccoli',
@@ -985,6 +1042,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     calabash: {
       id: 'calabash',
@@ -997,6 +1055,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     taro: {
       id: 'taro',
@@ -1009,6 +1068,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     pear: {
       id: 'pear',
@@ -1021,6 +1081,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     melon: {
       id: 'melon',
@@ -1033,6 +1094,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     plum: {
       id: 'plum',
@@ -1045,6 +1107,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     apricot: {
       id: 'apricot',
@@ -1057,6 +1120,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and helps you be healthy and hardy.',
       useConsumes: true,
+      shopable: true,
     },
     peach: {
       id: 'peach',
@@ -1069,6 +1133,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and can even lead to a long life.',
       useConsumes: true,
+      shopable: true,
     },
     divinePeach: {
       id: 'divinePeach',
@@ -1081,6 +1146,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Sates your immortal hunger.',
       useConsumes: true,
+      shopable: true,
     },
     // TODO: incorporate this into alchemy crafting
     distilledPeachEssence: {
@@ -1094,6 +1160,7 @@ baguaMap = [
       effect: 'health',
       increaseAmount: 500,
       pouchable: true,
+      shopable: true,
     },
     meat: {
       id: 'meat',
@@ -1101,11 +1168,12 @@ baguaMap = [
       name: 'meat',
       type: 'food',
       subtype: 'meat',
-      value: 50,
+      value: 25,
       description: 'Some delicious meat.',
       useLabel: 'Eat',
       useDescription: 'Fills your belly and adds variety to your diet.',
       useConsumes: true,
+      shopable: true,
     },
     spiritMeat: {
       id: 'spiritMeat',
@@ -1118,6 +1186,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and adds variety to your diet.',
       useConsumes: true,
+      shopable: true,
     },
     carp: {
       id: 'carp',
@@ -1125,11 +1194,12 @@ baguaMap = [
       name: 'carp',
       type: 'food',
       subtype: 'fish',
-      value: 50,
+      value: 25,
       description: 'A common fish.',
       useLabel: 'Eat',
       useDescription: 'Fills your belly and adds variety to your diet.',
       useConsumes: true,
+      shopable: true,
     },
     spiritCarp: {
       id: 'spiritCarp',
@@ -1142,6 +1212,7 @@ baguaMap = [
       useLabel: 'Eat',
       useDescription: 'Fills your belly and adds variety to your diet.',
       useConsumes: true,
+      shopable: true,
     },
     hide: {
       id: 'hide',
@@ -1149,8 +1220,9 @@ baguaMap = [
       imageColor: this.colorByRank[0],
       name: 'tattered hide',
       type: 'hide',
-      value: 1,
+      value: 10,
       description: 'A tattered animal hide.',
+      shopable: true,
     },
     thinPelt: {
       id: 'thinPelt',
@@ -1158,8 +1230,9 @@ baguaMap = [
       imageColor: this.colorByRank[1],
       name: 'thin pelt',
       type: 'hide',
-      value: 2,
+      value: 20,
       description: 'A thin fur pelt.',
+      shopable: true,
     },
     plainLeather: {
       id: 'plainLeather',
@@ -1167,8 +1240,9 @@ baguaMap = [
       imageColor: this.colorByRank[2],
       name: 'plain leather',
       type: 'hide',
-      value: 3,
+      value: 30,
       description: 'A basic leather hide.',
+      shopable: true,
     },
     scaleSkin: {
       id: 'scaleSkin',
@@ -1176,8 +1250,9 @@ baguaMap = [
       imageColor: this.colorByRank[3],
       name: 'scale skin',
       type: 'hide',
-      value: 4,
+      value: 50,
       description: 'A scaly reptile skin.',
+      shopable: true,
     },
     thickFur: {
       id: 'thickFur5',
@@ -1185,8 +1260,9 @@ baguaMap = [
       imageColor: this.colorByRank[4],
       name: 'thick fur',
       type: 'hide',
-      value: 5,
+      value: 70,
       description: 'A thick animal fur.',
+      shopable: true,
     },
     armoredHide: {
       id: 'armoredHide',
@@ -1194,8 +1270,9 @@ baguaMap = [
       imageColor: this.colorByRank[5],
       name: 'armored hide',
       type: 'hide',
-      value: 6,
+      value: 90,
       description: 'An armored animal hide.',
+      shopable: true,
     },
     frozenScales: {
       id: 'frozenScales',
@@ -1203,8 +1280,9 @@ baguaMap = [
       imageColor: this.colorByRank[6],
       name: 'frozen scales',
       type: 'hide',
-      value: 7,
+      value: 140,
       description: 'A frozen scaly hide.',
+      shopable: true,
     },
     mysticalLeather: {
       id: 'mysticalLeather',
@@ -1212,8 +1290,9 @@ baguaMap = [
       imageColor: this.colorByRank[7],
       name: 'mystical leather',
       type: 'hide',
-      value: 8,
+      value: 180,
       description: 'A mystical animal hide.',
+      shopable: true,
     },
     infernalFur: {
       id: 'infernalFur',
@@ -1221,8 +1300,9 @@ baguaMap = [
       imageColor: this.colorByRank[8],
       name: 'infernal fur',
       type: 'hide',
-      value: 9,
+      value: 220,
       description: 'A diabolical pelt.',
+      shopable: true,
     },
     orichalcumHide: {
       id: 'orichalcumHide',
@@ -1230,8 +1310,9 @@ baguaMap = [
       imageColor: this.colorByRank[9],
       name: 'orichalcum hide',
       type: 'hide',
-      value: 10,
+      value: 260,
       description: 'A strong magic-infused hide.',
+      shopable: true,
     },
     tempestScales: {
       id: 'tempestScales',
@@ -1239,8 +1320,9 @@ baguaMap = [
       imageColor: this.colorByRank[10],
       name: 'tempest scales',
       type: 'hide',
-      value: 11,
+      value: 310,
       description: 'A hide bristling with electricity.',
+      shopable: true,
     },
     evergreenVeil: {
       id: 'evergreenVeil',
@@ -1248,8 +1330,9 @@ baguaMap = [
       imageColor: this.colorByRank[11],
       name: 'evergreen veil',
       type: 'hide',
-      value: 12,
+      value: 360,
       description: 'An extremely durable hide .',
+      shopable: true,
     },
     sovereignLeather: {
       id: 'sovereignLeather',
@@ -1257,8 +1340,9 @@ baguaMap = [
       imageColor: this.colorByRank[12],
       name: 'sovereign leather',
       type: 'hide',
-      value: 13,
+      value: 420,
       description: 'A powerful hide of a noble animal.',
+      shopable: true,
     },
     abyssalFur: {
       id: 'abyssalFur',
@@ -1266,8 +1350,9 @@ baguaMap = [
       imageColor: this.colorByRank[13],
       name: 'abyssal fur',
       type: 'hide',
-      value: 14,
+      value: 480,
       description: 'A fur brimming with unholy power.',
+      shopable: true,
     },
     umbralHide: {
       id: 'umbralHide',
@@ -1275,8 +1360,9 @@ baguaMap = [
       imageColor: this.colorByRank[14],
       name: 'umbral hide',
       type: 'hide',
-      value: 15,
+      value: 650,
       description: 'A hide made of shadows themselves.',
+      shopable: true,
     },
     divineVeil: {
       id: 'divineVeil',
@@ -1284,8 +1370,9 @@ baguaMap = [
       imageColor: this.colorByRank[15],
       name: 'divine veil',
       type: 'hide',
-      value: 16,
+      value: 800,
       description: 'A hide consecrated with divine protection.',
+      shopable: true,
     },
     balsaLog: {
       id: 'balsaLog',
@@ -1294,8 +1381,9 @@ baguaMap = [
       name: 'balsa log',
       type: 'wood',
       subtype: 'fuel',
-      value: 1,
+      value: 10,
       description: 'A really soft log.',
+      shopable: true,
     },
     elmLog: {
       id: 'elmLog',
@@ -1304,8 +1392,9 @@ baguaMap = [
       name: 'elm log',
       type: 'wood',
       subtype: 'fuel',
-      value: 2,
+      value: 20,
       description: 'A soft log.',
+      shopable: true,
     },
     cypressLog: {
       id: 'cypressLog',
@@ -1314,8 +1403,9 @@ baguaMap = [
       name: 'cypress log',
       type: 'wood',
       subtype: 'fuel',
-      value: 3,
+      value: 30,
       description: 'A poor quality log.',
+      shopable: true,
     },
     walnutLog: {
       id: 'walnutLog',
@@ -1324,8 +1414,9 @@ baguaMap = [
       name: 'walnut log',
       type: 'wood',
       subtype: 'fuel',
-      value: 4,
+      value: 40,
       description: 'An adequate quality log.',
+      shopable: true,
     },
     laurelwoodLog: {
       id: 'laurelwoodLog',
@@ -1334,8 +1425,9 @@ baguaMap = [
       name: 'laurelwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 5,
+      value: 60,
       description: 'A nice quality log.',
+      shopable: true,
     },
     blackwoodLog: {
       id: 'blackwoodLog',
@@ -1344,8 +1436,9 @@ baguaMap = [
       name: 'blackwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 6,
+      value: 80,
       description: 'A good quality log.',
+      shopable: true,
     },
     rosewoodLog: {
       id: 'rosewoodLog',
@@ -1354,8 +1447,9 @@ baguaMap = [
       name: 'rosewood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 7,
+      value: 100,
       description: 'A great quality log.',
+      shopable: true,
     },
     pearwoodLog: {
       id: 'pearwoodLog',
@@ -1364,8 +1458,9 @@ baguaMap = [
       name: 'pearwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 8,
+      value: 130,
       description: 'An excellent quality log.',
+      shopable: true,
     },
     zitanLog: {
       id: 'zitanLog',
@@ -1374,8 +1469,9 @@ baguaMap = [
       name: 'zitan log',
       type: 'wood',
       subtype: 'fuel',
-      value: 9,
+      value: 160,
       description: 'An amazing quality log.',
+      shopable: true,
     },
     lignumvitaeLog: {
       id: 'lignumvitaeLog',
@@ -1384,8 +1480,9 @@ baguaMap = [
       name: 'lignum vitae log',
       type: 'wood',
       subtype: 'fuel',
-      value: 10,
+      value: 200,
       description: 'A log of the highest mortal quality.',
+      shopable: true,
     },
     peachwoodlog: {
       id: 'peachwoodlog',
@@ -1394,8 +1491,9 @@ baguaMap = [
       name: 'peachwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 11,
+      value: 250,
       description: 'A log brimming with spiritual energy.',
+      shopable: true,
     },
     diamondwoodLog: {
       id: 'diamondwoodLog',
@@ -1404,8 +1502,9 @@ baguaMap = [
       name: 'diamondwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 12,
+      value: 320,
       description: 'A log as hard as diamond.',
+      shopable: true,
     },
     titanwoodLog: {
       id: 'titanwoodLog',
@@ -1414,8 +1513,9 @@ baguaMap = [
       name: 'titanwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 13,
+      value: 400,
       description: 'A log with the strength of titans.',
+      shopable: true,
     },
     dragonwoodLog: {
       id: 'dragonwoodLog',
@@ -1424,8 +1524,9 @@ baguaMap = [
       name: 'dragonwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 14,
+      value: 500,
       description: 'A log blessed by dragons.',
+      shopable: true,
     },
     devilwoodLog: {
       id: 'devilwoodLog',
@@ -1434,8 +1535,9 @@ baguaMap = [
       name: 'devilwood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 15,
+      value: 620,
       description: 'A demonic quality log.',
+      shopable: true,
     },
     divinewoodLog: {
       id: 'divinewoodLog',
@@ -1444,8 +1546,9 @@ baguaMap = [
       name: 'divinewood log',
       type: 'wood',
       subtype: 'fuel',
-      value: 16,
+      value: 800,
       description: 'A divine quality log.',
+      shopable: true,
     },
     coal: {
       id: 'coal',
@@ -1455,6 +1558,7 @@ baguaMap = [
       subtype: 'fuel',
       value: 1,
       description: 'A chunk of coal.<br>Handy as fuel.',
+      shopable: true,
     },
     copperOre: {
       id: 'copperOre',
@@ -1462,8 +1566,9 @@ baguaMap = [
       imageColor: this.colorByRank[0],
       name: 'copper ore',
       type: 'ore',
-      value: 1,
+      value: 10,
       description: 'A chunk of copper ore.',
+      shopable: true,
     },
     tinOre: {
       id: 'tinOre',
@@ -1471,8 +1576,9 @@ baguaMap = [
       imageColor: this.colorByRank[1],
       name: 'tin ore',
       type: 'ore',
-      value: 2,
+      value: 20,
       description: 'A chunk of tin ore.',
+      shopable: true,
     },
     bronzeOre: {
       id: 'bronzeOre',
@@ -1480,8 +1586,9 @@ baguaMap = [
       imageColor: this.colorByRank[2],
       name: 'mixed ore',
       type: 'ore',
-      value: 3,
+      value: 40,
       description: 'A chunk of ore containing copper, tin, lead, and zinc.',
+      shopable: true,
     },
     ironOre: {
       id: 'ironOre',
@@ -1489,8 +1596,9 @@ baguaMap = [
       imageColor: this.colorByRank[3],
       name: 'iron ore',
       type: 'ore',
-      value: 4,
+      value: 80,
       description: 'A chunk of iron ore.',
+      shopable: true,
     },
     steelOre: {
       id: 'steelOre',
@@ -1498,8 +1606,9 @@ baguaMap = [
       imageColor: this.colorByRank[4],
       name: 'coal-mixed iron ore',
       type: 'ore',
-      value: 5,
+      value: 140,
       description: 'A chunk of iron ore laced with coal.',
+      shopable: true,
     },
     mithrilOre: {
       id: 'mithrilOre',
@@ -1507,8 +1616,9 @@ baguaMap = [
       imageColor: this.colorByRank[5],
       name: 'mithril ore',
       type: 'ore',
-      value: 6,
+      value: 180,
       description: 'A chunk of mithril ore.',
+      shopable: true,
     },
     greensteelOre: {
       id: 'greensteelOre',
@@ -1516,8 +1626,9 @@ baguaMap = [
       imageColor: this.colorByRank[6],
       name: 'greensteel ore',
       type: 'ore',
-      value: 7,
+      value: 220,
       description: 'A chunk of greensteel ore.',
+      shopable: true,
     },
     bluesteelOre: {
       id: 'bluesteelOre',
@@ -1525,8 +1636,9 @@ baguaMap = [
       imageColor: this.colorByRank[7],
       name: 'bluesteel ore',
       type: 'ore',
-      value: 8,
+      value: 260,
       description: 'A chunk of bluesteel ore.',
+      shopable: true,
     },
     redsteelOre: {
       id: 'redsteelOre',
@@ -1534,8 +1646,9 @@ baguaMap = [
       imageColor: this.colorByRank[8],
       name: 'redsteel ore',
       type: 'ore',
-      value: 9,
+      value: 300,
       description: 'A chunk of redsteel ore.',
+      shopable: true,
     },
     flamesteelOre: {
       id: 'flamesteelOre',
@@ -1543,8 +1656,9 @@ baguaMap = [
       imageColor: this.colorByRank[9],
       name: 'flamesteel ore',
       type: 'ore',
-      value: 10,
+      value: 350,
       description: 'A chunk of flamesteel ore.',
+      shopable: true,
     },
     froststeelOre: {
       id: 'froststeelOre',
@@ -1552,8 +1666,9 @@ baguaMap = [
       imageColor: this.colorByRank[10],
       name: 'froststeel ore',
       type: 'ore',
-      value: 11,
+      value: 400,
       description: 'A chunk of froststeel ore.',
+      shopable: true,
     },
     brightsteelOre: {
       id: 'brightsteelOre',
@@ -1561,8 +1676,9 @@ baguaMap = [
       imageColor: this.colorByRank[11],
       name: 'brightsteel ore',
       type: 'ore',
-      value: 12,
+      value: 470,
       description: 'A chunk of brightsteel ore.',
+      shopable: true,
     },
     darksteelOre: {
       id: 'darksteelOre',
@@ -1570,8 +1686,9 @@ baguaMap = [
       imageColor: this.colorByRank[12],
       name: 'darksteel ore',
       type: 'ore',
-      value: 13,
+      value: 540,
       description: 'A chunk of darksteel ore.',
+      shopable: true,
     },
     felsteelOre: {
       id: 'felsteelOre',
@@ -1579,8 +1696,9 @@ baguaMap = [
       imageColor: this.colorByRank[13],
       name: 'felsteel ore',
       type: 'ore',
-      value: 14,
+      value: 620,
       description: 'A chunk of felsteel ore.',
+      shopable: true,
     },
     cloudsteelOre: {
       id: 'cloudsteelOre',
@@ -1588,8 +1706,9 @@ baguaMap = [
       imageColor: this.colorByRank[14],
       name: 'cloudsteel ore',
       type: 'ore',
-      value: 15,
+      value: 700,
       description: 'A chunk of cloudsteel ore.',
+      shopable: true,
     },
     adamantOre: {
       id: 'adamantOre',
@@ -1597,8 +1716,9 @@ baguaMap = [
       imageColor: this.colorByRank[15],
       name: 'adamant ore',
       type: 'ore',
-      value: 16,
+      value: 800,
       description: 'A chunk of adamant ore.',
+      shopable: true,
     },
     // metal bars should always be 10x the value of the associated ore
     copperBar: {
@@ -1607,8 +1727,9 @@ baguaMap = [
       imageColor: this.colorByRank[0],
       name: 'copper bar',
       type: 'metal',
-      value: 10,
+      value: 100,
       description: 'A bar of copper.',
+      shopable: true,
     },
     tinBar: {
       id: 'tinBar',
@@ -1616,8 +1737,9 @@ baguaMap = [
       imageColor: this.colorByRank[1],
       name: 'tin bar',
       type: 'metal',
-      value: 20,
+      value: 200,
       description: 'A bar of tin.',
+      shopable: true,
     },
     bronzeBar: {
       id: 'bronzeBar',
@@ -1625,8 +1747,9 @@ baguaMap = [
       imageColor: this.colorByRank[2],
       name: 'bronze bar',
       type: 'metal',
-      value: 30,
+      value: 400,
       description: 'A bar of bronze.',
+      shopable: true,
     },
     ironBar: {
       id: 'ironBar',
@@ -1634,8 +1757,9 @@ baguaMap = [
       imageColor: this.colorByRank[3],
       name: 'iron bar',
       type: 'metal',
-      value: 40,
+      value: 800,
       description: 'A bar of iron.',
+      shopable: true,
     },
     steelBar: {
       id: 'steelBar',
@@ -1643,8 +1767,9 @@ baguaMap = [
       imageColor: this.colorByRank[4],
       name: 'steel bar',
       type: 'metal',
-      value: 50,
+      value: 1400,
       description: 'A bar of steel.',
+      shopable: true,
     },
     mithrilBar: {
       id: 'mithrilBar',
@@ -1652,8 +1777,9 @@ baguaMap = [
       imageColor: this.colorByRank[5],
       name: 'mithril bar',
       type: 'metal',
-      value: 60,
+      value: 1800,
       description: 'A bar of of mithril.',
+      shopable: true,
     },
     greensteelBar: {
       id: 'greensteelBar',
@@ -1661,8 +1787,9 @@ baguaMap = [
       imageColor: this.colorByRank[6],
       name: 'greensteel bar',
       type: 'metal',
-      value: 70,
+      value: 2200,
       description: 'A bar of greensteel.',
+      shopable: true,
     },
     bluesteelBar: {
       id: 'bluesteelBar',
@@ -1670,8 +1797,9 @@ baguaMap = [
       imageColor: this.colorByRank[7],
       name: 'bluesteel bar',
       type: 'metal',
-      value: 80,
+      value: 2600,
       description: 'A bar of bluesteel.',
+      shopable: true,
     },
     redsteelBar: {
       id: 'redsteelBar',
@@ -1679,8 +1807,9 @@ baguaMap = [
       imageColor: this.colorByRank[8],
       name: 'redsteel bar',
       type: 'metal',
-      value: 90,
+      value: 3000,
       description: 'A bar of redsteel.',
+      shopable: true,
     },
     flamesteelBar: {
       id: 'flamesteelBar',
@@ -1688,8 +1817,9 @@ baguaMap = [
       imageColor: this.colorByRank[9],
       name: 'flamesteel bar',
       type: 'metal',
-      value: 100,
+      value: 3500,
       description: 'A bar of flamesteel.',
+      shopable: true,
     },
     froststeelBar: {
       id: 'froststeelBar',
@@ -1697,8 +1827,9 @@ baguaMap = [
       imageColor: this.colorByRank[10],
       name: 'froststeel bar',
       type: 'metal',
-      value: 110,
+      value: 4000,
       description: 'A bar of froststeel.',
+      shopable: true,
     },
     brightsteelBar: {
       id: 'brightsteelBar',
@@ -1706,8 +1837,9 @@ baguaMap = [
       imageColor: this.colorByRank[11],
       name: 'brightsteel bar',
       type: 'metal',
-      value: 120,
+      value: 4700,
       description: 'A bar of brightsteel.',
+      shopable: true,
     },
     darksteelBar: {
       id: 'darksteelBar',
@@ -1715,8 +1847,9 @@ baguaMap = [
       imageColor: this.colorByRank[12],
       name: 'darksteel bar',
       type: 'metal',
-      value: 130,
+      value: 5400,
       description: 'A bar of darksteel.',
+      shopable: true,
     },
     felsteelBar: {
       id: 'felsteelBar',
@@ -1724,8 +1857,9 @@ baguaMap = [
       imageColor: this.colorByRank[13],
       name: 'felsteel bar',
       type: 'metal',
-      value: 140,
+      value: 6200,
       description: 'A bar of felsteel.',
+      shopable: true,
     },
     cloudsteelBar: {
       id: 'cloudsteelBar',
@@ -1733,8 +1867,9 @@ baguaMap = [
       imageColor: this.colorByRank[14],
       name: 'cloudsteel bar',
       type: 'metal',
-      value: 150,
+      value: 7000,
       description: 'A bar of cloudsteel.',
+      shopable: true,
     },
     adamantBar: {
       id: 'adamantBar',
@@ -1742,8 +1877,9 @@ baguaMap = [
       imageColor: this.colorByRank[15],
       name: 'adamant bar',
       type: 'metal',
-      value: 160,
+      value: 8000,
       description: 'A bar of adamant.',
+      shopable: true,
     },
     junk: {
       id: 'junk',
@@ -1752,6 +1888,7 @@ baguaMap = [
       type: 'metal',
       value: 10,
       description: 'Some metal junk.',
+      shopable: true,
     },
     pillMold: {
       id: 'pillMold',
@@ -1760,6 +1897,7 @@ baguaMap = [
       type: 'pillMold',
       value: 100,
       description: 'A metal mold for compressing a very powerful pill.',
+      shopable: false,
     },
     pillBox: {
       id: 'pillBox',
@@ -1768,6 +1906,7 @@ baguaMap = [
       type: 'pillBox',
       value: 100,
       description: 'A wooden box required for holding a very powerful pill.',
+      shopable: false,
     },
     pillPouch: {
       id: 'pillPouch',
@@ -1777,6 +1916,7 @@ baguaMap = [
       value: 100,
       description:
         'A leather pouch designed to fit inside a pill box and preserve the power of certain very potent pills.',
+      shopable: false,
     },
     unbreakableChain: {
       id: 'unbreakableChain',
@@ -1785,6 +1925,7 @@ baguaMap = [
       type: 'chain',
       value: 1,
       description: "This chain is specially forged to be incredibly strong, but it's REALLY heavy.",
+      shopable: false,
     },
     everlastingBrick: {
       id: 'everlastingBrick',
@@ -1793,6 +1934,7 @@ baguaMap = [
       type: 'brick',
       value: 1,
       description: 'This brick is specially made to bear unimaginable weight.',
+      shopable: false,
     },
     everlastingMortar: {
       id: 'everlastingMortar',
@@ -1801,6 +1943,7 @@ baguaMap = [
       type: 'mortar',
       value: 1,
       description: 'This mortar is specially made to hold up even the highest building.',
+      shopable: false,
     },
     scaffolding: {
       id: 'scaffolding',
@@ -1809,6 +1952,7 @@ baguaMap = [
       type: 'scaffolding',
       value: 1,
       description: 'This scaffolding allows you to work for the next level of your tower.',
+      shopable: false,
     },
     windTome: {
       id: 'windTome',
@@ -1817,6 +1961,7 @@ baguaMap = [
       type: 'windTome',
       value: 1,
       description: 'This book contains a great deal of research on how winds work and how they can be tamed.',
+      shopable: false,
     },
     army: {
       id: 'army',
@@ -1825,6 +1970,7 @@ baguaMap = [
       type: 'army',
       value: 1,
       description: 'This is an army. It fits nicely in your backpack due to your mastery of transdimensional magic.',
+      shopable: false,
     },
     immortality: {
       id: 'immortality',
@@ -1873,6 +2019,7 @@ baguaMap = [
           this.characterService.immortal.set(true);
         }
       },
+      shopable: false,
     },
     portalKey: {
       id: 'portalKey',
@@ -1918,6 +2065,7 @@ baguaMap = [
         );
         this.characterService.god.set(true);
       },
+      shopable: false,
     },
     fingers: {
       id: 'fingers',
@@ -1926,6 +2074,7 @@ baguaMap = [
       type: 'fingers',
       value: 1,
       description: 'A handful of bloody fingers. The demons carry them as grisly trophies. Now, it seems, you do too.',
+      shopable: false,
     },
     tokenOfGratitude: {
       id: 'tokenOfGratitude',
@@ -1934,6 +2083,7 @@ baguaMap = [
       type: 'tokenOfGratitude',
       value: 1,
       description: 'A small keepsake from your family member.',
+      shopable: false,
     },
     mirrorShard: {
       id: 'mirrorShard',
@@ -1942,6 +2092,7 @@ baguaMap = [
       type: 'mirrorShard',
       value: 1,
       description: 'A shard of broken glass. You carefully turn the reflective side away from you.',
+      shopable: false,
     },
     iceCore: {
       id: 'iceCore',
@@ -1950,6 +2101,7 @@ baguaMap = [
       type: 'iceCore',
       value: 1,
       description: 'A small sphere containing the essence of pure cold.',
+      shopable: false,
     },
     fireCore: {
       id: 'fireCore',
@@ -1958,6 +2110,7 @@ baguaMap = [
       type: 'fireCore',
       value: 1,
       description: 'A small sphere containing the essence of pure heat.',
+      shopable: false,
     },
     treasureMap: {
       id: 'treasureMap',
@@ -1966,6 +2119,7 @@ baguaMap = [
       type: 'treasureMap',
       value: 1,
       description: 'A treasure map with the location of a stolen relic.',
+      shopable: false,
     },
     stolenRelic: {
       id: 'stolenRelic',
@@ -1974,6 +2128,7 @@ baguaMap = [
       type: 'stolenRelic',
       value: 1,
       description: 'A treasure pilfered from a tomb.',
+      shopable: false,
     },
     hellCrownTongueRippers: {
       id: 'hellCrownTongueRippers',
@@ -2002,6 +2157,7 @@ baguaMap = [
         );
         this.followerService.unlockJob('prophet');
       },
+      shopable: false,
     },
     hellCrownScissors: {
       id: 'hellCrownScissors',
@@ -2034,6 +2190,7 @@ baguaMap = [
         );
         this.followerService.autoReplaceUnlocked = true;
       },
+      shopable: false,
     },
     hellCrownTreesOfKnives: {
       id: 'hellCrownTreesOfKnives',
@@ -2062,6 +2219,7 @@ baguaMap = [
         );
         this.followerService.unlockJob('moneyBurner');
       },
+      shopable: false,
     },
     hellCrownMirrors: {
       id: 'hellCrownMirrors',
@@ -2094,6 +2252,7 @@ baguaMap = [
         this.characterService.attributes.combatMastery.value += 1;
         this.activityService.CombatTraining.unlocked = true;
       },
+      shopable: false,
     },
     hellCrownSteamers: {
       id: 'hellCrownSteamers',
@@ -2121,6 +2280,7 @@ baguaMap = [
         );
         this.battleService.addPyroclasm();
       },
+      shopable: false,
     },
     hellCrownPillars: {
       id: 'hellCrownPillars',
@@ -2148,6 +2308,7 @@ baguaMap = [
         );
         this.battleService.addMetalFist();
       },
+      shopable: false,
     },
     hellCrownMountainOfKnives: {
       id: 'hellCrownMountainOfKnives',
@@ -2173,6 +2334,7 @@ baguaMap = [
         );
         this.characterService.yinYangBoosted = true;
       },
+      shopable: false,
     },
     hellCrownMountainOfIce: {
       id: 'hellCrownMountainOfIce',
@@ -2200,6 +2362,7 @@ baguaMap = [
         );
         this.battleService.addIceShield();
       },
+      shopable: false,
     },
     hellCrownCauldronsOfOil: {
       id: 'hellCrownCauldronsOfOil',
@@ -2225,6 +2388,7 @@ baguaMap = [
         );
         this.characterService.righteousWrathUnlocked = true;
       },
+      shopable: false,
     },
     hellCrownCattlePit: {
       id: 'hellCrownCattlePit',
@@ -2253,6 +2417,7 @@ baguaMap = [
         );
         this.followerService.petsBoosted = true;
       },
+      shopable: false,
     },
     hellCrownCrushingBoulder: {
       id: 'hellCrownCrushingBoulder',
@@ -2277,6 +2442,7 @@ baguaMap = [
         );
         this.characterService.bonusMuscles = true;
       },
+      shopable: false,
     },
     hellCrownMortarsAndPestles: {
       id: 'hellCrownMortarsAndPestles',
@@ -2310,6 +2476,7 @@ baguaMap = [
         this.inventoryService.divinePeachesUnlocked = true;
         this.inventoryService.updateFarmFoodList();
       },
+      shopable: false,
     },
     hellCrownBloodPool: {
       id: 'hellCrownBloodPool',
@@ -2337,6 +2504,7 @@ baguaMap = [
         );
         this.homeService.hellHome.set(true);
       },
+      shopable: false,
     },
     hellCrownWrongfulDead: {
       id: 'hellCrownWrongfulDead',
@@ -2362,6 +2530,7 @@ baguaMap = [
         );
         this.characterService.bonusBrains = true;
       },
+      shopable: false,
     },
     hellCrownDismemberment: {
       id: 'hellCrownDismemberment',
@@ -2389,6 +2558,7 @@ baguaMap = [
         );
         this.activityService.purifyGemsUnlocked = true;
       },
+      shopable: false,
     },
     hellCrownFireMountain: {
       id: 'hellCrownFireMountain',
@@ -2416,6 +2586,7 @@ baguaMap = [
         );
         this.battleService.addFireShield();
       },
+      shopable: false,
     },
     hellCrownMills: {
       id: 'hellCrownMills',
@@ -2440,6 +2611,7 @@ baguaMap = [
         );
         this.characterService.bonusHealth = true;
       },
+      shopable: false,
     },
     hellCrownSaws: {
       id: 'hellCrownSaws',
@@ -2468,6 +2640,7 @@ baguaMap = [
         );
         this.followerService.unlockJob('banker');
       },
+      shopable: false,
     },
     fastPlayManual: {
       id: 'fastPlayManual',
@@ -2489,6 +2662,7 @@ baguaMap = [
       owned: () => {
         return this.mainLoopService.unlockFastSpeed;
       },
+      shopable: false,
     },
     fasterPlayManual: {
       id: 'fasterPlayManual',
@@ -2510,6 +2684,7 @@ baguaMap = [
       owned: () => {
         return this.mainLoopService.unlockFasterSpeed;
       },
+      shopable: false,
     },
     fastestPlayManual: {
       id: 'fastestPlayManual',
@@ -2531,6 +2706,7 @@ baguaMap = [
       owned: () => {
         return this.mainLoopService.unlockFastestSpeed;
       },
+      shopable: false,
     },
     restartActivityManual: {
       id: 'restartActivityManual',
@@ -2560,6 +2736,7 @@ baguaMap = [
         }
         return this.activityService?.autoRestart;
       },
+      shopable: false,
     },
     autoSellManual: {
       id: 'autoSellManual',
@@ -2588,6 +2765,7 @@ baguaMap = [
         }
         return this.inventoryService.autoSellUnlocked();
       },
+      shopable: false,
     },
     autoEatManual: {
       id: 'autoEatManual',
@@ -2616,6 +2794,7 @@ baguaMap = [
         }
         return this.inventoryService.autoEatUnlocked();
       },
+      shopable: false,
     },
     basicGluttonyManual: {
       id: 'basicGluttonyManual',
@@ -2646,6 +2825,7 @@ baguaMap = [
         }
         return this.inventoryService.maxFoodPerDay >= 20;
       },
+      shopable: false,
     },
     advancedGluttonyManual: {
       id: 'advancedGluttonyManual',
@@ -2676,6 +2856,7 @@ baguaMap = [
         }
         return this.inventoryService.maxFoodPerDay >= 40;
       },
+      shopable: false,
     },
     autoUseManual: {
       id: 'autoUseManual',
@@ -2704,6 +2885,7 @@ baguaMap = [
         }
         return this.inventoryService.autoUseUnlocked();
       },
+      shopable: false,
     },
     autoBalanceManual: {
       id: 'autoBalanceManual',
@@ -2732,6 +2914,7 @@ baguaMap = [
         }
         return this.inventoryService.autoBalanceUnlocked();
       },
+      shopable: false,
     },
     autoPillManual: {
       id: 'autoPillManual',
@@ -2766,6 +2949,7 @@ baguaMap = [
         }
         return this.inventoryService.autoPillUnlocked;
       },
+      shopable: false,
     },
     herbalUnderstandingManual: {
       id: 'herbalUnderstandingManual',
@@ -2795,6 +2979,7 @@ baguaMap = [
         }
         return this.inventoryService.herbalUnderstanding;
       },
+      shopable: false,
     },
     basicHealthRegenerationManual: {
       id: 'basicHealthRegenerationManual',
@@ -2817,6 +3002,7 @@ baguaMap = [
       owned: () => {
         return this.characterService.status.health.battleTickRecovery >= 1;
       },
+      shopable: false,
     },
     basicQiRegenerateManual: {
       id: 'basicQiRegenerateManual',
@@ -2839,6 +3025,7 @@ baguaMap = [
       owned: () => {
         return this.characterService.status.qi.battleTickRecovery >= 1;
       },
+      shopable: false,
     },
     autoTroubleManual: {
       id: 'autoTroubleManual',
@@ -2867,6 +3054,7 @@ baguaMap = [
         }
         return this.battleService?.autoTroubleUnlocked;
       },
+      shopable: false,
     },
     autoWeaponMergeManual: {
       id: 'autoWeaponMergeManual',
@@ -2895,6 +3083,7 @@ baguaMap = [
         }
         return this.inventoryService.autoWeaponMergeUnlocked;
       },
+      shopable: false,
     },
     autoArmorMergeManual: {
       id: 'autoArmorMergeManual',
@@ -2923,6 +3112,7 @@ baguaMap = [
         }
         return this.inventoryService.autoArmorMergeUnlocked;
       },
+      shopable: false,
     },
     useSpiritGemManual: {
       id: 'useSpiritGemManual',
@@ -2953,6 +3143,7 @@ baguaMap = [
         }
         return this.inventoryService.useSpiritGemUnlocked;
       },
+      shopable: false,
     },
     bestHerbsManual: {
       id: 'bestHerbsManual',
@@ -2982,6 +3173,7 @@ baguaMap = [
         }
         return this.inventoryService.autoSellOldHerbs;
       },
+      shopable: false,
     },
     bestWoodManual: {
       id: 'bestWoodManual',
@@ -3011,6 +3203,7 @@ baguaMap = [
         }
         return this.inventoryService.autoSellOldWood;
       },
+      shopable: false,
     },
     bestOreManual: {
       id: 'bestOreManual',
@@ -3042,6 +3235,7 @@ baguaMap = [
         }
         return this.inventoryService.autoSellOldOre;
       },
+      shopable: false,
     },
     bestHidesManual: {
       id: 'bestHidesManual',
@@ -3071,6 +3265,7 @@ baguaMap = [
         }
         return this.inventoryService.autoSellOldHides;
       },
+      shopable: false,
     },
     bestWeaponManual: {
       id: 'bestWeaponManual',
@@ -3100,6 +3295,7 @@ baguaMap = [
         }
         return this.inventoryService.autoequipBestWeapon;
       },
+      shopable: false,
     },
     bestArmorManual: {
       id: 'bestArmorManual',
@@ -3129,6 +3325,7 @@ baguaMap = [
         }
         return this.inventoryService.autoequipBestArmor;
       },
+      shopable: false,
     },
     betterStorageManual: {
       id: 'betterStorageManual',
@@ -3158,6 +3355,7 @@ baguaMap = [
         }
         return this.inventoryService.maxStackSize >= 1000;
       },
+      shopable: false,
     },
     evenBetterStorageManual: {
       id: 'evenBetterStorageManual',
@@ -3187,6 +3385,7 @@ baguaMap = [
         }
         return this.inventoryService.maxStackSize >= 10000;
       },
+      shopable: false,
     },
     bestStorageManual: {
       id: 'bestStorageManual',
@@ -3216,6 +3415,7 @@ baguaMap = [
         }
         return this.inventoryService.maxStackSize >= 100000;
       },
+      shopable: false,
     },
     followerAutoDismissManual: {
       id: 'followerAutoDismissManual',
@@ -3245,6 +3445,7 @@ baguaMap = [
         }
         return this.followerService.autoDismissUnlocked;
       },
+      shopable: false,
     },
     bestGemsManual: {
       id: 'bestGemsManual',
@@ -3275,6 +3476,7 @@ baguaMap = [
         }
         return this.inventoryService.autoSellOldGemsUnlocked;
       },
+      shopable: false,
     },
     autoPauseSettingsManual: {
       id: 'autoPauseSettingsManual',
@@ -3301,6 +3503,7 @@ baguaMap = [
         }
         return this.activityService.autoPauseUnlocked;
       },
+      shopable: false,
     },
     bankedTicksEfficiencyManual: {
       id: 'bankedTicksEfficiencyManual',
@@ -3321,6 +3524,7 @@ baguaMap = [
       owned: () => {
         return this.mainLoopService.offlineDivider <= 2;
       },
+      shopable: false,
     },
     autoRestManual: {
       id: 'autoRestManual',
@@ -3347,6 +3551,7 @@ baguaMap = [
         }
         return this.activityService.autoRestUnlocked;
       },
+      shopable: false,
     },
     ageSpeedManual: {
       id: 'ageSpeedManual',
@@ -3367,6 +3572,7 @@ baguaMap = [
       owned: () => {
         return this.mainLoopService.unlockAgeSpeed;
       },
+      shopable: false,
     },
     totalPlaytimeManual: {
       id: 'totalPlaytimeManual',
@@ -3387,6 +3593,7 @@ baguaMap = [
       owned: () => {
         return this.mainLoopService.unlockPlaytimeSpeed;
       },
+      shopable: false,
     },
     perpetualCraftingManual: {
       id: 'perpetualCraftingManual',
@@ -3416,6 +3623,7 @@ baguaMap = [
         }
         return this.inventoryService.autoReloadCraftInputs;
       },
+      shopable: false,
     },
   };
 

@@ -4033,6 +4033,7 @@ export class ActivityService {
               baseName: 'hammer',
             },
             description: 'A crude copper hammer.',
+            shopable: false,
           };
           this.inventoryService.addItem(newHammer);
         }

@@ -613,6 +613,7 @@ export class GameStateService {
       maxFoodPerDay: props?.maxFoodPerDay || 10,
       unlockedFurniture: props?.unlockedFurniture || [],
       herbalUnderstanding: props?.herbalUnderstanding || false,
+      soldGoods: props?.soldGoods || {},
     };
   }
 

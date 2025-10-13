@@ -6,6 +6,8 @@ import { HomeService, HomeType, Home } from '../game-state/home.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LOOT_TYPE_GEM } from './battle.service';
+import { MainLoopService } from './main-loop.service';
+import { TitleCasePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +29,8 @@ export class StoreService {
     private characterService: CharacterService,
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService,
+    private mainLoopService: MainLoopService,
+    private titleCasePipe: TitleCasePipe,
     public homeService: HomeService,
     public dialog: MatDialog
   ) {
@@ -35,6 +39,29 @@ export class StoreService {
     this.manuals = [];
 
     this.regularStoreItems = [this.itemRepoService.items['rice'], this.itemRepoService.items['meat']];
+    let firstCheck = true;
+    mainLoopService.longTickSubject.subscribe(() => {
+      this.updateStoreItems(firstCheck);
+      firstCheck = false;
+    });
+  }
+
+  updateStoreItems(squelchToasts = false) {
+    for (const entryKey in this.inventoryService.soldGoods) {
+      const item = this.itemRepoService.items[entryKey];
+      if (
+        this.inventoryService.soldGoods[entryKey] > Math.pow(item.value, 3) * 10 &&
+        !this.regularStoreItems.includes(item)
+      ) {
+        this.regularStoreItems.push(item);
+        this.regularStoreItems.sort((a, b) => (a.type + a.subtype).localeCompare(b.type + b.subtype));
+        if (!squelchToasts) {
+          this.characterService.toast(
+            'A new item is available in the shop: ' + this.titleCasePipe.transform(item.name)
+          );
+        }
+      }
+    }
   }
 
   setFurnitureIndex(index: number) {

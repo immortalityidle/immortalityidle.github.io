@@ -383,14 +383,6 @@ export class FollowersService {
         const workPower = this.jobs['chef'].totalPower * daysElapsed + (this.leftoverWork['chef'] || 0);
         this.homeService.chefsWork(Math.floor(workPower / 100));
         this.leftoverWork['chef'] = workPower % 100;
-        console.log(
-          'chefs worked, workPower = ' +
-            workPower +
-            ' leftover=' +
-            this.leftoverWork['chef'] +
-            ' daysElapsed=' +
-            daysElapsed
-        );
       },
       description: 'Chefs increase the output of your kitchens.',
       totalPower: 0,
@@ -445,7 +437,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'miner');
         for (const worker of workers) {
-          this.inventoryService.addItem(this.inventoryService.getOre(Math.ceil(worker.power / 6)), daysElapsed);
+          this.inventoryService.addItem(this.inventoryService.getOre(worker.power), daysElapsed);
         }
       },
       description: 'Miners gather ore for your crafting.',
@@ -474,7 +466,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'lumberjack');
         for (const worker of workers) {
-          this.inventoryService.addItem(this.inventoryService.getWood(Math.ceil(worker.power / 6)), daysElapsed);
+          this.inventoryService.addItem(this.inventoryService.getWood(worker.power), daysElapsed);
         }
       },
       description: 'Lumberjacks gather wood for your crafting.',
@@ -484,7 +476,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'herbalist');
         for (const worker of workers) {
-          this.inventoryService.generateHerb(Math.ceil(worker.power / 6), false, daysElapsed);
+          this.inventoryService.generateHerb(worker.power, false, daysElapsed);
         }
       },
       description: 'Herbalists gather herbs for your crafting.',
@@ -494,7 +486,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'skinner');
         for (const worker of workers) {
-          this.inventoryService.addItem(this.inventoryService.getHide(Math.ceil(worker.power / 6)), daysElapsed);
+          this.inventoryService.addItem(this.inventoryService.getHide(worker.power), daysElapsed);
         }
       },
       description: 'Skinners gather hides for your crafting.',

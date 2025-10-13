@@ -1501,24 +1501,7 @@ export class BattleService {
     }
 
     const targetLocation = this.locationService.troubleTarget;
-    /*
-    if (this.godSlayersEnabled) {
-      const index = this.godSlayerKills % this.monsterTypes.length;
-      const rank = Math.floor(this.godSlayerKills / this.monsterTypes.length);
-      monsterType = this.monsterTypes[index];
-      monsterName = 'Godslaying ' + monsterType;
 
-      if (rank > 0) {
-        monsterName += ' ' + (rank + 1);
-      }
-
-      attack = Math.round(Math.pow(1.1, this.godSlayerKills));
-      defense = attack * 10;
-      health = attack * 200;
-      gem = this.inventoryService.generateSpiritGem(Math.ceil(this.godSlayerKills / 20));
-      this.godSlayerKills++;
-    }
-     */
     const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
 
     const monsterType = possibleMonsters[(this.killsByLocation[targetLocation] || 0) % possibleMonsters.length];
