@@ -903,7 +903,7 @@ export class InventoryService {
     });
   }
 
-  generateHerb(grade: number = -1, skipSnobbery: boolean = false, quantity = 1): void {
+  generateHerb(workerPower: number = -1, skipSnobbery: boolean = false, quantity = 1): void {
     let targetLocation = LocationType.SmallTown;
     if (this.locationService?.troubleTarget) {
       targetLocation = this.locationService.troubleTarget;
@@ -913,9 +913,15 @@ export class InventoryService {
       filteredHerbs = Herbs.filter(herb => herb.locations.includes(LocationType.SmallTown));
     }
     const woodLore = this.characterService.attributes.woodLore.value;
-    if (grade === -1) {
+
+    let grade;
+    if (workerPower === -1) {
       grade = Math.floor(Math.pow(woodLore / 1e12, 0.16) * herbQuality.length);
+    } else {
+      const valueScale = workerPower / 100;
+      grade = Math.floor(Math.pow((woodLore * valueScale) / 1e12, 0.16) * herbQuality.length);
     }
+
     if (grade >= herbQuality.length) {
       grade = herbQuality.length - 1;
     }
