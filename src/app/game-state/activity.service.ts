@@ -2260,7 +2260,6 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 0.1);
         this.characterService.increaseAttribute('speed', 0.1);
         this.characterService.status.stamina.value -= 10;
-        // the grade on herbs probably needs diminishing returns
         this.inventoryService.generateHerb();
         this.characterService.increaseAttribute('woodLore', 0.003);
         this.characterService.yang++;

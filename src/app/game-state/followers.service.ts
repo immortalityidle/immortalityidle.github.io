@@ -475,9 +475,12 @@ export class FollowersService {
     herbalist: {
       work: daysElapsed => {
         const workers = this.followers.filter(follower => follower.job === 'herbalist');
+        let averagePower = 0;
         for (const worker of workers) {
-          this.inventoryService.generateHerb(worker.power, false, daysElapsed);
+          averagePower += worker.power;
         }
+        averagePower = Math.floor(averagePower / workers.length);
+        this.inventoryService.generateHerb(averagePower, false, daysElapsed * workers.length);
       },
       description: 'Herbalists gather herbs for your crafting.',
       totalPower: 0,

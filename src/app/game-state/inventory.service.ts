@@ -948,15 +948,15 @@ export class InventoryService {
     );
     if (this.autoSellOldHerbsEnabled && !skipSnobbery) {
       // sell any herb of the same type that are cheaper than what we just picked
-      const oldHerbStack = this.itemStacks.find(
+      const oldHerbStacks = this.itemStacks.filter(
         (itemStack, index) =>
           index >= this.heirloomSlots() &&
           itemStack.item?.type === 'herb' &&
           itemStack.item.subtype === herb.name &&
-          itemStack.item.value < grade + 1
+          itemStack.item.value < grade * 10
       );
-      if (oldHerbStack) {
-        this.sell(oldHerbStack, oldHerbStack.quantity);
+      for (const stackToSell of oldHerbStacks) {
+        this.sell(stackToSell, stackToSell.quantity);
       }
     }
   }
