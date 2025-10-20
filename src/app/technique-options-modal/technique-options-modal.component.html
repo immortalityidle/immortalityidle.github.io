@@ -1,0 +1,37 @@
+<div class="darkMode">
+  <h3>Technique Development Options</h3>
+  <span class="techniqueDevelopmentOptions">
+    @for (prefix of battleService.techniquePrefixAdjectiveList; track prefix.value) {
+        @if (prefix.discovered){
+            <span [tooltip]='prefix.description'>
+                <input
+                    type="checkbox"
+                    (change)="entryToggled($event, prefix)"
+                    [id]="'prefix' + prefix.value"
+                    [checked]="prefix.allowed"
+                    />
+                <label [for]="'prefix' + prefix.value">
+                    Continue developing {{prefix.value}} techniques
+                </label>
+            </span>
+            <br/>
+        }
+    }
+    @for (prefix of battleService.techniqueEffectsList; track prefix.value) {
+        @if (prefix.discovered){
+            <span [tooltip]='prefix.description'>
+                <input
+                    type="checkbox"
+                    (change)="entryToggled($event, prefix)"
+                    [id]="'prefix' + prefix.value"
+                    [checked]="prefix.allowed"
+                    />
+                <label [for]="'prefix' + prefix.value">
+                    Continue developing {{prefix.value}} techniques
+                </label>
+            </span>
+            <br/>
+        }
+    }
+  </span>
+</div>

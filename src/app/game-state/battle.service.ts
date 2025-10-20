@@ -86,6 +86,10 @@ export interface BattleProperties {
   pouchPotionsUsed: number;
   pouchFoodUsed: number;
   timesFled: number;
+  discoveredTechniquePrefixes: string[];
+  blockedTechniquePrefixes: string[];
+  discoveredTechniqueEffects: string[];
+  blockedTechniqueEffects: string[];
 }
 
 export interface Technique {
@@ -117,6 +121,13 @@ export interface DisplayTechnique {
   trackField: WritableSignal<string>;
   disabled: WritableSignal<boolean>;
   unlocked: WritableSignal<boolean>;
+}
+
+export interface TechniqueDevelopmentEntry {
+  value: string;
+  description: string;
+  allowed: boolean;
+  discovered: boolean;
 }
 
 export interface StatusEffect {
@@ -215,6 +226,207 @@ export class BattleService {
   enemyImageFile = signal<string>('');
   enemiesPresent = signal<boolean>(false);
   timesFled = 0;
+
+  techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
+    {
+      value: 'Northern',
+      description:
+        'Techniques from the Northern lands. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Southern',
+      description:
+        'Techniques from the Southern lands. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Eastern',
+      description:
+        'Techniques from the Eastern lands. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Western',
+      description:
+        'Techniques from the Western lands. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Brutal',
+      description:
+        'Techniques that focus on their brutality. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Devastating',
+      description:
+        'Techniques that focus on devastating your foes. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Flowing',
+      description:
+        'Techniques that focus on their flowing form. Not actually faster than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Fierce',
+      description:
+        'Techniques that focus on fierceness. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Verdant',
+      description:
+        'Techniques that focus on emulating the verdant natural world. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Stealthy',
+      description:
+        'Techniques that focus on stealthy strikes. Not actually better than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: "Dragon's",
+      description:
+        'Techniques inspired by the power of dragons. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Devilish',
+      description:
+        'Techniques inspired by the wicked strength of devils. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Angelic',
+      description:
+        'Techniques inspired by the holy power of angelic beings. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Fearsome',
+      description:
+        'Techniques that focus on inspiring fear in your foes. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Ancient',
+      description:
+        'Techniques inspired by your study of ancient combat. Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Traditional',
+      description:
+        "Techniques inspired by your people's traditions. Not actually stronger than other attacks, but their name is impressive.",
+
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Lucky',
+      description:
+        'Techniques that focus on lucky strikes . Not actually stronger than other attacks, but their name is impressive.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Imprudent',
+      description: 'Techniques that trade a bit of your own life for extra power.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Reckless',
+      description: 'Techniques that trade a your own life for extra power.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'Wild',
+      description: 'Techniques that trade a dangerous amount of your own life for extra power.',
+      allowed: true,
+      discovered: false,
+    },
+  ];
+
+  techniqueEffectsList: TechniqueDevelopmentEntry[] = [
+    {
+      value: ELEMENT_EFFECT_FIRE,
+      description: 'Techniques infused with the fire element.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: ELEMENT_EFFECT_EARTH,
+      description: 'Techniques infused with the earth element.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: ELEMENT_EFFECT_METAL,
+      description: 'Techniques infused with the metal element.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: ELEMENT_EFFECT_WOOD,
+      description: 'Techniques infused with the wood element.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: ELEMENT_EFFECT_WATER,
+      description: 'Techniques infused with the water element.',
+      allowed: true,
+      discovered: false,
+    },
+    { value: EFFECT_POISON, description: 'Techniques that inflict poison.', allowed: true, discovered: false },
+    { value: EFFECT_DOOM, description: 'Techniques that inflict doom.', allowed: true, discovered: false },
+    {
+      value: EFFECT_EXPLOSIVE,
+      description: 'Techniques that deliver explosive damage to both you and your foe.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: EFFECT_SHIELDING,
+      description: 'Techniques that focus on shielding you from your enemies attacks.',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: EFFECT_PIERCING,
+      description: "Techniques that focus on piercing through your foe's defense.",
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: EFFECT_HASTE,
+      description: 'Techniques that inspire you to strike faster.',
+      allowed: true,
+      discovered: false,
+    },
+    { value: EFFECT_SLOW, description: "Techniques that slow your foe's attacks.", allowed: true, discovered: false },
+  ];
 
   private elementalFactor = 2;
   // elemental logic:
@@ -527,6 +739,27 @@ export class BattleService {
   }
 
   getProperties(): BattleProperties {
+    const discoveredPrefixes: string[] = [];
+    const blockedPrefixes: string[] = [];
+    const discoveredEffects: string[] = [];
+    const blockedEffects: string[] = [];
+    for (const prefix of this.techniquePrefixAdjectiveList) {
+      if (prefix.discovered) {
+        discoveredPrefixes.push(prefix.value);
+      }
+      if (!prefix.allowed) {
+        blockedPrefixes.push(prefix.value);
+      }
+    }
+    for (const prefix of this.techniqueEffectsList) {
+      if (prefix.discovered) {
+        discoveredEffects.push(prefix.value);
+      }
+      if (!prefix.allowed) {
+        blockedEffects.push(prefix.value);
+      }
+    }
+
     return {
       enemies: this.enemies,
       currentEnemy: this.currentEnemy,
@@ -560,6 +793,10 @@ export class BattleService {
       pouchPotionsUsed: this.pouchPotionsUsed,
       pouchFoodUsed: this.pouchFoodUsed,
       timesFled: this.timesFled,
+      discoveredTechniquePrefixes: discoveredPrefixes,
+      blockedTechniquePrefixes: blockedPrefixes,
+      discoveredTechniqueEffects: discoveredEffects,
+      blockedTechniqueEffects: blockedEffects,
     };
   }
 
@@ -601,6 +838,14 @@ export class BattleService {
           this.currentEnemy = enemy;
         }
       }
+    }
+    for (const prefix of this.techniquePrefixAdjectiveList) {
+      prefix.discovered = properties.discoveredTechniquePrefixes.includes(prefix.value);
+      prefix.allowed = !properties.blockedTechniquePrefixes.includes(prefix.value);
+    }
+    for (const prefix of this.techniqueEffectsList) {
+      prefix.discovered = properties.discoveredTechniqueEffects.includes(prefix.value);
+      prefix.allowed = !properties.blockedTechniqueEffects.includes(prefix.value);
     }
   }
 
@@ -650,43 +895,23 @@ export class BattleService {
   }
 
   private developNewTechnique() {
-    const prefixAdjectiveList = [
-      'Northern',
-      'Southern',
-      'Eastern',
-      'Western',
-      'Brutal',
-      'Devastating',
-      'Flowing',
-      'Fierce',
-      'Verdant',
-      'Stealthy',
-      "Dragon's",
-      'Devilish',
-      'Angelic',
-      'Fearsome',
-      'Ancient',
-      'Traditional',
-      'Lucky',
-      'Imprudent',
-      'Reckless',
-      'Wild',
-    ];
-    const prefix = prefixAdjectiveList[Math.floor(Math.random() * prefixAdjectiveList.length)];
+    const prefixes = this.techniquePrefixAdjectiveList.filter(entry => entry.allowed);
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
     let healthCost = 0;
     let extraMultiplier = 1;
-    if (prefix === 'Imprudent') {
+    if (prefix.value === 'Imprudent') {
       healthCost = 10;
       extraMultiplier = 2;
-    } else if (prefix === 'Reckless') {
+    } else if (prefix.value === 'Reckless') {
       healthCost = 100;
       extraMultiplier = 4;
-    } else if (prefix === 'Wild') {
+    } else if (prefix.value === 'Wild') {
       healthCost = 1000;
       extraMultiplier = 10;
     }
-    const attributeKeys = Object.keys(this.characterService.attackPower);
+    prefix.discovered = true;
 
+    const attributeKeys = Object.keys(this.characterService.attackPower);
     const attribute = attributeKeys[Math.floor(Math.random() * attributeKeys.length)] as AttributeType;
     let attributePrefix = '';
     if (attribute === 'strength') {
@@ -721,31 +946,18 @@ export class BattleService {
       extraMultiplier += qiCost / 10;
     }
 
-    const effects = [
-      ELEMENT_EFFECT_FIRE,
-      ELEMENT_EFFECT_EARTH,
-      ELEMENT_EFFECT_METAL,
-      ELEMENT_EFFECT_WOOD,
-      ELEMENT_EFFECT_WATER,
-      EFFECT_POISON,
-      EFFECT_DOOM,
-      EFFECT_EXPLOSIVE,
-      EFFECT_SHIELDING,
-      EFFECT_PIERCING,
-      EFFECT_HASTE,
-      EFFECT_SLOW,
-    ];
-
+    const effects = this.techniqueEffectsList.filter(entry => entry.allowed);
     const effectIndex = Math.floor(Math.random() * effects.length * 5);
     let effect = undefined;
     let suffix = '';
     if (effectIndex < effects.length) {
-      effect = effects[effectIndex];
+      effect = effects[effectIndex].value;
       suffix = ' of ' + effect;
+      effects[effectIndex].discovered = true;
     }
 
     this.techniques.push({
-      name: prefix + ' ' + attributePrefix + ' ' + attackNoun + suffix,
+      name: prefix.value + ' ' + attributePrefix + ' ' + attackNoun + suffix,
       description: 'A special family technique that can be passed to your descendants.',
       ticksRequired: ticksRequired,
       ticks: 0,
