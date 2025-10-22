@@ -867,7 +867,7 @@ export class InventoryService {
       value: grade,
       description: 'A potion that restores ' + effect,
       useLabel: 'Drink',
-      useDescription: 'Drink to increase restores ' + effect + '.',
+      useDescription: 'Drink to restore ' + effect + '.',
       useConsumes: true,
       pouchable: true,
       effect: effect,

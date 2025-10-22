@@ -1600,7 +1600,7 @@ export class ActivityService {
           return;
         }
 
-        if (this.characterService.attributes.charisma.value < 1e17) {
+        if (this.characterService.attributes.charisma.value < 5e16) {
           this.logService.injury(
             LogTopic.EVENT,
             "The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first."

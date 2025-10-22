@@ -1797,7 +1797,7 @@ export class HomeService {
         }
         for (const itemStack of herbStacks) {
           if (itemStack.item!.attribute === highestAttribute || itemStack.item!.attribute === secondHighestAttribute) {
-            totalValue += itemStack.item!.value * 0.5;
+            totalValue += itemStack.item!.value;
             itemStack.quantity--;
           }
         }
@@ -1812,7 +1812,7 @@ export class HomeService {
         }
         multiplier += attributeMap[highestAttribute] * attributeMap[highestAttribute];
         if (secondHighestAttribute === '') {
-          multiplier *= 2.5;
+          multiplier *= Math.max(2.5, attributeMap[highestAttribute]);
         } else {
           multiplier += attributeMap[secondHighestAttribute] * attributeMap[secondHighestAttribute];
         }
