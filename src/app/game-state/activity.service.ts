@@ -2057,6 +2057,19 @@ export class ActivityService {
         this.characterService.increaseAttribute('spirituality', 0.001);
         this.characterService.increaseAttribute('cooking', 0.1);
         this.characterService.status.stamina.value -= 90;
+        let money =
+          10 +
+          Math.log2(
+            (this.characterService.attributes.charisma.value +
+              2 * this.characterService.attributes.intelligence.value) /
+              3 +
+              this.characterService.attributes.spirituality.value * 10
+          );
+        if (this.familySpecialty === ActivityType.Cooking) {
+          money += money * 0.2;
+        }
+        money = this.characterService.updateMoney(money);
+        this.Cooking.lastIncome = money;
       },
     ],
     resourceUse: [

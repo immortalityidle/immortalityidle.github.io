@@ -731,8 +731,8 @@ export class HomeService {
       description: 'A simple cook pot to prepare meals.<br>You will need to provide your own ingredients.',
       maxInputs: 2,
       inputs: [],
-      consequence: (workstation: Workstation, activityType: ActivityType) => {
-        this.cookFood(workstation, activityType);
+      consequence: (workstation: Workstation) => {
+        this.cookFood(workstation, 1);
       },
     },
     {
@@ -745,8 +745,8 @@ export class HomeService {
         'A simple spit to roast your foods, letting you add more variety to your diet.<br>You will need to provide your own ingredients.',
       maxInputs: 3,
       inputs: [],
-      consequence: (workstation: Workstation, activityType: ActivityType) => {
-        this.cookFood(workstation, activityType);
+      consequence: (workstation: Workstation) => {
+        this.cookFood(workstation, 2);
       },
     },
     {
@@ -759,8 +759,8 @@ export class HomeService {
         'A restaurant quality kitchen allowing you to make magnificent meals.<br>You will need to provide your own ingredients.',
       maxInputs: 5,
       inputs: [],
-      consequence: (workstation: Workstation, activityType: ActivityType) => {
-        this.cookFood(workstation, activityType);
+      consequence: (workstation: Workstation) => {
+        this.cookFood(workstation, 3);
       },
     },
     {
@@ -1388,14 +1388,17 @@ export class HomeService {
     }
   }
 
-  chefsWork(workValue: number) {
+  chefsWork(cookAmount: number) {
+    if (cookAmount < 1) {
+      return;
+    }
     const kitchens = this.workstations.filter(ws => ws.triggerActivities.includes(ActivityType.Cooking));
     for (const kitchen of kitchens) {
-      this.cookFood(kitchen, workValue / kitchens.length);
+      this.cookFood(kitchen, cookAmount);
     }
   }
 
-  cookFood(workstation: Workstation, activityType: ActivityType, cookAmount: number = 1) {
+  cookFood(workstation: Workstation, cookAmount: number = 1) {
     if (workstation.inputs.length < 2) {
       // inputs array not populated, bail out
       return;
@@ -1428,14 +1431,16 @@ export class HomeService {
     totalValue *= usedSubtypes.length;
     totalValue *= workstation.power + 1;
 
-    const cookingLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
+    const cookingLevel = this.activityService?.getActivityByType(ActivityType.Cooking)?.level || 0;
     let imageFile = 'meal';
     let foodName = 'Menu Special #' + totalValue;
     let pouchable = false;
+    let fedPart = 'your body';
     if (cookingLevel > 0) {
       totalValue *= 4;
       imageFile = 'soulfood';
       foodName = 'Soul Food Special #' + totalValue;
+      fedPart = 'your body and soul';
       pouchable = true;
     }
     const effect = 'meal' + totalValue;
@@ -1449,7 +1454,7 @@ export class HomeService {
         type: 'food',
         subtype: 'meal',
         value: totalValue,
-        description: 'A home-made meal that can nourish you much more than raw ingredients.',
+        description: 'A home-made meal that can nourish ' + fedPart + ' much more than raw ingredients.',
         useLabel: 'Eat',
         useDescription: 'Fills your belly.',
         useConsumes: true,
