@@ -35,6 +35,7 @@ export class StoreModalComponent {
     imageFile: 'land',
     shopable: false,
   };
+  purchaseQuantity = 1;
 
   constructor(
     public storeService: StoreService,
@@ -46,6 +47,7 @@ export class StoreModalComponent {
     mainloopService: MainLoopService
   ) {
     this.landItem.value = this.homeService.landPrice;
+    this.buyDisabled = this.storeService.selectedItem === null;
 
     mainloopService.reincarnateSubject.subscribe(() => {
       this.landItem.value = this.homeService.landPrice;
@@ -62,20 +64,28 @@ export class StoreModalComponent {
     }
   }
 
-  buyItem(quantity: number) {
+  buyItem() {
     const item = this.storeService.selectedItem;
     if (!item) {
       return;
     }
     if (item === this.landItem) {
-      this.homeService.buyLand(quantity);
+      this.homeService.buyLand(this.purchaseQuantity);
       this.landItem.value = this.homeService.landPrice;
     } else {
-      const price = quantity * item.value * 10;
+      const price = this.purchaseQuantity * item.value * 10;
       if (this.characterService.money > price) {
-        this.inventoryService.addItem(item, quantity);
+        this.inventoryService.addItem(item, this.purchaseQuantity);
         this.characterService.updateMoney(0 - price);
       }
+    }
+  }
+
+  purchaseQuantityChange(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.purchaseQuantity = Math.floor(parseFloat(event.target.value));
+    if (this.purchaseQuantity < 1) {
+      this.purchaseQuantity = 1;
     }
   }
 }

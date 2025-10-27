@@ -15,10 +15,11 @@
   --staminaColor: light-dark(lightgreen, lightgreen);
   --nutritionColor: light-dark(yellow, yellow);
   --qiColor: light-dark(lightblue, #195061);
-  --buttonColor: light-dark(#fdfffc, #373737);
+  --buttonColor: light-dark(#fdfffc, #040404);
+  --disabledButtonColor: light-dark(#888888, #373737);
   --buttonBorder: light-dark(#a4c9aC, #999999);
   --dialogBackground: light-dark(#333333, #333333);
-  --disabledText: light-dark(#555555, #999999);
+  --disabledText: light-dark(#444444, #999999);
   --textHighlight: light-dark(green, green);
   --buttonHighlightBg: light-dark(gold, blue);
   --disabledActivity: light-dark(white, #5a5a5a);
@@ -88,7 +89,7 @@ button {
 }
 
 button:disabled {
-  color: var(--bodyText);
+  background-color: var(--disabledButtonColor);
 }
 
 .appRoot {
