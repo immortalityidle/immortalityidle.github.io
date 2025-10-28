@@ -55,8 +55,9 @@ export class TooltipDirective implements OnInit, OnDestroy {
 
   @HostListener('mouseover', ['$event'])
   @HostListener('touchstart', ['$event'])
-  show() {
-    if (tooltipShown) {
+  // @ts-ignore
+  show(event) {
+    if (tooltipShown || (event.buttons && event.buttons > 0)) {
       return;
     }
     tooltipShown = true;
@@ -88,5 +89,13 @@ export class TooltipDirective implements OnInit, OnDestroy {
     }
 
     this.overlayRef.detach();
+  }
+
+  @HostListener('mousemove', ['$event'])
+  // @ts-ignore
+  maybeHide(event) {
+    if (event.buttons && event.buttons > 0) {
+      this.hide();
+    }
   }
 }
