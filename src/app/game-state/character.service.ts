@@ -491,7 +491,9 @@ export class CharacterService {
   hellMoney = 0;
   // age in days
   age = INITIAL_AGE;
-  displayAge = signal<number>(this.age);
+  displayAge = signal<number>(this.age / 365);
+  displayAgeYears = signal<number>(Math.floor(this.age / 365));
+  displayAgeDays = signal<number>(this.age % 365);
   baseLifespan = 30 * 365;
   foodLifespan = 0; // bonus to lifespan based on food you've eaten
   alchemyLifespan = 0; // bonus to lifespan based on pills you've eaten
@@ -563,8 +565,11 @@ export class CharacterService {
 
       prevTotalTicks = currentTotalTicks;
       this.displayMoney.set(this.money);
-      this.displayAge.set(this.age);
-      this.displayLifespan.set(this.lifespan);
+      this.displayAge.set(this.age / 365);
+      this.displayAgeYears.set(Math.floor(this.age / 365));
+      this.displayAgeDays.set(this.age % 365);
+
+      this.displayLifespan.set(this.lifespan / 365);
       this.displayYin.set(this.yin);
       this.displayYang.set(this.yang);
       const statusKeys = Object.keys(this.status);

@@ -8,20 +8,11 @@
         }
         <div class="statusRow top">
             <div class="flexColumn">
-                @let ageBreakpoint = 10_000 * 365;
                 @if (!isCollapsed) {
                     <div class="statusCell age">
                         <mat-icon tooltip="{{characterService.lifespanTooltip()}}">timer</mat-icon>
                         <div>
-                            @if(characterService.displayAge() < ageBreakpoint) {
-                                <span>Age {{Math.floor(characterService.displayAge() / 365) }}</span>
-                            } @else {
-                                <span>Age {{characterService.displayAge() / 365 | bigNumber }}</span>
-                            }
-                            @if (characterService.displayAge() < ageBreakpoint) {
-                                <span>.{{characterService.displayAge() % 365 | number: '1.0-0'}}</span>
-                            }
-                            <span> years old.</span>
+                            <span>Age: {{characterService.displayAge() | bigNumber }} years.</span>
                         </div>
                     </div>
                     <div class="statusCell">
@@ -29,27 +20,17 @@
                             <div>You expect to live forever.</div>
                         }
                         @else {
-                            <div>You expect to live {{characterService.displayLifespan() / 365 | bigNumber}} years.</div>
+                            <div>You expect to live {{characterService.displayLifespan() | bigNumber}} years.</div>
                         }
                     </div>
                 } @else {
                     <span>
-                        @if(characterService.displayAge() < ageBreakpoint) {
-                            {{Math.floor(characterService.displayAge() / 365)}}
-                            /
-                            @if (characterService.immortal()) {
-                                Forever
-                            } @else {
-                                {{characterService.displayLifespan() / 365 | bigNumber}}
-                            }
+                        {{characterService.displayAge() | bigNumber }}
+                        /
+                        @if (characterService.immortal()) {
+                            Forever
                         } @else {
-                            {{characterService.displayAge() / 365 | bigNumber }}
-                            /
-                            @if (characterService.immortal()) {
-                                Forever
-                            } @else {
-                                {{characterService.displayLifespan() / 365 | bigNumber}}
-                            }
+                            {{characterService.displayLifespan() | bigNumber}}
                         }
                     </span>
                 }
