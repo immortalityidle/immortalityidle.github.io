@@ -53,6 +53,9 @@
           @if (homeService.openBedroomFurnitureSlots > 0){
             <span> has room for {{homeService.openBedroomFurnitureSlots}} more piece{{homeService.openBedroomFurnitureSlots > 1 ? "s" : ""}} of furniture</span>
           }
+          @else {
+            <span> (no more room for furniture)</span>
+          }
         </div>
         <table class="furnitureSlots">
           <tr>

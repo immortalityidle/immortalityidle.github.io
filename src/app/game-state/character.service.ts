@@ -1204,8 +1204,11 @@ export class CharacterService {
       }
       this.money = amount;
     } else {
-      const multiplier = 1 + Math.pow(this.fengshuiScore, 1.5) / 100;
-      amount *= multiplier;
+      let multiplier = 1;
+      if (amount > 0) {
+        multiplier += Math.pow(this.fengshuiScore, 1.5) / 100;
+        amount *= multiplier;
+      }
       this.money += amount;
       if (this.showUpdateAnimations) {
         this.moneyUpdates += amount;
