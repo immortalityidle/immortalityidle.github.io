@@ -1113,6 +1113,17 @@ export class GameStateService {
           aptitudeMult: props?.attributes?.cooking?.aptitudeMult || 1,
           icon: 'soup_kitchen',
         },
+        haggling: {
+          description: 'Mastery of financial matters.',
+          value: props?.attributes?.haggling?.value || 0,
+          lifeStartValue: props?.attributes?.haggling?.lifeStartValue || 0,
+          aptitude: props?.attributes?.haggling?.aptitude || 1,
+          displayKey: signal<string>('haggling'),
+          displayValue: signal<number>(0),
+          displayAptitude: signal<number>(1),
+          aptitudeMult: props?.attributes?.haggling?.aptitudeMult || 1,
+          icon: 'money_bag',
+        },
       },
       status: {
         health: {

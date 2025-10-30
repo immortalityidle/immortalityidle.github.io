@@ -57,7 +57,8 @@ export type AttributeType =
   | 'woodwork'
   | 'leatherwork'
   | 'formationMastery'
-  | 'cooking';
+  | 'cooking'
+  | 'haggling';
 
 export type AttributeObject = {
   description: string;
@@ -447,6 +448,17 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'soup_kitchen',
+    },
+    haggling: {
+      description: 'Mastery of financial matters.',
+      value: 0,
+      displayKey: signal<string>('haggling'),
+      displayValue: signal<number>(0),
+      lifeStartValue: 0,
+      aptitude: 1,
+      displayAptitude: signal<number>(1),
+      aptitudeMult: 1,
+      icon: 'money_bag',
     },
   };
   status: CharacterStatus = {

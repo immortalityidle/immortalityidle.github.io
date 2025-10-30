@@ -26,6 +26,7 @@ export enum ActivityType {
   Hunting,
   Fishing,
   Alchemy,
+  Merchant,
   Burning,
   BalanceChi,
   BodyCultivation,

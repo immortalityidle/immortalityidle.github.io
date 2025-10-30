@@ -940,7 +940,7 @@ export class InventoryService {
         type: 'herb',
         subtype: herb.name,
         attribute: herb.attribute,
-        value: grade * 10,
+        value: (grade + 1) * 10,
         description: 'Useful herbs.<br>Can be used in creating pills or potions.' + extraDescription,
         shopable: false,
       },
@@ -953,7 +953,7 @@ export class InventoryService {
           index >= this.heirloomSlots() &&
           itemStack.item?.type === 'herb' &&
           itemStack.item.subtype === herb.name &&
-          itemStack.item.value < grade * 10
+          itemStack.item.value < (grade + 1) * 10
       );
       for (const stackToSell of oldHerbStacks) {
         this.sell(stackToSell, stackToSell.quantity);

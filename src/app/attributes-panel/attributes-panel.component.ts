@@ -44,6 +44,7 @@ export class AttributesPanelComponent {
       skills: {
         performance: this.characterService.attributes.performance,
         cooking: this.characterService.attributes.cooking,
+        haggling: this.characterService.attributes.haggling,
         smithing: this.characterService.attributes.smithing,
         woodwork: this.characterService.attributes.woodwork,
         leatherwork: this.characterService.attributes.leatherwork,

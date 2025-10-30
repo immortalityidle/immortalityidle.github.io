@@ -764,6 +764,58 @@ export class HomeService {
       },
     },
     {
+      id: 'Shopfront Booth',
+      triggerActivities: [ActivityType.Merchant],
+      power: 0,
+      setupCost: 1000,
+      maintenanceCost: 5,
+      description: 'A simple booth to display wares to sell.',
+      maxInputs: 2,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.merchantWork(workstation);
+      },
+    },
+    {
+      id: 'Tiny Shop',
+      triggerActivities: [ActivityType.Merchant],
+      power: 1,
+      setupCost: 10000,
+      maintenanceCost: 100,
+      description: 'A tiny shop to display wares to sell.',
+      maxInputs: 6,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.merchantWork(workstation);
+      },
+    },
+    {
+      id: 'Modest Store',
+      triggerActivities: [ActivityType.Merchant],
+      power: 2,
+      setupCost: 1000000,
+      maintenanceCost: 500,
+      description: 'A lovely shop to display wares to sell.',
+      maxInputs: 10,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.merchantWork(workstation);
+      },
+    },
+    {
+      id: 'Elaborate Emporium',
+      triggerActivities: [ActivityType.Merchant],
+      power: 3,
+      setupCost: 1000000000,
+      maintenanceCost: 1000,
+      description: 'A massive store to display wares to sell.',
+      maxInputs: 16,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.merchantWork(workstation);
+      },
+    },
+    {
       id: 'Basic Formation Workstation',
       triggerActivities: [ActivityType.FormationCreation],
       power: 1,
@@ -2018,6 +2070,26 @@ export class HomeService {
         gemStack?.item?.subtype
       );
       gemStack!.quantity--;
+    }
+  }
+
+  merchantWork(workstation: Workstation) {
+    const merchantLevel = this.activityService?.getActivityByType(ActivityType.Merchant)?.level || 0;
+    for (const input of workstation.inputs) {
+      if (input.item?.value && input.item?.value > 0 && input.item?.value !== Infinity && input.quantity > 0) {
+        let moneyMultiplier = 10 - 9 * Math.exp(-0.1 * Math.log10(this.characterService.attributes.haggling.value));
+        if (moneyMultiplier < 1) {
+          moneyMultiplier = 1;
+        }
+        moneyMultiplier *= 1 + merchantLevel * 0.2;
+        moneyMultiplier *= 1 + workstation.power * 0.3;
+        this.characterService.updateMoney(input.item.value * moneyMultiplier);
+        input.quantity--;
+      }
+    }
+    if (merchantLevel >= 3) {
+      // investor level, earn some interest
+      this.characterService.updateMoney(this.characterService.money * 0.000000273);
     }
   }
 

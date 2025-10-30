@@ -198,6 +198,7 @@ export class ActivityService {
       this.Woodworking,
       this.Leatherworking,
       this.Alchemy,
+      this.Merchant,
       this.FormationCreation,
       this.Plowing,
       this.Clearing,
@@ -2425,6 +2426,90 @@ export class ActivityService {
     ],
     unlocked: false,
     skipApprenticeshipLevel: 2,
+  };
+
+  Merchant: Activity = {
+    level: 0,
+    name: ['Hawking Wares', 'Vending', 'Shopkeeping', 'Investing'],
+    location: LocationType.SmallTown,
+    imageBaseName: 'merchant',
+    activityType: ActivityType.Merchant,
+    description: [
+      "Sell your stuff for a little money. You'll need a shopfront of some kind.",
+      "Sell your stuff at a markup. You'll need a shopfront of some kind.",
+      "Sell your stuff at a large markup. You'll need a shopfront of some kind.",
+      "Become a moneylender and make some real money. You'll need a shopfront of some kind.",
+    ],
+    yinYangEffect: [YinYangEffect.None, YinYangEffect.None, YinYangEffect.None, YinYangEffect.None],
+    consequenceDescription: [
+      'Uses 20 Stamina. Trades whatever you have in your shopfront for items available at the store.',
+      'Uses 30 Stamina. Sells whatever you have in your shopfront.',
+      'Uses 40 Stamina. Sells whatever you have in your shopfront.',
+      'Uses 100 Stamina. Sells whatever you have in your shopfront and uses your wealth to make more wealth. It takes money to make money!',
+    ],
+    consequence: [
+      () => {
+        this.characterService.increaseAttribute('charisma', 0.01);
+        this.characterService.increaseAttribute('intelligence', 0.01);
+        this.characterService.increaseAttribute('haggling', 0.01);
+        this.characterService.status.stamina.value -= 20;
+      },
+      () => {
+        this.characterService.increaseAttribute('charisma', 0.02);
+        this.characterService.increaseAttribute('intelligence', 0.02);
+        this.characterService.increaseAttribute('haggling', 0.02);
+        this.characterService.status.stamina.value -= 30;
+      },
+      () => {
+        this.characterService.increaseAttribute('charisma', 0.05);
+        this.characterService.increaseAttribute('intelligence', 0.05);
+        this.characterService.increaseAttribute('haggling', 0.05);
+        this.characterService.status.stamina.value -= 40;
+      },
+      () => {
+        this.characterService.increaseAttribute('charisma', 0.1);
+        this.characterService.increaseAttribute('intelligence', 0.1);
+        this.characterService.increaseAttribute('haggling', 0.1);
+        this.characterService.status.stamina.value -= 100;
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 20,
+      },
+      {
+        stamina: 30,
+      },
+      {
+        stamina: 40,
+      },
+      {
+        stamina: 100,
+      },
+    ],
+    requirements: [
+      {
+        charisma: 1000,
+        intelligence: 1000,
+      },
+      {
+        charisma: 20000,
+        intelligence: 20000,
+        haggling: 20000,
+      },
+      {
+        charisma: 5000000,
+        intelligence: 5000000,
+        haggling: 5000000,
+      },
+      {
+        charisma: 1e12,
+        intelligence: 1e12,
+        haggling: 1e12,
+      },
+    ],
+    unlocked: false,
+    skipApprenticeshipLevel: 0,
   };
 
   ChopWood: Activity = {
