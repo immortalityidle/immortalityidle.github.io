@@ -5,7 +5,7 @@
       <div class="inventoryGrid">
         <div>
           <div class="itemSlot" (click)="slotClicked(landItem)" tabindex="0"
-            [ngClass]="{'selectedItem': landItem === storeService.selectedItem}"
+            [ngClass]="{'selectedItem': landItem === storeService.selectedItem, autobuyItem: landItem.id === homeService.merchantAutobuyItem}"
             tooltip="{{landItem.description}}">
             <div>
               @if (landItem.imageFile){
@@ -21,7 +21,7 @@
         @for (item of storeService.regularStoreItems; track item.id + item.value) {
           <div>
             <div class="itemSlot" (click)="slotClicked(item)" tabindex="0"
-              [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned()}"
+              [ngClass]="{'selectedItem': item === storeService.selectedItem, ownedItem: item.owned && item.owned(), autobuyItem: item.id === homeService.merchantAutobuyItem}"
               tooltip="{{item.description}}">
               <div>
                 @if (item.imageFile){
@@ -42,10 +42,17 @@
           Buy
         </button>
       </span>
-      <span class="flexGrow"></span>
       <span class="flexGrow">
         Quantity&nbsp;<input min="0" value="{{purchaseQuantity}}" type="number" class="inputBox" (change)="purchaseQuantityChange($event)"/>
       </span>
+    </div>
+    <div class="buttonDiv">
+      <span class="flexGrow">
+        <button (click)="autobuyItem()" class="flexGrow" [disabled]="buyDisabled" tooltip="Automatically buy this item when working one of your shopfronts.">
+          Automatically Buy
+        </button>
+      </span>
+      <span class="flexGrow"></span>
     </div>
   </div>
   

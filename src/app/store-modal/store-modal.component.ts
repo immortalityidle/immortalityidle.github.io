@@ -47,9 +47,13 @@ export class StoreModalComponent {
     mainloopService: MainLoopService
   ) {
     this.landItem.value = this.homeService.landPrice;
-    this.buyDisabled = this.storeService.selectedItem === null;
+    this.buyDisabled = true;
+    this.storeService.selectedItem = null;
 
     mainloopService.reincarnateSubject.subscribe(() => {
+      this.landItem.value = this.homeService.landPrice;
+    });
+    mainloopService.longTickSubject.subscribe(() => {
       this.landItem.value = this.homeService.landPrice;
     });
   }
@@ -78,6 +82,18 @@ export class StoreModalComponent {
         this.inventoryService.addItem(item, this.purchaseQuantity);
         this.characterService.updateMoney(0 - price);
       }
+    }
+  }
+
+  autobuyItem() {
+    const item = this.storeService.selectedItem;
+    if (!item) {
+      return;
+    }
+    if (this.homeService.merchantAutobuyItem === item.id) {
+      this.homeService.merchantAutobuyItem = null;
+    } else {
+      this.homeService.merchantAutobuyItem = item.id;
     }
   }
 

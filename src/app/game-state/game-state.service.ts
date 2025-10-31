@@ -641,6 +641,7 @@ export class GameStateService {
       totalCrafts: props?.totalCrafts || 0,
       forgeChainsCounter: props?.forgeChainsCounter || 0,
       pillsMade: props?.pillsMade || 0,
+      merchantAutobuyItem: props?.merchantAutobuyItem || null,
     };
   }
 

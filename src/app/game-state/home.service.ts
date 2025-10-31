@@ -86,6 +86,7 @@ export interface HomeProperties {
   totalCrafts: number;
   forgeChainsCounter: number;
   pillsMade: number;
+  merchantAutobuyItem: string | null;
 }
 
 @Injectable({
@@ -115,6 +116,7 @@ export class HomeService {
   forgeChainsCounter = 0;
   pillCraftsRequired = 5;
   pillsMade = 0;
+  merchantAutobuyItem: string | null = null;
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, espeicially formations
 
@@ -306,7 +308,7 @@ export class HomeService {
       },
       maxFurniture: 7,
       maxWorkstations: 4,
-      maxWorkstationPower: 0,
+      maxWorkstationPower: 1,
       daysToBuild: 3650,
     },
     {
@@ -1069,6 +1071,7 @@ export class HomeService {
       totalCrafts: this.totalCrafts,
       forgeChainsCounter: this.forgeChainsCounter,
       pillsMade: this.pillsMade,
+      merchantAutobuyItem: this.merchantAutobuyItem,
     };
   }
 
@@ -1101,6 +1104,7 @@ export class HomeService {
     this.totalCrafts = properties.totalCrafts;
     this.forgeChainsCounter = properties.forgeChainsCounter || 0;
     this.pillsMade = properties.pillsMade;
+    this.merchantAutobuyItem = properties.merchantAutobuyItem;
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
@@ -2085,11 +2089,29 @@ export class HomeService {
         moneyMultiplier *= 1 + workstation.power * 0.3;
         this.characterService.updateMoney(input.item.value * moneyMultiplier);
         input.quantity--;
+        if (input.item.shopable) {
+          this.inventoryService.soldGoods[input.item.id] = (this.inventoryService.soldGoods[input.item.id] || 0) + 10;
+        }
       }
     }
     if (merchantLevel >= 3) {
       // investor level, earn some interest
       this.characterService.updateMoney(this.characterService.money * 0.000000273);
+    }
+
+    if (this.merchantAutobuyItem) {
+      if (this.merchantAutobuyItem === 'land') {
+        this.buyLand(1);
+      } else {
+        const item = this.itemRepoService.getItemById(this.merchantAutobuyItem);
+        if (item) {
+          const price = item.value * 10;
+          if (this.characterService.money > price) {
+            this.inventoryService.addItem(item, 1);
+            this.characterService.updateMoney(0 - price);
+          }
+        }
+      }
     }
   }
 

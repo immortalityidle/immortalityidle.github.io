@@ -1216,10 +1216,15 @@ export class CharacterService {
       }
       this.money = amount;
     } else {
-      let multiplier = 1;
       if (amount > 0) {
-        multiplier += Math.pow(this.fengshuiScore, 1.5) / 100;
+        const multiplier = 1 + Math.pow(this.fengshuiScore, 1.5) / 100;
         amount *= multiplier;
+      } else {
+        let divider = 10 - 9 * Math.exp(-0.1 * Math.log10(this.attributes.haggling.value));
+        if (divider < 1) {
+          divider = 1;
+        }
+        amount /= divider;
       }
       this.money += amount;
       if (this.showUpdateAnimations) {
