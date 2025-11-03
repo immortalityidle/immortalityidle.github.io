@@ -34,6 +34,11 @@
               [ngClass]="{mobile: appService.isMobile()}">
               add_home
             </mat-icon>
+            <mat-icon (click)="homeService.buyLand(1)" class="iconButton" aria-label="Purchase Land" aria-hidden="false"
+              tooltip="Purchase Land"
+              [ngClass]="{mobile: appService.isMobile()}">
+              landscape_2
+            </mat-icon>
           }
         </div>
       </div>

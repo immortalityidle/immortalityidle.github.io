@@ -60,7 +60,8 @@ export interface BattleProperties {
   godSlayerKills: number;
   totalKills: number;
   autoTroubleUnlocked: boolean;
-  monthlyMonsterDay: number;
+  yearlyMonsterDay: number;
+  extraMonsterCounter: number;
   highestDamageTaken: number;
   highestDamageDealt: number;
   godSlayersUnlocked: boolean;
@@ -195,7 +196,8 @@ export class BattleService {
   killsByMonster: { [key: string]: number } = {};
   godSlayerKills: number;
   autoTroubleUnlocked = false;
-  yearlyMonsterDay: number;
+  yearlyMonsterDay = 0;
+  extraMonsterCounter = 0;
   highestDamageTaken = 0;
   highestDamageDealt = 0;
   totalKills = 0;
@@ -491,24 +493,22 @@ export class BattleService {
     this.currentEnemy = null;
     this.kills = 0;
     this.godSlayerKills = 0;
-    this.yearlyMonsterDay = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
       this.ageFormation();
       this.yearlyMonsterDay++;
-      if (this.homeService.homeValue === HomeType.SquatterTent && this.yearlyMonsterDay > 100) {
-        this.yearlyMonsterDay = 0;
+      this.extraMonsterCounter++;
+      if (this.homeService.homeValue === HomeType.SquatterTent && this.extraMonsterCounter > 100) {
+        this.extraMonsterCounter = 0;
         this.logService.injury(LogTopic.EVENT, 'The shabby tent you live in has attracted some nasty mice.');
         this.addMouse();
-        return;
-      } else if (this.homeService.homeValue === HomeType.OwnTent && this.yearlyMonsterDay > 150) {
-        this.yearlyMonsterDay = 0;
+      } else if (this.homeService.homeValue === HomeType.OwnTent && this.extraMonsterCounter > 150) {
+        this.extraMonsterCounter = 0;
         this.logService.injury(
           LogTopic.EVENT,
           "Your increased wealth has attracted a ruffian who's looking to steal your money."
         );
         this.addRuffian();
-        return;
       }
 
       if (this.yearlyMonsterDay >= 365) {
@@ -769,7 +769,8 @@ export class BattleService {
       godSlayerKills: this.godSlayerKills,
       totalKills: this.totalKills,
       autoTroubleUnlocked: this.autoTroubleUnlocked,
-      monthlyMonsterDay: this.yearlyMonsterDay,
+      yearlyMonsterDay: this.yearlyMonsterDay,
+      extraMonsterCounter: this.extraMonsterCounter,
       highestDamageDealt: this.highestDamageDealt,
       highestDamageTaken: this.highestDamageTaken,
       godSlayersUnlocked: this.godSlayersUnlocked,
@@ -808,7 +809,8 @@ export class BattleService {
     this.godSlayerKills = properties.godSlayerKills;
     this.totalKills = properties.totalKills;
     this.autoTroubleUnlocked = properties.autoTroubleUnlocked;
-    this.yearlyMonsterDay = properties.monthlyMonsterDay;
+    this.yearlyMonsterDay = properties.yearlyMonsterDay;
+    this.extraMonsterCounter = properties.extraMonsterCounter;
     this.highestDamageDealt = properties.highestDamageDealt;
     this.highestDamageTaken = properties.highestDamageTaken;
     this.godSlayersUnlocked = properties.godSlayersUnlocked;
@@ -1727,8 +1729,8 @@ export class BattleService {
     }
     const modifiedBasePower = monsterType.basePower * modifier;
     const monsterName = this.monsterQualities[qualityIndex] + ' ' + this.camelToTitle.transform(monsterType.name);
-    const health = modifiedBasePower * modifiedBasePower * 10;
-    const attack = modifiedBasePower / 5;
+    const health = modifiedBasePower * modifiedBasePower;
+    const attack = modifiedBasePower;
     const defense = modifiedBasePower / 10;
     const loot: Item[] = [];
     if (monsterType.lootType) {
@@ -1760,7 +1762,7 @@ export class BattleService {
           name: templateTechnique.name,
           ticks: templateTechnique.ticks,
           ticksRequired: templateTechnique.ticksRequired,
-          baseDamage: attack * templateTechnique.baseDamage,
+          baseDamage: attack * templateTechnique.baseDamage * 0.5,
           unlocked: templateTechnique.unlocked,
         });
       }
@@ -1951,7 +1953,7 @@ export class BattleService {
           name: 'Sting',
           ticks: 0,
           ticksRequired: 15,
-          baseDamage: 1,
+          baseDamage: 8,
           unlocked: true,
         },
       ],
@@ -1967,7 +1969,7 @@ export class BattleService {
           name: 'Gnaw',
           ticks: 0,
           ticksRequired: 12,
-          baseDamage: 1,
+          baseDamage: 10,
           unlocked: true,
         },
       ],
@@ -1983,14 +1985,14 @@ export class BattleService {
           name: 'Sting',
           ticks: 0,
           ticksRequired: 20,
-          baseDamage: 3,
+          baseDamage: 30,
           unlocked: true,
         },
         {
           name: 'Claw Snap',
           ticks: 0,
           ticksRequired: 6,
-          baseDamage: 0.1,
+          baseDamage: 10,
           unlocked: true,
         },
       ],
@@ -2030,7 +2032,7 @@ export class BattleService {
           name: 'Poke',
           ticks: 0,
           ticksRequired: 6,
-          baseDamage: 0.2,
+          baseDamage: 10,
           unlocked: true,
         },
       ],

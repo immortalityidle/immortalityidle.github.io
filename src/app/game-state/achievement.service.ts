@@ -322,6 +322,7 @@ export class AchievementService {
       },
       effect: () => {
         this.gameStateService!.unlockPanel('inventoryPanel');
+        this.gameStateService!.addLayoutPanel('inventoryPanel', 30, 28, 38, 20);
       },
       unlocked: false,
     },

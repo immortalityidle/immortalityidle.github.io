@@ -70,10 +70,22 @@ export type AttributeObject = {
   displayAptitude: WritableSignal<number>;
   aptitudeMult: number;
   icon: string;
+  attributeGroup: string;
 };
 
 export type AttributesObject = {
   [key in AttributeType]: AttributeObject;
+};
+
+export type SavedAttributeObject = {
+  value: number;
+  lifeStartValue: number;
+  aptitude: number;
+  aptitudeMult: number;
+};
+
+export type SavedAttributesObject = {
+  [key in AttributeType]: SavedAttributeObject;
 };
 
 export type EquipmentPosition = 'head' | 'feet' | 'body' | 'legs' | 'leftHand' | 'rightHand';
@@ -93,7 +105,7 @@ export type CharacterStatus = {
 };
 
 export interface CharacterProperties {
-  attributes: AttributesObject;
+  attributes: SavedAttributesObject;
   money: number;
   stashedMoney: number;
   hellMoney: number;
@@ -146,6 +158,10 @@ export interface CharacterProperties {
 }
 
 const INITIAL_AGE = 18 * 365;
+export const BASIC_ATTRIBUTES = 'Basic Attributes';
+export const DIVINE_ATTRIBUTES = 'Divine Attributes';
+export const LORE_ATTRIBUTES = 'Lore';
+export const SKILL_ATTRIBUTES = 'Skills';
 
 @Injectable({
   providedIn: 'root',
@@ -228,6 +244,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'fitness_center',
+      attributeGroup: BASIC_ATTRIBUTES,
     },
     toughness: {
       description: 'An immortal must develop resilience to endure hardship.',
@@ -239,6 +256,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'castle',
+      attributeGroup: BASIC_ATTRIBUTES,
     },
     speed: {
       description: 'An immortal must be quick of foot and hand.',
@@ -250,6 +268,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'directions_run',
+      attributeGroup: BASIC_ATTRIBUTES,
     },
     intelligence: {
       description: 'An immortal must understand the workings of the universe.',
@@ -261,6 +280,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'local_library',
+      attributeGroup: BASIC_ATTRIBUTES,
     },
     charisma: {
       description: 'An immortal must influence the hearts and minds of others.',
@@ -272,6 +292,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'forum',
+      attributeGroup: BASIC_ATTRIBUTES,
     },
     spirituality: {
       description: 'An immortal must find deep connections to the divine.',
@@ -283,6 +304,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'self_improvement',
+      attributeGroup: DIVINE_ATTRIBUTES,
     },
     earthLore: {
       description: 'Understanding the earth and how to draw power and materials from it.',
@@ -294,6 +316,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'landslide',
+      attributeGroup: LORE_ATTRIBUTES,
     },
     metalLore: {
       description: 'Understanding metals and how to forge and use them.',
@@ -305,6 +328,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'view_module',
+      attributeGroup: LORE_ATTRIBUTES,
     },
     woodLore: {
       description: 'Understanding plants and how to grow and care for them.',
@@ -316,6 +340,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'forest',
+      attributeGroup: LORE_ATTRIBUTES,
     },
     waterLore: {
       description: 'Understanding potions and pills and how to make and use them.',
@@ -327,6 +352,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'emoji_food_beverage',
+      attributeGroup: LORE_ATTRIBUTES,
     },
     fireLore: {
       description: 'Burn! Burn! BURN!!!',
@@ -338,6 +364,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'local_fire_department',
+      attributeGroup: LORE_ATTRIBUTES,
     },
     combatMastery: {
       description: 'Mastery of combat skills.',
@@ -349,6 +376,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'sports_martial_arts',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     magicMastery: {
       description: 'Mastery of magical skills.',
@@ -360,6 +388,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'auto_awesome',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     animalHandling: {
       description: 'Skill in working with animals and monsters.',
@@ -371,6 +400,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'cruelty_free',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     performance: {
       description: 'Skill in manipulating others with your voice.',
@@ -382,6 +412,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'record_voice_over',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     smithing: {
       description: 'Skill with the forge and anvil.',
@@ -393,6 +424,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'hardware',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     alchemy: {
       description: 'Mastery of potions and pills.',
@@ -404,6 +436,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'emoji_food_beverage',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     woodwork: {
       description: 'Skill with saws and chisels.',
@@ -415,6 +448,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'carpenter',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     leatherwork: {
       description: 'Skill shaping hides into useful items.',
@@ -426,6 +460,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'pets',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     formationMastery: {
       description: 'Experience creating formation flags.',
@@ -437,6 +472,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'flag',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     cooking: {
       description: 'Mastery of the wok and other kitchen essentials.',
@@ -448,6 +484,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'soup_kitchen',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
     haggling: {
       description: 'Mastery of financial matters.',
@@ -459,6 +496,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'money_bag',
+      attributeGroup: SKILL_ATTRIBUTES,
     },
   };
   status: CharacterStatus = {
@@ -1327,8 +1365,25 @@ export class CharacterService {
   }
 
   getProperties(): CharacterProperties {
+    const savedAttributes: SavedAttributesObject = JSON.parse(JSON.stringify(this.attributes));
+    for (const key in savedAttributes) {
+      const typedKey = key as AttributeType;
+      // @ts-expect-error removing fields that don't need saving
+      delete savedAttributes[typedKey].description;
+      // @ts-expect-error removing fields that don't need saving
+      delete savedAttributes[typedKey].displayKey;
+      // @ts-expect-error removing fields that don't need saving
+      delete savedAttributes[typedKey].displayValue;
+      // @ts-expect-error removing fields that don't need saving
+      delete savedAttributes[typedKey].displayAptitude;
+      // @ts-expect-error removing fields that don't need saving
+      delete savedAttributes[typedKey].icon;
+      // @ts-expect-error removing fields that don't need saving
+      delete savedAttributes[typedKey].attributeGroup;
+    }
+
     return {
-      attributes: this.attributes,
+      attributes: savedAttributes,
       money: this.money,
       stashedMoney: this.stashedMoney,
       hellMoney: this.hellMoney,
@@ -1382,7 +1437,13 @@ export class CharacterService {
   }
 
   setProperties(properties: CharacterProperties): void {
-    this.attributes = properties.attributes;
+    for (const key in properties.attributes) {
+      const typedKey = key as AttributeType;
+      this.attributes[typedKey].aptitude = properties.attributes[typedKey].aptitude;
+      this.attributes[typedKey].aptitudeMult = properties.attributes[typedKey].aptitudeMult;
+      this.attributes[typedKey].value = properties.attributes[typedKey].value;
+      this.attributes[typedKey].lifeStartValue = properties.attributes[typedKey].lifeStartValue;
+    }
     this.updateMoney(properties.money, true);
     this.stashedMoney = properties.stashedMoney;
     this.hellMoney = properties.hellMoney;

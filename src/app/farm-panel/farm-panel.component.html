@@ -25,6 +25,10 @@
           add
         </mat-icon>
       }
+      <mat-icon (click)="homeService.buyLand(1)" tooltip="Purchase Land" class="iconButton" 
+        aria-label="Purchase Land" aria-hidden="false">
+        landscape_2
+      </mat-icon>
     </div>
     <div class="farmGrid">
       @for (field of farmService.displayFields; track field.trackField(); let index = $index) {
