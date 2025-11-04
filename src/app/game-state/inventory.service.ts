@@ -1190,6 +1190,9 @@ export class InventoryService {
       value: 100 * grade,
       description: 'Meat from a wild beast',
       shopable: false,
+      useConsumes: true,
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and adds variety to your diet.',
     };
   }
 
@@ -1388,6 +1391,7 @@ export class InventoryService {
           this.characterService.status.nutrition.value++;
         }
       }
+      this.characterService.checkOverage();
 
       return;
     }
@@ -1417,6 +1421,7 @@ export class InventoryService {
         this.characterService.status.nutrition.value++;
       }
     }
+    this.characterService.checkOverage();
   }
 
   bellyFull() {
