@@ -1546,13 +1546,13 @@ export class FollowersService {
     }
     const startingIndex = index;
     while (followerList[index].power >= this.maxFollowerLevel) {
-      if (index >= followerList.length) {
-        index = 0;
-      }
       index++;
       if (index === startingIndex) {
         this.logService.log(LogTopic.FOLLOWER, 'All of your ' + followerLabel + ' are fully trained.');
         return;
+      }
+      if (index >= followerList.length) {
+        index = 0;
       }
     }
     const follower = followerList[index];
