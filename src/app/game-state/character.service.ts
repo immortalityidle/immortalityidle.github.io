@@ -598,22 +598,18 @@ export class CharacterService {
     this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
 
-    let prevTotalTicks = this.mainLoopService.totalTicks;
+    mainLoopService.tickSubject.subscribe(() => {
+      if (!this.dead) {
+        this.age++;
+      }
+      this.checkForDeath();
+    });
 
     mainLoopService.longTickSubject.subscribe(elapsedDays => {
-      const currentTotalTicks = this.mainLoopService.totalTicks;
-      const daysPerExtraDay = 3650;
-
-      let extraDays = Math.floor(elapsedDays / daysPerExtraDay);
-      if (prevTotalTicks % daysPerExtraDay > currentTotalTicks % daysPerExtraDay) {
-        extraDays++;
+      if (this.bloodlineRank >= 9 && this.activityService?.currentRealm === Realm.MortalRealm) {
+        this.increaseAptitudeDaily(elapsedDays);
       }
 
-      if (extraDays > 0) {
-        this.increaseBaseLifespan(extraDays, 70); //bonus day for living another 10 years, capped at 70 years
-      }
-
-      prevTotalTicks = currentTotalTicks;
       this.displayMoney.set(this.money);
       this.displayAge.set(this.age / 365);
       this.displayAgeYears.set(Math.floor(this.age / 365));
@@ -634,16 +630,7 @@ export class CharacterService {
         this.attributes[attributeKey].displayValue.set(this.attributes[attributeKey].value);
         this.attributes[attributeKey].displayAptitude.set(this.attributes[attributeKey].aptitude);
       }
-    });
 
-    mainLoopService.tickSubject.subscribe(() => {
-      if (!this.dead) {
-        this.age++;
-      }
-      this.checkForDeath();
-    });
-
-    mainLoopService.longTickSubject.subscribe(() => {
       if (this.highestMoney < this.money) {
         this.highestMoney = this.money;
       }
@@ -1289,31 +1276,13 @@ export class CharacterService {
   }
 
   increaseAptitudeDaily(days: number) {
-    const keys = Object.keys(this.attributes) as AttributeType[];
-    const slowGrowers = ['combatMastery', 'magicMastery'];
-    for (const key in keys) {
-      if (slowGrowers.includes(key)) {
-        this.attributes[keys[key]].aptitude += (this.attributes[keys[key]].value / 1e14) * days;
-      } else {
-        this.attributes[keys[key]].aptitude += (this.attributes[keys[key]].value / 1e7) * days;
+    for (const key in this.attributes) {
+      const typedKey = key as AttributeType;
+      const attribute = this.attributes[typedKey];
+      if (attribute.attributeGroup === BASIC_ATTRIBUTES) {
+        attribute.aptitude += (attribute.value / 1e7) * days;
       }
     }
-  }
-
-  /**increase in days
-   *
-   * limit in years
-   *
-   * returns false if limit is reached.
-   */
-  increaseBaseLifespan(increase: number, limit: number): boolean {
-    if (this.baseLifespan + increase < limit * 365) {
-      this.baseLifespan += increase;
-      return true;
-    } else if (this.baseLifespan < limit * 365) {
-      this.baseLifespan = limit * 365;
-    }
-    return false;
   }
 
   checkOverage() {

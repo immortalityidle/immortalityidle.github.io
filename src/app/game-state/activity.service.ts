@@ -236,16 +236,9 @@ export class ActivityService {
       this.reset();
     });
 
-    mainLoopService.longTickSubject.subscribe(daysElapsed => {
-      if (
-        this.characterService.bloodlineRank >= 9 &&
-        !(this.hellService?.inHell() && this.currentRealm === Realm.TreesOfKnives)
-      ) {
-        this.characterService.increaseAptitudeDaily(daysElapsed);
-      }
+    mainLoopService.longTickSubject.subscribe(() => {
       this.upgradeActivities(false);
       this.checkRequirements(false);
-
       this.updateDisplayValues();
     });
 
