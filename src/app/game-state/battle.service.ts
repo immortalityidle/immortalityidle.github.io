@@ -897,7 +897,11 @@ export class BattleService {
   }
 
   private developNewTechnique() {
-    const prefixes = this.techniquePrefixAdjectiveList.filter(entry => entry.allowed);
+    let prefixes = this.techniquePrefixAdjectiveList.filter(entry => entry.allowed);
+    if (prefixes.length === 0) {
+      // tried to filter out everything, allow everything
+      prefixes = this.techniquePrefixAdjectiveList;
+    }
     const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
     let healthCost = 0;
     let extraMultiplier = 1;
@@ -948,7 +952,10 @@ export class BattleService {
       extraMultiplier += qiCost / 10;
     }
 
-    const effects = this.techniqueEffectsList.filter(entry => entry.allowed);
+    let effects = this.techniqueEffectsList.filter(entry => entry.allowed);
+    if (effects.length === 0) {
+      effects = this.techniqueEffectsList;
+    }
     const effectIndex = Math.floor(Math.random() * effects.length * 5);
     let effect = undefined;
     let suffix = '';
@@ -957,9 +964,13 @@ export class BattleService {
       suffix = ' of ' + effect;
       effects[effectIndex].discovered = true;
     }
+    let techniqueName = prefix.value + ' ' + attributePrefix + ' ' + attackNoun + suffix;
+    while (this.techniques.find(entry => entry.name === techniqueName)) {
+      techniqueName += '!!';
+    }
 
     this.techniques.push({
-      name: prefix.value + ' ' + attributePrefix + ' ' + attackNoun + suffix,
+      name: techniqueName,
       description: 'A special family technique that can be passed to your descendants.',
       ticksRequired: ticksRequired,
       ticks: 0,

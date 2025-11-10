@@ -27,6 +27,9 @@
           @if (technique.healthCost){
             <div>Uses {{technique.healthCost}} health</div>
           }
+          @if (technique.effect){
+            <div>{{effectDescriptions[technique.effect]}}</div>
+          }
           <div>
               @if (technique.familyTechnique){
                   <button (click)="battleService.forsakeTechnique(technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
