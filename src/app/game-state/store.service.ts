@@ -50,6 +50,7 @@ export class StoreService {
     for (const entryKey in this.inventoryService.soldGoods) {
       const item = this.itemRepoService.items[entryKey];
       if (
+        item &&
         this.inventoryService.soldGoods[entryKey] > Math.pow(item.value, 3) * 10 &&
         !this.regularStoreItems.includes(item)
       ) {

@@ -1547,12 +1547,12 @@ export class FollowersService {
     const startingIndex = index;
     while (followerList[index].power >= this.maxFollowerLevel) {
       index++;
+      if (index >= followerList.length) {
+        index = 0;
+      }
       if (index === startingIndex) {
         this.logService.log(LogTopic.FOLLOWER, 'All of your ' + followerLabel + ' are fully trained.');
         return;
-      }
-      if (index >= followerList.length) {
-        index = 0;
       }
     }
     const follower = followerList[index];
@@ -1566,7 +1566,7 @@ export class FollowersService {
   }
 
   levelUp(follower: Follower) {
-    while (follower.experience > follower.power * 1000) {
+    while (follower.experience > follower.power * 1000 && follower.power < this.maxFollowerLevel) {
       follower.experience -= follower.power * 1000;
       follower.power++;
       if (follower.power > this.highestLevel) {

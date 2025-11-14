@@ -1255,7 +1255,7 @@ baguaMap = [
       shopable: true,
     },
     thickFur: {
-      id: 'thickFur5',
+      id: 'thickFur',
       imageFile: 'hide5',
       imageColor: this.colorByRank[4],
       name: 'thick fur',

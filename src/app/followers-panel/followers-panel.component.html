@@ -93,7 +93,12 @@
           {{follower.power}}
         </span>
         <span class="followerCell" >
-          {{follower.experience || 0}} / {{follower.power * 1000}}
+          @if (follower.power < followerService.maxFollowerLevel){
+            {{follower.experience || 0}} / {{follower.power * 1000}}
+          }
+          @else {
+            MAX
+          }
         </span>
         <span class="followerCell" >
           {{(follower.age / 365) + 18 | bigNumber}} / {{(follower.lifespan / 365) + 18 | bigNumber}}

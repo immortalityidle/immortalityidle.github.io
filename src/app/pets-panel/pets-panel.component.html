@@ -1,21 +1,48 @@
-<h3>
-  <span [ngClass]="followerService.followersMaxed">
-    &nbsp;({{this.followerService.pets.length}} / {{this.followerService.petsCap}})
+<div>
+  <span [ngClass]="followerService.petsMaxed">
+    &nbsp;({{followerService.pets.length}} / {{followerService.petsCap}} Pets)
   </span>
   @if (followerService.autoDismissUnlocked) {
     <mat-icon class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Pets" aria-hidden="false"
-      tooltip="Manage your pets.">
+      tooltip="Manage your pets">
       settings
     </mat-icon>
   }
-</h3>
+</div>
+<div>
+  <hr>
+</div>
 <div class="followersContainer">
   <div class="followerPanel">
+      <div class="followerLine">
+        <span class="followerCell">Name</span>
+        <span class="followerCell">Job</span>
+        <span class="followerCell">Level</span>
+        <span class="followerCell">Exp</span>
+        <span class="followerCell">Age</span>
+      </div>
     @for (follower of followerService.pets; track follower) {
-      <div class="attributeLine">
-                <span class="followerName" tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}.<br>{{followerService.jobs[follower.job].description}}<br>
-                {{follower.name}} has followed you for {{follower.age / 365 | bigNumber}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | bigNumber}} more years.<br>Daily cost: {{follower.cost | bigNumber}}">
-          {{follower.name | titlecase}} (lv.{{follower.power}} {{follower.job | camelToTitle}})
+      <div class="followerLine" tooltip="{{follower.name}} is a level {{follower.power}} {{follower.job | titlecase}}.<br>{{followerService.jobs[follower.job].description}}<br>
+        {{follower.name}} has followed you for {{follower.age / 365 | bigNumber}} years and will serve for another {{(follower.lifespan - follower.age) / 365 | bigNumber}} more years.<br>Daily cost: {{follower.cost | bigNumber}}">
+        <span class="followerName followerCell">
+          {{follower.name | titlecase}}
+        </span>
+        <span class="followerCell" >
+          {{follower.job | camelToTitle}}
+        </span>
+        <span class="followerCell" >
+          {{follower.power}}
+        </span>
+        <span class="followerCell" >
+          @if (follower.power < followerService.maxFollowerLevel){
+            {{follower.experience || 0}} / {{follower.power * 1000}}
+          }
+          @else {
+            MAX
+          }
+        </span>
+        <span class="followerCell" >
+          {{(follower.age / 365) + 18 | bigNumber}} / {{(follower.lifespan / 365) + 18 | bigNumber}}
         </span>
         <mat-icon class="smallerIcon"
           aria-label="Dismiss Pet" aria-hidden="false"
