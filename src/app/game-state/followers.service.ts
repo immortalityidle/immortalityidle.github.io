@@ -288,7 +288,7 @@ export class FollowersService {
       mealsRequired: true,
       maxFollowerIncrease: 15,
       bonusFreeFollowers: 2,
-      maxLevelIncrease: 30,
+      maxLevelIncrease: 50,
       experiencePerDay: 100,
       upgradeTooltip:
         'Upgrade for ' +
@@ -314,7 +314,7 @@ export class FollowersService {
       mealsRequired: true,
       maxFollowerIncrease: 20,
       bonusFreeFollowers: 3,
-      maxLevelIncrease: 50,
+      maxLevelIncrease: 100,
       experiencePerDay: 200,
       upgradeTooltip:
         'Upgrade for ' +
@@ -340,7 +340,7 @@ export class FollowersService {
       mealsRequired: true,
       maxFollowerIncrease: 30,
       bonusFreeFollowers: 4,
-      maxLevelIncrease: 80,
+      maxLevelIncrease: 200,
       experiencePerDay: 300,
       upgradeTooltip:
         'Upgrade for ' +
@@ -366,7 +366,7 @@ export class FollowersService {
       mealsRequired: true,
       maxFollowerIncrease: 50,
       bonusFreeFollowers: 5,
-      maxLevelIncrease: 100,
+      maxLevelIncrease: 300,
       experiencePerDay: 500,
       upgradeTooltip: '',
       upgradeMoneyCost: 0,

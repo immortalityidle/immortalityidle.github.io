@@ -119,7 +119,15 @@
     }
     @if (inventoryService.autoEatUnlocked()) {
       <mat-tab label="Food">
-        <div>
+        <div class="optionField">
+          <span>
+            <input type="checkbox" (change)="autoBuyFoodChange($event)"
+              id="autoBuyFood"  [checked]="inventoryService.autoBuyFood">
+            <label for="autoBuyFood">Automatically buy scraps each day if you have no food to avoid starvation.</label>
+          </span>
+        </div>
+
+        <div class="optionField">
           <span>
             When wisely eaten food is available:
           </span>

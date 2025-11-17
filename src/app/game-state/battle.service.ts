@@ -1242,6 +1242,16 @@ export class BattleService {
         this.characterService.updateMoney(0 - this.characterService.money / 10);
       } else if (technique.effect === EFFECT_LIFE) {
         enemy.health += damage * 0.1;
+      } else if (technique.effect === 'kamikaze') {
+        if (!technique.hitTracker) {
+          technique.hitTracker = 0;
+        }
+        let multiplier = (technique.hitTracker + 1) * 0.1;
+        if (multiplier > 0.9) {
+          multiplier = 0.9;
+        }
+        enemy.health *= multiplier;
+        technique.hitTracker++;
       }
     }
 
@@ -1629,7 +1639,7 @@ export class BattleService {
       (this.killsByLocation[this.locationService!.troubleTarget] || 0) + 1;
     this.killsByMonster[this.currentEnemy.baseName] = (this.killsByMonster[this.currentEnemy.baseName] || 0) + 1;
     this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
-    if (this.currentEnemy.name === 'Death itself') {
+    if (this.currentEnemy.name === 'Death itself' && !this.characterService.immortal) {
       this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
     }
     for (const item of this.currentEnemy.loot) {
@@ -1885,7 +1895,7 @@ export class BattleService {
       name: 'Death itself',
       baseName: 'death',
       health: 1e30,
-      maxHealth: 1e30,
+      maxHealth: 1e28,
       defense: 3e12,
       loot: [this.itemRepoService.items['immortality']],
       unique: true,
@@ -1909,6 +1919,8 @@ export class BattleService {
           ticks: 0,
           ticksRequired: 3000,
           baseDamage: 5e50,
+          effect: 'kamikaze',
+          hitTracker: 0,
           unlocked: true,
         },
       ],

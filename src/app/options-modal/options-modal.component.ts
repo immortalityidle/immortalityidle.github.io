@@ -71,11 +71,6 @@ export class OptionsModalComponent {
     }
   }
 
-  autoBuyFoodChange(event: Event) {
-    if (!(event.target instanceof HTMLInputElement)) return;
-    this.inventoryService.autoBuyFood = event.target.checked;
-  }
-
   playMusicChange(event: Event) {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.mainLoopService.playMusic = event.target.checked;

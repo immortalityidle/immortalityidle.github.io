@@ -15,13 +15,6 @@
   </div>
   <div class="optionField">
     <span>
-      <input type="checkbox" (change)="autoBuyFoodChange($event)"
-        id="autoBuyFood"  [checked]="inventoryService.autoBuyFood">
-      <label for="autoBuyFood">Automatically buy scraps each day if you have no food to avoid starvation.</label>
-    </span>
-  </div>
-  <div class="optionField">
-    <span>
       <input type="checkbox" (change)="showLifeSummaryChange($event)"
         id="showLifeSummary" [checked]="characterService.showLifeSummary">
       <label for="showLifeSummary">Show a previous life summary at the start of each life</label>
