@@ -472,11 +472,11 @@ export class GameStateService {
   importGame(value: string) {
     let gameStateSerialized: string;
     // TODO: stop supporting legacy game file imports
-    if (value.substring(0, 3) === 'iig') {
-      // it's a new save file
+    if (value.substring(0, 3) === 'iig' || value.substring(0, 3) === 'ii2') {
       gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
       // file isn't one this game created, bail out
+      this.characterService.toast("That save file didn't look right.");
       return;
     }
     const parsedGameState = JSON.parse(gameStateSerialized) as Partial<GameState>;
@@ -1149,7 +1149,7 @@ export class GameStateService {
       supportClicked: this.supportClicked,
     };
     let gameStateString = JSON.stringify(gameState);
-    gameStateString = 'iig' + btoa(encodeURIComponent(gameStateString));
+    gameStateString = 'ii2' + btoa(encodeURIComponent(gameStateString));
     return gameStateString;
   }
 
