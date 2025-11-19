@@ -1894,7 +1894,7 @@ export class BattleService {
     this.addEnemy({
       name: 'Death itself',
       baseName: 'death',
-      health: 1e30,
+      health: 1e28,
       maxHealth: 1e28,
       defense: 3e12,
       loot: [this.itemRepoService.items['immortality']],

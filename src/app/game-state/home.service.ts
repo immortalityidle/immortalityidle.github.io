@@ -1386,6 +1386,7 @@ export class HomeService {
       // no item to move, bail out
       return;
     }
+
     if (this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item) {
       if (
         this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item?.name ===
@@ -1785,7 +1786,7 @@ export class HomeService {
       } else {
         item = this.inventoryService.generateWeapon(grade, material);
       }
-      this.inventoryService.addItem(item);
+      this.inventoryService.addItem(item, 1, 0, true, true);
       materialStack.quantity -= 10;
     }
   }
@@ -1892,7 +1893,7 @@ export class HomeService {
         this.inventoryService.addItem({
           name: pillName,
           imageFile: pillNameBase,
-          id: 'pill',
+          id: 'pill' + effectString + grade * 10,
           type: 'pill',
           value: grade * 10,
           description: 'A magical pill that increases your ' + attributesString,
@@ -1936,7 +1937,7 @@ export class HomeService {
       this.inventoryService.addItem({
         name: pillName,
         imageFile: 'longevitypill',
-        id: 'pill',
+        id: 'pilllongevity' + grade * 10,
         type: 'pill',
         value: grade * 10,
         description: 'A magical pill that increases your lifespan.',
@@ -2046,7 +2047,7 @@ export class HomeService {
       (alchemyStack?.item?.value || 0);
     formationPower *= workstation.power;
     formationPower = Math.floor(formationPower);
-    this.inventoryService.addItem(this.inventoryService.generateFormationKit(formationPower));
+    this.inventoryService.addItem(this.inventoryService.generateFormationKit(formationPower), 1, 0, true);
     woodStack.quantity -= 10;
     hideStack.quantity -= 10;
     gemStack.quantity -= 10;

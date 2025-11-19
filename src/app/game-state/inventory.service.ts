@@ -763,7 +763,7 @@ export class InventoryService {
     );
     const damage = Math.min(Math.sqrt(grade + 1), 1000) * grade;
     return {
-      id: 'weapon',
+      id: 'weapon' + slot + name + grade + effect,
       imageFile: imageFileName,
       name: name,
       type: 'equipment',
@@ -862,7 +862,7 @@ export class InventoryService {
     this.addItem({
       name: name,
       imageFile: effect + 'potion',
-      id: 'potion',
+      id: 'potion' + effect + grade,
       type: 'potion',
       value: grade,
       description: 'A potion that restores ' + effect,
@@ -890,7 +890,7 @@ export class InventoryService {
     this.addItem({
       name: name,
       imageFile: imageFileName,
-      id: 'pill',
+      id: 'pill' + effect + value,
       type: 'pill',
       value: value,
       description: description,
@@ -1029,7 +1029,7 @@ export class InventoryService {
     );
     const defense = Math.min(Math.sqrt(grade), 1000) * grade;
     return {
-      id: 'armor',
+      id: 'armor' + slot + name + grade + effect,
       imageFile: imageFileName,
       name: name,
       type: 'equipment',
@@ -1198,7 +1198,7 @@ export class InventoryService {
 
   getCoinPurse(value: number): Item {
     return {
-      id: 'coinPurse',
+      id: 'coinPurse' + value,
       imageFile: 'coinPurse',
       name: 'coin purse',
       type: 'sellable',
@@ -1222,7 +1222,7 @@ export class InventoryService {
     const formationType = formationTypes[index];
     const descriptionSuffix = formationDescriptions[index];
     return {
-      id: formationType + 'FormationKit',
+      id: formationType + 'FormationKit' + value,
       imageFile: formationType + 'FormationKit', // TODO: make icons for these
       name: formationType + ' formation kit',
       type: 'formationKit',
@@ -1263,7 +1263,7 @@ export class InventoryService {
 
     if (this.grandmotherGift) {
       const stick: Equipment = {
-        id: 'weapon',
+        id: "weaponleftHandGrandmother's Walking Stick10",
         imageFile: 'stick',
         name: "Grandmother's Walking Stick",
         type: 'equipment',
@@ -1278,7 +1278,7 @@ export class InventoryService {
           "Your grandmother's walking stick.<br>Drag and drop onto similar weapons to merge them into something better.<br>Base Damage: 10",
         shopable: false,
       };
-      this.addItem(stick);
+      this.addItem(stick, 1, 0, true, true);
     }
 
     if (this.characterService.bloodlineRank >= 6 && this.motherGift) {
@@ -2001,7 +2001,7 @@ export class InventoryService {
 
     const itemToEquip = this.characterService.equipment[item.slot];
     if (itemToEquip) {
-      this.addItem(itemToEquip);
+      this.addItem(itemToEquip, 1, 0, true, true);
     }
     this.characterService.equipment[item.slot] = item;
     const index = this.itemStacks.indexOf(itemStack);
@@ -2253,11 +2253,19 @@ export class InventoryService {
           item1.weaponStats?.material + '',
           item1.weaponStats?.baseName,
           item1.effect
-        )
+        ),
+        1,
+        0,
+        true,
+        true
       );
     } else {
       inventoryIndex = this.addItem(
-        this.generateArmor(item1.value + item2.value, item1.slot, item1.armorStats?.baseName, item1.effect)
+        this.generateArmor(item1.value + item2.value, item1.slot, item1.armorStats?.baseName, item1.effect),
+        1,
+        0,
+        true,
+        true
       );
     }
     // if we can, move the new item to the desired destination index
