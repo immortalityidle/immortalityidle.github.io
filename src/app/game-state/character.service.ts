@@ -43,6 +43,11 @@ export type AttributeType =
   | 'intelligence'
   | 'charisma'
   | 'spirituality'
+  | 'wisdom'
+  | 'justice'
+  | 'mercy'
+  | 'wrath'
+  | 'presence'
   | 'earthLore'
   | 'metalLore'
   | 'woodLore'
@@ -304,6 +309,66 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'self_improvement',
+      attributeGroup: DIVINE_ATTRIBUTES,
+    },
+    wisdom: {
+      description: 'A true deity must have a depth of understanding that exceeds that of mere mortals.',
+      value: 0,
+      displayKey: signal<string>('wisdom'),
+      displayValue: signal<number>(0),
+      lifeStartValue: 0,
+      aptitude: 1,
+      displayAptitude: signal<number>(1),
+      aptitudeMult: 1,
+      icon: 'cognition',
+      attributeGroup: DIVINE_ATTRIBUTES,
+    },
+    justice: {
+      description: 'A true deity must have a deep sense of what is fair and right.',
+      value: 0,
+      displayKey: signal<string>('justice'),
+      displayValue: signal<number>(0),
+      lifeStartValue: 0,
+      aptitude: 1,
+      displayAptitude: signal<number>(1),
+      aptitudeMult: 1,
+      icon: 'balance',
+      attributeGroup: DIVINE_ATTRIBUTES,
+    },
+    mercy: {
+      description: 'A true deity must have compassion on lesser beings.',
+      value: 0,
+      displayKey: signal<string>('mercy'),
+      displayValue: signal<number>(0),
+      lifeStartValue: 0,
+      aptitude: 1,
+      displayAptitude: signal<number>(1),
+      aptitudeMult: 1,
+      icon: 'volunteer_activism',
+      attributeGroup: DIVINE_ATTRIBUTES,
+    },
+    wrath: {
+      description: 'A true deity is capable of fierce anger far beyond mortal capability.',
+      value: 0,
+      displayKey: signal<string>('wrath'),
+      displayValue: signal<number>(0),
+      lifeStartValue: 0,
+      aptitude: 1,
+      displayAptitude: signal<number>(1),
+      aptitudeMult: 1,
+      icon: 'swords',
+      attributeGroup: DIVINE_ATTRIBUTES,
+    },
+    presence: {
+      description: 'A true deity projects an aura of commands and majesty.',
+      value: 0,
+      displayKey: signal<string>('presence'),
+      displayValue: signal<number>(0),
+      lifeStartValue: 0,
+      aptitude: 1,
+      displayAptitude: signal<number>(1),
+      aptitudeMult: 1,
+      icon: 'settings_accessibility',
       attributeGroup: DIVINE_ATTRIBUTES,
     },
     earthLore: {
