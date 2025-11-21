@@ -11,6 +11,7 @@ import { FarmService } from './game-state/farm.service';
 import { MobileLayoutComponent } from './mobile-layout/mobile-layout.component';
 import { StandardLayoutComponent } from './standard-layout/standard-layout.component';
 import { AppService } from './app.service';
+import { MatIconRegistry } from '@angular/material/icon';
 
 const mobileBreakpoint = 500;
 
@@ -72,8 +73,11 @@ export class AppComponent implements OnInit, OnDestroy {
     public characterService: CharacterService,
     public inventoryService: InventoryService,
     public homeService: HomeService,
-    public farmService: FarmService
-  ) {}
+    public farmService: FarmService,
+    public iconRegistry: MatIconRegistry
+  ) {
+    iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
+  }
 
   private isMobileWidth(): boolean {
     return window.innerWidth < mobileBreakpoint;
