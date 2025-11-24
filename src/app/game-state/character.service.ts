@@ -147,7 +147,7 @@ export interface CharacterProperties {
   highestHealth: number;
   highestStamina: number;
   highestQi: number;
-  highestAttributes: { [key: string]: number };
+  highestAttributeValues: { [key: string]: number };
   yinYangBoosted: boolean;
   yin: number;
   yang: number;
@@ -164,6 +164,7 @@ export interface CharacterProperties {
 
 const INITIAL_AGE = 18 * 365;
 export const BASIC_ATTRIBUTES = 'Basic Attributes';
+export const SPIRITUAL_ATTRIBUTES = 'Spiritual Attributes';
 export const DIVINE_ATTRIBUTES = 'Divine Attributes';
 export const LORE_ATTRIBUTES = 'Lore';
 export const SKILL_ATTRIBUTES = 'Skills';
@@ -309,7 +310,7 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'self_improvement',
-      attributeGroup: DIVINE_ATTRIBUTES,
+      attributeGroup: SPIRITUAL_ATTRIBUTES,
     },
     wisdom: {
       description: 'A true deity must have a depth of understanding that exceeds that of mere mortals.',
@@ -647,7 +648,7 @@ export class CharacterService {
   highestHealth = 0;
   highestStamina = 0;
   highestQi = 0;
-  highestAttributes: { [key: string]: number } = {};
+  highestAttributes: { [key: string]: WritableSignal<number> };
   keepPouchItems = false;
 
   constructor(
@@ -662,6 +663,12 @@ export class CharacterService {
 
     this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
+
+    this.highestAttributes = {};
+    const keys = Object.keys(this.attributes) as AttributeType[];
+    for (const key in keys) {
+      this.highestAttributes[keys[key]] = signal<number>(0);
+    }
 
     mainLoopService.tickSubject.subscribe(() => {
       if (!this.dead) {
@@ -710,17 +717,6 @@ export class CharacterService {
       }
       if (this.highestQi < this.status.qi.value) {
         this.highestQi = this.status.qi.value;
-      }
-
-      const keys = Object.keys(this.attributes) as AttributeType[];
-      for (const key in keys) {
-        this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
-        if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
-          this.attributes[keys[key]].aptitudeMult *= 1000;
-        }
-        if ((keys[key] === 'intelligence' || keys[key] === 'charisma') && this.bonusBrains) {
-          this.attributes[keys[key]].aptitudeMult *= 1000;
-        }
       }
 
       if (this.dead) {
@@ -885,8 +881,10 @@ export class CharacterService {
     for (const key in keys) {
       const attribute = this.attributes[keys[key]];
       attribute.lifeStartValue = 0;
-      attribute.aptitude = 1 + attribute.aptitude / this.aptitudeGainDivider; // keep up to 20% of aptitudes after Ascension
-      if (parseInt(key) < 5) {
+      if (attribute.attributeGroup !== DIVINE_ATTRIBUTES) {
+        attribute.aptitude = 1 + attribute.aptitude / this.aptitudeGainDivider; // keep up to 20% of aptitudes after Ascension
+      }
+      if (attribute.attributeGroup === BASIC_ATTRIBUTES) {
         attribute.value = 1;
       } else {
         attribute.value = 0;
@@ -1021,7 +1019,7 @@ export class CharacterService {
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
-      if (this.attributes[keys[key]].value > 0) {
+      if (this.attributes[keys[key]].value > 0 && this.attributes[keys[key]].attributeGroup !== DIVINE_ATTRIBUTES) {
         // gain aptitude based on last life's value
         const addedValue =
           (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) /
@@ -1180,10 +1178,21 @@ export class CharacterService {
     if (this.hellMoney > this.maxMoney) {
       this.hellMoney = this.maxMoney;
     }
+
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
       this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
+      if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
+        this.attributes[keys[key]].aptitudeMult *= 1000;
+      }
+      if ((keys[key] === 'intelligence' || keys[key] === 'charisma') && this.bonusBrains) {
+        this.attributes[keys[key]].aptitudeMult *= 1000;
+      }
+      if (this.highestAttributes[keys[key]]() < this.attributes[keys[key]].value) {
+        this.highestAttributes[keys[key]].set(this.attributes[keys[key]].value);
+      }
     }
+
     this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
     this.lifespan =
       this.baseLifespan +
@@ -1334,9 +1343,6 @@ export class CharacterService {
     let increaseAmount = amount * (1 + this.achievementService!.unlockedAchievements.length * 0.02); // 2% bonus per achievement
     increaseAmount *= this.attributes[attribute].aptitudeMult;
     this.attributes[attribute].value += increaseAmount;
-    if (!this.highestAttributes[attribute] || this.highestAttributes[attribute] < this.attributes[attribute].value) {
-      this.highestAttributes[attribute] = this.attributes[attribute].value;
-    }
     return increaseAmount;
   }
 
@@ -1416,6 +1422,12 @@ export class CharacterService {
       delete savedAttributes[typedKey].attributeGroup;
     }
 
+    const highestAttributeValues: { [key: string]: number } = {};
+    const keys = Object.keys(this.attributes) as AttributeType[];
+    for (const key in keys) {
+      highestAttributeValues[keys[key]] = this.highestAttributes[keys[key]]();
+    }
+
     return {
       attributes: savedAttributes,
       money: this.money,
@@ -1454,7 +1466,7 @@ export class CharacterService {
       highestHealth: this.highestHealth,
       highestStamina: this.highestStamina,
       highestQi: this.highestQi,
-      highestAttributes: this.highestAttributes,
+      highestAttributeValues: highestAttributeValues,
       yinYangBoosted: this.yinYangBoosted,
       yin: this.yin,
       yang: this.yang,
@@ -1477,6 +1489,7 @@ export class CharacterService {
       this.attributes[typedKey].aptitudeMult = properties.attributes[typedKey].aptitudeMult;
       this.attributes[typedKey].value = properties.attributes[typedKey].value;
       this.attributes[typedKey].lifeStartValue = properties.attributes[typedKey].lifeStartValue;
+      this.highestAttributes[typedKey].set(properties.highestAttributeValues[typedKey] || 0);
     }
     this.updateMoney(properties.money, true);
     this.stashedMoney = properties.stashedMoney;
@@ -1525,7 +1538,6 @@ export class CharacterService {
     this.highestHealth = properties.highestHealth;
     this.highestStamina = properties.highestStamina;
     this.highestQi = properties.highestQi;
-    this.highestAttributes = properties.highestAttributes;
     this.yinYangBoosted = properties.yinYangBoosted;
     this.yin = properties.yin;
     this.yang = properties.yang;

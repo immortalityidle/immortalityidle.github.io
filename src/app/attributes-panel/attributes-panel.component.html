@@ -18,7 +18,7 @@
         </span>
       </div>
       @for (attribute of attributesByGroup[group] | keyvalue: originalOrder; track attribute.value.displayKey() + attribute.value.displayValue()) {
-        @if ((attribute.value.displayValue() !== 0 || characterService.highestAttributes[attribute.key])) {
+        @if ((attribute.value.displayValue() !== 0 || characterService.highestAttributes[attribute.key]())) {
           <div class='attributeLine'>
             <div class='attributeColumn' tooltip="{{attribute.value.displayKey() | camelToTitle}}<br>{{attribute.value.description}}">
               <mat-icon>{{attribute.value.icon}}</mat-icon>

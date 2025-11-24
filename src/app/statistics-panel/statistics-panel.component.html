@@ -297,7 +297,7 @@
             Highest {{highest.key | camelToTitle }}
           </td>
           <td>
-            {{ highest.value | bigNumber }}
+            {{ highest.value() | bigNumber }}
           </td>
         </tr>
       }

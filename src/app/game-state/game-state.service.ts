@@ -1130,7 +1130,7 @@ export class GameStateService {
       highestHealth: props?.highestHealth || 0,
       highestStamina: props?.highestStamina || 0,
       highestQi: props?.highestQi || 0,
-      highestAttributes: props?.highestAttributes || {},
+      highestAttributeValues: props?.highestAttributeValues || {},
       yinYangBoosted: props?.yinYangBoosted || false,
       yin: props?.yin || 1,
       yang: props?.yang || 1,

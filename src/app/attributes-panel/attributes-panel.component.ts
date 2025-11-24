@@ -6,6 +6,7 @@ import {
   DIVINE_ATTRIBUTES,
   LORE_ATTRIBUTES,
   SKILL_ATTRIBUTES,
+  SPIRITUAL_ATTRIBUTES,
 } from '../game-state/character.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from '../game-state/main-loop.service';
@@ -27,7 +28,7 @@ import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
   ],
 })
 export class AttributesPanelComponent {
-  protected groups = [BASIC_ATTRIBUTES, DIVINE_ATTRIBUTES, LORE_ATTRIBUTES, SKILL_ATTRIBUTES];
+  protected groups = [BASIC_ATTRIBUTES, SPIRITUAL_ATTRIBUTES, DIVINE_ATTRIBUTES, LORE_ATTRIBUTES, SKILL_ATTRIBUTES];
   protected attributesByGroup: { [key: string]: { [key: string]: AttributeObject } };
 
   constructor(public characterService: CharacterService, private mainLoopService: MainLoopService) {
