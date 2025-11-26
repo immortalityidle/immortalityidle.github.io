@@ -616,10 +616,10 @@ export class AchievementService {
       description: 'You got a taste of those sweet, sweet empowerment pills and want more.',
       hint: 'Master of all.',
       check: () => {
-        return this.characterService.empowermentFactor > 1;
+        return this.characterService.empowermentPillsTaken > 100;
       },
       effect: () => {
-        //TODO: Create a downside to taking empowerment pills, maybe post-Death
+        /* intentionally empty */
       },
       unlocked: false,
     },
@@ -627,13 +627,13 @@ export class AchievementService {
       name: 'Habitual User',
       displayName: 'Dope',
       description:
-        "You got every last drop you could out of those pills and now you feel nothing from them.<br>At least they didn't kill you or do lasting harm, right?",
-      hint: 'D.A.R.E.',
+        'You got tremendous powerout of those empowerment pills, and your body has adapted to use them better. More. More! MORE!!!!',
+      hint: 'Jagged little pills. So many of them.',
       check: () => {
-        return this.characterService.empowermentFactor >= 1953.65;
+        return this.characterService.empowermentPillsTaken >= 10000;
       },
       effect: () => {
-        //TODO: Create a downside to taking HUGE NUMBERS of empowerment pills, maybe in Hell?
+        this.characterService.empowermentMax = 999;
       },
       unlocked: false,
     },

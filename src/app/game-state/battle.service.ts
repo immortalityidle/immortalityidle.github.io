@@ -1209,6 +1209,9 @@ export class BattleService {
     if (defense >= 1) {
       damage = damage / (Math.pow(defense, 0.5) + Math.pow(1000000, (-damage + defense) / defense));
     }
+    if (this.characterService.attributes.justice.value > 0) {
+      damage /= this.characterService.attributes.justice.value + 1;
+    }
     const enemyName = this.titleCasePipe.transform(enemy.name);
     if (damage > 0) {
       this.logService.injury(
@@ -1593,6 +1596,9 @@ export class BattleService {
       if (technique.attribute) {
         this.characterService.increaseAttribute(technique.attribute, 0.01);
       }
+      if (this.characterService.attributes.wrath.value > 0) {
+        damage *= this.characterService.attributes.wrath.value + 1;
+      }
 
       let overage = this.damageEnemy(damage);
       if (blowthrough) {
@@ -1796,11 +1802,15 @@ export class BattleService {
         unlocked: true,
       });
     }
+    let modifiedHealth = health;
+    if (this.characterService.attributes.presence.value > 0) {
+      modifiedHealth /= this.characterService.attributes.presence.value;
+    }
 
     this.addEnemy({
       name: monsterName,
       baseName: monsterType.name,
-      health: health,
+      health: modifiedHealth,
       maxHealth: health,
       defense: defense,
       loot: loot,

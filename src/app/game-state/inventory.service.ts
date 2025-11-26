@@ -2189,7 +2189,7 @@ export class InventoryService {
         this.characterService.alchemyLifespan = 36500;
       }
     } else if (pill.effect === 'empowerment') {
-      this.characterService.empowermentFactor += 0.01 * quantity;
+      this.characterService.empowermentPillsTaken += quantity;
     } else {
       // effect should be an attribute
       let effect = 'strength';

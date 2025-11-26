@@ -903,6 +903,7 @@ export class FollowersService {
     if (this.hqUnlocked) {
       this.followerCap += this.hqs[this.hq].maxFollowerIncrease;
     }
+    this.followerCap += this.characterService.attributes.mercy.value + this.characterService.attributes.presence.value;
 
     this.petsCap = Math.round(
       1 +
@@ -911,8 +912,13 @@ export class FollowersService {
         this.characterService.bloodlineRank / 10 +
         Math.log10(this.characterService.attributes.animalHandling.value)
     );
+    this.petsCap += this.characterService.attributes.mercy.value + this.characterService.attributes.presence.value;
+
     this.followersMaxed =
       this.followers.length < this.followerCap ? (this.followersMaxed = 'UNMAXED') : (this.followersMaxed = 'MAXED');
+
+    this.maxFollowerLevel =
+      100 + this.hqs[this.hq].maxLevelIncrease + 10 * this.characterService.attributes.mercy.value;
   }
 
   updateFollowerTotalPower() {
@@ -1684,7 +1690,6 @@ export class FollowersService {
     this.characterService.money -= this.hqs[this.hq].upgradeMoneyCost;
     this.homeService.land -= this.hqs[this.hq].upgradeLandCost;
     this.hq++;
-    this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
     this.updateHQInputs();
   }
@@ -1692,7 +1697,6 @@ export class FollowersService {
   downgradeHQ() {
     this.hq--;
     this.homeService.land += this.hqs[this.hq].upgradeLandCost;
-    this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     this.updateFollowerCap();
     this.updateHQInputs();
   }

@@ -138,7 +138,7 @@ export interface CharacterProperties {
   healthBonusBath: number;
   healthBonusMagic: number;
   healthBonusSoul: number;
-  empowermentFactor: number;
+  empowermentPillsTaken: number;
   immortal: boolean;
   god: boolean;
   easyMode: boolean;
@@ -160,6 +160,7 @@ export interface CharacterProperties {
   showUpdateAnimations: boolean;
   startingStaminaBoost: boolean;
   keepPouchItems: boolean;
+  empowermentMax: number;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -214,8 +215,9 @@ export class CharacterService {
   healthBonusBath = 0;
   healthBonusMagic = 0;
   healthBonusSoul = 0;
-  empowermentFactor = 1;
+  empowermentPillsTaken = 0;
   empowermentMult = 1;
+  empowermentMax = 99;
   imperial = false;
   immortal = signal<boolean>(false);
   god = signal<boolean>(false);
@@ -1181,7 +1183,11 @@ export class CharacterService {
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
-      this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(this.attributes[keys[key]].aptitude);
+      this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(
+        this.attributes[keys[key]].aptitude,
+        false,
+        this.attributes[keys[key]].attributeGroup === DIVINE_ATTRIBUTES
+      );
       if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
         this.attributes[keys[key]].aptitudeMult *= 1000;
       }
@@ -1247,8 +1253,8 @@ export class CharacterService {
   }
 
   getEmpowermentMult(): number {
-    const max = 99;
-    const empowermentFactor = this.empowermentFactor - 1;
+    const max = this.empowermentMax;
+    const empowermentFactor = this.empowermentPillsTaken * 0.01;
     let returnValue = 1 + (2 * max) / (1 + Math.pow(1.02, -empowermentFactor / 3)) - max;
     if (this.easyMode) {
       returnValue *= 100;
@@ -1256,27 +1262,27 @@ export class CharacterService {
     return returnValue;
   }
 
-  //TODO: double check the math here and maybe cache the results on aptitude change instead of recalculating regularly
-  getAptitudeMultipier(aptitude: number, noEmpowerment = false): number {
+  //TODO: maybe cache the results on aptitude change instead of recalculating regularly
+  getAptitudeMultipier(aptitude: number, noEmpowerment = false, divineAttribute = false): number {
     if (aptitude < 0) {
       // should not happen, but sanity check it
       aptitude = 0;
     }
-    const empowermentFactor = noEmpowerment ? 1 : this.empowermentMult;
+    const empowermentMultiplier = noEmpowerment || divineAttribute ? 1 : this.empowermentMult;
     let x = 1;
     if (aptitude < this.attributeScalingLimit) {
       // linear up to the scaling limit
-      x = aptitude * empowermentFactor;
+      x = aptitude * empowermentMultiplier;
     } else if (aptitude < this.attributeScalingLimit * 10) {
       // from the limit to 10x the limit, change growth rate to 1/4
-      x = (this.attributeScalingLimit + (aptitude - this.attributeScalingLimit) / 4) * empowermentFactor;
+      x = (this.attributeScalingLimit + (aptitude - this.attributeScalingLimit) / 4) * empowermentMultiplier;
     } else if (aptitude < this.attributeScalingLimit * 100) {
       // from the 10x limit to 100x the limit, change growth rate to 1/20
       x =
         (this.attributeScalingLimit +
           (this.attributeScalingLimit * 9) / 4 +
           (aptitude - this.attributeScalingLimit * 10) / 20) *
-        empowermentFactor;
+        empowermentMultiplier;
     } else if (aptitude <= this.attributeSoftCap) {
       // from the 100x limit to softcap, change growth rate to 1/100
       x =
@@ -1284,7 +1290,7 @@ export class CharacterService {
           (this.attributeScalingLimit * 9) / 4 +
           (this.attributeScalingLimit * 90) / 20 +
           (aptitude - this.attributeScalingLimit * 100) / 100) *
-        empowermentFactor;
+        empowermentMultiplier;
     } else {
       const d =
         this.attributeScalingLimit +
@@ -1293,9 +1299,12 @@ export class CharacterService {
         (this.attributeSoftCap - this.attributeScalingLimit * 100) / 100; // Pre-softcap
       x =
         (Math.pow((aptitude - this.attributeSoftCap) * Math.pow(this.attributeScalingLimit / 1e13, 0.15), 0.5) + d) *
-        empowermentFactor; // Softcap
+        empowermentMultiplier; // Softcap
     }
     if (this.bloodlineRank >= 8) {
+      if (this.attributes.wisdom.value > 0 && !divineAttribute) {
+        x *= this.attributes.wisdom.value + 1;
+      }
       return x;
     }
     let c = 365000; // Hardcap
@@ -1305,7 +1314,11 @@ export class CharacterService {
     } else {
       c += this.yinYangBalance * c * 0.1;
     }
-    return c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
+    c = c / (-1 - Math.log((x + c) / c)) + c; // soft-hardcap math
+    if (this.attributes.wisdom.value > 0 && !divineAttribute) {
+      c *= this.attributes.wisdom.value + 1;
+    }
+    return c;
   }
 
   updateMoney(amount: number, justSetIt = false): number {
@@ -1457,7 +1470,8 @@ export class CharacterService {
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
       healthBonusSoul: this.healthBonusSoul,
-      empowermentFactor: this.empowermentFactor,
+      empowermentPillsTaken: this.empowermentPillsTaken,
+      empowermentMax: this.empowermentMax,
       immortal: this.immortal(),
       god: this.god(),
       easyMode: this.easyMode,
@@ -1529,7 +1543,8 @@ export class CharacterService {
     this.healthBonusBath = properties.healthBonusBath;
     this.healthBonusMagic = properties.healthBonusMagic;
     this.healthBonusSoul = properties.healthBonusSoul;
-    this.empowermentFactor = properties.empowermentFactor;
+    this.empowermentPillsTaken = properties.empowermentPillsTaken;
+    this.empowermentMax = properties.empowermentMax;
     this.immortal.set(properties.immortal);
     this.god.set(properties.god);
     this.easyMode = properties.easyMode;

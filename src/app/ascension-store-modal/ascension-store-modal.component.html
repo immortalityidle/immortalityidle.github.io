@@ -73,9 +73,9 @@
         </td>
       </tr>
     </table>
-    @if (characterService.empowermentFactor > 1) {
+    @if (characterService.empowermentPillsTaken > 0) {
       <span>
-        You have consumed {{(characterService.empowermentFactor - 1) * 100 | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.getEmpowermentMult()  | number:'1.0-3'}}. You will always keep this bonus, even after ascending.
+        You have consumed {{characterService.empowermentPillsTaken | number:'1.0-0'}} Empowerment Pills which multiplies all your attribute gains by {{characterService.empowermentMult  | number:'1.0-3'}}. You will always keep this bonus, even after ascending.
       </span>
     }
     
