@@ -1710,7 +1710,7 @@ export class FollowersService {
     while (inputStacks.length > this.hqs[this.hq].inputs) {
       const lastInputStack = inputStacks[inputStacks.length - 1];
       if (lastInputStack.item) {
-        this.inventoryService.addItem(lastInputStack.item, lastInputStack.quantity);
+        this.inventoryService.addItem(lastInputStack.item, lastInputStack.quantity, 0, false, false);
       }
       inputStacks.splice(inputStacks.length - 1);
     }
