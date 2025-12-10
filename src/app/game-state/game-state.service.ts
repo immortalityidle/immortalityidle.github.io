@@ -263,7 +263,7 @@ export class GameStateService {
         x: 0,
         y: 0,
         w: 98,
-        h: 8,
+        h: 10,
       },
       {
         id: 'attributesPanel',

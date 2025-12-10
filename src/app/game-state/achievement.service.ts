@@ -194,7 +194,7 @@ export class AchievementService {
       effect: () => {
         this.mainLoopService.timeUnlocked = true;
         this.gameStateService!.unlockPanel('timePanel');
-        this.gameStateService!.addLayoutPanel('timePanel', 0, 8, 30, 6);
+        this.gameStateService!.addLayoutPanel('timePanel', 0, 8, 30, 8);
         this.gameStateService!.unlockPanel('schedulePanel');
         this.gameStateService!.addLayoutPanel('schedulePanel', 0, 14, 30, 14);
       },
@@ -322,7 +322,7 @@ export class AchievementService {
       },
       effect: () => {
         this.gameStateService!.unlockPanel('inventoryPanel');
-        this.gameStateService!.addLayoutPanel('inventoryPanel', 30, 28, 38, 20);
+        this.gameStateService!.addLayoutPanel('inventoryPanel', 30, 28, 38, 22);
       },
       unlocked: false,
     },
@@ -336,7 +336,7 @@ export class AchievementService {
       effect: () => {
         this.battleService.battlesUnlocked = true;
         this.gameStateService!.unlockPanel('battlePanel');
-        this.gameStateService!.addLayoutPanel('battlePanel', 68, 35, 30, 20);
+        this.gameStateService!.addLayoutPanel('battlePanel', 68, 35, 30, 22);
       },
       unlocked: false,
     },
