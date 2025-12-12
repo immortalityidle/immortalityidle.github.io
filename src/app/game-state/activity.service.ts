@@ -59,6 +59,8 @@ export interface ActivityProperties {
   oddJobDays: number;
   beggingDays: number;
   incomeMultiplier: number;
+  hiddenActivities: ActivityType[];
+  activityOptionsUnlocked: boolean;
 }
 
 export interface DisplayActivity {
@@ -74,6 +76,8 @@ export interface DisplayActivity {
   familySpecialty: WritableSignal<boolean>;
   displayLastIncome: WritableSignal<boolean>;
   lastIncomeString: WritableSignal<string>;
+  hidden: WritableSignal<boolean>;
+  nextRank: WritableSignal<string>;
   activity: Activity;
 }
 
@@ -140,6 +144,9 @@ export class ActivityService {
   currentRealm = Realm.MortalRealm;
   currentRealmDisplay = signal<string>(RealmNames[Realm.MortalRealm]);
   incomeMultiplier = 1;
+  hiddenActivities: ActivityType[] = [];
+  activityOptionsUnlocked = signal<boolean>(false);
+  displayedActivitiesCount = 0;
 
   constructor(
     private injector: Injector,
@@ -411,6 +418,7 @@ export class ActivityService {
     this.displayCurrentIndex.set(this.currentIndex);
     this.displayCurrentTickCount.set(this.currentTickCount);
     this.currentRealmDisplay.set(RealmNames[this.currentRealm]);
+    this.displayedActivitiesCount = 0;
     for (let i = 0; i < this.activities.length; i++) {
       const activity = this.activities[i];
       if (this.displayActivities.length <= i) {
@@ -428,13 +436,19 @@ export class ActivityService {
           displayLastIncome: signal<boolean>(false),
           lastIncomeString: signal<string>(''),
           activity: activity,
+          hidden: signal<boolean>(false),
+          nextRank: signal<string>(''),
         });
       }
       const displayActivity = this.displayActivities[i];
       displayActivity.trackField.set(
         '' + activity.activityType + activity.level + activity.lastIncome + activity.unlocked + activity.discovered
       );
-      displayActivity.displayed.set(activity.discovered || activity.unlocked);
+      const displayed = activity.discovered || activity.unlocked;
+      displayActivity.displayed.set(displayed);
+      if (displayed) {
+        this.displayedActivitiesCount++;
+      }
       displayActivity.name.set(activity.name[activity.level]);
       displayActivity.projectionOnly.set(activity.projectionOnly || false);
       displayActivity.locked.set(!activity.unlocked || this.battleService.enemies.length > 0);
@@ -454,6 +468,8 @@ export class ActivityService {
           this.bigNumberPipe.transform(activity.lastIncome || 0) +
           ' taels.'
       );
+      displayActivity.nextRank.set(this.getNextRankTooltip(activity));
+      displayActivity.hidden.set(this.hiddenActivities.includes(activity.activityType));
     }
   }
 
@@ -497,6 +513,21 @@ export class ActivityService {
 
       return tooltipText;
     }
+  }
+
+  getNextRankTooltip(activity: Activity) {
+    let tooltipText = '';
+    if (this.activityOptionsUnlocked() && activity.level < activity.name.length - 1) {
+      tooltipText = [
+        'The next level of this activity is locked until you have the attributes required for it. You will need:<br>',
+        ...Object.entries(activity.requirements[activity.level + 1]).map(entry =>
+          entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
+        ),
+      ]
+        .filter(line => line)
+        .join('<br>');
+    }
+    return tooltipText;
   }
 
   checkTriggers() {
@@ -651,6 +682,8 @@ export class ActivityService {
       oddJobDays: this.oddJobDays,
       beggingDays: this.beggingDays,
       incomeMultiplier: this.incomeMultiplier,
+      hiddenActivities: this.hiddenActivities,
+      activityOptionsUnlocked: this.activityOptionsUnlocked(),
     };
   }
 
@@ -711,6 +744,8 @@ export class ActivityService {
       // set hell portals for the realm if needed
       this.hellService.hells[this.currentRealm].setPortals();
     }
+    this.hiddenActivities = properties.hiddenActivities;
+    this.activityOptionsUnlocked.set(properties.activityOptionsUnlocked);
   }
 
   meetsRequirements(activity: Activity): boolean {

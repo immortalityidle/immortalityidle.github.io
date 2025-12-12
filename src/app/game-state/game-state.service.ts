@@ -690,6 +690,8 @@ export class GameStateService {
       beggingDays: props?.beggingDays || 0,
       oddJobDays: props?.oddJobDays || 0,
       incomeMultiplier: props?.incomeMultiplier || 1,
+      hiddenActivities: props?.hiddenActivities || [],
+      activityOptionsUnlocked: props?.activityOptionsUnlocked || false,
     };
   }
 
@@ -882,8 +884,10 @@ export class GameStateService {
   private getCharacterProperties(props: CharacterProperties | undefined): CharacterProperties {
     // temporary kludge to get legacy empowerment pill counting to work with new variables.
     let empowermentPillsTaken = props?.empowermentPillsTaken || 0;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     if (empowermentPillsTaken === 0 && props?.empowermentFactor && props?.empowermentFactor > 1) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       empowermentPillsTaken = (props?.empowermentFactor - 1) * 100;
     }

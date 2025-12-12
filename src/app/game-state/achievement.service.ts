@@ -341,6 +341,19 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Busy Life',
+      description:
+        'You have discovered a wide variety of activities and developed some additional capabilites for managing them.',
+      hint: 'The world has so many things to do.',
+      check: () => {
+        return this.activityService.displayedActivitiesCount > 12;
+      },
+      effect: () => {
+        this.activityService.activityOptionsUnlocked.set(true);
+      },
+      unlocked: false,
+    },
+    {
       name: 'Spiritual Awakening',
       description: 'You have honed your mind and body enough to begin meditating to develop your spirit.',
       hint: 'An aspiring immortal needs to develop all the basic attributes.',

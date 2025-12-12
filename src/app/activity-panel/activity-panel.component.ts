@@ -12,6 +12,7 @@ import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { ActivityPanelService } from './activity-panel.service';
+import { ActivityOptionsModalComponent } from '../activity-options-modal/activity-options-modal.component';
 
 @Component({
   selector: 'app-activity-panel',
@@ -135,5 +136,13 @@ export class ActivityPanelComponent {
         }
       }
     }
+  }
+
+  optionsClicked() {
+    this.dialog.open(ActivityOptionsModalComponent, {
+      width: '700px',
+      data: { someField: 'foo' },
+      autoFocus: false,
+    });
   }
 }

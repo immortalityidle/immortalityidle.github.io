@@ -1,8 +1,15 @@
 <div class="activitiesContainer">
+  @if (activityService.activityOptionsUnlocked()){
+    <div>
+      <mat-icon  (click)="optionsClicked()" tooltip="Options" class="iconButton floatRight" aria-label="Activity Options" aria-hidden="false">
+        settings
+      </mat-icon>
+    </div>
+  }
   <div class="overflow">
     <div class="activityGrid" cdkDropList cdkDropListSortingDisabled>
       @for (displayActivity of activityService.displayActivities; track displayActivity.trackField(); let indexOfelement = $index) {
-        @if (displayActivity.displayed()) {
+        @if (displayActivity.displayed() && !displayActivity.hidden()) {
           <div class="activitySlot" [ngClass]="{'projectionOnly': displayActivity.projectionOnly(), 'lockedActivity': displayActivity.locked()}"
             [tabindex]="0"
             cdkDrag [cdkDragDisabled]="displayActivity.locked()" [cdkDragData]="displayActivity.activityType()"
@@ -40,6 +47,12 @@
                   <mat-icon tooltip="{{displayActivity.lastIncomeString()}}"
                     aria-label="Earns money" aria-hidden="false">
                     attach_money
+                  </mat-icon>
+                }
+                @if (displayActivity.nextRank() !== '') {
+                  <mat-icon tooltip="{{displayActivity.nextRank()}}"
+                    aria-label="Next Rank" aria-hidden="false">
+                    upgrade
                   </mat-icon>
                 }
                 <mat-icon class="iconButton" (click)="activityPanelService.showActivity($event, displayActivity.activity)"

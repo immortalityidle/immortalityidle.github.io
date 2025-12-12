@@ -1,0 +1,19 @@
+<div class="darkMode">
+  <h3>Activities Panel Options</h3>
+  <div class="optionsDiv">
+    @for (displayActivity of activityService.displayActivities; track displayActivity.trackField(); let indexOfelement = $index) {
+        @if (displayActivity.displayed()) {
+            <input
+            type="checkbox"
+            (change)="entryToggled($event, displayActivity)"
+            [id]="'activityOption' + displayActivity.name()"
+            [checked]="!displayActivity.hidden()"
+            />
+            <label [for]="'activityOption' + displayActivity.name()">
+                <span>Show {{displayActivity.name()}}</span>
+            </label>
+        <br/>
+        }
+    }
+  </div>
+</div>
