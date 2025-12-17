@@ -1,0 +1,16 @@
+<div class="contemplationContainer">
+  <div>
+    @for (displayConcept of contemplationService.displayConcepts; track displayConcept.name()) {
+        <div class="itemSlot conceptEntry" (click)="conceptClicked(displayConcept.concept)" tooltip="{{displayConcept.description()}}">
+          @if (contemplationService.currentConcept === displayConcept.concept){
+            <mat-icon tooltip="You are currently contemplating this concept.">
+              crisis_alert
+            </mat-icon>
+          }
+          <div>{{displayConcept.name()}}</div>
+          <div>{{displayConcept.progress() | bigNumber}} Thoughts</div>
+        </div>
+    }
+  </div>
+</div>
+<br>

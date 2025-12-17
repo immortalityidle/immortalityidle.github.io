@@ -6,6 +6,7 @@ import { LocationService } from './location.service';
 import { LocationType } from './activity';
 import { LogService, LogTopic } from './log.service';
 import { CamelToTitlePipe } from '../pipes';
+import { ContemplationService } from './contemplation.service';
 
 export enum ImpossibleTaskType {
   Swim,
@@ -163,7 +164,8 @@ export class ImpossibleTaskService {
     private injector: Injector,
     mainLoopService: MainLoopService,
     private battleService: BattleService,
-    private logService: LogService
+    private logService: LogService,
+    private contemplationService: ContemplationService
   ) {
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
@@ -304,6 +306,7 @@ export class ImpossibleTaskService {
     this.activityService!.checkRequirements(true);
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
       this.battleService.addDeath();
+      this.contemplationService.contemplationStarted = true;
     }
   }
 

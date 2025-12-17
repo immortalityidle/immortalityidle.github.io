@@ -14,6 +14,7 @@ import { TitleCasePipe } from '@angular/common';
 
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
+import { ContemplationService } from './contemplation.service';
 
 export interface Enemy {
   name: string;
@@ -481,6 +482,7 @@ export class BattleService {
     private itemRepoService: ItemRepoService,
     private inventoryService: InventoryService,
     private homeService: HomeService,
+    private contemplationService: ContemplationService,
     mainLoopService: MainLoopService,
     private titleCasePipe: TitleCasePipe
   ) {
@@ -1598,6 +1600,11 @@ export class BattleService {
       }
       if (this.characterService.attributes.wrath.value > 0) {
         damage *= this.characterService.attributes.wrath.value + 1;
+      }
+
+      const damageConcepts = this.contemplationService.concepts.filter(concept => concept.effect.includes('damage'));
+      for (const concept of damageConcepts) {
+        damage *= Math.log10(10 + concept.progress);
       }
 
       let overage = this.damageEnemy(damage);

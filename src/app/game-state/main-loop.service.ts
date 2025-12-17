@@ -112,7 +112,7 @@ export class MainLoopService {
   constructor(private injector: Injector) {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
 
-    this.audio = new Audio(this.audioTracks[0]);
+    this.audio = new Audio('./assets/music/' + this.audioTracks[0] + '.mp3');
     this.nowPlaying = this.audioTracks[0];
     this.audio.volume = 0.2;
     this.audio.addEventListener('ended', () => {

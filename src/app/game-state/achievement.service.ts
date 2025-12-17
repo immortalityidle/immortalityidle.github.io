@@ -18,6 +18,7 @@ import { LocationService } from './location.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
+import { ContemplationService } from './contemplation.service';
 
 export interface Achievement {
   name: string;
@@ -166,6 +167,7 @@ export class AchievementService {
     private impossibleTaskService: ImpossibleTaskService,
     private hellService: HellService,
     private locationService: LocationService,
+    private contemplationService: ContemplationService,
     private dialog: MatDialog
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
@@ -1656,6 +1658,8 @@ export class AchievementService {
           this.triggerMemory(MEMORY_IMMORTALITY);
         }
         this.activityService.checkRequirements(true);
+        this.contemplationService.discoverConcept('Tao of Life');
+        this.contemplationService.discoverConcept('Tao of Death');
       },
       unlocked: false,
     },
@@ -1934,6 +1938,24 @@ export class AchievementService {
       },
       effect: () => {
         // no effect, it's just for fun
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Deep Thoughts',
+      description:
+        'Having faced the personification of death itself, you have decided it is time to start really thinking about the nature of everything.',
+      hint: 'Sometimes serenity can only be found in the face of death itself.',
+      check: () => {
+        return this.contemplationService.contemplationStarted;
+      },
+      effect: () => {
+        this.gameStateService?.unlockPanel('contemplationPanel');
+        this.contemplationService.discoverConcept('Tao of Earth');
+        this.contemplationService.discoverConcept('Tao of Metal');
+        this.contemplationService.discoverConcept('Tao of Wood');
+        this.contemplationService.discoverConcept('Tao of Water');
+        this.contemplationService.discoverConcept('Tao of Fire');
       },
       unlocked: false,
     },

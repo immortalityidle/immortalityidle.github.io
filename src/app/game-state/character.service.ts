@@ -11,6 +11,7 @@ import { AchievementService } from './achievement.service';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { Equipment, ItemStack } from './inventory.service';
 import { Realm } from './activity';
+import { ContemplationService } from './contemplation.service';
 
 export type CharacterAttribute = {
   [key: string]: number | undefined;
@@ -657,6 +658,7 @@ export class CharacterService {
     private injector: Injector,
     private mainLoopService: MainLoopService,
     private logService: LogService,
+    private contemplationService: ContemplationService,
     private dialog: MatDialog
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -1165,6 +1167,10 @@ export class CharacterService {
     if (this.bonusHealth) {
       bonusFactor = 5;
     }
+    const lifeConcepts = this.contemplationService.concepts.filter(concept => concept.effect.includes('life'));
+    for (const concept of lifeConcepts) {
+      bonusFactor *= Math.log10(10 + concept.progress);
+    }
     bonusFactor += this.fengshuiScore / 20;
     this.status.health.max =
       (100 +
@@ -1188,6 +1194,10 @@ export class CharacterService {
         false,
         this.attributes[keys[key]].attributeGroup === DIVINE_ATTRIBUTES
       );
+      const concepts = this.contemplationService.concepts.filter(concept => concept.effect.includes(keys[key]));
+      for (const concept of concepts) {
+        this.attributes[keys[key]].aptitudeMult *= Math.log10(10 + concept.progress);
+      }
       if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
         this.attributes[keys[key]].aptitudeMult *= 1000;
       }

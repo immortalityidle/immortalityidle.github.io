@@ -18,6 +18,7 @@ import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService } from './location.service';
 import { LocationType, Realm } from './activity';
+import { ContemplationProperties, ContemplationService } from './contemplation.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -34,6 +35,7 @@ interface GameState {
   logs: LogProperties;
   mainLoop: MainLoopProperties;
   impossibleTasks: ImpossibleTaskProperties;
+  contemplations: ContemplationProperties;
   hell: HellProperties;
   darkMode: boolean;
   gameStartTimestamp: number;
@@ -226,6 +228,13 @@ export class GameStateService {
       panelHelp: 'Your progress through the terrors of hell.',
       unlocked: false,
     },
+    {
+      id: 'contemplationPanel',
+      name: 'Contemplation',
+      icon: 'candle',
+      panelHelp: 'Your progress in contemplating the fundamental concepts of the universe.',
+      unlocked: false,
+    },
   ];
 
   constructor(
@@ -243,6 +252,7 @@ export class GameStateService {
     private achievementService: AchievementService,
     private impossibleTaskService: ImpossibleTaskService,
     private locationService: LocationService,
+    private contemplationService: ContemplationService,
     private hellService: HellService
   ) {
     window.GameStateService = this;
@@ -504,6 +514,7 @@ export class GameStateService {
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
     this.achievementService.setProperties(gameState.achievements);
+    this.contemplationService.setProperties(gameState.contemplations);
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;
@@ -534,6 +545,7 @@ export class GameStateService {
       logs: this.getLogsProperties(gameState.logs),
       mainLoop: this.getMainLoopProperties(gameState.mainLoop),
       impossibleTasks: this.getImpossibleTasksProperties(gameState.impossibleTasks),
+      contemplations: this.getContemplationProperties(gameState.contemplations),
       hell: this.getHellProperties(gameState.hell),
       darkMode: gameState.darkMode ?? false,
       gameStartTimestamp: 0,
@@ -859,6 +871,15 @@ export class GameStateService {
     };
   }
 
+  private getContemplationProperties(props: ContemplationProperties | undefined): ContemplationProperties {
+    return {
+      contemplationStarted: props?.contemplationStarted || false,
+      conceptProgress: props?.conceptProgress || {},
+      discoveredConcepts: props?.discoveredConcepts || [],
+      currentConcept: props?.currentConcept || '',
+    };
+  }
+
   private getHellProperties(props: HellProperties | undefined): HellProperties {
     return {
       inHell: props?.inHell || false,
@@ -1180,6 +1201,7 @@ export class GameStateService {
       battles: this.battleService.getProperties(),
       followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
+      contemplations: this.contemplationService.getProperties(),
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
