@@ -306,7 +306,7 @@ export class ImpossibleTaskService {
     this.activityService!.checkRequirements(true);
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
       this.battleService.addDeath();
-      this.contemplationService.contemplationStarted = true;
+      this.contemplationService.contemplationStarted.set(true);
     }
   }
 

@@ -24,13 +24,19 @@ export interface DisplayConcept {
   concept: Concept;
 }
 
+export const NO_CONCEPT = '_NO_CONCEPT_';
+export const CONCEPT_EFFECT_DAMAGE = 'damage';
+export const CONCEPT_EFFECT_FERAL = 'feral';
+
 @Injectable({
   providedIn: 'root',
 })
 export class ContemplationService {
-  contemplationStarted = false;
+  contemplationStarted = signal<boolean>(false);
   displayConcepts: DisplayConcept[] = [];
   currentConcept: Concept | null = null;
+  techniqueConcepts = [CONCEPT_EFFECT_FERAL];
+
   concepts: Concept[] = [
     {
       name: 'Tao of Earth',
@@ -72,6 +78,13 @@ export class ContemplationService {
       description: 'Contemplate the true nature of life, coming to understand its vital essence.',
       progress: 0,
       effect: 'life',
+      discovered: false,
+    },
+    {
+      name: 'Tao of Beasts',
+      description: 'Contemplate the true nature of beasts, coming to understand both their domestic and feral natures.',
+      progress: 0,
+      effect: 'animalHandling,' + CONCEPT_EFFECT_FERAL,
       discovered: false,
     },
     {
@@ -137,7 +150,7 @@ export class ContemplationService {
       }
     }
     return {
-      contemplationStarted: this.contemplationStarted,
+      contemplationStarted: this.contemplationStarted(),
       conceptProgress: conceptProgress,
       discoveredConcepts: discoveredConcepts,
       currentConcept: this.currentConcept?.name || '',
@@ -145,7 +158,7 @@ export class ContemplationService {
   }
 
   setProperties(properties: ContemplationProperties) {
-    this.contemplationStarted = properties.contemplationStarted;
+    this.contemplationStarted.set(properties.contemplationStarted);
     for (const concept of this.concepts) {
       concept.progress = properties.conceptProgress[concept.name] || 0;
       concept.discovered = properties.discoveredConcepts.includes(concept.name);

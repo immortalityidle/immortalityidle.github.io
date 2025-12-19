@@ -21,6 +21,7 @@ import { CamelToTitlePipe } from '../pipes';
 import { MatIcon } from '@angular/material/icon';
 import { TechniqueOptionsModalComponent } from '../technique-options-modal/technique-options-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ContemplationService } from '../game-state/contemplation.service';
 
 @Component({
   selector: 'app-technique-panel',
@@ -30,8 +31,13 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class TechniquePanelComponent {
   effectDescriptions: { [key: string]: string } = {};
+  conceptDescriptions: { [key: string]: string } = {};
 
-  constructor(public battleService: BattleService, public dialog: MatDialog) {
+  constructor(
+    public battleService: BattleService,
+    public contemplationService: ContemplationService,
+    public dialog: MatDialog
+  ) {
     this.effectDescriptions[ELEMENT_EFFECT_FIRE] =
       'This technique inflicts fire damage, doing additional damage to wood and metal aspected enemies and less to water and earth aspected enemies.';
     this.effectDescriptions[ELEMENT_EFFECT_EARTH] =
@@ -54,6 +60,14 @@ export class TechniquePanelComponent {
     this.effectDescriptions[EFFECT_HASTE] =
       'This technique allows all your techniques to strike faster for a short time.';
     this.effectDescriptions[EFFECT_SLOW] = "This technique slows all your enemy's attacks for a short time.";
+
+    for (const techniqueConcept of this.contemplationService.techniqueConcepts) {
+      this.conceptDescriptions[techniqueConcept] = 'Strengthened by contemplation of: ';
+      const relevantConcepts = this.contemplationService.concepts.filter(c => c.effect.includes(techniqueConcept));
+      for (const concept of relevantConcepts) {
+        this.conceptDescriptions[techniqueConcept] += '<br>' + concept.name;
+      }
+    }
   }
 
   optionsClicked() {

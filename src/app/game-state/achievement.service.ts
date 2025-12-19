@@ -1658,7 +1658,6 @@ export class AchievementService {
           this.triggerMemory(MEMORY_IMMORTALITY);
         }
         this.activityService.checkRequirements(true);
-        this.contemplationService.discoverConcept('Tao of Life');
         this.contemplationService.discoverConcept('Tao of Death');
       },
       unlocked: false,
@@ -1947,7 +1946,7 @@ export class AchievementService {
         'Having faced the personification of death itself, you have decided it is time to start really thinking about the nature of everything.',
       hint: 'Sometimes serenity can only be found in the face of death itself.',
       check: () => {
-        return this.contemplationService.contemplationStarted;
+        return this.contemplationService.contemplationStarted();
       },
       effect: () => {
         this.gameStateService?.unlockPanel('contemplationPanel');
@@ -1956,6 +1955,7 @@ export class AchievementService {
         this.contemplationService.discoverConcept('Tao of Wood');
         this.contemplationService.discoverConcept('Tao of Water');
         this.contemplationService.discoverConcept('Tao of Fire');
+        this.contemplationService.discoverConcept('Tao of Life');
       },
       unlocked: false,
     },

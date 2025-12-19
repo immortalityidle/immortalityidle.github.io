@@ -5,35 +5,38 @@
     </mat-icon>
   </div>
   <div>
-    @for (technique of battleService.techniques; track technique) {
-      @if (technique.unlocked){
+    @for (displayTechnique of battleService.displayTechniques; track displayTechnique.trackField()) {
+      @if (displayTechnique.unlocked()){
         <div class="itemSlot techniqueEntry">
-          <div class="techniqueName">{{technique.name}}</div>
-          <div>{{technique.description}}</div>
-          <div>Base Damage: {{technique.baseDamage}}</div>
-          @if (technique.attribute){
-              <div>Damage increases with {{technique.attribute | camelToTitle}}</div>
+          <div class="techniqueName">{{displayTechnique.name()}}</div>
+          <div>{{displayTechnique.description()}}</div>
+          <div>Base Damage: {{displayTechnique.baseDamage()}}</div>
+          @if (displayTechnique.attribute() !== ''){
+              <div>Damage increases with {{displayTechnique.attribute() | camelToTitle}}</div>
           }
-          @if (technique.extraMultiplier){
-            <div>Damage multiplier: {{technique.extraMultiplier}}</div>
+          @if (displayTechnique.extraMultiplier() !== 0){
+            <div>Damage multiplier: {{displayTechnique.extraMultiplier()}}</div>
           }
-          <div>Activates every {{technique.ticksRequired}} combat ticks</div>
-          @if (technique.staminaCost){
-            <div>Uses {{technique.staminaCost}} stamina</div>
+          <div>Activates every {{displayTechnique.ticksRequired()}} combat ticks</div>
+          @if (displayTechnique.staminaCost() !== 0){
+            <div>Uses {{displayTechnique.staminaCost()}} stamina</div>
           }
-          @if (technique.qiCost){
-            <div>Uses {{technique.qiCost}} Qi</div>
+          @if (displayTechnique.qiCost()){
+            <div>Uses {{displayTechnique.qiCost()}} Qi</div>
           }
-          @if (technique.healthCost){
-            <div>Uses {{technique.healthCost}} health</div>
+          @if (displayTechnique.healthCost()){
+            <div>Uses {{displayTechnique.healthCost()}} health</div>
           }
-          @if (technique.effect){
-            <div>{{effectDescriptions[technique.effect]}}</div>
+          @if (displayTechnique.effect() !== ''){
+            <div>{{effectDescriptions[displayTechnique.effect()]}}</div>
+          }
+          @if (displayTechnique.concept() !== '' && contemplationService.contemplationStarted()){
+            <div innerHTML="{{conceptDescriptions[displayTechnique.concept()]}}"></div>
           }
           <div>
-              @if (technique.familyTechnique){
-                  <button (click)="battleService.forsakeTechnique(technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
-                      Forsake This Technique
+              @if (displayTechnique.familyTechnique()){
+                  <button (click)="battleService.forsakeTechnique(displayTechnique.technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
+                      Forsake This Family Technique
                   </button>
               }
           </div>

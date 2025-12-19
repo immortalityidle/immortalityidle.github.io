@@ -14,7 +14,7 @@ import { TitleCasePipe } from '@angular/common';
 
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
-import { ContemplationService } from './contemplation.service';
+import { CONCEPT_EFFECT_DAMAGE, CONCEPT_EFFECT_FERAL, ContemplationService, NO_CONCEPT } from './contemplation.service';
 
 export interface Enemy {
   name: string;
@@ -112,17 +112,28 @@ export interface Technique {
   disabled?: boolean;
   noAttack?: boolean;
   statusEffect?: StatusEffect;
+  concept?: string;
 }
 
 export interface DisplayTechnique {
   name: WritableSignal<string>;
-  description?: WritableSignal<string>;
   ticks: WritableSignal<number>;
   ticksRequired: WritableSignal<number>;
   ticksPercentage: WritableSignal<number>;
   trackField: WritableSignal<string>;
   disabled: WritableSignal<boolean>;
   unlocked: WritableSignal<boolean>;
+  description: WritableSignal<string>;
+  baseDamage: WritableSignal<number>;
+  attribute: WritableSignal<string>;
+  extraMultiplier: WritableSignal<number>;
+  staminaCost: WritableSignal<number>;
+  qiCost: WritableSignal<number>;
+  healthCost: WritableSignal<number>;
+  effect: WritableSignal<string>;
+  familyTechnique: WritableSignal<boolean>;
+  concept: WritableSignal<string>;
+  technique: Technique;
 }
 
 export interface TechniqueDevelopmentEntry {
@@ -130,6 +141,7 @@ export interface TechniqueDevelopmentEntry {
   description: string;
   allowed: boolean;
   discovered: boolean;
+  concept?: string;
 }
 
 export interface StatusEffect {
@@ -233,121 +245,105 @@ export class BattleService {
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
       value: 'Northern',
-      description:
-        'Techniques from the Northern lands. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques from the Northern lands.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Southern',
-      description:
-        'Techniques from the Southern lands. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques from the Southern lands.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Eastern',
-      description:
-        'Techniques from the Eastern lands. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques from the Eastern lands.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Western',
-      description:
-        'Techniques from the Western lands. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques from the Western lands.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Brutal',
-      description:
-        'Techniques that focus on their brutality. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques that focus on their brutality.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Devastating',
-      description:
-        'Techniques that focus on devastating your foes. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques that focus on devastating your foes.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Flowing',
-      description:
-        'Techniques that focus on their flowing form. Not actually faster than other attacks, but their name is impressive.',
+      description: 'Techniques that focus on their flowing form.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Fierce',
-      description:
-        'Techniques that focus on fierceness. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques inspired by beasts that focus on fierceness.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_FERAL,
     },
     {
       value: 'Verdant',
-      description:
-        'Techniques that focus on emulating the verdant natural world. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques that focus on emulating the verdant natural world.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Stealthy',
-      description:
-        'Techniques that focus on stealthy strikes. Not actually better than other attacks, but their name is impressive.',
+      description: 'Techniques that focus on stealthy strikes.',
       allowed: true,
       discovered: false,
     },
     {
       value: "Dragon's",
-      description:
-        'Techniques inspired by the power of dragons. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques inspired by the power of dragons.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Devilish',
-      description:
-        'Techniques inspired by the wicked strength of devils. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques inspired by the wicked strength of devils.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Angelic',
-      description:
-        'Techniques inspired by the holy power of angelic beings. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques inspired by the holy power of angelic beings.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Fearsome',
-      description:
-        'Techniques that focus on inspiring fear in your foes. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques that focus on inspiring fear in your foes.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Ancient',
-      description:
-        'Techniques inspired by your study of ancient combat. Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques inspired by your study of ancient combat.',
       allowed: true,
       discovered: false,
     },
     {
       value: 'Traditional',
-      description:
-        "Techniques inspired by your people's traditions. Not actually stronger than other attacks, but their name is impressive.",
+      description: "Techniques inspired by your people's traditions.",
 
       allowed: true,
       discovered: false,
     },
     {
       value: 'Lucky',
-      description:
-        'Techniques that focus on lucky strikes . Not actually stronger than other attacks, but their name is impressive.',
+      description: 'Techniques that focus on lucky strikes.',
       allowed: true,
       discovered: false,
     },
@@ -604,6 +600,17 @@ export class BattleService {
               trackField: signal<string>(technique.name + technique.ticks),
               disabled: signal<boolean>(technique.disabled || false),
               unlocked: signal<boolean>(technique.unlocked),
+              description: signal<string>(technique.description || ''),
+              baseDamage: signal<number>(technique.baseDamage || 0),
+              attribute: signal<string>(technique.attribute || ''),
+              extraMultiplier: signal<number>(technique.extraMultiplier || 0),
+              staminaCost: signal<number>(technique.staminaCost || 0),
+              qiCost: signal<number>(technique.qiCost || 0),
+              healthCost: signal<number>(technique.healthCost || 0),
+              effect: signal<string>(technique.effect || ''),
+              familyTechnique: signal<boolean>(technique.familyTechnique || false),
+              concept: signal<string>(technique.concept || ''),
+              technique: technique,
             });
           } else {
             this.displayEnemies[i].techniques[j].name.set(technique.name);
@@ -615,6 +622,17 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].trackField.set(technique.name + technique.ticks);
             this.displayEnemies[i].techniques[j].disabled.set(technique.disabled || false);
             this.displayEnemies[i].techniques[j].unlocked.set(technique.unlocked);
+            this.displayTechniques[i].description!.set(technique.description || '');
+            this.displayTechniques[i].baseDamage!.set(technique.baseDamage || 0);
+            this.displayTechniques[i].attribute!.set(technique.attribute || '');
+            this.displayTechniques[i].extraMultiplier!.set(technique.extraMultiplier || 0);
+            this.displayTechniques[i].staminaCost!.set(technique.staminaCost || 0);
+            this.displayTechniques[i].qiCost!.set(technique.qiCost || 0);
+            this.displayTechniques[i].healthCost!.set(technique.healthCost || 0);
+            this.displayTechniques[i].effect!.set(technique.effect || '');
+            this.displayTechniques[i].familyTechnique!.set(technique.familyTechnique || false);
+            this.displayTechniques[i].concept!.set(technique.concept || '');
+            this.displayEnemies[i].techniques[j].technique = technique;
           }
         }
         while (this.displayEnemies[i].statusEffects.length > (enemy.statusEffects?.length || 0)) {
@@ -655,18 +673,40 @@ export class BattleService {
             ticks: signal<number>(technique.ticks),
             ticksRequired: signal<number>(technique.ticksRequired),
             ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
-            trackField: signal<string>(technique.name + technique.ticks),
+            trackField: signal<string>(technique.name + i),
             disabled: signal<boolean>(technique.disabled || false),
             unlocked: signal<boolean>(technique.unlocked),
+            description: signal<string>(technique.description || ''),
+            baseDamage: signal<number>(technique.baseDamage || 0),
+            attribute: signal<string>(technique.attribute || ''),
+            extraMultiplier: signal<number>(technique.extraMultiplier || 0),
+            staminaCost: signal<number>(technique.staminaCost || 0),
+            qiCost: signal<number>(technique.qiCost || 0),
+            healthCost: signal<number>(technique.healthCost || 0),
+            effect: signal<string>(technique.effect || ''),
+            familyTechnique: signal<boolean>(technique.familyTechnique || false),
+            concept: signal<string>(technique.concept || ''),
+            technique: technique,
           });
         } else {
           this.displayTechniques[i].name.set(technique.name);
           this.displayTechniques[i].ticks.set(technique.ticks);
           this.displayTechniques[i].ticksRequired.set(technique.ticksRequired);
           this.displayTechniques[i].ticksPercentage.set(Math.floor((100 * technique.ticks) / technique.ticksRequired));
-          this.displayTechniques[i].trackField.set(technique.name + technique.ticks);
+          this.displayTechniques[i].trackField.set(technique.name + i);
           this.displayTechniques[i].disabled.set(technique.disabled || false);
           this.displayTechniques[i].unlocked.set(technique.unlocked);
+          this.displayTechniques[i].description!.set(technique.description || '');
+          this.displayTechniques[i].baseDamage!.set(technique.baseDamage || 0);
+          this.displayTechniques[i].attribute!.set(technique.attribute || '');
+          this.displayTechniques[i].extraMultiplier!.set(technique.extraMultiplier || 0);
+          this.displayTechniques[i].staminaCost!.set(technique.staminaCost || 0);
+          this.displayTechniques[i].qiCost!.set(technique.qiCost || 0);
+          this.displayTechniques[i].healthCost!.set(technique.healthCost || 0);
+          this.displayTechniques[i].effect!.set(technique.effect || '');
+          this.displayTechniques[i].familyTechnique!.set(technique.familyTechnique || false);
+          this.displayTechniques[i].concept!.set(technique.concept || '');
+          this.displayTechniques[i].technique = technique;
         }
       }
 
@@ -985,6 +1025,7 @@ export class BattleService {
       qiCost: qiCost,
       extraMultiplier: extraMultiplier,
       effect: effect,
+      concept: prefix.concept,
     });
 
     this.logService.log(
@@ -1602,7 +1643,10 @@ export class BattleService {
         damage *= this.characterService.attributes.wrath.value + 1;
       }
 
-      const damageConcepts = this.contemplationService.concepts.filter(concept => concept.effect.includes('damage'));
+      const damageConcepts = this.contemplationService.concepts.filter(
+        concept =>
+          concept.effect.includes(CONCEPT_EFFECT_DAMAGE) || concept.effect.includes(technique.concept || NO_CONCEPT)
+      );
       for (const concept of damageConcepts) {
         damage *= Math.log10(10 + concept.progress);
       }
