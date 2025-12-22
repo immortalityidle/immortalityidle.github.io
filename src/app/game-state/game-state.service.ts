@@ -513,8 +513,8 @@ export class GameStateService {
     this.followersService.setProperties(gameState.followers);
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
-    this.achievementService.setProperties(gameState.achievements);
     this.contemplationService.setProperties(gameState.contemplations);
+    this.achievementService.setProperties(gameState.achievements);
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
     this.easyModeEver = gameState.easyModeEver || false;

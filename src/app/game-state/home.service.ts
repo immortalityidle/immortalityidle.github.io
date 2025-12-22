@@ -10,6 +10,7 @@ import { ActivityService } from './activity.service';
 import { TitleCasePipe } from '@angular/common';
 import { FollowersService } from './followers.service';
 import { LOOT_TYPE_GEM } from './battle.service';
+import { CONCEPT_EFFECT_FOOD_YIELD, ContemplationService } from './contemplation.service';
 
 export interface Home {
   name: string;
@@ -945,6 +946,7 @@ export class HomeService {
     private logService: LogService,
     private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
+    private contemplationService: ContemplationService,
     private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -1460,6 +1462,14 @@ export class HomeService {
       // inputs array not populated, bail out
       return;
     }
+    let conceptMultiplier = 1;
+    const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
+      concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
+    );
+    for (const concept of foodIncreasingConcepts) {
+      conceptMultiplier += Math.log10(10 + concept.progress);
+    }
+
     const usedIngredients: string[] = [];
     const usedSubtypes: string[] = [];
     let totalValue = 0;
@@ -1519,7 +1529,7 @@ export class HomeService {
         effect: effect,
         shopable: false,
       },
-      cookAmount
+      cookAmount * conceptMultiplier
     );
   }
 

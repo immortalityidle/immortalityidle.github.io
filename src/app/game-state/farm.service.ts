@@ -5,6 +5,7 @@ import { InventoryService } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
 import { HomeService } from './home.service';
+import { CONCEPT_EFFECT_FOOD_YIELD, ContemplationService } from './contemplation.service';
 
 export interface Field {
   cropName: string;
@@ -69,7 +70,8 @@ export class FarmService {
     private inventoryService: InventoryService,
     mainLoopService: MainLoopService,
     private homeService: HomeService,
-    private itemRepoService: ItemRepoService
+    private itemRepoService: ItemRepoService,
+    private contemplationService: ContemplationService
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
 
@@ -289,11 +291,19 @@ export class FarmService {
   ageFields() {
     let totalDailyYield = 0;
     let harvested = false;
+    let conceptMultiplier = 1;
+    const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
+      concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
+    );
+    for (const concept of foodIncreasingConcepts) {
+      conceptMultiplier += Math.log10(10 + concept.progress);
+    }
+
     for (const field of this.fields) {
       let fieldYield = 0;
       if (!this.hellService?.inHell() && field.plots > 0) {
         if (field.daysToHarvest <= 0) {
-          fieldYield = field.yield;
+          fieldYield = field.yield * conceptMultiplier;
           totalDailyYield += fieldYield;
           this.inventoryService.addItem(this.itemRepoService.items[field.cropName], fieldYield);
           harvested = true;

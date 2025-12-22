@@ -14,7 +14,13 @@ import { TitleCasePipe } from '@angular/common';
 
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
-import { CONCEPT_EFFECT_DAMAGE, CONCEPT_EFFECT_FERAL, ContemplationService, NO_CONCEPT } from './contemplation.service';
+import {
+  CONCEPT_EFFECT_ARMOR_REDUCTION,
+  CONCEPT_EFFECT_DAMAGE,
+  CONCEPT_EFFECT_DEVASTATION,
+  CONCEPT_EFFECT_FERAL,
+  ContemplationService,
+} from './contemplation.service';
 
 export interface Enemy {
   name: string;
@@ -278,6 +284,7 @@ export class BattleService {
       description: 'Techniques that focus on devastating your foes.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_DEVASTATION,
     },
     {
       value: 'Flowing',
@@ -1600,6 +1607,15 @@ export class BattleService {
         damage *= Math.ceil(formationPowerString.length / 2);
       }
 
+      const armorReducingConcepts = this.contemplationService.concepts.filter(
+        concept =>
+          concept.effect.includes(CONCEPT_EFFECT_ARMOR_REDUCTION) ||
+          (technique.concept && concept.effect.includes(technique.concept))
+      );
+      for (const concept of armorReducingConcepts) {
+        defense /= Math.log10(10 + concept.progress);
+      }
+
       if (defense >= 1) {
         damage = damage / (Math.pow(defense, 0.2) + Math.pow(20000, (-damage + defense) / defense));
       }
@@ -1645,7 +1661,8 @@ export class BattleService {
 
       const damageConcepts = this.contemplationService.concepts.filter(
         concept =>
-          concept.effect.includes(CONCEPT_EFFECT_DAMAGE) || concept.effect.includes(technique.concept || NO_CONCEPT)
+          concept.effect.includes(CONCEPT_EFFECT_DAMAGE) ||
+          (technique.concept && concept.effect.includes(technique.concept))
       );
       for (const concept of damageConcepts) {
         damage *= Math.log10(10 + concept.progress);

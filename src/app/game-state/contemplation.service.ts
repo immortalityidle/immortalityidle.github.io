@@ -15,6 +15,7 @@ export interface Concept {
   progress: number;
   effect: string;
   discovered: boolean;
+  discoveryRequirements?: { [key: string]: number };
 }
 
 export interface DisplayConcept {
@@ -24,9 +25,11 @@ export interface DisplayConcept {
   concept: Concept;
 }
 
-export const NO_CONCEPT = '_NO_CONCEPT_';
 export const CONCEPT_EFFECT_DAMAGE = 'damage';
 export const CONCEPT_EFFECT_FERAL = 'feral';
+export const CONCEPT_EFFECT_DEVASTATION = 'devastation';
+export const CONCEPT_EFFECT_FOOD_YIELD = 'foodYield';
+export const CONCEPT_EFFECT_ARMOR_REDUCTION = 'armorReduction';
 
 @Injectable({
   providedIn: 'root',
@@ -91,8 +94,118 @@ export class ContemplationService {
       name: 'Tao of Death',
       description: 'Contemplate the true nature of death, coming to understand its destructive power.',
       progress: 0,
-      effect: 'damage',
+      effect: CONCEPT_EFFECT_DAMAGE,
       discovered: false,
+    },
+    {
+      name: 'Tao of Scorched Earth',
+      description: 'Contemplate the devastating aspects of fire combined with earth.',
+      progress: 0,
+      effect: 'earthLore,fireLore,' + CONCEPT_EFFECT_DEVASTATION,
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Earth': 1e8,
+        'Tao of Fire': 1e8,
+      },
+    },
+    {
+      name: 'Tao of Irrigation',
+      description: 'Contemplate the nourishing aspects of water combined with earth.',
+      progress: 0,
+      effect: 'earthLore,waterLore,' + CONCEPT_EFFECT_FOOD_YIELD,
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Earth': 1e8,
+        'Tao of Water': 1e8,
+      },
+    },
+    {
+      name: 'Tao of Fortication',
+      description: 'Contemplate the enduring aspects of metal combined with earth.',
+      progress: 0,
+      effect: 'earthLore,metalLore,toughness',
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Earth': 1e8,
+        'Tao of Metal': 1e8,
+      },
+    },
+    {
+      name: 'Tao of Agriculture',
+      description: 'Contemplate the cultivating aspects of wood combined with earth.',
+      progress: 0,
+      effect: 'earthLore,woodLore,' + CONCEPT_EFFECT_FOOD_YIELD,
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Earth': 1e8,
+        'Tao of Wood': 1e8,
+      },
+    },
+    {
+      name: 'Tao of Brewing',
+      description: 'Contemplate the simmering aspects of fire combined with water.',
+      progress: 0,
+      effect: 'fireLore,waterLore,intelligence',
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Fire': 1e8,
+        'Tao of Water': 1e8,
+      },
+    },
+    {
+      name: 'Tao of Air',
+      description: 'Contemplate the flow of air as fire combines with wood.',
+      progress: 0,
+      effect: 'fireLore,woodLore,speed',
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Fire': 1e8,
+        'Tao of Wood': 1e8,
+      },
+    },
+    {
+      name: 'Tao of the Forge',
+      description: 'Contemplate the powerful combination of fire and metal.',
+      progress: 0,
+      effect: 'fireLore,metalLore,strength',
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Fire': 1e8,
+        'Tao of Metal': 1e8,
+      },
+    },
+    {
+      name: 'Tao of Flexibility',
+      description: 'Contemplate the flowing aspects of water combined with wood.',
+      progress: 0,
+      effect: 'waterLore,woodLore,charisma',
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Water': 1e8,
+        'Tao of Wood': 1e8,
+      },
+    },
+    {
+      name: 'Tao of Corrosion',
+      description: 'Contemplate the destructive aspects of water combined with metal.',
+      progress: 0,
+      effect: 'waterLore,metalLore,' + CONCEPT_EFFECT_ARMOR_REDUCTION,
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Water': 1e8,
+        'Tao of Metal': 1e8,
+      },
+    },
+    {
+      name: 'Tao of the Harvest',
+      description: 'Contemplate the gathering aspects of metal combined with wood.',
+      progress: 0,
+      effect: 'metalLore,woodLore,' + CONCEPT_EFFECT_FOOD_YIELD,
+      discovered: false,
+      discoveryRequirements: {
+        'Tao of Metal': 1e8,
+        'Tao of wood': 1e8,
+      },
     },
   ];
 
@@ -100,7 +213,28 @@ export class ContemplationService {
     mainLoopService.tickSubject.subscribe(() => {
       this.tick();
     });
+    mainLoopService.battleTickSubject.subscribe(() => {
+      this.tick();
+    });
     mainLoopService.longTickSubject.subscribe(() => {
+      if (!this.contemplationStarted) {
+        return;
+      }
+      const discoverable = this.concepts.filter(concept => !concept.discovered && concept.discoveryRequirements);
+      for (const concept of discoverable) {
+        let requirementsMet = true;
+        for (const key in concept.discoveryRequirements) {
+          const checkConcept = this.concepts.find(concept => concept.name === key);
+          if ((checkConcept?.progress || 0) < concept.discoveryRequirements[key]) {
+            requirementsMet = false;
+            break;
+          }
+        }
+        if (requirementsMet) {
+          this.discoverConcept(concept.name);
+        }
+      }
+
       const discovered = this.concepts.filter(concept => concept.discovered);
       for (const concept of discovered) {
         const displayConcept = this.displayConcepts.find(dc => dc.name() === concept.name);
@@ -134,7 +268,7 @@ export class ContemplationService {
     const concept = this.concepts.find(concept => concept.name === conceptName);
     if (concept) {
       if (!concept.discovered) {
-        this.logService.log(LogTopic.EVENT, 'A new concept is available for contemplation: ' + conceptName);
+        this.logService.log(LogTopic.EVENT, 'A concept is available for contemplation: ' + conceptName);
       }
       concept.discovered = true;
     }
