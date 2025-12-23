@@ -43,63 +43,72 @@ export class ContemplationService {
   concepts: Concept[] = [
     {
       name: 'Tao of Earth',
-      description: 'Contemplate the true nature of earth, coming to understand its deepest secrets.',
+      description:
+        'Contemplate the true nature of earth, coming to understand its deepest secrets.<br><br>Increases your Earth Lore gain.',
       progress: 0,
       effect: 'earthLore',
       discovered: false,
     },
     {
       name: 'Tao of Metal',
-      description: 'Contemplate the true nature of metal, coming to understand its strongest aspects.',
+      description:
+        'Contemplate the true nature of metal, coming to understand its strongest aspects.<br><br>Increases your Metal Lore gain.',
       progress: 0,
       effect: 'metalLore',
       discovered: false,
     },
     {
       name: 'Tao of Wood',
-      description: 'Contemplate the true nature of wood, coming to understand its growing enigmas.',
+      description:
+        'Contemplate the true nature of wood, coming to understand its growing enigmas.<br><br>Increases your Wood Lore gain.',
       progress: 0,
       effect: 'woodLore',
       discovered: false,
     },
     {
       name: 'Tao of Water',
-      description: 'Contemplate the true nature of water, coming to understand its fluid keys.',
+      description:
+        'Contemplate the true nature of water, coming to understand its fluid keys.<br><br>Increases your Water Lore gain.',
       progress: 0,
       effect: 'waterLore',
       discovered: false,
     },
     {
       name: 'Tao of Fire',
-      description: 'Contemplate the true nature of fire, coming to understand its burning mysteries.',
+      description:
+        'Contemplate the true nature of fire, coming to understand its burning mysteries.<br><br>Increases your Fire Lore gain.',
       progress: 0,
       effect: 'fireLore',
       discovered: false,
     },
     {
       name: 'Tao of Life',
-      description: 'Contemplate the true nature of life, coming to understand its vital essence.',
+      description:
+        'Contemplate the true nature of life, coming to understand its vital essence.<br><br>Increases maximum health.',
       progress: 0,
       effect: 'life',
       discovered: false,
     },
     {
       name: 'Tao of Beasts',
-      description: 'Contemplate the true nature of beasts, coming to understand both their domestic and feral natures.',
+      description:
+        'Contemplate the true nature of beasts, coming to understand both their domestic and feral natures.<br><br>Increases Animal Handling gain and the power of certain techniques.',
       progress: 0,
       effect: 'animalHandling,' + CONCEPT_EFFECT_FERAL,
       discovered: false,
     },
     {
       name: 'Tao of Death',
-      description: 'Contemplate the true nature of death, coming to understand its destructive power.',
+      description:
+        'Contemplate the true nature of death, coming to understand its destructive power.<br><br>Increases power of all techniques.',
       progress: 0,
       effect: CONCEPT_EFFECT_DAMAGE,
       discovered: false,
     },
     {
       name: 'Tao of Scorched Earth',
-      description: 'Contemplate the devastating aspects of fire combined with earth.',
+      description:
+        'Contemplate the devastating aspects of fire combined with earth.<br><br>Increases some lore gains and the power of certain techniques.',
       progress: 0,
       effect: 'earthLore,fireLore,' + CONCEPT_EFFECT_DEVASTATION,
       discovered: false,
@@ -110,7 +119,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of Irrigation',
-      description: 'Contemplate the nourishing aspects of water combined with earth.',
+      description:
+        'Contemplate the nourishing aspects of water combined with earth.<br><br>Increases some lore gains and all food production.',
       progress: 0,
       effect: 'earthLore,waterLore,' + CONCEPT_EFFECT_FOOD_YIELD,
       discovered: false,
@@ -121,7 +131,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of Fortication',
-      description: 'Contemplate the enduring aspects of metal combined with earth.',
+      description:
+        'Contemplate the enduring aspects of metal combined with earth.<br><br>Increases toughness and some lore gains.',
       progress: 0,
       effect: 'earthLore,metalLore,toughness',
       discovered: false,
@@ -132,7 +143,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of Agriculture',
-      description: 'Contemplate the cultivating aspects of wood combined with earth.',
+      description:
+        'Contemplate the cultivating aspects of wood combined with earth.<br><br>Increases some lore gains and all food production.',
       progress: 0,
       effect: 'earthLore,woodLore,' + CONCEPT_EFFECT_FOOD_YIELD,
       discovered: false,
@@ -143,7 +155,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of Brewing',
-      description: 'Contemplate the simmering aspects of fire combined with water.',
+      description:
+        'Contemplate the simmering aspects of fire combined with water.<br><br>Increases intelligence and some lore gains.',
       progress: 0,
       effect: 'fireLore,waterLore,intelligence',
       discovered: false,
@@ -154,7 +167,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of Air',
-      description: 'Contemplate the flow of air as fire combines with wood.',
+      description:
+        'Contemplate the flow of air as fire combines with wood.<br><br>Increases speed and some lore gains.',
       progress: 0,
       effect: 'fireLore,woodLore,speed',
       discovered: false,
@@ -165,7 +179,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of the Forge',
-      description: 'Contemplate the powerful combination of fire and metal.',
+      description:
+        'Contemplate the powerful combination of fire and metal.<br><br>Increases strength and some lore gains.',
       progress: 0,
       effect: 'fireLore,metalLore,strength',
       discovered: false,
@@ -176,7 +191,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of Flexibility',
-      description: 'Contemplate the flowing aspects of water combined with wood.',
+      description:
+        'Contemplate the flowing aspects of water combined with wood.<br><br>Increases charisma and some lore gains.',
       progress: 0,
       effect: 'waterLore,woodLore,charisma',
       discovered: false,
@@ -187,7 +203,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of Corrosion',
-      description: 'Contemplate the destructive aspects of water combined with metal.',
+      description:
+        'Contemplate the destructive aspects of water combined with metal.<br><br>Increases some lore gains and reduces enemy defense.',
       progress: 0,
       effect: 'waterLore,metalLore,' + CONCEPT_EFFECT_ARMOR_REDUCTION,
       discovered: false,
@@ -198,7 +215,8 @@ export class ContemplationService {
     },
     {
       name: 'Tao of the Harvest',
-      description: 'Contemplate the gathering aspects of metal combined with wood.',
+      description:
+        'Contemplate the gathering aspects of metal combined with wood.<br><br>Increases some lore gains and all food production.',
       progress: 0,
       effect: 'metalLore,woodLore,' + CONCEPT_EFFECT_FOOD_YIELD,
       discovered: false,
