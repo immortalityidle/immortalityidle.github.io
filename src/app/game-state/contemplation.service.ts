@@ -38,7 +38,7 @@ export class ContemplationService {
   contemplationStarted = signal<boolean>(false);
   displayConcepts: DisplayConcept[] = [];
   currentConcept: Concept | null = null;
-  techniqueConcepts = [CONCEPT_EFFECT_FERAL];
+  techniqueConcepts = [CONCEPT_EFFECT_FERAL, CONCEPT_EFFECT_DEVASTATION];
 
   concepts: Concept[] = [
     {
