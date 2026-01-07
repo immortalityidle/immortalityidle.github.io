@@ -486,7 +486,7 @@ export class GameStateService {
       gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
       // file isn't one this game created, bail out
-      this.characterService.toast("That save file didn't look right.");
+      this.mainLoopService.toast("That save file didn't look right.");
       return;
     }
     const parsedGameState = JSON.parse(gameStateSerialized) as Partial<GameState>;

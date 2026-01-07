@@ -18,16 +18,16 @@
 
       <div class="home-row">
         <span>
-          You live in a {{homeService.home.name}}
+          You live in a {{homeService.displayHome.name()}}
         </span>
         <div class="icon-group">
-          @if ((homeService.home.name !== homeService.previousHome.name)) {
+          @if (homeService.displayHome.downgradable()) {
             <mat-icon (click)="homeService.downgradeHome()" class="iconButton" aria-label="Downgrade Home" aria-hidden="false"
               tooltip="Is your new home too expensive? Downgrade to your previous home.">
               keyboard_double_arrow_down
             </mat-icon>
           }
-          @if ((homeService.home.name !== homeService.nextHome.name)) {
+          @if (homeService.displayHome.upgradable()) {
             <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton" aria-label="Upgrade Home" aria-hidden="false"
               tooltip="{{homeService.nextHome.upgradeToTooltip}}">
               add_home
@@ -41,14 +41,35 @@
       </div>
     </div>
     <div class="homeInfo">
-      <span>{{homeService.home.description}}</span>
+      <span>{{homeService.displayHome.description()}}</span>
     </div>
+    @if (homeService.displayHome.healthRecovery() !== 0){
+      <div class="homeInfo">
+        <span>
+          Automatically restores {{homeService.displayHome.healthRecovery() | bigNumber}} health each night
+        </span>
+      </div>
+    }
+    @if (homeService.displayHome.staminaRecovery() !== 0){
+      <div class="homeInfo">
+        <span>
+          Automatically restores {{homeService.displayHome.staminaRecovery() | bigNumber}} stamina each night
+        </span>
+      </div>
+    }
+    @if (homeService.displayHome.qiRecovery() !== 0){
+      <div class="homeInfo">
+        <span>
+          Automatically restores {{homeService.displayHome.qiRecovery() | bigNumber}} qi each night
+        </span>
+      </div>
+    }
     <div>
       @if (!hellService.inHell() && !characterService.god()) {
-        <div class="homeInfo"><span>It costs {{homeService.home.costPerDay | bigNumber}} {{homeService.home.costPerDay === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
+        <div class="homeInfo"><span>It costs {{homeService.displayHome.costPerDay() | bigNumber}} {{homeService.displayHome.costPerDay() === 1 ? "tael" : "taels"}} per day to maintain your home</span></div>
       }
 
-      @if (homeService.home.maxFurniture > 0 && (!hellService.inHell() || homeService.hellHome())) {
+      @if (homeService.displayHome.hasFurniture() && (!hellService.inHell() || homeService.hellHome())) {
         <hr>
         <div>
           <span>Your Bedroom</span>

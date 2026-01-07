@@ -2,9 +2,7 @@ import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
-import { Subscription } from 'rxjs';
 import { HellService } from './hell.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { AchievementService } from './achievement.service';
@@ -183,8 +181,6 @@ export class CharacterService {
   fatherGift = false;
   lifespanTooltip = signal<string>('');
   private hellService?: HellService;
-  private snackBar: MatSnackBar;
-  private snackBarObservable?: Subscription;
   maxMoney = 9.9999e23;
   totalLives = 1;
   dead = false;
@@ -665,7 +661,6 @@ export class CharacterService {
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
     setTimeout(() => (this.achievementService = this.injector.get(AchievementService)));
 
-    this.snackBar = this.injector.get(MatSnackBar);
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
 
     this.highestAttributes = {};
@@ -799,7 +794,7 @@ export class CharacterService {
       }
       this.dead = true;
       if (!this.showLifeSummary) {
-        this.toast('A new life begins.');
+        this.mainLoopService.toast('A new life begins.');
       }
       this.reincarnate(deathMessage); // make sure character reincarnation fires before other things reset
       this.mainLoopService.reincarnating = true;
@@ -1000,19 +995,6 @@ export class CharacterService {
   restoreMoney() {
     this.updateMoney(this.stashedMoney, true);
     this.stashedMoney = 0;
-  }
-
-  // this doesn't really belong here, but nearly everything accesses this service and I didn't want to make a whole service for one function, so here it will live for now
-  toast(message: string, duration = 5000) {
-    const snackBar = this.snackBar.open(message, 'Close', {
-      duration: duration,
-      horizontalPosition: 'right',
-      verticalPosition: 'bottom',
-      panelClass: ['snackBar', 'darkMode'],
-    });
-    this.snackBarObservable = snackBar.onAction().subscribe(() => {
-      this.snackBarObservable?.unsubscribe();
-    });
   }
 
   // reset everything but increase aptitudes

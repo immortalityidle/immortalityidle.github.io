@@ -1,4 +1,4 @@
-import { Injectable, Injector, signal } from '@angular/core';
+import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService, EquipmentPosition } from './character.service';
@@ -10,7 +10,7 @@ import { ActivityService } from './activity.service';
 import { TitleCasePipe } from '@angular/common';
 import { FollowersService } from './followers.service';
 import { LOOT_TYPE_GEM } from './battle.service';
-import { CONCEPT_EFFECT_FOOD_YIELD, ContemplationService } from './contemplation.service';
+import { CONCEPT_EFFECT_FOOD_YIELD, CONCEPT_EFFECT_HOME_RECOVERY, ContemplationService } from './contemplation.service';
 
 export interface Home {
   name: string;
@@ -21,11 +21,28 @@ export interface Home {
   landRequired: number;
   maxInventory: number;
   upgradeToTooltip: string;
-  consequence: () => void;
+  baseHealthRecovery: number;
+  healthRecovery: number;
+  baseStaminaRecovery: number;
+  staminaRecovery: number;
+  baseQiRecovery: number;
+  qiRecovery: number;
   maxFurniture: number;
   maxWorkstations: number;
   maxWorkstationPower: number;
   daysToBuild: number;
+}
+
+export interface DisplayHome {
+  name: WritableSignal<string>;
+  description: WritableSignal<string>;
+  downgradable: WritableSignal<boolean>;
+  upgradable: WritableSignal<boolean>;
+  hasFurniture: WritableSignal<boolean>;
+  costPerDay: WritableSignal<number>;
+  healthRecovery: WritableSignal<number>;
+  staminaRecovery: WritableSignal<number>;
+  qiRecovery: WritableSignal<number>;
 }
 
 export enum HomeType {
@@ -132,9 +149,12 @@ export class HomeService {
       landRequired: 0,
       maxInventory: 10,
       upgradeToTooltip: '',
-      consequence: () => {
-        // do nothing
-      },
+      healthRecovery: 0,
+      staminaRecovery: 0,
+      qiRecovery: 0,
+      baseHealthRecovery: 0,
+      baseStaminaRecovery: 0,
+      baseQiRecovery: 0,
       maxFurniture: 0,
       maxWorkstations: 0,
       maxWorkstationPower: 0,
@@ -143,19 +163,19 @@ export class HomeService {
     {
       name: 'Tent of Your Own',
       type: HomeType.OwnTent,
-      description:
-        'A decent tent pitched on your own bit of land. The occasional ruffian might give you trouble. Automatically restores 1 stamina and a bit of health each night.',
+      description: 'A decent tent pitched on your own bit of land. The occasional ruffian might give you trouble.',
       cost: 100,
       costPerDay: 1,
       landRequired: 1,
       maxInventory: 15,
       upgradeToTooltip:
-        'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels and take up 1 land.<br>Land can be purchasd in the Regular People Shop.<br>The new home will restore 1 stamina and a bit of health each night.',
-      consequence: () => {
-        this.characterService.status.health.value += 0.5;
-        this.characterService.status.stamina.value += 1;
-        this.characterService.checkOverage();
-      },
+        'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels and take up 1 land.<br>Land can be purchasd in the Regular People Shop.',
+      healthRecovery: 0.5,
+      staminaRecovery: 1,
+      qiRecovery: 0,
+      baseHealthRecovery: 0.5,
+      baseStaminaRecovery: 1,
+      baseQiRecovery: 0,
       maxFurniture: 0,
       maxWorkstations: 0,
       maxWorkstationPower: 0,
@@ -164,19 +184,19 @@ export class HomeService {
     {
       name: 'Dirty Shack',
       type: HomeType.DirtyShack,
-      description:
-        'A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out. Automatically restores 3 stamina and a bit of health each night.',
+      description: 'A cheap dirt-floored wooden shack. At least it has a door to keep ruffians out.',
       cost: 1000,
       costPerDay: 5,
       landRequired: 5,
       maxInventory: 20,
       upgradeToTooltip:
-        'Get a better home and stop the ruffians from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.<br>The new home will restore 3 stamina and a bit of health each night.<br>It also has walls.',
-      consequence: () => {
-        this.characterService.status.health.value += 0.5;
-        this.characterService.status.stamina.value += 3;
-        this.characterService.checkOverage();
-      },
+        'Get a better home and stop the ruffians from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.',
+      healthRecovery: 0.5,
+      staminaRecovery: 3,
+      qiRecovery: 0,
+      baseHealthRecovery: 0.5,
+      baseStaminaRecovery: 3,
+      baseQiRecovery: 0,
       maxFurniture: 1,
       maxWorkstations: 0,
       maxWorkstationPower: 0,
@@ -186,18 +206,19 @@ export class HomeService {
       name: 'Simple Hut',
       type: HomeType.SimpleHut,
       description:
-        'A very simple hut. Automatically restores 5 stamina and a bit of health each night. This home and all future homes will remain in your family, and you wiil reincarnate as its heir.',
+        'A very simple hut. This home and all future homes will remain in your family, and you wiil reincarnate as its heir.',
       cost: 10000,
       costPerDay: 10,
       landRequired: 10,
       maxInventory: 25,
       upgradeToTooltip:
-        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels and take up 10 land.<br>The new home will restore 5 stamina and a bit of health each night.',
-      consequence: () => {
-        this.characterService.status.health.value += 0.7;
-        this.characterService.status.stamina.value += 5;
-        this.characterService.checkOverage();
-      },
+        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels and take up 10 land.',
+      healthRecovery: 0.7,
+      staminaRecovery: 5,
+      qiRecovery: 0,
+      baseHealthRecovery: 0.7,
+      baseStaminaRecovery: 5,
+      baseQiRecovery: 0,
       maxFurniture: 2,
       maxWorkstations: 0,
       maxWorkstationPower: 0,
@@ -206,20 +227,18 @@ export class HomeService {
     {
       name: 'Pleasant Cottage',
       type: HomeType.PleasantCottage,
-      description:
-        'A nice little home where you can rest peacefully. Automatically restores 10 stamina, 1 health and a bit of Qi each night.',
+      description: 'A nice little home where you can rest peacefully.',
       cost: 100000,
       costPerDay: 20,
       landRequired: 20,
       maxInventory: 30,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100,000 taels and take up 20 land.<br>The new home will restore 10 stamina and 1 health and a bit of Qi each night (if unlocked).',
-      consequence: () => {
-        this.characterService.status.qi.value += 0.1;
-        this.characterService.status.health.value += 1;
-        this.characterService.status.stamina.value += 10;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100,000 taels and take up 20 land.',
+      healthRecovery: 1,
+      staminaRecovery: 10,
+      qiRecovery: 0.1,
+      baseHealthRecovery: 1,
+      baseStaminaRecovery: 10,
+      baseQiRecovery: 0.1,
       maxFurniture: 3,
       maxWorkstations: 1,
       maxWorkstationPower: 0,
@@ -228,20 +247,18 @@ export class HomeService {
     {
       name: 'Large House',
       type: HomeType.LargeHouse,
-      description:
-        'A large house where you can live and work. Automatically restores 15 stamina, 2 health, and a bit of Qi each night.',
+      description: 'A large house where you can live and work.',
       cost: 1000000,
       costPerDay: 50,
       landRequired: 50,
       maxInventory: 35,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1M taels and take up 50 land.<br>The new home will restore 15 stamina, 2 health, and a bit of Qi each night (if unlocked).',
-      consequence: () => {
-        this.characterService.status.qi.value += 0.2;
-        this.characterService.status.health.value += 2;
-        this.characterService.status.stamina.value += 15;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1M taels and take up 50 land.',
+      healthRecovery: 2,
+      staminaRecovery: 15,
+      qiRecovery: 0.2,
+      baseHealthRecovery: 2,
+      baseStaminaRecovery: 15,
+      baseQiRecovery: 0.2,
       maxFurniture: 4,
       maxWorkstations: 2,
       maxWorkstationPower: 0,
@@ -250,20 +267,18 @@ export class HomeService {
     {
       name: 'Courtyard House',
       type: HomeType.CourtyardHouse,
-      description:
-        'A large house with a wall and an enclosed courtyard. Perfect for building a thriving business. Automatically restores 20 stamina, 3 health, and a bit of Qi each night.',
+      description: 'A large house with a wall and an enclosed courtyard. Perfect for building a thriving business.',
       cost: 1e7,
       costPerDay: 80,
       landRequired: 80,
       maxInventory: 40,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10m taels and take up 80 land.<br>The new home will restore 20 stamina, 3 health, and a bit of Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 0.3;
-        this.characterService.status.health.value += 3;
-        this.characterService.status.stamina.value += 20;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10m taels and take up 80 land.',
+      healthRecovery: 3,
+      staminaRecovery: 20,
+      qiRecovery: 0.3,
+      baseHealthRecovery: 3,
+      baseStaminaRecovery: 20,
+      baseQiRecovery: 0.3,
       maxFurniture: 5,
       maxWorkstations: 3,
       maxWorkstationPower: 0,
@@ -272,20 +287,18 @@ export class HomeService {
     {
       name: 'Manor',
       type: HomeType.Manor,
-      description:
-        'A large manor house. You are really moving up in the world. Automatically restores 25 stamina, 4 health, and a bit of Qi each night.',
+      description: 'A large manor house. You are really moving up in the world.',
       cost: 1e8,
       costPerDay: 100,
       landRequired: 100,
       maxInventory: 50,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100m taels and take up 100 land.<br>The new home will restore 25 stamina, 4 health, and a bit of Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 0.4;
-        this.characterService.status.health.value += 4;
-        this.characterService.status.stamina.value += 25;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100m taels and take up 100 land.',
+      healthRecovery: 4,
+      staminaRecovery: 25,
+      qiRecovery: 0.4,
+      baseHealthRecovery: 4,
+      baseStaminaRecovery: 25,
+      baseQiRecovery: 0.4,
       maxFurniture: 6,
       maxWorkstations: 3,
       maxWorkstationPower: 0,
@@ -294,19 +307,18 @@ export class HomeService {
     {
       name: 'Mansion',
       type: HomeType.Mansion,
-      description: 'An elaborate mansion. Automatically restores 30 stamina, 5 health, and a bit of Qi each night.',
+      description: 'An elaborate mansion.',
       cost: 1e9,
       costPerDay: 120,
       landRequired: 120,
       maxInventory: 50,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1B taels and take up 120 land.<br>The new home will restore 30 stamina, 5 health, and a bit of Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 0.5;
-        this.characterService.status.health.value += 5;
-        this.characterService.status.stamina.value += 30;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1B taels and take up 120 land.',
+      healthRecovery: 5,
+      staminaRecovery: 30,
+      qiRecovery: 0.5,
+      baseHealthRecovery: 5,
+      baseStaminaRecovery: 30,
+      baseQiRecovery: 0.5,
       maxFurniture: 7,
       maxWorkstations: 4,
       maxWorkstationPower: 1,
@@ -315,19 +327,18 @@ export class HomeService {
     {
       name: 'Palace',
       type: HomeType.Palace,
-      description: 'A lavish palace. Automatically restores 35 stamina, 10 health, and 1 Qi each night.',
+      description: 'A lavish palace.',
       cost: 1e10,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 55,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10B taels and take up 150 land.<br>The new home will restore 35 stamina, 10 health, and 1 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 1;
-        this.characterService.status.health.value += 10;
-        this.characterService.status.stamina.value += 35;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10B taels and take up 150 land.',
+      healthRecovery: 10,
+      staminaRecovery: 35,
+      qiRecovery: 1,
+      baseHealthRecovery: 10,
+      baseStaminaRecovery: 35,
+      baseQiRecovery: 1,
       maxFurniture: 8,
       maxWorkstations: 4,
       maxWorkstationPower: 1,
@@ -336,19 +347,18 @@ export class HomeService {
     {
       name: 'Castle',
       type: HomeType.Castle,
-      description: 'An imposing castle. Automatically restores 40 stamina, 15 health, and 2 Qi each night.',
+      description: 'An imposing castle.',
       cost: 1e11,
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 60,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100B taels and take up 150 land.<br>The new home will restore 40 stamina, 15 health, and 2 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 2;
-        this.characterService.status.health.value += 15;
-        this.characterService.status.stamina.value += 40;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100B taels and take up 150 land.',
+      healthRecovery: 15,
+      staminaRecovery: 40,
+      qiRecovery: 2,
+      baseHealthRecovery: 15,
+      baseStaminaRecovery: 40,
+      baseQiRecovery: 2,
       maxFurniture: 9,
       maxWorkstations: 5,
       maxWorkstationPower: 1,
@@ -357,19 +367,18 @@ export class HomeService {
     {
       name: 'Fortress',
       type: HomeType.Fortress,
-      description: 'An indomitable fortress. Automatically restores 50 stamina, 20 health, and 3 Qi each night.',
+      description: 'An indomitable fortress.',
       cost: 1e12,
       costPerDay: 180,
       landRequired: 180,
       maxInventory: 65,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1T taels and take up 180 land.<br>The new home will restore 50 stamina, 20 health, and 3 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 3;
-        this.characterService.status.health.value += 20;
-        this.characterService.status.stamina.value += 50;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1T taels and take up 180 land.',
+      healthRecovery: 20,
+      staminaRecovery: 50,
+      qiRecovery: 3,
+      baseHealthRecovery: 20,
+      baseStaminaRecovery: 50,
+      baseQiRecovery: 3,
       maxFurniture: 9,
       maxWorkstations: 5,
       maxWorkstationPower: 1,
@@ -378,19 +387,18 @@ export class HomeService {
     {
       name: 'Mountain',
       type: HomeType.Mountain,
-      description: 'An entire mighty mountain. Automatically restores 100 stamina, 30 health, and 4 Qi each night.',
+      description: 'An entire mighty mountain.',
       cost: 1e13,
       costPerDay: 500,
       landRequired: 500,
       maxInventory: 70,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10T taels and take up 500 land.<br>The new home will restore 100 stamina, 30 health, and 4 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 4;
-        this.characterService.status.health.value += 30;
-        this.characterService.status.stamina.value += 100;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10T taels and take up 500 land.',
+      healthRecovery: 30,
+      staminaRecovery: 100,
+      qiRecovery: 4,
+      baseHealthRecovery: 30,
+      baseStaminaRecovery: 100,
+      baseQiRecovery: 4,
       maxFurniture: 9,
       maxWorkstations: 6,
       maxWorkstationPower: 2,
@@ -399,19 +407,18 @@ export class HomeService {
     {
       name: 'Forbidden City',
       type: HomeType.ForbiddenCity,
-      description: 'A city of your very own. Automatically restores 200 stamina, 50 health, and 5 Qi each night.',
+      description: 'A city of your very own.',
       cost: 1e14,
       costPerDay: 1000,
       landRequired: 1000,
       maxInventory: 80,
-      upgradeToTooltip:
-        'Get a better house.<br>better home will cost 100T taels and take up 1,000 land.<br>The new home will restore 200 stamina, 50 health, and 5 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 5;
-        this.characterService.status.health.value += 50;
-        this.characterService.status.stamina.value += 200;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>better home will cost 100T taels and take up 1,000 land.',
+      healthRecovery: 50,
+      staminaRecovery: 200,
+      qiRecovery: 5,
+      baseHealthRecovery: 50,
+      baseStaminaRecovery: 200,
+      baseQiRecovery: 5,
       maxFurniture: 9,
       maxWorkstations: 6,
       maxWorkstationPower: 2,
@@ -420,20 +427,18 @@ export class HomeService {
     {
       name: 'Capital',
       type: HomeType.Capital,
-      description:
-        'The entire province is yours now. Automatically restores 300 stamina, 80 health, and 10 Qi each night.',
+      description: 'The entire province is yours now.',
       cost: 1e15,
       costPerDay: 10000,
       landRequired: 10000,
       maxInventory: 100,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1q taels and take up 10,000 land.<br>The new home will restore 300 stamina, 80 health, and 10 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 10;
-        this.characterService.status.health.value += 80;
-        this.characterService.status.stamina.value += 300;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1q taels and take up 10,000 land.',
+      healthRecovery: 80,
+      staminaRecovery: 300,
+      qiRecovery: 10,
+      baseHealthRecovery: 80,
+      baseStaminaRecovery: 300,
+      baseQiRecovery: 10,
       maxFurniture: 9,
       maxWorkstations: 7,
       maxWorkstationPower: 2,
@@ -442,20 +447,18 @@ export class HomeService {
     {
       name: 'Seat of the Empire',
       type: HomeType.ImperialSeat,
-      description:
-        "You've built quite a little empire for yourself. Automatically restores 500 stamina, 100 health, and 20 Qi each night.",
+      description: "You've built quite a little empire for yourself.",
       cost: 1e16,
       costPerDay: 1e6,
       landRequired: 1e6,
       maxInventory: 110,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10q taels and take up 1,000,000 land.<br>The new home will restore 500 stamina, 100 health, and 20 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 20;
-        this.characterService.status.health.value += 100;
-        this.characterService.status.stamina.value += 500;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10q taels and take up 1,000,000 land.',
+      healthRecovery: 100,
+      staminaRecovery: 500,
+      qiRecovery: 20,
+      baseHealthRecovery: 100,
+      baseStaminaRecovery: 500,
+      baseQiRecovery: 20,
       maxFurniture: 9,
       maxWorkstations: 8,
       maxWorkstationPower: 3,
@@ -464,20 +467,18 @@ export class HomeService {
     {
       name: 'Godthrone',
       type: HomeType.Godthrone,
-      description:
-        'All in the land kneel far beneath you. Automatically restores 1000 stamina, 150 health, and 30 Qi each night.',
+      description: 'All in the land kneel far beneath you.',
       cost: 1e17,
       costPerDay: 1e7,
       landRequired: 1e7,
       maxInventory: 120,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100q taels and take up 10,000,000 land.<br>The new home will restore 1000 stamina, 150 health, and 30 Qi each night.',
-      consequence: () => {
-        this.characterService.status.qi.value += 30;
-        this.characterService.status.health.value += 150;
-        this.characterService.status.stamina.value += 1000;
-        this.characterService.checkOverage();
-      },
+      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100q taels and take up 10,000,000 land.<br>',
+      healthRecovery: 150,
+      staminaRecovery: 1000,
+      qiRecovery: 30,
+      baseHealthRecovery: 150,
+      baseStaminaRecovery: 1000,
+      baseQiRecovery: 30,
       maxFurniture: 9,
       maxWorkstations: 9,
       maxWorkstationPower: 3,
@@ -931,6 +932,17 @@ export class HomeService {
 
   homeValue!: HomeType;
   home!: Home;
+  displayHome: DisplayHome = {
+    name: signal(this.homesList[0].name),
+    description: signal(this.homesList[0].description),
+    upgradable: signal(true),
+    downgradable: signal(false),
+    costPerDay: signal(this.homesList[0].costPerDay),
+    hasFurniture: signal(false),
+    healthRecovery: signal(0),
+    staminaRecovery: signal(0),
+    qiRecovery: signal(0),
+  };
   nextHome!: Home;
   previousHome!: Home;
   nextHomeCostReduction = 0;
@@ -978,6 +990,30 @@ export class HomeService {
         this.upgrading = false;
         this.setCurrentHome(this.home);
       }
+      let conceptMultiplier = 1;
+      const concepts = this.contemplationService.concepts.filter(concept =>
+        concept.effect.includes(CONCEPT_EFFECT_HOME_RECOVERY)
+      );
+      for (const concept of concepts) {
+        conceptMultiplier *= Math.log10(10 + concept.progress);
+      }
+      this.home.healthRecovery = this.home.baseHealthRecovery * conceptMultiplier;
+      this.home.staminaRecovery = this.home.baseStaminaRecovery * conceptMultiplier;
+      if (this.characterService.qiUnlocked) {
+        this.home.qiRecovery = this.home.baseQiRecovery * conceptMultiplier;
+      } else {
+        this.home.qiRecovery = 0;
+      }
+
+      this.displayHome.name.set(this.home.name);
+      this.displayHome.description.set(this.home.description);
+      this.displayHome.upgradable.set(this.homeValue !== this.homesList.length - 1);
+      this.displayHome.downgradable.set(this.homeValue !== 0);
+      this.displayHome.costPerDay.set(this.home.costPerDay);
+      this.displayHome.hasFurniture.set(this.home.maxFurniture > 0);
+      this.displayHome.healthRecovery.set(this.home.healthRecovery);
+      this.displayHome.staminaRecovery.set(this.home.staminaRecovery);
+      this.displayHome.qiRecovery.set(this.home.qiRecovery);
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -1019,7 +1055,10 @@ export class HomeService {
       this.nextHomeCost = 0;
     }
     if (!this.hellService?.inHell() || this.hellHome()) {
-      this.home.consequence();
+      this.characterService.status.health.value += this.home.healthRecovery;
+      this.characterService.status.stamina.value += this.home.staminaRecovery;
+      this.characterService.status.qi.value += this.home.qiRecovery;
+      this.characterService.checkOverage();
       for (const furniturePiece of this.bedroomFurniture) {
         if (furniturePiece?.use) {
           furniturePiece?.use();

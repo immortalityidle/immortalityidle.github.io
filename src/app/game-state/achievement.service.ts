@@ -1990,7 +1990,7 @@ export class AchievementService {
       this.unlockedAchievements.push(achievement.name);
       this.logService.log(LogTopic.STORY, achievement.description);
       // check if gameStateService is injected yet, if not, inject it (circular dependency issues)
-      this.characterService.toast(
+      this.mainLoopService.toast(
         'Achievement Unlocked: ' + (achievement.displayName ? achievement.displayName : achievement.name)
       );
     }

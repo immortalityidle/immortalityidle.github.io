@@ -17,8 +17,14 @@ import { FollowersService } from './followers.service';
 import {
   CONCEPT_EFFECT_ARMOR_REDUCTION,
   CONCEPT_EFFECT_DAMAGE,
+  CONCEPT_EFFECT_DEFENCE,
   CONCEPT_EFFECT_DEVASTATION,
   CONCEPT_EFFECT_FERAL,
+  CONCEPT_EFFECT_FLOW,
+  CONCEPT_EFFECT_STEEL,
+  CONCEPT_EFFECT_TRADITION,
+  CONCEPT_EFFECT_VERDANT,
+  CONCEPT_EFFECT_WOODSHAPED,
   ContemplationService,
 } from './contemplation.service';
 
@@ -291,6 +297,7 @@ export class BattleService {
       description: 'Techniques that focus on their flowing form.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_FLOW,
     },
     {
       value: 'Fierce',
@@ -304,6 +311,7 @@ export class BattleService {
       description: 'Techniques that focus on emulating the verdant natural world.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_VERDANT,
     },
     {
       value: 'Stealthy',
@@ -340,13 +348,14 @@ export class BattleService {
       description: 'Techniques inspired by your study of ancient combat.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_TRADITION,
     },
     {
       value: 'Traditional',
       description: "Techniques inspired by your people's traditions.",
-
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_TRADITION,
     },
     {
       value: 'Lucky',
@@ -463,6 +472,7 @@ export class BattleService {
       unlocked: false,
       attribute: 'strength',
       staminaCost: 10,
+      concept: CONCEPT_EFFECT_STEEL,
     },
     {
       // don't mess with the index on this
@@ -474,6 +484,7 @@ export class BattleService {
       unlocked: false,
       attribute: 'strength',
       staminaCost: 10,
+      concept: CONCEPT_EFFECT_WOODSHAPED,
     },
   ];
   displayTechniques: DisplayTechnique[] = [];
@@ -486,7 +497,7 @@ export class BattleService {
     private inventoryService: InventoryService,
     private homeService: HomeService,
     private contemplationService: ContemplationService,
-    mainLoopService: MainLoopService,
+    private mainLoopService: MainLoopService,
     private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -1262,6 +1273,13 @@ export class BattleService {
     if (this.characterService.attributes.justice.value > 0) {
       damage /= this.characterService.attributes.justice.value + 1;
     }
+    const defenseConcepts = this.contemplationService.concepts.filter(concept =>
+      concept.effect.includes(CONCEPT_EFFECT_DEFENCE)
+    );
+    for (const concept of defenseConcepts) {
+      damage /= Math.log10(10 + concept.progress);
+    }
+
     const enemyName = this.titleCasePipe.transform(enemy.name);
     if (damage > 0) {
       this.logService.injury(
@@ -1714,7 +1732,7 @@ export class BattleService {
     this.killsByMonster[this.currentEnemy.baseName] = (this.killsByMonster[this.currentEnemy.baseName] || 0) + 1;
     this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
     if (this.currentEnemy.name === 'Death itself' && !this.characterService.immortal) {
-      this.characterService.toast('HURRAY! Check your inventory. You just got something special!', 0);
+      this.mainLoopService.toast('HURRAY! Check your inventory. You just got something special!', 0);
     }
     for (const item of this.currentEnemy.loot) {
       const lootItem = this.itemRepoService.getItemById(item.id);

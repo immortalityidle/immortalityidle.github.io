@@ -57,9 +57,7 @@ export class StoreService {
         this.regularStoreItems.push(item);
         this.regularStoreItems.sort((a, b) => (a.type + a.subtype).localeCompare(b.type + b.subtype));
         if (!squelchToasts) {
-          this.characterService.toast(
-            'A new item is available in the shop: ' + this.titleCasePipe.transform(item.name)
-          );
+          this.mainLoopService.toast('A new item is available in the shop: ' + this.titleCasePipe.transform(item.name));
         }
       }
     }

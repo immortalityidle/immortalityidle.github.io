@@ -10,15 +10,15 @@ import { StatisticsPanelComponent } from './statistics-panel/statistics-panel.co
 import { AchievementPanelComponent } from './achievement-panel/achievement-panel.component';
 import { StoreService } from './game-state/store.service';
 import { GameStateService } from './game-state/game-state.service';
-import { CharacterService } from './game-state/character.service';
 import { CreditsModalComponent } from './credits-modal/credits-modal.component';
+import { MainLoopService } from './game-state/main-loop.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommonButtonsService {
   private readonly dialog = inject(MatDialog);
-  private readonly characterService = inject(CharacterService);
+  private readonly mainLoopService = inject(MainLoopService);
   private readonly gameStateService = inject(GameStateService);
   private readonly storeService = inject(StoreService);
 
@@ -75,7 +75,7 @@ export class CommonButtonsService {
 
   saveClicked() {
     this.gameStateService.savetoLocalStorage();
-    this.characterService.toast('Manual Save Complete');
+    this.mainLoopService.toast('Manual Save Complete');
   }
 
   creditsClicked() {

@@ -1,7 +1,8 @@
 import { Injectable, Injector, signal } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { CharacterService } from './character.service';
 import { BattleService } from './battle.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const TICK_INTERVAL_MS = 25;
 
@@ -31,6 +32,9 @@ export interface MainLoopProperties {
   providedIn: 'root',
 })
 export class MainLoopService {
+  private snackBar: MatSnackBar;
+  private snackBarObservable?: Subscription;
+
   longTickIntervalMS = 100;
 
   battleService?: BattleService;
@@ -110,6 +114,7 @@ export class MainLoopService {
   audioTrackIndex = 0;
 
   constructor(private injector: Injector) {
+    this.snackBar = this.injector.get(MatSnackBar);
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
 
     this.audio = new Audio('./assets/music/' + this.audioTracks[0] + '.mp3');
@@ -368,5 +373,17 @@ export class MainLoopService {
       this.audioTrackIndex = 0;
     }
     this.playAudio();
+  }
+
+  toast(message: string, duration = 5000) {
+    const snackBar = this.snackBar.open(message, 'Close', {
+      duration: duration,
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+      panelClass: ['snackBar', 'darkMode'],
+    });
+    this.snackBarObservable = snackBar.onAction().subscribe(() => {
+      this.snackBarObservable?.unsubscribe();
+    });
   }
 }

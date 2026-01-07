@@ -273,7 +273,7 @@ export class InventoryService {
     private injector: Injector,
     private logService: LogService,
     private characterService: CharacterService,
-    mainLoopService: MainLoopService,
+    private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
     private titleCasePipe: TitleCasePipe
   ) {
@@ -2585,7 +2585,7 @@ export class InventoryService {
     const furnitureItem = this.itemRepoService.furniture.find(item => item.name === furnitureToUnlock);
     if (furnitureItem) {
       furnitureItem.locked = false;
-      this.characterService.toast('New furniture is available: ' + this.titleCasePipe.transform(furnitureToUnlock));
+      this.mainLoopService.toast('New furniture is available: ' + this.titleCasePipe.transform(furnitureToUnlock));
     }
     this.unlockedFurniture.push(furnitureToUnlock);
   }
