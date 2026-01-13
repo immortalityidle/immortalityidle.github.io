@@ -24,6 +24,7 @@ import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService } from './location.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
+import { CONCEPT_CREATION, CONCEPT_EFFECT_CREATION, ContemplationService } from './contemplation.service';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -159,7 +160,8 @@ export class ActivityService {
     private battleService: BattleService,
     private logService: LogService,
     private followerService: FollowersService,
-    private impossibleTaskService: ImpossibleTaskService
+    private impossibleTaskService: ImpossibleTaskService,
+    private contemplationService: ContemplationService
   ) {
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.activities = [
@@ -227,6 +229,7 @@ export class ActivityService {
       this.InfuseBody,
       this.ExtendLife,
       this.SoulCultivation,
+      this.SynthesizingGems,
       this.PurifyGems,
       this.Recruiting,
       this.TrainingFollowers,
@@ -756,6 +759,14 @@ export class ActivityService {
     ) {
       activity.unlocked = false;
       return false;
+    }
+    if (activity.conceptRequirements) {
+      for (const conceptRequirement of activity.conceptRequirements) {
+        const concept = this.contemplationService.concepts.find(concept => concept.name === conceptRequirement);
+        if (concept && !concept.discovered) {
+          return false;
+        }
+      }
     }
     if (this.meetsRequirementsByLevel(activity, activity.level)) {
       activity.unlocked = true;
@@ -3923,6 +3934,46 @@ export class ActivityService {
         spirituality: 1e24,
       },
     ],
+    unlocked: false,
+    skipApprenticeshipLevel: 0,
+  };
+
+  SynthesizingGems: Activity = {
+    level: 0,
+    name: ['Synthesizing Gems'],
+    location: LocationType.Self,
+    imageBaseName: 'synthesizinggems',
+    activityType: ActivityType.SynthesizingGems,
+    description: ['Use your understanding of creation to generate artificial spirit gems.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Uses 100000 Stamina and some taels to create a gem.'],
+    consequence: [
+      () => {
+        this.characterService.status.stamina.value -= 100000;
+        let creationPower = 1;
+        let creationQuantity = 0;
+        const creation_concepts = this.contemplationService.concepts.filter(concept =>
+          concept.effect.includes(CONCEPT_EFFECT_CREATION)
+        );
+        for (const concept of creation_concepts) {
+          creationPower += Math.ceil(Math.log2(2 + concept.progress));
+          creationQuantity += Math.ceil(Math.log10(10 + concept.progress));
+        }
+        const gemToCreate = this.inventoryService.generateSpiritGem(creationPower);
+        const price = gemToCreate.value * creationQuantity * 10;
+        if (this.characterService.money > price) {
+          this.characterService.updateMoney(0 - price);
+          this.inventoryService.addItem(gemToCreate, creationQuantity);
+        }
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 100000,
+      },
+    ],
+    requirements: [{}],
+    conceptRequirements: [CONCEPT_CREATION],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };

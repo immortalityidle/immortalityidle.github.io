@@ -16,14 +16,21 @@ import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.serv
 import { FollowersService } from './followers.service';
 import {
   CONCEPT_EFFECT_ARMOR_REDUCTION,
+  CONCEPT_EFFECT_BRUTAL,
   CONCEPT_EFFECT_DAMAGE,
   CONCEPT_EFFECT_DEFENCE,
   CONCEPT_EFFECT_DEVASTATION,
+  CONCEPT_EFFECT_DRAGON,
+  CONCEPT_EFFECT_EASTERN,
+  CONCEPT_EFFECT_FEARSOME,
   CONCEPT_EFFECT_FERAL,
   CONCEPT_EFFECT_FLOW,
+  CONCEPT_EFFECT_NORTHERN,
+  CONCEPT_EFFECT_SOUTHERN,
   CONCEPT_EFFECT_STEEL,
   CONCEPT_EFFECT_TRADITION,
   CONCEPT_EFFECT_VERDANT,
+  CONCEPT_EFFECT_WESTERN,
   CONCEPT_EFFECT_WOODSHAPED,
   ContemplationService,
 } from './contemplation.service';
@@ -260,30 +267,35 @@ export class BattleService {
       description: 'Techniques from the Northern lands.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_NORTHERN,
     },
     {
       value: 'Southern',
       description: 'Techniques from the Southern lands.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_SOUTHERN,
     },
     {
       value: 'Eastern',
       description: 'Techniques from the Eastern lands.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_EASTERN,
     },
     {
       value: 'Western',
       description: 'Techniques from the Western lands.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_WESTERN,
     },
     {
       value: 'Brutal',
       description: 'Techniques that focus on their brutality.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_BRUTAL,
     },
     {
       value: 'Devastating',
@@ -324,6 +336,7 @@ export class BattleService {
       description: 'Techniques inspired by the power of dragons.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_DRAGON,
     },
     {
       value: 'Devilish',
@@ -342,6 +355,7 @@ export class BattleService {
       description: 'Techniques that focus on inspiring fear in your foes.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_FEARSOME,
     },
     {
       value: 'Ancient',

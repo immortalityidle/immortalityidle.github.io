@@ -38,6 +38,7 @@ export enum ActivityType {
   ExtendLife,
   Recruiting,
   TrainingFollowers,
+  SynthesizingGems,
   Swim,
   ForgeChains,
   AttachChains,
@@ -98,6 +99,7 @@ export interface Activity {
   yinYangEffect: YinYangEffect[];
   consequenceDescription: string[];
   requirements: CharacterAttribute[];
+  conceptRequirements?: string[];
   landRequirements?: number;
   fallowLandRequirements?: number;
   farmedLandRequirements?: number;

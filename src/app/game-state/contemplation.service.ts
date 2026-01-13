@@ -32,17 +32,27 @@ export const CONCEPT_EFFECT_DRAGON = 'dragon';
 export const CONCEPT_EFFECT_DEVASTATION = 'devastation';
 export const CONCEPT_EFFECT_FLOW = 'flow';
 export const CONCEPT_EFFECT_VERDANT = 'verdant';
+export const CONCEPT_EFFECT_BRUTAL = 'brutal';
+export const CONCEPT_EFFECT_FEARSOME = 'fearsome';
 export const CONCEPT_EFFECT_TRADITION = 'tradition';
+export const CONCEPT_EFFECT_SOUTHERN = 'southern';
+export const CONCEPT_EFFECT_WESTERN = 'western';
+export const CONCEPT_EFFECT_EASTERN = 'eastern';
+export const CONCEPT_EFFECT_NORTHERN = 'northern';
 export const CONCEPT_EFFECT_FOOD_YIELD = 'foodYield';
 export const CONCEPT_EFFECT_HOME_RECOVERY = 'homeRecovery';
 export const CONCEPT_EFFECT_ARMOR_REDUCTION = 'armorReduction';
 export const CONCEPT_EFFECT_STEEL = 'steel';
 export const CONCEPT_EFFECT_WOODSHAPED = 'woodshaped';
+export const CONCEPT_EFFECT_CREATION = 'creation';
 export const CONCEPT_WOOD = 'Tao of Wood';
 export const CONCEPT_FIRE = 'Tao of Fire';
 export const CONCEPT_WATER = 'Tao of Water';
 export const CONCEPT_METAL = 'Tao of Metal';
 export const CONCEPT_EARTH = 'Tao of Earth';
+export const CONCEPT_CREATION = 'Tao of Creation';
+export const CONCEPT_ANNIHILATION = 'Tao of Annihilation';
+export const CONCEPT_VOID = 'Tao of the Void';
 
 @Injectable({
   providedIn: 'root',
@@ -57,9 +67,15 @@ export class ContemplationService {
     CONCEPT_EFFECT_STEEL,
     CONCEPT_EFFECT_WOODSHAPED,
     CONCEPT_EFFECT_DRAGON,
+    CONCEPT_EFFECT_BRUTAL,
+    CONCEPT_EFFECT_FEARSOME,
     CONCEPT_EFFECT_VERDANT,
     CONCEPT_EFFECT_FLOW,
     CONCEPT_EFFECT_TRADITION,
+    CONCEPT_EFFECT_SOUTHERN,
+    CONCEPT_EFFECT_WESTERN,
+    CONCEPT_EFFECT_EASTERN,
+    CONCEPT_EFFECT_NORTHERN,
   ];
 
   concepts: Concept[] = [
@@ -116,7 +132,7 @@ export class ContemplationService {
       description:
         'Contemplate the true nature of beasts, coming to understand both their domestic and feral natures.<br><br>Increases Animal Handling gain and the power of certain techniques.',
       progress: 0,
-      effect: 'animalHandling,' + CONCEPT_EFFECT_FERAL,
+      effect: 'animalHandling,' + CONCEPT_EFFECT_FERAL + ',' + CONCEPT_EFFECT_BRUTAL,
       discovered: false,
     },
     {
@@ -375,6 +391,90 @@ export class ContemplationService {
         [CONCEPT_WATER]: 7e8,
         [CONCEPT_FIRE]: 7e8,
         [CONCEPT_EARTH]: 7e8,
+      },
+    },
+    {
+      name: 'Tao of the Wasteland Behemoths',
+      description:
+        'Contemplate the collosal creatures that dwell in the southern lands where no plants have ever grown.<br><br>Increases some lore gains, and the power of certain techniques.',
+      progress: 0,
+      effect: 'earthLore,fireLore,waterLore,metalLore,' + CONCEPT_EFFECT_DEVASTATION + ',' + CONCEPT_EFFECT_SOUTHERN,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_EARTH]: 5e10,
+        [CONCEPT_FIRE]: 5e10,
+        [CONCEPT_WATER]: 5e10,
+        [CONCEPT_METAL]: 5e10,
+      },
+    },
+    {
+      name: 'Tao of the Forest Spirits',
+      description:
+        'Contemplate the shining spirits that dwell in verdant eastern lands where no traces of metal can be found.<br><br>Increases some lore gains, and the power of certain techniques.',
+      progress: 0,
+      effect: 'earthLore,fireLore,waterLore,woodLore,' + CONCEPT_EFFECT_VERDANT + ',' + CONCEPT_EFFECT_EASTERN,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_EARTH]: 8e10,
+        [CONCEPT_FIRE]: 8e10,
+        [CONCEPT_WATER]: 8e10,
+        [CONCEPT_WOOD]: 8e10,
+      },
+    },
+    {
+      name: 'Tao of the Sand Dragons',
+      description:
+        'Contemplate the desert dragons that dwell in western lands where no traces of water can be found.<br><br>Increases some lore gains, and the power of certain techniques.',
+      progress: 0,
+      effect: 'earthLore,fireLore,metalLore,woodLore,' + CONCEPT_EFFECT_DRAGON + ',' + CONCEPT_EFFECT_WESTERN,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_EARTH]: 1e11,
+        [CONCEPT_FIRE]: 1e11,
+        [CONCEPT_METAL]: 1e11,
+        [CONCEPT_WOOD]: 1e11,
+      },
+    },
+    {
+      name: 'Tao of the Frozen Mountain',
+      description:
+        'Contemplate the brutal mountains that stand in the northern lands where no fire has ever been kindled.<br><br>Increases some lore gains, and the power of certain techniques.',
+      progress: 0,
+      effect: 'earthLore,waterLore,metalLore,woodLore,' + CONCEPT_EFFECT_BRUTAL + ',' + CONCEPT_EFFECT_NORTHERN,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_EARTH]: 3e11,
+        [CONCEPT_WATER]: 3e11,
+        [CONCEPT_METAL]: 3e11,
+        [CONCEPT_WOOD]: 3e11,
+      },
+    },
+    {
+      name: 'Tao of the Ocean Leviathans',
+      description:
+        'Contemplate the gargantuan creatures of the deepest oceans where no trace of earth has ever been seen.<br><br>Increases some lore gains, and the power of certain techniques.',
+      progress: 0,
+      effect: 'fireLore,waterLore,metalLore,woodLore,' + CONCEPT_EFFECT_BRUTAL + ',' + CONCEPT_EFFECT_FEARSOME,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_FIRE]: 6e11,
+        [CONCEPT_WATER]: 6e11,
+        [CONCEPT_METAL]: 6e11,
+        [CONCEPT_WOOD]: 6e11,
+      },
+    },
+    {
+      name: CONCEPT_CREATION,
+      description: 'Contemplate creation through the synthesis of the five elements.',
+      progress: 0,
+      effect: CONCEPT_EFFECT_CREATION,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_FIRE]: 1e12,
+        [CONCEPT_WATER]: 1e12,
+        [CONCEPT_METAL]: 1e12,
+        [CONCEPT_WOOD]: 1e12,
+        [CONCEPT_EARTH]: 1e12,
       },
     },
   ];
