@@ -30,8 +30,10 @@ import {
   CONCEPT_EFFECT_STEEL,
   CONCEPT_EFFECT_TRADITION,
   CONCEPT_EFFECT_VERDANT,
+  CONCEPT_EFFECT_VOID,
   CONCEPT_EFFECT_WESTERN,
   CONCEPT_EFFECT_WOODSHAPED,
+  CONCEPT_VOID,
   ContemplationService,
 } from './contemplation.service';
 
@@ -111,6 +113,7 @@ export interface BattleProperties {
   blockedTechniquePrefixes: string[];
   discoveredTechniqueEffects: string[];
   blockedTechniqueEffects: string[];
+  voidSkipCounter: number;
 }
 
 export interface Technique {
@@ -233,7 +236,6 @@ export class BattleService {
   highestDamageTaken = 0;
   highestDamageDealt = 0;
   totalKills = 0;
-  private skipEnemyAttack = 0;
   godSlayersUnlocked = false;
   godSlayersEnabled = false;
   totalEnemies = 0;
@@ -330,6 +332,7 @@ export class BattleService {
       description: 'Techniques that focus on stealthy strikes.',
       allowed: true,
       discovered: false,
+      concept: CONCEPT_EFFECT_VOID,
     },
     {
       value: "Dragon's",
@@ -502,6 +505,8 @@ export class BattleService {
     },
   ];
   displayTechniques: DisplayTechnique[] = [];
+  voidSkipCounter = 0;
+  voidSkipThreshold = Infinity;
 
   constructor(
     private injector: Injector,
@@ -778,11 +783,21 @@ export class BattleService {
         this.techniqueDevelopmentCounter = 0;
       }
       this.enemiesPresent.set(this.enemies.length > 0);
+      this.updateVoidSkip();
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+  }
+
+  updateVoidSkip() {
+    if (this.contemplationService.contemplationStarted()) {
+      const voidConcept = this.contemplationService.concepts.find(concept => concept.name === CONCEPT_VOID);
+      if (voidConcept?.discovered) {
+        this.voidSkipThreshold = Math.max(20 - Math.log10(10 + voidConcept.progress), 2);
+      }
+    }
   }
 
   ageFormation() {
@@ -872,6 +887,7 @@ export class BattleService {
       blockedTechniquePrefixes: blockedPrefixes,
       discoveredTechniqueEffects: discoveredEffects,
       blockedTechniqueEffects: blockedEffects,
+      voidSkipCounter: this.voidSkipCounter,
     };
   }
 
@@ -908,6 +924,7 @@ export class BattleService {
     this.pouchPotionsUsed = properties.pouchPotionsUsed;
     this.pouchFoodUsed = properties.pouchFoodUsed;
     this.timesFled = properties.timesFled;
+    this.voidSkipCounter = properties.voidSkipCounter;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -1239,10 +1256,15 @@ export class BattleService {
   }
 
   private enemyAttack(technique: Technique, enemy: Enemy) {
-    if (this.skipEnemyAttack > 0) {
-      this.skipEnemyAttack--;
+    if (this.voidSkipCounter >= this.voidSkipThreshold) {
+      this.voidSkipCounter = 0;
+      this.logService.log(
+        LogTopic.COMBAT,
+        "The power of your understanding of the void cancels the enemy's " + technique.name
+      );
       return;
     }
+    this.voidSkipCounter++;
     let damage = technique.baseDamage;
     // Yin/Yang factor
     damage -= damage * (this.characterService.yinYangBalance / 2);

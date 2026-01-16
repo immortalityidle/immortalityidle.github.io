@@ -1885,6 +1885,7 @@ export class ActivityService {
         }
         this.characterService.checkOverage();
         this.characterService.yin++;
+        this.contemplationService.tick(1);
       },
       () => {
         this.characterService.status.stamina.value += 200;
@@ -1893,6 +1894,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('spirituality', 0.5);
         this.characterService.checkOverage();
         this.characterService.yin++;
+        this.contemplationService.tick(5);
       },
       () => {
         this.characterService.status.stamina.value += 300;
@@ -1905,6 +1907,7 @@ export class ActivityService {
         } else {
           this.characterService.yin++;
         }
+        this.contemplationService.tick(10);
       },
     ],
     resourceUse: [{}, {}, {}, {}],

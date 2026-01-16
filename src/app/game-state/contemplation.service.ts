@@ -13,6 +13,7 @@ export interface Concept {
   name: string;
   description: string;
   progress: number;
+  unlocksMore: boolean;
   effect: string;
   discovered: boolean;
   discoveryRequirements?: { [key: string]: number };
@@ -45,6 +46,7 @@ export const CONCEPT_EFFECT_ARMOR_REDUCTION = 'armorReduction';
 export const CONCEPT_EFFECT_STEEL = 'steel';
 export const CONCEPT_EFFECT_WOODSHAPED = 'woodshaped';
 export const CONCEPT_EFFECT_CREATION = 'creation';
+export const CONCEPT_EFFECT_VOID = 'void';
 export const CONCEPT_WOOD = 'Tao of Wood';
 export const CONCEPT_FIRE = 'Tao of Fire';
 export const CONCEPT_WATER = 'Tao of Water';
@@ -53,6 +55,7 @@ export const CONCEPT_EARTH = 'Tao of Earth';
 export const CONCEPT_CREATION = 'Tao of Creation';
 export const CONCEPT_ANNIHILATION = 'Tao of Annihilation';
 export const CONCEPT_VOID = 'Tao of the Void';
+export const CONCEPT_SPACE = 'Tao of the Void';
 
 @Injectable({
   providedIn: 'root',
@@ -61,6 +64,7 @@ export class ContemplationService {
   contemplationStarted = signal<boolean>(false);
   displayConcepts: DisplayConcept[] = [];
   currentConcept: Concept | null = null;
+  contemplationMultiplier = 1;
   techniqueConcepts = [
     CONCEPT_EFFECT_FERAL,
     CONCEPT_EFFECT_DEVASTATION,
@@ -86,6 +90,7 @@ export class ContemplationService {
       progress: 0,
       effect: 'earthLore',
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: CONCEPT_METAL,
@@ -94,6 +99,7 @@ export class ContemplationService {
       progress: 0,
       effect: 'metalLore',
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: CONCEPT_WOOD,
@@ -102,6 +108,7 @@ export class ContemplationService {
       progress: 0,
       effect: 'woodLore',
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: CONCEPT_WATER,
@@ -110,6 +117,7 @@ export class ContemplationService {
       progress: 0,
       effect: 'waterLore',
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: CONCEPT_FIRE,
@@ -118,6 +126,7 @@ export class ContemplationService {
       progress: 0,
       effect: 'fireLore',
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: 'Tao of Life',
@@ -126,6 +135,7 @@ export class ContemplationService {
       progress: 0,
       effect: 'life',
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: 'Tao of Beasts',
@@ -134,6 +144,7 @@ export class ContemplationService {
       progress: 0,
       effect: 'animalHandling,' + CONCEPT_EFFECT_FERAL + ',' + CONCEPT_EFFECT_BRUTAL,
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: 'Tao of Death',
@@ -142,6 +153,7 @@ export class ContemplationService {
       progress: 0,
       effect: CONCEPT_EFFECT_DAMAGE,
       discovered: false,
+      unlocksMore: false,
     },
     {
       name: 'Tao of Scorched Earth',
@@ -154,6 +166,7 @@ export class ContemplationService {
         [CONCEPT_EARTH]: 1e8,
         [CONCEPT_FIRE]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Irrigation',
@@ -166,6 +179,7 @@ export class ContemplationService {
         [CONCEPT_EARTH]: 1e8,
         [CONCEPT_WATER]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Fortication',
@@ -178,6 +192,7 @@ export class ContemplationService {
         [CONCEPT_EARTH]: 1e8,
         [CONCEPT_METAL]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Agriculture',
@@ -190,6 +205,7 @@ export class ContemplationService {
         [CONCEPT_EARTH]: 1e8,
         [CONCEPT_WOOD]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Brewing',
@@ -202,6 +218,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 1e8,
         [CONCEPT_WATER]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Air',
@@ -214,6 +231,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 1e8,
         [CONCEPT_WOOD]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Forge',
@@ -226,6 +244,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 1e8,
         [CONCEPT_METAL]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Flexibility',
@@ -238,6 +257,7 @@ export class ContemplationService {
         [CONCEPT_WATER]: 1e8,
         [CONCEPT_WOOD]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Corrosion',
@@ -250,6 +270,7 @@ export class ContemplationService {
         [CONCEPT_WATER]: 1e8,
         [CONCEPT_METAL]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Harvest',
@@ -262,6 +283,7 @@ export class ContemplationService {
         [CONCEPT_METAL]: 1e8,
         [CONCEPT_WOOD]: 1e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Steel',
@@ -275,6 +297,7 @@ export class ContemplationService {
         [CONCEPT_WOOD]: 1e9,
         [CONCEPT_FIRE]: 1e9,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Woodshaping',
@@ -288,6 +311,7 @@ export class ContemplationService {
         [CONCEPT_WOOD]: 1e9,
         [CONCEPT_FIRE]: 1e9,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Hearth',
@@ -301,6 +325,7 @@ export class ContemplationService {
         [CONCEPT_WOOD]: 5e9,
         [CONCEPT_FIRE]: 5e9,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Sea Dragon',
@@ -314,6 +339,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 1e10,
         [CONCEPT_WATER]: 1e10,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Deep Dwellers',
@@ -327,6 +353,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 2e10,
         [CONCEPT_EARTH]: 2e10,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Mighty Dam',
@@ -340,6 +367,7 @@ export class ContemplationService {
         [CONCEPT_EARTH]: 5e8,
         [CONCEPT_WATER]: 5e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Shimmering Rice Field',
@@ -353,6 +381,7 @@ export class ContemplationService {
         [CONCEPT_WOOD]: 5e10,
         [CONCEPT_WATER]: 5e10,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Invincible Stronghold',
@@ -366,6 +395,7 @@ export class ContemplationService {
         [CONCEPT_WOOD]: 5e10,
         [CONCEPT_EARTH]: 5e10,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of Unbridled Growth',
@@ -379,6 +409,7 @@ export class ContemplationService {
         [CONCEPT_WOOD]: 6e10,
         [CONCEPT_EARTH]: 6e10,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Kiln',
@@ -392,6 +423,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 7e8,
         [CONCEPT_EARTH]: 7e8,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Wasteland Behemoths',
@@ -406,6 +438,7 @@ export class ContemplationService {
         [CONCEPT_WATER]: 5e10,
         [CONCEPT_METAL]: 5e10,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Forest Spirits',
@@ -420,6 +453,7 @@ export class ContemplationService {
         [CONCEPT_WATER]: 8e10,
         [CONCEPT_WOOD]: 8e10,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Sand Dragons',
@@ -434,6 +468,7 @@ export class ContemplationService {
         [CONCEPT_METAL]: 1e11,
         [CONCEPT_WOOD]: 1e11,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Frozen Mountain',
@@ -448,6 +483,7 @@ export class ContemplationService {
         [CONCEPT_METAL]: 3e11,
         [CONCEPT_WOOD]: 3e11,
       },
+      unlocksMore: false,
     },
     {
       name: 'Tao of the Ocean Leviathans',
@@ -462,6 +498,7 @@ export class ContemplationService {
         [CONCEPT_METAL]: 6e11,
         [CONCEPT_WOOD]: 6e11,
       },
+      unlocksMore: false,
     },
     {
       name: CONCEPT_CREATION,
@@ -476,6 +513,40 @@ export class ContemplationService {
         [CONCEPT_WOOD]: 1e12,
         [CONCEPT_EARTH]: 1e12,
       },
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_ANNIHILATION,
+      description: 'Contemplate the absolute annihilation of energy and matter.',
+      progress: 0,
+      effect: CONCEPT_EFFECT_DAMAGE + ',' + CONCEPT_EFFECT_ARMOR_REDUCTION,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_CREATION]: 1e13,
+      },
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_VOID,
+      description: 'Contemplate emptyness, the complete absence of everything.',
+      progress: 0,
+      effect: CONCEPT_EFFECT_VOID,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_CREATION]: 1e13,
+      },
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_SPACE,
+      description: 'Contemplate space, the careful arrangement of all things in the universe. Does nothing (yet).',
+      progress: 0,
+      effect: CONCEPT_EFFECT_VOID,
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_VOID]: 1e14,
+      },
+      unlocksMore: false,
     },
   ];
 
@@ -490,14 +561,17 @@ export class ContemplationService {
       if (!this.contemplationStarted) {
         return;
       }
+      this.concepts.forEach(concept => {
+        concept.unlocksMore = false;
+      });
       const discoverable = this.concepts.filter(concept => !concept.discovered && concept.discoveryRequirements);
       for (const concept of discoverable) {
         let requirementsMet = true;
         for (const key in concept.discoveryRequirements) {
           const checkConcept = this.concepts.find(concept => concept.name === key);
-          if ((checkConcept?.progress || 0) < concept.discoveryRequirements[key]) {
+          if (checkConcept && (checkConcept.progress || 0) < concept.discoveryRequirements[key]) {
             requirementsMet = false;
-            break;
+            checkConcept.unlocksMore = true;
           }
         }
         if (requirementsMet) {
@@ -510,7 +584,12 @@ export class ContemplationService {
         const displayConcept = this.displayConcepts.find(dc => dc.name() === concept.name);
         if (displayConcept) {
           displayConcept.name.set(concept.name);
-          displayConcept.description.set(concept.description);
+          let description = concept.description;
+          if (concept.unlocksMore) {
+            description +=
+              '<br><br>You feel that more contemplation of this concept could lead you to understand other concepts.';
+          }
+          displayConcept.description.set(description);
           displayConcept.progress.set(concept.progress);
           displayConcept.concept = concept;
         } else {
@@ -525,12 +604,12 @@ export class ContemplationService {
     });
   }
 
-  tick() {
+  tick(tickCount = 1) {
     if (!this.contemplationStarted) {
       return;
     }
     if (this.currentConcept !== null) {
-      this.currentConcept.progress++;
+      this.currentConcept.progress += tickCount * this.contemplationMultiplier;
     }
   }
 

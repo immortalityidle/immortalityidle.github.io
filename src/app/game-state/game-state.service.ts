@@ -788,6 +788,7 @@ export class GameStateService {
       blockedTechniquePrefixes: props?.blockedTechniquePrefixes || [],
       discoveredTechniqueEffects: props?.discoveredTechniqueEffects || [],
       blockedTechniqueEffects: props?.blockedTechniqueEffects || [],
+      voidSkipCounter: props?.voidSkipCounter || 0,
     };
   }
 

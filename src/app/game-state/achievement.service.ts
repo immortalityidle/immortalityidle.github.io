@@ -1960,6 +1960,40 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Deeper Thoughts',
+      description: 'You are getting better at contemplating the deep mysteries of the Tao.',
+      hint: 'Contemplate the Tao.',
+      check: () => {
+        const maxProgressConcept = this.contemplationService.concepts.reduce((prev, current) =>
+          prev && prev.progress > current.progress ? prev : current
+        );
+        return maxProgressConcept.progress > 1e8;
+      },
+      effect: () => {
+        if (this.contemplationService.contemplationMultiplier < 2) {
+          this.contemplationService.contemplationMultiplier = 2;
+        }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Deepest Thoughts',
+      description: 'You are really good at contemplating the deep mysteries of the Tao!',
+      hint: 'Contemplate the Tao some more.',
+      check: () => {
+        const maxProgressConcept = this.contemplationService.concepts.reduce((prev, current) =>
+          prev && prev.progress > current.progress ? prev : current
+        );
+        return maxProgressConcept.progress > 1e11;
+      },
+      effect: () => {
+        if (this.contemplationService.contemplationMultiplier < 5) {
+          this.contemplationService.contemplationMultiplier = 5;
+        }
+      },
+      unlocked: false,
+    },
+    {
       name: 'Going Meta',
       description: 'You earned 50 achievements. Good job!',
       hint: 'Can you get one for having lots?',
