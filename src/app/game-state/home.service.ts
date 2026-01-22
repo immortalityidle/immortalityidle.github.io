@@ -169,7 +169,7 @@ export class HomeService {
       landRequired: 1,
       maxInventory: 15,
       upgradeToTooltip:
-        'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels and take up 1 land.<br>Land can be purchasd in the Regular People Shop.',
+        'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels, take up 1 land, and cost you 1 tael per day in upkeep.<br>Land can be purchasd in the Regular People Shop.',
       healthRecovery: 0.5,
       staminaRecovery: 1,
       qiRecovery: 0,
@@ -190,7 +190,7 @@ export class HomeService {
       landRequired: 5,
       maxInventory: 20,
       upgradeToTooltip:
-        'Get a better home and stop the ruffians from stealing your wealth.<br>A better home will cost 1,000 taels and take up 5 land.',
+        'Get a better home and stop the ruffians from stealing your wealth.<br>A better home will cost 1,000 taels, take up 5 land, and cost you 5 taels per day in upkeep.',
       healthRecovery: 0.5,
       staminaRecovery: 3,
       qiRecovery: 0,
@@ -206,13 +206,13 @@ export class HomeService {
       name: 'Simple Hut',
       type: HomeType.SimpleHut,
       description:
-        'A very simple hut. This home and all future homes will remain in your family, and you wiil reincarnate as its heir.',
+        'A very simple hut. This home and all future homes will remain in your family, and you will reincarnate as its heir.',
       cost: 10000,
       costPerDay: 10,
       landRequired: 10,
       maxInventory: 25,
       upgradeToTooltip:
-        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels and take up 10 land.',
+        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels, take up 10 land, and cost you 10 taels per day in upkeep.',
       healthRecovery: 0.7,
       staminaRecovery: 5,
       qiRecovery: 0,
@@ -232,7 +232,8 @@ export class HomeService {
       costPerDay: 20,
       landRequired: 20,
       maxInventory: 30,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100,000 taels and take up 20 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 100,000 taels, take up 20 land, and cost you 20 taels per day in upkeep.',
       healthRecovery: 1,
       staminaRecovery: 10,
       qiRecovery: 0.1,
@@ -252,7 +253,8 @@ export class HomeService {
       costPerDay: 50,
       landRequired: 50,
       maxInventory: 35,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1M taels and take up 50 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 1M taels, take up 50 land, and cost you 50 taels per day in upkeep.',
       healthRecovery: 2,
       staminaRecovery: 15,
       qiRecovery: 0.2,
@@ -272,7 +274,8 @@ export class HomeService {
       costPerDay: 80,
       landRequired: 80,
       maxInventory: 40,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10m taels and take up 80 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 10m taels, take up 80 land, and cost you 80 taels per day in upkeep.',
       healthRecovery: 3,
       staminaRecovery: 20,
       qiRecovery: 0.3,
@@ -292,7 +295,8 @@ export class HomeService {
       costPerDay: 100,
       landRequired: 100,
       maxInventory: 50,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100m taels and take up 100 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 100m taels, take up 100 land, and cost you 100 taels per day in upkeep.',
       healthRecovery: 4,
       staminaRecovery: 25,
       qiRecovery: 0.4,
@@ -312,7 +316,8 @@ export class HomeService {
       costPerDay: 120,
       landRequired: 120,
       maxInventory: 50,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1B taels and take up 120 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 1B taels, take up 120 land, and cost you 120 taels per day in upkeep.',
       healthRecovery: 5,
       staminaRecovery: 30,
       qiRecovery: 0.5,
@@ -332,7 +337,8 @@ export class HomeService {
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 55,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10B taels and take up 150 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 10B taels, take up 150 land, and cost you 150 taels per day in upkeep.',
       healthRecovery: 10,
       staminaRecovery: 35,
       qiRecovery: 1,
@@ -349,10 +355,11 @@ export class HomeService {
       type: HomeType.Castle,
       description: 'An imposing castle.',
       cost: 1e11,
-      costPerDay: 150,
+      costPerDay: 160,
       landRequired: 150,
       maxInventory: 60,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100B taels and take up 150 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 100B taels, take up 150 land, and cost you 160 taels per day in upkeep.',
       healthRecovery: 15,
       staminaRecovery: 40,
       qiRecovery: 2,
@@ -372,7 +379,8 @@ export class HomeService {
       costPerDay: 180,
       landRequired: 180,
       maxInventory: 65,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1T taels and take up 180 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 1T taels, take up 180 land, and cost you 180 taels per day in upkeep.',
       healthRecovery: 20,
       staminaRecovery: 50,
       qiRecovery: 3,
@@ -392,7 +400,8 @@ export class HomeService {
       costPerDay: 500,
       landRequired: 500,
       maxInventory: 70,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10T taels and take up 500 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 10T taels, take up 500 land, and cost you 500 taels per day in upkeep.',
       healthRecovery: 30,
       staminaRecovery: 100,
       qiRecovery: 4,
@@ -412,7 +421,8 @@ export class HomeService {
       costPerDay: 1000,
       landRequired: 1000,
       maxInventory: 80,
-      upgradeToTooltip: 'Get a better house.<br>better home will cost 100T taels and take up 1,000 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>better home will cost 100T taels, take up 1,000 land, and cost you 1,000 taels per day in upkeep.',
       healthRecovery: 50,
       staminaRecovery: 200,
       qiRecovery: 5,
@@ -432,7 +442,8 @@ export class HomeService {
       costPerDay: 10000,
       landRequired: 10000,
       maxInventory: 100,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 1q taels and take up 10,000 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 1q taels, take up 10,000 land, and cost you 10,000 taels per day in upkeep.',
       healthRecovery: 80,
       staminaRecovery: 300,
       qiRecovery: 10,
@@ -452,7 +463,8 @@ export class HomeService {
       costPerDay: 1e6,
       landRequired: 1e6,
       maxInventory: 110,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 10q taels and take up 1,000,000 land.',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 10q taels, take up 1,000,000 land, and cost you 1,000,000 taels per day in upkeep.',
       healthRecovery: 100,
       staminaRecovery: 500,
       qiRecovery: 20,
@@ -472,7 +484,8 @@ export class HomeService {
       costPerDay: 1e7,
       landRequired: 1e7,
       maxInventory: 120,
-      upgradeToTooltip: 'Get a better house.<br>A better home will cost 100q taels and take up 10,000,000 land.<br>',
+      upgradeToTooltip:
+        'Get a better house.<br>A better home will cost 100q taels, take up 10,000,000 land, and cost you 10,000,000 taels per day in upkeep.',
       healthRecovery: 150,
       staminaRecovery: 1000,
       qiRecovery: 30,

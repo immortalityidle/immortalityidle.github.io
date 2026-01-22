@@ -1751,7 +1751,7 @@ export class AchievementService {
         return this.farmService.smoothFarming;
       },
       effect: () => {
-        // the reward is already received in the smoothFarming variable.
+        this.farmService.smoothFarming = true; // restore the smooth farming flag on setProperties
         // Did this one differently due to the risk of qualifying for the achievement then losing it before the check tick fired.
       },
       unlocked: false,
