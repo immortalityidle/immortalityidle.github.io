@@ -617,7 +617,7 @@ export class FollowersService {
         }
         this.characterService.increaseAttribute('spirituality', totalPower);
       },
-      description: 'Priests help you get closer to the divine, increasing your sprituality.',
+      description: 'Priests help you get closer to the divine, increasing your spirituality.',
       totalPower: 0,
     },
     gemologist: {

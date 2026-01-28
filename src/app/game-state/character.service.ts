@@ -752,7 +752,7 @@ export class CharacterService {
     } else if (this.status.nutrition.value <= 0) {
       this.status.nutrition.value = 0;
       if (this.attributes.spirituality.value > 0) {
-        // you're spritual now, you can fast!
+        // you're spiritual now, you can fast!
         const starvationDamage = Math.max(this.status.health.value * 0.2, 20);
         this.logService.injury(
           LogTopic.COMBAT,

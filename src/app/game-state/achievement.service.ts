@@ -37,7 +37,7 @@ export interface AchievementProperties {
 }
 
 export const MEMORY_HOME = 'Home';
-export const MEMORY_SPIRITUALITY = 'Sprituality';
+export const MEMORY_SPIRITUALITY = 'Spirituality';
 export const MEMORY_ASCENSION = 'Ascension';
 export const MEMORY_FOLLOWERS = 'Followers';
 export const MEMORY_SECT = 'Sect';

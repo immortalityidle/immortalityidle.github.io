@@ -1859,7 +1859,7 @@ export class ActivityService {
     yinYangEffect: [YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Balance],
     description: [
       'Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
-      'Enter a meditative state and begin your journey toward spritual enlightenment.',
+      'Enter a meditative state and begin your journey toward spiritual enlightenment.',
       'Extend your senses beyond the mortal realm and connect to deeper realities.',
       'Turn your senses inward and find pure stillness within.',
     ],
