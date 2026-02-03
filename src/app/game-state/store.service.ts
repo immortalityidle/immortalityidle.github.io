@@ -21,8 +21,22 @@ export class StoreService {
   bloodlineLabel = '';
   bloodlineDescription = '';
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
+  qiCompressionDescription = '';
+  qiCompressionCost = Infinity;
   storeOpened = false;
   furnitureIndex = 0;
+  qiConsistency = [
+    'ethereal',
+    'airy',
+    'vaporous',
+    'watery',
+    'creamy',
+    'syrupy',
+    'honey-thick',
+    'semisolid',
+    'solid',
+    'adamant',
+  ];
 
   constructor(
     private logService: LogService,
@@ -173,6 +187,40 @@ export class StoreService {
       this.bloodlineDescription =
         "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Empire, and can break through the limits of humanity. Finally, you will gain aptitudes every day from your current Attributes.";
     }
+    this.qiCompressionDescription =
+      'Compress your Qi from its current ' + this.qiConsistency[this.characterService.qiCompressionLevel] + ' state.';
+    this.qiCompressionCost = Math.pow(10, this.characterService.qiCompressionLevel + 3);
+  }
+
+  upgradeQiCompression() {
+    if (!this.characterService.qiUnlocked) {
+      this.logService.log(
+        LogTopic.EVENT,
+        "You haven't even begun to learn how to manipulate your qi, much less compress it."
+      );
+      return;
+    }
+    if (this.characterService.qiCompressionLevel >= 9) {
+      this.logService.log(LogTopic.EVENT, "You can't compress your Qi any further.");
+      return;
+    }
+    if (this.characterService.status.qi.max < this.qiCompressionCost) {
+      this.logService.log(LogTopic.EVENT, 'You lack the required Qi development to compress your Qi.');
+      return;
+    }
+    this.logService.log(
+      LogTopic.STORY,
+      'Your ' +
+        this.qiConsistency[this.characterService.qiCompressionLevel] +
+        ' Qi implodes within you, strengthening and thickening until it has an almost ' +
+        this.qiConsistency[this.characterService.qiCompressionLevel + 1] +
+        ' consistency. You will have greater power when you use Qi to strengthen your lifespan, infuse your body, or strike foes in battle.' +
+        ' It may take more effort to build up your maximum Qi, but you are certain the struggle will be worth it.'
+    );
+
+    this.characterService.qiCompressionLevel++;
+    this.characterService.status.qi.max = 1;
+    this.dialog.closeAll();
   }
 
   condenseSoulCore() {

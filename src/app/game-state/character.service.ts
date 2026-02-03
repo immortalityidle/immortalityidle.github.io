@@ -132,6 +132,7 @@ export interface CharacterProperties {
   reinforceMeridiansCost: number;
   bloodlineRank: number;
   qiUnlocked: boolean;
+  qiCompressionLevel: number;
   totalLives: number;
   healthBonusFood: number;
   healthBonusBath: number;
@@ -194,6 +195,7 @@ export class CharacterService {
   bloodlineCost = 1000;
   bloodlineRank = 0;
   qiUnlocked = false;
+  qiCompressionLevel = 0;
   attackPower: { [key in AttributeType]?: number } = {
     strength: 0,
     toughness: 0,
@@ -416,7 +418,7 @@ export class CharacterService {
       aptitude: 1,
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
-      icon: 'emoji_food_beverage',
+      icon: 'water',
       attributeGroup: LORE_ATTRIBUTES,
     },
     fireLore: {
@@ -1368,7 +1370,7 @@ export class CharacterService {
     if (this.healthBonusBath > 80000) {
       this.healthBonusBath = 80000;
     }
-    let healthBonusMagicCap = 1000000;
+    let healthBonusMagicCap = 1000000 * (1 + this.qiCompressionLevel);
     let healthBonusSoulCap = 2000000;
     if (this.yinYangBoosted) {
       healthBonusMagicCap += 2 * this.yinYangBalance * healthBonusMagicCap;
@@ -1382,9 +1384,6 @@ export class CharacterService {
     }
     if (this.status.stamina.max > 1000000) {
       this.status.stamina.max = 1000000;
-    }
-    if (this.status.qi.max > 1000000) {
-      this.status.qi.max = 1000000;
     }
     if (this.status.nutrition.max > 1000) {
       this.status.nutrition.max = 1000;
@@ -1406,6 +1405,14 @@ export class CharacterService {
     }
     if (this.hellMoney > this.maxMoney) {
       this.hellMoney = this.maxMoney;
+    }
+  }
+
+  increaseMaxQi(value: number) {
+    this.status.qi.max += value / (1 + this.qiCompressionLevel);
+    const maxQi = Math.pow(10, this.qiCompressionLevel + 4);
+    if (this.status.qi.max > maxQi) {
+      this.status.qi.max = maxQi;
     }
   }
 
@@ -1457,6 +1464,7 @@ export class CharacterService {
       reinforceMeridiansCost: this.reinforceMeridiansCost,
       bloodlineRank: this.bloodlineRank,
       qiUnlocked: this.qiUnlocked,
+      qiCompressionLevel: this.qiCompressionLevel,
       totalLives: this.totalLives,
       healthBonusFood: this.healthBonusFood,
       healthBonusBath: this.healthBonusBath,
@@ -1530,6 +1538,7 @@ export class CharacterService {
     this.bloodlineRank = properties.bloodlineRank;
     this.bloodlineCost = 1000 * Math.pow(100, this.bloodlineRank); // This is derived to avoid save issues.
     this.qiUnlocked = properties.qiUnlocked;
+    this.qiCompressionLevel = properties.qiCompressionLevel;
     this.totalLives = properties.totalLives;
     this.healthBonusFood = properties.healthBonusFood;
     this.healthBonusBath = properties.healthBonusBath;

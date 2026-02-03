@@ -97,7 +97,7 @@ export class LogService {
   fullLog(topic: LogTopic, type: LogType, rawMessage: string): void {
     const log = this.logs[topic];
     const timestamp = Date.now();
-    const message = rawMessage.replace('<br>', ' ');
+    const message = rawMessage.replaceAll('<br>', ' ');
     if (log.length === 0 || message !== log[log.length - 1].message) {
       log.push({
         message: message,

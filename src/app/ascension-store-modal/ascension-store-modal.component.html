@@ -39,7 +39,7 @@
           <br>
           Current Rank: {{storeService.meridianRank}}
           <br>
-            @if (storeService.meridianRank < 9) {
+          @if (storeService.meridianRank < 9) {
             <span>
               Next rank requires {{characterService.reinforceMeridiansCost | bigNumber}} spirituality and a grade {{storeService.meridianRank + 16}} spirit gem{{storeService.meridianRank > 2 ? ' of each element' : ''}}.
             </span>
@@ -68,6 +68,25 @@
           @else {
             <span>
               Max Rank
+            </span>
+          }
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button [disabled]="characterService.qiCompressionLevel >= 9" (click)="storeService.upgradeQiCompression()">Compress Qi</button>
+        </td>
+        <td>
+          {{storeService.qiCompressionDescription}}
+          <br>
+          @if (characterService.qiCompressionLevel < 9) {
+            <span>
+              Next rank requires {{storeService.qiCompressionCost  | bigNumber}} maximum Qi.
+            </span>
+          }
+          @else {
+            <span>
+              Your Qi is compressed as far as possible.
             </span>
           }
         </td>

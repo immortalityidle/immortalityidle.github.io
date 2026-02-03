@@ -1487,6 +1487,10 @@ export class BattleService {
         damage *= 1.2;
       }
 
+      if ((technique.qiCost || 0) > 0) {
+        damage *= 1 + this.characterService.qiCompressionLevel;
+      }
+
       if (technique.extraMultiplier) {
         damage *= technique.extraMultiplier;
       }

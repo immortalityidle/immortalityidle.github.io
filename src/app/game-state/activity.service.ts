@@ -3459,7 +3459,7 @@ export class ActivityService {
           this.coreCultivationCounter++;
           if (this.coreCultivationCounter > 100) {
             this.coreCultivationCounter = 0;
-            this.characterService.status.qi.max++;
+            this.characterService.increaseMaxQi(1);
             this.characterService.status.qi.value++;
           }
         }
@@ -3519,7 +3519,7 @@ export class ActivityService {
 
         this.characterService.healthBonusSoul++;
         this.characterService.status.stamina.max++;
-        this.characterService.status.qi.max++;
+        this.characterService.increaseMaxQi(1);
         this.characterService.checkOverage();
         if (this.characterService.yin > this.characterService.yang) {
           this.characterService.yang++;
@@ -3638,7 +3638,7 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 400;
         if (this.characterService.qiUnlocked && this.characterService.status.qi.value >= 20) {
           this.characterService.status.qi.value -= 20;
-          if (this.characterService.magicLifespan < 36500) {
+          if (this.characterService.magicLifespan < 36500 * (1 + this.characterService.qiCompressionLevel)) {
             this.characterService.magicLifespan += 10;
           }
         }

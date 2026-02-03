@@ -1149,6 +1149,7 @@ export class GameStateService {
       reinforceMeridiansCost: props?.reinforceMeridiansCost || 1000,
       bloodlineRank: props?.bloodlineRank || 0,
       qiUnlocked: props?.qiUnlocked || false,
+      qiCompressionLevel: props?.qiCompressionLevel || 0,
       totalLives: props?.totalLives || 1,
       healthBonusFood: props?.healthBonusFood || 0,
       healthBonusBath: props?.healthBonusBath || 0,
