@@ -862,11 +862,15 @@ baguaMap = [
       increaseAmount: 28,
       value: 1e17,
       description:
-        'This book burning in purple flame is too hot to touch, let alone read. It might make a nice conversation piece at parties though, if you invest in a fireproof shelf for it.',
+        "This book burning in purple flame is too hot to touch and difficult to read. It's clearly dangerous. You should never put it in your home.",
       useConsumes: false,
       locked: true,
       use: () => {
-        // just decorative
+        this.characterService.increaseAttribute('intelligence', 5);
+        this.characterService.yang += 100;
+        if (this.characterService.yin > 100) {
+          this.characterService.yin -= 100;
+        }
       },
       shopable: false,
     },
