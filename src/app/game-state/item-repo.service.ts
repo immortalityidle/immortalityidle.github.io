@@ -167,7 +167,8 @@ baguaMap = [
       color: 'gray',
       elements: ['water'],
       value: 10,
-      description: 'A simple gray bucket of water that lets you splash your face clean.<br>Increases charisma.',
+      description:
+        'A simple gray bucket of water that lets you splash your face clean.<br>Increases charisma, and good hygiene can lengthen your life.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('charisma', 0.01);
@@ -185,7 +186,8 @@ baguaMap = [
       color: 'brown',
       elements: ['water', 'earth'],
       value: 1000,
-      description: 'A clay wash basin with a rag to clean yourself.<br>Increases charisma.',
+      description:
+        'A clay wash basin with a rag to clean yourself.<br>Increases charisma, and good hygiene can lengthen your life.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('charisma', 0.05);
@@ -204,7 +206,7 @@ baguaMap = [
       elements: ['water', 'wood'],
       value: 10000,
       description:
-        'A tall and narrow wooden tub where you can squat and bathe.<br>Increases charisma and health recovery.',
+        'A tall and narrow wooden tub where you can squat and bathe.<br>Increases charisma and health recovery, and good hygiene can lengthen your life.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('charisma', 0.1);
@@ -225,7 +227,7 @@ baguaMap = [
       elements: ['water', 'metal'],
       value: 1000000,
       description:
-        'A luxurious bronze tub where you can get sparkling clean.<br>Increases charisma and health recovery.',
+        'A luxurious bronze tub where you can get sparkling clean.<br>Increases charisma and health recovery, and good hygiene can lengthen your life.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('charisma', 0.2);
@@ -245,7 +247,8 @@ baguaMap = [
       color: 'brown',
       elements: ['water', 'metal', 'fire'],
       value: 1e8,
-      description: 'A luxurious tub with its own heating stove.<br>Good for your health and beauty.',
+      description:
+        'A luxurious tub with its own heating stove.<br>Good for your health and beauty, increases maximum health, and good hygiene can lengthen your life.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('charisma', 0.2);
@@ -265,7 +268,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'books',
       value: 1000000,
-      description: 'An bookshelf to read and expand your mind.',
+      description: 'An bookshelf to read and expand your mind.<br>Increases intelligence.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('intelligence', 0.01);
@@ -279,7 +282,7 @@ baguaMap = [
       subtype: 'spiritual',
       value: 1e7,
       description:
-        "A quiet shrine for contemplative prayer.<br>You won't be able to use this unless you have some innate spirituality.",
+        "A quiet shrine for contemplative prayer.<br>You won't be able to use this unless you have some innate spirituality.<br>Increases spirituality.",
       useConsumes: false,
       use: () => {
         if (this.characterService.attributes.spirituality.value > 0) {
@@ -294,7 +297,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'animal',
       value: 1000000,
-      description: 'A kennel that comes with a faithful hunting dog.',
+      description: 'A kennel that comes with a faithful hunting dog.<br>Increases animal handling.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('animalHandling', 0.01);
@@ -307,7 +310,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'animal',
       value: 1000000,
-      description: 'A cage holding a trained cormorant that can help you with fishing.',
+      description: 'A cage holding a trained cormorant that can help you with fishing.<br>Increases animal handling.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('animalHandling', 0.01);
@@ -320,7 +323,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'fitness',
       value: 1000000,
-      description: 'A training dummy for practicing martial arts.',
+      description: 'A training dummy for practicing martial arts.<br>Increases strength and speed.',
       useConsumes: false,
       use: () => {
         this.characterService.increaseAttribute('strength', 0.001);
@@ -666,7 +669,7 @@ baguaMap = [
       increaseAmount: 5,
       value: 1e8,
       description:
-        'A colorful collection of scholarly textbooks arranged on a custom-made shelf. Who knew some monsters were readers?',
+        'A colorful collection of scholarly textbooks arranged on a custom-made shelf. Who knew some monsters were readers?<br>Increases intelligence.',
       useConsumes: false,
       locked: true,
       use: () => {
@@ -718,7 +721,7 @@ baguaMap = [
       increaseAmount: 5,
       value: 1e10,
       description:
-        "How did that walking shark get such massive quads? You don't know, but you're determined to find out.",
+        "How did that walking shark get such massive quads? You don't know, but you're determined to find out.<br>Increases strength and speed.",
       useConsumes: false,
       locked: true,
       use: () => {
@@ -788,7 +791,7 @@ baguaMap = [
       increaseAmount: 15,
       value: 1e14,
       description:
-        'The softest bed you can imagine, with magical restorative properties to ensure your sleep is perfect.',
+        'The softest bed you can imagine, with magical restorative properties to ensure your sleep is perfect.<br>Restores health and stamina.',
       useConsumes: false,
       locked: true,
       use: () => {
@@ -826,7 +829,7 @@ baguaMap = [
       increaseAmount: 20,
       value: 1e18,
       description:
-        "A sacred shrine guarded by the most powerful creatures in the forest. You can move it to your home, but it won't be cheap.",
+        "A sacred shrine guarded by the most powerful creatures in the forest. You can move it to your home, but it won't be cheap.<br>Increases spirituality.",
       useConsumes: false,
       locked: true,
       use: () => {
@@ -862,7 +865,7 @@ baguaMap = [
       increaseAmount: 28,
       value: 1e17,
       description:
-        "This book burning in purple flame is too hot to touch and difficult to read. It's clearly dangerous. You should never put it in your home.",
+        "This book burning in purple flame is too hot to touch and difficult to read. It's clearly dangerous. You should never put it in your home.<br>Increases intelligence but causes a terrible imbalance in your yin and yang.",
       useConsumes: false,
       locked: true,
       use: () => {
@@ -884,7 +887,7 @@ baguaMap = [
       increaseAmount: 30,
       value: 1e18,
       description:
-        'A vault made from the nearly indestructable hide of a doomworm. Seems to almost magically increase your wealth.',
+        'A vault made from the nearly indestructable hide of a doomworm.<br>Magically increases your wealth.',
       useConsumes: false,
       locked: true,
       use: () => {
@@ -901,7 +904,8 @@ baguaMap = [
       elements: ['metal'],
       increaseAmount: 32,
       value: 1e20,
-      description: "Don't read this. Just don't. No matter how much it calls to you, just leave it on the shelf.",
+      description:
+        "Don't read this. Just don't. No matter how much it calls to you, just leave it on the shelf.<br>Increases intelligence but causes a terrible imbalance in your yin and yang.",
       useConsumes: false,
       locked: true,
       use: () => {
@@ -940,7 +944,7 @@ baguaMap = [
       increaseAmount: 40,
       value: 1e22,
       description:
-        'A mystical altar found buried in the depths of the sea. The cost of bringing it home would be breathtaking.',
+        'A mystical altar found buried in the depths of the sea. The cost of bringing it home would be breathtaking.<br>Increases spirituality.',
       useConsumes: false,
       locked: true,
       use: () => {
@@ -960,7 +964,7 @@ baguaMap = [
       increaseAmount: 40,
       value: 1e22,
       description:
-        "With the right (and very expensive) setup, the stormbringer's heart can be harnessed for your daily bathing. Neat!",
+        "With the right (and very expensive) setup, the stormbringer's heart can be harnessed for your daily bathing. Neat!<br>Increases charisma, restores health and stamina, increases maximum health, and good hygiene can lengthen your life",
       useConsumes: false,
       locked: true,
       use: () => {
@@ -984,8 +988,7 @@ baguaMap = [
       elements: ['fire', 'earth', 'metal'],
       increaseAmount: 40,
       value: 1e23,
-      description:
-        'A vault made from unbreakable scales. Crazy expensive, but seems to magically increase your wealth.',
+      description: 'A vault made from unbreakable scales.<br>Crazy expensive, but magically increases your wealth.',
       useConsumes: false,
       locked: true,
       use: () => {

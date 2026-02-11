@@ -15,7 +15,7 @@ import { ActivityType } from './activity';
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
 export enum HQType {
-  GatheringField,
+  GatheringField = 0,
   MeetingHut,
   SimpleSchool,
   TrainingCenter,
@@ -971,52 +971,75 @@ export class FollowersService {
   }
 
   hqWorks() {
-    // check if requirements are met
+    // check if requirements are met. If requirements are not met, see if a lower level sect's requirements are met and act like that level
     if (!this.hqUnlocked) {
       return;
     }
-    if (this.characterService.money < this.hqs[this.hq].moneyPerDay) {
+    let effectiveHQLevel = this.hq;
+    while (effectiveHQLevel >= 0 && this.characterService.money < this.hqs[effectiveHQLevel].moneyPerDay) {
+      effectiveHQLevel--;
+    }
+    if (effectiveHQLevel < 0) {
       return;
     }
     let foodSubType = '';
-    if (this.hqs[this.hq].mealsRequired) {
+    if (this.hqs[effectiveHQLevel].mealsRequired) {
       foodSubType = 'meal';
     }
-    if (
-      this.hqs[this.hq].foodPerDay > 0 &&
-      this.inventoryService.checkFor('food', this.hqs[this.hq].foodPerDay * this.followers.length, foodSubType) === -1
+    while (
+      effectiveHQLevel >= 0 &&
+      this.hqs[effectiveHQLevel].mealsRequired &&
+      this.hqs[effectiveHQLevel].foodPerDay > 0 &&
+      this.inventoryService.checkFor(
+        'food',
+        this.hqs[effectiveHQLevel].foodPerDay * this.followers.length,
+        foodSubType
+      ) === -1
     ) {
+      effectiveHQLevel--;
+    }
+    if (effectiveHQLevel < 0) {
       return;
     }
-    if (
-      this.hqs[this.hq].gemsPerDay > 0 &&
-      this.inventoryService.checkForByValue('gem', this.hqs[this.hq].gemsPerDay * 10) === -1
+    while (
+      effectiveHQLevel >= 0 &&
+      this.hqs[effectiveHQLevel].gemsPerDay > 0 &&
+      this.inventoryService.checkForByValue('gem', this.hqs[effectiveHQLevel].gemsPerDay * 10) === -1
     ) {
+      effectiveHQLevel--;
+    }
+    if (effectiveHQLevel < 0) {
       return;
     }
     const administrators = this.followers.filter(follower => follower.job === 'administrator');
     let adminsAtLevel = 0;
-    for (const admin of administrators) {
-      if (admin.power >= this.hqs[this.hq].administratorLevel) {
-        adminsAtLevel++;
+    while (effectiveHQLevel >= 0) {
+      for (const admin of administrators) {
+        if (admin.power >= this.hqs[effectiveHQLevel].administratorLevel) {
+          adminsAtLevel++;
+        }
+      }
+      if (adminsAtLevel < this.hqs[effectiveHQLevel].administratorsRequired) {
+        effectiveHQLevel--;
+      } else {
+        break;
       }
     }
-    if (adminsAtLevel < this.hqs[this.hq].administratorsRequired) {
+    if (effectiveHQLevel < 0) {
       return;
     }
-
-    // requirements are met, pay costs
-    this.characterService.updateMoney(0 - this.hqs[this.hq].moneyPerDay);
-    if (this.hqs[this.hq].gemsPerDay > 0) {
-      this.inventoryService.consumeByValue('gem', this.hqs[this.hq].gemsPerDay * 10);
+    // requirements are met at effectiveHQLevel, pay costs
+    this.characterService.updateMoney(0 - this.hqs[effectiveHQLevel].moneyPerDay);
+    if (this.hqs[effectiveHQLevel].gemsPerDay > 0) {
+      this.inventoryService.consumeByValue('gem', this.hqs[effectiveHQLevel].gemsPerDay * 10);
     }
-    if (this.hqs[this.hq].foodPerDay > 0) {
-      this.inventoryService.consume('food', this.hqs[this.hq].foodPerDay, true, false, foodSubType);
+    if (this.hqs[effectiveHQLevel].foodPerDay > 0) {
+      this.inventoryService.consume('food', this.hqs[effectiveHQLevel].foodPerDay, true, false, foodSubType);
     }
 
     // get the benefits
     for (const follower of this.followers) {
-      follower.experience += this.hqs[this.hq].experiencePerDay;
+      follower.experience += this.hqs[effectiveHQLevel].experiencePerDay;
       this.levelUp(follower);
     }
     this.giftRecipientCounter++;

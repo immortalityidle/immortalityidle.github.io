@@ -1237,7 +1237,7 @@ export class BattleService {
       }
       let attackTriggered = false;
       for (const technique of enemy.techniques) {
-        if (technique.ticks === technique.ticksRequired) {
+        if (technique.ticks >= technique.ticksRequired) {
           if (!attackTriggered) {
             // a mercy to the player: no more than one attack will fire per enemy per tick
             this.enemyAttack(technique, enemy);
@@ -1390,7 +1390,7 @@ export class BattleService {
         familyTechniquesCounter++;
       }
       if (technique.unlocked && !technique.disabled) {
-        if (technique.ticks === technique.ticksRequired) {
+        if (technique.ticks >= technique.ticksRequired) {
           if (technique.familyTechnique) {
             technique.baseDamage++;
           }
