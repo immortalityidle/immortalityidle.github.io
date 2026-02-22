@@ -704,6 +704,7 @@ export class GameStateService {
       incomeMultiplier: props?.incomeMultiplier || 1,
       hiddenActivities: props?.hiddenActivities || [],
       activityOptionsUnlocked: props?.activityOptionsUnlocked || false,
+      openPortals: props?.openPortals || [],
     };
   }
 

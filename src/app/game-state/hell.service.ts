@@ -108,7 +108,7 @@ export class HellService {
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
-      this.reset();
+      this.returnToMortalRealm();
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -119,7 +119,7 @@ export class HellService {
     });
   }
 
-  reset() {
+  returnToMortalRealm() {
     // reincarnation gets you out and back to the mortal realm
     if (this.inHell() && this.activityService.currentRealm < this.hells.length) {
       const leavingHell = this.hells[this.activityService.currentRealm];

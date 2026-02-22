@@ -62,6 +62,7 @@ export interface ActivityProperties {
   incomeMultiplier: number;
   hiddenActivities: ActivityType[];
   activityOptionsUnlocked: boolean;
+  openPortals: ActivityType[];
 }
 
 export interface DisplayActivity {
@@ -643,6 +644,7 @@ export class ActivityService {
   getProperties(): ActivityProperties {
     const unlockedActivities: ActivityType[] = [];
     const discoveredActivities: ActivityType[] = [];
+    const openPortals: ActivityType[] = [];
     for (const activity of this.activities) {
       if (activity.unlocked) {
         unlockedActivities.push(activity.activityType);
@@ -650,6 +652,9 @@ export class ActivityService {
       if (activity.discovered) {
         discoveredActivities.push(activity.activityType);
       }
+    }
+    for (const portal of this.portals) {
+      openPortals.push(portal.activityType);
     }
     return {
       autoRestart: this.autoRestart,
@@ -687,6 +692,7 @@ export class ActivityService {
       incomeMultiplier: this.incomeMultiplier,
       hiddenActivities: this.hiddenActivities,
       activityOptionsUnlocked: this.activityOptionsUnlocked(),
+      openPortals: openPortals,
     };
   }
 
@@ -699,6 +705,13 @@ export class ActivityService {
       if (!activity.discovered) {
         activity.discovered =
           discoveredActivities.includes(activity.activityType) || unlockedActivities.includes(activity.activityType);
+      }
+    }
+    this.portals = [];
+    for (const portalType of properties.openPortals) {
+      const portalActivity = this.getActivityByType(portalType);
+      if (portalActivity) {
+        this.portals.push(portalActivity);
       }
     }
     this.autoRestart = properties.autoRestart;
@@ -975,6 +988,10 @@ export class ActivityService {
       if (activity.activityType === activityType) {
         return activity;
       }
+    }
+    if (activityType === ActivityType.ReturnToHell) {
+      // kind of an ugly hack to deal with portals outside of hell, refactor this later
+      return this.returnToHell;
     }
     return null;
   }
