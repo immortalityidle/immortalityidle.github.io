@@ -51,6 +51,7 @@ export interface Enemy {
   element?: string;
   statusEffects?: StatusEffect[];
   immunities?: string[];
+  resistances?: string[];
   unlocksFurniture?: string;
 }
 
@@ -211,6 +212,9 @@ export const EFFECT_SHIELDING = 'Shielding';
 export const EFFECT_PIERCING = 'Piercing';
 export const EFFECT_HASTE = 'Haste';
 export const EFFECT_SLOW = 'Slow';
+
+export const EFFECT_FEEDER = 'feeder';
+export const EFFECT_ZOMBIE_DECOY = 'zombie_decoy';
 
 @Injectable({
   providedIn: 'root',
@@ -1243,7 +1247,11 @@ export class BattleService {
             enemy.statusEffects.splice(i, 1);
           } else {
             if (enemy.statusEffects[i].name === EFFECT_POISON) {
-              enemy.health -= enemy.health * 0.01;
+              if (enemy.resistances && enemy.resistances.includes(EFFECT_POISON)) {
+                enemy.health -= enemy.health * 0.00001;
+              } else {
+                enemy.health -= enemy.health * 0.01;
+              }
             } else if (enemy.statusEffects[i].name === EFFECT_SLOW) {
               slowingEffect = enemy.statusEffects[i];
             }
@@ -1348,7 +1356,7 @@ export class BattleService {
     }
     this.characterService.status.health.value -= damage;
     if (technique.effect) {
-      if (technique.effect === 'feeder' && this.hellService) {
+      if (technique.effect === EFFECT_FEEDER && this.hellService) {
         if (technique.hitTracker !== undefined && technique.hitTracker < 2) {
           technique.hitTracker++;
         } else {
@@ -1375,6 +1383,8 @@ export class BattleService {
         }
         enemy.health *= multiplier;
         technique.hitTracker++;
+      } else if (technique.effect === EFFECT_ZOMBIE_DECOY) {
+        this.addZombieDecoy();
       }
     }
 
@@ -2078,6 +2088,28 @@ export class BattleService {
       ],
       immunities: [EFFECT_DOOM, EFFECT_POISON],
     });
+  }
+
+  addZombieDecoy() {
+    this.addEnemy({
+      name: 'Zombie Decoy',
+      baseName: 'Zombie Decoy',
+      health: 1e20,
+      maxHealth: 1e20,
+      defense: 0,
+      loot: [],
+      unique: true,
+      techniques: [
+        {
+          name: 'Shambling Strike',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 3e10,
+          unlocked: true,
+        },
+      ],
+    });
+    this.currentEnemy = this.enemies[this.enemies.length - 1];
   }
 
   private defeatEffect(enemy: Enemy) {

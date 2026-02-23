@@ -183,7 +183,7 @@ export class ContemplationService {
       unlocksMore: false,
     },
     {
-      name: 'Tao of Fortication',
+      name: 'Tao of Fortification',
       description:
         'Contemplate the enduring aspects of metal combined with earth.<br><br>Increases toughness and some lore gains.',
       progress: 0,

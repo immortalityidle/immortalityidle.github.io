@@ -3,7 +3,7 @@ import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
-import { BattleService, EFFECT_CORRUPTION } from './battle.service';
+import { BattleService, EFFECT_CORRUPTION, EFFECT_FEEDER, EFFECT_POISON, EFFECT_ZOMBIE_DECOY } from './battle.service';
 import { Activity, ActivityType, LocationType, Realm, YinYangEffect } from './activity';
 import { FollowersService } from './followers.service';
 import { InventoryService, Item } from './inventory.service';
@@ -72,6 +72,7 @@ export class HellService {
   fasterHellMoney = false;
   burnedMoney = 0;
   hellBossBaseHealth = 1e36;
+  baseHellBossDamage = 1e17;
 
   constructor(
     private logService: LogService,
@@ -289,7 +290,7 @@ export class HellService {
             ticks: 0,
             ticksRequired: 10,
             baseDamage: 1e6,
-            effect: 'feeder',
+            effect: EFFECT_FEEDER,
             hitTracker: 0,
             unlocked: true,
           },
@@ -335,7 +336,6 @@ export class HellService {
   }
 
   fightHellBoss() {
-    // TODO: tune stats
     if (this.activityService.currentRealm === Realm.TongueRipping) {
       this.battleService.addEnemy({
         name: 'Gorbolash the Gossip Gasher',
@@ -346,13 +346,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownTongueRippers']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Verbal Barrage',
             ticks: 0,
             ticksRequired: 10,
-            baseDamage: 1e10,
+            baseDamage: this.baseHellBossDamage,
+            unlocked: true,
+          },
+          {
+            name: 'Cutting Words',
+            ticks: 0,
+            ticksRequired: 1,
+            baseDamage: this.baseHellBossDamage * 0.2,
+            unlocked: true,
+          },
+          {
+            name: 'Backbiting Blow',
+            ticks: 0,
+            ticksRequired: 100,
+            baseDamage: this.baseHellBossDamage * 200,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.Scissors) {
       this.battleService.addEnemy({
@@ -364,13 +379,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownScissors']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Adulterating Strike',
             ticks: 0,
             ticksRequired: 10,
-            baseDamage: 1e11,
+            baseDamage: this.baseHellBossDamage,
+            unlocked: true,
+          },
+          {
+            name: 'Divisive Slice',
+            ticks: 0,
+            ticksRequired: 2,
+            baseDamage: this.baseHellBossDamage * 0.5,
+            unlocked: true,
+          },
+          {
+            name: 'Contemptuous Cleave',
+            ticks: 0,
+            ticksRequired: 44,
+            baseDamage: this.baseHellBossDamage * 444,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.TreesOfKnives) {
       this.battleService.addEnemy({
@@ -382,13 +412,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownTreesOfKnives']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Quarrelous Clash',
             ticks: 0,
             ticksRequired: 10,
-            baseDamage: 1e10,
+            baseDamage: this.baseHellBossDamage * 2,
+            unlocked: true,
+          },
+          {
+            name: 'Contentious Fist',
+            ticks: 0,
+            ticksRequired: 3,
+            baseDamage: this.baseHellBossDamage,
+            unlocked: true,
+          },
+          {
+            name: "Harmony's End",
+            ticks: 0,
+            ticksRequired: 777,
+            baseDamage: this.baseHellBossDamage * 7777,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.Mirrors) {
       this.battleService.addEnemy({
@@ -400,13 +445,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownMirrors']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Shame',
             ticks: 0,
             ticksRequired: 10,
-            baseDamage: 1e10,
+            baseDamage: this.baseHellBossDamage,
+            unlocked: true,
+          },
+          {
+            name: 'Self Loathing',
+            ticks: 0,
+            ticksRequired: 2,
+            baseDamage: this.baseHellBossDamage * 0.5,
+            unlocked: true,
+          },
+          {
+            name: 'Unending Guilt',
+            ticks: 0,
+            ticksRequired: 444,
+            baseDamage: this.baseHellBossDamage * 4444,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.Steamers) {
       this.battleService.addEnemy({
@@ -418,13 +478,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownSteamers']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Flattering Words',
             ticks: 0,
             ticksRequired: 10,
-            baseDamage: 1e10,
+            baseDamage: 1,
+            unlocked: true,
+          },
+          {
+            name: 'Kind Face',
+            ticks: 0,
+            ticksRequired: 2,
+            baseDamage: 1,
+            unlocked: true,
+          },
+          {
+            name: 'Treacherous Twist',
+            ticks: 0,
+            ticksRequired: 8888,
+            baseDamage: this.baseHellBossDamage * 1e50,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.CopperPillars) {
       this.battleService.addEnemy({
@@ -436,13 +511,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownPillars']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Blazing Bolt',
             ticks: 0,
             ticksRequired: 10,
-            baseDamage: 1e10,
+            baseDamage: this.baseHellBossDamage * 5,
+            unlocked: true,
+          },
+          {
+            name: 'Shower of Sparks',
+            ticks: 0,
+            ticksRequired: 1,
+            baseDamage: this.baseHellBossDamage,
+            unlocked: true,
+          },
+          {
+            name: 'Tempting Immolation',
+            ticks: 0,
+            ticksRequired: 4444,
+            baseDamage: this.baseHellBossDamage * 1e50,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.MountainOfKnives) {
       this.battleService.addEnemy({
@@ -454,13 +544,14 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownMountainOfKnives']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Murderous Rampage',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 3,
+            baseDamage: this.baseHellBossDamage * 20,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.MountainOfIce) {
       this.battleService.addEnemy({
@@ -472,13 +563,21 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownMountainOfIce']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Stacked Deck',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 3,
+            baseDamage: this.baseHellBossDamage * 10,
+            unlocked: true,
+          },
+          {
+            name: 'Loaded Dice',
+            ticks: 0,
+            ticksRequired: 5,
+            baseDamage: this.baseHellBossDamage * 18,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.CauldronsOfOil) {
       this.battleService.addEnemy({
@@ -490,13 +589,21 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownCauldronsOfOil']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Shameful Thoughts',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 1,
+            baseDamage: this.baseHellBossDamage * 10,
+            unlocked: true,
+          },
+          {
+            name: 'Disgusting Disgrace',
+            ticks: 0,
+            ticksRequired: 8,
+            baseDamage: this.baseHellBossDamage * 18,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.CattlePit) {
       this.battleService.addEnemy({
@@ -508,13 +615,21 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownCattlePit']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'MOOOOOOO!!!',
             ticks: 0,
             ticksRequired: 10,
-            baseDamage: 1e10,
+            baseDamage: this.baseHellBossDamage * 25,
+            unlocked: true,
+          },
+          {
+            name: 'Devil Milk Flood',
+            ticks: 0,
+            ticksRequired: 1000,
+            baseDamage: this.baseHellBossDamage * 1e50,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.CrushingBoulder) {
       this.battleService.addEnemy({
@@ -526,13 +641,14 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownCrushingBoulder']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Crush!',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 100,
+            baseDamage: this.baseHellBossDamage * 250,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.MortarsAndPestles) {
       this.battleService.addEnemy({
@@ -544,13 +660,21 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownMortarsAndPestles']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Greedy Gobbling',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 1,
+            baseDamage: this.baseHellBossDamage,
+            unlocked: true,
+          },
+          {
+            name: 'Big Bite',
+            ticks: 0,
+            ticksRequired: 44,
+            baseDamage: this.baseHellBossDamage * 44,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.BloodPool) {
       this.battleService.addEnemy({
@@ -562,13 +686,21 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownBloodPool']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Mocking Jeer',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 4,
+            baseDamage: this.baseHellBossDamage * 4,
+            unlocked: true,
+          },
+          {
+            name: 'Disdainful Slap',
+            ticks: 0,
+            ticksRequired: 44,
+            baseDamage: this.baseHellBossDamage * 44,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.WrongfulDead) {
       this.battleService.addEnemy({
@@ -580,13 +712,21 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownWrongfulDead']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Cleansing Rain',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 2,
+            baseDamage: this.baseHellBossDamage,
+            unlocked: true,
+          },
+          {
+            name: 'Merciful Thunderclap',
+            ticks: 0,
+            ticksRequired: 4444,
+            baseDamage: this.baseHellBossDamage * 1e50,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.Dismemberment) {
       this.battleService.addEnemy({
@@ -598,13 +738,29 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownDismemberment']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Boneyard Reconstruction',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 14,
+            baseDamage: 1,
+            effect: EFFECT_ZOMBIE_DECOY,
+            unlocked: true,
+          },
+          {
+            name: 'Sever Limbs',
+            ticks: 0,
+            ticksRequired: 44,
+            baseDamage: this.baseHellBossDamage * 444,
+            unlocked: true,
+          },
+          {
+            name: 'Decapitating Strike',
+            ticks: 0,
+            ticksRequired: 444,
+            baseDamage: this.baseHellBossDamage * 1e50,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.MountainOfFire) {
       this.battleService.addEnemy({
@@ -616,13 +772,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownFireMountain']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Choking Ash',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 4,
+            baseDamage: this.baseHellBossDamage * 7,
+            unlocked: true,
+          },
+          {
+            name: 'Lava Bomb',
+            ticks: 0,
+            ticksRequired: 44,
+            baseDamage: this.baseHellBossDamage * 444,
+            unlocked: true,
+          },
+          {
+            name: 'Eruption',
+            ticks: 0,
+            ticksRequired: 77,
+            baseDamage: this.baseHellBossDamage * 777,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.Mills) {
       this.battleService.addEnemy({
@@ -634,13 +805,21 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownMills']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Cruel Oppression',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 7,
+            baseDamage: this.baseHellBossDamage * 77,
+            unlocked: true,
+          },
+          {
+            name: 'Tyranical Domination',
+            ticks: 0,
+            ticksRequired: 77,
+            baseDamage: this.baseHellBossDamage * 777,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     } else if (this.activityService.currentRealm === Realm.Saws) {
       this.battleService.addEnemy({
@@ -652,13 +831,28 @@ export class HellService {
         loot: [this.itemRepoService.items['hellCrownSaws']],
         techniques: [
           {
-            name: 'Attack',
+            name: 'Sly Swipe',
             ticks: 0,
-            ticksRequired: 10,
-            baseDamage: 1e10,
+            ticksRequired: 4,
+            baseDamage: this.baseHellBossDamage * 2,
+            unlocked: true,
+          },
+          {
+            name: 'Bilking Blow',
+            ticks: 0,
+            ticksRequired: 22,
+            baseDamage: this.baseHellBossDamage * 22,
+            unlocked: true,
+          },
+          {
+            name: 'Unrefusable Deal',
+            ticks: 0,
+            ticksRequired: 4848,
+            baseDamage: this.baseHellBossDamage * 1e50,
             unlocked: true,
           },
         ],
+        resistances: [EFFECT_POISON],
       });
     }
   }
@@ -1286,7 +1480,7 @@ export class HellService {
     {
       name: 'Hell of the Crushing Boulder',
       description:
-        'Torment for child-killer and abondoners where the damned have to lift giant boulders or be crushed under them.<br>Atlas had it easy compared to these people.',
+        'Torment for child-killers and abandoners where the damned have to lift giant boulders or be crushed under them.<br>Atlas had it easy compared to these people.',
       index: Realm.CrushingBoulder,
       setPortals: () => {
         this.activityService.portals = [this.activityService.escapeHell];
