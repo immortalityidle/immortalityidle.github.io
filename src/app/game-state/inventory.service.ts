@@ -2560,7 +2560,11 @@ export class InventoryService {
       }
       // swap the pouch item with the inventory item
       const temp = this.itemStacks[itemIndex];
-      this.itemStacks[itemIndex] = this.characterService.itemPouches[pouchIndex];
+      if (this.characterService.itemPouches[pouchIndex].quantity > 0) {
+        this.itemStacks[itemIndex] = this.characterService.itemPouches[pouchIndex];
+      } else {
+        this.itemStacks[itemIndex] = this.getEmptyItemStack();
+      }
       this.characterService.itemPouches[pouchIndex] = temp;
       this.characterService.itemPouches[pouchIndex].id =
         pouchIndex +

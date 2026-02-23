@@ -885,7 +885,7 @@ export class AchievementService {
       description: 'You drank 888 potions and unlocked a second potion slot.',
       hint: 'Glug, glug, glug.',
       check: () => {
-        return this.inventoryService.lifetimePotionsUsed >= 88;
+        return this.inventoryService.lifetimePotionsUsed >= 888;
       },
       effect: () => {
         if (this.characterService.itemPouches.length < 2) {
@@ -1998,7 +1998,7 @@ export class AchievementService {
       description: 'You earned 50 achievements. Good job!',
       hint: 'Can you get one for having lots?',
       check: () => {
-        return this.unlockAchievement.length >= 50;
+        return this.unlockedAchievements.length >= 50;
       },
       effect: () => {
         // no effect, it's just for fun
@@ -2010,7 +2010,7 @@ export class AchievementService {
       description: 'You earned 100 achievements. Good job!',
       hint: 'Can you get more for having more?',
       check: () => {
-        return this.unlockAchievement.length >= 100;
+        return this.unlockedAchievements.length >= 100;
       },
       effect: () => {
         // no effect, it's just for fun

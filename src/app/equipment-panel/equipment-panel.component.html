@@ -92,7 +92,8 @@
                 cdkDrag (cdkDragStarted)="dragStart()" (cdkDragEnded)="dragEnd()" (cdkDragMoved)="dragMoved($event)" (cdkDragReleased)="dragReleased($event)"
                 [cdkDragData]="itemStack" [cdkDragDisabled]="!itemStack?.item"
                 (dblclick)="pouchDoubleClicked($index, $event)"
-                tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
+                tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}
+                {{((itemStack?.item?.cooldown || 0) > 0) ? '<br>' + 'Cooldown: ' + itemStack?.item?.cooldown + ' ticks' : ''}}">
                 <div class="itemName textOverflow">
                   @if (itemStack?.item?.imageFile){
                     <img ngSrc="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" priority 

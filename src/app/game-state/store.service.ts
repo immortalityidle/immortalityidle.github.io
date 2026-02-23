@@ -18,7 +18,6 @@ export class StoreService {
   selectedItem: Item | null;
   soulCoreRank = 0;
   meridianRank = 0;
-  bloodlineLabel = '';
   bloodlineDescription = '';
   bloodLineHomeRequirement: Home = this.homeService.homesList[HomeType.Palace];
   qiCompressionDescription = '';
@@ -133,11 +132,6 @@ export class StoreService {
   updateAscensions() {
     this.soulCoreRank = this.characterService.soulCoreRank();
     this.meridianRank = this.characterService.meridianRank();
-    if (this.characterService.bloodlineRank === 0) {
-      this.bloodlineLabel = 'Establish Bloodline';
-    } else {
-      this.bloodlineLabel = 'Enhance Bloodline';
-    }
     if (this.characterService.bloodlineRank === 0) {
       // Weapons
       this.bloodlineDescription =

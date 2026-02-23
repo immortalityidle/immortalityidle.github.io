@@ -56,6 +56,7 @@ export const CONCEPT_CREATION = 'Tao of Creation';
 export const CONCEPT_ANNIHILATION = 'Tao of Annihilation';
 export const CONCEPT_VOID = 'Tao of the Void';
 export const CONCEPT_SPACE = 'Tao of the Void';
+export const CONCEPT_BEASTS = 'Tao of Beasts';
 
 @Injectable({
   providedIn: 'root',
@@ -138,7 +139,7 @@ export class ContemplationService {
       unlocksMore: false,
     },
     {
-      name: 'Tao of Beasts',
+      name: CONCEPT_BEASTS,
       description:
         'Contemplate the true nature of beasts, coming to understand both their domestic and feral natures.<br><br>Increases Animal Handling gain and the power of certain techniques.',
       progress: 0,

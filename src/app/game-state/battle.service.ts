@@ -771,6 +771,19 @@ export class BattleService {
         }
       }
 
+      if (this.activeFormation === '') {
+        this.displayActiveFormation.set('');
+        this.displayFormationDuration.set(0);
+      } else {
+        this.displayActiveFormation.set(this.activeFormation);
+        this.displayFormationDuration.set(this.formationDuration);
+      }
+      for (const pouchItem of this.characterService.itemPouches) {
+        if (pouchItem.item && pouchItem.item.type === 'formationKit') {
+          pouchItem.item.cooldown = this.formationCooldown;
+        }
+      }
+
       this.techniques[1].unlocked = this.characterService.equipment.rightHand !== null;
       this.techniques[2].unlocked = this.characterService.equipment.leftHand !== null;
 
@@ -969,13 +982,16 @@ export class BattleService {
         } else if (itemStack.item.type === 'food') {
           if (
             this.characterService.status[this.foodThresholdStatusType].value <
-            this.characterService.status[this.foodThresholdStatusType].max * (this.foodThreshold / 100)
+              this.characterService.status[this.foodThresholdStatusType].max * (this.foodThreshold / 100) &&
+            this.inventoryService.foodEatenToday < this.inventoryService.maxFoodPerDay
           ) {
-            this.inventoryService.eatFood(itemStack.item, 1);
-            itemStack.quantity--;
-            itemStack.item.cooldown = this.foodCooldown;
-            this.pouchFoodUsed++;
-            itemUsed = true;
+            const eaten = this.inventoryService.eatFood(itemStack.item, 1);
+            if (eaten > 0) {
+              itemStack.quantity -= eaten;
+              itemStack.item.cooldown = this.foodCooldown;
+              this.pouchFoodUsed++;
+              itemUsed = true;
+            }
           }
         }
       } else {
@@ -2440,7 +2456,7 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 2500,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
-      unlocksFurniture: 'Cuteness Portrait',
+      unlocksFurniture: 'Cute Portrait',
     },
     {
       name: 'ghoul',

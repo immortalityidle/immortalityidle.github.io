@@ -1979,7 +1979,7 @@ export class HomeService {
       let totalValue = 0;
 
       for (const itemStack of herbStacks) {
-        totalValue += itemStack.item!.value * 0.5;
+        totalValue += itemStack.item!.value;
         itemStack.quantity--;
       }
       if (totalValue < 1) {
@@ -1987,13 +1987,13 @@ export class HomeService {
         return;
       }
       if (alchemyLevel >= 3 && gemStack) {
-        totalValue += gemStack.item!.value;
+        totalValue *= gemStack.item!.value;
       }
       if (gemStack) {
         gemStack!.quantity--;
       }
 
-      const grade = Math.ceil(totalValue / 10);
+      const grade = Math.ceil(totalValue / 5);
       const pillName = this.getPillPrefix(grade) + ' Everflowing Fountain Pill';
       this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + pillName + '. Keep up the good work.');
       this.inventoryService.addItem({

@@ -8,6 +8,7 @@ import { Activity, ActivityType, LocationType, Realm, YinYangEffect } from './ac
 import { FollowersService } from './followers.service';
 import { InventoryService, Item } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
+import { CONCEPT_BEASTS, ContemplationService } from './contemplation.service';
 
 export interface Hell {
   name: string;
@@ -80,7 +81,8 @@ export class HellService {
     private followersService: FollowersService,
     private battleService: BattleService,
     private inventoryService: InventoryService,
-    private itemRepoService: ItemRepoService
+    private itemRepoService: ItemRepoService,
+    private contemplationService: ContemplationService
   ) {
     mainLoopService.tickSubject.subscribe(() => {
       if (this.activityService.currentRealm >= this.hells.length) {
@@ -1253,6 +1255,7 @@ export class HellService {
         this.activityService.portals = [this.activityService.escapeHell];
       },
       completeEffect: () => {
+        this.contemplationService.discoverConcept(CONCEPT_BEASTS);
         this.logService.log(
           LogTopic.STORY,
           "The horde of rampaging cattle finally seems to understand that you're not there to hurt them. They back off and leave you alone. All except for that really big cow over there."

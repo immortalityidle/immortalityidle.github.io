@@ -506,11 +506,11 @@ export class FollowersService {
         const leftHand = this.characterService.equipment.leftHand;
         if (rightHand && rightHand.weaponStats) {
           rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
-          rightHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * daysElapsed;
+          rightHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
         }
         if (leftHand && leftHand.weaponStats) {
           leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
-          leftHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * daysElapsed;
+          leftHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
         }
         this.leftoverWork['weaponsmith'] = workPower % divider;
       },
@@ -971,6 +971,11 @@ export class FollowersService {
   }
 
   hqWorks() {
+    if (this.hellService?.inHell() && !this.characterService.god()) {
+      // no sect progress without you there in the mortal realm to lead them
+      return;
+    }
+
     // check if requirements are met. If requirements are not met, see if a lower level sect's requirements are met and act like that level
     if (!this.hqUnlocked) {
       return;

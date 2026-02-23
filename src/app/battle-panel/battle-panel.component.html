@@ -11,7 +11,10 @@
         @if (battleService.displayActiveFormation() !== ''){
           <div>
             <span>
-              {{battleService.displayActiveFormation() | titlecase}} formation active for {{battleService.displayFormationDuration()}} ticks
+              {{battleService.displayActiveFormation() | titlecase}} formation active
+              @if (battleService.displayFormationDuration() > 0){
+                for {{battleService.displayFormationDuration()}} ticks
+              }
             </span>
           </div>
         }
