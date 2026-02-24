@@ -23,6 +23,8 @@ export interface Hell {
   progressMax: () => number;
   progressCache: number;
   progressMaxCache: number;
+  tasksComplete?: boolean;
+  complete?: boolean;
   activities: Activity[];
   projectionActivities: Activity[];
   hint: string;
@@ -104,10 +106,7 @@ export class HellService {
         this.battleService.currentEnemy = null;
         this.moveToHell(Realm.Gates);
       }
-      if (!this.completedHellTasks.includes(this.activityService.currentRealm) && hell.successCheck()) {
-        hell.completeEffect();
-        this.completedHellTasks.push(this.activityService.currentRealm);
-      }
+      this.checkHellCompletion();
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -118,8 +117,18 @@ export class HellService {
       for (const hell of this.hells) {
         hell.progressCache = hell.progress();
         hell.progressMaxCache = hell.progressMax();
+        hell.tasksComplete = this.completedHellTasks.includes(hell.index);
+        hell.complete = this.completedHellBosses.includes(hell.index);
       }
     });
+  }
+
+  checkHellCompletion() {
+    const hell = this.hells[this.activityService.currentRealm];
+    if (!this.completedHellTasks.includes(this.activityService.currentRealm) && hell.successCheck()) {
+      hell.completeEffect();
+      this.completedHellTasks.push(this.activityService.currentRealm);
+    }
   }
 
   returnToMortalRealm() {
@@ -1011,11 +1020,15 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "It's hard to talk with all these demons going for your mouth, but maybe if you can get some help from the other prisoners here you could take control of this place.",
       progress: () => {
-        let totalPower = 0;
-        for (const follower of this.followersService.followers) {
-          totalPower += follower.power;
+        if (this.inHell()) {
+          let totalPower = 0;
+          for (const follower of this.followersService.followers) {
+            totalPower += follower.power;
+          }
+          return Math.min(totalPower, 5000);
+        } else {
+          return 0;
         }
-        return totalPower;
       },
       progressMax: () => {
         return 5000;
@@ -1060,7 +1073,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "These demons don't seem content to just take your fingers. You'd better get ready to defend yourself.",
       progress: () => {
-        return this.inventoryService.getQuantityByName('fingers');
+        return Math.min(this.inventoryService.getQuantityByName('fingers'), 100);
       },
       progressMax: () => {
         return 100;
@@ -1108,7 +1121,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Heal your family bonds.',
       progress: () => {
-        return this.inventoryService.getQuantityByName('token of gratitude');
+        return Math.min(this.inventoryService.getQuantityByName('token of gratitude'), 10000);
       },
       progressMax: () => {
         return 10000;
@@ -1152,7 +1165,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Master yourself. All by yourself.',
       progress: () => {
-        return this.inventoryService.getQuantityByName('mirror shard');
+        return Math.min(this.inventoryService.getQuantityByName('mirror shard'), 1000);
       },
       progressMax: () => {
         return 1000;
@@ -1213,7 +1226,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'There so many ruffians here that deserve some payback from you. I wonder if you can take them all on.',
       progress: () => {
-        return this.battleService.enemies.length;
+        return Math.min(this.battleService.enemies.length, 100);
       },
       progressMax: () => {
         return 100;
@@ -1264,7 +1277,11 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       progress: () => {
-        return this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0;
+        if (this.characterService.equipment.rightHand?.name === 'Copper Hammer') {
+          return Math.min(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0, 100);
+        } else {
+          return 0;
+        }
       },
       progressMax: () => {
         return 100;
@@ -1311,7 +1328,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "It seems you've accrued a lot of karma from all the killing you've done over your many lives. The bill is due.",
       progress: () => {
-        return this.mountainSteps;
+        return Math.min(this.mountainSteps, this.battleService.totalKills / 100);
       },
       progressMax: () => {
         return this.battleService.totalKills / 100;
@@ -1360,7 +1377,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Burn it down!',
       progress: () => {
-        return this.inventoryService.getQuantityByName('ice core');
+        return Math.min(this.inventoryService.getQuantityByName('ice core'), 10000);
       },
       progressMax: () => {
         return 10000;
@@ -1427,7 +1444,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "You'd need to be incredibly resilient to survive this place.",
       progress: () => {
-        return this.inventoryService.getQuantityByName('ice core');
+        return Math.min(this.inventoryService.getQuantityByName('ice core'), 1000);
       },
       progressMax: () => {
         return 1000;
@@ -1466,7 +1483,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Look at those poor sick cows. And those other cows that for some reason are standing up on two legs and charging you with weapons.',
       progress: () => {
-        return this.animalsHealed;
+        return Math.min(this.animalsHealed, 1000000);
       },
       progressMax: () => {
         return 1000000;
@@ -1533,7 +1550,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "It's leg day. No, it's arm day. Must be both! Lift!",
       progress: () => {
-        return this.boulderHeight;
+        return Math.min(this.boulderHeight, 1000);
       },
       progressMax: () => {
         return 1000;
@@ -1571,7 +1588,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'You begin to feel remorse for your gluttony across your many lives. Perhaps a nice, long fast would help you feel better. Hopefully you can keep the demons from spoonfeeding you their fiery concoction.',
       progress: () => {
-        return this.daysFasted;
+        return Math.min(this.daysFasted, 1000);
       },
       progressMax: () => {
         return 1000;
@@ -1603,7 +1620,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'Not this again!',
       progress: () => {
-        return this.swimDepth;
+        return Math.min(this.swimDepth);
       },
       progressMax: () => {
         return 10000;
@@ -1652,7 +1669,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "These people don't belong here. Get them out.",
       progress: () => {
-        return this.soulsEscaped;
+        return Math.min(this.soulsEscaped, 1000000);
       },
       progressMax: () => {
         return 1000000;
@@ -1693,7 +1710,7 @@ export class HellService {
       ],
       hint: 'Unloot those tombs.',
       progress: () => {
-        return this.relicsReturned;
+        return Math.min(this.relicsReturned, 10000);
       },
       progressMax: () => {
         return 10000;
@@ -1741,7 +1758,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'How does this volcano stay so hot?',
       progress: () => {
-        return this.inventoryService.getQuantityByName('fire core');
+        return Math.min(this.inventoryService.getQuantityByName('fire core'), 10000);
       },
       progressMax: () => {
         return 10000;
@@ -1770,7 +1787,7 @@ export class HellService {
       projectionActivities: [],
       hint: 'Just endure.',
       progress: () => {
-        return this.timesCrushed;
+        return Math.min(this.timesCrushed, this.characterService.totalLives * 100);
       },
       progressMax: () => {
         return this.characterService.totalLives * 100;
@@ -1813,7 +1830,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'You read legalese, right?',
       progress: () => {
-        return this.contractsExamined;
+        return Math.min(this.contractsExamined, 20000);
       },
       progressMax: () => {
         return 20000;

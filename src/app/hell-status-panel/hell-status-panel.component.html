@@ -12,7 +12,7 @@
             You are in the {{hellService.hells[activityService.currentRealm].name}}
         </span>
     </div>
-    @if (activityService.currentRealm > 0 && !hellService.completedHellTasks.includes(activityService.currentRealm)) {
+    @if (activityService.currentRealm > 0 && !hellService.hells[activityService.currentRealm].tasksComplete) {
         <span>
         <div  class="progress-bar"
             [attr.value]="Math.floor(hellService.hells[activityService.currentRealm].progress())"
@@ -25,9 +25,9 @@
         </div>
         </span>
     }
-    @if (activityService.currentRealm > 0 && hellService.completedHellTasks.includes(activityService.currentRealm)) {
+    @if (activityService.currentRealm > 0 && hellService.hells[activityService.currentRealm].tasksComplete) {
         <span>
-        <button (click)="hellBoss()">{{hellService.completedHellBosses.includes(activityService.currentRealm) ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
+        <button (click)="hellBoss()">{{hellService.hells[activityService.currentRealm].complete ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
         </span>
     }
   }
@@ -44,7 +44,14 @@
             </span>
         </td>
         <td>
-            <div class="progress-bar" style="height:20px;"
+          @if (hell.complete) { 
+            <span>Boss Defeated</span>
+          } 
+          @else if (hell.tasksComplete) {
+            <span>Tasks Complete</span>
+          } 
+          @else {
+          <div class="progress-bar" style="height:20px;"
             [attr.value]="Math.floor(hell.progressCache)"
             [attr.max]="Math.floor(hell.progressMaxCache)">
             <span
@@ -53,6 +60,7 @@
                     hell.progressMaxCache">
             </span>
             </div>
+          }
         </td>
         </tr>
       }

@@ -6,7 +6,7 @@ import { MainLoopService } from './main-loop.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { HellService } from './hell.service';
 import { HomeService, HomeType } from './home.service';
-import { LocationType } from './activity';
+import { LocationType, Realm } from './activity';
 import { LocationService } from './location.service';
 import { AttributeType, StatusType } from './character.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
@@ -638,7 +638,7 @@ export class BattleService {
               ticks: signal<number>(technique.ticks),
               ticksRequired: signal<number>(technique.ticksRequired),
               ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
-              trackField: signal<string>(technique.name + technique.ticks),
+              trackField: signal<string>(enemy.name + technique.name + technique.ticks),
               disabled: signal<boolean>(technique.disabled || false),
               unlocked: signal<boolean>(technique.unlocked),
               description: signal<string>(technique.description || ''),
@@ -660,19 +660,9 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].ticksPercentage.set(
               Math.floor((100 * technique.ticks) / technique.ticksRequired)
             );
-            this.displayEnemies[i].techniques[j].trackField.set(technique.name + technique.ticks);
+            this.displayEnemies[i].techniques[j].trackField.set(enemy.name + technique.name + technique.ticks);
             this.displayEnemies[i].techniques[j].disabled.set(technique.disabled || false);
             this.displayEnemies[i].techniques[j].unlocked.set(technique.unlocked);
-            this.displayTechniques[i].description!.set(technique.description || '');
-            this.displayTechniques[i].baseDamage!.set(technique.baseDamage || 0);
-            this.displayTechniques[i].attribute!.set(technique.attribute || '');
-            this.displayTechniques[i].extraMultiplier!.set(technique.extraMultiplier || 0);
-            this.displayTechniques[i].staminaCost!.set(technique.staminaCost || 0);
-            this.displayTechniques[i].qiCost!.set(technique.qiCost || 0);
-            this.displayTechniques[i].healthCost!.set(technique.healthCost || 0);
-            this.displayTechniques[i].effect!.set(technique.effect || '');
-            this.displayTechniques[i].familyTechnique!.set(technique.familyTechnique || false);
-            this.displayTechniques[i].concept!.set(technique.concept || '');
             this.displayEnemies[i].techniques[j].technique = technique;
           }
         }
@@ -687,14 +677,16 @@ export class BattleService {
                 name: signal<string>(statusEffect.name),
                 description: signal<string>(statusEffect.description || ''),
                 ticksLeft: signal<number>(statusEffect.ticksLeft),
-                trackField: signal<string>(statusEffect.name + statusEffect.ticksLeft),
+                trackField: signal<string>(enemy.name + statusEffect.name + statusEffect.ticksLeft),
                 imageFile: signal<string>('assets/images/effects/' + statusEffect.name.replace(' ', '_') + '.png'),
               });
             } else {
               this.displayEnemies[i].statusEffects[j].name.set(statusEffect.name);
               this.displayEnemies[i].statusEffects[j].description.set(statusEffect.description || '');
               this.displayEnemies[i].statusEffects[j].ticksLeft.set(statusEffect.ticksLeft);
-              this.displayEnemies[i].statusEffects[j].trackField.set(statusEffect.name + statusEffect.ticksLeft);
+              this.displayEnemies[i].statusEffects[j].trackField.set(
+                enemy.name + statusEffect.name + statusEffect.ticksLeft
+              );
               this.displayEnemies[i].statusEffects[j].imageFile.set(
                 'assets/images/effects/' + statusEffect.name.replace(' ', '_') + '.png'
               );
@@ -2120,31 +2112,50 @@ export class BattleService {
       return;
     }
     if (enemy.defeatEffect === 'respawnDouble') {
-      // add two more of the same enemy
-      this.logService.log(
-        LogTopic.COMBAT,
-        'They just keep coming! Two more ' + this.titleCasePipe.transform(enemy.name) + ' appear!'
-      );
-      this.addEnemy({
-        name: enemy.name,
-        baseName: enemy.baseName,
-        health: enemy.maxHealth,
-        maxHealth: enemy.maxHealth,
-        defense: enemy.defense,
-        defeatEffect: enemy.defeatEffect,
-        loot: enemy.loot,
-        techniques: enemy.techniques,
-      });
-      this.addEnemy({
-        name: enemy.name,
-        baseName: enemy.baseName,
-        health: enemy.maxHealth,
-        maxHealth: enemy.maxHealth,
-        defense: enemy.defense,
-        defeatEffect: enemy.defeatEffect,
-        loot: enemy.loot,
-        techniques: enemy.techniques,
-      });
+      this.hellService?.checkHellCompletion();
+      if (!this.hellService?.completedHellTasks.includes(Realm.Steamers)) {
+        // add two more of the same enemy
+        this.logService.log(
+          LogTopic.COMBAT,
+          'They just keep coming! Two more ' + this.titleCasePipe.transform(enemy.name) + ' appear!'
+        );
+        this.addEnemy({
+          name: 'Ruffian',
+          baseName: 'deadruffian',
+          health: enemy.maxHealth * 2,
+          maxHealth: enemy.maxHealth * 2,
+          defense: enemy.defense * 2,
+          defeatEffect: 'respawnDouble',
+          loot: [],
+          techniques: [
+            {
+              name: 'Attack',
+              ticks: 0,
+              ticksRequired: 10,
+              baseDamage: enemy.maxHealth * 2,
+              unlocked: true,
+            },
+          ],
+        });
+        this.addEnemy({
+          name: 'Ruffian',
+          baseName: 'deadruffian',
+          health: enemy.maxHealth * 2,
+          maxHealth: enemy.maxHealth * 2,
+          defense: enemy.defense * 2,
+          defeatEffect: 'respawnDouble',
+          loot: [],
+          techniques: [
+            {
+              name: 'Attack',
+              ticks: 0,
+              ticksRequired: 10,
+              baseDamage: enemy.maxHealth * 2,
+              unlocked: true,
+            },
+          ],
+        });
+      }
     }
   }
 

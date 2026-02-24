@@ -184,6 +184,7 @@ export class ActivityService {
       this.EndureTheMill,
       this.FreezeMountain,
       this.ExamineContracts,
+      this.HellSwim,
 
       this.Swim,
       this.ForgeChains,
@@ -446,7 +447,13 @@ export class ActivityService {
       }
       const displayActivity = this.displayActivities[i];
       displayActivity.trackField.set(
-        '' + activity.activityType + activity.level + activity.lastIncome + activity.unlocked + activity.discovered
+        '' +
+          activity.activityType +
+          activity.name +
+          activity.level +
+          activity.lastIncome +
+          activity.unlocked +
+          activity.discovered
       );
       const displayed = activity.discovered || activity.unlocked;
       displayActivity.displayed.set(displayed);

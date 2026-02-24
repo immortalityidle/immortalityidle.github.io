@@ -968,7 +968,7 @@ export class InventoryService {
     }
     return {
       id: 'spiritGemGrade' + grade,
-      imageFile: flavor + 'Gem',
+      imageFile: flavor.toLowerCase() + 'Gem',
       name: flavor + ' gem grade ' + grade,
       type: LOOT_TYPE_GEM,
       subtype: flavor,
