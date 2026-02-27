@@ -865,13 +865,14 @@ export class FollowersService {
                 newFollower?.name +
                 '.'
             );
+          } else {
+            this.logService.log(
+              LogTopic.FOLLOWER,
+              'Your follower ' +
+                follower.name +
+                ' passed away from old age and was not replaced because of your choices in follower jobs.'
+            );
           }
-          this.logService.log(
-            LogTopic.FOLLOWER,
-            'Your follower ' +
-              follower.name +
-              ' passed away from old age and was not replaced because of your choices in follower jobs.'
-          );
         } else {
           this.logService.injury(LogTopic.FOLLOWER, 'Your follower ' + follower.name + ' passed away from old age.');
         }

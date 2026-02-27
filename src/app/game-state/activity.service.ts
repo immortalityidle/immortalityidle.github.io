@@ -185,6 +185,7 @@ export class ActivityService {
       this.FreezeMountain,
       this.ExamineContracts,
       this.HellSwim,
+      this.hellRecruiting,
 
       this.Swim,
       this.ForgeChains,
@@ -4465,7 +4466,7 @@ export class ActivityService {
     level: 0,
     name: ['Swim Deeper into the Blood'],
     location: LocationType.Hell,
-    activityType: ActivityType.Swim,
+    activityType: ActivityType.HellSwim,
     description: ['Swim down further into the crimson depths.'],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: ['Uses 2000 Stamina. Reduce health by 1000.'],

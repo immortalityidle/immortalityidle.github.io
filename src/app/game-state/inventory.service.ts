@@ -168,6 +168,7 @@ export interface InventoryProperties {
   maxFoodPerDay: number;
   unlockedFurniture: string[];
   herbalUnderstanding: boolean;
+  lifetimeGemsSold: number;
   soldGoods: { [key: string]: number };
 }
 
@@ -557,6 +558,7 @@ export class InventoryService {
       maxFoodPerDay: this.maxFoodPerDay,
       unlockedFurniture: this.unlockedFurniture,
       herbalUnderstanding: this.herbalUnderstanding,
+      lifetimeGemsSold: this.lifetimeGemsSold,
       soldGoods: this.soldGoods,
     };
   }
@@ -625,6 +627,7 @@ export class InventoryService {
     this.maxFoodPerDay = properties.maxFoodPerDay;
     this.unlockedFurniture = properties.unlockedFurniture;
     this.herbalUnderstanding = properties.herbalUnderstanding;
+    this.lifetimeGemsSold = properties.lifetimeGemsSold;
     this.soldGoods = properties.soldGoods;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {

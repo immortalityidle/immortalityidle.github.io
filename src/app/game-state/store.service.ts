@@ -135,7 +135,7 @@ export class StoreService {
     if (this.characterService.bloodlineRank === 0) {
       // Weapons
       this.bloodlineDescription =
-        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and establish a bloodline. All of your future reincarnations will be born as your own descendants. Your weapons equipped on death will become family heirlooms and will be inherited by your future self.';
+        'End your current life, sacrifice all attributes and aptitudes that are not protected by the power of your previous soul core ascensions, and enhance your bloodline. Your weapons equipped on death will become family heirlooms and will be inherited by your future self.';
       this.bloodLineHomeRequirement = this.homeService.homesList[HomeType.Mansion];
     } else if (this.characterService.bloodlineRank === 1) {
       // Armor

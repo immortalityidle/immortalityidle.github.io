@@ -5,6 +5,34 @@
   <div class="statisticsDiv">
     <br>
     <br>
+    <span>Game Engine Performance</span>
+    <table>
+      <tr>
+        <td>
+          Game days per real second:
+        </td>
+        <td>
+          {{statisticsService.daysPerSecond | number:'1.0-2'}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Game years per real minute:
+        </td>
+        <td>
+          {{statisticsService.daysPerSecond * 60 / 365 | number:'1.0-2'}}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Game years per real hour:
+        </td>
+        <td>
+          {{statisticsService.daysPerSecond * 60 * 60 / 365 | number:'1.0-2'}}
+        </td>
+      </tr>
+    </table>
+    <br>
     <span>This Life's Activities</span>
     <br>
     <table>
@@ -91,30 +119,6 @@
     <span>Across All Lives</span>
     <br>
     <table>
-      <tr>
-        <td>
-          Game days per real second:
-        </td>
-        <td>
-          {{statisticsService.daysPerSecond | number:'1.0-2'}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Game years per real minute:
-        </td>
-        <td>
-          {{statisticsService.daysPerSecond * 60 / 365 | number:'1.0-2'}}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Game years per real hour:
-        </td>
-        <td>
-          {{statisticsService.daysPerSecond * 60 * 60 / 365 | number:'1.0-2'}}
-        </td>
-      </tr>
       <tr>
         <td>
           Total days lived:

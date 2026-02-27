@@ -301,7 +301,7 @@ export class FarmService {
 
     for (const field of this.fields) {
       let fieldYield = 0;
-      if (!this.hellService?.inHell() && field.plots > 0) {
+      if (field.plots > 0) {
         if (field.daysToHarvest <= 0) {
           fieldYield = field.yield * conceptMultiplier;
           totalDailyYield += fieldYield;

@@ -891,7 +891,12 @@ baguaMap = [
       useConsumes: false,
       locked: true,
       use: () => {
-        this.characterService.updateMoney(1e6);
+        if (!this.hellService) {
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService?.inHell()) {
+          this.characterService.updateMoney(1e6);
+        }
       },
       shopable: false,
     },
@@ -992,7 +997,12 @@ baguaMap = [
       useConsumes: false,
       locked: true,
       use: () => {
-        this.characterService.updateMoney(1e12);
+        if (!this.hellService) {
+          this.hellService = this.injector.get(HellService);
+        }
+        if (!this.hellService?.inHell()) {
+          this.characterService.updateMoney(1e12);
+        }
       },
       shopable: false,
     },
@@ -2990,7 +3000,7 @@ baguaMap = [
     },
     basicHealthRegenerationManual: {
       id: 'basicHealthRegenerationManual',
-      name: 'Manual of Basic Health Regeration',
+      name: 'Manual of Basic Health Regeneration',
       type: 'manual',
       description: 'This manual teaches you to automatically recover a small amount of health during your battles.',
       value: 1e10,
@@ -3013,7 +3023,7 @@ baguaMap = [
     },
     basicQiRegenerateManual: {
       id: 'basicQiRegenerateManual',
-      name: 'Manual of Basic Qi Regeration',
+      name: 'Manual of Basic Qi Regeneration',
       type: 'manual',
       description: 'This manual teaches you to automatically recover a small amount of Qi during your battles.',
       value: 1e15,

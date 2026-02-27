@@ -1300,7 +1300,6 @@ export class BattleService {
           fireDivisor = 10;
         }
         damage /= fireDivisor;
-        this.characterService.status.qi.value -= 10000;
         damageBack = true;
       } else if (this.statusEffects[i].name === ICE_SHIELD) {
         damage = 0;
