@@ -276,7 +276,6 @@ export const WeaponNames = [
   'yari',
   'yatagan',
   'yawara',
-  'yoroi-do',
   'yubi-bo',
   'zanbato',
   'zhanmadao',

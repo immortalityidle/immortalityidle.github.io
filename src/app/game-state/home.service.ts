@@ -1372,7 +1372,7 @@ export class HomeService {
   removeWorkstation(workstation: Workstation) {
     for (const inputItemStack of workstation.inputs) {
       if (inputItemStack.item) {
-        this.inventoryService.addItem(inputItemStack.item, inputItemStack.quantity);
+        this.inventoryService.addItem(inputItemStack.item, inputItemStack.quantity, 0, true);
       }
     }
     const index = this.workstations.indexOf(workstation);

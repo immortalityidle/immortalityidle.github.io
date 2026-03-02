@@ -61,6 +61,7 @@ export interface Item {
   cooldown?: number;
   locked?: boolean;
   shopable: boolean;
+  averageValueOnMerge?: boolean;
 }
 
 export interface Equipment extends Item {
@@ -1185,7 +1186,7 @@ export class InventoryService {
 
   getWildMeat(grade: number): Item {
     return {
-      id: 'wildMeat' + grade,
+      id: 'wildMeat',
       imageFile: 'meat',
       name: 'wild meat',
       type: 'food',
@@ -1196,18 +1197,20 @@ export class InventoryService {
       useConsumes: true,
       useLabel: 'Eat',
       useDescription: 'Fills your belly and adds variety to your diet.',
+      averageValueOnMerge: true,
     };
   }
 
   getCoinPurse(value: number): Item {
     return {
-      id: 'coinPurse' + value,
+      id: 'coinPurse',
       imageFile: 'coinPurse',
       name: 'coin purse',
       type: 'sellable',
       value: value,
       description: 'A purse with strange coins. You could probably sell this.',
       shopable: false,
+      averageValueOnMerge: true,
     };
   }
 
@@ -1529,7 +1532,13 @@ export class InventoryService {
               ) {
                 if (item.id === inputItemStack.item.id) {
                   // same thing
-                  inputItemStack.quantity += quantity;
+                  if (item.averageValueOnMerge && item.value !== inputItemStack.item.value) {
+                    const totalValue = inputItemStack.quantity * inputItemStack.item.value + item.value * quantity;
+                    inputItemStack.quantity += quantity;
+                    inputItemStack.item.value = Math.ceil(totalValue / inputItemStack.quantity);
+                  } else {
+                    inputItemStack.quantity += quantity;
+                  }
                   inputItemStack.item.description = item.description;
                   return -1;
                 } else if (
@@ -2288,9 +2297,18 @@ export class InventoryService {
       sourceStack.item &&
       destStack.item &&
       sourceStack.item.name === destStack.item.name &&
-      sourceStack.quantity + destStack.quantity < this.maxStackSize
+      sourceStack.quantity + destStack.quantity <= this.maxStackSize
     ) {
-      destStack.quantity += sourceStack.quantity;
+      if (
+        (sourceStack.item.averageValueOnMerge || destStack.item.averageValueOnMerge) &&
+        sourceStack.item.value !== destStack.item.value
+      ) {
+        const totalValue = sourceStack.quantity * sourceStack.item.value + destStack.item.value * destStack.quantity;
+        destStack.quantity += sourceStack.quantity;
+        destStack.item.value = Math.ceil(totalValue / destStack.quantity);
+      } else {
+        destStack.quantity += sourceStack.quantity;
+      }
       this.fixId(destInventoryIndex);
       this.setItemEmptyStack(sourceInventoryIndex);
     }
