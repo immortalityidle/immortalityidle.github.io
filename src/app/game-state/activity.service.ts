@@ -710,10 +710,8 @@ export class ActivityService {
     const discoveredActivities = properties.discoveredActivities || [ActivityType.OddJobs, ActivityType.Resting];
     for (const activity of this.activities) {
       activity.unlocked = unlockedActivities.includes(activity.activityType);
-      if (!activity.discovered) {
-        activity.discovered =
-          discoveredActivities.includes(activity.activityType) || unlockedActivities.includes(activity.activityType);
-      }
+      activity.discovered =
+        discoveredActivities.includes(activity.activityType) || unlockedActivities.includes(activity.activityType);
     }
     this.portals = [];
     for (const portalType of properties.openPortals) {
@@ -839,7 +837,7 @@ export class ActivityService {
     for (const keyString in resourceUse) {
       const key = keyString as StatusType;
       const requiredMax = activity.resourceUse[level][key] || 0;
-      if (this.characterService.status[key].max <= requiredMax) {
+      if (this.characterService.status[key].max < requiredMax) {
         return false;
       }
     }

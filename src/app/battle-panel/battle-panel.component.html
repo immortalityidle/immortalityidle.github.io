@@ -14,6 +14,9 @@
               {{battleService.displayActiveFormation() | titlecase}} formation active
               @if (battleService.displayFormationDuration() > 0){
                 for {{battleService.displayFormationDuration()}} ticks
+                <mat-icon  (click)="battleService.cancelFormation()" tooltip="Cancel Formation" class="smallerIcon" aria-label="Cancel Formation" aria-hidden="false">
+                  cancel
+                </mat-icon>
               }
             </span>
           </div>

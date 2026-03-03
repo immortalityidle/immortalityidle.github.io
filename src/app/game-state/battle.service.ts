@@ -823,6 +823,14 @@ export class BattleService {
     }
   }
 
+  cancelFormation() {
+    if (this.activeFormation !== '') {
+      this.activeFormation = '';
+      this.formationCooldown -= this.formationDuration * 2; // cut the cooldown proportional to the unused duration
+      this.formationDuration = 0;
+    }
+  }
+
   private reset() {
     this.clearEnemies();
     this.kills = 0;
@@ -959,7 +967,12 @@ export class BattleService {
       if (!itemStack || !itemStack.item || itemStack.quantity === 0 || !itemStack.item?.pouchable) {
         continue;
       }
-      if (this.activeFormation === '' && itemStack.item.type === 'formationKit' && itemStack.quantity > 0) {
+      if (
+        this.activeFormation === '' &&
+        itemStack.item.type === 'formationKit' &&
+        itemStack.quantity > 0 &&
+        this.formationCooldown <= 0
+      ) {
         itemStack.quantity--;
         this.inventoryService.useItem(itemStack.item);
       } else if ((itemStack.item.cooldown || 0) <= 0) {
