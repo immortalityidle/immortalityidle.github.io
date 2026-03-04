@@ -2466,6 +2466,12 @@ export class InventoryService {
   }
 
   restoreWeapons() {
+    if (this.characterService.equipment.rightHand) {
+      this.addItem(this.characterService.equipment.rightHand);
+    }
+    if (this.characterService.equipment.leftHand) {
+      this.addItem(this.characterService.equipment.leftHand);
+    }
     this.characterService.restoreWeapons();
     for (let i = this.stashedItemStacks.length - 1; i >= 0; i--) {
       const itemStack = this.stashedItemStacks[i];

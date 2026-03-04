@@ -4804,10 +4804,6 @@ export class ActivityService {
       () => {
         this.battleService.enemies = [];
         this.battleService.currentEnemy = null;
-        const leavingHell = this.hellService!.hells[this.currentRealm];
-        if (leavingHell.exitEffect) {
-          leavingHell.exitEffect();
-        }
         this.hellService!.moveToHell(Realm.Gates);
       },
     ],

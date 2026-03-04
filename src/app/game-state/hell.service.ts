@@ -1278,16 +1278,16 @@ export class HellService {
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       progress: () => {
         if (this.characterService.equipment.rightHand?.name === 'Copper Hammer') {
-          return Math.min(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0, 100);
+          return Math.min(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0, 10000);
         } else {
           return 0;
         }
       },
       progressMax: () => {
-        return 100;
+        return 10000;
       },
       successCheck: () => {
-        return (this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0) > 100; // tune this
+        return (this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0) > 10000; // tune this
       },
       progressCache: 0,
       progressMaxCache: 1,
