@@ -94,6 +94,7 @@ export interface FollowersProperties {
   hqInputs: ItemStack[];
   hqUnlocked: boolean;
   giftRecipientCounter: number;
+  followersRecruited: number;
 }
 
 export interface SavedAssignments {
@@ -1127,6 +1128,7 @@ export class FollowersService {
       hqInputs: this.hqInputs,
       hqUnlocked: this.hqUnlocked,
       giftRecipientCounter: this.giftRecipientCounter,
+      followersRecruited: this.followersRecruited,
     };
   }
 
@@ -1166,6 +1168,7 @@ export class FollowersService {
     this.hqUnlocked = properties.hqUnlocked;
     this.hqInputs = properties.hqInputs;
     this.giftRecipientCounter = properties.giftRecipientCounter;
+    this.followersRecruited = properties.followersRecruited;
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
     this.updateHQInputs();

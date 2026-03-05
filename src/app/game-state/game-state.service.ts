@@ -142,7 +142,7 @@ export class GameStateService {
       name: 'Equipment',
       icon: 'colorize',
       panelHelp:
-        'You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality.<br>Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment.<br>Watch out, each piece of gear will take damage with use and you will need to constantly improve it to keep it strong.',
+        'You will need to arm yourself with weapons and protective gear if you want to fight through the many battles that await you on your journey to immortality.<br>Legends even speak of extraordinary cultivators who can combine items of the same type to produce even stronger equipment.',
       unlocked: false,
     },
     {
@@ -831,6 +831,7 @@ export class GameStateService {
       hqInputs: props?.hqInputs || [],
       hqUnlocked: props?.hqUnlocked || false,
       giftRecipientCounter: props?.giftRecipientCounter || 0,
+      followersRecruited: props?.followersRecruited || 0,
     };
   }
 
