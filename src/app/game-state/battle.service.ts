@@ -53,6 +53,7 @@ export interface Enemy {
   immunities?: string[];
   resistances?: string[];
   unlocksFurniture?: string;
+  divine?: boolean;
 }
 
 export interface DisplayEnemy {
@@ -63,6 +64,7 @@ export interface DisplayEnemy {
   defense: WritableSignal<number>;
   techniques: DisplayTechnique[];
   statusEffects: DisplayStatusEffect[];
+  divine: WritableSignal<boolean>;
 }
 
 export interface EnemyTypes {
@@ -136,6 +138,7 @@ export interface Technique {
   noAttack?: boolean;
   statusEffect?: StatusEffect;
   concept?: string;
+  divine?: boolean;
 }
 
 export interface DisplayTechnique {
@@ -157,6 +160,7 @@ export interface DisplayTechnique {
   familyTechnique: WritableSignal<boolean>;
   concept: WritableSignal<string>;
   technique: Technique;
+  divine: WritableSignal<boolean>;
 }
 
 export interface TechniqueDevelopmentEntry {
@@ -619,6 +623,7 @@ export class BattleService {
             defense: signal<number>(enemy.defense),
             techniques: [],
             statusEffects: [],
+            divine: signal<boolean>(enemy.divine || false),
           });
         } else {
           this.displayEnemies[i].name.set(enemy.name);
@@ -626,6 +631,7 @@ export class BattleService {
           this.displayEnemies[i].maxHealth.set(enemy.maxHealth);
           this.displayEnemies[i].healthPercentage.set(Math.floor((100 * enemy.health) / enemy.maxHealth));
           this.displayEnemies[i].defense.set(enemy.defense);
+          this.displayEnemies[i].divine.set(enemy.divine || false);
         }
         while (this.displayEnemies[i].techniques.length > enemy.techniques.length) {
           this.displayEnemies[i].techniques.splice(0, 1);
@@ -652,6 +658,7 @@ export class BattleService {
               familyTechnique: signal<boolean>(technique.familyTechnique || false),
               concept: signal<string>(technique.concept || ''),
               technique: technique,
+              divine: signal<boolean>(technique.divine || false),
             });
           } else {
             this.displayEnemies[i].techniques[j].name.set(technique.name);
@@ -664,6 +671,7 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].disabled.set(technique.disabled || false);
             this.displayEnemies[i].techniques[j].unlocked.set(technique.unlocked);
             this.displayEnemies[i].techniques[j].technique = technique;
+            this.displayEnemies[i].techniques[j].divine.set(technique.divine || false);
           }
         }
         while (this.displayEnemies[i].statusEffects.length > (enemy.statusEffects?.length || 0)) {
@@ -720,6 +728,7 @@ export class BattleService {
             familyTechnique: signal<boolean>(technique.familyTechnique || false),
             concept: signal<string>(technique.concept || ''),
             technique: technique,
+            divine: signal<boolean>(technique.divine || false),
           });
         } else {
           this.displayTechniques[i].name.set(technique.name);
@@ -740,6 +749,7 @@ export class BattleService {
           this.displayTechniques[i].familyTechnique!.set(technique.familyTechnique || false);
           this.displayTechniques[i].concept!.set(technique.concept || '');
           this.displayTechniques[i].technique = technique;
+          this.displayTechniques[i].divine.set(technique.divine || false);
         }
       }
 

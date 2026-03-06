@@ -1830,14 +1830,14 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: 'You read legalese, right?',
       progress: () => {
-        return Math.min(this.contractsExamined, 20000);
+        return Math.min(this.contractsExamined, 3000);
       },
       progressMax: () => {
         return 20000;
       },
       successCheck: () => {
         // TODO: tune this
-        return this.contractsExamined > 20000;
+        return this.contractsExamined > 3000;
       },
       progressCache: 0,
       progressMaxCache: 1,

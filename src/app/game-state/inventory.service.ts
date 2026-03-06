@@ -170,6 +170,11 @@ export interface InventoryProperties {
   unlockedFurniture: string[];
   herbalUnderstanding: boolean;
   lifetimeGemsSold: number;
+  lifetimeUsedItems: number;
+  lifetimeUsedFood: number;
+  lifetimeSoldItems: number;
+  lifetimePotionsUsed: number;
+  lifetimePillsUsed: number;
   soldGoods: { [key: string]: number };
 }
 
@@ -560,6 +565,11 @@ export class InventoryService {
       unlockedFurniture: this.unlockedFurniture,
       herbalUnderstanding: this.herbalUnderstanding,
       lifetimeGemsSold: this.lifetimeGemsSold,
+      lifetimeUsedItems: this.lifetimeUsedItems,
+      lifetimeUsedFood: this.lifetimeUsedFood,
+      lifetimeSoldItems: this.lifetimeSoldItems,
+      lifetimePotionsUsed: this.lifetimePotionsUsed,
+      lifetimePillsUsed: this.lifetimePillsUsed,
       soldGoods: this.soldGoods,
     };
   }
@@ -629,6 +639,11 @@ export class InventoryService {
     this.unlockedFurniture = properties.unlockedFurniture;
     this.herbalUnderstanding = properties.herbalUnderstanding;
     this.lifetimeGemsSold = properties.lifetimeGemsSold;
+    this.lifetimeUsedItems = properties.lifetimeUsedItems;
+    this.lifetimeUsedFood = properties.lifetimeUsedFood;
+    this.lifetimeSoldItems = properties.lifetimeSoldItems;
+    this.lifetimePotionsUsed = properties.lifetimePotionsUsed;
+    this.lifetimePillsUsed = properties.lifetimePillsUsed;
     this.soldGoods = properties.soldGoods;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
