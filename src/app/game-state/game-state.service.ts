@@ -625,10 +625,10 @@ export class GameStateService {
       herbalUnderstanding: props?.herbalUnderstanding || false,
       lifetimeGemsSold: props?.lifetimeGemsSold || 0,
       lifetimeUsedItems: props?.lifetimeUsedItems || 0,
-      lifetimeUsedFood: props?.lifetimeUsedItems || 0,
-      lifetimeSoldItems: props?.lifetimeUsedItems || 0,
-      lifetimePotionsUsed: props?.lifetimeUsedItems || 0,
-      lifetimePillsUsed: props?.lifetimeUsedItems || 0,
+      lifetimeUsedFood: props?.lifetimeUsedFood || 0,
+      lifetimeSoldItems: props?.lifetimeSoldItems || 0,
+      lifetimePotionsUsed: props?.lifetimePotionsUsed || 0,
+      lifetimePillsUsed: props?.lifetimePillsUsed || 0,
 
       soldGoods: props?.soldGoods || {},
     };

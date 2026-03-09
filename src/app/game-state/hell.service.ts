@@ -1807,7 +1807,7 @@ export class HellService {
         this.activityService.portals = [this.activityService.escapeHell];
       },
       dailyEffect: () => {
-        if (this.contractsExamined <= 20000) {
+        if (this.contractsExamined <= 3000) {
           // saw damage
           this.logService.injury(LogTopic.COMBAT, 'The saws tear into your flesh, causing 100 damage.');
           this.characterService.status.health.value -= 100;
@@ -1833,7 +1833,7 @@ export class HellService {
         return Math.min(this.contractsExamined, 3000);
       },
       progressMax: () => {
-        return 20000;
+        return 3000;
       },
       successCheck: () => {
         // TODO: tune this
