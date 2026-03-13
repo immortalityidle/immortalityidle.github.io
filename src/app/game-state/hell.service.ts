@@ -214,9 +214,8 @@ export class HellService {
       }
     }
     this.inHell.set(false);
-    this.locationService!.currentRealm = Realm.MortalRealm;
+    this.locationService!.setRealm(Realm.MortalRealm);
     this.activityService.portals = [this.activityService.returnToHell];
-    this.locationService!.location = LocationType.SmallTown;
   }
 
   enterTheHells() {
@@ -240,8 +239,8 @@ export class HellService {
         hell.exitEffect();
       }
     }
+    this.locationService!.setRealm(Realm.Hell);
     this.locationService!.location = hellLocation;
-    this.locationService!.currentRealm = Realm.Hell;
     this.locationService!.unlockedLocations = [LocationType.Self, hellLocation];
     const newHell = this.getHell(this.locationService!.location);
     if (newHell.entryEffect) {

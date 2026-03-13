@@ -55,6 +55,7 @@ export interface LocationEntry {
 
 export interface LocationProperties {
   unlockedLocations: LocationType[];
+  notifiedLocations: LocationType[];
   location: LocationType;
   currentRealm: Realm;
   locationLocked: boolean;
@@ -331,6 +332,7 @@ export class LocationService {
     },
   };
   unlockedLocations: LocationType[] = [];
+  notifiedLocations: LocationType[] = [];
   locationLocked = false;
 
   constructor(
@@ -343,11 +345,23 @@ export class LocationService {
       this.checkForUnlocks();
     });
     this.mainLoopService.reincarnateSubject.subscribe(() => {
-      this.checkForUnlocks(false);
+      this.checkForUnlocks();
     });
   }
 
-  checkForUnlocks(logNewLocations: boolean = true) {
+  setRealm(realm: Realm) {
+    this.currentRealm = realm;
+    if (this.locationMap[this.location].realm !== this.currentRealm) {
+      // location is in the wrong realm, update it with the default for the realm
+      if (this.currentRealm === Realm.MortalRealm) {
+        this.location = LocationType.SmallTown;
+      } else if (this.currentRealm === Realm.Hell) {
+        this.location = LocationType.Gates;
+      }
+    }
+  }
+
+  checkForUnlocks() {
     if (this.hellService.inHell()) {
       // don't do any unlocking
       return;
@@ -359,7 +373,12 @@ export class LocationService {
           if (this.locationMap[key]) {
             if (this.locationMap[key].unlock()) {
               this.unlockedLocations.push(key);
-              if (logNewLocations && key !== LocationType.Self && key !== LocationType.SmallTown) {
+              if (
+                !this.notifiedLocations.includes(key) &&
+                key !== LocationType.Self &&
+                key !== LocationType.SmallTown
+              ) {
+                this.notifiedLocations.push(key);
                 this.logService.log(
                   LogTopic.EVENT,
                   'You have expanded your available locations and can now explore ' + this.locationMap[key].name
@@ -387,6 +406,7 @@ export class LocationService {
   getProperties(): LocationProperties {
     return {
       unlockedLocations: this.unlockedLocations,
+      notifiedLocations: this.notifiedLocations,
       location: this.location,
       currentRealm: this.currentRealm,
       locationLocked: this.locationLocked,
@@ -396,15 +416,10 @@ export class LocationService {
 
   setProperties(properties: LocationProperties) {
     this.unlockedLocations = properties.unlockedLocations;
+    this.notifiedLocations = properties.notifiedLocations;
+    this.setRealm(properties.currentRealm);
     this.location = properties.location;
-    this.currentRealm = properties.currentRealm;
     this.locationLocked = properties.locationLocked;
     this.distanceMultiplier = properties.distanceMultiplier;
-    if (this.hellService.inHell()) {
-      this.currentRealm = Realm.Hell;
-      if (this.locationMap[this.location].realm !== Realm.Hell) {
-        this.location = LocationType.Gates;
-      }
-    }
   }
 }

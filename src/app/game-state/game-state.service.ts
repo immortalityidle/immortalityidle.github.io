@@ -716,6 +716,7 @@ export class GameStateService {
   private getLocationsProperties(props: LocationProperties | undefined): LocationProperties {
     return {
       unlockedLocations: props?.unlockedLocations || [],
+      notifiedLocations: props?.notifiedLocations || [],
       location: props?.location || LocationType.SmallTown,
       currentRealm: props?.currentRealm ?? Realm.MortalRealm,
       locationLocked: props?.locationLocked || false,
