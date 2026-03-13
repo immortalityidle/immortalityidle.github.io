@@ -6,8 +6,7 @@ import { MainLoopService } from './main-loop.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { HellService } from './hell.service';
 import { HomeService, HomeType } from './home.service';
-import { LocationType, Realm } from './activity';
-import { LocationService } from './location.service';
+import { LocationService, LocationType } from './location.service';
 import { AttributeType, StatusType } from './character.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 import { TitleCasePipe } from '@angular/common';
@@ -69,6 +68,7 @@ export interface DisplayEnemy {
 
 export interface EnemyTypes {
   name: string;
+  baseName?: string;
   location: LocationType;
   description: string;
   element?: string;
@@ -270,6 +270,7 @@ export class BattleService {
   enemyImageFile = signal<string>('');
   enemiesPresent = signal<boolean>(false);
   timesFled = 0;
+  hellMonsterBasePower = 1e19;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -1807,8 +1808,8 @@ export class BattleService {
     }
     this.kills++;
     this.totalKills++;
-    this.killsByLocation[this.locationService!.troubleTarget] =
-      (this.killsByLocation[this.locationService!.troubleTarget] || 0) + 1;
+    this.killsByLocation[this.locationService!.location] =
+      (this.killsByLocation[this.locationService!.location] || 0) + 1;
     this.killsByMonster[this.currentEnemy.baseName] = (this.killsByMonster[this.currentEnemy.baseName] || 0) + 1;
     this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
     if (this.currentEnemy.name === 'Death itself' && !this.characterService.immortal) {
@@ -1896,18 +1897,14 @@ export class BattleService {
     if (this.enemies.length !== 0) {
       return;
     }
-    if (this.hellService && this.hellService.inHell()) {
-      // let hellService handle the trouble while we're in hell
-      this.hellService.trouble();
-      return;
-    }
+    const hellTrouble = this.hellService && this.hellService.inHell();
 
     if (!this.locationService) {
       // location service not injected yet, bail out
       return;
     }
 
-    const targetLocation = this.locationService.troubleTarget;
+    const targetLocation = this.locationService.location;
 
     const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
 
@@ -1921,30 +1918,35 @@ export class BattleService {
       qualityIndex = this.monsterQualities.length - 1;
     }
     const modifiedBasePower = monsterType.basePower * modifier;
-    const monsterName = this.monsterQualities[qualityIndex] + ' ' + this.camelToTitle.transform(monsterType.name);
+    let monsterName = this.monsterQualities[qualityIndex] + ' ' + this.camelToTitle.transform(monsterType.name);
+    if (hellTrouble) {
+      monsterName = this.camelToTitle.transform(monsterType.name);
+    }
     const health = modifiedBasePower * modifiedBasePower;
     const attack = modifiedBasePower;
     const defense = modifiedBasePower / 10;
     const loot: Item[] = [];
     if (monsterType.lootType) {
       const grade = Math.floor(Math.log2(modifiedBasePower + 2));
-      if (monsterType.lootType.includes(LOOT_TYPE_GEM)) {
-        loot.push(this.inventoryService.generateSpiritGem(grade, monsterType.element));
-      }
-      if (monsterType.lootType.includes(LOOT_TYPE_HIDE)) {
-        loot.push(this.inventoryService.getHide(grade));
-      }
-      if (monsterType.lootType.includes(LOOT_TYPE_ORE)) {
-        loot.push(this.inventoryService.getOre(grade));
-      }
-      if (monsterType.lootType.includes(LOOT_TYPE_FRUIT)) {
-        loot.push(this.itemRepoService.items['pear']);
-      }
-      if (monsterType.lootType.includes(LOOT_TYPE_MEAT)) {
-        loot.push(this.inventoryService.getWildMeat(grade));
-      }
-      if (monsterType.lootType.includes(LOOT_TYPE_MONEY)) {
-        loot.push(this.inventoryService.getCoinPurse(Math.floor(modifiedBasePower)));
+      for (const lootType of monsterType.lootType) {
+        if (lootType === LOOT_TYPE_GEM) {
+          loot.push(this.inventoryService.generateSpiritGem(grade, monsterType.element));
+        } else if (lootType === LOOT_TYPE_HIDE) {
+          loot.push(this.inventoryService.getHide(grade));
+        } else if (lootType === LOOT_TYPE_ORE) {
+          loot.push(this.inventoryService.getOre(grade));
+        } else if (lootType === LOOT_TYPE_FRUIT) {
+          loot.push(this.itemRepoService.items['pear']);
+        } else if (lootType === LOOT_TYPE_MEAT) {
+          loot.push(this.inventoryService.getWildMeat(grade));
+        } else if (lootType === LOOT_TYPE_MONEY) {
+          loot.push(this.inventoryService.getCoinPurse(Math.floor(modifiedBasePower)));
+        } else {
+          const lootItem = this.itemRepoService.items[lootType];
+          if (lootItem) {
+            loot.push(lootItem);
+          }
+        }
       }
     }
 
@@ -1973,9 +1975,14 @@ export class BattleService {
       modifiedHealth /= this.characterService.attributes.presence.value;
     }
 
+    let baseName = monsterType.name;
+    if (monsterType.baseName) {
+      baseName = monsterType.baseName;
+    }
+
     this.addEnemy({
       name: monsterName,
-      baseName: monsterType.name,
+      baseName: baseName,
       health: modifiedHealth,
       maxHealth: health,
       defense: defense,
@@ -2134,8 +2141,7 @@ export class BattleService {
       return;
     }
     if (enemy.defeatEffect === 'respawnDouble') {
-      this.hellService?.checkHellCompletion();
-      if (!this.hellService?.completedHellTasks.includes(Realm.Steamers)) {
+      if (!this.hellService?.completedHellTasks.includes(LocationType.Steamers)) {
         // add two more of the same enemy
         this.logService.log(
           LogTopic.COMBAT,
@@ -3281,6 +3287,188 @@ export class BattleService {
         },
       ],
       unlocksFurniture: 'Ashen Scale Vault',
+    },
+    {
+      name: 'Tongue Ripper',
+      location: LocationType.TongueRipping,
+      baseName: 'tongueripper',
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      lootType: [LOOT_TYPE_GEM],
+      element: EFFECT_CORRUPTION,
+      techniques: [
+        {
+          name: 'Tongue Lashing',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 100,
+          unlocked: true,
+        },
+        {
+          name: 'Mouth Grab',
+          ticks: 0,
+          ticksRequired: 2,
+          baseDamage: 10,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'Scissors Demon',
+      location: LocationType.Scissors,
+      baseName: 'scissorsdemon',
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      lootType: [LOOT_TYPE_GEM, 'fingers'],
+      techniques: [
+        {
+          name: 'Slice',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 20,
+          unlocked: true,
+        },
+        {
+          name: 'Sever',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: 120,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'Hungry Crow',
+      location: LocationType.TreesOfKnives,
+      baseName: 'crow',
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      element: EFFECT_CORRUPTION,
+      lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Peck',
+          ticks: 0,
+          ticksRequired: 7,
+          baseDamage: 20,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'Your Reflection',
+      baseName: 'mirror',
+      location: LocationType.Mirrors,
+      basePower: this.hellMonsterBasePower * (this.characterService.status.health.value * 0.1),
+      description: '',
+      lootType: ['mirrorShard'],
+      techniques: this.techniques,
+    },
+    {
+      name: 'Oiled Demon',
+      baseName: 'oileddemon',
+      location: LocationType.CauldronsOfOil,
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      element: EFFECT_CORRUPTION,
+      lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Grope',
+          ticks: 0,
+          ticksRequired: 3,
+          baseDamage: 8,
+          unlocked: true,
+        },
+        {
+          name: 'Squeeze',
+          ticks: 0,
+          ticksRequired: 12,
+          baseDamage: 77,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'Demonic Cow',
+      baseName: 'demoniccow',
+      location: LocationType.CattlePit,
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      element: EFFECT_CORRUPTION,
+      lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Trample',
+          ticks: 0,
+          ticksRequired: 18,
+          baseDamage: 128,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'Force Feeder',
+      baseName: 'forcefeeder',
+      location: LocationType.MortarsAndPestles,
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      element: EFFECT_CORRUPTION,
+      lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Force Feeding',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 88,
+          effect: EFFECT_FEEDER,
+          hitTracker: 0,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'Axe Demon',
+      baseName: 'axedemon',
+      location: LocationType.Dismemberment,
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      element: EFFECT_CORRUPTION,
+      lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Chop',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 77,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'Saw Demon',
+      baseName: 'sawdemon',
+      location: LocationType.Saws,
+      description: '',
+      basePower: this.hellMonsterBasePower,
+      element: EFFECT_CORRUPTION,
+      lootType: [LOOT_TYPE_GEM],
+      techniques: [
+        {
+          name: 'Rip',
+          ticks: 0,
+          ticksRequired: 9,
+          baseDamage: 60,
+          unlocked: true,
+        },
+        {
+          name: 'Rend',
+          ticks: 0,
+          ticksRequired: 11,
+          baseDamage: 40,
+          unlocked: true,
+        },
+      ],
     },
   ];
 

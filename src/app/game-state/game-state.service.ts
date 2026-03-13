@@ -16,8 +16,7 @@ import { OfflineModalComponent } from '../offline-modal/offline-modal.component'
 import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
-import { LocationProperties, LocationService } from './location.service';
-import { LocationType, Realm } from './activity';
+import { LocationProperties, LocationService, LocationType, Realm } from './location.service';
 import { ContemplationProperties, ContemplationService } from './contemplation.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
@@ -705,7 +704,6 @@ export class GameStateService {
       coreCultivationCounter: props?.coreCultivationCounter || 0,
       researchWindCounter: props?.researchWindCounter || 0,
       beforeDeathPauseUsed: props?.beforeDeathPauseUsed || false,
-      currentRealm: props?.currentRealm ?? Realm.MortalRealm,
       beggingDays: props?.beggingDays || 0,
       oddJobDays: props?.oddJobDays || 0,
       incomeMultiplier: props?.incomeMultiplier || 1,
@@ -718,7 +716,8 @@ export class GameStateService {
   private getLocationsProperties(props: LocationProperties | undefined): LocationProperties {
     return {
       unlockedLocations: props?.unlockedLocations || [],
-      troubleTarget: props?.troubleTarget || LocationType.SmallTown,
+      location: props?.location || LocationType.SmallTown,
+      currentRealm: props?.currentRealm ?? Realm.MortalRealm,
       locationLocked: props?.locationLocked || false,
       distanceMultiplier: props?.distanceMultiplier || 1,
     };

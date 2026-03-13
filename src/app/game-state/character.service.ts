@@ -8,7 +8,6 @@ import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { AchievementService } from './achievement.service';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { Equipment, ItemStack } from './inventory.service';
-import { Realm } from './activity';
 import { ContemplationService } from './contemplation.service';
 
 export type CharacterAttribute = {
@@ -679,7 +678,7 @@ export class CharacterService {
     });
 
     mainLoopService.longTickSubject.subscribe(elapsedDays => {
-      if (this.bloodlineRank >= 9 && this.activityService?.currentRealm === Realm.MortalRealm) {
+      if (this.bloodlineRank >= 9 && !this.hellService?.inHell()) {
         this.increaseAptitudeDaily(elapsedDays);
       }
 
@@ -725,15 +724,6 @@ export class CharacterService {
       }
 
       this.recalculateDerivedStats();
-      if (
-        this.activityService!.currentRealm === Realm.CrushingBoulder &&
-        !this.hellService!.completedHellTasks.includes(Realm.CrushingBoulder)
-      ) {
-        for (const keyString in this.attackPower) {
-          const key = keyString as AttributeType;
-          this.attackPower[key] = 1;
-        }
-      }
       this.setLifespanTooltip();
     });
 
@@ -781,8 +771,11 @@ export class CharacterService {
       } else {
         deathMessage = 'You succumb to your wounds and die at the age of ' + this.formatAge() + '.';
       }
-    } else if (this.immortal() && this.status.health.value < 0) {
+    } else if (this.immortal() && this.status.health.value <= 0) {
       this.status.health.value = 0;
+      if (this.hellService?.inHell()) {
+        this.hellService.beaten = true;
+      }
     }
     if (deathMessage !== '') {
       if (!this.immortal()) {

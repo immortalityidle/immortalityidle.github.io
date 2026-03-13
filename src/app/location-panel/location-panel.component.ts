@@ -1,6 +1,5 @@
 import { Component, forwardRef } from '@angular/core';
-import { LocationService } from '../game-state/location.service';
-import { LocationType } from '../game-state/activity';
+import { LocationService, LocationType } from '../game-state/location.service';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 
@@ -16,10 +15,6 @@ export class LocationPanelComponent {
   constructor(public locationService: LocationService) {}
 
   locationClicked(location: LocationType) {
-    if (this.locationService.troubleTarget === location) {
-      this.locationService.setTroubleLocation(null);
-    } else {
-      this.locationService.setTroubleLocation(location);
-    }
+    this.locationService.setLocation(location);
   }
 }

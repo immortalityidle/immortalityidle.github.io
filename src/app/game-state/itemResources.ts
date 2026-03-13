@@ -1,5 +1,5 @@
-import { LocationType } from './activity';
 import { Herb } from './inventory.service';
+import { LocationType } from './location.service';
 
 // alphabetical list of weapons
 export const WeaponNames = [

@@ -3,18 +3,60 @@ import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { LogService, LogTopic } from './log.service';
-import { LocationType } from './activity';
 import { HellService } from './hell.service';
+
+export enum Realm {
+  Hell = 'Hell',
+  MortalRealm = 'Mortal Realm',
+  DivineRealm = 'Divine Realm',
+}
+
+export enum LocationType {
+  Self = 'Self',
+  SmallTown = 'SmallTown',
+  LargeCity = 'LargeCity',
+  SmallPond = 'SmallPond',
+  Forest = 'Forest',
+  Mine = 'Mine',
+  Desert = 'Desert',
+  Jungle = 'Jungle',
+  Dungeon = 'Dungeon',
+  Beach = 'Beach',
+  DeepSea = 'DeepSea',
+  MountainTops = 'MountainTops',
+  AshenCrater = 'AshenCrater',
+  Gates = 'Gates of Hell',
+  TongueRipping = 'Hell of Tongue Ripping',
+  Scissors = 'Hell of Scissors',
+  TreesOfKnives = 'Hell of Trees of Knives',
+  Mirrors = 'Hell of Mirrors',
+  Steamers = 'Hell of Steamers',
+  CopperPillars = 'Hell of Copper Pillars',
+  MountainOfKnives = 'Hell of the Mountain of the Knives',
+  MountainOfIce = 'Hell of the Mountain of Ice',
+  CauldronsOfOil = 'Hell of the Cauldrons of Oil',
+  CattlePit = 'Hell of the Cattle Pit',
+  CrushingBoulder = 'Hell of the Crushing Boulder',
+  MortarsAndPestles = 'Hell of Mortars and Pestles',
+  BloodPool = 'Hell of the Blood Pool',
+  WrongfulDead = 'Hell of the Wrongful Dead',
+  Dismemberment = 'Hell of Dismemberment',
+  MountainOfFire = 'Hell of the Mountain of Fire',
+  Mills = 'Hell of Mills',
+  Saws = 'Hell of Saws',
+}
 
 export interface LocationEntry {
   name: string;
   description: string;
+  realm?: Realm;
   unlock: () => boolean;
 }
 
 export interface LocationProperties {
   unlockedLocations: LocationType[];
-  troubleTarget: LocationType;
+  location: LocationType;
+  currentRealm: Realm;
   locationLocked: boolean;
   distanceMultiplier: number;
 }
@@ -25,7 +67,8 @@ export interface LocationProperties {
   providedIn: 'root',
 })
 export class LocationService {
-  troubleTarget: LocationType = LocationType.SmallTown;
+  location: LocationType = LocationType.SmallTown;
+  currentRealm: Realm = Realm.MortalRealm;
   distanceMultiplier = 1;
   locationMap: { [key in LocationType]: LocationEntry } = {
     [LocationType.Self]: {
@@ -38,6 +81,7 @@ export class LocationService {
     [LocationType.SmallTown]: {
       name: 'Your Home Town',
       description: 'A small village, the ancestral home of your family.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return true;
       },
@@ -45,6 +89,7 @@ export class LocationService {
     [LocationType.LargeCity]: {
       name: 'A Large City',
       description: 'A bustling city. A thriving hub of crafts and trades.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 50;
       },
@@ -52,6 +97,7 @@ export class LocationService {
     [LocationType.SmallPond]: {
       name: 'A Lake',
       description: 'A freshwater lake ideal for fishing.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 100;
       },
@@ -59,6 +105,7 @@ export class LocationService {
     [LocationType.Forest]: {
       name: 'A Forest',
       description: 'A forest where you can chop wood or look for a wide variety of herbs.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 200;
       },
@@ -66,6 +113,7 @@ export class LocationService {
     [LocationType.Mine]: {
       name: 'A Mine',
       description: 'A mine where you can find coal or metal ores.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 500;
       },
@@ -73,6 +121,7 @@ export class LocationService {
     [LocationType.Desert]: {
       name: 'A Desert',
       description: 'A sandy desert wasteland.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 2000;
       },
@@ -80,6 +129,7 @@ export class LocationService {
     [LocationType.Jungle]: {
       name: 'A Jungle',
       description: 'A lush tropical jungle.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 10000;
       },
@@ -87,6 +137,7 @@ export class LocationService {
     [LocationType.Dungeon]: {
       name: 'A Creepy Dungeon',
       description: 'This dark and dank dungeon is full of monsters.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 200000;
       },
@@ -95,6 +146,7 @@ export class LocationService {
       name: 'A Sunny Beach',
       description:
         'A beautiful beach where you can definitely relax without worrying about any monsters creeping from the waves to murder you.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e6;
       },
@@ -103,6 +155,7 @@ export class LocationService {
     [LocationType.DeepSea]: {
       name: 'The Deep Sea',
       description: 'The depths of the sea.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e8;
       },
@@ -110,6 +163,7 @@ export class LocationService {
     [LocationType.MountainTops]: {
       name: 'The Mountain Tops',
       description: 'The tops of the highest mountains.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e10;
       },
@@ -118,13 +172,159 @@ export class LocationService {
       name: 'The Ashen Crater',
       description:
         'A huge empty hole in the ground, covered in gray ash and smoke. The ground here is scorching, with glowing red cracks revealing fire just under the surface.',
+      realm: Realm.MortalRealm,
       unlock: () => {
         return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e14;
       },
     },
-    [LocationType.Hell]: {
-      name: 'Hell',
-      description: 'The depths of Hell.',
+    [LocationType.Gates]: {
+      name: LocationType.Gates,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.TongueRipping]: {
+      name: LocationType.TongueRipping,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.Scissors]: {
+      name: LocationType.Scissors,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.TreesOfKnives]: {
+      name: LocationType.TreesOfKnives,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.Mirrors]: {
+      name: LocationType.Mirrors,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.Steamers]: {
+      name: LocationType.Steamers,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.CopperPillars]: {
+      name: LocationType.CopperPillars,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.MountainOfKnives]: {
+      name: LocationType.MountainOfKnives,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.MountainOfIce]: {
+      name: LocationType.MountainOfIce,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.CauldronsOfOil]: {
+      name: LocationType.CauldronsOfOil,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.CattlePit]: {
+      name: LocationType.CattlePit,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.CrushingBoulder]: {
+      name: LocationType.CrushingBoulder,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.MortarsAndPestles]: {
+      name: LocationType.MortarsAndPestles,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.BloodPool]: {
+      name: LocationType.BloodPool,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.WrongfulDead]: {
+      name: LocationType.WrongfulDead,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.Dismemberment]: {
+      name: LocationType.Dismemberment,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.MountainOfFire]: {
+      name: LocationType.MountainOfFire,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.Mills]: {
+      name: LocationType.Mills,
+      realm: Realm.Hell,
+      description: '',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.Saws]: {
+      name: LocationType.Saws,
+      realm: Realm.Hell,
+      description: '',
       unlock: () => {
         return false;
       },
@@ -143,33 +343,28 @@ export class LocationService {
       this.checkForUnlocks();
     });
     this.mainLoopService.reincarnateSubject.subscribe(() => {
-      this.unlockedLocations = [];
       this.checkForUnlocks(false);
     });
   }
 
   checkForUnlocks(logNewLocations: boolean = true) {
     if (this.hellService.inHell()) {
-      this.unlockedLocations = [LocationType.Hell];
-      this.troubleTarget = LocationType.Hell;
+      // don't do any unlocking
+      return;
     } else {
-      if (this.troubleTarget === LocationType.Hell) {
-        // we're out of hell, make sure trouble target isn't set there anymore
-        this.troubleTarget = LocationType.SmallTown;
-      }
-      if (this.unlockedLocations.includes(LocationType.Hell)) {
-        this.unlockedLocations = [];
-      }
+      this.unlockedLocations = [];
       for (const keyString in LocationType) {
         const key = keyString as LocationType;
         if (!this.unlockedLocations.includes(key)) {
-          if (this.locationMap[key].unlock()) {
-            this.unlockedLocations.push(key);
-            if (logNewLocations && key !== LocationType.Self && key !== LocationType.SmallTown) {
-              this.logService.log(
-                LogTopic.EVENT,
-                'You have expanded your available locations and can now explore ' + this.locationMap[key].name
-              );
+          if (this.locationMap[key]) {
+            if (this.locationMap[key].unlock()) {
+              this.unlockedLocations.push(key);
+              if (logNewLocations && key !== LocationType.Self && key !== LocationType.SmallTown) {
+                this.logService.log(
+                  LogTopic.EVENT,
+                  'You have expanded your available locations and can now explore ' + this.locationMap[key].name
+                );
+              }
             }
           }
         }
@@ -177,26 +372,23 @@ export class LocationService {
     }
   }
 
-  setTroubleLocation(location: LocationType | null) {
+  setLocation(location: LocationType | null) {
     if (this.locationLocked) {
       this.logService.log(LogTopic.EVENT, "You can't select a new location now.");
       return;
     }
     if (location === null) {
-      if (this.hellService.inHell()) {
-        this.troubleTarget = LocationType.Hell;
-      } else {
-        this.troubleTarget = LocationType.SmallTown;
-      }
+      this.location = LocationType.SmallTown;
     } else {
-      this.troubleTarget = location;
+      this.location = location;
     }
   }
 
   getProperties(): LocationProperties {
     return {
       unlockedLocations: this.unlockedLocations,
-      troubleTarget: this.troubleTarget,
+      location: this.location,
+      currentRealm: this.currentRealm,
       locationLocked: this.locationLocked,
       distanceMultiplier: this.distanceMultiplier,
     };
@@ -204,8 +396,15 @@ export class LocationService {
 
   setProperties(properties: LocationProperties) {
     this.unlockedLocations = properties.unlockedLocations;
-    this.troubleTarget = properties.troubleTarget;
+    this.location = properties.location;
+    this.currentRealm = properties.currentRealm;
     this.locationLocked = properties.locationLocked;
     this.distanceMultiplier = properties.distanceMultiplier;
+    if (this.hellService.inHell()) {
+      this.currentRealm = Realm.Hell;
+      if (this.locationMap[this.location].realm !== Realm.Hell) {
+        this.location = LocationType.Gates;
+      }
+    }
   }
 }

@@ -1,63 +1,61 @@
 <div class="hellStatusContainer">
-  @if (!hellService.inHell() || !hellService.hells[activityService.currentRealm]) {
+  @if (!hellService.inHell()) {
     <div>
         <span>
-            You are not stuck in hell.
+            You are not in hell.
         </span>
     </div>
   }
   @else {
     <div>
         <span>
-            You are in the {{hellService.hells[activityService.currentRealm].name}}
+            You are in the {{hellService.currentHellDisplayStatus.name()}}
         </span>
     </div>
-    @if (activityService.currentRealm > 0 && !hellService.hells[activityService.currentRealm].tasksComplete) {
+    <div>
+      <span innerHTML="{{hellService.currentHellDisplayStatus.description()}}">
+      </span>
+    </div>
+
+    <span>
+      Progress:
+      <div  class="progress-bar"
+          [attr.value]="hellService.currentHellDisplayStatus.progress()"
+          [attr.max]="hellService.currentHellDisplayStatus.progressMax()">
+          <span [style.width.%]="hellService.currentHellDisplayStatus.progressPercent()"></span>
+      </div>
+    </span>
+    @if (hellService.currentHellDisplayStatus.tasksComplete()) {
         <span>
-        <div  class="progress-bar"
-            [attr.value]="Math.floor(hellService.hells[activityService.currentRealm].progress())"
-            [attr.max]="Math.floor(hellService.hells[activityService.currentRealm].progressMax())">
-            <span
-            [style.width.%]="100 *
-            hellService.hells[activityService.currentRealm].progress() /
-            hellService.hells[activityService.currentRealm].progressMax()">
-            </span>
-        </div>
-        </span>
-    }
-    @if (activityService.currentRealm > 0 && hellService.hells[activityService.currentRealm].tasksComplete) {
-        <span>
-        <button (click)="hellBoss()">{{hellService.hells[activityService.currentRealm].complete ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
+        <button (click)="hellBoss()">{{hellService.currentHellDisplayStatus.complete() ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
         </span>
     }
   }
   <div>
     <table>
-      @for (hell of hellService.hells; track hell.name + hell.progress) {
+      @for (hell of hellService.displayStatus; track hell.name()) {
         <tr>
         <td>
             <span>
-            <mat-icon tooltip="{{hell.description}}">
+            <mat-icon tooltip="{{hell.description()}}">
                 help
             </mat-icon>
-            {{hell.name}}
+            {{hell.name()}}
             </span>
         </td>
         <td>
-          @if (hell.complete) { 
+          @if (hell.complete()) { 
             <span>Boss Defeated</span>
           } 
-          @else if (hell.tasksComplete) {
+          @else if (hell.tasksComplete()) {
             <span>Tasks Complete</span>
           } 
           @else {
           <div class="progress-bar" style="height:20px;"
-            [attr.value]="Math.floor(hell.progressCache)"
-            [attr.max]="Math.floor(hell.progressMaxCache)">
+            [attr.value]="hell.progress()"
+            [attr.max]="hell.progressMax()">
             <span
-                    [style.width.%]="100 *
-                    hell.progressCache /
-                    hell.progressMaxCache">
+                    [style.width.%]="hell.progressPercent()">
             </span>
             </div>
           }

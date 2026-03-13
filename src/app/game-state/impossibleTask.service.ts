@@ -2,8 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
 import { BattleService } from './battle.service';
-import { LocationService } from './location.service';
-import { LocationType } from './activity';
+import { LocationService, LocationType } from './location.service';
 import { LogService, LogTopic } from './log.service';
 import { CamelToTitlePipe } from '../pipes';
 import { ContemplationService } from './contemplation.service';
@@ -298,7 +297,7 @@ export class ImpossibleTaskService {
         );
         return;
       }
-      this.locationService!.setTroubleLocation(location);
+      this.locationService!.setLocation(location);
       this.locationService!.locationLocked = true;
     }
 

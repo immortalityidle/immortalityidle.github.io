@@ -21,8 +21,7 @@ import {
 } from './itemResources';
 import { HellService } from './hell.service';
 import { HomeService } from './home.service';
-import { LocationType } from './activity';
-import { LocationService } from './location.service';
+import { LocationService, LocationType } from './location.service';
 import { BigNumberPipe } from '../pipes';
 import { BattleService, LOOT_TYPE_GEM } from './battle.service';
 
@@ -924,8 +923,8 @@ export class InventoryService {
 
   generateHerb(workerPower: number = -1, skipSnobbery: boolean = false, quantity = 1): void {
     let targetLocation = LocationType.SmallTown;
-    if (this.locationService?.troubleTarget) {
-      targetLocation = this.locationService.troubleTarget;
+    if (this.locationService?.location) {
+      targetLocation = this.locationService.location;
     }
     let filteredHerbs = Herbs.filter(herb => herb.locations.includes(targetLocation));
     if (filteredHerbs.length === 0) {
