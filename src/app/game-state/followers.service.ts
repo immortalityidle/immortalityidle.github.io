@@ -78,8 +78,6 @@ export interface FollowersProperties {
   highestLevel: number;
   stashedFollowers: Follower[];
   stashedPets: Follower[];
-  stashedFollowersMaxes: { [key: string]: number };
-  stashedPetMaxes: { [key: string]: number };
   unlockedHiddenJobs: string[];
   autoReplaceUnlocked: boolean;
   petsBoosted: boolean;
@@ -1107,8 +1105,6 @@ export class FollowersService {
       petTriggers: this.petTriggers,
       followerTriggerIndex: this.followerTriggerIndex,
       petTriggerIndex: this.petTriggerIndex,
-      stashedFollowersMaxes: this.stashedFollowersMaxes,
-      stashedPetMaxes: this.stashedPetMaxes,
       sortField: this.sortField,
       sortAscending: this.sortAscending,
       totalRecruited: this.totalRecruited,
@@ -1147,8 +1143,6 @@ export class FollowersService {
     this.petTriggers = properties.petTriggers;
     this.followerTriggerIndex = properties.followerTriggerIndex;
     this.petTriggerIndex = properties.petTriggerIndex;
-    this.stashedFollowersMaxes = properties.stashedFollowersMaxes;
-    this.stashedPetMaxes = properties.stashedPetMaxes;
     this.sortField = properties.sortField;
     this.sortAscending = properties.sortAscending;
     this.totalRecruited = properties.totalRecruited;
@@ -1420,25 +1414,33 @@ export class FollowersService {
   }
 
   stashFollowers() {
-    this.stashedFollowers = this.followers;
-    this.followers = [];
-    this.stashedPets = this.pets;
-    this.pets = [];
-    this.stashedFollowersMaxes = this.maxFollowerByType;
-    this.stashedPetMaxes = this.maxPetsByType;
-    this.maxFollowerByType = {};
-    this.maxPetsByType = {};
+    while (this.followers.length > 0) {
+      const follower = this.followers.pop();
+      if (follower) {
+        this.stashedFollowers.push(follower);
+      }
+    }
+    while (this.pets.length > 0) {
+      const pet = this.pets.pop();
+      if (pet) {
+        this.stashedPets.push(pet);
+      }
+    }
   }
 
   restoreFollowers() {
-    this.followers = this.stashedFollowers;
-    this.stashedFollowers = [];
-    this.pets = this.stashedPets;
-    this.stashedPets = [];
-    this.maxFollowerByType = this.stashedFollowersMaxes;
-    this.maxPetsByType = this.stashedPetMaxes;
-    this.stashedFollowersMaxes = {};
-    this.stashedPetMaxes = {};
+    while (this.stashedFollowers.length > 0) {
+      const follower = this.stashedFollowers.pop();
+      if (follower) {
+        this.followers.push(follower);
+      }
+    }
+    while (this.stashedPets.length > 0) {
+      const pet = this.stashedPets.pop();
+      if (pet) {
+        this.pets.push(pet);
+      }
+    }
   }
 
   hellPurge() {

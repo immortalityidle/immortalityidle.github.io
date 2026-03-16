@@ -953,13 +953,6 @@ export class CharacterService {
     this.equipment.leftHand = null;
   }
 
-  restoreWeapons() {
-    this.equipment.rightHand = this.stashedEquipment.rightHand;
-    this.equipment.leftHand = this.stashedEquipment.leftHand;
-    this.stashedEquipment.rightHand = null;
-    this.stashedEquipment.leftHand = null;
-  }
-
   stashArmor() {
     this.stashedEquipment.head = this.equipment.head;
     this.stashedEquipment.body = this.equipment.body;
@@ -969,17 +962,6 @@ export class CharacterService {
     this.equipment.body = null;
     this.equipment.legs = null;
     this.equipment.feet = null;
-  }
-
-  restoreArmor() {
-    this.equipment.head = this.stashedEquipment.head;
-    this.equipment.body = this.stashedEquipment.body;
-    this.equipment.legs = this.stashedEquipment.legs;
-    this.equipment.feet = this.stashedEquipment.feet;
-    this.stashedEquipment.head = null;
-    this.stashedEquipment.body = null;
-    this.stashedEquipment.legs = null;
-    this.stashedEquipment.feet = null;
   }
 
   stashMoney() {

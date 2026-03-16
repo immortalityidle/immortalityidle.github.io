@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { ActivityService } from './activity.service';
-import { BattleService } from './battle.service';
+import { BattleService, FIRE_SHIELD, ICE_SHIELD, METAL_FIST_ATTACK, PYROCLASM_ATTACK } from './battle.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
@@ -3665,5 +3665,124 @@ baguaMap = [
       }
     }
     return null;
+  }
+
+  hellCleanup() {
+    if (!this.hellService) {
+      this.hellService = this.injector.get(HellService);
+    }
+    if (!this.followerService) {
+      this.followerService = this.injector.get(FollowersService);
+    }
+    if (!this.activityService) {
+      this.activityService = this.injector.get(ActivityService);
+    }
+    if (!this.battleService) {
+      this.battleService = this.injector.get(BattleService);
+    }
+    if (!this.farmService) {
+      this.farmService = this.injector.get(FarmService);
+    }
+    if (!this.homeService) {
+      this.homeService = this.injector.get(HomeService);
+    }
+
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.TongueRipping) &&
+      this.followerService.unlockedHiddenJobs.includes('prophet')
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.TongueRipping);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.Scissors) &&
+      this.followerService.autoReplaceUnlocked
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.Scissors);
+    }
+
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.TreesOfKnives) &&
+      this.followerService.unlockedHiddenJobs.includes('moneyBurner')
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.TreesOfKnives);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.Mirrors) &&
+      this.activityService.CombatTraining.unlocked
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.Mirrors);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.Steamers) &&
+      this.battleService.techniques.find(technique => technique.name === PYROCLASM_ATTACK)
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.Steamers);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.CopperPillars) &&
+      this.battleService.techniques.find(technique => technique.name === METAL_FIST_ATTACK)
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.CopperPillars);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.MountainOfKnives) &&
+      this.characterService.yinYangBoosted
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.MountainOfKnives);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.MountainOfIce) &&
+      this.battleService.techniques.find(technique => technique.name === ICE_SHIELD)
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.MountainOfIce);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.CauldronsOfOil) &&
+      this.characterService.righteousWrathUnlocked
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.CauldronsOfOil);
+    }
+    if (!this.hellService.completedHellBosses.includes(LocationType.CattlePit) && this.followerService.petsBoosted) {
+      this.hellService.completedHellBosses.push(LocationType.CattlePit);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.CrushingBoulder) &&
+      this.characterService.bonusMuscles
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.CrushingBoulder);
+    }
+    if (!this.hellService.completedHellBosses.includes(LocationType.MortarsAndPestles) && this.farmService.hellFood) {
+      this.hellService.completedHellBosses.push(LocationType.MortarsAndPestles);
+    }
+    if (!this.hellService.completedHellBosses.includes(LocationType.BloodPool) && this.homeService.hellHome()) {
+      this.hellService.completedHellBosses.push(LocationType.BloodPool);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.WrongfulDead) &&
+      this.characterService.bonusBrains
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.WrongfulDead);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.Dismemberment) &&
+      this.activityService.purifyGemsUnlocked
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.Dismemberment);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.MountainOfFire) &&
+      this.battleService.techniques.find(technique => technique.name === FIRE_SHIELD)
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.MountainOfFire);
+    }
+    if (!this.hellService.completedHellBosses.includes(LocationType.Mills) && this.characterService.bonusHealth) {
+      this.hellService.completedHellBosses.push(LocationType.Mills);
+    }
+    if (
+      !this.hellService.completedHellBosses.includes(LocationType.Saws) &&
+      this.followerService.unlockedHiddenJobs.includes('banker')
+    ) {
+      this.hellService.completedHellBosses.push(LocationType.Saws);
+    }
   }
 }

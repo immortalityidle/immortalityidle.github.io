@@ -2480,13 +2480,20 @@ export class InventoryService {
   }
 
   restoreWeapons() {
-    if (this.characterService.equipment.rightHand) {
-      this.addItem(this.characterService.equipment.rightHand);
+    if (this.characterService.stashedEquipment.rightHand) {
+      if (this.characterService.equipment.rightHand) {
+        this.addItem(this.characterService.equipment.rightHand);
+      }
+      this.characterService.equipment.rightHand = this.characterService.stashedEquipment.rightHand;
+      this.characterService.stashedEquipment.rightHand = null;
     }
-    if (this.characterService.equipment.leftHand) {
-      this.addItem(this.characterService.equipment.leftHand);
+    if (this.characterService.stashedEquipment.leftHand) {
+      if (this.characterService.equipment.leftHand) {
+        this.addItem(this.characterService.equipment.leftHand);
+      }
+      this.characterService.equipment.leftHand = this.characterService.stashedEquipment.leftHand;
+      this.characterService.stashedEquipment.leftHand = null;
     }
-    this.characterService.restoreWeapons();
     for (let i = this.stashedItemStacks.length - 1; i >= 0; i--) {
       const itemStack = this.stashedItemStacks[i];
       if (itemStack && itemStack.item && instanceOfEquipment(itemStack.item) && itemStack.item.weaponStats) {
@@ -2508,7 +2515,34 @@ export class InventoryService {
   }
 
   restoreArmor() {
-    this.characterService.restoreArmor();
+    if (this.characterService.stashedEquipment.head) {
+      if (this.characterService.equipment.head) {
+        this.addItem(this.characterService.equipment.head);
+      }
+      this.characterService.equipment.head = this.characterService.stashedEquipment.head;
+      this.characterService.stashedEquipment.head = null;
+    }
+    if (this.characterService.stashedEquipment.body) {
+      if (this.characterService.equipment.body) {
+        this.addItem(this.characterService.equipment.body);
+      }
+      this.characterService.equipment.body = this.characterService.stashedEquipment.body;
+      this.characterService.stashedEquipment.body = null;
+    }
+    if (this.characterService.stashedEquipment.legs) {
+      if (this.characterService.equipment.legs) {
+        this.addItem(this.characterService.equipment.legs);
+      }
+      this.characterService.equipment.legs = this.characterService.stashedEquipment.legs;
+      this.characterService.stashedEquipment.legs = null;
+    }
+    if (this.characterService.stashedEquipment.feet) {
+      if (this.characterService.equipment.feet) {
+        this.addItem(this.characterService.equipment.feet);
+      }
+      this.characterService.equipment.feet = this.characterService.stashedEquipment.feet;
+      this.characterService.stashedEquipment.feet = null;
+    }
     for (let i = this.stashedItemStacks.length - 1; i >= 0; i--) {
       const itemStack = this.stashedItemStacks[i];
       if (itemStack && itemStack.item && instanceOfEquipment(itemStack.item) && itemStack.item.armorStats) {

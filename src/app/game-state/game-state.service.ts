@@ -821,8 +821,6 @@ export class GameStateService {
       highestLevel: props?.highestLevel || 0,
       stashedFollowers: props?.stashedFollowers || [],
       stashedPets: props?.stashedPets || [],
-      stashedFollowersMaxes: props?.stashedFollowersMaxes || {},
-      stashedPetMaxes: props?.stashedPetMaxes || {},
       unlockedHiddenJobs: props?.unlockedHiddenJobs || [],
       autoReplaceUnlocked: props?.autoReplaceUnlocked || false,
       petsBoosted: props?.petsBoosted || false,

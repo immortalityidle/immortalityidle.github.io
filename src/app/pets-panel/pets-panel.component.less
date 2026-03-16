@@ -1,61 +1,74 @@
- 
-  span {
-    font-size: 14px;
-  }
+@import (reference) "../../styles.less";
 
-  .followersContainer {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    }
+span {
+  font-size: 14px;
+}
 
-  .followerPanel {
-    margin-left: 4px;
-    margin-right: 4px;
-  }
-  
-  .optionsIcon {
-    float: right;
-  }
-  
-  .UNMAXED {
-    color: var(--bodyText);
-  }
-  
-  .MAXED {
-    color: var(--textHighlight);
-  }
-  
-  .smallerIcon {
-    float: right;
-    height: 12px;
-    width: 12px;
-    margin-top: 1px;
-    margin-bottom: 0px;
-    vertical-align: top;
-    font-size: 12px;
-  }
-  
-  .followerName {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-  }
-  
-  .attributeLine {
-    border-bottom: 1px var(--tableDividerColor) solid;
-  }
-  
-  .attributeValueCell {
-    position:relative;
-  }
-  
-  .popupText {
-    position: absolute;
-    transform: translateZ(0);
-    color: var(--popupTextColor);
-    z-index: 10000;
-    font-size: x-small;
-  }
-  
+.headerLine {
+  margin-left: 2px;
+}
+
+.followersContainer {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.followerPanel {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.optionsIcon {
+  float: right;
+}
+
+.UNMAXED {
+  color: var(--bodyText);
+}
+
+.MAXED {
+  color: var(--textHighlight);
+}
+
+.smallerIcon {
+  float: right;
+  height: 12px;
+  width: 12px;
+  margin-top: 1px;
+  margin-bottom: 0px;
+  vertical-align: top;
+  font-size: 12px;
+}
+
+.followerName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.followerCell {
+  margin-right: 4px;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.followerLine {
+  border-bottom: 1px var(--tableDividerColor) solid;
+  display: flex;
+  flex-direction: row;
+}
+
+.attributeValueCell {
+  position:relative;
+}
+
+.popupText {
+  position: absolute;
+  transform: translateZ(0);
+  color: var(--popupTextColor);
+  z-index: 10000;
+  font-size: x-small;
+}
+

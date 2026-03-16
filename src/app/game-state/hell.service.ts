@@ -243,7 +243,7 @@ export class HellService {
     this.locationService!.location = hellLocation;
     this.locationService!.unlockedLocations = [LocationType.Self, hellLocation];
     const newHell = this.getHell(this.locationService!.location);
-    if (newHell.entryEffect) {
+    if (newHell.entryEffect && !this.completedHellBosses.includes(hellLocation)) {
       newHell.entryEffect();
     }
     newHell.setPortals();
@@ -846,6 +846,15 @@ export class HellService {
     this.fasterHellMoney = properties.fasterHellMoney || false;
     this.burnedMoney = properties.burnedMoney || 0;
     this.portalsSet = false;
+    setTimeout(() => {
+      // kludge to recover hell progress after refactor, remove this later
+      this.itemRepoService.hellCleanup();
+      for (const completedHell of this.completedHellBosses) {
+        if (!this.completedHellTasks.includes(completedHell)) {
+          this.completedHellTasks.push(completedHell);
+        }
+      }
+    });
   }
 
   hells: Hell[] = [
@@ -1125,7 +1134,6 @@ export class HellService {
         this.inventoryService.stashArmor();
       },
       exitEffect: () => {
-        this.activityService.portals = [this.activityService.escapeHell];
         this.inventoryService.restoreWeapons();
         this.inventoryService.restoreArmor();
       },
