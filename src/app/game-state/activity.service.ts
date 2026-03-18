@@ -4904,5 +4904,26 @@ export class ActivityService {
     unlocked: true,
     skipApprenticeshipLevel: 0,
   };
+
+  PortalToMortalRealm: Activity = {
+    level: 0,
+    location: LocationType.Self,
+    realm: Realm.Hell,
+    name: ['Portal to the Mortal Realm'],
+    activityType: ActivityType.MortalRealmPortal,
+    description: ['Open a portal to return to the Mortal Realm.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.hellService?.returnToMortalRealm();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
 }
 /* eslint-enable @typescript-eslint/ban-ts-comment */

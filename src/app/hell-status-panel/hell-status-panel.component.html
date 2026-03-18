@@ -25,7 +25,7 @@
           <span [style.width.%]="hellService.currentHellDisplayStatus.progressPercent()"></span>
       </div>
     </span>
-    @if (hellService.currentHellDisplayStatus.tasksComplete()) {
+    @if (hellService.currentHellDisplayStatus.tasksComplete() && !hellService.currentHellDisplayStatus.hidden()) {
         <span>
         <button (click)="hellBoss()">{{hellService.currentHellDisplayStatus.complete() ? "Beat On The Hell Lord Some More" : "Challenge the Hell Lord"}}</button>
         </span>
@@ -34,33 +34,35 @@
   <div>
     <table>
       @for (hell of hellService.displayStatus; track hell.name()) {
-        <tr>
-        <td>
-            <span>
-            <mat-icon tooltip="{{hell.description()}}">
-                help
-            </mat-icon>
-            {{hell.name()}}
-            </span>
-        </td>
-        <td>
-          @if (hell.complete()) { 
-            <span>Boss Defeated</span>
-          } 
-          @else if (hell.tasksComplete()) {
-            <span>Tasks Complete</span>
-          } 
-          @else {
-          <div class="progress-bar" style="height:20px;"
-            [attr.value]="hell.progress()"
-            [attr.max]="hell.progressMax()">
-            <span
-                    [style.width.%]="hell.progressPercent()">
-            </span>
-            </div>
-          }
-        </td>
-        </tr>
+        @if (!hell.hidden()) {
+          <tr>
+          <td>
+              <span>
+              <mat-icon tooltip="{{hell.description()}}">
+                  help
+              </mat-icon>
+              {{hell.name()}}
+              </span>
+          </td>
+          <td>
+            @if (hell.complete()) { 
+              <span>Boss Defeated</span>
+            } 
+            @else if (hell.tasksComplete()) {
+              <span>Tasks Complete</span>
+            } 
+            @else {
+            <div class="progress-bar" style="height:20px;"
+              [attr.value]="hell.progress()"
+              [attr.max]="hell.progressMax()">
+              <span
+                      [style.width.%]="hell.progressPercent()">
+              </span>
+              </div>
+            }
+          </td>
+          </tr>
+        }
       }
     </table>
   </div>

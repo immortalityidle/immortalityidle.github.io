@@ -57,6 +57,7 @@ export interface DisplayHellStatusEntry {
   progressPercent: WritableSignal<number>;
   tasksComplete: WritableSignal<boolean>;
   complete: WritableSignal<boolean>;
+  hidden: WritableSignal<boolean>;
 }
 
 @Injectable({
@@ -158,6 +159,7 @@ export class HellService {
             progressPercent: signal<number>(0),
             complete: signal<boolean>(false),
             tasksComplete: signal<boolean>(false),
+            hidden: signal<boolean>(true),
           });
         }
         const hell = this.hells[i];
@@ -168,6 +170,7 @@ export class HellService {
         this.displayStatus[i].progressPercent.set((100 * hell.progress()) / hell.progressMax());
         this.displayStatus[i].complete.set(this.completedHellBosses.includes(hell.location));
         this.displayStatus[i].tasksComplete.set(this.completedHellTasks.includes(hell.location));
+        this.displayStatus[i].hidden.set(hell.location === LocationType.Gates);
         if (this.locationService?.location === hell.location) {
           this.currentHellDisplayStatus.name.set(hell.name);
           this.currentHellDisplayStatus.description.set(hell.description);
@@ -176,6 +179,7 @@ export class HellService {
           this.currentHellDisplayStatus.progressPercent.set((100 * hell.progress()) / hell.progressMax());
           this.currentHellDisplayStatus.complete.set(this.completedHellBosses.includes(hell.location));
           this.currentHellDisplayStatus.tasksComplete.set(this.completedHellTasks.includes(hell.location));
+          this.currentHellDisplayStatus.hidden.set(hell.location === LocationType.Gates);
         }
       }
 
@@ -194,6 +198,7 @@ export class HellService {
       progressPercent: signal<number>(0),
       complete: signal<boolean>(false),
       tasksComplete: signal<boolean>(false),
+      hidden: signal<boolean>(true),
     };
   }
 
@@ -901,7 +906,10 @@ export class HellService {
           });
         }
         if (allComplete) {
-          this.activityService.portals.push(this.activityService.FinishHell);
+          this.activityService.portals.unshift(this.activityService.FinishHell);
+        }
+        if (this.characterService.god()) {
+          this.activityService.portals.unshift(this.activityService.PortalToMortalRealm);
         }
       },
       completeEffect: () => {
@@ -929,7 +937,8 @@ export class HellService {
         return 1;
       },
       successCheck: () => {
-        return this.characterService.god();
+        return false;
+        //return this.characterService.god();
       },
     },
     {
