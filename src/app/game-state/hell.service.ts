@@ -3,7 +3,7 @@ import { LogService, LogTopic } from './log.service';
 import { AttributeType, CharacterService } from '../game-state/character.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
-import { BattleService, EFFECT_POISON, EFFECT_ZOMBIE_DECOY } from './battle.service';
+import { BattleService, EFFECT_DOOM, EFFECT_POISON, EFFECT_ZOMBIE_DECOY } from './battle.service';
 import { Activity, ActivityType, YinYangEffect } from './activity';
 import { FollowersService } from './followers.service';
 import { InventoryService, Item } from './inventory.service';
@@ -85,7 +85,7 @@ export class HellService {
   fasterHellMoney = false;
   burnedMoney = 0;
   hellBossBaseHealth = 1e34;
-  baseHellBossDamage = 1e19;
+  baseHellBossDamage = 1e20;
   displayStatus: DisplayHellStatusEntry[] = [];
   currentHellDisplayStatus: DisplayHellStatusEntry;
   portalsSet = false;
@@ -806,6 +806,98 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+      });
+    }
+  }
+
+  fightYama() {
+    if (this.battleService!.enemies.length === 0) {
+      this.battleService!.addEnemy({
+        name: 'Lord Yama',
+        baseName: 'Yama',
+        health: this.hellBossBaseHealth * 100,
+        maxHealth: this.hellBossBaseHealth * 100,
+        defense: this.hellBossBaseHealth * 100,
+        loot: [this.itemRepoService.items['portalKey']],
+        techniques: [
+          {
+            name: 'Karmic Crush',
+            ticks: 0,
+            ticksRequired: 28,
+            baseDamage: this.baseHellBossDamage * 100000,
+            unlocked: true,
+          },
+          {
+            name: 'Penance',
+            ticks: 0,
+            ticksRequired: 7,
+            baseDamage: this.baseHellBossDamage * 30000,
+            unlocked: true,
+          },
+          {
+            name: 'Condemnation',
+            ticks: 0,
+            ticksRequired: 88,
+            baseDamage: this.baseHellBossDamage * 3300000,
+            unlocked: true,
+          },
+          {
+            name: 'Eternal Damnation',
+            ticks: 0,
+            ticksRequired: 2828,
+            baseDamage: this.baseHellBossDamage * 1e60,
+            unlocked: true,
+          },
+        ],
+        immunities: [EFFECT_DOOM, EFFECT_POISON],
+      });
+      this.battleService!.addEnemy({
+        name: 'Horse Face',
+        baseName: 'HorseFace',
+        health: this.hellBossBaseHealth * 10,
+        maxHealth: this.hellBossBaseHealth * 10,
+        defense: this.hellBossBaseHealth * 10,
+        loot: [],
+        techniques: [
+          {
+            name: 'Trample',
+            ticks: 0,
+            ticksRequired: 4,
+            baseDamage: this.baseHellBossDamage * 8000,
+            unlocked: true,
+          },
+          {
+            name: 'Smash',
+            ticks: 0,
+            ticksRequired: 32,
+            baseDamage: this.baseHellBossDamage * 22000,
+            unlocked: true,
+          },
+        ],
+      });
+      this.battleService!.addEnemy({
+        name: 'Ox Head',
+        baseName: 'OxHead',
+        health: this.hellBossBaseHealth * 10,
+        maxHealth: this.hellBossBaseHealth * 10,
+        defense: this.hellBossBaseHealth * 10,
+        loot: [],
+        techniques: [
+          {
+            name: 'Moo!',
+            ticks: 0,
+            ticksRequired: 16,
+            baseDamage: this.baseHellBossDamage * 10000,
+            unlocked: true,
+          },
+          {
+            name: 'Stomp',
+            ticks: 0,
+            ticksRequired: 22,
+            baseDamage: this.baseHellBossDamage * 14000,
+            unlocked: true,
+          },
+        ],
       });
     }
   }

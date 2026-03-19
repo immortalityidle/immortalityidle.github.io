@@ -57,11 +57,22 @@
         <div class="headerDiv">
           <span>Your Enemies</span>
         </div>
-        @for (enemy of battleService.displayEnemies; track enemy.name()) {
+        @for (enemy of battleService.displayEnemies; track enemy.name(); let firstEnemy = $first) {
+          @if (!firstEnemy){
+            <br>
+            <hr class="fullWidth">
+            <br>
+            
+          }
           <div>
             <span>Fighting </span>
             <span class="enemyName">{{enemy.name()}}</span>
           </div>
+          @if (!firstEnemy){
+            <div>
+              <button (click)="battleService.changeTarget(enemy.name())">Target this enemy</button>
+            </div>          
+          }
           <div class="columnDiv">
             <div class="splitDiv">
               <div>
@@ -100,7 +111,7 @@
               }              
             </div>
             <div class="splitDiv">
-              @if (battleService.enemyImageFile() !== '') {
+              @if (battleService.enemyImageFile() !== '' && firstEnemy) {
                 <div>
                   <img class="monsterImage" ngSrc="{{battleService.enemyImageFile()}}" alt="A Monster!" width="80" height="100" priority/>
                 </div>

@@ -271,6 +271,7 @@ export class BattleService {
   enemiesPresent = signal<boolean>(false);
   timesFled = 0;
   hellMonsterBasePower = 1e19;
+  divineEnemyBasePower = 1e24;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -1306,8 +1307,12 @@ export class BattleService {
     }
     this.voidSkipCounter++;
     let damage = technique.baseDamage;
-    // Yin/Yang factor
-    damage -= damage * (this.characterService.yinYangBalance / 2);
+    // Yin/Yang factor, balance can be up to 10 when boosted
+    if (this.characterService.yinYangBoosted) {
+      damage -= damage * (this.characterService.yinYangBalance / 18);
+    } else {
+      damage -= damage * (this.characterService.yinYangBalance / 2);
+    }
 
     let damageBack = false;
     for (let i = this.statusEffects.length - 1; i >= 0; i--) {
@@ -1867,6 +1872,18 @@ export class BattleService {
     }
   }
 
+  changeTarget(enemyName: string) {
+    if (this.enemies.length <= 1) {
+      return;
+    }
+    const enemyIndex = this.enemies.findIndex(enemy => enemy.name === enemyName);
+    if (enemyIndex > 0) {
+      const enemy = this.enemies.splice(enemyIndex, 1);
+      this.enemies.unshift(enemy[0]);
+      this.currentEnemy = this.enemies[0];
+    }
+  }
+
   clearEnemies() {
     this.enemies = [];
     this.currentEnemy = null;
@@ -1907,6 +1924,10 @@ export class BattleService {
     const targetLocation = this.locationService.location;
 
     const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
+    if (possibleMonsters.length === 0) {
+      // no monsters here, bail out
+      return;
+    }
 
     const monsterType = possibleMonsters[(this.killsByLocation[targetLocation] || 0) % possibleMonsters.length];
 
@@ -3470,6 +3491,18 @@ export class BattleService {
         },
       ],
     },
+    /* 
+    Greek Demigods
+Zeus: Heracles, Perseus, Pollux, Sarpedon, Helen, Amphion and Zethus, Minos, Dionysus.
+Poseidon: Theseus, Bellerophon, Orion, Pelias, Cycnus, Messapus, Ancaeus.
+Apollo: Asclepius, Aristaeus, Ion.
+Hermes: Autolycus, Myrtilus, Abderus, Aethelides, Echion.
+Hephaestus: Periphetes, Erichthonius (in one version), Palaemonius.
+Ares: Hyppolita, Penthesilea, Oenomaus, Ascalaphus, Cycnus, Romulus and Remus.
+Dionysus: Deianira, Eurymedon, Phlias.
+Demeter: Plutus, Chrysothemis, Eubuleus.
+Aphrodite: Aeneas.
+*/
   ];
 
   private monsterQualities = [

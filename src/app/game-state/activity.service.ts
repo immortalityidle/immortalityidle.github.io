@@ -1,5 +1,5 @@
 import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
-import { BattleService, EFFECT_CORRUPTION, EFFECT_DOOM, EFFECT_POISON, LOOT_TYPE_GEM } from './battle.service';
+import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM } from './battle.service';
 import {
   Activity,
   ActivityLoopEntry,
@@ -4843,60 +4843,7 @@ export class ActivityService {
     consequenceDescription: [''],
     consequence: [
       () => {
-        if (this.battleService.enemies.length === 0) {
-          this.battleService.addEnemy({
-            name: 'Lord Yama',
-            baseName: 'Yama',
-            health: 1e40,
-            maxHealth: 1e40,
-            defense: 1e18,
-            loot: [this.itemRepoService.items['portalKey']],
-            techniques: [
-              {
-                name: 'Attack',
-                ticks: 0,
-                ticksRequired: 10,
-                baseDamage: 1e21,
-                unlocked: true,
-              },
-            ],
-            immunities: [EFFECT_DOOM, EFFECT_POISON],
-          });
-          this.battleService.addEnemy({
-            name: 'Horse Face',
-            baseName: 'HorseFace',
-            health: 1e39,
-            maxHealth: 1e39,
-            defense: 5e17,
-            loot: [],
-            techniques: [
-              {
-                name: 'Attack',
-                ticks: 0,
-                ticksRequired: 24,
-                baseDamage: 1e20,
-                unlocked: true,
-              },
-            ],
-          });
-          this.battleService.addEnemy({
-            name: 'Ox Head',
-            baseName: 'OxHead',
-            health: 1e39,
-            maxHealth: 1e39,
-            defense: 5e17,
-            loot: [],
-            techniques: [
-              {
-                name: 'Attack',
-                ticks: 0,
-                ticksRequired: 16,
-                baseDamage: 1e20,
-                unlocked: true,
-              },
-            ],
-          });
-        }
+        this.hellService?.fightYama();
       },
     ],
     requirements: [{}],

@@ -9,6 +9,25 @@ export enum Realm {
   Hell = 'Hell',
   MortalRealm = 'Mortal Realm',
   DivineRealm = 'Divine Realm',
+  RealmOfFire = 'Realm of Fire',
+  RealmOfWater = 'Realm of Water',
+  RealmOfEarth = 'Realm of Earth',
+  RealmOfMetal = 'Realm of Metal',
+  RealmOfWood = 'Realm of Wood',
+  PhilosopherStates = 'Realm of the Philosopher States',
+  LegionOfArchitects = 'Realm of the Legion Of Architects',
+  RiverThroughTheSand = 'Realm of the River Through The Sand',
+  FrozenNorthlands = 'Realm of the Frozen Northlands',
+  MysteriousJungles = 'Realm of the Mysterious Jungles',
+  DistantIslands = 'Realm of the Distant Islands',
+  CultOfTheOldOnes = 'Realm of the Cult Of The Old Ones',
+  SunsoakedPlains = 'Realm of the Sunsoaked Plains',
+  DarkForests = 'Realm of the Dark Forests',
+  EnlightenedMultitude = 'Realm of the Enlightened Multitude',
+  FertileValleys = 'Realm of the Fertile Valleys',
+  LandOfLegends = 'Realm of the Land Of Legends',
+  IslandsOfTheDawn = 'Realm of the Islands Of The Dawn',
+  ShadowCultists = 'Realm of the Shadow Cultists',
 }
 
 export enum LocationType {
@@ -44,6 +63,23 @@ export enum LocationType {
   MountainOfFire = 'Hell of the Mountain of Fire',
   Mills = 'Hell of Mills',
   Saws = 'Hell of Saws',
+  BurningInferno = 'Burning Inferno',
+  VastOcean = 'Vast Ocean',
+  EndlessTunnels = 'Endless Tunnels',
+  IronCaverns = 'Iron Caverns',
+  EverTree = 'Ever Tree',
+  LightningLodge = 'LightningLodge',
+  MaritalSanctuary = 'MaritalSanctuary',
+  OceanPalace = 'OceanPalace',
+  HarvestHome = 'HarvestHome',
+  FortressOfWisdom = 'FortressOfWisdom',
+  AuditoriumOfLight = 'AuditoriumOfLight',
+  Woodlands = 'Woodlands',
+  MartialCamp = 'MartialCamp',
+  GardenOfDelights = 'GardenOfDelights',
+  TheMightyForge = 'TheMightyForge',
+  MessageDepot = 'MessageDepot',
+  VerdantVineyard = 'VerdantVineyard',
 }
 
 export interface LocationEntry {
@@ -330,7 +366,144 @@ export class LocationService {
         return false;
       },
     },
+    [LocationType.BurningInferno]: {
+      name: LocationType.BurningInferno,
+      realm: Realm.RealmOfFire,
+      description: 'Nothing but fire as far as you can see.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.VastOcean]: {
+      name: LocationType.VastOcean,
+      realm: Realm.RealmOfWater,
+      description: 'Nothing but water as far as you can see.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.EndlessTunnels]: {
+      name: LocationType.EndlessTunnels,
+      realm: Realm.RealmOfEarth,
+      description: 'Nothing but earth as far as you can see.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.IronCaverns]: {
+      name: LocationType.IronCaverns,
+      realm: Realm.RealmOfMetal,
+      description: 'Nothing but metal as far as you can see.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.EverTree]: {
+      name: LocationType.EverTree,
+      realm: Realm.RealmOfWood,
+      description: 'Nothing but wood as far as you can see.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.MessageDepot]: {
+      name: LocationType.MessageDepot,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Hermes, messenger of the gods, god of travel and thieves.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.MartialCamp]: {
+      name: LocationType.MartialCamp,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Ares, god of war, bloodshed, and violence.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.VerdantVineyard]: {
+      name: LocationType.VerdantVineyard,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Dionysus, god of wine.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.TheMightyForge]: {
+      name: LocationType.TheMightyForge,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Hephaestus, god of fire, metallurgy, and crafts.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.GardenOfDelights]: {
+      name: LocationType.GardenOfDelights,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Aphrodite, goddess of love, beauty, and desire.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.Woodlands]: {
+      name: LocationType.Woodlands,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Artemis, goddess of the hunt, wilderness, and the moon.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.AuditoriumOfLight]: {
+      name: LocationType.AuditoriumOfLight,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Apollo, god of music, prophecy, healing, and the sun.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.FortressOfWisdom]: {
+      name: LocationType.FortressOfWisdom,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Athena, goddess of wisdom, war strategy, and crafts.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.HarvestHome]: {
+      name: LocationType.HarvestHome,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Demeter, goddess of harvest and agriculture.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.OceanPalace]: {
+      name: LocationType.OceanPalace,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Poseidon, god of the sea, earthquakes, and horses.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.MaritalSanctuary]: {
+      name: LocationType.MaritalSanctuary,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Hera, Queen of the gods, goddess of marriage and women.',
+      unlock: () => {
+        return false;
+      },
+    },
+    [LocationType.LightningLodge]: {
+      name: LocationType.LightningLodge,
+      realm: Realm.PhilosopherStates,
+      description: 'Home of Zeus, King of the gods with power over the sky, thunder, and justice.',
+      unlock: () => {
+        return false;
+      },
+    },
   };
+
   unlockedLocations: LocationType[] = [];
   notifiedLocations: LocationType[] = [];
   locationLocked = false;
@@ -345,6 +518,7 @@ export class LocationService {
       this.checkForUnlocks();
     });
     this.mainLoopService.reincarnateSubject.subscribe(() => {
+      this.notifiedLocations = [];
       this.checkForUnlocks();
     });
   }

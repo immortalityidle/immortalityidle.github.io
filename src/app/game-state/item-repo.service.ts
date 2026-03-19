@@ -2081,6 +2081,21 @@ baguaMap = [
             ' lifetimes to claim your throne on Mount Penglai.'
         );
         this.characterService.god.set(true);
+        if (this.characterService.attributes.justice.value <= 0) {
+          this.characterService.attributes.justice.value += 1;
+        }
+        if (this.characterService.attributes.wisdom.value <= 0) {
+          this.characterService.attributes.wisdom.value += 1;
+        }
+        if (this.characterService.attributes.mercy.value <= 0) {
+          this.characterService.attributes.mercy.value += 1;
+        }
+        if (this.characterService.attributes.presence.value <= 0) {
+          this.characterService.attributes.presence.value += 1;
+        }
+        if (this.characterService.attributes.wrath.value <= 0) {
+          this.characterService.attributes.wrath.value += 1;
+        }
       },
       shopable: false,
     },
