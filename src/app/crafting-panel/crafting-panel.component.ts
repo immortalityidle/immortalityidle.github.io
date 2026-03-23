@@ -53,7 +53,7 @@ export class CraftingPanelComponent {
     const inputItem = workstation.inputs[inputSlot].item;
     if (inputItem) {
       if (workstation.inputs[inputSlot].quantity > 0) {
-        this.inventoryService.addItem(inputItem, workstation.inputs[inputSlot].quantity, 0, true);
+        this.inventoryService.addItem(inputItem, workstation.inputs[inputSlot].quantity, 0, true, true);
       }
       workstation.inputs[inputSlot] = this.inventoryService.getEmptyItemStack();
     }

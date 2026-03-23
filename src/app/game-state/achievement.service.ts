@@ -517,7 +517,7 @@ export class AchievementService {
         return this.inventoryService.divinePeachesUnlocked;
       },
       effect: () => {
-        this.farmService.unlockCrop('divinePeach');
+        this.farmService.unlockCrop('divine peach');
       },
       unlocked: false,
     },

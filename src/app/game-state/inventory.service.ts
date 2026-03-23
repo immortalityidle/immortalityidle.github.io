@@ -45,7 +45,7 @@ export interface Item {
   subtype?: string;
   color?: string;
   elements?: string[];
-  attribute?: AttributeType;
+  attribute?: AttributeType | 'any';
   effect?: string;
   useLabel?: string;
   useDescription?: string;
@@ -670,8 +670,9 @@ export class InventoryService {
   ];
 
   updateFarmFoodList() {
-    if (this.divinePeachesUnlocked) {
-      this.farmFoodList.push(this.itemRepoService.items['divinePeach']);
+    const divinePeachItem = this.itemRepoService.items['divinePeach'];
+    if (this.divinePeachesUnlocked && !this.farmFoodList.includes(divinePeachItem)) {
+      this.farmFoodList.push(divinePeachItem);
     }
   }
 

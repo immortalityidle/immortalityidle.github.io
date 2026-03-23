@@ -1912,20 +1912,25 @@ export class HomeService {
             attributeMap[attribute] = 1;
           }
           if (
-            !attributeMap[highestAttribute] ||
-            (attribute !== highestAttribute && attributeMap[attribute] >= attributeMap[highestAttribute])
+            attribute !== 'any' &&
+            (!attributeMap[highestAttribute] ||
+              (attribute !== highestAttribute && attributeMap[attribute] >= attributeMap[highestAttribute]))
           ) {
             secondHighestAttribute = highestAttribute;
             highestAttribute = attribute;
           }
         }
         for (const itemStack of herbStacks) {
-          if (itemStack.item!.attribute === highestAttribute || itemStack.item!.attribute === secondHighestAttribute) {
+          if (
+            itemStack.item!.attribute === highestAttribute ||
+            itemStack.item!.attribute === secondHighestAttribute ||
+            itemStack.item!.attribute === 'any'
+          ) {
             totalValue += itemStack.item!.value;
             itemStack.quantity--;
           }
         }
-        if (totalValue < 1) {
+        if (totalValue < 1 || highestAttribute === '') {
           // didn't find any usable ingredients
           return;
         }
@@ -1939,6 +1944,9 @@ export class HomeService {
           multiplier *= Math.max(2.5, attributeMap[highestAttribute]);
         } else {
           multiplier += attributeMap[secondHighestAttribute] * attributeMap[secondHighestAttribute];
+        }
+        if (attributeMap['any']) {
+          multiplier *= attributeMap['any'] * 2;
         }
         totalValue = Math.ceil(totalValue * multiplier);
         const grade = Math.ceil(totalValue / 10);
@@ -2010,6 +2018,14 @@ export class HomeService {
         increaseAmount: grade,
         shopable: false,
       });
+    } else if (workstation.alchemyProduct === 'distilled essences') {
+      const divineFruitStack = workstation.inputs.find(
+        itemStack => itemStack.item?.subtype === 'divinefruit' && itemStack.quantity > 10
+      );
+      if (divineFruitStack?.item?.id === 'divinePeach') {
+        divineFruitStack.quantity -= 10;
+        this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
+      }
     } else {
       for (const itemStack of herbStacks) {
         totalValue += itemStack.item!.value * 0.5;
@@ -2200,6 +2216,12 @@ export class HomeService {
       workstation.alchemyProduct = 'attribute pills';
     } else if (workstation.alchemyProduct === 'attribute pills' && alchemyLevel >= 2) {
       workstation.alchemyProduct = 'longevity pills';
+    } else if (
+      workstation.alchemyProduct === 'longevity pills' &&
+      alchemyLevel >= 2 &&
+      this.inventoryService.divinePeachesUnlocked
+    ) {
+      workstation.alchemyProduct = 'distilled essences';
     } else {
       workstation.alchemyProduct = 'potions';
     }

@@ -9,6 +9,7 @@ import { CONCEPT_EFFECT_FOOD_YIELD, ContemplationService } from './contemplation
 
 export interface Field {
   cropName: string;
+  cropId: string;
   plots: number;
   yield: number;
   maxPlotYield: number;
@@ -161,6 +162,24 @@ export class FarmService {
     this.hellFood = properties.hellFood || false;
     this.fallowPlots = properties.fallowPlots;
     this.unlockedCrops = properties.unlockedCrops;
+    // kludge for save files that have the old entry using the id instead of the name, remove this later
+    const divinePeachId = this.itemRepoService.items['divinePeach'].id;
+    const divinePeachIndex = this.unlockedCrops.indexOf(divinePeachId);
+    if (divinePeachIndex >= 0) {
+      this.unlockedCrops.splice(divinePeachIndex, 1);
+    }
+    for (const field of this.fields) {
+      if (!field.cropId) {
+        if (field.cropName === this.itemRepoService.items['divinePeach'].name) {
+          field.cropId = divinePeachId;
+          field.maxPlotYield = Math.ceil(200 / this.itemRepoService.items['divinePeach'].value);
+        } else {
+          const cropItem = this.itemRepoService.items[field.cropName];
+          field.maxPlotYield = Math.ceil(200 / cropItem.value);
+          field.cropId = cropItem.id;
+        }
+      }
+    }
     this.consecutiveHarvests = properties.consecutiveHarvests;
     this.farmedPlots = 0;
     for (const field of this.fields) {
@@ -188,14 +207,14 @@ export class FarmService {
     if (cropIndex >= this.unlockedCrops.length) {
       cropIndex = 0;
     }
-    const cropItem = this.inventoryService.farmFoodList.find(entry => entry.id === this.unlockedCrops[cropIndex]);
+    const cropItem = this.inventoryService.farmFoodList.find(entry => entry.name === this.unlockedCrops[cropIndex]);
     if (!cropItem) {
       // couldn't find the crop, bail out
       return;
     }
     this.fields[fieldIndex].cropName = this.unlockedCrops[cropIndex];
     this.fields[fieldIndex].yield = 0;
-    this.fields[fieldIndex].maxPlotYield = Math.floor(200 / cropItem.value);
+    this.fields[fieldIndex].maxPlotYield = Math.ceil(200 / cropItem.value);
     this.fields[fieldIndex].daysToHarvest = 180 + cropItem.value;
     this.fields[fieldIndex].originalDaysToHarvest = 180 + cropItem.value;
     this.fields[fieldIndex].averageYield = 0;
@@ -238,7 +257,8 @@ export class FarmService {
     }
     const cropItem = this.inventoryService.farmFoodList[0];
     this.fields.push({
-      cropName: cropItem.id,
+      cropName: cropItem.name,
+      cropId: cropItem.id,
       plots: 0,
       yield: 0,
       maxPlotYield: Math.floor(200 / cropItem.value),
@@ -305,7 +325,7 @@ export class FarmService {
         if (field.daysToHarvest <= 0) {
           fieldYield = field.yield * conceptMultiplier;
           totalDailyYield += fieldYield;
-          this.inventoryService.addItem(this.itemRepoService.items[field.cropName], fieldYield);
+          this.inventoryService.addItem(this.itemRepoService.items[field.cropId], fieldYield);
           harvested = true;
           field.daysToHarvest = field.originalDaysToHarvest;
           field.yield = 0;
