@@ -212,7 +212,8 @@ export class FarmService {
       // couldn't find the crop, bail out
       return;
     }
-    this.fields[fieldIndex].cropName = this.unlockedCrops[cropIndex];
+    this.fields[fieldIndex].cropName = cropItem.name;
+    this.fields[fieldIndex].cropId = cropItem.id;
     this.fields[fieldIndex].yield = 0;
     this.fields[fieldIndex].maxPlotYield = Math.ceil(200 / cropItem.value);
     this.fields[fieldIndex].daysToHarvest = 180 + cropItem.value;
@@ -338,7 +339,7 @@ export class FarmService {
         // smooth farming bonus crops on a day when no crops are harvested
         const smoothFarmingYield = Math.floor(field.averageYield) || 1;
         totalDailyYield += smoothFarmingYield;
-        this.inventoryService.addItem(this.itemRepoService.items[field.cropName], smoothFarmingYield);
+        this.inventoryService.addItem(this.itemRepoService.items[field.cropId], smoothFarmingYield);
       }
     }
     if (totalDailyYield > 0) {
