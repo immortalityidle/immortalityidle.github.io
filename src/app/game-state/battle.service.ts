@@ -73,6 +73,8 @@ export interface EnemyTypes {
   description: string;
   element?: string;
   basePower: number;
+  defenseToHealthRatio?: number;
+  attackToHealthRatio?: number;
   lootType?: string[];
   techniques?: Technique[];
   unlocksFurniture?: string;
@@ -270,8 +272,10 @@ export class BattleService {
   enemyImageFile = signal<string>('');
   enemiesPresent = signal<boolean>(false);
   timesFled = 0;
-  hellMonsterBasePower = 1e19;
+  hellMonsterBasePower = 1e18;
   divineEnemyBasePower = 1e24;
+  hellMonsterDefenseRatio = 100;
+  hellMonsterAttackRatio = 100;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -1944,8 +1948,17 @@ export class BattleService {
       monsterName = this.camelToTitle.transform(monsterType.name);
     }
     const health = modifiedBasePower * modifiedBasePower;
-    const attack = modifiedBasePower;
-    const defense = modifiedBasePower / 10;
+    let attack = modifiedBasePower;
+    if (monsterType.attackToHealthRatio) {
+      attack *= monsterType.attackToHealthRatio;
+    }
+    let defense = modifiedBasePower;
+    if (monsterType.defenseToHealthRatio) {
+      defense *= monsterType.defenseToHealthRatio;
+    } else {
+      defense *= 0.1;
+    }
+
     const loot: Item[] = [];
     if (monsterType.lootType) {
       const grade = Math.floor(Math.log2(modifiedBasePower + 2));
@@ -2483,6 +2496,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 1300,
+      defenseToHealthRatio: 10,
       element: 'earth',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ORE],
       techniques: [
@@ -2900,6 +2914,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 800000,
+      defenseToHealthRatio: 10,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
@@ -2947,6 +2962,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 3000000,
+      defenseToHealthRatio: 10,
       element: 'earth',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT, LOOT_TYPE_ORE],
       techniques: [
@@ -3150,6 +3166,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 200000000,
+      defenseToHealthRatio: 10,
       element: 'metal',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY, LOOT_TYPE_ORE],
       techniques: [
@@ -3315,6 +3332,8 @@ export class BattleService {
       baseName: 'tongueripper',
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       lootType: [LOOT_TYPE_GEM],
       element: EFFECT_CORRUPTION,
       techniques: [
@@ -3340,6 +3359,8 @@ export class BattleService {
       baseName: 'scissorsdemon',
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       lootType: [LOOT_TYPE_GEM, 'fingers'],
       techniques: [
         {
@@ -3364,6 +3385,8 @@ export class BattleService {
       baseName: 'crow',
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       element: EFFECT_CORRUPTION,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
@@ -3381,6 +3404,8 @@ export class BattleService {
       baseName: 'mirror',
       location: LocationType.Mirrors,
       basePower: this.hellMonsterBasePower * (this.characterService.status.health.value * 0.1),
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       description: '',
       lootType: ['mirrorShard'],
       techniques: this.techniques,
@@ -3391,6 +3416,8 @@ export class BattleService {
       location: LocationType.CauldronsOfOil,
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       element: EFFECT_CORRUPTION,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
@@ -3416,6 +3443,8 @@ export class BattleService {
       location: LocationType.CattlePit,
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       element: EFFECT_CORRUPTION,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
@@ -3434,6 +3463,8 @@ export class BattleService {
       location: LocationType.MortarsAndPestles,
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       element: EFFECT_CORRUPTION,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
@@ -3454,6 +3485,8 @@ export class BattleService {
       location: LocationType.Dismemberment,
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       element: EFFECT_CORRUPTION,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
@@ -3472,6 +3505,8 @@ export class BattleService {
       location: LocationType.Saws,
       description: '',
       basePower: this.hellMonsterBasePower,
+      defenseToHealthRatio: this.hellMonsterDefenseRatio,
+      attackToHealthRatio: this.hellMonsterAttackRatio,
       element: EFFECT_CORRUPTION,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
