@@ -217,7 +217,7 @@ export class ImpossibleTaskService {
       }
     }
     this.activeTaskIndex = -1;
-    this.activityService!.checkRequirements(true);
+    this.activityService!.checkRequirements();
     this.locationService!.locationLocked = false;
   }
 
@@ -302,7 +302,7 @@ export class ImpossibleTaskService {
     }
 
     this.activeTaskIndex = this.nextTask;
-    this.activityService!.checkRequirements(true);
+    this.activityService!.checkRequirements();
     if (this.activeTaskIndex === ImpossibleTaskType.OvercomeDeath) {
       this.battleService.addDeath();
       this.contemplationService.contemplationStarted.set(true);
@@ -322,6 +322,6 @@ export class ImpossibleTaskService {
         this.activityService!.activityLoop.splice(i, 1);
       }
     }
-    this.activityService!.checkRequirements(true);
+    this.activityService!.checkRequirements();
   }
 }

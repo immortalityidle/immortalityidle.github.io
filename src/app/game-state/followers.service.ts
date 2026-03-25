@@ -693,7 +693,7 @@ export class FollowersService {
           return;
         }
         this.characterService.updateMoney(0 - cost);
-        this.characterService.hellMoney += burnerPower;
+        this.characterService.updateHellMoney(burnerPower);
       },
       description: 'Money Burners dedicate themselves to burning mortal money to produce hell money.',
       hidden: true,
@@ -705,9 +705,10 @@ export class FollowersService {
         if (this.hellService?.inHell()) {
           totalPower /= 10;
         }
+        this.characterService.bankerMaxMoneyBonus = 1 + totalPower * 0.005;
         for (let i = 0; i < daysElapsed; i++) {
           this.characterService.updateMoney(this.characterService.money * 0.000000273 * totalPower);
-          this.characterService.hellMoney += this.characterService.hellMoney * 0.000000273 * totalPower;
+          this.characterService.updateHellMoney(this.characterService.hellMoney * 0.000000273 * totalPower);
         }
       },
       description:

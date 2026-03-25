@@ -227,10 +227,12 @@ export class HellService {
     this.inHell.set(true);
     this.hellUnlocked.set(true);
     this.moveToHell(LocationType.Gates);
-    this.characterService.updateMoney(0, true);
-    this.inventoryService.stashInventory();
-    this.followersService.hellPurge();
-    this.activityService.checkRequirements(true);
+    if (!this.characterService.god()) {
+      this.characterService.updateMoney(0, true);
+      this.inventoryService.stashInventory();
+      this.followersService.hellPurge();
+    }
+    this.activityService.checkRequirements();
   }
 
   moveToHell(hellLocation: LocationType) {
@@ -268,6 +270,10 @@ export class HellService {
       } else {
         activity.unlocked = false;
         activity.discovered = false;
+      }
+      if (activity.unlocked && activity.discovered && activity.notifiedLevel === undefined) {
+        this.logService.log(LogTopic.EVENT, 'An activity is available: ' + activity.name[activity.level] + '.');
+        activity.notifiedLevel = activity.level;
       }
     }
     this.activityService.disableLockedActivities();
@@ -1250,7 +1256,7 @@ export class HellService {
             LogTopic.EVENT,
             "As if the constant scalding steam isn't enough, one of these ruffians stole some money! Why does this feel so familiar?"
           );
-          this.characterService.hellMoney -= this.characterService.hellMoney * 0.1;
+          this.characterService.updateHellMoney(0 - this.characterService.hellMoney * 0.1);
         }
       },
       completeEffect: () => {

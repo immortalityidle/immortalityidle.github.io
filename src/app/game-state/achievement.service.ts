@@ -1259,7 +1259,7 @@ export class AchievementService {
           this.characterService.status.qi.max = 1;
           this.characterService.status.qi.value = 1;
         }
-        this.activityService.checkRequirements(true);
+        this.activityService.checkRequirements();
       },
       unlocked: false,
     },
@@ -1657,7 +1657,7 @@ export class AchievementService {
         if (!this.unlockedMemories.includes(MEMORY_IMMORTALITY)) {
           this.triggerMemory(MEMORY_IMMORTALITY);
         }
-        this.activityService.checkRequirements(true);
+        this.activityService.checkRequirements();
         this.contemplationService.discoverConcept('Tao of Death');
       },
       unlocked: false,

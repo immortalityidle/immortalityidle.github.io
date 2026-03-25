@@ -1027,6 +1027,13 @@ export class HomeService {
       this.displayHome.healthRecovery.set(this.home.healthRecovery);
       this.displayHome.staminaRecovery.set(this.home.staminaRecovery);
       this.displayHome.qiRecovery.set(this.home.qiRecovery);
+      let vaultMultiplier = 1;
+      for (const furnitureItem of this.bedroomFurniture) {
+        if (furnitureItem?.subtype === 'safe') {
+          vaultMultiplier *= 2;
+        }
+      }
+      this.characterService.vaultMaxMoneyBonus = vaultMultiplier;
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {

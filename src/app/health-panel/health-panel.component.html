@@ -86,7 +86,9 @@
           }
         </div>
         @if (characterService.hellMoney > 0) {
-          <div tooltip="Money accepted as legal tender in hell." class="moneyColumn">{{characterService.hellMoney | bigNumber}} Hell Money</div>
+          <div tooltip="Money accepted as legal tender in hell." class="moneyColumn">
+            <span>{{characterService.hellMoney | bigNumber}} Hell Money</span>
+          </div>
         }
         @if (homeService.land > 0) {
           <span>{{homeService.land | bigNumber}} Empty {{homeService.land === 1 ? "Plot" : "Plots"}} of Land</span>

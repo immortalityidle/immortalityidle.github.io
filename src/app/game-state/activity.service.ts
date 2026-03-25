@@ -245,8 +245,8 @@ export class ActivityService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
-      this.upgradeActivities(false);
-      this.checkRequirements(false);
+      this.checkRequirements();
+      this.upgradeActivities();
       this.updateDisplayValues();
     });
 
@@ -300,9 +300,6 @@ export class ActivityService {
           this.activityDeath = true;
         }
         this.handleSpiritActivity();
-        if (this.characterService.money > this.characterService.maxMoney) {
-          this.characterService.updateMoney(this.characterService.maxMoney, true);
-        }
         return;
       }
 
@@ -406,13 +403,7 @@ export class ActivityService {
         this.currentIndex = 0;
       }
       this.handleSpiritActivity();
-      if (this.characterService.money > this.characterService.maxMoney) {
-        this.characterService.updateMoney(this.characterService.maxMoney, true);
-      }
     });
-
-    this.upgradeActivities(true);
-    this.checkRequirements(true);
   }
 
   updateDisplayValues() {
@@ -739,10 +730,6 @@ export class ActivityService {
       this.pauseOnImpossibleFail = properties.pauseOnImpossibleFail;
     }
     this.totalExhaustedDays = properties.totalExhaustedDays || 0;
-    for (let i = 0; i < 5; i++) {
-      // upgrade to anything that the loaded attributes allow
-      this.upgradeActivities(true);
-    }
     this.tauntCounter = properties.tauntCounter;
     this.researchWindCounter = properties.researchWindCounter;
     this.miningCounter = properties.miningCounter;
@@ -754,9 +741,13 @@ export class ActivityService {
     this.oddJobDays = properties.oddJobDays;
     this.beggingDays = properties.beggingDays;
     this.incomeMultiplier = properties.incomeMultiplier;
-    this.checkRequirements(true);
     this.hiddenActivities = properties.hiddenActivities;
     this.activityOptionsUnlocked.set(properties.activityOptionsUnlocked);
+    setTimeout(() => this.checkRequirements());
+    for (let i = 0; i < 5; i++) {
+      // upgrade to anything that the loaded attributes allow
+      setTimeout(() => this.upgradeActivities());
+    }
   }
 
   meetsRequirements(activity: Activity): boolean {
@@ -845,7 +836,11 @@ export class ActivityService {
     return true;
   }
 
-  checkRequirements(squelchLogs: boolean): void {
+  checkRequirements(): void {
+    if (!this.locationService) {
+      // location service not initialized yet, bail out
+      return;
+    }
     if (this.hellService?.inHell()) {
       // hell handles its own activity checking
       return;
@@ -861,13 +856,14 @@ export class ActivityService {
         continue;
       }
       activity.projectionOnly = false;
-      if (this.meetsRequirements(activity) && !activity.unlocked) {
-        if (!squelchLogs) {
-          this.logService.log(
-            LogTopic.EVENT,
-            'A new activity is available. Maybe you should try ' + activity.name[activity.level] + '.'
-          );
-        }
+      if (
+        this.meetsRequirements(activity) &&
+        activity.unlocked &&
+        activity.discovered &&
+        activity.notifiedLevel === undefined
+      ) {
+        this.logService.log(LogTopic.EVENT, 'An activity is available: ' + activity.name[activity.level] + '.');
+        activity.notifiedLevel = activity.level;
       }
     }
   }
@@ -880,20 +876,15 @@ export class ActivityService {
     }
   }
 
-  upgradeActivities(squelchLogs: boolean): void {
+  upgradeActivities(): void {
     for (const activity of this.activities) {
       if (activity.level < activity.description.length - 1) {
         if (this.meetsRequirementsByLevel(activity, activity.level + 1)) {
-          if (!squelchLogs && activity.unlocked) {
-            this.logService.log(
-              LogTopic.EVENT,
-              'Congratulations on your promotion! ' +
-                activity.name[activity.level] +
-                ' upgraded to ' +
-                activity.name[activity.level + 1]
-            );
-          }
           activity.level++;
+          if (activity.unlocked && activity.discovered && (activity.notifiedLevel || -1) < activity.level) {
+            this.logService.log(LogTopic.EVENT, 'ACtivity upgraded! ' + activity.name[activity.level]);
+            activity.notifiedLevel = activity.level;
+          }
         }
       }
     }
@@ -932,11 +923,11 @@ export class ActivityService {
     for (const activity of this.activities) {
       activity.level = 0;
       activity.unlocked = false;
+      activity.notifiedLevel = undefined;
     }
-
     for (let i = 0; i < 5; i++) {
       // upgrade to anything that the starting attributes allow
-      this.upgradeActivities(true);
+      this.upgradeActivities();
     }
 
     if (this.impossibleTaskService.activeTaskIndex !== ImpossibleTaskType.Swim) {
@@ -944,7 +935,7 @@ export class ActivityService {
       this.OddJobs.unlocked = true;
     }
     if (this.autoRestart) {
-      this.checkRequirements(true);
+      this.checkRequirements();
       if (this.pauseOnDeath && !this.characterService.immortal()) {
         this.logService.log(LogTopic.EVENT, 'Your current life has ended. Game paused.');
         this.mainLoopService.togglePause(true);
@@ -952,6 +943,7 @@ export class ActivityService {
     } else {
       this.activityLoop = [];
     }
+
     this.currentTickCount = 0;
     this.currentIndex = 0;
     this.triggerIndex = 0;
@@ -996,7 +988,7 @@ export class ActivityService {
           activity.unlocked = false;
         }
       }
-      this.checkRequirements(true);
+      this.checkRequirements();
     }
   }
 
@@ -1016,7 +1008,7 @@ export class ActivityService {
     const loop = this.savedActivityLoops.find(entry => entry.name === saveName);
     if (loop) {
       this.activityLoop = JSON.parse(JSON.stringify(loop.activities));
-      this.checkRequirements(true);
+      this.checkRequirements();
       this.currentIndex = 0;
     }
   }
@@ -3999,9 +3991,9 @@ export class ActivityService {
         this.characterService.updateMoney(-1e6);
         this.hellService!.burnedMoney += 1e6;
         if (this.hellService!.fasterHellMoney) {
-          this.characterService.hellMoney += 10;
+          this.characterService.updateHellMoney(10);
         } else {
-          this.characterService.hellMoney++;
+          this.characterService.updateHellMoney(1);
         }
       },
     ],
@@ -4043,7 +4035,7 @@ export class ActivityService {
           return;
         }
         this.characterService.status.stamina.value -= 100;
-        this.characterService.hellMoney -= 1000;
+        this.characterService.updateHellMoney(-1000);
         if (Math.random() < 0.01) {
           this.followerService.generateFollower(false, 'damned');
           this.logService.log(LogTopic.EVENT, 'Your recruiting efforts seem to infuriate the demons here.');
@@ -4133,7 +4125,7 @@ export class ActivityService {
           );
           return;
         }
-        this.characterService.hellMoney--;
+        this.characterService.updateHellMoney(-1);
         this.inventoryService.addItem(this.itemRepoService.items['tokenOfGratitude']);
       },
     ],

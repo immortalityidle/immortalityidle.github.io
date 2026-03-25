@@ -64,7 +64,7 @@ export class MobileTimeComponent {
     entry.userDisabled = !entry.userDisabled;
     if (!entry.userDisabled) {
       // make sure nothing that can't be enabled gets enabled
-      this.activityService.checkRequirements(true);
+      this.activityService.checkRequirements();
     }
   }
 

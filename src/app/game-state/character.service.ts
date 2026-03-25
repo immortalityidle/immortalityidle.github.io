@@ -160,6 +160,8 @@ export interface CharacterProperties {
   startingStaminaBoost: boolean;
   keepPouchItems: boolean;
   empowermentMax: number;
+  vaultMaxMoneyBonus: number;
+  bankerMaxMoneyBonus: number;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -182,6 +184,8 @@ export class CharacterService {
   lifespanTooltip = signal<string>('');
   private hellService?: HellService;
   maxMoney = 9.9999e23;
+  vaultMaxMoneyBonus = 1;
+  bankerMaxMoneyBonus = 1;
   totalLives = 1;
   dead = false;
   attributeScalingLimit = 10;
@@ -884,7 +888,7 @@ export class CharacterService {
         attribute.value = 0;
       }
     }
-    this.activityService!.checkRequirements(true);
+    this.activityService!.checkRequirements();
     this.forceRebirth = true;
     this.mainLoopService.tick();
   }
@@ -1081,10 +1085,7 @@ export class CharacterService {
     } else {
       this.updateMoney(4 * this.money, true);
     }
-    if (this.money > this.maxMoney) {
-      this.updateMoney(this.maxMoney, true);
-    }
-    this.hellMoney = 0;
+    this.updateHellMoney(0, true);
     this.recalculateDerivedStats();
     if (this.bloodlineRank === 0) {
       this.equipment = {
@@ -1139,12 +1140,6 @@ export class CharacterService {
         this.healthBonusSoul +
         Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
       bonusFactor;
-    if (this.money > this.maxMoney) {
-      this.updateMoney(this.maxMoney, true);
-    }
-    if (this.hellMoney > this.maxMoney) {
-      this.hellMoney = this.maxMoney;
-    }
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
@@ -1312,7 +1307,22 @@ export class CharacterService {
         this.moneyUpdates += amount;
       }
     }
+    const modifiedMaxMoney = this.maxMoney * this.vaultMaxMoneyBonus * this.bankerMaxMoneyBonus;
+    if (this.money > modifiedMaxMoney) {
+      this.money = modifiedMaxMoney;
+    }
     return amount;
+  }
+
+  updateHellMoney(amount: number, justSetIt = false) {
+    if (justSetIt) {
+      this.hellMoney = amount;
+    } else {
+      this.hellMoney += amount;
+    }
+    if (this.hellMoney > this.maxMoney) {
+      this.hellMoney = this.maxMoney;
+    }
   }
 
   flashStatus(statusToFlash: string) {
@@ -1374,12 +1384,6 @@ export class CharacterService {
     }
     if (this.status.qi.value > this.status.qi.max) {
       this.status.qi.value = this.status.qi.max;
-    }
-    if (this.money > this.maxMoney) {
-      this.updateMoney(this.maxMoney, true);
-    }
-    if (this.hellMoney > this.maxMoney) {
-      this.hellMoney = this.maxMoney;
     }
   }
 
@@ -1468,6 +1472,8 @@ export class CharacterService {
       showUpdateAnimations: this.showUpdateAnimations,
       startingStaminaBoost: this.startingStaminaBoost,
       keepPouchItems: this.keepPouchItems,
+      vaultMaxMoneyBonus: this.vaultMaxMoneyBonus,
+      bankerMaxMoneyBonus: this.bankerMaxMoneyBonus,
     };
   }
 
@@ -1480,15 +1486,11 @@ export class CharacterService {
       this.attributes[typedKey].lifeStartValue = properties.attributes[typedKey].lifeStartValue;
       this.highestAttributes[typedKey].set(properties.highestAttributeValues[typedKey] || 0);
     }
+    this.vaultMaxMoneyBonus = properties.vaultMaxMoneyBonus;
+    this.bankerMaxMoneyBonus = properties.bankerMaxMoneyBonus;
     this.updateMoney(properties.money, true);
+    this.updateHellMoney(properties.hellMoney, true);
     this.stashedMoney = properties.stashedMoney;
-    this.hellMoney = properties.hellMoney;
-    if (this.money > this.maxMoney) {
-      this.updateMoney(this.maxMoney, true);
-    }
-    if (this.hellMoney > this.maxMoney) {
-      this.hellMoney = this.maxMoney;
-    }
     this.equipment = properties.equipment;
     this.stashedEquipment = properties.stashedEquipment;
     this.itemPouches = properties.itemPouches;

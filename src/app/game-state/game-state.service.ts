@@ -1121,6 +1121,8 @@ export class GameStateService {
           battleTickRecovery: props?.status?.nutrition?.battleTickRecovery || 0,
         },
       },
+      vaultMaxMoneyBonus: props?.vaultMaxMoneyBonus || 1,
+      bankerMaxMoneyBonus: props?.bankerMaxMoneyBonus || 1,
       money: props?.money || 0,
       stashedMoney: props?.stashedMoney || 0,
       hellMoney: props?.hellMoney || 0,

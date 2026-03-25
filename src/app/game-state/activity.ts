@@ -109,6 +109,7 @@ export interface Activity {
   farmedLandRequirements?: number;
   consequence: (() => void)[];
   unlocked: boolean;
+  notifiedLevel?: number;
   relockable?: boolean;
   discovered?: boolean;
   skipApprenticeshipLevel: number;
