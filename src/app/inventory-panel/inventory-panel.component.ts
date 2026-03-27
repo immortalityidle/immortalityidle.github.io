@@ -8,7 +8,7 @@ import { GameStateService } from '../game-state/game-state.service';
 import { CdkDragMove, CdkDragRelease, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { HomeService } from '../game-state/home.service';
 import { MatIcon } from '@angular/material/icon';
-import { NgClass, NgOptimizedImage, TitleCasePipe } from '@angular/common';
+import { NgClass, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { InventoryOptionsModalComponent } from '../inventory-options-modal/inventory-options-modal.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,7 +26,6 @@ import { FollowersService } from '../game-state/followers.service';
     forwardRef(() => CdkDrag),
     forwardRef(() => TitleCasePipe),
     forwardRef(() => TooltipDirective),
-    forwardRef(() => NgOptimizedImage),
   ],
 })
 export class InventoryPanelComponent {

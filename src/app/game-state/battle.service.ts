@@ -858,6 +858,9 @@ export class BattleService {
         itemStack.item.cooldown = 0;
       }
     }
+    this.formationCooldown = 0;
+    this.activeFormation = '';
+    this.formationDuration = 0;
   }
 
   getProperties(): BattleProperties {

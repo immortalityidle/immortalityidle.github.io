@@ -195,7 +195,7 @@ export class InventoryService {
   displaySelectedItem: DisplayItemStack = {
     name: signal<string>(''),
     description: signal<string>(''),
-    imageFile: signal<string>(''),
+    imageFile: signal<string>('assets/images/items/empty.png'),
     imageColor: signal<string>('white'),
     quantity: signal<number>(0),
     type: signal<string>(''),
@@ -406,7 +406,7 @@ export class InventoryService {
       if (this.selectedItem.item.imageFile) {
         this.displaySelectedItem.imageFile.set('assets/images/items/' + this.selectedItem.item.imageFile + '.png');
       } else {
-        this.displaySelectedItem.imageFile.set('');
+        this.displaySelectedItem.imageFile.set('assets/images/items/empty.png');
       }
       if (this.selectedItem.item.imageColor) {
         this.displaySelectedItem.imageColor.set(this.selectedItem.item.imageColor);
@@ -427,7 +427,7 @@ export class InventoryService {
     } else {
       this.displaySelectedItem.name.set('');
       this.displaySelectedItem.description.set('');
-      this.displaySelectedItem.imageFile.set('');
+      this.displaySelectedItem.imageFile.set('assets/images/items/empty.png');
       this.displaySelectedItem.quantity.set(0);
       this.displaySelectedItem.type.set('');
       this.displaySelectedItem.value.set(0);
@@ -444,7 +444,7 @@ export class InventoryService {
         this.displayItemStacks.push({
           name: signal<string>(''),
           description: signal<string>(''),
-          imageFile: signal<string>(''),
+          imageFile: signal<string>('assets/images/items/empty.png'),
           imageColor: signal<string>('white'),
           quantity: signal<number>(0),
           type: signal<string>(''),
@@ -466,7 +466,7 @@ export class InventoryService {
         if (itemStack.item.imageFile) {
           this.displayItemStacks[i].imageFile.set('assets/images/items/' + itemStack.item.imageFile + '.png');
         } else {
-          this.displayItemStacks[i].imageFile.set('');
+          this.displayItemStacks[i].imageFile.set('assets/images/items/empty.png');
         }
         if (itemStack.item.imageColor) {
           this.displayItemStacks[i].imageColor.set(itemStack.item.imageColor);
@@ -489,7 +489,7 @@ export class InventoryService {
       } else {
         this.displayItemStacks[i].name.set('');
         this.displayItemStacks[i].description.set('');
-        this.displayItemStacks[i].imageFile.set('');
+        this.displayItemStacks[i].imageFile.set('assets/images/items/empty.png');
         this.displayItemStacks[i].imageColor.set('white');
         this.displayItemStacks[i].quantity.set(0);
         this.displayItemStacks[i].type.set('');

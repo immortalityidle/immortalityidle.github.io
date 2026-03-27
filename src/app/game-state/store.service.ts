@@ -182,7 +182,9 @@ export class StoreService {
         "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Empire, and can break through the limits of humanity. Finally, you will gain aptitudes every day from your current Attributes.";
     }
     this.qiCompressionDescription =
-      'Compress your Qi from its current ' + this.qiConsistency[this.characterService.qiCompressionLevel] + ' state.';
+      'Compress your Qi from its current ' +
+      this.qiConsistency[this.characterService.qiCompressionLevel] +
+      ' state. This increases the power of Qi-based attacks and has other beneficial effect on abilities that use Qi.';
     this.qiCompressionCost = Math.pow(10, this.characterService.qiCompressionLevel + 3);
   }
 

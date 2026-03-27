@@ -399,7 +399,7 @@ export class FollowersService {
     hunter: {
       work: daysElapsed => {
         const workPower = this.jobs['hunter'].totalPower * daysElapsed + (this.leftoverWork['hunter'] || 0);
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() || this.characterService.god()) {
           this.inventoryService.addItem(this.itemRepoService.items['spiritMeat'], Math.floor(workPower / 1000));
           this.leftoverWork['hunter'] = workPower % 1000;
           return;
@@ -413,7 +413,7 @@ export class FollowersService {
     fisher: {
       work: daysElapsed => {
         const workPower = this.jobs['fisher'].totalPower * daysElapsed + (this.leftoverWork['fisher'] || 0);
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() || this.characterService.god()) {
           this.inventoryService.addItem(this.itemRepoService.items['spiritCarp'], Math.floor(workPower / 1000));
           this.leftoverWork['fisher'] = workPower % 1000;
           return;
@@ -498,7 +498,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workPower = this.jobs['weaponsmith'].totalPower * daysElapsed + (this.leftoverWork['weaponsmith'] || 0);
         let divider = 10;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           divider *= 10;
         }
         const rightHand = this.characterService.equipment.rightHand;
@@ -521,7 +521,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workPower = this.jobs['armorer'].totalPower * daysElapsed + (this.leftoverWork['armorer'] || 0);
         let divider = 10;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           divider *= 10;
         }
         const improveArmor = (armor: Equipment): Equipment => ({
@@ -556,7 +556,7 @@ export class FollowersService {
     brawler: {
       work: daysElapsed => {
         let totalPower = this.jobs['brawler'].totalPower * daysElapsed;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('strength', totalPower);
@@ -567,7 +567,7 @@ export class FollowersService {
     sprinter: {
       work: daysElapsed => {
         let totalPower = this.jobs['sprinter'].totalPower * daysElapsed;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('speed', totalPower);
@@ -578,7 +578,7 @@ export class FollowersService {
     trainer: {
       work: daysElapsed => {
         let totalPower = this.jobs['trainer'].totalPower * daysElapsed;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('toughness', totalPower);
@@ -589,7 +589,7 @@ export class FollowersService {
     tutor: {
       work: daysElapsed => {
         let totalPower = this.jobs['tutor'].totalPower * daysElapsed;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('intelligence', totalPower);
@@ -600,7 +600,7 @@ export class FollowersService {
     mediator: {
       work: daysElapsed => {
         let totalPower = this.jobs['mediator'].totalPower * daysElapsed;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('charisma', totalPower);
@@ -611,7 +611,7 @@ export class FollowersService {
     priest: {
       work: daysElapsed => {
         let totalPower = this.jobs['priest'].totalPower * daysElapsed;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
         }
         this.characterService.increaseAttribute('spirituality', totalPower);
@@ -623,7 +623,7 @@ export class FollowersService {
       work: daysElapsed => {
         const workPower = this.jobs['gemologist'].totalPower * daysElapsed + (this.leftoverWork['gemologist'] || 0);
         let divisor = 50;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           divisor *= 10;
         }
         this.leftoverWork['gemologist'] = workPower % divisor;
@@ -702,7 +702,7 @@ export class FollowersService {
     banker: {
       work: daysElapsed => {
         let totalPower = this.jobs['banker'].totalPower;
-        if (this.hellService?.inHell()) {
+        if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
         }
         this.characterService.bankerMaxMoneyBonus = 1 + totalPower * 0.005;
@@ -824,7 +824,7 @@ export class FollowersService {
       if (this.characterService.dead) {
         return;
       }
-      if (this.characterService.age % 18250 === 0 && !this.hellService?.inHell()) {
+      if (this.characterService.age % 18250 === 0 && (!this.hellService?.inHell() || this.characterService.god())) {
         // another 50xth birthday, you get bonus followers
         for (let i = 0; i < 1 + this.hqs[this.hq].bonusFreeFollowers; i++) {
           this.generateFollower();
@@ -877,7 +877,11 @@ export class FollowersService {
           this.logService.injury(LogTopic.FOLLOWER, 'Your follower ' + follower.name + ' passed away from old age.');
         }
         this.updateFollowerTotalPower();
-      } else if (this.characterService.money < listToHandle[i].cost * daysElapsed && !this.hellService?.inHell()) {
+      } else if (
+        this.characterService.money < listToHandle[i].cost * daysElapsed &&
+        !this.hellService?.inHell() &&
+        !this.characterService.god()
+      ) {
         // quit from not being paid
         this.totalDismissed++;
         this.logService.injury(
