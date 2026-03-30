@@ -794,6 +794,11 @@ export class ActivityService {
       // we've never completed an apprenticeship in this job and it needs one
       return false;
     }
+    if (activity.divinityRequired) {
+      if (activity.divinityRequired[level] && !this.characterService.god()) {
+        return false;
+      }
+    }
     const keys: (keyof CharacterAttribute)[] = Object.keys(
       activity.requirements[level]
     ) as (keyof CharacterAttribute)[];
@@ -882,7 +887,7 @@ export class ActivityService {
         if (this.meetsRequirementsByLevel(activity, activity.level + 1)) {
           activity.level++;
           if (activity.unlocked && activity.discovered && (activity.notifiedLevel || -1) < activity.level) {
-            this.logService.log(LogTopic.EVENT, 'ACtivity upgraded! ' + activity.name[activity.level]);
+            this.logService.log(LogTopic.EVENT, 'Activity upgraded! ' + activity.name[activity.level]);
             activity.notifiedLevel = activity.level;
           }
         }
@@ -2051,18 +2056,20 @@ export class ActivityService {
 
   Cooking: Activity = {
     level: 0,
-    name: ['Cooking', 'Soul Food Preparation'],
+    name: ['Cooking', 'Soul Food Preparation', 'Divine Cooking'],
     location: LocationType.SmallTown,
     imageBaseName: 'cooking',
     activityType: ActivityType.Cooking,
     description: [
       'Work as a chef. If you have a cooking workstation of your own, you can even make some meals for yourself.',
       'Work as a spiritual chef, devoting great energy to creating food that feeds both body and soul. If you have a cooking workstation of your own, you can even make some meals for yourself.',
+      'Create the most divine meals. You will need a cooking workstation worthy of you.',
     ],
-    yinYangEffect: [YinYangEffect.None, YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.None, YinYangEffect.Balance, YinYangEffect.Balance],
     consequenceDescription: [
       'Uses 10 Stamina. Increases charisma and intelligence and provides a little money.',
       'Uses 90 Stamina. Increases charisma, intelligence, and spirituality.',
+      'Uses 1000 Stamina. Increases charisma, intelligence, and spirituality.',
     ],
     consequence: [
       () => {
@@ -2103,6 +2110,13 @@ export class ActivityService {
         money = this.characterService.updateMoney(money);
         this.Cooking.lastIncome = money;
       },
+      () => {
+        this.characterService.increaseAttribute('charisma', 10);
+        this.characterService.increaseAttribute('intelligence', 10);
+        this.characterService.increaseAttribute('spirituality', 1);
+        this.characterService.increaseAttribute('cooking', 1);
+        this.characterService.status.stamina.value -= 1000;
+      },
     ],
     resourceUse: [
       {
@@ -2110,6 +2124,9 @@ export class ActivityService {
       },
       {
         stamina: 90,
+      },
+      {
+        stamina: 1000,
       },
     ],
     requirements: [
@@ -2124,7 +2141,15 @@ export class ActivityService {
         spirituality: 10,
         cooking: 1000,
       },
+      {
+        charisma: 1e35,
+        speed: 1e35,
+        intelligence: 1e35,
+        spirituality: 1e25,
+        cooking: 1e14,
+      },
     ],
+    divinityRequired: [false, false, true],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };

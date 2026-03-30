@@ -3374,7 +3374,9 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.inventoryService.maxStackSize *= 10;
+        if (this.inventoryService.maxStackSize < 1000) {
+          this.inventoryService.maxStackSize = 1000;
+        }
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -3404,7 +3406,9 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.inventoryService.maxStackSize *= 10;
+        if (this.inventoryService.maxStackSize < 10000) {
+          this.inventoryService.maxStackSize = 10000;
+        }
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -3434,7 +3438,9 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        this.inventoryService.maxStackSize *= 10;
+        if (this.inventoryService.maxStackSize < 100000) {
+          this.inventoryService.maxStackSize = 100000;
+        }
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -3446,6 +3452,39 @@ baguaMap = [
           this.inventoryService = this.injector.get(InventoryService);
         }
         return this.inventoryService.maxStackSize >= 100000;
+      },
+      shopable: false,
+    },
+    transdimensionalStorageManual: {
+      id: 'transdimensionalStorageManual',
+      name: 'Manual of Transdimensional Item Storage',
+      type: 'manual',
+      description:
+        'This manual teaches you to use the space between dimensional realms to store items more efficiently.',
+      value: 1e22,
+      useLabel: 'Read',
+      useDescription:
+        'Permanently increase by ten times the number of items you can put in each stack in your inventory.',
+      useConsumes: true,
+      use: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        if (this.inventoryService.maxStackSize < 1000000) {
+          this.inventoryService.maxStackSize = 1000000;
+        }
+        this.logService.log(
+          LogTopic.EVENT,
+          "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
+        );
+      },
+      owned: () => {
+        // check if inventoryService is injected yet, if not, inject it (circular dependency issues)
+        if (!this.inventoryService) {
+          this.inventoryService = this.injector.get(InventoryService);
+        }
+        return this.inventoryService.maxStackSize >= 1000000;
       },
       shopable: false,
     },

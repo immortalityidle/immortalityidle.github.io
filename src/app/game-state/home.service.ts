@@ -71,6 +71,7 @@ export interface Workstation {
   triggerActivities: ActivityType[];
   power: number;
   setupCost: number;
+  divine?: boolean;
   maintenanceCost: number;
   description: string;
   maxInputs: number;
@@ -781,6 +782,20 @@ export class HomeService {
       },
     },
     {
+      id: 'Divine Kitchen',
+      triggerActivities: [ActivityType.Cooking],
+      power: 3,
+      setupCost: 1e24,
+      maintenanceCost: 1e20,
+      divine: true,
+      description: 'A heavenly place for preparing divine meals.<br>You will need to provide your own ingredients.',
+      maxInputs: 6,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.cookFood(workstation, 1);
+      },
+    },
+    {
       id: 'Shopfront Booth',
       triggerActivities: [ActivityType.Merchant],
       power: 0,
@@ -1285,7 +1300,12 @@ export class HomeService {
     this.nextHome = this.getNextHome();
     this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
     this.inventoryService.changeMaxItems(this.home.maxInventory);
-    this.availableWorkstationsList = this.workstationsList.filter(ws => ws.power <= home.maxWorkstationPower);
+    this.availableWorkstationsList = this.workstationsList.filter(ws => {
+      if (ws.divine && !this.characterService.god()) {
+        return false;
+      }
+      return ws.power <= home.maxWorkstationPower;
+    });
     this.recalculateFengShui();
   }
 
@@ -1564,10 +1584,17 @@ export class HomeService {
     let fedPart = 'your body';
     if (cookingLevel > 0) {
       totalValue *= 4;
-      imageFile = 'soulfood';
-      foodName = 'Soul Food Special #' + totalValue;
-      fedPart = 'your body and soul';
       pouchable = true;
+      if (totalValue > 1e6 && this.characterService.god()) {
+        totalValue *= 4;
+        imageFile = 'divinefood';
+        foodName = 'Divine Meal #' + totalValue;
+        fedPart = 'your divine essence';
+      } else {
+        imageFile = 'soulfood';
+        foodName = 'Soul Food Special #' + totalValue;
+        fedPart = 'your body and soul';
+      }
     }
     const effect = 'meal' + totalValue;
 

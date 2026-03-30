@@ -1768,6 +1768,7 @@ export class AchievementService {
         this.gameStateService!.addLayoutPanel('hellStatusPanel', 0, 14, 30, 14);
         this.gameStateService?.unlockPanel('portalPanel');
         this.gameStateService!.addLayoutPanel('portalPanel', 0, 14, 30, 14);
+        this.storeService.unlockManual(this.itemRepoService.items['transdimensionalStorageManual']);
       },
       unlocked: false,
     },

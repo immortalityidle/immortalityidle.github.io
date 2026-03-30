@@ -103,6 +103,7 @@ export interface Activity {
   yinYangEffect: YinYangEffect[];
   consequenceDescription: string[];
   requirements: CharacterAttribute[];
+  divinityRequired?: boolean[];
   conceptRequirements?: string[];
   landRequirements?: number;
   fallowLandRequirements?: number;
