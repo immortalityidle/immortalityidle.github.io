@@ -1373,8 +1373,8 @@ export class AchievementService {
         if (!this.unlockedMemories.includes(MEMORY_ASCENSION)) {
           this.triggerMemory(MEMORY_ASCENSION);
         }
-        if (this.battleService.maxFamilyTechniques < 1) {
-          this.battleService.maxFamilyTechniques = 1;
+        if (this.battleService.maxFamilyTechniques() < 1) {
+          this.battleService.maxFamilyTechniques.set(1);
         }
       },
       unlocked: false,
@@ -1391,8 +1391,8 @@ export class AchievementService {
         );
       },
       effect: () => {
-        if (this.battleService.maxFamilyTechniques < 2) {
-          this.battleService.maxFamilyTechniques = 2;
+        if (this.battleService.maxFamilyTechniques() < 2) {
+          this.battleService.maxFamilyTechniques.set(2);
         }
       },
       unlocked: false,
@@ -1410,8 +1410,8 @@ export class AchievementService {
         );
       },
       effect: () => {
-        if (this.battleService.maxFamilyTechniques < 3) {
-          this.battleService.maxFamilyTechniques = 3;
+        if (this.battleService.maxFamilyTechniques() < 3) {
+          this.battleService.maxFamilyTechniques.set(3);
         }
       },
       unlocked: false,

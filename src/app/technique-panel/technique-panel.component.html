@@ -1,10 +1,18 @@
 <div class="techniqueContainer">
   <div>
+    @if (battleService.maxFamilyTechniques() > 0){
+      <span  tooltip="Family Techniques are special techniques that you can develop through combat experience and that are passed down to each of your descendants.<br>If your bloodline is powerful enough to support a new Family Technique, your every combat action contributes to the development of a new one.<br>The more Family Techniques you already have, the longer it will take to develop a new one.">
+        {{battleService.familyTechniqueCount()}} / {{battleService.maxFamilyTechniques()}} Family Techniques Developed
+      </span>
+    }
     <mat-icon  (click)="optionsClicked()" tooltip="Technique Development Options" class="iconButton floatRight" aria-label="Technique Development Options" aria-hidden="false">
       settings
     </mat-icon>
   </div>
   <div>
+    <div>
+      Active Techniques
+    </div>
     @for (displayTechnique of battleService.displayTechniques; track displayTechnique.trackField()) {
       @if (displayTechnique.unlocked()){
         <div class="itemSlot techniqueEntry">
@@ -35,14 +43,59 @@
           }
           <div>
               @if (displayTechnique.familyTechnique()){
-                  <button (click)="battleService.forsakeTechnique(displayTechnique.technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
-                      Forsake This Family Technique
+                  <button (click)="battleService.archiveTechnique(displayTechnique.technique)" tooltip="Write a custom manual for this technique and relegate it to your family's technique library to make room in your heart to develop another.">
+                      Archive this Family Technique
                   </button>
               }
           </div>
         </div>
       }   
     }
+    <br>
+    <div>
+      Archived Techniques Library
+    </div>
+    @for (displayTechnique of battleService.displayLibraryTechniques; track displayTechnique.trackField()) {
+      <div class="itemSlot techniqueEntry">
+        <div class="techniqueName">{{displayTechnique.name()}}</div>
+        <div>{{displayTechnique.description()}}</div>
+        <div>Base Damage: {{displayTechnique.baseDamage()}}</div>
+        @if (displayTechnique.attribute() !== ''){
+            <div>Damage increases with {{displayTechnique.attribute() | camelToTitle}}</div>
+        }
+        @if (displayTechnique.extraMultiplier() !== 0){
+          <div>Damage multiplier: {{displayTechnique.extraMultiplier()}}</div>
+        }
+        <div>Activates every {{displayTechnique.ticksRequired()}} combat ticks</div>
+        @if (displayTechnique.staminaCost() !== 0){
+          <div>Uses {{displayTechnique.staminaCost()}} stamina</div>
+        }
+        @if (displayTechnique.qiCost()){
+          <div>Uses {{displayTechnique.qiCost()}} Qi</div>
+        }
+        @if (displayTechnique.healthCost()){
+          <div>Uses {{displayTechnique.healthCost()}} health</div>
+        }
+        @if (displayTechnique.effect() !== ''){
+          <div>{{effectDescriptions[displayTechnique.effect()]}}</div>
+        }
+        @if (displayTechnique.concept() !== '' && contemplationService.contemplationStarted()){
+          <div innerHTML="{{conceptDescriptions[displayTechnique.concept()]}}"></div>
+        }
+        <div>
+            @if (displayTechnique.familyTechnique()){
+                <button (click)="battleService.relearnTechnique(displayTechnique.technique)" tooltip="Write a custom manual for this technique and relegate it to your family's technique library to make room in your heart to develop another.">
+                    Relearn this Family Technique
+                </button>
+                <button (click)="battleService.forsakeTechnique(displayTechnique.technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
+                    Forsake this Family Technique Forever
+                </button>
+            }
+        </div>
+      </div>
+    }
+
+    
   </div>
 </div>
 <br>

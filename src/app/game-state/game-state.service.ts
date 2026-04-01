@@ -776,6 +776,7 @@ export class GameStateService {
           staminaCost: 10,
         },
       ],
+      techniqueLibrary: props?.techniqueLibrary || [],
       techniqueDevelopmentCounter: props?.techniqueDevelopmentCounter || 0,
       maxFamilyTechniques: props?.maxFamilyTechniques || 0,
       statusEffects: props?.statusEffects || [],

@@ -96,6 +96,7 @@ export interface BattleProperties {
   totalEnemies: number;
   battleMessageDismissed: boolean;
   techniques: Technique[];
+  techniqueLibrary: Technique[];
   techniqueDevelopmentCounter: number;
   maxFamilyTechniques: number;
   statusEffects: StatusEffect[];
@@ -251,7 +252,8 @@ export class BattleService {
   totalEnemies = 0;
   battleMessageDismissed = false;
   private techniqueDevelopmentCounter = 0;
-  maxFamilyTechniques = 0;
+  maxFamilyTechniques = signal<number>(0);
+  familyTechniqueCount = signal<number>(0);
   statusEffects: StatusEffect[] = [];
   displayStatusEffects: DisplayStatusEffect[] = [];
   potionCooldown = 20;
@@ -276,6 +278,7 @@ export class BattleService {
   divineEnemyBasePower = 1e24;
   hellMonsterDefenseRatio = 100;
   hellMonsterAttackRatio = 100;
+  libraryTechniqueChanged = true;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -518,7 +521,9 @@ export class BattleService {
       concept: CONCEPT_EFFECT_WOODSHAPED,
     },
   ];
+  techniqueLibrary: Technique[] = [];
   displayTechniques: DisplayTechnique[] = [];
+  displayLibraryTechniques: DisplayTechnique[] = [];
   voidSkipCounter = 0;
   voidSkipThreshold = Infinity;
 
@@ -802,13 +807,69 @@ export class BattleService {
       const familyTechniques = this.techniques.filter(technique => technique.familyTechnique === true);
       if (
         this.techniqueDevelopmentCounter > 20000 * Math.pow(10, familyTechniques.length) &&
-        familyTechniques.length < this.maxFamilyTechniques
+        familyTechniques.length < this.maxFamilyTechniques()
       ) {
         this.developNewTechnique();
         this.techniqueDevelopmentCounter = 0;
+        this.familyTechniqueCount.set(familyTechniques.length + 1);
       }
       this.enemiesPresent.set(this.enemies.length > 0);
       this.updateVoidSkip();
+
+      if (this.libraryTechniqueChanged) {
+        this.libraryTechniqueChanged = false;
+        while (this.displayLibraryTechniques.length > this.techniqueLibrary.length) {
+          this.displayLibraryTechniques.splice(0, 1);
+        }
+        for (let i = 0; i < this.techniqueLibrary.length; i++) {
+          const technique = this.techniqueLibrary[i];
+          if (this.displayLibraryTechniques.length <= i) {
+            this.displayLibraryTechniques.push({
+              name: signal<string>(technique.name),
+              ticks: signal<number>(technique.ticks),
+              ticksRequired: signal<number>(technique.ticksRequired),
+              ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
+              trackField: signal<string>('library' + technique.name + i),
+              disabled: signal<boolean>(technique.disabled || false),
+              unlocked: signal<boolean>(technique.unlocked),
+              description: signal<string>(technique.description || ''),
+              baseDamage: signal<number>(technique.baseDamage || 0),
+              attribute: signal<string>(technique.attribute || ''),
+              extraMultiplier: signal<number>(technique.extraMultiplier || 0),
+              staminaCost: signal<number>(technique.staminaCost || 0),
+              qiCost: signal<number>(technique.qiCost || 0),
+              healthCost: signal<number>(technique.healthCost || 0),
+              effect: signal<string>(technique.effect || ''),
+              familyTechnique: signal<boolean>(technique.familyTechnique || false),
+              concept: signal<string>(technique.concept || ''),
+              technique: technique,
+              divine: signal<boolean>(technique.divine || false),
+            });
+          } else {
+            this.displayLibraryTechniques[i].name.set(technique.name);
+            this.displayLibraryTechniques[i].ticks.set(technique.ticks);
+            this.displayLibraryTechniques[i].ticksRequired.set(technique.ticksRequired);
+            this.displayLibraryTechniques[i].ticksPercentage.set(
+              Math.floor((100 * technique.ticks) / technique.ticksRequired)
+            );
+            this.displayLibraryTechniques[i].trackField.set(technique.name + i);
+            this.displayLibraryTechniques[i].disabled.set(technique.disabled || false);
+            this.displayLibraryTechniques[i].unlocked.set(technique.unlocked);
+            this.displayLibraryTechniques[i].description!.set(technique.description || '');
+            this.displayLibraryTechniques[i].baseDamage!.set(technique.baseDamage || 0);
+            this.displayLibraryTechniques[i].attribute!.set(technique.attribute || '');
+            this.displayLibraryTechniques[i].extraMultiplier!.set(technique.extraMultiplier || 0);
+            this.displayLibraryTechniques[i].staminaCost!.set(technique.staminaCost || 0);
+            this.displayLibraryTechniques[i].qiCost!.set(technique.qiCost || 0);
+            this.displayLibraryTechniques[i].healthCost!.set(technique.healthCost || 0);
+            this.displayLibraryTechniques[i].effect!.set(technique.effect || '');
+            this.displayLibraryTechniques[i].familyTechnique!.set(technique.familyTechnique || false);
+            this.displayLibraryTechniques[i].concept!.set(technique.concept || '');
+            this.displayLibraryTechniques[i].technique = technique;
+            this.displayLibraryTechniques[i].divine.set(technique.divine || false);
+          }
+        }
+      }
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -903,8 +964,9 @@ export class BattleService {
       totalEnemies: this.totalEnemies,
       battleMessageDismissed: this.battleMessageDismissed,
       techniques: this.techniques,
+      techniqueLibrary: this.techniqueLibrary,
       techniqueDevelopmentCounter: this.techniqueDevelopmentCounter,
-      maxFamilyTechniques: this.maxFamilyTechniques,
+      maxFamilyTechniques: this.maxFamilyTechniques(),
       statusEffects: this.statusEffects,
       potionCooldown: this.potionCooldown,
       potionThreshold: this.potionThreshold,
@@ -944,8 +1006,12 @@ export class BattleService {
     this.totalEnemies = properties.totalEnemies;
     this.battleMessageDismissed = properties.battleMessageDismissed;
     this.techniques = properties.techniques;
+    this.techniqueLibrary = properties.techniqueLibrary;
+    this.libraryTechniqueChanged = true;
     this.techniqueDevelopmentCounter = properties.techniqueDevelopmentCounter;
-    this.maxFamilyTechniques = properties.maxFamilyTechniques;
+    this.maxFamilyTechniques.set(properties.maxFamilyTechniques);
+    const familyTechniques = this.techniques.filter(technique => technique.familyTechnique === true);
+    this.familyTechniqueCount.set(familyTechniques.length);
     this.statusEffects = properties.statusEffects;
     this.potionCooldown = properties.potionCooldown;
     this.potionThreshold = properties.potionThreshold;
@@ -1128,12 +1194,48 @@ export class BattleService {
   }
 
   forsakeTechnique(technique: Technique) {
+    this.libraryTechniqueChanged = true;
     if (!technique.familyTechnique) {
       return;
     }
     const index = this.techniques.indexOf(technique);
     if (index > 2) {
       this.techniques.splice(index, 1);
+    }
+    const libraryIndex = this.techniqueLibrary.indexOf(technique);
+    if (libraryIndex >= 0) {
+      this.techniqueLibrary.splice(libraryIndex, 1);
+    }
+    const familyTechniques = this.techniques.filter(technique => technique.familyTechnique === true);
+    this.familyTechniqueCount.set(familyTechniques.length);
+    this.libraryTechniqueChanged = true;
+  }
+
+  archiveTechnique(technique: Technique) {
+    this.libraryTechniqueChanged = true;
+    const index = this.techniques.indexOf(technique);
+    if (index > 2) {
+      this.techniqueLibrary.push(technique);
+      this.techniques.splice(index, 1);
+    }
+    const familyTechniques = this.techniques.filter(technique => technique.familyTechnique === true);
+    this.familyTechniqueCount.set(familyTechniques.length);
+  }
+
+  relearnTechnique(technique: Technique) {
+    this.libraryTechniqueChanged = true;
+    if (technique.familyTechnique) {
+      const familyTechniques = this.techniques.filter(technique => technique.familyTechnique === true);
+      if (familyTechniques.length >= this.maxFamilyTechniques()) {
+        // already full up on family techniques, bail out
+        return;
+      }
+      this.familyTechniqueCount.set(familyTechniques.length + 1);
+    }
+    const libraryIndex = this.techniqueLibrary.indexOf(technique);
+    if (libraryIndex >= 0) {
+      this.techniques.push(technique);
+      this.techniqueLibrary.splice(libraryIndex, 1);
     }
   }
 
@@ -1466,7 +1568,7 @@ export class BattleService {
         }
       }
     }
-    if (familyTechniquesCounter < this.maxFamilyTechniques) {
+    if (familyTechniquesCounter < this.maxFamilyTechniques()) {
       this.techniqueDevelopmentCounter++;
     }
   }
