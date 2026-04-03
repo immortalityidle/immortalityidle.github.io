@@ -220,7 +220,6 @@ export class HellService {
     }
     this.inHell.set(false);
     this.locationService!.setRealm(Realm.MortalRealm);
-    this.activityService.portals = [this.activityService.returnToHell];
   }
 
   enterTheHells() {
@@ -236,8 +235,8 @@ export class HellService {
   }
 
   moveToHell(hellLocation: LocationType) {
-    if (this.locationService?.locationMap[hellLocation].realm === Realm.MortalRealm) {
-      this.returnToMortalRealm();
+    if (this.locationService?.locationMap[hellLocation].realm !== Realm.Hell) {
+      // not in hell, bail out
       return;
     }
     if (this.inHell()) {

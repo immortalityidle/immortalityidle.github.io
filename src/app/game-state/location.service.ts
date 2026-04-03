@@ -63,6 +63,7 @@ export enum LocationType {
   MountainOfFire = 'Hell of the Mountain of Fire',
   Mills = 'Hell of Mills',
   Saws = 'Hell of Saws',
+  MountPenglai = 'Mount Penglai',
   BurningInferno = 'Burning Inferno',
   VastOcean = 'Vast Ocean',
   EndlessTunnels = 'Endless Tunnels',
@@ -97,8 +98,6 @@ export interface LocationProperties {
   locationLocked: boolean;
   distanceMultiplier: number;
 }
-
-// TODO: lock locations for hells and some impossible tasks
 
 @Injectable({
   providedIn: 'root',
@@ -366,6 +365,14 @@ export class LocationService {
         return false;
       },
     },
+    [LocationType.MountPenglai]: {
+      name: LocationType.MountPenglai,
+      realm: Realm.DivineRealm,
+      description: 'The home of the gods. an immortal isl shrouded in mists and crowned with golden light.',
+      unlock: () => {
+        return true;
+      },
+    },
     [LocationType.BurningInferno]: {
       name: LocationType.BurningInferno,
       realm: Realm.RealmOfFire,
@@ -531,6 +538,8 @@ export class LocationService {
         this.location = LocationType.SmallTown;
       } else if (this.currentRealm === Realm.Hell) {
         this.location = LocationType.Gates;
+      } else if (this.currentRealm === Realm.DivineRealm) {
+        this.location = LocationType.MountPenglai;
       }
     }
   }
@@ -541,24 +550,17 @@ export class LocationService {
       return;
     } else {
       this.unlockedLocations = [];
-      for (const keyString in LocationType) {
+      for (const keyString in this.locationMap) {
         const key = keyString as LocationType;
-        if (!this.unlockedLocations.includes(key)) {
-          if (this.locationMap[key]) {
-            if (this.locationMap[key].unlock()) {
-              this.unlockedLocations.push(key);
-              if (
-                !this.notifiedLocations.includes(key) &&
-                key !== LocationType.Self &&
-                key !== LocationType.SmallTown
-              ) {
-                this.notifiedLocations.push(key);
-                this.logService.log(
-                  LogTopic.EVENT,
-                  'You have expanded your available locations and can now explore ' + this.locationMap[key].name
-                );
-              }
-            }
+        const location = this.locationMap[key];
+        if (location && (!location.realm || location.realm === this.currentRealm) && location.unlock()) {
+          this.unlockedLocations.push(key);
+          if (!this.notifiedLocations.includes(key) && key !== LocationType.Self && key !== LocationType.SmallTown) {
+            this.notifiedLocations.push(key);
+            this.logService.log(
+              LogTopic.EVENT,
+              'You have expanded your available locations and can now explore ' + this.locationMap[key].name
+            );
           }
         }
       }

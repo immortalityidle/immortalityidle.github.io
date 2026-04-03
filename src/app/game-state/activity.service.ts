@@ -248,6 +248,7 @@ export class ActivityService {
       this.checkRequirements();
       this.upgradeActivities();
       this.updateDisplayValues();
+      this.updatePortals();
     });
 
     mainLoopService.activityTickSubject.subscribe(() => {
@@ -406,6 +407,23 @@ export class ActivityService {
     });
   }
 
+  updatePortals() {
+    if (this.hellService?.inHell()) {
+      // let hell manage its own portals
+      return;
+    }
+    if (this.locationService?.currentRealm === Realm.MortalRealm) {
+      if (this.hellService?.hellUnlocked()) {
+        this.portals = [this.returnToHell];
+        if (this.characterService.god()) {
+          this.portals.push(this.PortalToDivineRealm);
+        }
+      }
+    } else if (this.locationService?.currentRealm === Realm.DivineRealm) {
+      this.portals = [this.PortalToMortalRealm];
+    }
+  }
+
   updateDisplayValues() {
     this.displayCurrentIndex.set(this.currentIndex);
     this.displayCurrentTickCount.set(this.currentTickCount);
@@ -511,6 +529,9 @@ export class ActivityService {
       if (!this.locationService!.unlockedLocations.includes(activity.location)) {
         tooltipText += '<br>Access to ' + this.camelToTitle.transform(activity.location);
       }
+      if (activity.divinityRequired && !this.characterService.god()) {
+        tooltipText += '<br>Godhood';
+      }
 
       return tooltipText;
     }
@@ -527,6 +548,9 @@ export class ActivityService {
       ]
         .filter(line => line)
         .join('<br>');
+    }
+    if (activity.divinityRequired && !this.characterService.god()) {
+      tooltipText += '<br>Godhood';
     }
     return tooltipText;
   }
@@ -752,8 +776,13 @@ export class ActivityService {
 
   meetsRequirements(activity: Activity): boolean {
     if (this.locationService && !this.locationService.unlockedLocations.includes(activity.location)) {
-      activity.unlocked = false;
-      return false;
+      if (this.characterService.god()) {
+        // location requirement isn't met, but as a god you can project there
+        activity.projectionOnly = true;
+      } else {
+        activity.unlocked = false;
+        return false;
+      }
     }
     if (activity.conceptRequirements) {
       for (const conceptRequirement of activity.conceptRequirements) {
@@ -2192,6 +2221,7 @@ export class ActivityService {
         money = this.characterService.updateMoney(money);
         this.Blacksmithing.lastIncome = money;
         this.characterService.increaseAttribute('metalLore', 0.1);
+        this.characterService.increaseAttribute('metalLore', 0.001);
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3826,7 +3856,7 @@ export class ActivityService {
   PetRecruiting: Activity = {
     level: 0,
     name: ['Finding Pets'],
-    location: LocationType.Self,
+    location: LocationType.SmallTown,
     imageBaseName: 'findingpets',
     activityType: ActivityType.PetRecruiting,
     description: ['Look for animals that want to be your pets.'],
@@ -3869,7 +3899,7 @@ export class ActivityService {
   PetTraining: Activity = {
     level: 0,
     name: ['Training Pets'],
-    location: LocationType.Self,
+    location: LocationType.SmallTown,
     imageBaseName: 'trainingpets',
     activityType: ActivityType.PetTraining,
     description: ['Train your pets to make them more powerful.'],
@@ -4881,6 +4911,29 @@ export class ActivityService {
     consequence: [
       () => {
         this.hellService?.returnToMortalRealm();
+        this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  PortalToDivineRealm: Activity = {
+    level: 0,
+    location: LocationType.Self,
+    realm: Realm.MortalRealm,
+    name: ['Portal to the Divine Realm'],
+    activityType: ActivityType.DivineRealmPortal,
+    description: ['Open a portal to Ascend to the Divine Realm.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.locationService?.setRealm(Realm.DivineRealm);
+        this.updatePortals();
       },
     ],
     requirements: [{}],

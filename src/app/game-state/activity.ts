@@ -85,6 +85,7 @@ export enum ActivityType {
   HellSwim,
   FinishHell,
   MortalRealmPortal,
+  DivineRealmPortal,
   Hell, // hell needs to be last for indexing purposes
 }
 
