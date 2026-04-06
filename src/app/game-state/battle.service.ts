@@ -6,7 +6,7 @@ import { MainLoopService } from './main-loop.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { HellService } from './hell.service';
 import { HomeService, HomeType } from './home.service';
-import { LocationService, LocationType } from './location.service';
+import { LocationService, LocationType, Realm } from './location.service';
 import { AttributeType, StatusType } from './character.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 import { TitleCasePipe } from '@angular/common';
@@ -195,6 +195,7 @@ export const LOOT_TYPE_HIDE = 'hide';
 export const LOOT_TYPE_FRUIT = 'fruit';
 export const LOOT_TYPE_MEAT = 'meat';
 export const LOOT_TYPE_ORE = 'ore';
+export const LOOT_TYPE_ESSENCE = 'essence';
 
 export const RIGHT_HAND_TECHNIQUE = 'Right-Handed Weapon';
 export const LEFT_HAND_TECHNIQUE = 'Left-Handed Weapon';
@@ -234,6 +235,7 @@ export class BattleService {
   private impossibleTaskService?: ImpossibleTaskService;
   private camelToTitle = new CamelToTitlePipe();
 
+  beaten = false;
   enemies: Enemy[];
   displayEnemies: DisplayEnemy[] = [];
   currentEnemy: Enemy | null;
@@ -279,6 +281,7 @@ export class BattleService {
   hellMonsterDefenseRatio = 100;
   hellMonsterAttackRatio = 100;
   libraryTechniqueChanged = true;
+  elementalRealmMonsterBasePower = 1e21;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -610,6 +613,24 @@ export class BattleService {
       }
       if (this.characterService.checkForDeath()) {
         this.clearEnemies();
+      }
+      if (this.characterService.immortal() && this.characterService.status.health.value <= 0) {
+        this.characterService.status.health.value = 0;
+        this.beaten = true;
+        // if we're in hell, let the hell service handler deal with this
+        if (!this.hellService?.inHell()) {
+          this.clearEnemies();
+          if (
+            this.locationService?.currentRealm === Realm.RealmOfFire ||
+            this.locationService?.currentRealm === Realm.RealmOfEarth ||
+            this.locationService?.currentRealm === Realm.RealmOfWater ||
+            this.locationService?.currentRealm === Realm.RealmOfMetal ||
+            this.locationService?.currentRealm === Realm.RealmOfWood
+          ) {
+            // defeated in an elemental realm, boot to divine realm
+            this.locationService.setRealm(Realm.DivineRealm);
+          }
+        }
       }
     });
 
@@ -2080,6 +2101,8 @@ export class BattleService {
           loot.push(this.inventoryService.getWildMeat(grade));
         } else if (lootType === LOOT_TYPE_MONEY) {
           loot.push(this.inventoryService.getCoinPurse(Math.floor(modifiedBasePower)));
+        } else if (lootType === LOOT_TYPE_ESSENCE) {
+          // TODO: add this
         } else {
           const lootItem = this.itemRepoService.items[lootType];
           if (lootItem) {
@@ -3324,7 +3347,7 @@ export class BattleService {
           unlocked: true,
         },
         {
-          name: 'Hurrican Force',
+          name: 'Hurricane Force',
           ticks: 0,
           ticksRequired: 100,
           baseDamage: 10,
@@ -3631,6 +3654,97 @@ export class BattleService {
         },
       ],
     },
+    {
+      name: 'earthElemental',
+      description: '',
+      location: LocationType.EndlessTunnels,
+      basePower: this.elementalRealmMonsterBasePower,
+      defenseToHealthRatio: 10,
+      element: 'earth',
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      techniques: [
+        {
+          name: 'Stomp',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: 10,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'fireElemental',
+      description: '',
+      location: LocationType.BurningInferno,
+      basePower: this.elementalRealmMonsterBasePower,
+      defenseToHealthRatio: 10,
+      element: 'fire',
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      techniques: [
+        {
+          name: 'Burn',
+          ticks: 0,
+          ticksRequired: 2,
+          baseDamage: 1,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'metalElemental',
+      description: '',
+      location: LocationType.IronCaverns,
+      basePower: this.elementalRealmMonsterBasePower,
+      defenseToHealthRatio: 10,
+      element: 'metal',
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      techniques: [
+        {
+          name: 'Shred',
+          ticks: 0,
+          ticksRequired: 6,
+          baseDamage: 3,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'waterElemental',
+      description: '',
+      location: LocationType.VastOcean,
+      basePower: this.elementalRealmMonsterBasePower,
+      defenseToHealthRatio: 10,
+      element: 'water',
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      techniques: [
+        {
+          name: 'Drown',
+          ticks: 0,
+          ticksRequired: 60,
+          baseDamage: 30,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'woodElemental',
+      description: '',
+      location: LocationType.EverTree,
+      basePower: this.elementalRealmMonsterBasePower,
+      defenseToHealthRatio: 10,
+      element: 'wood',
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      techniques: [
+        {
+          name: 'Clobber',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 5,
+          unlocked: true,
+        },
+      ],
+    },
+
     /* 
     Greek Demigods
 Zeus: Heracles, Perseus, Pollux, Sarpedon, Helen, Amphion and Zethus, Minos, Dionysus.

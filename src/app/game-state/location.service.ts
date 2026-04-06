@@ -378,7 +378,7 @@ export class LocationService {
       realm: Realm.RealmOfFire,
       description: 'Nothing but fire as far as you can see.',
       unlock: () => {
-        return false;
+        return true;
       },
     },
     [LocationType.VastOcean]: {
@@ -386,7 +386,7 @@ export class LocationService {
       realm: Realm.RealmOfWater,
       description: 'Nothing but water as far as you can see.',
       unlock: () => {
-        return false;
+        return true;
       },
     },
     [LocationType.EndlessTunnels]: {
@@ -394,7 +394,7 @@ export class LocationService {
       realm: Realm.RealmOfEarth,
       description: 'Nothing but earth as far as you can see.',
       unlock: () => {
-        return false;
+        return true;
       },
     },
     [LocationType.IronCaverns]: {
@@ -402,7 +402,7 @@ export class LocationService {
       realm: Realm.RealmOfMetal,
       description: 'Nothing but metal as far as you can see.',
       unlock: () => {
-        return false;
+        return true;
       },
     },
     [LocationType.EverTree]: {
@@ -410,7 +410,7 @@ export class LocationService {
       realm: Realm.RealmOfWood,
       description: 'Nothing but wood as far as you can see.',
       unlock: () => {
-        return false;
+        return true;
       },
     },
     [LocationType.MessageDepot]: {
@@ -540,6 +540,16 @@ export class LocationService {
         this.location = LocationType.Gates;
       } else if (this.currentRealm === Realm.DivineRealm) {
         this.location = LocationType.MountPenglai;
+      } else if (this.currentRealm === Realm.RealmOfFire) {
+        this.location = LocationType.BurningInferno;
+      } else if (this.currentRealm === Realm.RealmOfWater) {
+        this.location = LocationType.VastOcean;
+      } else if (this.currentRealm === Realm.RealmOfEarth) {
+        this.location = LocationType.EndlessTunnels;
+      } else if (this.currentRealm === Realm.RealmOfMetal) {
+        this.location = LocationType.IronCaverns;
+      } else if (this.currentRealm === Realm.RealmOfWood) {
+        this.location = LocationType.EverTree;
       }
     }
   }

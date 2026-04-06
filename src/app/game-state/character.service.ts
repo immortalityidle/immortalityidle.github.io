@@ -775,11 +775,6 @@ export class CharacterService {
       } else {
         deathMessage = 'You succumb to your wounds and die at the age of ' + this.formatAge() + '.';
       }
-    } else if (this.immortal() && this.status.health.value <= 0) {
-      this.status.health.value = 0;
-      if (this.hellService?.inHell()) {
-        this.hellService.beaten = true;
-      }
     }
     if (deathMessage !== '') {
       if (!this.immortal()) {

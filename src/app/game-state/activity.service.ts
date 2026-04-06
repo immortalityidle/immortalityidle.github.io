@@ -21,7 +21,16 @@ import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService, LocationType, Realm } from './location.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
-import { CONCEPT_CREATION, CONCEPT_EFFECT_CREATION, ContemplationService } from './contemplation.service';
+import {
+  CONCEPT_CREATION,
+  CONCEPT_EARTH,
+  CONCEPT_EFFECT_CREATION,
+  CONCEPT_FIRE,
+  CONCEPT_METAL,
+  CONCEPT_WATER,
+  CONCEPT_WOOD,
+  ContemplationService,
+} from './contemplation.service';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -181,6 +190,12 @@ export class ActivityService {
       this.ExamineContracts,
       this.HellSwim,
       this.hellRecruiting,
+
+      this.ContemplateFire,
+      this.ContemplateEarth,
+      this.ContemplateWater,
+      this.ContemplateMetal,
+      this.ContemplateWood,
 
       this.Swim,
       this.ForgeChains,
@@ -420,7 +435,22 @@ export class ActivityService {
         }
       }
     } else if (this.locationService?.currentRealm === Realm.DivineRealm) {
-      this.portals = [this.PortalToMortalRealm];
+      this.portals = [
+        this.PortalToMortalRealm,
+        this.PortalToFireRealm,
+        this.PortalToEarthRealm,
+        this.PortalToWaterRealm,
+        this.PortalToMetalRealm,
+        this.PortalToWoodRealm,
+      ];
+    } else if (
+      this.locationService?.currentRealm === Realm.RealmOfFire ||
+      this.locationService?.currentRealm === Realm.RealmOfWater ||
+      this.locationService?.currentRealm === Realm.RealmOfEarth ||
+      this.locationService?.currentRealm === Realm.RealmOfMetal ||
+      this.locationService?.currentRealm === Realm.RealmOfWood
+    ) {
+      this.portals = [this.PortalToDivineRealm];
     }
   }
 
@@ -776,7 +806,10 @@ export class ActivityService {
 
   meetsRequirements(activity: Activity): boolean {
     if (this.locationService && !this.locationService.unlockedLocations.includes(activity.location)) {
-      if (this.characterService.god()) {
+      if (
+        this.characterService.god() &&
+        this.locationService.locationMap[activity.location].realm === Realm.MortalRealm
+      ) {
         // location requirement isn't met, but as a god you can project there
         activity.projectionOnly = true;
       } else {
@@ -4085,7 +4118,7 @@ export class ActivityService {
           );
           this.characterService.status.health.value -= this.characterService.status.health.max * 0.2;
           if (this.characterService.status.health.value <= 0) {
-            this.hellService!.beaten = true;
+            this.battleService.beaten = true;
           }
           return;
         }
@@ -4742,7 +4775,7 @@ export class ActivityService {
         const damage = Math.max(100000 - this.characterService.attributes.toughness.value / 1e23, 100);
         this.characterService.status.health.value -= damage;
         if (this.characterService.status.health.value <= 0) {
-          this.hellService!.beaten = true;
+          this.battleService.beaten = true;
         } else {
           this.hellService!.timesCrushed++;
         }
@@ -4833,6 +4866,146 @@ export class ActivityService {
     skipApprenticeshipLevel: 0,
   };
 
+  ContemplateFire: Activity = {
+    level: 0,
+    name: ['Contemplate Fire'],
+    location: LocationType.BurningInferno,
+    imageBaseName: 'contemplateFire',
+    activityType: ActivityType.ContemplateFire,
+    description: [
+      'Gaze into the Blaze.<br>Delve into the mysteries of fire.<br>Advance your understanding of all Tao concepts that stem from fire, ignoring your chosen contemplation.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of fire based Tao principles.'],
+    consequence: [
+      () => {
+        this.contemplationService.groupTick(CONCEPT_FIRE, 1000);
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 100000,
+      },
+    ],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ContemplateWater: Activity = {
+    level: 0,
+    name: ['Contemplate Water'],
+    location: LocationType.VastOcean,
+    imageBaseName: 'contemplateWater',
+    activityType: ActivityType.ContemplateWater,
+    description: [
+      'Gaze into the Depths.<br>Delve into the mysteries of Water.<br>Advance your understanding of all Tao concepts that stem from watar, ignoring your chosen contemplation.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of water based Tao principles.'],
+    consequence: [
+      () => {
+        this.contemplationService.groupTick(CONCEPT_WATER, 1000);
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 100000,
+      },
+    ],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ContemplateEarth: Activity = {
+    level: 0,
+    name: ['Contemplate Earth'],
+    location: LocationType.EndlessTunnels,
+    imageBaseName: 'contemplateEarth',
+    activityType: ActivityType.ContemplateEarth,
+    description: [
+      'Cast your mind into the stone.<br>Delve into the mysteries of earth.<br>Advance your understanding of all Tao concepts that stem from earth, ignoring your chosen contemplation.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of earth based Tao principles.'],
+    consequence: [
+      () => {
+        this.contemplationService.groupTick(CONCEPT_EARTH, 1000);
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 100000,
+      },
+    ],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ContemplateMetal: Activity = {
+    level: 0,
+    name: ['Contemplate Metal'],
+    location: LocationType.IronCaverns,
+    imageBaseName: 'contemplateMetal',
+    activityType: ActivityType.ContemplateMetal,
+    description: [
+      'Let yourself become as strong as steel.<br>Delve into the mysteries of metal.<br>Advance your understanding of all Tao concepts that stem from metal, ignoring your chosen contemplation.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of metal based Tao principles.'],
+    consequence: [
+      () => {
+        this.contemplationService.groupTick(CONCEPT_METAL, 1000);
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 100000,
+      },
+    ],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ContemplateWood: Activity = {
+    level: 0,
+    name: ['Contemplate Wood'],
+    location: LocationType.EverTree,
+    imageBaseName: 'contemplateWood',
+    activityType: ActivityType.ContemplateWood,
+    description: [
+      'Become one with the tree.<br>Delve into the mysteries of wood.<br>Advance your understanding of all Tao concepts that stem from wood, ignoring your chosen contemplation.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of wood based Tao principles.'],
+    consequence: [
+      () => {
+        this.contemplationService.groupTick(CONCEPT_WOOD, 1000);
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 100000,
+      },
+    ],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+  };
+
   escapeHell: Activity = {
     level: 0,
     location: LocationType.Self,
@@ -4844,8 +5017,7 @@ export class ActivityService {
     consequenceDescription: [''],
     consequence: [
       () => {
-        this.battleService.enemies = [];
-        this.battleService.currentEnemy = null;
+        this.battleService.clearEnemies();
         this.hellService!.moveToHell(LocationType.Gates);
       },
     ],
@@ -4933,6 +5105,116 @@ export class ActivityService {
     consequence: [
       () => {
         this.locationService?.setRealm(Realm.DivineRealm);
+        this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  PortalToFireRealm: Activity = {
+    level: 0,
+    location: LocationType.MountPenglai,
+    realm: Realm.DivineRealm,
+    name: ['Portal to the Fire Realm'],
+    activityType: ActivityType.FireRealmPortal,
+    description: ['Open a portal to the elemental Fire Realm.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.locationService?.setRealm(Realm.RealmOfFire);
+        this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  PortalToEarthRealm: Activity = {
+    level: 0,
+    location: LocationType.MountPenglai,
+    realm: Realm.DivineRealm,
+    name: ['Portal to the Earth Realm'],
+    activityType: ActivityType.EarthRealmPortal,
+    description: ['Open a portal to the elemental Earth Realm.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.locationService?.setRealm(Realm.RealmOfEarth);
+        this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  PortalToWaterRealm: Activity = {
+    level: 0,
+    location: LocationType.MountPenglai,
+    realm: Realm.DivineRealm,
+    name: ['Portal to the Water Realm'],
+    activityType: ActivityType.WaterRealmPortal,
+    description: ['Open a portal to the elemental Water Realm.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.locationService?.setRealm(Realm.RealmOfWater);
+        this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  PortalToMetalRealm: Activity = {
+    level: 0,
+    location: LocationType.MountPenglai,
+    realm: Realm.DivineRealm,
+    name: ['Portal to the Metal Realm'],
+    activityType: ActivityType.MetalRealmPortal,
+    description: ['Open a portal to the elemental Metal Realm.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.locationService?.setRealm(Realm.RealmOfMetal);
+        this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  PortalToWoodRealm: Activity = {
+    level: 0,
+    location: LocationType.MountPenglai,
+    realm: Realm.DivineRealm,
+    name: ['Portal to the Wood Realm'],
+    activityType: ActivityType.WoodRealmPortal,
+    description: ['Open a portal to the elemental Wood Realm.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.locationService?.setRealm(Realm.RealmOfWood);
         this.updatePortals();
       },
     ],

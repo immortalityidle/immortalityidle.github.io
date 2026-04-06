@@ -86,6 +86,16 @@ export enum ActivityType {
   FinishHell,
   MortalRealmPortal,
   DivineRealmPortal,
+  FireRealmPortal,
+  EarthRealmPortal,
+  WaterRealmPortal,
+  MetalRealmPortal,
+  WoodRealmPortal,
+  ContemplateFire,
+  ContemplateWater,
+  ContemplateEarth,
+  ContemplateMetal,
+  ContemplateWood,
   Hell, // hell needs to be last for indexing purposes
 }
 

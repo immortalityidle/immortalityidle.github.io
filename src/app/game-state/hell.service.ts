@@ -113,14 +113,13 @@ export class HellService {
       if (hell.dailyEffect && !this.completedHellTasks.includes(hell.location)) {
         hell.dailyEffect();
       }
-      if (this.beaten) {
+      if (this.beaten || this.battleService?.beaten) {
         this.beaten = false;
         this.logService.injury(
           LogTopic.EVENT,
           "You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm."
         );
-        this.battleService!.enemies = [];
-        this.battleService!.currentEnemy = null;
+        this.battleService!.clearEnemies();
         this.moveToHell(LocationType.Gates);
       }
       this.checkHellCompletion();
@@ -131,14 +130,14 @@ export class HellService {
         // not currently in a hell, bail out
         return;
       }
-      if (this.beaten) {
+      if (this.beaten || this.battleService?.beaten) {
         this.beaten = false;
+        this.battleService!.beaten = false;
         this.logService.injury(
           LogTopic.EVENT,
           "You fall to your knees, unable to bear more damage. You crawl back through this hell's gate to get a moment of respite at the gates of Lord Yama's realm."
         );
-        this.battleService!.enemies = [];
-        this.battleService!.currentEnemy = null;
+        this.battleService!.clearEnemies();
         this.moveToHell(LocationType.Gates);
       }
       this.checkHellCompletion();

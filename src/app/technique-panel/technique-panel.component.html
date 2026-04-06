@@ -84,7 +84,7 @@
         }
         <div>
             @if (displayTechnique.familyTechnique()){
-                <button (click)="battleService.relearnTechnique(displayTechnique.technique)" tooltip="Write a custom manual for this technique and relegate it to your family's technique library to make room in your heart to develop another.">
+                <button (click)="battleService.relearnTechnique(displayTechnique.technique)" tooltip="Study the manual for this technique and relearn it.">
                     Relearn this Family Technique
                 </button>
                 <button (click)="battleService.forsakeTechnique(displayTechnique.technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
