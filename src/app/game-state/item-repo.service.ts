@@ -4,10 +4,10 @@ import { BattleService, FIRE_SHIELD, ICE_SHIELD, METAL_FIST_ATTACK, PYROCLASM_AT
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
-import { HomeService } from './home.service';
+import { HomeService, WORKSTATION_TRAINING_CHAMBER } from './home.service';
 import { InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
-import { FollowersService } from './followers.service';
+import { FOLLOWER_TYPE_TECHNIQUE_MASTER, FollowersService } from './followers.service';
 import { GameStateService } from './game-state.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
@@ -2274,6 +2274,9 @@ baguaMap = [
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
+        if (!this.homeService) {
+          this.homeService = this.injector.get(HomeService);
+        }
         if (!this.hellService.completedHellBosses.includes(LocationType.Mirrors)) {
           this.hellService.completedHellBosses.push(LocationType.Mirrors);
         }
@@ -2283,6 +2286,8 @@ baguaMap = [
         );
         this.characterService.attributes.combatMastery.value += 1;
         this.activityService.CombatTraining.unlocked = true;
+        this.homeService.unlockWorkstation(WORKSTATION_TRAINING_CHAMBER);
+        this.followerService.unlockJob(FOLLOWER_TYPE_TECHNIQUE_MASTER);
       },
       shopable: false,
     },

@@ -17,7 +17,7 @@ import {
   ELEMENT_EFFECT_WOOD,
 } from '../game-state/battle.service';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
-import { CamelToTitlePipe } from '../pipes';
+import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 import { MatIcon } from '@angular/material/icon';
 import { TechniqueOptionsModalComponent } from '../technique-options-modal/technique-options-modal.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,7 +25,12 @@ import { ContemplationService } from '../game-state/contemplation.service';
 
 @Component({
   selector: 'app-technique-panel',
-  imports: [forwardRef(() => TooltipDirective), forwardRef(() => CamelToTitlePipe), forwardRef(() => MatIcon)],
+  imports: [
+    forwardRef(() => TooltipDirective),
+    forwardRef(() => CamelToTitlePipe),
+    forwardRef(() => MatIcon),
+    forwardRef(() => BigNumberPipe),
+  ],
   templateUrl: './technique-panel.component.html',
   styleUrl: './technique-panel.component.less',
 })

@@ -117,6 +117,9 @@ type jobsType = {
   };
 };
 
+// TODO: use constants for all the jobs
+export const FOLLOWER_TYPE_TECHNIQUE_MASTER = 'technique master';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -722,6 +725,14 @@ export class FollowersService {
       },
       description: 'Administrators are required to operate complex organizations to their fullest.',
       hidden: false,
+      totalPower: 0,
+    },
+    [FOLLOWER_TYPE_TECHNIQUE_MASTER]: {
+      work: () => {
+        /* no action, just used in the RefineTechniques activity */
+      },
+      description: 'Technique masters can help you refine family techniques in your training chamber.',
+      hidden: true,
       totalPower: 0,
     },
     snake: {

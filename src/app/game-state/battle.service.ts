@@ -141,12 +141,15 @@ export interface Technique {
   noAttack?: boolean;
   statusEffect?: StatusEffect;
   concept?: string;
-  divine?: boolean;
+  divineDamage?: number;
+  weaponDamage?: number;
+  refinementFocus?: boolean;
 }
 
 export interface DisplayTechnique {
   name: WritableSignal<string>;
   ticks: WritableSignal<number>;
+  rawTicksRequired: WritableSignal<number>;
   ticksRequired: WritableSignal<number>;
   ticksPercentage: WritableSignal<number>;
   trackField: WritableSignal<string>;
@@ -163,7 +166,9 @@ export interface DisplayTechnique {
   familyTechnique: WritableSignal<boolean>;
   concept: WritableSignal<string>;
   technique: Technique;
-  divine: WritableSignal<boolean>;
+  divineDamage: WritableSignal<number>;
+  weaponDamage: WritableSignal<number>;
+  refinementFocus: WritableSignal<boolean>;
 }
 
 export interface TechniqueDevelopmentEntry {
@@ -224,6 +229,11 @@ export const EFFECT_SLOW = 'Slow';
 export const EFFECT_FEEDER = 'feeder';
 export const EFFECT_ZOMBIE_DECOY = 'zombie_decoy';
 
+export const TECHNIQUE_REFINEMENT_POWER = 'increase technique power';
+export const TECHNIQUE_REFINEMENT_COOLDOWN = 'decrease technique cooldown';
+export const TECHNIQUE_REFINEMENT_WEAPONS = 'incorporate your weapons into the technique';
+export const TECHNIQUE_REFINEMENT_DIVINITY = 'increase damage to divine beings';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -282,6 +292,9 @@ export class BattleService {
   hellMonsterAttackRatio = 100;
   libraryTechniqueChanged = true;
   elementalRealmMonsterBasePower = 1e21;
+  minimumTechniqueTicks = 3;
+  maximumTechniqueWeaponDamage = 1;
+  maximumTechniqueDivineDamage = 1;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -570,7 +583,7 @@ export class BattleService {
 
       if (this.yearlyMonsterDay >= 365) {
         this.yearlyMonsterDay = 0;
-        if (this.activeFormation === '') {
+        if (this.activeFormation === '' && this.formationCooldown <= 0) {
           // let repulsion formations trigger before a trouble fight starts
           const repulsionFormationStack = this.characterService.itemPouches.find(
             itemStack =>
@@ -674,8 +687,9 @@ export class BattleService {
             this.displayEnemies[i].techniques.push({
               name: signal<string>(technique.name),
               ticks: signal<number>(technique.ticks),
-              ticksRequired: signal<number>(technique.ticksRequired),
-              ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
+              rawTicksRequired: signal<number>(technique.ticksRequired),
+              ticksRequired: signal<number>(Math.ceil(technique.ticksRequired)),
+              ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / Math.ceil(technique.ticksRequired))),
               trackField: signal<string>(enemy.name + technique.name + technique.ticks),
               disabled: signal<boolean>(technique.disabled || false),
               unlocked: signal<boolean>(technique.unlocked),
@@ -690,20 +704,25 @@ export class BattleService {
               familyTechnique: signal<boolean>(technique.familyTechnique || false),
               concept: signal<string>(technique.concept || ''),
               technique: technique,
-              divine: signal<boolean>(technique.divine || false),
+              divineDamage: signal<number>(technique.divineDamage || 0),
+              weaponDamage: signal<number>(technique.weaponDamage || 0),
+              refinementFocus: signal<boolean>(false),
             });
           } else {
             this.displayEnemies[i].techniques[j].name.set(technique.name);
             this.displayEnemies[i].techniques[j].ticks.set(technique.ticks);
-            this.displayEnemies[i].techniques[j].ticksRequired.set(technique.ticksRequired);
+            this.displayEnemies[i].techniques[j].rawTicksRequired.set(technique.ticksRequired);
+            this.displayEnemies[i].techniques[j].ticksRequired.set(Math.ceil(technique.ticksRequired));
             this.displayEnemies[i].techniques[j].ticksPercentage.set(
-              Math.floor((100 * technique.ticks) / technique.ticksRequired)
+              Math.floor((100 * technique.ticks) / Math.ceil(technique.ticksRequired))
             );
             this.displayEnemies[i].techniques[j].trackField.set(enemy.name + technique.name + technique.ticks);
             this.displayEnemies[i].techniques[j].disabled.set(technique.disabled || false);
             this.displayEnemies[i].techniques[j].unlocked.set(technique.unlocked);
             this.displayEnemies[i].techniques[j].technique = technique;
-            this.displayEnemies[i].techniques[j].divine.set(technique.divine || false);
+            this.displayEnemies[i].techniques[j].divineDamage.set(technique.divineDamage || 0);
+            this.displayEnemies[i].techniques[j].weaponDamage.set(technique.weaponDamage || 0);
+            this.displayEnemies[i].techniques[j].refinementFocus.set(false);
           }
         }
         while (this.displayEnemies[i].statusEffects.length > (enemy.statusEffects?.length || 0)) {
@@ -744,8 +763,9 @@ export class BattleService {
           this.displayTechniques.push({
             name: signal<string>(technique.name),
             ticks: signal<number>(technique.ticks),
-            ticksRequired: signal<number>(technique.ticksRequired),
-            ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
+            rawTicksRequired: signal<number>(technique.ticksRequired),
+            ticksRequired: signal<number>(Math.ceil(technique.ticksRequired)),
+            ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / Math.ceil(technique.ticksRequired))),
             trackField: signal<string>(technique.name + i),
             disabled: signal<boolean>(technique.disabled || false),
             unlocked: signal<boolean>(technique.unlocked),
@@ -760,13 +780,18 @@ export class BattleService {
             familyTechnique: signal<boolean>(technique.familyTechnique || false),
             concept: signal<string>(technique.concept || ''),
             technique: technique,
-            divine: signal<boolean>(technique.divine || false),
+            divineDamage: signal<number>(technique.divineDamage || 0),
+            weaponDamage: signal<number>(technique.weaponDamage || 0),
+            refinementFocus: signal<boolean>(technique.refinementFocus || false),
           });
         } else {
           this.displayTechniques[i].name.set(technique.name);
           this.displayTechniques[i].ticks.set(technique.ticks);
-          this.displayTechniques[i].ticksRequired.set(technique.ticksRequired);
-          this.displayTechniques[i].ticksPercentage.set(Math.floor((100 * technique.ticks) / technique.ticksRequired));
+          this.displayTechniques[i].rawTicksRequired.set(technique.ticksRequired);
+          this.displayTechniques[i].ticksRequired.set(Math.ceil(technique.ticksRequired));
+          this.displayTechniques[i].ticksPercentage.set(
+            Math.floor((100 * technique.ticks) / Math.ceil(technique.ticksRequired))
+          );
           this.displayTechniques[i].trackField.set(technique.name + i);
           this.displayTechniques[i].disabled.set(technique.disabled || false);
           this.displayTechniques[i].unlocked.set(technique.unlocked);
@@ -781,7 +806,9 @@ export class BattleService {
           this.displayTechniques[i].familyTechnique!.set(technique.familyTechnique || false);
           this.displayTechniques[i].concept!.set(technique.concept || '');
           this.displayTechniques[i].technique = technique;
-          this.displayTechniques[i].divine.set(technique.divine || false);
+          this.displayTechniques[i].divineDamage.set(technique.divineDamage || 0);
+          this.displayTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
+          this.displayTechniques[i].refinementFocus.set(technique.refinementFocus || false);
         }
       }
 
@@ -848,8 +875,9 @@ export class BattleService {
             this.displayLibraryTechniques.push({
               name: signal<string>(technique.name),
               ticks: signal<number>(technique.ticks),
-              ticksRequired: signal<number>(technique.ticksRequired),
-              ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / technique.ticksRequired)),
+              rawTicksRequired: signal<number>(technique.ticksRequired),
+              ticksRequired: signal<number>(Math.ceil(technique.ticksRequired)),
+              ticksPercentage: signal<number>(Math.floor((100 * technique.ticks) / Math.ceil(technique.ticksRequired))),
               trackField: signal<string>('library' + technique.name + i),
               disabled: signal<boolean>(technique.disabled || false),
               unlocked: signal<boolean>(technique.unlocked),
@@ -864,7 +892,9 @@ export class BattleService {
               familyTechnique: signal<boolean>(technique.familyTechnique || false),
               concept: signal<string>(technique.concept || ''),
               technique: technique,
-              divine: signal<boolean>(technique.divine || false),
+              divineDamage: signal<number>(technique.divineDamage || 0),
+              weaponDamage: signal<number>(technique.weaponDamage || 0),
+              refinementFocus: signal<boolean>(false),
             });
           } else {
             this.displayLibraryTechniques[i].name.set(technique.name);
@@ -887,7 +917,9 @@ export class BattleService {
             this.displayLibraryTechniques[i].familyTechnique!.set(technique.familyTechnique || false);
             this.displayLibraryTechniques[i].concept!.set(technique.concept || '');
             this.displayLibraryTechniques[i].technique = technique;
-            this.displayLibraryTechniques[i].divine.set(technique.divine || false);
+            this.displayLibraryTechniques[i].divineDamage.set(technique.divineDamage || 0);
+            this.displayLibraryTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
+            this.displayLibraryTechniques[i].refinementFocus.set(false);
           }
         }
       }
@@ -1260,6 +1292,28 @@ export class BattleService {
     }
   }
 
+  focusTechnique(technique: Technique) {
+    for (const t of this.techniques) {
+      t.refinementFocus = false;
+    }
+    technique.refinementFocus = true;
+  }
+
+  refineTechnique(technique: Technique, aspect: string, value: number) {
+    if (aspect === TECHNIQUE_REFINEMENT_POWER) {
+      technique.baseDamage += value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_COOLDOWN) {
+      const alpha = 1 - value * 1e-8;
+      technique.ticksRequired = technique.ticksRequired * alpha + this.minimumTechniqueTicks * (1 - alpha);
+    } else if (aspect === TECHNIQUE_REFINEMENT_WEAPONS) {
+      const alpha = value * 1e-15;
+      technique.weaponDamage = (1 - alpha) * (technique.weaponDamage || 0) + alpha * this.maximumTechniqueWeaponDamage;
+    } else if (aspect === TECHNIQUE_REFINEMENT_DIVINITY) {
+      const alpha = value * 1e-15;
+      technique.divineDamage = (1 - alpha) * (technique.weaponDamage || 0) + alpha * this.maximumTechniqueDivineDamage;
+    }
+  }
+
   addQiAttack() {
     if (this.techniques.find(technique => technique.name === QI_ATTACK)) {
       // already added, bail out
@@ -1408,7 +1462,7 @@ export class BattleService {
       }
       let attackTriggered = false;
       for (const technique of enemy.techniques) {
-        if (technique.ticks >= technique.ticksRequired) {
+        if (technique.ticks >= Math.ceil(technique.ticksRequired)) {
           if (!attackTriggered) {
             // a mercy to the player: no more than one attack will fire per enemy per tick
             this.enemyAttack(technique, enemy);
@@ -1498,7 +1552,11 @@ export class BattleService {
       );
       this.characterService.increaseAttribute('toughness', 0.01);
       if (damageBack) {
-        this.damageEnemy(damage, 'Your shield strikes back! ' + enemyName + ' receives ' + damage + ' damage.');
+        this.damageEnemy(
+          damage,
+          technique.name,
+          'Your shield strikes back! ' + enemyName + ' receives ' + damage + ' damage.'
+        );
       }
     }
     if (damage > this.highestDamageTaken) {
@@ -1566,9 +1624,13 @@ export class BattleService {
         familyTechniquesCounter++;
       }
       if (technique.unlocked && !technique.disabled) {
-        if (technique.ticks >= technique.ticksRequired) {
+        if (technique.ticks >= Math.ceil(technique.ticksRequired)) {
           if (technique.familyTechnique) {
-            technique.baseDamage++;
+            if (technique.refinementFocus) {
+              technique.baseDamage += 4;
+            } else {
+              technique.baseDamage++;
+            }
           }
           this.youAttack(technique);
           if (this.activeFormation === 'stealth') {
@@ -1654,6 +1716,13 @@ export class BattleService {
               attackPower * Math.sqrt(this.characterService.equipment.leftHand.weaponStats?.baseDamage || 1)
             ) || 1;
         }
+      }
+      if (technique.weaponDamage && technique.weaponDamage > 0) {
+        attackPower *=
+          Math.sqrt(
+            (this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 1) +
+              (this.characterService.equipment.leftHand?.weaponStats?.baseDamage || 1)
+          ) * technique.weaponDamage;
       }
 
       let damage = attackPower * technique.baseDamage;
@@ -1902,18 +1971,18 @@ export class BattleService {
         damage *= Math.log10(10 + concept.progress);
       }
 
-      let overage = this.damageEnemy(damage);
+      let overage = this.damageEnemy(damage, technique.name);
       if (blowthrough) {
         while (overage > 0 && this.enemies.length > 0) {
           // keep using extra damage until it's gone or the enemies are
           this.currentEnemy = this.enemies[0];
-          overage = this.damageEnemy(overage);
+          overage = this.damageEnemy(overage, technique.name);
         }
       }
     }
   }
 
-  private damageEnemy(damage: number, customMessage = ''): number {
+  private damageEnemy(damage: number, techniqueName: string, customMessage = ''): number {
     if (!this.currentEnemy) {
       return 0;
     }
@@ -1921,18 +1990,20 @@ export class BattleService {
     this.currentEnemy.health = Math.floor(this.currentEnemy.health - damage);
     if (customMessage === '') {
       customMessage =
-        'You attack ' +
+        'Your ' +
+        techniqueName +
+        ' hits ' +
         this.titleCasePipe.transform(this.currentEnemy.name) +
         ' for ' +
         this.bigNumberPipe.transform(damage) +
         ' damage';
     }
     damage -= enemyHealth;
+    this.logService.log(LogTopic.COMBAT, customMessage);
     if (this.currentEnemy.health <= 0) {
       this.killCurrentEnemy();
       return (damage - enemyHealth) / 2; // return half the damage left over
     } else {
-      this.logService.log(LogTopic.COMBAT, customMessage);
       return 0;
     }
   }

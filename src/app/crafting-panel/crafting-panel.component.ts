@@ -60,6 +60,7 @@ export class CraftingPanelComponent {
   }
 
   protected addWorkstation() {
+    this.homeService.updateAvailableWorkstations();
     this.dialog.open(WorkstationSelectionModalComponent, {
       width: '600px',
       data: { someField: 'foo' },

@@ -85,6 +85,7 @@ export class HellService {
   fasterHellMoney = false;
   burnedMoney = 0;
   hellBossBaseHealth = 1e34;
+  hellBossBaseDefense = 1e20;
   baseHellBossDamage = 1e20;
   displayStatus: DisplayHellStatusEntry[] = [];
   currentHellDisplayStatus: DisplayHellStatusEntry;
@@ -299,7 +300,7 @@ export class HellService {
         baseName: 'Gorbolash',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownTongueRippers']],
         techniques: [
           {
@@ -332,7 +333,7 @@ export class HellService {
         baseName: 'Malgorath',
         health: this.hellBossBaseHealth * 0.001,
         maxHealth: this.hellBossBaseHealth * 0.001,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownScissors']],
         techniques: [
           {
@@ -365,7 +366,7 @@ export class HellService {
         baseName: 'Flamgolus',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownTreesOfKnives']],
         techniques: [
           {
@@ -398,7 +399,7 @@ export class HellService {
         baseName: 'Myorshuggath',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownMirrors']],
         techniques: [
           {
@@ -431,7 +432,7 @@ export class HellService {
         baseName: 'Stactolus',
         health: this.hellBossBaseHealth * 0.001,
         maxHealth: this.hellBossBaseHealth * 0.001,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownSteamers']],
         techniques: [
           {
@@ -464,7 +465,7 @@ export class HellService {
         baseName: 'Ignificor',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownPillars']],
         techniques: [
           {
@@ -497,7 +498,7 @@ export class HellService {
         baseName: 'Malignus',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownMountainOfKnives']],
         techniques: [
           {
@@ -516,7 +517,7 @@ export class HellService {
         baseName: 'Cheat',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownMountainOfIce']],
         techniques: [
           {
@@ -542,7 +543,7 @@ export class HellService {
         baseName: 'Nestor',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownCauldronsOfOil']],
         techniques: [
           {
@@ -568,7 +569,7 @@ export class HellService {
         baseName: 'CowEmperor',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownCattlePit']],
         techniques: [
           {
@@ -594,7 +595,7 @@ export class HellService {
         baseName: 'Crusher',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownCrushingBoulder']],
         techniques: [
           {
@@ -613,7 +614,7 @@ export class HellService {
         baseName: 'Glorbulskath',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownMortarsAndPestles']],
         techniques: [
           {
@@ -639,7 +640,7 @@ export class HellService {
         baseName: 'Gnarlyathor',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownBloodPool']],
         techniques: [
           {
@@ -665,7 +666,7 @@ export class HellService {
         baseName: 'Azoth-Raketh',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownWrongfulDead']],
         techniques: [
           {
@@ -691,7 +692,7 @@ export class HellService {
         baseName: 'Druskall',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownDismemberment']],
         techniques: [
           {
@@ -725,7 +726,7 @@ export class HellService {
         baseName: 'Magmar',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownFireMountain']],
         techniques: [
           {
@@ -758,7 +759,7 @@ export class HellService {
         baseName: 'Grimstone',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownMills']],
         techniques: [
           {
@@ -784,7 +785,7 @@ export class HellService {
         baseName: 'Crognaslark',
         health: this.hellBossBaseHealth,
         maxHealth: this.hellBossBaseHealth,
-        defense: 1e12,
+        defense: this.hellBossBaseDefense,
         loot: [this.itemRepoService.items['hellCrownSaws']],
         techniques: [
           {
@@ -821,7 +822,7 @@ export class HellService {
         baseName: 'Yama',
         health: this.hellBossBaseHealth * 100,
         maxHealth: this.hellBossBaseHealth * 100,
-        defense: this.hellBossBaseHealth * 100,
+        defense: this.hellBossBaseDefense * 10000,
         loot: [this.itemRepoService.items['portalKey']],
         techniques: [
           {
@@ -860,7 +861,7 @@ export class HellService {
         baseName: 'HorseFace',
         health: this.hellBossBaseHealth * 10,
         maxHealth: this.hellBossBaseHealth * 10,
-        defense: this.hellBossBaseHealth * 10,
+        defense: this.hellBossBaseDefense * 100,
         loot: [],
         techniques: [
           {
@@ -884,7 +885,7 @@ export class HellService {
         baseName: 'OxHead',
         health: this.hellBossBaseHealth * 10,
         maxHealth: this.hellBossBaseHealth * 10,
-        defense: this.hellBossBaseHealth * 10,
+        defense: this.hellBossBaseDefense * 100,
         loot: [],
         techniques: [
           {

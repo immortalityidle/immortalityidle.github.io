@@ -1,5 +1,5 @@
 import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
-import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM } from './battle.service';
+import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM, TECHNIQUE_REFINEMENT_POWER } from './battle.service';
 import {
   Activity,
   ActivityLoopEntry,
@@ -10,13 +10,13 @@ import {
 } from '../game-state/activity';
 import { AttributeType, CharacterAttribute, StatusType } from '../game-state/character.service';
 import { CharacterService } from '../game-state/character.service';
-import { HomeService, HomeType } from '../game-state/home.service';
+import { HomeService, HomeType, WORKSTATION_TRAINING_CHAMBER } from '../game-state/home.service';
 import { Equipment, InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
-import { FollowersService } from './followers.service';
+import { FOLLOWER_TYPE_TECHNIQUE_MASTER, FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService, LocationType, Realm } from './location.service';
@@ -249,6 +249,7 @@ export class ActivityService {
       this.PetRecruiting,
       this.PetTraining,
       this.CombatTraining,
+      this.RefineTechniques,
     ];
     this.portals = [];
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
@@ -4054,6 +4055,68 @@ export class ActivityService {
     ],
     requirements: [{}],
     conceptRequirements: [CONCEPT_CREATION],
+    unlocked: false,
+    skipApprenticeshipLevel: 0,
+  };
+
+  RefineTechniques: Activity = {
+    level: 0,
+    name: ['Refine Techniques'],
+    location: LocationType.Self,
+    imageBaseName: 'refiningtechniques',
+    activityType: ActivityType.RefineTechniques,
+    description: [
+      'Refine your family techniques.<br>You will need a dedicated training chamber in your home and at least one Technique Master follower.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [
+      'Expend 10000 stamina to use your training chamber to improve the family technique that you have selected for refinement.',
+    ],
+    consequence: [
+      () => {
+        const trainingChambers = this.homeService.workstations.filter(ws => ws.id === WORKSTATION_TRAINING_CHAMBER);
+        if (trainingChambers.length <= 0 || this.locationService?.currentRealm !== Realm.MortalRealm) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You fail to refine any techniques because you don't have access to a dedicated training chamber workstation."
+          );
+          return;
+        }
+        const followerPower = this.followerService.jobs[FOLLOWER_TYPE_TECHNIQUE_MASTER].totalPower;
+        if (followerPower < 1 || this.locationService?.currentRealm !== Realm.MortalRealm) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You fail to refine any techniques because you don't have access to a technique master to help you train."
+          );
+          return;
+        }
+        const technique = this.battleService.techniques.find(t => t.refinementFocus);
+        if (!technique) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You fail to refine any techniques because you don't have a technique selected as the focus for refinement."
+          );
+          return;
+        }
+        for (const chamber of trainingChambers) {
+          this.battleService.refineTechnique(
+            technique,
+            chamber.techniqueRefinementAspect || TECHNIQUE_REFINEMENT_POWER,
+            followerPower
+          );
+        }
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 10000,
+      },
+    ],
+    requirements: [
+      {
+        combatMastery: 1,
+      },
+    ],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };

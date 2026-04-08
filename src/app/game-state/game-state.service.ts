@@ -658,6 +658,7 @@ export class GameStateService {
       forgeChainsCounter: props?.forgeChainsCounter || 0,
       pillsMade: props?.pillsMade || 0,
       merchantAutobuyItem: props?.merchantAutobuyItem || null,
+      unlockedWorkstations: props?.unlockedWorkstations || [],
     };
   }
 

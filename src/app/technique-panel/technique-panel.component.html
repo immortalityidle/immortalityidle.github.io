@@ -10,8 +10,8 @@
     </mat-icon>
   </div>
   <div>
-    <div>
-      Active Techniques
+    <div class="headerDiv">
+      <span>Active Techniques</span>
     </div>
     @for (displayTechnique of battleService.displayTechniques; track displayTechnique.trackField()) {
       @if (displayTechnique.unlocked()){
@@ -25,7 +25,7 @@
           @if (displayTechnique.extraMultiplier() !== 0){
             <div>Damage multiplier: {{displayTechnique.extraMultiplier()}}</div>
           }
-          <div>Activates every {{displayTechnique.ticksRequired()}} combat ticks</div>
+          <div>Activates every {{displayTechnique.rawTicksRequired()}} combat ticks</div>
           @if (displayTechnique.staminaCost() !== 0){
             <div>Uses {{displayTechnique.staminaCost()}} stamina</div>
           }
@@ -35,25 +35,41 @@
           @if (displayTechnique.healthCost()){
             <div>Uses {{displayTechnique.healthCost()}} health</div>
           }
+          @if (displayTechnique.weaponDamage() > 0){
+            <div>Weapon Scaling: {{displayTechnique.weaponDamage() | bigNumber}}</div>
+          }
+          @if (displayTechnique.divineDamage() > 0){
+            <div>Damage to Divine Beings: {{displayTechnique.divineDamage() | bigNumber}}</div>
+          }
           @if (displayTechnique.effect() !== ''){
             <div>{{effectDescriptions[displayTechnique.effect()]}}</div>
           }
           @if (displayTechnique.concept() !== '' && contemplationService.contemplationStarted()){
             <div innerHTML="{{conceptDescriptions[displayTechnique.concept()]}}"></div>
           }
-          <div>
-              @if (displayTechnique.familyTechnique()){
-                  <button (click)="battleService.archiveTechnique(displayTechnique.technique)" tooltip="Write a custom manual for this technique and relegate it to your family's technique library to make room in your heart to develop another.">
-                      Archive this Family Technique
-                  </button>
+          @if (displayTechnique.familyTechnique()){
+            <div>
+              @if (displayTechnique.refinementFocus()){
+                <span tooltip="This technique will develop additional power with each use and is the focus for Technique Refinement.">Focused Technique</span>
+              } 
+              @else {
+                <button (click)="battleService.focusTechnique(displayTechnique.technique)" tooltip="Focus on developing additional power for this technique.">
+                  Focus on this Family Technique
+                </button>
               }
-          </div>
+            </div>
+            <div>
+              <button (click)="battleService.archiveTechnique(displayTechnique.technique)" tooltip="Write a custom manual for this technique and relegate it to your family's technique library to make room in your heart to develop another.">
+                  Archive this Family Technique
+              </button>
+            </div>
+          }
         </div>
       }   
     }
     <br>
-    <div>
-      Archived Techniques Library
+    <div class="headerDiv">
+      <span>Archived Techniques Library</span>
     </div>
     @for (displayTechnique of battleService.displayLibraryTechniques; track displayTechnique.trackField()) {
       <div class="itemSlot techniqueEntry">
@@ -66,7 +82,7 @@
         @if (displayTechnique.extraMultiplier() !== 0){
           <div>Damage multiplier: {{displayTechnique.extraMultiplier()}}</div>
         }
-        <div>Activates every {{displayTechnique.ticksRequired()}} combat ticks</div>
+        <div>Activates every {{displayTechnique.rawTicksRequired()}} combat ticks</div>
         @if (displayTechnique.staminaCost() !== 0){
           <div>Uses {{displayTechnique.staminaCost()}} stamina</div>
         }
@@ -75,6 +91,9 @@
         }
         @if (displayTechnique.healthCost()){
           <div>Uses {{displayTechnique.healthCost()}} health</div>
+        }
+        @if (displayTechnique.weaponDamage() > 0){
+          <div>Weapon Scaling: {{displayTechnique.weaponDamage()}}</div>
         }
         @if (displayTechnique.effect() !== ''){
           <div>{{effectDescriptions[displayTechnique.effect()]}}</div>

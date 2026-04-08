@@ -9,7 +9,13 @@ import { ActivityType } from './activity';
 import { ActivityService } from './activity.service';
 import { TitleCasePipe } from '@angular/common';
 import { FollowersService } from './followers.service';
-import { LOOT_TYPE_GEM } from './battle.service';
+import {
+  LOOT_TYPE_GEM,
+  TECHNIQUE_REFINEMENT_COOLDOWN,
+  TECHNIQUE_REFINEMENT_DIVINITY,
+  TECHNIQUE_REFINEMENT_POWER,
+  TECHNIQUE_REFINEMENT_WEAPONS,
+} from './battle.service';
 import { CONCEPT_EFFECT_FOOD_YIELD, CONCEPT_EFFECT_HOME_RECOVERY, ContemplationService } from './contemplation.service';
 
 export interface Home {
@@ -78,7 +84,9 @@ export interface Workstation {
   inputs: ItemStack[];
   equipmentSlot?: EquipmentPosition;
   alchemyProduct?: string;
+  techniqueRefinementAspect?: string;
   productCounter?: number;
+  locked?: boolean;
   consequence: (workstation: Workstation, activityType: ActivityType) => void;
 }
 
@@ -106,7 +114,10 @@ export interface HomeProperties {
   forgeChainsCounter: number;
   pillsMade: number;
   merchantAutobuyItem: string | null;
+  unlockedWorkstations: string[];
 }
+
+export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
 
 @Injectable({
   providedIn: 'root',
@@ -423,7 +434,7 @@ export class HomeService {
       landRequired: 1000,
       maxInventory: 80,
       upgradeToTooltip:
-        'Get a better house.<br>better home will cost 100T taels, take up 1,000 land, and cost you 1,000 taels per day in upkeep.',
+        'Get a better house.<br>A better home will cost 100T taels, take up 1,000 land, and cost you 1,000 taels per day in upkeep.',
       healthRecovery: 50,
       staminaRecovery: 200,
       qiRecovery: 5,
@@ -519,7 +530,7 @@ export class HomeService {
         const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
         const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
 
-        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity > 5) {
+        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity >= 5) {
           this.totalCrafts++;
           this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
           oreStack.quantity--;
@@ -933,6 +944,21 @@ export class HomeService {
         this.infuseEquipment(workstation);
       },
     },
+    {
+      id: WORKSTATION_TRAINING_CHAMBER,
+      triggerActivities: [ActivityType.CombatTraining],
+      power: 0,
+      setupCost: 1e18,
+      maintenanceCost: 1e9,
+      description: 'A dedicated space for combat training or refining techniques.',
+      maxInputs: 0,
+      inputs: [],
+      consequence: () => {
+        this.characterService.increaseAttribute('combatMastery', 0.01);
+      },
+      techniqueRefinementAspect: TECHNIQUE_REFINEMENT_POWER,
+      locked: true,
+    },
   ];
   availableWorkstationsList: Workstation[] = [];
 
@@ -1124,6 +1150,12 @@ export class HomeService {
   }
 
   getProperties(): HomeProperties {
+    const unlockedWorkstations = [];
+    for (const ws of this.workstationsList) {
+      if (ws.locked === false) {
+        unlockedWorkstations.push(ws.id);
+      }
+    }
     return {
       homeValue: this.homeValue,
       bedroomFurniture: this.bedroomFurniture,
@@ -1148,6 +1180,7 @@ export class HomeService {
       forgeChainsCounter: this.forgeChainsCounter,
       pillsMade: this.pillsMade,
       merchantAutobuyItem: this.merchantAutobuyItem,
+      unlockedWorkstations: unlockedWorkstations,
     };
   }
 
@@ -1167,6 +1200,9 @@ export class HomeService {
       } else {
         this.bedroomFurniture[i] = null;
       }
+    }
+    for (const wsId of properties.unlockedWorkstations) {
+      this.unlockWorkstation(wsId);
     }
     this.ownedFurniture = properties.ownedFurniture || [];
     this.highestLand = properties.highestLand || 0;
@@ -1300,13 +1336,20 @@ export class HomeService {
     this.nextHome = this.getNextHome();
     this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
     this.inventoryService.changeMaxItems(this.home.maxInventory);
+    this.updateAvailableWorkstations();
+    this.recalculateFengShui();
+  }
+
+  updateAvailableWorkstations() {
     this.availableWorkstationsList = this.workstationsList.filter(ws => {
+      if (ws.locked) {
+        return false;
+      }
       if (ws.divine && !this.characterService.god()) {
         return false;
       }
-      return ws.power <= home.maxWorkstationPower;
+      return ws.power <= this.home.maxWorkstationPower;
     });
-    this.recalculateFengShui();
   }
 
   getHomeFromValue(value: HomeType): Home {
@@ -1396,6 +1439,13 @@ export class HomeService {
     this.characterService.fengshuiScore = fengshuiScore;
   }
 
+  unlockWorkstation(id: string) {
+    const ws = this.workstationsList.find(ws => ws.id === id);
+    if (ws) {
+      ws.locked = false;
+    }
+  }
+
   removeWorkstation(workstation: Workstation) {
     for (const inputItemStack of workstation.inputs) {
       if (inputItemStack.item) {
@@ -1441,12 +1491,14 @@ export class HomeService {
       equipmentSlot: workstationTemplate.equipmentSlot,
       consequence: workstationTemplate.consequence,
       alchemyProduct: workstationTemplate.alchemyProduct,
+      techniqueRefinementAspect: workstationTemplate.techniqueRefinementAspect,
     };
 
     if (copyWorkstation) {
       newWorkstation.inputs = copyWorkstation.inputs;
       newWorkstation.equipmentSlot = copyWorkstation.equipmentSlot;
       newWorkstation.alchemyProduct = copyWorkstation.alchemyProduct;
+      newWorkstation.techniqueRefinementAspect = copyWorkstation.techniqueRefinementAspect;
     }
     this.workstations.push(newWorkstation);
   }
@@ -2258,6 +2310,18 @@ export class HomeService {
       workstation.alchemyProduct = 'distilled essences';
     } else {
       workstation.alchemyProduct = 'potions';
+    }
+  }
+
+  changeWorkstationTechniqueRefinement(workstation: Workstation) {
+    if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_POWER) {
+      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_COOLDOWN;
+    } else if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_COOLDOWN) {
+      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_WEAPONS;
+    } else if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_WEAPONS && this.characterService.god()) {
+      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_DIVINITY;
+    } else {
+      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_POWER;
     }
   }
 
