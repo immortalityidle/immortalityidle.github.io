@@ -616,12 +616,14 @@ export class ContemplationService {
 
   groupTick(baseConcept: string, tickCount = 1) {
     for (const concept of this.concepts) {
-      if (concept.name === baseConcept) {
-        concept.progress += tickCount * this.contemplationMultiplier;
-      } else {
-        for (const req in concept.discoveryRequirements) {
-          if (req === baseConcept) {
-            concept.progress += tickCount * this.contemplationMultiplier;
+      if (concept.discovered) {
+        if (concept.name === baseConcept) {
+          concept.progress += tickCount * this.contemplationMultiplier;
+        } else {
+          for (const req in concept.discoveryRequirements) {
+            if (req === baseConcept) {
+              concept.progress += tickCount * this.contemplationMultiplier;
+            }
           }
         }
       }

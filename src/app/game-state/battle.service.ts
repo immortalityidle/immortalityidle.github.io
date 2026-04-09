@@ -1303,13 +1303,16 @@ export class BattleService {
     if (aspect === TECHNIQUE_REFINEMENT_POWER) {
       technique.baseDamage += value;
     } else if (aspect === TECHNIQUE_REFINEMENT_COOLDOWN) {
-      const alpha = 1 - value * 1e-8;
+      const alpha = 1 - value * 1e-11;
       technique.ticksRequired = technique.ticksRequired * alpha + this.minimumTechniqueTicks * (1 - alpha);
+      if (technique.ticksRequired < this.minimumTechniqueTicks + 0.00000003) {
+        technique.ticksRequired = this.minimumTechniqueTicks;
+      }
     } else if (aspect === TECHNIQUE_REFINEMENT_WEAPONS) {
-      const alpha = value * 1e-15;
+      const alpha = value * 1e-18;
       technique.weaponDamage = (1 - alpha) * (technique.weaponDamage || 0) + alpha * this.maximumTechniqueWeaponDamage;
     } else if (aspect === TECHNIQUE_REFINEMENT_DIVINITY) {
-      const alpha = value * 1e-15;
+      const alpha = value * 1e-21;
       technique.divineDamage = (1 - alpha) * (technique.weaponDamage || 0) + alpha * this.maximumTechniqueDivineDamage;
     }
   }
