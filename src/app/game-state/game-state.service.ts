@@ -799,6 +799,7 @@ export class GameStateService {
       discoveredTechniqueEffects: props?.discoveredTechniqueEffects || [],
       blockedTechniqueEffects: props?.blockedTechniqueEffects || [],
       voidSkipCounter: props?.voidSkipCounter || 0,
+      pauseOnBattle: props?.pauseOnBattle || false,
     };
   }
 

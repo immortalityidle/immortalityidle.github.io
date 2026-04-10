@@ -8,6 +8,7 @@ import { CharacterService } from '../game-state/character.service';
 import { CamelToTitlePipe } from '../pipes';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MatIcon } from '@angular/material/icon';
+import { BattleService } from '../game-state/battle.service';
 
 @Component({
   selector: 'app-time-options-panel',
@@ -30,10 +31,16 @@ export class TimeOptionsPanelComponent {
   constructor(
     public activityService: ActivityService,
     public homeService: HomeService,
-    public characterService: CharacterService
+    public characterService: CharacterService,
+    public battleService: BattleService
   ) {
     this.attributeKeys = Object.keys(this.characterService.attributes);
     this.statusMaxes = Object.keys(this.characterService.status);
+  }
+
+  pauseOnBattle(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.battleService.pauseOnBattle = event.target.checked;
   }
 
   pauseOnDeath(event: Event) {

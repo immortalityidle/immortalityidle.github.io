@@ -2990,21 +2990,21 @@ export class ActivityService {
       },
       () => {
         this.checkApprenticeship(ActivityType.FormationCreation);
-        this.characterService.increaseAttribute('formationMastery', 0.1);
+        this.characterService.increaseAttribute('formationMastery', 0.2);
         this.characterService.status.stamina.value -= 200;
         this.characterService.yin++;
         this.characterService.yang++;
       },
       () => {
         this.checkApprenticeship(ActivityType.FormationCreation);
-        this.characterService.increaseAttribute('formationMastery', 0.1);
+        this.characterService.increaseAttribute('formationMastery', 0.5);
         this.characterService.status.stamina.value -= 500;
         this.characterService.yin++;
         this.characterService.yang++;
       },
       () => {
         this.checkApprenticeship(ActivityType.FormationCreation);
-        this.characterService.increaseAttribute('formationMastery', 0.1);
+        this.characterService.increaseAttribute('formationMastery', 1);
         this.characterService.status.stamina.value -= 1000;
         this.characterService.yin++;
         this.characterService.yang++;
@@ -4242,6 +4242,7 @@ export class ActivityService {
               unlocked: true,
             },
           ],
+          location: this.locationService?.location || LocationType.Steamers,
         });
       },
     ],
@@ -4477,6 +4478,7 @@ export class ActivityService {
                 unlocked: true,
               },
             ],
+            location: this.locationService?.location || LocationType.MountainOfIce,
           });
         }
       },
@@ -4521,6 +4523,7 @@ export class ActivityService {
                 unlocked: true,
               },
             ],
+            location: this.locationService?.location || LocationType.MountainOfFire,
           });
         }
       },

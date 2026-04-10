@@ -64,6 +64,7 @@ export enum LocationType {
   Mills = 'Hell of Mills',
   Saws = 'Hell of Saws',
   MountPenglai = 'Mount Penglai',
+  DivineArena = 'Divine Arena',
   BurningInferno = 'Burning Inferno',
   VastOcean = 'Vast Ocean',
   EndlessTunnels = 'Endless Tunnels',
@@ -369,6 +370,14 @@ export class LocationService {
       name: LocationType.MountPenglai,
       realm: Realm.DivineRealm,
       description: 'The home of the gods. an immortal isl shrouded in mists and crowned with golden light.',
+      unlock: () => {
+        return true;
+      },
+    },
+    [LocationType.DivineArena]: {
+      name: LocationType.DivineArena,
+      realm: Realm.DivineRealm,
+      description: 'The arena where the gods gather to spar for fun and glory.',
       unlock: () => {
         return true;
       },

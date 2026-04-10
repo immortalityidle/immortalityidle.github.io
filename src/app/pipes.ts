@@ -43,7 +43,7 @@ export class BigNumberPipe implements PipeTransform {
         unsignedValue = 0 - value;
       }
       const suffixArray = ['', 'k', 'M', 'B', 'T', 'q', 'Q', 's'];
-      if (unsignedValue < 0.001) {
+      if (unsignedValue < 0.001 && unsignedValue !== 0) {
         returnValue = unsignedValue.toPrecision(3);
       } else if (unsignedValue < 100 && !Number.isInteger(unsignedValue)) {
         returnValue = unsignedValue.toFixed(2) + '';

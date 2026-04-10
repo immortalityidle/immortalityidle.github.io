@@ -4,6 +4,13 @@
     <mat-tab label="Auto-Pause">
       <div>
         <span>
+          <input type="checkbox" (change)="pauseOnBattle($event)" id="pauseOnBattle"
+            [checked]="battleService.pauseOnBattle"/>
+          <label for="pauseOnBattle">Pause on Battle Start</label>
+        </span>
+      </div>
+      <div>
+        <span>
           @if (activityService.autoRestart) {
             <input type="checkbox" (change)="pauseOnDeath($event)" id="pauseOnDeath"
               [checked]="activityService.pauseOnDeath"/>

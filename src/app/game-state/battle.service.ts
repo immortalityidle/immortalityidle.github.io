@@ -53,6 +53,7 @@ export interface Enemy {
   resistances?: string[];
   unlocksFurniture?: string;
   divine?: boolean;
+  location: LocationType;
 }
 
 export interface DisplayEnemy {
@@ -120,6 +121,7 @@ export interface BattleProperties {
   discoveredTechniqueEffects: string[];
   blockedTechniqueEffects: string[];
   voidSkipCounter: number;
+  pauseOnBattle: boolean;
 }
 
 export interface Technique {
@@ -295,6 +297,7 @@ export class BattleService {
   minimumTechniqueTicks = 3;
   maximumTechniqueWeaponDamage = 1;
   maximumTechniqueDivineDamage = 1;
+  pauseOnBattle = false;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -1039,6 +1042,7 @@ export class BattleService {
       discoveredTechniqueEffects: discoveredEffects,
       blockedTechniqueEffects: blockedEffects,
       voidSkipCounter: this.voidSkipCounter,
+      pauseOnBattle: this.pauseOnBattle,
     };
   }
 
@@ -1095,6 +1099,7 @@ export class BattleService {
       prefix.discovered = properties.discoveredTechniqueEffects.includes(prefix.value);
       prefix.allowed = !properties.blockedTechniqueEffects.includes(prefix.value);
     }
+    this.pauseOnBattle = properties.pauseOnBattle;
   }
 
   usePouchItems() {
@@ -2017,8 +2022,9 @@ export class BattleService {
     }
     this.kills++;
     this.totalKills++;
-    this.killsByLocation[this.locationService!.location] =
-      (this.killsByLocation[this.locationService!.location] || 0) + 1;
+    // minor kludge here for save files that had a current enemy before this update added locations to them, remove later
+    this.killsByLocation[this.currentEnemy.location || LocationType.SmallTown] =
+      (this.killsByLocation[this.currentEnemy.location] || 0) + 1;
     this.killsByMonster[this.currentEnemy.baseName] = (this.killsByMonster[this.currentEnemy.baseName] || 0) + 1;
     this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
     if (this.currentEnemy.name === 'Death itself' && !this.characterService.immortal) {
@@ -2073,6 +2079,9 @@ export class BattleService {
     this.enemies.push(enemy);
     if (this.currentEnemy === null) {
       this.currentEnemy = this.enemies[0];
+      if (this.pauseOnBattle) {
+        this.mainLoopService.togglePause(true);
+      }
     }
   }
 
@@ -2225,6 +2234,7 @@ export class BattleService {
       loot: loot,
       techniques: techniques,
       unlocksFurniture: monsterType.unlocksFurniture,
+      location: this.locationService.location,
     });
   }
 
@@ -2245,6 +2255,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      location: this.locationService?.location || LocationType.SmallTown,
     });
   }
 
@@ -2266,6 +2277,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      location: this.locationService?.location || LocationType.SmallTown,
     });
   }
 
@@ -2286,6 +2298,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      location: this.locationService?.location || LocationType.SmallTown,
     });
   }
 
@@ -2306,6 +2319,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      location: this.locationService?.location || LocationType.SmallTown,
     });
   }
 
@@ -2344,6 +2358,7 @@ export class BattleService {
         },
       ],
       immunities: [EFFECT_DOOM, EFFECT_POISON],
+      location: this.locationService?.location || LocationType.SmallTown,
     });
   }
 
@@ -2365,6 +2380,7 @@ export class BattleService {
           unlocked: true,
         },
       ],
+      location: this.locationService?.location || LocationType.SmallTown,
     });
     this.currentEnemy = this.enemies[this.enemies.length - 1];
   }
@@ -2400,6 +2416,7 @@ export class BattleService {
               unlocked: true,
             },
           ],
+          location: this.locationService?.location || LocationType.Steamers,
         });
         this.addEnemy({
           name: 'Ruffian',
@@ -2418,6 +2435,7 @@ export class BattleService {
               unlocked: true,
             },
           ],
+          location: this.locationService?.location || LocationType.Steamers,
         });
       }
     }

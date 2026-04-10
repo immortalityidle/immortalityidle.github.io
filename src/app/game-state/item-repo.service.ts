@@ -2096,6 +2096,7 @@ baguaMap = [
         if (this.characterService.attributes.wrath.value <= 0) {
           this.characterService.attributes.wrath.value += 1;
         }
+        this.hellService.setPortals();
       },
       shopable: false,
     },

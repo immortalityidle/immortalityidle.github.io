@@ -326,6 +326,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.Scissors) {
       this.battleService!.addEnemy({
@@ -359,6 +360,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.TreesOfKnives) {
       this.battleService!.addEnemy({
@@ -392,6 +394,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.Mirrors) {
       this.battleService!.addEnemy({
@@ -425,6 +428,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.Steamers) {
       this.battleService!.addEnemy({
@@ -458,6 +462,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.CopperPillars) {
       this.battleService!.addEnemy({
@@ -491,6 +496,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.MountainOfKnives) {
       this.battleService!.addEnemy({
@@ -510,6 +516,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.MountainOfIce) {
       this.battleService!.addEnemy({
@@ -536,6 +543,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.CauldronsOfOil) {
       this.battleService!.addEnemy({
@@ -562,6 +570,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.CattlePit) {
       this.battleService!.addEnemy({
@@ -588,6 +597,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.CrushingBoulder) {
       this.battleService!.addEnemy({
@@ -607,6 +617,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.MortarsAndPestles) {
       this.battleService!.addEnemy({
@@ -633,6 +644,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.BloodPool) {
       this.battleService!.addEnemy({
@@ -659,6 +671,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.WrongfulDead) {
       this.battleService!.addEnemy({
@@ -685,6 +698,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.Dismemberment) {
       this.battleService!.addEnemy({
@@ -719,6 +733,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.MountainOfFire) {
       this.battleService!.addEnemy({
@@ -752,6 +767,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.Mills) {
       this.battleService!.addEnemy({
@@ -778,6 +794,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     } else if (this.locationService!.location === LocationType.Saws) {
       this.battleService!.addEnemy({
@@ -811,6 +828,7 @@ export class HellService {
           },
         ],
         resistances: [EFFECT_POISON],
+        location: this.locationService!.location,
       });
     }
   }
@@ -855,6 +873,7 @@ export class HellService {
           },
         ],
         immunities: [EFFECT_DOOM, EFFECT_POISON],
+        location: this.locationService!.location,
       });
       this.battleService!.addEnemy({
         name: 'Horse Face',
@@ -879,6 +898,7 @@ export class HellService {
             unlocked: true,
           },
         ],
+        location: this.locationService!.location,
       });
       this.battleService!.addEnemy({
         name: 'Ox Head',
@@ -903,6 +923,7 @@ export class HellService {
             unlocked: true,
           },
         ],
+        location: this.locationService!.location,
       });
     }
   }
@@ -1578,6 +1599,7 @@ export class HellService {
                 unlocked: true,
               },
             ],
+            location: this.locationService!.location,
           });
         }
       },
