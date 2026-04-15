@@ -1315,14 +1315,18 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100;
-        const workstation = this.homeService.workstations.find(ws =>
-          ws.triggerActivities.includes(ActivityType.MakeMortar)
+        const workstation = this.homeService.workstations.find(
+          ws => ws.triggerActivities.includes(ActivityType.MakeMortar) && ws.alchemyProduct === 'mortar'
         );
         if (workstation === undefined) {
           this.logService.log(
             LogTopic.EVENT,
-            "You think about making mortar, but you don't have the right workstation to even get started."
+            "You think about making mortar, but you don't have any workstations ready to get started."
           );
+        }
+        if (this.pauseOnImpossibleFail) {
+          this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
+          this.mainLoopService.togglePause(true);
         }
       },
     ],

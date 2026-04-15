@@ -17,6 +17,7 @@ import {
   TECHNIQUE_REFINEMENT_WEAPONS,
 } from './battle.service';
 import { CONCEPT_EFFECT_FOOD_YIELD, CONCEPT_EFFECT_HOME_RECOVERY, ContemplationService } from './contemplation.service';
+import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 
 export interface Home {
   name: string;
@@ -126,6 +127,7 @@ export class HomeService {
   hellService?: HellService;
   activityService?: ActivityService;
   followerService?: FollowersService;
+  impossibleTaskService?: ImpossibleTaskService;
   keepFurniture = false;
   keepWorkstationInputs = false;
   land: number;
@@ -743,9 +745,9 @@ export class HomeService {
       maxInputs: 6,
       inputs: [],
       consequence: (workstation: Workstation, activityType: ActivityType) => {
-        if (activityType === ActivityType.MakeMortar) {
+        if (activityType === ActivityType.MakeMortar && workstation.alchemyProduct === 'mortar') {
           this.makeMortar(workstation);
-        } else {
+        } else if (activityType === ActivityType.Alchemy) {
           this.craftAlchemy(workstation, activityType);
         }
       },
@@ -1018,6 +1020,7 @@ export class HomeService {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
     setTimeout(() => (this.followerService = this.injector.get(FollowersService)));
+    setTimeout(() => (this.impossibleTaskService = this.injector.get(ImpossibleTaskService)));
     this.land = 0;
     this.landPrice = 100;
     this.setCurrentHome(this.homesList[0]);
@@ -2298,7 +2301,12 @@ export class HomeService {
       return;
     }
     const alchemyLevel = this.activityService?.getActivityByType(ActivityType.Alchemy)?.level || 0;
-    if (workstation.alchemyProduct === 'potions') {
+    if (
+      workstation.alchemyProduct === 'potions' &&
+      this.impossibleTaskService?.activeTaskIndex === ImpossibleTaskType.BuildTower
+    ) {
+      workstation.alchemyProduct = 'mortar';
+    } else if (workstation.alchemyProduct === 'potions' || workstation.alchemyProduct === 'mortar') {
       workstation.alchemyProduct = 'attribute pills';
     } else if (workstation.alchemyProduct === 'attribute pills' && alchemyLevel >= 2) {
       workstation.alchemyProduct = 'longevity pills';

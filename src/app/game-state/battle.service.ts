@@ -3839,7 +3839,11 @@ export class BattleService {
 
     /* 
     Greek Demigods
-Zeus: Heracles, Perseus, Pollux, Sarpedon, Helen, Amphion and Zethus, Minos, Dionysus.
+Zeus: Heracles, Perseus, Pollux, Sarpedon, Helen, Amphion and Zethus, Minos
+Hera: Typhon, Eris
+Athena: Erichthonius
+Artemis: Huntress brigade
+Hermes: Autolycus, Eudoros, Myrtilus, Hermaphroditus
 Poseidon: Theseus, Bellerophon, Orion, Pelias, Cycnus, Messapus, Ancaeus.
 Apollo: Asclepius, Aristaeus, Ion.
 Hermes: Autolycus, Myrtilus, Abderus, Aethelides, Echion.
