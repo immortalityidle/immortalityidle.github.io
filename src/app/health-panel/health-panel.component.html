@@ -72,6 +72,15 @@
       </div>
     </div>
   </div>
+  @if (characterService.displayEnergy.length > 0){
+    <div class="flexColumn">
+      @for (entry of characterService.displayEnergy; track entry()){
+        <div>
+          <span>{{entry()}}</span>
+        </div>  
+      }
+    </div>
+  }
   <div class="flexColumn lastColumn">
     <div class="moneyLabelColumn"><span>Wealth:</span></div>
     <div class="moneyContainer">

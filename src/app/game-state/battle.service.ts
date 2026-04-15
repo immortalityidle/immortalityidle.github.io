@@ -43,6 +43,8 @@ export interface Enemy {
   maxHealth: number;
   defense: number;
   loot: Item[];
+  energyLootType?: string;
+  energyLootAmount?: number;
   unique?: boolean;
   defeatEffect?: string;
   techniques: Technique[];
@@ -146,6 +148,7 @@ export interface Technique {
   divineDamage?: number;
   weaponDamage?: number;
   refinementFocus?: boolean;
+  energyUsage?: number;
 }
 
 export interface DisplayTechnique {
@@ -170,6 +173,7 @@ export interface DisplayTechnique {
   technique: Technique;
   divineDamage: WritableSignal<number>;
   weaponDamage: WritableSignal<number>;
+  energyUsage: WritableSignal<number>;
   refinementFocus: WritableSignal<boolean>;
 }
 
@@ -202,7 +206,7 @@ export const LOOT_TYPE_HIDE = 'hide';
 export const LOOT_TYPE_FRUIT = 'fruit';
 export const LOOT_TYPE_MEAT = 'meat';
 export const LOOT_TYPE_ORE = 'ore';
-export const LOOT_TYPE_ESSENCE = 'essence';
+export const LOOT_TYPE_ENERGY = 'energy';
 
 export const RIGHT_HAND_TECHNIQUE = 'Right-Handed Weapon';
 export const LEFT_HAND_TECHNIQUE = 'Left-Handed Weapon';
@@ -234,7 +238,14 @@ export const EFFECT_ZOMBIE_DECOY = 'zombie_decoy';
 export const TECHNIQUE_REFINEMENT_POWER = 'increase technique power';
 export const TECHNIQUE_REFINEMENT_COOLDOWN = 'decrease technique cooldown';
 export const TECHNIQUE_REFINEMENT_WEAPONS = 'incorporate your weapons into the technique';
+export const TECHNIQUE_REFINEMENT_ENERGY_USAGE = 'incorporate energy into the technique';
 export const TECHNIQUE_REFINEMENT_DIVINITY = 'increase damage to divine beings';
+
+export const ELEMENT_FIRE = 'fire';
+export const ELEMENT_WATER = 'water';
+export const ELEMENT_EARTH = 'earth';
+export const ELEMENT_METAL = 'metal';
+export const ELEMENT_WOOD = 'wood';
 
 @Injectable({
   providedIn: 'root',
@@ -297,6 +308,7 @@ export class BattleService {
   minimumTechniqueTicks = 3;
   maximumTechniqueWeaponDamage = 1;
   maximumTechniqueDivineDamage = 1;
+  maximumTechniqueEnergyUsage = 100000;
   pauseOnBattle = false;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
@@ -710,6 +722,7 @@ export class BattleService {
               divineDamage: signal<number>(technique.divineDamage || 0),
               weaponDamage: signal<number>(technique.weaponDamage || 0),
               refinementFocus: signal<boolean>(false),
+              energyUsage: signal<number>(technique.energyUsage || 0),
             });
           } else {
             this.displayEnemies[i].techniques[j].name.set(technique.name);
@@ -725,6 +738,7 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].technique = technique;
             this.displayEnemies[i].techniques[j].divineDamage.set(technique.divineDamage || 0);
             this.displayEnemies[i].techniques[j].weaponDamage.set(technique.weaponDamage || 0);
+            this.displayEnemies[i].techniques[j].energyUsage.set(technique.energyUsage || 0);
             this.displayEnemies[i].techniques[j].refinementFocus.set(false);
           }
         }
@@ -786,6 +800,7 @@ export class BattleService {
             divineDamage: signal<number>(technique.divineDamage || 0),
             weaponDamage: signal<number>(technique.weaponDamage || 0),
             refinementFocus: signal<boolean>(technique.refinementFocus || false),
+            energyUsage: signal<number>(technique.energyUsage || 0),
           });
         } else {
           this.displayTechniques[i].name.set(technique.name);
@@ -812,6 +827,7 @@ export class BattleService {
           this.displayTechniques[i].divineDamage.set(technique.divineDamage || 0);
           this.displayTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
           this.displayTechniques[i].refinementFocus.set(technique.refinementFocus || false);
+          this.displayTechniques[i].energyUsage.set(technique.energyUsage || 0);
         }
       }
 
@@ -898,6 +914,7 @@ export class BattleService {
               divineDamage: signal<number>(technique.divineDamage || 0),
               weaponDamage: signal<number>(technique.weaponDamage || 0),
               refinementFocus: signal<boolean>(false),
+              energyUsage: signal<number>(technique.energyUsage || 0),
             });
           } else {
             this.displayLibraryTechniques[i].name.set(technique.name);
@@ -922,6 +939,7 @@ export class BattleService {
             this.displayLibraryTechniques[i].technique = technique;
             this.displayLibraryTechniques[i].divineDamage.set(technique.divineDamage || 0);
             this.displayLibraryTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
+            this.displayLibraryTechniques[i].energyUsage.set(technique.energyUsage || 0);
             this.displayLibraryTechniques[i].refinementFocus.set(false);
           }
         }
@@ -1316,9 +1334,12 @@ export class BattleService {
     } else if (aspect === TECHNIQUE_REFINEMENT_WEAPONS) {
       const alpha = value * 1e-18;
       technique.weaponDamage = (1 - alpha) * (technique.weaponDamage || 0) + alpha * this.maximumTechniqueWeaponDamage;
+    } else if (aspect === TECHNIQUE_REFINEMENT_ENERGY_USAGE) {
+      const alpha = value * 1e-12;
+      technique.energyUsage = (1 - alpha) * (technique.energyUsage || 0) + alpha * this.maximumTechniqueEnergyUsage;
     } else if (aspect === TECHNIQUE_REFINEMENT_DIVINITY) {
       const alpha = value * 1e-21;
-      technique.divineDamage = (1 - alpha) * (technique.weaponDamage || 0) + alpha * this.maximumTechniqueDivineDamage;
+      technique.divineDamage = (1 - alpha) * (technique.divineDamage || 0) + alpha * this.maximumTechniqueDivineDamage;
     }
   }
 
@@ -1748,7 +1769,7 @@ export class BattleService {
         damage *= technique.extraMultiplier;
       }
 
-      // TODO: tune all of this
+      let elementalWeaknessHit = false;
       // apply effects
       if (effect === EFFECT_CORRUPTION) {
         damage *= 10;
@@ -1771,41 +1792,46 @@ export class BattleService {
         this.characterService.checkOverage();
       } else if (effect === ELEMENT_EFFECT_FIRE) {
         if (this.currentEnemy.element) {
-          if (this.currentEnemy.element === 'metal' || this.currentEnemy.element === 'wood') {
+          if (this.currentEnemy.element === ELEMENT_METAL || this.currentEnemy.element === ELEMENT_WOOD) {
             damage *= this.elementalFactor;
-          } else if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'earth') {
+            elementalWeaknessHit = true;
+          } else if (this.currentEnemy.element === ELEMENT_WATER || this.currentEnemy.element === ELEMENT_EARTH) {
             damage /= this.elementalFactor;
           }
         }
       } else if (effect === ELEMENT_EFFECT_WOOD) {
         if (this.currentEnemy.element) {
-          if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'earth') {
+          if (this.currentEnemy.element === ELEMENT_WATER || this.currentEnemy.element === ELEMENT_EARTH) {
             damage *= this.elementalFactor;
-          } else if (this.currentEnemy.element === 'metal' || this.currentEnemy.element === 'fire') {
+            elementalWeaknessHit = true;
+          } else if (this.currentEnemy.element === ELEMENT_METAL || this.currentEnemy.element === ELEMENT_FIRE) {
             damage /= this.elementalFactor;
           }
         }
       } else if (effect === ELEMENT_EFFECT_WATER) {
         if (this.currentEnemy.element) {
-          if (this.currentEnemy.element === 'fire' || this.currentEnemy.element === 'metal') {
+          if (this.currentEnemy.element === ELEMENT_FIRE || this.currentEnemy.element === ELEMENT_METAL) {
             damage *= this.elementalFactor;
-          } else if (this.currentEnemy.element === 'wood' || this.currentEnemy.element === 'earth') {
+            elementalWeaknessHit = true;
+          } else if (this.currentEnemy.element === ELEMENT_WOOD || this.currentEnemy.element === ELEMENT_EARTH) {
             damage /= this.elementalFactor;
           }
         }
       } else if (effect === ELEMENT_EFFECT_METAL) {
         if (this.currentEnemy.element) {
-          if (this.currentEnemy.element === 'wood' || this.currentEnemy.element === 'earth') {
+          if (this.currentEnemy.element === ELEMENT_WOOD || this.currentEnemy.element === ELEMENT_EARTH) {
             damage *= this.elementalFactor;
-          } else if (this.currentEnemy.element === 'fire' || this.currentEnemy.element === 'water') {
+            elementalWeaknessHit = true;
+          } else if (this.currentEnemy.element === ELEMENT_FIRE || this.currentEnemy.element === ELEMENT_WATER) {
             damage /= this.elementalFactor;
           }
         }
       } else if (effect === ELEMENT_EFFECT_EARTH) {
         if (this.currentEnemy.element) {
-          if (this.currentEnemy.element === 'water' || this.currentEnemy.element === 'fire') {
+          if (this.currentEnemy.element === ELEMENT_WATER || this.currentEnemy.element === ELEMENT_FIRE) {
             damage *= this.elementalFactor;
-          } else if (this.currentEnemy.element === 'wood' || this.currentEnemy.element === 'metal') {
+            elementalWeaknessHit = true;
+          } else if (this.currentEnemy.element === ELEMENT_WOOD || this.currentEnemy.element === ELEMENT_METAL) {
             damage /= this.elementalFactor;
           }
         }
@@ -1970,6 +1996,33 @@ export class BattleService {
         damage *= this.characterService.attributes.wrath.value + 1;
       }
 
+      if (technique.energyUsage && technique.energyUsage > 0) {
+        let energyType = 'spirit';
+        if (effect === ELEMENT_EFFECT_FIRE) {
+          energyType = ELEMENT_FIRE;
+        } else if (effect === ELEMENT_EFFECT_WATER) {
+          energyType = ELEMENT_WATER;
+        } else if (effect === ELEMENT_EFFECT_EARTH) {
+          energyType = ELEMENT_EARTH;
+        } else if (effect === ELEMENT_EFFECT_METAL) {
+          energyType = ELEMENT_METAL;
+        } else if (effect === ELEMENT_EFFECT_WOOD) {
+          energyType = ELEMENT_WOOD;
+        }
+        let energyUsage = technique.energyUsage;
+        const availableEnergy = this.characterService.energy[energyType] || 0;
+        if (availableEnergy < energyUsage) {
+          energyUsage = availableEnergy;
+        }
+        if (energyUsage > 0) {
+          this.characterService.updateEnergy(energyType, 0 - energyUsage);
+          damage *= 1 + energyUsage * 100;
+          if (elementalWeaknessHit) {
+            damage *= 10;
+          }
+        }
+      }
+
       const damageConcepts = this.contemplationService.concepts.filter(
         concept =>
           concept.effect.includes(CONCEPT_EFFECT_DAMAGE) ||
@@ -2043,6 +2096,9 @@ export class BattleService {
         // the item was generated, not part of the repo, so just add it instead of using the lookup
         this.inventoryService.addItem(item, quantity);
       }
+    }
+    if (this.currentEnemy.energyLootType && this.currentEnemy.energyLootAmount) {
+      this.characterService.updateEnergy(this.currentEnemy.energyLootType, this.currentEnemy.energyLootAmount);
     }
     this.defeatEffect(this.currentEnemy);
     const index = this.enemies.indexOf(this.currentEnemy);
@@ -2168,6 +2224,8 @@ export class BattleService {
       defense *= 0.1;
     }
 
+    let energyAmount = 0;
+    let energyType = undefined;
     const loot: Item[] = [];
     if (monsterType.lootType) {
       const grade = Math.floor(Math.log2(modifiedBasePower + 2));
@@ -2184,8 +2242,13 @@ export class BattleService {
           loot.push(this.inventoryService.getWildMeat(grade));
         } else if (lootType === LOOT_TYPE_MONEY) {
           loot.push(this.inventoryService.getCoinPurse(Math.floor(modifiedBasePower)));
-        } else if (lootType === LOOT_TYPE_ESSENCE) {
-          // TODO: add this
+        } else if (lootType === LOOT_TYPE_ENERGY) {
+          energyAmount += Math.log10(modifiedBasePower);
+          if (monsterType.element) {
+            energyType = monsterType.element;
+          } else {
+            energyType = 'spirit';
+          }
         } else {
           const lootItem = this.itemRepoService.items[lootType];
           if (lootItem) {
@@ -2232,6 +2295,8 @@ export class BattleService {
       maxHealth: health,
       defense: defense,
       loot: loot,
+      energyLootType: energyType,
+      energyLootAmount: energyAmount,
       techniques: techniques,
       unlocksFurniture: monsterType.unlocksFurniture,
       location: this.locationService.location,
@@ -2510,7 +2575,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 8,
-      element: 'fire',
+      element: ELEMENT_FIRE,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
@@ -2518,7 +2583,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 10,
-      element: 'fire',
+      element: ELEMENT_FIRE,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
@@ -2542,7 +2607,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 15,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
@@ -2558,7 +2623,6 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 20,
-      element: 'water',
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
@@ -2566,6 +2630,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 30,
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
         {
@@ -2611,7 +2676,7 @@ export class BattleService {
       description: '',
       location: LocationType.Jungle,
       basePower: 100,
-      element: 'metal',
+      element: ELEMENT_METAL,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_FRUIT],
       unlocksFurniture: 'Lucky Paw',
     },
@@ -2620,7 +2685,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 200,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
       techniques: [
         {
@@ -2651,7 +2716,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 500,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
@@ -2659,7 +2724,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 600,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
@@ -2674,7 +2739,7 @@ export class BattleService {
       description: '',
       location: LocationType.Mine,
       basePower: 800,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
       unlocksFurniture: 'Candle',
     },
@@ -2690,7 +2755,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 1000,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM],
       techniques: [
         {
@@ -2708,7 +2773,7 @@ export class BattleService {
       description: '',
       location: LocationType.SmallPond,
       basePower: 1200,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
@@ -2717,7 +2782,7 @@ export class BattleService {
       location: LocationType.LargeCity,
       basePower: 1300,
       defenseToHealthRatio: 10,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ORE],
       techniques: [
         {
@@ -2773,7 +2838,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 2100,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
@@ -2820,7 +2885,7 @@ export class BattleService {
       description: '',
       location: LocationType.Jungle,
       basePower: 4000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
@@ -2836,7 +2901,7 @@ export class BattleService {
       description: '',
       location: LocationType.LargeCity,
       basePower: 6000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MONEY],
       unlocksFurniture: 'Scholarly Texts',
     },
@@ -2869,7 +2934,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 8000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
@@ -2877,7 +2942,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 9000,
-      element: 'fire',
+      element: ELEMENT_FIRE,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
@@ -2933,7 +2998,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 15000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
@@ -2941,7 +3006,7 @@ export class BattleService {
       description: '',
       location: LocationType.Dungeon,
       basePower: 18000,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MONEY],
     },
     {
@@ -2949,7 +3014,7 @@ export class BattleService {
       description: '',
       location: LocationType.Beach,
       basePower: 20000,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
@@ -2979,7 +3044,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 70000,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
       unlocksFurniture: 'Bearskin Rug',
     },
@@ -2988,7 +3053,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 80000,
-      element: 'metal',
+      element: ELEMENT_METAL,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
     },
     {
@@ -3012,7 +3077,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 120000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
       unlocksFurniture: 'Ivory Horn',
     },
@@ -3036,7 +3101,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 180000,
-      element: 'fire',
+      element: ELEMENT_FIRE,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
       unlocksFurniture: 'Phoenix Down Mattress',
     },
@@ -3045,7 +3110,7 @@ export class BattleService {
       description: '',
       location: LocationType.Desert,
       basePower: 200000,
-      element: 'fire',
+      element: ELEMENT_FIRE,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_ORE],
     },
     {
@@ -3060,7 +3125,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 300000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
     },
     {
@@ -3068,7 +3133,7 @@ export class BattleService {
       description: '',
       location: LocationType.Dungeon,
       basePower: 400000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
     },
     {
@@ -3076,7 +3141,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 500000,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
       techniques: [
         {
@@ -3101,7 +3166,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 600000,
-      element: 'metal',
+      element: ELEMENT_METAL,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
       techniques: [
         {
@@ -3125,7 +3190,7 @@ export class BattleService {
       description: '',
       location: LocationType.Forest,
       basePower: 800000,
-      element: 'wood',
+      element: ELEMENT_WOOD,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
       unlocksFurniture: 'Altar of Nature',
     },
@@ -3157,7 +3222,7 @@ export class BattleService {
       description: '',
       location: LocationType.Dungeon,
       basePower: 2500000,
-      element: 'fire',
+      element: ELEMENT_FIRE,
       techniques: [
         {
           name: 'Scorch',
@@ -3183,7 +3248,7 @@ export class BattleService {
       location: LocationType.Desert,
       basePower: 3000000,
       defenseToHealthRatio: 10,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT, LOOT_TYPE_ORE],
       techniques: [
         {
@@ -3201,7 +3266,7 @@ export class BattleService {
       description: '',
       location: LocationType.Dungeon,
       basePower: 5000000,
-      element: 'metal',
+      element: ELEMENT_METAL,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
       techniques: [
         {
@@ -3298,7 +3363,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 20000000,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
       techniques: [
         {
@@ -3329,7 +3394,7 @@ export class BattleService {
       description: '',
       location: LocationType.MountainTops,
       basePower: 60000000,
-      element: 'earth',
+      element: ELEMENT_EARTH,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
       techniques: [
         {
@@ -3346,7 +3411,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 80000000,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
       techniques: [
         {
@@ -3387,7 +3452,7 @@ export class BattleService {
       location: LocationType.MountainTops,
       basePower: 200000000,
       defenseToHealthRatio: 10,
-      element: 'metal',
+      element: ELEMENT_METAL,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY, LOOT_TYPE_ORE],
       techniques: [
         {
@@ -3404,7 +3469,7 @@ export class BattleService {
       description: '',
       location: LocationType.DeepSea,
       basePower: 500000000,
-      element: 'water',
+      element: ELEMENT_WATER,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE, LOOT_TYPE_MEAT],
       techniques: [
         {
@@ -3451,7 +3516,7 @@ export class BattleService {
     {
       name: 'lavaLeech',
       description: 'A disgusting creature that sucks the heat and life out of anything it grabs.',
-      element: 'fire',
+      element: ELEMENT_FIRE,
       location: LocationType.AshenCrater,
       basePower: 4000000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
@@ -3475,7 +3540,7 @@ export class BattleService {
     {
       name: 'emberHound',
       description: 'A huge black dog made of smoke and ash, with red eyes and flames leaking from its mouth.',
-      element: 'fire',
+      element: ELEMENT_FIRE,
       location: LocationType.AshenCrater,
       basePower: 10000000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
@@ -3500,7 +3565,7 @@ export class BattleService {
       name: 'magmaGolem',
       description:
         'A giant creature made of molten rock and lava. Some say it was created to guard the wealth of a legendary cultivator now long forgotten.',
-      element: 'fire',
+      element: ELEMENT_FIRE,
       location: LocationType.AshenCrater,
       basePower: 20000000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ORE, LOOT_TYPE_MONEY],
@@ -3524,7 +3589,7 @@ export class BattleService {
     {
       name: 'ashSerpent',
       description: 'A huge snake-like monster that hides under the ash. Its body is covered in blazing scales.',
-      element: 'fire',
+      element: ELEMENT_FIRE,
       location: LocationType.AshenCrater,
       basePower: 50000000000,
       lootType: [LOOT_TYPE_GEM, LOOT_TYPE_HIDE],
@@ -3752,8 +3817,8 @@ export class BattleService {
       location: LocationType.EndlessTunnels,
       basePower: this.elementalRealmMonsterBasePower,
       defenseToHealthRatio: 10,
-      element: 'earth',
-      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      element: ELEMENT_EARTH,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ENERGY],
       techniques: [
         {
           name: 'Stomp',
@@ -3770,8 +3835,8 @@ export class BattleService {
       location: LocationType.BurningInferno,
       basePower: this.elementalRealmMonsterBasePower,
       defenseToHealthRatio: 10,
-      element: 'fire',
-      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      element: ELEMENT_FIRE,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ENERGY],
       techniques: [
         {
           name: 'Burn',
@@ -3788,8 +3853,8 @@ export class BattleService {
       location: LocationType.IronCaverns,
       basePower: this.elementalRealmMonsterBasePower,
       defenseToHealthRatio: 10,
-      element: 'metal',
-      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      element: ELEMENT_METAL,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ENERGY],
       techniques: [
         {
           name: 'Shred',
@@ -3806,8 +3871,8 @@ export class BattleService {
       location: LocationType.VastOcean,
       basePower: this.elementalRealmMonsterBasePower,
       defenseToHealthRatio: 10,
-      element: 'water',
-      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      element: ELEMENT_WATER,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ENERGY],
       techniques: [
         {
           name: 'Drown',
@@ -3824,8 +3889,8 @@ export class BattleService {
       location: LocationType.EverTree,
       basePower: this.elementalRealmMonsterBasePower,
       defenseToHealthRatio: 10,
-      element: 'wood',
-      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ESSENCE],
+      element: ELEMENT_WOOD,
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_ENERGY],
       techniques: [
         {
           name: 'Clobber',

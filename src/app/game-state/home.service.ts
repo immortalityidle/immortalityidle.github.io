@@ -10,9 +10,15 @@ import { ActivityService } from './activity.service';
 import { TitleCasePipe } from '@angular/common';
 import { FollowersService } from './followers.service';
 import {
+  ELEMENT_EARTH,
+  ELEMENT_FIRE,
+  ELEMENT_METAL,
+  ELEMENT_WATER,
+  ELEMENT_WOOD,
   LOOT_TYPE_GEM,
   TECHNIQUE_REFINEMENT_COOLDOWN,
   TECHNIQUE_REFINEMENT_DIVINITY,
+  TECHNIQUE_REFINEMENT_ENERGY_USAGE,
   TECHNIQUE_REFINEMENT_POWER,
   TECHNIQUE_REFINEMENT_WEAPONS,
 } from './battle.service';
@@ -967,23 +973,23 @@ export class HomeService {
   //Feng Shui Bagua map:
   baguaMap = [
     //0: Top Left: Wealth, Wood, Purple/Red/Green
-    ['books', 'wood', 'purple', 'red', 'green'],
+    ['books', ELEMENT_WOOD, 'purple', 'red', 'green'],
     //1: Top Center: Fame, Fire, Red/Orange
-    ['bed', 'trophy', 'fire', 'red', 'orange'],
+    ['bed', 'trophy', ELEMENT_FIRE, 'red', 'orange'],
     //2: Top Right: Love/Relationships, Earth, Pink/Red
-    ['bed', 'portrait', 'animal', 'earth', 'red', 'pink'],
+    ['bed', 'portrait', 'animal', ELEMENT_EARTH, 'red', 'pink'],
     //3: Center Left: Family/Health, Wood, Green/Blue
-    ['portrait', 'fitness', 'animal', 'wood', 'green', 'blue'],
+    ['portrait', 'fitness', 'animal', ELEMENT_WOOD, 'green', 'blue'],
     //4: Center: Health/Wellbeing, Earth, Yellow/Earth tones
-    ['fitness', 'earth', 'yellow', 'brown'],
+    ['fitness', ELEMENT_EARTH, 'yellow', 'brown'],
     //5: Center Right: Children/Creativity, Metal, White/Pastels
-    ['portrait', 'metal', 'white', 'pastel'],
+    ['portrait', ELEMENT_METAL, 'white', 'pastel'],
     //6: Bottom Left: Knowledge, Water/Earth, Blue/Black/Green
-    ['books', 'spiritual', 'water', 'earth', 'blue', 'black', 'green'],
+    ['books', 'spiritual', ELEMENT_WATER, ELEMENT_EARTH, 'blue', 'black', 'green'],
     //7: Bottom Center: Career, Water, Black
-    ['water', 'black'],
+    [ELEMENT_WATER, 'black'],
     //8: Bottom Right: Helpful People/Travel, Metal, Gray/White/Black
-    ['books', 'animal', 'metal', 'gray', 'white', 'black'],
+    ['books', 'animal', ELEMENT_METAL, 'gray', 'white', 'black'],
   ];
 
   homeValue!: HomeType;
@@ -2328,6 +2334,8 @@ export class HomeService {
       workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_WEAPONS;
     } else if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_WEAPONS && this.characterService.god()) {
       workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_DIVINITY;
+    } else if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_DIVINITY && this.characterService.god()) {
+      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_ENERGY_USAGE;
     } else {
       workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_POWER;
     }

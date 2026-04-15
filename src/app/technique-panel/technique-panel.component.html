@@ -36,7 +36,10 @@
             <div>Uses {{displayTechnique.healthCost()}} health</div>
           }
           @if (displayTechnique.weaponDamage() > 0){
-            <div>Weapon Scaling: {{displayTechnique.weaponDamage() | bigNumber}}</div>
+            <div tooltip="Increase the power of this technique in proportion to the combined power of your equipped weapons.">Weapon Scaling: {{displayTechnique.weaponDamage() | bigNumber}}</div>
+          }
+          @if (displayTechnique.energyUsage() > 0){
+            <div tooltip="Increase the power of this technique by expending absorbed energy.">Energy Usage: {{displayTechnique.energyUsage() | bigNumber}}</div>
           }
           @if (displayTechnique.divineDamage() > 0){
             <div>Damage to Divine Beings: {{displayTechnique.divineDamage() | bigNumber}}</div>

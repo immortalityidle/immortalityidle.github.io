@@ -1190,6 +1190,7 @@ export class GameStateService {
       showUpdateAnimations: props?.showUpdateAnimations ?? true,
       startingStaminaBoost: props?.startingStaminaBoost || false,
       keepPouchItems: props?.keepPouchItems || false,
+      energy: props?.energy || {},
     };
   }
 

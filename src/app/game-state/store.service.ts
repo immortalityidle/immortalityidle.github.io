@@ -5,7 +5,7 @@ import { InventoryService, Item } from '../game-state/inventory.service';
 import { HomeService, HomeType, Home } from '../game-state/home.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { MatDialog } from '@angular/material/dialog';
-import { LOOT_TYPE_GEM } from './battle.service';
+import { ELEMENT_EARTH, ELEMENT_FIRE, ELEMENT_METAL, ELEMENT_WATER, LOOT_TYPE_GEM } from './battle.service';
 import { MainLoopService } from './main-loop.service';
 import { TitleCasePipe } from '@angular/common';
 
@@ -277,25 +277,25 @@ export class StoreService {
       const metalGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
           itemStack.item?.type === LOOT_TYPE_GEM &&
-          itemStack.item.subtype === 'metal' &&
+          itemStack.item.subtype === ELEMENT_METAL &&
           itemStack.item.value >= minimumGemValue
       );
       const earthGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
           itemStack.item?.type === LOOT_TYPE_GEM &&
-          itemStack.item.subtype === 'earth' &&
+          itemStack.item.subtype === ELEMENT_EARTH &&
           itemStack.item.value >= minimumGemValue
       );
       const waterGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
           itemStack.item?.type === LOOT_TYPE_GEM &&
-          itemStack.item.subtype === 'water' &&
+          itemStack.item.subtype === ELEMENT_WATER &&
           itemStack.item.value >= minimumGemValue
       );
       const fireGemStack = this.inventoryService.itemStacks.find(
         itemStack =>
           itemStack.item?.type === LOOT_TYPE_GEM &&
-          itemStack.item.subtype === 'fire' &&
+          itemStack.item.subtype === ELEMENT_FIRE &&
           itemStack.item.value >= minimumGemValue
       );
       const woodGemStack = this.inventoryService.itemStacks.find(

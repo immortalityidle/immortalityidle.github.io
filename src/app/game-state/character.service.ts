@@ -162,6 +162,7 @@ export interface CharacterProperties {
   empowermentMax: number;
   vaultMaxMoneyBonus: number;
   bankerMaxMoneyBonus: number;
+  energy: { [key: string]: number };
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -607,6 +608,7 @@ export class CharacterService {
   };
   money = 0;
   displayMoney = signal<number>(this.money);
+  displayEnergy: WritableSignal<string>[] = [];
   stashedMoney = 0;
   hellMoney = 0;
   // age in days
@@ -654,6 +656,7 @@ export class CharacterService {
   highestQi = 0;
   highestAttributes: { [key: string]: WritableSignal<number> };
   keepPouchItems = false;
+  energy: { [key: string]: number } = {};
 
   constructor(
     private injector: Injector,
@@ -705,6 +708,18 @@ export class CharacterService {
         const attributeKey = key as AttributeType;
         this.attributes[attributeKey].displayValue.set(this.attributes[attributeKey].value);
         this.attributes[attributeKey].displayAptitude.set(this.attributes[attributeKey].aptitude);
+      }
+      let displayEnergyIndex = 0;
+      for (const energyType in this.energy) {
+        if (this.displayEnergy.length <= displayEnergyIndex) {
+          this.displayEnergy.push(signal<string>(''));
+        }
+        this.displayEnergy[displayEnergyIndex].set(
+          this.camelToTitlePipe.transform(energyType) +
+            ' Energy: ' +
+            this.bigNumberPipe.transform(this.energy[energyType])
+        );
+        displayEnergyIndex++;
       }
 
       if (this.highestMoney < this.money) {
@@ -1320,6 +1335,10 @@ export class CharacterService {
     }
   }
 
+  updateEnergy(energyType: string, amount: number) {
+    this.energy[energyType] = (this.energy[energyType] || 0) + amount;
+  }
+
   flashStatus(statusToFlash: string) {
     if (!this.statusToFlash.includes(statusToFlash)) {
       this.statusToFlash.push(statusToFlash);
@@ -1469,6 +1488,7 @@ export class CharacterService {
       keepPouchItems: this.keepPouchItems,
       vaultMaxMoneyBonus: this.vaultMaxMoneyBonus,
       bankerMaxMoneyBonus: this.bankerMaxMoneyBonus,
+      energy: this.energy,
     };
   }
 
@@ -1538,6 +1558,7 @@ export class CharacterService {
     this.showUpdateAnimations = properties.showUpdateAnimations;
     this.startingStaminaBoost = properties.startingStaminaBoost;
     this.keepPouchItems = properties.keepPouchItems;
+    this.energy = properties.energy;
 
     this.recalculateDerivedStats();
   }

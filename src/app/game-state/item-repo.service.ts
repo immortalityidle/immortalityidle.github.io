@@ -1,6 +1,17 @@
 import { Injectable, Injector } from '@angular/core';
 import { ActivityService } from './activity.service';
-import { BattleService, FIRE_SHIELD, ICE_SHIELD, METAL_FIST_ATTACK, PYROCLASM_ATTACK } from './battle.service';
+import {
+  BattleService,
+  ELEMENT_EARTH,
+  ELEMENT_FIRE,
+  ELEMENT_METAL,
+  ELEMENT_WATER,
+  ELEMENT_WOOD,
+  FIRE_SHIELD,
+  ICE_SHIELD,
+  METAL_FIST_ATTACK,
+  PYROCLASM_ATTACK,
+} from './battle.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
@@ -79,7 +90,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bed',
       color: 'gray',
-      elements: ['wood'],
+      elements: [ELEMENT_WOOD],
       value: 10,
       description:
         'A tattered, gray cotton blanket.<br>Not much, but it could keep you warm at night.<br>Increases daily stamina recovery by 1.',
@@ -95,7 +106,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bed',
       color: 'brown',
-      elements: ['wood'],
+      elements: [ELEMENT_WOOD],
       value: 1000,
       description:
         'A thin mat woven from brown reeds.<br>Increases daily stamina recovery by 1 and restores a bit of health.',
@@ -130,7 +141,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bed',
       color: 'brown',
-      elements: ['fire'],
+      elements: [ELEMENT_FIRE],
       value: 100000,
       description:
         'A bed built over a small clay oven. Keeps you toasty on even the coldest nights.<br>Increases daily stamina recovery by 5 and improves health recovery.',
@@ -148,7 +159,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bed',
       color: 'black',
-      elements: ['metal'],
+      elements: [ELEMENT_METAL],
       value: 10000,
       description:
         "A solid board with iron nails poking upwards.<br>You won't sleep as well, but it is certain to toughen you up.",
@@ -165,7 +176,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bath',
       color: 'gray',
-      elements: ['water'],
+      elements: [ELEMENT_WATER],
       value: 10,
       description:
         'A simple gray bucket of water that lets you splash your face clean.<br>Increases charisma, and good hygiene can lengthen your life.',
@@ -184,7 +195,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bath',
       color: 'brown',
-      elements: ['water', 'earth'],
+      elements: [ELEMENT_WATER, ELEMENT_EARTH],
       value: 1000,
       description:
         'A clay wash basin with a rag to clean yourself.<br>Increases charisma, and good hygiene can lengthen your life.',
@@ -203,7 +214,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bath',
       color: 'brown',
-      elements: ['water', 'wood'],
+      elements: [ELEMENT_WATER, ELEMENT_WOOD],
       value: 10000,
       description:
         'A tall and narrow wooden tub where you can squat and bathe.<br>Increases charisma and health recovery, and good hygiene can lengthen your life.',
@@ -224,7 +235,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bath',
       color: 'brown',
-      elements: ['water', 'metal'],
+      elements: [ELEMENT_WATER, ELEMENT_METAL],
       value: 1000000,
       description:
         'A luxurious bronze tub where you can get sparkling clean.<br>Increases charisma and health recovery, and good hygiene can lengthen your life.',
@@ -245,7 +256,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bath',
       color: 'brown',
-      elements: ['water', 'metal', 'fire'],
+      elements: [ELEMENT_WATER, ELEMENT_METAL, ELEMENT_FIRE],
       value: 1e8,
       description:
         'A luxurious tub with its own heating stove.<br>Good for your health and beauty, increases maximum health, and good hygiene can lengthen your life.',
@@ -530,7 +541,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'trophy',
       color: 'orange',
-      elements: ['wood', 'earth'],
+      elements: [ELEMENT_WOOD, ELEMENT_EARTH],
       increaseAmount: 1,
       value: 1e4,
       description: 'A trophy made from a small monster you defeated. Could brighten up your home.',
@@ -563,7 +574,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'trophy',
       color: 'brown',
-      elements: ['metal'],
+      elements: [ELEMENT_METAL],
       increaseAmount: 2,
       value: 1e6,
       description:
@@ -581,7 +592,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'trophy',
       color: 'yellow',
-      elements: ['fire'],
+      elements: [ELEMENT_FIRE],
       increaseAmount: 2,
       value: 1e2,
       description: 'A candle taken from a kobold. He told you not to take it, but you took it.',
@@ -598,7 +609,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'portrait',
       color: 'blue',
-      elements: ['water'],
+      elements: [ELEMENT_WATER],
       increaseAmount: 3,
       value: 1e7,
       description:
@@ -632,7 +643,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'portrait',
       color: 'brown',
-      elements: ['wood'],
+      elements: [ELEMENT_WOOD],
       increaseAmount: 4,
       value: 1e8,
       description: 'So cute, so fuzzy, so little. So dead now.',
@@ -649,7 +660,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'trophy',
       color: 'yellow',
-      elements: ['water', 'wood', 'earth'],
+      elements: [ELEMENT_WATER, ELEMENT_WOOD, ELEMENT_EARTH],
       increaseAmount: 5,
       value: 1e4,
       description: 'Artful arrangement of the yellowed tusks of a hippo with other knickknacks from your adventures.',
@@ -700,7 +711,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'trophy',
       color: 'black',
-      elements: ['wood', 'earth', 'metal'],
+      elements: [ELEMENT_WOOD, ELEMENT_EARTH, ELEMENT_METAL],
       increaseAmount: 6,
       value: 1e5,
       description: 'Artful arrangement of the blackened tusks of a troll with other knickknacks from your adventures.',
@@ -717,7 +728,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'fitness',
       color: 'blue',
-      elements: ['water', 'metal'],
+      elements: [ELEMENT_WATER, ELEMENT_METAL],
       increaseAmount: 5,
       value: 1e10,
       description:
@@ -736,7 +747,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'animal',
       color: 'brown',
-      elements: ['wood'],
+      elements: [ELEMENT_WOOD],
       increaseAmount: 8,
       value: 1e10,
       description: 'The perfectly preserved hide and head of a massive bear.',
@@ -753,7 +764,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'trophy',
       color: 'white',
-      elements: ['wood'],
+      elements: [ELEMENT_WOOD],
       increaseAmount: 12,
       value: 1e11,
       description:
@@ -787,7 +798,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bed',
       color: 'red',
-      elements: ['fire'],
+      elements: [ELEMENT_FIRE],
       increaseAmount: 15,
       value: 1e14,
       description:
@@ -807,7 +818,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'portrait',
       color: 'pink',
-      elements: ['water'],
+      elements: [ELEMENT_WATER],
       increaseAmount: 25,
       value: 1e16,
       description:
@@ -825,7 +836,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'spiritual',
       color: 'green',
-      elements: ['wood'],
+      elements: [ELEMENT_WOOD],
       increaseAmount: 20,
       value: 1e18,
       description:
@@ -861,7 +872,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'books',
       color: 'purple',
-      elements: ['fire'],
+      elements: [ELEMENT_FIRE],
       increaseAmount: 28,
       value: 1e17,
       description:
@@ -883,7 +894,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'safe',
       color: 'orange',
-      elements: ['earth', 'metal'],
+      elements: [ELEMENT_EARTH, ELEMENT_METAL],
       increaseAmount: 30,
       value: 1e18,
       description:
@@ -906,7 +917,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'books',
       color: 'black',
-      elements: ['metal'],
+      elements: [ELEMENT_METAL],
       increaseAmount: 32,
       value: 1e20,
       description:
@@ -945,7 +956,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'spiritual',
       color: 'blue',
-      elements: ['water'],
+      elements: [ELEMENT_WATER],
       increaseAmount: 40,
       value: 1e22,
       description:
@@ -965,7 +976,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'bath',
       color: 'white',
-      elements: ['water'],
+      elements: [ELEMENT_WATER],
       increaseAmount: 40,
       value: 1e22,
       description:
@@ -990,7 +1001,7 @@ baguaMap = [
       type: 'furniture',
       subtype: 'safe',
       color: 'black',
-      elements: ['fire', 'earth', 'metal'],
+      elements: [ELEMENT_FIRE, ELEMENT_EARTH, ELEMENT_METAL],
       increaseAmount: 40,
       value: 1e23,
       description: 'A vault made from unbreakable scales.<br>Crazy expensive, but magically increases your wealth.',
