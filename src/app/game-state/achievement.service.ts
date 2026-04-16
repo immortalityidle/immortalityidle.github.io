@@ -2,11 +2,18 @@ import { Injectable, Injector, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from './character.service';
 import { InventoryService } from './inventory.service';
-import { HomeService, HomeType } from './home.service';
+import { HomeService, HomeType, WORKSTATION_ENERGY_MANIPULATOR } from './home.service';
 import { ItemRepoService } from './item-repo.service';
 import { StoreService } from './store.service';
 import { MainLoopService } from './main-loop.service';
-import { BattleService } from './battle.service';
+import {
+  BattleService,
+  ELEMENT_EARTH,
+  ELEMENT_FIRE,
+  ELEMENT_METAL,
+  ELEMENT_WATER,
+  ELEMENT_WOOD,
+} from './battle.service';
 import { GameStateService } from './game-state.service';
 import { ActivityService } from './activity.service';
 import { ActivityType } from './activity';
@@ -1991,6 +1998,25 @@ export class AchievementService {
         if (this.contemplationService.contemplationMultiplier < 5) {
           this.contemplationService.contemplationMultiplier = 5;
         }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Master of Elements',
+      description:
+        'You have delved into the elemental realms and started to understand the power of raw elemental energy!',
+      hint: 'There are places beyond the divine realm.',
+      check: () => {
+        return (
+          (this.characterService.energy[ELEMENT_FIRE] || 0) > 0 &&
+          (this.characterService.energy[ELEMENT_EARTH] || 0) > 0 &&
+          (this.characterService.energy[ELEMENT_WATER] || 0) > 0 &&
+          (this.characterService.energy[ELEMENT_METAL] || 0) > 0 &&
+          (this.characterService.energy[ELEMENT_WOOD] || 0) > 0
+        );
+      },
+      effect: () => {
+        this.homeService.unlockWorkstation(WORKSTATION_ENERGY_MANIPULATOR);
       },
       unlocked: false,
     },

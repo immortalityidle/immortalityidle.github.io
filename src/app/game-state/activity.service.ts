@@ -250,6 +250,7 @@ export class ActivityService {
       this.PetTraining,
       this.CombatTraining,
       this.RefineTechniques,
+      this.ManipulateEnergy,
     ];
     this.portals = [];
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
@@ -871,7 +872,7 @@ export class ActivityService {
       if (activity.requirements[level][key] !== undefined) {
         requirementValue = activity.requirements[level][key] ?? 0;
       }
-      if (this.characterService.attributes[key as AttributeType].value <= requirementValue) {
+      if (this.characterService.attributes[key as AttributeType].value < requirementValue) {
         return false;
       }
     }
@@ -4102,6 +4103,7 @@ export class ActivityService {
           );
           return;
         }
+        this.characterService.status.stamina.value -= 10000;
         for (const chamber of trainingChambers) {
           this.battleService.refineTechnique(
             technique,
@@ -4121,6 +4123,38 @@ export class ActivityService {
         combatMastery: 1,
       },
     ],
+    unlocked: false,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ManipulateEnergy: Activity = {
+    level: 0,
+    name: ['Manipulating Energy'],
+    location: LocationType.Self,
+    imageBaseName: 'manipulatingenergy',
+    activityType: ActivityType.ManipulateEnergy,
+    description: [
+      'Manipulate absorbed energy, allowing you to use an Energy Manipulator workstation to convert energy between different forms.',
+    ],
+    yinYangEffect: [YinYangEffect.Balance],
+    consequenceDescription: ['Expend 10000 stamina to use an Energy Manipulator workstation.'],
+    consequence: [
+      () => {
+        this.characterService.status.stamina.value -= 10000;
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 10000,
+      },
+    ],
+    requirements: [
+      {
+        wisdom: 1,
+        justice: 1,
+      },
+    ],
+    divinityRequired: [true],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };

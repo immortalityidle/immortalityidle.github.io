@@ -109,6 +109,17 @@
                 </div>
               </div>
             }
+            @if (workstation.energyManipulation){
+              <div class="product">
+                <div>
+                  <mat-icon (click)="homeService.changeWorkstationEnergyManipulation(workstation)" tooltip="Change Manipulation" 
+                    class="iconButton" aria-label="Change Manipulation" aria-hidden="false">
+                    change_circle
+                  </mat-icon>
+                  <span class="product">{{workstation.energyManipulation | camelToTitle}}</span>
+                </div>
+              </div>
+            }
           </div>
         </div>
       }

@@ -15,6 +15,7 @@ import {
   ELEMENT_METAL,
   ELEMENT_WATER,
   ELEMENT_WOOD,
+  ENERGY_SPIRIT,
   LOOT_TYPE_GEM,
   TECHNIQUE_REFINEMENT_COOLDOWN,
   TECHNIQUE_REFINEMENT_DIVINITY,
@@ -92,6 +93,7 @@ export interface Workstation {
   equipmentSlot?: EquipmentPosition;
   alchemyProduct?: string;
   techniqueRefinementAspect?: string;
+  energyManipulation?: string;
   productCounter?: number;
   locked?: boolean;
   consequence: (workstation: Workstation, activityType: ActivityType) => void;
@@ -125,6 +127,10 @@ export interface HomeProperties {
 }
 
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
+export const WORKSTATION_ENERGY_MANIPULATOR = 'Energy Manipulator';
+
+export const MANIPULATION_SPIRIT = 'transform elemental energy into spirit energy';
+export const MANIPULATION_ELEMENTAL = 'transform spirit energy into elemental energy';
 
 @Injectable({
   providedIn: 'root',
@@ -967,6 +973,21 @@ export class HomeService {
       techniqueRefinementAspect: TECHNIQUE_REFINEMENT_POWER,
       locked: true,
     },
+    {
+      id: WORKSTATION_ENERGY_MANIPULATOR,
+      triggerActivities: [ActivityType.ManipulateEnergy],
+      power: 3,
+      setupCost: 1e22,
+      maintenanceCost: 1e18,
+      description: 'A workstation to extract and manipulate absorbed energy.',
+      maxInputs: 0,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.manipulateEnergy(workstation);
+      },
+      energyManipulation: MANIPULATION_SPIRIT,
+      locked: true,
+    },
   ];
   availableWorkstationsList: Workstation[] = [];
 
@@ -1501,6 +1522,7 @@ export class HomeService {
       consequence: workstationTemplate.consequence,
       alchemyProduct: workstationTemplate.alchemyProduct,
       techniqueRefinementAspect: workstationTemplate.techniqueRefinementAspect,
+      energyManipulation: workstationTemplate.energyManipulation,
     };
 
     if (copyWorkstation) {
@@ -1508,6 +1530,7 @@ export class HomeService {
       newWorkstation.equipmentSlot = copyWorkstation.equipmentSlot;
       newWorkstation.alchemyProduct = copyWorkstation.alchemyProduct;
       newWorkstation.techniqueRefinementAspect = copyWorkstation.techniqueRefinementAspect;
+      newWorkstation.energyManipulation = copyWorkstation.energyManipulation;
     }
     this.workstations.push(newWorkstation);
   }
@@ -1584,6 +1607,49 @@ export class HomeService {
         this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item!.name +
         this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
       this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
+    }
+  }
+
+  manipulateEnergy(workstation: Workstation) {
+    let amount =
+      workstation.power *
+      (this.characterService.attributes.wisdom.value + this.characterService.attributes.justice.value);
+    if (workstation.energyManipulation === MANIPULATION_SPIRIT) {
+      if ((this.characterService.energy[ELEMENT_FIRE] || 0) < amount) {
+        amount = this.characterService.energy[ELEMENT_FIRE];
+      }
+      if ((this.characterService.energy[ELEMENT_EARTH] || 0) < amount) {
+        amount = this.characterService.energy[ELEMENT_EARTH];
+      }
+      if ((this.characterService.energy[ELEMENT_WATER] || 0) < amount) {
+        amount = this.characterService.energy[ELEMENT_WATER];
+      }
+      if ((this.characterService.energy[ELEMENT_METAL] || 0) < amount) {
+        amount = this.characterService.energy[ELEMENT_METAL];
+      }
+      if ((this.characterService.energy[ELEMENT_WOOD] || 0) < amount) {
+        amount = this.characterService.energy[ELEMENT_WOOD];
+      }
+      if (amount > 0) {
+        this.characterService.energy[ELEMENT_FIRE] -= amount;
+        this.characterService.energy[ELEMENT_EARTH] -= amount;
+        this.characterService.energy[ELEMENT_WATER] -= amount;
+        this.characterService.energy[ELEMENT_METAL] -= amount;
+        this.characterService.energy[ELEMENT_WOOD] -= amount;
+        this.characterService.energy[ENERGY_SPIRIT] = (this.characterService.energy[ENERGY_SPIRIT] || 0) + amount;
+      }
+    } else if ((workstation.energyManipulation = MANIPULATION_ELEMENTAL)) {
+      if (this.characterService.energy[ENERGY_SPIRIT] < amount) {
+        amount = this.characterService.energy[ENERGY_SPIRIT];
+      }
+      if (amount > 0) {
+        this.characterService.energy[ELEMENT_FIRE] += amount;
+        this.characterService.energy[ELEMENT_EARTH] += amount;
+        this.characterService.energy[ELEMENT_WATER] += amount;
+        this.characterService.energy[ELEMENT_METAL] += amount;
+        this.characterService.energy[ELEMENT_WOOD] += amount;
+        this.characterService.energy[ENERGY_SPIRIT] -= amount;
+      }
     }
   }
 
@@ -2338,6 +2404,14 @@ export class HomeService {
       workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_ENERGY_USAGE;
     } else {
       workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_POWER;
+    }
+  }
+
+  changeWorkstationEnergyManipulation(workstation: Workstation) {
+    if (workstation.energyManipulation === MANIPULATION_SPIRIT) {
+      workstation.energyManipulation = MANIPULATION_ELEMENTAL;
+    } else {
+      workstation.energyManipulation = MANIPULATION_SPIRIT;
     }
   }
 

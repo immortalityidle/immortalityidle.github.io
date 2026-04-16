@@ -6,7 +6,7 @@ import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
 import { Equipment, InventoryService, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
-import { BattleService } from './battle.service';
+import { BattleService, ENERGY_SPIRIT } from './battle.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
@@ -168,6 +168,7 @@ export class FollowersService {
   hqUnlocked = false;
   hqInputs: ItemStack[] = [];
   giftRecipientCounter = 0;
+  energyGemConversion = 100000;
 
   hqs: HQ[] = [
     {
@@ -212,7 +213,7 @@ export class FollowersService {
     {
       name: 'Simple School',
       description:
-        'A simple school where your followers can rest and train.<br>Costs 1,000 Taels, one food item per follower, and one spirit gem per day.<br>Requires an administrator follower to run it.',
+        'A simple school where your followers can rest and train.<br>Costs 1,000 Taels, one food item per follower, and one spirit gem or equivalent Spirit Energy per day.<br>Requires an administrator follower to run it.',
       moneyPerDay: 1000,
       gemsPerDay: 1,
       foodPerDay: 1,
@@ -231,7 +232,7 @@ export class FollowersService {
     {
       name: 'Training Center',
       description:
-        'A school where your followers rest and train.<br>Costs 100,000 Taels, two food items per follower, and 10 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 10 administrator follower to run it.',
+        'A school where your followers rest and train.<br>Costs 100,000 Taels, two food items per follower, and 10 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 10 administrator follower to run it.',
       moneyPerDay: 100000,
       gemsPerDay: 10,
       foodPerDay: 2,
@@ -257,7 +258,7 @@ export class FollowersService {
       description:
         'An elite school where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e10) +
-        ' Taels, three food items per follower, and 40 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 20 administrator follower to run it.',
+        ' Taels, three food items per follower, and 40 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 20 administrator follower to run it.',
       moneyPerDay: 1e10,
       gemsPerDay: 40,
       foodPerDay: 3,
@@ -283,7 +284,7 @@ export class FollowersService {
       description:
         'An elaborate compound where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e13) +
-        ' Taels, one proper meal per follower, and 100 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 50 administrator follower to run it.',
+        ' Taels, one proper meal per follower, and 100 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 50 administrator follower to run it.',
       moneyPerDay: 1e13,
       gemsPerDay: 100,
       foodPerDay: 1,
@@ -309,7 +310,7 @@ export class FollowersService {
       description:
         'A huge campus where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e16) +
-        ' Taels, two proper meals per follower, and 200 spirit gems per day (higher quality gems can count as more than one).<br>Requires a level 100 administrator follower to run it.',
+        ' Taels, two proper meals per follower, and 200 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 100 administrator follower to run it.',
       moneyPerDay: 1e16,
       gemsPerDay: 200,
       foodPerDay: 2,
@@ -335,7 +336,7 @@ export class FollowersService {
       description:
         'A powerful fortress where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e20) +
-        ' Taels, three proper meals per follower, and 500 spirit gems per day (higher quality gems can count as more than one).<br>Requires 2 level 100 administrators to run it.',
+        ' Taels, three proper meals per follower, and 500 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires 2 level 100 administrators to run it.',
       moneyPerDay: 1e20,
       gemsPerDay: 500,
       foodPerDay: 3,
@@ -361,7 +362,7 @@ export class FollowersService {
       description:
         'An immense citidel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
-        ' Taels, five meals per follower, and 1000 spirit gems per day (higher quality gems can count as more than one).<br>Requires 4 level 100 administrators to run it.',
+        ' Taels, five meals per follower, and 1000 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires 4 level 100 administrators to run it.',
       moneyPerDay: 1e26,
       gemsPerDay: 1000,
       foodPerDay: 5,
@@ -1025,6 +1026,8 @@ export class FollowersService {
     while (
       effectiveHQLevel >= 0 &&
       this.hqs[effectiveHQLevel].gemsPerDay > 0 &&
+      (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.energyGemConversion <
+        this.hqs[effectiveHQLevel].gemsPerDay &&
       this.inventoryService.checkForByValue('gem', this.hqs[effectiveHQLevel].gemsPerDay * 10) === -1
     ) {
       effectiveHQLevel--;
@@ -1052,7 +1055,14 @@ export class FollowersService {
     // requirements are met at effectiveHQLevel, pay costs
     this.characterService.updateMoney(0 - this.hqs[effectiveHQLevel].moneyPerDay);
     if (this.hqs[effectiveHQLevel].gemsPerDay > 0) {
-      this.inventoryService.consumeByValue('gem', this.hqs[effectiveHQLevel].gemsPerDay * 10);
+      if (
+        (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.energyGemConversion >=
+        this.hqs[effectiveHQLevel].gemsPerDay
+      ) {
+        this.characterService.energy[ENERGY_SPIRIT] -= this.hqs[effectiveHQLevel].gemsPerDay / this.energyGemConversion;
+      } else {
+        this.inventoryService.consumeByValue('gem', this.hqs[effectiveHQLevel].gemsPerDay * 10);
+      }
     }
     if (this.hqs[effectiveHQLevel].foodPerDay > 0) {
       this.inventoryService.consume('food', this.hqs[effectiveHQLevel].foodPerDay, true, false, foodSubType);

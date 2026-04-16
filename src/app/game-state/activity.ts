@@ -97,6 +97,7 @@ export enum ActivityType {
   ContemplateMetal,
   ContemplateWood,
   RefineTechniques,
+  ManipulateEnergy,
   Hell, // hell needs to be last for indexing purposes
 }
 

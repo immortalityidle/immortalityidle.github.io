@@ -246,6 +246,7 @@ export const ELEMENT_WATER = 'water';
 export const ELEMENT_EARTH = 'earth';
 export const ELEMENT_METAL = 'metal';
 export const ELEMENT_WOOD = 'wood';
+export const ENERGY_SPIRIT = 'spirit';
 
 @Injectable({
   providedIn: 'root',
@@ -1997,7 +1998,7 @@ export class BattleService {
       }
 
       if (technique.energyUsage && technique.energyUsage > 0) {
-        let energyType = 'spirit';
+        let energyType = ENERGY_SPIRIT;
         if (effect === ELEMENT_EFFECT_FIRE) {
           energyType = ELEMENT_FIRE;
         } else if (effect === ELEMENT_EFFECT_WATER) {
@@ -2247,7 +2248,7 @@ export class BattleService {
           if (monsterType.element) {
             energyType = monsterType.element;
           } else {
-            energyType = 'spirit';
+            energyType = ENERGY_SPIRIT;
           }
         } else {
           const lootItem = this.itemRepoService.items[lootType];

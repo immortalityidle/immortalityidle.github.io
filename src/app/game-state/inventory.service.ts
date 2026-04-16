@@ -23,7 +23,7 @@ import { HellService } from './hell.service';
 import { HomeService } from './home.service';
 import { LocationService, LocationType } from './location.service';
 import { BigNumberPipe } from '../pipes';
-import { BattleService, LOOT_TYPE_GEM } from './battle.service';
+import { BattleService, ENERGY_SPIRIT, LOOT_TYPE_GEM } from './battle.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -834,15 +834,15 @@ export class InventoryService {
       this.bigNumberPipe.transform(armor.armorStats.defense);
   }
 
-  upgradeEquipment(equipment: Equipment, value: number, newEffect = 'spirit') {
+  upgradeEquipment(equipment: Equipment, value: number, newEffect = ENERGY_SPIRIT) {
     if (equipment.armorStats) {
       equipment.armorStats.defense += Math.max(Math.sqrt(value), 1000) * value;
-      if (newEffect !== 'spirit') {
+      if (newEffect !== ENERGY_SPIRIT) {
         equipment.effect = newEffect;
       }
     } else if (equipment.weaponStats) {
       equipment.weaponStats.baseDamage += Math.max(Math.sqrt(value), 1000) * value;
-      if (newEffect !== 'spirit') {
+      if (newEffect !== ENERGY_SPIRIT) {
         equipment.effect = newEffect;
       }
     }
@@ -980,9 +980,9 @@ export class InventoryService {
     }
   }
 
-  generateSpiritGem(grade: number, flavor = 'spirit'): Item {
+  generateSpiritGem(grade: number, flavor = ENERGY_SPIRIT): Item {
     let description = 'A spirit gem dropped by a monster.';
-    if (flavor !== 'spirit') {
+    if (flavor !== ENERGY_SPIRIT) {
       description = 'A spirit gem full of the power of ' + flavor + '.';
     }
     return {
