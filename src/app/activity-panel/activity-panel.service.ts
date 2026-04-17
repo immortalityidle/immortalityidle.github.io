@@ -24,6 +24,10 @@ export class ActivityPanelService {
       // in a battle, bail out
       return;
     }
+    if (!activity.unlocked) {
+      // activity is locked, bail out
+      return;
+    }
     if (!this.activityService.meetsRequirements(activity)) {
       this.logService.log(LogTopic.EVENT, activity.name[activity.level] + ' is unavailable now.');
       return;

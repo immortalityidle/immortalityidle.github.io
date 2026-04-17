@@ -15,7 +15,7 @@ import {
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
-import { HomeService, WORKSTATION_TRAINING_CHAMBER } from './home.service';
+import { HomeService, WORKSTATION_GEM_EXTRACTOR, WORKSTATION_TRAINING_CHAMBER } from './home.service';
 import { InventoryService, Item } from './inventory.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FOLLOWER_TYPE_TECHNIQUE_MASTER, FollowersService } from './followers.service';
@@ -2601,11 +2601,16 @@ baguaMap = [
         if (!this.activityService) {
           this.activityService = this.injector.get(ActivityService);
         }
+        if (!this.homeService) {
+          this.homeService = this.injector.get(HomeService);
+        }
+
         this.logService.log(
           LogTopic.STORY,
           'The Crown of Limbs settles onto your head, then sinks in to become a part of your very soul. If you are spiritual enough, you can now purify gems to infuse new effects into your weapons.'
         );
         this.activityService.purifyGemsUnlocked = true;
+        this.homeService.unlockWorkstation(WORKSTATION_GEM_EXTRACTOR);
       },
       shopable: false,
     },

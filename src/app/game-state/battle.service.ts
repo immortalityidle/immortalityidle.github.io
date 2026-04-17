@@ -2431,7 +2431,7 @@ export class BattleService {
   addZombieDecoy() {
     this.addEnemy({
       name: 'Zombie Decoy',
-      baseName: 'Zombie Decoy',
+      baseName: 'zombie',
       health: 1e20,
       maxHealth: 1e20,
       defense: 0,

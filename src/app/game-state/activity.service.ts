@@ -10,7 +10,12 @@ import {
 } from '../game-state/activity';
 import { AttributeType, CharacterAttribute, StatusType } from '../game-state/character.service';
 import { CharacterService } from '../game-state/character.service';
-import { HomeService, HomeType, WORKSTATION_TRAINING_CHAMBER } from '../game-state/home.service';
+import {
+  HomeService,
+  HomeType,
+  WORKSTATION_GEM_EXTRACTOR,
+  WORKSTATION_TRAINING_CHAMBER,
+} from '../game-state/home.service';
 import { Equipment, InventoryService } from '../game-state/inventory.service';
 import { ItemRepoService } from '../game-state/item-repo.service';
 import { LogService, LogTopic } from './log.service';
@@ -244,6 +249,7 @@ export class ActivityService {
       this.SoulCultivation,
       this.SynthesizingGems,
       this.PurifyGems,
+      this.ExtractGems,
       this.Recruiting,
       this.TrainingFollowers,
       this.PetRecruiting,
@@ -914,6 +920,7 @@ export class ActivityService {
       // hell handles its own activity checking
       return;
     }
+    this.disableLockedActivities();
     for (const activity of this.activities) {
       if (activity.impossibleTaskIndex !== undefined) {
         // impossible task activities only care if you are on the task
@@ -4013,6 +4020,39 @@ export class ActivityService {
     resourceUse: [
       {
         stamina: 100000,
+      },
+    ],
+    requirements: [
+      {
+        spirituality: 1e24,
+      },
+    ],
+    unlocked: false,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ExtractGems: Activity = {
+    level: 0,
+    name: ['Extracting Gems'],
+    location: LocationType.Self,
+    imageBaseName: 'extractinggems',
+    activityType: ActivityType.ExtractGems,
+    description: [
+      'Use a ' +
+        WORKSTATION_GEM_EXTRACTOR +
+        ' and your gemologist followers to extract raw spirit energy from spirit gems.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Uses 1000 Stamina, 1000 Qi, and gems from your inventory.'],
+    consequence: [
+      () => {
+        this.characterService.status.stamina.value -= 1000;
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 1000,
+        qi: 1000,
       },
     ],
     requirements: [

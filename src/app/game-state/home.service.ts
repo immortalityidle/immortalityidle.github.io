@@ -128,6 +128,7 @@ export interface HomeProperties {
 
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
 export const WORKSTATION_ENERGY_MANIPULATOR = 'Energy Manipulator';
+export const WORKSTATION_GEM_EXTRACTOR = 'Gem Extractor';
 
 export const MANIPULATION_SPIRIT = 'transform elemental energy into spirit energy';
 export const MANIPULATION_ELEMENTAL = 'transform spirit energy into elemental energy';
@@ -988,6 +989,20 @@ export class HomeService {
       energyManipulation: MANIPULATION_SPIRIT,
       locked: true,
     },
+    {
+      id: WORKSTATION_GEM_EXTRACTOR,
+      triggerActivities: [ActivityType.ExtractGems],
+      power: 1,
+      setupCost: 1e18,
+      maintenanceCost: 1e12,
+      description: 'A workstation that allows you and your gemologists to extract raw Spirit Energy from gems.',
+      maxInputs: 0,
+      inputs: [],
+      consequence: (workstation: Workstation) => {
+        this.extractGems(workstation);
+      },
+      locked: true,
+    },
   ];
   availableWorkstationsList: Workstation[] = [];
 
@@ -1651,6 +1666,13 @@ export class HomeService {
         this.characterService.energy[ENERGY_SPIRIT] -= amount;
       }
     }
+  }
+
+  extractGems(workstation: Workstation) {
+    let power = (100 + this.followerService!.jobs['gemologist'].totalPower) * workstation.power * 5;
+    power = this.inventoryService.consumeByValue('gem', power * 10, false, ENERGY_SPIRIT);
+    const energyGain = (2 * power) / this.followerService!.energyGemConversion;
+    this.characterService.updateEnergy(ENERGY_SPIRIT, energyGain);
   }
 
   chefsWork(cookAmount: number) {
