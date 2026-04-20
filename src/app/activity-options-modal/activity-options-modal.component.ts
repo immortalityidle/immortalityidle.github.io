@@ -25,4 +25,9 @@ export class ActivityOptionsModalComponent {
       entry.hidden.set(true);
     }
   }
+
+  hideLockedActivitiesToggled(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.activityService.hideLockedActivities.set(event.target.checked);
+  }
 }

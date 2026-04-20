@@ -980,7 +980,8 @@ export class HomeService {
       power: 3,
       setupCost: 1e22,
       maintenanceCost: 1e18,
-      description: 'A workstation to extract and manipulate absorbed energy.',
+      description:
+        'A workstation to extract and manipulate absorbed energy.<br><br>Can convert raw energy from all five elements into spirit energy or reverse the process.',
       maxInputs: 0,
       inputs: [],
       consequence: (workstation: Workstation) => {

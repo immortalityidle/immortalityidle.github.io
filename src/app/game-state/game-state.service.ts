@@ -711,6 +711,7 @@ export class GameStateService {
       hiddenActivities: props?.hiddenActivities || [],
       activityOptionsUnlocked: props?.activityOptionsUnlocked || false,
       openPortals: props?.openPortals || [],
+      hideLockedActivities: props?.hideLockedActivities || false,
     };
   }
 

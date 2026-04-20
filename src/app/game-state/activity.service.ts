@@ -73,6 +73,7 @@ export interface ActivityProperties {
   hiddenActivities: ActivityType[];
   activityOptionsUnlocked: boolean;
   openPortals: ActivityType[];
+  hideLockedActivities: boolean;
 }
 
 export interface DisplayActivity {
@@ -158,6 +159,7 @@ export class ActivityService {
   hiddenActivities: ActivityType[] = [];
   activityOptionsUnlocked = signal<boolean>(false);
   displayedActivitiesCount = 0;
+  hideLockedActivities = signal<boolean>(false);
 
   constructor(
     private injector: Injector,
@@ -502,6 +504,9 @@ export class ActivityService {
       if (activity.realm && activity.realm !== this.locationService?.currentRealm) {
         displayed = false;
       }
+      if (this.hideLockedActivities() && !activity.unlocked) {
+        displayed = false;
+      }
       displayActivity.displayed.set(displayed);
       if (displayed) {
         this.displayedActivitiesCount++;
@@ -751,6 +756,7 @@ export class ActivityService {
       hiddenActivities: this.hiddenActivities,
       activityOptionsUnlocked: this.activityOptionsUnlocked(),
       openPortals: openPortals,
+      hideLockedActivities: this.hideLockedActivities(),
     };
   }
 
@@ -805,6 +811,7 @@ export class ActivityService {
     this.incomeMultiplier = properties.incomeMultiplier;
     this.hiddenActivities = properties.hiddenActivities;
     this.activityOptionsUnlocked.set(properties.activityOptionsUnlocked);
+    this.hideLockedActivities.set(properties.hideLockedActivities);
     setTimeout(() => this.checkRequirements());
     for (let i = 0; i < 5; i++) {
       // upgrade to anything that the loaded attributes allow
@@ -824,6 +831,9 @@ export class ActivityService {
         activity.unlocked = false;
         return false;
       }
+    }
+    if (activity.realm && activity.realm !== this.locationService?.currentRealm) {
+      return false;
     }
     if (activity.conceptRequirements) {
       for (const conceptRequirement of activity.conceptRequirements) {
@@ -4233,7 +4243,6 @@ export class ActivityService {
     ],
     requirements: [{}],
     unlocked: true,
-    discovered: true,
     skipApprenticeshipLevel: 0,
   };
 
@@ -5034,7 +5043,6 @@ export class ActivityService {
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
-    discovered: true,
     skipApprenticeshipLevel: 0,
   };
 
@@ -5062,7 +5070,6 @@ export class ActivityService {
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
-    discovered: true,
     skipApprenticeshipLevel: 0,
   };
 
@@ -5090,7 +5097,6 @@ export class ActivityService {
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
-    discovered: true,
     skipApprenticeshipLevel: 0,
   };
 
@@ -5118,7 +5124,6 @@ export class ActivityService {
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
-    discovered: true,
     skipApprenticeshipLevel: 0,
   };
 
@@ -5146,7 +5151,6 @@ export class ActivityService {
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
-    discovered: true,
     skipApprenticeshipLevel: 0,
   };
 

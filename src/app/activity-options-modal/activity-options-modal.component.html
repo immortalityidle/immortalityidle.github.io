@@ -1,5 +1,18 @@
 <div class="darkMode">
   <h3>Activities Panel Options</h3>
+  <hr>
+  <div>
+    <input
+    type="checkbox"
+    (change)="hideLockedActivitiesToggled($event)"
+    id="hideLockedActivities"
+    [checked]="activityService.hideLockedActivities()"
+    />
+    <label for="hideLockedActivities">
+        <span>Hide all locked and unavailable activities</span>
+    </label>
+  </div>
+  <hr>
   <div class="optionsDiv">
     @for (displayActivity of activityService.displayActivities; track displayActivity.trackField(); let indexOfelement = $index) {
         @if (displayActivity.displayed()) {
