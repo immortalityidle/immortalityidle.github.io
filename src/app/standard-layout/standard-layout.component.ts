@@ -38,6 +38,7 @@ import { HellService } from '../game-state/hell.service';
 import { AchievementService } from '../game-state/achievement.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { ContemplationPanelComponent } from '../contemplation-panel/contemplation-panel.component';
+import { DivineDuelsPanelComponent } from '../divine-duels-panel/divine-duels-panel.component';
 
 @Component({
   selector: 'app-standard-layout',
@@ -67,6 +68,7 @@ import { ContemplationPanelComponent } from '../contemplation-panel/contemplatio
     forwardRef(() => CraftingPanelComponent),
     forwardRef(() => HellStatusPanelComponent),
     forwardRef(() => ContemplationPanelComponent),
+    forwardRef(() => DivineDuelsPanelComponent),
     forwardRef(() => TooltipDirective),
   ],
   templateUrl: './standard-layout.component.html',

@@ -4,6 +4,21 @@ import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { LogService, LogTopic } from './log.service';
 import { HellService } from './hell.service';
+import {
+  GOD_APHRODITE,
+  GOD_APOLLO,
+  GOD_ARES,
+  GOD_ARTEMIS,
+  GOD_ATHENA,
+  GOD_DEMETER,
+  GOD_DIONYSUS,
+  GOD_HADES,
+  GOD_HEPHAESTUS,
+  GOD_HERA,
+  GOD_POSEIDON,
+  GOD_ZEUS,
+  PantheonService,
+} from './pantheon.service';
 
 export enum Realm {
   Hell = 'Hell',
@@ -14,20 +29,20 @@ export enum Realm {
   RealmOfEarth = 'Realm of Earth',
   RealmOfMetal = 'Realm of Metal',
   RealmOfWood = 'Realm of Wood',
-  PhilosopherStates = 'Realm of the Philosopher States',
-  LegionOfArchitects = 'Realm of the Legion Of Architects',
-  RiverThroughTheSand = 'Realm of the River Through The Sand',
-  FrozenNorthlands = 'Realm of the Frozen Northlands',
-  MysteriousJungles = 'Realm of the Mysterious Jungles',
-  DistantIslands = 'Realm of the Distant Islands',
-  CultOfTheOldOnes = 'Realm of the Cult Of The Old Ones',
-  SunsoakedPlains = 'Realm of the Sunsoaked Plains',
-  DarkForests = 'Realm of the Dark Forests',
-  EnlightenedMultitude = 'Realm of the Enlightened Multitude',
-  FertileValleys = 'Realm of the Fertile Valleys',
-  LandOfLegends = 'Realm of the Land Of Legends',
-  IslandsOfTheDawn = 'Realm of the Islands Of The Dawn',
-  ShadowCultists = 'Realm of the Shadow Cultists',
+  PhilosopherStates = 'The Philosopher States',
+  LegionOfArchitects = 'The Legion Of Architects',
+  RiverThroughTheSand = 'The River Through The Sand',
+  FrozenNorthlands = 'The Frozen Northlands',
+  MysteriousJungles = 'The Mysterious Jungles',
+  DistantIslands = 'The Distant Islands',
+  CultOfTheOldOnes = 'The Cult Of The Old Ones',
+  SunsoakedPlains = 'The Sunsoaked Plains',
+  DarkForests = 'The Dark Forests',
+  EnlightenedMultitude = 'The Enlightened Multitude',
+  FertileValleys = 'The Fertile Valleys',
+  LandOfLegends = 'The Land Of Legends',
+  IslandsOfTheDawn = 'The Islands Of The Dawn',
+  ShadowCultists = 'The Shadow Cultists',
 }
 
 export enum LocationType {
@@ -71,8 +86,9 @@ export enum LocationType {
   IronCaverns = 'Iron Caverns',
   EverTree = 'Ever Tree',
   LightningLodge = 'LightningLodge',
+  TartarusPalace = 'TartarusPalace',
   MaritalSanctuary = 'MaritalSanctuary',
-  OceanPalace = 'OceanPalace',
+  OceanAbode = 'OceanAbode',
   HarvestHome = 'HarvestHome',
   FortressOfWisdom = 'FortressOfWisdom',
   AuditoriumOfLight = 'AuditoriumOfLight',
@@ -90,7 +106,6 @@ export interface LocationEntry {
   realm?: Realm;
   unlock: () => boolean;
 }
-
 export interface LocationProperties {
   unlockedLocations: LocationType[];
   notifiedLocations: LocationType[];
@@ -425,97 +440,110 @@ export class LocationService {
     [LocationType.MessageDepot]: {
       name: LocationType.MessageDepot,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Hermes, messenger of the gods, god of travel and thieves.',
+      description: 'A strange outpost with rows of scrolls and winged shoes. What sort of god would want to live here?',
       unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.MartialCamp]: {
-      name: LocationType.MartialCamp,
-      realm: Realm.PhilosopherStates,
-      description: 'Home of Ares, god of war, bloodshed, and violence.',
-      unlock: () => {
-        return false;
+        return true;
       },
     },
     [LocationType.VerdantVineyard]: {
       name: LocationType.VerdantVineyard,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Dionysus, god of wine.',
+      description:
+        'A vineyard overflowing with juicy grapes. Some mortals seem to be fermenting them in leather skins and clay pots.',
       unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.TheMightyForge]: {
-      name: LocationType.TheMightyForge,
-      realm: Realm.PhilosopherStates,
-      description: 'Home of Hephaestus, god of fire, metallurgy, and crafts.',
-      unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.GardenOfDelights]: {
-      name: LocationType.GardenOfDelights,
-      realm: Realm.PhilosopherStates,
-      description: 'Home of Aphrodite, goddess of love, beauty, and desire.',
-      unlock: () => {
-        return false;
+        return this.pantheonService.isGodDiscovered(GOD_DIONYSUS);
       },
     },
     [LocationType.Woodlands]: {
       name: LocationType.Woodlands,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Artemis, goddess of the hunt, wilderness, and the moon.',
+      description:
+        'A verdant wooded grove rife with game animals but no home. Does the goddess of this place simply sleep on the ground?',
       unlock: () => {
-        return false;
+        return this.pantheonService.isGodDiscovered(GOD_ARTEMIS);
+      },
+    },
+    [LocationType.GardenOfDelights]: {
+      name: LocationType.GardenOfDelights,
+      realm: Realm.PhilosopherStates,
+      description: 'A lush garden where mortals cavort and preen. What vanity!',
+      unlock: () => {
+        return this.pantheonService.isGodDiscovered(GOD_APHRODITE);
+      },
+    },
+    [LocationType.TheMightyForge]: {
+      name: LocationType.TheMightyForge,
+      realm: Realm.PhilosopherStates,
+      description:
+        'A huge anvil in a massive cavern. A river of molten bronze flows past a row of giant hammers. A painting of Aphrodite hangs on one wall.',
+      unlock: () => {
+        return this.pantheonService.isGodDiscovered(GOD_HEPHAESTUS);
       },
     },
     [LocationType.AuditoriumOfLight]: {
       name: LocationType.AuditoriumOfLight,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Apollo, god of music, prophecy, healing, and the sun.',
+      description: 'A great sun-lit auditorium where mortals play out scenes from their poems.',
       unlock: () => {
-        return false;
-      },
-    },
-    [LocationType.FortressOfWisdom]: {
-      name: LocationType.FortressOfWisdom,
-      realm: Realm.PhilosopherStates,
-      description: 'Home of Athena, goddess of wisdom, war strategy, and crafts.',
-      unlock: () => {
-        return false;
+        return this.pantheonService.isGodDiscovered(GOD_APOLLO);
       },
     },
     [LocationType.HarvestHome]: {
       name: LocationType.HarvestHome,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Demeter, goddess of harvest and agriculture.',
+      description:
+        'Mortals gather large bushels of wheat from all around this fruitful plain. The orchards all around are rich with apples and figs.',
       unlock: () => {
-        return false;
+        return this.pantheonService.isGodDiscovered(GOD_DEMETER);
       },
     },
-    [LocationType.OceanPalace]: {
-      name: LocationType.OceanPalace,
+    [LocationType.MartialCamp]: {
+      name: LocationType.MartialCamp,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Poseidon, god of the sea, earthquakes, and horses.',
+      description:
+        'An army camp in the middle of a battlefield. The mortals here seem to be fighting for no reason at all.',
       unlock: () => {
-        return false;
+        return this.pantheonService.isGodDiscovered(GOD_ARES);
+      },
+    },
+    [LocationType.FortressOfWisdom]: {
+      name: LocationType.FortressOfWisdom,
+      realm: Realm.PhilosopherStates,
+      description: 'A well-defended fort guarded by soldiers in gleaming bronze armor.',
+      unlock: () => {
+        return this.pantheonService.isGodDiscovered(GOD_ATHENA);
       },
     },
     [LocationType.MaritalSanctuary]: {
       name: LocationType.MaritalSanctuary,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Hera, Queen of the gods, goddess of marriage and women.',
+      description: 'A temple dedicated to the faithful and jealous wife of a scoundrel husband.',
       unlock: () => {
-        return false;
+        return this.pantheonService.isGodDiscovered(GOD_HERA);
+      },
+    },
+    [LocationType.OceanAbode]: {
+      name: LocationType.OceanAbode,
+      realm: Realm.PhilosopherStates,
+      description: 'An undersea estate surrounded by colorful coral and statues of horses.',
+      unlock: () => {
+        return this.pantheonService.isGodDiscovered(GOD_POSEIDON);
+      },
+    },
+    [LocationType.TartarusPalace]: {
+      name: LocationType.TartarusPalace,
+      realm: Realm.PhilosopherStates,
+      description: 'A dark and gloomy palace buried deep in the earth below the philosopher states.',
+      unlock: () => {
+        return this.pantheonService.isGodDiscovered(GOD_HADES);
       },
     },
     [LocationType.LightningLodge]: {
       name: LocationType.LightningLodge,
       realm: Realm.PhilosopherStates,
-      description: 'Home of Zeus, King of the gods with power over the sky, thunder, and justice.',
+      description: 'A lofty palace at the peak of one of the local mountains. Thunderclouds loom overhead.',
       unlock: () => {
-        return false;
+        return this.pantheonService.isGodDiscovered(GOD_ZEUS);
       },
     },
   };
@@ -528,7 +556,8 @@ export class LocationService {
     private mainLoopService: MainLoopService,
     private characterService: CharacterService,
     private logService: LogService,
-    private hellService: HellService
+    private hellService: HellService,
+    private pantheonService: PantheonService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
       this.checkForUnlocks();
@@ -559,6 +588,8 @@ export class LocationService {
         this.location = LocationType.IronCaverns;
       } else if (this.currentRealm === Realm.RealmOfWood) {
         this.location = LocationType.EverTree;
+      } else if (this.currentRealm === Realm.PhilosopherStates) {
+        this.location = LocationType.MessageDepot;
       }
     }
   }

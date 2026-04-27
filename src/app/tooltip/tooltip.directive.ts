@@ -81,7 +81,6 @@ export class TooltipDirective implements OnInit, OnDestroy {
   @HostListener('click')
   @HostListener('drag')
   @HostListener('invalid')
-  @HostListener('unload')
   hide() {
     tooltipShown = false;
     if (this.timeoutId) {

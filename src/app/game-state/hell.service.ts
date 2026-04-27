@@ -4,12 +4,12 @@ import { AttributeType, CharacterService } from '../game-state/character.service
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
 import { BattleService, EFFECT_DOOM, EFFECT_POISON, EFFECT_ZOMBIE_DECOY } from './battle.service';
-import { Activity, ActivityType, YinYangEffect } from './activity';
 import { FollowersService } from './followers.service';
 import { InventoryService, Item } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { CONCEPT_BEASTS, ContemplationService } from './contemplation.service';
 import { LocationService, LocationType, Realm } from './location.service';
+import { Activity, ActivityType, YinYangEffect } from './activity';
 
 export interface Hell {
   name: string;
@@ -836,7 +836,7 @@ export class HellService {
   fightYama() {
     if (this.battleService!.enemies.length === 0) {
       this.battleService!.addEnemy({
-        name: 'Lord Yama',
+        name: 'Yama, King of Hell',
         baseName: 'Yama',
         health: this.hellBossBaseHealth * 100,
         maxHealth: this.hellBossBaseHealth * 100,

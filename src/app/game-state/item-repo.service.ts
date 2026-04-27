@@ -2185,6 +2185,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2214,6 +2215,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2247,6 +2249,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2276,6 +2279,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2313,6 +2317,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2341,6 +2346,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2370,6 +2376,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2395,6 +2402,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2424,6 +2432,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2450,6 +2459,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2478,6 +2488,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2504,6 +2515,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2537,6 +2549,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2566,6 +2579,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2591,6 +2605,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2624,6 +2639,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2652,6 +2668,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);
@@ -2677,6 +2694,7 @@ baguaMap = [
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
+      noGreed: true,
       use: () => {
         if (!this.hellService) {
           this.hellService = this.injector.get(HellService);

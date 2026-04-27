@@ -137,6 +137,7 @@ export interface CharacterProperties {
   healthBonusBath: number;
   healthBonusMagic: number;
   healthBonusSoul: number;
+  healthBonusDivine: number;
   empowermentPillsTaken: number;
   immortal: boolean;
   god: boolean;
@@ -163,6 +164,7 @@ export interface CharacterProperties {
   vaultMaxMoneyBonus: number;
   bankerMaxMoneyBonus: number;
   energy: { [key: string]: number };
+  staminaCap: number;
 }
 
 const INITIAL_AGE = 18 * 365;
@@ -218,6 +220,7 @@ export class CharacterService {
   healthBonusBath = 0;
   healthBonusMagic = 0;
   healthBonusSoul = 0;
+  healthBonusDivine = 0;
   empowermentPillsTaken = 0;
   empowermentMult = 1;
   empowermentMax = 99;
@@ -657,6 +660,7 @@ export class CharacterService {
   highestAttributes: { [key: string]: WritableSignal<number> };
   keepPouchItems = false;
   energy: { [key: string]: number } = {};
+  staminaCap = 1000000;
 
   constructor(
     private injector: Injector,
@@ -1148,6 +1152,7 @@ export class CharacterService {
         this.healthBonusBath +
         this.healthBonusMagic +
         this.healthBonusSoul +
+        this.healthBonusDivine +
         Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
       bonusFactor;
 
@@ -1346,7 +1351,10 @@ export class CharacterService {
   }
 
   increaseAttribute(attribute: AttributeType, amount: number): number {
-    let increaseAmount = amount * (1 + this.achievementService!.unlockedAchievements.length * 0.02); // 2% bonus per achievement
+    let increaseAmount = amount;
+    if (this.attributes[attribute].attributeGroup !== DIVINE_ATTRIBUTES) {
+      amount *= 1 + this.achievementService!.unlockedAchievements.length * 0.02; // 2% bonus per achievement
+    }
     increaseAmount *= this.attributes[attribute].aptitudeMult;
     this.attributes[attribute].value += increaseAmount;
     return increaseAmount;
@@ -1381,8 +1389,8 @@ export class CharacterService {
     if (this.healthBonusSoul > healthBonusSoulCap) {
       this.healthBonusSoul = healthBonusSoulCap;
     }
-    if (this.status.stamina.max > 1000000) {
-      this.status.stamina.max = 1000000;
+    if (this.status.stamina.max > this.staminaCap) {
+      this.status.stamina.max = this.staminaCap;
     }
     if (this.status.nutrition.max > 1000) {
       this.status.nutrition.max = 1000;
@@ -1463,6 +1471,7 @@ export class CharacterService {
       healthBonusBath: this.healthBonusBath,
       healthBonusMagic: this.healthBonusMagic,
       healthBonusSoul: this.healthBonusSoul,
+      healthBonusDivine: this.healthBonusDivine,
       empowermentPillsTaken: this.empowermentPillsTaken,
       empowermentMax: this.empowermentMax,
       immortal: this.immortal(),
@@ -1489,6 +1498,7 @@ export class CharacterService {
       vaultMaxMoneyBonus: this.vaultMaxMoneyBonus,
       bankerMaxMoneyBonus: this.bankerMaxMoneyBonus,
       energy: this.energy,
+      staminaCap: this.staminaCap,
     };
   }
 
@@ -1536,6 +1546,7 @@ export class CharacterService {
     this.healthBonusBath = properties.healthBonusBath;
     this.healthBonusMagic = properties.healthBonusMagic;
     this.healthBonusSoul = properties.healthBonusSoul;
+    this.healthBonusDivine = properties.healthBonusDivine;
     this.empowermentPillsTaken = properties.empowermentPillsTaken;
     this.empowermentMax = properties.empowermentMax;
     this.immortal.set(properties.immortal);
@@ -1559,6 +1570,7 @@ export class CharacterService {
     this.startingStaminaBoost = properties.startingStaminaBoost;
     this.keepPouchItems = properties.keepPouchItems;
     this.energy = properties.energy;
+    this.staminaCap = properties.staminaCap;
 
     this.recalculateDerivedStats();
   }

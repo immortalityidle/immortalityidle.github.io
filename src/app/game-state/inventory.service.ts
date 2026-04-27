@@ -61,6 +61,7 @@ export interface Item {
   locked?: boolean;
   shopable: boolean;
   averageValueOnMerge?: boolean;
+  noGreed?: boolean;
 }
 
 export interface Equipment extends Item {
@@ -580,6 +581,10 @@ export class InventoryService {
         this.setItemEmptyStack(i);
       } else {
         this.fixId(i);
+        if (this.itemStacks[i].item && this.itemStacks[i].item?.value === null) {
+          // JSON.stringify doesn't support infinity and turns it to null, so do this kludge to restore infinity value items
+          this.itemStacks[i].item!.value = Infinity;
+        }
       }
     }
     this.stashedItemStacks = properties.stashedItemStacks;

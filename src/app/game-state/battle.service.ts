@@ -35,6 +35,7 @@ import {
   CONCEPT_VOID,
   ContemplationService,
 } from './contemplation.service';
+import { PantheonService } from './pantheon.service';
 
 export interface Enemy {
   name: string;
@@ -81,6 +82,7 @@ export interface EnemyTypes {
   lootType?: string[];
   techniques?: Technique[];
   unlocksFurniture?: string;
+  noPrefix?: boolean;
 }
 
 export interface BattleProperties {
@@ -568,6 +570,7 @@ export class BattleService {
     private homeService: HomeService,
     private contemplationService: ContemplationService,
     private mainLoopService: MainLoopService,
+    private pantheonService: PantheonService,
     private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -646,6 +649,9 @@ export class BattleService {
       if (this.characterService.immortal() && this.characterService.status.health.value <= 0) {
         this.characterService.status.health.value = 0;
         this.beaten = true;
+        if (this.currentEnemy) {
+          this.logService.injury(LogTopic.EVENT, 'Beaten by ' + this.currentEnemy.name + '! How Humiliating!');
+        }
         // if we're in hell, let the hell service handler deal with this
         if (!this.hellService?.inHell()) {
           this.clearEnemies();
@@ -1501,7 +1507,8 @@ export class BattleService {
           }
         } else {
           if (slowingEffect) {
-            slowingEffect.ticksLeft -= 2;
+            slowingEffect.ticksLeft -= 1;
+            technique.ticks += 0.1;
           } else {
             technique.ticks++;
           }
@@ -2087,7 +2094,7 @@ export class BattleService {
     for (const item of this.currentEnemy.loot) {
       const lootItem = this.itemRepoService.getItemById(item.id);
       let quantity = 1;
-      if (this.activeFormation === 'greed') {
+      if (this.activeFormation === 'greed' && !item.noGreed) {
         const formationPowerString = this.formationPower + '';
         quantity += Math.ceil(formationPowerString.length / 3);
       }
@@ -2209,7 +2216,11 @@ export class BattleService {
       qualityIndex = this.monsterQualities.length - 1;
     }
     const modifiedBasePower = monsterType.basePower * modifier;
-    let monsterName = this.monsterQualities[qualityIndex] + ' ' + this.camelToTitle.transform(monsterType.name);
+
+    let monsterName = this.camelToTitle.transform(monsterType.name);
+    if (!monsterType.noPrefix) {
+      monsterName = this.monsterQualities[qualityIndex] + ' ' + monsterName;
+    }
     if (hellTrouble) {
       monsterName = this.camelToTitle.transform(monsterType.name);
     }
@@ -2452,6 +2463,9 @@ export class BattleService {
   }
 
   private defeatEffect(enemy: Enemy) {
+    if (enemy.divine) {
+      this.pantheonService.defeatGod(enemy.baseName);
+    }
     if (enemy.unlocksFurniture) {
       this.inventoryService.unlockFurniture(enemy.unlocksFurniture);
     }

@@ -16,16 +16,17 @@ import {
 } from './battle.service';
 import { GameStateService } from './game-state.service';
 import { ActivityService } from './activity.service';
-import { ActivityType } from './activity';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
-import { LocationService } from './location.service';
+import { LocationService, LocationType } from './location.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
 import { ContemplationService } from './contemplation.service';
+import { ActivityType } from './activity';
+import { GOD_YAMA, PANTHEON_CELESTIAL_EMPIRE, PantheonService } from './pantheon.service';
 
 export interface Achievement {
   name: string;
@@ -175,6 +176,7 @@ export class AchievementService {
     private hellService: HellService,
     private locationService: LocationService,
     private contemplationService: ContemplationService,
+    private pantheonService: PantheonService,
     private dialog: MatDialog
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
@@ -2017,6 +2019,20 @@ export class AchievementService {
       },
       effect: () => {
         this.homeService.unlockWorkstation(WORKSTATION_ENERGY_MANIPULATOR);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'The Arena Is Open',
+      description: 'You have discovered the arena where the gods duel.',
+      hint: 'One of the great wonders of existence, accessible only from the Divine Realm.',
+      check: () => {
+        return this.locationService.location === LocationType.DivineArena;
+      },
+      effect: () => {
+        this.gameStateService?.unlockPanel('divineDuelsPanel');
+        this.pantheonService.unlockPantheon(PANTHEON_CELESTIAL_EMPIRE);
+        this.pantheonService.discoverGod(GOD_YAMA);
       },
       unlocked: false,
     },

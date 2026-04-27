@@ -1,15 +1,6 @@
 import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM, TECHNIQUE_REFINEMENT_POWER } from './battle.service';
-import {
-  Activity,
-  ActivityLoopEntry,
-  ActivityType,
-  LoopChangeTrigger,
-  SavedActivityLoop,
-  YinYangEffect,
-} from '../game-state/activity';
-import { AttributeType, CharacterAttribute, StatusType } from '../game-state/character.service';
-import { CharacterService } from '../game-state/character.service';
+import { AttributeType, CharacterAttribute, CharacterService, StatusType } from '../game-state/character.service';
 import {
   HomeService,
   HomeType,
@@ -32,10 +23,20 @@ import {
   CONCEPT_EFFECT_CREATION,
   CONCEPT_FIRE,
   CONCEPT_METAL,
+  CONCEPT_SPACE,
   CONCEPT_WATER,
   CONCEPT_WOOD,
   ContemplationService,
 } from './contemplation.service';
+import { GOD_HERMES, PantheonService } from './pantheon.service';
+import {
+  Activity,
+  ActivityLoopEntry,
+  ActivityType,
+  LoopChangeTrigger,
+  SavedActivityLoop,
+  YinYangEffect,
+} from './activity';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -173,10 +174,13 @@ export class ActivityService {
     private logService: LogService,
     private followerService: FollowersService,
     private impossibleTaskService: ImpossibleTaskService,
-    private contemplationService: ContemplationService
+    private contemplationService: ContemplationService,
+    private pantheonService: PantheonService
   ) {
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.activities = [
+      this.DeliverMessages,
+
       this.BurnMoney,
       this.HonorAncestors,
       this.Rehabilitation,
@@ -453,12 +457,17 @@ export class ActivityService {
         this.PortalToMetalRealm,
         this.PortalToWoodRealm,
       ];
+      const spaceConcept = this.contemplationService.concepts.find(concept => concept.name === CONCEPT_SPACE);
+      if (spaceConcept && spaceConcept.progress > 0) {
+        this.portals.push(this.PortalToPhilosopherStates);
+      }
     } else if (
       this.locationService?.currentRealm === Realm.RealmOfFire ||
       this.locationService?.currentRealm === Realm.RealmOfWater ||
       this.locationService?.currentRealm === Realm.RealmOfEarth ||
       this.locationService?.currentRealm === Realm.RealmOfMetal ||
-      this.locationService?.currentRealm === Realm.RealmOfWood
+      this.locationService?.currentRealm === Realm.RealmOfWood ||
+      this.locationService?.currentRealm === Realm.PhilosopherStates
     ) {
       this.portals = [this.PortalToDivineRealm];
     }
@@ -3698,6 +3707,9 @@ export class ActivityService {
           this.characterService.status.qi.value -= 10;
           this.characterService.healthBonusMagic++;
         }
+        if (this.characterService.god()) {
+          this.characterService.healthBonusDivine++;
+        }
         this.characterService.yang++;
         this.characterService.yin++;
       },
@@ -5023,6 +5035,7 @@ export class ActivityService {
     level: 0,
     name: ['Contemplate Fire'],
     location: LocationType.BurningInferno,
+    realm: Realm.RealmOfFire,
     imageBaseName: 'contemplateFire',
     activityType: ActivityType.ContemplateFire,
     description: [
@@ -5050,6 +5063,7 @@ export class ActivityService {
     level: 0,
     name: ['Contemplate Water'],
     location: LocationType.VastOcean,
+    realm: Realm.RealmOfWater,
     imageBaseName: 'contemplateWater',
     activityType: ActivityType.ContemplateWater,
     description: [
@@ -5077,6 +5091,7 @@ export class ActivityService {
     level: 0,
     name: ['Contemplate Earth'],
     location: LocationType.EndlessTunnels,
+    realm: Realm.RealmOfEarth,
     imageBaseName: 'contemplateEarth',
     activityType: ActivityType.ContemplateEarth,
     description: [
@@ -5104,6 +5119,7 @@ export class ActivityService {
     level: 0,
     name: ['Contemplate Metal'],
     location: LocationType.IronCaverns,
+    realm: Realm.RealmOfMetal,
     imageBaseName: 'contemplateMetal',
     activityType: ActivityType.ContemplateMetal,
     description: [
@@ -5131,6 +5147,7 @@ export class ActivityService {
     level: 0,
     name: ['Contemplate Wood'],
     location: LocationType.EverTree,
+    realm: Realm.RealmOfWood,
     imageBaseName: 'contemplateWood',
     activityType: ActivityType.ContemplateWood,
     description: [
@@ -5371,6 +5388,75 @@ export class ActivityService {
     discovered: true,
     skipApprenticeshipLevel: 0,
     resourceUse: [],
+  };
+
+  PortalToPhilosopherStates: Activity = {
+    level: 0,
+    location: LocationType.DivineArena,
+    realm: Realm.DivineRealm,
+    name: ['Portal to ' + Realm.PhilosopherStates],
+    activityType: ActivityType.PhilosopherStatesRealmPortal,
+    description: ['Open a portal to ' + Realm.PhilosopherStates],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.locationService?.setRealm(Realm.PhilosopherStates);
+        this.pantheonService.unlockPantheon(Realm.PhilosopherStates);
+        this.pantheonService.discoverGod(GOD_HERMES);
+        this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  DeliverMessages: Activity = {
+    level: 0,
+    name: ['Deliver Messages'],
+    location: LocationType.MessageDepot,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'deliverMessages',
+    activityType: ActivityType.DeliverMessages,
+    description: [
+      "It appears that you won't be able to get a duel with any of these strange foreign gods until their urgent needs are met.<br><br>You shrug and prepare to deliver some of these scrolls to their destinations.",
+    ],
+    yinYangEffect: [YinYangEffect.Yang],
+    consequenceDescription: ['Uses a lot of stamina. How does this little guy keep this up all day?'],
+    consequence: [
+      () => {
+        const staminaCost = this.characterService.staminaCap - 1;
+        if (this.characterService.status.stamina.max < staminaCost) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Hermes calls out: "Did you skip leg day or something? Do some cardio workouts before you come back here."'
+          );
+          return;
+        }
+        if (this.characterService.status.stamina.value < staminaCost) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Hermes calls out: "Hey, thanks for trying to help, but you look exhausted. Come back when you\'re fresh."'
+          );
+          return;
+        }
+        this.pantheonService.increaseGodProgress(GOD_HERMES, 1);
+        this.characterService.increaseAttribute('speed', 100);
+        if (this.characterService.staminaCap < 1e8) {
+          this.characterService.staminaCap++;
+        }
+        this.characterService.status.stamina.value = 0;
+        this.characterService.yang += 100;
+      },
+    ],
+    resourceUse: [],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
   };
 }
 /* eslint-enable @typescript-eslint/ban-ts-comment */

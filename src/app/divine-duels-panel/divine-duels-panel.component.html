@@ -1,0 +1,60 @@
+<div class="divineDuelsContainer">
+  <div>
+      @for (pantheon of pantheonService.pantheons; track pantheon.name()) {
+        @if (pantheon.unlocked()) {
+          <div (click)="pantheonService.togglePantheon(pantheon)">
+            <span>
+                <mat-icon tooltip="{{pantheon.description()}}">
+                    help
+                </mat-icon>
+                {{pantheon.name()}}
+            </span>
+          </div>
+            @if (!pantheon.collapsed()) {
+              @for (god of pantheon.gods; track god.name()) {
+                @if (god.discovered()) {
+                    <div class="indented">
+                        <div>
+                            <span class="godName">
+                                {{god.name()}}
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                {{god.description()}}
+                            </span>
+                        </div>
+                        @if (god.unlocked()) {
+                            <div>
+                                <span>
+                                    Times Defeated: {{god.timesDefeated()}}
+                                </span>
+                            </div>
+                            <div>
+                                <span>
+                                    <button (click)="pantheonService.challengeGod(god)">Challenge!</button>
+                                </span>
+                            </div>
+                        }
+                        @else {
+                            <div [tooltip]="god.challengeMessage()">
+                                <span>
+                                    Challenge Progress
+                                </span>
+                                <div class="progress-bar" style="height:20px;"
+                                    [attr.value]="god.unlockProgress()"
+                                    [attr.max]="god.unlockProgressRequired()">
+                                    <span
+                                            [style.width.%]="god.unlockProgressPercent()">
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+              }
+            }
+        }
+      }
+  </div>
+</div>

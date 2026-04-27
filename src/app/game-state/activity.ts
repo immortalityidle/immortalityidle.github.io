@@ -99,6 +99,8 @@ export enum ActivityType {
   RefineTechniques,
   ManipulateEnergy,
   ExtractGems,
+  PhilosopherStatesRealmPortal,
+  DeliverMessages,
   Hell, // hell needs to be last for indexing purposes
 }
 

@@ -52,10 +52,11 @@ export const CONCEPT_FIRE = 'Tao of Fire';
 export const CONCEPT_WATER = 'Tao of Water';
 export const CONCEPT_METAL = 'Tao of Metal';
 export const CONCEPT_EARTH = 'Tao of Earth';
+export const CONCEPT_DEATH = 'Tao of Death';
 export const CONCEPT_CREATION = 'Tao of Creation';
 export const CONCEPT_ANNIHILATION = 'Tao of Annihilation';
 export const CONCEPT_VOID = 'Tao of the Void';
-export const CONCEPT_SPACE = 'Tao of the Void';
+export const CONCEPT_SPACE = 'Tao of Space';
 export const CONCEPT_BEASTS = 'Tao of Beasts';
 
 @Injectable({
@@ -148,7 +149,7 @@ export class ContemplationService {
       unlocksMore: false,
     },
     {
-      name: 'Tao of Death',
+      name: CONCEPT_DEATH,
       description:
         'Contemplate the true nature of death, coming to understand its destructive power.<br><br>Increases power of all techniques.',
       progress: 0,
@@ -523,7 +524,8 @@ export class ContemplationService {
       effect: CONCEPT_EFFECT_DAMAGE + ',' + CONCEPT_EFFECT_ARMOR_REDUCTION,
       discovered: false,
       discoveryRequirements: {
-        [CONCEPT_CREATION]: 1e13,
+        [CONCEPT_CREATION]: 1e11,
+        [CONCEPT_DEATH]: 1e11,
       },
       unlocksMore: false,
     },
@@ -534,18 +536,19 @@ export class ContemplationService {
       effect: CONCEPT_EFFECT_VOID,
       discovered: false,
       discoveryRequirements: {
-        [CONCEPT_CREATION]: 1e13,
+        [CONCEPT_ANNIHILATION]: 1e11,
       },
       unlocksMore: false,
     },
     {
       name: CONCEPT_SPACE,
-      description: 'Contemplate space, the careful arrangement of all things in the universe. Does nothing (yet).',
+      description:
+        'Contemplate space, the careful arrangement of all things in existence. Allows travel to the most distant realms.',
       progress: 0,
       effect: CONCEPT_EFFECT_VOID,
       discovered: false,
       discoveryRequirements: {
-        [CONCEPT_VOID]: 1e14,
+        [CONCEPT_VOID]: 1e13,
       },
       unlocksMore: false,
     },

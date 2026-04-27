@@ -18,6 +18,7 @@ import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService, LocationType, Realm } from './location.service';
 import { ContemplationProperties, ContemplationService } from './contemplation.service';
+import { PantheonProperties, PantheonService } from './pantheon.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -35,6 +36,7 @@ interface GameState {
   mainLoop: MainLoopProperties;
   impossibleTasks: ImpossibleTaskProperties;
   contemplations: ContemplationProperties;
+  pantheons: PantheonProperties;
   hell: HellProperties;
   darkMode: boolean;
   gameStartTimestamp: number;
@@ -234,6 +236,13 @@ export class GameStateService {
       panelHelp: 'Your progress in contemplating the fundamental concepts of the universe.',
       unlocked: false,
     },
+    {
+      id: 'divineDuelsPanel',
+      name: 'Divine Duels',
+      icon: 'sword_rose',
+      panelHelp: 'Prove your worth and become the greatest of all the gods.',
+      unlocked: false,
+    },
   ];
 
   constructor(
@@ -252,6 +261,7 @@ export class GameStateService {
     private impossibleTaskService: ImpossibleTaskService,
     private locationService: LocationService,
     private contemplationService: ContemplationService,
+    private pantheonService: PantheonService,
     private hellService: HellService
   ) {
     window.GameStateService = this;
@@ -513,6 +523,7 @@ export class GameStateService {
     this.logService.setProperties(gameState.logs);
     this.mainLoopService.setProperties(gameState.mainLoop);
     this.contemplationService.setProperties(gameState.contemplations);
+    this.pantheonService.setProperties(gameState.pantheons);
     this.achievementService.setProperties(gameState.achievements);
     this.isDarkMode = gameState.darkMode || false;
     this.gameStartTimestamp = gameState.gameStartTimestamp || new Date().getTime();
@@ -545,6 +556,7 @@ export class GameStateService {
       mainLoop: this.getMainLoopProperties(gameState.mainLoop),
       impossibleTasks: this.getImpossibleTasksProperties(gameState.impossibleTasks),
       contemplations: this.getContemplationProperties(gameState.contemplations),
+      pantheons: this.getPantheonProperties(gameState.pantheons),
       hell: this.getHellProperties(gameState.hell),
       darkMode: gameState.darkMode ?? false,
       gameStartTimestamp: gameState.gameStartTimestamp || 0,
@@ -883,6 +895,12 @@ export class GameStateService {
     };
   }
 
+  private getPantheonProperties(props: PantheonProperties | undefined): PantheonProperties {
+    return {
+      pantheons: props?.pantheons || [],
+    };
+  }
+
   private getContemplationProperties(props: ContemplationProperties | undefined): ContemplationProperties {
     return {
       contemplationStarted: props?.contemplationStarted || false,
@@ -1168,6 +1186,7 @@ export class GameStateService {
       healthBonusBath: props?.healthBonusBath || 0,
       healthBonusMagic: props?.healthBonusMagic || 0,
       healthBonusSoul: props?.healthBonusSoul || 0,
+      healthBonusDivine: props?.healthBonusDivine || 0,
       empowermentPillsTaken: empowermentPillsTaken,
       empowermentMax: props?.empowermentMax || 99,
       immortal: props?.immortal || false,
@@ -1192,6 +1211,7 @@ export class GameStateService {
       startingStaminaBoost: props?.startingStaminaBoost || false,
       keepPouchItems: props?.keepPouchItems || false,
       energy: props?.energy || {},
+      staminaCap: props?.staminaCap || 1000000,
     };
   }
 
@@ -1218,6 +1238,7 @@ export class GameStateService {
       followers: this.followersService.getProperties(),
       logs: this.logService.getProperties(),
       contemplations: this.contemplationService.getProperties(),
+      pantheons: this.pantheonService.getProperties(),
       mainLoop: this.mainLoopService.getProperties(),
       darkMode: this.isDarkMode,
       gameStartTimestamp: this.gameStartTimestamp,
