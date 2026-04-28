@@ -19,11 +19,11 @@ import { LocationService, LocationType, Realm } from './location.service';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 import {
   CONCEPT_CREATION,
+  CONCEPT_DIVINITY,
   CONCEPT_EARTH,
   CONCEPT_EFFECT_CREATION,
   CONCEPT_FIRE,
   CONCEPT_METAL,
-  CONCEPT_SPACE,
   CONCEPT_WATER,
   CONCEPT_WOOD,
   ContemplationService,
@@ -458,7 +458,7 @@ export class ActivityService {
         this.PortalToMetalRealm,
         this.PortalToWoodRealm,
       ];
-      const spaceConcept = this.contemplationService.concepts.find(concept => concept.name === CONCEPT_SPACE);
+      const spaceConcept = this.contemplationService.concepts.find(concept => concept.name === CONCEPT_DIVINITY);
       if (spaceConcept && spaceConcept.progress > 0) {
         this.portals.push(this.PortalToPhilosopherStates);
       }

@@ -14,6 +14,9 @@ export class ContemplationPanelComponent {
   constructor(public contemplationService: ContemplationService) {}
 
   conceptClicked(concept: Concept) {
+    if (!concept.discovered) {
+      return;
+    }
     this.contemplationService.currentConcept = concept;
   }
 }

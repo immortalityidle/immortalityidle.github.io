@@ -21,6 +21,7 @@ export interface Concept {
 
 export interface DisplayConcept {
   name: WritableSignal<string>;
+  displayName: WritableSignal<string>;
   description: WritableSignal<string>;
   progress: WritableSignal<number>;
   concept: Concept;
@@ -52,7 +53,9 @@ export const CONCEPT_FIRE = 'Tao of Fire';
 export const CONCEPT_WATER = 'Tao of Water';
 export const CONCEPT_METAL = 'Tao of Metal';
 export const CONCEPT_EARTH = 'Tao of Earth';
+export const CONCEPT_LIFE = 'Tao of Life';
 export const CONCEPT_DEATH = 'Tao of Death';
+export const CONCEPT_DIVINITY = 'Tao of Divinity';
 export const CONCEPT_CREATION = 'Tao of Creation';
 export const CONCEPT_ANNIHILATION = 'Tao of Annihilation';
 export const CONCEPT_VOID = 'Tao of the Void';
@@ -131,7 +134,7 @@ export class ContemplationService {
       unlocksMore: false,
     },
     {
-      name: 'Tao of Life',
+      name: CONCEPT_LIFE,
       description:
         'Contemplate the true nature of life, coming to understand its vital essence.<br><br>Increases maximum health.',
       progress: 0,
@@ -503,6 +506,24 @@ export class ContemplationService {
       unlocksMore: false,
     },
     {
+      name: CONCEPT_DIVINITY,
+      description:
+        'Contemplate the nature of divinity.<br><br>Allows you to take your first steps in discovering gods beyond your own realm.',
+      progress: 0,
+      effect: '',
+      discovered: false,
+      discoveryRequirements: {
+        [CONCEPT_FIRE]: 5e11,
+        [CONCEPT_WATER]: 5e11,
+        [CONCEPT_METAL]: 5e11,
+        [CONCEPT_WOOD]: 5e11,
+        [CONCEPT_EARTH]: 5e11,
+        [CONCEPT_LIFE]: 1e10,
+        [CONCEPT_DEATH]: 1e10,
+      },
+      unlocksMore: false,
+    },
+    {
       name: CONCEPT_CREATION,
       description: 'Contemplate creation through the synthesis of the five elements.',
       progress: 0,
@@ -545,16 +566,29 @@ export class ContemplationService {
       description:
         'Contemplate space, the careful arrangement of all things in existence. Allows travel to the most distant realms.',
       progress: 0,
-      effect: CONCEPT_EFFECT_VOID,
+      effect: '',
       discovered: false,
       discoveryRequirements: {
         [CONCEPT_VOID]: 1e13,
+        [CONCEPT_DIVINITY]: 1e13,
       },
       unlocksMore: false,
     },
   ];
 
   constructor(private injector: Injector, private mainLoopService: MainLoopService, private logService: LogService) {
+    for (let i = 0; i < this.concepts.length; i++) {
+      const concept = this.concepts[i];
+      if (this.displayConcepts.length <= i) {
+        this.displayConcepts.push({
+          name: signal<string>(concept.name),
+          displayName: signal<string>(''),
+          description: signal<string>(''),
+          progress: signal<number>(0),
+          concept: concept,
+        });
+      }
+    }
     mainLoopService.tickSubject.subscribe(() => {
       this.tick();
     });
@@ -583,27 +617,34 @@ export class ContemplationService {
         }
       }
 
-      const discovered = this.concepts.filter(concept => concept.discovered);
-      for (const concept of discovered) {
-        const displayConcept = this.displayConcepts.find(dc => dc.name() === concept.name);
-        if (displayConcept) {
-          displayConcept.name.set(concept.name);
+      for (let i = 0; i < this.concepts.length; i++) {
+        const concept = this.concepts[i];
+        const displayConcept = this.displayConcepts[i];
+        if (concept.discovered) {
+          displayConcept.displayName.set(concept.name);
           let description = concept.description;
           if (concept.unlocksMore) {
             description +=
               '<br><br>You feel that more contemplation of this concept could lead you to understand other concepts.';
           }
           displayConcept.description.set(description);
-          displayConcept.progress.set(concept.progress);
-          displayConcept.concept = concept;
         } else {
-          this.displayConcepts.push({
-            name: signal<string>(concept.name),
-            description: signal<string>(concept.description),
-            progress: signal<number>(concept.progress),
-            concept: concept,
-          });
+          displayConcept.displayName.set('Tao of ????');
+          let description =
+            'This concept is beyond your current comprehension. To understand it, you will need a greater understanding of:<br>';
+          for (const key in concept.discoveryRequirements) {
+            const requiredConcept = this.concepts.find(c => c.name === key);
+            if (requiredConcept && requiredConcept.progress < concept.discoveryRequirements[key]) {
+              if (requiredConcept && requiredConcept.discovered) {
+                description += key + '<br>';
+              } else {
+                description += '????<br>';
+              }
+            }
+          }
+          displayConcept.description.set(description);
         }
+        displayConcept.progress.set(concept.progress);
       }
     });
   }

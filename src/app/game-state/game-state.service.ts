@@ -933,15 +933,6 @@ export class GameStateService {
   }
 
   private getCharacterProperties(props: CharacterProperties | undefined): CharacterProperties {
-    // temporary kludge to get legacy empowerment pill counting to work with new variables.
-    let empowermentPillsTaken = props?.empowermentPillsTaken || 0;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    if (empowermentPillsTaken === 0 && props?.empowermentFactor && props?.empowermentFactor > 1) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      empowermentPillsTaken = (props?.empowermentFactor - 1) * 100;
-    }
     return {
       attributes: {
         strength: {
@@ -1187,7 +1178,7 @@ export class GameStateService {
       healthBonusMagic: props?.healthBonusMagic || 0,
       healthBonusSoul: props?.healthBonusSoul || 0,
       healthBonusDivine: props?.healthBonusDivine || 0,
-      empowermentPillsTaken: empowermentPillsTaken,
+      empowermentPillsTaken: props?.empowermentPillsTaken || 0,
       empowermentMax: props?.empowermentMax || 99,
       immortal: props?.immortal || false,
       god: props?.god || false,

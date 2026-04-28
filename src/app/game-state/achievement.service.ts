@@ -54,6 +54,7 @@ export const MEMORY_IMPOSSIBLE_TASKS = 'ImpossibleTasks';
 export const MEMORY_IMMORTALITY = 'Immortality';
 export const MEMORY_JOIN_THE_GODS = 'JoinTheGods';
 export const MEMORY_HELL_COMPLETION = 'HellCompletion';
+export const MEMORY_DISTANT_REALMS = 'DistantRealms';
 
 export interface Memory {
   title: string;
@@ -156,6 +157,13 @@ export class AchievementService {
         'Lord Yama lies defeated before you, unable to stand against your strength.<br><br>He bows in acknowledgement of your growth in both character and prowess.<br><br>"Take this key, child."<br><br>Lord Yama hands you a glowing artifact.<br><br>"The portals will answer to you now. You may return now to the Divine Realm to claim your rightful place. Welcome home, young upstart, and may the heavens continue to smile upon you."<br><br>',
       ],
       imageBaseName: 'hellCompletion',
+    },
+    [MEMORY_DISTANT_REALMS]: {
+      title: 'Beyond the Heavens',
+      text: [
+        'Your portal key tingles in your hand as you contemplate the vast emptiness beyond the divine arena.<br><br>Could there be other worlds out there?<br><br>Places where other men and women worship other gods?<br><br>And if so, could they provide you with a proper challenge to hone your skills?<br><br>Perhaps you need to contemplate further on how to breach the inconceivable distance.',
+      ],
+      imageBaseName: 'distantRealms',
     },
   };
 
@@ -2033,6 +2041,9 @@ export class AchievementService {
         this.gameStateService?.unlockPanel('divineDuelsPanel');
         this.pantheonService.unlockPantheon(PANTHEON_CELESTIAL_EMPIRE);
         this.pantheonService.discoverGod(GOD_YAMA);
+        if (!this.unlockedMemories.includes(MEMORY_DISTANT_REALMS)) {
+          this.triggerMemory(MEMORY_DISTANT_REALMS);
+        }
       },
       unlocked: false,
     },
