@@ -34,13 +34,13 @@
             </tr>
             @if (activityService.spiritActivity !== null) {
             <tr>
-                <td>{{activityService.getActivityName(activityService.spiritActivity)}}</td>
-                <td>
+                <td [ngClass]="{'disabled': activityService.spiritActivityDisabled()}">{{activityService.getActivityName(activityService.spiritActivity)}}</td>
+                <td [ngClass]="{'disabled': activityService.spiritActivityDisabled()}">
                 <div class="progress-bar" [ngClass]="{'indeterminate': activityService.spiritActivityProgress && !mainLoopService.pause}">
                     <span></span>
                 </div>
                 </td>
-                <td>
+                <td [ngClass]="{'disabled': activityService.spiritActivityDisabled()}">
                 <mat-icon tooltip="Remove this activity from the schedule." (click)="removeSpiritActivity()" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
                 </td>
             </tr>

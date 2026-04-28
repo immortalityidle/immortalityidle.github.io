@@ -161,6 +161,7 @@ export class ActivityService {
   activityOptionsUnlocked = signal<boolean>(false);
   displayedActivitiesCount = 0;
   hideLockedActivities = signal<boolean>(false);
+  spiritActivityDisabled = signal<boolean>(false);
 
   constructor(
     private injector: Injector,
@@ -542,6 +543,17 @@ export class ActivityService {
       displayActivity.nextRank.set(this.getNextRankTooltip(activity));
       displayActivity.hidden.set(this.hiddenActivities.includes(activity.activityType));
     }
+
+    if (this.spiritActivity !== null) {
+      const activity = this.getActivityByType(this.spiritActivity);
+      if (activity !== null && activity.unlocked) {
+        this.spiritActivityDisabled.set(false);
+      } else {
+        this.spiritActivityDisabled.set(true);
+      }
+    } else {
+      this.spiritActivityDisabled.set(true);
+    }
   }
 
   getActivityTooltip(activity: Activity, doNow: boolean) {
@@ -581,7 +593,7 @@ export class ActivityService {
       if (!this.locationService!.unlockedLocations.includes(activity.location)) {
         tooltipText += '<br>Access to ' + this.camelToTitle.transform(activity.location);
       }
-      if (activity.divinityRequired && !this.characterService.god()) {
+      if (activity.divinityRequired) {
         tooltipText += '<br>Godhood';
       }
 
@@ -601,7 +613,7 @@ export class ActivityService {
         .filter(line => line)
         .join('<br>');
     }
-    if (activity.divinityRequired && !this.characterService.god()) {
+    if (activity.divinityRequired && activity.divinityRequired[activity.level + 1]) {
       tooltipText += '<br>Godhood';
     }
     return tooltipText;
@@ -1940,22 +1952,30 @@ export class ActivityService {
 
   Resting: Activity = {
     level: 0,
-    name: ['Resting', 'Meditation', 'Communing With Divinity', 'Finding True Inner Peace'],
+    name: ['Resting', 'Meditation', 'Communing With Divinity', 'Finding True Inner Peace', 'Celestial Meditation'],
     location: LocationType.Self,
     imageBaseName: 'resting',
     activityType: ActivityType.Resting,
-    yinYangEffect: [YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Balance],
+    yinYangEffect: [
+      YinYangEffect.Yin,
+      YinYangEffect.Yin,
+      YinYangEffect.Yin,
+      YinYangEffect.Balance,
+      YinYangEffect.Balance,
+    ],
     description: [
       'Take a break and get some sleep. Good sleeping habits are essential for cultivating immortal attributes.',
       'Enter a meditative state and begin your journey toward spiritual enlightenment.',
       'Extend your senses beyond the mortal realm and connect to deeper realities.',
       'Turn your senses inward and find pure stillness within.',
+      'Let your divine mind contemplate the eternal universe.',
     ],
     consequenceDescription: [
       'Restores 50 Stamina and 2 Health.',
       'Restores 100 Stamina, 10 Health, and 1 Qi (if unlocked).',
       'Restores 200 Stamina, 20 Health, and 10 Qi (if unlocked).',
       'Restores 300 Stamina, 30 Health, and 20 Qi (if unlocked).',
+      'Restores 1000 Stamina, 100 Health, and 50 Qi.',
     ],
     consequence: [
       () => {
@@ -1982,7 +2002,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('spirituality', 0.5);
         this.characterService.checkOverage();
         this.characterService.yin++;
-        this.contemplationService.tick(5);
+        this.contemplationService.tick(10);
       },
       () => {
         this.characterService.status.stamina.value += 300;
@@ -1995,10 +2015,23 @@ export class ActivityService {
         } else {
           this.characterService.yin++;
         }
-        this.contemplationService.tick(10);
+        this.contemplationService.tick(50);
+      },
+      () => {
+        this.characterService.status.stamina.value += 1000;
+        this.characterService.status.health.value += 100;
+        this.characterService.status.qi.value += 50;
+        this.characterService.increaseAttribute('spirituality', 10);
+        this.characterService.checkOverage();
+        if (this.characterService.yin > this.characterService.yang) {
+          this.characterService.yang++;
+        } else {
+          this.characterService.yin++;
+        }
+        this.contemplationService.tick(888);
       },
     ],
-    resourceUse: [{}, {}, {}, {}],
+    resourceUse: [{}, {}, {}, {}, {}],
     requirements: [
       {},
       {
@@ -2034,7 +2067,21 @@ export class ActivityService {
         metalLore: 1e18,
         woodLore: 1e18,
       },
+      {
+        strength: 1e35,
+        speed: 1e35,
+        charisma: 1e35,
+        intelligence: 1e35,
+        toughness: 1e35,
+        spirituality: 1e28,
+        fireLore: 1e35,
+        waterLore: 1e35,
+        earthLore: 1e35,
+        metalLore: 1e35,
+        woodLore: 1e35,
+      },
     ],
+    divinityRequired: [false, false, false, false, true],
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
