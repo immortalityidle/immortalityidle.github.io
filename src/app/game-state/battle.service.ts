@@ -303,11 +303,11 @@ export class BattleService {
   enemiesPresent = signal<boolean>(false);
   timesFled = 0;
   hellMonsterBasePower = 1e18;
-  divineEnemyBasePower = 1e24;
   hellMonsterDefenseRatio = 100;
   hellMonsterAttackRatio = 100;
   libraryTechniqueChanged = true;
   elementalRealmMonsterBasePower = 1e21;
+  demigodBasePower = 1e22;
   minimumTechniqueTicks = 3;
   maximumTechniqueWeaponDamage = 1;
   maximumTechniqueDivineDamage = 1;
@@ -2038,6 +2038,10 @@ export class BattleService {
       );
       for (const concept of damageConcepts) {
         damage *= Math.log10(10 + concept.progress);
+      }
+
+      if (this.currentEnemy.divine) {
+        damage *= technique.divineDamage || 0;
       }
 
       let overage = this.damageEnemy(damage, technique.name);
@@ -3909,6 +3913,42 @@ export class BattleService {
       techniques: [
         {
           name: 'Clobber',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 5,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'pan',
+      description: '',
+      location: LocationType.MessageDepot,
+      basePower: this.demigodBasePower,
+      defenseToHealthRatio: 10,
+      lootType: [],
+      noPrefix: true,
+      techniques: [
+        {
+          name: 'Tricky Whack',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 5,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'orion',
+      description: '',
+      location: LocationType.MessageDepot,
+      basePower: this.demigodBasePower * 5,
+      defenseToHealthRatio: 10,
+      lootType: [],
+      noPrefix: true,
+      techniques: [
+        {
+          name: 'Arrow Shot',
           ticks: 0,
           ticksRequired: 10,
           baseDamage: 5,

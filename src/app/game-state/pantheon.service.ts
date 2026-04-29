@@ -121,8 +121,10 @@ export class PantheonService {
           baseHealth: this.greekBaseHealth * 1e9,
           techniqueNames: ['Wine Splash', 'Grape Crush', 'Drowned Sorrows'],
           techniqueCooldowns: [5, 50, 500],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          challengeMessage: signal<string>(
+            "A duel?<br><br>Oh, no, I couldn't possibly.<br><br>The celebrations must continue, so I need to focus on getting this year's vintage ready."
+          ),
+          attributes: ['mercy', 'mercy', 'mercy', 'wisdom', 'wisdom'],
         },
         {
           name: signal<string>(GOD_ARTEMIS),

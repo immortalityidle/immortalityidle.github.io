@@ -56,6 +56,7 @@ export const CONCEPT_EARTH = 'Tao of Earth';
 export const CONCEPT_LIFE = 'Tao of Life';
 export const CONCEPT_DEATH = 'Tao of Death';
 export const CONCEPT_DIVINITY = 'Tao of Divinity';
+export const CONCEPT_FORTIFICATION = 'Tao of Fortification';
 export const CONCEPT_CREATION = 'Tao of Creation';
 export const CONCEPT_ANNIHILATION = 'Tao of Annihilation';
 export const CONCEPT_VOID = 'Tao of the Void';
@@ -187,7 +188,7 @@ export class ContemplationService {
       unlocksMore: false,
     },
     {
-      name: 'Tao of Fortification',
+      name: CONCEPT_FORTIFICATION,
       description:
         'Contemplate the enduring aspects of metal combined with earth.<br><br>Increases toughness and some lore gains.',
       progress: 0,
@@ -442,6 +443,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 5e10,
         [CONCEPT_WATER]: 5e10,
         [CONCEPT_METAL]: 5e10,
+        [CONCEPT_BEASTS]: 1e9,
       },
       unlocksMore: false,
     },
@@ -457,6 +459,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 8e10,
         [CONCEPT_WATER]: 8e10,
         [CONCEPT_WOOD]: 8e10,
+        [CONCEPT_BEASTS]: 3e9,
       },
       unlocksMore: false,
     },
@@ -472,6 +475,7 @@ export class ContemplationService {
         [CONCEPT_FIRE]: 1e11,
         [CONCEPT_METAL]: 1e11,
         [CONCEPT_WOOD]: 1e11,
+        [CONCEPT_BEASTS]: 5e9,
       },
       unlocksMore: false,
     },
@@ -487,6 +491,7 @@ export class ContemplationService {
         [CONCEPT_WATER]: 3e11,
         [CONCEPT_METAL]: 3e11,
         [CONCEPT_WOOD]: 3e11,
+        [CONCEPT_FORTIFICATION]: 1e9,
       },
       unlocksMore: false,
     },
@@ -502,6 +507,7 @@ export class ContemplationService {
         [CONCEPT_WATER]: 6e11,
         [CONCEPT_METAL]: 6e11,
         [CONCEPT_WOOD]: 6e11,
+        [CONCEPT_BEASTS]: 7e9,
       },
       unlocksMore: false,
     },

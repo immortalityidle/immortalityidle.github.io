@@ -28,7 +28,7 @@ import {
   CONCEPT_WOOD,
   ContemplationService,
 } from './contemplation.service';
-import { GOD_HERMES, PantheonService } from './pantheon.service';
+import { GOD_DIONYSUS, GOD_HERMES, PantheonService } from './pantheon.service';
 import {
   Activity,
   ActivityLoopEntry,
@@ -181,6 +181,7 @@ export class ActivityService {
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
     this.activities = [
       this.DeliverMessages,
+      this.ProvideWine,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -593,7 +594,15 @@ export class ActivityService {
       if (!this.locationService!.unlockedLocations.includes(activity.location)) {
         tooltipText += '<br>Access to ' + this.camelToTitle.transform(activity.location);
       }
-      if (activity.divinityRequired) {
+      if (
+        activity.realm &&
+        activity.realm !== Realm.MortalRealm &&
+        activity.location !== this.locationService?.location
+      ) {
+        tooltipText += '<br>Location: ' + this.camelToTitle.transform(activity.location);
+      }
+
+      if (activity.divinityRequired && !this.characterService.god()) {
         tooltipText += '<br>Godhood';
       }
 
@@ -849,6 +858,13 @@ export class ActivityService {
         // location requirement isn't met, but as a god you can project there
         activity.projectionOnly = true;
       } else {
+        activity.unlocked = false;
+        return false;
+      }
+    }
+    if (activity.realm && activity.realm !== Realm.MortalRealm) {
+      // needs an exact match outside the mortal realm
+      if (activity.location !== this.locationService?.location) {
         activity.unlocked = false;
         return false;
       }
@@ -5497,6 +5513,35 @@ export class ActivityService {
         }
         this.characterService.status.stamina.value = 0;
         this.characterService.yang += 100;
+      },
+    ],
+    resourceUse: [],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ProvideWine: Activity = {
+    level: 0,
+    name: ['Provide Wine'],
+    location: LocationType.VerdantVineyard,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'provideWine',
+    activityType: ActivityType.ProvideWine,
+    description: ['Supply this strange drunken god with the wine he needs for his celebrations.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['How much can this guy drink?'],
+    consequence: [
+      () => {
+        if (this.inventoryService.consume('wine', 1e6) === -1) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Dionysus says: "Oh, no, this won\'t do at all. We\'re going to need much more than this."'
+          );
+          return;
+        }
+        this.pantheonService.increaseGodProgress(GOD_DIONYSUS, 1);
       },
     ],
     resourceUse: [],

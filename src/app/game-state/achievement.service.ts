@@ -26,7 +26,7 @@ import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
 import { ContemplationService } from './contemplation.service';
 import { ActivityType } from './activity';
-import { GOD_YAMA, PANTHEON_CELESTIAL_EMPIRE, PantheonService } from './pantheon.service';
+import { GOD_DIONYSUS, GOD_YAMA, PANTHEON_CELESTIAL_EMPIRE, PantheonService } from './pantheon.service';
 
 export interface Achievement {
   name: string;
@@ -535,6 +535,18 @@ export class AchievementService {
       },
       effect: () => {
         this.farmService.unlockCrop('divine peach');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'What a Strange Vine',
+      description: 'You can now grow grapes in your farm.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.isGodDiscovered(GOD_DIONYSUS);
+      },
+      effect: () => {
+        this.farmService.unlockCrop('grapes');
       },
       unlocked: false,
     },
