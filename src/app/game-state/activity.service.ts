@@ -4167,7 +4167,7 @@ export class ActivityService {
           concept.effect.includes(CONCEPT_EFFECT_CREATION)
         );
         for (const concept of creation_concepts) {
-          creationPower += Math.ceil(Math.log2(2 + concept.progress));
+          creationPower += Math.ceil(4 * Math.log2(2 + concept.progress));
           creationQuantity += Math.ceil(Math.log10(10 + concept.progress));
         }
         const gemToCreate = this.inventoryService.generateSpiritGem(creationPower);

@@ -41,5 +41,8 @@ export class CraftingOptionsModalComponent {
     this.inventoryService.automergeEquipped = event.target.checked;
   }
 
-  //TODO: add better options for autoloading workstation inputs
+  autoReloadCraftInputsChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoReloadCraftInputs = event.target.checked;
+  }
 }

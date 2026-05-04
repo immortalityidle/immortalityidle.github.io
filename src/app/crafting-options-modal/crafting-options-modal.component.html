@@ -26,4 +26,12 @@
       </span>
     </div>
   }
+  @if (inventoryService.autoReloadCraftInputsUnlocked){
+    <div class="optionField">
+      <span>
+        <input type="checkbox" id="autoReloadCraftInputs" [checked]="inventoryService.autoReloadCraftInputs" (change)="autoReloadCraftInputsChange($event)">
+        <label for="autoReloadCraftInputs" >Automatically reload crafting ingredients</label>
+      </span>
+    </div>
+  }
 </div>

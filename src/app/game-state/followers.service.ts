@@ -6,7 +6,7 @@ import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
 import { Equipment, InventoryService, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
-import { BattleService, ENERGY_SPIRIT } from './battle.service';
+import { BattleService, ENERGY_SPIRIT, LOOT_TYPE_GEM } from './battle.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
@@ -79,6 +79,7 @@ export interface FollowersProperties {
   stashedFollowers: Follower[];
   stashedPets: Follower[];
   unlockedHiddenJobs: string[];
+  disabledJobs: string[];
   autoReplaceUnlocked: boolean;
   petsBoosted: boolean;
   onlyWantedFollowers: boolean;
@@ -93,6 +94,7 @@ export interface FollowersProperties {
   hqUnlocked: boolean;
   giftRecipientCounter: number;
   followersRecruited: number;
+  leftoverHQCostGemValue: number;
 }
 
 export interface SavedAssignments {
@@ -114,6 +116,7 @@ type jobsType = {
     pet?: boolean;
     totalPower: number;
     runEachTick?: boolean;
+    enabled: boolean;
   };
 };
 
@@ -169,6 +172,7 @@ export class FollowersService {
   hqInputs: ItemStack[] = [];
   giftRecipientCounter = 0;
   energyGemConversion = 100000;
+  leftoverHQCostGemValue = 0;
 
   hqs: HQ[] = [
     {
@@ -213,7 +217,7 @@ export class FollowersService {
     {
       name: 'Simple School',
       description:
-        'A simple school where your followers can rest and train.<br>Costs 1,000 Taels, one food item per follower, and one spirit gem or equivalent Spirit Energy per day.<br>Requires an administrator follower to run it.',
+        'A simple school where your followers can rest and train.<br>Costs 1,000 Taels, one food item per follower, and 1 level 1 gem or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires an administrator follower to run it.',
       moneyPerDay: 1000,
       gemsPerDay: 1,
       foodPerDay: 1,
@@ -232,9 +236,9 @@ export class FollowersService {
     {
       name: 'Training Center',
       description:
-        'A school where your followers rest and train.<br>Costs 100,000 Taels, two food items per follower, and 10 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 10 administrator follower to run it.',
+        'A school where your followers rest and train.<br>Costs 100,000 Taels, two food items per follower, and 1000 level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires a level 10 administrator follower to run it.',
       moneyPerDay: 100000,
-      gemsPerDay: 10,
+      gemsPerDay: 1000,
       foodPerDay: 2,
       mealsRequired: false,
       maxFollowerIncrease: 10,
@@ -258,9 +262,11 @@ export class FollowersService {
       description:
         'An elite school where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e10) +
-        ' Taels, three food items per follower, and 40 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 20 administrator follower to run it.',
+        ' Taels, three food items per follower, and ' +
+        this.bigNumberPipe.transform(1e6) +
+        ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires a level 20 administrator follower to run it.',
       moneyPerDay: 1e10,
-      gemsPerDay: 40,
+      gemsPerDay: 1e6,
       foodPerDay: 3,
       mealsRequired: false,
       maxFollowerIncrease: 10,
@@ -284,9 +290,11 @@ export class FollowersService {
       description:
         'An elaborate compound where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e13) +
-        ' Taels, one proper meal per follower, and 100 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 50 administrator follower to run it.',
+        ' Taels, one proper meal per follower, and ' +
+        this.bigNumberPipe.transform(1e12) +
+        ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires a level 50 administrator follower to run it.',
       moneyPerDay: 1e13,
-      gemsPerDay: 100,
+      gemsPerDay: 1e12,
       foodPerDay: 1,
       mealsRequired: true,
       maxFollowerIncrease: 15,
@@ -310,9 +318,11 @@ export class FollowersService {
       description:
         'A huge campus where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e16) +
-        ' Taels, two proper meals per follower, and 200 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires a level 100 administrator follower to run it.',
+        ' Taels, two proper meals per follower, and ' +
+        this.bigNumberPipe.transform(1e27) +
+        ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires a level 100 administrator follower to run it.',
       moneyPerDay: 1e16,
-      gemsPerDay: 200,
+      gemsPerDay: 1e27,
       foodPerDay: 2,
       mealsRequired: true,
       maxFollowerIncrease: 20,
@@ -336,9 +346,11 @@ export class FollowersService {
       description:
         'A powerful fortress where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e20) +
-        ' Taels, three proper meals per follower, and 500 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires 2 level 100 administrators to run it.',
+        ' Taels, three proper meals per follower, and ' +
+        this.bigNumberPipe.transform(1e39) +
+        ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires 2 level 100 administrators to run it.',
       moneyPerDay: 1e20,
-      gemsPerDay: 500,
+      gemsPerDay: 1e39,
       foodPerDay: 3,
       mealsRequired: true,
       maxFollowerIncrease: 30,
@@ -362,9 +374,11 @@ export class FollowersService {
       description:
         'An immense citidel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
-        ' Taels, five meals per follower, and 1000 spirit gems or equivalent Spirit Energy per day (higher quality gems can count as more than one).<br>Requires 4 level 100 administrators to run it.',
+        ' Taels, five meals per follower, and ' +
+        this.bigNumberPipe.transform(1e51) +
+        ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires 4 level 100 administrators to run it.',
       moneyPerDay: 1e26,
-      gemsPerDay: 1000,
+      gemsPerDay: 1e51,
       foodPerDay: 5,
       mealsRequired: true,
       maxFollowerIncrease: 50,
@@ -389,6 +403,7 @@ export class FollowersService {
       },
       description: 'Chefs increase the output of your kitchens.',
       totalPower: 0,
+      enabled: true,
     },
     builder: {
       work: daysElapsed => {
@@ -399,6 +414,7 @@ export class FollowersService {
       },
       description: 'Builders reduce the cost of the next home you upgrade to. They can also help you build it faster.',
       totalPower: 0,
+      enabled: true,
     },
     hunter: {
       work: daysElapsed => {
@@ -413,6 +429,7 @@ export class FollowersService {
       },
       description: 'Hunters collect meat and help you hunt for hides.',
       totalPower: 0,
+      enabled: true,
     },
     fisher: {
       work: daysElapsed => {
@@ -427,6 +444,7 @@ export class FollowersService {
       },
       description: 'Fishers fish up delicious fish to contribute to your meals.',
       totalPower: 0,
+      enabled: true,
     },
     farmer: {
       work: daysElapsed => {
@@ -435,6 +453,7 @@ export class FollowersService {
       description: 'Farmers work your fields, helping your crops to grow.',
       totalPower: 0,
       runEachTick: true,
+      enabled: true,
     },
     miner: {
       work: daysElapsed => {
@@ -445,6 +464,7 @@ export class FollowersService {
       },
       description: 'Miners gather ore for your crafting.',
       totalPower: 0,
+      enabled: true,
     },
     metallurgist: {
       work: daysElapsed => {
@@ -455,6 +475,7 @@ export class FollowersService {
       description: 'Metallurgists operate your smelting workstations, turning ores into refined metals.',
       totalPower: 0,
       runEachTick: true,
+      enabled: true,
     },
     coalDigger: {
       work: daysElapsed => {
@@ -464,6 +485,7 @@ export class FollowersService {
       },
       description: 'Coal Diggers gather coal for your crafting.',
       totalPower: 0,
+      enabled: true,
     },
     lumberjack: {
       work: daysElapsed => {
@@ -474,6 +496,7 @@ export class FollowersService {
       },
       description: 'Lumberjacks gather wood for your crafting.',
       totalPower: 0,
+      enabled: true,
     },
     herbalist: {
       work: daysElapsed => {
@@ -487,6 +510,7 @@ export class FollowersService {
       },
       description: 'Herbalists gather herbs for your crafting.',
       totalPower: 0,
+      enabled: true,
     },
     skinner: {
       work: daysElapsed => {
@@ -497,6 +521,7 @@ export class FollowersService {
       },
       description: 'Skinners gather hides for your crafting.',
       totalPower: 0,
+      enabled: true,
     },
     weaponsmith: {
       work: daysElapsed => {
@@ -520,6 +545,7 @@ export class FollowersService {
       description:
         'Weaponsmiths help you take care of your currently equipped weapons, adding power to them each day. Higher levels can also help improve them.',
       totalPower: 0,
+      enabled: true,
     },
     armorer: {
       work: daysElapsed => {
@@ -556,6 +582,7 @@ export class FollowersService {
       description:
         'Armorers help you take care of your currently equipped pieces of armor, adding defense to them each day. Higher levels can also help improve them.',
       totalPower: 0,
+      enabled: true,
     },
     brawler: {
       work: daysElapsed => {
@@ -567,6 +594,7 @@ export class FollowersService {
       },
       description: 'Brawlers will spar with you in wrestling and boxing matches, increasing your strength.',
       totalPower: 0,
+      enabled: true,
     },
     sprinter: {
       work: daysElapsed => {
@@ -578,6 +606,7 @@ export class FollowersService {
       },
       description: 'Sprinters challenge you to footraces and help you increase your speed.',
       totalPower: 0,
+      enabled: true,
     },
     trainer: {
       work: daysElapsed => {
@@ -589,6 +618,7 @@ export class FollowersService {
       },
       description: 'Trainers make sure you follow their strict fitness and diet rules, increasing your toughness.',
       totalPower: 0,
+      enabled: true,
     },
     tutor: {
       work: daysElapsed => {
@@ -600,6 +630,7 @@ export class FollowersService {
       },
       description: 'Tutors teach you all about the wonders of the universe, increasing your intelligence.',
       totalPower: 0,
+      enabled: true,
     },
     mediator: {
       work: daysElapsed => {
@@ -611,6 +642,7 @@ export class FollowersService {
       },
       description: 'Mediators teach you how to persuade others, increasing your charisma.',
       totalPower: 0,
+      enabled: true,
     },
     priest: {
       work: daysElapsed => {
@@ -622,6 +654,7 @@ export class FollowersService {
       },
       description: 'Priests help you get closer to the divine, increasing your spirituality.',
       totalPower: 0,
+      enabled: true,
     },
     gemologist: {
       work: daysElapsed => {
@@ -639,6 +672,7 @@ export class FollowersService {
       },
       description: 'Gemologists combine spirit gems into higher grades.',
       totalPower: 0,
+      enabled: true,
     },
     scout: {
       work: () => {
@@ -647,6 +681,7 @@ export class FollowersService {
       description: 'Scouts help you track down and get in fights with monsters faster.',
       totalPower: 0,
       runEachTick: true,
+      enabled: true,
     },
     monsterHunter: {
       work: daysElapsed => {
@@ -660,6 +695,7 @@ export class FollowersService {
       },
       description: 'Monster Hunters take on low level monsters for you and offer you some of the gems they gather.',
       totalPower: 0,
+      enabled: true,
     },
     damned: {
       work: () => {
@@ -669,6 +705,7 @@ export class FollowersService {
         'Damned are souls working off karmic debt in hell that hav decided to join you. Having this follower seems to enrage the demons around you.',
       hidden: true,
       totalPower: 0,
+      enabled: true,
     },
     prophet: {
       work: daysElapsed => {
@@ -683,6 +720,7 @@ export class FollowersService {
         'Prophets are dedicated to spreading the word of your greatness. Prophets can even find other followers for you if you are out of the mortal realm.',
       hidden: true,
       totalPower: 0,
+      enabled: true,
     },
     moneyBurner: {
       work: daysElapsed => {
@@ -702,6 +740,7 @@ export class FollowersService {
       description: 'Money Burners dedicate themselves to burning mortal money to produce hell money.',
       hidden: true,
       totalPower: 0,
+      enabled: true,
     },
     banker: {
       work: daysElapsed => {
@@ -719,6 +758,7 @@ export class FollowersService {
         'Bankers put your money to use, earning interest on what you have. Surprisingly, this works for hell money too.',
       hidden: true,
       totalPower: 0,
+      enabled: true,
     },
     administrator: {
       work: () => {
@@ -727,6 +767,7 @@ export class FollowersService {
       description: 'Administrators are required to operate complex organizations to their fullest.',
       hidden: false,
       totalPower: 0,
+      enabled: true,
     },
     [FOLLOWER_TYPE_TECHNIQUE_MASTER]: {
       work: () => {
@@ -735,6 +776,7 @@ export class FollowersService {
       description: 'Technique masters can help you refine family techniques in your training chamber.',
       hidden: true,
       totalPower: 0,
+      enabled: true,
     },
     snake: {
       work: daysElapsed => {
@@ -747,6 +789,7 @@ export class FollowersService {
       description: 'A fiery serpent. Snakes understand fire and can teach you the hidden secrets of the flames.',
       pet: true,
       totalPower: 0,
+      enabled: true,
     },
     tiger: {
       work: daysElapsed => {
@@ -759,6 +802,7 @@ export class FollowersService {
       description: 'Tigers know the secrets of the jungle and can teach you the deepest mysteries of Wood Lore.',
       pet: true,
       totalPower: 0,
+      enabled: true,
     },
     ox: {
       work: daysElapsed => {
@@ -771,6 +815,7 @@ export class FollowersService {
       description: 'Oxen connect deeply to the earth and can teach you their secret understanding.',
       pet: true,
       totalPower: 0,
+      enabled: true,
     },
     monkey: {
       work: daysElapsed => {
@@ -783,6 +828,7 @@ export class FollowersService {
       description: 'Monkeys know more about metal than the greatest of human blacksmiths.',
       pet: true,
       totalPower: 0,
+      enabled: true,
     },
     pig: {
       work: daysElapsed => {
@@ -795,6 +841,7 @@ export class FollowersService {
       description: 'Pigs understand the secrets of water and can teach them to you.',
       pet: true,
       totalPower: 0,
+      enabled: true,
     },
   };
 
@@ -977,7 +1024,7 @@ export class FollowersService {
   followersWorks(daysElapsed?: number) {
     for (const job of Object.keys(this.jobs)) {
       const jobObj = this.jobs[job];
-      if (jobObj.totalPower > 0) {
+      if (jobObj.totalPower > 0 && jobObj.enabled) {
         if (daysElapsed && !jobObj.runEachTick) {
           jobObj.work(daysElapsed);
         } else if (!daysElapsed && jobObj.runEachTick) {
@@ -1028,7 +1075,11 @@ export class FollowersService {
       this.hqs[effectiveHQLevel].gemsPerDay > 0 &&
       (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.energyGemConversion <
         this.hqs[effectiveHQLevel].gemsPerDay &&
-      this.inventoryService.checkForByValue('gem', this.hqs[effectiveHQLevel].gemsPerDay * 10) === -1
+      this.inventoryService.consumeByGemEquivalentValue(
+        LOOT_TYPE_GEM,
+        this.hqs[effectiveHQLevel].gemsPerDay * 10 - this.leftoverHQCostGemValue,
+        true
+      ) === -1
     ) {
       effectiveHQLevel--;
     }
@@ -1055,13 +1106,15 @@ export class FollowersService {
     // requirements are met at effectiveHQLevel, pay costs
     this.characterService.updateMoney(0 - this.hqs[effectiveHQLevel].moneyPerDay);
     if (this.hqs[effectiveHQLevel].gemsPerDay > 0) {
+      const requiredValue = this.hqs[effectiveHQLevel].gemsPerDay * 10 - this.leftoverHQCostGemValue;
       if (
         (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.energyGemConversion >=
         this.hqs[effectiveHQLevel].gemsPerDay
       ) {
         this.characterService.energy[ENERGY_SPIRIT] -= this.hqs[effectiveHQLevel].gemsPerDay / this.energyGemConversion;
       } else {
-        this.inventoryService.consumeByValue('gem', this.hqs[effectiveHQLevel].gemsPerDay * 10);
+        const consumedValue = this.inventoryService.consumeByGemEquivalentValue(LOOT_TYPE_GEM, requiredValue);
+        this.leftoverHQCostGemValue = consumedValue - requiredValue;
       }
     }
     if (this.hqs[effectiveHQLevel].foodPerDay > 0) {
@@ -1116,6 +1169,14 @@ export class FollowersService {
   }
 
   getProperties(): FollowersProperties {
+    const disabledJobs = [];
+    for (const job of Object.keys(this.jobs)) {
+      const jobObj = this.jobs[job];
+      if (!jobObj.enabled) {
+        disabledJobs.push(job);
+      }
+    }
+
     return {
       followersUnlocked: this.followersUnlocked,
       followers: this.followers,
@@ -1151,6 +1212,8 @@ export class FollowersService {
       hqUnlocked: this.hqUnlocked,
       giftRecipientCounter: this.giftRecipientCounter,
       followersRecruited: this.followersRecruited,
+      disabledJobs: disabledJobs,
+      leftoverHQCostGemValue: this.leftoverHQCostGemValue,
     };
   }
 
@@ -1192,6 +1255,11 @@ export class FollowersService {
     this.unhideUnlockedJobs();
     this.updateFollowerTotalPower();
     this.updateHQInputs();
+    this.leftoverHQCostGemValue = properties.leftoverHQCostGemValue;
+    for (const job of Object.keys(this.jobs)) {
+      const jobObj = this.jobs[job];
+      jobObj.enabled = !properties.disabledJobs.includes(job);
+    }
   }
 
   unlockJob(job: string) {
@@ -1835,5 +1903,9 @@ export class FollowersService {
         this.hqInputs[destinationInputIndex].quantity;
       this.inventoryService.itemStacks[itemIndex] = this.inventoryService.getEmptyItemStack();
     }
+  }
+
+  toggleJobEnabled(jobKey: string) {
+    this.jobs[jobKey].enabled = !this.jobs[jobKey].enabled;
   }
 }

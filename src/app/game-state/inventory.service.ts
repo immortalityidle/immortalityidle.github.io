@@ -159,6 +159,7 @@ export interface InventoryProperties {
   equipmentUnlocked: boolean;
   equipmentCreated: number;
   totalItemsReceived: number;
+  autoReloadCraftInputsUnlocked: boolean;
   autoReloadCraftInputs: boolean;
   potionCounter: number;
   herbCounter: number;
@@ -264,6 +265,7 @@ export class InventoryService {
   emptyIdCounter = 0;
   emptyIdPrefix = Date.now() + '';
   totalItemsReceived = 0;
+  autoReloadCraftInputsUnlocked = false;
   autoReloadCraftInputs = false;
   potionCounter = 0;
   herbCounter = 0;
@@ -555,6 +557,7 @@ export class InventoryService {
       equipmentCreated: this.equipmentCreated,
       totalItemsReceived: this.totalItemsReceived,
       autoReloadCraftInputs: this.autoReloadCraftInputs,
+      autoReloadCraftInputsUnlocked: this.autoReloadCraftInputsUnlocked,
       potionCounter: this.potionCounter,
       herbCounter: this.herbCounter,
       gemsAcquired: this.gemsAcquired,
@@ -632,6 +635,7 @@ export class InventoryService {
     this.equipmentUnlocked = properties.equipmentUnlocked;
     this.equipmentCreated = properties.equipmentCreated;
     this.totalItemsReceived = properties.totalItemsReceived;
+    this.autoReloadCraftInputsUnlocked = properties.autoReloadCraftInputsUnlocked;
     this.autoReloadCraftInputs = properties.autoReloadCraftInputs;
     this.potionCounter = properties.potionCounter;
     this.herbCounter = properties.herbCounter;
@@ -2115,6 +2119,63 @@ export class InventoryService {
 
   checkFor(itemType: string, quantity = 1, subtype = ''): number {
     return this.consume(itemType, quantity, false, true, subtype);
+  }
+
+  // return the number of level 1 gems equivalent to the given gem
+  getLevel1GemEquivalence(item: Item): number {
+    const gemGrade = item.value / 10;
+    return Math.pow(10, gemGrade);
+  }
+
+  consumeByGemEquivalentValue(consumedThing: string, value: number, checkOnly = false, subtype = ''): number {
+    if (consumedThing !== LOOT_TYPE_GEM) {
+      // called for something other than gems, bail out
+      return -1;
+    }
+    const filteredItemStacks = this.itemStacks
+      .slice(this.heirloomSlots())
+      .filter(
+        itemStack =>
+          itemStack.item?.type === consumedThing &&
+          itemStack.quantity > 0 &&
+          (subtype === '' || itemStack.item.subtype === subtype)
+      )
+      .sort((a, b) => {
+        return a.item!.value - b.item!.value;
+      });
+    if (filteredItemStacks.length === 0) {
+      return -1;
+    }
+    let totalValue = 0;
+    filteredItemStacks.forEach(
+      itemStack => (totalValue += this.getLevel1GemEquivalence(itemStack.item!) * itemStack.quantity)
+    );
+    if (totalValue < value) {
+      // not enough value available of the item, bail out
+      return -1;
+    } else if (checkOnly) {
+      return totalValue;
+    }
+    totalValue = 0;
+    for (const itemStack of filteredItemStacks) {
+      const equivalentValue = this.getLevel1GemEquivalence(itemStack.item!);
+      if (totalValue + equivalentValue * itemStack.quantity >= value) {
+        // there's enough in  this stack to cover the required value, figure out how many of them to consume
+        while (totalValue < value) {
+          totalValue += equivalentValue;
+          itemStack.quantity--;
+        }
+        if (itemStack.quantity === 0) {
+          const index = this.itemStacks.indexOf(itemStack);
+          this.setItemEmptyStack(index);
+        }
+      } else {
+        totalValue += equivalentValue * itemStack.quantity;
+        const index = this.itemStacks.indexOf(itemStack);
+        this.setItemEmptyStack(index);
+      }
+    }
+    return totalValue;
   }
 
   // consume items of the consumedThing type until the value is met, returning the actual value consumed or -1 if there's not enough

@@ -3746,6 +3746,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
+        this.inventoryService.autoReloadCraftInputsUnlocked = true;
         this.inventoryService.autoReloadCraftInputs = true;
         this.logService.log(
           LogTopic.EVENT,
@@ -3757,7 +3758,7 @@ baguaMap = [
         if (!this.inventoryService) {
           this.inventoryService = this.injector.get(InventoryService);
         }
-        return this.inventoryService.autoReloadCraftInputs;
+        return this.inventoryService.autoReloadCraftInputsUnlocked;
       },
       shopable: false,
     },

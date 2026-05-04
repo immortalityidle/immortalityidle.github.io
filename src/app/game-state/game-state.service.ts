@@ -624,6 +624,7 @@ export class GameStateService {
       equipmentUnlocked: props?.equipmentUnlocked || false,
       equipmentCreated: props?.equipmentCreated || 0,
       totalItemsReceived: props?.totalItemsReceived || 0,
+      autoReloadCraftInputsUnlocked: props?.autoReloadCraftInputsUnlocked || props?.autoReloadCraftInputs || false,
       autoReloadCraftInputs: props?.autoReloadCraftInputs || false,
       potionCounter: props?.potionCounter || 0,
       herbCounter: props?.herbCounter || 0,
@@ -852,6 +853,8 @@ export class GameStateService {
       hqUnlocked: props?.hqUnlocked || false,
       giftRecipientCounter: props?.giftRecipientCounter || 0,
       followersRecruited: props?.followersRecruited || 0,
+      leftoverHQCostGemValue: props?.leftoverHQCostGemValue || 0,
+      disabledJobs: props?.disabledJobs || [],
     };
   }
 
