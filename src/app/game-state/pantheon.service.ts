@@ -140,10 +140,12 @@ export class PantheonService {
           baseDamage: this.greekBaseDamage * 1e15,
           baseDefense: this.greekBaseDefense * 1e15,
           baseHealth: this.greekBaseHealth * 1e15,
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Quick Shot', 'Aimed Shot', 'Woodlands Stampede'],
+          techniqueCooldowns: [6, 40, 1000],
+          challengeMessage: signal<string>(
+            "You want me to duel with you?<br><br>Is that some kind of euphemism?<br><br>I don't go in for any funny business.<br><br>Well, if you want me to waste my time with you, you'll need to prove your hunting skills first.<br><br>I hope you know your wild beasts."
+          ),
+          attributes: ['justice', 'justice', 'wrath', 'wrath', 'mercy'],
         },
         {
           name: signal<string>(GOD_APHRODITE),

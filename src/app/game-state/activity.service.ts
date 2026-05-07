@@ -28,7 +28,7 @@ import {
   CONCEPT_WOOD,
   ContemplationService,
 } from './contemplation.service';
-import { GOD_DIONYSUS, GOD_HERMES, PantheonService } from './pantheon.service';
+import { GOD_ARTEMIS, GOD_DIONYSUS, GOD_HERMES, PantheonService } from './pantheon.service';
 import {
   Activity,
   ActivityLoopEntry,
@@ -182,6 +182,7 @@ export class ActivityService {
     this.activities = [
       this.DeliverMessages,
       this.ProvideWine,
+      this.MoonlightTracking,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -5546,6 +5547,50 @@ export class ActivityService {
     ],
     resourceUse: [],
     requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  MoonlightTracking: Activity = {
+    level: 0,
+    name: ['Moonlight Tracking'],
+    location: LocationType.Woodlands,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'moonlightTracking',
+    activityType: ActivityType.MoonlightTracking,
+    description: ['Track woodland beasts by the light of the moon to prove your hunting skills.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [
+      'The beasts in these strange woods are both exotic and delicious, but hunting them is exhausting.',
+    ],
+    consequence: [
+      () => {
+        const staminaCost = this.characterService.staminaCap - 1;
+        if (
+          this.characterService.status.stamina.max < staminaCost ||
+          this.characterService.status.stamina.value < staminaCost
+        ) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Artemis calls out: "Go rest, strange god. You are not prepared for tonight\'s hunt."'
+          );
+          return;
+        }
+        this.inventoryService.getWildMeat(500); // TODO: Tune this
+        this.pantheonService.increaseGodProgress(GOD_ARTEMIS, 1);
+        if (this.characterService.staminaCap < 5e8) {
+          this.characterService.staminaCap++;
+        }
+        this.characterService.status.stamina.value = 0;
+      },
+    ],
+    resourceUse: [],
+    requirements: [
+      {
+        animalHandling: 1e36,
+      },
+    ],
     divinityRequired: [true],
     unlocked: true,
     skipApprenticeshipLevel: 0,

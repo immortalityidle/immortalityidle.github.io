@@ -992,7 +992,13 @@ export class BattleService {
   private reset() {
     this.clearEnemies();
     this.kills = 0;
-    this.killsByLocation = {};
+    for (const locationKey in this.killsByLocation) {
+      const location = this.locationService?.locationMap[locationKey as LocationType];
+      if (location?.realm === Realm.MortalRealm || location?.realm === Realm.Hell) {
+        this.killsByLocation[locationKey] = 0;
+      }
+    }
+
     this.godSlayerKills = 0;
     this.yearlyMonsterDay = 0;
     for (const itemStack of this.characterService.itemPouches) {

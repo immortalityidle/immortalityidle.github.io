@@ -102,6 +102,7 @@ export enum ActivityType {
   PhilosopherStatesRealmPortal,
   DeliverMessages,
   ProvideWine,
+  MoonlightTracking,
   Hell, // hell needs to be last for indexing purposes
 }
 

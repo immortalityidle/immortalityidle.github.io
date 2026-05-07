@@ -319,10 +319,10 @@ export class FollowersService {
         'A huge campus where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e16) +
         ' Taels, two proper meals per follower, and ' +
-        this.bigNumberPipe.transform(1e27) +
+        this.bigNumberPipe.transform(1e25) +
         ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires a level 100 administrator follower to run it.',
       moneyPerDay: 1e16,
-      gemsPerDay: 1e27,
+      gemsPerDay: 1e25,
       foodPerDay: 2,
       mealsRequired: true,
       maxFollowerIncrease: 20,
@@ -347,10 +347,10 @@ export class FollowersService {
         'A powerful fortress where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e20) +
         ' Taels, three proper meals per follower, and ' +
-        this.bigNumberPipe.transform(1e39) +
+        this.bigNumberPipe.transform(1e38) +
         ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires 2 level 100 administrators to run it.',
       moneyPerDay: 1e20,
-      gemsPerDay: 1e39,
+      gemsPerDay: 1e38,
       foodPerDay: 3,
       mealsRequired: true,
       maxFollowerIncrease: 30,
@@ -375,10 +375,10 @@ export class FollowersService {
         'An immense citidel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
         ' Taels, five meals per follower, and ' +
-        this.bigNumberPipe.transform(1e51) +
+        this.bigNumberPipe.transform(1e50) +
         ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires 4 level 100 administrators to run it.',
       moneyPerDay: 1e26,
-      gemsPerDay: 1e51,
+      gemsPerDay: 1e50,
       foodPerDay: 5,
       mealsRequired: true,
       maxFollowerIncrease: 50,
