@@ -1887,9 +1887,6 @@ export class BattleService {
             const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_DOOM);
             if (doomEffect) {
               doomEffect.power += doomEffect.power * 0.2;
-              if (doomEffect.power > 2) {
-                damage *= doomEffect.power;
-              }
             } else {
               this.currentEnemy.statusEffects.push(statusEffect);
             }
@@ -1950,6 +1947,15 @@ export class BattleService {
           }
         } else {
           this.currentEnemy.statusEffects = [statusEffect];
+        }
+      }
+      if (this.currentEnemy.statusEffects) {
+        // Doom should amp damage for all techniques
+        const doomEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_DOOM);
+        if (doomEffect) {
+          if (doomEffect.power > 2) {
+            damage *= doomEffect.power;
+          }
         }
       }
 
@@ -2265,7 +2271,7 @@ export class BattleService {
         } else if (lootType === LOOT_TYPE_MONEY) {
           loot.push(this.inventoryService.getCoinPurse(Math.floor(modifiedBasePower)));
         } else if (lootType === LOOT_TYPE_ENERGY) {
-          energyAmount += Math.log10(modifiedBasePower);
+          energyAmount += Math.log(modifiedBasePower) / Math.log(50);
           if (monsterType.element) {
             energyType = monsterType.element;
           } else {

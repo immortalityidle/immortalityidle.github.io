@@ -996,7 +996,8 @@ export class HomeService {
       power: 1,
       setupCost: 1e18,
       maintenanceCost: 1e12,
-      description: 'A workstation that allows you and your gemologists to extract raw Spirit Energy from gems.',
+      description:
+        'A workstation that allows you and your gemologists to extract raw Spirit Energy from all kinds of gems.',
       maxInputs: 0,
       inputs: [],
       consequence: (workstation: Workstation) => {
@@ -1670,10 +1671,8 @@ export class HomeService {
   }
 
   extractGems(workstation: Workstation) {
-    let power = (100 + this.followerService!.jobs['gemologist'].totalPower) * workstation.power * 5;
-    power = this.inventoryService.consumeByValue('gem', power * 10, false, ENERGY_SPIRIT);
-    const energyGain = (2 * power) / this.followerService!.energyGemConversion;
-    this.characterService.updateEnergy(ENERGY_SPIRIT, energyGain);
+    const gemQuantity = (100 + this.followerService!.jobs['gemologist'].totalPower) * workstation.power * 100;
+    this.inventoryService.consumeGemsForEnergy(gemQuantity);
   }
 
   chefsWork(cookAmount: number) {

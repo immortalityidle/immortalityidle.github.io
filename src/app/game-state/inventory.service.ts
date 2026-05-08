@@ -277,6 +277,7 @@ export class InventoryService {
   unlockedFurniture: string[] = [];
   herbalUnderstanding = false;
   soldGoods: { [key: string]: number } = {};
+  energyGemConversionRate = 1e90; // 1 spirit energy equivalent to 1 level 90 gem
 
   constructor(
     private injector: Injector,
@@ -1243,7 +1244,7 @@ export class InventoryService {
     const formationDescriptions = [
       'When used, this formation increases your attack power.',
       'When used, this formation increases your defense when attacked.',
-      'When used, this formation allows you to survive a single killing blow.',
+      'When used, this formation allows you to survive a single killing blow, leaving you instead with the barest trace of health.',
       'When used, this formation increases the amount of loot you get from killing your enemies.',
       'When used, this formation prevents random monsters from attacking you.<br>If you go looking, you can still find trouble.',
       'When used, this formation allows you to strike your enemy once before they prepare to strike you.',
@@ -2125,6 +2126,42 @@ export class InventoryService {
   getLevel1GemEquivalence(item: Item): number {
     const gemGrade = item.value / 10;
     return Math.pow(10, gemGrade);
+  }
+
+  consumeGemsForEnergy(quantity: number) {
+    let gemsToConsume = quantity;
+    const filteredItemStacks = this.itemStacks
+      .slice(this.heirloomSlots())
+      .filter(itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.quantity > 0)
+      .sort((a, b) => {
+        return a.item!.value - b.item!.value;
+      });
+    let energyGain = 0;
+    for (const stack of filteredItemStacks) {
+      if (stack.quantity > gemsToConsume) {
+        energyGain += (this.getLevel1GemEquivalence(stack.item!) * quantity) / this.energyGemConversionRate;
+        stack.quantity -= gemsToConsume;
+        gemsToConsume = 0;
+        break;
+      } else {
+        energyGain += (this.getLevel1GemEquivalence(stack.item!) * stack.quantity) / this.energyGemConversionRate;
+        gemsToConsume -= stack.quantity;
+        stack.quantity = 0;
+        const index = this.itemStacks.indexOf(stack);
+        this.setItemEmptyStack(index);
+      }
+    }
+    if (energyGain > 0) {
+      this.characterService.updateEnergy(ENERGY_SPIRIT, energyGain);
+      this.logService.log(
+        LogTopic.CRAFTING,
+        'Extracted ' +
+          this.bigNumberPipe.transform(energyGain) +
+          ' raw spirit energy from ' +
+          (quantity - gemsToConsume) +
+          ' gems.'
+      );
+    }
   }
 
   consumeByGemEquivalentValue(consumedThing: string, value: number, checkOnly = false, subtype = ''): number {

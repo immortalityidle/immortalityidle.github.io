@@ -171,7 +171,6 @@ export class FollowersService {
   hqUnlocked = false;
   hqInputs: ItemStack[] = [];
   giftRecipientCounter = 0;
-  energyGemConversion = 100000;
   leftoverHQCostGemValue = 0;
 
   hqs: HQ[] = [
@@ -670,7 +669,7 @@ export class FollowersService {
         }
         this.inventoryService.mergeAnySpiritGem(gemmerPower);
       },
-      description: 'Gemologists combine spirit gems into higher grades.',
+      description: 'Gemologists combine spirit gems into higher grades or help you use gem-focused workstations.',
       totalPower: 0,
       enabled: true,
     },
@@ -1073,7 +1072,7 @@ export class FollowersService {
     while (
       effectiveHQLevel >= 0 &&
       this.hqs[effectiveHQLevel].gemsPerDay > 0 &&
-      (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.energyGemConversion <
+      (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.inventoryService.energyGemConversionRate <
         this.hqs[effectiveHQLevel].gemsPerDay &&
       this.inventoryService.consumeByGemEquivalentValue(
         LOOT_TYPE_GEM,
@@ -1108,10 +1107,11 @@ export class FollowersService {
     if (this.hqs[effectiveHQLevel].gemsPerDay > 0) {
       const requiredValue = this.hqs[effectiveHQLevel].gemsPerDay * 10 - this.leftoverHQCostGemValue;
       if (
-        (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.energyGemConversion >=
+        (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.inventoryService.energyGemConversionRate >=
         this.hqs[effectiveHQLevel].gemsPerDay
       ) {
-        this.characterService.energy[ENERGY_SPIRIT] -= this.hqs[effectiveHQLevel].gemsPerDay / this.energyGemConversion;
+        this.characterService.energy[ENERGY_SPIRIT] -=
+          this.hqs[effectiveHQLevel].gemsPerDay / this.inventoryService.energyGemConversionRate;
       } else {
         const consumedValue = this.inventoryService.consumeByGemEquivalentValue(LOOT_TYPE_GEM, requiredValue);
         this.leftoverHQCostGemValue = consumedValue - requiredValue;
