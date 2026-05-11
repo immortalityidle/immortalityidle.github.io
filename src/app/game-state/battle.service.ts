@@ -1302,6 +1302,7 @@ export class BattleService {
 
   archiveTechnique(technique: Technique) {
     this.libraryTechniqueChanged = true;
+    technique.refinementFocus = false;
     const index = this.techniques.indexOf(technique);
     if (index > 2) {
       this.techniqueLibrary.push(technique);
@@ -3968,6 +3969,60 @@ export class BattleService {
         },
       ],
     },
+    {
+      name: 'eurymedon',
+      description: '',
+      location: LocationType.VerdantVineyard,
+      basePower: this.demigodBasePower * 10,
+      defenseToHealthRatio: 10,
+      lootType: [],
+      noPrefix: true,
+      techniques: [
+        {
+          name: 'Argonaut Fury',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 5,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'priapos',
+      description: '',
+      location: LocationType.VerdantVineyard,
+      basePower: this.demigodBasePower * 12,
+      defenseToHealthRatio: 10,
+      lootType: [],
+      noPrefix: true,
+      techniques: [
+        {
+          name: 'Veggie Barrage',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 5,
+          unlocked: true,
+        },
+      ],
+    },
+    {
+      name: 'phanosAndStaphylos',
+      description: '',
+      location: LocationType.VerdantVineyard,
+      basePower: this.demigodBasePower * 15,
+      defenseToHealthRatio: 10,
+      lootType: [],
+      noPrefix: true,
+      techniques: [
+        {
+          name: 'Argo Duo Strike',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: 5,
+          unlocked: true,
+        },
+      ],
+    },
 
     /* 
     Greek Demigods
@@ -3975,13 +4030,11 @@ Zeus: Heracles, Perseus, Pollux, Sarpedon, Helen, Amphion and Zethus, Minos
 Hera: Typhon, Eris
 Athena: Erichthonius
 Artemis: Huntress brigade
-Hermes: Autolycus, Eudoros, Myrtilus, Hermaphroditus
 Poseidon: Theseus, Bellerophon, Orion, Pelias, Cycnus, Messapus, Ancaeus.
 Apollo: Asclepius, Aristaeus, Ion.
 Hermes: Autolycus, Myrtilus, Abderus, Aethelides, Echion.
 Hephaestus: Periphetes, Erichthonius (in one version), Palaemonius.
 Ares: Hyppolita, Penthesilea, Oenomaus, Ascalaphus, Cycnus, Romulus and Remus.
-Dionysus: Deianira, Eurymedon, Phlias.
 Demeter: Plutus, Chrysothemis, Eubuleus.
 Aphrodite: Aeneas.
 */
