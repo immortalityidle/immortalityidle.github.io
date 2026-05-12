@@ -67,6 +67,9 @@ export interface ActivityProperties {
   petRecruitingCounter: number;
   coreCultivationCounter: number;
   researchWindCounter: number;
+  pillMoldCounter: number;
+  pillBoxCounter: number;
+  pillPouchCounter: number;
   beforeDeathPauseUsed: boolean;
   oddJobDays: number;
   beggingDays: number;
@@ -773,6 +776,9 @@ export class ActivityService {
       lifeActivities: this.lifeActivities,
       familySpecialty: this.familySpecialty,
       tauntCounter: this.tauntCounter,
+      pillMoldCounter: this.pillMoldCounter,
+      pillBoxCounter: this.pillBoxCounter,
+      pillPouchCounter: this.pillPouchCounter,
       researchWindCounter: this.researchWindCounter,
       miningCounter: this.miningCounter,
       huntingCounter: this.huntingCounter,
@@ -830,6 +836,9 @@ export class ActivityService {
     }
     this.totalExhaustedDays = properties.totalExhaustedDays || 0;
     this.tauntCounter = properties.tauntCounter;
+    this.pillMoldCounter = properties.pillMoldCounter;
+    this.pillBoxCounter = properties.pillBoxCounter;
+    this.pillPouchCounter = properties.pillPouchCounter;
     this.researchWindCounter = properties.researchWindCounter;
     this.miningCounter = properties.miningCounter;
     this.huntingCounter = properties.huntingCounter;

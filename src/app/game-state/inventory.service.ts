@@ -2548,7 +2548,7 @@ export class InventoryService {
     stack.quantity -= 10;
     this.addItem(this.generateSpiritGem(stack.item.value / 10 + 1, stack.item.subtype));
     // go find the stack and remove it or update the id
-    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+    for (let i = 0; i < this.itemStacks.length; i++) {
       if (this.itemStacks[i] === stack) {
         if (stack.quantity === 0) {
           this.setItemEmptyStack(i);

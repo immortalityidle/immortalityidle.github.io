@@ -14,7 +14,7 @@
               {{battleService.displayActiveFormation() | titlecase}} formation active
               @if (battleService.displayFormationDuration() > 0){
                 for {{battleService.displayFormationDuration()}} ticks
-                <mat-icon  (click)="battleService.cancelFormation()" tooltip="Cancel Formation" class="smallerIcon" aria-label="Cancel Formation" aria-hidden="false">
+                <mat-icon  (click)="battleService.cancelFormation()" tooltip="Cancel Formation" class="smallerIcon floatRight" aria-label="Cancel Formation" aria-hidden="false">
                   cancel
                 </mat-icon>
               }
@@ -26,7 +26,12 @@
             <div class="techniqueLine">
               <div class="techniqueName">
                 <input type="checkbox" [checked]="!technique.disabled()" (change)="techniqueEnableChange($event, $index)">
-                <span>{{technique.name()}}</span>
+                <span>{{technique.name()}}
+                  <mat-icon class="smallerIcon">
+                    {{technique.elementIcon()}}
+                  </mat-icon>
+
+                </span>
               </div>
               <div class="technique-bar"
                   [attr.value]="technique.ticks() | bigNumber"
@@ -66,7 +71,8 @@
           }
           <div>
             <span>Fighting </span>
-            <span class="enemyName">{{enemy.name()}}</span>
+            <span class="enemyName">{{enemy.name()}}
+            </span>
           </div>
           @if (!firstEnemy){
             <div>
@@ -75,6 +81,14 @@
           }
           <div class="columnDiv">
             <div class="splitDiv">
+              @if (enemy.elementIcon()){
+                <div>
+                  <span class="verticalMiddle">Element:</span>
+                  <mat-icon  [tooltip]=enemy.elementDescription()>
+                    {{enemy.elementIcon()}}
+                  </mat-icon>
+                </div>
+              }
               <div>
                 <span tooltip="Defense"><mat-icon>shield</mat-icon>{{enemy.defense() | bigNumber}}</span>
               </div>

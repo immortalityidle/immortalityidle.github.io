@@ -373,7 +373,7 @@ export class FollowersService {
       description:
         'An immense citidel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
-        ' Taels, five meals per follower, and ' +
+        ' Taels, five proper meals per follower, and ' +
         this.bigNumberPipe.transform(1e50) +
         ' level 1 gems or equivalent spirit energy (from raw spirit energy or higher quality gems) per day.<br>Requires 4 level 100 administrators to run it.',
       moneyPerDay: 1e26,
@@ -1118,7 +1118,13 @@ export class FollowersService {
       }
     }
     if (this.hqs[effectiveHQLevel].foodPerDay > 0) {
-      this.inventoryService.consume('food', this.hqs[effectiveHQLevel].foodPerDay, true, false, foodSubType);
+      this.inventoryService.consume(
+        'food',
+        this.hqs[effectiveHQLevel].foodPerDay * this.followers.length,
+        true,
+        false,
+        foodSubType
+      );
     }
 
     // get the benefits

@@ -68,6 +68,8 @@ export interface DisplayEnemy {
   techniques: DisplayTechnique[];
   statusEffects: DisplayStatusEffect[];
   divine: WritableSignal<boolean>;
+  elementIcon: WritableSignal<string>;
+  elementDescription: WritableSignal<string>;
 }
 
 export interface EnemyTypes {
@@ -177,6 +179,7 @@ export interface DisplayTechnique {
   weaponDamage: WritableSignal<number>;
   energyUsage: WritableSignal<number>;
   refinementFocus: WritableSignal<boolean>;
+  elementIcon: WritableSignal<string>;
 }
 
 export interface TechniqueDevelopmentEntry {
@@ -512,12 +515,6 @@ export class BattleService {
   ];
 
   private elementalFactor = 2;
-  // elemental logic:
-  // fire weakens metal and burns wood
-  // wood absorbs water and rootbinds earth
-  // water quenches fire and rusts metal
-  // metal cuts wood and breaks earth
-  // earth dams water and smothers fire
 
   techniques: Technique[] = [
     {
@@ -691,6 +688,8 @@ export class BattleService {
             techniques: [],
             statusEffects: [],
             divine: signal<boolean>(enemy.divine || false),
+            elementIcon: signal<string>(this.getElementIcon(enemy.element)),
+            elementDescription: signal<string>(this.getElementDescription(enemy.element)),
           });
         } else {
           this.displayEnemies[i].name.set(enemy.name);
@@ -699,6 +698,8 @@ export class BattleService {
           this.displayEnemies[i].healthPercentage.set(Math.floor((100 * enemy.health) / enemy.maxHealth));
           this.displayEnemies[i].defense.set(enemy.defense);
           this.displayEnemies[i].divine.set(enemy.divine || false);
+          this.displayEnemies[i].elementIcon.set(this.getElementIcon(enemy.element));
+          this.displayEnemies[i].elementDescription.set(this.getElementDescription(enemy.element));
         }
         while (this.displayEnemies[i].techniques.length > enemy.techniques.length) {
           this.displayEnemies[i].techniques.splice(0, 1);
@@ -730,6 +731,7 @@ export class BattleService {
               weaponDamage: signal<number>(technique.weaponDamage || 0),
               refinementFocus: signal<boolean>(false),
               energyUsage: signal<number>(technique.energyUsage || 0),
+              elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
             this.displayEnemies[i].techniques[j].name.set(technique.name);
@@ -747,6 +749,7 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].weaponDamage.set(technique.weaponDamage || 0);
             this.displayEnemies[i].techniques[j].energyUsage.set(technique.energyUsage || 0);
             this.displayEnemies[i].techniques[j].refinementFocus.set(false);
+            this.displayEnemies[i].techniques[j].elementIcon.set(this.getElementIcon(technique.effect));
           }
         }
         while (this.displayEnemies[i].statusEffects.length > (enemy.statusEffects?.length || 0)) {
@@ -808,6 +811,7 @@ export class BattleService {
             weaponDamage: signal<number>(technique.weaponDamage || 0),
             refinementFocus: signal<boolean>(technique.refinementFocus || false),
             energyUsage: signal<number>(technique.energyUsage || 0),
+            elementIcon: signal<string>(this.getElementIcon(technique.effect)),
           });
         } else {
           this.displayTechniques[i].name.set(technique.name);
@@ -835,6 +839,7 @@ export class BattleService {
           this.displayTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
           this.displayTechniques[i].refinementFocus.set(technique.refinementFocus || false);
           this.displayTechniques[i].energyUsage.set(technique.energyUsage || 0);
+          this.displayTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
         }
       }
 
@@ -922,6 +927,7 @@ export class BattleService {
               weaponDamage: signal<number>(technique.weaponDamage || 0),
               refinementFocus: signal<boolean>(false),
               energyUsage: signal<number>(technique.energyUsage || 0),
+              elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
             this.displayLibraryTechniques[i].name.set(technique.name);
@@ -948,6 +954,7 @@ export class BattleService {
             this.displayLibraryTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
             this.displayLibraryTechniques[i].energyUsage.set(technique.energyUsage || 0);
             this.displayLibraryTechniques[i].refinementFocus.set(false);
+            this.displayLibraryTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
           }
         }
       }
@@ -956,6 +963,69 @@ export class BattleService {
     mainLoopService.reincarnateSubject.subscribe(() => {
       this.reset();
     });
+  }
+
+  getElementIcon(element: string | undefined): string {
+    if (element === ELEMENT_EARTH) {
+      return 'landslide';
+    }
+    if (element === ELEMENT_FIRE) {
+      return 'local_fire_department';
+    }
+    if (element === ELEMENT_METAL) {
+      return 'view_module';
+    }
+    if (element === ELEMENT_WATER) {
+      return 'water';
+    }
+    if (element === ELEMENT_WOOD) {
+      return 'forest';
+    }
+    return '';
+  }
+
+  getElementDescription(element: string | undefined): string {
+    // fire weakens metal and burns wood
+    // wood absorbs water and rootbinds earth
+    // water quenches fire and rusts metal
+    // metal cuts wood and breaks earth
+    // earth dams water and smothers fire
+    if (element === ELEMENT_EARTH) {
+      return (
+        'This enemy is associated with the Earth element.<br><br>' +
+        'Takes additional damage from Wood and Metal techniques.<br><br>' +
+        'Takes reduced damage from Water and Fire techniques.<br><br>'
+      );
+    }
+    if (element === ELEMENT_FIRE) {
+      return (
+        'This enemy is associated with the Fire element.<br><br>' +
+        'Takes additional damage from Water and Earth techniques.<br><br>' +
+        'Takes reduced damage from Metal and Wood techniques.<br><br>'
+      );
+    }
+    if (element === ELEMENT_METAL) {
+      return (
+        'This enemy is associated with the Metal element.<br><br>' +
+        'Takes additional damage from Water and Fire techniques.<br><br>' +
+        'Takes reduced damage from Earth and Wood techniques.<br><br>'
+      );
+    }
+    if (element === ELEMENT_WATER) {
+      return (
+        'This enemy is associated with the Water element.<br><br>' +
+        'Takes additional damage from Wood and Earth techniques.<br><br>' +
+        'Takes reduced damage from Metal and Fire techniques.<br><br>'
+      );
+    }
+    if (element === ELEMENT_WOOD) {
+      return (
+        'This enemy is associated with the Wood element.<br><br>' +
+        'Takes additional damage from Fire and Metal techniques.<br><br>' +
+        'Takes reduced damage from Earth and Water techniques.<br><br>'
+      );
+    }
+    return '';
   }
 
   updateVoidSkip() {
@@ -1388,6 +1458,7 @@ export class BattleService {
       baseDamage: 100000,
       unlocked: true,
       attribute: 'fireLore',
+      effect: ELEMENT_FIRE,
       qiCost: 10000,
     });
   }
@@ -1406,6 +1477,7 @@ export class BattleService {
       baseDamage: 100000,
       unlocked: true,
       attribute: 'metalLore',
+      effect: ELEMENT_METAL,
       qiCost: 10000,
     });
   }
@@ -2329,6 +2401,7 @@ export class BattleService {
       techniques: techniques,
       unlocksFurniture: monsterType.unlocksFurniture,
       location: this.locationService.location,
+      element: monsterType.element,
     });
   }
 

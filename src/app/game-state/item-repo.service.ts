@@ -2626,7 +2626,8 @@ baguaMap = [
       name: 'Crown of Limbs',
       type: 'hellcrown',
       value: Infinity,
-      description: 'A crown topped with dismembered limbs. Using this will open up a new understanding of spirit gems.',
+      description:
+        'A crown topped with dismembered limbs. Using this will open up a new understanding of spirit gems and a new workstation.',
       useLabel: 'Accept the Crown',
       useDescription: '',
       useConsumes: true,
