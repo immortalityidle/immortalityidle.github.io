@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="statusRow">
-      <div class="statusCell health" tooltip="{{characterService.status.health.description}}">
+      <div class="statusCell health" tooltip="{{characterService.status.health.description}}{{characterService.healthBreakdown()}}">
         <div><span>Health</span></div>
         <div class="progress-bar" [ngClass]="healthService.flashHealth ? 'flash' : ''"
             [attr.value]="Math.floor(characterService.immortal() && characterService.status.health.displayValue() < 0 ? 0 : characterService.status.health.displayValue()) | bigNumber"
@@ -34,7 +34,7 @@
           </span>
         </div>
       </div>
-      <div class="statusCell stamina" tooltip="{{characterService.status.stamina.description}}">
+      <div class="statusCell stamina" tooltip="{{characterService.status.stamina.description}}{{characterService.staminaBreakdown()}}">
         <div><span>Stamina</span></div>
         <div class="progress-bar" [ngClass]="healthService.flashStamina ? 'flash' : ''"
           [attr.value]="Math.floor(characterService.immortal() && characterService.status.stamina.displayValue() < 0 ? 0 : characterService.status.stamina.displayValue()) | bigNumber"

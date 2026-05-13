@@ -22,7 +22,7 @@
 </div>
 @if (followerService.hqUnlocked){
   <div>
-    <span class="headerLine" [tooltip]="followerService.hqs[followerService.hq].description">
+    <span class="headerLine" tooltip="{{followerService.hqs[followerService.hq].description}}{{followerService.leftoverHQCostDisplay()}}">
       Headquarters: {{followerService.hqs[followerService.hq].name}}
     </span>
     @if (followerService.hqs[followerService.hq].upgradeMoneyCost !== 0) {

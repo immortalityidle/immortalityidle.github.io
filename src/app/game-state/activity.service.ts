@@ -5505,7 +5505,7 @@ export class ActivityService {
         if (this.characterService.status.stamina.max < staminaCost) {
           this.logService.log(
             LogTopic.EVENT,
-            'Hermes calls out: "Did you skip leg day or something? Do some cardio workouts before you come back here."'
+            'Hermes calls out: "Did you skip leg day or something? Where is your stamina? Do some cardio workouts before you come back here."'
           );
           return;
         }
@@ -5517,6 +5517,11 @@ export class ActivityService {
           return;
         }
         this.pantheonService.increaseGodProgress(GOD_HERMES, 1);
+        this.logService.log(
+          LogTopic.EVENT,
+          'Hermes calls out: "Thanks, pal, maybe you\'re quicker than you look! And your legs look like they\'ve gotten a little more go-go-go to them."'
+        );
+
         this.characterService.increaseAttribute('speed', 100);
         if (this.characterService.staminaCap < 1e8) {
           this.characterService.staminaCap++;
@@ -5552,6 +5557,10 @@ export class ActivityService {
           return;
         }
         this.pantheonService.increaseGodProgress(GOD_DIONYSUS, 1);
+        this.logService.log(
+          LogTopic.EVENT,
+          'Dionysus says: "Well, well, well! What a nice surprise! This is just what we needed."'
+        );
       },
     ],
     resourceUse: [],
@@ -5588,6 +5597,11 @@ export class ActivityService {
         }
         this.inventoryService.getWildMeat(500); // TODO: Tune this
         this.pantheonService.increaseGodProgress(GOD_ARTEMIS, 1);
+        this.logService.log(
+          LogTopic.EVENT,
+          'Artemis whispers: "A fine kill, strange god. Perhaps you do know your way around the woods."'
+        );
+
         if (this.characterService.staminaCap < 5e8) {
           this.characterService.staminaCap++;
         }

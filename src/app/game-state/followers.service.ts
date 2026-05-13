@@ -172,6 +172,7 @@ export class FollowersService {
   hqInputs: ItemStack[] = [];
   giftRecipientCounter = 0;
   leftoverHQCostGemValue = 0;
+  leftoverHQCostDisplay = signal<string>('');
 
   hqs: HQ[] = [
     {
@@ -400,7 +401,7 @@ export class FollowersService {
         this.homeService.chefsWork(Math.floor(workPower / 100));
         this.leftoverWork['chef'] = workPower % 100;
       },
-      description: 'Chefs increase the output of your kitchens.',
+      description: 'Chefs work in your kitchens, turning raw ingredients into tasty meals.',
       totalPower: 0,
       enabled: true,
     },
@@ -873,6 +874,15 @@ export class FollowersService {
       this.sortFollowers(this.sortAscending, false);
 
       this.checkTriggers();
+      if (this.leftoverHQCostGemValue > 0) {
+        this.leftoverHQCostDisplay.set(
+          '<br>Currently storing ' +
+            this.bigNumberPipe.transform(this.leftoverHQCostGemValue / 10) +
+            ' gems worth of spirit energy.'
+        );
+      } else {
+        this.leftoverHQCostDisplay.set('');
+      }
     });
 
     mainLoopService.tickSubject.subscribe(() => {

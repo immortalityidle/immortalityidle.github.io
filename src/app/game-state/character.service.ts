@@ -575,7 +575,7 @@ export class CharacterService {
   };
   status: CharacterStatus = {
     health: {
-      description: 'Physical well-being. Take too much damage and you will die.',
+      description: 'Physical well-being.<br>Take too much damage and you will die.',
       value: 100,
       displayValue: signal<number>(100),
       max: 100,
@@ -584,7 +584,7 @@ export class CharacterService {
     },
     stamina: {
       description:
-        'Physical energy to accomplish tasks. Most activities use stamina, and if you let yourself run down you could get sick and have to stay in bed for a few days.',
+        'Physical energy to accomplish tasks.<br>Most activities use stamina, and if you let yourself run down you could get sick and have to stay in bed for a few days.',
       value: 100,
       displayValue: signal<number>(100),
       max: 100,
@@ -601,7 +601,7 @@ export class CharacterService {
     },
     nutrition: {
       description:
-        'Eating is essential to life. You will automatically eat whatever food you have available when you are hungry. If you run out of food, you will automatically spend some money on cheap scraps each day.',
+        'Eating is essential to life.<br>You will automatically eat whatever food you have available when you are hungry.<br>If you run out of food, you will automatically spend some money on cheap scraps each day.',
       value: 30,
       displayValue: signal<number>(30),
       max: 30,
@@ -661,6 +661,9 @@ export class CharacterService {
   keepPouchItems = false;
   energy: { [key: string]: number } = {};
   staminaCap = 1000000;
+  staminaBreakdown = signal<string>('');
+  healthBreakdown = signal<string>('');
+  healthBonusFactor = 1;
 
   constructor(
     private injector: Injector,
@@ -725,6 +728,46 @@ export class CharacterService {
         );
         displayEnergyIndex++;
       }
+
+      let staminaBreakdownString =
+        '<br><br>You currently have ' +
+        Math.floor(this.status.stamina.value) +
+        ' of ' +
+        this.status.stamina.max +
+        ' stamina.';
+      if (this.status.stamina.max < this.staminaCap && this.activityService?.SoulCultivation.unlocked) {
+        staminaBreakdownString += '<br><br>Your maximum stamina can be increased through Soul Cultivation.';
+      }
+      this.staminaBreakdown.set(staminaBreakdownString);
+
+      let healthBreakdownString =
+        '<br><br>You currently have ' +
+        Math.floor(this.status.health.value) +
+        ' of ' +
+        this.status.health.max +
+        ' health.';
+      healthBreakdownString += '<br><br>Base Health: 100.';
+      healthBreakdownString +=
+        '<br>Toughness Bonus: ' + Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5) + '.';
+      if (this.healthBonusFood > 0) {
+        healthBreakdownString += '<br>Food Bonus: ' + this.healthBonusFood + '.';
+      }
+      if (this.healthBonusBath > 0) {
+        healthBreakdownString += '<br>Hygiene Bonus: ' + this.healthBonusBath + '.';
+      }
+      if (this.healthBonusMagic > 0) {
+        healthBreakdownString += '<br>Magic Bonus: ' + this.healthBonusMagic + '.';
+      }
+      if (this.healthBonusSoul > 0) {
+        healthBreakdownString += '<br>Soul Cultivation Bonus: ' + this.healthBonusSoul + '.';
+      }
+      if (this.healthBonusDivine > 0) {
+        healthBreakdownString += '<br>Divine Bonus: ' + this.healthBonusDivine + '.';
+      }
+      if (this.healthBonusFactor > 1) {
+        healthBreakdownString += '<br>Health Multiplier: ' + this.healthBonusFactor + '.';
+      }
+      this.healthBreakdown.set(healthBreakdownString);
 
       if (this.highestMoney < this.money) {
         this.highestMoney = this.money;
@@ -1137,15 +1180,15 @@ export class CharacterService {
   }
 
   recalculateDerivedStats(): void {
-    let bonusFactor = 1;
+    this.healthBonusFactor = 1;
     if (this.bonusHealth) {
-      bonusFactor = 5;
+      this.healthBonusFactor = 5;
     }
     const lifeConcepts = this.contemplationService.concepts.filter(concept => concept.effect.includes('life'));
     for (const concept of lifeConcepts) {
-      bonusFactor *= Math.log10(10 + concept.progress);
+      this.healthBonusFactor *= Math.log10(10 + concept.progress);
     }
-    bonusFactor += this.fengshuiScore / 20;
+    this.healthBonusFactor += this.fengshuiScore / 20;
     this.status.health.max =
       (100 +
         this.healthBonusFood +
@@ -1154,7 +1197,7 @@ export class CharacterService {
         this.healthBonusSoul +
         this.healthBonusDivine +
         Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
-      bonusFactor;
+      this.healthBonusFactor;
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
