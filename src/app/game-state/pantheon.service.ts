@@ -38,6 +38,7 @@ export interface God {
   techniqueCooldowns: number[];
   challengeMessage: WritableSignal<string>;
   attributes: string[];
+  defeatEffect?: string;
 }
 
 export interface Pantheon {
@@ -125,6 +126,7 @@ export class PantheonService {
             "A duel?<br><br>Oh, no, I couldn't possibly.<br><br>The celebrations must continue, so I need to focus on getting this year's vintage ready."
           ),
           attributes: ['mercy', 'mercy', 'mercy', 'wisdom', 'wisdom'],
+          defeatEffect: 'unlockNectar',
         },
         {
           name: signal<string>(GOD_ARTEMIS),
@@ -468,6 +470,7 @@ export class PantheonService {
       location: LocationType.DivineArena,
       divine: true,
       immunities: [EFFECT_DOOM, EFFECT_POISON],
+      defeatEffect: god.defeatEffect,
     });
   }
 

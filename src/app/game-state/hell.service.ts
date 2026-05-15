@@ -969,15 +969,6 @@ export class HellService {
     this.fasterHellMoney = properties.fasterHellMoney || false;
     this.burnedMoney = properties.burnedMoney || 0;
     this.portalsSet = false;
-    setTimeout(() => {
-      // kludge to recover hell progress after refactor, remove this later
-      this.itemRepoService.hellCleanup();
-      for (const completedHell of this.completedHellBosses) {
-        if (!this.completedHellTasks.includes(completedHell)) {
-          this.completedHellTasks.push(completedHell);
-        }
-      }
-    });
   }
 
   hells: Hell[] = [

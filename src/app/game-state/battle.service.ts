@@ -128,6 +128,8 @@ export interface BattleProperties {
   blockedTechniqueEffects: string[];
   voidSkipCounter: number;
   pauseOnBattle: boolean;
+  qiAttacksUnlocked: boolean;
+  maximumTechniqueQiUsage: number;
 }
 
 export interface Technique {
@@ -216,7 +218,6 @@ export const LOOT_TYPE_ENERGY = 'energy';
 export const RIGHT_HAND_TECHNIQUE = 'Right-Handed Weapon';
 export const LEFT_HAND_TECHNIQUE = 'Left-Handed Weapon';
 export const QI_ATTACK = 'Qi Strike';
-export const PYROCLASM_ATTACK = 'Pyroclasm';
 export const METAL_FIST_ATTACK = 'Metal Fist';
 export const QI_SHIELD = 'Qi Shield';
 export const FIRE_SHIELD = 'Fire Shield';
@@ -243,8 +244,9 @@ export const EFFECT_ZOMBIE_DECOY = 'zombie_decoy';
 export const TECHNIQUE_REFINEMENT_POWER = 'increase technique power';
 export const TECHNIQUE_REFINEMENT_COOLDOWN = 'decrease technique cooldown';
 export const TECHNIQUE_REFINEMENT_WEAPONS = 'incorporate your weapons into the technique';
-export const TECHNIQUE_REFINEMENT_ENERGY_USAGE = 'incorporate energy into the technique';
+export const TECHNIQUE_REFINEMENT_ENERGY_USAGE = 'incorporate raw energy into the technique';
 export const TECHNIQUE_REFINEMENT_DIVINITY = 'increase damage to divine beings';
+export const TECHNIQUE_REFINEMENT_QI_USAGE = 'increase technique qi usage and damage';
 
 export const ELEMENT_FIRE = 'fire';
 export const ELEMENT_WATER = 'water';
@@ -315,7 +317,9 @@ export class BattleService {
   maximumTechniqueWeaponDamage = 1;
   maximumTechniqueDivineDamage = 1;
   maximumTechniqueEnergyUsage = 100000;
+  maximumTechniqueQiUsage = 1000;
   pauseOnBattle = false;
+  qiAttacksUnlocked = false;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -1144,6 +1148,8 @@ export class BattleService {
       blockedTechniqueEffects: blockedEffects,
       voidSkipCounter: this.voidSkipCounter,
       pauseOnBattle: this.pauseOnBattle,
+      maximumTechniqueQiUsage: this.maximumTechniqueQiUsage,
+      qiAttacksUnlocked: this.qiAttacksUnlocked,
     };
   }
 
@@ -1185,6 +1191,8 @@ export class BattleService {
     this.pouchFoodUsed = properties.pouchFoodUsed;
     this.timesFled = properties.timesFled;
     this.voidSkipCounter = properties.voidSkipCounter;
+    this.maximumTechniqueQiUsage = properties.maximumTechniqueQiUsage;
+    this.qiAttacksUnlocked = properties.qiAttacksUnlocked;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -1307,9 +1315,9 @@ export class BattleService {
     const attackNoun = attackNouns[Math.floor(Math.random() * attackNouns.length)];
     const ticksRequired = 5 + Math.floor(Math.random() * 10);
     const staminaCost = Math.max(Math.floor(Math.random() * 20) - 5, 0);
-    const qiCost = Math.max(Math.floor(Math.random() * 10) - 5, 0);
-    if (qiCost > 1) {
-      extraMultiplier += qiCost / 10;
+    let qiCost = 0;
+    if (this.qiAttacksUnlocked) {
+      qiCost = Math.max(Math.floor(Math.random() * 10) - 5, 0);
     }
 
     let effects = this.techniqueEffectsList.filter(entry => entry.allowed);
@@ -1424,6 +1432,9 @@ export class BattleService {
     } else if (aspect === TECHNIQUE_REFINEMENT_DIVINITY) {
       const alpha = value * 1e-21;
       technique.divineDamage = (1 - alpha) * (technique.divineDamage || 0) + alpha * this.maximumTechniqueDivineDamage;
+    } else if (aspect === TECHNIQUE_REFINEMENT_QI_USAGE) {
+      const alpha = value * 1e-8;
+      technique.qiCost = (1 - alpha) * (technique.qiCost || 0) + alpha * this.maximumTechniqueQiUsage;
     }
   }
 
@@ -1441,25 +1452,6 @@ export class BattleService {
       unlocked: true,
       attribute: 'intelligence',
       qiCost: 10,
-    });
-  }
-
-  addPyroclasm() {
-    if (this.techniques.find(technique => technique.name === PYROCLASM_ATTACK)) {
-      // already added, bail out
-      return;
-    }
-    this.techniques.push({
-      name: PYROCLASM_ATTACK,
-      description:
-        "Focus your Qi and blast your enemies with heat so intense their children's children will get burned. Each use of this ability requires 10,000 Qi.",
-      ticksRequired: 20,
-      ticks: 0,
-      baseDamage: 100000,
-      unlocked: true,
-      attribute: 'fireLore',
-      effect: ELEMENT_FIRE,
-      qiCost: 10000,
     });
   }
 
@@ -1856,6 +1848,10 @@ export class BattleService {
         damage *= technique.extraMultiplier;
       }
 
+      if (technique.qiCost) {
+        damage *= technique.qiCost / 10;
+      }
+
       let elementalWeaknessHit = false;
       // apply effects
       if (effect === EFFECT_CORRUPTION) {
@@ -2053,7 +2049,6 @@ export class BattleService {
       if (damage < 1) {
         damage = 1;
       }
-      let blowthrough = false;
       if (technique.name === METAL_FIST_ATTACK) {
         // TODO: tune this
         let metalMultiplier = Math.log(this.characterService.attributes.metalLore.value) / Math.log(50);
@@ -2064,18 +2059,6 @@ export class BattleService {
           metalMultiplier = 100;
         }
         damage *= metalMultiplier;
-      }
-      if (technique.name === PYROCLASM_ATTACK) {
-        // TODO: tune this
-        let fireMultiplier = Math.log(this.characterService.attributes.fireLore.value) / Math.log(100);
-        if (fireMultiplier < 1) {
-          fireMultiplier = 1;
-        }
-        if (fireMultiplier > 10) {
-          fireMultiplier = 10;
-        }
-        damage *= fireMultiplier;
-        blowthrough = true;
       }
       damage += damage * this.characterService.yinYangBalance;
 
@@ -2127,15 +2110,6 @@ export class BattleService {
 
       if (this.currentEnemy.divine) {
         damage *= technique.divineDamage || 0;
-      }
-
-      let overage = this.damageEnemy(damage, technique.name);
-      if (blowthrough) {
-        while (overage > 0 && this.enemies.length > 0) {
-          // keep using extra damage until it's gone or the enemies are
-          this.currentEnemy = this.enemies[0];
-          overage = this.damageEnemy(overage, technique.name);
-        }
       }
     }
   }
@@ -2608,6 +2582,8 @@ export class BattleService {
           location: this.locationService?.location || LocationType.Steamers,
         });
       }
+    } else if (enemy.defeatEffect === 'unlockNectar') {
+      this.homeService.nectarUnlocked = true;
     }
   }
 

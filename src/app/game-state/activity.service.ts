@@ -4215,7 +4215,7 @@ export class ActivityService {
     consequence: [
       () => {
         const trainingChambers = this.homeService.workstations.filter(ws => ws.id === WORKSTATION_TRAINING_CHAMBER);
-        if (trainingChambers.length <= 0 || this.locationService?.currentRealm !== Realm.MortalRealm) {
+        if (trainingChambers.length <= 0 || this.locationService?.currentRealm === Realm.Hell) {
           this.logService.log(
             LogTopic.EVENT,
             "You fail to refine any techniques because you don't have access to a dedicated training chamber workstation."
@@ -4223,7 +4223,7 @@ export class ActivityService {
           return;
         }
         const followerPower = this.followerService.jobs[FOLLOWER_TYPE_TECHNIQUE_MASTER].totalPower;
-        if (followerPower < 1 || this.locationService?.currentRealm !== Realm.MortalRealm) {
+        if (followerPower < 1) {
           this.logService.log(
             LogTopic.EVENT,
             "You fail to refine any techniques because you don't have access to a technique master to help you train."

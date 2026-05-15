@@ -13,13 +13,13 @@
         <span> old.</span>
       </div>
       <div class="statusCell">
+        <mat-icon tooltip="{{characterService.lifespanTooltip()}}">timer</mat-icon>
         @if (characterService.immortal()) {
             <span>You expect to live forever.</span>
         }
         @else {
           <span>You expect to live {{characterService.displayLifespan() | bigNumber}} years.</span>
         }
-        <mat-icon tooltip="{{characterService.lifespanTooltip()}}">timer</mat-icon>
       </div>
     </div>
     <div class="statusRow">

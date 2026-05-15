@@ -21,6 +21,7 @@ import {
   TECHNIQUE_REFINEMENT_DIVINITY,
   TECHNIQUE_REFINEMENT_ENERGY_USAGE,
   TECHNIQUE_REFINEMENT_POWER,
+  TECHNIQUE_REFINEMENT_QI_USAGE,
   TECHNIQUE_REFINEMENT_WEAPONS,
 } from './battle.service';
 import { CONCEPT_EFFECT_FOOD_YIELD, CONCEPT_EFFECT_HOME_RECOVERY, ContemplationService } from './contemplation.service';
@@ -124,6 +125,8 @@ export interface HomeProperties {
   pillsMade: number;
   merchantAutobuyItem: string | null;
   unlockedWorkstations: string[];
+  nectarUnlocked: boolean;
+  qiAttackRefinementUnlocked: boolean;
 }
 
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
@@ -162,6 +165,8 @@ export class HomeService {
   pillCraftsRequired = 5;
   pillsMade = 0;
   merchantAutobuyItem: string | null = null;
+  qiAttackRefinementUnlocked = false;
+
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, espeicially formations
 
@@ -1050,6 +1055,7 @@ export class HomeService {
   highestLand = 0;
   highestLandPrice = 100;
   bestHome = 0;
+  nectarUnlocked = false;
 
   constructor(
     private injector: Injector,
@@ -1228,6 +1234,8 @@ export class HomeService {
       pillsMade: this.pillsMade,
       merchantAutobuyItem: this.merchantAutobuyItem,
       unlockedWorkstations: unlockedWorkstations,
+      nectarUnlocked: this.nectarUnlocked,
+      qiAttackRefinementUnlocked: this.qiAttackRefinementUnlocked,
     };
   }
 
@@ -1264,6 +1272,8 @@ export class HomeService {
     this.forgeChainsCounter = properties.forgeChainsCounter || 0;
     this.pillsMade = properties.pillsMade;
     this.merchantAutobuyItem = properties.merchantAutobuyItem;
+    this.nectarUnlocked = properties.nectarUnlocked;
+    this.qiAttackRefinementUnlocked = properties.qiAttackRefinementUnlocked;
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
@@ -2206,9 +2216,19 @@ export class HomeService {
       if (divineFruitStack?.item?.id === 'divinePeach' && divineFruitStack.quantity > 10) {
         divineFruitStack.quantity -= 10;
         this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
+        return;
       } else if (divineFruitStack?.item?.id === 'grapes' && divineFruitStack.quantity > 10000) {
         divineFruitStack.quantity -= 10000;
         this.inventoryService.addItem(this.itemRepoService.items['wine']);
+        return;
+      }
+      if (this.nectarUnlocked) {
+        const wineStack = workstation.inputs.find(itemStack => itemStack.item?.id === 'wine');
+        if (wineStack && wineStack.quantity >= 1000) {
+          wineStack.quantity -= 1000;
+          this.inventoryService.addItem(this.itemRepoService.items['nectar']);
+          return;
+        }
       }
     } else {
       for (const itemStack of herbStacks) {
@@ -2417,17 +2437,21 @@ export class HomeService {
   }
 
   changeWorkstationTechniqueRefinement(workstation: Workstation) {
-    if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_POWER) {
-      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_COOLDOWN;
-    } else if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_COOLDOWN) {
-      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_WEAPONS;
-    } else if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_WEAPONS && this.characterService.god()) {
-      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_DIVINITY;
-    } else if (workstation.techniqueRefinementAspect === TECHNIQUE_REFINEMENT_DIVINITY && this.characterService.god()) {
-      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_ENERGY_USAGE;
-    } else {
-      workstation.techniqueRefinementAspect = TECHNIQUE_REFINEMENT_POWER;
+    const aspects = [TECHNIQUE_REFINEMENT_POWER, TECHNIQUE_REFINEMENT_COOLDOWN, TECHNIQUE_REFINEMENT_WEAPONS];
+    if (this.qiAttackRefinementUnlocked) {
+      aspects.push(TECHNIQUE_REFINEMENT_QI_USAGE);
     }
+    if (this.characterService.god()) {
+      aspects.push(TECHNIQUE_REFINEMENT_DIVINITY);
+      aspects.push(TECHNIQUE_REFINEMENT_ENERGY_USAGE);
+    }
+    let index = aspects.indexOf(workstation.techniqueRefinementAspect || TECHNIQUE_REFINEMENT_POWER);
+    if (index === aspects.length - 1) {
+      index = 0;
+    } else {
+      index++;
+    }
+    workstation.techniqueRefinementAspect = aspects[index];
   }
 
   changeWorkstationEnergyManipulation(workstation: Workstation) {

@@ -1542,7 +1542,7 @@ export class AchievementService {
     {
       name: 'Harmony of Mind and Body',
       description:
-        'You have balanced your powerful mind and body and unlocked the ability to use your Qi to strike down your enemies.',
+        'You have balanced your powerful mind and body and unlocked the ability to develop techniques that use your Qi to strike down your enemies.',
       hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
         const speed = this.characterService.attributes.speed.value;
@@ -1556,7 +1556,7 @@ export class AchievementService {
         return lowValue >= 1000000 && highValue <= lowValue * 1.21; // 1.1 * 1.1 = 1.21
       },
       effect: () => {
-        this.battleService.addQiAttack();
+        this.battleService.qiAttacksUnlocked = true;
       },
       unlocked: false,
     },

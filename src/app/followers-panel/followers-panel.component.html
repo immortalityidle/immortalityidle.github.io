@@ -22,8 +22,12 @@
 </div>
 @if (followerService.hqUnlocked){
   <div>
-    <span class="headerLine" tooltip="{{followerService.hqs[followerService.hq].description}}{{followerService.leftoverHQCostDisplay()}}">
-      Headquarters: {{followerService.hqs[followerService.hq].name}}
+    <span class="headerLine" >
+      Headquarters: 
+      <mat-icon tooltip="{{followerService.hqs[followerService.hq].description}}{{followerService.leftoverHQCostDisplay()}}">
+        help
+      </mat-icon>
+      {{followerService.hqs[followerService.hq].name}}
     </span>
     @if (followerService.hqs[followerService.hq].upgradeMoneyCost !== 0) {
       <mat-icon class="iconButton optionsIcon" (click)="followerService.upgradeHQ()" aria-label="Upgrade Headquarters" aria-hidden="false"

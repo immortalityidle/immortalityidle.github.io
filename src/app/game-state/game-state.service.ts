@@ -672,6 +672,8 @@ export class GameStateService {
       pillsMade: props?.pillsMade || 0,
       merchantAutobuyItem: props?.merchantAutobuyItem || null,
       unlockedWorkstations: props?.unlockedWorkstations || [],
+      nectarUnlocked: props?.nectarUnlocked || false,
+      qiAttackRefinementUnlocked: props?.qiAttackRefinementUnlocked || false,
     };
   }
 
@@ -817,6 +819,8 @@ export class GameStateService {
       blockedTechniqueEffects: props?.blockedTechniqueEffects || [],
       voidSkipCounter: props?.voidSkipCounter || 0,
       pauseOnBattle: props?.pauseOnBattle || false,
+      maximumTechniqueQiUsage: props?.maximumTechniqueQiUsage || 1000,
+      qiAttacksUnlocked: props?.qiAttacksUnlocked || false,
     };
   }
 
