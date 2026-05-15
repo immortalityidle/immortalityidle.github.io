@@ -2111,6 +2111,15 @@ export class BattleService {
       if (this.currentEnemy.divine) {
         damage *= technique.divineDamage || 0;
       }
+      const blowthrough = false; // TODO: make this usable again
+      let overage = this.damageEnemy(damage, technique.name);
+      if (blowthrough) {
+        while (overage > 0 && this.enemies.length > 0) {
+          // keep using extra damage until it's gone or the enemies are
+          this.currentEnemy = this.enemies[0];
+          overage = this.damageEnemy(overage, technique.name);
+        }
+      }
     }
   }
 
