@@ -688,6 +688,7 @@ export class CharacterService {
       if (!this.dead) {
         this.age++;
       }
+      this.status.nutrition.value--; // tick the day's hunger
       this.checkForDeath();
     });
 

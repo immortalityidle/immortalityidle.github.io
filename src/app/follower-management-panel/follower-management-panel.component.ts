@@ -106,6 +106,7 @@ export class FollowerManagementPanelComponent {
 
   protected sortAscSwitch() {
     this.followerService.sortAscending = !this.followerService.sortAscending;
+    this.followerService.sortFollowers(this.followerService.sortAscending, this.pets);
   }
 
   protected sortOrderChanged(event: Event) {

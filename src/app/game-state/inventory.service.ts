@@ -331,6 +331,14 @@ export class InventoryService {
       this.itemStacks.push(this.getEmptyItemStack());
     }
 
+    mainLoopService.breakfastSubject.subscribe(() => {
+      this.eatBreakfast();
+    });
+
+    mainLoopService.dinnerSubject.subscribe(() => {
+      this.eatDinner();
+    });
+
     mainLoopService.inventoryTickSubject.subscribe(() => {
       this.tick();
     });
@@ -383,9 +391,6 @@ export class InventoryService {
     if (this.characterService.dead) {
       return;
     }
-    this.characterService.status.nutrition.value--; // tick the day's hunger
-    this.foodEatenToday = 0;
-    this.eatDailyMeal();
 
     if (this.mergeCounter >= 20) {
       if (this.autoWeaponMergeUnlocked) {
@@ -397,9 +402,6 @@ export class InventoryService {
       this.mergeCounter = 0;
     } else {
       this.mergeCounter++;
-    }
-    if (this.foodEatenToday === this.maxFoodPerDay) {
-      this.daysGorged++;
     }
   }
 
@@ -1382,48 +1384,26 @@ export class InventoryService {
     }
   }
 
-  eatDailyMeal(): void {
+  eatDinner(): void {
     if (
       this.autoEatUnlocked() &&
       (this.autoEatNutrition || this.autoEatHealth || this.autoEatStamina || this.autoEatQi || this.autoEatAll)
     ) {
-      let foodStack = null;
-      let fed = false;
-      let highestValue = -1;
-      for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
-        const itemIterator = this.itemStacks[i];
-        if (itemIterator.item === null) {
-          continue;
-        }
-        if (
-          itemIterator.item!.type === 'food' &&
-          this.autoUseEntries.find(item => item.name === itemIterator.item!.name)
-        ) {
-          if (itemIterator.item!.value > highestValue) {
-            highestValue = itemIterator.item!.value;
-            foodStack = itemIterator;
-          }
-        }
-      }
-      while (foodStack && foodStack.quantity > 0 && !this.bellyFull()) {
-        this.useItemStack(foodStack);
-        fed = true;
-      }
+      this.eatToLimit(false);
+    }
+    if (this.foodEatenToday === this.maxFoodPerDay) {
+      this.daysGorged++;
+    }
+  }
 
-      if (!fed) {
-        // no food found, buy scraps automatically
-        if (
-          !this.hellService?.inHell() &&
-          this.characterService.money > 0 &&
-          this.autoBuyFood &&
-          this.characterService.status.nutrition.value <= this.characterService.status.nutrition.max * 0.2
-        ) {
-          this.characterService.updateMoney(-1);
-          this.characterService.status.nutrition.value++;
-        }
-      }
-      this.characterService.checkOverage();
+  eatBreakfast(): void {
+    this.foodEatenToday = 0;
 
+    if (
+      this.autoEatUnlocked() &&
+      (this.autoEatNutrition || this.autoEatHealth || this.autoEatStamina || this.autoEatQi || this.autoEatAll)
+    ) {
+      this.eatToLimit(this.autoBuyFood);
       return;
     }
     if (this.characterService.status.nutrition.value > this.characterService.status.nutrition.max * 0.2) {
@@ -1448,6 +1428,44 @@ export class InventoryService {
     } else {
       // no food found, buy scraps automatically
       if (!this.hellService?.inHell() && this.characterService.money > 0 && this.autoBuyFood) {
+        this.characterService.updateMoney(-1);
+        this.characterService.status.nutrition.value++;
+      }
+    }
+    this.characterService.checkOverage();
+  }
+
+  eatToLimit(buyScraps: boolean) {
+    let foodStack = null;
+    let fed = false;
+    let highestValue = -1;
+    for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+      const itemIterator = this.itemStacks[i];
+      if (itemIterator.item === null) {
+        continue;
+      }
+      if (
+        itemIterator.item!.type === 'food' &&
+        this.autoUseEntries.find(item => item.name === itemIterator.item!.name)
+      ) {
+        if (itemIterator.item!.value > highestValue) {
+          highestValue = itemIterator.item!.value;
+          foodStack = itemIterator;
+        }
+      }
+    }
+    while (foodStack && foodStack.quantity > 0 && !this.bellyFull()) {
+      this.useItemStack(foodStack);
+      fed = true;
+    }
+
+    if (!fed && buyScraps) {
+      // no food found, buy scraps automatically
+      if (
+        !this.hellService?.inHell() &&
+        this.characterService.money > 0 &&
+        this.characterService.status.nutrition.value <= this.characterService.status.nutrition.max * 0.2
+      ) {
         this.characterService.updateMoney(-1);
         this.characterService.status.nutrition.value++;
       }
@@ -1707,7 +1725,7 @@ export class InventoryService {
       }
 
       if (item.type !== 'food') {
-        // food has its own autouse handling in eatDailyMeal()
+        // food has its own auto-use handling
         for (const entry of this.autoUseEntries) {
           if (entry.name === item.name) {
             let numberToUse = this.getQuantityByName(item.name) + quantity - entry.reserve;

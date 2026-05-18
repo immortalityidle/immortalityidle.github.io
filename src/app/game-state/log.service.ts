@@ -128,6 +128,9 @@ export class LogService {
 
   setProperties(properties: LogProperties) {
     this.logs[LogTopic.STORY] = properties.storyLog;
+    for (const log of this.logs[LogTopic.STORY]) {
+      log.message = log.message.replaceAll('<br>', ' ');
+    }
     properties.logTopics.forEach(topic => {
       this.topicProperties[LogTopic[topic]].enabled = true;
     });

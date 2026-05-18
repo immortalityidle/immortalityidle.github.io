@@ -763,7 +763,7 @@ export class AchievementService {
     {
       name: 'Waster',
       description:
-        'You throw away 10,000 items and unlocked the ' + this.itemRepoService.items['betterStorageManual'].name,
+        'You threw away 10,000 items and unlocked the ' + this.itemRepoService.items['betterStorageManual'].name,
       hint: 'Too much stuff.',
       check: () => {
         return this.inventoryService.thrownAwayItems >= 10000;
@@ -776,7 +776,7 @@ export class AchievementService {
     {
       name: 'Landfill',
       description:
-        'You throw away 100,000 items and unlocked the ' + this.itemRepoService.items['evenBetterStorageManual'].name,
+        'You threw away 100,000 items and unlocked the ' + this.itemRepoService.items['evenBetterStorageManual'].name,
       hint: 'Way, way too much stuff.',
       check: () => {
         return this.inventoryService.maxStackSize >= 1000 && this.inventoryService.thrownAwayItems >= 100000;

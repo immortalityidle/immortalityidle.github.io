@@ -39,6 +39,8 @@ export class MainLoopService {
 
   battleService?: BattleService;
 
+  breakfastSubject = new Subject<number>();
+  dinnerSubject = new Subject<number>();
   tickSubject = new Subject<number>();
   homeTickSubject = new Subject<number>();
   inventoryTickSubject = new Subject<number>();
@@ -255,6 +257,8 @@ export class MainLoopService {
     if (this.battleService && this.battleService.enemies.length > 0) {
       this.battleTickSubject.next(1);
     } else {
+      // tick a day
+      this.breakfastSubject.next(1);
       this.daysSinceLongTick++;
       this.daysSinceYearOrLongTick++;
       if (this.daysSinceYearOrLongTick >= 365) {
@@ -272,6 +276,7 @@ export class MainLoopService {
       this.inventoryTickSubject.next(1);
       this.homeTickSubject.next(1);
       this.tickSubject.next(1); // ticks character, followers, and hell
+      this.dinnerSubject.next(1);
     }
     if (this.reincarnating) {
       this.reincarnateSubject.next(1);
