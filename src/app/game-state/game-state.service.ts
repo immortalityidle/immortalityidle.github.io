@@ -1107,6 +1107,12 @@ export class GameStateService {
           aptitude: props?.attributes?.haggling?.aptitude || 1,
           aptitudeMult: props?.attributes?.haggling?.aptitudeMult || 1,
         },
+        metalFist: {
+          value: props?.attributes?.metalFist?.value || 0,
+          lifeStartValue: props?.attributes?.metalFist?.lifeStartValue || 0,
+          aptitude: props?.attributes?.metalFist?.aptitude || 1,
+          aptitudeMult: props?.attributes?.metalFist?.aptitudeMult || 1,
+        },
       },
       status: {
         health: {

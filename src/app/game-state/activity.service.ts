@@ -1388,10 +1388,10 @@ export class ActivityService {
             LogTopic.EVENT,
             "You think about making mortar, but you don't have any workstations ready to get started."
           );
-        }
-        if (this.pauseOnImpossibleFail) {
-          this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
-          this.mainLoopService.togglePause(true);
+          if (this.pauseOnImpossibleFail) {
+            this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
+            this.mainLoopService.togglePause(true);
+          }
         }
       },
     ],
@@ -5140,7 +5140,7 @@ export class ActivityService {
     imageBaseName: 'contemplateWater',
     activityType: ActivityType.ContemplateWater,
     description: [
-      'Gaze into the Depths.<br>Delve into the mysteries of Water.<br>Advance your understanding of all Tao concepts that stem from watar, ignoring your chosen contemplation.',
+      'Gaze into the Depths.<br>Delve into the mysteries of Water.<br>Advance your understanding of all Tao concepts that stem from water, ignoring your chosen contemplation.',
     ],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of water based Tao principles.'],

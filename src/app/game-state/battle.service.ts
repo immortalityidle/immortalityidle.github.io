@@ -218,7 +218,6 @@ export const LOOT_TYPE_ENERGY = 'energy';
 export const RIGHT_HAND_TECHNIQUE = 'Right-Handed Weapon';
 export const LEFT_HAND_TECHNIQUE = 'Left-Handed Weapon';
 export const QI_ATTACK = 'Qi Strike';
-export const METAL_FIST_ATTACK = 'Metal Fist';
 export const QI_SHIELD = 'Qi Shield';
 export const FIRE_SHIELD = 'Fire Shield';
 export const ICE_SHIELD = 'Ice Shield';
@@ -1455,25 +1454,6 @@ export class BattleService {
     });
   }
 
-  addMetalFist() {
-    if (this.techniques.find(technique => technique.name === METAL_FIST_ATTACK)) {
-      // already added, bail out
-      return;
-    }
-    this.techniques.push({
-      name: METAL_FIST_ATTACK,
-      description:
-        'Focus your Qi and summon a massive metal fist to crush your enemy. Each use of this ability requires 10,000 Qi.',
-      ticksRequired: 20,
-      ticks: 0,
-      baseDamage: 100000,
-      unlocked: true,
-      attribute: 'metalLore',
-      effect: ELEMENT_METAL,
-      qiCost: 10000,
-    });
-  }
-
   addQiShield() {
     if (this.techniques.find(technique => technique.name === QI_SHIELD)) {
       // already added, bail out
@@ -1652,6 +1632,11 @@ export class BattleService {
       damage /= Math.log10(10 + concept.progress);
     }
 
+    if (this.characterService.attributes.metalFist.value >= 1) {
+      // Math.log(100)=4.605170185988092
+      damage /= Math.log(this.characterService.attributes.metalFist.value + 100) / 4.605170185988092;
+    }
+
     const enemyName = this.titleCasePipe.transform(enemy.name);
     if (damage > 0) {
       this.logService.injury(
@@ -1789,6 +1774,15 @@ export class BattleService {
       }
       this.characterService.status.health.value -= technique.healthCost;
     }
+
+    if (
+      !this.characterService.equipment.rightHand &&
+      !this.characterService.equipment.leftHand &&
+      this.characterService.attributes.metalFist.value > 0
+    ) {
+      this.characterService.increaseAttribute('metalFist', 0.0001);
+    }
+
     if (technique.statusEffect) {
       this.statusEffects.push({
         name: technique.statusEffect.name,
@@ -2048,17 +2042,6 @@ export class BattleService {
       // pity damage
       if (damage < 1) {
         damage = 1;
-      }
-      if (technique.name === METAL_FIST_ATTACK) {
-        // TODO: tune this
-        let metalMultiplier = Math.log(this.characterService.attributes.metalLore.value) / Math.log(50);
-        if (metalMultiplier < 1) {
-          metalMultiplier = 1;
-        }
-        if (metalMultiplier > 100) {
-          metalMultiplier = 100;
-        }
-        damage *= metalMultiplier;
       }
       damage += damage * this.characterService.yinYangBalance;
 

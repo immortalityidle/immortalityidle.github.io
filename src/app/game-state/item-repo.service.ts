@@ -2396,9 +2396,9 @@ baguaMap = [
         }
         this.logService.log(
           LogTopic.STORY,
-          'The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now summon a massive metal fist with each of your combat strikes.'
+          'The Crown of Pillars settles onto your head, then sinks in to become a part of your very soul. You can now begin metal fist training through unarmed combat.'
         );
-        this.battleService.addMetalFist();
+        this.characterService.attributes.metalFist.value += 1;
       },
       shopable: false,
     },

@@ -82,7 +82,7 @@
                     (click)="onMinusClick(entry, $event)" class="iconButton" aria-label="Remove Days" aria-hidden="false">remove</mat-icon>
                 <mat-icon tooltip="Spend more days on this.<br>Shift- or Ctrl-click to add 10x<br>Shift-Ctrl-click to add 100x"
                     (click)="onPlusClick(entry, $event)" class="iconButton" aria-label="Add Days" aria-hidden="false">add</mat-icon>
-                <mat-icon tooltip="Disable this activity on the schedule." (click)="onDisableClick(entry)" class="iconButton" aria-label="Disable Activity" aria-hidden="false">cancel</mat-icon>
+                <mat-icon tooltip="{{entry.userDisabled ? 'Enable this activity on the schedule.' : 'Disable this activity on the schedule.'}}" (click)="onDisableClick(entry)" class="iconButton" aria-label="Disable Activity" aria-hidden="false">cancel</mat-icon>
                 <mat-icon tooltip="Remove this activity from the schedule." (click)="onRemoveClick(entry)" class="iconButton" aria-label="Remove Activity" aria-hidden="false">clear</mat-icon>
                 </td>
             </tr>

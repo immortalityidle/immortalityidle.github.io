@@ -32,6 +32,7 @@ export type CharacterAttribute = {
   woodwork?: number;
   leatherwork?: number;
   formationMastery?: number;
+  metalFist?: number;
 };
 
 export type AttributeType =
@@ -61,7 +62,8 @@ export type AttributeType =
   | 'leatherwork'
   | 'formationMastery'
   | 'cooking'
-  | 'haggling';
+  | 'haggling'
+  | 'metalFist';
 
 export type AttributeObject = {
   description: string;
@@ -570,6 +572,18 @@ export class CharacterService {
       displayAptitude: signal<number>(1),
       aptitudeMult: 1,
       icon: 'money_bag',
+      attributeGroup: SKILL_ATTRIBUTES,
+    },
+    metalFist: {
+      description: 'Training in the secret practice of hardening your fists through unarmed combat.',
+      value: 0,
+      displayKey: signal<string>('metalFist'),
+      displayValue: signal<number>(0),
+      lifeStartValue: 0,
+      aptitude: 1,
+      displayAptitude: signal<number>(1),
+      aptitudeMult: 1,
+      icon: 'hand_bones',
       attributeGroup: SKILL_ATTRIBUTES,
     },
   };
