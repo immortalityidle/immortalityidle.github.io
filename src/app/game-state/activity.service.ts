@@ -714,10 +714,10 @@ export class ActivityService {
       const activity = this.getActivityByType(this.spiritActivity);
       // if we don't have the resources for spirit activities, just don't do them
       if (activity !== null && this.checkResourceUse(activity, true) === '' && activity.unlocked) {
+        this.characterService.status.qi.value -= 5;
         this.lifeActivities[activity.activityType] = (this.lifeActivities[activity.activityType] || 0) + 1;
         activity.consequence[activity.level]();
         this.homeService.triggerWorkstations(activity.activityType);
-        this.characterService.status.qi.value -= 5;
       } else {
         this.spiritActivityProgress = false;
       }

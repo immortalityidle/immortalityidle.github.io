@@ -275,8 +275,8 @@ export class MainLoopService {
       }
       this.inventoryTickSubject.next(1);
       this.tickSubject.next(1); // ticks character, followers, and hell
+      this.homeTickSubject.next(1); // this is total nonsense to go to bed then eat dinner, but it saves on meals so we're going with it.
       this.dinnerSubject.next(1);
-      this.homeTickSubject.next(1);
     }
     if (this.reincarnating) {
       this.reincarnateSubject.next(1);
