@@ -62,8 +62,8 @@ export class FarmService {
   fallowPlots = 0;
   displayFallowPlots = signal<number>(0);
   displayAddFields = signal<boolean>(false);
+  displayFieldsCount = signal<string>('');
   unlockedCrops = ['rice'];
-  maxFields = 30;
 
   constructor(
     private injector: Injector,
@@ -90,7 +90,8 @@ export class FarmService {
       }
 
       this.displayFallowPlots.set(this.fallowPlots);
-      this.displayAddFields.set(this.fields.length < this.maxFields);
+      this.displayAddFields.set(this.fields.length < this.homeService.home.maxFields);
+      this.displayFieldsCount.set(this.fields.length + ' of ' + this.homeService.home.maxFields + ' fields planted');
       while (this.displayFields.length < this.fields.length) {
         this.displayFields.push({
           trackField: signal<string>(''),
@@ -240,7 +241,7 @@ export class FarmService {
   }
 
   addField() {
-    if (this.fields.length >= this.maxFields) {
+    if (this.fields.length >= this.homeService.home.maxFields) {
       return;
     }
     const cropItem = this.inventoryService.farmFoodList[0];

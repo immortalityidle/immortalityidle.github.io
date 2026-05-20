@@ -46,6 +46,7 @@ export interface Home {
   maxWorkstations: number;
   maxWorkstationPower: number;
   daysToBuild: number;
+  maxFields: number;
 }
 
 export interface DisplayHome {
@@ -191,6 +192,7 @@ export class HomeService {
       maxWorkstations: 0,
       maxWorkstationPower: 0,
       daysToBuild: 1,
+      maxFields: 5,
     },
     {
       name: 'Tent of Your Own',
@@ -212,6 +214,7 @@ export class HomeService {
       maxWorkstations: 0,
       maxWorkstationPower: 0,
       daysToBuild: 1,
+      maxFields: 6,
     },
     {
       name: 'Dirty Shack',
@@ -233,6 +236,7 @@ export class HomeService {
       maxWorkstations: 0,
       maxWorkstationPower: 0,
       daysToBuild: 1,
+      maxFields: 8,
     },
     {
       name: 'Simple Hut',
@@ -255,6 +259,7 @@ export class HomeService {
       maxWorkstations: 0,
       maxWorkstationPower: 0,
       daysToBuild: 10,
+      maxFields: 10,
     },
     {
       name: 'Pleasant Cottage',
@@ -276,6 +281,7 @@ export class HomeService {
       maxWorkstations: 1,
       maxWorkstationPower: 0,
       daysToBuild: 30,
+      maxFields: 12,
     },
     {
       name: 'Large House',
@@ -297,6 +303,7 @@ export class HomeService {
       maxWorkstations: 2,
       maxWorkstationPower: 0,
       daysToBuild: 90,
+      maxFields: 14,
     },
     {
       name: 'Courtyard House',
@@ -318,6 +325,7 @@ export class HomeService {
       maxWorkstations: 3,
       maxWorkstationPower: 0,
       daysToBuild: 180,
+      maxFields: 16,
     },
     {
       name: 'Manor',
@@ -339,6 +347,7 @@ export class HomeService {
       maxWorkstations: 3,
       maxWorkstationPower: 0,
       daysToBuild: 365,
+      maxFields: 18,
     },
     {
       name: 'Mansion',
@@ -360,6 +369,7 @@ export class HomeService {
       maxWorkstations: 4,
       maxWorkstationPower: 1,
       daysToBuild: 3650,
+      maxFields: 20,
     },
     {
       name: 'Palace',
@@ -381,6 +391,7 @@ export class HomeService {
       maxWorkstations: 4,
       maxWorkstationPower: 1,
       daysToBuild: 36500,
+      maxFields: 22,
     },
     {
       name: 'Castle',
@@ -402,6 +413,7 @@ export class HomeService {
       maxWorkstations: 5,
       maxWorkstationPower: 1,
       daysToBuild: 365000,
+      maxFields: 25,
     },
     {
       name: 'Fortress',
@@ -423,6 +435,7 @@ export class HomeService {
       maxWorkstations: 5,
       maxWorkstationPower: 1,
       daysToBuild: 3650000,
+      maxFields: 28,
     },
     {
       name: 'Mountain',
@@ -444,6 +457,7 @@ export class HomeService {
       maxWorkstations: 6,
       maxWorkstationPower: 2,
       daysToBuild: 365e5,
+      maxFields: 32,
     },
     {
       name: 'Forbidden City',
@@ -465,6 +479,7 @@ export class HomeService {
       maxWorkstations: 6,
       maxWorkstationPower: 2,
       daysToBuild: 365e6,
+      maxFields: 36,
     },
     {
       name: 'Capital',
@@ -486,6 +501,7 @@ export class HomeService {
       maxWorkstations: 7,
       maxWorkstationPower: 2,
       daysToBuild: 365e7,
+      maxFields: 40,
     },
     {
       name: 'Seat of the Empire',
@@ -507,6 +523,7 @@ export class HomeService {
       maxWorkstations: 8,
       maxWorkstationPower: 3,
       daysToBuild: 365e8,
+      maxFields: 45,
     },
     {
       name: 'Godthrone',
@@ -528,6 +545,7 @@ export class HomeService {
       maxWorkstations: 9,
       maxWorkstationPower: 3,
       daysToBuild: 365e9,
+      maxFields: 50,
     },
   ];
 

@@ -29,6 +29,9 @@
         aria-label="Purchase Land" aria-hidden="false">
         landscape_2
       </mat-icon>
+      <span tooltip="The maximum number of fields depends on the quality of your home.">
+        {{farmService.displayFieldsCount()}}
+      </span>
     </div>
     <div class="farmGrid">
       @for (field of farmService.displayFields; track field.trackField(); let index = $index) {

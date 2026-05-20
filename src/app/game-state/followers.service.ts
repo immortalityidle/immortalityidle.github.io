@@ -1066,7 +1066,6 @@ export class FollowersService {
     }
     while (
       effectiveHQLevel >= 0 &&
-      this.hqs[effectiveHQLevel].mealsRequired &&
       this.hqs[effectiveHQLevel].foodPerDay > 0 &&
       this.inventoryService.checkFor(
         'food',
@@ -1075,6 +1074,9 @@ export class FollowersService {
       ) === -1
     ) {
       effectiveHQLevel--;
+      if (!this.hqs[effectiveHQLevel].mealsRequired) {
+        foodSubType = '';
+      }
     }
     if (effectiveHQLevel < 0) {
       return;
