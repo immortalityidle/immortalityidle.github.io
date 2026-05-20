@@ -1187,15 +1187,15 @@ export class HomeService {
       this.nextHomeCost = 0;
     }
     if (!this.hellService?.inHell() || this.hellHome()) {
-      this.characterService.status.health.value += this.home.healthRecovery;
-      this.characterService.status.stamina.value += this.home.staminaRecovery;
-      this.characterService.status.qi.value += this.home.qiRecovery;
-      this.characterService.checkOverage();
       for (const furniturePiece of this.bedroomFurniture) {
         if (furniturePiece?.use) {
           furniturePiece?.use();
         }
       }
+      this.characterService.status.health.value += this.home.healthRecovery;
+      this.characterService.status.stamina.value += this.home.staminaRecovery;
+      this.characterService.status.qi.value += this.home.qiRecovery;
+      this.characterService.checkOverage();
     }
     if (!this.hellService?.inHell() && !this.characterService.god()) {
       let totalCost = 0;

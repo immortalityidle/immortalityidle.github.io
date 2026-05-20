@@ -3702,6 +3702,7 @@ export class ActivityService {
         this.characterService.healthBonusSoul++;
         this.characterService.status.stamina.max++;
         this.characterService.increaseMaxQi(1);
+        this.characterService.recalculateDerivedStats();
         this.characterService.checkOverage();
         if (this.characterService.yin > this.characterService.yang) {
           this.characterService.yang++;
@@ -3783,6 +3784,7 @@ export class ActivityService {
         if (this.characterService.god()) {
           this.characterService.healthBonusDivine++;
         }
+        this.characterService.recalculateDerivedStats();
         this.characterService.yang++;
         this.characterService.yin++;
       },
