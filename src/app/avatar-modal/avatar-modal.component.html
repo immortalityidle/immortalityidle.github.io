@@ -1,0 +1,161 @@
+<div class='darkMode'>
+  <h3>Avatar Portal (Under Construction. You will not actually be reborn yet.)</h3>
+  <hr/>
+  <div class="avatarContainer">
+    <div class="avatarSection">
+        <span>
+            Stepping through the avatar portal allows you to experience a new kind of rebirth, taking on a the role of a mortal with specific limitations.
+            <br>
+            This will strip you of all your possessions, your home, your wealth, most of your attributes and aptitudes, all pill effects, and nearly all of the capabilities you have acquired through your many lives.
+            <br>
+            You will retain your divine attributes, your achievements, your automatic behaviors, your Tao contemplation, and your understanding of the workings of the universe (game panels).
+            <br>
+            Each avatar challenge has a special goal that you will need to reach before you can resume your existence as a god.
+            <br>
+            There is no escape and no shortcut for returning to godhood without reaching this goal, so do not undertake these challenges lightly!
+            <br>
+            Avatar challenges persist across reincarnations, allowing you to attempt to reach your goal for as long as it takes until you reach it.
+            <br>
+            Entering an avatar challenge will also reset your relationships with all foreign gods, allowing you to defeat them again at their original strength.
+            <br>
+            Enemy strength will not reset on reincarnation during avatar challenges.
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{BLOODTHIRSTY_BRAWLER}} Avatar</u>
+            <br>
+            Take on the role of a mortal specially gifted in unarmed combat who loves nothing more than to fight. You will never take up arms during this avatar challenge, instead relying solely on your fists and feet. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Defeat 1,000,000 Enemies
+            <br>
+            Reward: Lifesteal Technique Refinement
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(BLOODTHIRSTY_BRAWLER)">
+                Be Reborn as a {{BLOODTHIRSTY_BRAWLER}} Avatar
+            </button>
+            <br>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{TREE_LOVER}} Avatar</u>
+            <br>
+            Take on the role of a mortal who loves trees so much that you will never cut one down. During this avatar challenge, you can never chop wood or do anything else that might harm a tree, and neither will your followers. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Create a wooden weapon with 8,000,000 Attack power
+            <br>
+            Reward: New kinds of wood and increased power for wooden weapons
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(TREE_LOVER)">
+                Be Reborn as a {{TREE_LOVER}} Avatar
+            </button>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{DARK_FEARING}} Avatar</u>
+            <br>
+            Take on the role of a mortal who is permanently terrified of the dark. During this avatar challenge, you can never mine metal or do anything else that might put you in a dark place, and neither will your followers. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Create a metal weapon with 8,000,000 Attack power
+            <br>
+            Reward: New kinds of metal and increased power for metal weapons
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(DARK_FEARING)">
+                Be Reborn as a {{DARK_FEARING}} Avatar
+            </button>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{SWORD_SAINT}} Avatar</u>
+            <br>
+            Take on the role of a mortal who fights only wearing thin robes. During this avatar challenge, you can never wear armor of any sort. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Defeat Death Itself
+            <br>
+            Reward: More powerful armor options
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(SWORD_SAINT)">
+                Be Reborn as a {{SWORD_SAINT}} Avatar
+            </button>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{DRUG_IMMUNE}} Avatar</u>
+            <br>
+            Take on the role of a mortal who cannot be affected by drugs of any sort. During this avatar challenge, you can never consume pills or potions. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Reach 1e20 in all basic attributes
+            <br>
+            Reward: More powerful pills and potions
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(DRUG_IMMUNE)">
+                Be Reborn as a {{DRUG_IMMUNE}} Avatar
+            </button>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{WANDERER}} Avatar</u>
+            <br>
+            Take on the role of a mortal who cannot be bound to a home of any sort. During this avatar challenge, you can never have any kind of home or land of your own. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Defeat Lord Yama in Hell
+            <br>
+            Reward: New divine homes
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(WANDERER)">
+                Be Reborn as a {{WANDERER}} Avatar
+            </button>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{ALL_NATURAL}} Avatar</u>
+            <br>
+            Take on the role of a mortal who feels a very close connection to nature and lives more like an animal than a human. During this avatar challenge, you can never wear any clothes, wield any weapons, or participate in any activities that might civilize you like money-making professions. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Defeat Death Itself
+            <br>
+            Reward: New technique refinements
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(ALL_NATURAL)">
+                Be Reborn as an {{ALL_NATURAL}} Avatar
+            </button>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{BEAST_MASTER}} Avatar</u>
+            <br>
+            Take on the role of a mortal who loves animals but has no use for humans. During this avatar challenge, you can have pets but no human followers.
+            <br>
+            Goal: Defeat Death Itself
+            <br>
+            Reward: New more powerful pets
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(BEAST_MASTER)">
+                Be Reborn as an {{BEAST_MASTER}} Avatar
+            </button>
+        </span>
+    </div>
+    <div class="avatarSection">
+        <span>
+            <u>{{ASCETIC}} Avatar</u>
+            <br>
+            Take on the role of a mortal who eschews possessions of any sort. During this avatar challenge, you can never have any kind of home or land of your own, and can never hold any items. Enemy strength will not reset on reincarnation.
+            <br>
+            Goal: Defeat Death Itself
+            <br>
+            Reward: New Tao concepts to contemplate
+            <br>
+            <button (click)="mainLoopService.avatarRebirth(ASCETIC)">
+                Be Reborn as an {{ASCETIC}} Avatar
+            </button>
+        </span>
+    </div>
+  </div>
+</div>

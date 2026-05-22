@@ -103,6 +103,7 @@ export enum ActivityType {
   DeliverMessages,
   ProvideWine,
   MoonlightTracking,
+  AvatarPortal,
   Hell, // hell needs to be last for indexing purposes
 }
 

@@ -2143,7 +2143,7 @@ export class BattleService {
       (this.killsByLocation[this.currentEnemy.location] || 0) + 1;
     this.killsByMonster[this.currentEnemy.baseName] = (this.killsByMonster[this.currentEnemy.baseName] || 0) + 1;
     this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
-    if (this.currentEnemy.name === 'Death itself' && !this.characterService.immortal) {
+    if (this.currentEnemy.baseName === 'death' && !this.characterService.immortal) {
       this.mainLoopService.toast('HURRAY! Check your inventory. You just got something special!', 0);
     }
     for (const item of this.currentEnemy.loot) {
@@ -2458,7 +2458,7 @@ export class BattleService {
 
   addDeath() {
     this.addEnemy({
-      name: 'Death itself',
+      name: 'Death Itself',
       baseName: 'death',
       health: 1e28,
       maxHealth: 1e28,

@@ -4,6 +4,16 @@ import { CharacterService } from './character.service';
 import { BattleService } from './battle.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+export const AVATAR_BLOODTHIRSTY_BRAWLER = 'Bloodthirsty Brawler';
+export const AVATAR_TREE_LOVER = 'Tree Lover';
+export const AVATAR_DARK_FEARING = 'Dark Fearing';
+export const AVATAR_SWORD_SAINT = 'Sword Saint';
+export const AVATAR_DRUG_IMMUNE = 'Drug Immune';
+export const AVATAR_WANDERER = 'Wanderer';
+export const AVATAR_ASCETIC = 'Ascetic';
+export const AVATAR_ALL_NATURAL = 'All Natural';
+export const AVATAR_BEAST_MASTER = 'Beast Master';
+
 const TICK_INTERVAL_MS = 25;
 
 export interface MainLoopProperties {
@@ -390,5 +400,22 @@ export class MainLoopService {
     this.snackBarObservable = snackBar.onAction().subscribe(() => {
       this.snackBarObservable?.unsubscribe();
     });
+  }
+
+  avatarRebirth(avatarType: string) {
+    if (
+      confirm(
+        'If you continue through this portal you will be reborn again as a mortal with drastic limitations until you achieve the goal of the avatar challenge. Are you sure you want to proceed?'
+      )
+    ) {
+      const value = prompt(
+        'If you\'re really sure, type "REBIRTH" to proceed through the portal and return to mortal infancy.'
+      );
+      if (value?.toLowerCase() === 'rebirth') {
+        alert('Avatar rebirth is still under construction, check back here soon.');
+      }
+    }
+
+    console.log('rebirth: ' + avatarType);
   }
 }

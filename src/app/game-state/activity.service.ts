@@ -1,4 +1,4 @@
-import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM, TECHNIQUE_REFINEMENT_POWER } from './battle.service';
 import { AttributeType, CharacterAttribute, CharacterService, StatusType } from '../game-state/character.service';
 import {
@@ -37,6 +37,8 @@ import {
   SavedActivityLoop,
   YinYangEffect,
 } from './activity';
+import { AvatarModalComponent } from '../avatar-modal/avatar-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -102,6 +104,7 @@ export interface DisplayActivity {
   providedIn: 'root',
 })
 export class ActivityService {
+  private dialog = inject(MatDialog);
   camelToTitle = new CamelToTitlePipe();
   bigNumberPipe: BigNumberPipe;
   activityLoop: ActivityLoopEntry[] = [];
@@ -466,6 +469,9 @@ export class ActivityService {
       const spaceConcept = this.contemplationService.concepts.find(concept => concept.name === CONCEPT_DIVINITY);
       if (spaceConcept && spaceConcept.progress > 0) {
         this.portals.push(this.PortalToPhilosopherStates);
+      }
+      if (this.pantheonService.getGod(GOD_HERMES)!.timesDefeated() > 0) {
+        this.portals.push(this.AvatarPortal);
       }
     } else if (
       this.locationService?.currentRealm === Realm.RealmOfFire ||
@@ -5456,6 +5462,31 @@ export class ActivityService {
       () => {
         this.locationService?.setRealm(Realm.RealmOfWood);
         this.updatePortals();
+      },
+    ],
+    requirements: [{}],
+    unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  AvatarPortal: Activity = {
+    level: 0,
+    location: LocationType.MountPenglai,
+    realm: Realm.DivineRealm,
+    name: ['Avatar Portal'],
+    activityType: ActivityType.MortalRealmPortal,
+    description: [
+      'Step through a protal that will transform you back into a mortal and allow you to take on special challenges.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.dialog.open(AvatarModalComponent, {
+          autoFocus: false,
+        });
       },
     ],
     requirements: [{}],
