@@ -122,6 +122,7 @@ export interface Activity {
   yinYangEffect: YinYangEffect[];
   consequenceDescription: string[];
   requirements: CharacterAttribute[];
+  immortalityRequired?: boolean[];
   divinityRequired?: boolean[];
   conceptRequirements?: string[];
   landRequirements?: number;

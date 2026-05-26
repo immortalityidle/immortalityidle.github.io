@@ -1097,7 +1097,9 @@ export class FollowersService {
     if (effectiveHQLevel < 0) {
       return;
     }
-    const administrators = this.followers.filter(follower => follower.job === 'administrator');
+    const administrators = this.followers.filter(
+      follower => follower.job === 'administrator' && this.jobs['administrator'].enabled
+    );
     let adminsAtLevel = 0;
     while (effectiveHQLevel >= 0) {
       for (const admin of administrators) {

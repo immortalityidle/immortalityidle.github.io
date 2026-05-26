@@ -612,8 +612,16 @@ export class ActivityService {
         tooltipText += '<br>Location: ' + this.camelToTitle.transform(activity.location);
       }
 
-      if (activity.divinityRequired && !this.characterService.god()) {
+      if (activity.divinityRequired && activity.divinityRequired[activity.level] && !this.characterService.god()) {
         tooltipText += '<br>Godhood';
+      }
+
+      if (
+        activity.immortalityRequired &&
+        activity.immortalityRequired[activity.level] &&
+        !this.characterService.immortal()
+      ) {
+        tooltipText += '<br>Immortality';
       }
 
       return tooltipText;
@@ -634,6 +642,9 @@ export class ActivityService {
     }
     if (activity.divinityRequired && activity.divinityRequired[activity.level + 1]) {
       tooltipText += '<br>Godhood';
+    }
+    if (activity.immortalityRequired && activity.immortalityRequired[activity.level + 1]) {
+      tooltipText += '<br>Immortality';
     }
     return tooltipText;
   }
@@ -929,6 +940,11 @@ export class ActivityService {
     }
     if (activity.divinityRequired) {
       if (activity.divinityRequired[level] && !this.characterService.god()) {
+        return false;
+      }
+    }
+    if (activity.immortalityRequired) {
+      if (activity.immortalityRequired[level] && !this.characterService.immortal()) {
         return false;
       }
     }
@@ -3725,9 +3741,9 @@ export class ActivityService {
     requirements: [
       {
         spirituality: 1e15,
-        // also requires immortality in getActivityList
       },
     ],
+    immortalityRequired: [true],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };
@@ -5478,7 +5494,7 @@ export class ActivityService {
     name: ['Avatar Portal'],
     activityType: ActivityType.MortalRealmPortal,
     description: [
-      'Step through a protal that will transform you back into a mortal and allow you to take on special challenges.',
+      'Step through a portal that will transform you back into a mortal and allow you to take on special challenges.',
     ],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [''],

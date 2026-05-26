@@ -74,7 +74,7 @@ export interface PantheonProperties {
 export class PantheonService {
   greekBaseHealth = 1e44;
   greekBaseDefense = 1e28;
-  greekBaseDamage = 1e30;
+  greekBaseDamage = 1e29;
 
   pantheons: Pantheon[] = [
     {
@@ -100,7 +100,7 @@ export class PantheonService {
           baseDefense: this.greekBaseDefense,
           baseHealth: this.greekBaseHealth,
           techniqueNames: ['Fast Jab', 'Winged Kick', 'Staff Strike'],
-          techniqueCooldowns: [1, 2, 20],
+          techniqueCooldowns: [1, 2, 10],
           challengeMessage: signal<string>(
             "You're looking for a duel?<br><br>Are you mad, barbarian?<br><br>I don't have time to fight you right now!<br><br>I need to get these messages delivered!"
           ),
@@ -450,7 +450,7 @@ export class PantheonService {
         name: god.techniqueNames[i],
         ticks: 0,
         ticksRequired: god.techniqueCooldowns[i],
-        baseDamage: god.baseDamage * Math.pow(100, god.timesDefeated()) * Math.pow(god.techniqueCooldowns[i], 3),
+        baseDamage: god.baseDamage * Math.pow(100, god.timesDefeated()) * Math.pow(god.techniqueCooldowns[i], 2),
         unlocked: true,
       });
     }
