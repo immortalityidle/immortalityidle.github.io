@@ -5598,7 +5598,7 @@ export class ActivityService {
     consequenceDescription: ['How much can this guy drink?'],
     consequence: [
       () => {
-        if (this.inventoryService.consume('wine', 1e6) === -1) {
+        if (this.inventoryService.consume('herb', 1e6, true, false, 'wine') === -1) {
           this.logService.log(
             LogTopic.EVENT,
             'Dionysus says: "Oh, no, this won\'t do at all. We\'re going to need much more than this."'

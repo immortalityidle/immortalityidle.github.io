@@ -9,8 +9,8 @@ import {
   AVATAR_SWORD_SAINT,
   AVATAR_TREE_LOVER,
   AVATAR_WANDERER,
-  MainLoopService,
-} from '../game-state/main-loop.service';
+  GameStateService,
+} from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-avatar-modal',
@@ -29,5 +29,5 @@ export class AvatarModalComponent {
   readonly ALL_NATURAL = AVATAR_ALL_NATURAL;
   readonly BEAST_MASTER = AVATAR_BEAST_MASTER;
 
-  constructor(public mainLoopService: MainLoopService) {}
+  constructor(public gameStateService: GameStateService) {}
 }

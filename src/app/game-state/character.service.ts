@@ -780,7 +780,10 @@ export class CharacterService {
         healthBreakdownString += '<br>Divine Bonus: ' + this.healthBonusDivine + '.';
       }
       if (this.healthBonusFactor > 1) {
-        healthBreakdownString += '<br>Health Multiplier: ' + this.healthBonusFactor + '.';
+        healthBreakdownString +=
+          '<br>Multiplier from Feng Shui, Contemplation, etc.: ' +
+          this.bigNumberPipe.transform(this.healthBonusFactor) +
+          '.';
       }
       this.healthBreakdown.set(healthBreakdownString);
 

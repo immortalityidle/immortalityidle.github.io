@@ -185,7 +185,7 @@ export class HellService {
 
       // kludge for handling location service circular dependency
       if (!this.portalsSet) {
-        this.moveToHell(this.locationService!.location);
+        this.moveToHell(this.locationService!.location, true);
         this.portalsSet = true;
       }
     });
@@ -234,7 +234,7 @@ export class HellService {
     this.activityService.checkRequirements();
   }
 
-  moveToHell(hellLocation: LocationType) {
+  moveToHell(hellLocation: LocationType, loading: boolean = false) {
     if (this.locationService?.locationMap[hellLocation].realm !== Realm.Hell) {
       // not in hell, bail out
       return;
@@ -249,7 +249,7 @@ export class HellService {
     this.locationService!.location = hellLocation;
     this.locationService!.unlockedLocations = [LocationType.Self, hellLocation];
     const newHell = this.getHell(this.locationService!.location);
-    if (newHell.entryEffect && !this.completedHellBosses.includes(hellLocation)) {
+    if (newHell.entryEffect && !this.completedHellBosses.includes(hellLocation) && !loading) {
       newHell.entryEffect();
     }
     newHell.setPortals();

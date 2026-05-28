@@ -1,5 +1,5 @@
 <div class='darkMode'>
-  <h3>Avatar Portal (Under Construction. You will not actually be reborn yet.)</h3>
+  <h3>Avatar Portal (Under Construction. There is no way back yet.)</h3>
   <hr/>
   <div class="avatarContainer">
     <div class="avatarSection">
@@ -19,6 +19,8 @@
             Entering an avatar challenge will also reset your relationships with all foreign gods, allowing you to defeat them again at their original strength.
             <br>
             Enemy strength will not reset on reincarnation during avatar challenges.
+            <br>
+            <b>You should export your save file before proceeding!</b>
         </span>
     </div>
     <div class="avatarSection">
@@ -31,7 +33,7 @@
             <br>
             Reward: Lifesteal Technique Refinement
             <br>
-            <button (click)="mainLoopService.avatarRebirth(BLOODTHIRSTY_BRAWLER)">
+            <button (click)="gameStateService.avatarRebirth(BLOODTHIRSTY_BRAWLER)">
                 Be Reborn as a {{BLOODTHIRSTY_BRAWLER}} Avatar
             </button>
             <br>
@@ -47,7 +49,7 @@
             <br>
             Reward: New kinds of wood and increased power for wooden weapons
             <br>
-            <button (click)="mainLoopService.avatarRebirth(TREE_LOVER)">
+            <button (click)="gameStateService.avatarRebirth(TREE_LOVER)">
                 Be Reborn as a {{TREE_LOVER}} Avatar
             </button>
         </span>
@@ -62,7 +64,7 @@
             <br>
             Reward: New kinds of metal and increased power for metal weapons
             <br>
-            <button (click)="mainLoopService.avatarRebirth(DARK_FEARING)">
+            <button (click)="gameStateService.avatarRebirth(DARK_FEARING)">
                 Be Reborn as a {{DARK_FEARING}} Avatar
             </button>
         </span>
@@ -77,7 +79,7 @@
             <br>
             Reward: More powerful armor options
             <br>
-            <button (click)="mainLoopService.avatarRebirth(SWORD_SAINT)">
+            <button (click)="gameStateService.avatarRebirth(SWORD_SAINT)">
                 Be Reborn as a {{SWORD_SAINT}} Avatar
             </button>
         </span>
@@ -92,7 +94,7 @@
             <br>
             Reward: More powerful pills and potions
             <br>
-            <button (click)="mainLoopService.avatarRebirth(DRUG_IMMUNE)">
+            <button (click)="gameStateService.avatarRebirth(DRUG_IMMUNE)">
                 Be Reborn as a {{DRUG_IMMUNE}} Avatar
             </button>
         </span>
@@ -107,7 +109,7 @@
             <br>
             Reward: New divine homes
             <br>
-            <button (click)="mainLoopService.avatarRebirth(WANDERER)">
+            <button (click)="gameStateService.avatarRebirth(WANDERER)">
                 Be Reborn as a {{WANDERER}} Avatar
             </button>
         </span>
@@ -122,7 +124,7 @@
             <br>
             Reward: New technique refinements
             <br>
-            <button (click)="mainLoopService.avatarRebirth(ALL_NATURAL)">
+            <button (click)="gameStateService.avatarRebirth(ALL_NATURAL)">
                 Be Reborn as an {{ALL_NATURAL}} Avatar
             </button>
         </span>
@@ -137,7 +139,7 @@
             <br>
             Reward: New more powerful pets
             <br>
-            <button (click)="mainLoopService.avatarRebirth(BEAST_MASTER)">
+            <button (click)="gameStateService.avatarRebirth(BEAST_MASTER)">
                 Be Reborn as an {{BEAST_MASTER}} Avatar
             </button>
         </span>
@@ -152,7 +154,7 @@
             <br>
             Reward: New Tao concepts to contemplate
             <br>
-            <button (click)="mainLoopService.avatarRebirth(ASCETIC)">
+            <button (click)="gameStateService.avatarRebirth(ASCETIC)">
                 Be Reborn as an {{ASCETIC}} Avatar
             </button>
         </span>

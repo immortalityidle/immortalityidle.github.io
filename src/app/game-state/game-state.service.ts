@@ -22,6 +22,16 @@ import { PantheonProperties, PantheonService } from './pantheon.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
+export const AVATAR_BLOODTHIRSTY_BRAWLER = 'Bloodthirsty Brawler';
+export const AVATAR_TREE_LOVER = 'Tree Lover';
+export const AVATAR_DARK_FEARING = 'Dark Fearing';
+export const AVATAR_SWORD_SAINT = 'Sword Saint';
+export const AVATAR_DRUG_IMMUNE = 'Drug Immune';
+export const AVATAR_WANDERER = 'Wanderer';
+export const AVATAR_ASCETIC = 'Ascetic';
+export const AVATAR_ALL_NATURAL = 'All Natural';
+export const AVATAR_BEAST_MASTER = 'Beast Master';
+
 interface GameState {
   achievements: AchievementProperties;
   character: CharacterProperties;
@@ -46,6 +56,8 @@ interface GameState {
   layout: KtdGridLayout;
   creditsClicked: boolean;
   supportClicked: boolean;
+  divineGameState: string;
+  avatarChallenge: string;
 }
 
 declare global {
@@ -80,6 +92,8 @@ export class GameStateService {
   supportClicked = false;
   hardResetting = false;
   newPanelAvailable = signal<boolean>(false);
+  divineGameState = '';
+  avatarChallenge = '';
 
   panels: Panel[] = [
     {
@@ -491,7 +505,7 @@ export class GameStateService {
   importGame(value: string) {
     let gameStateSerialized: string;
     // TODO: stop supporting legacy game file imports
-    if (value.substring(0, 3) === 'iig' || value.substring(0, 3) === 'ii2') {
+    if (value.substring(0, 3) === 'ii2') {
       gameStateSerialized = decodeURIComponent(atob(value.substring(3)));
     } else {
       // file isn't one this game created, bail out
@@ -539,6 +553,8 @@ export class GameStateService {
     this.supportClicked = gameState.supportClicked || false;
     this.updateAllPanelsUsed();
     this.newPanelAvailable.set(false);
+    this.divineGameState = gameState.divineGameState;
+    this.avatarChallenge = gameState.avatarChallenge;
   }
 
   private validateGameState(gameState: Partial<GameState>): GameState {
@@ -566,6 +582,8 @@ export class GameStateService {
       layout: gameState.layout ?? [],
       creditsClicked: gameState.creditsClicked || false,
       supportClicked: gameState.supportClicked || false,
+      divineGameState: gameState.divineGameState || '',
+      avatarChallenge: gameState.avatarChallenge || '',
     };
     return returnValue;
   }
@@ -574,6 +592,7 @@ export class GameStateService {
     return {
       unlockedAchievements: props?.unlockedAchievements || [],
       unlockedMemories: props?.unlockedMemories || [],
+      disabledAchievements: props?.disabledAchievements || [],
     };
   }
 
@@ -650,7 +669,7 @@ export class GameStateService {
     return {
       land: props?.land || 0,
       homeValue: props?.homeValue || HomeType.SquatterTent,
-      bedroomFurniture: props?.bedroomFurniture || [],
+      bedroomFurniture: props?.bedroomFurniture || [null, null, null, null, null, null, null, null, null],
       landPrice: props?.landPrice || 0,
       keepFurniture: props?.keepFurniture || false,
       keepWorkstationInputs: props?.keepWorkstationInputs || false,
@@ -899,7 +918,44 @@ export class GameStateService {
 
   private getImpossibleTasksProperties(props: ImpossibleTaskProperties | undefined): ImpossibleTaskProperties {
     return {
-      taskProgress: props?.taskProgress || [],
+      taskProgress: props?.taskProgress || [
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+        {
+          progress: 0,
+          complete: false,
+        },
+      ],
       impossibleTasksUnlocked: props?.impossibleTasksUnlocked || false,
       activeTaskIndex: props?.activeTaskIndex || 0,
     };
@@ -1255,6 +1311,8 @@ export class GameStateService {
       layout: this.layout() ?? [],
       creditsClicked: this.creditsClicked,
       supportClicked: this.supportClicked,
+      divineGameState: this.divineGameState,
+      avatarChallenge: this.avatarChallenge,
     };
     let gameStateString = JSON.stringify(gameState);
     gameStateString = 'ii2' + btoa(encodeURIComponent(gameStateString));
@@ -1275,6 +1333,96 @@ export class GameStateService {
     this.characterService.forceRebirth = true;
     this.mainLoopService.togglePause(true);
     this.mainLoopService.tick();
+  }
+
+  avatarRebirth(avatarType: string) {
+    if (
+      confirm(
+        'If you continue through this portal you will be reborn again as a mortal with drastic limitations until you achieve the goal of the avatar challenge. Are you sure you want to proceed?'
+      )
+    ) {
+      const value = prompt(
+        'If you\'re really sure, type "REBIRTH" to proceed through the portal and return to mortal infancy.'
+      );
+      if (value?.toLowerCase() === 'rebirth') {
+        this.divineGameState = ''; // just to make sure we're not nesting gamestates
+        const divineGameStateString = this.getGameExport();
+        // create a fresh game state
+        const newGameState = this.validateGameState({});
+        newGameState.divineGameState = divineGameStateString;
+
+        // preserve selected properties
+
+        const characterProperties = this.characterService.getProperties();
+        newGameState.character.attributes.wisdom = characterProperties.attributes.wisdom;
+        newGameState.character.attributes.justice = characterProperties.attributes.justice;
+        newGameState.character.attributes.mercy = characterProperties.attributes.mercy;
+        newGameState.character.attributes.presence = characterProperties.attributes.presence;
+        newGameState.character.attributes.wrath = characterProperties.attributes.wrath;
+
+        newGameState.achievements.unlockedAchievements = this.achievementService.getProperties().unlockedAchievements;
+        newGameState.achievements.disabledAchievements.push('A Sect of Your Own');
+        newGameState.achievements.disabledAchievements.push('First Disciple');
+        newGameState.achievements.disabledAchievements.push("You're a wizard now.");
+        newGameState.achievements.disabledAchievements.push("Grandma's Stick");
+        newGameState.achievements.disabledAchievements.push('Maternal Love');
+        newGameState.achievements.disabledAchievements.push('Paternal Pride');
+        newGameState.achievements.disabledAchievements.push("Grandpa's Old Tent");
+        newGameState.achievements.disabledAchievements.push('Real Housewives of Immortality');
+        newGameState.achievements.disabledAchievements.push('Ascension');
+        newGameState.achievements.disabledAchievements.push('Eternal Nation');
+        newGameState.achievements.disabledAchievements.push('Bigger on the Inside');
+        newGameState.achievements.disabledAchievements.push('Storage Ring');
+        newGameState.achievements.disabledAchievements.push('Unity of Spirit, Mind, and Body');
+
+        newGameState.contemplations = this.contemplationService.getProperties();
+
+        newGameState.mainLoop = this.mainLoopService.getProperties();
+
+        newGameState.impossibleTasks = this.impossibleTaskService.getProperties();
+
+        newGameState.battles.autoTroubleUnlocked = this.battleService.autoTroubleUnlocked;
+
+        newGameState.followers.autoDismissUnlocked = this.followersService.autoDismissUnlocked;
+
+        newGameState.activities.autoPauseUnlocked = this.activityService.autoPauseUnlocked;
+        newGameState.activities.autoRestUnlocked = this.activityService.autoRestUnlocked;
+        newGameState.activities.autoRestart = this.activityService.autoRestart;
+
+        newGameState.inventory.maxFoodPerDay = this.inventoryService.maxFoodPerDay;
+        newGameState.inventory.autoPillUnlocked = this.inventoryService.autoPillUnlocked;
+        newGameState.inventory.herbalUnderstanding = this.inventoryService.herbalUnderstanding;
+        newGameState.inventory.autoWeaponMergeUnlocked = this.inventoryService.autoWeaponMergeUnlocked;
+        newGameState.inventory.autoArmorMergeUnlocked = this.inventoryService.autoArmorMergeUnlocked;
+        newGameState.inventory.useSpiritGemUnlocked = this.inventoryService.useSpiritGemUnlocked;
+        newGameState.inventory.autoSellOldHerbs = this.inventoryService.autoSellOldHerbs;
+        newGameState.inventory.autoSellOldWood = this.inventoryService.autoSellOldWood;
+        newGameState.inventory.autoSellOldOre = this.inventoryService.autoSellOldOre;
+        newGameState.inventory.autoSellOldHides = this.inventoryService.autoSellOldHides;
+        newGameState.inventory.autoequipBestWeapon = this.inventoryService.autoequipBestWeapon;
+        newGameState.inventory.autoequipBestArmor = this.inventoryService.autoequipBestArmor;
+        newGameState.inventory.autoSellOldGemsUnlocked = this.inventoryService.autoSellOldGemsUnlocked;
+        newGameState.inventory.autoReloadCraftInputsUnlocked = this.inventoryService.autoReloadCraftInputsUnlocked;
+        newGameState.inventory.autoSellUnlocked = this.inventoryService.autoSellUnlocked();
+        newGameState.inventory.autoEatUnlocked = this.inventoryService.autoEatUnlocked();
+        newGameState.inventory.autoUseUnlocked = this.inventoryService.autoUseUnlocked();
+        newGameState.inventory.autoBalanceUnlocked = this.inventoryService.autoBalanceUnlocked();
+
+        newGameState.layout = this.layout() ?? [];
+
+        newGameState.avatarChallenge = avatarType;
+
+        this.mainLoopService.importing = true;
+        let gameStateString = JSON.stringify(newGameState);
+        gameStateString = 'ii2' + btoa(encodeURIComponent(gameStateString));
+        this.importGame(gameStateString);
+        this.savetoLocalStorage();
+        // refresh the page
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
+      }
+    }
   }
 
   getDeploymentFlavor() {

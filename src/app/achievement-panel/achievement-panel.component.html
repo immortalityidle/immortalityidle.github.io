@@ -3,11 +3,11 @@
   <hr/>
   <div class="achievementContainer">
     <div class="achievementGrid">
-      @for (achievement of achievementService.achievements; track $index + '' + achievement.unlocked) {
+      @for (achievement of achievementService.achievements; track $index + '' + achievement.unlocked + achievement.disabled) {
         <div>
           @if (achievement.unlocked) {
-            <div class="itemSlot" tabindex="0"
-              tooltip="{{achievement.description}}">
+            <div class="itemSlot" [ngClass]="{'disabledAchievement': achievement.disabled}" tabindex="0"
+              [tooltip]="achievement.disabled ? 'This achievement is disabled until its requirements are met again.' : achievement.description">
               @if (achievement.displayName) {
                 <div>{{achievement.displayName}}</div>
               }

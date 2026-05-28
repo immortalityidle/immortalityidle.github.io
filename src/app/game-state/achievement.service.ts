@@ -37,10 +37,12 @@ export interface Achievement {
   check: () => boolean;
   effect: () => void;
   unlocked: boolean;
+  disabled?: boolean;
 }
 
 export interface AchievementProperties {
   unlockedAchievements: string[];
+  disabledAchievements: string[];
   unlockedMemories: string[];
 }
 
@@ -68,6 +70,7 @@ export interface Memory {
 export class AchievementService {
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
+  disabledAchievements: string[] = [];
   unlockedMemories: string[] = [];
   memoriesUnlocked = signal<boolean>(false);
 
@@ -192,7 +195,7 @@ export class AchievementService {
         this.gameStateService = this.injector.get(GameStateService);
       }
       for (const achievement of this.achievements) {
-        if (!this.unlockedAchievements.includes(achievement.name)) {
+        if (!this.unlockedAchievements.includes(achievement.name) || achievement.disabled) {
           if (achievement.check()) {
             this.unlockAchievement(achievement, true);
           }
@@ -1722,7 +1725,7 @@ export class AchievementService {
     },
     {
       name: 'The Old Soulsmith',
-      description: "She's retired from soulsmithing and just goes fishing now. Also, go reread Cradle.",
+      description: "She's retired from soulsmithing and just goes fishing now. Also, go read Cradle again.",
       hint: "Lindon's soulsmithing tutor.",
       check: () => {
         for (const follower of this.followerService.followers) {
@@ -2085,7 +2088,7 @@ export class AchievementService {
     },
   ];
 
-  unlockAchievement(achievement: Achievement, newAchievement: boolean) {
+  unlockAchievement(achievement: Achievement, newAchievement: boolean, achievementDisabled: boolean = false) {
     if (newAchievement) {
       this.unlockedAchievements.push(achievement.name);
       this.logService.log(LogTopic.STORY, achievement.description);
@@ -2094,7 +2097,12 @@ export class AchievementService {
         'Achievement Unlocked: ' + (achievement.displayName ? achievement.displayName : achievement.name)
       );
     }
-    achievement.effect();
+    if (achievementDisabled) {
+      achievement.disabled = true;
+    } else {
+      achievement.disabled = false;
+      achievement.effect();
+    }
     achievement.unlocked = true;
     if (newAchievement) {
       this.gameStateService?.savetoLocalStorage();
@@ -2102,6 +2110,13 @@ export class AchievementService {
   }
 
   triggerMemory(memoryName: string, triggerFunction: (() => void) | null = null) {
+    if (!this.unlockedMemories.includes(memoryName)) {
+      this.unlockedMemories.push(memoryName);
+      this.memoriesUnlocked.set(true);
+    }
+    if (this.mainLoopService.importing) {
+      return;
+    }
     const memory = this.memories[memoryName];
     const imageFiles = [];
     for (let i = 0; i < memory.text.length; i++) {
@@ -2116,10 +2131,6 @@ export class AchievementService {
     if (triggerFunction) {
       dialogRef.afterClosed().subscribe(triggerFunction);
     }
-    if (!this.unlockedMemories.includes(memoryName)) {
-      this.unlockedMemories.push(memoryName);
-      this.memoriesUnlocked.set(true);
-    }
   }
 
   reviewMemories() {
@@ -2133,6 +2144,7 @@ export class AchievementService {
     return {
       unlockedAchievements: this.unlockedAchievements,
       unlockedMemories: this.unlockedMemories,
+      disabledAchievements: this.disabledAchievements,
     };
   }
 
@@ -2145,9 +2157,10 @@ export class AchievementService {
       this.memoriesUnlocked.set(true);
     }
     this.unlockedAchievements = properties.unlockedAchievements;
+    this.disabledAchievements = properties.disabledAchievements;
     for (const achievement of this.achievements) {
-      if (this.unlockedAchievements.includes(achievement.name)) {
-        this.unlockAchievement(achievement, false);
+      if (this.unlockedAchievements.includes(achievement.name) && !achievement.disabled) {
+        this.unlockAchievement(achievement, false, this.disabledAchievements.includes(achievement.name));
       }
     }
   }
