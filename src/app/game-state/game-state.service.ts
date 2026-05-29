@@ -4,7 +4,7 @@ import { BattleService, BattleProperties, RIGHT_HAND_TECHNIQUE, LEFT_HAND_TECHNI
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService, MEMORY_JOIN_THE_GODS } from './achievement.service';
-import { CharacterProperties } from './character.service';
+import { CharacterProperties, INITIAL_AGE } from './character.service';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties, HQType } from './followers.service';
 import { HomeService, HomeProperties, HomeType } from './home.service';
@@ -1228,7 +1228,7 @@ export class GameStateService {
         rightHand: props?.stashedEquipment.rightHand || null,
       },
       itemPouches: props?.itemPouches || [],
-      age: props?.age || 0,
+      age: props?.age || INITIAL_AGE,
       baseLifespan: props?.baseLifespan || 30 * 365,
       foodLifespan: props?.foodLifespan || 0,
       alchemyLifespan: props?.alchemyLifespan || 0,
@@ -1353,13 +1353,6 @@ export class GameStateService {
 
         // preserve selected properties
 
-        const characterProperties = this.characterService.getProperties();
-        newGameState.character.attributes.wisdom = characterProperties.attributes.wisdom;
-        newGameState.character.attributes.justice = characterProperties.attributes.justice;
-        newGameState.character.attributes.mercy = characterProperties.attributes.mercy;
-        newGameState.character.attributes.presence = characterProperties.attributes.presence;
-        newGameState.character.attributes.wrath = characterProperties.attributes.wrath;
-
         newGameState.achievements.unlockedAchievements = this.achievementService.getProperties().unlockedAchievements;
         newGameState.achievements.disabledAchievements.push('A Sect of Your Own');
         newGameState.achievements.disabledAchievements.push('First Disciple');
@@ -1374,6 +1367,7 @@ export class GameStateService {
         newGameState.achievements.disabledAchievements.push('Bigger on the Inside');
         newGameState.achievements.disabledAchievements.push('Storage Ring');
         newGameState.achievements.disabledAchievements.push('Unity of Spirit, Mind, and Body');
+        newGameState.achievements.disabledAchievements.push('Animal Friend');
 
         newGameState.contemplations = this.contemplationService.getProperties();
 
@@ -1403,10 +1397,18 @@ export class GameStateService {
         newGameState.inventory.autoequipBestArmor = this.inventoryService.autoequipBestArmor;
         newGameState.inventory.autoSellOldGemsUnlocked = this.inventoryService.autoSellOldGemsUnlocked;
         newGameState.inventory.autoReloadCraftInputsUnlocked = this.inventoryService.autoReloadCraftInputsUnlocked;
+        newGameState.inventory.autoReloadCraftInputs = this.inventoryService.autoReloadCraftInputs;
         newGameState.inventory.autoSellUnlocked = this.inventoryService.autoSellUnlocked();
         newGameState.inventory.autoEatUnlocked = this.inventoryService.autoEatUnlocked();
         newGameState.inventory.autoUseUnlocked = this.inventoryService.autoUseUnlocked();
         newGameState.inventory.autoBalanceUnlocked = this.inventoryService.autoBalanceUnlocked();
+        newGameState.darkMode = this.isDarkMode;
+        newGameState.gameStartTimestamp = this.gameStartTimestamp;
+        newGameState.saveInterval = this.saveInterval || 300;
+        newGameState.easyModeEver = this.easyModeEver;
+        newGameState.lockPanels = this.lockPanels;
+        newGameState.creditsClicked = this.creditsClicked;
+        newGameState.supportClicked = this.supportClicked;
 
         newGameState.layout = this.layout() ?? [];
 

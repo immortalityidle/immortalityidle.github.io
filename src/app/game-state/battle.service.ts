@@ -1336,6 +1336,8 @@ export class BattleService {
       techniqueName += '!!';
     }
 
+    const disabled = healthCost > 0;
+
     this.techniques.push({
       name: techniqueName,
       description: 'A special family technique that can be passed to your descendants.',
@@ -1351,6 +1353,7 @@ export class BattleService {
       extraMultiplier: extraMultiplier,
       effect: effect,
       concept: prefix.concept,
+      disabled: disabled,
     });
 
     this.logService.log(

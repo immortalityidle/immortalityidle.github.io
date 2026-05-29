@@ -169,7 +169,7 @@ export interface CharacterProperties {
   staminaCap: number;
 }
 
-const INITIAL_AGE = 18 * 365;
+export const INITIAL_AGE = 18 * 365;
 export const BASIC_ATTRIBUTES = 'Basic Attributes';
 export const SPIRITUAL_ATTRIBUTES = 'Spiritual Attributes';
 export const DIVINE_ATTRIBUTES = 'Divine Attributes';
@@ -1225,9 +1225,11 @@ export class CharacterService {
         this.attributes[keys[key]].attributeGroup === DIVINE_ATTRIBUTES
       );
       const concepts = this.contemplationService.concepts.filter(concept => concept.effect.includes(keys[key]));
+      let conceptMultiplier = 1;
       for (const concept of concepts) {
-        this.attributes[keys[key]].aptitudeMult *= Math.log10(10 + concept.progress);
+        conceptMultiplier += Math.log10(10 + concept.progress);
       }
+      this.attributes[keys[key]].aptitudeMult *= conceptMultiplier;
       if ((keys[key] === 'strength' || keys[key] === 'speed' || keys[key] === 'toughness') && this.bonusMuscles) {
         this.attributes[keys[key]].aptitudeMult *= 1000;
       }
