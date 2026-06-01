@@ -44,6 +44,9 @@
           @if (displayTechnique.divineDamage() > 0){
             <div>Damage to Divine Beings: {{displayTechnique.divineDamage() | bigNumber}}</div>
           }
+          @if (displayTechnique.lifesteal() > 0){
+            <div>Lifesteal: {{displayTechnique.lifesteal() | bigNumber}}</div>
+          }
           @if (displayTechnique.effect() !== ''){
             <div>{{effectDescriptions[displayTechnique.effect()]}}</div>
           }

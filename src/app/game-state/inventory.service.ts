@@ -177,6 +177,7 @@ export interface InventoryProperties {
   lifetimePotionsUsed: number;
   lifetimePillsUsed: number;
   soldGoods: { [key: string]: number };
+  noWeapons: boolean;
 }
 
 @Injectable({
@@ -278,6 +279,7 @@ export class InventoryService {
   herbalUnderstanding = false;
   soldGoods: { [key: string]: number } = {};
   energyGemConversionRate = 1e90; // 1 spirit energy equivalent to 1 level 90 gem
+  noWeapons = false;
 
   constructor(
     private injector: Injector,
@@ -577,6 +579,7 @@ export class InventoryService {
       lifetimePotionsUsed: this.lifetimePotionsUsed,
       lifetimePillsUsed: this.lifetimePillsUsed,
       soldGoods: this.soldGoods,
+      noWeapons: this.noWeapons,
     };
   }
 
@@ -656,6 +659,7 @@ export class InventoryService {
     this.lifetimePotionsUsed = properties.lifetimePotionsUsed;
     this.lifetimePillsUsed = properties.lifetimePillsUsed;
     this.soldGoods = properties.soldGoods;
+    this.noWeapons = properties.noWeapons;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -2051,6 +2055,11 @@ export class InventoryService {
         }
       }
 
+      return;
+    }
+
+    if (this.noWeapons && (item.slot === 'leftHand' || item.slot === 'rightHand')) {
+      // can't equip weapons and this is a weapon, bail out
       return;
     }
 

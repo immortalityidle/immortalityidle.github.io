@@ -4,7 +4,7 @@ import { BattleService, BattleProperties, RIGHT_HAND_TECHNIQUE, LEFT_HAND_TECHNI
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService, MEMORY_JOIN_THE_GODS } from './achievement.service';
-import { CharacterProperties, INITIAL_AGE } from './character.service';
+import { AttributeType, CharacterProperties, INITIAL_AGE } from './character.service';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties, HQType } from './followers.service';
 import { HomeService, HomeProperties, HomeType } from './home.service';
@@ -31,6 +31,7 @@ export const AVATAR_WANDERER = 'Wanderer';
 export const AVATAR_ASCETIC = 'Ascetic';
 export const AVATAR_ALL_NATURAL = 'All Natural';
 export const AVATAR_BEAST_MASTER = 'Beast Master';
+export const AVATAR_STATE_LOADING = 'Loading';
 
 interface GameState {
   achievements: AchievementProperties;
@@ -58,6 +59,7 @@ interface GameState {
   supportClicked: boolean;
   divineGameState: string;
   avatarChallenge: string;
+  completedAvatarChallenges: string[];
 }
 
 declare global {
@@ -94,6 +96,12 @@ export class GameStateService {
   newPanelAvailable = signal<boolean>(false);
   divineGameState = '';
   avatarChallenge = '';
+  avatarChallengeProgress = signal<number>(0);
+  avatarChallengeProgressRequired = signal<number>(1);
+  avatarChallengeProgressPercent = signal<number>(0);
+  avatarProgressDescription = signal<string>('');
+  avatarChallengeDisplay = signal<string>('');
+  completedAvatarChallenges: string[] = [];
 
   panels: Panel[] = [
     {
@@ -284,6 +292,7 @@ export class GameStateService {
       if (currentTime - this.lastSaved >= this.saveInterval * 1000) {
         this.savetoLocalStorage();
       }
+      this.checkAvatarProgress();
     });
     this.layout.set([]);
     this.resetPanels();
@@ -466,7 +475,7 @@ export class GameStateService {
   }
 
   savetoLocalStorage(): void {
-    if (this.hardResetting) {
+    if (this.hardResetting || this.avatarChallenge === AVATAR_STATE_LOADING) {
       return;
     }
     window.localStorage.setItem(LOCAL_STORAGE_GAME_STATE_KEY + this.getDeploymentFlavor(), this.getGameExport());
@@ -555,6 +564,7 @@ export class GameStateService {
     this.newPanelAvailable.set(false);
     this.divineGameState = gameState.divineGameState;
     this.avatarChallenge = gameState.avatarChallenge;
+    this.completedAvatarChallenges = gameState.completedAvatarChallenges;
   }
 
   private validateGameState(gameState: Partial<GameState>): GameState {
@@ -584,6 +594,7 @@ export class GameStateService {
       supportClicked: gameState.supportClicked || false,
       divineGameState: gameState.divineGameState || '',
       avatarChallenge: gameState.avatarChallenge || '',
+      completedAvatarChallenges: gameState.completedAvatarChallenges || [],
     };
     return returnValue;
   }
@@ -662,6 +673,7 @@ export class GameStateService {
       lifetimePillsUsed: props?.lifetimePillsUsed || 0,
 
       soldGoods: props?.soldGoods || {},
+      noWeapons: props?.noWeapons || false,
     };
   }
 
@@ -693,6 +705,7 @@ export class GameStateService {
       unlockedWorkstations: props?.unlockedWorkstations || [],
       nectarUnlocked: props?.nectarUnlocked || false,
       qiAttackRefinementUnlocked: props?.qiAttackRefinementUnlocked || false,
+      lifestealRefinementUnlocked: props?.lifestealRefinementUnlocked || false,
     };
   }
 
@@ -840,6 +853,7 @@ export class GameStateService {
       pauseOnBattle: props?.pauseOnBattle || false,
       maximumTechniqueQiUsage: props?.maximumTechniqueQiUsage || 1000,
       qiAttacksUnlocked: props?.qiAttacksUnlocked || false,
+      skipKillCountReset: props?.skipKillCountReset || false,
     };
   }
 
@@ -1313,6 +1327,7 @@ export class GameStateService {
       supportClicked: this.supportClicked,
       divineGameState: this.divineGameState,
       avatarChallenge: this.avatarChallenge,
+      completedAvatarChallenges: this.completedAvatarChallenges,
     };
     let gameStateString = JSON.stringify(gameState);
     gameStateString = 'ii2' + btoa(encodeURIComponent(gameStateString));
@@ -1376,6 +1391,7 @@ export class GameStateService {
         newGameState.impossibleTasks = this.impossibleTaskService.getProperties();
 
         newGameState.battles.autoTroubleUnlocked = this.battleService.autoTroubleUnlocked;
+        newGameState.battles.skipKillCountReset = true;
 
         newGameState.followers.autoDismissUnlocked = this.followersService.autoDismissUnlocked;
 
@@ -1402,6 +1418,9 @@ export class GameStateService {
         newGameState.inventory.autoEatUnlocked = this.inventoryService.autoEatUnlocked();
         newGameState.inventory.autoUseUnlocked = this.inventoryService.autoUseUnlocked();
         newGameState.inventory.autoBalanceUnlocked = this.inventoryService.autoBalanceUnlocked();
+
+        newGameState.hell.completedHellTasks = this.hellService.completedHellTasks;
+
         newGameState.darkMode = this.isDarkMode;
         newGameState.gameStartTimestamp = this.gameStartTimestamp;
         newGameState.saveInterval = this.saveInterval || 300;
@@ -1412,6 +1431,12 @@ export class GameStateService {
 
         newGameState.layout = this.layout() ?? [];
 
+        if (avatarType === AVATAR_BLOODTHIRSTY_BRAWLER) {
+          newGameState.character.attributes.combatMastery.value = 1;
+          newGameState.character.attributes.metalFist.value = 1;
+          newGameState.inventory.noWeapons = true;
+        }
+
         newGameState.avatarChallenge = avatarType;
 
         this.mainLoopService.importing = true;
@@ -1419,12 +1444,50 @@ export class GameStateService {
         gameStateString = 'ii2' + btoa(encodeURIComponent(gameStateString));
         this.importGame(gameStateString);
         this.savetoLocalStorage();
+        this.avatarChallenge = AVATAR_STATE_LOADING;
         // refresh the page
         setTimeout(() => {
           window.location.reload();
         }, 10);
       }
     }
+  }
+
+  returnToGodhood() {
+    const attributes = this.characterService.attributes;
+    const attributeValues: Partial<{ [key in AttributeType]: number }> = {};
+    for (const keystring in attributes) {
+      const key = keystring as AttributeType;
+      attributeValues[key] = attributes[key].value;
+    }
+    const conceptValues: { [key: string]: number } = {};
+    for (const concept of this.contemplationService.concepts) {
+      conceptValues[concept.name] = concept.progress;
+    }
+    const avatarChallenge = this.avatarChallenge;
+
+    this.importGame(this.divineGameState);
+    // add any attribute gains
+    for (const keystring in attributes) {
+      const key = keystring as AttributeType;
+      this.characterService.attributes[key].value += attributeValues[key] || 0;
+    }
+    // take the better of pre-avater values vs any concepts gained
+    for (const concept of this.contemplationService.concepts) {
+      if (concept.progress < conceptValues[concept.name]) {
+        concept.progress = conceptValues[concept.name];
+      }
+    }
+
+    if (avatarChallenge === AVATAR_BLOODTHIRSTY_BRAWLER) {
+      this.homeService.lifestealRefinementUnlocked = true;
+    }
+    this.completedAvatarChallenges.push(avatarChallenge);
+    this.savetoLocalStorage();
+    this.avatarChallenge = AVATAR_STATE_LOADING;
+    setTimeout(() => {
+      window.location.reload();
+    }, 10);
   }
 
   getDeploymentFlavor() {
@@ -1453,5 +1516,26 @@ export class GameStateService {
     this.achievementService.triggerMemory(MEMORY_JOIN_THE_GODS, () => {
       this.hellService.enterTheHells();
     });
+  }
+
+  checkAvatarProgress() {
+    if (this.avatarChallenge === '') {
+      return;
+    }
+    this.avatarChallengeDisplay.set(this.avatarChallenge);
+    if (this.avatarChallenge === AVATAR_BLOODTHIRSTY_BRAWLER) {
+      this.avatarProgressDescription.set('Avatar Challenge Goal: Defeat 1000000 enemies');
+      this.avatarChallengeProgressRequired.set(1000000);
+      this.avatarChallengeProgress.set(this.battleService.totalKills);
+    }
+    this.avatarChallengeProgressPercent.set(
+      (this.avatarChallengeProgress() / this.avatarChallengeProgressRequired()) * 100
+    );
+    if (this.avatarChallengeProgress() >= this.avatarChallengeProgressRequired()) {
+      if (!this.activityService.ReturnToGodhoodPortal.unlocked) {
+        this.mainLoopService.toast('A portal opens to return you to your divine state.');
+      }
+      this.activityService.ReturnToGodhoodPortal.unlocked = true;
+    }
   }
 }

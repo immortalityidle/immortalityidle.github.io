@@ -8,6 +8,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { HealthService } from './health.service';
 import { BigNumberPipe } from '../pipes';
 import { YinYangComponent } from './yin-yang/yin-yang.component';
+import { GameStateService } from '../game-state/game-state.service';
 
 @Component({
   selector: 'app-health-panel',
@@ -37,6 +38,7 @@ export class HealthPanelComponent {
   protected healthService = inject(HealthService);
   protected characterService = inject(CharacterService);
   protected homeService = inject(HomeService);
+  protected gameStateService = inject(GameStateService);
 
   protected Math = Math;
 

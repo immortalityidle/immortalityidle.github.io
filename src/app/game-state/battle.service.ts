@@ -130,6 +130,7 @@ export interface BattleProperties {
   pauseOnBattle: boolean;
   qiAttacksUnlocked: boolean;
   maximumTechniqueQiUsage: number;
+  skipKillCountReset: boolean;
 }
 
 export interface Technique {
@@ -155,6 +156,7 @@ export interface Technique {
   weaponDamage?: number;
   refinementFocus?: boolean;
   energyUsage?: number;
+  lifesteal?: number;
 }
 
 export interface DisplayTechnique {
@@ -180,6 +182,7 @@ export interface DisplayTechnique {
   divineDamage: WritableSignal<number>;
   weaponDamage: WritableSignal<number>;
   energyUsage: WritableSignal<number>;
+  lifesteal: WritableSignal<number>;
   refinementFocus: WritableSignal<boolean>;
   elementIcon: WritableSignal<string>;
 }
@@ -246,6 +249,7 @@ export const TECHNIQUE_REFINEMENT_WEAPONS = 'incorporate your weapons into the t
 export const TECHNIQUE_REFINEMENT_ENERGY_USAGE = 'incorporate raw energy into the technique';
 export const TECHNIQUE_REFINEMENT_DIVINITY = 'increase damage to divine beings';
 export const TECHNIQUE_REFINEMENT_QI_USAGE = 'increase technique qi usage and damage';
+export const TECHNIQUE_REFINEMENT_LIFESTEAL = 'Allow technique to steal the vital essence of your enemy';
 
 export const ELEMENT_FIRE = 'fire';
 export const ELEMENT_WATER = 'water';
@@ -315,10 +319,12 @@ export class BattleService {
   minimumTechniqueTicks = 3;
   maximumTechniqueWeaponDamage = 1;
   maximumTechniqueDivineDamage = 1;
+  maximumTechniqueLifesteal = 1e-30;
   maximumTechniqueEnergyUsage = 100000;
   maximumTechniqueQiUsage = 1000;
   pauseOnBattle = false;
   qiAttacksUnlocked = false;
+  skipKillCountReset = false;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -734,6 +740,7 @@ export class BattleService {
               weaponDamage: signal<number>(technique.weaponDamage || 0),
               refinementFocus: signal<boolean>(false),
               energyUsage: signal<number>(technique.energyUsage || 0),
+              lifesteal: signal<number>(technique.lifesteal || 0),
               elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
@@ -751,6 +758,7 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].divineDamage.set(technique.divineDamage || 0);
             this.displayEnemies[i].techniques[j].weaponDamage.set(technique.weaponDamage || 0);
             this.displayEnemies[i].techniques[j].energyUsage.set(technique.energyUsage || 0);
+            this.displayEnemies[i].techniques[j].lifesteal.set(technique.lifesteal || 0);
             this.displayEnemies[i].techniques[j].refinementFocus.set(false);
             this.displayEnemies[i].techniques[j].elementIcon.set(this.getElementIcon(technique.effect));
           }
@@ -814,6 +822,7 @@ export class BattleService {
             weaponDamage: signal<number>(technique.weaponDamage || 0),
             refinementFocus: signal<boolean>(technique.refinementFocus || false),
             energyUsage: signal<number>(technique.energyUsage || 0),
+            lifesteal: signal<number>(technique.lifesteal || 0),
             elementIcon: signal<string>(this.getElementIcon(technique.effect)),
           });
         } else {
@@ -842,6 +851,7 @@ export class BattleService {
           this.displayTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
           this.displayTechniques[i].refinementFocus.set(technique.refinementFocus || false);
           this.displayTechniques[i].energyUsage.set(technique.energyUsage || 0);
+          this.displayTechniques[i].lifesteal.set(technique.lifesteal || 0);
           this.displayTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
         }
       }
@@ -930,6 +940,7 @@ export class BattleService {
               weaponDamage: signal<number>(technique.weaponDamage || 0),
               refinementFocus: signal<boolean>(false),
               energyUsage: signal<number>(technique.energyUsage || 0),
+              lifesteal: signal<number>(technique.lifesteal || 0),
               elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
@@ -956,6 +967,7 @@ export class BattleService {
             this.displayLibraryTechniques[i].divineDamage.set(technique.divineDamage || 0);
             this.displayLibraryTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
             this.displayLibraryTechniques[i].energyUsage.set(technique.energyUsage || 0);
+            this.displayLibraryTechniques[i].lifesteal.set(technique.lifesteal || 0);
             this.displayLibraryTechniques[i].refinementFocus.set(false);
             this.displayLibraryTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
           }
@@ -1065,10 +1077,12 @@ export class BattleService {
   private reset() {
     this.clearEnemies();
     this.kills = 0;
-    for (const locationKey in this.killsByLocation) {
-      const location = this.locationService?.locationMap[locationKey as LocationType];
-      if (location?.realm === Realm.MortalRealm || location?.realm === Realm.Hell) {
-        this.killsByLocation[locationKey] = 0;
+    if (!this.skipKillCountReset) {
+      for (const locationKey in this.killsByLocation) {
+        const location = this.locationService?.locationMap[locationKey as LocationType];
+        if (location?.realm === Realm.MortalRealm || location?.realm === Realm.Hell) {
+          this.killsByLocation[locationKey] = 0;
+        }
       }
     }
 
@@ -1149,6 +1163,7 @@ export class BattleService {
       pauseOnBattle: this.pauseOnBattle,
       maximumTechniqueQiUsage: this.maximumTechniqueQiUsage,
       qiAttacksUnlocked: this.qiAttacksUnlocked,
+      skipKillCountReset: this.skipKillCountReset,
     };
   }
 
@@ -1208,6 +1223,7 @@ export class BattleService {
       prefix.allowed = !properties.blockedTechniqueEffects.includes(prefix.value);
     }
     this.pauseOnBattle = properties.pauseOnBattle;
+    this.skipKillCountReset = properties.skipKillCountReset;
   }
 
   usePouchItems() {
@@ -1437,24 +1453,10 @@ export class BattleService {
     } else if (aspect === TECHNIQUE_REFINEMENT_QI_USAGE) {
       const alpha = value * 1e-8;
       technique.qiCost = (1 - alpha) * (technique.qiCost || 0) + alpha * this.maximumTechniqueQiUsage;
+    } else if (aspect === TECHNIQUE_REFINEMENT_LIFESTEAL) {
+      const alpha = value * 1e-39;
+      technique.lifesteal = (1 - alpha) * (technique.lifesteal || 0) + alpha * this.maximumTechniqueLifesteal;
     }
-  }
-
-  addQiAttack() {
-    if (this.techniques.find(technique => technique.name === QI_ATTACK)) {
-      // already added, bail out
-      return;
-    }
-    this.techniques.push({
-      name: QI_ATTACK,
-      description: 'Focus your Qi into a concentrated blast. Each use of this ability requires 10 Qi.',
-      ticksRequired: 5,
-      ticks: 0,
-      baseDamage: 2,
-      unlocked: true,
-      attribute: 'intelligence',
-      qiCost: 10,
-    });
   }
 
   addQiShield() {
@@ -1651,6 +1653,7 @@ export class BattleService {
         this.damageEnemy(
           damage,
           technique.name,
+          0,
           'Your shield strikes back! ' + enemyName + ' receives ' + damage + ' damage.'
         );
       }
@@ -2098,35 +2101,48 @@ export class BattleService {
         damage *= technique.divineDamage || 0;
       }
       const blowthrough = false; // TODO: make this usable again
-      let overage = this.damageEnemy(damage, technique.name);
+      let overage = this.damageEnemy(damage, technique.name, technique.lifesteal || 0);
+
       if (blowthrough) {
         while (overage > 0 && this.enemies.length > 0) {
           // keep using extra damage until it's gone or the enemies are
           this.currentEnemy = this.enemies[0];
-          overage = this.damageEnemy(overage, technique.name);
+          overage = this.damageEnemy(overage, technique.name, technique.lifesteal || 0);
         }
       }
     }
   }
 
-  private damageEnemy(damage: number, techniqueName: string, customMessage = ''): number {
+  private damageEnemy(
+    damage: number,
+    techniqueName: string,
+    lifesteal: number,
+    customMessage: string | undefined = undefined
+  ): number {
     if (!this.currentEnemy) {
       return 0;
     }
     const enemyHealth = this.currentEnemy.health;
     this.currentEnemy.health = Math.floor(this.currentEnemy.health - damage);
-    if (customMessage === '') {
-      customMessage =
-        'Your ' +
-        techniqueName +
-        ' hits ' +
-        this.titleCasePipe.transform(this.currentEnemy.name) +
-        ' for ' +
-        this.bigNumberPipe.transform(damage) +
-        ' damage';
+    let message =
+      'Your ' +
+      techniqueName +
+      ' hits ' +
+      this.titleCasePipe.transform(this.currentEnemy.name) +
+      ' for ' +
+      this.bigNumberPipe.transform(damage) +
+      ' damage';
+    if (lifesteal) {
+      const healAmount = Math.min(damage * lifesteal, enemyHealth);
+      this.characterService.status.health.value += healAmount;
+      this.characterService.checkOverage();
+      message += ', healing you for ' + healAmount;
     }
     damage -= enemyHealth;
-    this.logService.log(LogTopic.COMBAT, customMessage);
+    if (customMessage) {
+      message = customMessage;
+    }
+    this.logService.log(LogTopic.COMBAT, message);
     if (this.currentEnemy.health <= 0) {
       this.killCurrentEnemy();
       return (damage - enemyHealth) / 2; // return half the damage left over

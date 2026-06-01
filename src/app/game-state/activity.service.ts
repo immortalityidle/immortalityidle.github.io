@@ -483,6 +483,9 @@ export class ActivityService {
     ) {
       this.portals = [this.PortalToDivineRealm];
     }
+    if (this.ReturnToGodhoodPortal.unlocked && !this.portals.includes(this.ReturnToGodhoodPortal)) {
+      this.portals.push(this.ReturnToGodhoodPortal);
+    }
   }
 
   updateDisplayValues() {
@@ -5492,7 +5495,7 @@ export class ActivityService {
     location: LocationType.MountPenglai,
     realm: Realm.DivineRealm,
     name: ['Avatar Portal'],
-    activityType: ActivityType.MortalRealmPortal,
+    activityType: ActivityType.AvatarPortal,
     description: [
       'Step through a portal that will transform you back into a mortal and allow you to take on special challenges.',
     ],
@@ -5507,6 +5510,29 @@ export class ActivityService {
     ],
     requirements: [{}],
     unlocked: true,
+    discovered: true,
+    skipApprenticeshipLevel: 0,
+    resourceUse: [],
+  };
+
+  ReturnToGodhoodPortal: Activity = {
+    level: 0,
+    location: LocationType.MountPenglai,
+    realm: Realm.DivineRealm,
+    name: ['Divinity Portal'],
+    activityType: ActivityType.ReturnToGodhoodPortal,
+    description: ['A portal that will transform you back into a god, if you have proven you are worthy to return.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [''],
+    consequence: [
+      () => {
+        this.dialog.open(AvatarModalComponent, {
+          autoFocus: false,
+        });
+      },
+    ],
+    requirements: [{}],
+    unlocked: false,
     discovered: true,
     skipApprenticeshipLevel: 0,
     resourceUse: [],

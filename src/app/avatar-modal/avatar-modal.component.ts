@@ -6,6 +6,7 @@ import {
   AVATAR_BLOODTHIRSTY_BRAWLER,
   AVATAR_DARK_FEARING,
   AVATAR_DRUG_IMMUNE,
+  AVATAR_STATE_LOADING,
   AVATAR_SWORD_SAINT,
   AVATAR_TREE_LOVER,
   AVATAR_WANDERER,
@@ -28,6 +29,7 @@ export class AvatarModalComponent {
   readonly ASCETIC = AVATAR_ASCETIC;
   readonly ALL_NATURAL = AVATAR_ALL_NATURAL;
   readonly BEAST_MASTER = AVATAR_BEAST_MASTER;
+  readonly LOADING = AVATAR_STATE_LOADING;
 
   constructor(public gameStateService: GameStateService) {}
 }

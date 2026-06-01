@@ -20,6 +20,7 @@ import {
   TECHNIQUE_REFINEMENT_COOLDOWN,
   TECHNIQUE_REFINEMENT_DIVINITY,
   TECHNIQUE_REFINEMENT_ENERGY_USAGE,
+  TECHNIQUE_REFINEMENT_LIFESTEAL,
   TECHNIQUE_REFINEMENT_POWER,
   TECHNIQUE_REFINEMENT_QI_USAGE,
   TECHNIQUE_REFINEMENT_WEAPONS,
@@ -128,6 +129,7 @@ export interface HomeProperties {
   unlockedWorkstations: string[];
   nectarUnlocked: boolean;
   qiAttackRefinementUnlocked: boolean;
+  lifestealRefinementUnlocked: boolean;
 }
 
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
@@ -167,6 +169,7 @@ export class HomeService {
   pillsMade = 0;
   merchantAutobuyItem: string | null = null;
   qiAttackRefinementUnlocked = false;
+  lifestealRefinementUnlocked = false;
 
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, espeicially formations
@@ -1254,6 +1257,7 @@ export class HomeService {
       unlockedWorkstations: unlockedWorkstations,
       nectarUnlocked: this.nectarUnlocked,
       qiAttackRefinementUnlocked: this.qiAttackRefinementUnlocked,
+      lifestealRefinementUnlocked: this.lifestealRefinementUnlocked,
     };
   }
 
@@ -1292,6 +1296,8 @@ export class HomeService {
     this.merchantAutobuyItem = properties.merchantAutobuyItem;
     this.nectarUnlocked = properties.nectarUnlocked;
     this.qiAttackRefinementUnlocked = properties.qiAttackRefinementUnlocked;
+    this.lifestealRefinementUnlocked = properties.lifestealRefinementUnlocked;
+
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
@@ -2463,6 +2469,10 @@ export class HomeService {
       aspects.push(TECHNIQUE_REFINEMENT_DIVINITY);
       aspects.push(TECHNIQUE_REFINEMENT_ENERGY_USAGE);
     }
+    if (this.lifestealRefinementUnlocked) {
+      aspects.push(TECHNIQUE_REFINEMENT_LIFESTEAL);
+    }
+
     let index = aspects.indexOf(workstation.techniqueRefinementAspect || TECHNIQUE_REFINEMENT_POWER);
     if (index === aspects.length - 1) {
       index = 0;

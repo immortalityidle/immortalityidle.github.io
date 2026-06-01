@@ -1,6 +1,19 @@
 <div class="healthContainer">
   <app-yin-yang />
   <div class="flexColumn">
+    @if (gameStateService.avatarChallengeDisplay() !== ''){
+      <div class="statusRow">
+        <div class="statusCell stamina" tooltip="{{gameStateService.avatarProgressDescription()}}">
+          <span>Avatar Challenge: {{gameStateService.avatarChallengeDisplay()}}</span>
+          <div class="progress-bar"
+              [attr.value]="gameStateService.avatarChallengeProgress() | bigNumber"
+              [attr.max]="gameStateService.avatarChallengeProgressRequired() | bigNumber">
+            <span [style.width.%]="gameStateService.avatarChallengeProgressPercent()">
+            </span>
+          </div>
+        </div>
+      </div>
+    }
     <div class="statusRow">
       <div class="statusCell">
         @if (characterService.displayAge() < 10000) {
