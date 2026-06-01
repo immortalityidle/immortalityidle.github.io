@@ -585,6 +585,10 @@ export class InventoryService {
 
   setProperties(properties: InventoryProperties) {
     this.itemStacks = properties.itemStacks;
+    while (this.itemStacks.length < this.maxItems) {
+      this.itemStacks.push(this.getEmptyItemStack());
+    }
+
     for (let i = 0; i < this.itemStacks.length; i++) {
       if (!this.itemStacks[i]) {
         this.setItemEmptyStack(i);
