@@ -575,7 +575,8 @@ export class CharacterService {
       attributeGroup: SKILL_ATTRIBUTES,
     },
     metalFist: {
-      description: 'Training in the secret practice of hardening your fists through unarmed combat.',
+      description:
+        'Training in the secret practice of hardening your fists through unarmed combat, reducing all combat damage taken.',
       value: 0,
       displayKey: signal<string>('metalFist'),
       displayValue: signal<number>(0),
@@ -957,7 +958,7 @@ export class CharacterService {
       if (attribute.attributeGroup !== DIVINE_ATTRIBUTES) {
         attribute.aptitude = 1 + attribute.aptitude / this.aptitudeGainDivider; // keep up to 20% of aptitudes after Ascension
       }
-      if (attribute.attributeGroup === BASIC_ATTRIBUTES) {
+      if (attribute.attributeGroup === BASIC_ATTRIBUTES || attribute.value >= 1) {
         attribute.value = 1;
       } else {
         attribute.value = 0;

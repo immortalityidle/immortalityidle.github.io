@@ -1786,7 +1786,7 @@ export class BattleService {
       !this.characterService.equipment.leftHand &&
       this.characterService.attributes.metalFist.value > 0
     ) {
-      this.characterService.increaseAttribute('metalFist', 0.0001);
+      this.characterService.increaseAttribute('metalFist', 0.001);
     }
 
     if (technique.statusEffect) {
