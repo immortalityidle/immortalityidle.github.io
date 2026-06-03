@@ -2101,6 +2101,10 @@ export class AchievementService {
       achievement.disabled = true;
     } else {
       achievement.disabled = false;
+      const index = this.disabledAchievements.indexOf(achievement.name);
+      if (index >= 0) {
+        this.disabledAchievements.splice(index, 1);
+      }
       achievement.effect();
     }
     achievement.unlocked = true;
@@ -2159,7 +2163,7 @@ export class AchievementService {
     this.unlockedAchievements = properties.unlockedAchievements;
     this.disabledAchievements = properties.disabledAchievements;
     for (const achievement of this.achievements) {
-      if (this.unlockedAchievements.includes(achievement.name) && !achievement.disabled) {
+      if (this.unlockedAchievements.includes(achievement.name)) {
         this.unlockAchievement(achievement, false, this.disabledAchievements.includes(achievement.name));
       }
     }
