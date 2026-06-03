@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService } from './character.service';
 import { LogService, LogTopic } from './log.service';
@@ -104,6 +104,7 @@ export interface LocationEntry {
   name: string;
   description: string;
   realm?: Realm;
+  eradicated?: boolean;
   unlock: () => boolean;
 }
 export interface LocationProperties {
@@ -113,6 +114,14 @@ export interface LocationProperties {
   currentRealm: Realm;
   locationLocked: boolean;
   distanceMultiplier: number;
+}
+export interface DisplayLocations {
+  name: WritableSignal<string>;
+  description: WritableSignal<string>;
+  eradicated: WritableSignal<boolean>;
+  selected: WritableSignal<boolean>;
+  trackField: WritableSignal<string>;
+  key: LocationType;
 }
 
 @Injectable({
@@ -549,8 +558,10 @@ export class LocationService {
   };
 
   unlockedLocations: LocationType[] = [];
+  nonSelfUnlockedLocations: LocationType[] = [];
   notifiedLocations: LocationType[] = [];
   locationLocked = false;
+  displayLocations: DisplayLocations[] = [];
 
   constructor(
     private mainLoopService: MainLoopService,
@@ -560,11 +571,37 @@ export class LocationService {
     private pantheonService: PantheonService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
-      this.checkForUnlocks();
+      this.updateLocations();
+
+      while (this.displayLocations.length < this.nonSelfUnlockedLocations.length) {
+        this.displayLocations.push({
+          name: signal<string>(''),
+          description: signal<string>(''),
+          eradicated: signal<boolean>(false),
+          selected: signal<boolean>(false),
+          trackField: signal<string>(''),
+          key: LocationType.SmallTown,
+        });
+      }
+      while (this.displayLocations.length > this.nonSelfUnlockedLocations.length) {
+        this.displayLocations.pop();
+      }
+
+      for (let i = 0; i < this.nonSelfUnlockedLocations.length; i++) {
+        const entry = this.locationMap[this.nonSelfUnlockedLocations[i]];
+        this.displayLocations[i].name.set(entry.name);
+        this.displayLocations[i].description.set(entry.description);
+        this.displayLocations[i].eradicated.set(entry.eradicated || false);
+        this.displayLocations[i].selected.set(this.nonSelfUnlockedLocations[i] === this.location);
+        this.displayLocations[i].trackField.set(
+          this.displayLocations[i].name() + this.displayLocations[i].eradicated() + this.displayLocations[i].selected()
+        );
+        this.displayLocations[i].key = this.nonSelfUnlockedLocations[i];
+      }
     });
     this.mainLoopService.reincarnateSubject.subscribe(() => {
       this.notifiedLocations = [];
-      this.checkForUnlocks();
+      this.updateLocations();
     });
   }
 
@@ -594,17 +631,21 @@ export class LocationService {
     }
   }
 
-  checkForUnlocks() {
+  updateLocations() {
     if (this.hellService.inHell()) {
       // don't do any unlocking
       return;
     } else {
       this.unlockedLocations = [];
+      this.nonSelfUnlockedLocations = [];
       for (const keyString in this.locationMap) {
         const key = keyString as LocationType;
         const location = this.locationMap[key];
         if (location && (!location.realm || location.realm === this.currentRealm) && location.unlock()) {
           this.unlockedLocations.push(key);
+          if (key !== LocationType.Self) {
+            this.nonSelfUnlockedLocations.push(key);
+          }
           if (!this.notifiedLocations.includes(key) && key !== LocationType.Self && key !== LocationType.SmallTown) {
             this.notifiedLocations.push(key);
             this.logService.log(

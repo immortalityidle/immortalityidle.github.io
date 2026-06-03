@@ -854,6 +854,7 @@ export class GameStateService {
       maximumTechniqueQiUsage: props?.maximumTechniqueQiUsage || 1000,
       qiAttacksUnlocked: props?.qiAttacksUnlocked || false,
       skipKillCountReset: props?.skipKillCountReset || false,
+      eradicatedMonsterTypes: props?.eradicatedMonsterTypes || [],
     };
   }
 
@@ -1465,6 +1466,11 @@ export class GameStateService {
     for (const concept of this.contemplationService.concepts) {
       conceptValues[concept.name] = concept.progress;
     }
+    for (const pantheon of this.pantheonService.pantheons) {
+      for (const god of pantheon.gods) {
+        god.timesDefeated.set(0);
+      }
+    }
     const avatarChallenge = this.avatarChallenge;
 
     this.importGame(this.divineGameState);
@@ -1525,9 +1531,17 @@ export class GameStateService {
     }
     this.avatarChallengeDisplay.set(this.avatarChallenge);
     if (this.avatarChallenge === AVATAR_BLOODTHIRSTY_BRAWLER) {
-      this.avatarProgressDescription.set('Avatar Challenge Goal: Defeat 1000000 enemies');
-      this.avatarChallengeProgressRequired.set(1000000);
-      this.avatarChallengeProgress.set(this.battleService.totalKills);
+      this.avatarProgressDescription.set('Avatar Challenge Goal: Eradicate all enemies in the Mortal Realm');
+      this.avatarChallengeProgressRequired.set(12);
+      let eradicationCount = 0;
+      for (const keyString in this.locationService.locationMap) {
+        const key = keyString as LocationType;
+        const entry = this.locationService.locationMap[key];
+        if (entry.realm === Realm.MortalRealm && entry.eradicated) {
+          eradicationCount++;
+        }
+      }
+      this.avatarChallengeProgress.set(eradicationCount);
     }
     this.avatarChallengeProgressPercent.set(
       (this.avatarChallengeProgress() / this.avatarChallengeProgressRequired()) * 100

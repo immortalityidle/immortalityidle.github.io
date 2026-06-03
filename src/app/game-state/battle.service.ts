@@ -85,6 +85,7 @@ export interface EnemyTypes {
   techniques?: Technique[];
   unlocksFurniture?: string;
   noPrefix?: boolean;
+  eradicated?: boolean;
 }
 
 export interface BattleProperties {
@@ -131,6 +132,7 @@ export interface BattleProperties {
   qiAttacksUnlocked: boolean;
   maximumTechniqueQiUsage: number;
   skipKillCountReset: boolean;
+  eradicatedMonsterTypes: string[];
 }
 
 export interface Technique {
@@ -325,6 +327,7 @@ export class BattleService {
   pauseOnBattle = false;
   qiAttacksUnlocked = false;
   skipKillCountReset = false;
+  monstersPerQuality = 10;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -973,6 +976,15 @@ export class BattleService {
           }
         }
       }
+
+      for (const keyString in this.locationService?.locationMap) {
+        const key = keyString as LocationType;
+        const location = this.locationService?.locationMap[key];
+        const uneradicatedLocationMonsters = this.monsterTypes.filter(
+          monsterType => key === monsterType.location && !monsterType.eradicated
+        );
+        location.eradicated = uneradicatedLocationMonsters.length === 0;
+      }
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
@@ -1084,6 +1096,12 @@ export class BattleService {
           this.killsByLocation[locationKey] = 0;
         }
       }
+      for (const monsterKey in this.killsByMonster) {
+        this.killsByMonster[monsterKey] = 0;
+      }
+      for (const monsterType of this.monsterTypes) {
+        monsterType.eradicated = false;
+      }
     }
 
     this.godSlayerKills = 0;
@@ -1117,6 +1135,12 @@ export class BattleService {
       }
       if (!prefix.allowed) {
         blockedEffects.push(prefix.value);
+      }
+    }
+    const eradicatedMonsterTypes = [];
+    for (const monsterType of this.monsterTypes) {
+      if (monsterType.eradicated) {
+        eradicatedMonsterTypes.push(monsterType.baseName || monsterType.name);
       }
     }
 
@@ -1164,6 +1188,7 @@ export class BattleService {
       maximumTechniqueQiUsage: this.maximumTechniqueQiUsage,
       qiAttacksUnlocked: this.qiAttacksUnlocked,
       skipKillCountReset: this.skipKillCountReset,
+      eradicatedMonsterTypes: eradicatedMonsterTypes,
     };
   }
 
@@ -1224,6 +1249,9 @@ export class BattleService {
     }
     this.pauseOnBattle = properties.pauseOnBattle;
     this.skipKillCountReset = properties.skipKillCountReset;
+    for (const monsterType of this.monsterTypes) {
+      monsterType.eradicated = properties.eradicatedMonsterTypes.includes(monsterType.baseName || monsterType.name);
+    }
   }
 
   usePouchItems() {
@@ -2274,21 +2302,26 @@ export class BattleService {
 
     const targetLocation = this.locationService.location;
 
-    const possibleMonsters = this.monsterTypes.filter(monsterType => targetLocation === monsterType.location);
+    const possibleMonsters = this.monsterTypes.filter(
+      monsterType => targetLocation === monsterType.location && !monsterType.eradicated
+    );
     if (possibleMonsters.length === 0) {
       // no monsters here, bail out
       return;
     }
 
     const monsterType = possibleMonsters[(this.killsByLocation[targetLocation] || 0) % possibleMonsters.length];
+    const killsForType = this.killsByMonster[monsterType.baseName || monsterType.name] || 0;
+    const modifier = (killsForType + 1) / this.monstersPerQuality;
+    let qualityIndex = Math.floor(killsForType / this.monstersPerQuality);
 
-    const killsToNextQualityRank = ((monsterType.basePower + '').length + 3) * 5;
-    const modifier = ((this.killsByLocation[targetLocation] || 0) + 1) / killsToNextQualityRank;
-
-    const qualityIndex = Math.floor(modifier);
     if (qualityIndex >= this.monsterQualities.length) {
-      // no more monsters of this type left
-      return;
+      if (this.locationService.currentRealm === Realm.MortalRealm && this.skipKillCountReset) {
+        monsterType.eradicated = true;
+        // no more monsters of this type left
+        return;
+      }
+      qualityIndex = this.monsterQualities.length - 1;
     }
     const modifiedBasePower = monsterType.basePower * modifier;
 

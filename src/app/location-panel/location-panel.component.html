@@ -4,19 +4,22 @@
   <span>Available Locations</span>
   <br>
   <div>
-    @for (location of locationService.unlockedLocations; track location) {
-      @if (location !== locationTypeSelf) {
-        <div class="itemSlot locationEntry" (click)="locationClicked(location)">
-          @if (locationService.location === location){
-            <mat-icon tooltip="When you look for trouble or herbs, you will look for them here.">
-              crisis_alert
-            </mat-icon>
+    @for (location of locationService.displayLocations; track location.trackField()) {
+        <div class="itemSlot locationEntry" (click)="locationClicked(location.key)">
+          <span>
+            @if (location.selected()){
+              <mat-icon tooltip="When you look for trouble or herbs, you will look for them here.">
+                crisis_alert
+              </mat-icon>
+            }
+          </span>
+          <div><span>{{location.name()}}</span></div>
+          <div><span>{{location.description()}}</span></div>
+          @if (location.eradicated()){
+            <div><span>All Monsters Eradicated</span></div>
           }
-          <div>{{locationService.locationMap[location].name}}</div>
-          <div>{{locationService.locationMap[location].description}}</div>
         </div>
       }
-    }
   </div>
 </div>
 <br>
