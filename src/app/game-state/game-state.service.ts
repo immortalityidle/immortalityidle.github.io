@@ -1383,6 +1383,7 @@ export class GameStateService {
         newGameState.achievements.disabledAchievements.push('Storage Ring');
         newGameState.achievements.disabledAchievements.push('Unity of Spirit, Mind, and Body');
         newGameState.achievements.disabledAchievements.push('Animal Friend');
+        newGameState.achievements.disabledAchievements.push('Preserved Ingredients');
 
         newGameState.contemplations = this.contemplationService.getProperties();
 

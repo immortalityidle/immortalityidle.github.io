@@ -2285,9 +2285,10 @@ export class BattleService {
     const killsToNextQualityRank = ((monsterType.basePower + '').length + 3) * 5;
     const modifier = ((this.killsByLocation[targetLocation] || 0) + 1) / killsToNextQualityRank;
 
-    let qualityIndex = Math.floor(modifier);
+    const qualityIndex = Math.floor(modifier);
     if (qualityIndex >= this.monsterQualities.length) {
-      qualityIndex = this.monsterQualities.length - 1;
+      // no more monsters of this type left
+      return;
     }
     const modifiedBasePower = monsterType.basePower * modifier;
 

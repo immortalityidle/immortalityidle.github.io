@@ -2720,6 +2720,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 0.1);
         this.characterService.increaseAttribute('haggling', 0.1);
         this.characterService.status.stamina.value -= 100;
+        this.characterService.updateMoney(this.characterService.money * 0.0000273);
       },
     ],
     resourceUse: [
@@ -3114,6 +3115,16 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 0.1);
         this.characterService.status.stamina.value -= 100;
+        let money =
+          this.characterService.attributes.smithing.value +
+          this.characterService.attributes.cooking.value +
+          this.characterService.attributes.alchemy.value +
+          this.characterService.attributes.woodwork.value +
+          this.characterService.attributes.leatherwork.value +
+          this.characterService.attributes.formationMastery.value;
+        money *= this.incomeMultiplier;
+        money = this.characterService.updateMoney(money);
+        this.FormationCreation.lastIncome = money;
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3121,6 +3132,16 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 0.2);
         this.characterService.status.stamina.value -= 200;
+        let money =
+          this.characterService.attributes.smithing.value +
+          this.characterService.attributes.cooking.value +
+          this.characterService.attributes.alchemy.value +
+          this.characterService.attributes.woodwork.value +
+          this.characterService.attributes.leatherwork.value +
+          this.characterService.attributes.formationMastery.value;
+        money *= this.incomeMultiplier;
+        money = this.characterService.updateMoney(money);
+        this.FormationCreation.lastIncome = money;
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3128,6 +3149,16 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 0.5);
         this.characterService.status.stamina.value -= 500;
+        let money =
+          this.characterService.attributes.smithing.value +
+          this.characterService.attributes.cooking.value +
+          this.characterService.attributes.alchemy.value +
+          this.characterService.attributes.woodwork.value +
+          this.characterService.attributes.leatherwork.value +
+          this.characterService.attributes.formationMastery.value;
+        money *= this.incomeMultiplier;
+        money = this.characterService.updateMoney(money);
+        this.FormationCreation.lastIncome = money;
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3135,6 +3166,16 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 1);
         this.characterService.status.stamina.value -= 1000;
+        let money =
+          this.characterService.attributes.smithing.value +
+          this.characterService.attributes.cooking.value +
+          this.characterService.attributes.alchemy.value +
+          this.characterService.attributes.woodwork.value +
+          this.characterService.attributes.leatherwork.value +
+          this.characterService.attributes.formationMastery.value;
+        money *= this.incomeMultiplier;
+        money = this.characterService.updateMoney(money);
+        this.FormationCreation.lastIncome = money;
         this.characterService.yin++;
         this.characterService.yang++;
       },
