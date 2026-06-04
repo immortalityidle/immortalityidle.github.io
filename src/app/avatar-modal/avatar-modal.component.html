@@ -52,6 +52,21 @@
                 <br>
             </span>
         </div>
+        <div class="avatarSection">
+            <span>
+                <u>{{DRUG_IMMUNE}} Avatar</u>
+                <br>
+                Take on the role of a mortal who cannot be affected by drugs of any sort. During this avatar challenge, you can never consume pills or potions.
+                <br>
+                Goal: Reach 1e20 in all basic attributes
+                <br>
+                Reward: More powerful pills and potions
+                <br>
+                <button (click)="gameStateService.avatarRebirth(DRUG_IMMUNE)">
+                    Be Reborn as a {{DRUG_IMMUNE}} Avatar
+                </button>
+            </span>
+        </div>
         <div>
         <br>
         <br>
@@ -101,21 +116,6 @@
                 <br>
                 <button (click)="gameStateService.avatarRebirth(SWORD_SAINT)">
                     Be Reborn as a {{SWORD_SAINT}} Avatar
-                </button>
-            </span>
-        </div>
-        <div class="avatarSection">
-            <span>
-                <u>{{DRUG_IMMUNE}} Avatar</u>
-                <br>
-                Take on the role of a mortal who cannot be affected by drugs of any sort. During this avatar challenge, you can never consume pills or potions.
-                <br>
-                Goal: Reach 1e20 in all basic attributes
-                <br>
-                Reward: More powerful pills and potions
-                <br>
-                <button (click)="gameStateService.avatarRebirth(DRUG_IMMUNE)">
-                    Be Reborn as a {{DRUG_IMMUNE}} Avatar
                 </button>
             </span>
         </div>

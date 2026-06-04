@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, Injector, signal } from '@angular/core';
 import { ActivityService, ActivityProperties } from './activity.service';
 import { BattleService, BattleProperties, RIGHT_HAND_TECHNIQUE, LEFT_HAND_TECHNIQUE } from './battle.service';
 import { LogProperties, LogService } from './log.service';
@@ -19,6 +19,7 @@ import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService, LocationType, Realm } from './location.service';
 import { ContemplationProperties, ContemplationService } from './contemplation.service';
 import { PantheonProperties, PantheonService } from './pantheon.service';
+import { BigNumberPipe } from '../pipes';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -102,6 +103,7 @@ export class GameStateService {
   avatarProgressDescription = signal<string>('');
   avatarChallengeDisplay = signal<string>('');
   completedAvatarChallenges: string[] = [];
+  private bigNumberPipe: BigNumberPipe;
 
   panels: Panel[] = [
     {
@@ -268,6 +270,7 @@ export class GameStateService {
   ];
 
   constructor(
+    private injector: Injector,
     private characterService: CharacterService,
     private homeService: HomeService,
     private farmService: FarmService,
@@ -286,6 +289,8 @@ export class GameStateService {
     private pantheonService: PantheonService,
     private hellService: HellService
   ) {
+    this.bigNumberPipe = this.injector.get(BigNumberPipe);
+
     window.GameStateService = this;
     mainLoopService.longTickSubject.subscribe(() => {
       const currentTime = new Date().getTime();
@@ -671,9 +676,10 @@ export class GameStateService {
       lifetimeSoldItems: props?.lifetimeSoldItems || 0,
       lifetimePotionsUsed: props?.lifetimePotionsUsed || 0,
       lifetimePillsUsed: props?.lifetimePillsUsed || 0,
-
       soldGoods: props?.soldGoods || {},
       noWeapons: props?.noWeapons || false,
+      noDrugs: props?.noDrugs || false,
+      drugMultiplier: props?.drugMultiplier || 1,
     };
   }
 
@@ -1437,6 +1443,8 @@ export class GameStateService {
           newGameState.character.attributes.combatMastery.value = 1;
           newGameState.character.attributes.metalFist.value = 1;
           newGameState.inventory.noWeapons = true;
+        } else if (avatarType === AVATAR_DRUG_IMMUNE) {
+          newGameState.inventory.noDrugs = true;
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1488,6 +1496,8 @@ export class GameStateService {
 
     if (avatarChallenge === AVATAR_BLOODTHIRSTY_BRAWLER) {
       this.homeService.lifestealRefinementUnlocked = true;
+    } else if (avatarChallenge === AVATAR_DRUG_IMMUNE) {
+      this.inventoryService.drugMultiplier = 100;
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1542,6 +1552,20 @@ export class GameStateService {
         }
       }
       this.avatarChallengeProgress.set(eradicationCount);
+    } else if (this.avatarChallenge === AVATAR_DRUG_IMMUNE) {
+      const targetAttributeValue = 1e20;
+      this.avatarProgressDescription.set(
+        'Avatar Challenge Goal: Raise basic attributes to ' + this.bigNumberPipe.transform(targetAttributeValue)
+      );
+      this.avatarChallengeProgressRequired.set(5);
+      let valuesAtLevel = 0;
+      const basicAttributes = ['strength', 'toughness', 'speed', 'intelligence', 'charisma'];
+      for (const attribute of basicAttributes) {
+        if (this.characterService.attributes[attribute as AttributeType].value >= targetAttributeValue) {
+          valuesAtLevel++;
+        }
+      }
+      this.avatarChallengeProgress.set(valuesAtLevel);
     }
     this.avatarChallengeProgressPercent.set(
       (this.avatarChallengeProgress() / this.avatarChallengeProgressRequired()) * 100

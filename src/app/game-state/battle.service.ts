@@ -1268,10 +1268,10 @@ export class BattleService {
         itemStack.quantity > 0 &&
         this.formationCooldown <= 0
       ) {
-        itemStack.quantity--;
-        this.inventoryService.useItem(itemStack.item);
+        const numberUsed = this.inventoryService.useItem(itemStack.item);
+        itemStack.quantity -= numberUsed;
       } else if ((itemStack.item.cooldown || 0) <= 0) {
-        if (itemStack.item.type === 'potion') {
+        if (itemStack.item.type === 'potion' && !this.inventoryService.noDrugs) {
           const effect: StatusType = itemStack.item.effect as StatusType;
           if (
             this.characterService.status[effect].value <
@@ -1482,7 +1482,7 @@ export class BattleService {
       const alpha = value * 1e-8;
       technique.qiCost = (1 - alpha) * (technique.qiCost || 0) + alpha * this.maximumTechniqueQiUsage;
     } else if (aspect === TECHNIQUE_REFINEMENT_LIFESTEAL) {
-      const alpha = value * 1e-39;
+      const alpha = value * 1e-37;
       technique.lifesteal = (1 - alpha) * (technique.lifesteal || 0) + alpha * this.maximumTechniqueLifesteal;
     }
   }

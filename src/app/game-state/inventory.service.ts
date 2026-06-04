@@ -178,6 +178,8 @@ export interface InventoryProperties {
   lifetimePillsUsed: number;
   soldGoods: { [key: string]: number };
   noWeapons: boolean;
+  noDrugs: boolean;
+  drugMultiplier: number;
 }
 
 @Injectable({
@@ -280,6 +282,8 @@ export class InventoryService {
   soldGoods: { [key: string]: number } = {};
   energyGemConversionRate = 1e90; // 1 spirit energy equivalent to 1 level 90 gem
   noWeapons = false;
+  noDrugs = false;
+  drugMultiplier = 1;
 
   constructor(
     private injector: Injector,
@@ -580,6 +584,8 @@ export class InventoryService {
       lifetimePillsUsed: this.lifetimePillsUsed,
       soldGoods: this.soldGoods,
       noWeapons: this.noWeapons,
+      noDrugs: this.noDrugs,
+      drugMultiplier: this.drugMultiplier,
     };
   }
 
@@ -664,6 +670,8 @@ export class InventoryService {
     this.lifetimePillsUsed = properties.lifetimePillsUsed;
     this.soldGoods = properties.soldGoods;
     this.noWeapons = properties.noWeapons;
+    this.noDrugs = properties.noDrugs;
+    this.drugMultiplier = properties.drugMultiplier;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -1648,7 +1656,7 @@ export class InventoryService {
         // couldn't stack it, let it fall through and get treated like a normal item
       }
 
-      if (this.autoPillEnabled && item.type === 'pill') {
+      if (this.autoPillEnabled && item.type === 'pill' && !this.noDrugs) {
         this.useItem(item, quantity);
         return -1;
       } else if (item.type === 'pill') {
@@ -1963,7 +1971,9 @@ export class InventoryService {
     } else {
       this.lifetimeUsedItems++;
     }
-    if (item.type === 'potion') {
+    if (this.noDrugs && (item.type === 'potion' || item.type === 'pill')) {
+      return 0;
+    } else if (item.type === 'potion') {
       this.usePotion(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
     } else if (item.type === 'pill') {
       this.usePill(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
@@ -2334,7 +2344,7 @@ export class InventoryService {
       effect = potion.effect;
     }
     const statusKey = effect as StatusType;
-    this.characterService.status[statusKey].value += (potion.increaseAmount || 1) * quantity;
+    this.characterService.status[statusKey].value += (potion.increaseAmount || 1) * quantity * this.drugMultiplier;
     this.characterService.checkOverage();
   }
 
@@ -2361,11 +2371,17 @@ export class InventoryService {
         const effectArray = effect.split(',');
         for (const attr of effectArray) {
           const attributeKey = attr as AttributeType;
-          this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity);
+          this.characterService.increaseAttribute(
+            attributeKey,
+            (pill.increaseAmount || 1) * quantity * this.drugMultiplier
+          );
         }
       } else {
         const attributeKey = effect as AttributeType;
-        this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity);
+        this.characterService.increaseAttribute(
+          attributeKey,
+          (pill.increaseAmount || 1) * quantity * this.drugMultiplier
+        );
       }
     }
     this.characterService.checkOverage();
