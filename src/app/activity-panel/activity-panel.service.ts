@@ -1,12 +1,13 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
-import { CharacterService } from '../game-state/character.service';
+import { CharacterService, StatusType } from '../game-state/character.service';
 import { ActivityService } from '../game-state/activity.service';
 import { Activity } from '../game-state/activity';
 import { BattleService } from '../game-state/battle.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { MainLoopService } from '../game-state/main-loop.service';
+import { BigNumberPipe } from '../pipes';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,11 @@ export class ActivityPanelService {
   private characterService = inject(CharacterService);
   private logService = inject(LogService);
   private mainLoopService = inject(MainLoopService);
+  private bigNumberPipe: BigNumberPipe;
+
+  constructor(private injector: Injector) {
+    this.bigNumberPipe = this.injector.get(BigNumberPipe);
+  }
 
   public doActivity(activity: Activity) {
     if (this.battleService.enemies.length > 0) {
@@ -50,6 +56,14 @@ export class ActivityPanelService {
   public showActivity(event: MouseEvent, activity: Activity) {
     event.stopPropagation();
     let bodyString = activity.description[activity.level] + '\n\n' + activity.consequenceDescription[activity.level];
+    const resourceUse = activity.resourceUse[activity.level];
+    for (const key in resourceUse) {
+      let value = resourceUse[key as StatusType] || 0;
+      if (key === 'qi' && this.characterService.qiCompressionLevel > 0) {
+        value /= this.characterService.qiCompressionLevel + 1;
+      }
+      bodyString += '\nUses ' + this.bigNumberPipe.transform(value) + ' ' + key + '.';
+    }
     bodyString += this.activityService.getYinYangDescription(activity.yinYangEffect[activity.level]);
     if (activity.projectionOnly) {
       bodyString +=

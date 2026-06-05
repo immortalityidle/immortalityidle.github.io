@@ -372,7 +372,7 @@ export class FollowersService {
     {
       name: 'Mighty Citadel',
       description:
-        'An immense citidel where your followers rest and train.<br>Costs ' +
+        'An immense citadel where your followers rest and train.<br>Costs ' +
         this.bigNumberPipe.transform(1e26) +
         ' Taels, five proper meals per follower, and ' +
         this.bigNumberPipe.transform(1e50) +

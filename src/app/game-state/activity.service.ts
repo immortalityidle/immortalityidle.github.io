@@ -706,22 +706,21 @@ export class ActivityService {
   }
 
   checkResourceUse(activity: Activity, spirit = false): string {
-    if (!activity.resourceUse || !activity.resourceUse[activity.level]) {
-      return '';
+    const requiredResources = {
+      health: 0,
+      stamina: 0,
+      qi: 0,
+      nutrition: 0,
+    };
+    for (const key in activity.resourceUse[activity.level]) {
+      requiredResources[key as StatusType] = activity.resourceUse?.[activity.level]?.[key as StatusType] ?? 0;
     }
     if (spirit) {
-      if (!activity.resourceUse[activity.level]['qi']) {
-        activity.resourceUse[activity.level]['qi'] = 0;
-      }
-      if (this.characterService.status['qi'].value < (activity.resourceUse[activity.level]?.['qi'] ?? 0) + 5) {
-        return 'qi';
-      }
+      requiredResources.qi += 5;
     }
+    requiredResources.qi /= this.characterService.qiCompressionLevel + 1;
     for (const key in activity.resourceUse[activity.level]) {
-      if (
-        this.characterService.status[key as StatusType].value <
-        (activity.resourceUse?.[activity.level]?.[key as StatusType] ?? 0)
-      ) {
+      if (this.characterService.status[key as StatusType].value < requiredResources[key as StatusType]) {
         return key;
       }
     }
@@ -729,12 +728,15 @@ export class ActivityService {
   }
 
   handleSpiritActivity() {
-    if (this.spiritActivity !== null && this.characterService.status.qi.value >= 5) {
+    if (
+      this.spiritActivity !== null &&
+      this.characterService.status.qi.value >= 5 / (this.characterService.qiCompressionLevel + 1)
+    ) {
       this.spiritActivityProgress = true;
       const activity = this.getActivityByType(this.spiritActivity);
       // if we don't have the resources for spirit activities, just don't do them
       if (activity !== null && this.checkResourceUse(activity, true) === '' && activity.unlocked) {
-        this.characterService.status.qi.value -= 5;
+        this.characterService.status.qi.value -= 5 / (this.characterService.qiCompressionLevel + 1);
         this.lifeActivities[activity.activityType] = (this.lifeActivities[activity.activityType] || 0) + 1;
         activity.consequence[activity.level]();
         this.homeService.triggerWorkstations(activity.activityType);
@@ -969,7 +971,10 @@ export class ActivityService {
     const resourceUse = activity.resourceUse[level];
     for (const keyString in resourceUse) {
       const key = keyString as StatusType;
-      const requiredMax = activity.resourceUse[level][key] || 0;
+      let requiredMax = activity.resourceUse[level][key] || 0;
+      if (key === 'qi') {
+        requiredMax /= this.characterService.qiCompressionLevel + 1;
+      }
       if (this.characterService.status[key].max < requiredMax) {
         return false;
       }
@@ -1194,7 +1199,7 @@ export class ActivityService {
     activityType: ActivityType.Swim,
     description: ['Swim down further into the depths.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 20 Stamina. Reduce health by 100.'],
+    consequenceDescription: ['Reduce health by 100.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 20;
@@ -1229,7 +1234,7 @@ export class ActivityService {
     description: ['Forge a chain strong enough to pull the island from the depths.'],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Uses 100 Stamina. If you have the right facilities, materials, and knowledge you might be able to create an unbreakable chain.',
+      'If you have the right facilities, materials, and knowledge you might be able to create an unbreakable chain.',
     ],
     consequence: [
       () => {
@@ -1265,7 +1270,7 @@ export class ActivityService {
     description: ['Swim deep and attach one of your chains to the island, then pull.'],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Uses nearly a million Stamina. These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.',
+      'These chains are really, REALLY heavy. You better plan on having an Unbreakable Chain and a good place to rest afterwards.',
     ],
     consequence: [
       () => {
@@ -1327,9 +1332,7 @@ export class ActivityService {
     activityType: ActivityType.MakeBrick,
     description: ['Create bricks sturdy enough to support the weight of your tower.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: [
-      'Uses 100 Stamina. If you have the right followers and materials you will create some everlasting bricks.',
-    ],
+    consequenceDescription: ['If you have the right followers and materials you will create some everlasting bricks.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100;
@@ -1364,7 +1367,7 @@ export class ActivityService {
     description: ['Set up the scaffolding for the next level of your tower.'],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Uses 1000 Stamina. If you have the right materials you might succeed in setting up the scaffolding for the next level.',
+      'If you have the right materials you might succeed in setting up the scaffolding for the next level.',
     ],
     consequence: [
       () => {
@@ -1400,7 +1403,7 @@ export class ActivityService {
     description: ['Mix mortar powerful enough to hold your mighty tower together.'],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Uses 100 Stamina. If you have the right followers, facilities, and materials you might succeed in mixing some proper mortar.',
+      'If you have the right followers, facilities, and materials you might succeed in mixing some proper mortar.',
     ],
     consequence: [
       () => {
@@ -1441,9 +1444,7 @@ export class ActivityService {
       'Assemble bricks, mortar, and scaffolding to construct the next level of your tower. You will need a lot of expert help for this.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: [
-      'Uses 1000 Stamina. If you have the right followers and materials you will build the next level.',
-    ],
+    consequenceDescription: ['If you have the right followers and materials you will build the next level.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
@@ -1528,12 +1529,12 @@ export class ActivityService {
     description: ['Delve deep into wind lore to understand how the neverending storm can be controlled.'],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Uses 1000 Stamina and Qi. Compile your research and if you have done enough you may produce a Tome of Wind Control.',
+      'Compile your research and if you have done enough you may produce a Tome of Wind Control.',
     ],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
-        this.characterService.status.qi.value -= 1000;
+        this.characterService.status.qi.value -= 1000 / (this.characterService.qiCompressionLevel + 1);
         if (this.characterService.status.stamina.value < 0 || this.characterService.status.qi.value < 0) {
           this.logService.log(LogTopic.EVENT, "You try to research, but you just don't have the energy.");
           return;
@@ -1568,13 +1569,11 @@ export class ActivityService {
     activityType: ActivityType.TameWinds,
     description: ['Use your research to tame the winds.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: [
-      'Uses 10000 Stamina and Qi and an obscene amount of money. Use a Tome of Wind Control to tame the hurricane.',
-    ],
+    consequenceDescription: ['Uses an obscene amount of money. Use a Tome of Wind Control to tame the hurricane.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 10000;
-        this.characterService.status.qi.value -= 10000;
+        this.characterService.status.qi.value -= 10000 / (this.characterService.qiCompressionLevel + 1);
         if (this.characterService.money < 1e18) {
           this.logService.injury(
             LogTopic.EVENT,
@@ -1936,11 +1935,11 @@ export class ActivityService {
     activityType: ActivityType.MoveStars,
     description: ['Extend your vast magical powers into the heavens and force the stars into alignment.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 900,000 Stamina and 50,000 Qi.'],
+    consequenceDescription: [''],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 900000;
-        this.characterService.status.qi.value -= 50000;
+        this.characterService.status.qi.value -= 50000 / (this.characterService.qiCompressionLevel + 1);
         if (this.characterService.status.stamina.value >= 0 && this.characterService.status.qi.value >= 0) {
           this.impossibleTaskService.taskProgress[ImpossibleTaskType.RearrangeTheStars].progress++;
           this.impossibleTaskService.checkCompletion();
@@ -1974,9 +1973,7 @@ export class ActivityService {
       'Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for a future immortal, but you have to eat to live.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: [
-      'Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.',
-    ],
+    consequenceDescription: ['Increases all your basic attributes by a small amount and provides a little money.'],
     consequence: [
       () => {
         this.characterService.increaseAttribute('strength', 0.02);
@@ -2152,10 +2149,10 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang],
     consequenceDescription: [
-      'Uses 5 Stamina. Increases charisma and provides a little money.',
-      'Uses 5 Stamina. Increases charisma and provides some money.',
-      'Uses 5 Stamina. Increases charisma and provides money.',
-      'Uses 5 Stamina. Increases charisma, provides money, and makes you wonder if there is more to life than just money and fame.',
+      'Increases charisma and provides a little money.',
+      'Increases charisma and provides some money.',
+      'Increases charisma and provides money.',
+      'Increases charisma, provides money, and makes you wonder if there is more to life than just money and fame.',
     ],
     consequence: [
       () => {
@@ -2259,9 +2256,9 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.None, YinYangEffect.Balance, YinYangEffect.Balance],
     consequenceDescription: [
-      'Uses 10 Stamina. Increases charisma and intelligence and provides a little money.',
-      'Uses 90 Stamina. Increases charisma, intelligence, and spirituality.',
-      'Uses 1000 Stamina. Increases charisma, intelligence, and spirituality.',
+      'Increases charisma and intelligence and provides a little money.',
+      'Increases charisma, intelligence, and spirituality.',
+      'Increases charisma, intelligence, and spirituality.',
     ],
     consequence: [
       () => {
@@ -2360,10 +2357,10 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
     consequenceDescription: [
-      'Uses 25 Stamina. Increases strength and toughness and provides a little money.',
-      'Uses 25 Stamina. Increases strength, toughness, and money.',
-      'Uses 25 Stamina. Build your physical power, master your craft, and create weapons.',
-      'Uses 50 Stamina. Bring down your mighty hammer and create works of metal wonder.',
+      'Increases strength and toughness and provides a little money.',
+      'Increases strength, toughness, and money.',
+      'Build your physical power, master your craft, and create weapons.',
+      'Bring down your mighty hammer and create works of metal wonder.',
     ],
     consequence: [
       // grade 0
@@ -2517,7 +2514,7 @@ export class ActivityService {
     activityType: ActivityType.GatherHerbs,
     description: ['Search the natural world for useful herbs.'],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: ['Uses 10 Stamina. Find herbs and learn about plants'],
+    consequenceDescription: ['Find herbs and learn about plants'],
     consequence: [
       () => {
         this.characterService.increaseAttribute('intelligence', 0.1);
@@ -2557,10 +2554,10 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin, YinYangEffect.Yin],
     consequenceDescription: [
-      'Uses 10 Stamina. Get smarter, make a few taels, and learn the secrets of alchemy.',
-      'Uses 10 Stamina. Get smarter, make money, practice your craft. If you have some herbs, you might make a usable potion or pill.',
-      'Uses 10 Stamina. Get smarter, make money, and make some decent potions or pills.',
-      'Uses 20 Stamina. Create amazing potions and pills.',
+      'Get smarter, make a few taels, and learn the secrets of alchemy.',
+      'Get smarter, make money, practice your craft. If you have some herbs, you might make a usable potion or pill.',
+      'Get smarter, make money, and make some decent potions or pills.',
+      'Create amazing potions and pills.',
     ],
     consequence: [
       () => {
@@ -2691,10 +2688,10 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.None, YinYangEffect.None, YinYangEffect.None, YinYangEffect.None],
     consequenceDescription: [
-      'Uses 20 Stamina. Trades whatever you have in your shopfront for items available at the store.',
-      'Uses 30 Stamina. Sells whatever you have in your shopfront.',
-      'Uses 40 Stamina. Sells whatever you have in your shopfront.',
-      'Uses 100 Stamina. Sells whatever you have in your shopfront and uses your wealth to make more wealth. It takes money to make money!',
+      'Trades whatever you have in your shopfront for items available at the store.',
+      'Sells whatever you have in your shopfront.',
+      'Sells whatever you have in your shopfront.',
+      'Sells whatever you have in your shopfront and uses your wealth to make more wealth. It takes money to make money!',
     ],
     consequence: [
       () => {
@@ -2770,7 +2767,7 @@ export class ActivityService {
     activityType: ActivityType.ChopWood,
     description: ['Work as a woodcutter, cutting logs in the forest.'],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: ['Uses 10 Stamina. Get a log and learn about plants.'],
+    consequenceDescription: ['Get a log and learn about plants.'],
     consequence: [
       () => {
         this.characterService.increaseAttribute('strength', 0.1);
@@ -2808,10 +2805,10 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang, YinYangEffect.Yang],
     consequenceDescription: [
-      'Uses 20 Stamina. Increases strength and intelligence and provides a little money.',
-      'Uses 20 Stamina. Increases strength and intelligence and provides a little money. You may make something you want to keep now and then.',
-      'Uses 20 Stamina. Increases strength and intelligence, earn some money, create wooden equipment.',
-      'Uses 40 Stamina. Create the best of wooden weapons.',
+      'Increases strength and intelligence and provides a little money.',
+      'Increases strength and intelligence and provides a little money. You may make something you want to keep now and then.',
+      'Increases strength and intelligence, earn some money, create wooden equipment.',
+      'Create the best of wooden weapons.',
     ],
     consequence: [
       () => {
@@ -2956,10 +2953,10 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
     consequenceDescription: [
-      'Uses 20 Stamina. Increases speed and toughness and provides a little money.',
-      'Uses 20 Stamina. Increases speed and toughness and provides a little money. You may make something you want to keep now and then.',
-      'Uses 20 Stamina. Increases speed and toughness, earn some money, create leather equipment.',
-      'Uses 40 Stamina. Create the fanciest pants you can imagine. Maybe some boots, too.',
+      'Increases speed and toughness and provides a little money.',
+      'Increases speed and toughness and provides a little money. You may make something you want to keep now and then.',
+      'Increases speed and toughness, earn some money, create leather equipment.',
+      'Create the fanciest pants you can imagine. Maybe some boots, too.',
     ],
     consequence: [
       () => {
@@ -3105,10 +3102,10 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
     consequenceDescription: [
-      'Uses 100 Stamina. If you have a formation workstation, you can make some weak formations kits.',
-      'Uses 200 Stamina. If you have a formation workstation, you can make some simple formations kits.',
-      'Uses 500 Stamina. If you have a formation workstation, you can make some formations kits.',
-      'Uses 1000 Stamina. If you have a formation workstation, you can make some excellent formations kits.',
+      'If you have a formation workstation, you can make some weak formations kits.',
+      'If you have a formation workstation, you can make some simple formations kits.',
+      'If you have a formation workstation, you can make some formations kits.',
+      'If you have a formation workstation, you can make some excellent formations kits.',
     ],
     consequence: [
       () => {
@@ -3239,7 +3236,7 @@ export class ActivityService {
     activityType: ActivityType.Plowing,
     description: ['Plow an unused plot of land into a field for growing crops.'],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: ['Uses 50 Stamina. Increases strength and speed.'],
+    consequenceDescription: ['Increases strength and speed.'],
     consequence: [
       () => {
         this.farmService.plowPlot();
@@ -3276,7 +3273,7 @@ export class ActivityService {
     activityType: ActivityType.Clearing,
     description: ['Clear a fallow plot of farmland into an empty plot of land.'],
     yinYangEffect: [YinYangEffect.Yin],
-    consequenceDescription: ['Uses 50 Stamina. Increases strength and speed.'],
+    consequenceDescription: ['Increases strength and speed.'],
     consequence: [
       () => {
         this.farmService.clearPlot();
@@ -3315,9 +3312,7 @@ export class ActivityService {
       "Cultivate the crops in your fields. This is a waste of time if you don't have planted fields ready to work.",
     ],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: [
-      'Uses 20 Stamina. Increases strength and speed and helps your fields to produce more food.',
-    ],
+    consequenceDescription: ['Increases strength and speed and helps your fields to produce more food.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 20;
@@ -3360,7 +3355,7 @@ export class ActivityService {
     activityType: ActivityType.Mining,
     description: ['Dig in the ground for usable minerals.'],
     yinYangEffect: [YinYangEffect.Yin],
-    consequenceDescription: ['Uses 20 Stamina. Increases strength and sometimes finds something useful.'],
+    consequenceDescription: ['Increases strength and sometimes finds something useful.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 20;
@@ -3402,7 +3397,7 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.Balance],
     consequenceDescription: [
-      'Uses 20 Stamina. Increases toughness and intelligence. If you have metal ores, you can make them into bars.',
+      'Increases toughness and intelligence. If you have metal ores, you can make them into bars.',
     ],
     consequence: [
       () => {
@@ -3437,7 +3432,7 @@ export class ActivityService {
     activityType: ActivityType.Hunting,
     description: ['Hunt for animals in the nearby woods.'],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: ['Uses 50 Stamina. Increases speed and a good hunt provides some meat.'],
+    consequenceDescription: ['Increases speed and a good hunt provides some meat.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 50;
@@ -3482,7 +3477,7 @@ export class ActivityService {
     activityType: ActivityType.Fishing,
     description: ['Grab your net and see if you can catch some fish.'],
     yinYangEffect: [YinYangEffect.Yin],
-    consequenceDescription: ['Uses 30 Stamina. Increases intelligence and strength and you might catch a fish.'],
+    consequenceDescription: ['Increases intelligence and strength and you might catch a fish.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 30;
@@ -3525,7 +3520,7 @@ export class ActivityService {
     activityType: ActivityType.Burning,
     description: ['Light things on fire and watch them burn.'],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: ['Uses 5 Stamina. You will be charged for what you burn. Teaches you to love fire.'],
+    consequenceDescription: ['You will be charged for what you burn. Teaches you to love fire.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 5;
@@ -3559,7 +3554,7 @@ export class ActivityService {
     activityType: ActivityType.BalanceChi,
     description: ['Balance the flow of your chi and widen your meridians.'],
     yinYangEffect: [YinYangEffect.Balance],
-    consequenceDescription: ['Uses 100 Stamina. Increases your weakest lore.'],
+    consequenceDescription: ['Increases your weakest lore.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100;
@@ -3616,9 +3611,7 @@ export class ActivityService {
       'Focus on the development of your body. Unblock your meridians, let your chi flow, and prepare your body for immortality.',
     ],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: [
-      'Uses 100 Stamina. Increases your physical abilities and strengthen your aptitudes in them.',
-    ],
+    consequenceDescription: ['Increases your physical abilities and strengthen your aptitudes in them.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100;
@@ -3659,9 +3652,7 @@ export class ActivityService {
       'Focus on the development of your mind. Unblock your meridians, let your chi flow, and prepare your mind for immortality.',
     ],
     yinYangEffect: [YinYangEffect.Yin],
-    consequenceDescription: [
-      'Uses 100 Stamina. Increases your mental abilities and strengthen your aptitudes in them.',
-    ],
+    consequenceDescription: ['Increases your mental abilities and strengthen your aptitudes in them.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100;
@@ -3698,7 +3689,7 @@ export class ActivityService {
     description: ['Focus on the development of your soul core.'],
     yinYangEffect: [YinYangEffect.Balance],
     consequenceDescription: [
-      'Uses 200 Stamina. A very advanced cultivation technique. Make sure you have achieved a deep understanding of elemental balance before attempting this. Gives you a small chance of increasing your Qi capabilities.',
+      'A very advanced cultivation technique. Make sure you have achieved a deep understanding of elemental balance before attempting this. Gives you a small chance of increasing your Qi capabilities.',
     ],
     consequence: [
       () => {
@@ -3743,7 +3734,7 @@ export class ActivityService {
     description: ['Focus on the development of your immortal soul.'],
     yinYangEffect: [YinYangEffect.Balance],
     consequenceDescription: [
-      "Uses 1000 health. An immortal's cultivation technique. Balance your attributes and your lore, and improve yourself in every way.",
+      "An immortal's cultivation technique. Balance your attributes and your lore, and improve yourself in every way.",
     ],
     consequence: [
       () => {
@@ -3800,11 +3791,11 @@ export class ActivityService {
     activityType: ActivityType.InfuseEquipment,
     description: ['Infuse the power of a gem into your equipment.'],
     yinYangEffect: [YinYangEffect.Balance],
-    consequenceDescription: ['Uses 200 Stamina and 10 Qi. An advanced magical technique.'],
+    consequenceDescription: ['An advanced magical technique.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 200;
-        this.characterService.status.qi.value -= 10;
+        this.characterService.status.qi.value -= 10 / (this.characterService.qiCompressionLevel + 1);
         this.characterService.yang++;
         this.characterService.yin++;
       },
@@ -3837,14 +3828,15 @@ export class ActivityService {
       'Direct your magical energy into reinforcing your physical body, making it healthier and more able to sustain damage without falling.',
     ],
     yinYangEffect: [YinYangEffect.Balance],
-    consequenceDescription: [
-      'Uses 10 Qi and 200 Stamina. Make sure you have enough magical power before attempting this.',
-    ],
+    consequenceDescription: ['Make sure you have enough magical power before attempting this.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 200;
-        if (this.characterService.qiUnlocked && this.characterService.status.qi.value >= 10) {
-          this.characterService.status.qi.value -= 10;
+        if (
+          this.characterService.qiUnlocked &&
+          this.characterService.status.qi.value >= 10 / (this.characterService.qiCompressionLevel + 1)
+        ) {
+          this.characterService.status.qi.value -= 10 / (this.characterService.qiCompressionLevel + 1);
           this.characterService.healthBonusMagic++;
         }
         if (this.characterService.god()) {
@@ -3883,14 +3875,15 @@ export class ActivityService {
     activityType: ActivityType.ExtendLife,
     description: ['Direct your magical energy into extending your lifespan, making you live longer.'],
     yinYangEffect: [YinYangEffect.Balance],
-    consequenceDescription: [
-      'Uses 20 Qi and 400 Stamina. Make sure you have enough magical power before attempting this.',
-    ],
+    consequenceDescription: ['Make sure you have enough magical power before attempting this.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 400;
-        if (this.characterService.qiUnlocked && this.characterService.status.qi.value >= 20) {
-          this.characterService.status.qi.value -= 20;
+        if (
+          this.characterService.qiUnlocked &&
+          this.characterService.status.qi.value >= 20 / (this.characterService.qiCompressionLevel + 1)
+        ) {
+          this.characterService.status.qi.value -= 20 / (this.characterService.qiCompressionLevel + 1);
           if (this.characterService.magicLifespan < 36500 * (1 + this.characterService.qiCompressionLevel)) {
             this.characterService.magicLifespan += 10;
           }
@@ -3928,7 +3921,7 @@ export class ActivityService {
     description: ['Look for followers willing to serve you.'],
     yinYangEffect: [YinYangEffect.Yang],
     consequenceDescription: [
-      'Uses 100 Stamina and 1M taels. Gives you a small chance of finding a follower, if you are powerful enough to attract any.',
+      'Costs 1M taels. Gives you a small chance of finding a follower, if you are powerful enough to attract any.',
     ],
     consequence: [
       () => {
@@ -3976,7 +3969,7 @@ export class ActivityService {
     description: ['Train your followers to make them more powerful.'],
     yinYangEffect: [YinYangEffect.Yang],
     consequenceDescription: [
-      'Uses 1000 Stamina. Gives one of your followers some experience. They might learn more if you are a better leader.',
+      'Gives one of your followers some experience. They might learn more if you are a better leader.',
     ],
     consequence: [
       () => {
@@ -4039,7 +4032,7 @@ export class ActivityService {
       'Hone every fiber of your being to martial sepremacy. Your experience in the Hell of Mirrors allowed you to examine your own combat form and understand how to improve it. Now all you need is practice.',
     ],
     yinYangEffect: [YinYangEffect.Balance],
-    consequenceDescription: ['Uses 10000 stamina. Trains your Combat Mastery.'],
+    consequenceDescription: ['Trains your Combat Mastery.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 10000;
@@ -4070,7 +4063,7 @@ export class ActivityService {
     activityType: ActivityType.PetRecruiting,
     description: ['Look for animals that want to be your pets.'],
     yinYangEffect: [YinYangEffect.Yang],
-    consequenceDescription: ['Uses 100 Stamina and 100,000 food. Gives you a small chance of finding a pet.'],
+    consequenceDescription: ['Uses 100,000 food. Gives you a small chance of finding a pet.'],
     consequence: [
       () => {
         if (this.inventoryService.getQuantityByType('food') < 100000) {
@@ -4114,7 +4107,7 @@ export class ActivityService {
     description: ['Train your pets to make them more powerful.'],
     yinYangEffect: [YinYangEffect.Yang],
     consequenceDescription: [
-      'Uses 1000 Stamina and 100k food. Gives you a small chance for each pet of increasing their power. They might learn more if you are a better with animals.',
+      'Uses 100k food. Gives you a small chance for each pet of increasing their power. They might learn more if you are a better with animals.',
     ],
     consequence: [
       () => {
@@ -4158,7 +4151,7 @@ export class ActivityService {
     activityType: ActivityType.PurifyGems,
     description: ['Purify corrupted spirit gems into life gems.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100000 Stamina and a corrupted spirit gem.'],
+    consequenceDescription: ['Uses a corrupted spirit gem.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100000;
@@ -4206,10 +4199,11 @@ export class ActivityService {
         ' and your gemologist followers to extract raw spirit energy from spirit gems.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 Stamina, 1000 Qi, and gems from your inventory.'],
+    consequenceDescription: ['Uses gems from your inventory.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
+        this.characterService.status.qi.value -= 1000 / (this.characterService.qiCompressionLevel + 1);
       },
     ],
     resourceUse: [
@@ -4235,7 +4229,7 @@ export class ActivityService {
     activityType: ActivityType.SynthesizingGems,
     description: ['Use your understanding of creation to generate artificial spirit gems.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100000 Stamina and some taels to create a gem.'],
+    consequenceDescription: ['Uses some taels to create a gem.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 100000;
@@ -4278,7 +4272,7 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Expend 10000 stamina to use your training chamber to improve the family technique that you have selected for refinement.',
+      'Use your training chamber to improve the family technique that you have selected for refinement.',
     ],
     consequence: [
       () => {
@@ -4340,7 +4334,7 @@ export class ActivityService {
       'Manipulate absorbed energy, allowing you to use an Energy Manipulator workstation to convert energy between different forms.',
     ],
     yinYangEffect: [YinYangEffect.Balance],
-    consequenceDescription: ['Expend 10000 stamina to use an Energy Manipulator workstation.'],
+    consequenceDescription: ['Use an Energy Manipulator workstation.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 10000;
@@ -4370,7 +4364,7 @@ export class ActivityService {
     activityType: ActivityType.BurnMoney,
     description: ['Burn mortal realm money to receive hell money.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses a huge pile of mortal money (one million). Gives you some hell money.'],
+    consequenceDescription: ['Burns a huge pile of mortal money (one million taels). Gives you some hell money.'],
     consequence: [
       () => {
         if (this.characterService.money < 1e6) {
@@ -4407,7 +4401,7 @@ export class ActivityService {
     activityType: ActivityType.HellRecruiting,
     description: ['Look for followers willing to help you.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100 Stamina and 1000 hell money. Gives you a small chance of finding a follower.'],
+    consequenceDescription: ['Uses 1000 hell money. Gives you a small chance of finding a follower.'],
     consequence: [
       () => {
         if (this.characterService.attributes.charisma.value < 1e6) {
@@ -4460,7 +4454,7 @@ export class ActivityService {
     ],
     yinYangEffect: [YinYangEffect.None],
     consequenceDescription: [
-      'Uses 100 Stamina and 10 hell money as bait. Breaks a ruffian out of their basket and picks a fight with them.',
+      'Uses 10 hell money as bait. Breaks a ruffian out of their basket and picks a fight with them.',
     ],
     consequence: [
       () => {
@@ -4542,7 +4536,7 @@ export class ActivityService {
       "The copper pillars here look like they're made of a decent grade of copper. It looks like you have enough slack in your chains to turn and break off some pieces.",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 stamina and produces one copper bar.'],
+    consequenceDescription: ['Produces one copper bar.'],
     consequence: [
       () => {
         if (this.characterService.attributes.strength.value < 1e24) {
@@ -4574,7 +4568,7 @@ export class ActivityService {
       'Shape a bar of copper into a hammer using your bare hands. This would be so much easier with an anvil and tools.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 stamina and produces the worst hammer in the world.'],
+    consequenceDescription: ['Produces the worst hammer in the world.'],
     consequence: [
       () => {
         if (this.characterService.attributes.strength.value < 1e24) {
@@ -4626,7 +4620,7 @@ export class ActivityService {
       "Take another step up the mountain. The path before you seems exceptionally jagged. Maybe you shouldn't have killed so very many little spiders.",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 stamina and works off some of that murderous karma you have built up.'],
+    consequenceDescription: ['Works off some of that murderous karma you have built up.'],
     consequence: [
       () => {
         if (
@@ -4785,11 +4779,11 @@ export class ActivityService {
       'You notice that not all the animals here are frenzied killers. Some of them are sick, wounded, and miserable. You resolve to do what good you can here.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 10,000 Qi and 10,000 stamina. Heals an animal.'],
+    consequenceDescription: ['Heals an animal.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 10000;
-        this.characterService.status.qi.value -= 10000;
+        this.characterService.status.qi.value -= 10000 / (this.characterService.qiCompressionLevel + 1);
         this.hellService!.animalsHealed++;
       },
     ],
@@ -4813,10 +4807,11 @@ export class ActivityService {
     activityType: ActivityType.LiftBoulder,
     description: ['The boulder is heavy, but you are strong. See how high you can lift it.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 stamina.'],
+    consequenceDescription: ['Lift it!'],
     consequence: [
       () => {
-        this.characterService.status.stamina.value -= 100000;
+        this.characterService.status.stamina.value -= 10000;
+        this.characterService.status.qi.value -= 10000 / (this.characterService.qiCompressionLevel + 1);
         this.hellService!.boulderHeight++;
       },
     ],
@@ -4840,7 +4835,7 @@ export class ActivityService {
     activityType: ActivityType.HellSwim,
     description: ['Swim down further into the crimson depths.'],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 2000 Stamina. Reduce health by 1000.'],
+    consequenceDescription: ['Make some progress and reduce health by 1000.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 2000;
@@ -4869,11 +4864,10 @@ export class ActivityService {
       "The lost souls here are searching for a way out, and they can't seem to see the portal you came in on. You could help them search for the exit they're seeking.",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 200,000 Stamina.'],
+    consequenceDescription: ['Has a chance of finding the exit based on your intelligence.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 200000;
-        // TODO: tune this
         if (this.characterService.attributes.intelligence.value <= 1e24) {
           this.logService.log(
             LogTopic.EVENT,
@@ -4906,7 +4900,7 @@ export class ActivityService {
     activityType: ActivityType.TeachTheWay,
     description: ["If you've discovered the way to the exit, you could teach the other damned souls here the way out."],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 200,000 Stamina.'],
+    consequenceDescription: ['Help the wrongful dead to escape.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 200000;
@@ -4916,7 +4910,6 @@ export class ActivityService {
           return;
         }
 
-        // TODO: tune this
         if (this.characterService.attributes.charisma.value <= 1e24) {
           this.logService.log(LogTopic.EVENT, 'The damned souls completely ignore your attempts at instruction.');
           return;
@@ -4946,7 +4939,7 @@ export class ActivityService {
       'Find out where the tomb looters here hid their stolen treasures. You might be able to reverse some of the damage they have done.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 Stamina.'],
+    consequenceDescription: ['Has a chance to make a treasure map based on your charisma.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
@@ -4986,7 +4979,7 @@ export class ActivityService {
       "Recover a stolen relic. You'll need all your wits to find it even if you have one the sketchy maps the damned can provide.",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 Stamina.'],
+    consequenceDescription: ['Has a chance to recover a relic using a treasure map.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
@@ -5031,7 +5024,7 @@ export class ActivityService {
       "Return a stolen relic to the tomb where it came from. You'll need to be quick to avoid the tomb's traps.",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 Stamina.'],
+    consequenceDescription: ['Has a chance to successully put a relic back based on your speed.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
@@ -5073,7 +5066,7 @@ export class ActivityService {
       "Trapped under the millstone like this, there's not much you can do but endure the punishment. Fortunately, you probably never went out looking for tiny spiders to squash, right?",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 1000 stamina. Try not to give up. You can do this!'],
+    consequenceDescription: ['Try not to give up. You can do this!'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
@@ -5108,7 +5101,7 @@ export class ActivityService {
       "As if the saw-weilding demons weren't bad enough, this place is a haven for fiendish bureaucrats. Huge piles of paper containing the contracts, covenants, bylaws, stipulations, regulations, and heretofor unspecified legal nonsense for this hell. Maybe if you go through them carefully, you can find a loophole to get yourself an audience with the boss.",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 500,000 stamina because hellish legalese is so incredibly boring.'],
+    consequenceDescription: ['Requires lots of stamina because hellish legalese is so incredibly boring.'],
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 500000;
@@ -5145,9 +5138,7 @@ export class ActivityService {
       "Run errands, pull weeds, clean toilet pits, or do whatever else you can to earn a coin. Undignified work for an aspiring god, but you can't manage anything more profitable when you're projecting your spirit this far.",
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: [
-      'Uses 5 Stamina. Increases all your basic attributes by a small amount and provides a little money.',
-    ],
+    consequenceDescription: ['Increases all your basic attributes by a small amount and provides a little money.'],
     consequence: [
       () => {
         this.characterService.increaseAttribute('strength', 0.02);
@@ -5183,7 +5174,7 @@ export class ActivityService {
       'Gaze into the Blaze.<br>Delve into the mysteries of fire.<br>Advance your understanding of all Tao concepts that stem from fire, ignoring your chosen contemplation.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of fire based Tao principles.'],
+    consequenceDescription: ['Increases your understanding of fire based Tao principles.'],
     consequence: [
       () => {
         this.contemplationService.groupTick(CONCEPT_FIRE, 1000);
@@ -5211,7 +5202,7 @@ export class ActivityService {
       'Gaze into the Depths.<br>Delve into the mysteries of Water.<br>Advance your understanding of all Tao concepts that stem from water, ignoring your chosen contemplation.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of water based Tao principles.'],
+    consequenceDescription: ['Increases your understanding of water based Tao principles.'],
     consequence: [
       () => {
         this.contemplationService.groupTick(CONCEPT_WATER, 1000);
@@ -5239,7 +5230,7 @@ export class ActivityService {
       'Cast your mind into the stone.<br>Delve into the mysteries of earth.<br>Advance your understanding of all Tao concepts that stem from earth, ignoring your chosen contemplation.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of earth based Tao principles.'],
+    consequenceDescription: ['Increases your understanding of earth based Tao principles.'],
     consequence: [
       () => {
         this.contemplationService.groupTick(CONCEPT_EARTH, 1000);
@@ -5267,7 +5258,7 @@ export class ActivityService {
       'Let yourself become as strong as steel.<br>Delve into the mysteries of metal.<br>Advance your understanding of all Tao concepts that stem from metal, ignoring your chosen contemplation.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of metal based Tao principles.'],
+    consequenceDescription: ['Increases your understanding of metal based Tao principles.'],
     consequence: [
       () => {
         this.contemplationService.groupTick(CONCEPT_METAL, 1000);
@@ -5295,7 +5286,7 @@ export class ActivityService {
       'Become one with the tree.<br>Delve into the mysteries of wood.<br>Advance your understanding of all Tao concepts that stem from wood, ignoring your chosen contemplation.',
     ],
     yinYangEffect: [YinYangEffect.None],
-    consequenceDescription: ['Uses 100,000 Stamina. Increases your understanding of wood based Tao principles.'],
+    consequenceDescription: ['Increases your understanding of wood based Tao principles.'],
     consequence: [
       () => {
         this.contemplationService.groupTick(CONCEPT_WOOD, 1000);
@@ -5331,7 +5322,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   returnToHell: Activity = {
@@ -5352,7 +5343,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   FinishHell: Activity = {
@@ -5372,7 +5363,7 @@ export class ActivityService {
       },
     ],
     requirements: [{}],
-    resourceUse: [],
+    resourceUse: [{}],
     unlocked: true,
     skipApprenticeshipLevel: 0,
   };
@@ -5396,7 +5387,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   PortalToDivineRealm: Activity = {
@@ -5418,7 +5409,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   PortalToFireRealm: Activity = {
@@ -5440,7 +5431,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   PortalToEarthRealm: Activity = {
@@ -5462,7 +5453,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   PortalToWaterRealm: Activity = {
@@ -5484,7 +5475,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   PortalToMetalRealm: Activity = {
@@ -5506,7 +5497,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   PortalToWoodRealm: Activity = {
@@ -5528,7 +5519,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   AvatarPortal: Activity = {
@@ -5553,7 +5544,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   ReturnToGodhoodPortal: Activity = {
@@ -5576,7 +5567,7 @@ export class ActivityService {
     unlocked: false,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   PortalToPhilosopherStates: Activity = {
@@ -5600,7 +5591,7 @@ export class ActivityService {
     unlocked: true,
     discovered: true,
     skipApprenticeshipLevel: 0,
-    resourceUse: [],
+    resourceUse: [{}],
   };
 
   DeliverMessages: Activity = {
@@ -5646,7 +5637,7 @@ export class ActivityService {
         this.characterService.yang += 100;
       },
     ],
-    resourceUse: [],
+    resourceUse: [{}],
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
@@ -5679,7 +5670,7 @@ export class ActivityService {
         );
       },
     ],
-    resourceUse: [],
+    resourceUse: [{}],
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
@@ -5724,7 +5715,7 @@ export class ActivityService {
         this.characterService.status.stamina.value = 0;
       },
     ],
-    resourceUse: [],
+    resourceUse: [{}],
     requirements: [
       {
         animalHandling: 1e36,
