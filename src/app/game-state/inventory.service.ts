@@ -23,7 +23,16 @@ import { HellService } from './hell.service';
 import { HomeService } from './home.service';
 import { LocationService, LocationType } from './location.service';
 import { BigNumberPipe } from '../pipes';
-import { BattleService, ENERGY_SPIRIT, LOOT_TYPE_GEM } from './battle.service';
+import {
+  BattleService,
+  ELEMENT_EARTH,
+  ELEMENT_FIRE,
+  ELEMENT_METAL,
+  ELEMENT_WATER,
+  ELEMENT_WOOD,
+  ENERGY_SPIRIT,
+  LOOT_TYPE_GEM,
+} from './battle.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -2605,6 +2614,29 @@ export class InventoryService {
         }
       }
     }
+  }
+
+  shatterSpiritGem(stack: ItemStack) {
+    if (!stack.item) {
+      return;
+    }
+    if (stack.quantity < 1) {
+      return;
+    }
+    if (stack.item.type !== LOOT_TYPE_GEM || stack.item.subtype !== ENERGY_SPIRIT) {
+      this.logService.log(LogTopic.CRAFTING, 'Only spirit gems can be shattered into elemental components.');
+      return;
+    }
+    if (stack.item.value < 110) {
+      this.logService.log(LogTopic.CRAFTING, 'This gem is too weak to produce useful components.');
+      return;
+    }
+    stack.quantity--;
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_EARTH));
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_WATER));
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_FIRE));
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_METAL));
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_WOOD));
   }
 
   mergeAnySpiritGem(power: number) {

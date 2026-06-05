@@ -184,6 +184,16 @@ export class InventoryPanelComponent {
     this.inventoryService.updateDisplayValues();
   }
 
+  shatterSpiritGem() {
+    if (this.inventoryService.selectedItem) {
+      this.inventoryService.shatterSpiritGem(this.inventoryService.selectedItem);
+      if (this.inventoryService.selectedItem.quantity === 0) {
+        this.inventoryService.selectedItem = this.inventoryService.getEmptyItemStack();
+      }
+    }
+    this.inventoryService.updateDisplayValues();
+  }
+
   dragStart() {
     this.gameStateService.dragging = true;
   }

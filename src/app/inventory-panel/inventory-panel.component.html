@@ -75,6 +75,12 @@
               diamond
             </mat-icon>
           }
+          @if ((inventoryService.displaySelectedItem.type() === gem_type)) {
+            <mat-icon (click)="shatterSpiritGem()"  class="iconButton" aria-label="Prismatic Split Gem" aria-hidden="false"
+              tooltip="Shatter this gem into its elemental components.">
+              destruction
+            </mat-icon>
+          }
           @if (inventoryService.displaySelectedItem.sellable()) {
             <mat-icon (click)="throwAway()"  class="iconButton" aria-label="Throw Away" aria-hidden="false"
               tooltip="Throw this stack of items away.">
