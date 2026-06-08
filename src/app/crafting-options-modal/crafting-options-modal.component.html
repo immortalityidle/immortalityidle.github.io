@@ -26,6 +26,25 @@
       </span>
     </div>
   }
+  @if (inventoryService.autoWeaponMergeUnlocked) {
+    <div  class="optionField">
+      <span>
+        <input type="checkbox" (change)="automergeWeaponChange($event)"
+          id="automergeWeapon"  [checked]="inventoryService.autoWeaponMergeEnabled"/>
+        <label for="automergeWeapon">Automatically merge weapons in your inventory</label>
+      </span>
+    </div>
+  }
+  @if (inventoryService.autoWeaponMergeUnlocked) {
+    <div  class="optionField">
+      <span>
+        <input type="checkbox" (change)="automergeArmorChange($event)"
+          id="automergeArmor"  [checked]="inventoryService.autoArmorMergeEnabled"/>
+        <label for="automergeArmor">Automatically merge armor in your inventory</label>
+      </span>
+    </div>
+  }
+
   @if (inventoryService.autoReloadCraftInputsUnlocked){
     <div class="optionField">
       <span>

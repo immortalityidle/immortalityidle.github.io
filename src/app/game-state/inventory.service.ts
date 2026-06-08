@@ -141,6 +141,8 @@ export interface InventoryProperties {
   autoPillEnabled: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
+  autoWeaponMergeEnabled: boolean;
+  autoArmorMergeEnabled: boolean;
   useSpiritGemUnlocked: boolean;
   useSpiritGemWeapons: boolean;
   useCheapestSpiritGem: boolean;
@@ -239,6 +241,8 @@ export class InventoryService {
   autoPillEnabled: boolean;
   autoWeaponMergeUnlocked: boolean;
   autoArmorMergeUnlocked: boolean;
+  autoWeaponMergeEnabled: boolean;
+  autoArmorMergeEnabled: boolean;
   autoequipBestWeapon: boolean;
   autoequipBestArmor: boolean;
   autoequipBestEnabled = true;
@@ -318,6 +322,8 @@ export class InventoryService {
     this.autoPillEnabled = false;
     this.autoWeaponMergeUnlocked = false;
     this.autoArmorMergeUnlocked = false;
+    this.autoWeaponMergeEnabled = false;
+    this.autoArmorMergeEnabled = false;
     this.autoequipBestWeapon = false;
     this.autoequipBestArmor = false;
     this.useSpiritGemUnlocked = false;
@@ -408,10 +414,10 @@ export class InventoryService {
     }
 
     if (this.mergeCounter >= 20) {
-      if (this.autoWeaponMergeUnlocked) {
+      if (this.autoWeaponMergeEnabled) {
         this.autoWeaponMerge();
       }
-      if (this.autoArmorMergeUnlocked) {
+      if (this.autoArmorMergeEnabled) {
         this.autoArmorMerge();
       }
       this.mergeCounter = 0;
@@ -547,6 +553,8 @@ export class InventoryService {
       autoPillEnabled: this.autoPillEnabled,
       autoWeaponMergeUnlocked: this.autoWeaponMergeUnlocked,
       autoArmorMergeUnlocked: this.autoArmorMergeUnlocked,
+      autoWeaponMergeEnabled: this.autoWeaponMergeEnabled,
+      autoArmorMergeEnabled: this.autoArmorMergeEnabled,
       useSpiritGemUnlocked: this.useSpiritGemUnlocked,
       useSpiritGemWeapons: this.useSpiritGemWeapons,
       useCheapestSpiritGem: this.useCheapestSpiritGem,
@@ -632,6 +640,8 @@ export class InventoryService {
     this.autoPillEnabled = properties.autoPillEnabled;
     this.autoWeaponMergeUnlocked = properties.autoWeaponMergeUnlocked;
     this.autoArmorMergeUnlocked = properties.autoArmorMergeUnlocked;
+    this.autoWeaponMergeEnabled = properties.autoWeaponMergeEnabled;
+    this.autoArmorMergeEnabled = properties.autoArmorMergeEnabled;
     this.useSpiritGemUnlocked = properties.useSpiritGemUnlocked;
     this.useSpiritGemWeapons = properties.useSpiritGemWeapons;
     this.useCheapestSpiritGem = properties.useCheapestSpiritGem;

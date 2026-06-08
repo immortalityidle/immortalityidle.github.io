@@ -41,6 +41,16 @@ export class CraftingOptionsModalComponent {
     this.inventoryService.automergeEquipped = event.target.checked;
   }
 
+  automergeWeaponChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoWeaponMergeEnabled = event.target.checked;
+  }
+
+  automergeArmorChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoArmorMergeEnabled = event.target.checked;
+  }
+
   autoReloadCraftInputsChange(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoReloadCraftInputs = event.target.checked;

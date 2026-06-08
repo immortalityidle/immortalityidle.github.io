@@ -632,6 +632,8 @@ export class GameStateService {
       autoPillEnabled: props?.autoPillEnabled || false,
       autoWeaponMergeUnlocked: props?.autoWeaponMergeUnlocked || false,
       autoArmorMergeUnlocked: props?.autoArmorMergeUnlocked || false,
+      autoWeaponMergeEnabled: props?.autoWeaponMergeEnabled || props?.autoWeaponMergeUnlocked || false,
+      autoArmorMergeEnabled: props?.autoArmorMergeEnabled || props?.autoArmorMergeUnlocked || false,
       useSpiritGemUnlocked: props?.useSpiritGemUnlocked || false,
       useSpiritGemWeapons: props?.useSpiritGemWeapons || false,
       useCheapestSpiritGem: props?.useCheapestSpiritGem || false,
@@ -1411,6 +1413,8 @@ export class GameStateService {
         newGameState.inventory.herbalUnderstanding = this.inventoryService.herbalUnderstanding;
         newGameState.inventory.autoWeaponMergeUnlocked = this.inventoryService.autoWeaponMergeUnlocked;
         newGameState.inventory.autoArmorMergeUnlocked = this.inventoryService.autoArmorMergeUnlocked;
+        newGameState.inventory.autoWeaponMergeEnabled = this.inventoryService.autoWeaponMergeEnabled;
+        newGameState.inventory.autoArmorMergeEnabled = this.inventoryService.autoArmorMergeEnabled;
         newGameState.inventory.useSpiritGemUnlocked = this.inventoryService.useSpiritGemUnlocked;
         newGameState.inventory.autoSellOldHerbs = this.inventoryService.autoSellOldHerbs;
         newGameState.inventory.autoSellOldWood = this.inventoryService.autoSellOldWood;

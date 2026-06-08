@@ -3181,6 +3181,7 @@ baguaMap = [
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoWeaponMergeUnlocked = true;
+        this.inventoryService.autoWeaponMergeEnabled = true;
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
@@ -3210,6 +3211,7 @@ baguaMap = [
           this.inventoryService = this.injector.get(InventoryService);
         }
         this.inventoryService.autoArmorMergeUnlocked = true;
+        this.inventoryService.autoArmorMergeEnabled = true;
         this.logService.log(
           LogTopic.EVENT,
           "The teachings of the manual sink deep into your soul. You'll be able to apply this knowledge in all future reincarnations."
