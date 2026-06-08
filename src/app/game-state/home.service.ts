@@ -108,7 +108,6 @@ export interface HomeProperties {
   bedroomFurniture: (Item | null)[];
   landPrice: number;
   keepFurniture: boolean;
-  keepWorkstationInputs: boolean;
   nextHomeCostReduction: number;
   houseBuildingProgress: number;
   upgrading: boolean;
@@ -148,7 +147,6 @@ export class HomeService {
   followerService?: FollowersService;
   impossibleTaskService?: ImpossibleTaskService;
   keepFurniture = false;
-  keepWorkstationInputs = false;
   land: number;
   landPrice: number;
   ownedFurniture: string[] = [];
@@ -1236,7 +1234,6 @@ export class HomeService {
       land: this.land,
       landPrice: this.landPrice,
       keepFurniture: this.keepFurniture,
-      keepWorkstationInputs: this.keepWorkstationInputs,
       nextHomeCostReduction: this.nextHomeCostReduction,
       houseBuildingProgress: this.houseBuildingProgress,
       upgrading: this.upgrading,
@@ -1266,7 +1263,6 @@ export class HomeService {
     this.landPrice = properties.landPrice;
     this.setCurrentHome(this.homesList[properties.homeValue]);
     this.keepFurniture = properties.keepFurniture || false;
-    this.keepWorkstationInputs = properties.keepWorkstationInputs || false;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
     this.upgrading = properties.upgrading || false;
@@ -1378,7 +1374,7 @@ export class HomeService {
   reset() {
     if (!this.keepHome) {
       this.setCurrentHome(this.homesList[0]);
-    } else if (!this.keepWorkstationInputs) {
+    } else if (this.characterService.bloodlineRank < 6) {
       for (const workstation of this.workstations) {
         for (const wsinput of workstation.inputs) {
           wsinput.quantity = 0;

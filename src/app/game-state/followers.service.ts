@@ -1081,17 +1081,7 @@ export class FollowersService {
     if (effectiveHQLevel < 0) {
       return;
     }
-    while (
-      effectiveHQLevel >= 0 &&
-      this.hqs[effectiveHQLevel].gemsPerDay > 0 &&
-      (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.inventoryService.energyGemConversionRate <
-        this.hqs[effectiveHQLevel].gemsPerDay &&
-      this.inventoryService.consumeByGemEquivalentValue(
-        LOOT_TYPE_GEM,
-        this.hqs[effectiveHQLevel].gemsPerDay * 10 - this.leftoverHQCostGemValue,
-        true
-      ) === -1
-    ) {
+    while (effectiveHQLevel >= 0 && !this.gemCritiriaMet(this.hqs[effectiveHQLevel].gemsPerDay)) {
       effectiveHQLevel--;
     }
     if (effectiveHQLevel < 0) {
@@ -1119,16 +1109,20 @@ export class FollowersService {
     // requirements are met at effectiveHQLevel, pay costs
     this.characterService.updateMoney(0 - this.hqs[effectiveHQLevel].moneyPerDay);
     if (this.hqs[effectiveHQLevel].gemsPerDay > 0) {
-      const requiredValue = this.hqs[effectiveHQLevel].gemsPerDay * 10 - this.leftoverHQCostGemValue;
-      if (
-        (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.inventoryService.energyGemConversionRate >=
-        this.hqs[effectiveHQLevel].gemsPerDay
-      ) {
-        this.characterService.energy[ENERGY_SPIRIT] -=
-          this.hqs[effectiveHQLevel].gemsPerDay / this.inventoryService.energyGemConversionRate;
+      if (this.hqs[effectiveHQLevel].gemsPerDay * 10 <= this.leftoverHQCostGemValue) {
+        this.leftoverHQCostGemValue -= this.hqs[effectiveHQLevel].gemsPerDay * 10;
       } else {
-        const consumedValue = this.inventoryService.consumeByGemEquivalentValue(LOOT_TYPE_GEM, requiredValue);
-        this.leftoverHQCostGemValue = consumedValue - requiredValue;
+        const requiredValue = this.hqs[effectiveHQLevel].gemsPerDay * 10 - this.leftoverHQCostGemValue;
+        if (
+          (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.inventoryService.energyGemConversionRate >=
+          this.hqs[effectiveHQLevel].gemsPerDay
+        ) {
+          this.characterService.energy[ENERGY_SPIRIT] -=
+            this.hqs[effectiveHQLevel].gemsPerDay / this.inventoryService.energyGemConversionRate;
+        } else {
+          const consumedValue = this.inventoryService.consumeByGemEquivalentValue(LOOT_TYPE_GEM, requiredValue);
+          this.leftoverHQCostGemValue = consumedValue - requiredValue;
+        }
       }
     }
     if (this.hqs[effectiveHQLevel].foodPerDay > 0) {
@@ -1162,6 +1156,31 @@ export class FollowersService {
         }
       }
     }
+  }
+
+  gemCritiriaMet(gemsRequired: number): boolean {
+    if (gemsRequired <= 0) {
+      return true;
+    }
+    if (gemsRequired * 10 <= this.leftoverHQCostGemValue) {
+      return true;
+    }
+    if (
+      gemsRequired <=
+      (this.characterService.energy[ENERGY_SPIRIT] || 0) * this.inventoryService.energyGemConversionRate
+    ) {
+      return true;
+    }
+    if (
+      this.inventoryService.consumeByGemEquivalentValue(
+        LOOT_TYPE_GEM,
+        gemsRequired * 10 - this.leftoverHQCostGemValue,
+        true
+      ) !== -1
+    ) {
+      return true;
+    }
+    return false;
   }
 
   reset() {

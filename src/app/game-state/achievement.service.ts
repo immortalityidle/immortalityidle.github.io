@@ -1365,7 +1365,7 @@ export class AchievementService {
         return this.characterService.bloodlineRank >= 6;
       },
       effect: () => {
-        this.homeService.keepWorkstationInputs = true;
+        // covered just by the bloodline effect
       },
       unlocked: false,
     },

@@ -690,7 +690,6 @@ export class GameStateService {
       bedroomFurniture: props?.bedroomFurniture || [null, null, null, null, null, null, null, null, null],
       landPrice: props?.landPrice || 0,
       keepFurniture: props?.keepFurniture || false,
-      keepWorkstationInputs: props?.keepWorkstationInputs || false,
       nextHomeCostReduction: props?.nextHomeCostReduction || 0,
       houseBuildingProgress: props?.houseBuildingProgress || 1,
       upgrading: props?.upgrading || false,
@@ -1553,7 +1552,7 @@ export class GameStateService {
       }
       this.avatarChallengeProgress.set(eradicationCount);
     } else if (this.avatarChallenge === AVATAR_DRUG_IMMUNE) {
-      const targetAttributeValue = 1e20;
+      const targetAttributeValue = 5e17;
       this.avatarProgressDescription.set(
         'Avatar Challenge Goal: Raise basic attributes to ' + this.bigNumberPipe.transform(targetAttributeValue)
       );
@@ -1561,7 +1560,7 @@ export class GameStateService {
       let valuesAtLevel = 0;
       const basicAttributes = ['strength', 'toughness', 'speed', 'intelligence', 'charisma'];
       for (const attribute of basicAttributes) {
-        if (this.characterService.attributes[attribute as AttributeType].value >= targetAttributeValue) {
+        if (this.characterService.highestAttributes[attribute as AttributeType]() >= targetAttributeValue) {
           valuesAtLevel++;
         }
       }
