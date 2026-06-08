@@ -20,6 +20,7 @@ import { LocationProperties, LocationService, LocationType, Realm } from './loca
 import { ContemplationProperties, ContemplationService } from './contemplation.service';
 import { PantheonProperties, PantheonService } from './pantheon.service';
 import { BigNumberPipe } from '../pipes';
+import { ActivityType } from './activity';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -682,6 +683,7 @@ export class GameStateService {
       noWeapons: props?.noWeapons || false,
       noDrugs: props?.noDrugs || false,
       drugMultiplier: props?.drugMultiplier || 1,
+      treeLover: props?.treeLover || false,
     };
   }
 
@@ -766,6 +768,7 @@ export class GameStateService {
       oddJobDays: props?.oddJobDays || 0,
       incomeMultiplier: props?.incomeMultiplier || 1,
       hiddenActivities: props?.hiddenActivities || [],
+      forbiddenActivities: props?.forbiddenActivities || [],
       activityOptionsUnlocked: props?.activityOptionsUnlocked || false,
       openPortals: props?.openPortals || [],
       hideLockedActivities: props?.hideLockedActivities || false,
@@ -862,6 +865,7 @@ export class GameStateService {
       qiAttacksUnlocked: props?.qiAttacksUnlocked || false,
       skipKillCountReset: props?.skipKillCountReset || false,
       eradicatedMonsterTypes: props?.eradicatedMonsterTypes || [],
+      uneradicableMonsterTypes: props?.uneradicableMonsterTypes || [],
     };
   }
 
@@ -903,6 +907,8 @@ export class GameStateService {
       followersRecruited: props?.followersRecruited || 0,
       leftoverHQCostGemValue: props?.leftoverHQCostGemValue || 0,
       disabledJobs: props?.disabledJobs || [],
+      forbiddenJobs: props?.forbiddenJobs || [],
+      forbiddenSlots: props?.forbiddenSlots || [],
     };
   }
 
@@ -1448,6 +1454,12 @@ export class GameStateService {
           newGameState.inventory.noWeapons = true;
         } else if (avatarType === AVATAR_DRUG_IMMUNE) {
           newGameState.inventory.noDrugs = true;
+        } else if (avatarType === AVATAR_TREE_LOVER) {
+          newGameState.activities.forbiddenActivities.push(ActivityType.ChopWood);
+          newGameState.followers.forbiddenJobs.push('lumberjack');
+          newGameState.followers.forbiddenSlots.push('leftHand');
+          newGameState.battles.uneradicableMonsterTypes.push('leshy');
+          newGameState.inventory.treeLover = true;
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1501,6 +1513,8 @@ export class GameStateService {
       this.homeService.lifestealRefinementUnlocked = true;
     } else if (avatarChallenge === AVATAR_DRUG_IMMUNE) {
       this.inventoryService.drugMultiplier = 100;
+    } else if (avatarChallenge === AVATAR_TREE_LOVER) {
+      this.inventoryService.treeLover = true;
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1556,7 +1570,7 @@ export class GameStateService {
       }
       this.avatarChallengeProgress.set(eradicationCount);
     } else if (this.avatarChallenge === AVATAR_DRUG_IMMUNE) {
-      const targetAttributeValue = 5e17;
+      const targetAttributeValue = 2e17;
       this.avatarProgressDescription.set(
         'Avatar Challenge Goal: Raise basic attributes to ' + this.bigNumberPipe.transform(targetAttributeValue)
       );
@@ -1569,6 +1583,10 @@ export class GameStateService {
         }
       }
       this.avatarChallengeProgress.set(valuesAtLevel);
+    } else if (this.avatarChallenge === AVATAR_TREE_LOVER) {
+      this.avatarProgressDescription.set('Avatar Challenge Goal: Wield a powerful wooden weapon.');
+      this.avatarChallengeProgress.set(this.characterService.equipment.leftHand?.weaponStats?.baseDamage || 0);
+      this.avatarChallengeProgressRequired.set(8000000);
     }
     this.avatarChallengeProgressPercent.set(
       (this.avatarChallengeProgress() / this.avatarChallengeProgressRequired()) * 100

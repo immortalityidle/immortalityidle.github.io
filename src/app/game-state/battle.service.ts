@@ -133,6 +133,7 @@ export interface BattleProperties {
   maximumTechniqueQiUsage: number;
   skipKillCountReset: boolean;
   eradicatedMonsterTypes: string[];
+  uneradicableMonsterTypes: string[];
 }
 
 export interface Technique {
@@ -328,6 +329,7 @@ export class BattleService {
   qiAttacksUnlocked = false;
   skipKillCountReset = false;
   monstersPerQuality = 10;
+  uneradicableMonsterTypes: string[] = [];
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -1189,6 +1191,7 @@ export class BattleService {
       qiAttacksUnlocked: this.qiAttacksUnlocked,
       skipKillCountReset: this.skipKillCountReset,
       eradicatedMonsterTypes: eradicatedMonsterTypes,
+      uneradicableMonsterTypes: this.uneradicableMonsterTypes,
     };
   }
 
@@ -1232,6 +1235,7 @@ export class BattleService {
     this.voidSkipCounter = properties.voidSkipCounter;
     this.maximumTechniqueQiUsage = properties.maximumTechniqueQiUsage;
     this.qiAttacksUnlocked = properties.qiAttacksUnlocked;
+    this.uneradicableMonsterTypes = properties.uneradicableMonsterTypes;
     if (this.enemies.length > 0) {
       for (const enemy of this.enemies) {
         if (enemy.name === properties.currentEnemy?.name) {
@@ -2315,7 +2319,7 @@ export class BattleService {
     const modifier = (killsForType + 1) / this.monstersPerQuality;
     let qualityIndex = Math.floor(killsForType / this.monstersPerQuality);
 
-    if (qualityIndex >= this.monsterQualities.length) {
+    if (qualityIndex >= this.monsterQualities.length && !this.uneradicableMonsterTypes.includes(monsterType.name)) {
       if (this.locationService.currentRealm === Realm.MortalRealm && this.skipKillCountReset) {
         monsterType.eradicated = true;
         // no more monsters of this type left
@@ -3252,7 +3256,7 @@ export class BattleService {
       location: LocationType.Forest,
       basePower: 300000,
       element: ELEMENT_WOOD,
-      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY],
+      lootType: [LOOT_TYPE_GEM, LOOT_TYPE_MONEY, 'rottenWoodScraps'],
     },
     {
       name: 'chimaera',

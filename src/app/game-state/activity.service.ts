@@ -80,6 +80,7 @@ export interface ActivityProperties {
   activityOptionsUnlocked: boolean;
   openPortals: ActivityType[];
   hideLockedActivities: boolean;
+  forbiddenActivities: ActivityType[];
 }
 
 export interface DisplayActivity {
@@ -168,6 +169,7 @@ export class ActivityService {
   displayedActivitiesCount = 0;
   hideLockedActivities = signal<boolean>(false);
   spiritActivityDisabled = signal<boolean>(false);
+  forbiddenActivities: ActivityType[] = [];
 
   constructor(
     private injector: Injector,
@@ -813,6 +815,7 @@ export class ActivityService {
       beggingDays: this.beggingDays,
       incomeMultiplier: this.incomeMultiplier,
       hiddenActivities: this.hiddenActivities,
+      forbiddenActivities: this.forbiddenActivities,
       activityOptionsUnlocked: this.activityOptionsUnlocked(),
       openPortals: openPortals,
       hideLockedActivities: this.hideLockedActivities(),
@@ -872,6 +875,7 @@ export class ActivityService {
     this.beggingDays = properties.beggingDays;
     this.incomeMultiplier = properties.incomeMultiplier;
     this.hiddenActivities = properties.hiddenActivities;
+    this.forbiddenActivities = properties.forbiddenActivities;
     this.activityOptionsUnlocked.set(properties.activityOptionsUnlocked);
     this.hideLockedActivities.set(properties.hideLockedActivities);
     setTimeout(() => this.checkRequirements());
@@ -882,6 +886,9 @@ export class ActivityService {
   }
 
   meetsRequirements(activity: Activity): boolean {
+    if (this.forbiddenActivities.includes(activity.activityType)) {
+      return false;
+    }
     if (this.locationService && !this.locationService.unlockedLocations.includes(activity.location)) {
       if (
         this.characterService.god() &&

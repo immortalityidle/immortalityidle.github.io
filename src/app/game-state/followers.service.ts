@@ -95,6 +95,8 @@ export interface FollowersProperties {
   giftRecipientCounter: number;
   followersRecruited: number;
   leftoverHQCostGemValue: number;
+  forbiddenJobs: string[];
+  forbiddenSlots: string[];
 }
 
 export interface SavedAssignments {
@@ -173,6 +175,8 @@ export class FollowersService {
   giftRecipientCounter = 0;
   leftoverHQCostGemValue = 0;
   leftoverHQCostDisplay = signal<string>('');
+  forbiddenJobs: string[] = [];
+  forbiddenSlots: string[] = [];
 
   hqs: HQ[] = [
     {
@@ -530,15 +534,19 @@ export class FollowersService {
         if (this.hellService?.inHell() && !this.characterService.god()) {
           divider *= 10;
         }
-        const rightHand = this.characterService.equipment.rightHand;
-        const leftHand = this.characterService.equipment.leftHand;
-        if (rightHand && rightHand.weaponStats) {
-          rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
-          rightHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+        if (!this.forbiddenSlots.includes('rightHand')) {
+          const rightHand = this.characterService.equipment.rightHand;
+          if (rightHand && rightHand.weaponStats) {
+            rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+            rightHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+          }
         }
-        if (leftHand && leftHand.weaponStats) {
-          leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
-          leftHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+        if (!this.forbiddenSlots.includes('leftHand')) {
+          const leftHand = this.characterService.equipment.leftHand;
+          if (leftHand && leftHand.weaponStats) {
+            leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+            leftHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+          }
         }
         this.leftoverWork['weaponsmith'] = workPower % divider;
       },
@@ -1253,6 +1261,8 @@ export class FollowersService {
       followersRecruited: this.followersRecruited,
       disabledJobs: disabledJobs,
       leftoverHQCostGemValue: this.leftoverHQCostGemValue,
+      forbiddenJobs: this.forbiddenJobs,
+      forbiddenSlots: this.forbiddenSlots,
     };
   }
 
@@ -1295,9 +1305,15 @@ export class FollowersService {
     this.updateFollowerTotalPower();
     this.updateHQInputs();
     this.leftoverHQCostGemValue = properties.leftoverHQCostGemValue;
+    this.forbiddenJobs = properties.forbiddenJobs;
+    this.forbiddenSlots = properties.forbiddenSlots;
     for (const job of Object.keys(this.jobs)) {
       const jobObj = this.jobs[job];
       jobObj.enabled = !properties.disabledJobs.includes(job);
+      if (this.forbiddenJobs.includes(job)) {
+        jobObj.hidden = true;
+        jobObj.enabled = false;
+      }
     }
   }
 

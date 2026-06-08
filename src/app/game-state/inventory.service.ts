@@ -191,6 +191,7 @@ export interface InventoryProperties {
   noWeapons: boolean;
   noDrugs: boolean;
   drugMultiplier: number;
+  treeLover: boolean;
 }
 
 @Injectable({
@@ -297,6 +298,7 @@ export class InventoryService {
   noWeapons = false;
   noDrugs = false;
   drugMultiplier = 1;
+  treeLover = false;
 
   constructor(
     private injector: Injector,
@@ -603,6 +605,7 @@ export class InventoryService {
       noWeapons: this.noWeapons,
       noDrugs: this.noDrugs,
       drugMultiplier: this.drugMultiplier,
+      treeLover: this.treeLover,
     };
   }
 
@@ -691,6 +694,7 @@ export class InventoryService {
     this.noWeapons = properties.noWeapons;
     this.noDrugs = properties.noDrugs;
     this.drugMultiplier = properties.drugMultiplier;
+    this.treeLover = properties.treeLover;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -809,10 +813,14 @@ export class InventoryService {
     let materialPrefix = material;
     let slot: EquipmentPosition = 'rightHand';
     let imageFileName = 'metalWeapon';
+    let damageMultiplier = 1;
     if (material === 'wood') {
       slot = 'leftHand';
       materialPrefix = 'wooden';
       imageFileName = 'woodenWeapon';
+      if (this.treeLover) {
+        damageMultiplier = 100;
+      }
     }
     const baseName = defaultName ?? WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     let name: string;
@@ -827,7 +835,7 @@ export class InventoryService {
       LogTopic.CRAFTING,
       'Your hard work paid off! You created a new weapon: ' + this.titleCasePipe.transform(name) + '!'
     );
-    const damage = Math.min(Math.sqrt(grade + 1), 1000) * grade;
+    const damage = Math.min(Math.sqrt(grade + 1), 1000) * grade * damageMultiplier;
     return {
       id: 'weapon' + slot + name + grade + effect,
       imageFile: imageFileName,
@@ -1191,7 +1199,29 @@ export class InventoryService {
     }
     let lastWood = this.itemRepoService.items['balsaLog'];
 
-    for (const key in this.itemRepoService.items) {
+    const logKeys = [
+      'balsaLog',
+      'elmLog',
+      'cypressLog',
+      'walnutLog',
+      'laurelwoodLog',
+      'blackwoodLog',
+      'rosewoodLog',
+      'pearwoodLog',
+      'zitanLog',
+      'lignumvitaeLog',
+      'peachwoodlog',
+      'diamondwoodLog',
+      'titanwoodLog',
+      'dragonwoodLog',
+      'devilwoodLog',
+      'divinewoodLog',
+    ];
+    if (this.treeLover) {
+      logKeys.push('dreamwoodLog');
+    }
+
+    for (const key of logKeys) {
       const item = this.itemRepoService.items[key];
       if (item.type === 'wood' && item.value > lastWood.value && item.value <= woodValue) {
         lastWood = item;
