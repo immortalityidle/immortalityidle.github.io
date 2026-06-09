@@ -1489,14 +1489,17 @@ export class GameStateService {
     for (const concept of this.contemplationService.concepts) {
       conceptValues[concept.name] = concept.progress;
     }
+    const avatarChallenge = this.avatarChallenge;
+
+    this.importGame(this.divineGameState);
+
+    // reset god rematches
     for (const pantheon of this.pantheonService.pantheons) {
       for (const god of pantheon.gods) {
         god.timesDefeated.set(0);
       }
     }
-    const avatarChallenge = this.avatarChallenge;
 
-    this.importGame(this.divineGameState);
     // add any attribute gains
     for (const keystring in attributes) {
       const key = keystring as AttributeType;

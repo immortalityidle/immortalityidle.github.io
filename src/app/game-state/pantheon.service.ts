@@ -480,6 +480,7 @@ export class PantheonService {
       imageFile: 'tokenof' + attribute,
       name: 'Token of ' + attribute,
       type: 'pill',
+      subtype: 'divineToken',
       value: Infinity,
       description: 'A divine token that can be absorbed to improve your divine attributes.',
       useLabel: 'Absorb the token',

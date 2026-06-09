@@ -322,7 +322,7 @@ export class BattleService {
   minimumTechniqueTicks = 3;
   maximumTechniqueWeaponDamage = 1;
   maximumTechniqueDivineDamage = 1;
-  maximumTechniqueLifesteal = 1e-30;
+  maximumTechniqueLifesteal = 5;
   maximumTechniqueEnergyUsage = 100000;
   maximumTechniqueQiUsage = 1000;
   pauseOnBattle = false;
@@ -1476,18 +1476,33 @@ export class BattleService {
     } else if (aspect === TECHNIQUE_REFINEMENT_WEAPONS) {
       const alpha = value * 1e-18;
       technique.weaponDamage = (1 - alpha) * (technique.weaponDamage || 0) + alpha * this.maximumTechniqueWeaponDamage;
+      if (technique.weaponDamage > this.maximumTechniqueWeaponDamage - 0.0000000003) {
+        technique.weaponDamage = this.maximumTechniqueWeaponDamage;
+      }
     } else if (aspect === TECHNIQUE_REFINEMENT_ENERGY_USAGE) {
       const alpha = value * 1e-12;
       technique.energyUsage = (1 - alpha) * (technique.energyUsage || 0) + alpha * this.maximumTechniqueEnergyUsage;
+      if (technique.energyUsage > this.maximumTechniqueEnergyUsage - 0.00000003) {
+        technique.energyUsage = this.maximumTechniqueEnergyUsage;
+      }
     } else if (aspect === TECHNIQUE_REFINEMENT_DIVINITY) {
       const alpha = value * 1e-21;
       technique.divineDamage = (1 - alpha) * (technique.divineDamage || 0) + alpha * this.maximumTechniqueDivineDamage;
+      if (technique.divineDamage > this.maximumTechniqueDivineDamage - 0.000000000003) {
+        technique.divineDamage = this.maximumTechniqueDivineDamage;
+      }
     } else if (aspect === TECHNIQUE_REFINEMENT_QI_USAGE) {
       const alpha = value * 1e-8;
       technique.qiCost = (1 - alpha) * (technique.qiCost || 0) + alpha * this.maximumTechniqueQiUsage;
+      if (technique.qiCost > this.maximumTechniqueQiUsage - 0.00000003) {
+        technique.qiCost = this.maximumTechniqueQiUsage;
+      }
     } else if (aspect === TECHNIQUE_REFINEMENT_LIFESTEAL) {
-      const alpha = value * 1e-37;
+      const alpha = value * 1e-11;
       technique.lifesteal = (1 - alpha) * (technique.lifesteal || 0) + alpha * this.maximumTechniqueLifesteal;
+      if (technique.lifesteal > this.maximumTechniqueLifesteal - 0.000000003) {
+        technique.lifesteal = this.maximumTechniqueLifesteal;
+      }
     }
   }
 
@@ -2165,7 +2180,7 @@ export class BattleService {
       this.bigNumberPipe.transform(damage) +
       ' damage';
     if (lifesteal) {
-      const healAmount = Math.min(damage * lifesteal, enemyHealth);
+      const healAmount = Math.min(this.characterService.status.health.max * lifesteal * 0.01, enemyHealth, damage);
       this.characterService.status.health.value += healAmount;
       this.characterService.checkOverage();
       message += ', healing you for ' + healAmount;

@@ -2416,21 +2416,19 @@ export class InventoryService {
       if (pill.effect) {
         effect = pill.effect;
       }
+      let multiplier = 1;
+      if (pill.subtype !== 'divineToken') {
+        multiplier = this.drugMultiplier;
+      }
       if (effect.includes(',')) {
         const effectArray = effect.split(',');
         for (const attr of effectArray) {
           const attributeKey = attr as AttributeType;
-          this.characterService.increaseAttribute(
-            attributeKey,
-            (pill.increaseAmount || 1) * quantity * this.drugMultiplier
-          );
+          this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity * multiplier);
         }
       } else {
         const attributeKey = effect as AttributeType;
-        this.characterService.increaseAttribute(
-          attributeKey,
-          (pill.increaseAmount || 1) * quantity * this.drugMultiplier
-        );
+        this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity * multiplier);
       }
     }
     this.characterService.checkOverage();
