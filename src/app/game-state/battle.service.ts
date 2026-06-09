@@ -1611,7 +1611,7 @@ export class BattleService {
         } else {
           if (slowingEffect) {
             slowingEffect.ticksLeft -= 1;
-            technique.ticks += 0.1;
+            technique.ticks += 0.5;
           } else {
             technique.ticks++;
           }
@@ -1655,8 +1655,9 @@ export class BattleService {
         damage /= fireDivisor;
         damageBack = true;
       } else if (this.statusEffects[i].name === ICE_SHIELD) {
-        damage = 0;
         this.statusEffects.splice(i, 1);
+        this.logService.log(LogTopic.COMBAT, "Your ice shield blocks the enemy's " + technique.name);
+        return;
       } else if (this.statusEffects[i].name === EFFECT_CORRUPTION) {
         damage *= 10;
       }
