@@ -3533,9 +3533,6 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 5;
         const moneyCost = this.characterService.increaseAttribute('fireLore', 0.1);
         this.characterService.updateMoney(0 - moneyCost);
-        if (this.characterService.money < 0) {
-          this.characterService.updateMoney(0, true);
-        }
         this.characterService.yang++;
       },
     ],
@@ -3940,7 +3937,7 @@ export class ActivityService {
           );
           return;
         }
-        if (this.characterService.money <= 1000000) {
+        if (this.characterService.money < 1000000) {
           this.logService.log(LogTopic.FOLLOWER, "You don't have the funds required to recruit anyone.");
           return;
         }
@@ -4251,7 +4248,7 @@ export class ActivityService {
         }
         const gemToCreate = this.inventoryService.generateSpiritGem(creationPower);
         const price = gemToCreate.value * creationQuantity * 10;
-        if (this.characterService.money > price) {
+        if (this.characterService.money >= price) {
           this.characterService.updateMoney(0 - price);
           this.inventoryService.addItem(gemToCreate, creationQuantity);
         }

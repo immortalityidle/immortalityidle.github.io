@@ -1390,6 +1390,9 @@ export class CharacterService {
     if (this.money > modifiedMaxMoney) {
       this.money = modifiedMaxMoney;
     }
+    if (this.money < 0) {
+      this.money = 0;
+    }
     return amount;
   }
 

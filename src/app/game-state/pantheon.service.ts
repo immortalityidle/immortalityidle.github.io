@@ -440,6 +440,10 @@ export class PantheonService {
   }
 
   challengeGod(god: God) {
+    if (this.battleService!.enemies.length > 0) {
+      // don't start a divine duel while you're already in a fight
+      return;
+    }
     let rematchString = '';
     if (god.timesDefeated() > 0) {
       rematchString = ' - Rematch #' + god.timesDefeated();

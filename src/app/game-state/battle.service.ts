@@ -2021,44 +2021,44 @@ export class BattleService {
           this.characterService.equipment.leftHand = null;
         }
       } else if (effect === EFFECT_SHIELDING) {
-        const shieldingEffect: StatusEffect = {
-          name: EFFECT_SHIELDING,
-          description: 'Your shielding technique is protecting you.',
-          ticksLeft: 10,
-          power: 1,
-        };
-        const statusEffect = this.statusEffects.find(e => e.name === EFFECT_CORRUPTION);
+        const statusEffect = this.statusEffects.find(e => e.name === EFFECT_SHIELDING);
         if (statusEffect) {
-          statusEffect.ticksLeft += shieldingEffect.ticksLeft;
+          statusEffect.ticksLeft += technique.ticksRequired;
         } else {
+          const shieldingEffect: StatusEffect = {
+            name: EFFECT_SHIELDING,
+            description: 'Your shielding technique is protecting you.',
+            ticksLeft: technique.ticksRequired + 1,
+            power: 1,
+          };
           this.statusEffects.push(shieldingEffect);
         }
       } else if (effect === EFFECT_PIERCING) {
         defense *= 0.5;
       } else if (effect === EFFECT_HASTE) {
-        const hasteEffect: StatusEffect = {
-          name: EFFECT_HASTE,
-          description: 'Your attacks strike more quickly, with less time between them.',
-          ticksLeft: 10,
-          power: 1,
-        };
         const statusEffect = this.statusEffects.find(e => e.name === EFFECT_HASTE);
         if (statusEffect) {
-          statusEffect.ticksLeft += hasteEffect.ticksLeft;
+          statusEffect.ticksLeft += technique.ticksRequired;
         } else {
+          const hasteEffect: StatusEffect = {
+            name: EFFECT_HASTE,
+            description: 'Your attacks strike more quickly, with less time between them.',
+            ticksLeft: technique.ticksRequired + 1,
+            power: 1,
+          };
           this.statusEffects.push(hasteEffect);
         }
       } else if (effect === EFFECT_SLOW) {
         const statusEffect: StatusEffect = {
           name: EFFECT_SLOW,
           description: 'This creature is slowed.',
-          ticksLeft: 1000,
+          ticksLeft: technique.ticksRequired + 1,
           power: 1,
         };
         if (this.currentEnemy.statusEffects) {
           const slowingEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_SLOW);
           if (slowingEffect) {
-            slowingEffect.ticksLeft += statusEffect.ticksLeft;
+            slowingEffect.ticksLeft += technique.ticksRequired;
           } else {
             this.currentEnemy.statusEffects.push(statusEffect);
           }

@@ -984,7 +984,19 @@ export class FollowersService {
     if (this.hqUnlocked) {
       this.followerCap += this.hqs[this.hq].maxFollowerIncrease;
     }
-    this.followerCap += this.characterService.attributes.mercy.value + this.characterService.attributes.presence.value;
+    const followerCapIncreasingAttributes = [
+      this.characterService.attributes.mercy.value,
+      this.characterService.attributes.presence.value,
+    ];
+    for (const value of followerCapIncreasingAttributes) {
+      if (value <= 10) {
+        this.followerCap += value;
+      }
+      if (value >= 10) {
+        const valueString = value + '';
+        this.followerCap += 9 + valueString.length;
+      }
+    }
 
     this.petsCap = Math.round(
       1 +

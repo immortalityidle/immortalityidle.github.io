@@ -1708,7 +1708,7 @@ export class InventoryService {
       if (this.autoPillEnabled && item.type === 'pill' && !this.noDrugs) {
         this.useItem(item, quantity);
         return -1;
-      } else if (item.type === 'pill') {
+      } else if (item.type === 'pill' && item.subtype !== 'divineToken') {
         // see if we can merge it into another stack of the same kind of pill
         const existingStack = this.itemStacks.find(
           (itemStack, index) =>

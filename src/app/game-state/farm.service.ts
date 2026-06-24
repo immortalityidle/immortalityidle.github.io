@@ -6,6 +6,7 @@ import { ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
 import { HomeService } from './home.service';
 import { CONCEPT_EFFECT_FOOD_YIELD, ContemplationService } from './contemplation.service';
+import { LogService, LogTopic } from './log.service';
 
 export interface Field {
   cropName: string;
@@ -69,6 +70,7 @@ export class FarmService {
     private injector: Injector,
     private characterService: CharacterService,
     private inventoryService: InventoryService,
+    private logService: LogService,
     mainLoopService: MainLoopService,
     private homeService: HomeService,
     private itemRepoService: ItemRepoService,
@@ -135,12 +137,16 @@ export class FarmService {
       return;
     }
     if (!this.hellService?.inHell() || this.hellFood) {
-      this.ageFields();
       let upkeepCosts = 0;
       for (const field of this.fields) {
         upkeepCosts += field.upkeepCost || 0;
       }
-      this.characterService.updateMoney(0 - upkeepCosts);
+      if (this.characterService.money >= upkeepCosts) {
+        this.characterService.updateMoney(0 - upkeepCosts);
+        this.ageFields();
+      } else {
+        this.logService.log(LogTopic.EVENT, "You don't have the funds required for your farms' upkeep.");
+      }
     }
   }
 
@@ -356,7 +362,10 @@ export class FarmService {
       upkeep += Math.pow(field.plots - 100, 2);
     }
     if (field.plots > 1000) {
-      upkeep += Math.pow(2, field.plots - 1000);
+      upkeep += Math.pow(field.plots - 1000, 3);
+    }
+    if (field.plots > 5000) {
+      upkeep += Math.pow(1.7, field.plots - 5000);
     }
     field.upkeepCost = upkeep;
   }
