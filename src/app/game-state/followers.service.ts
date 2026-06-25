@@ -984,19 +984,6 @@ export class FollowersService {
     if (this.hqUnlocked) {
       this.followerCap += this.hqs[this.hq].maxFollowerIncrease;
     }
-    const followerCapIncreasingAttributes = [
-      this.characterService.attributes.mercy.value,
-      this.characterService.attributes.presence.value,
-    ];
-    for (const value of followerCapIncreasingAttributes) {
-      if (value <= 10) {
-        this.followerCap += value;
-      }
-      if (value >= 10) {
-        const valueString = value + '';
-        this.followerCap += 9 + valueString.length;
-      }
-    }
 
     this.petsCap = Math.round(
       1 +
@@ -1005,13 +992,27 @@ export class FollowersService {
         this.characterService.bloodlineRank / 10 +
         Math.log10(this.characterService.attributes.animalHandling.value)
     );
-    this.petsCap += this.characterService.attributes.mercy.value + this.characterService.attributes.presence.value;
+
+    this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
+    const followerCapIncreasingAttributes = [
+      this.characterService.attributes.mercy.value,
+      this.characterService.attributes.presence.value,
+    ];
+    for (const value of followerCapIncreasingAttributes) {
+      if (value < 10) {
+        this.followerCap += value;
+        this.petsCap += value;
+        this.maxFollowerLevel += value;
+      } else {
+        const logValue = Math.floor(Math.log2(value - 8));
+        this.followerCap += 9 + logValue;
+        this.petsCap += 9 + logValue;
+        this.maxFollowerLevel += 10 * logValue;
+      }
+    }
 
     this.followersMaxed =
       this.followers.length < this.followerCap ? (this.followersMaxed = 'UNMAXED') : (this.followersMaxed = 'MAXED');
-
-    this.maxFollowerLevel =
-      100 + this.hqs[this.hq].maxLevelIncrease + 10 * this.characterService.attributes.mercy.value;
   }
 
   updateFollowerTotalPower() {

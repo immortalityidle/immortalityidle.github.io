@@ -1792,7 +1792,7 @@ export class BattleService {
             this.statusEffects = [];
             return;
           }
-          technique.ticks = 0;
+          technique.ticks -= technique.ticksRequired;
         } else {
           technique.ticks += 1 + hasteTicks;
         }
