@@ -493,6 +493,17 @@ export class PantheonService {
   }
 
   generateToken(attribute: string, level: number): Item {
+    let power;
+    if (level <= 4) {
+      power = 0.1 * Math.pow(10, level);
+    } else if (level <= 13) {
+      power = 1000 * (level - 3);
+    } else if (level <= 23) {
+      power = 10000 + 2000 * (level - 13);
+    } else {
+      power = 30000 + 5000 * (level - 23);
+    }
+
     return {
       id: 'tokenof' + attribute,
       imageFile: 'tokenof' + attribute,
@@ -505,7 +516,7 @@ export class PantheonService {
       useDescription: '',
       useConsumes: true,
       effect: attribute,
-      increaseAmount: 0.1 * Math.pow(10, level),
+      increaseAmount: power,
       noGreed: true,
       shopable: false,
     };

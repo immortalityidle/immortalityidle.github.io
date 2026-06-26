@@ -1386,7 +1386,8 @@ export class CharacterService {
         this.moneyUpdates += amount;
       }
     }
-    const modifiedMaxMoney = this.maxMoney * this.vaultMaxMoneyBonus * this.bankerMaxMoneyBonus;
+    const justiceMoneyBonus = 100 - 99 * Math.exp(-0.00001 * this.attributes.justice.value);
+    const modifiedMaxMoney = this.maxMoney * this.vaultMaxMoneyBonus * this.bankerMaxMoneyBonus * justiceMoneyBonus;
     if (this.money > modifiedMaxMoney) {
       this.money = modifiedMaxMoney;
     }
