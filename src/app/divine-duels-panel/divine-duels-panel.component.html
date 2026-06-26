@@ -1,4 +1,18 @@
 <div class="divineDuelsContainer">
+  @if (pantheonService.identityResets > 0){
+    <div class="avatarIdentities">
+      <div>
+        <span>
+            <button (click)="pantheonService.resetIdentity()" tooltip="Use the identity you established in one of your avatar challenges to fool the gods into thinking you are a whole new deity.<br>This allows you to challenge each one anew as if they had never encountered you.">Assume an Avatar Identity</button>
+        </span>
+      </div>
+      <div>
+        <span>
+            You have {{pantheonService.identityResets}} avatar identities available.
+        </span>
+      </div>
+    </div>
+  }
   <div>
       @for (pantheon of pantheonService.pantheons; track pantheon.name()) {
         @if (pantheon.unlocked()) {

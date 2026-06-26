@@ -66,6 +66,7 @@ export interface PantheonSaveData {
 
 export interface PantheonProperties {
   pantheons: PantheonSaveData[];
+  identityResets: number;
 }
 
 @Injectable({
@@ -75,6 +76,7 @@ export class PantheonService {
   greekBaseHealth = 1e44;
   greekBaseDefense = 1e28;
   greekBaseDamage = 1e29;
+  identityResets = 0;
 
   pantheons: Pantheon[] = [
     {
@@ -478,6 +480,18 @@ export class PantheonService {
     });
   }
 
+  resetIdentity() {
+    if (this.identityResets < 1) {
+      return;
+    }
+    for (const pantheon of this.pantheons) {
+      for (const god of pantheon.gods) {
+        god.timesDefeated.set(0);
+      }
+    }
+    this.identityResets--;
+  }
+
   generateToken(attribute: string, level: number): Item {
     return {
       id: 'tokenof' + attribute,
@@ -520,6 +534,7 @@ export class PantheonService {
     }
     return {
       pantheons: pantheonData,
+      identityResets: this.identityResets,
     };
   }
 
@@ -554,5 +569,6 @@ export class PantheonService {
         }
       }
     }
+    this.identityResets = properties.identityResets;
   }
 }

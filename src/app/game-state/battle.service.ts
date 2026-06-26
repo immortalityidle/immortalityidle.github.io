@@ -1610,12 +1610,14 @@ export class BattleService {
           }
         } else {
           if (slowingEffect) {
-            slowingEffect.ticksLeft -= 1;
             technique.ticks += 0.5;
           } else {
             technique.ticks++;
           }
         }
+      }
+      if (slowingEffect) {
+        slowingEffect.ticksLeft -= 1;
       }
     }
   }

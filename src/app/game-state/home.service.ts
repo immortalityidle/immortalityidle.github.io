@@ -2236,11 +2236,9 @@ export class HomeService {
       if (divineFruitStack?.item?.id === 'divinePeach' && divineFruitStack.quantity > 10) {
         divineFruitStack.quantity -= 10;
         this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
-        return;
       } else if (divineFruitStack?.item?.id === 'grapes' && divineFruitStack.quantity > 10000) {
         divineFruitStack.quantity -= 10000;
         this.inventoryService.addItem(this.itemRepoService.items['wine']);
-        return;
       }
       if (this.nectarUnlocked) {
         const wineStack = workstation.inputs.find(itemStack => itemStack.item?.id === 'wine');

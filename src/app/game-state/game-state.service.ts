@@ -992,6 +992,7 @@ export class GameStateService {
   private getPantheonProperties(props: PantheonProperties | undefined): PantheonProperties {
     return {
       pantheons: props?.pantheons || [],
+      identityResets: props?.identityResets || 0,
     };
   }
 
@@ -1493,12 +1494,7 @@ export class GameStateService {
 
     this.importGame(this.divineGameState);
 
-    // reset god rematches
-    for (const pantheon of this.pantheonService.pantheons) {
-      for (const god of pantheon.gods) {
-        god.timesDefeated.set(0);
-      }
-    }
+    this.pantheonService.identityResets++;
 
     // add any attribute gains
     for (const keystring in attributes) {
