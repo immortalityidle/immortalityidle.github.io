@@ -39,6 +39,7 @@ export interface God {
   challengeMessage: WritableSignal<string>;
   attributes: string[];
   defeatEffect?: string;
+  baseLootLevel: number;
 }
 
 export interface Pantheon {
@@ -107,6 +108,7 @@ export class PantheonService {
             "You're looking for a duel?<br><br>Are you mad, barbarian?<br><br>I don't have time to fight you right now!<br><br>I need to get these messages delivered!"
           ),
           attributes: ['justice', 'wisdom', 'mercy', 'presence', 'wrath'],
+          baseLootLevel: 0,
         },
         {
           name: signal<string>(GOD_DIONYSUS),
@@ -129,6 +131,7 @@ export class PantheonService {
           ),
           attributes: ['mercy', 'mercy', 'mercy', 'wisdom', 'wisdom'],
           defeatEffect: 'unlockNectar',
+          baseLootLevel: 5,
         },
         {
           name: signal<string>(GOD_ARTEMIS),
@@ -150,6 +153,7 @@ export class PantheonService {
             "You want me to duel with you?<br><br>Is that some kind of euphemism?<br><br>I don't go in for any funny business.<br><br>Well, if you want me to waste my time with you, you'll need to prove your hunting skills first.<br><br>I hope you know your wild beasts."
           ),
           attributes: ['justice', 'justice', 'wrath', 'wrath', 'mercy'],
+          baseLootLevel: 10,
         },
         {
           name: signal<string>(GOD_APHRODITE),
@@ -169,6 +173,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 15,
         },
         {
           name: signal<string>(GOD_HEPHAESTUS),
@@ -188,6 +193,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 20,
         },
         {
           name: signal<string>(GOD_APOLLO),
@@ -205,6 +211,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 25,
         },
         {
           name: signal<string>(GOD_DEMETER),
@@ -224,6 +231,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 30,
         },
         {
           name: signal<string>(GOD_ARES),
@@ -241,6 +249,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 35,
         },
         {
           name: signal<string>(GOD_ATHENA),
@@ -260,6 +269,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 40,
         },
         {
           name: signal<string>(GOD_HERA),
@@ -279,6 +289,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 45,
         },
         {
           name: signal<string>(GOD_POSEIDON),
@@ -298,6 +309,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 50,
         },
         {
           name: signal<string>(GOD_HADES),
@@ -317,6 +329,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 55,
         },
         {
           name: signal<string>(GOD_ZEUS),
@@ -336,6 +349,7 @@ export class PantheonService {
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 60,
         },
       ],
     },
@@ -363,6 +377,7 @@ export class PantheonService {
           techniqueCooldowns: [28, 7, 88, 2828],
           challengeMessage: signal<string>(''),
           attributes: [],
+          baseLootLevel: 250,
         },
       ],
     },
@@ -462,7 +477,7 @@ export class PantheonService {
     }
     const loot: Item[] = [];
     for (const attribute of god.attributes) {
-      loot.push(this.generateToken(attribute, god.timesDefeated()));
+      loot.push(this.generateToken(attribute, god.baseLootLevel + god.timesDefeated()));
     }
 
     this.battleService!.addEnemy({

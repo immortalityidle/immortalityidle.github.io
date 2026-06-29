@@ -1616,9 +1616,6 @@ export class BattleService {
           }
         }
       }
-      if (slowingEffect) {
-        slowingEffect.ticksLeft -= 1;
-      }
     }
   }
 
@@ -2040,7 +2037,7 @@ export class BattleService {
       } else if (effect === EFFECT_HASTE) {
         const statusEffect = this.statusEffects.find(e => e.name === EFFECT_HASTE);
         if (statusEffect) {
-          statusEffect.ticksLeft += technique.ticksRequired;
+          statusEffect.ticksLeft += Math.ceil(technique.ticksRequired / 2);
         } else {
           const hasteEffect: StatusEffect = {
             name: EFFECT_HASTE,
@@ -2060,7 +2057,7 @@ export class BattleService {
         if (this.currentEnemy.statusEffects) {
           const slowingEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_SLOW);
           if (slowingEffect) {
-            slowingEffect.ticksLeft += technique.ticksRequired;
+            slowingEffect.ticksLeft += technique.ticksRequired + 1;
           } else {
             this.currentEnemy.statusEffects.push(statusEffect);
           }
