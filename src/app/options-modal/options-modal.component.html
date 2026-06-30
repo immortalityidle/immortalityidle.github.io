@@ -67,6 +67,14 @@
       Reincarnate
     </button>
   </div>
+  @if (characterService.god()){
+    <div class="optionField">
+      <button tooltip="Purge your mortal attributes to gain aptitudes." (click)="characterService.purifyAttributes()">
+        Purify Mortal Attributes
+      </button>
+    </div>
+  }
+
   <div class="optionField">
     <span>
       <input type="checkbox" (change)="darkModeToggle()" id="darkMode" [checked]="gameStateService.isDarkMode"/>

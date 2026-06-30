@@ -1058,42 +1058,7 @@ export class CharacterService {
   reincarnate(causeOfDeath: string): void {
     this.totalLives++;
 
-    let attributeGains = '';
-
-    const keys = Object.keys(this.attributes) as AttributeType[];
-    for (const key in keys) {
-      if (this.attributes[keys[key]].value > 0 && this.attributes[keys[key]].attributeGroup !== DIVINE_ATTRIBUTES) {
-        // gain aptitude based on last life's value
-        const addedValue =
-          (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) /
-          this.aptitudeGainDivider;
-        if (addedValue > 0) {
-          // never reduce aptitudes during reincarnation
-          this.attributes[keys[key]].aptitude += addedValue;
-          const message =
-            'Your aptitude for ' +
-            this.camelToTitlePipe.transform(keys[key]) +
-            ' increased by ' +
-            this.bigNumberPipe.transform(addedValue) +
-            '\n    New aptitude: ' +
-            this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
-          this.logService.log(LogTopic.EVENT, message);
-          attributeGains +=
-            message +
-            '\n    New starting value: ' +
-            this.bigNumberPipe.transform(
-              this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude)
-            ) +
-            '\n';
-        }
-        // start at the aptitude value
-        this.attributes[keys[key]].value = this.getAttributeStartingValue(
-          this.attributes[keys[key]].value,
-          this.attributes[keys[key]].aptitude
-        );
-        this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
-      }
-    }
+    const attributeGains = this.purifyAttributes();
 
     if (this.showLifeSummary) {
       if (this.dialogRef) {
@@ -1180,6 +1145,46 @@ export class CharacterService {
     }
     this.yin = 1;
     this.yang = 1;
+  }
+
+  purifyAttributes(): string {
+    let attributeGains = '';
+
+    const keys = Object.keys(this.attributes) as AttributeType[];
+    for (const key in keys) {
+      if (this.attributes[keys[key]].value > 0 && this.attributes[keys[key]].attributeGroup !== DIVINE_ATTRIBUTES) {
+        // gain aptitude based on last life's value
+        const addedValue =
+          (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) /
+          this.aptitudeGainDivider;
+        if (addedValue > 0) {
+          // never reduce aptitudes during reincarnation
+          this.attributes[keys[key]].aptitude += addedValue;
+          const message =
+            'Your aptitude for ' +
+            this.camelToTitlePipe.transform(keys[key]) +
+            ' increased by ' +
+            this.bigNumberPipe.transform(addedValue) +
+            '\n    New aptitude: ' +
+            this.bigNumberPipe.transform(this.attributes[keys[key]].aptitude);
+          this.logService.log(LogTopic.EVENT, message);
+          attributeGains +=
+            message +
+            '\n    New starting value: ' +
+            this.bigNumberPipe.transform(
+              this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude)
+            ) +
+            '\n';
+        }
+        // start at the aptitude value
+        this.attributes[keys[key]].value = this.getAttributeStartingValue(
+          this.attributes[keys[key]].value,
+          this.attributes[keys[key]].aptitude
+        );
+        this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
+      }
+    }
+    return attributeGains;
   }
 
   getAttributeStartingValue(value: number, aptitude: number): number {

@@ -1218,7 +1218,7 @@ baguaMap = [
       type: 'herb',
       subtype: 'nectar',
       attribute: 'any',
-      value: 50000,
+      value: 5000000,
       description:
         'The pinnacle of the beverages fron the realm of the strange philosopher gods. It tastes fine, but might be more useful in other applications.',
       effect: 'health',

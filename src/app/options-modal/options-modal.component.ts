@@ -9,12 +9,13 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { environment } from '../../environments/environment';
 import { FarmService } from '../game-state/farm.service';
 import { FormsModule } from '@angular/forms';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   selector: 'app-options-modal',
   templateUrl: './options-modal.component.html',
   styleUrls: ['./options-modal.component.less'],
-  imports: [forwardRef(() => FormsModule)],
+  imports: [forwardRef(() => FormsModule), forwardRef(() => TooltipDirective)],
 })
 export class OptionsModalComponent {
   constructor(
