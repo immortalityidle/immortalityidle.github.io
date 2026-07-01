@@ -715,6 +715,7 @@ export class GameStateService {
       nectarUnlocked: props?.nectarUnlocked || false,
       qiAttackRefinementUnlocked: props?.qiAttackRefinementUnlocked || false,
       lifestealRefinementUnlocked: props?.lifestealRefinementUnlocked || false,
+      infusableSlots: props?.infusableSlots || ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'],
     };
   }
 
@@ -725,7 +726,7 @@ export class GameStateService {
       mostFields: props?.mostFields || 0,
       hellFood: props?.hellFood || false,
       fallowPlots: props?.fallowPlots || 0,
-      unlockedCrops: props?.unlockedCrops || [],
+      unlockedCrops: props?.unlockedCrops || ['rice'],
       consecutiveHarvests: props?.consecutiveHarvests || 0,
     };
   }
@@ -1399,6 +1400,9 @@ export class GameStateService {
         newGameState.achievements.disabledAchievements.push('Unity of Spirit, Mind, and Body');
         newGameState.achievements.disabledAchievements.push('Animal Friend');
         newGameState.achievements.disabledAchievements.push('Preserved Ingredients');
+        newGameState.achievements.disabledAchievements.push('Almost Eating Like an Immortal');
+        newGameState.achievements.disabledAchievements.push('Sweeter Still');
+        newGameState.achievements.disabledAchievements.push('What a Strange Vine');
 
         newGameState.contemplations = this.contemplationService.getProperties();
 
@@ -1460,6 +1464,7 @@ export class GameStateService {
           newGameState.followers.forbiddenJobs.push('lumberjack');
           newGameState.followers.forbiddenSlots.push('leftHand');
           newGameState.battles.uneradicableMonsterTypes.push('leshy');
+          newGameState.home.infusableSlots = ['head', 'body', 'legs', 'feet', 'rightHand'];
           newGameState.inventory.treeLover = true;
         }
 

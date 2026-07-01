@@ -129,6 +129,7 @@ export interface HomeProperties {
   nectarUnlocked: boolean;
   qiAttackRefinementUnlocked: boolean;
   lifestealRefinementUnlocked: boolean;
+  infusableSlots: EquipmentPosition[];
 }
 
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
@@ -168,6 +169,7 @@ export class HomeService {
   merchantAutobuyItem: string | null = null;
   qiAttackRefinementUnlocked = false;
   lifestealRefinementUnlocked = false;
+  infusableSlots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
 
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, espeicially formations
@@ -1255,6 +1257,7 @@ export class HomeService {
       nectarUnlocked: this.nectarUnlocked,
       qiAttackRefinementUnlocked: this.qiAttackRefinementUnlocked,
       lifestealRefinementUnlocked: this.lifestealRefinementUnlocked,
+      infusableSlots: this.infusableSlots,
     };
   }
 
@@ -1293,6 +1296,7 @@ export class HomeService {
     this.nectarUnlocked = properties.nectarUnlocked;
     this.qiAttackRefinementUnlocked = properties.qiAttackRefinementUnlocked;
     this.lifestealRefinementUnlocked = properties.lifestealRefinementUnlocked;
+    this.infusableSlots = properties.infusableSlots;
 
     this.workstations = [];
     for (const workstation of properties.workstations) {
@@ -2420,7 +2424,7 @@ export class HomeService {
     if (!workstation.equipmentSlot) {
       return;
     }
-    const slots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
+    const slots: EquipmentPosition[] = this.infusableSlots;
     let index = slots.indexOf(workstation.equipmentSlot);
     index++;
     if (index >= slots.length) {
