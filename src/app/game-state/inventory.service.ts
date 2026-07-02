@@ -192,6 +192,7 @@ export interface InventoryProperties {
   noDrugs: boolean;
   drugMultiplier: number;
   treeLover: boolean;
+  darkMetal: boolean;
 }
 
 @Injectable({
@@ -299,6 +300,7 @@ export class InventoryService {
   noDrugs = false;
   drugMultiplier = 1;
   treeLover = false;
+  darkMetal = false;
 
   constructor(
     private injector: Injector,
@@ -606,6 +608,7 @@ export class InventoryService {
       noDrugs: this.noDrugs,
       drugMultiplier: this.drugMultiplier,
       treeLover: this.treeLover,
+      darkMetal: this.darkMetal,
     };
   }
 
@@ -695,6 +698,7 @@ export class InventoryService {
     this.noDrugs = properties.noDrugs;
     this.drugMultiplier = properties.drugMultiplier;
     this.treeLover = properties.treeLover;
+    this.darkMetal = properties.darkMetal;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -821,6 +825,8 @@ export class InventoryService {
       if (this.treeLover) {
         damageMultiplier = 100;
       }
+    } else if (this.darkMetal) {
+      damageMultiplier = 100;
     }
     const baseName = defaultName ?? WeaponNames[Math.floor(Math.random() * WeaponNames.length)];
     let name: string;
@@ -1144,7 +1150,30 @@ export class InventoryService {
       oreValue = Math.floor(Math.pow((earthLore * valueScale) / 1e12, 0.15) * 800);
     }
     let lastOre = this.itemRepoService.items['copperOre'];
-    for (const key in this.itemRepoService.items) {
+
+    const oreKeys = [
+      'copperOre',
+      'tinOre',
+      'bronzeOre',
+      'ironOre',
+      'steelOre',
+      'mithrilOre',
+      'greensteelOre',
+      'bluesteelOre',
+      'redsteelOre',
+      'flamesteelOre',
+      'froststeelOre',
+      'brightsteelOre',
+      'darksteelOre',
+      'felsteelOre',
+      'cloudsteelOre',
+      'adamantOre',
+    ];
+    if (this.darkMetal) {
+      oreKeys.push('dreadsteelOre');
+    }
+
+    for (const key of oreKeys) {
       const item = this.itemRepoService.items[key];
       if (item.type === 'ore' && item.value > lastOre.value && item.value <= oreValue) {
         lastOre = item;

@@ -1804,6 +1804,16 @@ baguaMap = [
       description: 'A chunk of adamant ore.',
       shopable: true,
     },
+    dreadsteelOre: {
+      id: 'dreadsteelOre',
+      imageFile: 'ore',
+      imageColor: this.colorByRank[15],
+      name: 'dreadsteel ore',
+      type: 'ore',
+      value: 8000,
+      description: "A chunk of dreadsteel ore. It's blackness is so absolute no light can escape it.",
+      shopable: false,
+    },
     // metal bars should always be 10x the value of the associated ore
     copperBar: {
       id: 'copperBar',
@@ -1964,6 +1974,16 @@ baguaMap = [
       value: 8000,
       description: 'A bar of adamant.',
       shopable: true,
+    },
+    dreadsteelBar: {
+      id: 'dreadsteelBar',
+      imageFile: 'metal',
+      imageColor: this.colorByRank[15],
+      name: 'dreadsteel bar',
+      type: 'metal',
+      value: 80000,
+      description: "A bar of dreadsteel. It's blackness is so absolute no light can escape it.",
+      shopable: false,
     },
     junk: {
       id: 'junk',

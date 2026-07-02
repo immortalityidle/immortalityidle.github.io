@@ -45,9 +45,9 @@
                     <span>Completed!</span>
                 }
                 @else {
-                <button (click)="gameStateService.avatarRebirth(BLOODTHIRSTY_BRAWLER)">
-                    Be Reborn as a {{BLOODTHIRSTY_BRAWLER}} Avatar
-                </button>
+                    <button (click)="gameStateService.avatarRebirth(BLOODTHIRSTY_BRAWLER)">
+                        Be Reborn as a {{BLOODTHIRSTY_BRAWLER}} Avatar
+                    </button>
                 }
                 <br>
             </span>
@@ -62,9 +62,14 @@
                 <br>
                 Reward: More powerful pills and potions
                 <br>
-                <button (click)="gameStateService.avatarRebirth(DRUG_IMMUNE)">
-                    Be Reborn as a {{DRUG_IMMUNE}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(DRUG_IMMUNE)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(DRUG_IMMUNE)">
+                        Be Reborn as a {{DRUG_IMMUNE}} Avatar
+                    </button>
+                }
             </span>
         </div>
         <div class="avatarSection">
@@ -77,17 +82,15 @@
                 <br>
                 Reward: New kinds of wood and increased power for wooden weapons
                 <br>
-                <button (click)="gameStateService.avatarRebirth(TREE_LOVER)">
-                    Be Reborn as a {{TREE_LOVER}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(TREE_LOVER)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(TREE_LOVER)">
+                        Be Reborn as a {{TREE_LOVER}} Avatar
+                    </button>
+                }                
             </span>
-        </div>
-        <div>
-        <br>
-        <br>
-        <span>The following are still under Construction. Don't use them.</span>
-        <br>
-        <br>
         </div>
         <div class="avatarSection">
             <span>
@@ -99,10 +102,22 @@
                 <br>
                 Reward: New kinds of metal and increased power for metal weapons
                 <br>
-                <button (click)="gameStateService.avatarRebirth(DARK_FEARING)">
-                    Be Reborn as a {{DARK_FEARING}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(DARK_FEARING)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(DARK_FEARING)">
+                        Be Reborn as a {{DARK_FEARING}} Avatar
+                    </button>
+                }
             </span>
+        </div>
+        <div>
+        <br>
+        <br>
+        <span>The following are still under Construction. Don't use them.</span>
+        <br>
+        <br>
         </div>
         <div class="avatarSection">
             <span>
@@ -114,9 +129,14 @@
                 <br>
                 Reward: More powerful armor options
                 <br>
-                <button (click)="gameStateService.avatarRebirth(SWORD_SAINT)">
-                    Be Reborn as a {{SWORD_SAINT}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(SWORD_SAINT)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(SWORD_SAINT)">
+                        Be Reborn as a {{SWORD_SAINT}} Avatar
+                    </button>
+                }
             </span>
         </div>
         <div class="avatarSection">
@@ -129,9 +149,14 @@
                 <br>
                 Reward: New divine homes
                 <br>
-                <button (click)="gameStateService.avatarRebirth(WANDERER)">
-                    Be Reborn as a {{WANDERER}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(WANDERER)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(WANDERER)">
+                        Be Reborn as a {{WANDERER}} Avatar
+                    </button>
+                }
             </span>
         </div>
         <div class="avatarSection">
@@ -144,9 +169,14 @@
                 <br>
                 Reward: New technique refinements
                 <br>
-                <button (click)="gameStateService.avatarRebirth(ALL_NATURAL)">
-                    Be Reborn as an {{ALL_NATURAL}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(ALL_NATURAL)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(ALL_NATURAL)">
+                        Be Reborn as an {{ALL_NATURAL}} Avatar
+                    </button>
+                }
             </span>
         </div>
         <div class="avatarSection">
@@ -159,9 +189,14 @@
                 <br>
                 Reward: New more powerful pets
                 <br>
-                <button (click)="gameStateService.avatarRebirth(BEAST_MASTER)">
-                    Be Reborn as an {{BEAST_MASTER}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(BEAST_MASTER)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(BEAST_MASTER)">
+                        Be Reborn as an {{BEAST_MASTER}} Avatar
+                    </button>
+                }
             </span>
         </div>
         <div class="avatarSection">
@@ -174,9 +209,14 @@
                 <br>
                 Reward: New Tao concepts to contemplate
                 <br>
-                <button (click)="gameStateService.avatarRebirth(ASCETIC)">
-                    Be Reborn as an {{ASCETIC}} Avatar
-                </button>
+                @if (gameStateService.completedAvatarChallenges.includes(ASCETIC)){
+                    <span>Completed!</span>
+                }
+                @else {
+                    <button (click)="gameStateService.avatarRebirth(ASCETIC)">
+                        Be Reborn as an {{ASCETIC}} Avatar
+                    </button>
+                }
             </span>
         </div>
     }

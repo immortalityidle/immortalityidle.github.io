@@ -5722,7 +5722,7 @@ export class ActivityService {
     resourceUse: [{}],
     requirements: [
       {
-        animalHandling: 1e36,
+        animalHandling: 1e24,
       },
     ],
     divinityRequired: [true],

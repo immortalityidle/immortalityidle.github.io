@@ -684,6 +684,7 @@ export class GameStateService {
       noDrugs: props?.noDrugs || false,
       drugMultiplier: props?.drugMultiplier || 1,
       treeLover: props?.treeLover || false,
+      darkMetal: props?.darkMetal || false,
     };
   }
 
@@ -739,7 +740,7 @@ export class GameStateService {
       activityLoop: props?.activityLoop || [],
       unlockedActivities: props?.unlockedActivities || [],
       discoveredActivities: props?.discoveredActivities || [],
-      openApprenticeships: props?.openApprenticeships || 0,
+      openApprenticeships: props?.openApprenticeships || 1,
       spiritActivity: props?.spiritActivity || null,
       completedApprenticeships: props?.completedApprenticeships || [],
       currentApprenticeship: props?.currentApprenticeship || undefined,
@@ -1418,6 +1419,10 @@ export class GameStateService {
         newGameState.activities.autoPauseUnlocked = this.activityService.autoPauseUnlocked;
         newGameState.activities.autoRestUnlocked = this.activityService.autoRestUnlocked;
         newGameState.activities.autoRestart = this.activityService.autoRestart;
+        newGameState.activities.pauseOnDeath = this.activityService.pauseOnDeath;
+        newGameState.activities.pauseBeforeDeath = this.activityService.pauseBeforeDeath;
+
+        newGameState.home.thugPause = this.homeService.thugPause;
 
         newGameState.inventory.maxFoodPerDay = this.inventoryService.maxFoodPerDay;
         newGameState.inventory.autoPillUnlocked = this.inventoryService.autoPillUnlocked;
@@ -1466,6 +1471,16 @@ export class GameStateService {
           newGameState.battles.uneradicableMonsterTypes.push('leshy');
           newGameState.home.infusableSlots = ['head', 'body', 'legs', 'feet', 'rightHand'];
           newGameState.inventory.treeLover = true;
+        } else if (avatarType === AVATAR_DARK_FEARING) {
+          newGameState.activities.forbiddenActivities.push(ActivityType.Mining);
+          newGameState.followers.forbiddenJobs.push('miner');
+          newGameState.followers.forbiddenSlots.push('rightHand');
+          newGameState.battles.uneradicableMonsterTypes.push('golem');
+          newGameState.battles.uneradicableMonsterTypes.push('sphinx');
+          newGameState.battles.uneradicableMonsterTypes.push('doomworm');
+          newGameState.battles.uneradicableMonsterTypes.push('titan');
+          newGameState.battles.uneradicableMonsterTypes.push('magmaGolem');
+          newGameState.home.infusableSlots = ['head', 'body', 'legs', 'feet', 'leftHand'];
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1519,6 +1534,8 @@ export class GameStateService {
       this.inventoryService.drugMultiplier = 100;
     } else if (avatarChallenge === AVATAR_TREE_LOVER) {
       this.inventoryService.treeLover = true;
+    } else if (avatarChallenge === AVATAR_DARK_FEARING) {
+      this.inventoryService.darkMetal = true;
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1590,7 +1607,11 @@ export class GameStateService {
     } else if (this.avatarChallenge === AVATAR_TREE_LOVER) {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Wield a powerful wooden weapon.');
       this.avatarChallengeProgress.set(this.characterService.equipment.leftHand?.weaponStats?.baseDamage || 0);
-      this.avatarChallengeProgressRequired.set(8000000);
+      this.avatarChallengeProgressRequired.set(8e11);
+    } else if (this.avatarChallenge === AVATAR_DARK_FEARING) {
+      this.avatarProgressDescription.set('Avatar Challenge Goal: Wield a powerful metal weapon.');
+      this.avatarChallengeProgress.set(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0);
+      this.avatarChallengeProgressRequired.set(8e11);
     }
     this.avatarChallengeProgressPercent.set(
       (this.avatarChallengeProgress() / this.avatarChallengeProgressRequired()) * 100

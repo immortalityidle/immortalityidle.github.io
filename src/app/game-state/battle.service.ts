@@ -1547,7 +1547,7 @@ export class BattleService {
       qiCost: 10000,
       statusEffect: {
         name: FIRE_SHIELD,
-        description: 'A blazing shield tha harms your enemies.',
+        description: 'A blazing shield that protects you and harms your enemies.',
         ticksLeft: 10,
         power: 1,
       },
