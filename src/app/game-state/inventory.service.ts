@@ -193,6 +193,8 @@ export interface InventoryProperties {
   drugMultiplier: number;
   treeLover: boolean;
   darkMetal: boolean;
+  noArmor: boolean;
+  armorAvatarBonus: boolean;
 }
 
 @Injectable({
@@ -301,6 +303,8 @@ export class InventoryService {
   drugMultiplier = 1;
   treeLover = false;
   darkMetal = false;
+  noArmor = false;
+  armorAvatarBonus = false;
 
   constructor(
     private injector: Injector,
@@ -609,6 +613,8 @@ export class InventoryService {
       drugMultiplier: this.drugMultiplier,
       treeLover: this.treeLover,
       darkMetal: this.darkMetal,
+      noArmor: this.noArmor,
+      armorAvatarBonus: this.armorAvatarBonus,
     };
   }
 
@@ -699,6 +705,8 @@ export class InventoryService {
     this.drugMultiplier = properties.drugMultiplier;
     this.treeLover = properties.treeLover;
     this.darkMetal = properties.darkMetal;
+    this.noArmor = properties.noArmor;
+    this.armorAvatarBonus = properties.armorAvatarBonus;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -1107,7 +1115,10 @@ export class InventoryService {
       LogTopic.CRAFTING,
       'Your hard work paid off! You created some armor: ' + this.titleCasePipe.transform(name) + '!'
     );
-    const defense = Math.min(Math.sqrt(grade), 1000) * grade;
+    let defense = Math.min(Math.sqrt(grade), 1000) * grade;
+    if (this.armorAvatarBonus) {
+      defense *= 100;
+    }
     return {
       id: 'armor' + slot + name + grade + effect,
       imageFile: imageFileName,
@@ -2152,6 +2163,12 @@ export class InventoryService {
 
     if (this.noWeapons && (item.slot === 'leftHand' || item.slot === 'rightHand')) {
       // can't equip weapons and this is a weapon, bail out
+      return;
+    }
+    if (
+      this.noArmor &&
+      (item.slot === 'head' || item.slot === 'body' || item.slot === 'legs' || item.slot === 'feet')
+    ) {
       return;
     }
 

@@ -685,6 +685,8 @@ export class GameStateService {
       drugMultiplier: props?.drugMultiplier || 1,
       treeLover: props?.treeLover || false,
       darkMetal: props?.darkMetal || false,
+      noArmor: props?.noArmor || false,
+      armorAvatarBonus: props?.armorAvatarBonus || false,
     };
   }
 
@@ -1481,6 +1483,8 @@ export class GameStateService {
           newGameState.battles.uneradicableMonsterTypes.push('titan');
           newGameState.battles.uneradicableMonsterTypes.push('magmaGolem');
           newGameState.home.infusableSlots = ['head', 'body', 'legs', 'feet', 'leftHand'];
+        } else if (avatarType === AVATAR_SWORD_SAINT) {
+          newGameState.inventory.noArmor = true;
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1536,6 +1540,8 @@ export class GameStateService {
       this.inventoryService.treeLover = true;
     } else if (avatarChallenge === AVATAR_DARK_FEARING) {
       this.inventoryService.darkMetal = true;
+    } else if (avatarChallenge === AVATAR_SWORD_SAINT) {
+      this.inventoryService.armorAvatarBonus = true;
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1612,6 +1618,10 @@ export class GameStateService {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Wield a powerful metal weapon.');
       this.avatarChallengeProgress.set(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0);
       this.avatarChallengeProgressRequired.set(8e11);
+    } else if (this.avatarChallenge === AVATAR_SWORD_SAINT) {
+      this.avatarProgressDescription.set('Avatar Challenge Goal: Defeat Death Itself.');
+      this.avatarChallengeProgress.set(this.battleService.killsByMonster['death']);
+      this.avatarChallengeProgressRequired.set(1);
     }
     this.avatarChallengeProgressPercent.set(
       (this.avatarChallengeProgress() / this.avatarChallengeProgressRequired()) * 100

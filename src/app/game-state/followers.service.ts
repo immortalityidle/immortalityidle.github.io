@@ -581,6 +581,9 @@ export class FollowersService {
         if (this.hellService?.inHell() && !this.characterService.god()) {
           divider *= 10;
         }
+        if (this.inventoryService.armorAvatarBonus) {
+          divider /= 10;
+        }
         const improveArmor = (armor: Equipment): Equipment => ({
           ...armor,
           armorStats: armor.armorStats
@@ -591,7 +594,7 @@ export class FollowersService {
             : undefined,
           value: armor.value + Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2),
         });
-        const equipment = this.characterService.equipment; // Too many long names, reduced and referenced
+        const equipment = this.characterService.equipment;
         if (equipment.head && equipment.head.armorStats) {
           equipment.head = improveArmor(equipment.head);
         }
