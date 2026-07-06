@@ -10,7 +10,7 @@ import { FollowersService, FollowersProperties, HQType } from './followers.servi
 import { HomeService, HomeProperties, HomeType } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
-import { ImpossibleTaskProperties, ImpossibleTaskService } from './impossibleTask.service';
+import { ImpossibleTaskProperties, ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { HellProperties, HellService } from './hell.service';
 import { OfflineModalComponent } from '../offline-modal/offline-modal.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -1485,6 +1485,8 @@ export class GameStateService {
           newGameState.home.infusableSlots = ['head', 'body', 'legs', 'feet', 'leftHand'];
         } else if (avatarType === AVATAR_SWORD_SAINT) {
           newGameState.inventory.noArmor = true;
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
         }
 
         newGameState.avatarChallenge = avatarType;
