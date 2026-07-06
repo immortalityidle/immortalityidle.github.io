@@ -5706,7 +5706,7 @@ export class ActivityService {
           );
           return;
         }
-        this.inventoryService.getWildMeat(500); // TODO: Tune this
+        this.inventoryService.addItem(this.inventoryService.getWildMeat(500)); // TODO: Tune this
         this.pantheonService.increaseGodProgress(GOD_ARTEMIS, 1);
         this.logService.log(
           LogTopic.EVENT,
