@@ -719,6 +719,7 @@ export class GameStateService {
       qiAttackRefinementUnlocked: props?.qiAttackRefinementUnlocked || false,
       lifestealRefinementUnlocked: props?.lifestealRefinementUnlocked || false,
       infusableSlots: props?.infusableSlots || ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'],
+      godHomesUnlocked: props?.godHomesUnlocked || false,
     };
   }
 
@@ -1487,6 +1488,8 @@ export class GameStateService {
           newGameState.inventory.noArmor = true;
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
+        } else if (avatarType === AVATAR_WANDERER) {
+          newGameState.home.homeValue = HomeType.None;
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1544,6 +1547,8 @@ export class GameStateService {
       this.inventoryService.darkMetal = true;
     } else if (avatarChallenge === AVATAR_SWORD_SAINT) {
       this.inventoryService.armorAvatarBonus = true;
+    } else if (avatarChallenge === AVATAR_WANDERER) {
+      this.homeService.godHomesUnlocked = true;
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1620,9 +1625,9 @@ export class GameStateService {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Wield a powerful metal weapon.');
       this.avatarChallengeProgress.set(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0);
       this.avatarChallengeProgressRequired.set(8e11);
-    } else if (this.avatarChallenge === AVATAR_SWORD_SAINT) {
+    } else if (this.avatarChallenge === AVATAR_SWORD_SAINT || this.avatarChallenge === AVATAR_WANDERER) {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Defeat Death Itself.');
-      this.avatarChallengeProgress.set(this.battleService.killsByMonster['death']);
+      this.avatarChallengeProgress.set(this.battleService.killsByMonster['death'] || 0);
       this.avatarChallengeProgressRequired.set(1);
     }
     this.avatarChallengeProgressPercent.set(

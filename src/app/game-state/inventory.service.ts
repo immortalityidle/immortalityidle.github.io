@@ -1397,7 +1397,11 @@ export class InventoryService {
       }
     }
 
-    this.changeMaxItems(this.homeService!.home.maxInventory);
+    if (this.homeService!.home) {
+      this.changeMaxItems(this.homeService!.home.maxInventory);
+    } else {
+      this.changeMaxItems(60);
+    }
 
     if (this.grandmotherGift) {
       const stick: Equipment = {

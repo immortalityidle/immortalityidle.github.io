@@ -92,8 +92,13 @@ export class FarmService {
       }
 
       this.displayFallowPlots.set(this.fallowPlots);
-      this.displayAddFields.set(this.fields.length < this.homeService.home.maxFields);
-      this.displayFieldsCount.set(this.fields.length + ' of ' + this.homeService.home.maxFields + ' fields planted');
+      let maxFields = 0;
+      if (this.homeService.home) {
+        maxFields = this.homeService.home.maxFields;
+      }
+
+      this.displayAddFields.set(this.fields.length < maxFields);
+      this.displayFieldsCount.set(this.fields.length + ' of ' + maxFields + ' fields planted');
       while (this.displayFields.length < this.fields.length) {
         this.displayFields.push({
           trackField: signal<string>(''),
@@ -231,10 +236,6 @@ export class FarmService {
     this.homeService.land -= quantity;
   }
 
-  /**
-   *
-   * @param quantity -1 for all
-   */
   clearPlot(quantity = 1) {
     if (quantity < 0) {
       quantity = this.fallowPlots;
@@ -247,7 +248,12 @@ export class FarmService {
   }
 
   addField() {
-    if (this.fields.length >= this.homeService.home.maxFields) {
+    let maxFields = 0;
+    if (this.homeService.home) {
+      maxFields = this.homeService.home.maxFields;
+    }
+
+    if (this.fields.length >= maxFields) {
       return;
     }
     const cropItem = this.inventoryService.farmFoodList[0];

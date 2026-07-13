@@ -1909,12 +1909,14 @@ export class FollowersService {
       this.logService.log(LogTopic.EVENT, "You don't have enough money to upgrade your headquarters.");
       return;
     }
-    if (this.homeService.land < this.hqs[this.hq].upgradeLandCost) {
+    if (this.homeService.home && this.homeService.land < this.hqs[this.hq].upgradeLandCost) {
       this.logService.log(LogTopic.EVENT, "You don't have enough land to upgrade your headquarters.");
       return;
     }
     this.characterService.money -= this.hqs[this.hq].upgradeMoneyCost;
-    this.homeService.land -= this.hqs[this.hq].upgradeLandCost;
+    if (this.homeService.home) {
+      this.homeService.land -= this.hqs[this.hq].upgradeLandCost;
+    }
     this.hq++;
     this.updateFollowerCap();
     this.updateHQInputs();
@@ -1922,7 +1924,9 @@ export class FollowersService {
 
   downgradeHQ() {
     this.hq--;
-    this.homeService.land += this.hqs[this.hq].upgradeLandCost;
+    if (this.homeService.home) {
+      this.homeService.land += this.hqs[this.hq].upgradeLandCost;
+    }
     this.updateFollowerCap();
     this.updateHQInputs();
   }

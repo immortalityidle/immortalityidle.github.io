@@ -586,7 +586,7 @@ export class AchievementService {
         'You have unlocked your very own workstations to create your own gear, meals, potions, and pills. You can now access the crafting panel.',
       hint: 'You need a big house for this.',
       check: () => {
-        return this.homeService.home.maxWorkstations > 0;
+        return this.homeService.home !== null && this.homeService.home.maxWorkstations > 0;
       },
       effect: () => {
         this.gameStateService?.unlockPanel('craftingPanel');
@@ -1465,7 +1465,7 @@ export class AchievementService {
       description: 'You have built a home strong enough to endure for generations.',
       hint: 'Build back better.',
       check: () => {
-        return this.homeService.home.type >= HomeType.SimpleHut;
+        return this.homeService.home !== null && this.homeService.home.type >= HomeType.SimpleHut;
       },
       effect: () => {
         this.homeService.keepHome = true;
@@ -1523,7 +1523,11 @@ export class AchievementService {
       description: 'You have established an empire that will never fall, and a bloodline that will always inherit it.',
       hint: 'Bloodline Empire.',
       check: () => {
-        return this.homeService.home.type >= HomeType.Capital && this.characterService.bloodlineRank >= 7;
+        return (
+          this.homeService.home !== null &&
+          this.homeService.home.type >= HomeType.Capital &&
+          this.characterService.bloodlineRank >= 7
+        );
       },
       effect: () => {
         this.characterService.imperial = true;

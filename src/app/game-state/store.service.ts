@@ -263,7 +263,7 @@ export class StoreService {
       this.logService.log(LogTopic.EVENT, "You can't enhance your bloodline any further.");
       return;
     }
-    if (this.homeService.home.type < this.bloodLineHomeRequirement.type) {
+    if (this.homeService.home && this.homeService.home.type < this.bloodLineHomeRequirement.type) {
       this.logService.log(LogTopic.EVENT, "You don't have a powerful enough home to ascend.");
       return;
     }

@@ -60,9 +60,12 @@ export interface DisplayHome {
   healthRecovery: WritableSignal<number>;
   staminaRecovery: WritableSignal<number>;
   qiRecovery: WritableSignal<number>;
+  availableWorkstations: WritableSignal<number>;
+  maxWorkstations: WritableSignal<number>;
 }
 
 export enum HomeType {
+  None = -1,
   SquatterTent,
   OwnTent,
   DirtyShack,
@@ -130,6 +133,7 @@ export interface HomeProperties {
   qiAttackRefinementUnlocked: boolean;
   lifestealRefinementUnlocked: boolean;
   infusableSlots: EquipmentPosition[];
+  godHomesUnlocked: boolean;
 }
 
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
@@ -170,6 +174,7 @@ export class HomeService {
   qiAttackRefinementUnlocked = false;
   lifestealRefinementUnlocked = false;
   infusableSlots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
+  godHomesUnlocked = false;
 
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, espeicially formations
@@ -1056,18 +1061,22 @@ export class HomeService {
     ['books', 'animal', ELEMENT_METAL, 'gray', 'white', 'black'],
   ];
 
-  homeValue!: HomeType;
-  home!: Home;
+  homeValue: HomeType = HomeType.SquatterTent;
+  home: Home | null = this.homesList[HomeType.SquatterTent];
   displayHome: DisplayHome = {
-    name: signal(this.homesList[0].name),
-    description: signal(this.homesList[0].description),
-    upgradable: signal(true),
+    name: signal(
+      'big, wide world, full of sights to see and places to travel. Homes are not for a free soul like yours.'
+    ),
+    description: signal(''),
+    upgradable: signal(false),
     downgradable: signal(false),
-    costPerDay: signal(this.homesList[0].costPerDay),
+    costPerDay: signal(0),
     hasFurniture: signal(false),
     healthRecovery: signal(0),
     staminaRecovery: signal(0),
     qiRecovery: signal(0),
+    availableWorkstations: signal(0),
+    maxWorkstations: signal(0),
   };
   nextHome!: Home;
   previousHome!: Home;
@@ -1095,15 +1104,15 @@ export class HomeService {
     this.land = 0;
     this.landPrice = 100;
     this.setCurrentHome(this.homesList[0]);
-    if (this.home === undefined || this.homeValue === undefined || this.nextHome === undefined) {
-      throw Error('Home service not initialized correctly.');
-    }
 
     mainLoopService.homeTickSubject.subscribe(() => {
       this.tick();
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
+      if (this.homeValue === HomeType.None || this.home === null) {
+        return;
+      }
       if (this.land > this.highestLand) {
         this.highestLand = this.land;
       }
@@ -1142,6 +1151,8 @@ export class HomeService {
       this.displayHome.healthRecovery.set(this.home.healthRecovery);
       this.displayHome.staminaRecovery.set(this.home.staminaRecovery);
       this.displayHome.qiRecovery.set(this.home.qiRecovery);
+      this.displayHome.availableWorkstations.set(this.home.maxWorkstations - this.workstations.length);
+      this.displayHome.maxWorkstations.set(this.home.maxWorkstations);
       let vaultMultiplier = 1;
       for (const furnitureItem of this.bedroomFurniture) {
         if (furnitureItem?.subtype === 'safe') {
@@ -1152,6 +1163,9 @@ export class HomeService {
     });
 
     mainLoopService.reincarnateSubject.subscribe(() => {
+      if (this.homeValue === HomeType.None || this.home === null) {
+        return;
+      }
       this.reset();
       if (this.keepHome) {
         this.logService.log(
@@ -1179,6 +1193,10 @@ export class HomeService {
   }
 
   tick() {
+    if (this.homeValue === HomeType.None || this.home === null) {
+      return;
+    }
+
     if (this.characterService.dead) {
       return;
     }
@@ -1258,13 +1276,18 @@ export class HomeService {
       qiAttackRefinementUnlocked: this.qiAttackRefinementUnlocked,
       lifestealRefinementUnlocked: this.lifestealRefinementUnlocked,
       infusableSlots: this.infusableSlots,
+      godHomesUnlocked: this.godHomesUnlocked,
     };
   }
 
   setProperties(properties: HomeProperties) {
     this.land = properties.land;
     this.landPrice = properties.landPrice;
-    this.setCurrentHome(this.homesList[properties.homeValue]);
+    if (properties.homeValue >= HomeType.SquatterTent) {
+      this.setCurrentHome(this.homesList[properties.homeValue]);
+    } else {
+      this.setCurrentHome(null);
+    }
     this.keepFurniture = properties.keepFurniture || false;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
@@ -1297,6 +1320,7 @@ export class HomeService {
     this.qiAttackRefinementUnlocked = properties.qiAttackRefinementUnlocked;
     this.lifestealRefinementUnlocked = properties.lifestealRefinementUnlocked;
     this.infusableSlots = properties.infusableSlots;
+    this.godHomesUnlocked = properties.godHomesUnlocked;
 
     this.workstations = [];
     for (const workstation of properties.workstations) {
@@ -1317,16 +1341,16 @@ export class HomeService {
   }
 
   // gets the specs of the next home, doesn't actually downgrade
-  getPreviousHome() {
+  getPreviousHome(): Home {
     if (this.homeValue === HomeType.SquatterTent) {
-      return this.home;
+      return this.homesList[HomeType.SquatterTent];
     }
     for (let i = 1; i < this.homesList.length; i++) {
       if (this.homeValue === this.homesList[i].type) {
         return this.homesList[i - 1];
       }
     }
-    return this.home; // shouldn't ever happen
+    return this.homesList[HomeType.SquatterTent];
   }
 
   upgradeToNextHome() {
@@ -1356,7 +1380,7 @@ export class HomeService {
     for (let i = 0; i < this.bedroomFurniture.length; i++) {
       this.setFurniture(null, i);
     }
-    this.land += this.home.landRequired;
+    this.land += this.home!.landRequired;
 
     this.setCurrentHome(this.previousHome);
   }
@@ -1371,7 +1395,7 @@ export class HomeService {
       this.houseBuildingProgress = 1;
       this.upgrading = false;
       this.setCurrentHome(this.nextHome);
-      this.logService.log(LogTopic.EVENT, 'You finished upgrading your home. You now live in a ' + this.home.name);
+      this.logService.log(LogTopic.EVENT, 'You finished upgrading your home. You now live in a ' + this.home!.name);
     }
   }
 
@@ -1410,15 +1434,22 @@ export class HomeService {
     this.land = 0;
   }
 
-  setCurrentHome(home: Home) {
-    this.homeValue = home.type;
-    this.home = this.getHomeFromValue(this.homeValue);
-    this.previousHome = this.getPreviousHome();
-    this.nextHome = this.getNextHome();
-    this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
-    this.inventoryService.changeMaxItems(this.home.maxInventory);
-    this.updateAvailableWorkstations();
-    this.recalculateFengShui();
+  setCurrentHome(home: Home | null) {
+    if (home === null) {
+      this.homeValue = HomeType.None;
+      this.home = null;
+      this.characterService.fengshuiScore = 0;
+      this.availableWorkstationsList = [];
+    } else {
+      this.homeValue = home.type;
+      this.home = this.getHomeFromValue(this.homeValue);
+      this.previousHome = this.getPreviousHome();
+      this.nextHome = this.getNextHome();
+      this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
+      this.inventoryService.changeMaxItems(this.home.maxInventory);
+      this.updateAvailableWorkstations();
+      this.recalculateFengShui();
+    }
   }
 
   updateAvailableWorkstations() {
@@ -1429,7 +1460,7 @@ export class HomeService {
       if (ws.divine && !this.characterService.god()) {
         return false;
       }
-      return ws.power <= this.home.maxWorkstationPower;
+      return ws.power <= this.home!.maxWorkstationPower;
     });
   }
 
@@ -1447,6 +1478,10 @@ export class HomeService {
    * @returns count of actual purchase
    */
   buyLand(count: number): number {
+    if (this.home === null) {
+      this.logService.log(LogTopic.EVENT, 'You are a wanderer and will never own land.');
+      return 0;
+    }
     const increase = 10 * ((count * (count - 1)) / 2); //mathmatically increase by linear sum n (n + 1) / 2
     const price = this.landPrice * count + increase;
     if (this.characterService.money >= price) {
@@ -1490,7 +1525,11 @@ export class HomeService {
   }
 
   recalculateFengShui() {
-    this.openBedroomFurnitureSlots = this.home.maxFurniture;
+    if (!this.home) {
+      this.characterService.fengshuiScore = 0;
+      return;
+    }
+    this.openBedroomFurnitureSlots = this.home!.maxFurniture;
     let fengshuiScore = 0;
     for (let i = 0; i < this.bedroomFurniture.length; i++) {
       const furnitureItem = this.bedroomFurniture[i];
@@ -1538,7 +1577,7 @@ export class HomeService {
   }
 
   addWorkstation(workstationId: string, copyWorkstation: Workstation | null = null) {
-    if (this.workstations.length >= this.home.maxWorkstations) {
+    if (this.workstations.length >= this.home!.maxWorkstations) {
       // can't support another workstation, bail out
       return;
     }
