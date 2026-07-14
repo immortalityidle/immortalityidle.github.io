@@ -172,6 +172,8 @@ export interface InventoryProperties {
   totalItemsReceived: number;
   autoReloadCraftInputsUnlocked: boolean;
   autoReloadCraftInputs: boolean;
+  autoReloadCraftInputsDistributed: boolean;
+  autoReloadCraftInputsOnEmpty: boolean;
   potionCounter: number;
   herbCounter: number;
   gemsAcquired: number;
@@ -287,6 +289,8 @@ export class InventoryService {
   totalItemsReceived = 0;
   autoReloadCraftInputsUnlocked = false;
   autoReloadCraftInputs = false;
+  autoReloadCraftInputsDistributed = false;
+  autoReloadCraftInputsOnEmpty = false;
   potionCounter = 0;
   herbCounter = 0;
   gemsAcquired = 0;
@@ -305,6 +309,7 @@ export class InventoryService {
   darkMetal = false;
   noArmor = false;
   armorAvatarBonus = false;
+  craftInputRotations: { [key: string]: number } = {};
 
   constructor(
     private injector: Injector,
@@ -591,6 +596,8 @@ export class InventoryService {
       equipmentCreated: this.equipmentCreated,
       totalItemsReceived: this.totalItemsReceived,
       autoReloadCraftInputs: this.autoReloadCraftInputs,
+      autoReloadCraftInputsDistributed: this.autoReloadCraftInputsDistributed,
+      autoReloadCraftInputsOnEmpty: this.autoReloadCraftInputsOnEmpty,
       autoReloadCraftInputsUnlocked: this.autoReloadCraftInputsUnlocked,
       potionCounter: this.potionCounter,
       herbCounter: this.herbCounter,
@@ -684,6 +691,8 @@ export class InventoryService {
     this.totalItemsReceived = properties.totalItemsReceived;
     this.autoReloadCraftInputsUnlocked = properties.autoReloadCraftInputsUnlocked;
     this.autoReloadCraftInputs = properties.autoReloadCraftInputs;
+    this.autoReloadCraftInputsDistributed = properties.autoReloadCraftInputsDistributed;
+    this.autoReloadCraftInputsOnEmpty = properties.autoReloadCraftInputsOnEmpty;
     this.potionCounter = properties.potionCounter;
     this.herbCounter = properties.herbCounter;
     this.gemsAcquired = properties.gemsAcquired;
@@ -1671,6 +1680,9 @@ export class InventoryService {
       }
 
       if (this.autoReloadCraftInputs && !ignoreAutoReload) {
+        const matchingInputSlots: ItemStack[] = [];
+        const matchingWorkstationIndex: number[] = [];
+        const matchingInputIndex: number[] = [];
         const workstations = this.homeService?.workstations;
         if (workstations) {
           for (let workstationIndex = 0; workstationIndex < workstations.length; workstationIndex++) {
@@ -1680,34 +1692,53 @@ export class InventoryService {
               if (
                 inputItemStack.quantity < this.maxStackSize &&
                 inputItemStack.item?.type === item.type &&
-                inputItemStack.item?.subtype === item.subtype
+                inputItemStack.item?.subtype === item.subtype &&
+                (item.id === inputItemStack.item!.id ||
+                  ((item.type !== 'food' || item.name === inputItemStack.item!.name) &&
+                    item.type !== LOOT_TYPE_GEM &&
+                    (item.value > inputItemStack.item!.value || inputItemStack.quantity < 10)))
               ) {
-                if (item.id === inputItemStack.item.id) {
-                  // same thing
-                  if (item.averageValueOnMerge && item.value !== inputItemStack.item.value) {
-                    const totalValue = inputItemStack.quantity * inputItemStack.item.value + item.value * quantity;
-                    inputItemStack.quantity += quantity;
-                    inputItemStack.item.value = Math.ceil(totalValue / inputItemStack.quantity);
-                  } else {
-                    inputItemStack.quantity += quantity;
-                  }
-                  inputItemStack.item.description = item.description;
-                  return -1;
-                } else if (
-                  (item.type !== 'food' || item.name === inputItemStack.item.name) &&
-                  item.type !== LOOT_TYPE_GEM &&
-                  (item.value > inputItemStack.item?.value || inputItemStack.quantity < 10)
-                ) {
-                  // add it to the inventory then swap it in
-                  const newItemIndex = this.addItem(item, quantity, 0, true);
-                  if (newItemIndex !== -1) {
-                    this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputSlotIndex);
-                  }
-                  return -1;
-                }
+                matchingInputSlots.push(inputItemStack);
+                matchingWorkstationIndex.push(workstationIndex);
+                matchingInputIndex.push(inputSlotIndex);
               }
             }
           }
+        }
+
+        if (matchingInputSlots.length > 0) {
+          if (this.autoReloadCraftInputsDistributed) {
+            const baseQuantity = Math.floor(quantity / matchingInputSlots.length);
+            const remainder = quantity % matchingInputSlots.length;
+
+            // Create an array and distribute the remainder to the first few slots
+            const quantityArray = Array.from({ length: matchingInputSlots.length }, (_, index) => {
+              return index < remainder ? baseQuantity + 1 : baseQuantity;
+            });
+            const rotationId = item.type + item.subtype + item.id;
+            const rotations = (this.craftInputRotations[rotationId] || 0) % quantityArray.length;
+            const rotatedArray = [...quantityArray.slice(-rotations), ...quantityArray.slice(0, -rotations)];
+            this.craftInputRotations[rotationId] = (this.craftInputRotations[rotationId] || 0) + 1;
+            for (let i = 0; i < matchingInputSlots.length && i < rotatedArray.length; i++) {
+              this.loadWorstationInput(
+                item,
+                matchingInputSlots[i],
+                matchingInputIndex[i],
+                matchingInputIndex[i],
+                rotatedArray[i]
+              );
+            }
+            return -1;
+          } else {
+            this.loadWorstationInput(
+              item,
+              matchingInputSlots[0],
+              matchingInputIndex[0],
+              matchingInputIndex[0],
+              quantity
+            );
+          }
+          return -1;
         }
       }
 
@@ -1951,6 +1982,61 @@ export class InventoryService {
     }
     this.thrownAwayItems += quantity;
     return firstStack;
+  }
+
+  loadWorstationInput(
+    item: Item,
+    inputItemStack: ItemStack,
+    workstationIndex: number,
+    inputIndex: number,
+    quantity: number
+  ) {
+    if (quantity <= 0) {
+      return;
+    }
+    if (item.id === inputItemStack.item!.id) {
+      // same thing
+      if (item.averageValueOnMerge && item.value !== inputItemStack.item!.value) {
+        const totalValue = inputItemStack.quantity * inputItemStack.item!.value + item.value * quantity;
+        inputItemStack.quantity += quantity;
+        inputItemStack.item!.value = Math.ceil(totalValue / inputItemStack.quantity);
+      } else {
+        inputItemStack.quantity += quantity;
+      }
+      inputItemStack.item!.description = item.description;
+    } else {
+      // add it to the inventory then swap it in
+      const newItemIndex = this.addItem(item, quantity, 0, true);
+      if (newItemIndex !== -1) {
+        this.homeService?.moveItemToWorkstation(newItemIndex, workstationIndex, inputIndex);
+      }
+    }
+  }
+
+  checkLowWorstationInputs(inputs: ItemStack[]) {
+    if (!this.autoReloadCraftInputsOnEmpty) {
+      return;
+    }
+    const lowItemThreshold = 20;
+    for (const inputStack of inputs) {
+      if (inputStack.item && inputStack.quantity <= lowItemThreshold) {
+        // find an inventory stack with a matching item
+        const matchingItemStackIndex = this.itemStacks.findIndex(
+          itemStack => itemStack.item && itemStack.item.id === inputStack.item!.id
+        );
+        if (matchingItemStackIndex !== -1) {
+          const matchingItemStack = this.itemStacks[matchingItemStackIndex];
+          const quantity = Math.min(lowItemThreshold, matchingItemStack.quantity);
+          matchingItemStack.quantity -= quantity;
+          inputStack.quantity += quantity;
+          if (matchingItemStack.quantity === 0) {
+            this.setItemEmptyStack(matchingItemStackIndex);
+          } else {
+            this.fixId(matchingItemStackIndex);
+          }
+        }
+      }
+    }
   }
 
   sell(itemStack: ItemStack, quantity: number): void {

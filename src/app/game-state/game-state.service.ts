@@ -664,6 +664,8 @@ export class GameStateService {
       totalItemsReceived: props?.totalItemsReceived || 0,
       autoReloadCraftInputsUnlocked: props?.autoReloadCraftInputsUnlocked || props?.autoReloadCraftInputs || false,
       autoReloadCraftInputs: props?.autoReloadCraftInputs || false,
+      autoReloadCraftInputsDistributed: props?.autoReloadCraftInputsDistributed || false,
+      autoReloadCraftInputsOnEmpty: props?.autoReloadCraftInputsOnEmpty || false,
       potionCounter: props?.potionCounter || 0,
       herbCounter: props?.herbCounter || 0,
       gemsAcquired: props?.gemsAcquired || 0,

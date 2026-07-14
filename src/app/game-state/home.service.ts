@@ -1631,6 +1631,7 @@ export class HomeService {
       for (const workstation of this.workstations) {
         if (workstation.triggerActivities.includes(activityType)) {
           workstation.consequence(workstation, activityType);
+          this.inventoryService.checkLowWorstationInputs(workstation.inputs);
         }
       }
     }

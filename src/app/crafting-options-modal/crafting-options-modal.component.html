@@ -49,7 +49,19 @@
     <div class="optionField">
       <span>
         <input type="checkbox" id="autoReloadCraftInputs" [checked]="inventoryService.autoReloadCraftInputs" (change)="autoReloadCraftInputsChange($event)">
-        <label for="autoReloadCraftInputs" >Automatically reload crafting ingredients</label>
+        <label for="autoReloadCraftInputs" >Automatically reload crafting ingredients when acquired</label>
+      </span>
+    </div>
+    <div class="optionField">
+      <span>
+        <input type="checkbox" id="autoReloadCraftInputsDistributed" [checked]="inventoryService.autoReloadCraftInputsDistributed" (change)="autoReloadCraftInputsDistributedChange($event)">
+        <label for="autoReloadCraftInputsDistributed" >Automatically distribute crafting ingredients across workstations using the same item (when acquired)</label>
+      </span>
+    </div>
+    <div class="optionField">
+      <span>
+        <input type="checkbox" id="autoReloadCraftInputsOnEmpty" [checked]="inventoryService.autoReloadCraftInputsOnEmpty" (change)="autoReloadCraftInputsOnEmptyChange($event)">
+        <label for="autoReloadCraftInputsOnEmpty" >Automatically reload crafting ingredients when workstation runs low</label>
       </span>
     </div>
   }

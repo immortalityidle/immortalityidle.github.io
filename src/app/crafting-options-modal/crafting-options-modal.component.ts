@@ -55,4 +55,14 @@ export class CraftingOptionsModalComponent {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.autoReloadCraftInputs = event.target.checked;
   }
+
+  autoReloadCraftInputsDistributedChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoReloadCraftInputsDistributed = event.target.checked;
+  }
+
+  autoReloadCraftInputsOnEmptyChange(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoReloadCraftInputsOnEmpty = event.target.checked;
+  }
 }
