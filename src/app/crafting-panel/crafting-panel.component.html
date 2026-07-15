@@ -120,6 +120,17 @@
                 </div>
               </div>
             }
+            @if (workstation.limitable){
+              <div class="product">
+                <div>
+                  <span tooltip="Limit the power of products from this workstation to the selected value">
+                    <input type="checkbox" id="limiter{{wsIndex}}" [checked]="workstation.powerLimitEnabled" (change)="changePowerLimitEnabled($event, workstation)">
+                    <label for="limiter{{wsIndex}}" >Limit Power</label>
+                    <input min="0" value="{{workstation.powerLimit || 0}}" type="number" class="inputBox" (change)="changePowerLimit($event, workstation)"/>
+                  </span>
+                </div>
+              </div>
+            }
           </div>
         </div>
       }

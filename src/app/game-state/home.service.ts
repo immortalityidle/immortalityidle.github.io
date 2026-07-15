@@ -102,6 +102,9 @@ export interface Workstation {
   energyManipulation?: string;
   productCounter?: number;
   locked?: boolean;
+  limitable?: boolean;
+  powerLimitEnabled?: boolean;
+  powerLimit?: number;
   consequence: (workstation: Workstation, activityType: ActivityType) => void;
 }
 
@@ -177,7 +180,7 @@ export class HomeService {
   godHomesUnlocked = false;
 
   //TODO: put the counters on the workstations, and display progress
-  //TODO: counter for more things, espeicially formations
+  //TODO: counter for more things, especially formations
 
   homesList: Home[] = [
     {
@@ -931,6 +934,7 @@ export class HomeService {
       consequence: (workstation: Workstation) => {
         this.createFormationKit(workstation);
       },
+      limitable: true,
     },
     {
       id: 'Masterwork Formation Workstation',
@@ -945,6 +949,7 @@ export class HomeService {
       consequence: (workstation: Workstation) => {
         this.createFormationKit(workstation);
       },
+      limitable: true,
     },
     {
       id: 'Simple Infusion Station',
@@ -1613,6 +1618,9 @@ export class HomeService {
       alchemyProduct: workstationTemplate.alchemyProduct,
       techniqueRefinementAspect: workstationTemplate.techniqueRefinementAspect,
       energyManipulation: workstationTemplate.energyManipulation,
+      limitable: workstationTemplate.limitable,
+      powerLimitEnabled: workstationTemplate.powerLimitEnabled,
+      powerLimit: workstationTemplate.powerLimit,
     };
 
     if (copyWorkstation) {
@@ -1621,6 +1629,9 @@ export class HomeService {
       newWorkstation.alchemyProduct = copyWorkstation.alchemyProduct;
       newWorkstation.techniqueRefinementAspect = copyWorkstation.techniqueRefinementAspect;
       newWorkstation.energyManipulation = copyWorkstation.energyManipulation;
+      newWorkstation.limitable = copyWorkstation.limitable;
+      newWorkstation.powerLimitEnabled = copyWorkstation.powerLimitEnabled;
+      newWorkstation.powerLimit = copyWorkstation.powerLimit;
     }
     this.workstations.push(newWorkstation);
   }
@@ -2391,6 +2402,9 @@ export class HomeService {
       (alchemyStack?.item?.value || 0);
     formationPower *= workstation.power;
     formationPower = Math.floor(formationPower);
+    if (workstation.powerLimitEnabled && workstation.powerLimit) {
+      formationPower = Math.min(formationPower, workstation.powerLimit);
+    }
     this.inventoryService.addItem(this.inventoryService.generateFormationKit(formationPower), 1, 0, true);
     woodStack.quantity -= 10;
     hideStack.quantity -= 10;

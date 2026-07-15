@@ -1480,6 +1480,7 @@ export class GameStateService {
           newGameState.activities.forbiddenActivities.push(ActivityType.Mining);
           newGameState.followers.forbiddenJobs.push('miner');
           newGameState.followers.forbiddenSlots.push('rightHand');
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
           newGameState.battles.uneradicableMonsterTypes.push('golem');
           newGameState.battles.uneradicableMonsterTypes.push('sphinx');
           newGameState.battles.uneradicableMonsterTypes.push('doomworm');

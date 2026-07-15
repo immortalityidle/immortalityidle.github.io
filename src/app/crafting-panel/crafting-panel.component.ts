@@ -152,4 +152,14 @@ export class CraftingPanelComponent {
     }
     this.inventoryService.updateDisplayValues();
   }
+
+  changePowerLimitEnabled(event: Event, workstation: Workstation): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    workstation.powerLimitEnabled = event.target.checked;
+  }
+
+  changePowerLimit(event: Event, workstation: Workstation) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    workstation.powerLimit = Math.floor(parseFloat(event.target.value));
+  }
 }
