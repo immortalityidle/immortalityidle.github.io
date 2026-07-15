@@ -1723,7 +1723,7 @@ export class InventoryService {
               this.loadWorstationInput(
                 item,
                 matchingInputSlots[i],
-                matchingInputIndex[i],
+                matchingWorkstationIndex[i],
                 matchingInputIndex[i],
                 rotatedArray[i]
               );
@@ -1733,7 +1733,7 @@ export class InventoryService {
             this.loadWorstationInput(
               item,
               matchingInputSlots[0],
-              matchingInputIndex[0],
+              matchingWorkstationIndex[0],
               matchingInputIndex[0],
               quantity
             );
