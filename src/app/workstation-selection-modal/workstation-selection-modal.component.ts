@@ -22,6 +22,11 @@ export class WorkstationSelectionModalComponent {
   ) {}
 
   slotClicked(workstation: Workstation) {
+    if (!this.homeService.home || this.homeService.workstations.length >= this.homeService.home.maxWorkstations) {
+      // can't support another workstation, bail out
+      return;
+    }
+
     if (this.characterService.money > workstation.setupCost) {
       this.characterService.updateMoney(0 - workstation.setupCost);
       this.homeService.addWorkstation(workstation.id);

@@ -3126,7 +3126,7 @@ export class ActivityService {
           this.characterService.attributes.woodwork.value +
           this.characterService.attributes.leatherwork.value +
           this.characterService.attributes.formationMastery.value;
-        money *= this.incomeMultiplier;
+        money *= this.incomeMultiplier * 10;
         money = this.characterService.updateMoney(money);
         this.FormationCreation.lastIncome = money;
         this.characterService.yin++;
@@ -3143,7 +3143,7 @@ export class ActivityService {
           this.characterService.attributes.woodwork.value +
           this.characterService.attributes.leatherwork.value +
           this.characterService.attributes.formationMastery.value;
-        money *= this.incomeMultiplier;
+        money *= this.incomeMultiplier * 100;
         money = this.characterService.updateMoney(money);
         this.FormationCreation.lastIncome = money;
         this.characterService.yin++;
@@ -3160,7 +3160,7 @@ export class ActivityService {
           this.characterService.attributes.woodwork.value +
           this.characterService.attributes.leatherwork.value +
           this.characterService.attributes.formationMastery.value;
-        money *= this.incomeMultiplier;
+        money *= this.incomeMultiplier * 1000;
         money = this.characterService.updateMoney(money);
         this.FormationCreation.lastIncome = money;
         this.characterService.yin++;

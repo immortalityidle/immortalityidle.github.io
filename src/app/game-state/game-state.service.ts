@@ -1479,6 +1479,7 @@ export class GameStateService {
         } else if (avatarType === AVATAR_DARK_FEARING) {
           newGameState.activities.forbiddenActivities.push(ActivityType.Mining);
           newGameState.followers.forbiddenJobs.push('miner');
+          newGameState.followers.forbiddenJobs.push('coalDigger');
           newGameState.followers.forbiddenSlots.push('rightHand');
           newGameState.battles.uneradicableMonsterTypes.push('rat');
           newGameState.battles.uneradicableMonsterTypes.push('golem');
@@ -1493,6 +1494,7 @@ export class GameStateService {
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
         } else if (avatarType === AVATAR_WANDERER) {
           newGameState.home.homeValue = HomeType.None;
+          newGameState.home.workstations.push(this.homeService.wandererPackWorkstation);
         }
 
         newGameState.avatarChallenge = avatarType;

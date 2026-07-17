@@ -73,9 +73,7 @@
             @if (workstation.equipmentSlot){
               <div class="product">
                 <div>
-                  <span>Currently Infusing: </span>
-                </div>
-                <div>
+                  <span>Infusion Target: </span>
                   <mat-icon (click)="homeService.changeWorkstationEquipmentSlot(workstation)" tooltip="Change Equipment Slot" 
                     class="iconButton" aria-label="Change Equipment Slot" aria-hidden="false">
                     change_circle
@@ -87,9 +85,7 @@
             @if (workstation.alchemyProduct){
               <div class="product">
                 <div>
-                  <span>Currently Creating: </span>
-                </div>
-                <div>
+                  <span>Alchemy Product: </span>
                   <mat-icon (click)="homeService.changeWorkstationAlchemyProduct(workstation)" tooltip="Change Product" 
                     class="iconButton" aria-label="Change Product" aria-hidden="false">
                     change_circle
@@ -125,7 +121,7 @@
                 <div>
                   <span tooltip="Limit the power of products from this workstation to the selected value">
                     <input type="checkbox" id="limiter{{wsIndex}}" [checked]="workstation.powerLimitEnabled" (change)="changePowerLimitEnabled($event, workstation)">
-                    <label for="limiter{{wsIndex}}" >Limit Power</label>
+                    <label for="limiter{{wsIndex}}" >Limit Formation Power</label>
                     <input min="0" value="{{workstation.powerLimit || 0}}" type="number" class="inputBox" (change)="changePowerLimit($event, workstation)"/>
                   </span>
                 </div>

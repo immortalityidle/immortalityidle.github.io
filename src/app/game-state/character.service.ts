@@ -758,9 +758,9 @@ export class CharacterService {
 
       let healthBreakdownString =
         '<br><br>You currently have ' +
-        Math.floor(this.status.health.value) +
+        this.bigNumberPipe.transform(this.status.health.value) +
         ' of ' +
-        this.status.health.max +
+        this.bigNumberPipe.transform(this.status.health.max) +
         ' health.';
       healthBreakdownString += '<br><br>Base Health: 100.';
       healthBreakdownString +=
@@ -772,13 +772,14 @@ export class CharacterService {
         healthBreakdownString += '<br>Hygiene Bonus: ' + this.healthBonusBath + '.';
       }
       if (this.healthBonusMagic > 0) {
-        healthBreakdownString += '<br>Magic Bonus: ' + this.healthBonusMagic + '.';
+        healthBreakdownString += '<br>Magic Bonus: ' + this.bigNumberPipe.transform(this.healthBonusMagic) + '.';
       }
       if (this.healthBonusSoul > 0) {
-        healthBreakdownString += '<br>Soul Cultivation Bonus: ' + this.healthBonusSoul + '.';
+        healthBreakdownString +=
+          '<br>Soul Cultivation Bonus: ' + this.bigNumberPipe.transform(this.healthBonusSoul) + '.';
       }
       if (this.healthBonusDivine > 0) {
-        healthBreakdownString += '<br>Divine Bonus: ' + this.healthBonusDivine + '.';
+        healthBreakdownString += '<br>Divine Bonus: ' + this.bigNumberPipe.transform(this.healthBonusDivine) + '.';
       }
       if (this.healthBonusFactor > 1) {
         healthBreakdownString +=

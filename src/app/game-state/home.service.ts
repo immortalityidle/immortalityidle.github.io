@@ -105,6 +105,7 @@ export interface Workstation {
   limitable?: boolean;
   powerLimitEnabled?: boolean;
   powerLimit?: number;
+  unique?: boolean;
   consequence: (workstation: Workstation, activityType: ActivityType) => void;
 }
 
@@ -142,6 +143,7 @@ export interface HomeProperties {
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
 export const WORKSTATION_ENERGY_MANIPULATOR = 'Energy Manipulator';
 export const WORKSTATION_GEM_EXTRACTOR = 'Gem Extractor';
+export const WORKSTATION_WANDERER_PACK = "Wanderer's Crafting Backpack";
 
 export const MANIPULATION_SPIRIT = 'transform elemental energy into spirit energy';
 export const MANIPULATION_ELEMENTAL = 'transform spirit energy into elemental energy';
@@ -178,6 +180,69 @@ export class HomeService {
   lifestealRefinementUnlocked = false;
   infusableSlots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
   godHomesUnlocked = false;
+
+  wandererPackWorkstation: Workstation = {
+    id: WORKSTATION_WANDERER_PACK,
+    triggerActivities: [
+      ActivityType.Smelting,
+      ActivityType.Blacksmithing,
+      ActivityType.Woodworking,
+      ActivityType.Leatherworking,
+      ActivityType.Alchemy,
+      ActivityType.Cooking,
+      ActivityType.Merchant,
+      ActivityType.FormationCreation,
+      ActivityType.InfuseEquipment,
+      ActivityType.CombatTraining,
+      ActivityType.ManipulateEnergy,
+      ActivityType.ExtractGems,
+    ],
+    power: 1,
+    setupCost: 0,
+    maintenanceCost: 0,
+    description: 'A magnificent backpack with all the tools a wanderer might need to do various handycrafts.',
+    maxInputs: 4,
+    inputs: [
+      this.inventoryService.getEmptyItemStack(),
+      this.inventoryService.getEmptyItemStack(),
+      this.inventoryService.getEmptyItemStack(),
+      this.inventoryService.getEmptyItemStack(),
+    ],
+    consequence: (workstation: Workstation, activityType: ActivityType) => {
+      if (activityType === ActivityType.Smelting) {
+        this.smeltMetal(workstation, 5);
+      } else if (
+        activityType === ActivityType.Blacksmithing ||
+        activityType === ActivityType.Woodworking ||
+        activityType === ActivityType.Leatherworking
+      ) {
+        this.createEquipment(workstation, activityType);
+      } else if (activityType === ActivityType.Alchemy) {
+        this.craftAlchemy(workstation, activityType);
+      } else if (activityType === ActivityType.Cooking) {
+        this.cookFood(workstation, 2);
+      } else if (activityType === ActivityType.Merchant) {
+        this.merchantWork(workstation);
+      } else if (activityType === ActivityType.FormationCreation) {
+        this.createFormationKit(workstation);
+      } else if (activityType === ActivityType.InfuseEquipment) {
+        this.infuseEquipment(workstation);
+      } else if (activityType === ActivityType.CombatTraining) {
+        this.characterService.increaseAttribute('combatMastery', 0.01);
+      } else if (activityType === ActivityType.ManipulateEnergy) {
+        this.manipulateEnergy(workstation);
+      } else if (activityType === ActivityType.ExtractGems) {
+        this.extractGems(workstation);
+      }
+    },
+    techniqueRefinementAspect: TECHNIQUE_REFINEMENT_POWER,
+    alchemyProduct: 'potions',
+    energyManipulation: MANIPULATION_SPIRIT,
+    limitable: true,
+    locked: true,
+    equipmentSlot: 'head',
+    unique: true,
+  };
 
   //TODO: put the counters on the workstations, and display progress
   //TODO: counter for more things, especially formations
@@ -572,19 +637,7 @@ export class HomeService {
       maxInputs: 2,
       inputs: [],
       consequence: (workstation: Workstation) => {
-        if (workstation.inputs.length < 2) {
-          // inputs array not populated, bail out
-          return;
-        }
-        const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
-        const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
-
-        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity >= 5) {
-          this.totalCrafts++;
-          this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
-          oreStack.quantity--;
-          fuelStack.quantity -= 5;
-        }
+        this.smeltMetal(workstation, 5);
       },
     },
     {
@@ -602,19 +655,7 @@ export class HomeService {
           this.makeBricks(workstation);
           return;
         }
-        if (workstation.inputs.length < 2) {
-          // inputs array not populated, bail out
-          return;
-        }
-        const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
-        const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
-
-        if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity > 0) {
-          this.totalCrafts++;
-          this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
-          oreStack.quantity--;
-          fuelStack.quantity--;
-        }
+        this.smeltMetal(workstation, 1);
       },
     },
     {
@@ -1041,6 +1082,7 @@ export class HomeService {
       },
       locked: true,
     },
+    this.wandererPackWorkstation,
   ];
   availableWorkstationsList: Workstation[] = [];
 
@@ -1116,6 +1158,7 @@ export class HomeService {
 
     mainLoopService.longTickSubject.subscribe(() => {
       if (this.homeValue === HomeType.None || this.home === null) {
+        this.displayHome.maxWorkstations.set(1); // wanderer challenge, backpack workstation
         return;
       }
       if (this.land > this.highestLand) {
@@ -1462,6 +1505,9 @@ export class HomeService {
       if (ws.locked) {
         return false;
       }
+      if (ws.unique) {
+        return false;
+      }
       if (ws.divine && !this.characterService.god()) {
         return false;
       }
@@ -1572,6 +1618,9 @@ export class HomeService {
   }
 
   removeWorkstation(workstation: Workstation) {
+    if (workstation.unique) {
+      return; // don't allow removing unique workstations
+    }
     for (const inputItemStack of workstation.inputs) {
       if (inputItemStack.item) {
         this.inventoryService.addItem(inputItemStack.item, inputItemStack.quantity, 0, true);
@@ -1582,10 +1631,6 @@ export class HomeService {
   }
 
   addWorkstation(workstationId: string, copyWorkstation: Workstation | null = null) {
-    if (this.workstations.length >= this.home!.maxWorkstations) {
-      // can't support another workstation, bail out
-      return;
-    }
     const workstationTemplate = this.workstationsList.find(({ id }) => id === workstationId);
     if (!workstationTemplate) {
       // no template found in the list for the id, bail out
@@ -1621,6 +1666,7 @@ export class HomeService {
       limitable: workstationTemplate.limitable,
       powerLimitEnabled: workstationTemplate.powerLimitEnabled,
       powerLimit: workstationTemplate.powerLimit,
+      unique: workstationTemplate.unique,
     };
 
     if (copyWorkstation) {
@@ -1632,6 +1678,7 @@ export class HomeService {
       newWorkstation.limitable = copyWorkstation.limitable;
       newWorkstation.powerLimitEnabled = copyWorkstation.powerLimitEnabled;
       newWorkstation.powerLimit = copyWorkstation.powerLimit;
+      newWorkstation.unique = copyWorkstation.unique;
     }
     this.workstations.push(newWorkstation);
   }
@@ -1758,6 +1805,22 @@ export class HomeService {
   extractGems(workstation: Workstation) {
     const gemQuantity = (100 + this.followerService!.jobs['gemologist'].totalPower) * workstation.power * 100;
     this.inventoryService.consumeGemsForEnergy(gemQuantity);
+  }
+
+  smeltMetal(workstation: Workstation, fuelCost: number) {
+    if (workstation.inputs.length < 2) {
+      // inputs array not populated, bail out
+      return;
+    }
+    const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
+    const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
+
+    if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity >= fuelCost) {
+      this.totalCrafts++;
+      this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
+      oreStack.quantity--;
+      fuelStack.quantity -= fuelCost;
+    }
   }
 
   chefsWork(cookAmount: number) {

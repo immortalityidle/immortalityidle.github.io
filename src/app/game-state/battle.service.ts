@@ -2183,7 +2183,7 @@ export class BattleService {
       const healAmount = Math.min(this.characterService.status.health.max * lifesteal * 0.01, enemyHealth, damage);
       this.characterService.status.health.value += healAmount;
       this.characterService.checkOverage();
-      message += ', healing you for ' + healAmount;
+      message += ', healing you for ' + this.bigNumberPipe.transform(healAmount);
     }
     damage -= enemyHealth;
     if (customMessage) {

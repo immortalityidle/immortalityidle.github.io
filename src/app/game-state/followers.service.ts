@@ -495,8 +495,8 @@ export class FollowersService {
     coalDigger: {
       work: daysElapsed => {
         const workPower = this.jobs['coalDigger'].totalPower * daysElapsed + (this.leftoverWork['coalDigger'] || 0);
-        this.inventoryService.addItem(this.itemRepoService.items['coal'], Math.floor(workPower / 100));
-        this.leftoverWork['coalDigger'] = workPower % 100;
+        this.inventoryService.addItem(this.itemRepoService.items['coal'], Math.floor(workPower / 20));
+        this.leftoverWork['coalDigger'] = workPower % 20;
       },
       description: 'Coal Diggers gather coal for your crafting.',
       totalPower: 0,
