@@ -5612,7 +5612,7 @@ export class ActivityService {
     consequenceDescription: ['Uses a lot of stamina. How does this little guy keep this up all day?'],
     consequence: [
       () => {
-        const staminaCost = this.characterService.staminaCap - 1;
+        const staminaCost = Math.min(this.characterService.staminaCap - 1, 8000000);
         if (this.characterService.status.stamina.max < staminaCost) {
           this.logService.log(
             LogTopic.EVENT,
@@ -5695,7 +5695,7 @@ export class ActivityService {
     ],
     consequence: [
       () => {
-        const staminaCost = this.characterService.staminaCap - 1;
+        const staminaCost = Math.min(this.characterService.staminaCap - 1, 12000000);
         if (
           this.characterService.status.stamina.max < staminaCost ||
           this.characterService.status.stamina.value < staminaCost
@@ -5713,7 +5713,7 @@ export class ActivityService {
           'Artemis whispers: "A fine kill, strange god. Perhaps you do know your way around the woods."'
         );
 
-        if (this.characterService.staminaCap < 5e8) {
+        if (this.characterService.staminaCap < 1e9) {
           this.characterService.staminaCap++;
         }
         this.characterService.status.stamina.value = 0;

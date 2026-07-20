@@ -32,7 +32,9 @@ export class HealthService {
       }
       this.popupCounter = 0;
       if (this.characterService.moneyUpdates !== 0) {
-        this.moneyUpdates.push(this.characterService.moneyUpdates);
+        if (!this.moneyUpdates.includes(this.characterService.moneyUpdates)) {
+          this.moneyUpdates.push(this.characterService.moneyUpdates);
+        }
         this.characterService.moneyUpdates = 0;
       }
       this.updateYinYang();

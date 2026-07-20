@@ -330,6 +330,8 @@ export class BattleService {
   skipKillCountReset = false;
   monstersPerQuality = 10;
   uneradicableMonsterTypes: string[] = [];
+  fastestTechnique: Technique | null = null;
+  lastFastestHit: { [key: string]: number } = {};
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -802,6 +804,15 @@ export class BattleService {
       }
       for (let i = 0; i < this.techniques.length; i++) {
         const technique = this.techniques[i];
+        if (
+          !technique.disabled &&
+          (this.fastestTechnique === null ||
+            this.fastestTechnique.disabled ||
+            (technique.ticksRequired < this.fastestTechnique.ticksRequired && technique.baseDamage > 0))
+        ) {
+          this.fastestTechnique = technique;
+          this.lastFastestHit = {};
+        }
         if (this.displayTechniques.length <= i) {
           this.displayTechniques.push({
             name: signal<string>(technique.name),
@@ -1698,6 +1709,7 @@ export class BattleService {
       this.characterService.increaseAttribute('toughness', 0.01);
       if (damageBack) {
         this.damageEnemy(
+          enemy,
           damage,
           technique.name,
           0,
@@ -2098,9 +2110,6 @@ export class BattleService {
       }
       damage += damage * this.characterService.yinYangBalance;
 
-      if (damage > this.highestDamageDealt) {
-        this.highestDamageDealt = damage;
-      }
       if (technique.attribute) {
         this.characterService.increaseAttribute(technique.attribute, 0.01);
       }
@@ -2147,72 +2156,88 @@ export class BattleService {
       if (this.currentEnemy.divine) {
         damage *= technique.divineDamage || 0;
       }
+      if (damage > this.highestDamageDealt) {
+        this.highestDamageDealt = damage;
+      }
+
+      if (this.fastestTechnique === technique) {
+        this.lastFastestHit[this.currentEnemy.baseName] = damage;
+      }
       const blowthrough = false; // TODO: make this usable again
-      let overage = this.damageEnemy(damage, technique.name, technique.lifesteal || 0);
+      let overage = this.damageEnemy(this.currentEnemy, damage, technique.name, technique.lifesteal || 0);
 
       if (blowthrough) {
         while (overage > 0 && this.enemies.length > 0) {
           // keep using extra damage until it's gone or the enemies are
           this.currentEnemy = this.enemies[0];
-          overage = this.damageEnemy(overage, technique.name, technique.lifesteal || 0);
+          overage = this.damageEnemy(this.currentEnemy, overage, technique.name, technique.lifesteal || 0);
         }
       }
     }
   }
 
   private damageEnemy(
+    enemy: Enemy,
     damage: number,
     techniqueName: string,
     lifesteal: number,
     customMessage: string | undefined = undefined
   ): number {
-    if (!this.currentEnemy) {
-      return 0;
+    const enemyHealth = enemy.health;
+    enemy.health = Math.floor(enemy.health - damage);
+    let message;
+    if (customMessage) {
+      message = customMessage;
+    } else {
+      message =
+        'Your ' +
+        techniqueName +
+        ' hits ' +
+        this.titleCasePipe.transform(enemy.name) +
+        ' for ' +
+        this.bigNumberPipe.transform(damage) +
+        ' damage.';
     }
-    const enemyHealth = this.currentEnemy.health;
-    this.currentEnemy.health = Math.floor(this.currentEnemy.health - damage);
-    let message =
-      'Your ' +
-      techniqueName +
-      ' hits ' +
-      this.titleCasePipe.transform(this.currentEnemy.name) +
-      ' for ' +
-      this.bigNumberPipe.transform(damage) +
-      ' damage';
     if (lifesteal) {
       const healAmount = Math.min(this.characterService.status.health.max * lifesteal * 0.01, enemyHealth, damage);
       this.characterService.status.health.value += healAmount;
       this.characterService.checkOverage();
-      message += ', healing you for ' + this.bigNumberPipe.transform(healAmount);
+      message += ' Lifesteal heals you for ' + this.bigNumberPipe.transform(healAmount);
     }
+
     damage -= enemyHealth;
-    if (customMessage) {
-      message = customMessage;
-    }
+
     this.logService.log(LogTopic.COMBAT, message);
-    if (this.currentEnemy.health <= 0) {
-      this.killCurrentEnemy();
+    if (enemy.health <= 0) {
+      this.killEnemy(enemy);
+      const index = this.enemies.indexOf(enemy);
+      if (index !== -1) {
+        this.enemies.splice(index, 1);
+        this.currentEnemy = null;
+        if (this.enemies.length === 0) {
+          for (const itemStack of this.characterService.itemPouches) {
+            if (itemStack.item) {
+              itemStack.item.cooldown = 0;
+            }
+          }
+        }
+      }
       return (damage - enemyHealth) / 2; // return half the damage left over
     } else {
       return 0;
     }
   }
 
-  private killCurrentEnemy() {
-    if (!this.currentEnemy) {
-      return;
-    }
+  killEnemy(enemy: Enemy) {
     this.kills++;
     this.totalKills++;
-    // minor kludge here for save files that had a current enemy before this update added locations to them, remove later
-    this.killsByLocation[this.currentEnemy.location || LocationType.SmallTown] =
-      (this.killsByLocation[this.currentEnemy.location] || 0) + 1;
-    this.killsByMonster[this.currentEnemy.baseName] = (this.killsByMonster[this.currentEnemy.baseName] || 0) + 1;
-    this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(this.currentEnemy.name));
-    if (this.currentEnemy.baseName === 'death' && !this.characterService.immortal) {
+    this.killsByLocation[enemy.location] = (this.killsByLocation[enemy.location] || 0) + 1;
+    this.killsByMonster[enemy.baseName] = (this.killsByMonster[enemy.baseName] || 0) + 1;
+    this.logService.log(LogTopic.COMBAT, 'You manage to kill ' + this.titleCasePipe.transform(enemy.name));
+    if (enemy.baseName === 'death' && !this.characterService.immortal) {
       this.mainLoopService.toast('HURRAY! Check your inventory. You just got something special!', 0);
     }
-    for (const item of this.currentEnemy.loot) {
+    for (const item of enemy.loot) {
       const lootItem = this.itemRepoService.getItemById(item.id);
       let quantity = 1;
       if (this.activeFormation === 'greed' && !item.noGreed) {
@@ -2226,20 +2251,10 @@ export class BattleService {
         this.inventoryService.addItem(item, quantity);
       }
     }
-    if (this.currentEnemy.energyLootType && this.currentEnemy.energyLootAmount) {
-      this.characterService.updateEnergy(this.currentEnemy.energyLootType, this.currentEnemy.energyLootAmount);
+    if (enemy.energyLootType && enemy.energyLootAmount) {
+      this.characterService.updateEnergy(enemy.energyLootType, enemy.energyLootAmount);
     }
-    this.defeatEffect(this.currentEnemy);
-    const index = this.enemies.indexOf(this.currentEnemy);
-    this.enemies.splice(index, 1);
-    this.currentEnemy = null;
-    if (this.enemies.length === 0) {
-      for (const itemStack of this.characterService.itemPouches) {
-        if (itemStack.item) {
-          itemStack.item.cooldown = 0;
-        }
-      }
-    }
+    this.defeatEffect(enemy);
   }
 
   addEnemy(enemy: Enemy) {
@@ -2260,6 +2275,25 @@ export class BattleService {
       enemy.name = enemy.name + ' #' + (highestIndex + 1);
     }
     enemy.index = highestIndex;
+
+    if (
+      !this.pauseOnBattle &&
+      this.enemies.length === 0 &&
+      this.fastestTechnique &&
+      this.lastFastestHit[enemy.baseName]
+    ) {
+      // check instakill
+      if (enemy.maxHealth < this.lastFastestHit[enemy.baseName] * 0.5) {
+        this.damageEnemy(
+          enemy,
+          this.lastFastestHit[enemy.baseName],
+          this.fastestTechnique.name,
+          this.fastestTechnique.lifesteal || 0,
+          'Insta-killed ' + this.titleCasePipe.transform(enemy.name) + '.'
+        );
+        return;
+      }
+    }
 
     this.enemies.push(enemy);
     if (this.currentEnemy === null) {
@@ -2334,11 +2368,13 @@ export class BattleService {
     const modifier = (killsForType + 1) / this.monstersPerQuality;
     let qualityIndex = Math.floor(killsForType / this.monstersPerQuality);
 
-    if (qualityIndex >= this.monsterQualities.length && !this.uneradicableMonsterTypes.includes(monsterType.name)) {
-      if (this.locationService.currentRealm === Realm.MortalRealm && this.skipKillCountReset) {
-        monsterType.eradicated = true;
-        // no more monsters of this type left
-        return;
+    if (qualityIndex >= this.monsterQualities.length) {
+      if (!this.uneradicableMonsterTypes.includes(monsterType.name)) {
+        if (this.locationService.currentRealm === Realm.MortalRealm && this.skipKillCountReset) {
+          monsterType.eradicated = true;
+          // no more monsters of this type left
+          return;
+        }
       }
       qualityIndex = this.monsterQualities.length - 1;
     }
