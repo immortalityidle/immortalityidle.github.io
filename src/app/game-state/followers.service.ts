@@ -97,6 +97,7 @@ export interface FollowersProperties {
   leftoverHQCostGemValue: number;
   forbiddenJobs: string[];
   forbiddenSlots: string[];
+  huntingBonus: boolean;
 }
 
 export interface SavedAssignments {
@@ -177,6 +178,7 @@ export class FollowersService {
   leftoverHQCostDisplay = signal<string>('');
   forbiddenJobs: string[] = [];
   forbiddenSlots: string[] = [];
+  huntingBonus = false;
 
   hqs: HQ[] = [
     {
@@ -425,7 +427,12 @@ export class FollowersService {
     },
     hunter: {
       work: daysElapsed => {
-        let workPower = this.jobs['hunter'].totalPower * daysElapsed + (this.leftoverWork['hunter'] || 0);
+        let huntingBonusMultiplier = 1;
+        if (this.huntingBonus) {
+          huntingBonusMultiplier = 2;
+        }
+        let workPower =
+          this.jobs['hunter'].totalPower * huntingBonusMultiplier * daysElapsed + (this.leftoverWork['hunter'] || 0);
         if (this.characterService.attributes.wisdom.value > 0) {
           workPower *= Math.log10(this.characterService.attributes.wisdom.value + 1);
         }
@@ -1306,6 +1313,7 @@ export class FollowersService {
       leftoverHQCostGemValue: this.leftoverHQCostGemValue,
       forbiddenJobs: this.forbiddenJobs,
       forbiddenSlots: this.forbiddenSlots,
+      huntingBonus: this.huntingBonus,
     };
   }
 
@@ -1350,6 +1358,7 @@ export class FollowersService {
     this.leftoverHQCostGemValue = properties.leftoverHQCostGemValue;
     this.forbiddenJobs = properties.forbiddenJobs;
     this.forbiddenSlots = properties.forbiddenSlots;
+    this.huntingBonus = properties.huntingBonus;
     for (const job of Object.keys(this.jobs)) {
       const jobObj = this.jobs[job];
       jobObj.enabled = !properties.disabledJobs.includes(job);

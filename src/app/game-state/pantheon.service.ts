@@ -11,9 +11,9 @@ export const GOD_YAMA = 'Yama';
 export const GOD_HERMES = 'Hermes';
 export const GOD_ARES = 'Ares';
 export const GOD_DIONYSUS = 'Dionysus';
+export const GOD_ARTEMIS = 'Artemis';
 export const GOD_HEPHAESTUS = 'Hephaestus';
 export const GOD_APHRODITE = 'Aphrodite';
-export const GOD_ARTEMIS = 'Artemis';
 export const GOD_APOLLO = 'Apollo';
 export const GOD_ATHENA = 'Athena';
 export const GOD_DEMETER = 'Demeter';
@@ -169,10 +169,12 @@ export class PantheonService {
           baseDamage: this.greekBaseDamage * 1e21,
           baseDefense: this.greekBaseDefense * 1e21,
           baseHealth: this.greekBaseHealth * 1e21,
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Dazzling Smile', 'Irrestable Temptation', 'Heartbreak'],
+          techniqueCooldowns: [2, 24, 120],
+          challengeMessage: signal<string>(
+            'A duel? How fascinating!<br>But we would both need to look our best before we entangle ourselves in any such <i>engagements</i>.'
+          ),
+          attributes: ['presence', 'presence', 'presence', 'mercy', 'mercy'],
           baseLootLevel: 15,
         },
         {

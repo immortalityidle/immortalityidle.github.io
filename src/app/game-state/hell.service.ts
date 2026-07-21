@@ -235,7 +235,7 @@ export class HellService {
   }
 
   moveToHell(hellLocation: LocationType, loading: boolean = false) {
-    if (this.locationService?.locationMap[hellLocation].realm !== Realm.Hell) {
+    if (this.locationService?.locationMap[hellLocation]?.realm !== Realm.Hell) {
       // not in hell, bail out
       return;
     }

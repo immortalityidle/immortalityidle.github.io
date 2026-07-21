@@ -28,7 +28,7 @@ import {
   CONCEPT_WOOD,
   ContemplationService,
 } from './contemplation.service';
-import { GOD_ARTEMIS, GOD_DIONYSUS, GOD_HERMES, PantheonService } from './pantheon.service';
+import { GOD_APHRODITE, GOD_ARTEMIS, GOD_DIONYSUS, GOD_HERMES, PantheonService } from './pantheon.service';
 import {
   Activity,
   ActivityLoopEntry,
@@ -191,6 +191,7 @@ export class ActivityService {
       this.DeliverMessages,
       this.ProvideWine,
       this.MoonlightTracking,
+      this.SpaDay,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -3448,6 +3449,9 @@ export class ActivityService {
         if (this.homeService.bedroomFurniture.find(item => item?.id === 'dogKennel')) {
           counterSatisfied = 5;
         }
+        if (this.followerService.huntingBonus) {
+          counterSatisfied = 1;
+        }
         this.characterService.increaseAttribute('animalHandling', 0.1);
         this.huntingCounter++;
         if (this.huntingCounter > counterSatisfied) {
@@ -5716,7 +5720,85 @@ export class ActivityService {
         if (this.characterService.staminaCap < 1e9) {
           this.characterService.staminaCap++;
         }
-        this.characterService.status.stamina.value = 0;
+        this.characterService.status.stamina.value -= staminaCost;
+      },
+    ],
+    resourceUse: [{}],
+    requirements: [
+      {
+        animalHandling: 1e24,
+      },
+    ],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  SpaDay: Activity = {
+    level: 0,
+    name: ['Spa Day'],
+    location: LocationType.GardenOfDelights,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'spaDay',
+    activityType: ActivityType.SpaDay,
+    description: [
+      'Aphrodite insists that you join her for a series of spa treatments before your duel. You will need to provide the supplies.',
+    ],
+    yinYangEffect: [YinYangEffect.Yin],
+    consequenceDescription: [
+      'The treatments may be exhausting, but you will look your best after this, the goddess assures you.',
+    ],
+    consequence: [
+      () => {
+        const staminaCost = Math.min(this.characterService.staminaCap - 1, 15000000);
+        if (
+          this.characterService.status.stamina.max < staminaCost ||
+          this.characterService.status.stamina.value < staminaCost
+        ) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Aphrodite takes your hand and whispers: "Go take a little rest, honey. You\'ll need all your strength for what\'s coming."'
+          );
+          return;
+        }
+
+        if (this.inventoryService.consume('herb', 2, false, true, 'nectar') <= 0) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Aphrodite waves you off with a laugh. "A little liquid refreshment for the two of us would be the least you could bring."'
+          );
+          return;
+        }
+
+        const pillStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(
+            itemStack =>
+              itemStack.quantity > 1000 &&
+              itemStack.item?.type === 'pill' &&
+              itemStack.item.effect?.includes('charisma')
+          );
+        if (!pillStack) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Aphrodite brushes a finger against your cheek and whispers: "You\'ll need to bring a few more party favors for our little soiree to begin. A little bit of candy? I think you know what I mean."'
+          );
+          return;
+        }
+
+        this.inventoryService.consume('herb', 2, false, false, 'nectar');
+
+        this.inventoryService.useItem(pillStack!.item!, 2000); // yes, use double the amount that actually get used. that's how sharing with a goddess works
+        pillStack.quantity -= 1000;
+
+        this.pantheonService.increaseGodProgress(GOD_APHRODITE, 1);
+        this.logService.log(LogTopic.EVENT, 'Aphrodite breathes in your ear: "You are looking more lovely already."');
+
+        if (this.characterService.staminaCap < 1e9) {
+          this.characterService.staminaCap++;
+        }
+        this.characterService.status.stamina.value -= staminaCost;
+        this.characterService.yin += 10000;
       },
     ],
     resourceUse: [{}],

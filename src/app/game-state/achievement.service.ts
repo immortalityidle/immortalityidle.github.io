@@ -26,7 +26,14 @@ import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
 import { ContemplationService } from './contemplation.service';
 import { ActivityType } from './activity';
-import { GOD_DIONYSUS, GOD_YAMA, PANTHEON_CELESTIAL_EMPIRE, PantheonService } from './pantheon.service';
+import {
+  GOD_APHRODITE,
+  GOD_ARTEMIS,
+  GOD_DIONYSUS,
+  GOD_YAMA,
+  PANTHEON_CELESTIAL_EMPIRE,
+  PantheonService,
+} from './pantheon.service';
 
 export interface Achievement {
   name: string;
@@ -2063,6 +2070,30 @@ export class AchievementService {
         if (!this.unlockedMemories.includes(MEMORY_DISTANT_REALMS)) {
           this.triggerMemory(MEMORY_DISTANT_REALMS);
         }
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Master Hunter',
+      description: 'Having learned from Artemis, your hunting is now much more effective.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_ARTEMIS)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.followerService.huntingBonus = true;
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Beauty Queen',
+      description: 'Aphrodite has opened your eyes to new ways to improve your appearance.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_APHRODITE)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.inventoryService.unlockFurniture("Aphrodite's Vanity");
       },
       unlocked: false,
     },

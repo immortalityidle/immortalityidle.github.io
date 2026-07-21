@@ -1013,6 +1013,30 @@ baguaMap = [
       },
       shopable: false,
     },
+    {
+      id: 'aphrotideVanity',
+      name: "Aphrodite's Vanity",
+      type: 'furniture',
+      subtype: 'bath',
+      color: 'pink',
+      elements: [ELEMENT_FIRE, ELEMENT_EARTH, ELEMENT_METAL, ELEMENT_WATER, ELEMENT_WOOD],
+      increaseAmount: 50,
+      value: 1e24,
+      description: 'The ultimate beauty preparation station.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.increaseAttribute('charisma', 50);
+        this.characterService.yin += 100;
+        this.characterService.status.stamina.value -= 100;
+        this.characterService.healthBonusBath += 50;
+        if (this.characterService.hygieneLifespan < 109500) {
+          this.characterService.hygieneLifespan += 50;
+        }
+        this.characterService.checkOverage();
+      },
+      shopable: false,
+    },
   ];
 
   items: { [key: string]: Item } = {

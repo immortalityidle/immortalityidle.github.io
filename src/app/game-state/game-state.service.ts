@@ -917,6 +917,7 @@ export class GameStateService {
       disabledJobs: props?.disabledJobs || [],
       forbiddenJobs: props?.forbiddenJobs || [],
       forbiddenSlots: props?.forbiddenSlots || [],
+      huntingBonus: props?.huntingBonus || false,
     };
   }
 

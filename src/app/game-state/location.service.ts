@@ -85,19 +85,19 @@ export enum LocationType {
   EndlessTunnels = 'Endless Tunnels',
   IronCaverns = 'Iron Caverns',
   EverTree = 'Ever Tree',
-  LightningLodge = 'LightningLodge',
-  TartarusPalace = 'TartarusPalace',
-  MaritalSanctuary = 'MaritalSanctuary',
-  OceanAbode = 'OceanAbode',
-  HarvestHome = 'HarvestHome',
-  FortressOfWisdom = 'FortressOfWisdom',
-  AuditoriumOfLight = 'AuditoriumOfLight',
+  LightningLodge = 'Lightning Lodge',
+  TartarusPalace = 'Tartarus Palace',
+  MaritalSanctuary = 'Marital Sanctuary',
+  OceanAbode = 'Ocean Abode',
+  HarvestHome = 'Harvest Home',
+  FortressOfWisdom = 'Fortress Of Wisdom',
+  AuditoriumOfLight = 'Auditorium Of Light',
   Woodlands = 'Woodlands',
-  MartialCamp = 'MartialCamp',
-  GardenOfDelights = 'GardenOfDelights',
-  TheMightyForge = 'TheMightyForge',
-  MessageDepot = 'MessageDepot',
-  VerdantVineyard = 'VerdantVineyard',
+  MartialCamp = 'Martial Camp',
+  GardenOfDelights = 'Garden Of Delights',
+  TheMightyForge = 'The Mighty Forge',
+  MessageDepot = 'Message Depot',
+  VerdantVineyard = 'Verdant Vineyard',
 }
 
 export interface LocationEntry {
@@ -562,6 +562,7 @@ export class LocationService {
   notifiedLocations: LocationType[] = [];
   locationLocked = false;
   displayLocations: DisplayLocations[] = [];
+  displayCurrentLocation: WritableSignal<string> = signal('');
 
   constructor(
     private mainLoopService: MainLoopService,
@@ -571,6 +572,7 @@ export class LocationService {
     private pantheonService: PantheonService
   ) {
     this.mainLoopService.longTickSubject.subscribe(() => {
+      this.displayCurrentLocation.set(this.locationMap[this.location].name);
       this.updateLocations();
 
       while (this.displayLocations.length < this.nonSelfUnlockedLocations.length) {
@@ -685,7 +687,9 @@ export class LocationService {
     this.unlockedLocations = properties.unlockedLocations;
     this.notifiedLocations = properties.notifiedLocations;
     this.setRealm(properties.currentRealm);
-    this.location = properties.location;
+    if (this.locationMap[properties.location]) {
+      this.location = properties.location;
+    }
     this.locationLocked = properties.locationLocked;
     this.distanceMultiplier = properties.distanceMultiplier;
   }
