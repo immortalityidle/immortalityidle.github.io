@@ -27,4 +27,9 @@ export class BattleOptionsPanelComponent {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.battleService.foodThreshold = Math.floor(parseFloat(event.target.value));
   }
+
+  instakillToggled(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.battleService.instakillEnabled = event.target.checked;
+  }
 }

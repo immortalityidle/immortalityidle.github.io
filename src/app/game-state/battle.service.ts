@@ -134,6 +134,7 @@ export interface BattleProperties {
   skipKillCountReset: boolean;
   eradicatedMonsterTypes: string[];
   uneradicableMonsterTypes: string[];
+  instakillEnabled: boolean;
 }
 
 export interface Technique {
@@ -332,6 +333,7 @@ export class BattleService {
   uneradicableMonsterTypes: string[] = [];
   fastestTechnique: Technique | null = null;
   lastFastestHit: { [key: string]: number } = {};
+  instakillEnabled = false;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -1203,6 +1205,7 @@ export class BattleService {
       skipKillCountReset: this.skipKillCountReset,
       eradicatedMonsterTypes: eradicatedMonsterTypes,
       uneradicableMonsterTypes: this.uneradicableMonsterTypes,
+      instakillEnabled: this.instakillEnabled,
     };
   }
 
@@ -1267,6 +1270,7 @@ export class BattleService {
     for (const monsterType of this.monsterTypes) {
       monsterType.eradicated = properties.eradicatedMonsterTypes.includes(monsterType.baseName || monsterType.name);
     }
+    this.instakillEnabled = properties.instakillEnabled;
   }
 
   usePouchItems() {
@@ -2277,6 +2281,7 @@ export class BattleService {
     enemy.index = highestIndex;
 
     if (
+      this.instakillEnabled &&
       !this.pauseOnBattle &&
       this.enemies.length === 0 &&
       this.fastestTechnique &&

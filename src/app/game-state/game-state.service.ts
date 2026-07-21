@@ -873,6 +873,7 @@ export class GameStateService {
       skipKillCountReset: props?.skipKillCountReset || false,
       eradicatedMonsterTypes: props?.eradicatedMonsterTypes || [],
       uneradicableMonsterTypes: props?.uneradicableMonsterTypes || [],
+      instakillEnabled: props?.instakillEnabled || false,
     };
   }
 

@@ -17,6 +17,17 @@
     </span>
   </div>
   <div>
+    <input
+    type="checkbox"
+    (change)="instakillToggled($event)"
+    id="instakillCheckbox"
+    [checked]="battleService.instakillEnabled"
+    />
+    <label for="instakillCheckbox">
+        <span>Enable Insta-kill</span>
+    </label>
+  </div>
+  <div>
     <span>
       Insta-kill Note: The fastest technique that you have enabled has a chance to instantly kill an enemy you encounter if it did enough damage the last time you fought that enemy type.
       <br>
