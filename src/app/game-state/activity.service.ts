@@ -5772,16 +5772,18 @@ export class ActivityService {
 
         const pillStack = this.inventoryService.itemStacks
           .slice(this.inventoryService.heirloomSlots())
-          .find(
-            itemStack =>
-              itemStack.quantity > 1000 &&
-              itemStack.item?.type === 'pill' &&
-              itemStack.item.effect?.includes('charisma')
-          );
+          .find(itemStack => itemStack.item?.type === 'pill' && itemStack.item.effect?.includes('charisma'));
         if (!pillStack) {
           this.logService.log(
             LogTopic.EVENT,
-            'Aphrodite brushes a finger against your cheek and whispers: "You\'ll need to bring a few more party favors for our little soiree to begin. A little bit of candy? I think you know what I mean."'
+            'Aphrodite brushes a finger against your cheek and whispers: "You\'ll need to bring a few party favors for our little soiree to begin. A little bit of candy? I think you know what I mean."'
+          );
+          return;
+        }
+        if (pillStack.quantity < 1000) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Aphrodite runs a hand across your shoulder and down your arm. "Ah, I see you\'ve brought some treats to share. We\'re going to need a few more of those."'
           );
           return;
         }

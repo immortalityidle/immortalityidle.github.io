@@ -27,6 +27,7 @@ import {
 } from './battle.service';
 import { CONCEPT_EFFECT_FOOD_YIELD, CONCEPT_EFFECT_HOME_RECOVERY, ContemplationService } from './contemplation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
+import { BigNumberPipe } from '../pipes';
 
 export interface Home {
   name: string;
@@ -48,6 +49,7 @@ export interface Home {
   maxWorkstationPower: number;
   daysToBuild: number;
   maxFields: number;
+  locked?: boolean;
 }
 
 export interface DisplayHome {
@@ -55,6 +57,8 @@ export interface DisplayHome {
   description: WritableSignal<string>;
   downgradable: WritableSignal<boolean>;
   upgradable: WritableSignal<boolean>;
+  upgradeTooltip: WritableSignal<string>;
+  buildTimeYears: WritableSignal<string>;
   hasFurniture: WritableSignal<boolean>;
   costPerDay: WritableSignal<number>;
   healthRecovery: WritableSignal<number>;
@@ -83,6 +87,11 @@ export enum HomeType {
   Capital,
   ImperialSeat,
   Godthrone,
+  PocketDimension,
+  HandcraftedRealm,
+  PersonalPlanet,
+  BespokeGalaxy,
+  PrivateUniverse,
 }
 
 export interface Workstation {
@@ -156,13 +165,14 @@ export class HomeService {
   activityService?: ActivityService;
   followerService?: FollowersService;
   impossibleTaskService?: ImpossibleTaskService;
+  bigNumberPipe: BigNumberPipe;
   keepFurniture = false;
   land: number;
   landPrice: number;
   ownedFurniture: string[] = [];
   grandfatherTent = false;
   houseBuildingProgress = 1;
-  upgrading = false;
+  upgrading = signal<boolean>(false);
   thugPause = false;
   hellHome = signal<boolean>(false);
   homeUnlocked = false;
@@ -244,9 +254,6 @@ export class HomeService {
     unique: true,
   };
 
-  //TODO: put the counters on the workstations, and display progress
-  //TODO: counter for more things, especially formations
-
   homesList: Home[] = [
     {
       name: 'Squatter Tent',
@@ -278,8 +285,7 @@ export class HomeService {
       costPerDay: 1,
       landRequired: 1,
       maxInventory: 15,
-      upgradeToTooltip:
-        'Get a better home and stop the mouse invasions.<br>A better home will cost 100 taels, take up 1 land, and cost you 1 tael per day in upkeep.<br>Land can be purchasd in the Regular People Shop.',
+      upgradeToTooltip: 'Get a better home and stop the mouse invasions.',
       healthRecovery: 0.5,
       staminaRecovery: 1,
       qiRecovery: 0,
@@ -300,8 +306,7 @@ export class HomeService {
       costPerDay: 5,
       landRequired: 5,
       maxInventory: 20,
-      upgradeToTooltip:
-        'Get a better home and stop the ruffians from stealing your wealth.<br>A better home will cost 1,000 taels, take up 5 land, and cost you 5 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better home and stop the ruffians from stealing your wealth.',
       healthRecovery: 0.5,
       staminaRecovery: 3,
       qiRecovery: 0,
@@ -323,8 +328,7 @@ export class HomeService {
       costPerDay: 10,
       landRequired: 10,
       maxInventory: 25,
-      upgradeToTooltip:
-        'Get a better house and give your descendants a permanent place to settle.<br>A better home will cost 10,000 taels, take up 10 land, and cost you 10 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house and give your descendants a permanent place to settle.',
       healthRecovery: 0.7,
       staminaRecovery: 5,
       qiRecovery: 0,
@@ -345,8 +349,7 @@ export class HomeService {
       costPerDay: 20,
       landRequired: 20,
       maxInventory: 30,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100,000 taels, take up 20 land, and cost you 20 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 1,
       staminaRecovery: 10,
       qiRecovery: 0.1,
@@ -367,8 +370,7 @@ export class HomeService {
       costPerDay: 50,
       landRequired: 50,
       maxInventory: 35,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1M taels, take up 50 land, and cost you 50 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 2,
       staminaRecovery: 15,
       qiRecovery: 0.2,
@@ -389,8 +391,7 @@ export class HomeService {
       costPerDay: 80,
       landRequired: 80,
       maxInventory: 40,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10m taels, take up 80 land, and cost you 80 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 3,
       staminaRecovery: 20,
       qiRecovery: 0.3,
@@ -411,8 +412,7 @@ export class HomeService {
       costPerDay: 100,
       landRequired: 100,
       maxInventory: 50,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100m taels, take up 100 land, and cost you 100 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 4,
       staminaRecovery: 25,
       qiRecovery: 0.4,
@@ -433,8 +433,7 @@ export class HomeService {
       costPerDay: 120,
       landRequired: 120,
       maxInventory: 50,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1B taels, take up 120 land, and cost you 120 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 5,
       staminaRecovery: 30,
       qiRecovery: 0.5,
@@ -455,8 +454,7 @@ export class HomeService {
       costPerDay: 150,
       landRequired: 150,
       maxInventory: 55,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10B taels, take up 150 land, and cost you 150 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 10,
       staminaRecovery: 35,
       qiRecovery: 1,
@@ -477,8 +475,7 @@ export class HomeService {
       costPerDay: 160,
       landRequired: 150,
       maxInventory: 60,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100B taels, take up 150 land, and cost you 160 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 15,
       staminaRecovery: 40,
       qiRecovery: 2,
@@ -499,8 +496,7 @@ export class HomeService {
       costPerDay: 180,
       landRequired: 180,
       maxInventory: 65,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1T taels, take up 180 land, and cost you 180 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 20,
       staminaRecovery: 50,
       qiRecovery: 3,
@@ -521,8 +517,7 @@ export class HomeService {
       costPerDay: 500,
       landRequired: 500,
       maxInventory: 70,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10T taels, take up 500 land, and cost you 500 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 30,
       staminaRecovery: 100,
       qiRecovery: 4,
@@ -543,8 +538,7 @@ export class HomeService {
       costPerDay: 1000,
       landRequired: 1000,
       maxInventory: 80,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100T taels, take up 1,000 land, and cost you 1,000 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 50,
       staminaRecovery: 200,
       qiRecovery: 5,
@@ -565,8 +559,7 @@ export class HomeService {
       costPerDay: 10000,
       landRequired: 10000,
       maxInventory: 100,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 1q taels, take up 10,000 land, and cost you 10,000 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 80,
       staminaRecovery: 300,
       qiRecovery: 10,
@@ -587,8 +580,7 @@ export class HomeService {
       costPerDay: 1e6,
       landRequired: 1e6,
       maxInventory: 110,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 10q taels, take up 1,000,000 land, and cost you 1,000,000 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 100,
       staminaRecovery: 500,
       qiRecovery: 20,
@@ -609,8 +601,7 @@ export class HomeService {
       costPerDay: 1e7,
       landRequired: 1e7,
       maxInventory: 120,
-      upgradeToTooltip:
-        'Get a better house.<br>A better home will cost 100q taels, take up 10,000,000 land, and cost you 10,000,000 taels per day in upkeep.',
+      upgradeToTooltip: 'Get a better house.',
       healthRecovery: 150,
       staminaRecovery: 1000,
       qiRecovery: 30,
@@ -623,6 +614,59 @@ export class HomeService {
       daysToBuild: 365e9,
       maxFields: 50,
     },
+    {
+      name: 'Pocket Dimension',
+      type: HomeType.PocketDimension,
+      description:
+        'Using the same principles as your storage ring, you have carved out a modest dimension all of your own.',
+      cost: 0,
+      costPerDay: 0,
+      landRequired: 0,
+      maxInventory: 140,
+      upgradeToTooltip: 'Get a transdimensional house.',
+      healthRecovery: 1500,
+      staminaRecovery: 10000,
+      qiRecovery: 300,
+      baseHealthRecovery: 1500,
+      baseStaminaRecovery: 10000,
+      baseQiRecovery: 300,
+      maxFurniture: 9,
+      maxWorkstations: 12,
+      maxWorkstationPower: 4,
+      daysToBuild: 365e12,
+      maxFields: 80,
+      locked: true,
+    },
+    {
+      name: 'Handcrafted Realm',
+      type: HomeType.HandcraftedRealm,
+      description:
+        'Using the same principles as your storage ring, you have carved out a larger dimension all of your own.',
+      cost: 0,
+      costPerDay: 0,
+      landRequired: 0,
+      maxInventory: 150,
+      upgradeToTooltip: 'Get a better transdimensional house.',
+      healthRecovery: 5000,
+      staminaRecovery: 100000,
+      qiRecovery: 800,
+      baseHealthRecovery: 5000,
+      baseStaminaRecovery: 100000,
+      baseQiRecovery: 800,
+      maxFurniture: 9,
+      maxWorkstations: 14,
+      maxWorkstationPower: 5,
+      daysToBuild: 365e14,
+      maxFields: 120,
+      locked: true,
+    },
+
+    /*
+    ,
+    PersonalPlanet,
+    BespokeGalaxy,
+    PrivateUniverse,
+    */
   ];
 
   workstationsList: Workstation[] = [
@@ -1116,6 +1160,8 @@ export class HomeService {
     ),
     description: signal(''),
     upgradable: signal(false),
+    upgradeTooltip: signal(''),
+    buildTimeYears: signal(''),
     downgradable: signal(false),
     costPerDay: signal(0),
     hasFurniture: signal(false),
@@ -1125,8 +1171,6 @@ export class HomeService {
     availableWorkstations: signal(0),
     maxWorkstations: signal(0),
   };
-  nextHome!: Home;
-  previousHome!: Home;
   nextHomeCostReduction = 0;
   nextHomeCost = 0;
   highestLand = 0;
@@ -1144,6 +1188,7 @@ export class HomeService {
     private contemplationService: ContemplationService,
     private titleCasePipe: TitleCasePipe
   ) {
+    this.bigNumberPipe = this.injector.get(BigNumberPipe);
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
     setTimeout(() => (this.activityService = this.injector.get(ActivityService)));
     setTimeout(() => (this.followerService = this.injector.get(FollowersService)));
@@ -1157,6 +1202,10 @@ export class HomeService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
+      if (this.godHomesUnlocked) {
+        this.homesList[HomeType.PocketDimension].locked = false;
+        this.homesList[HomeType.HandcraftedRealm].locked = false;
+      }
       if (this.homeValue === HomeType.None || this.home === null) {
         this.displayHome.maxWorkstations.set(1); // wanderer challenge, backpack workstation
         return;
@@ -1169,11 +1218,6 @@ export class HomeService {
       }
       if (this.homeValue > this.bestHome) {
         this.bestHome = this.homeValue;
-      }
-      if (this.upgrading && this.nextHome === this.home) {
-        this.houseBuildingProgress = 1;
-        this.upgrading = false;
-        this.setCurrentHome(this.home);
       }
       let conceptMultiplier = 1;
       const concepts = this.contemplationService.concepts.filter(concept =>
@@ -1190,9 +1234,39 @@ export class HomeService {
         this.home.qiRecovery = 0;
       }
 
+      const upgradeable = this.homeValue < this.homesList.length - 1 && !this.homesList[this.homeValue + 1].locked;
+      let nextHome = null;
+      let upgradeTooltip = '';
+      if (upgradeable) {
+        nextHome = this.homesList[this.homeValue + 1];
+        this.nextHomeCost = nextHome.cost - this.nextHomeCostReduction;
+        if (this.nextHomeCost < 0) {
+          this.nextHomeCost = 0;
+        }
+        upgradeTooltip =
+          nextHome.upgradeToTooltip +
+          '<br>' +
+          'A better home will require ' +
+          this.bigNumberPipe.transform(this.nextHomeCost) +
+          ' taels, ' +
+          this.bigNumberPipe.transform(nextHome.landRequired) +
+          ' land, and cost you ' +
+          this.bigNumberPipe.transform(nextHome.costPerDay) +
+          ' tael(s) per day in upkeep.';
+      }
+      let buildTimeYears = '';
+      if (this.upgrading() && this.followerService && nextHome) {
+        const builderPower = 1 + this.followerService.jobs['builder'].totalPower;
+        buildTimeYears =
+          this.bigNumberPipe.transform(((1 - this.houseBuildingProgress) * nextHome.daysToBuild) / builderPower / 365) +
+          ' years';
+      }
+
       this.displayHome.name.set(this.home.name);
       this.displayHome.description.set(this.home.description);
-      this.displayHome.upgradable.set(this.homeValue !== this.homesList.length - 1);
+      this.displayHome.upgradable.set(upgradeable);
+      this.displayHome.upgradeTooltip.set(upgradeTooltip);
+      this.displayHome.buildTimeYears.set(buildTimeYears);
       this.displayHome.downgradable.set(this.homeValue !== 0);
       this.displayHome.costPerDay.set(this.home.costPerDay);
       this.displayHome.hasFurniture.set(this.home.maxFurniture > 0);
@@ -1225,7 +1299,7 @@ export class HomeService {
           LogTopic.EVENT,
           'Your grandfather gives you a bit of land and helps you set up a tent on it.'
         );
-        this.setCurrentHome(this.nextHome);
+        this.setCurrentHome(this.homesList[this.homeValue + 1]);
       }
       if (this.characterService.fatherGift && this.characterService.bloodlineRank < 6) {
         // Skip this at higher bloodline ranks, it's not thematic.
@@ -1248,12 +1322,8 @@ export class HomeService {
     if (this.characterService.dead) {
       return;
     }
-    if (this.upgrading) {
+    if (this.upgrading()) {
       this.upgradeTick();
-    }
-    this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
-    if (this.nextHomeCost < 0) {
-      this.nextHomeCost = 0;
     }
     if (!this.hellService?.inHell() || this.hellHome()) {
       for (const furniturePiece of this.bedroomFurniture) {
@@ -1304,7 +1374,7 @@ export class HomeService {
       keepFurniture: this.keepFurniture,
       nextHomeCostReduction: this.nextHomeCostReduction,
       houseBuildingProgress: this.houseBuildingProgress,
-      upgrading: this.upgrading,
+      upgrading: this.upgrading(),
       ownedFurniture: this.ownedFurniture,
       highestLand: this.highestLand,
       highestLandPrice: this.highestLandPrice,
@@ -1339,7 +1409,7 @@ export class HomeService {
     this.keepFurniture = properties.keepFurniture || false;
     this.nextHomeCostReduction = properties.nextHomeCostReduction || 0;
     this.houseBuildingProgress = properties.houseBuildingProgress || 1;
-    this.upgrading = properties.upgrading || false;
+    this.upgrading.set(properties.upgrading || false);
     for (let i = 0; i < properties.bedroomFurniture.length; i++) {
       const furnitureItem = properties.bedroomFurniture[i];
       if (furnitureItem) {
@@ -1379,48 +1449,49 @@ export class HomeService {
 
   // gets the specs of the next home, doesn't actually upgrade
   getNextHome() {
-    for (let i = this.homeValue; i < this.homesList.length - 1; i++) {
-      if (this.homeValue === this.homesList[i].type) {
-        return this.homesList[i + 1];
-      }
+    if (this.homeValue < this.homesList.length - 1 && !this.homesList[this.homeValue + 1].locked) {
+      return this.homesList[this.homeValue + 1];
+    } else {
+      return this.homesList[this.homeValue];
     }
-    // we're on the last home.
-    return this.homesList[this.homesList.length - 1];
   }
 
-  // gets the specs of the next home, doesn't actually downgrade
+  // gets the specs of the previous home, doesn't actually downgrade
   getPreviousHome(): Home {
     if (this.homeValue === HomeType.SquatterTent) {
       return this.homesList[HomeType.SquatterTent];
+    } else {
+      return this.homesList[this.homeValue - 1];
     }
-    for (let i = 1; i < this.homesList.length; i++) {
-      if (this.homeValue === this.homesList[i].type) {
-        return this.homesList[i - 1];
-      }
-    }
-    return this.homesList[HomeType.SquatterTent];
   }
 
   upgradeToNextHome() {
-    if (this.upgrading) {
+    if (this.upgrading()) {
       // currently upgrading, bail out
       return;
     }
-    if (this.characterService.money >= this.nextHomeCost && this.land >= this.nextHome.landRequired) {
+    if (this.homeValue >= this.homesList.length - 1 || this.homesList[this.homeValue + 1].locked) {
+      return;
+    }
+    const nextHome = this.homesList[this.homeValue + 1];
+    if (this.characterService.money >= this.nextHomeCost && this.land >= nextHome.landRequired) {
       this.characterService.updateMoney(0 - this.nextHomeCost);
-      this.land -= this.nextHome.landRequired;
+      this.land -= nextHome.landRequired;
       this.nextHomeCostReduction = 0;
       this.houseBuildingProgress = 0;
-      this.upgrading = true;
-      this.logService.log(LogTopic.EVENT, 'You start upgrading your home to a ' + this.nextHome.name);
+      this.upgrading.set(true);
+      this.logService.log(LogTopic.EVENT, 'You start upgrading your home to a ' + nextHome.name);
     }
   }
 
   downgradeHome() {
+    if (this.homeValue <= HomeType.SquatterTent) {
+      return;
+    }
     if (this.upgrading) {
       this.nextHomeCostReduction = 0;
       this.houseBuildingProgress = 0;
-      this.upgrading = false;
+      this.upgrading.set(false);
     }
     while (this.workstations.length > 0) {
       this.removeWorkstation(this.workstations[0]);
@@ -1430,19 +1501,19 @@ export class HomeService {
     }
     this.land += this.home!.landRequired;
 
-    this.setCurrentHome(this.previousHome);
+    this.setCurrentHome(this.homesList[this.homeValue - 1]);
   }
 
   upgradeTick(quantity = 1) {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
-
-    this.houseBuildingProgress += (1 / this.nextHome.daysToBuild) * quantity;
+    const nextHome = this.homesList[this.homeValue + 1];
+    this.houseBuildingProgress += (1 / nextHome.daysToBuild) * quantity;
     if (this.houseBuildingProgress >= 1) {
       this.houseBuildingProgress = 1;
-      this.upgrading = false;
-      this.setCurrentHome(this.nextHome);
+      this.upgrading.set(false);
+      this.setCurrentHome(nextHome);
       this.logService.log(LogTopic.EVENT, 'You finished upgrading your home. You now live in a ' + this.home!.name);
     }
   }
@@ -1465,11 +1536,11 @@ export class HomeService {
       this.ownedFurniture = [];
     }
     if (this.characterService.bloodlineRank < 7) {
-      if (this.upgrading) {
+      if (this.upgrading()) {
         // refund the land used in the upgrade so land prices come out right
-        this.land += this.nextHome.landRequired;
+        this.land += this.homesList[this.homeValue + 1].landRequired;
       }
-      this.upgrading = false;
+      this.upgrading.set(false);
       this.houseBuildingProgress = 1;
     }
     this.nextHomeCostReduction = 0;
@@ -1490,10 +1561,7 @@ export class HomeService {
       this.availableWorkstationsList = [];
     } else {
       this.homeValue = home.type;
-      this.home = this.getHomeFromValue(this.homeValue);
-      this.previousHome = this.getPreviousHome();
-      this.nextHome = this.getNextHome();
-      this.nextHomeCost = this.nextHome.cost - this.nextHomeCostReduction;
+      this.home = this.homesList[this.homeValue];
       this.inventoryService.changeMaxItems(this.home.maxInventory);
       this.updateAvailableWorkstations();
       this.recalculateFengShui();
@@ -1513,15 +1581,6 @@ export class HomeService {
       }
       return ws.power <= this.home!.maxWorkstationPower;
     });
-  }
-
-  getHomeFromValue(value: HomeType): Home {
-    for (const home of this.homesList) {
-      if (home.type === value) {
-        return home;
-      }
-    }
-    throw Error('Home was not found with the given value');
   }
 
   /**

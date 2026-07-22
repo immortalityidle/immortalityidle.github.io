@@ -39,15 +39,6 @@ export class HomePanelComponent {
     private bignumber: BigNumberPipe
   ) {}
 
-  protected buildTimeYears(): string {
-    const builderPower = 1 + this.followerService.jobs['builder'].totalPower;
-    return (
-      this.bignumber.transform(
-        ((1 - this.homeService.houseBuildingProgress) * this.homeService.nextHome.daysToBuild) / builderPower / 365
-      ) + ' years'
-    );
-  }
-
   protected selectFurniture(furnitureIndex: number) {
     if (this.homeService.bedroomFurniture[furnitureIndex]) {
       this.homeService.setFurniture(null, furnitureIndex);

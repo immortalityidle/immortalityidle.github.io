@@ -964,7 +964,8 @@ export class BattleService {
           } else {
             this.displayLibraryTechniques[i].name.set(technique.name);
             this.displayLibraryTechniques[i].ticks.set(technique.ticks);
-            this.displayLibraryTechniques[i].ticksRequired.set(technique.ticksRequired);
+            this.displayLibraryTechniques[i].rawTicksRequired.set(technique.ticksRequired);
+            this.displayLibraryTechniques[i].ticksRequired.set(Math.ceil(technique.ticksRequired));
             this.displayLibraryTechniques[i].ticksPercentage.set(
               Math.floor((100 * technique.ticks) / technique.ticksRequired)
             );

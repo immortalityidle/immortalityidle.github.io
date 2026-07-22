@@ -8,9 +8,9 @@
   }
   @else {
     <div>
-      @if (homeService.upgrading) {
+      @if (homeService.upgrading()) {
         <div class="progress-bar" tooltip="Upgrading your home."
-          [attr.value]=buildTimeYears()>
+          [attr.value]=homeService.displayHome.buildTimeYears()>
           <span [style.width.%]="100 * homeService.houseBuildingProgress"></span>
         </div>
         <span style="margin-left: 4px;"></span>
@@ -29,7 +29,7 @@
           }
           @if (homeService.displayHome.upgradable()) {
             <mat-icon (click)="homeService.upgradeToNextHome()" class="iconButton" aria-label="Upgrade Home" aria-hidden="false"
-              tooltip="{{homeService.nextHome.upgradeToTooltip}}">
+              tooltip="{{homeService.displayHome.upgradeTooltip()}}">
               add_home
             </mat-icon>
             <mat-icon (click)="homeService.buyLand(1)" class="iconButton" aria-label="Purchase Land" aria-hidden="false"

@@ -417,7 +417,7 @@ export class FollowersService {
     builder: {
       work: daysElapsed => {
         this.homeService.nextHomeCostReduction += this.jobs['builder'].totalPower;
-        if (this.homeService.upgrading) {
+        if (this.homeService.upgrading()) {
           this.homeService.upgradeTick(this.jobs['builder'].totalPower * daysElapsed);
         }
       },
