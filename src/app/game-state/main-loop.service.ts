@@ -26,6 +26,7 @@ export interface MainLoopProperties {
   daysSinceYearOrLongTick: number;
   audioTrack: number;
   audioVolume: number;
+  hyperSpeed: number;
 }
 
 @Injectable({
@@ -114,6 +115,7 @@ export class MainLoopService {
     'Shaolin Dub - Slap Trap',
   ];
   audioTrackIndex = 0;
+  hyperSpeed = 1;
 
   constructor(private injector: Injector) {
     this.snackBar = this.injector.get(MatSnackBar);
@@ -148,6 +150,7 @@ export class MainLoopService {
       daysSinceYearOrLongTick: this.daysSinceYearOrLongTick,
       audioTrack: this.audioTrackIndex,
       audioVolume: this.audio.volume,
+      hyperSpeed: this.hyperSpeed,
     };
   }
 
@@ -187,6 +190,7 @@ export class MainLoopService {
     }
     this.audio.volume = properties.audioVolume;
     this.audioTrackIndex = properties.audioTrack;
+    this.hyperSpeed = properties.hyperSpeed;
     this.playAudio();
   }
 
@@ -251,7 +255,9 @@ export class MainLoopService {
         this.bankedTicks += (ticksToDo - 1) * this.tickDivider;
         break;
       } else {
-        this.tick();
+        for (let j = 0; j < this.hyperSpeed; j++) {
+          this.tick();
+        }
         this.lastUsedTickTime = newTime;
       }
     }

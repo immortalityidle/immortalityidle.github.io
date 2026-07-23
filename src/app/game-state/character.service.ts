@@ -1666,12 +1666,19 @@ export class CharacterService {
   }
 
   startSeclusion() {
-    this.inSeclusion.set(true);
+    this.mainLoopService.pause = false;
+    this.mainLoopService.tickDivider = 1;
+    this.mainLoopService.longTickIntervalMS = 1000;
+    this.mainLoopService.hyperSpeed = 2;
     this.daysInSeclusion = 0;
     this.daysInSeclusionDisplay.set(0);
+    this.inSeclusion.set(true);
   }
 
   endSeclusion() {
+    this.mainLoopService.tickDivider = 1;
+    this.mainLoopService.longTickIntervalMS = 500;
+    this.mainLoopService.hyperSpeed = 1;
     this.inSeclusion.set(false);
   }
 }

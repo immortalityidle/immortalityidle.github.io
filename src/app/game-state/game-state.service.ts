@@ -950,6 +950,7 @@ export class GameStateService {
       daysSinceYearOrLongTick: props?.daysSinceYearOrLongTick || 0,
       audioTrack: props?.audioTrack || 0,
       audioVolume: props?.audioVolume || 0.2,
+      hyperSpeed: props?.hyperSpeed || 1,
     };
   }
 

@@ -103,7 +103,7 @@ export class PantheonService {
           baseDefense: this.greekBaseDefense,
           baseHealth: this.greekBaseHealth,
           techniqueNames: ['Fast Jab', 'Winged Kick', 'Staff Strike'],
-          techniqueCooldowns: [1, 2, 10],
+          techniqueCooldowns: [2, 3, 10],
           challengeMessage: signal<string>(
             "You're looking for a duel?<br><br>Are you mad, barbarian?<br><br>I don't have time to fight you right now!<br><br>I need to get these messages delivered!"
           ),
