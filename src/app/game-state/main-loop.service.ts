@@ -205,6 +205,11 @@ export class MainLoopService {
     if (!this.characterService) {
       this.characterService = this.injector.get(CharacterService);
     }
+    if (this.characterService.inSeclusion()) {
+      this.pause = false;
+      this.tickDivider = 1;
+      this.longTickIntervalMS = 500;
+    }
 
     setTimeout(() => this.handleTimeout(), TICK_INTERVAL_MS);
     setTimeout(() => this.handleLongTickTimeout(), this.longTickIntervalMS);

@@ -2349,6 +2349,9 @@ export class BattleService {
 
   // generate a monster based on current trouble location and lifetime kills
   trouble() {
+    if (this.characterService.inSeclusion()) {
+      return;
+    }
     if (this.enemies.length !== 0) {
       return;
     }

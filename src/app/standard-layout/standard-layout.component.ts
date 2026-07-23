@@ -39,6 +39,7 @@ import { AchievementService } from '../game-state/achievement.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { ContemplationPanelComponent } from '../contemplation-panel/contemplation-panel.component';
 import { DivineDuelsPanelComponent } from '../divine-duels-panel/divine-duels-panel.component';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-standard-layout',
@@ -70,6 +71,7 @@ import { DivineDuelsPanelComponent } from '../divine-duels-panel/divine-duels-pa
     forwardRef(() => ContemplationPanelComponent),
     forwardRef(() => DivineDuelsPanelComponent),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => BigNumberPipe),
   ],
   templateUrl: './standard-layout.component.html',
   styleUrl: './standard-layout.component.less',

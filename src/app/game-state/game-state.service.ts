@@ -1313,6 +1313,8 @@ export class GameStateService {
       keepPouchItems: props?.keepPouchItems || false,
       energy: props?.energy || {},
       staminaCap: props?.staminaCap || 1000000,
+      inSeclusion: props?.inSeclusion || false,
+      daysInSeclusion: props?.daysInSeclusion || 0,
     };
   }
 

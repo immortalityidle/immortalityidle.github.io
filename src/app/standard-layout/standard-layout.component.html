@@ -58,6 +58,14 @@
           <button (click)="gameStateService.joinTheGodsClick()">Join the Gods</button>
         </span>
       }
+      @if (characterService.god() && !characterService.inSeclusion()) {
+        <span class="topText">
+          <button tooltip="Enter a state of seclusion, avoiding all distractions from the external world.<br>Time will flow at an accelerated rate and you will continue with your established schedule, but you will not engage in any battles.<br>You will not be able to see or interact with most game functions until you leave seclusion." 
+            (click)="characterService.startSeclusion()">
+            Enter Seclusion
+          </button>
+        </span>
+      }
 
       @if (mainLoopService.playMusic){
         <span class="musicSpan">
@@ -94,90 +102,109 @@
         </span>
       }
     </div>
-    <div class="grid-container">
-      <ktd-grid cols="100"
-          rowHeight="10"
-          [compactType]="compactType"
-          [gap]="gridGap"
-          compactOnPropsChange="true"
-          preventCollision="false"
-          [layout]="gameStateService.layout() ?? []"
-          [scrollableParent]="document"
-          (layoutUpdated)="onLayoutUpdated($event)">
-          @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
-            <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" [id]="getPanel(panelLayout).id">
-              <div class="panel">
-                <div ktdGridDragHandle [ngClass]="{'grabCursor': !gameStateService.lockPanels}" class="panelHeader">
-                  <mat-icon>
-                    {{getPanel(panelLayout).icon}}
-                  </mat-icon>
-                  <span>{{getPanel(panelLayout).name}}</span>
-                  <span class="floatRight">
-                    <mat-icon [tooltip]="getPanel(panelLayout).panelHelp">
-                      help
+    @if (characterService.inSeclusion()){
+      <div class="seclusionDiv">
+        <div>
+          <span>You are cultivating in a state of seclusion, tuning out the external world to focus on your divine progression.</span>
+        </div>
+        <div>
+          <span>
+            Days in seclusion: {{characterService.daysInSeclusionDisplay() | bigNumber}}
+          </span>
+        </div>
+        <div>
+          <span>
+            <button (click)="characterService.endSeclusion()">Exit Seclusion</button>
+          </span>
+        </div>
+      </div>
+    }
+    @else {
+      <div class="grid-container">
+        <ktd-grid cols="100"
+            rowHeight="10"
+            [compactType]="compactType"
+            [gap]="gridGap"
+            compactOnPropsChange="true"
+            preventCollision="false"
+            [layout]="gameStateService.layout() ?? []"
+            [scrollableParent]="document"
+            (layoutUpdated)="onLayoutUpdated($event)">
+            @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
+              <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" [id]="getPanel(panelLayout).id">
+                <div class="panel">
+                  <div ktdGridDragHandle [ngClass]="{'grabCursor': !gameStateService.lockPanels}" class="panelHeader">
+                    <mat-icon>
+                      {{getPanel(panelLayout).icon}}
                     </mat-icon>
-                    @if(!gameStateService.allPanelsUsed){
-                      <mat-icon class="iconButton" (click)="previousPanelClick($index)">
-                        arrow_back
+                    <span>{{getPanel(panelLayout).name}}</span>
+                    <span class="floatRight">
+                      <mat-icon [tooltip]="getPanel(panelLayout).panelHelp">
+                        help
                       </mat-icon>
-                      <mat-icon class="iconButton" (click)="nextPanelClick($index)">
-                        arrow_forward
+                      @if(!gameStateService.allPanelsUsed){
+                        <mat-icon class="iconButton" (click)="previousPanelClick($index)">
+                          arrow_back
+                        </mat-icon>
+                        <mat-icon class="iconButton" (click)="nextPanelClick($index)">
+                          arrow_forward
+                        </mat-icon>
+                      }
+                      <mat-icon class="iconButton" (click)="closePanelClick($index)">
+                        close
                       </mat-icon>
+                    </span>
+                    </div>
+                  <div class="grid-item-content">
+                    @if (panelLayout.id === 'timePanel'){
+                      <app-time-panel class="panelComponent"></app-time-panel>
+                    } @else if (panelLayout.id === 'schedulePanel'){
+                      <app-schedule-panel class="panelComponent"></app-schedule-panel>
+                    } @else if (panelLayout.id === 'attributesPanel'){
+                      <app-attributes-panel class="panelComponent"></app-attributes-panel>
+                    } @else if (panelLayout.id === 'healthPanel'){
+                      <app-health-panel class="panelComponent"></app-health-panel>
+                    } @else if (panelLayout.id === 'activityPanel'){
+                      <app-activity-panel class="panelComponent" ></app-activity-panel>
+                    } @else if (panelLayout.id === 'battlePanel'){
+                      <app-battle-panel class="panelComponent" ></app-battle-panel>
+                    } @else if (panelLayout.id === 'equipmentPanel'){
+                      <app-equipment-panel class="panelComponent" ></app-equipment-panel>
+                    } @else if (panelLayout.id === 'homePanel'){
+                      <app-home-panel class="panelComponent" ></app-home-panel>
+                    } @else if (panelLayout.id === 'inventoryPanel'){
+                      <app-inventory-panel class="panelComponent" ></app-inventory-panel>
+                    } @else if (panelLayout.id === 'logPanel'){
+                      <app-log-panel class="panelComponent" ></app-log-panel>
+                    } @else if (panelLayout.id === 'portalPanel'){
+                      <app-portal-panel class="panelComponent" ></app-portal-panel>
+                    } @else if (panelLayout.id === 'followersPanel'){
+                      <app-followers-panel class="panelComponent"></app-followers-panel>
+                    } @else if (panelLayout.id === 'petsPanel'){
+                      <app-pets-panel class="panelComponent" ></app-pets-panel>
+                    } @else if (panelLayout.id === 'farmPanel'){
+                      <app-farm-panel class="panelComponent" ></app-farm-panel>
+                    } @else if (panelLayout.id === 'locationPanel'){
+                      <app-location-panel class="panelComponent" ></app-location-panel>
+                    } @else if (panelLayout.id === 'impossibleTasksPanel'){
+                      <app-impossible-task-panel class="panelComponent" ></app-impossible-task-panel>
+                    } @else if (panelLayout.id === 'techniquePanel'){
+                      <app-technique-panel class="panelComponent" ></app-technique-panel>
+                    } @else if (panelLayout.id === 'craftingPanel'){
+                      <app-crafting-panel class="panelComponent" ></app-crafting-panel>
+                    } @else if (panelLayout.id === 'hellStatusPanel'){
+                      <app-hell-status-panel class="panelComponent" ></app-hell-status-panel>
+                    } @else if (panelLayout.id === 'contemplationPanel'){
+                      <app-contemplation-panel class="panelComponent" ></app-contemplation-panel>
+                    } @else if (panelLayout.id === 'divineDuelsPanel'){
+                      <app-divine-duels-panel class="panelComponent" ></app-divine-duels-panel>
                     }
-                    <mat-icon class="iconButton" (click)="closePanelClick($index)">
-                      close
-                    </mat-icon>
-                  </span>
                   </div>
-                <div class="grid-item-content">
-                  @if (panelLayout.id === 'timePanel'){
-                    <app-time-panel class="panelComponent"></app-time-panel>
-                  } @else if (panelLayout.id === 'schedulePanel'){
-                    <app-schedule-panel class="panelComponent"></app-schedule-panel>
-                  } @else if (panelLayout.id === 'attributesPanel'){
-                    <app-attributes-panel class="panelComponent"></app-attributes-panel>
-                  } @else if (panelLayout.id === 'healthPanel'){
-                    <app-health-panel class="panelComponent"></app-health-panel>
-                  } @else if (panelLayout.id === 'activityPanel'){
-                    <app-activity-panel class="panelComponent" ></app-activity-panel>
-                  } @else if (panelLayout.id === 'battlePanel'){
-                    <app-battle-panel class="panelComponent" ></app-battle-panel>
-                  } @else if (panelLayout.id === 'equipmentPanel'){
-                    <app-equipment-panel class="panelComponent" ></app-equipment-panel>
-                  } @else if (panelLayout.id === 'homePanel'){
-                    <app-home-panel class="panelComponent" ></app-home-panel>
-                  } @else if (panelLayout.id === 'inventoryPanel'){
-                    <app-inventory-panel class="panelComponent" ></app-inventory-panel>
-                  } @else if (panelLayout.id === 'logPanel'){
-                    <app-log-panel class="panelComponent" ></app-log-panel>
-                  } @else if (panelLayout.id === 'portalPanel'){
-                    <app-portal-panel class="panelComponent" ></app-portal-panel>
-                  } @else if (panelLayout.id === 'followersPanel'){
-                    <app-followers-panel class="panelComponent"></app-followers-panel>
-                  } @else if (panelLayout.id === 'petsPanel'){
-                    <app-pets-panel class="panelComponent" ></app-pets-panel>
-                  } @else if (panelLayout.id === 'farmPanel'){
-                    <app-farm-panel class="panelComponent" ></app-farm-panel>
-                  } @else if (panelLayout.id === 'locationPanel'){
-                    <app-location-panel class="panelComponent" ></app-location-panel>
-                  } @else if (panelLayout.id === 'impossibleTasksPanel'){
-                    <app-impossible-task-panel class="panelComponent" ></app-impossible-task-panel>
-                  } @else if (panelLayout.id === 'techniquePanel'){
-                    <app-technique-panel class="panelComponent" ></app-technique-panel>
-                  } @else if (panelLayout.id === 'craftingPanel'){
-                    <app-crafting-panel class="panelComponent" ></app-crafting-panel>
-                  } @else if (panelLayout.id === 'hellStatusPanel'){
-                    <app-hell-status-panel class="panelComponent" ></app-hell-status-panel>
-                  } @else if (panelLayout.id === 'contemplationPanel'){
-                    <app-contemplation-panel class="panelComponent" ></app-contemplation-panel>
-                  } @else if (panelLayout.id === 'divineDuelsPanel'){
-                    <app-divine-duels-panel class="panelComponent" ></app-divine-duels-panel>
-                  }
                 </div>
-              </div>
-            </ktd-grid-item>
-          }
-        </ktd-grid>
-    </div>
+              </ktd-grid-item>
+            }
+          </ktd-grid>
+      </div>
+    }
   </div>
 </div>

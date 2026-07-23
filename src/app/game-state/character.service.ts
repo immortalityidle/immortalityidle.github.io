@@ -167,6 +167,8 @@ export interface CharacterProperties {
   bankerMaxMoneyBonus: number;
   energy: { [key: string]: number };
   staminaCap: number;
+  inSeclusion: boolean;
+  daysInSeclusion: number;
 }
 
 export const INITIAL_AGE = 18 * 365;
@@ -679,6 +681,9 @@ export class CharacterService {
   staminaBreakdown = signal<string>('');
   healthBreakdown = signal<string>('');
   healthBonusFactor = 1;
+  inSeclusion = signal<boolean>(false);
+  daysInSeclusion = 0;
+  daysInSeclusionDisplay = signal<number>(0);
 
   constructor(
     private injector: Injector,
@@ -700,6 +705,9 @@ export class CharacterService {
     }
 
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.inSeclusion()) {
+        this.daysInSeclusion++;
+      }
       if (!this.dead) {
         this.age++;
       }
@@ -710,6 +718,10 @@ export class CharacterService {
     mainLoopService.longTickSubject.subscribe(elapsedDays => {
       if (this.bloodlineRank >= 9 && !this.hellService?.inHell()) {
         this.increaseAptitudeDaily(elapsedDays);
+      }
+
+      if (this.inSeclusion()) {
+        this.daysInSeclusionDisplay.set(this.daysInSeclusion);
       }
 
       this.displayMoney.set(this.money);
@@ -1573,6 +1585,8 @@ export class CharacterService {
       bankerMaxMoneyBonus: this.bankerMaxMoneyBonus,
       energy: this.energy,
       staminaCap: this.staminaCap,
+      inSeclusion: this.inSeclusion(),
+      daysInSeclusion: this.daysInSeclusion,
     };
   }
 
@@ -1645,7 +1659,19 @@ export class CharacterService {
     this.keepPouchItems = properties.keepPouchItems;
     this.energy = properties.energy;
     this.staminaCap = properties.staminaCap;
+    this.inSeclusion.set(properties.inSeclusion);
+    this.daysInSeclusion = properties.daysInSeclusion;
 
     this.recalculateDerivedStats();
+  }
+
+  startSeclusion() {
+    this.inSeclusion.set(true);
+    this.daysInSeclusion = 0;
+    this.daysInSeclusionDisplay.set(0);
+  }
+
+  endSeclusion() {
+    this.inSeclusion.set(false);
   }
 }
