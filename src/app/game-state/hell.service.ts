@@ -1789,6 +1789,8 @@ export class HellService {
           );
           this.characterService.status.health.value -= damage;
         }
+        const reducer = 0.9;
+        this.characterService.attributes.waterLore.value *= reducer;
       },
       completeEffect: () => {
         this.logService.log(
