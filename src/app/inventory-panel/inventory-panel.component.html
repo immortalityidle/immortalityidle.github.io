@@ -112,6 +112,11 @@
           <span>
             {{inventoryService.displaySelectedItem.name() | titlecase}}
           </span>
+          @if (inventoryService.displaySelectedItem.quantity() > 1) {
+            <span>
+              x{{inventoryService.displaySelectedItem.quantity()}}
+            </span>
+          }
         </div>
         <div class='selectedItemTextBody'>
           <span [innerHTML]="inventoryService.displaySelectedItem.description()">
@@ -158,8 +163,8 @@
                       [style.border-color]="displayItemStack.imageColor()"
                       width="48" height="48"  alt="{{displayItemStack.name() | titlecase}}"/>
                   </div>
-                  @if ((displayItemStack.quantity() || 0) > 1) {
-                    <div class="itemQuantity">x{{displayItemStack.quantity()}}</div>
+                  @if (displayItemStack.quantity() > 1) {
+                    <div class="itemQuantity">x{{displayItemStack.quantity() | bigNumber}}</div>
                   }
                 </div>
               </div>
@@ -190,8 +195,8 @@
                     [style.border-color]="displayItemStack.imageColor()"
                     width="48" height="48"  alt="{{displayItemStack.name() | titlecase}}" />
                 </div>
-                @if ((displayItemStack.quantity() || 0) > 1) {
-                  <div class="itemQuantity">x{{displayItemStack.quantity()}}</div>
+                @if (displayItemStack.quantity() > 1) {
+                  <div class="itemQuantity">x{{displayItemStack.quantity() | bigNumber}}</div>
                 }
               </div>
             </div>

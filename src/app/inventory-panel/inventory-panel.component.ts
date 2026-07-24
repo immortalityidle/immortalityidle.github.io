@@ -14,6 +14,7 @@ import { InventoryOptionsModalComponent } from '../inventory-options-modal/inven
 import { MatDialog } from '@angular/material/dialog';
 import { LOOT_TYPE_GEM } from '../game-state/battle.service';
 import { FollowersService } from '../game-state/followers.service';
+import { BigNumberPipe } from '../pipes';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -26,6 +27,7 @@ import { FollowersService } from '../game-state/followers.service';
     forwardRef(() => CdkDrag),
     forwardRef(() => TitleCasePipe),
     forwardRef(() => TooltipDirective),
+    forwardRef(() => BigNumberPipe),
   ],
 })
 export class InventoryPanelComponent {

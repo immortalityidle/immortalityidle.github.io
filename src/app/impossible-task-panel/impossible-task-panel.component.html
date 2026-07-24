@@ -4,7 +4,6 @@
       id="pauseOnImpossibleFail" [checked]="activityService.pauseOnImpossibleFail"/>
     <label for="pauseOnImpossibleFail">Automatically pause if task related activity fails</label>
   </span>
-  <hr/>
   @if (impossibleTaskService.activeTaskIndex >= 0) {
     <div>
       <span>Current Task: {{impossibleTaskService.tasks[impossibleTaskService.activeTaskIndex].name}}</span>

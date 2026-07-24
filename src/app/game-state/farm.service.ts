@@ -359,19 +359,26 @@ export class FarmService {
   }
 
   updateFieldUpkeep(index: number) {
+    if (!this.homeService.home) {
+      return;
+    }
     const field = this.fields[index];
     let upkeep = 0;
-    if (field.plots > 10) {
-      upkeep += field.plots - 10;
+    let fieldCostThreshold = this.homeService.home.fieldCostScaling;
+    if (field.plots > fieldCostThreshold) {
+      upkeep += field.plots - fieldCostThreshold;
     }
-    if (field.plots > 100) {
-      upkeep += Math.pow(field.plots - 100, 2);
+    fieldCostThreshold *= 10;
+    if (field.plots > fieldCostThreshold) {
+      upkeep += Math.pow(field.plots - fieldCostThreshold, 2);
     }
-    if (field.plots > 1000) {
-      upkeep += Math.pow(field.plots - 1000, 3);
+    fieldCostThreshold *= 10;
+    if (field.plots > fieldCostThreshold) {
+      upkeep += Math.pow(field.plots - fieldCostThreshold, 3);
     }
-    if (field.plots > 5000) {
-      upkeep += Math.pow(1.7, field.plots - 5000);
+    fieldCostThreshold *= 5;
+    if (field.plots > fieldCostThreshold) {
+      upkeep += Math.pow(1.7, field.plots - fieldCostThreshold);
     }
     field.upkeepCost = upkeep;
   }
