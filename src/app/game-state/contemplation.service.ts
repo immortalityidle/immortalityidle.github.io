@@ -62,6 +62,7 @@ export const CONCEPT_ANNIHILATION = 'Tao of Annihilation';
 export const CONCEPT_VOID = 'Tao of the Void';
 export const CONCEPT_SPACE = 'Tao of Space';
 export const CONCEPT_BEASTS = 'Tao of Beasts';
+export const CONCEPT_BEAUTY = 'Tao of Beauty';
 
 @Injectable({
   providedIn: 'root',
@@ -580,6 +581,14 @@ export class ContemplationService {
       },
       unlocksMore: false,
     },
+    {
+      name: CONCEPT_BEAUTY,
+      description: 'Contemplate beauty. Allows a small amount of spirituality to emerge from your charisma.',
+      progress: 0,
+      effect: '',
+      discovered: false,
+      unlocksMore: false,
+    },
   ];
 
   constructor(private injector: Injector, private mainLoopService: MainLoopService, private logService: LogService) {
@@ -612,7 +621,7 @@ export class ContemplationService {
       for (const concept of discoverable) {
         let requirementsMet = true;
         for (const key in concept.discoveryRequirements) {
-          const checkConcept = this.concepts.find(concept => concept.name === key);
+          const checkConcept = this.getConcept(key);
           if (checkConcept && (checkConcept.progress || 0) < concept.discoveryRequirements[key]) {
             requirementsMet = false;
             checkConcept.unlocksMore = true;
@@ -639,7 +648,7 @@ export class ContemplationService {
           let description =
             'This concept is beyond your current comprehension. To understand it, you will need a greater understanding of:<br>';
           for (const key in concept.discoveryRequirements) {
-            const requiredConcept = this.concepts.find(c => c.name === key);
+            const requiredConcept = this.getConcept(key);
             if (requiredConcept && requiredConcept.progress < concept.discoveryRequirements[key]) {
               if (requiredConcept && requiredConcept.discovered) {
                 description += key + '<br>';
@@ -680,8 +689,12 @@ export class ContemplationService {
     }
   }
 
+  getConcept(conceptName: string) {
+    return this.concepts.find(concept => concept.name === conceptName);
+  }
+
   discoverConcept(conceptName: string) {
-    const concept = this.concepts.find(concept => concept.name === conceptName);
+    const concept = this.getConcept(conceptName);
     if (concept) {
       if (!concept.discovered) {
         this.logService.log(LogTopic.EVENT, 'A concept is available for contemplation: ' + conceptName);
@@ -714,6 +727,6 @@ export class ContemplationService {
       concept.progress = properties.conceptProgress[concept.name] || 0;
       concept.discovered = properties.discoveredConcepts.includes(concept.name);
     }
-    this.currentConcept = this.concepts.find(concept => concept.name === properties.currentConcept) || null;
+    this.currentConcept = this.getConcept(properties.currentConcept) || null;
   }
 }

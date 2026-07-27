@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from '../game-state/character.service';
 import { InventoryService, Item } from '../game-state/inventory.service';
@@ -36,6 +36,7 @@ export class StoreService {
     'solid',
     'adamant',
   ];
+  bloodLineHomeRequirementDisplay = signal<string>('');
 
   constructor(
     private logService: LogService,
@@ -180,6 +181,12 @@ export class StoreService {
     } else if (this.characterService.bloodlineRank === 9) {
       this.bloodlineDescription =
         "You can't enhance your bloodline any further. Your armor and your weapons equipped on death will become family heirlooms and will be inherited by your future self. You will also inherit your past self's money plus interest. Your aptitudes extend your lifespan to a much greater degree. Your followers also have enhanced bloodlines and will follow you between incarnations. You will keep your Empire, and can break through the limits of humanity. Finally, you will gain aptitudes every day from your current Attributes.";
+    }
+
+    if (this.homeService.home) {
+      this.bloodLineHomeRequirementDisplay.set(' and a ' + this.bloodLineHomeRequirement.name);
+    } else {
+      this.bloodLineHomeRequirementDisplay.set('');
     }
     this.qiCompressionDescription =
       'Compress your Qi from its current ' +

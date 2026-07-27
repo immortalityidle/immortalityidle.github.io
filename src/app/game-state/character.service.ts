@@ -8,7 +8,7 @@ import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { AchievementService } from './achievement.service';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { Equipment, ItemStack } from './inventory.service';
-import { ContemplationService } from './contemplation.service';
+import { CONCEPT_BEAUTY, ContemplationService } from './contemplation.service';
 
 export type CharacterAttribute = {
   [key: string]: number | undefined;
@@ -716,8 +716,16 @@ export class CharacterService {
     });
 
     mainLoopService.longTickSubject.subscribe(elapsedDays => {
-      if (this.bloodlineRank >= 9 && !this.hellService?.inHell()) {
-        this.increaseAptitudeDaily(elapsedDays);
+      if (elapsedDays > 0) {
+        const beautyConcept = this.contemplationService.getConcept(CONCEPT_BEAUTY);
+        if (beautyConcept && beautyConcept.progress > 0) {
+          const spriritualBeauty =
+            Math.log(this.attributes.charisma.value) * Math.log10(beautyConcept.progress + 10) * 1e-6;
+          this.attributes.spirituality.value += spriritualBeauty * elapsedDays;
+        }
+        if (this.bloodlineRank >= 9 && !this.hellService?.inHell()) {
+          this.increaseAptitudeDaily(elapsedDays);
+        }
       }
 
       if (this.inSeclusion()) {

@@ -1073,7 +1073,7 @@ export class BattleService {
 
   updateVoidSkip() {
     if (this.contemplationService.contemplationStarted()) {
-      const voidConcept = this.contemplationService.concepts.find(concept => concept.name === CONCEPT_VOID);
+      const voidConcept = this.contemplationService.getConcept(CONCEPT_VOID);
       if (voidConcept?.discovered) {
         this.voidSkipThreshold = Math.max(20 - Math.log10(10 + voidConcept.progress), 2);
       }

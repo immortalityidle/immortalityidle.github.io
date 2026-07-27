@@ -469,7 +469,7 @@ export class ActivityService {
         this.PortalToMetalRealm,
         this.PortalToWoodRealm,
       ];
-      const spaceConcept = this.contemplationService.concepts.find(concept => concept.name === CONCEPT_DIVINITY);
+      const spaceConcept = this.contemplationService.getConcept(CONCEPT_DIVINITY);
       if (spaceConcept && spaceConcept.progress > 0) {
         this.portals.push(this.PortalToPhilosopherStates);
       }
@@ -914,7 +914,7 @@ export class ActivityService {
     }
     if (activity.conceptRequirements) {
       for (const conceptRequirement of activity.conceptRequirements) {
-        const concept = this.contemplationService.concepts.find(concept => concept.name === conceptRequirement);
+        const concept = this.contemplationService.getConcept(conceptRequirement);
         if (concept && !concept.discovered) {
           return false;
         }

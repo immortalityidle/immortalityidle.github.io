@@ -1012,9 +1012,13 @@ export class FollowersService {
   }
 
   updateFollowerCap() {
+    let homeFollowers = 10;
+    if (this.homeService.home) {
+      homeFollowers = this.homeService.homeValue * 3;
+    }
     this.followerCap =
       1 +
-      this.homeService.homeValue * 3 +
+      homeFollowers +
       this.characterService.meridianRank() +
       this.characterService.soulCoreRank() +
       this.characterService.bloodlineRank;

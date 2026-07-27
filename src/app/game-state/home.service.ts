@@ -1579,6 +1579,7 @@ export class HomeService {
       this.home = null;
       this.characterService.fengshuiScore = 0;
       this.availableWorkstationsList = [];
+      this.inventoryService.changeMaxItems(60);
     } else {
       this.homeValue = home.type;
       this.home = this.homesList[this.homeValue];

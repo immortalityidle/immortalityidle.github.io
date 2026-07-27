@@ -24,7 +24,7 @@ import { LocationService, LocationType } from './location.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
-import { ContemplationService } from './contemplation.service';
+import { CONCEPT_BEAUTY, ContemplationService } from './contemplation.service';
 import { ActivityType } from './activity';
 import {
   GOD_APHRODITE,
@@ -2094,6 +2094,7 @@ export class AchievementService {
       },
       effect: () => {
         this.inventoryService.unlockFurniture("Aphrodite's Vanity");
+        this.contemplationService.discoverConcept(CONCEPT_BEAUTY);
       },
       unlocked: false,
     },

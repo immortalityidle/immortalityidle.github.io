@@ -1425,18 +1425,29 @@ export class GameStateService {
         newGameState.battles.skipKillCountReset = true;
         const blockedPrefixes: string[] = [];
         const blockedEffects: string[] = [];
+        const discoveredPrefixes: string[] = [];
+        const discoveredEffects: string[] = [];
+
         for (const prefix of this.battleService.techniquePrefixAdjectiveList) {
           if (!prefix.allowed) {
             blockedPrefixes.push(prefix.value);
+          }
+          if (prefix.discovered) {
+            discoveredPrefixes.push(prefix.value);
           }
         }
         for (const prefix of this.battleService.techniqueEffectsList) {
           if (!prefix.allowed) {
             blockedEffects.push(prefix.value);
           }
+          if (prefix.discovered) {
+            discoveredEffects.push(prefix.value);
+          }
         }
         newGameState.battles.blockedTechniquePrefixes = blockedPrefixes;
         newGameState.battles.blockedTechniqueEffects = blockedEffects;
+        newGameState.battles.discoveredTechniquePrefixes = discoveredPrefixes;
+        newGameState.battles.discoveredTechniqueEffects = discoveredEffects;
 
         newGameState.followers.autoDismissUnlocked = this.followersService.autoDismissUnlocked;
 

@@ -62,7 +62,7 @@
           <br>
           @if (characterService.bloodlineRank < 9) {
             <span>
-              Next rank requires {{characterService.bloodlineCost | bigNumber}} spirituality and a {{this.storeService.bloodLineHomeRequirement.name}}.
+              Next rank requires {{characterService.bloodlineCost | bigNumber}} spirituality{{this.storeService.bloodLineHomeRequirementDisplay()}}.
             </span>
           }
           @else {

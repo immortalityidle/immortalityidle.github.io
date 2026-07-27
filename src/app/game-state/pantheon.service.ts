@@ -180,7 +180,7 @@ export class PantheonService {
         {
           name: signal<string>(GOD_HEPHAESTUS),
           description: signal<string>(
-            'A blacksmith god of fire, metallurgy, and crafts. His forge is almost as good as one of yours.'
+            'A blacksmith god of fire, metallurgy, and crafts. His forge might be slightly better than yours.'
           ),
           timesDefeated: signal<number>(0),
           unlocked: signal<boolean>(false),
