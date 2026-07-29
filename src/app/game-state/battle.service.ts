@@ -3878,7 +3878,7 @@ export class BattleService {
       name: 'Your Reflection',
       baseName: 'mirror',
       location: LocationType.Mirrors,
-      basePower: this.hellMonsterBasePower * (this.characterService.status.health.value * 0.1),
+      basePower: this.hellMonsterBasePower * (this.characterService.status.health.value * 0.05),
       defenseToHealthRatio: this.hellMonsterDefenseRatio,
       attackToHealthRatio: this.hellMonsterAttackRatio,
       description: '',

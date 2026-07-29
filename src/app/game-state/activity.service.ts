@@ -1635,6 +1635,7 @@ export class ActivityService {
     consequenceDescription: ['You will certainly, probably, maybe not die doing this.'],
     consequence: [
       () => {
+        this.characterService.status.qi.value -= 20000 / (this.characterService.qiCompressionLevel + 1);
         this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress++;
         if (this.impossibleTaskService.taskProgress[ImpossibleTaskType.LearnToFly].progress < 2222) {
           this.logService.injury(
@@ -1670,6 +1671,7 @@ export class ActivityService {
     resourceUse: [
       {
         health: 1001,
+        qi: 20000,
       },
     ],
     requirements: [{}],
