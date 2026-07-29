@@ -1061,6 +1061,7 @@ export class HellService {
       },
       entryEffect: () => {
         this.followersService.stashFollowers();
+        this.followersService.setMaxFollowers('damned', 1000);
       },
       dailyEffect: () => {
         // This might be a stupid way to nerf charisma. Consider other alternatives.

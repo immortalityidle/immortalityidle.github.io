@@ -116,6 +116,17 @@
                 </div>
               </div>
             }
+            @if (workstation.merchantMode){
+              <div class="product">
+                <div>
+                  <mat-icon (click)="homeService.changeWorkstationMerchantMode(workstation)" tooltip="Change Merchant Mode" 
+                    class="iconButton" aria-label="Change Merchant Mode" aria-hidden="false">
+                    change_circle
+                  </mat-icon>
+                  <span class="product">{{workstation.merchantMode | camelToTitle}}</span>
+                </div>
+              </div>
+            }
             @if (workstation.limitable){
               <div class="product">
                 <div>

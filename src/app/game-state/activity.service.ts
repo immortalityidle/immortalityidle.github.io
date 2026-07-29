@@ -4099,7 +4099,7 @@ export class ActivityService {
     ],
     requirements: [
       {
-        animalHandling: 1e15,
+        animalHandling: 1e14,
       },
     ],
     unlocked: false,

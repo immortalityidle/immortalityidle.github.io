@@ -110,6 +110,7 @@ export interface Workstation {
   alchemyProduct?: string;
   techniqueRefinementAspect?: string;
   energyManipulation?: string;
+  merchantMode?: string;
   productCounter?: number;
   locked?: boolean;
   limitable?: boolean;
@@ -157,6 +158,10 @@ export const WORKSTATION_WANDERER_PACK = "Wanderer's Crafting Backpack";
 
 export const MANIPULATION_SPIRIT = 'transform elemental energy into spirit energy';
 export const MANIPULATION_ELEMENTAL = 'transform spirit energy into elemental energy';
+
+export const MERCHANT_MODE_BUY_SELL = 'Buy and sell';
+export const MERCHANT_MODE_BUY = 'Buy only';
+export const MERCHANT_MODE_SELL = 'Sell only';
 
 @Injectable({
   providedIn: 'root',
@@ -249,6 +254,7 @@ export class HomeService {
     techniqueRefinementAspect: TECHNIQUE_REFINEMENT_POWER,
     alchemyProduct: 'potions',
     energyManipulation: MANIPULATION_SPIRIT,
+    merchantMode: MERCHANT_MODE_BUY_SELL,
     limitable: true,
     locked: true,
     equipmentSlot: 'head',
@@ -969,6 +975,7 @@ export class HomeService {
       description: 'A simple booth to display wares to sell.',
       maxInputs: 2,
       inputs: [],
+      merchantMode: MERCHANT_MODE_BUY_SELL,
       consequence: (workstation: Workstation) => {
         this.merchantWork(workstation);
       },
@@ -982,6 +989,7 @@ export class HomeService {
       description: 'A tiny shop to display wares to sell.',
       maxInputs: 6,
       inputs: [],
+      merchantMode: MERCHANT_MODE_BUY_SELL,
       consequence: (workstation: Workstation) => {
         this.merchantWork(workstation);
       },
@@ -995,6 +1003,7 @@ export class HomeService {
       description: 'A lovely shop to display wares to sell.',
       maxInputs: 10,
       inputs: [],
+      merchantMode: MERCHANT_MODE_BUY_SELL,
       consequence: (workstation: Workstation) => {
         this.merchantWork(workstation);
       },
@@ -1008,6 +1017,7 @@ export class HomeService {
       description: 'A massive store to display wares to sell.',
       maxInputs: 16,
       inputs: [],
+      merchantMode: MERCHANT_MODE_BUY_SELL,
       consequence: (workstation: Workstation) => {
         this.merchantWork(workstation);
       },
@@ -1743,6 +1753,7 @@ export class HomeService {
       alchemyProduct: workstationTemplate.alchemyProduct,
       techniqueRefinementAspect: workstationTemplate.techniqueRefinementAspect,
       energyManipulation: workstationTemplate.energyManipulation,
+      merchantMode: workstationTemplate.merchantMode,
       limitable: workstationTemplate.limitable,
       powerLimitEnabled: workstationTemplate.powerLimitEnabled,
       powerLimit: workstationTemplate.powerLimit,
@@ -1755,6 +1766,7 @@ export class HomeService {
       newWorkstation.alchemyProduct = copyWorkstation.alchemyProduct;
       newWorkstation.techniqueRefinementAspect = copyWorkstation.techniqueRefinementAspect;
       newWorkstation.energyManipulation = copyWorkstation.energyManipulation;
+      newWorkstation.merchantMode = copyWorkstation.merchantMode;
       newWorkstation.limitable = copyWorkstation.limitable;
       newWorkstation.powerLimitEnabled = copyWorkstation.powerLimitEnabled;
       newWorkstation.powerLimit = copyWorkstation.powerLimit;
@@ -2581,18 +2593,20 @@ export class HomeService {
 
   merchantWork(workstation: Workstation) {
     const merchantLevel = this.activityService?.getActivityByType(ActivityType.Merchant)?.level || 0;
-    for (const input of workstation.inputs) {
-      if (input.item?.value && input.item?.value > 0 && input.item?.value !== Infinity && input.quantity > 0) {
-        let moneyMultiplier = 10 - 9 * Math.exp(-0.1 * Math.log10(this.characterService.attributes.haggling.value));
-        if (moneyMultiplier < 1) {
-          moneyMultiplier = 1;
-        }
-        moneyMultiplier *= 1 + merchantLevel * 0.2;
-        moneyMultiplier *= 1 + workstation.power * 0.3;
-        this.characterService.updateMoney(input.item.value * moneyMultiplier);
-        input.quantity--;
-        if (input.item.shopable) {
-          this.inventoryService.soldGoods[input.item.id] = (this.inventoryService.soldGoods[input.item.id] || 0) + 10;
+    if (workstation.merchantMode !== MERCHANT_MODE_BUY) {
+      for (const input of workstation.inputs) {
+        if (input.item?.value && input.item?.value > 0 && input.item?.value !== Infinity && input.quantity > 0) {
+          let moneyMultiplier = 10 - 9 * Math.exp(-0.1 * Math.log10(this.characterService.attributes.haggling.value));
+          if (moneyMultiplier < 1) {
+            moneyMultiplier = 1;
+          }
+          moneyMultiplier *= 1 + merchantLevel * 0.2;
+          moneyMultiplier *= 1 + workstation.power * 0.3;
+          this.characterService.updateMoney(input.item.value * moneyMultiplier);
+          input.quantity--;
+          if (input.item.shopable) {
+            this.inventoryService.soldGoods[input.item.id] = (this.inventoryService.soldGoods[input.item.id] || 0) + 10;
+          }
         }
       }
     }
@@ -2601,7 +2615,7 @@ export class HomeService {
       this.characterService.updateMoney(this.characterService.money * 0.000000273);
     }
 
-    if (this.merchantAutobuyItem) {
+    if (this.merchantAutobuyItem && workstation.merchantMode !== MERCHANT_MODE_SELL) {
       if (this.merchantAutobuyItem === 'land') {
         this.buyLand(1);
       } else {
@@ -2682,6 +2696,16 @@ export class HomeService {
       workstation.energyManipulation = MANIPULATION_ELEMENTAL;
     } else {
       workstation.energyManipulation = MANIPULATION_SPIRIT;
+    }
+  }
+
+  changeWorkstationMerchantMode(workstation: Workstation) {
+    if (workstation.merchantMode === MERCHANT_MODE_BUY) {
+      workstation.merchantMode = MERCHANT_MODE_SELL;
+    } else if (workstation.merchantMode === MERCHANT_MODE_SELL) {
+      workstation.merchantMode = MERCHANT_MODE_BUY_SELL;
+    } else {
+      workstation.merchantMode = MERCHANT_MODE_BUY;
     }
   }
 

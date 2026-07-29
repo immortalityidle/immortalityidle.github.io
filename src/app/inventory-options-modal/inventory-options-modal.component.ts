@@ -87,6 +87,11 @@ export class InventoryOptionsModalComponent {
     this.inventoryService.autoEatAll = event.target.checked;
   }
 
+  autoEatPouchChanged(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    this.inventoryService.autoEatPouch = event.target.checked;
+  }
+
   useSpiritGemWeaponsChange(event: Event): void {
     if (!(event.target instanceof HTMLInputElement)) return;
     this.inventoryService.useSpiritGemWeapons = event.target.checked;

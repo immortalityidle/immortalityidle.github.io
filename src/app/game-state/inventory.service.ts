@@ -134,6 +134,7 @@ export interface InventoryProperties {
   autoEatStamina: boolean;
   autoEatQi: boolean;
   autoEatAll: boolean;
+  autoEatPouch: boolean;
   autoUseEntries: AutoItemEntry[];
   autoBalanceUnlocked: boolean;
   autoBalanceItems: BalanceItem[];
@@ -240,6 +241,7 @@ export class InventoryService {
   autoEatStamina: boolean;
   autoEatQi: boolean;
   autoEatAll: boolean;
+  autoEatPouch: boolean;
   autoUseEntries: AutoItemEntry[];
   autoBalanceUnlocked = signal<boolean>(false);
   autoBalanceItems: BalanceItem[];
@@ -328,8 +330,10 @@ export class InventoryService {
     this.autoEatNutrition = true;
     this.autoEatHealth = false;
     this.autoEatStamina = false;
+    this.autoEatPouch = false;
     this.autoEatQi = false;
     this.autoEatAll = false;
+    this.autoEatPouch = false;
     this.autoBalanceItems = [];
     this.autoPillUnlocked = false;
     this.autoPillEnabled = false;
@@ -559,6 +563,7 @@ export class InventoryService {
       autoEatStamina: this.autoEatStamina,
       autoEatQi: this.autoEatQi,
       autoEatAll: this.autoEatAll,
+      autoEatPouch: this.autoEatPouch,
       autoUseEntries: this.autoUseEntries,
       autoBalanceUnlocked: this.autoBalanceUnlocked(),
       autoBalanceItems: this.autoBalanceItems,
@@ -1543,6 +1548,13 @@ export class InventoryService {
     }
     if (foodStack) {
       this.useItemStack(foodStack);
+    } else if (this.autoEatPouch) {
+      for (const pouch of this.characterService.itemPouches) {
+        if (pouch.item && pouch.item.type === 'food' && pouch.quantity > 0) {
+          this.useItemStack(pouch);
+          break;
+        }
+      }
     } else {
       // no food found, buy scraps automatically
       if (!this.hellService?.inHell() && this.characterService.money > 0 && this.autoBuyFood) {
@@ -1569,6 +1581,14 @@ export class InventoryService {
         if (itemIterator.item!.value > highestValue) {
           highestValue = itemIterator.item!.value;
           foodStack = itemIterator;
+        }
+      }
+    }
+    if (!foodStack && this.autoEatPouch) {
+      for (const pouch of this.characterService.itemPouches) {
+        if (pouch.item && pouch.item.type === 'food' && pouch.quantity > 0) {
+          foodStack = pouch;
+          break;
         }
       }
     }
@@ -2125,7 +2145,9 @@ export class InventoryService {
       itemStack.quantity -= numberUsed;
       if (itemStack.quantity <= 0) {
         const index = this.itemStacks.indexOf(itemStack);
-        this.setItemEmptyStack(index);
+        if (index !== -1) {
+          this.setItemEmptyStack(index);
+        }
       } else {
         this.fixIdByStack(itemStack);
       }

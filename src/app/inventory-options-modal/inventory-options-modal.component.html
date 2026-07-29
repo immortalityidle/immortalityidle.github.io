@@ -167,6 +167,13 @@
           <label for="autoEatAll">Eat all you can! (Your stomach can handle up to {{inventoryService.maxFoodPerDay}} meals per day)</label>
         </span>
       </div>
+      <div>
+        <span>
+          <input type="checkbox" (change)="autoEatPouchChanged($event)"
+            id="autoEatPouch"  [checked]="inventoryService.autoEatPouch"/>
+          <label for="autoEatPouch">Eat from equipped pouches out of battle when inventory doesn't have food.</label>
+        </span>
+      </div>
       <div class="optionField">
         <div>
           <span>Wisely Eaten Foods:</span>

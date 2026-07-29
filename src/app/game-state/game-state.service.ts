@@ -626,6 +626,7 @@ export class GameStateService {
       autoEatStamina: props?.autoEatStamina || false,
       autoEatQi: props?.autoEatQi || false,
       autoEatAll: props?.autoEatAll || false,
+      autoEatPouch: props?.autoEatPouch || false,
       autoUseEntries: props?.autoUseEntries || [],
       autoBalanceUnlocked: props?.autoBalanceUnlocked || false,
       autoBalanceItems: props?.autoBalanceItems || [],
@@ -1499,6 +1500,7 @@ export class GameStateService {
           newGameState.inventory.noWeapons = true;
         } else if (avatarType === AVATAR_DRUG_IMMUNE) {
           newGameState.inventory.noDrugs = true;
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
         } else if (avatarType === AVATAR_TREE_LOVER) {
           newGameState.activities.forbiddenActivities.push(ActivityType.ChopWood);
           newGameState.followers.forbiddenJobs.push('lumberjack');
@@ -1506,6 +1508,7 @@ export class GameStateService {
           newGameState.battles.uneradicableMonsterTypes.push('leshy');
           newGameState.home.infusableSlots = ['head', 'body', 'legs', 'feet', 'rightHand'];
           newGameState.inventory.treeLover = true;
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
         } else if (avatarType === AVATAR_DARK_FEARING) {
           newGameState.activities.forbiddenActivities.push(ActivityType.Mining);
           newGameState.followers.forbiddenJobs.push('miner');
@@ -1520,11 +1523,15 @@ export class GameStateService {
           newGameState.home.infusableSlots = ['head', 'body', 'legs', 'feet', 'leftHand'];
         } else if (avatarType === AVATAR_SWORD_SAINT) {
           newGameState.inventory.noArmor = true;
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
         } else if (avatarType === AVATAR_WANDERER) {
           newGameState.home.homeValue = HomeType.None;
           newGameState.home.workstations.push(this.homeService.wandererPackWorkstation);
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
         }
 
         newGameState.avatarChallenge = avatarType;
