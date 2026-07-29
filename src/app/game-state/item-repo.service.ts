@@ -1668,6 +1668,16 @@ baguaMap = [
       description: 'A chunk of coal.<br>Handy as fuel.',
       shopable: true,
     },
+    coke: {
+      id: 'coke',
+      imageFile: 'coke',
+      name: 'coke',
+      type: 'coke',
+      subtype: 'fuel',
+      value: 100,
+      description: 'A refined fuel that burns hotter than most.',
+      shopable: true,
+    },
     copperOre: {
       id: 'copperOre',
       imageFile: 'ore',

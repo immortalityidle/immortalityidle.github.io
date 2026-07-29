@@ -2,7 +2,7 @@ import { Injectable, Injector, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService } from './character.service';
 import { InventoryService } from './inventory.service';
-import { HomeService, HomeType, WORKSTATION_ENERGY_MANIPULATOR } from './home.service';
+import { HomeService, HomeType, WORKSTATION_DIVINE_ANVIL, WORKSTATION_ENERGY_MANIPULATOR } from './home.service';
 import { ItemRepoService } from './item-repo.service';
 import { StoreService } from './store.service';
 import { MainLoopService } from './main-loop.service';
@@ -30,6 +30,7 @@ import {
   GOD_APHRODITE,
   GOD_ARTEMIS,
   GOD_DIONYSUS,
+  GOD_HEPHAESTUS,
   GOD_YAMA,
   PANTHEON_CELESTIAL_EMPIRE,
   PantheonService,
@@ -2095,6 +2096,18 @@ export class AchievementService {
       effect: () => {
         this.inventoryService.unlockFurniture("Aphrodite's Vanity");
         this.contemplationService.discoverConcept(CONCEPT_BEAUTY);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Master of the Forge',
+      description: 'Hepheastus has taught you how to create an even better forge.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_HEPHAESTUS)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.homeService.unlockWorkstation(WORKSTATION_DIVINE_ANVIL);
       },
       unlocked: false,
     },

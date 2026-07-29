@@ -192,10 +192,12 @@ export class PantheonService {
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 4),
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 4),
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 4),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Hammer Strike', 'Ring the Forge', 'Volcanic Fury'],
+          techniqueCooldowns: [6, 40, 200],
+          challengeMessage: signal<string>(
+            "You want to fight?<br>Impossible.<br> I'm too busy making a present for my wife.<br>Have you seen how good she looks lately?<br>I'm going to need something really special to impress her, something incredible rare.<br>Maybe a dreadsteel necklace loaded with quality gems."
+          ),
+          attributes: ['justice', 'justice', 'presence', 'wrath', 'wrath'],
           baseLootLevel: 20,
         },
         {

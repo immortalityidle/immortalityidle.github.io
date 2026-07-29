@@ -25,7 +25,12 @@ import {
   TECHNIQUE_REFINEMENT_QI_USAGE,
   TECHNIQUE_REFINEMENT_WEAPONS,
 } from './battle.service';
-import { CONCEPT_EFFECT_FOOD_YIELD, CONCEPT_EFFECT_HOME_RECOVERY, ContemplationService } from './contemplation.service';
+import {
+  CONCEPT_EFFECT_FOOD_YIELD,
+  CONCEPT_EFFECT_HOME_RECOVERY,
+  CONCEPT_FORTIFICATION,
+  ContemplationService,
+} from './contemplation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { BigNumberPipe } from '../pipes';
 
@@ -155,6 +160,7 @@ export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
 export const WORKSTATION_ENERGY_MANIPULATOR = 'Energy Manipulator';
 export const WORKSTATION_GEM_EXTRACTOR = 'Gem Extractor';
 export const WORKSTATION_WANDERER_PACK = "Wanderer's Crafting Backpack";
+export const WORKSTATION_DIVINE_ANVIL = 'Divine Anvil';
 
 export const MANIPULATION_SPIRIT = 'transform elemental energy into spirit energy';
 export const MANIPULATION_ELEMENTAL = 'transform spirit energy into elemental energy';
@@ -773,6 +779,21 @@ export class HomeService {
         }
       },
     },
+    {
+      id: WORKSTATION_DIVINE_ANVIL,
+      triggerActivities: [ActivityType.Blacksmithing],
+      power: 3,
+      setupCost: 0,
+      maintenanceCost: 100000,
+      description:
+        'A divine anvil that will let you craft godlike equipment when you do Blacksmithing.<br>You will need to provide your own metal bars.',
+      maxInputs: 4,
+      inputs: [],
+      consequence: (workstation: Workstation, activityType: ActivityType) => {
+        this.createEquipment(workstation, activityType);
+      },
+    },
+
     {
       id: 'Basic Woodworking Bench',
       triggerActivities: [ActivityType.Woodworking],
@@ -1537,8 +1558,14 @@ export class HomeService {
     if (quantity < 1) {
       quantity = 1; //handle potential 0 and negatives just in case
     }
+    let conceptMultiplier = 1;
+    const concept = this.contemplationService.getConcept(CONCEPT_FORTIFICATION);
+    if (concept && concept.progress > 10) {
+      conceptMultiplier = Math.log10(concept.progress);
+    }
+
     const nextHome = this.homesList[this.homeValue + 1];
-    this.houseBuildingProgress += (1 / nextHome.daysToBuild) * quantity;
+    this.houseBuildingProgress += (1 / nextHome.daysToBuild) * (quantity * conceptMultiplier);
     if (this.houseBuildingProgress >= 1) {
       this.houseBuildingProgress = 1;
       this.upgrading.set(false);
@@ -2246,6 +2273,15 @@ export class HomeService {
         itemStack.item?.type !== material &&
         (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide')
     );
+    let extraStack2 = undefined;
+    if (extraStack) {
+      extraStack2 = workstation.inputs.find(
+        itemStack =>
+          itemStack.item?.type !== material &&
+          itemStack.item?.type !== extraStack.item?.type &&
+          (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide')
+      );
+    }
     if (materialStack && materialStack.quantity >= 10) {
       let grade = (materialStack?.item?.value || 1) + workstation.power * 5;
       if (materialStack.item?.type === 'wood') {
@@ -2262,6 +2298,10 @@ export class HomeService {
       if (extraStack && extraStack.quantity > 0) {
         grade += extraStack?.item?.value || 1;
         extraStack.quantity--;
+        if (extraStack2 && extraStack2.quantity > 0) {
+          grade *= extraStack2.item!.value;
+          extraStack2.quantity--;
+        }
       }
       this.totalCrafts++;
       let item;
@@ -2448,6 +2488,13 @@ export class HomeService {
       } else if (divineFruitStack?.item?.id === 'grapes' && divineFruitStack.quantity > 10000) {
         divineFruitStack.quantity -= 10000;
         this.inventoryService.addItem(this.itemRepoService.items['wine']);
+      }
+      const coalStack = workstation.inputs.find(
+        itemStack => itemStack.item?.type === 'coal' && itemStack.quantity >= 100
+      );
+      if (coalStack) {
+        coalStack.quantity -= 100;
+        this.inventoryService.addItem(this.itemRepoService.items['coke']);
       }
       if (this.nectarUnlocked) {
         const wineStack = workstation.inputs.find(itemStack => itemStack.item?.id === 'wine');

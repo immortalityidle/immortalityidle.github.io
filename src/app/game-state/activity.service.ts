@@ -28,7 +28,14 @@ import {
   CONCEPT_WOOD,
   ContemplationService,
 } from './contemplation.service';
-import { GOD_APHRODITE, GOD_ARTEMIS, GOD_DIONYSUS, GOD_HERMES, PantheonService } from './pantheon.service';
+import {
+  GOD_APHRODITE,
+  GOD_ARTEMIS,
+  GOD_DIONYSUS,
+  GOD_HEPHAESTUS,
+  GOD_HERMES,
+  PantheonService,
+} from './pantheon.service';
 import {
   Activity,
   ActivityLoopEntry,
@@ -192,6 +199,7 @@ export class ActivityService {
       this.ProvideWine,
       this.MoonlightTracking,
       this.SpaDay,
+      this.CraftWithHephaestus,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -5806,11 +5814,105 @@ export class ActivityService {
       },
     ],
     resourceUse: [{}],
-    requirements: [
-      {
-        animalHandling: 1e24,
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  CraftWithHephaestus: Activity = {
+    level: 0,
+    name: ['Craft With Hephaestus'],
+    location: LocationType.TheMightyForge,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'craftWithHephaestus',
+    activityType: ActivityType.CraftWithHephaestus,
+    description: [
+      'Looking at Hephaustus and his forge, you sense there may be room for some collaboration between the two of you.',
+    ],
+    yinYangEffect: [YinYangEffect.Yang],
+    consequenceDescription: ['Work with Hephaestus and help him craft the ultimate gift for his wife, Aphrodite.'],
+    consequence: [
+      () => {
+        const staminaCost = Math.min(this.characterService.staminaCap - 1, 20000000);
+        if (
+          this.characterService.status.stamina.max < staminaCost ||
+          this.characterService.status.stamina.value < staminaCost
+        ) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Hephaestus looks you over. "You look tired, friend. The Forge is no place to get careless."'
+          );
+          return;
+        }
+
+        const dreadsteelStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(itemStack => itemStack.item?.id === 'dreadsteelBar');
+        if (!dreadsteelStack) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "Dreadsteel. Ever heard of it? Stronger than any metal I've ever heard of. Only seen it once, way down deep in the dark depths. It's the only thing that will do for my bride's gift."
+          );
+          return;
+        }
+        if (dreadsteelStack.quantity < 10000) {
+          this.logService.log(LogTopic.EVENT, "You found some! Bring some more, we'll need to get this perfect.");
+          return;
+        }
+
+        const cokeStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(itemStack => itemStack.item?.type === 'coke');
+        if (!cokeStack) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "We're going to need fuel that burns hotter than wood or charcoal for this. Maybe you can come up with something."
+          );
+          return;
+        }
+        if (cokeStack.quantity < 100000) {
+          this.logService.log(LogTopic.EVENT, "Oh, this is good. Burns hot and strong. We'll need more.");
+          return;
+        }
+
+        const gemStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value > 2000);
+        if (!gemStack) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "We're going to need gems, and not just simple things like diamongs and rubies. Maybe something from your homeland? They'd need to be high quality."
+          );
+          return;
+        }
+        if (gemStack.quantity < 100000) {
+          this.logService.log(LogTopic.EVENT, "These gems will do, but we'll need more of them.");
+          return;
+        }
+
+        cokeStack.quantity -= 100000;
+        dreadsteelStack.quantity -= 10000;
+        gemStack.quantity -= 100000;
+
+        this.characterService.increaseAttribute('strength', 10);
+        this.characterService.increaseAttribute('toughness', 10);
+
+        this.pantheonService.increaseGodProgress(GOD_HEPHAESTUS, 1);
+        this.logService.log(
+          LogTopic.EVENT,
+          'Hephaestus looks at the metal on the anvil appraisingly. "We\'re on the right track, friend. Thank you."'
+        );
+
+        if (this.characterService.staminaCap < 1e10) {
+          this.characterService.staminaCap += 10;
+        }
+        this.characterService.status.stamina.value -= staminaCost;
+        this.characterService.yang += 10000;
       },
     ],
+    resourceUse: [{}],
+    requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
     skipApprenticeshipLevel: 0,

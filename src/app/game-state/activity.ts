@@ -104,6 +104,7 @@ export enum ActivityType {
   ProvideWine,
   MoonlightTracking,
   SpaDay,
+  CraftWithHephaestus,
   AvatarPortal,
   ReturnToGodhoodPortal,
   Hell, // hell needs to be last for indexing purposes
