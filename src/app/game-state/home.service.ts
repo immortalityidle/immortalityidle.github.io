@@ -1306,10 +1306,17 @@ export class HomeService {
       }
       let buildTimeYears = '';
       if (this.upgrading() && this.followerService && nextHome) {
+        let conceptMultiplier = 1;
+        const concept = this.contemplationService.getConcept(CONCEPT_FORTIFICATION);
+        if (concept && concept.progress > 10) {
+          conceptMultiplier = Math.log10(concept.progress);
+        }
+
         const builderPower = 1 + this.followerService.jobs['builder'].totalPower;
         buildTimeYears =
-          this.bigNumberPipe.transform(((1 - this.houseBuildingProgress) * nextHome.daysToBuild) / builderPower / 365) +
-          ' years';
+          this.bigNumberPipe.transform(
+            ((1 - this.houseBuildingProgress) * nextHome.daysToBuild) / (builderPower * conceptMultiplier * 365)
+          ) + ' years';
       }
 
       this.displayHome.name.set(this.home.name);

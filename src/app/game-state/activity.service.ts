@@ -894,11 +894,15 @@ export class ActivityService {
     }
   }
 
-  meetsRequirements(activity: Activity): boolean {
+  meetsRequirements(activity: Activity, ignoreLocation = false): boolean {
     if (this.forbiddenActivities.includes(activity.activityType)) {
       return false;
     }
-    if (this.locationService && !this.locationService.unlockedLocations.includes(activity.location)) {
+    if (
+      !ignoreLocation &&
+      this.locationService &&
+      !this.locationService.unlockedLocations.includes(activity.location)
+    ) {
       if (
         this.characterService.god() &&
         this.locationService.locationMap[activity.location].realm === Realm.MortalRealm
@@ -5780,7 +5784,7 @@ export class ActivityService {
           return;
         }
 
-        const pillStack = this.inventoryService.itemStacks
+        let pillStack = this.inventoryService.itemStacks
           .slice(this.inventoryService.heirloomSlots())
           .find(itemStack => itemStack.item?.type === 'pill' && itemStack.item.effect?.includes('charisma'));
         if (!pillStack) {
@@ -5790,7 +5794,16 @@ export class ActivityService {
           );
           return;
         }
-        if (pillStack.quantity < 1000) {
+        pillStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(
+            itemStack =>
+              itemStack.item?.type === 'pill' &&
+              itemStack.item.effect?.includes('charisma') &&
+              itemStack.quantity >= 1000
+          );
+
+        if (!pillStack) {
           this.logService.log(
             LogTopic.EVENT,
             'Aphrodite runs a hand across your shoulder and down your arm. "Ah, I see you\'ve brought some treats to share. We\'re going to need a few more of those."'
@@ -5846,7 +5859,7 @@ export class ActivityService {
           return;
         }
 
-        const dreadsteelStack = this.inventoryService.itemStacks
+        let dreadsteelStack = this.inventoryService.itemStacks
           .slice(this.inventoryService.heirloomSlots())
           .find(itemStack => itemStack.item?.id === 'dreadsteelBar');
         if (!dreadsteelStack) {
@@ -5856,12 +5869,15 @@ export class ActivityService {
           );
           return;
         }
-        if (dreadsteelStack.quantity < 10000) {
+        dreadsteelStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(itemStack => itemStack.item?.id === 'dreadsteelBar' && itemStack.quantity >= 10000);
+        if (!dreadsteelStack) {
           this.logService.log(LogTopic.EVENT, "You found some! Bring some more, we'll need to get this perfect.");
           return;
         }
 
-        const cokeStack = this.inventoryService.itemStacks
+        let cokeStack = this.inventoryService.itemStacks
           .slice(this.inventoryService.heirloomSlots())
           .find(itemStack => itemStack.item?.type === 'coke');
         if (!cokeStack) {
@@ -5871,12 +5887,15 @@ export class ActivityService {
           );
           return;
         }
-        if (cokeStack.quantity < 100000) {
+        cokeStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(itemStack => itemStack.item?.type === 'coke' && itemStack.quantity >= 100000);
+        if (!cokeStack) {
           this.logService.log(LogTopic.EVENT, "Oh, this is good. Burns hot and strong. We'll need more.");
           return;
         }
 
-        const gemStack = this.inventoryService.itemStacks
+        let gemStack = this.inventoryService.itemStacks
           .slice(this.inventoryService.heirloomSlots())
           .find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value > 2000);
         if (!gemStack) {
@@ -5886,7 +5905,13 @@ export class ActivityService {
           );
           return;
         }
-        if (gemStack.quantity < 100000) {
+        gemStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(
+            itemStack =>
+              itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value > 2000 && itemStack.quantity >= 100000
+          );
+        if (!gemStack) {
           this.logService.log(LogTopic.EVENT, "These gems will do, but we'll need more of them.");
           return;
         }

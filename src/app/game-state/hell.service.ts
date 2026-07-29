@@ -261,7 +261,7 @@ export class HellService {
     for (const activity of this.activityService.activities) {
       if (hell.activities.includes(activity)) {
         activity.discovered = true;
-        this.activityService.meetsRequirements(activity);
+        this.activityService.meetsRequirements(activity, true);
       } else if (hell.projectionActivities.includes(activity)) {
         activity.projectionOnly = true;
         activity.unlocked = true;
@@ -1459,7 +1459,7 @@ export class HellService {
         if (this.inventoryService.consume('iceCore') > 0) {
           this.logService.injury(
             LogTopic.EVENT,
-            'The ice cores you brought in with you make the oil sputter and pop, baking you in a cloud of superheated steam.'
+            'The ice cores you brought in with you make the oil sputter and pop, burning you in a cloud of superheated steam. Maybe with enough you could do some real damage.'
           );
           this.characterService.status.health.value -= 100000;
           return;
@@ -1489,7 +1489,7 @@ export class HellService {
       completeEffect: () => {
         this.logService.log(
           LogTopic.STORY,
-          'The pile of ice cores you brought in with you make the oil sputter and pop, but you are tough enough to withstand the superheated steam. Out of the cauldron now, you look around for the boss.'
+          'The large pile of ice cores you brought in with you is enough to overload and break the cauldron. Fortunately, you are tough enough to withstand the superheated steam. Out of the cauldron now, you look around for the boss.'
         );
       },
       activities: [

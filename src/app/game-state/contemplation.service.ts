@@ -191,7 +191,7 @@ export class ContemplationService {
     {
       name: CONCEPT_FORTIFICATION,
       description:
-        'Contemplate the enduring aspects of metal combined with earth.<br><br>Increases toughness and some lore gains.',
+        'Contemplate the enduring aspects of metal combined with earth.<br><br>Increases toughness and some lore gains, and decreases the time required to upgrade your home.',
       progress: 0,
       effect: 'earthLore,metalLore,toughness',
       discovered: false,
