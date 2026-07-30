@@ -1905,7 +1905,13 @@ export class BattleService {
       }
 
       if ((technique.qiCost || 0) > 0) {
-        damage *= 1 + this.characterService.qiCompressionLevel;
+        if (this.characterService.immortal()) {
+          damage *= 1 + Math.pow(this.characterService.qiCompressionLevel, 2);
+        } else if (this.characterService.god()) {
+          damage *= 1 + Math.pow(this.characterService.qiCompressionLevel, 3);
+        } else {
+          damage *= 1 + this.characterService.qiCompressionLevel;
+        }
       }
 
       if (technique.extraMultiplier) {
