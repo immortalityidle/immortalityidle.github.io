@@ -312,6 +312,7 @@ export class InventoryService {
   noArmor = false;
   armorAvatarBonus = false;
   craftInputRotations: { [key: string]: number } = {};
+  skipTicks = false;
 
   constructor(
     private injector: Injector,
@@ -370,14 +371,26 @@ export class InventoryService {
     }
 
     mainLoopService.breakfastSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       this.eatBreakfast();
     });
 
     mainLoopService.dinnerSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       this.eatDinner();
     });
 
     mainLoopService.inventoryTickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       this.tick();
     });
     mainLoopService.longTickSubject.subscribe(() => {

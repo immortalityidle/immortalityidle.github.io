@@ -177,6 +177,7 @@ export class ActivityService {
   hideLockedActivities = signal<boolean>(false);
   spiritActivityDisabled = signal<boolean>(false);
   forbiddenActivities: ActivityType[] = [];
+  skipTicks = false;
 
   constructor(
     private injector: Injector,
@@ -301,6 +302,9 @@ export class ActivityService {
     });
 
     mainLoopService.activityTickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
       if (this.activityLoop.length === 0 && !this.immediateActivity) {
         this.mainLoopService.togglePause(true);
         return;

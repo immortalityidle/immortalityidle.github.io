@@ -65,6 +65,7 @@ export class FarmService {
   displayAddFields = signal<boolean>(false);
   displayFieldsCount = signal<string>('');
   unlockedCrops = ['rice'];
+  skipTicks = false;
 
   constructor(
     private injector: Injector,
@@ -79,6 +80,10 @@ export class FarmService {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
 
     mainLoopService.homeTickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       this.tick();
     });
 

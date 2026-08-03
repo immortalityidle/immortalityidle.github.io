@@ -1227,6 +1227,7 @@ export class HomeService {
   highestLandPrice = 100;
   bestHome = 0;
   nectarUnlocked = false;
+  skipTicks = false;
 
   constructor(
     private injector: Injector,
@@ -1248,6 +1249,10 @@ export class HomeService {
     this.setCurrentHome(this.homesList[0]);
 
     mainLoopService.homeTickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       this.tick();
     });
 

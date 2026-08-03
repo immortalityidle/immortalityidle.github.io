@@ -890,6 +890,8 @@ export class FollowersService {
     },
   };
 
+  skipTicks = false;
+
   constructor(
     private injector: Injector,
     private logService: LogService,
@@ -931,6 +933,10 @@ export class FollowersService {
     });
 
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       if (!this.followersUnlocked) {
         return;
       }

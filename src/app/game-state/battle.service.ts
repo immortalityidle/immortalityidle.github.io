@@ -575,6 +575,7 @@ export class BattleService {
   displayLibraryTechniques: DisplayTechnique[] = [];
   voidSkipCounter = 0;
   voidSkipThreshold = Infinity;
+  skipTicks = false;
 
   constructor(
     private injector: Injector,
@@ -599,6 +600,10 @@ export class BattleService {
     this.godSlayerKills = 0;
 
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       this.ageFormation();
       this.yearlyMonsterDay++;
       this.extraMonsterCounter++;

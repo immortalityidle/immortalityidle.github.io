@@ -684,6 +684,7 @@ export class CharacterService {
   inSeclusion = signal<boolean>(false);
   daysInSeclusion = 0;
   daysInSeclusionDisplay = signal<number>(0);
+  skipTicks = false;
 
   constructor(
     private injector: Injector,
@@ -705,6 +706,10 @@ export class CharacterService {
     }
 
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       if (this.inSeclusion()) {
         this.daysInSeclusion++;
       }

@@ -591,6 +591,8 @@ export class ContemplationService {
     },
   ];
 
+  skipTicks = false;
+
   constructor(private injector: Injector, private mainLoopService: MainLoopService, private logService: LogService) {
     for (let i = 0; i < this.concepts.length; i++) {
       const concept = this.concepts[i];
@@ -605,6 +607,10 @@ export class ContemplationService {
       }
     }
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       this.tick();
     });
     mainLoopService.battleTickSubject.subscribe(() => {

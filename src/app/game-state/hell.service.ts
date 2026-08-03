@@ -90,6 +90,7 @@ export class HellService {
   displayStatus: DisplayHellStatusEntry[] = [];
   currentHellDisplayStatus: DisplayHellStatusEntry;
   portalsSet = false;
+  skipTicks = false;
 
   constructor(
     private injector: Injector,
@@ -106,6 +107,10 @@ export class HellService {
     setTimeout(() => (this.battleService = this.injector.get(BattleService)));
 
     mainLoopService.tickSubject.subscribe(() => {
+      if (this.skipTicks) {
+        return;
+      }
+
       if (!this.inHell() || !this.locationService) {
         // not currently in a hell, or location service isn't read, bail out
         return;
