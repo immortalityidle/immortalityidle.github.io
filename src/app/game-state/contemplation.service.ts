@@ -63,6 +63,7 @@ export const CONCEPT_VOID = 'Tao of the Void';
 export const CONCEPT_SPACE = 'Tao of Space';
 export const CONCEPT_BEASTS = 'Tao of Beasts';
 export const CONCEPT_BEAUTY = 'Tao of Beauty';
+export const CONCEPT_PHILOSOPHY = 'Tao of Philosophy';
 
 @Injectable({
   providedIn: 'root',
@@ -72,6 +73,7 @@ export class ContemplationService {
   displayConcepts: DisplayConcept[] = [];
   currentConcept: Concept | null = null;
   contemplationMultiplier = 1;
+  philosophyMultiplier = 1;
   techniqueConcepts = [
     CONCEPT_EFFECT_FERAL,
     CONCEPT_EFFECT_DEVASTATION,
@@ -620,6 +622,12 @@ export class ContemplationService {
       if (!this.contemplationStarted) {
         return;
       }
+      const philosphyConcept = this.getConcept(CONCEPT_PHILOSOPHY);
+      if (philosphyConcept && philosphyConcept.progress > 1) {
+        this.philosophyMultiplier = 1 + Math.log10(philosphyConcept.progress);
+      } else {
+        this.philosophyMultiplier = 1;
+      }
       this.concepts.forEach(concept => {
         concept.unlocksMore = false;
       });
@@ -675,7 +683,7 @@ export class ContemplationService {
       return;
     }
     if (this.currentConcept !== null) {
-      this.currentConcept.progress += tickCount * this.contemplationMultiplier;
+      this.currentConcept.progress += Math.floor(tickCount * this.contemplationMultiplier * this.philosophyMultiplier);
     }
   }
 

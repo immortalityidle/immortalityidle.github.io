@@ -66,6 +66,7 @@ export class FarmService {
   displayFieldsCount = signal<string>('');
   unlockedCrops = ['rice'];
   skipTicks = false;
+  conceptMultiplier = 1;
 
   constructor(
     private injector: Injector,
@@ -88,6 +89,14 @@ export class FarmService {
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
+      this.conceptMultiplier = 1;
+      const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
+        concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
+      );
+      for (const concept of foodIncreasingConcepts) {
+        this.conceptMultiplier += Math.log10(10 + concept.progress);
+      }
+
       let totalPlots = this.fallowPlots;
       for (const field of this.fields) {
         totalPlots += field.plots;
@@ -317,19 +326,12 @@ export class FarmService {
   ageFields() {
     let totalDailyYield = 0;
     let harvested = false;
-    let conceptMultiplier = 1;
-    const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
-      concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
-    );
-    for (const concept of foodIncreasingConcepts) {
-      conceptMultiplier += Math.log10(10 + concept.progress);
-    }
 
     for (const field of this.fields) {
       let fieldYield = 0;
       if (field.plots > 0) {
         if (field.daysToHarvest <= 0) {
-          fieldYield = field.yield * conceptMultiplier;
+          fieldYield = field.yield * this.conceptMultiplier;
           totalDailyYield += fieldYield;
           this.inventoryService.addItem(this.itemRepoService.items[field.cropId], fieldYield);
           harvested = true;

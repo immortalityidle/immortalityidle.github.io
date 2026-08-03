@@ -781,7 +781,7 @@ export class HomeService {
     },
     {
       id: WORKSTATION_DIVINE_ANVIL,
-      triggerActivities: [ActivityType.Blacksmithing],
+      triggerActivities: [ActivityType.Blacksmithing, ActivityType.ForgeDivineChains],
       power: 3,
       setupCost: 0,
       maintenanceCost: 100000,
@@ -790,7 +790,11 @@ export class HomeService {
       maxInputs: 4,
       inputs: [],
       consequence: (workstation: Workstation, activityType: ActivityType) => {
-        this.createEquipment(workstation, activityType);
+        if (activityType === ActivityType.ForgeDivineChains) {
+          this.forgeChains(workstation);
+        } else {
+          this.createEquipment(workstation, activityType);
+        }
       },
     },
 
@@ -2047,29 +2051,48 @@ export class HomeService {
   }
 
   forgeChains(workstation: Workstation) {
+    const divineChain = workstation.power >= 3;
     const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'metal');
 
-    if (this.characterService.attributes.metalLore.value < 1e9) {
+    let valueRequired = 1e9;
+    if (divineChain) {
+      valueRequired = 1e15;
+    }
+
+    if (this.characterService.attributes.metalLore.value < valueRequired) {
       this.logService.injury(LogTopic.EVENT, 'You lack the necessary knowledge and cause a deadly explosion.');
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.6;
-      if (this.activityService?.pauseOnImpossibleFail) {
+      if (this.activityService?.pauseOnImpossibleFail && !divineChain) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
         this.mainLoopService.togglePause(true);
       }
       return;
     }
 
-    if (!materialStack || materialStack.quantity < 10 || (materialStack.item?.value || 0) < 150) {
+    valueRequired = 5000;
+    if (divineChain) {
+      valueRequired = 800000;
+    }
+
+    if (!materialStack || materialStack.quantity < 10 || (materialStack.item?.value || 0) < valueRequired) {
       this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong tools and materials and hurt yourself.');
+      if (divineChain) {
+        this.logService.injury(LogTopic.EVENT, "You'll need something even stronger than dreadsteel for this.");
+      }
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
-      if (this.activityService?.pauseOnImpossibleFail) {
+      if (this.activityService?.pauseOnImpossibleFail && !divineChain) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
         this.mainLoopService.togglePause(true);
       }
       return;
     }
+
+    valueRequired = 200;
+    if (divineChain) {
+      valueRequired = 2000;
+    }
     const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
-    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < 200) {
+    if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < valueRequired) {
       this.logService.injury(
         LogTopic.EVENT,
         "You think you have the right metal, but you'll need something to imbue it with additional strength."
@@ -2090,7 +2113,11 @@ export class HomeService {
         LogTopic.CRAFTING,
         'Your anvil gives off an ear-splitting ring and echoes endlessly into the depths. The new chain glows with power!'
       );
-      this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
+      if (divineChain) {
+        this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
+      } else {
+        this.inventoryService.addItem(this.itemRepoService.items['divineChain']);
+      }
       this.forgeChainsCounter = 0;
     } else {
       this.logService.log(
@@ -2515,6 +2542,13 @@ export class HomeService {
           this.inventoryService.addItem(this.itemRepoService.items['nectar']);
           return;
         }
+      }
+      const dreadsteelStack = workstation.inputs.find(
+        itemStack => itemStack.item?.id === 'dreadsteelBar' && itemStack.quantity >= 100
+      );
+      if (dreadsteelStack) {
+        dreadsteelStack.quantity -= 100;
+        this.inventoryService.addItem(this.itemRepoService.items['refinedDreadsteelBar']);
       }
     } else {
       for (const itemStack of herbStacks) {

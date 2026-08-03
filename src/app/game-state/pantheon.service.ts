@@ -212,10 +212,12 @@ export class PantheonService {
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 5),
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 5),
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 5),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Rhythmic Beat', 'Philosopher Stoning', 'Solar Flare'],
+          techniqueCooldowns: [2, 20, 1000],
+          challengeMessage: signal<string>(
+            "Exchanging pointers in a duel?<br>An interesting concept.<br>I'd need time to prepare, of course.<br>Would you mind driving the sun across the sky for a few days while I get ready?"
+          ),
+          attributes: ['wisdom', 'wisdom', 'wisdom', 'justice', 'justice'],
           baseLootLevel: 25,
         },
         {

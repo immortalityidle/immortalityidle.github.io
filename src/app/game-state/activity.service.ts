@@ -30,6 +30,7 @@ import {
 } from './contemplation.service';
 import {
   GOD_APHRODITE,
+  GOD_APOLLO,
   GOD_ARTEMIS,
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
@@ -5943,6 +5944,112 @@ export class ActivityService {
     resourceUse: [{}],
     requirements: [{}],
     divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  PullTheSun: Activity = {
+    level: 0,
+    name: ['Pull the Sun Across the Sky'],
+    location: LocationType.AuditoriumOfLight,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'pullTheSun',
+    activityType: ActivityType.PullTheSun,
+    description: [
+      "This realm has the strangest laws of motion. Instead of the world moving in clean arcs around the sun, here the sun is pulled across the sky. Apollo uses a divine chariot. You'll have to use your own strength and wits. And chains. Definitely some chains.",
+    ],
+    yinYangEffect: [YinYangEffect.Yang],
+    consequenceDescription: [
+      'Pull the sun across the sky of the Philosopher States. Plotting the proper course seems to be as important as the strength and qi required to move the sun',
+    ],
+    consequence: [
+      () => {
+        const staminaCost = Math.min(this.characterService.staminaCap - 1, 25000000);
+        if (
+          this.characterService.status.stamina.max < staminaCost ||
+          this.characterService.status.stamina.value < staminaCost
+        ) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Apollo puts a hand all your shoulder and shakes his head. "Rest, strange foreign god. You need it. I\'ll pull today\'s sun."'
+          );
+          return;
+        }
+
+        let chainStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(itemStack => itemStack.item?.id === 'divineChain');
+        if (!chainStack) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You'll need something to pull the sun. A chain longer, stronger, and lighter than anything you've ever created before."
+          );
+          return;
+        }
+        chainStack = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .find(itemStack => itemStack.item?.id === 'divineChain' && itemStack.quantity >= 100);
+        if (!chainStack) {
+          this.logService.log(LogTopic.EVENT, "You'll need a few more chains.");
+          return;
+        }
+
+        chainStack.quantity -= 100;
+        this.characterService.increaseAttribute('strength', 10);
+        this.characterService.increaseAttribute('intelligence', 10);
+
+        this.pantheonService.increaseGodProgress(GOD_APOLLO, 1);
+        this.logService.log(LogTopic.EVENT, 'Apollo nods in your direction. He seems pleased with your work today.');
+
+        if (this.characterService.staminaCap < 1e10) {
+          this.characterService.staminaCap += 10;
+        }
+        this.characterService.status.stamina.value -= staminaCost;
+        this.characterService.yang += 10000;
+      },
+    ],
+    resourceUse: [
+      {
+        qi: 1e8,
+      },
+    ],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  ForgeDivineChains: Activity = {
+    level: 0,
+    location: LocationType.TheMightyForge,
+    name: ['Forge Divine Chains'],
+    imageBaseName: 'forgechains',
+    activityType: ActivityType.ForgeDivineChains,
+    description: ['Forge chains strong enough for divine purposes.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [
+      'If you have the right facilities, materials, and knowledge you might be able to create a divine chain.',
+    ],
+    consequence: [
+      () => {
+        this.characterService.status.stamina.value -= 20000000;
+        const workstation = this.homeService.workstations.find(ws =>
+          ws.triggerActivities.includes(ActivityType.ForgeDivineChains)
+        );
+        if (workstation === undefined) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You think about forging divine chains, but you don't have the right workstation to even get started, and Hephaestus is busy using his."
+          );
+        }
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 20000000,
+      },
+    ],
+    requirements: [{}],
     unlocked: true,
     skipApprenticeshipLevel: 0,
   };

@@ -24,10 +24,11 @@ import { LocationService, LocationType } from './location.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
-import { CONCEPT_BEAUTY, ContemplationService } from './contemplation.service';
+import { CONCEPT_BEAUTY, CONCEPT_PHILOSOPHY, ContemplationService } from './contemplation.service';
 import { ActivityType } from './activity';
 import {
   GOD_APHRODITE,
+  GOD_APOLLO,
   GOD_ARTEMIS,
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
@@ -2108,6 +2109,18 @@ export class AchievementService {
       },
       effect: () => {
         this.homeService.unlockWorkstation(WORKSTATION_DIVINE_ANVIL);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Philosophy',
+      description: 'Apollo has taught you a whole new way of thinking about the nature of reality.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_APOLLO)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.contemplationService.discoverConcept(CONCEPT_PHILOSOPHY);
       },
       unlocked: false,
     },
