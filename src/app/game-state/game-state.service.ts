@@ -735,6 +735,8 @@ export class GameStateService {
       fallowPlots: props?.fallowPlots || 0,
       unlockedCrops: props?.unlockedCrops || ['rice'],
       consecutiveHarvests: props?.consecutiveHarvests || 0,
+      secludedDays: props?.secludedDays || 0,
+      fieldWork: props?.fieldWork || 0,
     };
   }
 

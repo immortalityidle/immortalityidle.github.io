@@ -41,6 +41,8 @@ export interface FarmProperties {
   fallowPlots: number;
   unlockedCrops: string[];
   consecutiveHarvests: number;
+  secludedDays: number;
+  fieldWork: number;
 }
 
 // TODO: add growing herbs
@@ -67,6 +69,8 @@ export class FarmService {
   unlockedCrops = ['rice'];
   skipTicks = false;
   conceptMultiplier = 1;
+  secludedDays = 0;
+  fieldWork = 0;
 
   constructor(
     private injector: Injector,
@@ -109,6 +113,11 @@ export class FarmService {
       let maxFields = 0;
       if (this.homeService.home) {
         maxFields = this.homeService.home.maxFields;
+      }
+
+      if (this.secludedDays > 0) {
+        this.ageFields(this.secludedDays);
+        this.secludedDays = 0;
       }
 
       this.displayAddFields.set(this.fields.length < maxFields);
@@ -155,6 +164,9 @@ export class FarmService {
     if (this.characterService.dead) {
       return;
     }
+    if (this.characterService.inSeclusion()) {
+      this.secludedDays++;
+    }
     if (!this.hellService?.inHell() || this.hellFood) {
       let upkeepCosts = 0;
       for (const field of this.fields) {
@@ -178,6 +190,8 @@ export class FarmService {
       fallowPlots: this.fallowPlots,
       unlockedCrops: this.unlockedCrops,
       consecutiveHarvests: this.consecutiveHarvests,
+      secludedDays: this.secludedDays,
+      fieldWork: this.fieldWork,
     };
   }
 
@@ -188,6 +202,8 @@ export class FarmService {
     this.hellFood = properties.hellFood || false;
     this.fallowPlots = properties.fallowPlots;
     this.unlockedCrops = properties.unlockedCrops;
+    this.secludedDays = properties.secludedDays;
+    this.fieldWork = properties.fieldWork;
 
     this.consecutiveHarvests = properties.consecutiveHarvests;
     this.farmedPlots = 0;
@@ -291,12 +307,7 @@ export class FarmService {
   }
 
   workFields(workValue: number) {
-    for (const field of this.fields) {
-      field.yield += workValue * field.plots;
-      if (field.yield > field.maxPlotYield * field.plots) {
-        field.yield = field.maxPlotYield * field.plots;
-      }
-    }
+    this.fieldWork += workValue;
   }
 
   assignFallowPlots(fieldIndex: number, quantity: number = 1) {
@@ -323,33 +334,52 @@ export class FarmService {
     this.updateFieldUpkeep(fieldIndex);
   }
 
-  ageFields() {
-    let totalDailyYield = 0;
+  ageFields(days = 1) {
+    let totalYield = 0;
     let harvested = false;
 
     for (const field of this.fields) {
+      const workValue = this.fieldWork;
       let fieldYield = 0;
       if (field.plots > 0) {
-        if (field.daysToHarvest <= 0) {
-          fieldYield = field.yield * this.conceptMultiplier;
-          totalDailyYield += fieldYield;
+        const fieldDays = days + (field.originalDaysToHarvest - field.daysToHarvest);
+        const harvests = Math.floor(fieldDays / field.originalDaysToHarvest);
+        const remainder = fieldDays % field.originalDaysToHarvest;
+        field.daysToHarvest = field.originalDaysToHarvest - remainder;
+        if (harvests > 0) {
+          fieldYield = field.yield + workValue * field.plots;
+          if (fieldYield > field.maxPlotYield * field.plots * harvests) {
+            fieldYield = field.maxPlotYield * field.plots * harvests;
+            // carry over leftover work to the next harvest
+            field.yield = Math.min(
+              fieldYield - field.maxPlotYield * field.plots * harvests,
+              field.maxPlotYield * field.plots
+            );
+          } else {
+            field.yield = 0;
+          }
+          totalYield += fieldYield;
           this.inventoryService.addItem(this.itemRepoService.items[field.cropId], fieldYield);
           harvested = true;
-          field.daysToHarvest = field.originalDaysToHarvest;
-          field.yield = 0;
         } else {
           field.daysToHarvest--;
+          field.yield += workValue * field.plots;
+          if (field.yield > field.maxPlotYield * field.plots) {
+            field.yield = field.maxPlotYield * field.plots;
+          }
         }
       }
-      field.averageYield = (field.averageYield * 364 + fieldYield) / 365;
-      if (this.smoothFarming && !harvested && field.plots > 0 && field.averageYield > 0.25) {
-        // smooth farming bonus crops on a day when no crops are harvested
-        const smoothFarmingYield = Math.floor(field.averageYield) || 1;
-        totalDailyYield += smoothFarmingYield;
-        this.inventoryService.addItem(this.itemRepoService.items[field.cropId], smoothFarmingYield);
+      if (days === 1) {
+        field.averageYield = (field.averageYield * 364 + fieldYield) / 365;
+        if (this.smoothFarming && !harvested && field.plots > 0 && field.averageYield > 0.25) {
+          // smooth farming bonus crops on a day when no crops are harvested
+          const smoothFarmingYield = Math.floor(field.averageYield) || 1;
+          totalYield += smoothFarmingYield;
+          this.inventoryService.addItem(this.itemRepoService.items[field.cropId], smoothFarmingYield);
+        }
       }
     }
-    if (totalDailyYield > 0) {
+    if (totalYield > 0 && days === 1) {
       this.consecutiveHarvests++;
       if (this.consecutiveHarvests >= 30) {
         this.smoothFarming = true;
