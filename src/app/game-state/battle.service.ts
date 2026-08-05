@@ -35,7 +35,7 @@ import {
   CONCEPT_VOID,
   ContemplationService,
 } from './contemplation.service';
-import { PantheonService } from './pantheon.service';
+import { GOD_DEMETER, PantheonService } from './pantheon.service';
 
 export interface Enemy {
   name: string;
@@ -2646,6 +2646,46 @@ export class BattleService {
     this.currentEnemy = this.enemies[this.enemies.length - 1];
   }
 
+  addHadesMinion() {
+    const powerFactor =
+      Math.pow(this.pantheonService.greekScaling, 4) * this.pantheonService.getGod(GOD_DEMETER)!.unlockProgress();
+    this.addEnemy({
+      name: 'Underworld Shade',
+      baseName: 'shade',
+      health: this.pantheonService.greekBaseHealth * powerFactor,
+      maxHealth: this.pantheonService.greekBaseHealth * powerFactor,
+      defense: 0,
+      loot: [],
+      unique: true,
+      techniques: [
+        {
+          name: "You'll Never Find Her",
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: this.pantheonService.greekBaseDamage * powerFactor,
+          unlocked: true,
+        },
+        {
+          name: 'Stop Looking',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: this.pantheonService.greekBaseDamage * powerFactor * 3,
+          unlocked: true,
+        },
+        {
+          name: 'Leave Them Alone',
+          ticks: 0,
+          ticksRequired: 30,
+          baseDamage: this.pantheonService.greekBaseDamage * powerFactor * 10,
+          unlocked: true,
+        },
+      ],
+      location: LocationType.HarvestHome,
+      defeatEffect: 'advanceDemeter',
+    });
+    this.currentEnemy = this.enemies[this.enemies.length - 1];
+  }
+
   private defeatEffect(enemy: Enemy) {
     if (enemy.divine) {
       this.pantheonService.defeatGod(enemy.baseName);
@@ -2704,6 +2744,8 @@ export class BattleService {
       }
     } else if (enemy.defeatEffect === 'unlockNectar') {
       this.homeService.nectarUnlocked = true;
+    } else if (enemy.defeatEffect === 'advanceDemeter') {
+      this.pantheonService.increaseGodProgress(GOD_DEMETER, 1);
     }
   }
 

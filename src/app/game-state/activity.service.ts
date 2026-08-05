@@ -202,6 +202,9 @@ export class ActivityService {
       this.MoonlightTracking,
       this.SpaDay,
       this.CraftWithHephaestus,
+      this.PullTheSun,
+      this.ForgeDivineChains,
+      this.SearchForPersephone,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -5623,7 +5626,7 @@ export class ActivityService {
 
   DeliverMessages: Activity = {
     level: 0,
-    name: ['Deliver Messages'],
+    name: ['Delivering Messages'],
     location: LocationType.MessageDepot,
     realm: Realm.PhilosopherStates,
     imageBaseName: 'deliverMessages',
@@ -5673,7 +5676,7 @@ export class ActivityService {
 
   ProvideWine: Activity = {
     level: 0,
-    name: ['Provide Wine'],
+    name: ['Providing Wine'],
     location: LocationType.VerdantVineyard,
     realm: Realm.PhilosopherStates,
     imageBaseName: 'provideWine',
@@ -5840,7 +5843,7 @@ export class ActivityService {
 
   CraftWithHephaestus: Activity = {
     level: 0,
-    name: ['Craft With Hephaestus'],
+    name: ['Crafting With Hephaestus'],
     location: LocationType.TheMightyForge,
     realm: Realm.PhilosopherStates,
     imageBaseName: 'craftWithHephaestus',
@@ -5950,7 +5953,7 @@ export class ActivityService {
 
   PullTheSun: Activity = {
     level: 0,
-    name: ['Pull the Sun Across the Sky'],
+    name: ['Pulling the Sun Across the Sky'],
     location: LocationType.AuditoriumOfLight,
     realm: Realm.PhilosopherStates,
     imageBaseName: 'pullTheSun',
@@ -6022,7 +6025,7 @@ export class ActivityService {
   ForgeDivineChains: Activity = {
     level: 0,
     location: LocationType.TheMightyForge,
-    name: ['Forge Divine Chains'],
+    name: ['Forging Divine Chains'],
     imageBaseName: 'forgechains',
     activityType: ActivityType.ForgeDivineChains,
     description: ['Forge chains strong enough for divine purposes.'],
@@ -6050,6 +6053,29 @@ export class ActivityService {
       },
     ],
     requirements: [{}],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  SearchForPersephone: Activity = {
+    level: 0,
+    name: ['Searching For Persephone'],
+    location: LocationType.HarvestHome,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'searchForPersephone',
+    activityType: ActivityType.SearchForPersephone,
+    description: ['Demeter points you to where she last saw her daughter. You can discern faint signs of her passing.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Follow the signs to search for Persephone.'],
+    consequence: [
+      () => {
+        this.logService.log(LogTopic.EVENT, 'You are ambushed by a strange shadowy creature.');
+        this.battleService.addHadesMinion();
+      },
+    ],
+    resourceUse: [{}],
+    requirements: [{}],
+    divinityRequired: [true],
     unlocked: true,
     skipApprenticeshipLevel: 0,
   };

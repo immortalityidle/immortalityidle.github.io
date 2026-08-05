@@ -234,10 +234,12 @@ export class PantheonService {
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 6),
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 6),
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 6),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Threshing', 'Barley Barrage', 'Harvest Season'],
+          techniqueCooldowns: [4, 12, 24],
+          challengeMessage: signal<string>(
+            "I don't have time to duel with strange barbarians. I need to find my daughter, Persephone."
+          ),
+          attributes: ['justice', 'justice', 'wisdom', 'mercy', 'mercy'],
           baseLootLevel: 30,
         },
         {

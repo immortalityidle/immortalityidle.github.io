@@ -107,6 +107,7 @@ export enum ActivityType {
   CraftWithHephaestus,
   PullTheSun,
   ForgeDivineChains,
+  SearchForPersephone,
   AvatarPortal,
   ReturnToGodhoodPortal,
   Hell, // hell needs to be last for indexing purposes
