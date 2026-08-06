@@ -161,6 +161,9 @@ export interface Technique {
   refinementFocus?: boolean;
   energyUsage?: number;
   lifesteal?: number;
+  berzerk?: number;
+  criticalChance?: number;
+  criticalDamage?: number;
 }
 
 export interface DisplayTechnique {
@@ -187,6 +190,9 @@ export interface DisplayTechnique {
   weaponDamage: WritableSignal<number>;
   energyUsage: WritableSignal<number>;
   lifesteal: WritableSignal<number>;
+  berzerk: WritableSignal<number>;
+  criticalChance: WritableSignal<number>;
+  criticalDamage: WritableSignal<number>;
   refinementFocus: WritableSignal<boolean>;
   elementIcon: WritableSignal<string>;
 }
@@ -254,6 +260,9 @@ export const TECHNIQUE_REFINEMENT_ENERGY_USAGE = 'incorporate raw energy into th
 export const TECHNIQUE_REFINEMENT_DIVINITY = 'increase damage to divine beings';
 export const TECHNIQUE_REFINEMENT_QI_USAGE = 'increase technique qi usage and damage';
 export const TECHNIQUE_REFINEMENT_LIFESTEAL = 'Allow technique to steal the vital essence of your enemy';
+export const TECHNIQUE_REFINEMENT_BERZERK = 'do more damage as your health decreases';
+export const TECHNIQUE_REFINEMENT_CRITICAL_CHANCE = 'chance to get a critical hit that does increased damage';
+export const TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE = 'damage increase when striking a critical hit';
 
 export const ELEMENT_FIRE = 'fire';
 export const ELEMENT_WATER = 'water';
@@ -324,6 +333,9 @@ export class BattleService {
   maximumTechniqueWeaponDamage = 1;
   maximumTechniqueDivineDamage = 1;
   maximumTechniqueLifesteal = 5;
+  maximumTechniqueBerzerk = 10;
+  maximumTechniqueCriticalChance = 10;
+  maximumTechniqueCriticalDamage = 10;
   maximumTechniqueEnergyUsage = 100000;
   maximumTechniqueQiUsage = 1000;
   pauseOnBattle = false;
@@ -755,6 +767,9 @@ export class BattleService {
               refinementFocus: signal<boolean>(false),
               energyUsage: signal<number>(technique.energyUsage || 0),
               lifesteal: signal<number>(technique.lifesteal || 0),
+              berzerk: signal<number>(technique.berzerk || 0),
+              criticalChance: signal<number>(technique.criticalChance || 0),
+              criticalDamage: signal<number>(technique.criticalDamage || 0),
               elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
@@ -773,6 +788,9 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].weaponDamage.set(technique.weaponDamage || 0);
             this.displayEnemies[i].techniques[j].energyUsage.set(technique.energyUsage || 0);
             this.displayEnemies[i].techniques[j].lifesteal.set(technique.lifesteal || 0);
+            this.displayEnemies[i].techniques[j].berzerk.set(technique.berzerk || 0);
+            this.displayEnemies[i].techniques[j].criticalChance.set(technique.criticalChance || 0);
+            this.displayEnemies[i].techniques[j].criticalDamage.set(technique.criticalDamage || 0);
             this.displayEnemies[i].techniques[j].refinementFocus.set(false);
             this.displayEnemies[i].techniques[j].elementIcon.set(this.getElementIcon(technique.effect));
           }
@@ -846,6 +864,9 @@ export class BattleService {
             refinementFocus: signal<boolean>(technique.refinementFocus || false),
             energyUsage: signal<number>(technique.energyUsage || 0),
             lifesteal: signal<number>(technique.lifesteal || 0),
+            berzerk: signal<number>(technique.berzerk || 0),
+            criticalChance: signal<number>(technique.criticalChance || 0),
+            criticalDamage: signal<number>(technique.criticalDamage || 0),
             elementIcon: signal<string>(this.getElementIcon(technique.effect)),
           });
         } else {
@@ -875,6 +896,9 @@ export class BattleService {
           this.displayTechniques[i].refinementFocus.set(technique.refinementFocus || false);
           this.displayTechniques[i].energyUsage.set(technique.energyUsage || 0);
           this.displayTechniques[i].lifesteal.set(technique.lifesteal || 0);
+          this.displayTechniques[i].berzerk.set(technique.berzerk || 0);
+          this.displayTechniques[i].criticalChance.set(technique.criticalChance || 0);
+          this.displayTechniques[i].criticalDamage.set(technique.criticalDamage || 0);
           this.displayTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
         }
       }
@@ -964,6 +988,9 @@ export class BattleService {
               refinementFocus: signal<boolean>(false),
               energyUsage: signal<number>(technique.energyUsage || 0),
               lifesteal: signal<number>(technique.lifesteal || 0),
+              berzerk: signal<number>(technique.berzerk || 0),
+              criticalChance: signal<number>(technique.criticalChance || 0),
+              criticalDamage: signal<number>(technique.criticalDamage || 0),
               elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
@@ -992,6 +1019,9 @@ export class BattleService {
             this.displayLibraryTechniques[i].weaponDamage.set(technique.weaponDamage || 0);
             this.displayLibraryTechniques[i].energyUsage.set(technique.energyUsage || 0);
             this.displayLibraryTechniques[i].lifesteal.set(technique.lifesteal || 0);
+            this.displayLibraryTechniques[i].berzerk.set(technique.berzerk || 0);
+            this.displayLibraryTechniques[i].criticalChance.set(technique.criticalChance || 0);
+            this.displayLibraryTechniques[i].criticalDamage.set(technique.criticalDamage || 0);
             this.displayLibraryTechniques[i].refinementFocus.set(false);
             this.displayLibraryTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
           }
@@ -1523,6 +1553,26 @@ export class BattleService {
       technique.lifesteal = (1 - alpha) * (technique.lifesteal || 0) + alpha * this.maximumTechniqueLifesteal;
       if (technique.lifesteal > this.maximumTechniqueLifesteal - 0.000000003) {
         technique.lifesteal = this.maximumTechniqueLifesteal;
+      }
+    } else if (aspect === TECHNIQUE_REFINEMENT_BERZERK) {
+      const alpha = value * 1e-11;
+      technique.berzerk = (1 - alpha) * (technique.berzerk || 0) + alpha * this.maximumTechniqueBerzerk;
+      if (technique.berzerk > this.maximumTechniqueBerzerk - 0.000000003) {
+        technique.berzerk = this.maximumTechniqueBerzerk;
+      }
+    } else if (aspect === TECHNIQUE_REFINEMENT_CRITICAL_CHANCE) {
+      const alpha = value * 1e-11;
+      technique.criticalChance =
+        (1 - alpha) * (technique.criticalChance || 0) + alpha * this.maximumTechniqueCriticalChance;
+      if (technique.criticalChance > this.maximumTechniqueCriticalChance - 0.000000003) {
+        technique.criticalChance = this.maximumTechniqueCriticalChance;
+      }
+    } else if (aspect === TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE) {
+      const alpha = value * 1e-11;
+      technique.criticalDamage =
+        (1 - alpha) * (technique.criticalDamage || 0) + alpha * this.maximumTechniqueCriticalDamage;
+      if (technique.criticalDamage > this.maximumTechniqueCriticalDamage - 0.000000003) {
+        technique.criticalDamage = this.maximumTechniqueCriticalDamage;
       }
     }
   }
@@ -2172,6 +2222,18 @@ export class BattleService {
       if (this.currentEnemy.divine) {
         damage *= technique.divineDamage || 0;
       }
+      if (technique.berzerk) {
+        damage *=
+          (1 - this.characterService.status.health.value / this.characterService.status.health.max) * // how damaged you are
+          (1 + technique.berzerk); // the berzerk factor of the technique
+      }
+      if (technique.criticalChance) {
+        if (Math.random() > technique.criticalChance / 100) {
+          this.logService.log(LogTopic.COMBAT, 'Critical hit!');
+          damage *= 2 + (technique.criticalDamage || 0);
+        }
+      }
+
       if (damage > this.highestDamageDealt) {
         this.highestDamageDealt = damage;
       }

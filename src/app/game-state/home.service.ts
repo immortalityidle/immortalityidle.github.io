@@ -17,7 +17,10 @@ import {
   ELEMENT_WOOD,
   ENERGY_SPIRIT,
   LOOT_TYPE_GEM,
+  TECHNIQUE_REFINEMENT_BERZERK,
   TECHNIQUE_REFINEMENT_COOLDOWN,
+  TECHNIQUE_REFINEMENT_CRITICAL_CHANCE,
+  TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE,
   TECHNIQUE_REFINEMENT_DIVINITY,
   TECHNIQUE_REFINEMENT_ENERGY_USAGE,
   TECHNIQUE_REFINEMENT_LIFESTEAL,
@@ -152,6 +155,7 @@ export interface HomeProperties {
   nectarUnlocked: boolean;
   qiAttackRefinementUnlocked: boolean;
   lifestealRefinementUnlocked: boolean;
+  berzerkRefinementUnlocked: boolean;
   infusableSlots: EquipmentPosition[];
   godHomesUnlocked: boolean;
 }
@@ -200,6 +204,7 @@ export class HomeService {
   merchantAutobuyItem: string | null = null;
   qiAttackRefinementUnlocked = false;
   lifestealRefinementUnlocked = false;
+  berzerkRefinementUnlocked = false;
   infusableSlots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
   godHomesUnlocked = false;
 
@@ -1459,6 +1464,7 @@ export class HomeService {
       nectarUnlocked: this.nectarUnlocked,
       qiAttackRefinementUnlocked: this.qiAttackRefinementUnlocked,
       lifestealRefinementUnlocked: this.lifestealRefinementUnlocked,
+      berzerkRefinementUnlocked: this.berzerkRefinementUnlocked,
       infusableSlots: this.infusableSlots,
       godHomesUnlocked: this.godHomesUnlocked,
     };
@@ -1503,6 +1509,7 @@ export class HomeService {
     this.nectarUnlocked = properties.nectarUnlocked;
     this.qiAttackRefinementUnlocked = properties.qiAttackRefinementUnlocked;
     this.lifestealRefinementUnlocked = properties.lifestealRefinementUnlocked;
+    this.berzerkRefinementUnlocked = properties.berzerkRefinementUnlocked;
     this.infusableSlots = properties.infusableSlots;
     this.godHomesUnlocked = properties.godHomesUnlocked;
 
@@ -2772,6 +2779,11 @@ export class HomeService {
     }
     if (this.lifestealRefinementUnlocked) {
       aspects.push(TECHNIQUE_REFINEMENT_LIFESTEAL);
+    }
+    if (this.berzerkRefinementUnlocked) {
+      aspects.push(TECHNIQUE_REFINEMENT_BERZERK);
+      aspects.push(TECHNIQUE_REFINEMENT_CRITICAL_CHANCE);
+      aspects.push(TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE);
     }
 
     let index = aspects.indexOf(workstation.techniqueRefinementAspect || TECHNIQUE_REFINEMENT_POWER);

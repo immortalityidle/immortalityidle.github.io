@@ -47,6 +47,15 @@
           @if (displayTechnique.lifesteal() > 0){
             <div>Lifesteal: {{displayTechnique.lifesteal() | bigNumber}}</div>
           }
+          @if (displayTechnique.berzerk() > 0){
+            <div tooltip="Berzerk multiplier increases your damage when your health is low.">Berzerk Multiplier: {{displayTechnique.berzerk() | bigNumber}}</div>
+          }
+          @if (displayTechnique.criticalChance() > 0){
+            <div tooltip="Chance to strike a critical hit that does extra damage.">Critical Chance: {{displayTechnique.criticalChance() | bigNumber}}%</div>
+          }
+          @if (displayTechnique.criticalDamage() > 0){
+            <div tooltip="Increase the critical hit damage multiplier.">Critical Damage: {{displayTechnique.criticalDamage() | bigNumber}}</div>
+          }
           @if (displayTechnique.effect() !== ''){
             <div>{{effectDescriptions[displayTechnique.effect()]}}</div>
           }

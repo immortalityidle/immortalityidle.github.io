@@ -721,6 +721,7 @@ export class GameStateService {
       nectarUnlocked: props?.nectarUnlocked || false,
       qiAttackRefinementUnlocked: props?.qiAttackRefinementUnlocked || false,
       lifestealRefinementUnlocked: props?.lifestealRefinementUnlocked || false,
+      berzerkRefinementUnlocked: props?.berzerkRefinementUnlocked || false,
       infusableSlots: props?.infusableSlots || ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'],
       godHomesUnlocked: props?.godHomesUnlocked || false,
     };
@@ -1534,6 +1535,21 @@ export class GameStateService {
           newGameState.battles.uneradicableMonsterTypes.push('rat');
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
+        } else if (avatarType === AVATAR_ALL_NATURAL) {
+          newGameState.inventory.noArmor = true;
+          newGameState.followers.forbiddenSlots.push('leftHand');
+          newGameState.followers.forbiddenSlots.push('rightHand');
+          newGameState.activities.forbiddenActivities.push(ActivityType.Blacksmithing);
+          newGameState.activities.forbiddenActivities.push(ActivityType.Woodworking);
+          newGameState.activities.forbiddenActivities.push(ActivityType.Leatherworking);
+          newGameState.activities.forbiddenActivities.push(ActivityType.Alchemy);
+          newGameState.activities.forbiddenActivities.push(ActivityType.Cooking);
+          newGameState.activities.forbiddenActivities.push(ActivityType.FormationCreation);
+          newGameState.activities.forbiddenActivities.push(ActivityType.Merchant);
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
+          newGameState.home.berzerkRefinementUnlocked = true;
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1593,6 +1609,8 @@ export class GameStateService {
       this.inventoryService.armorAvatarBonus = true;
     } else if (avatarChallenge === AVATAR_WANDERER) {
       this.homeService.godHomesUnlocked = true;
+    } else if (avatarChallenge === AVATAR_ALL_NATURAL) {
+      this.homeService.berzerkRefinementUnlocked = true;
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1669,7 +1687,11 @@ export class GameStateService {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Wield a powerful metal weapon.');
       this.avatarChallengeProgress.set(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0);
       this.avatarChallengeProgressRequired.set(8e11);
-    } else if (this.avatarChallenge === AVATAR_SWORD_SAINT || this.avatarChallenge === AVATAR_WANDERER) {
+    } else if (
+      this.avatarChallenge === AVATAR_SWORD_SAINT ||
+      this.avatarChallenge === AVATAR_WANDERER ||
+      this.avatarChallenge === AVATAR_ALL_NATURAL
+    ) {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Defeat Death Itself.');
       this.avatarChallengeProgress.set(this.battleService.killsByMonster['death'] || 0);
       this.avatarChallengeProgressRequired.set(1);
