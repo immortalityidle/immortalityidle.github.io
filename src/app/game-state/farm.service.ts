@@ -166,6 +166,7 @@ export class FarmService {
     }
     if (this.characterService.inSeclusion()) {
       this.secludedDays++;
+      return;
     }
     if (!this.hellService?.inHell() || this.hellFood) {
       let upkeepCosts = 0;
@@ -358,6 +359,7 @@ export class FarmService {
           } else {
             field.yield = 0;
           }
+          fieldYield *= this.conceptMultiplier;
           totalYield += fieldYield;
           this.inventoryService.addItem(this.itemRepoService.items[field.cropId], fieldYield);
           harvested = true;
