@@ -2102,17 +2102,13 @@ export class AchievementService {
     },
     {
       name: 'Master of the Forge',
-      description:
-        'Hepheastus has taught you how to create an even better forge. He also inspired you to organize your crafting workstations better to hold more input items in each slot.',
+      description: 'Hepheastus has taught you how to create an even better forge.',
       hint: 'Foreign gods might teach you a thing or two.',
       check: () => {
         return this.pantheonService.getGod(GOD_HEPHAESTUS)!.timesDefeated() > 0;
       },
       effect: () => {
         this.homeService.unlockWorkstation(WORKSTATION_DIVINE_ANVIL);
-        if (this.homeService.inputQuantityBonus < 10) {
-          this.homeService.inputQuantityBonus = 10;
-        }
       },
       unlocked: false,
     },

@@ -54,15 +54,15 @@
                       (dblclick)="inputDoubleClicked(workstation, $index)"
                       tooltip="{{(itemStack?.item) ? (itemStack?.item?.name | titlecase) + '.<br>' + (itemStack?.item?.description) : ''}}">
                       <div class="itemName textOverflow">
-                        @if (itemStack.item?.imageFile){
+                        @if (itemStack?.item?.imageFile){
                           <img ngSrc="assets/images/items/{{itemStack?.item?.imageFile}}.png" class="itemImage" priority
                             width="48" height="48"  alt="{{itemStack?.item?.name | titlecase}}"/>
                         }
                         @else {
-                          {{itemStack.item?.name | titlecase}}
+                          {{itemStack?.item?.name | titlecase}}
                         }
                       </div>
-                      <div class="itemQuantity">x{{itemStack.quantity | bigNumber}}</div>
+                      <div class="itemQuantity">x{{itemStack?.quantity}}</div>
                     </div>
                   </div>
                 </div>
