@@ -724,6 +724,7 @@ export class GameStateService {
       berzerkRefinementUnlocked: props?.berzerkRefinementUnlocked || false,
       infusableSlots: props?.infusableSlots || ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'],
       godHomesUnlocked: props?.godHomesUnlocked || false,
+      inputQuantityBonus: props?.inputQuantityBonus || 1,
     };
   }
 

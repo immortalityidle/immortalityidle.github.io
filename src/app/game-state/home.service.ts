@@ -158,6 +158,7 @@ export interface HomeProperties {
   berzerkRefinementUnlocked: boolean;
   infusableSlots: EquipmentPosition[];
   godHomesUnlocked: boolean;
+  inputQuantityBonus: number;
 }
 
 export const WORKSTATION_TRAINING_CHAMBER = 'Training Chamber';
@@ -207,6 +208,7 @@ export class HomeService {
   berzerkRefinementUnlocked = false;
   infusableSlots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
   godHomesUnlocked = false;
+  inputQuantityBonus = 1;
 
   wandererPackWorkstation: Workstation = {
     id: WORKSTATION_WANDERER_PACK,
@@ -1467,6 +1469,7 @@ export class HomeService {
       berzerkRefinementUnlocked: this.berzerkRefinementUnlocked,
       infusableSlots: this.infusableSlots,
       godHomesUnlocked: this.godHomesUnlocked,
+      inputQuantityBonus: this.inputQuantityBonus,
     };
   }
 
@@ -1512,6 +1515,7 @@ export class HomeService {
     this.berzerkRefinementUnlocked = properties.berzerkRefinementUnlocked;
     this.infusableSlots = properties.infusableSlots;
     this.godHomesUnlocked = properties.godHomesUnlocked;
+    this.inputQuantityBonus = properties.inputQuantityBonus;
 
     this.workstations = [];
     for (const workstation of properties.workstations) {
@@ -1842,6 +1846,7 @@ export class HomeService {
       return;
     }
 
+    const maxInputStackSize = this.inventoryService.maxStackSize * this.inputQuantityBonus;
     if (this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item) {
       if (
         this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].item?.name ===
@@ -1849,8 +1854,7 @@ export class HomeService {
       ) {
         // same item type, dump the quantity into the workstation
         const maxAdditionalQuantity =
-          this.inventoryService.maxStackSize -
-          this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
+          maxInputStackSize - this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity;
         if (this.inventoryService.itemStacks[itemIndex].quantity < maxAdditionalQuantity) {
           this.workstations[destinationWorkstationIndex].inputs[destinationInputIndex].quantity +=
             this.inventoryService.itemStacks[itemIndex].quantity;
