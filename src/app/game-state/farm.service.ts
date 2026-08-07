@@ -358,6 +358,7 @@ export class FarmService {
           } else {
             field.yield = 0;
           }
+          fieldYield *= this.conceptMultiplier;
           totalYield += fieldYield;
           this.inventoryService.addItem(this.itemRepoService.items[field.cropId], fieldYield);
           harvested = true;
