@@ -60,7 +60,7 @@
       }
       @if (characterService.god() && !characterService.inSeclusion()) {
         <span class="topText">
-          <button tooltip="Enter a state of seclusion, avoiding all distractions from the external world.<br>Time will flow at an accelerated rate and you will continue with your established schedule, but you will not engage in any battles.<br>You will not be able to see or interact with most game functions until you leave seclusion." 
+          <button tooltip="Enter a state of seclusion, avoiding all distractions from the external world.<br>Time will flow at an accelerated rate and you will continue with your established schedule, but you will not engage in any battles.<br>You will not be able to see or interact with most game functions until you leave seclusion."
             (click)="characterService.startSeclusion()">
             Enter Seclusion
           </button>
@@ -88,7 +88,7 @@
 
         </span>
       }
-      
+
 
       <span class="floatRight">
         <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
@@ -119,17 +119,17 @@
         </div>
       </div>
     }
-    @else {
-      <div class="grid-container">
-        <ktd-grid cols="100"
-            rowHeight="10"
-            [compactType]="compactType"
-            [gap]="gridGap"
-            compactOnPropsChange="true"
-            preventCollision="false"
-            [layout]="gameStateService.layout() ?? []"
-            [scrollableParent]="document"
-            (layoutUpdated)="onLayoutUpdated($event)">
+    <div class="grid-container">
+      <ktd-grid cols="100"
+          rowHeight="10"
+          [compactType]="compactType"
+          [gap]="gridGap"
+          compactOnPropsChange="true"
+          preventCollision="false"
+          [layout]="gameStateService.layout() ?? []"
+          [scrollableParent]="document"
+          (layoutUpdated)="onLayoutUpdated($event)">
+          @if (!characterService.inSeclusion()){
             @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
               <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" [id]="getPanel(panelLayout).id">
                 <div class="panel">
@@ -203,8 +203,8 @@
                 </div>
               </ktd-grid-item>
             }
-          </ktd-grid>
-      </div>
-    }
+          }
+        </ktd-grid>
+    </div>
   </div>
 </div>
