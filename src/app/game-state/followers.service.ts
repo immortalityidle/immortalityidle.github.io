@@ -1054,7 +1054,7 @@ export class FollowersService {
         const logValue = Math.floor(Math.log2(value - 8));
         this.followerCap += 9 + logValue;
         this.petsCap += 9 + logValue;
-        this.maxFollowerLevel += 10 * logValue;
+        this.maxFollowerLevel += Math.floor(10 * Math.log2(value - 8));
       }
     }
 

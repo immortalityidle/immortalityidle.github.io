@@ -1325,7 +1325,7 @@ export class HomeService {
         let conceptMultiplier = 1;
         const concept = this.contemplationService.getConcept(CONCEPT_FORTIFICATION);
         if (concept && concept.progress > 10) {
-          conceptMultiplier = Math.log10(concept.progress);
+          conceptMultiplier = Math.log10(concept.progress) * 10;
         }
 
         const builderPower = 1 + this.followerService.jobs['builder'].totalPower;
@@ -1588,7 +1588,7 @@ export class HomeService {
     let conceptMultiplier = 1;
     const concept = this.contemplationService.getConcept(CONCEPT_FORTIFICATION);
     if (concept && concept.progress > 10) {
-      conceptMultiplier = Math.log10(concept.progress);
+      conceptMultiplier = Math.log10(concept.progress) * 10;
     }
 
     const nextHome = this.homesList[this.homeValue + 1];

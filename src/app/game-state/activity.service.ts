@@ -406,8 +406,16 @@ export class ActivityService {
         }
         if (activity) {
           // this should always be true at this point
-          if (this.autoRestUnlocked && this.checkResourceUse(activity) !== '') {
-            // we can't do the activity because of resources, so rest instead
+          const resourceRequired = this.checkResourceUse(activity);
+          if (this.autoRestUnlocked && resourceRequired !== '') {
+            this.logService.log(
+              LogTopic.EVENT,
+              "You don't have enough " +
+                resourceRequired +
+                ' to do ' +
+                activity.name[activity.level] +
+                ' so you spend the day recovering instead.'
+            );
             activity = this.Resting;
           }
           this.lifeActivities[activity.activityType] = (this.lifeActivities[activity.activityType] || 0) + 1;
@@ -726,7 +734,7 @@ export class ActivityService {
 
   checkResourceUse(activity: Activity, spirit = false): string {
     const requiredResources = {
-      health: 0,
+      health: 0.1,
       stamina: 0,
       qi: 0,
       nutrition: 0,
@@ -738,7 +746,7 @@ export class ActivityService {
       requiredResources.qi += 5;
     }
     requiredResources.qi /= this.characterService.qiCompressionLevel + 1;
-    for (const key in activity.resourceUse[activity.level]) {
+    for (const key in requiredResources) {
       if (this.characterService.status[key as StatusType].value < requiredResources[key as StatusType]) {
         return key;
       }
