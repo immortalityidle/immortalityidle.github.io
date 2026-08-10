@@ -77,7 +77,7 @@ export class PantheonService {
   greekBaseHealth = 1e44;
   greekBaseDefense = 1e28;
   greekBaseDamage = 1e29;
-  greekScaling = 1e5;
+  greekScaling = 1e4;
   identityResets = 0;
 
   pantheons: Pantheon[] = [
