@@ -1723,7 +1723,7 @@ export class InventoryService {
             for (let inputSlotIndex = 0; inputSlotIndex < workstation.inputs.length; inputSlotIndex++) {
               const inputItemStack = workstation.inputs[inputSlotIndex];
               if (
-                inputItemStack.quantity < this.maxStackSize &&
+                inputItemStack.quantity < this.maxStackSize * this.homeService!.inputQuantityBonus &&
                 inputItemStack.item?.type === item.type &&
                 inputItemStack.item?.subtype === item.subtype &&
                 (item.id === inputItemStack.item!.id ||

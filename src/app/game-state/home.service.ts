@@ -36,6 +36,7 @@ import {
 } from './contemplation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
 import { BigNumberPipe } from '../pipes';
+import { GOD_HEPHAESTUS, PantheonService } from './pantheon.service';
 
 export interface Home {
   name: string;
@@ -209,6 +210,13 @@ export class HomeService {
   infusableSlots: EquipmentPosition[] = ['head', 'body', 'legs', 'feet', 'rightHand', 'leftHand'];
   godHomesUnlocked = false;
   inputQuantityBonus = 1;
+  defaultLockedWorkstations: string[] = [
+    WORKSTATION_WANDERER_PACK,
+    WORKSTATION_DIVINE_ANVIL,
+    WORKSTATION_TRAINING_CHAMBER,
+    WORKSTATION_ENERGY_MANIPULATOR,
+    WORKSTATION_GEM_EXTRACTOR,
+  ];
 
   wandererPackWorkstation: Workstation = {
     id: WORKSTATION_WANDERER_PACK,
@@ -803,6 +811,7 @@ export class HomeService {
           this.createEquipment(workstation, activityType);
         }
       },
+      locked: true,
     },
 
     {
@@ -1248,6 +1257,7 @@ export class HomeService {
     private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
     private contemplationService: ContemplationService,
+    private pantheonService: PantheonService,
     private titleCasePipe: TitleCasePipe
   ) {
     this.bigNumberPipe = this.injector.get(BigNumberPipe);
@@ -1493,9 +1503,7 @@ export class HomeService {
         this.bedroomFurniture[i] = null;
       }
     }
-    for (const wsId of properties.unlockedWorkstations) {
-      this.unlockWorkstation(wsId);
-    }
+
     this.ownedFurniture = properties.ownedFurniture || [];
     this.highestLand = properties.highestLand || 0;
     this.highestLandPrice = properties.highestLandPrice || 100;
@@ -1517,6 +1525,24 @@ export class HomeService {
     this.godHomesUnlocked = properties.godHomesUnlocked;
     this.inputQuantityBonus = properties.inputQuantityBonus;
 
+    for (const workstationListEntry of this.workstationsList) {
+      if (
+        this.defaultLockedWorkstations.includes(workstationListEntry.id) &&
+        !properties.unlockedWorkstations.includes(workstationListEntry.id)
+      ) {
+        workstationListEntry.locked = true;
+      } else {
+        if (
+          workstationListEntry.id === WORKSTATION_DIVINE_ANVIL &&
+          this.pantheonService.getGod(GOD_HEPHAESTUS)!.timesDefeated() === 0
+        ) {
+          // this is a kludge to handle accidentally unlocking the divine anvil for everyone, remove it later
+          workstationListEntry.locked = true;
+        } else {
+          workstationListEntry.locked = false;
+        }
+      }
+    }
     this.workstations = [];
     for (const workstation of properties.workstations) {
       this.addWorkstation(workstation.id, workstation);
