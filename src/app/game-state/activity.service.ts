@@ -91,6 +91,7 @@ export interface ActivityProperties {
   hideLockedActivities: boolean;
   forbiddenActivities: ActivityType[];
   unpaidActivities: ActivityType[];
+  ignoreRequirements: { [key in ActivityType]?: string[] };
 }
 
 export interface DisplayActivity {
@@ -183,6 +184,7 @@ export class ActivityService {
   unpaidActivities: ActivityType[] = []; // note that this needs to be handled specifically for every activity that uses it
   skipTicks = false;
   natureMultiplier = 1;
+  ignoreRequirements: { [key in ActivityType]?: string[] } = {};
 
   constructor(
     private injector: Injector,
@@ -627,9 +629,17 @@ export class ActivityService {
     } else {
       let tooltipText = [
         'This activity is locked until you have the attributes required for it. You will need:<br>',
-        ...Object.entries(activity.requirements[0]).map(entry =>
-          entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
-        ),
+        ...Object.entries(activity.requirements[0]).map(entry => {
+          if (
+            this.ignoreRequirements[activity.activityType] &&
+            this.ignoreRequirements[activity.activityType]!.includes(entry[0])
+          ) {
+            return undefined;
+          }
+          return entry[1]
+            ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}`
+            : undefined;
+        }),
       ]
         .filter(line => line)
         .join('<br>');
@@ -674,9 +684,17 @@ export class ActivityService {
     if (this.activityOptionsUnlocked() && activity.level < activity.name.length - 1) {
       tooltipText = [
         'The next level of this activity is locked until you have the attributes required for it. You will need:<br>',
-        ...Object.entries(activity.requirements[activity.level + 1]).map(entry =>
-          entry[1] ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}` : undefined
-        ),
+        ...Object.entries(activity.requirements[activity.level + 1]).map(entry => {
+          if (
+            this.ignoreRequirements[activity.activityType] &&
+            this.ignoreRequirements[activity.activityType]!.includes(entry[0])
+          ) {
+            return undefined;
+          }
+          return entry[1]
+            ? `${this.camelToTitle.transform(entry[0])}: ${this.bigNumberPipe.transform(entry[1])}`
+            : undefined;
+        }),
       ]
         .filter(line => line)
         .join('<br>');
@@ -856,6 +874,7 @@ export class ActivityService {
       activityOptionsUnlocked: this.activityOptionsUnlocked(),
       openPortals: openPortals,
       hideLockedActivities: this.hideLockedActivities(),
+      ignoreRequirements: this.ignoreRequirements,
     };
   }
 
@@ -916,6 +935,7 @@ export class ActivityService {
     this.unpaidActivities = properties.unpaidActivities;
     this.activityOptionsUnlocked.set(properties.activityOptionsUnlocked);
     this.hideLockedActivities.set(properties.hideLockedActivities);
+    this.ignoreRequirements = properties.ignoreRequirements;
     setTimeout(() => this.checkRequirements());
     for (let i = 0; i < 5; i++) {
       // upgrade to anything that the loaded attributes allow
@@ -1007,6 +1027,12 @@ export class ActivityService {
     ) as (keyof CharacterAttribute)[];
     for (const keyIndex in keys) {
       const key = keys[keyIndex];
+      if (
+        this.ignoreRequirements[activity.activityType] &&
+        this.ignoreRequirements[activity.activityType]!.includes(key.toString())
+      ) {
+        continue;
+      }
       let requirementValue = 0;
       if (activity.requirements[level][key] !== undefined) {
         requirementValue = activity.requirements[level][key] ?? 0;

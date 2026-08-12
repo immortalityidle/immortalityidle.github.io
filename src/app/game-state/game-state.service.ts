@@ -785,6 +785,7 @@ export class GameStateService {
       activityOptionsUnlocked: props?.activityOptionsUnlocked || false,
       openPortals: props?.openPortals || [],
       hideLockedActivities: props?.hideLockedActivities || false,
+      ignoreRequirements: props?.ignoreRequirements || {},
     };
   }
 
@@ -1546,8 +1547,14 @@ export class GameStateService {
           newGameState.activities.forbiddenActivities.push(ActivityType.Leatherworking);
           newGameState.activities.forbiddenActivities.push(ActivityType.Cooking);
           newGameState.activities.forbiddenActivities.push(ActivityType.Merchant);
-          newGameState.activities.unpaidActivities.push(ActivityType.FormationCreation);
           newGameState.activities.unpaidActivities.push(ActivityType.Alchemy);
+          newGameState.activities.unpaidActivities.push(ActivityType.FormationCreation);
+          newGameState.activities.ignoreRequirements[ActivityType.FormationCreation] = [
+            'smithing',
+            'cooking',
+            'woodwork',
+            'leatherwork',
+          ];
           newGameState.battles.uneradicableMonsterTypes.push('rat');
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
