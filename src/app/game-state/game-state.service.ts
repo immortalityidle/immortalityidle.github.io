@@ -17,7 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService, LocationType, Realm } from './location.service';
-import { ContemplationProperties, ContemplationService } from './contemplation.service';
+import { CONCEPT_NATURE, ContemplationProperties, ContemplationService } from './contemplation.service';
 import { PantheonProperties, PantheonService } from './pantheon.service';
 import { BigNumberPipe } from '../pipes';
 import { ActivityType } from './activity';
@@ -781,6 +781,7 @@ export class GameStateService {
       incomeMultiplier: props?.incomeMultiplier || 1,
       hiddenActivities: props?.hiddenActivities || [],
       forbiddenActivities: props?.forbiddenActivities || [],
+      unpaidActivities: props?.unpaidActivities || [],
       activityOptionsUnlocked: props?.activityOptionsUnlocked || false,
       openPortals: props?.openPortals || [],
       hideLockedActivities: props?.hideLockedActivities || false,
@@ -1543,14 +1544,15 @@ export class GameStateService {
           newGameState.activities.forbiddenActivities.push(ActivityType.Blacksmithing);
           newGameState.activities.forbiddenActivities.push(ActivityType.Woodworking);
           newGameState.activities.forbiddenActivities.push(ActivityType.Leatherworking);
-          newGameState.activities.forbiddenActivities.push(ActivityType.Alchemy);
           newGameState.activities.forbiddenActivities.push(ActivityType.Cooking);
-          newGameState.activities.forbiddenActivities.push(ActivityType.FormationCreation);
           newGameState.activities.forbiddenActivities.push(ActivityType.Merchant);
+          newGameState.activities.unpaidActivities.push(ActivityType.FormationCreation);
+          newGameState.activities.unpaidActivities.push(ActivityType.Alchemy);
           newGameState.battles.uneradicableMonsterTypes.push('rat');
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
           newGameState.home.berzerkRefinementUnlocked = true;
+          newGameState.contemplations.discoveredConcepts.push(CONCEPT_NATURE);
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1612,6 +1614,7 @@ export class GameStateService {
       this.homeService.godHomesUnlocked = true;
     } else if (avatarChallenge === AVATAR_ALL_NATURAL) {
       this.homeService.berzerkRefinementUnlocked = true;
+      this.contemplationService.discoverConcept(CONCEPT_NATURE);
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();

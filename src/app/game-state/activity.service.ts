@@ -24,6 +24,7 @@ import {
   CONCEPT_EFFECT_CREATION,
   CONCEPT_FIRE,
   CONCEPT_METAL,
+  CONCEPT_NATURE,
   CONCEPT_WATER,
   CONCEPT_WOOD,
   ContemplationService,
@@ -89,6 +90,7 @@ export interface ActivityProperties {
   openPortals: ActivityType[];
   hideLockedActivities: boolean;
   forbiddenActivities: ActivityType[];
+  unpaidActivities: ActivityType[];
 }
 
 export interface DisplayActivity {
@@ -178,7 +180,9 @@ export class ActivityService {
   hideLockedActivities = signal<boolean>(false);
   spiritActivityDisabled = signal<boolean>(false);
   forbiddenActivities: ActivityType[] = [];
+  unpaidActivities: ActivityType[] = []; // note that this needs to be handled specifically for every activity that uses it
   skipTicks = false;
+  natureMultiplier = 1;
 
   constructor(
     private injector: Injector,
@@ -303,6 +307,13 @@ export class ActivityService {
       this.upgradeActivities();
       this.updateDisplayValues();
       this.updatePortals();
+
+      const natureConcept = this.contemplationService.getConcept(CONCEPT_NATURE);
+      if ((natureConcept?.progress || 0) > 0) {
+        this.natureMultiplier = 1 + Math.log10(this.contemplationService.getConcept(CONCEPT_NATURE)?.progress || 0);
+      } else {
+        this.natureMultiplier = 1;
+      }
     });
 
     mainLoopService.activityTickSubject.subscribe(() => {
@@ -841,6 +852,7 @@ export class ActivityService {
       incomeMultiplier: this.incomeMultiplier,
       hiddenActivities: this.hiddenActivities,
       forbiddenActivities: this.forbiddenActivities,
+      unpaidActivities: this.unpaidActivities,
       activityOptionsUnlocked: this.activityOptionsUnlocked(),
       openPortals: openPortals,
       hideLockedActivities: this.hideLockedActivities(),
@@ -901,6 +913,7 @@ export class ActivityService {
     this.incomeMultiplier = properties.incomeMultiplier;
     this.hiddenActivities = properties.hiddenActivities;
     this.forbiddenActivities = properties.forbiddenActivities;
+    this.unpaidActivities = properties.unpaidActivities;
     this.activityOptionsUnlocked.set(properties.activityOptionsUnlocked);
     this.hideLockedActivities.set(properties.hideLockedActivities);
     setTimeout(() => this.checkRequirements());
@@ -1223,6 +1236,10 @@ export class ActivityService {
         this.loopChangeTriggers.splice(i, 1);
       }
     }
+  }
+
+  gainNatureSprirituality(amount: number) {
+    this.characterService.increaseAttribute('spirituality', amount * this.natureMultiplier);
   }
 
   Swim: Activity = {
@@ -2561,6 +2578,7 @@ export class ActivityService {
         this.inventoryService.generateHerb();
         this.characterService.increaseAttribute('woodLore', 0.003);
         this.characterService.yang++;
+        this.gainNatureSprirituality(0.1);
       },
     ],
     resourceUse: [
@@ -2603,15 +2621,17 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 0.1);
         this.characterService.increaseAttribute('alchemy', 0.1);
         this.characterService.status.stamina.value -= 10;
-        let money =
-          Math.log2(this.characterService.attributes.intelligence.value) +
-          this.characterService.attributes.waterLore.value;
-        if (this.familySpecialty === ActivityType.Alchemy) {
-          money += money * 0.2;
+        if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
+          let money =
+            Math.log2(this.characterService.attributes.intelligence.value) +
+            this.characterService.attributes.waterLore.value;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+          money *= this.incomeMultiplier;
+          money = this.characterService.updateMoney(money);
+          this.Alchemy.lastIncome = money;
         }
-        money *= this.incomeMultiplier;
-        money = this.characterService.updateMoney(money);
-        this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.05);
         this.characterService.increaseAttribute('waterLore', 0.1);
         this.characterService.yin++;
@@ -2621,15 +2641,17 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 0.2);
         this.characterService.increaseAttribute('alchemy', 0.1);
         this.characterService.status.stamina.value -= 10;
-        let money =
-          Math.log2(this.characterService.attributes.intelligence.value) +
-          this.characterService.attributes.waterLore.value * 2;
-        if (this.familySpecialty === ActivityType.Alchemy) {
-          money += money * 0.2;
+        if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
+          let money =
+            Math.log2(this.characterService.attributes.intelligence.value) +
+            this.characterService.attributes.waterLore.value * 2;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+          money *= this.incomeMultiplier;
+          money = this.characterService.updateMoney(money);
+          this.Alchemy.lastIncome = money;
         }
-        money *= this.incomeMultiplier;
-        money = this.characterService.updateMoney(money);
-        this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.1);
         this.characterService.increaseAttribute('waterLore', 0.2);
         this.characterService.yin++;
@@ -2639,15 +2661,17 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 0.5);
         this.characterService.increaseAttribute('alchemy', 0.1);
         this.characterService.status.stamina.value -= 10;
-        let money =
-          Math.log2(this.characterService.attributes.intelligence.value) +
-          this.characterService.attributes.waterLore.value * 5;
-        if (this.familySpecialty === ActivityType.Alchemy) {
-          money += money * 0.2;
+        if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
+          let money =
+            Math.log2(this.characterService.attributes.intelligence.value) +
+            this.characterService.attributes.waterLore.value * 5;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+          money *= this.incomeMultiplier;
+          money = this.characterService.updateMoney(money);
+          this.Alchemy.lastIncome = money;
         }
-        money *= this.incomeMultiplier;
-        money = this.characterService.updateMoney(money);
-        this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.15);
         this.characterService.increaseAttribute('waterLore', 0.3);
         this.characterService.yin++;
@@ -2657,15 +2681,17 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 1);
         this.characterService.increaseAttribute('alchemy', 0.1);
         this.characterService.status.stamina.value -= 20;
-        let money =
-          Math.log2(this.characterService.attributes.intelligence.value) +
-          this.characterService.attributes.waterLore.value * 10;
-        if (this.familySpecialty === ActivityType.Alchemy) {
-          money += money * 0.2;
+        if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
+          let money =
+            Math.log2(this.characterService.attributes.intelligence.value) +
+            this.characterService.attributes.waterLore.value * 10;
+          if (this.familySpecialty === ActivityType.Alchemy) {
+            money += money * 0.2;
+          }
+          money *= this.incomeMultiplier;
+          money = this.characterService.updateMoney(money);
+          this.Alchemy.lastIncome = money;
         }
-        money *= this.incomeMultiplier;
-        money = this.characterService.updateMoney(money);
-        this.Alchemy.lastIncome = money;
         this.characterService.increaseAttribute('woodLore', 0.2);
         this.characterService.increaseAttribute('waterLore', 0.6);
         this.characterService.yin++;
@@ -2813,6 +2839,7 @@ export class ActivityService {
         this.inventoryService.addItem(this.inventoryService.getWood());
         this.characterService.increaseAttribute('woodLore', 0.01);
         this.characterService.yang++;
+        this.gainNatureSprirituality(0.1);
       },
     ],
     resourceUse: [
@@ -3150,16 +3177,18 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 0.1);
         this.characterService.status.stamina.value -= 100;
-        let money =
-          this.characterService.attributes.smithing.value +
-          this.characterService.attributes.cooking.value +
-          this.characterService.attributes.alchemy.value +
-          this.characterService.attributes.woodwork.value +
-          this.characterService.attributes.leatherwork.value +
-          this.characterService.attributes.formationMastery.value;
-        money *= this.incomeMultiplier * 10;
-        money = this.characterService.updateMoney(money);
-        this.FormationCreation.lastIncome = money;
+        if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
+          let money =
+            this.characterService.attributes.smithing.value +
+            this.characterService.attributes.cooking.value +
+            this.characterService.attributes.alchemy.value +
+            this.characterService.attributes.woodwork.value +
+            this.characterService.attributes.leatherwork.value +
+            this.characterService.attributes.formationMastery.value;
+          money *= this.incomeMultiplier * 10;
+          money = this.characterService.updateMoney(money);
+          this.FormationCreation.lastIncome = money;
+        }
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3167,16 +3196,18 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 0.2);
         this.characterService.status.stamina.value -= 200;
-        let money =
-          this.characterService.attributes.smithing.value +
-          this.characterService.attributes.cooking.value +
-          this.characterService.attributes.alchemy.value +
-          this.characterService.attributes.woodwork.value +
-          this.characterService.attributes.leatherwork.value +
-          this.characterService.attributes.formationMastery.value;
-        money *= this.incomeMultiplier * 100;
-        money = this.characterService.updateMoney(money);
-        this.FormationCreation.lastIncome = money;
+        if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
+          let money =
+            this.characterService.attributes.smithing.value +
+            this.characterService.attributes.cooking.value +
+            this.characterService.attributes.alchemy.value +
+            this.characterService.attributes.woodwork.value +
+            this.characterService.attributes.leatherwork.value +
+            this.characterService.attributes.formationMastery.value;
+          money *= this.incomeMultiplier * 100;
+          money = this.characterService.updateMoney(money);
+          this.FormationCreation.lastIncome = money;
+        }
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3184,16 +3215,18 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 0.5);
         this.characterService.status.stamina.value -= 500;
-        let money =
-          this.characterService.attributes.smithing.value +
-          this.characterService.attributes.cooking.value +
-          this.characterService.attributes.alchemy.value +
-          this.characterService.attributes.woodwork.value +
-          this.characterService.attributes.leatherwork.value +
-          this.characterService.attributes.formationMastery.value;
-        money *= this.incomeMultiplier * 1000;
-        money = this.characterService.updateMoney(money);
-        this.FormationCreation.lastIncome = money;
+        if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
+          let money =
+            this.characterService.attributes.smithing.value +
+            this.characterService.attributes.cooking.value +
+            this.characterService.attributes.alchemy.value +
+            this.characterService.attributes.woodwork.value +
+            this.characterService.attributes.leatherwork.value +
+            this.characterService.attributes.formationMastery.value;
+          money *= this.incomeMultiplier * 1000;
+          money = this.characterService.updateMoney(money);
+          this.FormationCreation.lastIncome = money;
+        }
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3201,16 +3234,18 @@ export class ActivityService {
         this.checkApprenticeship(ActivityType.FormationCreation);
         this.characterService.increaseAttribute('formationMastery', 1);
         this.characterService.status.stamina.value -= 1000;
-        let money =
-          this.characterService.attributes.smithing.value +
-          this.characterService.attributes.cooking.value +
-          this.characterService.attributes.alchemy.value +
-          this.characterService.attributes.woodwork.value +
-          this.characterService.attributes.leatherwork.value +
-          this.characterService.attributes.formationMastery.value;
-        money *= this.incomeMultiplier;
-        money = this.characterService.updateMoney(money);
-        this.FormationCreation.lastIncome = money;
+        if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
+          let money =
+            this.characterService.attributes.smithing.value +
+            this.characterService.attributes.cooking.value +
+            this.characterService.attributes.alchemy.value +
+            this.characterService.attributes.woodwork.value +
+            this.characterService.attributes.leatherwork.value +
+            this.characterService.attributes.formationMastery.value;
+          money *= this.incomeMultiplier;
+          money = this.characterService.updateMoney(money);
+          this.FormationCreation.lastIncome = money;
+        }
         this.characterService.yin++;
         this.characterService.yang++;
       },
@@ -3284,6 +3319,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('woodLore', 0.001);
         this.characterService.increaseAttribute('earthLore', 0.001);
         this.characterService.yang++;
+        this.gainNatureSprirituality(0.1);
       },
     ],
     resourceUse: [
@@ -3321,6 +3357,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('woodLore', 0.001);
         this.characterService.increaseAttribute('earthLore', 0.001);
         this.characterService.yin++;
+        this.gainNatureSprirituality(0.1);
       },
     ],
     resourceUse: [
@@ -3366,6 +3403,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('woodLore', 0.001);
         this.characterService.increaseAttribute('earthLore', 0.001);
         this.characterService.yang++;
+        this.gainNatureSprirituality(0.1);
       },
     ],
     resourceUse: [
@@ -3493,6 +3531,7 @@ export class ActivityService {
           );
         }
         this.characterService.yang++;
+        this.gainNatureSprirituality(0.1);
       },
     ],
     resourceUse: [
@@ -3536,6 +3575,7 @@ export class ActivityService {
           this.inventoryService.addItem(this.itemRepoService.items['carp']);
         }
         this.characterService.yin++;
+        this.gainNatureSprirituality(0.1);
       },
     ],
     resourceUse: [
@@ -4120,6 +4160,7 @@ export class ActivityService {
           }
         }
         this.characterService.yang++;
+        this.gainNatureSprirituality(1);
       },
     ],
     resourceUse: [
@@ -4165,6 +4206,7 @@ export class ActivityService {
           true
         );
         this.characterService.yang++;
+        this.gainNatureSprirituality(1);
       },
     ],
     resourceUse: [

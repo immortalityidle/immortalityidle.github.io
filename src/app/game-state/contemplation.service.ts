@@ -64,6 +64,7 @@ export const CONCEPT_SPACE = 'Tao of Space';
 export const CONCEPT_BEASTS = 'Tao of Beasts';
 export const CONCEPT_BEAUTY = 'Tao of Beauty';
 export const CONCEPT_PHILOSOPHY = 'Tao of Philosophy';
+export const CONCEPT_NATURE = 'Tao of Nature';
 
 @Injectable({
   providedIn: 'root',
@@ -588,6 +589,15 @@ export class ContemplationService {
       description: 'Contemplate beauty. Allows a small amount of spirituality to emerge from your charisma.',
       progress: 0,
       effect: '',
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_NATURE,
+      description:
+        'Contemplate the serenity of the natural world. Allows spiritual development from activities out in nature.',
+      progress: 0,
+      effect: 'animalHandling,' + CONCEPT_EFFECT_FERAL,
       discovered: false,
       unlocksMore: false,
     },
