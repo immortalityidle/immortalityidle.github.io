@@ -1783,10 +1783,7 @@ export class InventoryService {
         if (!existingStack) {
           // not there, check the inventory slots
           existingStack = this.itemStacks.find(
-            (itemStack, index) =>
-              index < this.heirloomSlots() &&
-              itemStack.item?.type === item.type &&
-              itemStack.item.effect === item.effect
+            itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
           );
         }
         if (existingStack) {
@@ -1819,8 +1816,7 @@ export class InventoryService {
       } else if (item.type === 'pill' && item.subtype !== 'divineToken') {
         // see if we can merge it into another stack of the same kind of pill
         const existingStack = this.itemStacks.find(
-          (itemStack, index) =>
-            index < this.heirloomSlots() && itemStack.item?.type === item.type && itemStack.item.name === item.name
+          itemStack => itemStack.item?.type === item.type && itemStack.item.name === item.name
         );
         if (existingStack) {
           const totalPower =
@@ -1946,7 +1942,7 @@ export class InventoryService {
 
       if (item.type !== 'equipment') {
         // try to stack the new item with existing items
-        for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
+        for (let i = 0; i < this.itemStacks.length; i++) {
           const itemIterator = this.itemStacks[i];
           if (!itemIterator.item) {
             continue;
