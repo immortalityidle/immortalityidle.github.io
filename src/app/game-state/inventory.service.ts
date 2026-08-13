@@ -1778,12 +1778,18 @@ export class InventoryService {
       if (item.pouchable && !ignoreAutoReload) {
         // check for same type of potion in item pouches
         let existingStack = this.characterService.itemPouches.find(
-          itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
+          itemStack =>
+            itemStack.item?.type === item.type &&
+            itemStack.item.effect === item.effect &&
+            itemStack.quantity < this.maxStackSize * this.homeService!.inputQuantityBonus // Hephaestus gave you bigger pouches too
         );
         if (!existingStack) {
           // not there, check the inventory slots
           existingStack = this.itemStacks.find(
-            itemStack => itemStack.item?.type === item.type && itemStack.item.effect === item.effect
+            itemStack =>
+              itemStack.item?.type === item.type &&
+              itemStack.item.effect === item.effect &&
+              itemStack.quantity < this.maxStackSize
           );
         }
         if (existingStack) {

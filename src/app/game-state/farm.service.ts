@@ -321,6 +321,30 @@ export class FarmService {
     this.updateFieldUpkeep(fieldIndex);
   }
 
+  setAllFieldsSize(size: number) {
+    for (const field of this.fields) {
+      // free up extra plots first
+      if (field.plots > size) {
+        const diff = field.plots - size;
+        field.plots -= diff;
+        this.fallowPlots += diff;
+      }
+    }
+    for (let i = 0; i < this.fields.length; i++) {
+      // then add plots as needed/available
+      const field = this.fields[i];
+      let diff = size - field.plots;
+      if (diff > 0) {
+        if (diff > this.fallowPlots) {
+          diff = this.fallowPlots;
+        }
+        field.plots += diff;
+        this.fallowPlots -= diff;
+      }
+      this.updateFieldUpkeep(i);
+    }
+  }
+
   /**
    *
    * @param quantity -1 for all

@@ -33,6 +33,13 @@
         {{farmService.displayFieldsCount()}}
       </span>
     </div>
+    @if (farmService.smoothFarming){
+      <span tooltip="If you have enough fallow plots of land, set all fields to the specified size.">
+        Set all fields to size: 
+        <input min="0" value="{{setAllQuantity}}" type="number" class="inputBox" (change)="setAllQuantityChanged($event)"/>
+        <button (click)="setAllFields()">Set</button>
+      </span>
+    }
     <div class="farmGrid">
       @for (field of farmService.displayFields; track field.trackField(); let index = $index) {
         <div class="fieldSlot">

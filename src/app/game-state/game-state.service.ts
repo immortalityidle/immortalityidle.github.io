@@ -1545,10 +1545,10 @@ export class GameStateService {
           newGameState.activities.forbiddenActivities.push(ActivityType.Blacksmithing);
           newGameState.activities.forbiddenActivities.push(ActivityType.Woodworking);
           newGameState.activities.forbiddenActivities.push(ActivityType.Leatherworking);
-          newGameState.activities.forbiddenActivities.push(ActivityType.Cooking);
           newGameState.activities.forbiddenActivities.push(ActivityType.Merchant);
           newGameState.activities.unpaidActivities.push(ActivityType.Alchemy);
           newGameState.activities.unpaidActivities.push(ActivityType.FormationCreation);
+          newGameState.activities.unpaidActivities.push(ActivityType.Cooking);
           newGameState.activities.ignoreRequirements[ActivityType.FormationCreation] = [
             'smithing',
             'cooking',

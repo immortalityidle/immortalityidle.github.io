@@ -127,4 +127,9 @@ export class StandardLayoutComponent {
   protected closePanelClick(index: number) {
     this.gameStateService.removeLayoutPanel(index);
   }
+
+  protected endSeclusion() {
+    this.characterService.endSeclusion();
+    this.gameStateService.savetoLocalStorage();
+  }
 }

@@ -21,6 +21,8 @@ import { HellService } from '../game-state/hell.service';
   ],
 })
 export class FarmPanelComponent {
+  setAllQuantity = 0;
+
   constructor(
     protected farmService: FarmService,
     protected homeService: HomeService,
@@ -69,5 +71,15 @@ export class FarmPanelComponent {
 
   protected changeCropClicked(event: MouseEvent, fieldIndex: number) {
     this.farmService.changeCrop(fieldIndex);
+  }
+
+  protected setAllQuantityChanged(event: Event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+
+    this.setAllQuantity = Math.floor(parseFloat(event.target.value));
+  }
+
+  protected setAllFields() {
+    this.farmService.setAllFieldsSize(this.setAllQuantity);
   }
 }
