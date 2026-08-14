@@ -169,6 +169,7 @@ export interface CharacterProperties {
   staminaCap: number;
   inSeclusion: boolean;
   daysInSeclusion: number;
+  seclusionEnabled: boolean;
 }
 
 export const INITIAL_AGE = 18 * 365;
@@ -685,6 +686,7 @@ export class CharacterService {
   daysInSeclusion = 0;
   daysInSeclusionDisplay = signal<number>(0);
   skipTicks = false;
+  seclusionEnabled = signal<boolean>(false);
 
   constructor(
     private injector: Injector,
@@ -1600,6 +1602,7 @@ export class CharacterService {
       staminaCap: this.staminaCap,
       inSeclusion: this.inSeclusion(),
       daysInSeclusion: this.daysInSeclusion,
+      seclusionEnabled: this.seclusionEnabled(),
     };
   }
 
@@ -1674,6 +1677,7 @@ export class CharacterService {
     this.staminaCap = properties.staminaCap;
     this.inSeclusion.set(properties.inSeclusion);
     this.daysInSeclusion = properties.daysInSeclusion;
+    this.seclusionEnabled.set(properties.seclusionEnabled || this.god());
 
     this.recalculateDerivedStats();
   }

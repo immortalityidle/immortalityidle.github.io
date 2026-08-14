@@ -58,7 +58,7 @@
           <button (click)="gameStateService.joinTheGodsClick()">Join the Gods</button>
         </span>
       }
-      @if (characterService.god() && !characterService.inSeclusion()) {
+      @if (characterService.seclusionEnabled() && !characterService.inSeclusion()) {
         <span class="topText">
           <button tooltip="Enter a state of seclusion, avoiding all distractions from the external world.<br>Time will flow at an accelerated rate and you will continue with your established schedule, but you will not engage in any battles.<br>You will not be able to see or interact with most game functions until you leave seclusion."
             (click)="characterService.startSeclusion()">

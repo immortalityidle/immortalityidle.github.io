@@ -1323,6 +1323,7 @@ export class GameStateService {
       staminaCap: props?.staminaCap || 1000000,
       inSeclusion: props?.inSeclusion || false,
       daysInSeclusion: props?.daysInSeclusion || 0,
+      seclusionEnabled: props?.seclusionEnabled || false,
     };
   }
 
@@ -1560,6 +1561,7 @@ export class GameStateService {
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
           newGameState.home.berzerkRefinementUnlocked = true;
           newGameState.contemplations.discoveredConcepts.push(CONCEPT_NATURE);
+          newGameState.character.seclusionEnabled = true;
         }
 
         newGameState.avatarChallenge = avatarType;
