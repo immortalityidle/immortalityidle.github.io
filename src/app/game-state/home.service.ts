@@ -2048,11 +2048,9 @@ export class HomeService {
     const cookingLevel = this.activityService?.getActivityByType(ActivityType.Cooking)?.level || 0;
     let imageFile = 'meal';
     let foodName = 'Menu Special #' + totalValue;
-    let pouchable = false;
     let fedPart = 'your body';
     if (cookingLevel > 0) {
       totalValue *= 4;
-      pouchable = true;
       if (totalValue > 1e6 && this.characterService.god()) {
         totalValue *= 4;
         imageFile = 'divinefood';
@@ -2079,7 +2077,7 @@ export class HomeService {
         useLabel: 'Eat',
         useDescription: 'Fills your belly.',
         useConsumes: true,
-        pouchable: pouchable,
+        pouchable: true,
         effect: effect,
         shopable: false,
       },
