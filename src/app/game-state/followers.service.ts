@@ -405,7 +405,7 @@ export class FollowersService {
       work: daysElapsed => {
         let workPower = this.jobs['chef'].totalPower * daysElapsed + (this.leftoverWork['chef'] || 0);
         if (this.characterService.attributes.mercy.value > 0) {
-          workPower *= Math.log10(this.characterService.attributes.mercy.value + 1);
+          workPower *= Math.log10(this.characterService.attributes.mercy.value + 10);
         }
         this.homeService.chefsWork(Math.floor(workPower / 100));
         this.leftoverWork['chef'] = workPower % 100;
@@ -434,7 +434,7 @@ export class FollowersService {
         let workPower =
           this.jobs['hunter'].totalPower * huntingBonusMultiplier * daysElapsed + (this.leftoverWork['hunter'] || 0);
         if (this.characterService.attributes.wisdom.value > 0) {
-          workPower *= Math.log10(this.characterService.attributes.wisdom.value + 1);
+          workPower *= Math.log10(this.characterService.attributes.wisdom.value + 10);
         }
 
         if (this.hellService?.inHell() || this.characterService.god()) {
@@ -453,7 +453,7 @@ export class FollowersService {
       work: daysElapsed => {
         let workPower = this.jobs['fisher'].totalPower * daysElapsed + (this.leftoverWork['fisher'] || 0);
         if (this.characterService.attributes.wisdom.value > 0) {
-          workPower *= Math.log10(this.characterService.attributes.wisdom.value + 1);
+          workPower *= Math.log10(this.characterService.attributes.wisdom.value + 10);
         }
 
         if (this.hellService?.inHell() || this.characterService.god()) {
@@ -549,7 +549,7 @@ export class FollowersService {
       work: daysElapsed => {
         let workPower = this.jobs['weaponsmith'].totalPower * daysElapsed + (this.leftoverWork['weaponsmith'] || 0);
         if (this.characterService.attributes.wrath.value > 0) {
-          workPower *= Math.log10(this.characterService.attributes.wrath.value + 1);
+          workPower *= Math.log10(this.characterService.attributes.wrath.value + 10);
         }
 
         let divider = 10;
@@ -581,7 +581,7 @@ export class FollowersService {
       work: daysElapsed => {
         let workPower = this.jobs['armorer'].totalPower * daysElapsed + (this.leftoverWork['armorer'] || 0);
         if (this.characterService.attributes.justice.value > 0) {
-          workPower *= Math.log10(this.characterService.attributes.justice.value + 1);
+          workPower *= Math.log10(this.characterService.attributes.justice.value + 10);
         }
 
         let divider = 10;
@@ -748,7 +748,7 @@ export class FollowersService {
       work: daysElapsed => {
         let workPower = this.jobs['prophet'].totalPower * daysElapsed + (this.leftoverWork['prophet'] || 0);
         if (this.characterService.attributes.presence.value > 0) {
-          workPower *= Math.log10(this.characterService.attributes.presence.value + 1);
+          workPower *= Math.log10(this.characterService.attributes.presence.value + 10);
         }
 
         while (workPower > 100000) {
@@ -787,7 +787,7 @@ export class FollowersService {
       work: daysElapsed => {
         let totalPower = this.jobs['banker'].totalPower;
         if (this.characterService.attributes.justice.value > 0) {
-          totalPower *= Math.log10(this.characterService.attributes.justice.value + 1);
+          totalPower *= Math.log10(this.characterService.attributes.justice.value + 10);
         }
 
         if (this.hellService?.inHell() && !this.characterService.god()) {

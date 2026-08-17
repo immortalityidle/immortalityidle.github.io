@@ -2011,7 +2011,7 @@ baguaMap = [
     },
     dreadsteelBar: {
       id: 'dreadsteelBar',
-      imageFile: 'metal',
+      imageFile: 'dreadsteel',
       imageColor: this.colorByRank[15],
       name: 'dreadsteel bar',
       type: 'metal',
@@ -2021,7 +2021,7 @@ baguaMap = [
     },
     refinedDreadsteelBar: {
       id: 'refinedDreadsteelBar',
-      imageFile: 'metal',
+      imageFile: 'refinedDreadsteel',
       imageColor: this.colorByRank[15],
       name: 'refined dreadsteel bar',
       type: 'metal',

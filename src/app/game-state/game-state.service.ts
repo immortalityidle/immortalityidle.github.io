@@ -6,8 +6,8 @@ import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService, MEMORY_JOIN_THE_GODS } from './achievement.service';
 import { AttributeType, CharacterProperties, INITIAL_AGE } from './character.service';
 import { CharacterService } from './character.service';
-import { FollowersService, FollowersProperties, HQType } from './followers.service';
-import { HomeService, HomeProperties, HomeType } from './home.service';
+import { FollowersService, FollowersProperties, HQType, FOLLOWER_TYPE_TECHNIQUE_MASTER } from './followers.service';
+import { HomeService, HomeProperties, HomeType, WORKSTATION_TRAINING_CHAMBER } from './home.service';
 import { InventoryService, InventoryProperties } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
 import { ImpossibleTaskProperties, ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
@@ -1560,8 +1560,12 @@ export class GameStateService {
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
           newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
           newGameState.home.berzerkRefinementUnlocked = true;
+          newGameState.home.unlockedWorkstations.push(WORKSTATION_TRAINING_CHAMBER);
           newGameState.contemplations.discoveredConcepts.push(CONCEPT_NATURE);
           newGameState.character.seclusionEnabled = true;
+          newGameState.character.attributes.combatMastery.value = 1;
+          newGameState.character.attributes.metalFist.value = 1;
+          newGameState.followers.unlockedHiddenJobs.push(FOLLOWER_TYPE_TECHNIQUE_MASTER);
         }
 
         newGameState.avatarChallenge = avatarType;

@@ -2224,11 +2224,11 @@ export class BattleService {
       }
       if (technique.berzerk) {
         damage *=
-          (1 - this.characterService.status.health.value / this.characterService.status.health.max) * // how damaged you are
+          (1 + (1 - this.characterService.status.health.value / this.characterService.status.health.max)) * // how damaged you are
           (1 + technique.berzerk); // the berzerk factor of the technique
       }
       if (technique.criticalChance) {
-        if (Math.random() > technique.criticalChance / 100) {
+        if (Math.random() <= technique.criticalChance / 100) {
           this.logService.log(LogTopic.COMBAT, 'Critical hit!');
           damage *= 2 + (technique.criticalDamage || 0);
         }

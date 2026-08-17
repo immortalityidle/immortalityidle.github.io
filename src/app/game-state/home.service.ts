@@ -2583,7 +2583,7 @@ export class HomeService {
       );
       if (dreadsteelStack) {
         dreadsteelStack.quantity -= 100;
-        this.inventoryService.addItem(this.itemRepoService.items['refinedDreadsteelBar']);
+        this.inventoryService.addItem(this.itemRepoService.items['refinedDreadsteelBar'], 1, 0, true);
       }
     } else {
       for (const itemStack of herbStacks) {
