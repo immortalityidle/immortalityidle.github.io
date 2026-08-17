@@ -559,14 +559,24 @@ export class FollowersService {
         if (!this.forbiddenSlots.includes('rightHand')) {
           const rightHand = this.characterService.equipment.rightHand;
           if (rightHand && rightHand.weaponStats) {
-            rightHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+            let damageMultiplier = 1;
+            if (this.inventoryService.darkMetal) {
+              damageMultiplier = 100;
+            }
+            rightHand.weaponStats.baseDamage +=
+              Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * damageMultiplier;
             rightHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
           }
         }
         if (!this.forbiddenSlots.includes('leftHand')) {
           const leftHand = this.characterService.equipment.leftHand;
           if (leftHand && leftHand.weaponStats) {
-            leftHand.weaponStats.baseDamage += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+            let damageMultiplier = 1;
+            if (this.inventoryService.treeLover) {
+              damageMultiplier = 100;
+            }
+            leftHand.weaponStats.baseDamage +=
+              Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * damageMultiplier;
             leftHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
           }
         }
