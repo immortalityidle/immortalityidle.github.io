@@ -2149,9 +2149,9 @@ export class HomeService {
         'Your anvil gives off an ear-splitting ring and echoes endlessly into the depths. The new chain glows with power!'
       );
       if (divineChain) {
-        this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
-      } else {
         this.inventoryService.addItem(this.itemRepoService.items['divineChain']);
+      } else {
+        this.inventoryService.addItem(this.itemRepoService.items['unbreakableChain']);
       }
       this.forgeChainsCounter = 0;
     } else {
