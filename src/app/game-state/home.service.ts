@@ -1983,10 +1983,12 @@ export class HomeService {
       // inputs array not populated, bail out
       return;
     }
-    const fuelStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'fuel');
-    const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore');
+    const fuelStack = workstation.inputs.find(
+      itemStack => itemStack.item?.subtype === 'fuel' && itemStack.quantity >= fuelCost
+    );
+    const oreStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'ore' && itemStack.quantity > 0);
 
-    if (fuelStack && oreStack && oreStack.quantity > 0 && fuelStack.quantity >= fuelCost) {
+    if (fuelStack && oreStack) {
       this.totalCrafts++;
       this.inventoryService.addItem(this.inventoryService.getBar(oreStack.item?.value || 1));
       oreStack.quantity--;
@@ -2110,11 +2112,12 @@ export class HomeService {
     }
 
     if (!materialStack || materialStack.quantity < 10 || (materialStack.item?.value || 0) < valueRequired) {
-      this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong tools and materials and hurt yourself.');
       if (divineChain) {
         this.logService.injury(LogTopic.EVENT, "You'll need something even stronger than dreadsteel for this.");
+      } else {
+        this.logService.injury(LogTopic.EVENT, 'You fumble with the wrong tools and materials and hurt yourself.');
+        this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
       }
-      this.characterService.status.health.value -= this.characterService.status.health.max * 0.05;
       if (this.activityService?.pauseOnImpossibleFail && !divineChain) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
         this.mainLoopService.togglePause(true);
@@ -2132,7 +2135,7 @@ export class HomeService {
         LogTopic.EVENT,
         "You think you have the right metal, but you'll need something to imbue it with additional strength."
       );
-      if (this.activityService?.pauseOnImpossibleFail) {
+      if (this.activityService?.pauseOnImpossibleFail && !divineChain) {
         this.logService.log(LogTopic.EVENT, 'An attempt at an impossible task has failed. Game paused.');
         this.mainLoopService.togglePause(true);
       }
@@ -2338,14 +2341,19 @@ export class HomeService {
       material = 'hide';
     }
     const activityLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
-    const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === material);
+    const materialStack = workstation.inputs.find(
+      itemStack => itemStack.item?.type === material && itemStack.quantity >= 10
+    );
     // gems can be added for extra power
-    const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
+    const gemStack = workstation.inputs.find(
+      itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.quantity > 0
+    );
     // wood or leather can be added for extra power
     const extraStack = workstation.inputs.find(
       itemStack =>
         itemStack.item?.type !== material &&
-        (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide')
+        (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide') &&
+        itemStack.quantity > 0
     );
     let extraStack2 = undefined;
     if (extraStack) {
@@ -2356,7 +2364,7 @@ export class HomeService {
           (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide')
       );
     }
-    if (materialStack && materialStack.quantity >= 10) {
+    if (materialStack) {
       let grade = (materialStack?.item?.value || 1) + workstation.power * 5;
       if (materialStack.item?.type === 'wood') {
         grade += Math.log10(this.characterService.attributes.woodLore.value);
@@ -2365,11 +2373,11 @@ export class HomeService {
       }
 
       grade += activityLevel;
-      if (gemStack && gemStack.quantity > 0 && this.inventoryService.useSpiritGemUnlocked) {
+      if (gemStack && this.inventoryService.useSpiritGemUnlocked) {
         grade += gemStack?.item?.value || 1;
         gemStack.quantity--;
       }
-      if (extraStack && extraStack.quantity > 0) {
+      if (extraStack) {
         grade += extraStack?.item?.value || 1;
         extraStack.quantity--;
         if (extraStack2 && extraStack2.quantity > 0) {
@@ -2555,8 +2563,10 @@ export class HomeService {
         shopable: false,
       });
     } else if (workstation.alchemyProduct === 'distilled essences') {
-      const divineFruitStack = workstation.inputs.find(itemStack => itemStack.item?.subtype === 'divinefruit');
-      if (divineFruitStack?.item?.id === 'divinePeach' && divineFruitStack.quantity > 10) {
+      const divineFruitStack = workstation.inputs.find(
+        itemStack => itemStack.item?.subtype === 'divinefruit' && itemStack.quantity > 10
+      );
+      if (divineFruitStack?.item?.id === 'divinePeach') {
         divineFruitStack.quantity -= 10;
         this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
       } else if (divineFruitStack?.item?.id === 'grapes' && divineFruitStack.quantity > 10000) {
@@ -2571,8 +2581,10 @@ export class HomeService {
         this.inventoryService.addItem(this.itemRepoService.items['coke']);
       }
       if (this.nectarUnlocked) {
-        const wineStack = workstation.inputs.find(itemStack => itemStack.item?.id === 'wine');
-        if (wineStack && wineStack.quantity >= 1000) {
+        const wineStack = workstation.inputs.find(
+          itemStack => itemStack.item?.id === 'wine' && itemStack.quantity >= 1000
+        );
+        if (wineStack) {
           wineStack.quantity -= 1000;
           this.inventoryService.addItem(this.itemRepoService.items['nectar']);
           return;
