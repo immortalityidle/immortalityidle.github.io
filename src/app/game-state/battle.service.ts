@@ -1633,7 +1633,7 @@ export class BattleService {
     this.techniques.push({
       name: ICE_SHIELD,
       description:
-        "Bring forth the ice inside you to form a freezing barrier around you that will stop your enemy's next attack. Each use of this ability requires 10,000 Qi.",
+        "Bring forth the ice inside you to form a freezing barrier around you that will stop your enemy's next fatal attack. Each use of this ability requires 10,000 Qi.",
       ticksRequired: 10,
       ticks: 0,
       baseDamage: 0,
@@ -1642,7 +1642,7 @@ export class BattleService {
       qiCost: 10000,
       statusEffect: {
         name: ICE_SHIELD,
-        description: 'A frozen shield that will negate damage from the next enemy attack.',
+        description: 'A frozen shield that will negate damage from the next fatal enemy attack.',
         ticksLeft: 10,
         power: 1,
       },
@@ -1709,6 +1709,7 @@ export class BattleService {
     }
 
     let damageBack = false;
+    let iceShieldReady = false;
     for (let i = this.statusEffects.length - 1; i >= 0; i--) {
       if (this.statusEffects[i].name === QI_SHIELD) {
         damage /= 2;
@@ -1725,9 +1726,7 @@ export class BattleService {
         damage /= fireDivisor;
         damageBack = true;
       } else if (this.statusEffects[i].name === ICE_SHIELD) {
-        this.statusEffects.splice(i, 1);
-        this.logService.log(LogTopic.COMBAT, "Your ice shield blocks the enemy's " + technique.name);
-        return;
+        iceShieldReady = true;
       } else if (this.statusEffects[i].name === EFFECT_CORRUPTION) {
         damage *= 10;
       }
@@ -1780,6 +1779,14 @@ export class BattleService {
     if (damage > this.highestDamageTaken) {
       this.highestDamageTaken = damage;
     }
+
+    if (this.characterService.status.health.value <= damage && iceShieldReady) {
+      const iceShieldIndex = this.statusEffects.findIndex(entry => entry.name === ICE_SHIELD);
+      this.statusEffects.splice(iceShieldIndex, 1);
+      this.logService.log(LogTopic.COMBAT, "Your ice shield blocks the enemy's " + technique.name);
+      return;
+    }
+
     this.characterService.status.health.value -= damage;
     if (technique.effect) {
       if (technique.effect === EFFECT_FEEDER && this.hellService) {
