@@ -3,7 +3,7 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { EquipmentPosition, AttributeType, StatusType } from './character.service';
 import { CharacterService } from './character.service';
-import { ItemRepoService } from './item-repo.service';
+import { ITEM_TYPE_METAL, ItemRepoService } from './item-repo.service';
 import { TitleCasePipe } from '@angular/common';
 import {
   WeaponNames,
@@ -1237,7 +1237,7 @@ export class InventoryService {
     let lastMetal = this.itemRepoService.items['copperBar'];
     for (const key in this.itemRepoService.items) {
       const item = this.itemRepoService.items[key];
-      if (item.type === 'metal' && item.value === barValue) {
+      if (item.type === ITEM_TYPE_METAL && item.value === barValue) {
         lastMetal = item;
         break;
       }
@@ -1247,7 +1247,7 @@ export class InventoryService {
       // sell any metal cheaper than what we just got
       for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemStack = this.itemStacks[i];
-        if (itemStack.item && itemStack.item.type === 'metal' && itemStack.item.value < lastMetal.value) {
+        if (itemStack.item && itemStack.item.type === ITEM_TYPE_METAL && itemStack.item.value < lastMetal.value) {
           this.sell(itemStack, itemStack.quantity);
         }
       }

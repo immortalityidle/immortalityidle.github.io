@@ -3,7 +3,7 @@ import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { CharacterService, EquipmentPosition } from './character.service';
 import { InventoryService, Item, ItemStack } from './inventory.service';
-import { ItemRepoService } from './item-repo.service';
+import { ITEM_TYPE_METAL, ITEM_TYPE_REFINED_METAL, ItemRepoService } from './item-repo.service';
 import { HellService } from './hell.service';
 import { ActivityType } from './activity';
 import { ActivityService } from './activity.service';
@@ -2089,7 +2089,9 @@ export class HomeService {
 
   forgeChains(workstation: Workstation) {
     const divineChain = workstation.power >= 3;
-    const materialStack = workstation.inputs.find(itemStack => itemStack.item?.type === 'metal');
+    const materialStack = workstation.inputs.find(
+      itemStack => itemStack.item?.type === ITEM_TYPE_METAL || itemStack.item?.type === ITEM_TYPE_REFINED_METAL
+    );
 
     let valueRequired = 1e9;
     if (divineChain) {
@@ -2334,16 +2336,23 @@ export class HomeService {
       // inputs array not populated, bail out
       return;
     }
-    let material = 'metal';
+    let material = ITEM_TYPE_REFINED_METAL;
     if (activityType === ActivityType.Woodworking) {
       material = 'wood';
     } else if (activityType === ActivityType.Leatherworking) {
       material = 'hide';
     }
     const activityLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
-    const materialStack = workstation.inputs.find(
+    let materialStack = workstation.inputs.find(
       itemStack => itemStack.item?.type === material && itemStack.quantity >= 10
     );
+    if (activityType === ActivityType.Blacksmithing && !materialStack) {
+      // no refined metal was found, check for regular metal
+      material = ITEM_TYPE_METAL;
+      materialStack = workstation.inputs.find(
+        itemStack => itemStack.item?.type === material && itemStack.quantity >= 10
+      );
+    }
     // gems can be added for extra power
     const gemStack = workstation.inputs.find(
       itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.quantity > 0
@@ -2352,7 +2361,10 @@ export class HomeService {
     const extraStack = workstation.inputs.find(
       itemStack =>
         itemStack.item?.type !== material &&
-        (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide') &&
+        (itemStack.item?.type === 'wood' ||
+          itemStack.item?.type === ITEM_TYPE_METAL ||
+          itemStack.item?.type === ITEM_TYPE_REFINED_METAL ||
+          itemStack.item?.type === 'hide') &&
         itemStack.quantity > 0
     );
     let extraStack2 = undefined;
@@ -2361,14 +2373,17 @@ export class HomeService {
         itemStack =>
           itemStack.item?.type !== material &&
           itemStack.item?.type !== extraStack.item?.type &&
-          (itemStack.item?.type === 'wood' || itemStack.item?.type === 'metal' || itemStack.item?.type === 'hide')
+          (itemStack.item?.type === 'wood' ||
+            itemStack.item?.type === ITEM_TYPE_METAL ||
+            itemStack.item?.type === ITEM_TYPE_REFINED_METAL ||
+            itemStack.item?.type === 'hide')
       );
     }
     if (materialStack) {
       let grade = (materialStack?.item?.value || 1) + workstation.power * 5;
       if (materialStack.item?.type === 'wood') {
         grade += Math.log10(this.characterService.attributes.woodLore.value);
-      } else if (materialStack.item?.type === 'metal') {
+      } else if (materialStack.item?.type === ITEM_TYPE_METAL || materialStack.item?.type === ITEM_TYPE_REFINED_METAL) {
         grade += Math.log10(this.characterService.attributes.metalLore.value);
       }
 
@@ -2681,7 +2696,9 @@ export class HomeService {
       return;
     }
     const metalStack = workstation.inputs.find(
-      itemStack => itemStack.item?.type === 'metal' && itemStack.quantity >= 10
+      itemStack =>
+        (itemStack.item?.type === ITEM_TYPE_METAL || itemStack.item?.type === ITEM_TYPE_REFINED_METAL) &&
+        itemStack.quantity >= 10
     );
     const alchemyStack = workstation.inputs.find(
       itemStack =>

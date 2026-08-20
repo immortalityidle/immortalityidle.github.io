@@ -8,7 +8,7 @@ import {
   WORKSTATION_TRAINING_CHAMBER,
 } from '../game-state/home.service';
 import { Equipment, InventoryService } from '../game-state/inventory.service';
-import { ItemRepoService } from '../game-state/item-repo.service';
+import { ITEM_TYPE_METAL, ItemRepoService } from '../game-state/item-repo.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
@@ -4689,7 +4689,7 @@ export class ActivityService {
           return;
         }
         this.characterService.status.stamina.value -= 100000;
-        if (this.inventoryService.consume('metal', 1) > 0) {
+        if (this.inventoryService.consume(ITEM_TYPE_METAL, 1) > 0) {
           const newHammer: Equipment = {
             id: 'weapon',
             imageFile: 'copperHammer',
@@ -4699,7 +4699,7 @@ export class ActivityService {
             value: 1,
             weaponStats: {
               baseDamage: 1,
-              material: 'metal',
+              material: ITEM_TYPE_METAL,
               baseName: 'hammer',
             },
             description: 'A crude copper hammer.',

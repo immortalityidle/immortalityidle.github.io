@@ -687,6 +687,7 @@ export class CharacterService {
   daysInSeclusionDisplay = signal<number>(0);
   skipTicks = false;
   seclusionEnabled = signal<boolean>(false);
+  yinYangHealthModifier = 1;
 
   constructor(
     private injector: Injector,
@@ -804,6 +805,12 @@ export class CharacterService {
       if (this.healthBonusSoul > 0) {
         healthBreakdownString +=
           '<br>Soul Cultivation Bonus: ' + this.bigNumberPipe.transform(this.healthBonusSoul) + '.';
+      }
+      if (this.yinYangHealthModifier !== 1) {
+        healthBreakdownString +=
+          '<br>Yin/Yang Balance Multiplier (applies to soul and magic bonuses): ' +
+          this.bigNumberPipe.transform(this.yinYangHealthModifier) +
+          '.';
       }
       if (this.healthBonusDivine > 0) {
         healthBreakdownString += '<br>Divine Bonus: ' + this.bigNumberPipe.transform(this.healthBonusDivine) + '.';
@@ -1241,12 +1248,28 @@ export class CharacterService {
       this.healthBonusFactor *= Math.log10(10 + concept.progress);
     }
     this.healthBonusFactor += this.fengshuiScore / 20;
+
+    const healthBonusMagicCap = 1000000 * (1 + this.qiCompressionLevel);
+    const healthBonusSoulCap = 2000000;
+
+    this.healthBonusMagic = Math.min(healthBonusMagicCap, this.healthBonusMagic);
+    this.healthBonusSoul = Math.min(healthBonusSoulCap, this.healthBonusSoul);
+
+    let effectiveHealthBonusMagic = this.healthBonusMagic;
+    let effectiveHealthBonusSoul = this.healthBonusSoul;
+    this.yinYangHealthModifier = 1;
+    if (this.yinYangBoosted) {
+      this.yinYangHealthModifier = 2 * this.yinYangBalance;
+      effectiveHealthBonusMagic += this.yinYangHealthModifier * healthBonusMagicCap;
+      effectiveHealthBonusSoul += this.yinYangHealthModifier * healthBonusSoulCap;
+    }
+
     this.status.health.max =
       (100 +
         this.healthBonusFood +
         this.healthBonusBath +
-        this.healthBonusMagic +
-        this.healthBonusSoul +
+        effectiveHealthBonusMagic +
+        effectiveHealthBonusSoul +
         this.healthBonusDivine +
         Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
       this.healthBonusFactor;
@@ -1477,18 +1500,6 @@ export class CharacterService {
     }
     if (this.healthBonusBath > 80000) {
       this.healthBonusBath = 80000;
-    }
-    let healthBonusMagicCap = 1000000 * (1 + this.qiCompressionLevel);
-    let healthBonusSoulCap = 2000000;
-    if (this.yinYangBoosted) {
-      healthBonusMagicCap += 2 * this.yinYangBalance * healthBonusMagicCap;
-      healthBonusSoulCap += 2 * this.yinYangBalance * healthBonusSoulCap;
-    }
-    if (this.healthBonusMagic > healthBonusMagicCap) {
-      this.healthBonusMagic = healthBonusMagicCap;
-    }
-    if (this.healthBonusSoul > healthBonusSoulCap) {
-      this.healthBonusSoul = healthBonusSoulCap;
     }
     if (this.status.stamina.max > this.staminaCap) {
       this.status.stamina.max = this.staminaCap;
