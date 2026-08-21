@@ -634,7 +634,7 @@ export class ContemplationService {
       }
       const philosphyConcept = this.getConcept(CONCEPT_PHILOSOPHY);
       if (philosphyConcept && philosphyConcept.progress > 1) {
-        this.philosophyMultiplier = 1 + Math.log10(philosphyConcept.progress);
+        this.philosophyMultiplier = 1 + Math.log10(philosphyConcept.progress) * 10;
       } else {
         this.philosophyMultiplier = 1;
       }

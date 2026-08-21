@@ -131,6 +131,7 @@ export interface Activity {
   immortalityRequired?: boolean[];
   divinityRequired?: boolean[];
   conceptRequirements?: string[];
+  conceptRequirementsLevel?: number[];
   landRequirements?: number;
   fallowLandRequirements?: number;
   farmedLandRequirements?: number;

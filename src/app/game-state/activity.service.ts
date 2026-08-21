@@ -674,6 +674,12 @@ export class ActivityService {
       ) {
         tooltipText += '<br>Immortality';
       }
+      if (activity.conceptRequirements && activity.conceptRequirements[activity.level]) {
+        tooltipText += '<br>' + activity.conceptRequirements[activity.level];
+        if (activity.conceptRequirementsLevel && activity.conceptRequirementsLevel[activity.level]) {
+          tooltipText += ': ' + this.bigNumberPipe.transform(activity.conceptRequirementsLevel[activity.level]);
+        }
+      }
 
       return tooltipText;
     }
@@ -704,6 +710,12 @@ export class ActivityService {
     }
     if (activity.immortalityRequired && activity.immortalityRequired[activity.level + 1]) {
       tooltipText += '<br>Immortality';
+    }
+    if (activity.conceptRequirements && activity.conceptRequirements[activity.level + 1]) {
+      tooltipText += '<br>' + activity.conceptRequirements[activity.level + 1];
+      if (activity.conceptRequirementsLevel && activity.conceptRequirementsLevel[activity.level + 1]) {
+        tooltipText += ': ' + this.bigNumberPipe.transform(activity.conceptRequirementsLevel[activity.level + 1]);
+      }
     }
     return tooltipText;
   }
@@ -973,14 +985,6 @@ export class ActivityService {
     if (activity.realm && activity.realm !== this.locationService?.currentRealm) {
       return false;
     }
-    if (activity.conceptRequirements) {
-      for (const conceptRequirement of activity.conceptRequirements) {
-        const concept = this.contemplationService.getConcept(conceptRequirement);
-        if (concept && !concept.discovered) {
-          return false;
-        }
-      }
-    }
     if (this.meetsRequirementsByLevel(activity, activity.level)) {
       activity.unlocked = true;
       if (activity.discovered) {
@@ -1020,6 +1024,20 @@ export class ActivityService {
     if (activity.immortalityRequired) {
       if (activity.immortalityRequired[level] && !this.characterService.immortal()) {
         return false;
+      }
+    }
+    if (activity.conceptRequirements) {
+      const requiredConcept = activity.conceptRequirements[level];
+      const concept = this.contemplationService.getConcept(requiredConcept);
+      if (concept) {
+        if (!concept.discovered) {
+          return false;
+        } else if (activity.conceptRequirementsLevel) {
+          const requiredLevel = activity.conceptRequirementsLevel[level];
+          if (concept?.progress < requiredLevel) {
+            return false;
+          }
+        }
       }
     }
     const keys: (keyof CharacterAttribute)[] = Object.keys(
@@ -3835,14 +3853,15 @@ export class ActivityService {
 
   SoulCultivation: Activity = {
     level: 0,
-    name: ['Soul Cultivation'],
+    name: ['Soul Cultivation', 'Divine Cultivation'],
     location: LocationType.Self,
     imageBaseName: 'soulcultivation',
     activityType: ActivityType.SoulCultivation,
-    description: ['Focus on the development of your immortal soul.'],
-    yinYangEffect: [YinYangEffect.Balance],
+    description: ['Focus on the development of your immortal soul.', 'Focus on the development of your divine soul.'],
+    yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance],
     consequenceDescription: [
       "An immortal's cultivation technique. Balance your attributes and your lore, and improve yourself in every way.",
+      "An divine being's cultivation technique. Balance your attributes and your lore, and improve yourself in every way.",
     ],
     consequence: [
       () => {
@@ -3875,18 +3894,57 @@ export class ActivityService {
           this.characterService.yin++;
         }
       },
+      () => {
+        this.characterService.status.qi.value -= 10000;
+        let lowStat = 'earthLore' as AttributeType;
+        for (const attribute of ['metalLore', 'woodLore', 'waterLore', 'fireLore'] as AttributeType[]) {
+          if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+        }
+        this.characterService.increaseAttribute(lowStat, 100);
+
+        lowStat = 'strength' as AttributeType;
+        for (const attribute of ['speed', 'toughness', 'intelligence', 'charisma'] as AttributeType[]) {
+          if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
+            lowStat = attribute;
+          }
+        }
+        this.characterService.increaseAttribute(lowStat, 100);
+        this.characterService.increaseAttribute('spirituality', 1);
+
+        this.characterService.healthBonusSoul += 100;
+        this.characterService.status.stamina.max += 100;
+        this.characterService.increaseMaxQi(100);
+        this.characterService.recalculateDerivedStats();
+        this.characterService.checkOverage();
+        if (this.characterService.yin > this.characterService.yang) {
+          this.characterService.yang++;
+        } else {
+          this.characterService.yin++;
+        }
+      },
     ],
     resourceUse: [
       {
         health: 1000,
+      },
+      {
+        qi: 10000,
       },
     ],
     requirements: [
       {
         spirituality: 1e15,
       },
+      {
+        spirituality: 1e25,
+      },
     ],
-    immortalityRequired: [true],
+    immortalityRequired: [true, true],
+    divinityRequired: [false, true],
+    conceptRequirements: ['', CONCEPT_DIVINITY],
+    conceptRequirementsLevel: [0, 1e13],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };
