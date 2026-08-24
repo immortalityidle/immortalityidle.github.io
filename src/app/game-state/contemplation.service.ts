@@ -601,6 +601,15 @@ export class ContemplationService {
       discovered: false,
       unlocksMore: false,
     },
+    {
+      name: CONCEPT_PHILOSOPHY,
+      description:
+        'Contemplate the very nature of contemplation, applying the strange logic you learned in the Philosopher States to advance your understanding of all Tao concepts.',
+      progress: 0,
+      effect: '',
+      discovered: false,
+      unlocksMore: false,
+    },
   ];
 
   skipTicks = false;

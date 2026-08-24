@@ -3914,14 +3914,15 @@ export class ActivityService {
         this.characterService.increaseAttribute('spirituality', 1);
 
         this.characterService.healthBonusSoul += 100;
+        this.characterService.healthBonusDivine += 10;
         this.characterService.status.stamina.max += 100;
         this.characterService.increaseMaxQi(100);
         this.characterService.recalculateDerivedStats();
         this.characterService.checkOverage();
         if (this.characterService.yin > this.characterService.yang) {
-          this.characterService.yang++;
+          this.characterService.yang += 10;
         } else {
-          this.characterService.yin++;
+          this.characterService.yin += 10;
         }
       },
     ],
@@ -3944,7 +3945,7 @@ export class ActivityService {
     immortalityRequired: [true, true],
     divinityRequired: [false, true],
     conceptRequirements: ['', CONCEPT_DIVINITY],
-    conceptRequirementsLevel: [0, 1e13],
+    conceptRequirementsLevel: [0, 1e12],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };
