@@ -670,6 +670,7 @@ export class InventoryService {
     this.autoEatStamina = properties.autoEatStamina;
     this.autoEatQi = properties.autoEatQi;
     this.autoEatAll = properties.autoEatAll;
+    this.autoEatPouch = properties.autoEatPouch;
     this.autoUseEntries = properties.autoUseEntries;
     this.autoBalanceUnlocked.set(properties.autoBalanceUnlocked);
     this.autoBalanceItems = properties.autoBalanceItems;
