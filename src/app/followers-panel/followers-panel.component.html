@@ -1,3 +1,11 @@
+@if (followerService.noHumans){
+  <div>
+    <span class="headerLine">
+      Human followers? The very idea disgusts you.
+    </span>
+  </div>
+}
+@else {
 <div>
   @if (followerService.hqUnlocked){
     <span class="headerLine">
@@ -120,4 +128,5 @@
     }
   </div>
 </div>
+}
 <br>

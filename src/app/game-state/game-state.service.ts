@@ -925,6 +925,8 @@ export class GameStateService {
       forbiddenJobs: props?.forbiddenJobs || [],
       forbiddenSlots: props?.forbiddenSlots || [],
       huntingBonus: props?.huntingBonus || false,
+      noHumans: props?.noHumans || false,
+      menagerieUnlocked: props?.menagerieUnlocked || false,
     };
   }
 
@@ -1566,6 +1568,33 @@ export class GameStateService {
           newGameState.character.attributes.combatMastery.value = 1;
           newGameState.character.attributes.metalFist.value = 1;
           newGameState.followers.unlockedHiddenJobs.push(FOLLOWER_TYPE_TECHNIQUE_MASTER);
+        } else if (avatarType === AVATAR_BEAST_MASTER) {
+          newGameState.activities.unpaidActivities.push(ActivityType.Alchemy);
+          newGameState.activities.unpaidActivities.push(ActivityType.Blacksmithing);
+          newGameState.activities.unpaidActivities.push(ActivityType.Leatherworking);
+          newGameState.activities.unpaidActivities.push(ActivityType.Woodworking);
+          newGameState.activities.unpaidActivities.push(ActivityType.FormationCreation);
+          newGameState.activities.unpaidActivities.push(ActivityType.Cooking);
+          newGameState.activities.forbiddenActivities.push(ActivityType.Begging);
+          newGameState.activities.forbiddenActivities.push(ActivityType.Recruiting);
+          newGameState.activities.forbiddenActivities.push(ActivityType.TrainingFollowers);
+          newGameState.activities.completedApprenticeships.push(ActivityType.Alchemy);
+          newGameState.activities.completedApprenticeships.push(ActivityType.Blacksmithing);
+          newGameState.activities.completedApprenticeships.push(ActivityType.Leatherworking);
+          newGameState.activities.completedApprenticeships.push(ActivityType.Woodworking);
+          newGameState.activities.completedApprenticeships.push(ActivityType.FormationCreation);
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
+          newGameState.followers.noHumans = true;
+          newGameState.followers.followersUnlocked = true;
+          newGameState.followers.unlockedHiddenJobs.push('elephant');
+          newGameState.followers.unlockedHiddenJobs.push('turtle');
+          newGameState.followers.unlockedHiddenJobs.push('gorilla');
+          newGameState.followers.unlockedHiddenJobs.push('rhinoceros');
+          newGameState.followers.unlockedHiddenJobs.push('panda');
+          newGameState.followers.unlockedHiddenJobs.push('owl');
+          newGameState.followers.unlockedHiddenJobs.push('falcon');
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1628,6 +1657,15 @@ export class GameStateService {
     } else if (avatarChallenge === AVATAR_ALL_NATURAL) {
       this.homeService.berzerkRefinementUnlocked = true;
       this.contemplationService.discoverConcept(CONCEPT_NATURE);
+    } else if (avatarChallenge === AVATAR_BEAST_MASTER) {
+      this.followersService.unlockJob('elephant');
+      this.followersService.unlockJob('turtle');
+      this.followersService.unlockJob('gorilla');
+      this.followersService.unlockJob('rhinoceros');
+      this.followersService.unlockJob('panda');
+      this.followersService.unlockJob('owl');
+      this.followersService.unlockJob('falcon');
+      this.followersService.menagerieUnlocked = true;
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1707,7 +1745,8 @@ export class GameStateService {
     } else if (
       this.avatarChallenge === AVATAR_SWORD_SAINT ||
       this.avatarChallenge === AVATAR_WANDERER ||
-      this.avatarChallenge === AVATAR_ALL_NATURAL
+      this.avatarChallenge === AVATAR_ALL_NATURAL ||
+      this.avatarChallenge === AVATAR_BEAST_MASTER
     ) {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Defeat Death Itself.');
       this.avatarChallengeProgress.set(this.battleService.killsByMonster['death'] || 0);

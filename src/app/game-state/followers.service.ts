@@ -98,6 +98,8 @@ export interface FollowersProperties {
   forbiddenJobs: string[];
   forbiddenSlots: string[];
   huntingBonus: boolean;
+  noHumans: boolean;
+  menagerieUnlocked: boolean;
 }
 
 export interface SavedAssignments {
@@ -179,6 +181,8 @@ export class FollowersService {
   forbiddenJobs: string[] = [];
   forbiddenSlots: string[] = [];
   huntingBonus = false;
+  noHumans = false;
+  menagerieUnlocked = false;
 
   hqs: HQ[] = [
     {
@@ -898,6 +902,104 @@ export class FollowersService {
       totalPower: 0,
       enabled: true,
     },
+    elephant: {
+      work: () => {
+        let power = this.jobs['elephant'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 10;
+        }
+        this.characterService.healthBonusPets = Math.log2(power);
+      },
+      description: 'Elephants lend you the massive reserve of health that their hearts contain.',
+      pet: true,
+      totalPower: 0,
+      enabled: true,
+      hidden: true,
+    },
+    turtle: {
+      work: () => {
+        let power = this.jobs['turtle'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 10;
+        }
+        this.characterService.defenseBonusPets = Math.log2(power);
+      },
+      description: 'Turtles teach you the secrets of unconquerable defense.',
+      pet: true,
+      totalPower: 0,
+      enabled: true,
+      hidden: true,
+    },
+    gorilla: {
+      work: () => {
+        let power = this.jobs['gorilla'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 10;
+        }
+        this.characterService.petsAttributeBoost['strength'] = Math.log2(power);
+      },
+      description: 'Gorillas amplify your strength gains, giving you unbelievable physical power.',
+      pet: true,
+      totalPower: 0,
+      enabled: true,
+      hidden: true,
+    },
+    rhinoceros: {
+      work: () => {
+        let power = this.jobs['rhinoceros'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 10;
+        }
+        this.characterService.petsAttributeBoost['toughness'] = Math.log2(power);
+      },
+      description: 'Rhinoceroses amplify your toughness gains, granting you the resilience of their tough hide.',
+      pet: true,
+      totalPower: 0,
+      enabled: true,
+      hidden: true,
+    },
+    panda: {
+      work: () => {
+        let power = this.jobs['panda'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 10;
+        }
+        this.characterService.petsAttributeBoost['charisma'] = Math.log2(power);
+      },
+      description: 'Pandas amplify your charisma gains. Look at those guys, rolling around and eating bamboo. So cute!',
+      pet: true,
+      totalPower: 0,
+      enabled: true,
+      hidden: true,
+    },
+    owl: {
+      work: () => {
+        let power = this.jobs['owl'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 10;
+        }
+        this.characterService.petsAttributeBoost['intelligence'] = Math.log2(power);
+      },
+      description: 'Owls amplify your intelligence gains, teaching you their wise ways.',
+      pet: true,
+      totalPower: 0,
+      enabled: true,
+      hidden: true,
+    },
+    falcon: {
+      work: () => {
+        let power = this.jobs['falcon'].totalPower;
+        if (!this.petsBoosted) {
+          power *= 10;
+        }
+        this.characterService.petsAttributeBoost['speed'] = Math.log2(power);
+      },
+      description: 'Falcons amplify your speed gains. Whooooosh!',
+      pet: true,
+      totalPower: 0,
+      enabled: true,
+      hidden: true,
+    },
   };
 
   skipTicks = false;
@@ -956,7 +1058,7 @@ export class FollowersService {
       if (this.characterService.age % 18250 === 0 && (!this.hellService?.inHell() || this.characterService.god())) {
         // another 50xth birthday, you get bonus followers
         for (let i = 0; i < 1 + this.hqs[this.hq].bonusFreeFollowers; i++) {
-          this.generateFollower();
+          this.generateFollower(this.noHumans);
         }
       }
 
@@ -1041,14 +1143,20 @@ export class FollowersService {
     if (this.hqUnlocked) {
       this.followerCap += this.hqs[this.hq].maxFollowerIncrease;
     }
+    if (this.noHumans) {
+      this.followerCap = 0;
+    }
 
     this.petsCap = Math.round(
       1 +
         this.characterService.meridianRank() / 10 +
         this.characterService.soulCoreRank() / 10 +
         this.characterService.bloodlineRank / 10 +
-        Math.log10(this.characterService.attributes.animalHandling.value)
+        Math.log10(this.characterService.attributes.animalHandling.value + 1)
     );
+    if (this.noHumans) {
+      this.petsCap += 5;
+    }
 
     this.maxFollowerLevel = 100 + this.hqs[this.hq].maxLevelIncrease;
     const followerCapIncreasingAttributes = [
@@ -1334,10 +1442,13 @@ export class FollowersService {
       forbiddenJobs: this.forbiddenJobs,
       forbiddenSlots: this.forbiddenSlots,
       huntingBonus: this.huntingBonus,
+      noHumans: this.noHumans,
+      menagerieUnlocked: this.menagerieUnlocked,
     };
   }
 
   setProperties(properties: FollowersProperties) {
+    this.noHumans = properties.noHumans;
     this.followers = properties.followers;
     this.pets = properties.pets;
     this.stashedFollowers = properties.stashedFollowers;
@@ -1369,6 +1480,7 @@ export class FollowersService {
     this.sectName = properties.sectName;
     this.hq = properties.hq;
     this.hqUnlocked = properties.hqUnlocked;
+    this.menagerieUnlocked = properties.menagerieUnlocked;
     this.hqInputs = properties.hqInputs;
     this.giftRecipientCounter = properties.giftRecipientCounter;
     this.followersRecruited = properties.followersRecruited;

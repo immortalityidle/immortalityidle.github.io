@@ -226,6 +226,9 @@ export class CharacterService {
   healthBonusMagic = 0;
   healthBonusSoul = 0;
   healthBonusDivine = 0;
+  healthBonusPets = 0;
+  defenseBonusPets = 0;
+  petsAttributeBoost: { [key in AttributeType]?: number } = {};
   empowermentPillsTaken = 0;
   empowermentMult = 1;
   empowermentMax = 99;
@@ -821,6 +824,11 @@ export class CharacterService {
           this.bigNumberPipe.transform(this.healthBonusFactor) +
           '.';
       }
+      if (this.healthBonusPets > 1) {
+        healthBreakdownString +=
+          '<br>Multiplier from pets: ' + this.bigNumberPipe.transform(this.healthBonusPets) + '.';
+      }
+
       this.healthBreakdown.set(healthBreakdownString);
 
       if (this.highestMoney < this.money) {
@@ -1273,6 +1281,9 @@ export class CharacterService {
         this.healthBonusDivine +
         Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
       this.healthBonusFactor;
+    if (this.healthBonusPets >= 1) {
+      this.status.health.max *= this.healthBonusPets;
+    }
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
@@ -1340,6 +1351,9 @@ export class CharacterService {
     this.defense = Math.floor(toughnessDefense * (head + body + legs + feet)) || 1;
     if (this.righteousWrathUnlocked) {
       this.defense *= 2;
+    }
+    if (this.defenseBonusPets >= 1) {
+      this.defense *= this.defenseBonusPets;
     }
     if (this.yinYangBoosted) {
       // calculate yin/yang balance bonus, 10 for perfect balance, 0 at worst
@@ -1480,6 +1494,10 @@ export class CharacterService {
       amount *= 1 + this.achievementService!.unlockedAchievements.length * 0.02; // 2% bonus per achievement
     }
     increaseAmount *= this.attributes[attribute].aptitudeMult;
+    if (this.petsAttributeBoost[attribute] && this.petsAttributeBoost[attribute] >= 1) {
+      increaseAmount *= this.petsAttributeBoost[attribute];
+    }
+
     this.attributes[attribute].value += increaseAmount;
     return increaseAmount;
   }
