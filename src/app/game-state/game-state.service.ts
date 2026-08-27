@@ -1595,6 +1595,7 @@ export class GameStateService {
           newGameState.followers.unlockedHiddenJobs.push('panda');
           newGameState.followers.unlockedHiddenJobs.push('owl');
           newGameState.followers.unlockedHiddenJobs.push('falcon');
+          newGameState.character.seclusionEnabled = true;
         }
 
         newGameState.avatarChallenge = avatarType;

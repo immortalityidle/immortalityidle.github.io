@@ -1287,10 +1287,17 @@ export class CharacterService {
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
-      this.attributes[keys[key]].aptitudeMult = this.getAptitudeMultipier(
-        this.attributes[keys[key]].aptitude,
+      const attribute = keys[key];
+      let petMultiplier = 1;
+      if (this.petsAttributeBoost[attribute] && this.petsAttributeBoost[attribute] >= 1) {
+        petMultiplier = this.petsAttributeBoost[attribute];
+      }
+
+      this.attributes[attribute].aptitudeMult = this.getAptitudeMultipier(
+        this.attributes[attribute].aptitude,
         false,
-        this.attributes[keys[key]].attributeGroup === DIVINE_ATTRIBUTES
+        this.attributes[attribute].attributeGroup === DIVINE_ATTRIBUTES,
+        petMultiplier
       );
       const concepts = this.contemplationService.concepts.filter(concept => concept.effect.includes(keys[key]));
       let conceptMultiplier = 1;
@@ -1376,7 +1383,7 @@ export class CharacterService {
   }
 
   //TODO: maybe cache the results on aptitude change instead of recalculating regularly
-  getAptitudeMultipier(aptitude: number, noEmpowerment = false, divineAttribute = false): number {
+  getAptitudeMultipier(aptitude: number, noEmpowerment = false, divineAttribute = false, extraMultiplier = 1): number {
     if (aptitude < 0) {
       // should not happen, but sanity check it
       aptitude = 0;
@@ -1431,6 +1438,8 @@ export class CharacterService {
     if (this.attributes.wisdom.value > 0 && !divineAttribute) {
       c *= this.attributes.wisdom.value + 1;
     }
+    c *= extraMultiplier;
+
     return c;
   }
 
@@ -1494,10 +1503,6 @@ export class CharacterService {
       amount *= 1 + this.achievementService!.unlockedAchievements.length * 0.02; // 2% bonus per achievement
     }
     increaseAmount *= this.attributes[attribute].aptitudeMult;
-    if (this.petsAttributeBoost[attribute] && this.petsAttributeBoost[attribute] >= 1) {
-      increaseAmount *= this.petsAttributeBoost[attribute];
-    }
-
     this.attributes[attribute].value += increaseAmount;
     return increaseAmount;
   }

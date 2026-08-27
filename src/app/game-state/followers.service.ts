@@ -933,10 +933,13 @@ export class FollowersService {
     gorilla: {
       work: () => {
         let power = this.jobs['gorilla'].totalPower;
+        if (power < 1) {
+          this.characterService.petsAttributeBoost['strength'] = 1;
+        }
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.petsAttributeBoost['strength'] = Math.log2(power);
+        this.characterService.petsAttributeBoost['strength'] = Math.log2(power + 2);
       },
       description: 'Gorillas amplify your strength gains, giving you unbelievable physical power.',
       pet: true,
@@ -947,10 +950,13 @@ export class FollowersService {
     rhinoceros: {
       work: () => {
         let power = this.jobs['rhinoceros'].totalPower;
+        if (power < 1) {
+          this.characterService.petsAttributeBoost['toughness'] = 1;
+        }
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.petsAttributeBoost['toughness'] = Math.log2(power);
+        this.characterService.petsAttributeBoost['toughness'] = Math.log2(power + 2);
       },
       description: 'Rhinoceroses amplify your toughness gains, granting you the resilience of their tough hide.',
       pet: true,
@@ -961,10 +967,13 @@ export class FollowersService {
     panda: {
       work: () => {
         let power = this.jobs['panda'].totalPower;
+        if (power < 1) {
+          this.characterService.petsAttributeBoost['charisma'] = 1;
+        }
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.petsAttributeBoost['charisma'] = Math.log2(power);
+        this.characterService.petsAttributeBoost['charisma'] = Math.log2(power + 2);
       },
       description: 'Pandas amplify your charisma gains. Look at those guys, rolling around and eating bamboo. So cute!',
       pet: true,
@@ -975,10 +984,13 @@ export class FollowersService {
     owl: {
       work: () => {
         let power = this.jobs['owl'].totalPower;
+        if (power < 1) {
+          this.characterService.petsAttributeBoost['intelligence'] = 1;
+        }
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.petsAttributeBoost['intelligence'] = Math.log2(power);
+        this.characterService.petsAttributeBoost['intelligence'] = Math.log2(power + 2);
       },
       description: 'Owls amplify your intelligence gains, teaching you their wise ways.',
       pet: true,
@@ -989,10 +1001,13 @@ export class FollowersService {
     falcon: {
       work: () => {
         let power = this.jobs['falcon'].totalPower;
+        if (power < 1) {
+          this.characterService.petsAttributeBoost['speed'] = 1;
+        }
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.petsAttributeBoost['speed'] = Math.log2(power);
+        this.characterService.petsAttributeBoost['speed'] = Math.log2(power + 2);
       },
       description: 'Falcons amplify your speed gains. Whooooosh!',
       pet: true,
