@@ -3919,7 +3919,7 @@ export class ActivityService {
         }
       },
       () => {
-        this.characterService.status.qi.value -= 10000;
+        this.characterService.status.qi.value -= 10000 / (this.characterService.qiCompressionLevel + 1);
         let lowStat = 'earthLore' as AttributeType;
         for (const attribute of ['metalLore', 'woodLore', 'waterLore', 'fireLore'] as AttributeType[]) {
           if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
