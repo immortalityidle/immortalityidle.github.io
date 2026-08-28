@@ -1094,7 +1094,7 @@ export class FollowersService {
             this.bigNumberPipe.transform(this.menagerie.energyPerDay) +
             ' raw energy of each element available, it will also grant each pet ' +
             this.bigNumberPipe.transform(this.menagerie.experiencePerDay) +
-            ' experience per day.'
+            ' experience per day and an extended lifespan.'
         );
       } else {
         this.menagerieDescription.set('');
@@ -1427,6 +1427,7 @@ export class FollowersService {
 
     for (const pet of this.pets) {
       pet.experience += Math.floor(this.menagerie.experiencePerDay);
+      pet.lifespan++;
       this.levelUp(pet);
     }
   }
@@ -2254,7 +2255,8 @@ export class FollowersService {
     if (
       this.menagerie.energyPerDay === 1 &&
       this.menagerie.experiencePerDay === 500 &&
-      this.menagerie.maxPetIncrease === 50
+      this.menagerie.maxPetIncrease === 50 &&
+      this.menagerie.maxLevelIncrease === 400
     ) {
       return false;
     }
@@ -2268,6 +2270,11 @@ export class FollowersService {
       this.menagerie.experiencePerDay += 0.001;
       if (this.menagerie.experiencePerDay > 500) {
         this.menagerie.experiencePerDay = 500;
+      }
+    } else if (randomNumber < 0.95) {
+      this.menagerie.maxLevelIncrease += 0.0001;
+      if (this.menagerie.maxLevelIncrease > 400) {
+        this.menagerie.maxLevelIncrease = 400;
       }
     } else {
       this.menagerie.maxPetIncrease += 0.0001;
