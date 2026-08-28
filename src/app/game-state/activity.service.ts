@@ -183,7 +183,7 @@ export class ActivityService {
   forbiddenActivities: ActivityType[] = [];
   unpaidActivities: ActivityType[] = []; // note that this needs to be handled specifically for every activity that uses it
   skipTicks = false;
-  natureMultiplier = 1;
+  natureMultiplier = 0;
   ignoreRequirements: { [key in ActivityType]?: string[] } = {};
 
   constructor(
@@ -314,7 +314,7 @@ export class ActivityService {
       if ((natureConcept?.progress || 0) > 0) {
         this.natureMultiplier = 1 + Math.log10(this.contemplationService.getConcept(CONCEPT_NATURE)?.progress || 0);
       } else {
-        this.natureMultiplier = 1;
+        this.natureMultiplier = 0;
       }
     });
 

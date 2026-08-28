@@ -2723,7 +2723,7 @@ export class BattleService {
       baseName: 'shade',
       health: this.pantheonService.greekBaseHealth * powerFactor,
       maxHealth: this.pantheonService.greekBaseHealth * powerFactor,
-      defense: 0,
+      defense: this.pantheonService.greekBaseHealth * powerFactor,
       loot: [],
       unique: true,
       techniques: [
