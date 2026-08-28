@@ -110,6 +110,7 @@ export enum ActivityType {
   SearchForPersephone,
   AvatarPortal,
   ReturnToGodhoodPortal,
+  UpgradeMenagerie,
   Hell, // hell needs to be last for indexing purposes
 }
 
@@ -128,6 +129,7 @@ export interface Activity {
   yinYangEffect: YinYangEffect[];
   consequenceDescription: string[];
   requirements: CharacterAttribute[];
+  extraRequirements?: (() => boolean)[];
   immortalityRequired?: boolean[];
   divinityRequired?: boolean[];
   conceptRequirements?: string[];

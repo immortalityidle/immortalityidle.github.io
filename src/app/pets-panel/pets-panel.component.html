@@ -1,4 +1,8 @@
 <div>
+  <span innerHTML="{{ followerService.menagerieDescription() }}">
+  </span>
+</div>
+<div>
   <span [ngClass]="followerService.petsMaxed">
     &nbsp;({{followerService.pets.length}} / {{followerService.petsCap}} Pets)
   </span>

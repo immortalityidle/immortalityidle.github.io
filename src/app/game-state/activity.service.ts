@@ -294,6 +294,7 @@ export class ActivityService {
       this.CombatTraining,
       this.RefineTechniques,
       this.ManipulateEnergy,
+      this.UpgradeMenagerie,
     ];
     this.portals = [];
     setTimeout(() => (this.locationService = this.injector.get(LocationService)));
@@ -1059,7 +1060,9 @@ export class ActivityService {
         return false;
       }
     }
-
+    if (activity.extraRequirements && activity.extraRequirements[level] && !activity.extraRequirements[level]()) {
+      return false;
+    }
     // max status value must be high enough to perform the activity
     const resourceUse = activity.resourceUse[level];
     for (const keyString in resourceUse) {
@@ -6240,6 +6243,41 @@ export class ActivityService {
     requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  UpgradeMenagerie: Activity = {
+    level: 0,
+    name: ['Upgrading Your Menagerie'],
+    location: LocationType.SmallTown,
+    imageBaseName: 'upgradeMenagerie',
+    activityType: ActivityType.UpgradeMenagerie,
+    description: [
+      'Upgrade your menagerie to reduce its energy cost, allow it to hold more pets, or strengthen its ability to empower your pets.',
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Improve your menagerie.'],
+    consequence: [
+      () => {
+        this.characterService.status.qi.value -= 100000 / (this.characterService.qiCompressionLevel + 1);
+        if (!this.followerService.upgradeMenagerie()) {
+          this.logService.log(LogTopic.EVENT, 'Your menagerie cannot be imroved any more.');
+        }
+      },
+    ],
+    resourceUse: [
+      {
+        qi: 100000,
+      },
+    ],
+    requirements: [{}],
+    divinityRequired: [true],
+    unlocked: false,
+    extraRequirements: [
+      () => {
+        return this.followerService.menagerieUnlocked;
+      },
+    ],
     skipApprenticeshipLevel: 0,
   };
 }

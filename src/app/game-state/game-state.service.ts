@@ -927,6 +927,12 @@ export class GameStateService {
       huntingBonus: props?.huntingBonus || false,
       noHumans: props?.noHumans || false,
       menagerieUnlocked: props?.menagerieUnlocked || false,
+      menagerie: props?.menagerie || {
+        energyPerDay: 1e6,
+        maxPetIncrease: 1,
+        maxLevelIncrease: 1,
+        experiencePerDay: 1,
+      },
     };
   }
 

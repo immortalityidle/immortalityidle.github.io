@@ -6,7 +6,16 @@ import { HomeService } from './home.service';
 import { FirstNames } from './followerResources';
 import { Equipment, InventoryService, ItemStack } from './inventory.service';
 import { ItemRepoService } from './item-repo.service';
-import { BattleService, ENERGY_SPIRIT, LOOT_TYPE_GEM } from './battle.service';
+import {
+  BattleService,
+  ELEMENT_EARTH,
+  ELEMENT_FIRE,
+  ELEMENT_METAL,
+  ELEMENT_WATER,
+  ELEMENT_WOOD,
+  ENERGY_SPIRIT,
+  LOOT_TYPE_GEM,
+} from './battle.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
@@ -43,6 +52,13 @@ export interface HQ {
   administratorsRequired: number;
   administratorLevel: number;
   inputs: number;
+}
+
+export interface Menagerie {
+  energyPerDay: number;
+  maxPetIncrease: number;
+  maxLevelIncrease: number;
+  experiencePerDay: number;
 }
 
 export interface Follower {
@@ -100,6 +116,7 @@ export interface FollowersProperties {
   huntingBonus: boolean;
   noHumans: boolean;
   menagerieUnlocked: boolean;
+  menagerie: Menagerie;
 }
 
 export interface SavedAssignments {
@@ -173,6 +190,12 @@ export class FollowersService {
   maxFollowerLevel = 100;
   sectName = this.generateSectName();
   hq = HQType.GatheringField;
+  menagerie: Menagerie = {
+    energyPerDay: 1e6,
+    maxPetIncrease: 1,
+    maxLevelIncrease: 1,
+    experiencePerDay: 1,
+  };
   hqUnlocked = false;
   hqInputs: ItemStack[] = [];
   giftRecipientCounter = 0;
@@ -183,6 +206,7 @@ export class FollowersService {
   huntingBonus = false;
   noHumans = false;
   menagerieUnlocked = false;
+  menagerieDescription = signal<string>('');
 
   hqs: HQ[] = [
     {
@@ -1048,6 +1072,9 @@ export class FollowersService {
       this.sortFollowers(this.sortAscending, false);
 
       this.checkTriggers();
+    });
+
+    mainLoopService.longTickSubject.subscribe(() => {
       if (this.leftoverHQCostGemValue > 0) {
         this.leftoverHQCostDisplay.set(
           '<br>Currently storing ' +
@@ -1056,6 +1083,21 @@ export class FollowersService {
         );
       } else {
         this.leftoverHQCostDisplay.set('');
+      }
+      if (this.menagerieUnlocked) {
+        this.menagerieDescription.set(
+          'Your menagerie increases the maximum pets you can support by ' +
+            this.bigNumberPipe.transform(this.menagerie.maxPetIncrease) +
+            ' and increases their maximum level by ' +
+            this.bigNumberPipe.transform(this.menagerie.maxLevelIncrease) +
+            ' (rounded down).<br>If you have ' +
+            this.bigNumberPipe.transform(this.menagerie.energyPerDay) +
+            ' raw energy of each element available, it will also grant each pet ' +
+            this.bigNumberPipe.transform(this.menagerie.experiencePerDay) +
+            ' experience per day.'
+        );
+      } else {
+        this.menagerieDescription.set('');
       }
     });
 
@@ -1079,6 +1121,7 @@ export class FollowersService {
 
       this.followersWorks();
       this.hqWorks();
+      this.menagerieWorks();
 
       this.followersMaxed =
         this.followers.length < this.followerCap ? (this.followersMaxed = 'UNMAXED') : (this.followersMaxed = 'MAXED');
@@ -1169,6 +1212,9 @@ export class FollowersService {
         this.characterService.bloodlineRank / 10 +
         Math.log10(this.characterService.attributes.animalHandling.value + 1)
     );
+    if (this.menagerieUnlocked) {
+      this.petsCap += Math.floor(this.menagerie.maxPetIncrease);
+    }
     if (this.noHumans) {
       this.petsCap += 5;
     }
@@ -1359,6 +1405,32 @@ export class FollowersService {
     }
   }
 
+  menagerieWorks() {
+    if (!this.menagerieUnlocked) {
+      return;
+    }
+    if (
+      this.characterService.energy[ELEMENT_FIRE] < this.menagerie.energyPerDay ||
+      this.characterService.energy[ELEMENT_WATER] < this.menagerie.energyPerDay ||
+      this.characterService.energy[ELEMENT_METAL] < this.menagerie.energyPerDay ||
+      this.characterService.energy[ELEMENT_WOOD] < this.menagerie.energyPerDay ||
+      this.characterService.energy[ELEMENT_EARTH] < this.menagerie.energyPerDay
+    ) {
+      // not enough energy
+      return;
+    }
+    this.characterService.energy[ELEMENT_FIRE] -= this.menagerie.energyPerDay;
+    this.characterService.energy[ELEMENT_WATER] -= this.menagerie.energyPerDay;
+    this.characterService.energy[ELEMENT_METAL] -= this.menagerie.energyPerDay;
+    this.characterService.energy[ELEMENT_WOOD] -= this.menagerie.energyPerDay;
+    this.characterService.energy[ELEMENT_EARTH] -= this.menagerie.energyPerDay;
+
+    for (const pet of this.pets) {
+      pet.experience += Math.floor(this.menagerie.experiencePerDay);
+      this.levelUp(pet);
+    }
+  }
+
   gemCritiriaMet(gemsRequired: number): boolean {
     if (gemsRequired <= 0) {
       return true;
@@ -1459,6 +1531,7 @@ export class FollowersService {
       huntingBonus: this.huntingBonus,
       noHumans: this.noHumans,
       menagerieUnlocked: this.menagerieUnlocked,
+      menagerie: this.menagerie,
     };
   }
 
@@ -1496,6 +1569,7 @@ export class FollowersService {
     this.hq = properties.hq;
     this.hqUnlocked = properties.hqUnlocked;
     this.menagerieUnlocked = properties.menagerieUnlocked;
+    this.menagerie = properties.menagerie;
     this.hqInputs = properties.hqInputs;
     this.giftRecipientCounter = properties.giftRecipientCounter;
     this.followersRecruited = properties.followersRecruited;
@@ -1933,7 +2007,11 @@ export class FollowersService {
       index = 0;
     }
     const startingIndex = index;
-    while (followerList[index].power >= this.maxFollowerLevel) {
+    let maxLevel = this.maxFollowerLevel;
+    if (this.menagerieUnlocked && pet) {
+      maxLevel += this.menagerie.maxLevelIncrease;
+    }
+    while (followerList[index].power >= maxLevel) {
       index++;
       if (index >= followerList.length) {
         index = 0;
@@ -1954,7 +2032,12 @@ export class FollowersService {
   }
 
   levelUp(follower: Follower) {
-    while (follower.experience > follower.power * 1000 && follower.power < this.maxFollowerLevel) {
+    let maxLevel = this.maxFollowerLevel;
+    if (this.menagerieUnlocked && follower.pet) {
+      maxLevel += this.menagerie.maxLevelIncrease;
+    }
+
+    while (follower.experience > follower.power * 1000 && follower.power < maxLevel) {
       follower.experience -= follower.power * 1000;
       follower.power++;
       if (follower.power > this.highestLevel) {
@@ -2165,5 +2248,33 @@ export class FollowersService {
 
   toggleJobEnabled(jobKey: string) {
     this.jobs[jobKey].enabled = !this.jobs[jobKey].enabled;
+  }
+
+  upgradeMenagerie(): boolean {
+    if (
+      this.menagerie.energyPerDay === 1 &&
+      this.menagerie.experiencePerDay === 500 &&
+      this.menagerie.maxPetIncrease === 50
+    ) {
+      return false;
+    }
+    const randomNumber = Math.random();
+    if (randomNumber < 0.8) {
+      this.menagerie.energyPerDay *= 0.9999;
+      if (this.menagerie.energyPerDay < 1) {
+        this.menagerie.energyPerDay = 1;
+      }
+    } else if (randomNumber < 0.9) {
+      this.menagerie.experiencePerDay += 0.001;
+      if (this.menagerie.experiencePerDay > 500) {
+        this.menagerie.experiencePerDay = 500;
+      }
+    } else {
+      this.menagerie.maxPetIncrease += 0.0001;
+      if (this.menagerie.maxPetIncrease > 50) {
+        this.menagerie.maxPetIncrease = 50;
+      }
+    }
+    return true;
   }
 }
