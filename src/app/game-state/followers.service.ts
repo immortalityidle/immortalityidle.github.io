@@ -431,6 +431,9 @@ export class FollowersService {
   jobs: jobsType = {
     chef: {
       work: daysElapsed => {
+        if (!this.jobs['chef'].enabled || this.jobs['chef'].totalPower < 1) {
+          return;
+        }
         let workPower = this.jobs['chef'].totalPower * daysElapsed + (this.leftoverWork['chef'] || 0);
         if (this.characterService.attributes.mercy.value > 0) {
           workPower *= Math.log10(this.characterService.attributes.mercy.value + 10);
@@ -444,6 +447,9 @@ export class FollowersService {
     },
     builder: {
       work: daysElapsed => {
+        if (!this.jobs['builder'].enabled || this.jobs['builder'].totalPower < 1) {
+          return;
+        }
         this.homeService.nextHomeCostReduction += this.jobs['builder'].totalPower;
         if (this.homeService.upgrading()) {
           this.homeService.upgradeTick(this.jobs['builder'].totalPower * daysElapsed);
@@ -455,6 +461,9 @@ export class FollowersService {
     },
     hunter: {
       work: daysElapsed => {
+        if (!this.jobs['hunter'].enabled || this.jobs['hunter'].totalPower < 1) {
+          return;
+        }
         let huntingBonusMultiplier = 1;
         if (this.huntingBonus) {
           huntingBonusMultiplier = 2;
@@ -479,6 +488,9 @@ export class FollowersService {
     },
     fisher: {
       work: daysElapsed => {
+        if (!this.jobs['fisher'].enabled || this.jobs['fisher'].totalPower < 1) {
+          return;
+        }
         let workPower = this.jobs['fisher'].totalPower * daysElapsed + (this.leftoverWork['fisher'] || 0);
         if (this.characterService.attributes.wisdom.value > 0) {
           workPower *= Math.log10(this.characterService.attributes.wisdom.value + 10);
@@ -498,6 +510,9 @@ export class FollowersService {
     },
     farmer: {
       work: daysElapsed => {
+        if (!this.jobs['farmer'].enabled || this.jobs['farmer'].totalPower < 1) {
+          return;
+        }
         this.farmService.workFields(Math.floor(this.jobs['farmer'].totalPower * daysElapsed));
       },
       description: 'Farmers work your fields, helping your crops to grow.',
@@ -507,6 +522,9 @@ export class FollowersService {
     },
     miner: {
       work: daysElapsed => {
+        if (!this.jobs['miner'].enabled || this.jobs['miner'].totalPower < 1) {
+          return;
+        }
         const workers = this.followers.filter(follower => follower.job === 'miner');
         for (const worker of workers) {
           this.inventoryService.addItem(this.inventoryService.getOre(worker.power), daysElapsed);
@@ -518,6 +536,9 @@ export class FollowersService {
     },
     metallurgist: {
       work: daysElapsed => {
+        if (!this.jobs['metallurgist'].enabled || this.jobs['metallurgist'].totalPower < 1) {
+          return;
+        }
         const workPower = this.jobs['metallurgist'].totalPower * daysElapsed + (this.leftoverWork['metallurgist'] || 0);
         this.homeService.triggerWorkstations(ActivityType.Smelting, Math.floor(workPower / 100));
         this.leftoverWork['metallurgist'] = workPower % 100;
@@ -529,6 +550,9 @@ export class FollowersService {
     },
     coalDigger: {
       work: daysElapsed => {
+        if (!this.jobs['coalDigger'].enabled || this.jobs['coalDigger'].totalPower < 1) {
+          return;
+        }
         const workPower = this.jobs['coalDigger'].totalPower * daysElapsed + (this.leftoverWork['coalDigger'] || 0);
         this.inventoryService.addItem(this.itemRepoService.items['coal'], Math.floor(workPower / 20));
         this.leftoverWork['coalDigger'] = workPower % 20;
@@ -539,6 +563,9 @@ export class FollowersService {
     },
     lumberjack: {
       work: daysElapsed => {
+        if (!this.jobs['lumberjack'].enabled || this.jobs['lumberjack'].totalPower < 1) {
+          return;
+        }
         const workers = this.followers.filter(follower => follower.job === 'lumberjack');
         for (const worker of workers) {
           this.inventoryService.addItem(this.inventoryService.getWood(worker.power), daysElapsed);
@@ -550,6 +577,9 @@ export class FollowersService {
     },
     herbalist: {
       work: daysElapsed => {
+        if (!this.jobs['herbalist'].enabled || this.jobs['herbalist'].totalPower < 1) {
+          return;
+        }
         const workers = this.followers.filter(follower => follower.job === 'herbalist');
         let averagePower = 0;
         for (const worker of workers) {
@@ -564,6 +594,9 @@ export class FollowersService {
     },
     skinner: {
       work: daysElapsed => {
+        if (!this.jobs['skinner'].enabled || this.jobs['skinner'].totalPower < 1) {
+          return;
+        }
         const workers = this.followers.filter(follower => follower.job === 'skinner');
         for (const worker of workers) {
           this.inventoryService.addItem(this.inventoryService.getHide(worker.power), daysElapsed);
@@ -575,6 +608,9 @@ export class FollowersService {
     },
     weaponsmith: {
       work: daysElapsed => {
+        if (!this.jobs['weaponsmith'].enabled || this.jobs['weaponsmith'].totalPower < 1) {
+          return;
+        }
         let workPower = this.jobs['weaponsmith'].totalPower * daysElapsed + (this.leftoverWork['weaponsmith'] || 0);
         if (this.characterService.attributes.wrath.value > 0) {
           workPower *= Math.log10(this.characterService.attributes.wrath.value + 10);
@@ -617,6 +653,9 @@ export class FollowersService {
     },
     armorer: {
       work: daysElapsed => {
+        if (!this.jobs['armorer'].enabled || this.jobs['armorer'].totalPower < 1) {
+          return;
+        }
         let workPower = this.jobs['armorer'].totalPower * daysElapsed + (this.leftoverWork['armorer'] || 0);
         if (this.characterService.attributes.justice.value > 0) {
           workPower *= Math.log10(this.characterService.attributes.justice.value + 10);
@@ -661,6 +700,9 @@ export class FollowersService {
     },
     brawler: {
       work: daysElapsed => {
+        if (!this.jobs['brawler'].enabled || this.jobs['brawler'].totalPower < 1) {
+          return;
+        }
         let totalPower = this.jobs['brawler'].totalPower * daysElapsed;
         if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
@@ -673,6 +715,9 @@ export class FollowersService {
     },
     sprinter: {
       work: daysElapsed => {
+        if (!this.jobs['sprinter'].enabled || this.jobs['sprinter'].totalPower < 1) {
+          return;
+        }
         let totalPower = this.jobs['sprinter'].totalPower * daysElapsed;
         if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
@@ -685,6 +730,9 @@ export class FollowersService {
     },
     trainer: {
       work: daysElapsed => {
+        if (!this.jobs['trainer'].enabled || this.jobs['trainer'].totalPower < 1) {
+          return;
+        }
         let totalPower = this.jobs['trainer'].totalPower * daysElapsed;
         if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
@@ -697,6 +745,9 @@ export class FollowersService {
     },
     tutor: {
       work: daysElapsed => {
+        if (!this.jobs['tutor'].enabled || this.jobs['tutor'].totalPower < 1) {
+          return;
+        }
         let totalPower = this.jobs['tutor'].totalPower * daysElapsed;
         if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
@@ -709,6 +760,9 @@ export class FollowersService {
     },
     mediator: {
       work: daysElapsed => {
+        if (!this.jobs['mediator'].enabled || this.jobs['mediator'].totalPower < 1) {
+          return;
+        }
         let totalPower = this.jobs['mediator'].totalPower * daysElapsed;
         if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
@@ -721,6 +775,9 @@ export class FollowersService {
     },
     priest: {
       work: daysElapsed => {
+        if (!this.jobs['priest'].enabled || this.jobs['priest'].totalPower < 1) {
+          return;
+        }
         let totalPower = this.jobs['priest'].totalPower * daysElapsed;
         if (this.hellService?.inHell() && !this.characterService.god()) {
           totalPower /= 10;
@@ -733,6 +790,9 @@ export class FollowersService {
     },
     gemologist: {
       work: daysElapsed => {
+        if (!this.jobs['gemologist'].enabled || this.jobs['gemologist'].totalPower < 1) {
+          return;
+        }
         const workPower = this.jobs['gemologist'].totalPower * daysElapsed + (this.leftoverWork['gemologist'] || 0);
         let divisor = 50;
         if (this.hellService?.inHell() && !this.characterService.god()) {
@@ -751,6 +811,9 @@ export class FollowersService {
     },
     scout: {
       work: () => {
+        if (!this.jobs['scout'].enabled || this.jobs['scout'].totalPower < 1) {
+          return;
+        }
         this.battleService.yearlyMonsterDay += this.jobs['scout'].totalPower;
       },
       description: 'Scouts help you track down and get in fights with monsters faster.',
@@ -760,6 +823,9 @@ export class FollowersService {
     },
     monsterHunter: {
       work: daysElapsed => {
+        if (!this.jobs['monsterHunter'].enabled || this.jobs['monsterHunter'].totalPower < 1) {
+          return;
+        }
         const workers = this.followers.filter(follower => follower.job === 'monsterHunter');
         for (const worker of workers) {
           this.inventoryService.addItem(
@@ -774,6 +840,9 @@ export class FollowersService {
     },
     damned: {
       work: () => {
+        if (!this.jobs['damned'].enabled || this.jobs['damned'].totalPower < 1) {
+          return;
+        }
         this.battleService.trouble();
       },
       description:
@@ -784,6 +853,9 @@ export class FollowersService {
     },
     prophet: {
       work: daysElapsed => {
+        if (!this.jobs['prophet'].enabled || this.jobs['prophet'].totalPower < 1) {
+          return;
+        }
         let workPower = this.jobs['prophet'].totalPower * daysElapsed + (this.leftoverWork['prophet'] || 0);
         if (this.characterService.attributes.presence.value > 0) {
           workPower *= Math.log10(this.characterService.attributes.presence.value + 10);
@@ -803,6 +875,9 @@ export class FollowersService {
     },
     moneyBurner: {
       work: daysElapsed => {
+        if (!this.jobs['moneyBurner'].enabled || this.jobs['moneyBurner'].totalPower < 1) {
+          return;
+        }
         const workPower = this.jobs['moneyBurner'].totalPower * daysElapsed + (this.leftoverWork['moneyBurner'] || 0);
         const burnerPower = Math.floor(workPower / 50);
         this.leftoverWork['moneyBurner'] = workPower % 50;
@@ -823,6 +898,9 @@ export class FollowersService {
     },
     banker: {
       work: daysElapsed => {
+        if (!this.jobs['banker'].enabled || this.jobs['banker'].totalPower < 1) {
+          return;
+        }
         let totalPower = this.jobs['banker'].totalPower;
         if (this.characterService.attributes.justice.value > 0) {
           totalPower *= Math.log10(this.characterService.attributes.justice.value + 10);
@@ -863,6 +941,9 @@ export class FollowersService {
     },
     snake: {
       work: daysElapsed => {
+        if (!this.jobs['snake'].enabled || this.jobs['snake'].totalPower < 1) {
+          return;
+        }
         let power = this.jobs['snake'].totalPower;
         if (!this.petsBoosted) {
           power *= 0.01;
@@ -876,6 +957,9 @@ export class FollowersService {
     },
     tiger: {
       work: daysElapsed => {
+        if (!this.jobs['tiger'].enabled || this.jobs['tiger'].totalPower < 1) {
+          return;
+        }
         let power = this.jobs['tiger'].totalPower;
         if (!this.petsBoosted) {
           power *= 0.01;
@@ -889,6 +973,9 @@ export class FollowersService {
     },
     ox: {
       work: daysElapsed => {
+        if (!this.jobs['ox'].enabled || this.jobs['ox'].totalPower < 1) {
+          return;
+        }
         let power = this.jobs['ox'].totalPower;
         if (!this.petsBoosted) {
           power *= 0.01;
@@ -902,6 +989,9 @@ export class FollowersService {
     },
     monkey: {
       work: daysElapsed => {
+        if (!this.jobs['monkey'].enabled || this.jobs['monkey'].totalPower < 1) {
+          return;
+        }
         let power = this.jobs['monkey'].totalPower;
         if (!this.petsBoosted) {
           power *= 0.01;
@@ -915,6 +1005,9 @@ export class FollowersService {
     },
     pig: {
       work: daysElapsed => {
+        if (!this.jobs['pig'].enabled || this.jobs['pig'].totalPower < 1) {
+          return;
+        }
         let power = this.jobs['pig'].totalPower;
         if (!this.petsBoosted) {
           power *= 0.01;
@@ -928,11 +1021,15 @@ export class FollowersService {
     },
     elephant: {
       work: () => {
+        if (!this.jobs['elephant'].enabled || this.jobs['elephant'].totalPower < 1) {
+          this.characterService.healthBonusPets = 1;
+          return;
+        }
         let power = this.jobs['elephant'].totalPower;
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.healthBonusPets = Math.log2(power);
+        this.characterService.healthBonusPets = Math.log2(power + 2);
       },
       description: 'Elephants lend you the massive reserve of health that their hearts contain.',
       pet: true,
@@ -942,11 +1039,15 @@ export class FollowersService {
     },
     turtle: {
       work: () => {
+        if (!this.jobs['turtle'].enabled || this.jobs['turtle'].totalPower < 1) {
+          this.characterService.defenseBonusPets = 1;
+          return;
+        }
         let power = this.jobs['turtle'].totalPower;
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.defenseBonusPets = Math.log2(power);
+        this.characterService.defenseBonusPets = Math.log2(power + 2);
       },
       description: 'Turtles teach you the secrets of unconquerable defense.',
       pet: true,
@@ -956,6 +1057,10 @@ export class FollowersService {
     },
     gorilla: {
       work: () => {
+        if (!this.jobs['gorilla'].enabled || this.jobs['gorilla'].totalPower < 1) {
+          this.characterService.petsAttributeBoost['strength'] = 1;
+          return;
+        }
         let power = this.jobs['gorilla'].totalPower;
         if (power < 1) {
           this.characterService.petsAttributeBoost['strength'] = 1;
@@ -973,6 +1078,10 @@ export class FollowersService {
     },
     rhinoceros: {
       work: () => {
+        if (!this.jobs['rhinoceros'].enabled || this.jobs['rhinoceros'].totalPower < 1) {
+          this.characterService.petsAttributeBoost['toughness'] = 1;
+          return;
+        }
         let power = this.jobs['rhinoceros'].totalPower;
         if (power < 1) {
           this.characterService.petsAttributeBoost['toughness'] = 1;
@@ -990,6 +1099,10 @@ export class FollowersService {
     },
     panda: {
       work: () => {
+        if (!this.jobs['panda'].enabled || this.jobs['panda'].totalPower < 1) {
+          this.characterService.petsAttributeBoost['charisma'] = 1;
+          return;
+        }
         let power = this.jobs['panda'].totalPower;
         if (power < 1) {
           this.characterService.petsAttributeBoost['charisma'] = 1;
@@ -1007,6 +1120,10 @@ export class FollowersService {
     },
     owl: {
       work: () => {
+        if (!this.jobs['owl'].enabled || this.jobs['owl'].totalPower < 1) {
+          this.characterService.petsAttributeBoost['intelligence'] = 1;
+          return;
+        }
         let power = this.jobs['owl'].totalPower;
         if (power < 1) {
           this.characterService.petsAttributeBoost['intelligence'] = 1;
@@ -1024,6 +1141,10 @@ export class FollowersService {
     },
     falcon: {
       work: () => {
+        if (!this.jobs['falcon'].enabled || this.jobs['falcon'].totalPower < 1) {
+          this.characterService.petsAttributeBoost['speed'] = 1;
+          return;
+        }
         let power = this.jobs['falcon'].totalPower;
         if (power < 1) {
           this.characterService.petsAttributeBoost['speed'] = 1;
@@ -1280,12 +1401,12 @@ export class FollowersService {
   followersWorks(daysElapsed?: number) {
     for (const job of Object.keys(this.jobs)) {
       const jobObj = this.jobs[job];
-      if (jobObj.totalPower > 0 && jobObj.enabled) {
-        if (daysElapsed && !jobObj.runEachTick) {
-          jobObj.work(daysElapsed);
-        } else if (!daysElapsed && jobObj.runEachTick) {
-          jobObj.work(1);
-        }
+      if (daysElapsed && !jobObj.runEachTick) {
+        // called from the long tick, run the non-daily jobs
+        jobObj.work(daysElapsed);
+      } else if (!daysElapsed && jobObj.runEachTick) {
+        // called from the daily tick, run the daily jobs
+        jobObj.work(1);
       }
     }
   }

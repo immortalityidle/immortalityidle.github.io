@@ -1332,6 +1332,8 @@ export class GameStateService {
       inSeclusion: props?.inSeclusion || false,
       daysInSeclusion: props?.daysInSeclusion || 0,
       seclusionEnabled: props?.seclusionEnabled || false,
+      healthBonusPets: props?.healthBonusPets || 1,
+      defenseBonusPets: props?.defenseBonusPets || 1,
     };
   }
 

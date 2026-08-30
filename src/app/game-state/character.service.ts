@@ -170,6 +170,8 @@ export interface CharacterProperties {
   inSeclusion: boolean;
   daysInSeclusion: number;
   seclusionEnabled: boolean;
+  healthBonusPets: number;
+  defenseBonusPets: number;
 }
 
 export const INITIAL_AGE = 18 * 365;
@@ -226,8 +228,8 @@ export class CharacterService {
   healthBonusMagic = 0;
   healthBonusSoul = 0;
   healthBonusDivine = 0;
-  healthBonusPets = 0;
-  defenseBonusPets = 0;
+  healthBonusPets = 1;
+  defenseBonusPets = 1;
   petsAttributeBoost: { [key in AttributeType]?: number } = {};
   empowermentPillsTaken = 0;
   empowermentMult = 1;
@@ -1637,6 +1639,8 @@ export class CharacterService {
       inSeclusion: this.inSeclusion(),
       daysInSeclusion: this.daysInSeclusion,
       seclusionEnabled: this.seclusionEnabled(),
+      healthBonusPets: this.healthBonusPets,
+      defenseBonusPets: this.defenseBonusPets,
     };
   }
 
@@ -1712,6 +1716,8 @@ export class CharacterService {
     this.inSeclusion.set(properties.inSeclusion);
     this.daysInSeclusion = properties.daysInSeclusion;
     this.seclusionEnabled.set(properties.seclusionEnabled || this.god());
+    this.healthBonusPets = properties.healthBonusPets;
+    this.defenseBonusPets = properties.defenseBonusPets;
 
     this.recalculateDerivedStats();
   }
