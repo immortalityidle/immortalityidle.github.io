@@ -627,9 +627,11 @@ export class FollowersService {
             if (this.inventoryService.darkMetal) {
               damageMultiplier = 100;
             }
-            rightHand.weaponStats.baseDamage +=
-              Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * damageMultiplier;
             rightHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+            rightHand.weaponStats.baseDamage +=
+              Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) *
+              Math.min(Math.sqrt(rightHand.value), 1000) *
+              damageMultiplier;
           }
         }
         if (!this.forbiddenSlots.includes('leftHand')) {
@@ -639,9 +641,11 @@ export class FollowersService {
             if (this.inventoryService.treeLover) {
               damageMultiplier = 100;
             }
-            leftHand.weaponStats.baseDamage +=
-              Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) * damageMultiplier;
             leftHand.value += Math.ceil(Math.pow(Math.floor(workPower / divider), 2));
+            leftHand.weaponStats.baseDamage +=
+              Math.ceil(Math.pow(Math.floor(workPower / divider), 2)) *
+              Math.min(Math.sqrt(leftHand.value), 1000) *
+              damageMultiplier;
           }
         }
         this.leftoverWork['weaponsmith'] = workPower % divider;
@@ -673,7 +677,13 @@ export class FollowersService {
           armorStats: armor.armorStats
             ? {
                 ...armor.armorStats,
-                defense: armor.armorStats?.defense + Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2),
+                defense:
+                  armor.armorStats?.defense +
+                  Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2) *
+                    Math.max(
+                      Math.sqrt(armor.value + Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2)),
+                      1000
+                    ),
               }
             : undefined,
           value: armor.value + Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2),
