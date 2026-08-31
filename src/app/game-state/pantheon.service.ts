@@ -244,20 +244,20 @@ export class PantheonService {
         },
         {
           name: signal<string>(GOD_ARES),
-          description: signal<string>('A god of war, bloodshed, and violence. Perhaps he will be a worth duelist.'),
+          description: signal<string>('A god of war, bloodshed, and violence. Perhaps he will be a worthy duelist.'),
           timesDefeated: signal<number>(0),
           unlocked: signal<boolean>(false),
           discovered: signal<boolean>(false),
-          unlockProgress: signal<number>(0),
-          unlockProgressRequired: signal<number>(100),
-          unlockProgressPercent: signal<number>(0),
-          baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 7),
+          unlockProgress: signal<number>(1),
+          unlockProgressRequired: signal<number>(1),
+          unlockProgressPercent: signal<number>(100),
+          baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 7) * 2,
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 7),
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 7),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['War Cry', 'Martial Strike', 'Absolute Devastation'],
+          techniqueCooldowns: [5, 10, 1000],
+          challengeMessage: signal<string>("A fight? Wonderful! Come to my camp and let's get to it!"),
+          attributes: ['wrath', 'wrath', 'wrath', 'wrath', 'wrath'],
           baseLootLevel: 35,
         },
         {
@@ -272,12 +272,14 @@ export class PantheonService {
           unlockProgressRequired: signal<number>(100),
           unlockProgressPercent: signal<number>(0),
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 8),
-          baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 8),
+          baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 8) * 2,
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 8),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Distracting Jab', 'Shield Bash', 'Tactical Strike', 'Fortress Bombardment'],
+          techniqueCooldowns: [4, 12, 24, 400],
+          challengeMessage: signal<string>(
+            "You'd like a duel?<br>Perhaps.<br>But before we compare the strength of our bodies, let's compare the strength of our minds.<br>Perhaps a game of Polis?<br>You have been building your mind as well as your body, haven't you?"
+          ),
+          attributes: ['wisdom', 'wisdom', 'wisdom', 'wisdom', 'wisdom'],
           baseLootLevel: 40,
         },
         {
@@ -476,11 +478,16 @@ export class PantheonService {
     }
     const techniques: Technique[] = [];
     for (let i = 0; i < god.techniqueNames.length; i++) {
+      let damage = god.baseDamage * Math.pow(100, god.timesDefeated()) * Math.pow(god.techniqueCooldowns[i], 2);
+      if (god.techniqueCooldowns[i] < 3) {
+        // special treatment for very fast attacks
+        damage *= 0.5;
+      }
       techniques.push({
         name: god.techniqueNames[i],
         ticks: 0,
         ticksRequired: god.techniqueCooldowns[i],
-        baseDamage: god.baseDamage * Math.pow(100, god.timesDefeated()) * Math.pow(god.techniqueCooldowns[i], 2),
+        baseDamage: damage,
         unlocked: true,
       });
     }

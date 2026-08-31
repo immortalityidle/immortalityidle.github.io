@@ -106,6 +106,7 @@ export interface LocationEntry {
   realm?: Realm;
   eradicated?: boolean;
   unlock: () => boolean;
+  entryEffect?: () => void;
 }
 export interface LocationProperties {
   unlockedLocations: LocationType[];
@@ -514,6 +515,9 @@ export class LocationService {
       unlock: () => {
         return this.pantheonService.isGodDiscovered(GOD_ARES);
       },
+      entryEffect: () => {
+        this.pantheonService.increaseGodProgress(GOD_ARES, 1);
+      },
     },
     [LocationType.FortressOfWisdom]: {
       name: LocationType.FortressOfWisdom,
@@ -669,6 +673,10 @@ export class LocationService {
       this.location = LocationType.SmallTown;
     } else {
       this.location = location;
+    }
+    const entryEffect = this.locationMap[this.location].entryEffect;
+    if (entryEffect) {
+      entryEffect();
     }
   }
 

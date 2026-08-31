@@ -111,6 +111,7 @@ export enum ActivityType {
   AvatarPortal,
   ReturnToGodhoodPortal,
   UpgradeMenagerie,
+  BoardGames,
   Hell, // hell needs to be last for indexing purposes
 }
 

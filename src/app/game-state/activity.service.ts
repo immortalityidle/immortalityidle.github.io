@@ -33,6 +33,7 @@ import {
   GOD_APHRODITE,
   GOD_APOLLO,
   GOD_ARTEMIS,
+  GOD_ATHENA,
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
   GOD_HERMES,
@@ -211,6 +212,7 @@ export class ActivityService {
       this.PullTheSun,
       this.ForgeDivineChains,
       this.SearchForPersephone,
+      this.BoardGames,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -6241,6 +6243,42 @@ export class ActivityService {
     ],
     resourceUse: [{}],
     requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  BoardGames: Activity = {
+    level: 0,
+    name: ['Play Board Games'],
+    location: LocationType.FortressOfWisdom,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'boardGames',
+    activityType: ActivityType.BoardGames,
+    description: ['Athena sits across a marble table from you, ready to play.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Challenge the goddess of strategy to a strategy board game.'],
+    consequence: [
+      () => {
+        this.characterService.increaseAttribute('intelligence', 100);
+        const successChance = this.characterService.attributes.intelligence.value * 1e-62;
+        if (Math.random() < successChance) {
+          this.logService.log(LogTopic.EVENT, 'You manage to win a game against the goddess.');
+          this.pantheonService.increaseGodProgress(GOD_ATHENA, 1);
+        } else {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Athena slides her final pawn across the board for the win. Perhaps next time.'
+          );
+        }
+      },
+    ],
+    resourceUse: [{}],
+    requirements: [
+      {
+        intelligence: 1e56,
+      },
+    ],
     divinityRequired: [true],
     unlocked: true,
     skipApprenticeshipLevel: 0,
