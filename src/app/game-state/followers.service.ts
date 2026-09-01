@@ -680,7 +680,7 @@ export class FollowersService {
                 defense:
                   armor.armorStats?.defense +
                   Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2) *
-                    Math.max(
+                    Math.min(
                       Math.sqrt(armor.value + Math.ceil(Math.pow(Math.floor(workPower / divider), 2) / 2)),
                       1000
                     ),
