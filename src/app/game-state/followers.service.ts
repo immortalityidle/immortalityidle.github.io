@@ -1050,7 +1050,11 @@ export class FollowersService {
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.healthBonusPets = Math.log2(power + 2);
+        if (power <= 100) {
+          this.characterService.healthBonusPets = power + 2;
+        } else {
+          this.characterService.healthBonusPets = 102 + Math.sqrt(power - 98);
+        }
       },
       description: 'Elephants lend you the massive reserve of health that their hearts contain.',
       pet: true,
@@ -1068,7 +1072,11 @@ export class FollowersService {
         if (!this.petsBoosted) {
           power *= 10;
         }
-        this.characterService.defenseBonusPets = Math.log2(power + 2);
+        if (power <= 100) {
+          this.characterService.defenseBonusPets = power + 2;
+        } else {
+          this.characterService.defenseBonusPets = 102 + Math.sqrt(power - 98);
+        }
       },
       description: 'Turtles teach you the secrets of unconquerable defense.',
       pet: true,

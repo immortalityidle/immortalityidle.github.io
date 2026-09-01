@@ -710,11 +710,11 @@ export class ContemplationService {
     for (const concept of this.concepts) {
       if (concept.discovered) {
         if (concept.name === baseConcept) {
-          concept.progress += tickCount * this.contemplationMultiplier;
+          concept.progress += tickCount * this.contemplationMultiplier * this.philosophyMultiplier;
         } else {
           for (const req in concept.discoveryRequirements) {
             if (req === baseConcept) {
-              concept.progress += tickCount * this.contemplationMultiplier;
+              concept.progress += tickCount * this.contemplationMultiplier * this.philosophyMultiplier;
             }
           }
         }
