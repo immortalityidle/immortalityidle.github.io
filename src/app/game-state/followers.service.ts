@@ -20,6 +20,7 @@ import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { ActivityType } from './activity';
+import { GOD_ARTEMIS, PantheonService } from './pantheon.service';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -473,13 +474,23 @@ export class FollowersService {
         if (this.characterService.attributes.wisdom.value > 0) {
           workPower *= Math.log10(this.characterService.attributes.wisdom.value + 10);
         }
+        let quantityMultiplier = 1;
+        if (this.pantheonService.getGod(GOD_ARTEMIS)!.timesDefeated() > 0) {
+          quantityMultiplier *= this.farmService.conceptMultiplier;
+        }
 
         if (this.hellService?.inHell() || this.characterService.god()) {
-          this.inventoryService.addItem(this.itemRepoService.items['spiritMeat'], Math.floor(workPower / 1000));
+          this.inventoryService.addItem(
+            this.itemRepoService.items['spiritMeat'],
+            Math.floor(workPower / 1000) * quantityMultiplier
+          );
           this.leftoverWork['hunter'] = workPower % 1000;
           return;
         }
-        this.inventoryService.addItem(this.itemRepoService.items['meat'], Math.floor(workPower / 10) * daysElapsed);
+        this.inventoryService.addItem(
+          this.itemRepoService.items['meat'],
+          Math.floor(workPower / 10) * daysElapsed * quantityMultiplier
+        );
         this.leftoverWork['hunter'] = workPower % 10;
       },
       description: 'Hunters collect meat and help you hunt for hides.',
@@ -1182,6 +1193,7 @@ export class FollowersService {
     private farmService: FarmService,
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService,
+    private pantheonService: PantheonService,
     mainLoopService: MainLoopService,
     private battleService: BattleService
   ) {

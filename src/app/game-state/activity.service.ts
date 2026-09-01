@@ -3601,7 +3601,11 @@ export class ActivityService {
         this.huntingCounter++;
         if (this.huntingCounter > counterSatisfied) {
           this.huntingCounter = 0;
-          this.inventoryService.addItem(this.itemRepoService.items['meat']);
+          let quantity = 1;
+          if (this.pantheonService.getGod(GOD_ARTEMIS)!.timesDefeated() > 0) {
+            quantity += this.farmService.conceptMultiplier;
+          }
+          this.inventoryService.addItem(this.itemRepoService.items['meat'], quantity);
           this.inventoryService.addItem(
             this.inventoryService.getHide(),
             Math.floor(this.followerService.jobs['hunter'].totalPower / 20)
@@ -5900,7 +5904,11 @@ export class ActivityService {
           );
           return;
         }
-        this.inventoryService.addItem(this.inventoryService.getWildMeat(500)); // TODO: Tune this
+        let quantity = 1;
+        if (this.pantheonService.getGod(GOD_ARTEMIS)!.timesDefeated() > 0) {
+          quantity *= this.farmService.conceptMultiplier;
+        }
+        this.inventoryService.addItem(this.inventoryService.getWildMeat(500), quantity); // TODO: Tune this
         this.pantheonService.increaseGodProgress(GOD_ARTEMIS, 1);
         this.logService.log(
           LogTopic.EVENT,
