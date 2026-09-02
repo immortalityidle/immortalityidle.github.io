@@ -65,6 +65,8 @@ export const CONCEPT_BEASTS = 'Tao of Beasts';
 export const CONCEPT_BEAUTY = 'Tao of Beauty';
 export const CONCEPT_PHILOSOPHY = 'Tao of Philosophy';
 export const CONCEPT_NATURE = 'Tao of Nature';
+export const CONCEPT_ABUNDANCE = 'Tao of Abundance';
+export const CONCEPT_SCARCITY = 'Tao of Scarcity';
 
 @Injectable({
   providedIn: 'root',
@@ -607,6 +609,31 @@ export class ContemplationService {
         'Contemplate the very nature of contemplation, applying the strange logic you learned in the Philosopher States to advance your understanding of all Tao concepts.',
       progress: 0,
       effect: '',
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_ABUNDANCE,
+      description:
+        'Contemplate the overflowing abundance of the growing seasons. Increases the production and benefits of food.',
+      progress: 0,
+      effect: CONCEPT_EFFECT_FOOD_YIELD + ',' + CONCEPT_EFFECT_VERDANT,
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_SCARCITY,
+      description:
+        'Contemplate the devastating and brutal scarcity of an extended winter. Improves damage, defense, and some techniques.',
+      progress: 0,
+      effect:
+        CONCEPT_EFFECT_DEVASTATION +
+        ',' +
+        CONCEPT_EFFECT_BRUTAL +
+        ',' +
+        CONCEPT_EFFECT_DAMAGE +
+        ',' +
+        CONCEPT_EFFECT_DEFENCE,
       discovered: false,
       unlocksMore: false,
     },

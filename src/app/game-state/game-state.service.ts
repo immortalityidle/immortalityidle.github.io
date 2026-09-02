@@ -1334,6 +1334,7 @@ export class GameStateService {
       seclusionEnabled: props?.seclusionEnabled || false,
       healthBonusPets: props?.healthBonusPets || 1,
       defenseBonusPets: props?.defenseBonusPets || 1,
+      healthBonusFoodCap: props?.healthBonusFoodCap || 19000,
     };
   }
 

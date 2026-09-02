@@ -8,7 +8,12 @@ import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { AchievementService } from './achievement.service';
 import { LifeSummaryComponent } from '../life-summary/life-summary.component';
 import { Equipment, ItemStack } from './inventory.service';
-import { CONCEPT_BEAUTY, ContemplationService } from './contemplation.service';
+import {
+  CONCEPT_ABUNDANCE,
+  CONCEPT_BEAUTY,
+  CONCEPT_EFFECT_FOOD_YIELD,
+  ContemplationService,
+} from './contemplation.service';
 
 export type CharacterAttribute = {
   [key: string]: number | undefined;
@@ -172,6 +177,7 @@ export interface CharacterProperties {
   seclusionEnabled: boolean;
   healthBonusPets: number;
   defenseBonusPets: number;
+  healthBonusFoodCap: number;
 }
 
 export const INITIAL_AGE = 18 * 365;
@@ -693,6 +699,7 @@ export class CharacterService {
   skipTicks = false;
   seclusionEnabled = signal<boolean>(false);
   yinYangHealthModifier = 1;
+  healthBonusFoodCap = 19000;
 
   constructor(
     private injector: Injector,
@@ -799,7 +806,7 @@ export class CharacterService {
       healthBreakdownString +=
         '<br>Toughness Bonus: ' + Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5) + '.';
       if (this.healthBonusFood > 0) {
-        healthBreakdownString += '<br>Food Bonus: ' + this.healthBonusFood + '.';
+        healthBreakdownString += '<br>Food Bonus: ' + this.bigNumberPipe.transform(this.healthBonusFood) + '.';
       }
       if (this.healthBonusBath > 0) {
         healthBreakdownString += '<br>Hygiene Bonus: ' + this.healthBonusBath + '.';
@@ -1259,6 +1266,18 @@ export class CharacterService {
     }
     this.healthBonusFactor += this.fengshuiScore / 20;
 
+    if (this.contemplationService.getConcept(CONCEPT_ABUNDANCE)?.discovered) {
+      const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
+        concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
+      );
+      let foodConceptMultiplier = 1;
+      for (const concept of foodIncreasingConcepts) {
+        foodConceptMultiplier += concept.progress;
+      }
+      foodConceptMultiplier = Math.sqrt(foodConceptMultiplier);
+      this.healthBonusFoodCap = 19000 * foodConceptMultiplier;
+    }
+
     const healthBonusMagicCap = 1000000 * (1 + this.qiCompressionLevel);
     const healthBonusSoulCap = 2000000;
 
@@ -1520,8 +1539,8 @@ export class CharacterService {
   }
 
   checkOverage() {
-    if (this.healthBonusFood > 19000) {
-      this.healthBonusFood = 19000;
+    if (this.healthBonusFood > this.healthBonusFoodCap) {
+      this.healthBonusFood = this.healthBonusFoodCap;
     }
     if (this.healthBonusBath > 80000) {
       this.healthBonusBath = 80000;
@@ -1641,6 +1660,7 @@ export class CharacterService {
       seclusionEnabled: this.seclusionEnabled(),
       healthBonusPets: this.healthBonusPets,
       defenseBonusPets: this.defenseBonusPets,
+      healthBonusFoodCap: this.healthBonusFoodCap,
     };
   }
 
@@ -1718,6 +1738,7 @@ export class CharacterService {
     this.seclusionEnabled.set(properties.seclusionEnabled || this.god());
     this.healthBonusPets = properties.healthBonusPets;
     this.defenseBonusPets = properties.defenseBonusPets;
+    this.healthBonusFoodCap = properties.healthBonusFoodCap;
 
     this.recalculateDerivedStats();
   }

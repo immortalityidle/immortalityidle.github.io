@@ -24,12 +24,19 @@ import { LocationService, LocationType } from './location.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MemoriesPanelComponent } from '../memories-panel/memories-panel.component';
-import { CONCEPT_BEAUTY, CONCEPT_PHILOSOPHY, ContemplationService } from './contemplation.service';
+import {
+  CONCEPT_ABUNDANCE,
+  CONCEPT_BEAUTY,
+  CONCEPT_PHILOSOPHY,
+  CONCEPT_SCARCITY,
+  ContemplationService,
+} from './contemplation.service';
 import { ActivityType } from './activity';
 import {
   GOD_APHRODITE,
   GOD_APOLLO,
   GOD_ARTEMIS,
+  GOD_DEMETER,
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
   GOD_YAMA,
@@ -2125,6 +2132,20 @@ export class AchievementService {
       },
       effect: () => {
         this.contemplationService.discoverConcept(CONCEPT_PHILOSOPHY);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Weaponized Seasons',
+      description:
+        'Demeter was enraged to learn that her brother kidnapped and married her daughter. Strange gods, these. But you learned a few things about how godly power might be wielded.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_DEMETER)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.contemplationService.discoverConcept(CONCEPT_ABUNDANCE);
+        this.contemplationService.discoverConcept(CONCEPT_SCARCITY);
       },
       unlocked: false,
     },
