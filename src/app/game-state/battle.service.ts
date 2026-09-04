@@ -1745,7 +1745,7 @@ export class BattleService {
       damage = damage / (Math.pow(defense, 0.5) + Math.pow(1000000, (-damage + defense) / defense));
     }
     if (this.characterService.attributes.justice.value > 0) {
-      damage /= this.characterService.attributes.justice.value + 1;
+      damage /= this.characterService.attributes.justice.value * 2 + 1;
     }
     const defenseConcepts = this.contemplationService.concepts.filter(concept =>
       concept.effect.includes(CONCEPT_EFFECT_DEFENCE)
