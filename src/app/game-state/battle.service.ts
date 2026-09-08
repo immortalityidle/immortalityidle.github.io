@@ -32,6 +32,7 @@ import {
   CONCEPT_EFFECT_VOID,
   CONCEPT_EFFECT_WESTERN,
   CONCEPT_EFFECT_WOODSHAPED,
+  CONCEPT_STRATEGY,
   CONCEPT_VOID,
   ContemplationService,
 } from './contemplation.service';
@@ -1752,6 +1753,10 @@ export class BattleService {
     );
     for (const concept of defenseConcepts) {
       damage /= Math.log10(10 + concept.progress);
+    }
+    const strategyConcept = this.contemplationService.getConcept(CONCEPT_STRATEGY);
+    if (strategyConcept && strategyConcept.progress > 0) {
+      damage /= this.characterService.attributes.wisdom.value * Math.log10(10 + strategyConcept.progress) + 1;
     }
 
     if (this.characterService.attributes.metalFist.value >= 1) {

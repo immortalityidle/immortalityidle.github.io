@@ -29,13 +29,17 @@ import {
   CONCEPT_BEAUTY,
   CONCEPT_PHILOSOPHY,
   CONCEPT_SCARCITY,
+  CONCEPT_STRATEGY,
+  CONCEPT_WAR,
   ContemplationService,
 } from './contemplation.service';
 import { ActivityType } from './activity';
 import {
   GOD_APHRODITE,
   GOD_APOLLO,
+  GOD_ARES,
   GOD_ARTEMIS,
+  GOD_ATHENA,
   GOD_DEMETER,
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
@@ -2146,6 +2150,31 @@ export class AchievementService {
       effect: () => {
         this.contemplationService.discoverConcept(CONCEPT_ABUNDANCE);
         this.contemplationService.discoverConcept(CONCEPT_SCARCITY);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'God of War',
+      description:
+        'Ares has taught you to appreciate a whole new level of violence. Such a senseless concept, but perhaps useful to you.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_ARES)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.contemplationService.discoverConcept(CONCEPT_WAR);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Goddess of War',
+      description: 'Athena has taught you to leverage the power of your divine wisdom to protect youreself.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_ATHENA)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.contemplationService.discoverConcept(CONCEPT_STRATEGY);
       },
       unlocked: false,
     },

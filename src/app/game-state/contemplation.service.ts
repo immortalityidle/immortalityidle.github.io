@@ -67,6 +67,8 @@ export const CONCEPT_PHILOSOPHY = 'Tao of Philosophy';
 export const CONCEPT_NATURE = 'Tao of Nature';
 export const CONCEPT_ABUNDANCE = 'Tao of Abundance';
 export const CONCEPT_SCARCITY = 'Tao of Scarcity';
+export const CONCEPT_WAR = 'Tao of War';
+export const CONCEPT_STRATEGY = 'Tao of Strategy';
 
 @Injectable({
   providedIn: 'root',
@@ -576,7 +578,7 @@ export class ContemplationService {
     {
       name: CONCEPT_SPACE,
       description:
-        'Contemplate space, the careful arrangement of all things in existence. Allows travel to the most distant realms.',
+        'Contemplate space, the careful arrangement of all things in existence.<br><br>Allows travel to the most distant realms.',
       progress: 0,
       effect: '',
       discovered: false,
@@ -588,7 +590,7 @@ export class ContemplationService {
     },
     {
       name: CONCEPT_BEAUTY,
-      description: 'Contemplate beauty. Allows a small amount of spirituality to emerge from your charisma.',
+      description: 'Contemplate beauty.<br><br>Allows a small amount of spirituality to emerge from your charisma.',
       progress: 0,
       effect: '',
       discovered: false,
@@ -597,7 +599,7 @@ export class ContemplationService {
     {
       name: CONCEPT_NATURE,
       description:
-        'Contemplate the serenity of the natural world. Allows spiritual development from activities out in nature.',
+        'Contemplate the serenity of the natural world.<br><br>Allows spiritual development from activities out in nature.',
       progress: 0,
       effect: 'animalHandling,' + CONCEPT_EFFECT_FERAL,
       discovered: false,
@@ -615,7 +617,7 @@ export class ContemplationService {
     {
       name: CONCEPT_ABUNDANCE,
       description:
-        'Contemplate the overflowing abundance of the growing seasons. Increases the production and benefits of food.',
+        'Contemplate the overflowing abundance of the growing seasons.<br><br>Increases the production and benefits of food.',
       progress: 0,
       effect: CONCEPT_EFFECT_FOOD_YIELD + ',' + CONCEPT_EFFECT_VERDANT,
       discovered: false,
@@ -624,7 +626,7 @@ export class ContemplationService {
     {
       name: CONCEPT_SCARCITY,
       description:
-        'Contemplate the devastating and brutal scarcity of an extended winter. Improves damage, defense, and some techniques.',
+        'Contemplate the devastating and brutal scarcity of an extended winter.<br><br>Improves damage, defense, and some techniques.',
       progress: 0,
       effect:
         CONCEPT_EFFECT_DEVASTATION +
@@ -634,6 +636,35 @@ export class ContemplationService {
         CONCEPT_EFFECT_DAMAGE +
         ',' +
         CONCEPT_EFFECT_DEFENCE,
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_WAR,
+      description:
+        'Contemplate the senseless devastatation and brutality of war.<br><br>Improves damage, defense, and some techniques.',
+      progress: 0,
+      effect:
+        CONCEPT_EFFECT_DEVASTATION +
+        ',' +
+        CONCEPT_EFFECT_BRUTAL +
+        ',' +
+        CONCEPT_EFFECT_FEARSOME +
+        ',' +
+        CONCEPT_EFFECT_FERAL +
+        ',' +
+        CONCEPT_EFFECT_DAMAGE +
+        ',' +
+        CONCEPT_EFFECT_DEFENCE,
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_STRATEGY,
+      description:
+        "Contemplate the wise use of strategy in resolving conflicts.<br><br>Improves your defense, allows you to see through others' defenses, and leverages your wisdom in protecting you.",
+      progress: 0,
+      effect: CONCEPT_EFFECT_ARMOR_REDUCTION + ',' + CONCEPT_EFFECT_DEFENCE,
       discovered: false,
       unlocksMore: false,
     },
