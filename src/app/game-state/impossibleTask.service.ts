@@ -307,6 +307,7 @@ export class ImpossibleTaskService {
       this.battleService.addDeath();
       this.contemplationService.contemplationStarted.set(true);
     }
+    this.logService.log(LogTopic.EVENT, 'You have begun an impossible task. New activities are available.');
   }
 
   stopTask() {

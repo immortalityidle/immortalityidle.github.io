@@ -112,7 +112,7 @@ export class GameStateService {
       name: 'Time',
       icon: 'timer',
       panelHelp:
-        'Control the flow of time, stopping and starting it as you see fit. What an immense power!<br>Time will automatically pause if you have no activities on your schedule that you can perform.',
+        'Control the flow of time, stopping and starting it as you see fit.<br>What an immense power!<br>Time will automatically pause if you have no activities on your schedule that you can perform.',
       unlocked: false,
     },
     {
@@ -221,7 +221,7 @@ export class GameStateService {
       name: 'Location',
       icon: 'public',
       panelHelp:
-        'The locations you have available depend mostly on your speed, and will determine what activities you have available. You can select which locations you would prefer to find monsters in when you look for trouble.',
+        'The locations you have available depend mostly on your speed, and will determine what activities you have available.<br>You can select which locations you would prefer to find monsters in when you look for trouble.',
       unlocked: false,
     },
     {
@@ -229,7 +229,7 @@ export class GameStateService {
       name: 'Impossible Tasks',
       icon: 'priority_high',
       panelHelp:
-        'The path to immortality runs through these impossible tasks. Only by completing them can you find the way to live forever.',
+        'The path to immortality runs through these impossible tasks.<br>Only by completing them can you find the way to live forever.<br>Accepting these tasks may open up new actvities that only the most powerful cultivators should attempt.',
       unlocked: false,
     },
     {
