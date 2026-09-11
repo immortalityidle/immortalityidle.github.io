@@ -131,7 +131,7 @@ export class EquipmentPanelComponent {
               }
             }
           } else {
-            if (sourceItem.quantity) {
+            if (sourceItem.item.pouchable) {
               // it's a pouch stack
               const pouchIndex = this.characterService.itemPouches.indexOf(sourceItem);
               if (pouchIndex !== -1) {

@@ -1436,7 +1436,7 @@ export class BattleService {
       techniqueName += '!!';
     }
 
-    const disabled = healthCost > 0;
+    const disabled = healthCost > 0 || effect === EFFECT_EXPLOSIVE;
 
     this.techniques.push({
       name: techniqueName,
