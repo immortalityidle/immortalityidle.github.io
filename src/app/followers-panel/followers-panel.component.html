@@ -12,9 +12,11 @@
       {{followerService.sectName}}
     </span>
   }
-  <span [ngClass]="followerService.followersMaxed">
-    &nbsp;({{followerService.followers.length}} / {{followerService.followerCap}} Followers)
-  </span>
+  @if (followerService.followerCap > 0){
+    <span [ngClass]="followerService.followersMaxed">
+      &nbsp;({{followerService.followers.length}} / {{followerService.followerCap}} Followers)
+    </span>
+  }
   @if (followerService.autoDismissUnlocked) {
     <mat-icon class="iconButton optionsIcon" (click)="followerOptionsClicked()" aria-label="Manage Followers" aria-hidden="false"
       tooltip="Manage your followers">

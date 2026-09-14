@@ -1,6 +1,13 @@
 <div class='darkMode'>
   <span>Battle Options</span>
   <hr/>
+  @if (followersService.followerCap > 0){
+    <div tooltip="Enable/Disable scouts looking for trouble.">
+      <span>Scout Followers Enabled
+        <input type="checkbox" [checked]="followersService.jobs['scout'].enabled" (change)="followersService.toggleJobEnabled('scout')">
+      </span>
+    </div>
+  }
   <div>
     <span tooltip='Drink potions in your equipment pouches when the status they restore gets below this percentage.'>Potion Threshold
       <input min="0" value="{{battleService.potionThreshold}}" type="number" class="inputBox" (change)="potionThresholdChange($event)"/>%

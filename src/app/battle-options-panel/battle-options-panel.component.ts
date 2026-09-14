@@ -4,6 +4,7 @@ import { CharacterService } from '../game-state/character.service';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MatSelectModule } from '@angular/material/select';
 import { InventoryService } from '../game-state/inventory.service';
+import { FollowersService } from '../game-state/followers.service';
 
 @Component({
   selector: 'app-battle-options-panel',
@@ -15,7 +16,8 @@ export class BattleOptionsPanelComponent {
   constructor(
     protected battleService: BattleService,
     protected characterService: CharacterService,
-    protected inventoryService: InventoryService
+    protected inventoryService: InventoryService,
+    protected followersService: FollowersService
   ) {}
 
   potionThresholdChange(event: Event) {

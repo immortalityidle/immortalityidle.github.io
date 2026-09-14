@@ -64,7 +64,14 @@
               Automatically Sold Items:
             </span>
             <div class="scrollingDiv">
-              @for (entry of inventoryService.autoSellEntries; track entry) {
+              @for (entry of inventoryService.autoSellEntries; track entry; let i = $index) {
+                @if (i === 0 || inventoryService.autoSellEntries[i - 1].type !== entry.type){
+                  <div>
+                    <span>
+                      {{entry.type | titlecase}}
+                    </span>
+                  </div>
+                }
                 <div>
                   <span>
                     - {{entry.name | titlecase}}
@@ -82,7 +89,14 @@
           <div class="optionField">
             <span>Automatically Used Items:</span>
             <div class="scrollingDiv">
-              @for (entry of inventoryService.autoUseEntries; track entry) {
+              @for (entry of inventoryService.autoUseEntries; track entry; let i = $index) {
+                @if (i === 0 || inventoryService.autoUseEntries[i - 1].type !== entry.type){
+                  <div>
+                    <span>
+                      {{entry.type | titlecase}}
+                    </span>
+                  </div>
+                }
                 @if (entry.type !== 'food'){
                   <div>
                     <span>
@@ -102,7 +116,14 @@
           <div class="optionField">
             <span>Automatically Balanced Items:</span>
             <div class="scrollingDiv">
-              @for (balanceItem of inventoryService.autoBalanceItems; track balanceItem) {
+              @for (balanceItem of inventoryService.autoBalanceItems; track balanceItem; let i = $index) {
+                @if (i === 0 || inventoryService.autoBalanceItems[i - 1].type !== balanceItem.type){
+                  <div>
+                    <span>
+                      {{balanceItem.type | titlecase}}
+                    </span>
+                  </div>
+                }
                 <div>
                   <span>
                     -{{balanceItem.name | titlecase}}

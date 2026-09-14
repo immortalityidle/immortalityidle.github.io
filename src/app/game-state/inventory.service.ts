@@ -108,6 +108,7 @@ export interface BalanceItem {
   sellNumber: number;
   index: number;
   name: string;
+  type: string;
 }
 
 export interface AutoItemEntry {
@@ -365,6 +366,10 @@ export class InventoryService {
     for (const item of this.farmFoodList) {
       this.autoUseEntries.push({ name: item.name, type: 'food', reserve: 0 });
     }
+    this.autoUseEntries.sort((a, b) => {
+      const aValue = a.type + a.name;
+      return aValue.localeCompare(b.type + b.name);
+    });
 
     for (let i = 0; i < this.maxItems; i++) {
       this.itemStacks.push(this.getEmptyItemStack());
@@ -2136,6 +2141,10 @@ export class InventoryService {
     }
     if (!this.autoSellEntries.some(e => e.name === item.name)) {
       this.autoSellEntries.push({ name: item.name, type: item.type, reserve: 0 });
+      this.autoSellEntries.sort((a, b) => {
+        const aValue = a.type + a.name;
+        return aValue.localeCompare(b.type + b.name);
+      });
     }
     //sell all that you currently have
     this.sellAll(item);
@@ -2217,6 +2226,10 @@ export class InventoryService {
     }
     if (!this.autoUseEntries.some(e => e.name === item.name)) {
       this.autoUseEntries.push({ name: item.name, type: item.type, reserve: 0 });
+      this.autoUseEntries.sort((a, b) => {
+        const aValue = a.type + a.name;
+        return aValue.localeCompare(b.type + b.name);
+      });
     }
     if (item.useConsumes && item.type !== 'food') {
       // use all the ones you have now
@@ -2249,7 +2262,13 @@ export class InventoryService {
       index: 0,
       useNumber: 1,
       sellNumber: 1,
+      type: item.type,
     });
+    this.autoBalanceItems.sort((a, b) => {
+      const aValue = a.type + a.name;
+      return aValue.localeCompare(b.type + b.name);
+    });
+
     // sell current stock, incoming items will be balanced
     this.sellAll(item);
   }
