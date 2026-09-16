@@ -69,6 +69,8 @@
                   <div>
                     <span>
                       {{entry.type | titlecase}}
+                      <button (click)="inventoryService.unAutoSellType(entry.type)" >Stop Auto-Selling All {{entry.type | titlecase}} Items</button>
+                      <button (click)="inventoryService.autoSellType(entry.type)" >Auto-Sell All {{entry.type | titlecase}} Items in Inventory</button>
                     </span>
                   </div>
                 }
@@ -90,14 +92,16 @@
             <span>Automatically Used Items:</span>
             <div class="scrollingDiv">
               @for (entry of inventoryService.autoUseEntries; track entry; let i = $index) {
-                @if (i === 0 || inventoryService.autoUseEntries[i - 1].type !== entry.type){
-                  <div>
-                    <span>
-                      {{entry.type | titlecase}}
-                    </span>
-                  </div>
-                }
                 @if (entry.type !== 'food'){
+                  @if (i === 0 || inventoryService.autoUseEntries[i - 1].type !== entry.type){
+                    <div>
+                      <span>
+                        {{entry.type | titlecase}}
+                        <button (click)="inventoryService.unAutoUseType(entry.type)" >Stop Auto-Using All {{entry.type | titlecase}} Items</button>
+                        <button (click)="inventoryService.autoUseType(entry.type)" >Auto-Use All {{entry.type | titlecase}} Items in Inventory</button>
+                      </span>
+                    </div>
+                  }
                   <div>
                     <span>
                       - {{entry.name | titlecase}}
@@ -121,6 +125,8 @@
                   <div>
                     <span>
                       {{balanceItem.type | titlecase}}
+                      <button (click)="inventoryService.unAutoBalanceType(balanceItem.type)" >Stop Auto-Balancing All {{balanceItem.type | titlecase}} Items</button>
+                      <button (click)="inventoryService.autoBalanceType(balanceItem.type)" >Auto-Balance All {{balanceItem.type | titlecase}} Items in Inventory</button>
                     </span>
                   </div>
                 }
@@ -197,7 +203,11 @@
       </div>
       <div class="optionField">
         <div>
-          <span>Wisely Eaten Foods:</span>
+          <span>
+            Wisely Eaten Foods:
+            <button (click)="inventoryService.unAutoUseType('food')" >Stop Wisely Eating All Food</button>
+            <button (click)="inventoryService.autoUseType('food')" >Wisely Eat All Food in Inventory</button>
+          </span>
           <div class="scrollingDiv">
               @for (entry of inventoryService.autoUseEntries; track entry) {
                 @if (entry.type === 'food'){

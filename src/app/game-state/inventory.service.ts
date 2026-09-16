@@ -2155,6 +2155,22 @@ export class InventoryService {
     this.autoSellEntries.splice(index, 1);
   }
 
+  unAutoSellType(typeString: string) {
+    for (let i = this.autoSellEntries.length - 1; i >= 0; i--) {
+      if (this.autoSellEntries[i].type === typeString) {
+        this.autoSellEntries.splice(i, 1);
+      }
+    }
+  }
+
+  autoSellType(typeString: string) {
+    let autoSellItemStack = this.itemStacks.find(itemStack => itemStack.item?.type === typeString);
+    while (autoSellItemStack && autoSellItemStack.item) {
+      this.autoSell(autoSellItemStack.item);
+      autoSellItemStack = this.itemStacks.find(itemStack => itemStack.item?.type === typeString);
+    }
+  }
+
   useItemStack(itemStack: ItemStack, quantity = 1): void {
     if (!itemStack.item) {
       return;
@@ -2250,6 +2266,28 @@ export class InventoryService {
     this.autoUseEntries.splice(index, 1);
   }
 
+  unAutoUseType(typeString: string) {
+    for (let i = this.autoUseEntries.length - 1; i >= 0; i--) {
+      if (this.autoUseEntries[i].type === typeString) {
+        this.autoUseEntries.splice(i, 1);
+      }
+    }
+  }
+
+  autoUseType(typeString: string) {
+    let autoUseItemStack = this.itemStacks.find(
+      itemStack =>
+        itemStack.item?.type === typeString && !this.autoUseEntries.find(entry => entry.name === itemStack.item?.name)
+    );
+    while (autoUseItemStack && autoUseItemStack.item) {
+      this.autoUse(autoUseItemStack.item);
+      autoUseItemStack = this.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === typeString && !this.autoUseEntries.find(entry => entry.name === itemStack.item?.name)
+      );
+    }
+  }
+
   autoBalance(item: Item) {
     for (const balanceItem of this.autoBalanceItems) {
       if (balanceItem.name === item.name) {
@@ -2279,6 +2317,30 @@ export class InventoryService {
         this.autoBalanceItems.splice(index, 1);
         return;
       }
+    }
+  }
+
+  unAutoBalanceType(typeString: string) {
+    for (let i = this.autoBalanceItems.length - 1; i >= 0; i--) {
+      if (this.autoBalanceItems[i].type === typeString) {
+        this.autoBalanceItems.splice(i, 1);
+      }
+    }
+  }
+
+  autoBalanceType(typeString: string) {
+    let autoBalanceItemStack = this.itemStacks.find(
+      itemStack =>
+        itemStack.item?.type === typeString && !this.autoBalanceItems.find(entry => entry.name === itemStack.item?.name)
+    );
+
+    while (autoBalanceItemStack && autoBalanceItemStack.item) {
+      this.autoBalance(autoBalanceItemStack.item);
+      autoBalanceItemStack = this.itemStacks.find(
+        itemStack =>
+          itemStack.item?.type === typeString &&
+          !this.autoBalanceItems.find(entry => entry.name === itemStack.item?.name)
+      );
     }
   }
 
