@@ -2474,7 +2474,10 @@ export class InventoryService {
     let gemsToConsume = quantity;
     const filteredItemStacks = this.itemStacks
       .slice(this.heirloomSlots())
-      .filter(itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.quantity > 0)
+      .filter(
+        itemStack =>
+          itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item?.subtype === ENERGY_SPIRIT && itemStack.quantity > 0
+      )
       .sort((a, b) => {
         return a.item!.value - b.item!.value;
       });

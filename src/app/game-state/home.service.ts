@@ -1188,7 +1188,7 @@ export class HomeService {
       setupCost: 1e18,
       maintenanceCost: 1e12,
       description:
-        'A workstation that allows you and your gemologists to extract raw Spirit Energy from all kinds of gems.',
+        'A workstation that allows you and your gemologists to extract raw Spirit Energy from spirit gems in your inventory.<br><br>This will not extract elemental energy.',
       maxInputs: 0,
       inputs: [],
       consequence: (workstation: Workstation) => {
@@ -1583,6 +1583,7 @@ export class HomeService {
       this.nextHomeCostReduction = 0;
       this.houseBuildingProgress = 0;
       this.upgrading.set(true);
+      this.upgradeTick();
       this.logService.log(LogTopic.EVENT, 'You start upgrading your home to a ' + nextHome.name);
     }
   }
