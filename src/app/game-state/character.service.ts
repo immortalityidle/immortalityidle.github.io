@@ -1518,10 +1518,13 @@ export class CharacterService {
     }
   }
 
-  increaseAttribute(attribute: AttributeType, amount: number): number {
+  increaseAttribute(attribute: AttributeType, amount: number, qiCompressionBonus: boolean = false): number {
     let increaseAmount = amount;
     if (this.attributes[attribute].attributeGroup !== DIVINE_ATTRIBUTES) {
-      amount *= 1 + this.achievementService!.unlockedAchievements.length * 0.02; // 2% bonus per achievement
+      increaseAmount *= 1 + this.achievementService!.unlockedAchievements.length * 0.02; // 2% bonus per achievement
+    }
+    if (qiCompressionBonus) {
+      increaseAmount *= this.qiCompressionLevel + 1;
     }
     increaseAmount *= this.attributes[attribute].aptitudeMult;
     this.attributes[attribute].value += increaseAmount;

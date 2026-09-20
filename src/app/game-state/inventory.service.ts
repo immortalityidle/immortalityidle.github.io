@@ -1933,14 +1933,17 @@ export class InventoryService {
         }
       }
       for (const entry of this.autoSellEntries) {
-        if (entry.name === item.name && !this.hellService?.inHell()) {
+        if (entry.name === item.name) {
           let numberToSell = this.getQuantityByName(item.name) + quantity - entry.reserve;
           if (numberToSell > quantity) {
             // don't worry about selling more than the incoming quantity here
             numberToSell = quantity;
           }
           if (numberToSell > 0) {
-            this.characterService.updateMoney(item.value * numberToSell);
+            // can't make money selling in hell
+            if (!this.hellService?.inHell()) {
+              this.characterService.updateMoney(item.value * numberToSell);
+            }
             quantity -= numberToSell;
             if (quantity === 0) {
               return -1;
@@ -2085,10 +2088,6 @@ export class InventoryService {
       // don't sell infinitely valuable things.
       return;
     }
-    // can't sell in hell
-    if (this.hellService?.inHell()) {
-      return;
-    }
     this.lifetimeSoldItems += quantity;
     if (itemStack.item.type === LOOT_TYPE_GEM) {
       this.lifetimeGemsSold += quantity;
@@ -2096,11 +2095,17 @@ export class InventoryService {
     const index = this.itemStacks.indexOf(itemStack);
     if (quantity >= itemStack.quantity) {
       this.setItemEmptyStack(index);
-      this.characterService.updateMoney(itemStack.quantity * itemStack.item.value);
+      // can't make money selling in hell
+      if (!this.hellService?.inHell()) {
+        this.characterService.updateMoney(itemStack.quantity * itemStack.item.value);
+      }
     } else {
       itemStack.quantity -= quantity;
       this.fixIdByStack(itemStack);
-      this.characterService.updateMoney(quantity * itemStack.item.value);
+      // can't make money selling in hell
+      if (!this.hellService?.inHell()) {
+        this.characterService.updateMoney(quantity * itemStack.item.value);
+      }
     }
     if (itemStack.item.shopable) {
       this.soldGoods[itemStack.item.id] = (this.soldGoods[itemStack.item.id] || 0) + quantity;
@@ -2108,11 +2113,6 @@ export class InventoryService {
   }
 
   sellAll(item: Item) {
-    // can't sell in hell
-    if (this.hellService?.inHell()) {
-      return;
-    }
-
     for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
       const itemIterator = this.itemStacks[i];
       if (!itemIterator.item) {
