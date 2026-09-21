@@ -17,7 +17,7 @@ import {
 import { GameStateService } from './game-state.service';
 import { ActivityService } from './activity.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
-import { FollowersService } from './followers.service';
+import { FOLLOWER_TYPE_ALCHEMIST, FollowersService } from './followers.service';
 import { HellService } from './hell.service';
 import { FarmService } from './farm.service';
 import { LocationService, LocationType } from './location.service';
@@ -43,6 +43,7 @@ import {
   GOD_DEMETER,
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
+  GOD_HERA,
   GOD_YAMA,
   PANTHEON_CELESTIAL_EMPIRE,
   PantheonService,
@@ -2175,6 +2176,19 @@ export class AchievementService {
       },
       effect: () => {
         this.contemplationService.discoverConcept(CONCEPT_STRATEGY);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Marriage of Materials',
+      description:
+        'Dealing with Hera has given you new ideas on uniting opposed components and binding disparate materials. You think you can teach these principles to your followers.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_HERA)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.followerService.unlockJob(FOLLOWER_TYPE_ALCHEMIST);
       },
       unlocked: false,
     },

@@ -145,6 +145,7 @@ type jobsType = {
 
 // TODO: use constants for all the jobs
 export const FOLLOWER_TYPE_TECHNIQUE_MASTER = 'technique master';
+export const FOLLOWER_TYPE_ALCHEMIST = 'alchemist';
 
 @Injectable({
   providedIn: 'root',
@@ -956,6 +957,25 @@ export class FollowersService {
         /* no action, just used in the RefineTechniques activity */
       },
       description: 'Technique masters can help you refine family techniques in your training chamber.',
+      hidden: true,
+      totalPower: 0,
+      enabled: true,
+    },
+    [FOLLOWER_TYPE_ALCHEMIST]: {
+      work: daysElapsed => {
+        if (!this.jobs[FOLLOWER_TYPE_ALCHEMIST].enabled || this.jobs[FOLLOWER_TYPE_ALCHEMIST].totalPower < 1) {
+          return;
+        }
+        let workPower =
+          this.jobs[FOLLOWER_TYPE_ALCHEMIST].totalPower * daysElapsed +
+          (this.leftoverWork[FOLLOWER_TYPE_ALCHEMIST] || 0);
+        if (this.characterService.attributes.wisdom.value > 0) {
+          workPower *= Math.log10(this.characterService.attributes.wisdom.value + 10);
+        }
+        this.homeService.alchemistsWork(Math.floor(workPower / 100));
+        this.leftoverWork[FOLLOWER_TYPE_ALCHEMIST] = workPower % 100;
+      },
+      description: 'Alchemists work in your alchemy workstations, supporting your experiments and production.',
       hidden: true,
       totalPower: 0,
       enabled: true,

@@ -291,15 +291,17 @@ export class PantheonService {
           unlocked: signal<boolean>(false),
           discovered: signal<boolean>(false),
           unlockProgress: signal<number>(0),
-          unlockProgressRequired: signal<number>(100),
+          unlockProgressRequired: signal<number>(12),
           unlockProgressPercent: signal<number>(0),
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 7.6),
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 7.6),
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 7.6),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Dominating Lash', 'Forced Fidelity', 'Eternal Bonds'],
+          techniqueCooldowns: [2, 6, 120],
+          challengeMessage: signal<string>(
+            'A duel? What a quaint idea.<br>Well.<br>I would need a favor from you first.<br>One of my more special children has been a bit wayward and needs to be taught a lesson before he gets bold enough to challenge my husband.<br>Find him, give him a taste of some discipline, then return back to me and we might discuss a match between us.'
+          ),
+          attributes: ['justice', 'presence', 'presence', 'wrath', 'wrath'],
           baseLootLevel: 45,
         },
         {

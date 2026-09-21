@@ -2007,6 +2007,16 @@ export class HomeService {
     }
   }
 
+  alchemistsWork(workAmount: number) {
+    if (workAmount < 1) {
+      return;
+    }
+    const cauldrons = this.workstations.filter(ws => ws.triggerActivities.includes(ActivityType.Alchemy));
+    for (const cauldron of cauldrons) {
+      this.craftAlchemy(cauldron, workAmount);
+    }
+  }
+
   cookFood(workstation: Workstation, cookAmount: number = 1) {
     if (workstation.inputs.length < 2) {
       // inputs array not populated, bail out

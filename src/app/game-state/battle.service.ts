@@ -36,7 +36,7 @@ import {
   CONCEPT_VOID,
   ContemplationService,
 } from './contemplation.service';
-import { GOD_DEMETER, PantheonService } from './pantheon.service';
+import { GOD_DEMETER, GOD_HERA, PantheonService } from './pantheon.service';
 
 export interface Enemy {
   name: string;
@@ -2760,6 +2760,49 @@ export class BattleService {
     this.currentEnemy = this.enemies[this.enemies.length - 1];
   }
 
+  addTyphon() {
+    const hera = this.pantheonService.getGod(GOD_HERA);
+    if (!hera) {
+      // should never happen, but it keeps the linter happy
+      return;
+    }
+    this.addEnemy({
+      name: 'Typhon',
+      baseName: 'typhon',
+      health: hera.baseHealth * hera.unlockProgress(),
+      maxHealth: hera.baseHealth * hera.unlockProgress(),
+      defense: hera.baseDefense * hera.unlockProgress(),
+      loot: [],
+      unique: true,
+      techniques: [
+        {
+          name: 'Serpentine Strike',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: hera.baseDamage * hera.unlockProgress() * 10,
+          unlocked: true,
+        },
+        {
+          name: 'Jealous Rage',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: hera.baseDamage * hera.unlockProgress() * 20,
+          unlocked: true,
+        },
+        {
+          name: 'Mommy Issues',
+          ticks: 0,
+          ticksRequired: 30,
+          baseDamage: hera.baseDamage * hera.unlockProgress() * 30,
+          unlocked: true,
+        },
+      ],
+      location: LocationType.MaritalSanctuary,
+      defeatEffect: 'advanceHera',
+    });
+    this.currentEnemy = this.enemies[this.enemies.length - 1];
+  }
+
   private defeatEffect(enemy: Enemy) {
     if (enemy.divine) {
       this.pantheonService.defeatGod(enemy.baseName);
@@ -2820,6 +2863,8 @@ export class BattleService {
       this.homeService.nectarUnlocked = true;
     } else if (enemy.defeatEffect === 'advanceDemeter') {
       this.pantheonService.increaseGodProgress(GOD_DEMETER, 1);
+    } else if (enemy.defeatEffect === 'advanceHera') {
+      this.pantheonService.increaseGodProgress(GOD_HERA, 1);
     }
   }
 

@@ -213,6 +213,7 @@ export class ActivityService {
       this.ForgeDivineChains,
       this.SearchForPersephone,
       this.BoardGames,
+      this.HuntTyphon,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -6279,6 +6280,51 @@ export class ActivityService {
             'Athena slides her final pawn across the board for the win. Perhaps next time.'
           );
         }
+      },
+    ],
+    resourceUse: [{}],
+    requirements: [
+      {
+        intelligence: 1e56,
+      },
+    ],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  HuntTyphon: Activity = {
+    level: 0,
+    name: ['Hunt Down Typhon'],
+    location: LocationType.MaritalSanctuary,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'huntTyphon',
+    activityType: ActivityType.HuntTyphon,
+    description: [
+      "Apparently not all of Hera's children came from her union with Zeus. This one seems more like a pure embodiment of her jealousy and rage.",
+    ],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [
+      "Seek out the monster Typhon and deliver some divine discipline. You'll have to find him first though, and that doesn't seem like it's going to be easy.",
+    ],
+    consequence: [
+      () => {
+        const staminaCost = Math.min(this.characterService.staminaCap - 1, 30000000);
+        if (
+          this.characterService.status.stamina.max < staminaCost ||
+          this.characterService.status.stamina.value < staminaCost
+        ) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Hera calls out: "My, what poor stamina the gods of your realm must have. Look for him a little harder next time."'
+          );
+          return;
+        }
+        if (this.characterService.staminaCap < 1e10) {
+          this.characterService.staminaCap += 10;
+        }
+        this.characterService.status.stamina.value -= staminaCost;
+        this.battleService.addTyphon();
       },
     ],
     resourceUse: [{}],
