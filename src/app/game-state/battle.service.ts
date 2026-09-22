@@ -34,6 +34,7 @@ import {
   CONCEPT_EFFECT_WOODSHAPED,
   CONCEPT_STRATEGY,
   CONCEPT_VOID,
+  CONCEPT_WAR,
   ContemplationService,
 } from './contemplation.service';
 import { GOD_DEMETER, GOD_HERA, PantheonService } from './pantheon.service';
@@ -2229,6 +2230,16 @@ export class BattleService {
       );
       for (const concept of damageConcepts) {
         damage *= Math.log10(10 + concept.progress);
+      }
+      const warConcept = this.contemplationService.getConcept(CONCEPT_WAR);
+      if (warConcept && warConcept.progress > 0) {
+        damage *= Math.log10(10 + warConcept.progress);
+      }
+      const strategyConcept = this.contemplationService.getConcept(CONCEPT_STRATEGY);
+      if (strategyConcept && strategyConcept.progress > 0) {
+        damage *=
+          Math.log10(10 + this.characterService.attributes.wisdom.value) * Math.log10(10 + strategyConcept.progress) +
+          1;
       }
 
       if (this.currentEnemy.divine) {
