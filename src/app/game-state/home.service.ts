@@ -2013,7 +2013,9 @@ export class HomeService {
     }
     const cauldrons = this.workstations.filter(ws => ws.triggerActivities.includes(ActivityType.Alchemy));
     for (const cauldron of cauldrons) {
-      this.craftAlchemy(cauldron, workAmount);
+      for (let i = 0; i < workAmount; i++) {
+        this.craftAlchemy(cauldron, ActivityType.Alchemy);
+      }
     }
   }
 

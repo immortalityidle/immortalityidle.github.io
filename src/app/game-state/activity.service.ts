@@ -36,6 +36,7 @@ import {
   GOD_ATHENA,
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
+  GOD_HERA,
   GOD_HERMES,
   PantheonService,
 } from './pantheon.service';
@@ -6324,7 +6325,11 @@ export class ActivityService {
           this.characterService.staminaCap += 10;
         }
         this.characterService.status.stamina.value -= staminaCost;
-        this.battleService.addTyphon();
+        if (Math.random() < (this.pantheonService.getGod(GOD_HERA)!.timesDefeated() + 1) * 0.01) {
+          this.battleService.addTyphon();
+        } else {
+          this.logService.log(LogTopic.EVENT, 'Hera calls out: "A good effort! Keep searching!"');
+        }
       },
     ],
     resourceUse: [{}],

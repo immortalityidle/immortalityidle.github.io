@@ -2780,10 +2780,10 @@ export class BattleService {
     this.addEnemy({
       name: 'Typhon',
       baseName: 'typhon',
-      health: hera.baseHealth * hera.unlockProgress(),
-      maxHealth: hera.baseHealth * hera.unlockProgress(),
-      defense: hera.baseDefense * hera.unlockProgress(),
-      loot: [],
+      health: hera.baseHealth * hera.unlockProgress() * 10,
+      maxHealth: hera.baseHealth * hera.unlockProgress() * 10,
+      defense: hera.baseDefense * hera.unlockProgress() * 2,
+      loot: [this.itemRepoService.getItemById('ichor')!],
       unique: true,
       techniques: [
         {

@@ -1251,6 +1251,18 @@ baguaMap = [
       effect: 'health',
       shopable: false,
     },
+    ichor: {
+      id: 'ichor',
+      imageFile: 'ichor',
+      name: 'ichor',
+      type: 'herb',
+      subtype: 'ichor',
+      attribute: 'any',
+      value: 10000000,
+      description: "Divine monstrous fluid, probably usable in alchemy if you don't fear divine retribution.",
+      effect: 'health',
+      shopable: false,
+    },
     meat: {
       id: 'meat',
       imageFile: 'meat',
