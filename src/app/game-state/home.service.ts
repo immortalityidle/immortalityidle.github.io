@@ -2428,7 +2428,6 @@ export class HomeService {
       // inputs array not populated, bail out
       return;
     }
-    let totalValue = 0;
     const alchemyLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     this.totalCrafts++;
     workstation.productCounter = (workstation.productCounter || 0) + quantity;
@@ -2453,6 +2452,7 @@ export class HomeService {
       const crafts = Math.floor(workstation.productCounter / this.pillCraftsRequired);
       workstation.productCounter = workstation.productCounter % this.pillCraftsRequired;
       for (let i = 0; i < crafts; i++) {
+        let totalValue = 0;
         const moldStack = workstation.inputs.find(
           itemStack => itemStack.item?.type === 'pillMold' && itemStack.quantity > 0
         );
@@ -2636,6 +2636,7 @@ export class HomeService {
       }
     } else {
       for (let i = 0; i < quantity; i++) {
+        let totalValue = 0;
         for (const itemStack of herbStacks) {
           totalValue += itemStack.item!.value * 0.5;
           itemStack.quantity--;

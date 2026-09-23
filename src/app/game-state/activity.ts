@@ -113,6 +113,7 @@ export enum ActivityType {
   UpgradeMenagerie,
   BoardGames,
   HuntTyphon,
+  FishingWithPoseidon,
   Hell, // hell needs to be last for indexing purposes
 }
 

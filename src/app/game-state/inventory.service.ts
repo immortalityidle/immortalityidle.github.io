@@ -1352,12 +1352,29 @@ export class InventoryService {
   getWildMeat(grade: number): Item {
     return {
       id: 'wildMeat',
-      imageFile: 'meat',
+      imageFile: 'wildMeat',
       name: 'wild meat',
       type: 'food',
       subtype: 'wildMeat',
       value: 100 * grade,
       description: 'Meat from a wild beast',
+      shopable: false,
+      useConsumes: true,
+      useLabel: 'Eat',
+      useDescription: 'Fills your belly and adds variety to your diet.',
+      averageValueOnMerge: true,
+    };
+  }
+
+  getDeepSeaFish(grade: number): Item {
+    return {
+      id: 'deepSeaFish',
+      imageFile: 'deepSeaFish',
+      name: 'wild meat',
+      type: 'food',
+      subtype: 'wildMeat',
+      value: 100 * grade,
+      description: 'Fish from the deep sea',
       shopable: false,
       useConsumes: true,
       useLabel: 'Eat',

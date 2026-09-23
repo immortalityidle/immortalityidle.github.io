@@ -313,15 +313,17 @@ export class PantheonService {
           unlocked: signal<boolean>(false),
           discovered: signal<boolean>(false),
           unlockProgress: signal<number>(0),
-          unlockProgressRequired: signal<number>(100),
+          unlockProgressRequired: signal<number>(1000),
           unlockProgressPercent: signal<number>(0),
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 8.2),
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 8.2),
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 8.2),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Frothy Tremor', 'Crashing Wave', 'Tsunami'],
+          techniqueCooldowns: [4, 16, 200],
+          challengeMessage: signal<string>(
+            "You're looking for a fight?<br>I'd say you need to relax, friend.<br>Calm your roiling sea a bit.<br>Let's do a little fishing, that always settles me down.<br>I hope you know your fish and have the stamina to haul in a big one!"
+          ),
+          attributes: ['justice', 'wisdom', 'mercy', 'presence', 'wrath'],
           baseLootLevel: 50,
         },
         {

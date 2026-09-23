@@ -1304,7 +1304,7 @@ baguaMap = [
     },
     spiritCarp: {
       id: 'spiritCarp',
-      imageFile: 'fish',
+      imageFile: 'spiritFish',
       name: 'spirit carp',
       type: 'food',
       subtype: 'fish',

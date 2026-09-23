@@ -38,6 +38,7 @@ import {
   GOD_HEPHAESTUS,
   GOD_HERA,
   GOD_HERMES,
+  GOD_POSEIDON,
   PantheonService,
 } from './pantheon.service';
 import {
@@ -215,6 +216,7 @@ export class ActivityService {
       this.SearchForPersephone,
       this.BoardGames,
       this.HuntTyphon,
+      this.FishingWithPoseidon,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -6336,6 +6338,54 @@ export class ActivityService {
     requirements: [
       {
         intelligence: 1e56,
+      },
+    ],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  FishingWithPoseidon: Activity = {
+    level: 0,
+    name: ['Fishing with Poseidon'],
+    location: LocationType.OceanAbode,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'fishingWithPoseidon',
+    activityType: ActivityType.FishingWithPoseidon,
+    description: ['Take Poseidon up on his offer to go fishing.'],
+    yinYangEffect: [YinYangEffect.Balance],
+    consequenceDescription: [
+      'The fish in these deep waters are both exotic and delicious, and fishing for them is more relaxing than you would have expected.',
+    ],
+    consequence: [
+      () => {
+        let quantity = 1;
+        if (this.pantheonService.getGod(GOD_POSEIDON)!.timesDefeated() > 0) {
+          quantity *= this.farmService.conceptMultiplier;
+        }
+        this.inventoryService.addItem(this.inventoryService.getDeepSeaFish(5000), quantity);
+        this.pantheonService.increaseGodProgress(GOD_POSEIDON, 1);
+        this.logService.log(LogTopic.EVENT, 'Poseidon laughs. "A good catch, my friend. Let\'s get a few more."');
+
+        this.characterService.status.stamina.value -= 18000000;
+        if (this.characterService.yin > this.characterService.yang + 10) {
+          this.characterService.yang += 10;
+        } else if (this.characterService.yang > this.characterService.yin + 10) {
+          this.characterService.yin += 10;
+        }
+        this.characterService.increaseAttribute('spirituality', 1000, true);
+        this.characterService.checkOverage();
+        this.contemplationService.tick(10000);
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 18000000,
+      },
+    ],
+    requirements: [
+      {
+        animalHandling: 1e27,
       },
     ],
     divinityRequired: [true],
