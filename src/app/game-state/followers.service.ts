@@ -976,6 +976,7 @@ export class FollowersService {
         this.leftoverWork[FOLLOWER_TYPE_ALCHEMIST] = workPower % 100;
       },
       description: 'Alchemists work in your alchemy workstations, supporting your experiments and production.',
+      runEachTick: true,
       hidden: true,
       totalPower: 0,
       enabled: true,
