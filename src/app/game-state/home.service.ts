@@ -2013,9 +2013,7 @@ export class HomeService {
     }
     const cauldrons = this.workstations.filter(ws => ws.triggerActivities.includes(ActivityType.Alchemy));
     for (const cauldron of cauldrons) {
-      for (let i = 0; i < workAmount; i++) {
-        this.craftAlchemy(cauldron, ActivityType.Alchemy);
-      }
+      this.craftAlchemy(cauldron, ActivityType.Alchemy, workAmount);
     }
   }
 
@@ -2425,7 +2423,7 @@ export class HomeService {
     }
   }
 
-  craftAlchemy(workstation: Workstation, activityType: ActivityType) {
+  craftAlchemy(workstation: Workstation, activityType: ActivityType, quantity: number = 1) {
     if (workstation.inputs.length < 1) {
       // inputs array not populated, bail out
       return;
@@ -2433,7 +2431,7 @@ export class HomeService {
     let totalValue = 0;
     const alchemyLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     this.totalCrafts++;
-    workstation.productCounter = (workstation.productCounter || 0) + 1;
+    workstation.productCounter = (workstation.productCounter || 0) + quantity;
     const herbStacks = workstation.inputs.filter((itemStack, index, array) => {
       for (let i = 0; i < index; i++) {
         if (array[i].item?.subtype === itemStack.item?.subtype) {
@@ -2452,101 +2450,104 @@ export class HomeService {
       if (workstation.productCounter < this.pillCraftsRequired) {
         return;
       }
-      workstation.productCounter = 0;
-      const moldStack = workstation.inputs.find(
-        itemStack => itemStack.item?.type === 'pillMold' && itemStack.quantity > 0
-      );
-      const boxStack = workstation.inputs.find(
-        itemStack => itemStack.item?.type === 'pillBox' && itemStack.quantity > 0
-      );
-      const pouchStack = workstation.inputs.find(
-        itemStack => itemStack.item?.type === 'pillPouch' && itemStack.quantity > 0
-      );
+      const crafts = Math.floor(workstation.productCounter / this.pillCraftsRequired);
+      workstation.productCounter = workstation.productCounter % this.pillCraftsRequired;
+      for (let i = 0; i < crafts; i++) {
+        const moldStack = workstation.inputs.find(
+          itemStack => itemStack.item?.type === 'pillMold' && itemStack.quantity > 0
+        );
+        const boxStack = workstation.inputs.find(
+          itemStack => itemStack.item?.type === 'pillBox' && itemStack.quantity > 0
+        );
+        const pouchStack = workstation.inputs.find(
+          itemStack => itemStack.item?.type === 'pillPouch' && itemStack.quantity > 0
+        );
 
-      if (moldStack && boxStack && pouchStack && (gemStack || alchemyLevel > 2)) {
-        this.inventoryService.generateEmpowermentPill();
-        moldStack.quantity--;
-        boxStack.quantity--;
-        pouchStack.quantity--;
-        if (gemStack) {
-          gemStack.quantity--;
-        }
-      } else {
-        const attributeMap: { [key: string]: number } = {};
-        let highestAttribute = '';
-        let secondHighestAttribute = '';
-
-        for (const itemStack of herbStacks) {
-          const attribute = itemStack.item!.attribute!;
-          if (attributeMap[attribute]) {
-            attributeMap[attribute]++;
-          } else {
-            attributeMap[attribute] = 1;
+        if (moldStack && boxStack && pouchStack && (gemStack || alchemyLevel > 2)) {
+          this.inventoryService.generateEmpowermentPill();
+          moldStack.quantity--;
+          boxStack.quantity--;
+          pouchStack.quantity--;
+          if (gemStack) {
+            gemStack.quantity--;
           }
-          if (
-            attribute !== 'any' &&
-            (!attributeMap[highestAttribute] ||
-              (attribute !== highestAttribute && attributeMap[attribute] >= attributeMap[highestAttribute]))
-          ) {
-            secondHighestAttribute = highestAttribute;
-            highestAttribute = attribute;
-          }
-        }
-        for (const itemStack of herbStacks) {
-          if (
-            itemStack.item!.attribute === highestAttribute ||
-            itemStack.item!.attribute === secondHighestAttribute ||
-            itemStack.item!.attribute === 'any'
-          ) {
-            totalValue += itemStack.item!.value;
-            itemStack.quantity--;
-          }
-        }
-        if (totalValue < 1 || highestAttribute === '') {
-          // didn't find any usable ingredients
-          return;
-        }
-        let multiplier = 1;
-        if (gemStack) {
-          gemStack.quantity--;
-          multiplier += 1 + Math.log2(gemStack.item!.value / 10);
-        }
-        multiplier += attributeMap[highestAttribute] * attributeMap[highestAttribute];
-        if (secondHighestAttribute === '') {
-          multiplier *= Math.max(2.5, attributeMap[highestAttribute]);
         } else {
-          multiplier += attributeMap[secondHighestAttribute] * attributeMap[secondHighestAttribute];
-        }
-        if (attributeMap['any']) {
-          multiplier *= attributeMap['any'] * 2;
-        }
-        totalValue = Math.ceil(totalValue * multiplier);
-        const grade = Math.ceil(totalValue / 10);
-        const pillNameBase = this.getPillName(highestAttribute, secondHighestAttribute);
-        const pillName = this.getPillPrefix(grade) + ' ' + pillNameBase;
-        this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + pillName + '. Keep up the good work.');
-        let attributesString = highestAttribute;
-        let effectString = highestAttribute;
-        if (secondHighestAttribute !== '') {
-          attributesString += ' and ' + secondHighestAttribute;
-          effectString += ',' + secondHighestAttribute;
-        }
+          const attributeMap: { [key: string]: number } = {};
+          let highestAttribute = '';
+          let secondHighestAttribute = '';
 
-        this.inventoryService.addItem({
-          name: pillName,
-          imageFile: pillNameBase,
-          id: 'pill' + effectString + grade * 10,
-          type: 'pill',
-          value: grade * 10,
-          description: 'A magical pill that increases your ' + attributesString,
-          useLabel: 'Swallow',
-          useDescription: 'Use to increase your attributes.',
-          useConsumes: true,
-          effect: effectString,
-          increaseAmount: grade,
-          shopable: false,
-        });
-        this.pillsMade++;
+          for (const itemStack of herbStacks) {
+            const attribute = itemStack.item!.attribute!;
+            if (attributeMap[attribute]) {
+              attributeMap[attribute]++;
+            } else {
+              attributeMap[attribute] = 1;
+            }
+            if (
+              attribute !== 'any' &&
+              (!attributeMap[highestAttribute] ||
+                (attribute !== highestAttribute && attributeMap[attribute] >= attributeMap[highestAttribute]))
+            ) {
+              secondHighestAttribute = highestAttribute;
+              highestAttribute = attribute;
+            }
+          }
+          for (const itemStack of herbStacks) {
+            if (
+              itemStack.item!.attribute === highestAttribute ||
+              itemStack.item!.attribute === secondHighestAttribute ||
+              itemStack.item!.attribute === 'any'
+            ) {
+              totalValue += itemStack.item!.value;
+              itemStack.quantity--;
+            }
+          }
+          if (totalValue < 1 || highestAttribute === '') {
+            // didn't find any usable ingredients
+            return;
+          }
+          let multiplier = 1;
+          if (gemStack) {
+            gemStack.quantity--;
+            multiplier += 1 + Math.log2(gemStack.item!.value / 10);
+          }
+          multiplier += attributeMap[highestAttribute] * attributeMap[highestAttribute];
+          if (secondHighestAttribute === '') {
+            multiplier *= Math.max(2.5, attributeMap[highestAttribute]);
+          } else {
+            multiplier += attributeMap[secondHighestAttribute] * attributeMap[secondHighestAttribute];
+          }
+          if (attributeMap['any']) {
+            multiplier *= attributeMap['any'] * 2;
+          }
+          totalValue = Math.ceil(totalValue * multiplier);
+          const grade = Math.ceil(totalValue / 10);
+          const pillNameBase = this.getPillName(highestAttribute, secondHighestAttribute);
+          const pillName = this.getPillPrefix(grade) + ' ' + pillNameBase;
+          this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + pillName + '. Keep up the good work.');
+          let attributesString = highestAttribute;
+          let effectString = highestAttribute;
+          if (secondHighestAttribute !== '') {
+            attributesString += ' and ' + secondHighestAttribute;
+            effectString += ',' + secondHighestAttribute;
+          }
+
+          this.inventoryService.addItem({
+            name: pillName,
+            imageFile: pillNameBase,
+            id: 'pill' + effectString + grade * 10,
+            type: 'pill',
+            value: grade * 10,
+            description: 'A magical pill that increases your ' + attributesString,
+            useLabel: 'Swallow',
+            useDescription: 'Use to increase your attributes.',
+            useConsumes: true,
+            effect: effectString,
+            increaseAmount: grade,
+            shopable: false,
+          });
+          this.pillsMade++;
+        }
       }
     } else if (workstation.alchemyProduct === 'longevity pills') {
       if (workstation.productCounter < this.pillCraftsRequired * 10) {
@@ -2555,87 +2556,97 @@ export class HomeService {
       if (alchemyLevel < 3 && !gemStack) {
         return;
       }
-      workstation.productCounter = 0;
-      let totalValue = 0;
+      const crafts = Math.floor(workstation.productCounter / (this.pillCraftsRequired * 10));
+      workstation.productCounter = workstation.productCounter % (this.pillCraftsRequired * 10);
 
-      for (const itemStack of herbStacks) {
-        totalValue += itemStack.item!.value;
-        itemStack.quantity--;
-      }
-      if (totalValue < 1) {
-        // didn't find any usable ingredients
-        return;
-      }
-      if (alchemyLevel >= 3 && gemStack) {
-        totalValue *= gemStack.item!.value;
-      }
-      if (gemStack) {
-        gemStack!.quantity--;
-      }
+      for (let i = 0; i < crafts; i++) {
+        let totalValue = 0;
 
-      const grade = Math.ceil(totalValue / 5);
-      const pillName = this.getPillPrefix(grade) + ' Everflowing Fountain Pill';
-      this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + pillName + '. Keep up the good work.');
-      this.inventoryService.addItem({
-        name: pillName,
-        imageFile: 'longevitypill',
-        id: 'pilllongevity' + grade * 10,
-        type: 'pill',
-        value: grade * 10,
-        description: 'A magical pill that increases your lifespan.',
-        useLabel: 'Swallow',
-        useDescription: 'Use to increase your lifespan',
-        useConsumes: true,
-        effect: 'longevity',
-        increaseAmount: grade,
-        shopable: false,
-      });
+        for (const itemStack of herbStacks) {
+          totalValue += itemStack.item!.value;
+          itemStack.quantity--;
+        }
+        if (totalValue < 1) {
+          // didn't find any usable ingredients
+          return;
+        }
+        if (alchemyLevel >= 3 && gemStack) {
+          totalValue *= gemStack.item!.value;
+        }
+        if (gemStack) {
+          gemStack!.quantity--;
+        }
+
+        const grade = Math.ceil(totalValue / 5);
+        const pillName = this.getPillPrefix(grade) + ' Everflowing Fountain Pill';
+        this.logService.log(LogTopic.CRAFTING, 'Alchemy Success! Created a ' + pillName + '. Keep up the good work.');
+        this.inventoryService.addItem({
+          name: pillName,
+          imageFile: 'longevitypill',
+          id: 'pilllongevity' + grade * 10,
+          type: 'pill',
+          value: grade * 10,
+          description: 'A magical pill that increases your lifespan.',
+          useLabel: 'Swallow',
+          useDescription: 'Use to increase your lifespan',
+          useConsumes: true,
+          effect: 'longevity',
+          increaseAmount: grade,
+          shopable: false,
+        });
+      }
     } else if (workstation.alchemyProduct === 'distilled essences') {
       const divineFruitStack = workstation.inputs.find(
         itemStack => itemStack.item?.subtype === 'divinefruit' && itemStack.quantity > 10
       );
       if (divineFruitStack?.item?.id === 'divinePeach') {
-        divineFruitStack.quantity -= 10;
-        this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence']);
+        const outputQuantity = Math.min(Math.floor(divineFruitStack.quantity / 10), quantity);
+        divineFruitStack.quantity -= 10 * outputQuantity;
+        this.inventoryService.addItem(this.itemRepoService.items['distilledPeachEssence'], outputQuantity);
       } else if (divineFruitStack?.item?.id === 'grapes' && divineFruitStack.quantity > 10000) {
-        divineFruitStack.quantity -= 10000;
-        this.inventoryService.addItem(this.itemRepoService.items['wine']);
+        const outputQuantity = Math.min(Math.floor(divineFruitStack.quantity / 10000), quantity);
+        divineFruitStack.quantity -= 10000 * outputQuantity;
+        this.inventoryService.addItem(this.itemRepoService.items['wine'], outputQuantity);
       }
       const coalStack = workstation.inputs.find(
         itemStack => itemStack.item?.type === 'coal' && itemStack.quantity >= 100
       );
       if (coalStack) {
-        coalStack.quantity -= 100;
-        this.inventoryService.addItem(this.itemRepoService.items['coke']);
+        const outputQuantity = Math.min(Math.floor(coalStack.quantity / 100), quantity);
+        coalStack.quantity -= 100 * outputQuantity;
+        this.inventoryService.addItem(this.itemRepoService.items['coke'], outputQuantity);
       }
       if (this.nectarUnlocked) {
         const wineStack = workstation.inputs.find(
           itemStack => itemStack.item?.id === 'wine' && itemStack.quantity >= 1000
         );
         if (wineStack) {
-          wineStack.quantity -= 1000;
-          this.inventoryService.addItem(this.itemRepoService.items['nectar']);
-          return;
+          const outputQuantity = Math.min(Math.floor(wineStack.quantity / 1000), quantity);
+          wineStack.quantity -= 1000 * outputQuantity;
+          this.inventoryService.addItem(this.itemRepoService.items['nectar'], outputQuantity);
         }
       }
       const dreadsteelStack = workstation.inputs.find(
         itemStack => itemStack.item?.id === 'dreadsteelBar' && itemStack.quantity >= 100
       );
       if (dreadsteelStack) {
-        dreadsteelStack.quantity -= 100;
-        this.inventoryService.addItem(this.itemRepoService.items['refinedDreadsteelBar'], 1, 0, true);
+        const outputQuantity = Math.min(Math.floor(dreadsteelStack.quantity / 100), quantity);
+        dreadsteelStack.quantity -= 100 * outputQuantity;
+        this.inventoryService.addItem(this.itemRepoService.items['refinedDreadsteelBar'], outputQuantity, 0, true);
       }
     } else {
-      for (const itemStack of herbStacks) {
-        totalValue += itemStack.item!.value * 0.5;
-        itemStack.quantity--;
-      }
-      if (totalValue < 1) {
-        // didn't find any usable ingredients
-        return;
-      }
+      for (let i = 0; i < quantity; i++) {
+        for (const itemStack of herbStacks) {
+          totalValue += itemStack.item!.value * 0.5;
+          itemStack.quantity--;
+        }
+        if (totalValue < 1) {
+          // didn't find any usable ingredients
+          return;
+        }
 
-      this.inventoryService.generatePotion(totalValue);
+        this.inventoryService.generatePotion(totalValue);
+      }
     }
   }
 
