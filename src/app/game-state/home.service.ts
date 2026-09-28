@@ -26,12 +26,14 @@ import {
   TECHNIQUE_REFINEMENT_LIFESTEAL,
   TECHNIQUE_REFINEMENT_POWER,
   TECHNIQUE_REFINEMENT_QI_USAGE,
+  TECHNIQUE_REFINEMENT_SEVERING,
   TECHNIQUE_REFINEMENT_WEAPONS,
 } from './battle.service';
 import {
   CONCEPT_EFFECT_FOOD_YIELD,
   CONCEPT_EFFECT_HOME_RECOVERY,
   CONCEPT_FORTIFICATION,
+  CONCEPT_FREEDOM,
   ContemplationService,
 } from './contemplation.service';
 import { ImpossibleTaskService, ImpossibleTaskType } from './impossibleTask.service';
@@ -2883,6 +2885,10 @@ export class HomeService {
       aspects.push(TECHNIQUE_REFINEMENT_BERZERK);
       aspects.push(TECHNIQUE_REFINEMENT_CRITICAL_CHANCE);
       aspects.push(TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE);
+    }
+    const freedomConcept = this.contemplationService.getConcept(CONCEPT_FREEDOM);
+    if (freedomConcept && freedomConcept.progress > 0) {
+      aspects.push(TECHNIQUE_REFINEMENT_SEVERING);
     }
 
     let index = aspects.indexOf(workstation.techniqueRefinementAspect || TECHNIQUE_REFINEMENT_POWER);

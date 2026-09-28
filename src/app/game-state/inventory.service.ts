@@ -33,6 +33,7 @@ import {
   ENERGY_SPIRIT,
   LOOT_TYPE_GEM,
 } from './battle.service';
+import { CONCEPT_CONTENTMENT, ContemplationService } from './contemplation.service';
 
 export interface WeaponStats {
   baseDamage: number;
@@ -199,6 +200,7 @@ export interface InventoryProperties {
   darkMetal: boolean;
   noArmor: boolean;
   armorAvatarBonus: boolean;
+  noItems: boolean;
 }
 
 @Injectable({
@@ -314,6 +316,7 @@ export class InventoryService {
   armorAvatarBonus = false;
   craftInputRotations: { [key: string]: number } = {};
   skipTicks = false;
+  noItems = false;
 
   constructor(
     private injector: Injector,
@@ -321,6 +324,7 @@ export class InventoryService {
     private characterService: CharacterService,
     private mainLoopService: MainLoopService,
     private itemRepoService: ItemRepoService,
+    private contemplationService: ContemplationService,
     private titleCasePipe: TitleCasePipe
   ) {
     setTimeout(() => (this.hellService = this.injector.get(HellService)));
@@ -645,6 +649,7 @@ export class InventoryService {
       darkMetal: this.darkMetal,
       noArmor: this.noArmor,
       armorAvatarBonus: this.armorAvatarBonus,
+      noItems: this.noItems,
     };
   }
 
@@ -740,6 +745,7 @@ export class InventoryService {
     this.darkMetal = properties.darkMetal;
     this.noArmor = properties.noArmor;
     this.armorAvatarBonus = properties.armorAvatarBonus;
+    this.noItems = properties.noItems;
     for (const furniture of this.itemRepoService.furniture) {
       if (furniture.locked !== undefined) {
         if (this.unlockedFurniture.includes(furniture.name)) {
@@ -1683,25 +1689,30 @@ export class InventoryService {
     if (quantity > this.maxFoodPerDay - this.foodEatenToday) {
       quantity = this.maxFoodPerDay - this.foodEatenToday;
     }
+    let bonusMultiplier = 1;
+    const contentmentConcept = this.contemplationService.getConcept(CONCEPT_CONTENTMENT);
+    if (contentmentConcept && contentmentConcept.progress > 0) {
+      bonusMultiplier += Math.log10(contentmentConcept.progress + 10);
+    }
     const value = foodItem.value;
-    this.characterService.status.nutrition.value += quantity + quantity * value;
-    this.characterService.healthBonusFood += quantity * value * 0.01;
-    this.characterService.status.health.value += quantity * value * 0.01;
-    this.characterService.status.stamina.value += quantity * value * 0.01;
-    this.characterService.status.qi.value += quantity * value * 0.01;
-    const maxLifespanIncrease = Math.min(value * 365, 7300);
+    this.characterService.status.nutrition.value += quantity + quantity * value * bonusMultiplier;
+    this.characterService.healthBonusFood += quantity * value * 0.01 * bonusMultiplier;
+    this.characterService.status.health.value += quantity * value * 0.01 * bonusMultiplier;
+    this.characterService.status.stamina.value += quantity * value * 0.01 * bonusMultiplier;
+    this.characterService.status.qi.value += quantity * value * 0.01 * bonusMultiplier;
+    const maxLifespanIncrease = Math.min(value * 365, 7300) * bonusMultiplier;
     if (this.characterService.foodLifespan + quantity <= maxLifespanIncrease) {
-      this.characterService.foodLifespan += quantity;
+      this.characterService.foodLifespan += quantity * bonusMultiplier;
     } else if (this.characterService.foodLifespan < maxLifespanIncrease) {
       this.characterService.foodLifespan = maxLifespanIncrease;
     }
     if (foodItem.subtype === 'meal') {
-      this.characterService.status.stamina.max += (quantity * value) / 100;
+      this.characterService.status.stamina.max += (quantity * value * bonusMultiplier) / 100;
       if (this.characterService.status.nutrition.max < 200) {
         this.characterService.status.nutrition.max += 0.1;
       }
       if (foodItem.name.startsWith('Soul')) {
-        this.characterService.increaseAttribute('spirituality', 0.001);
+        this.characterService.increaseAttribute('spirituality', 0.001 * bonusMultiplier);
       }
     }
     this.foodEatenToday += quantity;
@@ -1723,6 +1734,9 @@ export class InventoryService {
     ignoreAutoReload: boolean = false,
     skipStacking = false
   ): number {
+    if (this.noItems) {
+      return -1;
+    }
     let firstStack = -1;
 
     if (!skipStacking) {
@@ -2664,8 +2678,15 @@ export class InventoryService {
     if (potion.effect) {
       effect = potion.effect;
     }
+    let bonusMultiplier = 1;
+    const contentmentConcept = this.contemplationService.getConcept(CONCEPT_CONTENTMENT);
+    if (contentmentConcept && contentmentConcept.progress > 0) {
+      bonusMultiplier += Math.log10(contentmentConcept.progress + 10);
+    }
+
     const statusKey = effect as StatusType;
-    this.characterService.status[statusKey].value += (potion.increaseAmount || 1) * quantity * this.drugMultiplier;
+    this.characterService.status[statusKey].value +=
+      (potion.increaseAmount || 1) * quantity * this.drugMultiplier * bonusMultiplier;
     this.characterService.checkOverage();
   }
 
@@ -2675,10 +2696,16 @@ export class InventoryService {
       quantity = 1; //handle potential 0 and negatives just in case
     }
     this.lifetimePillsUsed += quantity;
+    let bonusMultiplier = 1;
+    const contentmentConcept = this.contemplationService.getConcept(CONCEPT_CONTENTMENT);
+    if (contentmentConcept && contentmentConcept.progress > 0) {
+      bonusMultiplier += Math.log10(contentmentConcept.progress + 10);
+    }
+
     if (pill.effect === 'longevity') {
-      this.characterService.alchemyLifespan += (pill.increaseAmount || 1) * quantity;
-      if (this.characterService.alchemyLifespan > 36500) {
-        this.characterService.alchemyLifespan = 36500;
+      this.characterService.alchemyLifespan += (pill.increaseAmount || 1) * quantity * bonusMultiplier;
+      if (this.characterService.alchemyLifespan > 36500 * bonusMultiplier) {
+        this.characterService.alchemyLifespan = 36500 * bonusMultiplier;
       }
     } else if (pill.effect === 'empowerment') {
       this.characterService.empowermentPillsTaken += quantity;
@@ -2696,11 +2723,17 @@ export class InventoryService {
         const effectArray = effect.split(',');
         for (const attr of effectArray) {
           const attributeKey = attr as AttributeType;
-          this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity * multiplier);
+          this.characterService.increaseAttribute(
+            attributeKey,
+            (pill.increaseAmount || 1) * quantity * multiplier * bonusMultiplier
+          );
         }
       } else {
         const attributeKey = effect as AttributeType;
-        this.characterService.increaseAttribute(attributeKey, (pill.increaseAmount || 1) * quantity * multiplier);
+        this.characterService.increaseAttribute(
+          attributeKey,
+          (pill.increaseAmount || 1) * quantity * multiplier * bonusMultiplier
+        );
       }
     }
     this.characterService.checkOverage();

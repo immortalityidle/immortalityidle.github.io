@@ -32,6 +32,7 @@ import {
   CONCEPT_EFFECT_VOID,
   CONCEPT_EFFECT_WESTERN,
   CONCEPT_EFFECT_WOODSHAPED,
+  CONCEPT_FREEDOM,
   CONCEPT_STRATEGY,
   CONCEPT_VOID,
   CONCEPT_WAR,
@@ -166,6 +167,7 @@ export interface Technique {
   berzerk?: number;
   criticalChance?: number;
   criticalDamage?: number;
+  severing?: number;
 }
 
 export interface DisplayTechnique {
@@ -195,6 +197,7 @@ export interface DisplayTechnique {
   berzerk: WritableSignal<number>;
   criticalChance: WritableSignal<number>;
   criticalDamage: WritableSignal<number>;
+  severing: WritableSignal<number>;
   refinementFocus: WritableSignal<boolean>;
   elementIcon: WritableSignal<string>;
 }
@@ -265,6 +268,7 @@ export const TECHNIQUE_REFINEMENT_LIFESTEAL = 'Allow technique to steal the vita
 export const TECHNIQUE_REFINEMENT_BERZERK = 'do more damage as your health decreases';
 export const TECHNIQUE_REFINEMENT_CRITICAL_CHANCE = 'chance to get a critical hit that does increased damage';
 export const TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE = 'damage increase when striking a critical hit';
+export const TECHNIQUE_REFINEMENT_SEVERING = 'damage increase from severing threads of fate';
 
 export const ELEMENT_FIRE = 'fire';
 export const ELEMENT_WATER = 'water';
@@ -338,6 +342,7 @@ export class BattleService {
   maximumTechniqueBerzerk = 10;
   maximumTechniqueCriticalChance = 10;
   maximumTechniqueCriticalDamage = 10;
+  maximumTechniqueSeveringDamage = 100;
   maximumTechniqueEnergyUsage = 100000;
   maximumTechniqueQiUsage = 1000;
   pauseOnBattle = false;
@@ -772,6 +777,7 @@ export class BattleService {
               berzerk: signal<number>(technique.berzerk || 0),
               criticalChance: signal<number>(technique.criticalChance || 0),
               criticalDamage: signal<number>(technique.criticalDamage || 0),
+              severing: signal<number>(technique.severing || 0),
               elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
@@ -793,6 +799,7 @@ export class BattleService {
             this.displayEnemies[i].techniques[j].berzerk.set(technique.berzerk || 0);
             this.displayEnemies[i].techniques[j].criticalChance.set(technique.criticalChance || 0);
             this.displayEnemies[i].techniques[j].criticalDamage.set(technique.criticalDamage || 0);
+            this.displayEnemies[i].techniques[j].severing.set(technique.severing || 0);
             this.displayEnemies[i].techniques[j].refinementFocus.set(false);
             this.displayEnemies[i].techniques[j].elementIcon.set(this.getElementIcon(technique.effect));
           }
@@ -869,6 +876,7 @@ export class BattleService {
             berzerk: signal<number>(technique.berzerk || 0),
             criticalChance: signal<number>(technique.criticalChance || 0),
             criticalDamage: signal<number>(technique.criticalDamage || 0),
+            severing: signal<number>(technique.severing || 0),
             elementIcon: signal<string>(this.getElementIcon(technique.effect)),
           });
         } else {
@@ -901,6 +909,7 @@ export class BattleService {
           this.displayTechniques[i].berzerk.set(technique.berzerk || 0);
           this.displayTechniques[i].criticalChance.set(technique.criticalChance || 0);
           this.displayTechniques[i].criticalDamage.set(technique.criticalDamage || 0);
+          this.displayTechniques[i].severing.set(technique.severing || 0);
           this.displayTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
         }
       }
@@ -993,6 +1002,7 @@ export class BattleService {
               berzerk: signal<number>(technique.berzerk || 0),
               criticalChance: signal<number>(technique.criticalChance || 0),
               criticalDamage: signal<number>(technique.criticalDamage || 0),
+              severing: signal<number>(technique.severing || 0),
               elementIcon: signal<string>(this.getElementIcon(technique.effect)),
             });
           } else {
@@ -1024,6 +1034,7 @@ export class BattleService {
             this.displayLibraryTechniques[i].berzerk.set(technique.berzerk || 0);
             this.displayLibraryTechniques[i].criticalChance.set(technique.criticalChance || 0);
             this.displayLibraryTechniques[i].criticalDamage.set(technique.criticalDamage || 0);
+            this.displayLibraryTechniques[i].severing.set(technique.severing || 0);
             this.displayLibraryTechniques[i].refinementFocus.set(false);
             this.displayLibraryTechniques[i].elementIcon.set(this.getElementIcon(technique.effect));
           }
@@ -1113,6 +1124,10 @@ export class BattleService {
       const voidConcept = this.contemplationService.getConcept(CONCEPT_VOID);
       if (voidConcept?.discovered) {
         this.voidSkipThreshold = Math.max(20 - Math.log10(10 + voidConcept.progress), 2);
+        const freedomConcept = this.contemplationService.getConcept(CONCEPT_FREEDOM);
+        if (freedomConcept?.discovered) {
+          this.voidSkipThreshold = Math.max(this.voidSkipThreshold - Math.log10(10 + freedomConcept.progress), 2);
+        }
       }
     }
   }
@@ -1575,6 +1590,12 @@ export class BattleService {
         (1 - alpha) * (technique.criticalDamage || 0) + alpha * this.maximumTechniqueCriticalDamage;
       if (technique.criticalDamage > this.maximumTechniqueCriticalDamage - 0.000000003) {
         technique.criticalDamage = this.maximumTechniqueCriticalDamage;
+      }
+    } else if (aspect === TECHNIQUE_REFINEMENT_SEVERING) {
+      const alpha = value * 1e-11;
+      technique.severing = (1 - alpha) * (technique.severing || 0) + alpha * this.maximumTechniqueSeveringDamage;
+      if (technique.severing > this.maximumTechniqueSeveringDamage - 0.000000003) {
+        technique.severing = this.maximumTechniqueSeveringDamage;
       }
     }
   }
@@ -2254,6 +2275,13 @@ export class BattleService {
         if (Math.random() <= technique.criticalChance / 100) {
           this.logService.log(LogTopic.COMBAT, 'Critical hit!');
           damage *= 2 + (technique.criticalDamage || 0);
+        }
+      }
+      if (technique.severing) {
+        damage *= 2 + (technique.severing || 0);
+        const freedomConcept = this.contemplationService.getConcept(CONCEPT_FREEDOM);
+        if (freedomConcept && freedomConcept.progress > 0) {
+          damage *= Math.log10(freedomConcept.progress + 10);
         }
       }
 

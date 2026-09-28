@@ -69,6 +69,8 @@ export const CONCEPT_ABUNDANCE = 'Tao of Abundance';
 export const CONCEPT_SCARCITY = 'Tao of Scarcity';
 export const CONCEPT_WAR = 'Tao of War';
 export const CONCEPT_STRATEGY = 'Tao of Strategy';
+export const CONCEPT_FREEDOM = 'Tao of Freedom';
+export const CONCEPT_CONTENTMENT = 'Tao of Contentment';
 
 @Injectable({
   providedIn: 'root',
@@ -665,6 +667,24 @@ export class ContemplationService {
         "Contemplate the wise use of strategy in resolving conflicts.<br><br>Improves your defense, allows you to see through others' defenses, and leverages your wisdom in protecting you.",
       progress: 0,
       effect: CONCEPT_EFFECT_ARMOR_REDUCTION + ',' + CONCEPT_EFFECT_DEFENCE,
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_FREEDOM,
+      description:
+        'Contemplate freedom from base desires and disconnection from the binding threads of fate.<br><br>You might even be able to train yourself to disrupt those threads of fate binding others.',
+      progress: 0,
+      effect: CONCEPT_EFFECT_VOID,
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_CONTENTMENT,
+      description:
+        'Contemplate happiness without depending on material things or other beings.<br><br>Increases appreciation for the most basic things in life.',
+      progress: 0,
+      effect: CONCEPT_EFFECT_FOOD_YIELD,
       discovered: false,
       unlocksMore: false,
     },

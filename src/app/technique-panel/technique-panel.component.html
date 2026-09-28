@@ -56,6 +56,9 @@
           @if (displayTechnique.criticalDamage() > 0){
             <div tooltip="Increase the critical hit damage multiplier.">Critical Damage: {{displayTechnique.criticalDamage() | bigNumber}}</div>
           }
+          @if (displayTechnique.severing() > 0){
+            <div tooltip="Increase damage by severing the threads of fate connected to your enemy.">Severing Damage Bonus: {{displayTechnique.severing() | bigNumber}}</div>
+          }
           @if (displayTechnique.effect() !== ''){
             <div>{{effectDescriptions[displayTechnique.effect()]}}</div>
           }

@@ -17,7 +17,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { FarmProperties, FarmService } from './farm.service';
 import { LocationProperties, LocationService, LocationType, Realm } from './location.service';
-import { CONCEPT_NATURE, ContemplationProperties, ContemplationService } from './contemplation.service';
+import {
+  CONCEPT_CONTENTMENT,
+  CONCEPT_FREEDOM,
+  CONCEPT_NATURE,
+  ContemplationProperties,
+  ContemplationService,
+} from './contemplation.service';
 import { PantheonProperties, PantheonService } from './pantheon.service';
 import { BigNumberPipe } from '../pipes';
 import { ActivityType } from './activity';
@@ -690,6 +696,7 @@ export class GameStateService {
       darkMetal: props?.darkMetal || false,
       noArmor: props?.noArmor || false,
       armorAvatarBonus: props?.armorAvatarBonus || false,
+      noItems: props?.noItems || false,
     };
   }
 
@@ -1605,6 +1612,13 @@ export class GameStateService {
           newGameState.followers.unlockedHiddenJobs.push('owl');
           newGameState.followers.unlockedHiddenJobs.push('falcon');
           newGameState.character.seclusionEnabled = true;
+        } else if (avatarType === AVATAR_ASCETIC) {
+          newGameState.home.homeValue = HomeType.None;
+          newGameState.inventory.noItems = true;
+          newGameState.battles.uneradicableMonsterTypes.push('rat');
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].progress = 0;
+          newGameState.impossibleTasks.taskProgress[ImpossibleTaskType.OvercomeDeath].complete = false;
+          newGameState.character.seclusionEnabled = true;
         }
 
         newGameState.avatarChallenge = avatarType;
@@ -1676,6 +1690,9 @@ export class GameStateService {
       this.followersService.unlockJob('owl');
       this.followersService.unlockJob('falcon');
       this.followersService.menagerieUnlocked = true;
+    } else if (avatarChallenge === AVATAR_ASCETIC) {
+      this.contemplationService.discoverConcept(CONCEPT_FREEDOM);
+      this.contemplationService.discoverConcept(CONCEPT_CONTENTMENT);
     }
     this.completedAvatarChallenges.push(avatarChallenge);
     this.savetoLocalStorage();
@@ -1756,7 +1773,8 @@ export class GameStateService {
       this.avatarChallenge === AVATAR_SWORD_SAINT ||
       this.avatarChallenge === AVATAR_WANDERER ||
       this.avatarChallenge === AVATAR_ALL_NATURAL ||
-      this.avatarChallenge === AVATAR_BEAST_MASTER
+      this.avatarChallenge === AVATAR_BEAST_MASTER ||
+      this.avatarChallenge === AVATAR_ASCETIC
     ) {
       this.avatarProgressDescription.set('Avatar Challenge Goal: Defeat Death Itself.');
       this.avatarChallengeProgress.set(this.battleService.killsByMonster['death'] || 0);
