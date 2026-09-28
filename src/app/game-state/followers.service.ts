@@ -1409,6 +1409,9 @@ export class FollowersService {
       }
     }
 
+    this.followerCap = Math.floor(this.followerCap);
+    this.petsCap = Math.floor(this.petsCap);
+
     this.followersMaxed =
       this.followers.length < this.followerCap ? (this.followersMaxed = 'UNMAXED') : (this.followersMaxed = 'MAXED');
   }

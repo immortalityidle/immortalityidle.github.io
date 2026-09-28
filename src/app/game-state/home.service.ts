@@ -2452,6 +2452,11 @@ export class HomeService {
       const crafts = Math.floor(workstation.productCounter / this.pillCraftsRequired);
       workstation.productCounter = workstation.productCounter % this.pillCraftsRequired;
       for (let i = 0; i < crafts; i++) {
+        for (let j = herbStacks.length - 1; j >= 0; j--) {
+          if (herbStacks[j].quantity < 1) {
+            herbStacks.splice(j, 1);
+          }
+        }
         let totalValue = 0;
         const moldStack = workstation.inputs.find(
           itemStack => itemStack.item?.type === 'pillMold' && itemStack.quantity > 0
@@ -2560,6 +2565,12 @@ export class HomeService {
       workstation.productCounter = workstation.productCounter % (this.pillCraftsRequired * 10);
 
       for (let i = 0; i < crafts; i++) {
+        for (let j = herbStacks.length - 1; j >= 0; j--) {
+          if (herbStacks[j].quantity < 1) {
+            herbStacks.splice(j, 1);
+          }
+        }
+
         let totalValue = 0;
 
         for (const itemStack of herbStacks) {
@@ -2636,6 +2647,12 @@ export class HomeService {
       }
     } else {
       for (let i = 0; i < quantity; i++) {
+        for (let j = herbStacks.length - 1; j >= 0; j--) {
+          if (herbStacks[j].quantity < 1) {
+            herbStacks.splice(j, 1);
+          }
+        }
+
         let totalValue = 0;
         for (const itemStack of herbStacks) {
           totalValue += itemStack.item!.value * 0.5;
