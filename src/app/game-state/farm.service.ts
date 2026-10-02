@@ -282,8 +282,18 @@ export class FarmService {
     if (cropIndex >= this.unlockedCrops.length) {
       cropIndex = 0;
     }
-    this.defaultCropType =
-      this.inventoryService.farmFoodList.find(entry => entry.name === this.unlockedCrops[cropIndex])?.name || 'rice';
+    let defaultCropItem = this.inventoryService.farmFoodList.find(
+      entry => entry.name === this.unlockedCrops[cropIndex]
+    );
+    if (!defaultCropItem) {
+      defaultCropItem = this.itemRepoService.items[this.unlockedCrops[cropIndex]];
+    }
+    if (!defaultCropItem) {
+      // couldn't find the crop, bail out
+      this.defaultCropType = 'rice';
+    } else {
+      this.defaultCropType = defaultCropItem.name;
+    }
   }
 
   /**
