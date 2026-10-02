@@ -708,7 +708,7 @@ export class GameStateService {
       landPrice: props?.landPrice || 0,
       keepFurniture: props?.keepFurniture || false,
       nextHomeCostReduction: props?.nextHomeCostReduction || 0,
-      houseBuildingProgress: props?.houseBuildingProgress || 1,
+      houseBuildingProgress: props?.houseBuildingProgress ?? 1,
       upgrading: props?.upgrading || false,
       ownedFurniture: props?.ownedFurniture || [],
       highestLand: props?.highestLand || 0,
@@ -746,6 +746,11 @@ export class GameStateService {
       consecutiveHarvests: props?.consecutiveHarvests || 0,
       secludedDays: props?.secludedDays || 0,
       fieldWork: props?.fieldWork || 0,
+      defaultCropType: props?.defaultCropType || 'rice',
+      autoStaggerUnlocked: props?.autoStaggerUnlocked || false,
+      autoStaggerEnabled: props?.autoStaggerEnabled || false,
+      autoStaggerLimit: props?.autoStaggerLimit ?? 1,
+      autoStaggerInterval: props?.autoStaggerInterval ?? 7,
     };
   }
 

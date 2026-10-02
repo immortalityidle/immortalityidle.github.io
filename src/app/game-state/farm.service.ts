@@ -43,6 +43,11 @@ export interface FarmProperties {
   consecutiveHarvests: number;
   secludedDays: number;
   fieldWork: number;
+  defaultCropType: string;
+  autoStaggerUnlocked: boolean;
+  autoStaggerEnabled: boolean;
+  autoStaggerLimit: number;
+  autoStaggerInterval: number;
 }
 
 // TODO: add growing herbs
@@ -71,6 +76,12 @@ export class FarmService {
   conceptMultiplier = 1;
   secludedDays = 0;
   fieldWork = 0;
+  autoStaggerUnlocked = false;
+  autoStaggerEnabled = false;
+  autoStaggerLimit = 1;
+  autoStaggerInterval = 7;
+  defaultCropType = 'rice';
+  intervalHarvests: { [key: string]: number } = {};
 
   constructor(
     private injector: Injector,
@@ -89,7 +100,7 @@ export class FarmService {
         return;
       }
 
-      this.tick();
+      this.tick(mainLoopService.totalTicks);
     });
 
     mainLoopService.longTickSubject.subscribe(() => {
@@ -160,7 +171,7 @@ export class FarmService {
     });
   }
 
-  tick() {
+  tick(totalTicks: number) {
     if (this.characterService.dead) {
       return;
     }
@@ -180,6 +191,9 @@ export class FarmService {
         this.logService.log(LogTopic.EVENT, "You don't have the funds required for your farms' upkeep.");
       }
     }
+    if (this.autoStaggerEnabled && totalTicks % this.autoStaggerInterval === 0) {
+      this.intervalHarvests = {};
+    }
   }
 
   getProperties(): FarmProperties {
@@ -193,6 +207,11 @@ export class FarmService {
       consecutiveHarvests: this.consecutiveHarvests,
       secludedDays: this.secludedDays,
       fieldWork: this.fieldWork,
+      defaultCropType: this.defaultCropType,
+      autoStaggerUnlocked: this.autoStaggerUnlocked,
+      autoStaggerEnabled: this.autoStaggerEnabled,
+      autoStaggerLimit: this.autoStaggerLimit,
+      autoStaggerInterval: this.autoStaggerInterval,
     };
   }
 
@@ -205,6 +224,11 @@ export class FarmService {
     this.unlockedCrops = properties.unlockedCrops;
     this.secludedDays = properties.secludedDays;
     this.fieldWork = properties.fieldWork;
+    this.defaultCropType = properties.defaultCropType;
+    this.autoStaggerUnlocked = properties.autoStaggerUnlocked;
+    this.autoStaggerEnabled = properties.autoStaggerEnabled;
+    this.autoStaggerLimit = properties.autoStaggerLimit;
+    this.autoStaggerInterval = properties.autoStaggerInterval;
 
     this.consecutiveHarvests = properties.consecutiveHarvests;
     this.farmedPlots = 0;
@@ -252,6 +276,16 @@ export class FarmService {
     this.fields[fieldIndex].imageFile = cropItem.imageFile;
   }
 
+  changeDefaultCrop() {
+    let cropIndex = this.unlockedCrops.indexOf(this.defaultCropType);
+    cropIndex++;
+    if (cropIndex >= this.unlockedCrops.length) {
+      cropIndex = 0;
+    }
+    this.defaultCropType =
+      this.inventoryService.farmFoodList.find(entry => entry.name === this.unlockedCrops[cropIndex])?.name || 'rice';
+  }
+
   /**
    *
    * @param quantity -1 for all
@@ -287,7 +321,9 @@ export class FarmService {
     if (this.fields.length >= maxFields) {
       return;
     }
-    const cropItem = this.inventoryService.farmFoodList[0];
+    const cropItem =
+      this.inventoryService.farmFoodList.find(item => item.name === this.defaultCropType) ||
+      this.inventoryService.farmFoodList[0];
     this.fields.push({
       cropName: cropItem.name,
       cropId: cropItem.id,
@@ -368,26 +404,32 @@ export class FarmService {
       let fieldYield = 0;
       if (field.plots > 0) {
         const fieldDays = days + (field.originalDaysToHarvest - field.daysToHarvest);
-        const harvests = Math.floor(fieldDays / field.originalDaysToHarvest);
+        let harvests = Math.floor(fieldDays / field.originalDaysToHarvest);
         const remainder = fieldDays % field.originalDaysToHarvest;
         field.daysToHarvest = field.originalDaysToHarvest - remainder;
         if (harvests > 0) {
-          fieldYield = field.yield + workValue * field.plots;
-          if (fieldYield > field.maxPlotYield * field.plots * harvests) {
-            fieldYield = field.maxPlotYield * field.plots * harvests;
-            // carry over leftover work to the next harvest
-            field.yield = Math.min(
-              fieldYield - field.maxPlotYield * field.plots * harvests,
-              field.maxPlotYield * field.plots
-            );
+          if (this.autoStaggerEnabled && (this.intervalHarvests[field.cropName] || 0) >= this.autoStaggerLimit) {
+            harvests = 0;
+            field.daysToHarvest = 0;
           } else {
-            field.yield = 0;
+            fieldYield = field.yield + workValue * field.plots;
+            if (fieldYield > field.maxPlotYield * field.plots * harvests) {
+              fieldYield = field.maxPlotYield * field.plots * harvests;
+              // carry over leftover work to the next harvest
+              field.yield = Math.min(
+                fieldYield - field.maxPlotYield * field.plots * harvests,
+                field.maxPlotYield * field.plots
+              );
+            } else {
+              field.yield = 0;
+            }
+            fieldYield *= this.conceptMultiplier;
+            totalYield += fieldYield;
+            this.inventoryService.addItem(this.itemRepoService.items[field.cropId], fieldYield);
+            harvested = true;
+            this.intervalHarvests[field.cropName] = (this.intervalHarvests[field.cropName] || 0) + harvests;
           }
-          fieldYield *= this.conceptMultiplier;
-          totalYield += fieldYield;
-          this.inventoryService.addItem(this.itemRepoService.items[field.cropId], fieldYield);
-          harvested = true;
-        } else {
+        } else if (field.daysToHarvest > 0) {
           field.daysToHarvest--;
           field.yield += workValue * field.plots;
           if (field.yield > field.maxPlotYield * field.plots) {

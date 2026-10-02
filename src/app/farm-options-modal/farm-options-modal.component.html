@@ -1,0 +1,45 @@
+<div class='darkMode optionsDiv'>
+  <span>Crafting Options</span>
+  <hr>
+
+  <div class="optionField">
+    <span>
+      Default crop type for new fields: 
+      <mat-icon (click)="farmService.changeDefaultCrop()" tooltip="Change Default Crop" 
+        class="iconButton" aria-label="Change Default Crop" aria-hidden="false">
+        change_circle
+      </mat-icon>
+      {{farmService.defaultCropType | camelToTitle}}
+    </span>
+  </div>
+
+  @if (farmService.smoothFarming){
+    <div class="optionField">
+      <span tooltip="If you have enough fallow plots of land, set all fields to the specified size.">
+        Set all fields to size: 
+      <input min="0" value="{{setAllQuantity}}" type="number" class="inputBox" (change)="setAllQuantityChanged($event)"/>
+      <button (click)="setAllFields()">Set</button>
+      </span>
+    </div>
+  }
+
+  @if (farmService.autoStaggerUnlocked){
+    <div class="optionField">
+      <input type="checkbox" id="autoStagger" [checked]="farmService.autoStaggerEnabled" (change)="autoStaggerChange($event)">
+      <label for="autoStagger" >
+        <span>
+          Automatically stagger harvests.
+        </span>
+      </label>
+      <div class="optionField indent">
+        <span>
+            Harvest fields for each crop type
+            <input min="1" value="{{farmService.autoStaggerLimit || 1}}" type="number" class="inputBox" (change)="changeAutoStaggerLimit($event)"/> 
+            times per 
+            <input min="1" value="{{farmService.autoStaggerInterval || 1}}" type="number" class="inputBox" (change)="changeAutoStaggerInterval($event)"/> 
+            days
+        </span>
+      </div>
+    </div>
+  }
+</div>

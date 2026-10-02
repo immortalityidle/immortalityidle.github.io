@@ -6,6 +6,8 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
 import { HomeService } from '../game-state/home.service';
 import { HellService } from '../game-state/hell.service';
+import { FarmOptionsModalComponent } from '../farm-options-modal/farm-options-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-farm-panel',
@@ -21,12 +23,11 @@ import { HellService } from '../game-state/hell.service';
   ],
 })
 export class FarmPanelComponent {
-  setAllQuantity = 0;
-
   constructor(
     protected farmService: FarmService,
     protected homeService: HomeService,
-    protected hellService: HellService
+    protected hellService: HellService,
+    private dialog: MatDialog
   ) {}
 
   protected addFieldClicked(event: MouseEvent): void {
@@ -73,13 +74,11 @@ export class FarmPanelComponent {
     this.farmService.changeCrop(fieldIndex);
   }
 
-  protected setAllQuantityChanged(event: Event) {
-    if (!(event.target instanceof HTMLInputElement)) return;
-
-    this.setAllQuantity = Math.floor(parseFloat(event.target.value));
-  }
-
-  protected setAllFields() {
-    this.farmService.setAllFieldsSize(this.setAllQuantity);
+  protected farmOptions() {
+    this.dialog.open(FarmOptionsModalComponent, {
+      width: '700px',
+      data: { someField: 'foo' },
+      autoFocus: false,
+    });
   }
 }

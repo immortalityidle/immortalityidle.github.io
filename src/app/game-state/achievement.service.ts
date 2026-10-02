@@ -2151,6 +2151,7 @@ export class AchievementService {
       effect: () => {
         this.contemplationService.discoverConcept(CONCEPT_ABUNDANCE);
         this.contemplationService.discoverConcept(CONCEPT_SCARCITY);
+        this.farmService.autoStaggerUnlocked = true;
       },
       unlocked: false,
     },

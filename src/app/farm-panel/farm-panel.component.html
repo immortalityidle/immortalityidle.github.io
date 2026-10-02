@@ -7,7 +7,12 @@
     </div>
   }
   @else {
-
+    <div>
+      <span>Your Farm</span>
+      <mat-icon  (click)="farmOptions()" tooltip="Options" class="iconButton floatRight" aria-label="Farm Options" aria-hidden="false">
+        settings
+      </mat-icon>
+    </div>
     <div>
       <span>
         You can set up farm fields to grow various foods. Fields need to have plots assigned and regular farming work to be productive.
@@ -33,13 +38,6 @@
         {{farmService.displayFieldsCount()}}
       </span>
     </div>
-    @if (farmService.smoothFarming){
-      <span tooltip="If you have enough fallow plots of land, set all fields to the specified size.">
-        Set all fields to size: 
-        <input min="0" value="{{setAllQuantity}}" type="number" class="inputBox" (change)="setAllQuantityChanged($event)"/>
-        <button (click)="setAllFields()">Set</button>
-      </span>
-    }
     <div class="farmGrid">
       @for (field of farmService.displayFields; track field.trackField(); let index = $index) {
         <div class="fieldSlot">
