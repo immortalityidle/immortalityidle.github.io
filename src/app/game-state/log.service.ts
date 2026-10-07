@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MainLoopService } from './main-loop.service';
+import { repeat } from 'rxjs';
 
 type AllTopicProperties = { [key: string]: TopicProperties };
 
@@ -14,6 +15,7 @@ export interface Log {
   topic: LogTopic;
   timestamp: number;
   repeat: number;
+  trackValue: string;
 }
 
 export interface LogProperties {
@@ -56,6 +58,7 @@ export class LogService {
   );
 
   currentLog: Log[] = [];
+  uniqueCounter = 0;
 
   startingStoryLogEntries = [
     'Once in a very long while, a soul emerges from the chaos that is destined for immortality.',
@@ -105,10 +108,14 @@ export class LogService {
         topic: topic,
         timestamp: timestamp,
         repeat: 1,
+        trackValue: message + 1 + timestamp + this.uniqueCounter,
       });
     } else {
       log[log.length - 1].repeat++;
+      log[log.length - 1].timestamp = timestamp;
+      log[log.length - 1].trackValue = message + repeat + timestamp + this.uniqueCounter;
     }
+    this.uniqueCounter++;
 
     if (!this.topicProperties[topic].enabled) {
       this.topicProperties[topic].hasNewMessages = true;
@@ -130,6 +137,8 @@ export class LogService {
     this.logs[LogTopic.STORY] = properties.storyLog;
     for (const log of this.logs[LogTopic.STORY]) {
       log.message = log.message.replaceAll('<br>', ' ');
+      log.trackValue = log.message + log.repeat + log.timestamp + this.uniqueCounter;
+      this.uniqueCounter++;
     }
     properties.logTopics.forEach(topic => {
       this.topicProperties[LogTopic[topic]].enabled = true;

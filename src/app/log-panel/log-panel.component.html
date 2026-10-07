@@ -7,7 +7,7 @@
   </h3>
   <div class="logBoxContainer">
     <div class="logBox">
-      @for (logMsg of logService.currentLog; track logMsg.message + logMsg.repeat+ logMsg.timestamp) {
+      @for (logMsg of logService.currentLog; track logMsg.trackValue) {
         <div [ngClass]="logMsg.type" class="logEntryDiv">
           <span>
             {{logMsg.message}}

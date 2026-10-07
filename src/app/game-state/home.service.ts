@@ -2432,7 +2432,6 @@ export class HomeService {
     }
     const alchemyLevel = this.activityService?.getActivityByType(activityType)?.level || 0;
     this.totalCrafts++;
-    workstation.productCounter = (workstation.productCounter || 0) + quantity;
     const herbStacks = workstation.inputs.filter((itemStack, index, array) => {
       for (let i = 0; i < index; i++) {
         if (array[i].item?.subtype === itemStack.item?.subtype) {
@@ -2448,6 +2447,7 @@ export class HomeService {
     );
 
     if (workstation.alchemyProduct === 'attribute pills') {
+      workstation.productCounter = (workstation.productCounter || 0) + quantity;
       if (workstation.productCounter < this.pillCraftsRequired) {
         return;
       }
@@ -2557,6 +2557,7 @@ export class HomeService {
         }
       }
     } else if (workstation.alchemyProduct === 'longevity pills') {
+      workstation.productCounter = (workstation.productCounter || 0) + quantity;
       if (workstation.productCounter < this.pillCraftsRequired * 10) {
         return;
       }
