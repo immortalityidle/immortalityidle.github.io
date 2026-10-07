@@ -30,6 +30,7 @@ import {
   CONCEPT_PHILOSOPHY,
   CONCEPT_SCARCITY,
   CONCEPT_STRATEGY,
+  CONCEPT_TIDES,
   CONCEPT_WAR,
   ContemplationService,
 } from './contemplation.service';
@@ -44,6 +45,7 @@ import {
   GOD_DIONYSUS,
   GOD_HEPHAESTUS,
   GOD_HERA,
+  GOD_POSEIDON,
   GOD_YAMA,
   PANTHEON_CELESTIAL_EMPIRE,
   PantheonService,
@@ -2190,6 +2192,19 @@ export class AchievementService {
       },
       effect: () => {
         this.followerService.unlockJob(FOLLOWER_TYPE_ALCHEMIST);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Wisdom of the Sea',
+      description:
+        "Your time with Poseidon has taught you a whole new appreciation of the wisdom and power that can be found in the ocean's tides.",
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_POSEIDON)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.contemplationService.discoverConcept(CONCEPT_TIDES);
       },
       unlocked: false,
     },

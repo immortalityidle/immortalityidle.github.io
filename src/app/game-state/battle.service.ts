@@ -1724,11 +1724,14 @@ export class BattleService {
     }
     this.voidSkipCounter++;
     let damage = technique.baseDamage;
-    // Yin/Yang factor, balance can be up to 10 when boosted
-    if (this.characterService.yinYangBoosted) {
+    // Yin/Yang factor
+    if (this.characterService.yinYangBalance <= 1) {
+      damage -= damage * (this.characterService.yinYangBalance / 2);
+    } else if (this.characterService.yinYangBalance <= 10) {
       damage -= damage * (this.characterService.yinYangBalance / 18);
     } else {
-      damage -= damage * (this.characterService.yinYangBalance / 2);
+      damage -= damage * (10 / 18);
+      damage /= this.characterService.yinYangBalance - 9;
     }
 
     let damageBack = false;

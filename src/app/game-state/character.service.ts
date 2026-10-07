@@ -12,6 +12,7 @@ import {
   CONCEPT_ABUNDANCE,
   CONCEPT_BEAUTY,
   CONCEPT_EFFECT_FOOD_YIELD,
+  CONCEPT_TIDES,
   ContemplationService,
 } from './contemplation.service';
 
@@ -1383,12 +1384,25 @@ export class CharacterService {
     if (this.defenseBonusPets >= 1) {
       this.defense *= this.defenseBonusPets;
     }
+    // calculate yin/yang balance bonus
+    const tidesConcept = this.contemplationService.getConcept(CONCEPT_TIDES);
+    const absoluteDifference = Math.abs(this.yang - this.yin);
+    const averageValue = (this.yang + this.yin) / 2;
+    let maxValue = 1;
     if (this.yinYangBoosted) {
-      // calculate yin/yang balance bonus, 10 for perfect balance, 0 at worst
-      this.yinYangBalance = Math.max(10 - (10 * Math.abs(this.yang - this.yin)) / ((this.yang + this.yin) / 2), 0);
+      maxValue = 10;
+    }
+    if (averageValue === 0) {
+      this.yinYangBalance = 0;
+    } else if (tidesConcept && tidesConcept.progress > 0) {
+      maxValue *= Math.log2(tidesConcept.progress + 2);
+      if (absoluteDifference / averageValue > 0.5) {
+        this.yinYangBalance = maxValue;
+      } else {
+        this.yinYangBalance = Math.max(maxValue - (maxValue * absoluteDifference) / averageValue, 0);
+      }
     } else {
-      // calculate yin/yang balance bonus, 1 for perfect balance, 0 at worst
-      this.yinYangBalance = Math.max(1 - Math.abs(this.yang - this.yin) / ((this.yang + this.yin) / 2), 0);
+      this.yinYangBalance = Math.max(maxValue - (maxValue * absoluteDifference) / averageValue, 0);
     }
     this.empowermentMult = this.getEmpowermentMult();
   }
@@ -1450,7 +1464,6 @@ export class CharacterService {
     }
     let c = 365000; // Hardcap
     if (this.yinYangBoosted) {
-      // TODO: tune this
       c += this.yinYangBalance * c;
     } else {
       c += this.yinYangBalance * c * 0.1;

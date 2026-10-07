@@ -71,6 +71,7 @@ export const CONCEPT_WAR = 'Tao of War';
 export const CONCEPT_STRATEGY = 'Tao of Strategy';
 export const CONCEPT_FREEDOM = 'Tao of Freedom';
 export const CONCEPT_CONTENTMENT = 'Tao of Contentment';
+export const CONCEPT_TIDES = 'Tao of Tides';
 
 @Injectable({
   providedIn: 'root',
@@ -685,6 +686,15 @@ export class ContemplationService {
         'Contemplate happiness without depending on material things or other beings.<br><br>Increases appreciation for the most basic things in life.',
       progress: 0,
       effect: CONCEPT_EFFECT_FOOD_YIELD,
+      discovered: false,
+      unlocksMore: false,
+    },
+    {
+      name: CONCEPT_TIDES,
+      description:
+        'Contemplate the harmony of opposing forces in the ocean tides: coming and going, rising and falling, land and sea.<br><br>Increases the power of yin and yang effects and makes it easier to maximize their effects.<br><br>Also allows you to draw on the strength of the sea in combat and deeply contemplate while fishing.',
+      progress: 0,
+      effect: 'waterLore,' + CONCEPT_EFFECT_DAMAGE + ',' + CONCEPT_EFFECT_DEFENCE,
       discovered: false,
       unlocksMore: false,
     },

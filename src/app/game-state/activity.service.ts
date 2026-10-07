@@ -25,6 +25,7 @@ import {
   CONCEPT_FIRE,
   CONCEPT_METAL,
   CONCEPT_NATURE,
+  CONCEPT_TIDES,
   CONCEPT_WATER,
   CONCEPT_WOOD,
   ContemplationService,
@@ -3661,6 +3662,10 @@ export class ActivityService {
         }
         this.characterService.yin++;
         this.gainNatureSprirituality(0.1);
+        const tidesConcept = this.contemplationService.getConcept(CONCEPT_TIDES);
+        if (tidesConcept && tidesConcept.progress > 0) {
+          this.contemplationService.tick(Math.floor(Math.log2(tidesConcept.progress + 2)));
+        }
       },
     ],
     resourceUse: [
@@ -6375,7 +6380,12 @@ export class ActivityService {
         }
         this.characterService.increaseAttribute('spirituality', 1000, true);
         this.characterService.checkOverage();
-        this.contemplationService.tick(10000);
+        let contemplationAmount = 10000;
+        const tidesConcept = this.contemplationService.getConcept(CONCEPT_TIDES);
+        if (tidesConcept && tidesConcept.progress > 0) {
+          contemplationAmount *= Math.floor(Math.log2(tidesConcept.progress + 2));
+        }
+        this.contemplationService.tick(contemplationAmount);
       },
     ],
     resourceUse: [
