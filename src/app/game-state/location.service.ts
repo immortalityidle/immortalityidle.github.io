@@ -115,6 +115,7 @@ export interface LocationProperties {
   currentRealm: Realm;
   locationLocked: boolean;
   distanceMultiplier: number;
+  forbiddenLocations: LocationType[];
 }
 export interface DisplayLocations {
   name: WritableSignal<string>;
@@ -132,6 +133,7 @@ export class LocationService {
   location: LocationType = LocationType.SmallTown;
   currentRealm: Realm = Realm.MortalRealm;
   distanceMultiplier = 1;
+  forbiddenLocations: LocationType[] = [];
   locationMap: { [key in LocationType]: LocationEntry } = {
     [LocationType.Self]: {
       name: 'Your Very Self',
@@ -665,15 +667,19 @@ export class LocationService {
   }
 
   setLocation(location: LocationType | null) {
+    if (location === null) {
+      this.location = LocationType.SmallTown;
+      return;
+    }
+    if (this.forbiddenLocations.includes(location)) {
+      this.logService.log(LogTopic.EVENT, 'Nope. Not going there.');
+      return;
+    }
     if (this.locationLocked) {
       this.logService.log(LogTopic.EVENT, "You can't select a new location now.");
       return;
     }
-    if (location === null) {
-      this.location = LocationType.SmallTown;
-    } else {
-      this.location = location;
-    }
+    this.location = location;
     const entryEffect = this.locationMap[this.location].entryEffect;
     if (entryEffect) {
       entryEffect();
@@ -688,6 +694,7 @@ export class LocationService {
       currentRealm: this.currentRealm,
       locationLocked: this.locationLocked,
       distanceMultiplier: this.distanceMultiplier,
+      forbiddenLocations: this.forbiddenLocations,
     };
   }
 
@@ -700,5 +707,6 @@ export class LocationService {
     }
     this.locationLocked = properties.locationLocked;
     this.distanceMultiplier = properties.distanceMultiplier;
+    this.forbiddenLocations = properties.forbiddenLocations;
   }
 }

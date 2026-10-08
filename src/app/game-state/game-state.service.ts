@@ -809,6 +809,7 @@ export class GameStateService {
       currentRealm: props?.currentRealm ?? Realm.MortalRealm,
       locationLocked: props?.locationLocked || false,
       distanceMultiplier: props?.distanceMultiplier || 1,
+      forbiddenLocations: props?.forbiddenLocations || [],
     };
   }
 
@@ -1544,6 +1545,7 @@ export class GameStateService {
           newGameState.followers.forbiddenJobs.push('miner');
           newGameState.followers.forbiddenJobs.push('coalDigger');
           newGameState.followers.forbiddenSlots.push('rightHand');
+          newGameState.locations.forbiddenLocations.push(LocationType.Mine);
           newGameState.battles.uneradicableMonsterTypes.push('rat');
           newGameState.battles.uneradicableMonsterTypes.push('golem');
           newGameState.battles.uneradicableMonsterTypes.push('sphinx');
