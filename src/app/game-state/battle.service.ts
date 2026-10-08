@@ -675,7 +675,7 @@ export class BattleService {
       }
       this.characterService.checkOverage();
 
-      if (this.currentEnemy === null && this.enemies.length > 0) {
+      if (!this.currentEnemy && this.enemies.length > 0) {
         this.currentEnemy = this.enemies[0];
       }
       this.handleYourTechniques();
