@@ -2,6 +2,7 @@ import { Component, forwardRef } from '@angular/core';
 import {
   BattleService,
   EFFECT_CORRUPTION,
+  EFFECT_DARKLIGHT,
   EFFECT_DOOM,
   EFFECT_EXPLOSIVE,
   EFFECT_HASTE,
@@ -57,6 +58,7 @@ export class TechniquePanelComponent {
       'This technique inflicts corruption, increasing damage but leaving you vulnerable.';
     this.effectDescriptions[EFFECT_LIFE] = 'This technique restores your life with each strike.';
     this.effectDescriptions[EFFECT_POISON] = "This technique inflicts poison, sapping your enemy's health over time.";
+    this.effectDescriptions[EFFECT_DARKLIGHT] = 'This technique prevents your enemy from being healed.';
     this.effectDescriptions[EFFECT_DOOM] = 'This technique inflicts doom, increasing the damage of subsequent strikes.';
     this.effectDescriptions[EFFECT_EXPLOSIVE] = 'This technique does explosive damage to both you and your enemy.';
     this.effectDescriptions[EFFECT_SHIELDING] = 'This technique grants you additional protection each time it strikes.';

@@ -38,7 +38,7 @@ import {
   CONCEPT_WAR,
   ContemplationService,
 } from './contemplation.service';
-import { GOD_DEMETER, GOD_HERA, PantheonService } from './pantheon.service';
+import { GOD_DEMETER, GOD_HADES, GOD_HERA, PantheonService } from './pantheon.service';
 
 export interface Enemy {
   name: string;
@@ -168,6 +168,7 @@ export interface Technique {
   criticalChance?: number;
   criticalDamage?: number;
   severing?: number;
+  unvoidable?: boolean;
 }
 
 export interface DisplayTechnique {
@@ -254,6 +255,7 @@ export const EFFECT_SHIELDING = 'Shielding';
 export const EFFECT_PIERCING = 'Piercing';
 export const EFFECT_HASTE = 'Haste';
 export const EFFECT_SLOW = 'Slow';
+export const EFFECT_DARKLIGHT = 'Darklight';
 
 export const EFFECT_FEEDER = 'feeder';
 export const EFFECT_ZOMBIE_DECOY = 'zombie_decoy';
@@ -1714,7 +1716,7 @@ export class BattleService {
   }
 
   private enemyAttack(technique: Technique, enemy: Enemy) {
-    if (this.voidSkipCounter >= this.voidSkipThreshold) {
+    if (this.voidSkipCounter >= this.voidSkipThreshold && !technique.unvoidable) {
       this.voidSkipCounter = 0;
       this.logService.log(
         LogTopic.COMBAT,
@@ -1835,7 +1837,14 @@ export class BattleService {
       } else if (technique.effect === 'theft') {
         this.characterService.updateMoney(0 - this.characterService.money / 10);
       } else if (technique.effect === EFFECT_LIFE) {
-        enemy.health += damage * 0.1;
+        if (enemy.statusEffects?.find(effect => effect.name === EFFECT_DARKLIGHT)) {
+          this.logService.log(
+            LogTopic.COMBAT,
+            'The power of darklight prevents ' + technique.name + ' from healing the enemy.'
+          );
+        } else {
+          enemy.health += damage * 0.1;
+        }
       } else if (technique.effect === 'kamikaze') {
         if (!technique.hitTracker) {
           technique.hitTracker = 0;
@@ -1848,6 +1857,23 @@ export class BattleService {
         technique.hitTracker++;
       } else if (technique.effect === EFFECT_ZOMBIE_DECOY) {
         this.addZombieDecoy();
+      } else if (technique.effect === 'addCerberus') {
+        this.addCerberus();
+      } else if (technique.effect === 'addPersephone') {
+        this.addPersephone();
+      } else if (technique.effect === 'healAllies') {
+        for (const healedEnemy of this.enemies) {
+          if (enemy !== healedEnemy) {
+            if (healedEnemy.statusEffects?.find(effect => effect.name === EFFECT_DARKLIGHT)) {
+              this.logService.log(
+                LogTopic.COMBAT,
+                'The power of darklight prevents ' + technique.name + ' from healing ' + healedEnemy.name + '.'
+              );
+            } else {
+              healedEnemy.health += healedEnemy.maxHealth * 0.1;
+            }
+          }
+        }
       }
     }
 
@@ -2035,6 +2061,23 @@ export class BattleService {
         this.logService.log(LogTopic.COMBAT, 'Your attack healed you for ' + healAmount + ' as you struck the enemy.');
         this.characterService.status.health.value += healAmount; // TODO: tune this
         this.characterService.checkOverage();
+      } else if (effect === EFFECT_DARKLIGHT) {
+        const statusEffect: StatusEffect = {
+          name: EFFECT_DARKLIGHT,
+          description: 'The power of darklight prevents the enemy from being healed.',
+          ticksLeft: 10,
+          power: 1,
+        };
+        if (this.currentEnemy.statusEffects) {
+          const darklightEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_DARKLIGHT);
+          if (darklightEffect) {
+            darklightEffect.ticksLeft += statusEffect.ticksLeft;
+          } else {
+            this.currentEnemy.statusEffects.push(statusEffect);
+          }
+        } else {
+          this.currentEnemy.statusEffects = [statusEffect];
+        }
       } else if (effect === ELEMENT_EFFECT_FIRE) {
         if (this.currentEnemy.element) {
           if (this.currentEnemy.element === ELEMENT_METAL || this.currentEnemy.element === ELEMENT_WOOD) {
@@ -2845,6 +2888,90 @@ export class BattleService {
     this.currentEnemy = this.enemies[this.enemies.length - 1];
   }
 
+  addCerberus() {
+    if (this.enemies.find(enemy => enemy.name === 'Cerberus')) {
+      return;
+    }
+    this.logService.log(LogTopic.EVENT, 'A massive three headed dog bounds forward and joins the fray.');
+
+    const hades = this.pantheonService.getGod(GOD_HADES);
+    if (!hades) {
+      // should never happen, but it keeps the linter happy
+      return;
+    }
+
+    const damage = hades.baseDamage * Math.pow(100, hades.timesDefeated());
+    this.addEnemy({
+      name: 'Cerberus',
+      baseName: 'cerberus',
+      health: hades.baseHealth,
+      maxHealth: hades.baseHealth,
+      defense: hades.baseDefense,
+      loot: [this.itemRepoService.getItemById('ichor')!],
+      unique: true,
+      techniques: [
+        {
+          name: 'Guardian Growl',
+          ticks: 0,
+          ticksRequired: 10,
+          baseDamage: damage * 1000,
+          unlocked: true,
+        },
+        {
+          name: 'Viscious Bite',
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: damage * 8000,
+          unlocked: true,
+        },
+        {
+          name: 'Triple Bite',
+          ticks: 0,
+          ticksRequired: 100,
+          baseDamage: damage * 10000000,
+          unlocked: true,
+        },
+      ],
+      location: LocationType.TartarusPalace,
+    });
+  }
+
+  addPersephone() {
+    if (this.enemies.find(enemy => enemy.name === 'Persephone')) {
+      return;
+    }
+
+    this.logService.log(LogTopic.EVENT, 'Persephone cries out: "How dare you touch my beloved?!"');
+
+    const hades = this.pantheonService.getGod(GOD_HADES);
+    if (!hades) {
+      // should never happen, but it keeps the linter happy
+      return;
+    }
+
+    this.addEnemy({
+      name: 'Persephone',
+      baseName: 'Persephone',
+      health: hades.baseHealth * 0.1,
+      maxHealth: hades.baseHealth * 0.1,
+      defense: hades.baseDefense * 0.1,
+      loot: [],
+      unique: true,
+      techniques: [
+        {
+          name: "I'll help you, my love!",
+          ticks: 0,
+          ticksRequired: 20,
+          baseDamage: 0,
+          unlocked: true,
+          effect: 'healAllies',
+        },
+      ],
+      location: LocationType.TartarusPalace,
+      defeatEffect: 'enrageAllies',
+    });
+  }
+
   private defeatEffect(enemy: Enemy) {
     if (enemy.divine) {
       this.pantheonService.defeatGod(enemy.baseName);
@@ -2907,6 +3034,12 @@ export class BattleService {
       this.pantheonService.increaseGodProgress(GOD_DEMETER, 1);
     } else if (enemy.defeatEffect === 'advanceHera') {
       this.pantheonService.increaseGodProgress(GOD_HERA, 1);
+    } else if (enemy.defeatEffect === 'enrageAllies') {
+      for (const enragedEnemy of this.enemies) {
+        for (const enragedTechnique of enragedEnemy.techniques) {
+          enragedTechnique.baseDamage *= 1.1;
+        }
+      }
     }
   }
 

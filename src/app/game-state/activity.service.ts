@@ -1,5 +1,17 @@
 import { inject, Injectable, Injector, signal, WritableSignal } from '@angular/core';
-import { BattleService, EFFECT_CORRUPTION, LOOT_TYPE_GEM, TECHNIQUE_REFINEMENT_POWER } from './battle.service';
+import {
+  BattleService,
+  EFFECT_CORRUPTION,
+  EFFECT_DARKLIGHT,
+  ELEMENT_EARTH,
+  ELEMENT_FIRE,
+  ELEMENT_METAL,
+  ELEMENT_WATER,
+  ELEMENT_WOOD,
+  ENERGY_SPIRIT,
+  LOOT_TYPE_GEM,
+  TECHNIQUE_REFINEMENT_POWER,
+} from './battle.service';
 import { AttributeType, CharacterAttribute, CharacterService, StatusType } from '../game-state/character.service';
 import {
   HomeService,
@@ -35,7 +47,9 @@ import {
   GOD_APOLLO,
   GOD_ARTEMIS,
   GOD_ATHENA,
+  GOD_DEMETER,
   GOD_DIONYSUS,
+  GOD_HADES,
   GOD_HEPHAESTUS,
   GOD_HERA,
   GOD_HERMES,
@@ -218,6 +232,9 @@ export class ActivityService {
       this.BoardGames,
       this.HuntTyphon,
       this.FishingWithPoseidon,
+      this.SpeakWithDemeter,
+      this.OfferDemeterWealth,
+      this.MineDarklightGems,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -6396,6 +6413,190 @@ export class ActivityService {
     requirements: [
       {
         animalHandling: 1e27,
+      },
+    ],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  SpeakWithDemeter: Activity = {
+    level: 0,
+    name: ['Speak with Demeter'],
+    location: LocationType.HarvestHome,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'speakWithDemeter',
+    activityType: ActivityType.SpeakWithDemeter,
+    description: ['Hades has asked you to negotiate a peace with his new mother-in-law.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: ['Try to calm Demeter and convince her that her daughter ran off with Hades willingly.'],
+    consequence: [
+      () => {
+        const hades = this.pantheonService.getGod(GOD_HADES);
+
+        if (hades!.unlockProgress() >= 10000) {
+          this.characterService.increaseAttribute('charisma', 1000, true);
+          this.logService.log(LogTopic.EVENT, 'You have a lovely conversation with your friend Demeter.');
+          return;
+        }
+
+        this.characterService.increaseAttribute('toughness', 1000, true);
+        let successChance = this.characterService.attributes.toughness.value * 1e-64;
+        if (Math.random() > successChance) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You attempt to discuss Persephone and Hades with Demeter, but you aren't tough enough to withstand her initial outbursts. She flies into a rage and attacks you."
+          );
+          this.pantheonService.challengeGod(this.pantheonService.getGod(GOD_DEMETER)!);
+          return;
+        }
+
+        this.characterService.increaseAttribute('charisma', 1000, true);
+        successChance = this.characterService.attributes.charisma.value * 1e-64;
+        if (Math.random() > successChance) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'You make an impassioned plea for Demeter to calm her wrath, but her anger continues to burn. If only you were a better speaker...'
+          );
+          return;
+        }
+
+        this.characterService.increaseAttribute('intelligence', 1000, true);
+        successChance = this.characterService.attributes.intelligence.value * 1e-64;
+        if (Math.random() > successChance) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "You make a logical argument for Demeter to accept her daughter's choice of husband, but she is not yet convinced. If only you more clever..."
+          );
+          return;
+        }
+
+        if (hades!.unlockProgress() < 5000) {
+          this.logService.log(LogTopic.EVENT, 'Demeter is still not convinced, but you feel you are making progress.');
+          this.pantheonService.increaseGodProgress(GOD_HADES, 1);
+        } else if (hades!.unlockProgress() < 10000) {
+          this.logService.log(
+            LogTopic.EVENT,
+            "Demeter's anger is abated, but now she demands that Hades offer an appropriate bride price. Something rare and precious that only his domain could provide. And something from you personally, since you have decided to act as his agent."
+          );
+        }
+      },
+    ],
+    resourceUse: [{}],
+    requirements: [{}],
+    extraRequirements: [() => this.pantheonService.isGodDiscovered(GOD_HADES)],
+    divinityRequired: [true],
+    unlocked: false,
+    skipApprenticeshipLevel: 0,
+  };
+
+  OfferDemeterWealth: Activity = {
+    level: 0,
+    name: ['Offer Demeter Wealth'],
+    location: LocationType.HarvestHome,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'offerDemeterWealth',
+    activityType: ActivityType.OfferDemeterWealth,
+    description: ['Hades has asked you to negotiate a peace with his new mother-in-law.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [
+      'Offer Demeter wealth to calm her and get her to accept the marriage of Hades and Persphones.',
+    ],
+    consequence: [
+      () => {
+        const hades = this.pantheonService.getGod(GOD_HADES);
+        if (hades!.unlockProgress() < 5000) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Demeter is enraged beyond comprehension and attacks you with all her might.'
+          );
+          this.pantheonService.challengeGod(this.pantheonService.getGod(GOD_DEMETER)!);
+          return;
+        }
+
+        // supply darkstone, spirit, and elemental gems,
+        if (this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, true, EFFECT_DARKLIGHT) === -1) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Demeter says: "What meager offerings. I\'m sure that Hades can provide more than this from his realm."'
+          );
+          return;
+        }
+        const gemSubtypes = [ENERGY_SPIRIT, ELEMENT_EARTH, ELEMENT_FIRE, ELEMENT_WATER, ELEMENT_WOOD, ELEMENT_METAL];
+        const gemSubtypeColors = ['white', 'brown', 'red', 'blue', 'green', 'silvery'];
+        for (let i = 0; i < gemSubtypes.length; i++) {
+          if (this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, true, gemSubtypes[i]) === -1) {
+            this.logService.log(
+              LogTopic.EVENT,
+              'Demeter says: "What about some of those pretty ' +
+                gemSubtypeColors[i] +
+                ' gems from your land that you seem to like? Those would be a fine addition to the bride price. Let\'s say 1000 of them."'
+            );
+            return;
+          }
+        }
+
+        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, EFFECT_DARKLIGHT);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ENERGY_SPIRIT);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_EARTH);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_FIRE);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_WATER);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_WOOD);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_METAL);
+
+        if (hades!.unlockProgress() < 10000) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Demeter nods in approval and accepts the offering. You feel like you have made progress towards resolving her anger.'
+          );
+          this.pantheonService.increaseGodProgress(GOD_HADES, 1);
+        } else {
+          this.logService.log(LogTopic.EVENT, 'Demeter thanks you and offers you a strange fruit.');
+          this.inventoryService.addItem(this.itemRepoService.items['pomegranate']);
+        }
+      },
+    ],
+    resourceUse: [{}],
+    requirements: [{}],
+    extraRequirements: [() => this.pantheonService.isGodDiscovered(GOD_HADES)],
+    divinityRequired: [true],
+    unlocked: false,
+    skipApprenticeshipLevel: 0,
+  };
+
+  MineDarklightGems: Activity = {
+    level: 0,
+    name: ['Mine Darklight Gems'],
+    location: LocationType.TartarusPalace,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'mineDarklightGems',
+    activityType: ActivityType.MineDarklightGems,
+    description: ['Dig for treasure unique to the dark realm where Hades dwells.'],
+    yinYangEffect: [YinYangEffect.Yin],
+    consequenceDescription: [
+      'Digging in the black depths may seem hopeless at first, but Hades assures you that treasures can be found if you persist.',
+    ],
+    consequence: [
+      () => {
+        this.characterService.status.stamina.value -= 25000000;
+        this.characterService.increaseAttribute('strength', 1000);
+        this.characterService.increaseAttribute('earthLore', 50);
+        this.miningCounter++;
+        if (this.miningCounter > 500) {
+          this.miningCounter = 0;
+          this.inventoryService.addItem(this.itemRepoService.items['darklightGem']);
+        }
+        this.characterService.yin++;
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 25000000,
+      },
+    ],
+    requirements: [
+      {
+        strength: 1e65,
       },
     ],
     divinityRequired: [true],

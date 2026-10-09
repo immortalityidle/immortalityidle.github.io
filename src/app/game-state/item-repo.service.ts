@@ -2,11 +2,13 @@ import { Injectable, Injector } from '@angular/core';
 import { ActivityService } from './activity.service';
 import {
   BattleService,
+  EFFECT_DARKLIGHT,
   ELEMENT_EARTH,
   ELEMENT_FIRE,
   ELEMENT_METAL,
   ELEMENT_WATER,
   ELEMENT_WOOD,
+  LOOT_TYPE_GEM,
 } from './battle.service';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
@@ -1212,6 +1214,19 @@ baguaMap = [
       useDescription: 'Sates your immortal hunger.',
       useConsumes: true,
       shopable: true,
+    },
+    pomegranate: {
+      id: 'pomegranate',
+      imageFile: 'pomegranate',
+      name: 'pomegranate',
+      type: 'food',
+      subtype: 'divinefruit',
+      value: 10000,
+      description: 'A strange fruit from the Philosopher States.',
+      useLabel: 'Eat',
+      useDescription: 'Sates your immortal hunger.',
+      useConsumes: true,
+      shopable: false,
     },
     distilledPeachEssence: {
       id: 'distilledPeachEssence',
@@ -3886,6 +3901,16 @@ baguaMap = [
         }
         return this.inventoryService.autoReloadCraftInputsUnlocked;
       },
+      shopable: false,
+    },
+    darklightGem: {
+      id: 'darklightGem',
+      imageFile: 'darklightGem',
+      name: 'darklight gem',
+      type: LOOT_TYPE_GEM,
+      subtype: EFFECT_DARKLIGHT,
+      value: 10,
+      description: 'A gem full of the dark power of the underworld',
       shopable: false,
     },
   };

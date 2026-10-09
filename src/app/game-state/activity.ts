@@ -114,6 +114,9 @@ export enum ActivityType {
   BoardGames,
   HuntTyphon,
   FishingWithPoseidon,
+  SpeakWithDemeter,
+  OfferDemeterWealth,
+  MineDarklightGems,
   Hell, // hell needs to be last for indexing purposes
 }
 

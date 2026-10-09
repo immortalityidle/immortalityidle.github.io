@@ -25,6 +25,7 @@ import { LocationService, LocationType } from './location.service';
 import { BigNumberPipe } from '../pipes';
 import {
   BattleService,
+  EFFECT_DARKLIGHT,
   ELEMENT_EARTH,
   ELEMENT_FIRE,
   ELEMENT_METAL,
@@ -2941,6 +2942,12 @@ export class InventoryService {
     if (!stack.item) {
       return;
     }
+    if (stack.item.type !== LOOT_TYPE_GEM) {
+      return;
+    }
+    if (stack.item.subtype === EFFECT_DARKLIGHT) {
+      return;
+    }
     if (stack.quantity < 10) {
       return;
     }
@@ -2959,12 +2966,15 @@ export class InventoryService {
     }
   }
 
-  shatterSpiritGem(stack: ItemStack) {
+  shatterSpiritGem(stack: ItemStack, quantity = 1) {
     if (!stack.item) {
       return;
     }
     if (stack.quantity < 1) {
       return;
+    }
+    if (stack.quantity < quantity) {
+      quantity = stack.quantity;
     }
     if (stack.item.type !== LOOT_TYPE_GEM || stack.item.subtype !== ENERGY_SPIRIT) {
       this.logService.log(LogTopic.CRAFTING, 'Only spirit gems can be shattered into elemental components.');
@@ -2974,19 +2984,23 @@ export class InventoryService {
       this.logService.log(LogTopic.CRAFTING, 'This gem is too weak to produce useful components.');
       return;
     }
-    stack.quantity--;
-    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_EARTH));
-    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_WATER));
-    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_FIRE));
-    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_METAL));
-    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_WOOD));
+    stack.quantity -= quantity;
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_EARTH), quantity);
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_WATER), quantity);
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_FIRE), quantity);
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_METAL), quantity);
+    this.addItem(this.generateSpiritGem((stack.item.value - 100) / 10, ELEMENT_WOOD), quantity);
   }
 
   mergeAnySpiritGem(power: number) {
     for (let j = 0; j < power; j++) {
       for (let i = this.heirloomSlots(); i < this.itemStacks.length; i++) {
         const itemIterator = this.itemStacks[i];
-        if (itemIterator.item?.type === LOOT_TYPE_GEM && itemIterator.quantity >= 10) {
+        if (
+          itemIterator.item?.type === LOOT_TYPE_GEM &&
+          itemIterator.item?.subtype !== EFFECT_DARKLIGHT &&
+          itemIterator.quantity >= 10
+        ) {
           this.mergeSpiritGem(itemIterator);
           break;
         }

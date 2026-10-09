@@ -36,6 +36,8 @@ export interface God {
   baseHealth: number;
   techniqueNames: string[];
   techniqueCooldowns: number[];
+  techniqueEffects?: string[];
+  techniqueUnvoidable?: boolean[];
   challengeMessage: WritableSignal<string>;
   attributes: string[];
   defeatEffect?: string;
@@ -335,14 +337,18 @@ export class PantheonService {
           unlocked: signal<boolean>(false),
           discovered: signal<boolean>(false),
           unlockProgress: signal<number>(0),
-          unlockProgressRequired: signal<number>(100),
+          unlockProgressRequired: signal<number>(10000),
           unlockProgressPercent: signal<number>(0),
-          baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 8.8),
-          baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 8.8),
-          baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 8.8),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
+          baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 9.2),
+          baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 9.2),
+          baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 9.2),
+          techniqueNames: ['Stygian Strike', 'Call of Styx', 'Guard Dog', 'Protective Bride'],
+          techniqueCooldowns: [4, 12, 200, 400],
+          techniqueEffects: ['', '', 'addCerberus', 'addPersephone'],
+          techniqueUnvoidable: [false, false, true, true],
+          challengeMessage: signal<string>(
+            "You want me to take time out of my schedule for a duel?<br>Are you mad, strange foreigner?<br>In the best of times, running the underworld barely leaves me a spare moment, but now?<br>Persephone's mother is convinced that I kidnapped my bride and is threatening to destroy the entire realm!<br>Convince her to relent and we can talk about your little trading of combat pointers."
+          ),
           attributes: [],
           baseLootLevel: 55,
         },
@@ -357,9 +363,9 @@ export class PantheonService {
           unlockProgress: signal<number>(0),
           unlockProgressRequired: signal<number>(100),
           unlockProgressPercent: signal<number>(0),
-          baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 9.4),
-          baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 9.4),
-          baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 9.4),
+          baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 10),
+          baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 10),
+          baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 10),
           techniqueNames: [],
           techniqueCooldowns: [],
           challengeMessage: signal<string>(''),
@@ -487,12 +493,22 @@ export class PantheonService {
         // special treatment for very fast attacks
         damage *= 0.5;
       }
+      let effect = undefined;
+      if (god.techniqueEffects) {
+        effect = god.techniqueEffects[i];
+      }
+      let unvoidable = false;
+      if (god.techniqueUnvoidable) {
+        unvoidable = god.techniqueUnvoidable[i];
+      }
       techniques.push({
         name: god.techniqueNames[i],
         ticks: 0,
         ticksRequired: god.techniqueCooldowns[i],
         baseDamage: damage,
         unlocked: true,
+        effect: effect,
+        unvoidable: unvoidable,
       });
     }
     const loot: Item[] = [];
