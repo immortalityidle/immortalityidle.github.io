@@ -337,7 +337,7 @@ export class PantheonService {
           unlocked: signal<boolean>(false),
           discovered: signal<boolean>(false),
           unlockProgress: signal<number>(0),
-          unlockProgressRequired: signal<number>(10000),
+          unlockProgressRequired: signal<number>(1000),
           unlockProgressPercent: signal<number>(0),
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 9.2),
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 9.2),

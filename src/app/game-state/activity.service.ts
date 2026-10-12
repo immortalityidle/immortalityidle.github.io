@@ -6434,7 +6434,7 @@ export class ActivityService {
       () => {
         const hades = this.pantheonService.getGod(GOD_HADES);
 
-        if (hades!.unlockProgress() >= 10000) {
+        if (hades!.unlockProgress() >= hades!.unlockProgressRequired()) {
           this.characterService.increaseAttribute('charisma', 1000, true);
           this.logService.log(LogTopic.EVENT, 'You have a lovely conversation with your friend Demeter.');
           return;
@@ -6471,10 +6471,10 @@ export class ActivityService {
           return;
         }
 
-        if (hades!.unlockProgress() < 5000) {
+        if (hades!.unlockProgress() < hades!.unlockProgressRequired() / 2) {
           this.logService.log(LogTopic.EVENT, 'Demeter is still not convinced, but you feel you are making progress.');
           this.pantheonService.increaseGodProgress(GOD_HADES, 1);
-        } else if (hades!.unlockProgress() < 10000) {
+        } else if (hades!.unlockProgress() < hades!.unlockProgressRequired()) {
           this.logService.log(
             LogTopic.EVENT,
             "Demeter's anger is abated, but now she demands that Hades offer an appropriate bride price. Something rare and precious that only his domain could provide. And something from you personally, since you have decided to act as his agent."
@@ -6505,7 +6505,7 @@ export class ActivityService {
     consequence: [
       () => {
         const hades = this.pantheonService.getGod(GOD_HADES);
-        if (hades!.unlockProgress() < 5000) {
+        if (hades!.unlockProgress() < hades!.unlockProgressRequired() / 2) {
           this.logService.log(
             LogTopic.EVENT,
             'Demeter is enraged beyond comprehension and attacks you with all her might.'
@@ -6515,7 +6515,7 @@ export class ActivityService {
         }
 
         // supply darkstone, spirit, and elemental gems,
-        if (this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, true, EFFECT_DARKLIGHT) === -1) {
+        if (this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, true, EFFECT_DARKLIGHT) === -1) {
           this.logService.log(
             LogTopic.EVENT,
             'Demeter says: "What meager offerings. I\'m sure that Hades can provide more than this from his realm."'
@@ -6525,26 +6525,26 @@ export class ActivityService {
         const gemSubtypes = [ENERGY_SPIRIT, ELEMENT_EARTH, ELEMENT_FIRE, ELEMENT_WATER, ELEMENT_WOOD, ELEMENT_METAL];
         const gemSubtypeColors = ['white', 'brown', 'red', 'blue', 'green', 'silvery'];
         for (let i = 0; i < gemSubtypes.length; i++) {
-          if (this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, true, gemSubtypes[i]) === -1) {
+          if (this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, true, gemSubtypes[i]) === -1) {
             this.logService.log(
               LogTopic.EVENT,
               'Demeter says: "What about some of those pretty ' +
                 gemSubtypeColors[i] +
-                ' gems from your land that you seem to like? Those would be a fine addition to the bride price. Let\'s say 1000 of them."'
+                ' gems from your land that you seem to like? Those would be a fine addition to the bride price. Let\'s say 100 of them."'
             );
             return;
           }
         }
 
-        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, EFFECT_DARKLIGHT);
-        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ENERGY_SPIRIT);
-        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_EARTH);
-        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_FIRE);
-        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_WATER);
-        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_WOOD);
-        this.inventoryService.consume(LOOT_TYPE_GEM, 1000, true, false, ELEMENT_METAL);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, false, EFFECT_DARKLIGHT);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, false, ENERGY_SPIRIT);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, false, ELEMENT_EARTH);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, false, ELEMENT_FIRE);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, false, ELEMENT_WATER);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, false, ELEMENT_WOOD);
+        this.inventoryService.consume(LOOT_TYPE_GEM, 100, true, false, ELEMENT_METAL);
 
-        if (hades!.unlockProgress() < 10000) {
+        if (hades!.unlockProgress() < hades!.unlockProgressRequired()) {
           this.logService.log(
             LogTopic.EVENT,
             'Demeter nods in approval and accepts the offering. You feel like you have made progress towards resolving her anger.'
@@ -6592,7 +6592,7 @@ export class ActivityService {
           return;
         }
         this.miningCounter++;
-        if (this.miningCounter > 500) {
+        if (this.miningCounter > 200) {
           this.miningCounter = 0;
           this.inventoryService.addItem(this.itemRepoService.items['darklightGem']);
         }
