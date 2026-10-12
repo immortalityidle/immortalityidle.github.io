@@ -6581,6 +6581,16 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 25000000;
         this.characterService.increaseAttribute('strength', 1000);
         this.characterService.increaseAttribute('earthLore', 50);
+        if (this.characterService.staminaCap < 1e11) {
+          this.characterService.staminaCap += 10;
+        }
+        if (this.characterService.attributes.strength.value < 1e65) {
+          console.log(
+            LogTopic.EVENT,
+            'Hades calls out: "Feel free to take whatever you need from my lands, but you\'ll need a little more muscle on your frame if you want to get anything from these stones."'
+          );
+          return;
+        }
         this.miningCounter++;
         if (this.miningCounter > 500) {
           this.miningCounter = 0;
@@ -6594,11 +6604,7 @@ export class ActivityService {
         stamina: 25000000,
       },
     ],
-    requirements: [
-      {
-        strength: 1e65,
-      },
-    ],
+    requirements: [{}],
     divinityRequired: [true],
     unlocked: true,
     skipApprenticeshipLevel: 0,

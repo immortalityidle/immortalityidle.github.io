@@ -1854,7 +1854,7 @@ export class InventoryService {
       if (this.autoPillEnabled && item.type === 'pill' && !this.noDrugs) {
         this.useItem(item, quantity);
         return -1;
-      } else if (item.type === 'pill' && item.subtype !== 'divineToken') {
+      } else if (item.type === 'pill') {
         // see if we can merge it into another stack of the same kind of pill
         const existingStack = this.itemStacks.find(
           itemStack => itemStack.item?.type === item.type && itemStack.item.name === item.name
@@ -1863,7 +1863,7 @@ export class InventoryService {
           const totalPower =
             (item.increaseAmount || 0) * quantity + (existingStack.item!.increaseAmount || 0) * existingStack.quantity;
           existingStack.quantity += quantity;
-          existingStack.item!.increaseAmount = Math.floor(totalPower / existingStack.quantity);
+          existingStack.item!.increaseAmount = totalPower / existingStack.quantity;
           return -1;
         }
       }
