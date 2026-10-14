@@ -32,6 +32,7 @@ import {
   CONCEPT_STRATEGY,
   CONCEPT_TIDES,
   CONCEPT_WAR,
+  CONCEPT_WEALTH,
   ContemplationService,
 } from './contemplation.service';
 import { ActivityType } from './activity';
@@ -43,6 +44,7 @@ import {
   GOD_ATHENA,
   GOD_DEMETER,
   GOD_DIONYSUS,
+  GOD_HADES,
   GOD_HEPHAESTUS,
   GOD_HERA,
   GOD_POSEIDON,
@@ -2205,6 +2207,18 @@ export class AchievementService {
       },
       effect: () => {
         this.contemplationService.discoverConcept(CONCEPT_TIDES);
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Undergod',
+      description: 'Hades has taught you new secrets of wealth.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_HADES)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.contemplationService.discoverConcept(CONCEPT_WEALTH);
       },
       unlocked: false,
     },

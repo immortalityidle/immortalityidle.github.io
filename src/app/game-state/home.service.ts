@@ -2035,6 +2035,7 @@ export class HomeService {
     const usedIngredients: string[] = [];
     const usedSubtypes: string[] = [];
     let totalValue = 0;
+    let hasPomegranate = false;
     for (const itemStack of workstation.inputs) {
       if (
         itemStack.item &&
@@ -2049,6 +2050,9 @@ export class HomeService {
         }
         totalValue += itemStack.item.value;
         itemStack.quantity -= cookAmount;
+        if (itemStack.item.id === 'pomegranate') {
+          hasPomegranate = true;
+        }
       }
     }
     if (totalValue < 1) {
@@ -2067,10 +2071,17 @@ export class HomeService {
     if (cookingLevel > 0) {
       totalValue *= 4;
       if (totalValue > 1e6 && this.characterService.god()) {
-        totalValue *= 4;
-        imageFile = 'divinefood';
-        foodName = 'Divine Meal #' + totalValue;
-        fedPart = 'your divine essence';
+        if (hasPomegranate) {
+          totalValue *= 80;
+          imageFile = 'ambrosia';
+          foodName = 'Ambrosia #' + totalValue;
+          fedPart = 'a celestial appetite';
+        } else {
+          totalValue *= 4;
+          imageFile = 'divinefood';
+          foodName = 'Divine Meal #' + totalValue;
+          fedPart = 'your divine essence';
+        }
       } else {
         imageFile = 'soulfood';
         foodName = 'Soul Food Special #' + totalValue;

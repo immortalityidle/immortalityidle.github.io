@@ -884,6 +884,7 @@ export class GameStateService {
       timesFled: props?.timesFled || 0,
       discoveredTechniquePrefixes: props?.discoveredTechniquePrefixes || [],
       blockedTechniquePrefixes: props?.blockedTechniquePrefixes || [],
+      hiddenTechniquePrefixes: props?.hiddenTechniquePrefixes || ['Expensive'],
       discoveredTechniqueEffects: props?.discoveredTechniqueEffects || [],
       blockedTechniqueEffects: props?.blockedTechniqueEffects || [],
       voidSkipCounter: props?.voidSkipCounter || 0,

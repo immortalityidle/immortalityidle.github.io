@@ -21,6 +21,7 @@ import {
   CONCEPT_EFFECT_DEVASTATION,
   CONCEPT_EFFECT_DRAGON,
   CONCEPT_EFFECT_EASTERN,
+  CONCEPT_EFFECT_EXPENSIVE,
   CONCEPT_EFFECT_FEARSOME,
   CONCEPT_EFFECT_FERAL,
   CONCEPT_EFFECT_FLOW,
@@ -36,6 +37,7 @@ import {
   CONCEPT_STRATEGY,
   CONCEPT_VOID,
   CONCEPT_WAR,
+  CONCEPT_WEALTH,
   ContemplationService,
 } from './contemplation.service';
 import { GOD_DEMETER, GOD_HADES, GOD_HERA, PantheonService } from './pantheon.service';
@@ -128,6 +130,7 @@ export interface BattleProperties {
   timesFled: number;
   discoveredTechniquePrefixes: string[];
   blockedTechniquePrefixes: string[];
+  hiddenTechniquePrefixes: string[];
   discoveredTechniqueEffects: string[];
   blockedTechniqueEffects: string[];
   voidSkipCounter: number;
@@ -209,6 +212,7 @@ export interface TechniqueDevelopmentEntry {
   allowed: boolean;
   discovered: boolean;
   concept?: string;
+  hidden?: boolean;
 }
 
 export interface StatusEffect {
@@ -490,6 +494,13 @@ export class BattleService {
       description: 'Techniques that trade a dangerous amount of your own life for extra power.',
       allowed: true,
       discovered: false,
+    },
+    {
+      value: 'Expensive',
+      description: 'Techniques that devastate your finances and use the power of money to increase their power.',
+      allowed: true,
+      discovered: false,
+      concept: CONCEPT_EFFECT_EXPENSIVE,
     },
   ];
 
@@ -1189,14 +1200,19 @@ export class BattleService {
   getProperties(): BattleProperties {
     const discoveredPrefixes: string[] = [];
     const blockedPrefixes: string[] = [];
+    const hiddenPrefixes: string[] = [];
     const discoveredEffects: string[] = [];
     const blockedEffects: string[] = [];
+
     for (const prefix of this.techniquePrefixAdjectiveList) {
       if (prefix.discovered) {
         discoveredPrefixes.push(prefix.value);
       }
       if (!prefix.allowed) {
         blockedPrefixes.push(prefix.value);
+      }
+      if (prefix.hidden) {
+        hiddenPrefixes.push(prefix.value);
       }
     }
     for (const prefix of this.techniqueEffectsList) {
@@ -1251,6 +1267,7 @@ export class BattleService {
       timesFled: this.timesFled,
       discoveredTechniquePrefixes: discoveredPrefixes,
       blockedTechniquePrefixes: blockedPrefixes,
+      hiddenTechniquePrefixes: hiddenPrefixes,
       discoveredTechniqueEffects: discoveredEffects,
       blockedTechniqueEffects: blockedEffects,
       voidSkipCounter: this.voidSkipCounter,
@@ -1315,6 +1332,7 @@ export class BattleService {
     for (const prefix of this.techniquePrefixAdjectiveList) {
       prefix.discovered = properties.discoveredTechniquePrefixes.includes(prefix.value);
       prefix.allowed = !properties.blockedTechniquePrefixes.includes(prefix.value);
+      prefix.hidden = properties.hiddenTechniquePrefixes.includes(prefix.value);
     }
     for (const prefix of this.techniqueEffectsList) {
       prefix.discovered = properties.discoveredTechniqueEffects.includes(prefix.value);
@@ -2329,6 +2347,12 @@ export class BattleService {
         if (freedomConcept && freedomConcept.progress > 0) {
           damage *= Math.log10(freedomConcept.progress + 10);
         }
+      }
+      if (technique.concept === CONCEPT_EFFECT_EXPENSIVE) {
+        const wealthConceptProgress = this.contemplationService.getConcept(CONCEPT_WEALTH)?.progress || 2;
+        const moneyMultiplier = Math.log2(this.characterService.money) * Math.log2(wealthConceptProgress) * 100; // TODO: tune this
+        this.characterService.updateMoney(0, true);
+        damage *= moneyMultiplier;
       }
 
       if (damage > this.highestDamageDealt) {

@@ -48,6 +48,7 @@ export const CONCEPT_EFFECT_STEEL = 'steel';
 export const CONCEPT_EFFECT_WOODSHAPED = 'woodshaped';
 export const CONCEPT_EFFECT_CREATION = 'creation';
 export const CONCEPT_EFFECT_VOID = 'void';
+export const CONCEPT_EFFECT_EXPENSIVE = 'expensive';
 export const CONCEPT_WOOD = 'Tao of Wood';
 export const CONCEPT_FIRE = 'Tao of Fire';
 export const CONCEPT_WATER = 'Tao of Water';
@@ -72,6 +73,7 @@ export const CONCEPT_STRATEGY = 'Tao of Strategy';
 export const CONCEPT_FREEDOM = 'Tao of Freedom';
 export const CONCEPT_CONTENTMENT = 'Tao of Contentment';
 export const CONCEPT_TIDES = 'Tao of Tides';
+export const CONCEPT_WEALTH = 'Tao of Wealth';
 
 @Injectable({
   providedIn: 'root',
@@ -698,6 +700,15 @@ export class ContemplationService {
       discovered: false,
       unlocksMore: false,
     },
+    {
+      name: CONCEPT_WEALTH,
+      description:
+        'Contemplate the power of precious gold and gems, the influence of treasure and currency. Increases your wealth cap and allows new technique development.',
+      progress: 0,
+      effect: CONCEPT_EFFECT_DRAGON + ',' + CONCEPT_EFFECT_TRADITION + ',' + CONCEPT_EFFECT_EXPENSIVE,
+      discovered: false,
+      unlocksMore: false,
+    },
   ];
 
   skipTicks = false;
@@ -766,15 +777,17 @@ export class ContemplationService {
           displayConcept.description.set(description);
         } else {
           displayConcept.displayName.set('Tao of ????');
-          let description =
-            'This concept is beyond your current comprehension. To understand it, you will need a greater understanding of:<br>';
-          for (const key in concept.discoveryRequirements) {
-            const requiredConcept = this.getConcept(key);
-            if (requiredConcept && requiredConcept.progress < concept.discoveryRequirements[key]) {
-              if (requiredConcept && requiredConcept.discovered) {
-                description += key + '<br>';
-              } else {
-                description += '????<br>';
+          let description = 'This concept is beyond your current comprehension.';
+          if (concept.discoveryRequirements) {
+            description += ' To understand it, you will need a greater understanding of:<br>';
+            for (const key in concept.discoveryRequirements) {
+              const requiredConcept = this.getConcept(key);
+              if (requiredConcept && requiredConcept.progress < concept.discoveryRequirements[key]) {
+                if (requiredConcept && requiredConcept.discovered) {
+                  description += key + '<br>';
+                } else {
+                  description += '????<br>';
+                }
               }
             }
           }

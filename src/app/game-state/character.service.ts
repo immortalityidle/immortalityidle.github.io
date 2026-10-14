@@ -13,6 +13,7 @@ import {
   CONCEPT_BEAUTY,
   CONCEPT_EFFECT_FOOD_YIELD,
   CONCEPT_TIDES,
+  CONCEPT_WEALTH,
   ContemplationService,
 } from './contemplation.service';
 
@@ -203,6 +204,7 @@ export class CharacterService {
   maxMoney = 9.9999e23;
   vaultMaxMoneyBonus = 1;
   bankerMaxMoneyBonus = 1;
+  conceptMaxMoneyBonus = 1;
   totalLives = 1;
   dead = false;
   attributeScalingLimit = 10;
@@ -1500,7 +1502,19 @@ export class CharacterService {
       }
     }
     const justiceMoneyBonus = 100 - 99 * Math.exp(-0.00001 * this.attributes.justice.value);
-    const modifiedMaxMoney = this.maxMoney * this.vaultMaxMoneyBonus * this.bankerMaxMoneyBonus * justiceMoneyBonus;
+    const wealthConcept = this.contemplationService.getConcept(CONCEPT_WEALTH);
+    let conceptMaxMoneyBonus = 1;
+    if (wealthConcept && wealthConcept.progress > 0) {
+      conceptMaxMoneyBonus = 1 + Math.log2(wealthConcept.progress + 2);
+    }
+    const modifiedMaxMoney =
+      this.maxMoney *
+      this.vaultMaxMoneyBonus *
+      this.bankerMaxMoneyBonus *
+      justiceMoneyBonus *
+      conceptMaxMoneyBonus *
+      this.conceptMaxMoneyBonus;
+
     if (this.money > modifiedMaxMoney) {
       this.money = modifiedMaxMoney;
     }
