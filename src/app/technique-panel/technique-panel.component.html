@@ -81,6 +81,13 @@
                   Archive this Family Technique
               </button>
             </div>
+            @if (battleService.techniqueDisassemblyUnlocked){
+              <div>
+                <button (click)="disassembleTechnique(displayTechnique.technique)" tooltip="Hephaestus has taught you intense new crafting techniques, including the power to dissamble techniques into their refinements and apply those refinements to other techniques.">
+                    Disassemble this Technique
+                </button>
+              </div>
+            }
           }
         </div>
       }   
@@ -127,6 +134,13 @@
                 <button (click)="battleService.forsakeTechnique(displayTechnique.technique)" tooltip="Forsake this technique to make room in your heart to develop another.">
                     Forsake this Family Technique Forever
                 </button>
+                @if (battleService.techniqueDisassemblyUnlocked){
+                  <div>
+                    <button (click)="disassembleTechnique(displayTechnique.technique)" tooltip="Hephaestus has taught you intense new crafting techniques, including the power to dissamble techniques into their refinements and apply those refinements to other techniques.">
+                        Disassemble this Technique
+                    </button>
+                  </div>
+                }
             }
         </div>
       </div>

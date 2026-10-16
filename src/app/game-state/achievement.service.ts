@@ -2129,6 +2129,7 @@ export class AchievementService {
         if (this.homeService.inputQuantityBonus < 10) {
           this.homeService.inputQuantityBonus = 10;
         }
+        this.battleService.techniqueDisassemblyUnlocked = true;
       },
       unlocked: false,
     },
@@ -2219,6 +2220,7 @@ export class AchievementService {
       },
       effect: () => {
         this.contemplationService.discoverConcept(CONCEPT_WEALTH);
+        this.battleService.unhideTechniquePrefix('Expensive');
       },
       unlocked: false,
     },

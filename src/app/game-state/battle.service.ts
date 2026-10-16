@@ -141,6 +141,7 @@ export interface BattleProperties {
   eradicatedMonsterTypes: string[];
   uneradicableMonsterTypes: string[];
   instakillEnabled: boolean;
+  techniqueDisassemblyUnlocked: boolean;
 }
 
 export interface Technique {
@@ -264,17 +265,17 @@ export const EFFECT_DARKLIGHT = 'Darklight';
 export const EFFECT_FEEDER = 'feeder';
 export const EFFECT_ZOMBIE_DECOY = 'zombie_decoy';
 
-export const TECHNIQUE_REFINEMENT_POWER = 'increase technique power';
-export const TECHNIQUE_REFINEMENT_COOLDOWN = 'decrease technique cooldown';
+export const TECHNIQUE_REFINEMENT_POWER = 'increase the technique power';
+export const TECHNIQUE_REFINEMENT_COOLDOWN = 'decrease the technique cooldown';
 export const TECHNIQUE_REFINEMENT_WEAPONS = 'incorporate your weapons into the technique';
 export const TECHNIQUE_REFINEMENT_ENERGY_USAGE = 'incorporate raw energy into the technique';
 export const TECHNIQUE_REFINEMENT_DIVINITY = 'increase damage to divine beings';
 export const TECHNIQUE_REFINEMENT_QI_USAGE = 'increase technique qi usage and damage';
-export const TECHNIQUE_REFINEMENT_LIFESTEAL = 'Allow technique to steal the vital essence of your enemy';
+export const TECHNIQUE_REFINEMENT_LIFESTEAL = 'allow the technique to steal the vital essence of your enemy';
 export const TECHNIQUE_REFINEMENT_BERZERK = 'do more damage as your health decreases';
-export const TECHNIQUE_REFINEMENT_CRITICAL_CHANCE = 'chance to get a critical hit that does increased damage';
-export const TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE = 'damage increase when striking a critical hit';
-export const TECHNIQUE_REFINEMENT_SEVERING = 'damage increase from severing threads of fate';
+export const TECHNIQUE_REFINEMENT_CRITICAL_CHANCE = 'grant a chance to get a critical hit that does increased damage';
+export const TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE = 'grant increased damage when striking a critical hit';
+export const TECHNIQUE_REFINEMENT_SEVERING = 'apply a damage increase from severing threads of fate';
 
 export const ELEMENT_FIRE = 'fire';
 export const ELEMENT_WATER = 'water';
@@ -359,6 +360,7 @@ export class BattleService {
   fastestTechnique: Technique | null = null;
   lastFastestHit: { [key: string]: number } = {};
   instakillEnabled = false;
+  techniqueDisassemblyUnlocked = false;
 
   techniquePrefixAdjectiveList: TechniqueDevelopmentEntry[] = [
     {
@@ -501,6 +503,7 @@ export class BattleService {
       allowed: true,
       discovered: false,
       concept: CONCEPT_EFFECT_EXPENSIVE,
+      hidden: true,
     },
   ];
 
@@ -1278,6 +1281,7 @@ export class BattleService {
       eradicatedMonsterTypes: eradicatedMonsterTypes,
       uneradicableMonsterTypes: this.uneradicableMonsterTypes,
       instakillEnabled: this.instakillEnabled,
+      techniqueDisassemblyUnlocked: this.techniqueDisassemblyUnlocked,
     };
   }
 
@@ -1344,6 +1348,7 @@ export class BattleService {
       monsterType.eradicated = properties.eradicatedMonsterTypes.includes(monsterType.baseName || monsterType.name);
     }
     this.instakillEnabled = properties.instakillEnabled;
+    this.techniqueDisassemblyUnlocked = properties.techniqueDisassemblyUnlocked;
   }
 
   usePouchItems() {
@@ -1400,10 +1405,10 @@ export class BattleService {
   }
 
   private developNewTechnique() {
-    let prefixes = this.techniquePrefixAdjectiveList.filter(entry => entry.allowed);
+    let prefixes = this.techniquePrefixAdjectiveList.filter(entry => entry.allowed && !entry.hidden);
     if (prefixes.length === 0) {
       // tried to filter out everything, allow everything
-      prefixes = this.techniquePrefixAdjectiveList;
+      prefixes = this.techniquePrefixAdjectiveList.filter(entry => !entry.hidden);
     }
     const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
     let healthCost = 0;
@@ -1472,7 +1477,7 @@ export class BattleService {
       techniqueName += '!!';
     }
 
-    const disabled = healthCost > 0 || effect === EFFECT_EXPLOSIVE;
+    const disabled = healthCost > 0 || effect === EFFECT_EXPLOSIVE || prefix.concept === CONCEPT_EFFECT_EXPENSIVE;
 
     this.techniques.push({
       name: techniqueName,
@@ -1496,6 +1501,13 @@ export class BattleService {
       LogTopic.EVENT,
       'Enlightenment! Your combat experience has allowed you to develop a new family technique!'
     );
+  }
+
+  unhideTechniquePrefix(prefix: string) {
+    const prefixEntry = this.techniquePrefixAdjectiveList.find(entry => entry.value === prefix && entry.hidden);
+    if (prefixEntry) {
+      prefixEntry.hidden = false;
+    }
   }
 
   forsakeTechnique(technique: Technique) {
@@ -1617,6 +1629,136 @@ export class BattleService {
       if (technique.severing > this.maximumTechniqueSeveringDamage - 0.000000003) {
         technique.severing = this.maximumTechniqueSeveringDamage;
       }
+    }
+  }
+
+  disassembleTechnique(technique: Technique) {
+    this.inventoryService.addTechniqueEssence(
+      'Distilled Technique Power',
+      TECHNIQUE_REFINEMENT_POWER,
+      technique.baseDamage,
+      'red'
+    );
+    this.inventoryService.addTechniqueEssence(
+      'Distilled Technique Speed',
+      TECHNIQUE_REFINEMENT_COOLDOWN,
+      technique.ticksRequired,
+      'yellow'
+    );
+    if (technique.weaponDamage) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Finesse',
+        TECHNIQUE_REFINEMENT_WEAPONS,
+        technique.weaponDamage,
+        'gray'
+      );
+    }
+    if (technique.energyUsage) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Energy',
+        TECHNIQUE_REFINEMENT_ENERGY_USAGE,
+        technique.energyUsage,
+        'darkviolet'
+      );
+    }
+    if (technique.divineDamage) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Godslaying',
+        TECHNIQUE_REFINEMENT_DIVINITY,
+        technique.divineDamage,
+        'darkorange'
+      );
+    }
+    if (technique.qiCost) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Qi',
+        TECHNIQUE_REFINEMENT_QI_USAGE,
+        technique.qiCost,
+        'lightblue'
+      );
+    }
+    if (technique.lifesteal) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Draining',
+        TECHNIQUE_REFINEMENT_LIFESTEAL,
+        technique.lifesteal,
+        'green'
+      );
+    }
+    if (technique.berzerk) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Frenzy',
+        TECHNIQUE_REFINEMENT_BERZERK,
+        technique.berzerk,
+        'orange'
+      );
+    }
+    if (technique.criticalChance) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Luck',
+        TECHNIQUE_REFINEMENT_CRITICAL_CHANCE,
+        technique.criticalChance,
+        'purple'
+      );
+    }
+    if (technique.criticalDamage) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Precision',
+        TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE,
+        technique.criticalDamage,
+        'fuchsia'
+      );
+    }
+    if (technique.severing) {
+      this.inventoryService.addTechniqueEssence(
+        'Distilled Technique Karma',
+        TECHNIQUE_REFINEMENT_SEVERING,
+        technique.severing,
+        'gold'
+      );
+    }
+    let index = this.techniques.indexOf(technique);
+    if (index !== -1) {
+      this.techniques.splice(index, 1);
+    }
+    index = this.techniqueLibrary.indexOf(technique);
+    if (index !== -1) {
+      this.techniqueLibrary.splice(index, 1);
+      this.libraryTechniqueChanged = true;
+    }
+  }
+
+  updateTechnique(aspect: string, value: number) {
+    const focusedTechnique = this.techniques.find(t => t.refinementFocus);
+    if (!focusedTechnique) {
+      this.logService.log(
+        LogTopic.EVENT,
+        "You fail to apply the essence to any techniques because you don't have a technique selected as the focus for refinement."
+      );
+      return;
+    }
+    if (aspect === TECHNIQUE_REFINEMENT_POWER) {
+      focusedTechnique.baseDamage = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_COOLDOWN) {
+      focusedTechnique.ticksRequired = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_WEAPONS) {
+      focusedTechnique.weaponDamage = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_ENERGY_USAGE) {
+      focusedTechnique.energyUsage = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_DIVINITY) {
+      focusedTechnique.divineDamage = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_QI_USAGE) {
+      focusedTechnique.qiCost = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_LIFESTEAL) {
+      focusedTechnique.lifesteal = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_BERZERK) {
+      focusedTechnique.berzerk = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_CRITICAL_CHANCE) {
+      focusedTechnique.criticalChance = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_CRITICAL_DAMAGE) {
+      focusedTechnique.criticalDamage = value;
+    } else if (aspect === TECHNIQUE_REFINEMENT_SEVERING) {
+      focusedTechnique.severing = value;
     }
   }
 

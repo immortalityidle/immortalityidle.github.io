@@ -16,6 +16,7 @@ import {
   ELEMENT_EFFECT_METAL,
   ELEMENT_EFFECT_WATER,
   ELEMENT_EFFECT_WOOD,
+  Technique,
 } from '../game-state/battle.service';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
@@ -83,5 +84,11 @@ export class TechniquePanelComponent {
       data: { someField: 'foo' },
       autoFocus: false,
     });
+  }
+
+  disassembleTechnique(technique: Technique) {
+    if (confirm('This will destroy this technique. Are you sure?')) {
+      this.battleService.disassembleTechnique(technique);
+    }
   }
 }

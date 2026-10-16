@@ -1418,7 +1418,7 @@ export class InventoryService {
     const descriptionSuffix = formationDescriptions[index];
     return {
       id: formationType + 'FormationKit' + value,
-      imageFile: formationType + 'FormationKit', // TODO: make icons for these
+      imageFile: formationType + 'FormationKit',
       name: formationType + ' formation kit',
       type: 'formationKit',
       subtype: formationType,
@@ -1432,6 +1432,36 @@ export class InventoryService {
         'A kit containing formation flags and other essentials for creating a formation.<br>' + descriptionSuffix,
       shopable: false,
     };
+  }
+
+  addTechniqueEssence(itemName: string, aspect: string, value: number, color: string) {
+    this.addItem(
+      {
+        id: itemName + aspect + value,
+        imageFile: 'techniqueEssence',
+        imageColor: color,
+        name: itemName,
+        type: 'techniqueEssence',
+        effect: aspect,
+        value: 1,
+        increaseAmount: value,
+        useConsumes: true,
+        pouchable: false,
+        useDescription: 'Apply this essence to your currently focused technique',
+        useLabel: 'Use',
+        description:
+          'A distilled aspect of a technique.<br>This aspect can ' +
+          aspect +
+          '.<br>The new value will be ' +
+          value +
+          '.<br>Beware! This will replace the existing technique refinement even if it degrades the technique!',
+        shopable: false,
+      },
+      1,
+      0,
+      true,
+      true
+    );
   }
 
   reset(): void {
@@ -2250,6 +2280,8 @@ export class InventoryService {
       this.usePill(item, quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
     } else if (item.type === 'formationKit') {
       quantity = this.useFormationKit(item);
+    } else if (item.type === 'techniqueEssence') {
+      this.battleService!.updateTechnique(item.effect || '', item.increaseAmount || 0);
     } else if (item.use) {
       item.use(quantity); // Multiplies the effect by the stack quantity removed if quantity is > 1
       if (item.type === 'food') {

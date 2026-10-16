@@ -895,6 +895,7 @@ export class GameStateService {
       eradicatedMonsterTypes: props?.eradicatedMonsterTypes || [],
       uneradicableMonsterTypes: props?.uneradicableMonsterTypes || [],
       instakillEnabled: props?.instakillEnabled || false,
+      techniqueDisassemblyUnlocked: props?.techniqueDisassemblyUnlocked || false,
     };
   }
 

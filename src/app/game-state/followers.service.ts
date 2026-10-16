@@ -21,6 +21,7 @@ import { FarmService } from './farm.service';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
 import { ActivityType } from './activity';
 import { GOD_ARTEMIS, PantheonService } from './pantheon.service';
+import { CONCEPT_TIDES, ContemplationService } from './contemplation.service';
 
 export type FollowerColor = 'UNMAXED' | 'MAXED';
 
@@ -508,12 +509,24 @@ export class FollowersService {
           workPower *= Math.log10(this.characterService.attributes.wisdom.value + 10);
         }
 
+        let conceptMultiplier = 1;
+        const tidesConcept = this.contemplationService.getConcept(CONCEPT_TIDES);
+        if (tidesConcept && tidesConcept.progress > 0) {
+          conceptMultiplier += Math.log10(tidesConcept.progress + 10);
+        }
+
         if (this.hellService?.inHell() || this.characterService.god()) {
-          this.inventoryService.addItem(this.itemRepoService.items['spiritCarp'], Math.floor(workPower / 1000));
+          this.inventoryService.addItem(
+            this.itemRepoService.items['spiritCarp'],
+            Math.floor(workPower / 1000) * conceptMultiplier
+          );
           this.leftoverWork['fisher'] = workPower % 1000;
           return;
         }
-        this.inventoryService.addItem(this.itemRepoService.items['carp'], Math.floor(workPower / 10) * daysElapsed);
+        this.inventoryService.addItem(
+          this.itemRepoService.items['carp'],
+          Math.floor(workPower / 10) * daysElapsed * conceptMultiplier
+        );
         this.leftoverWork['fisher'] = workPower % 10;
       },
       description: 'Fishers fish up delicious fish to contribute to your meals.',
@@ -1223,6 +1236,7 @@ export class FollowersService {
     private inventoryService: InventoryService,
     private itemRepoService: ItemRepoService,
     private pantheonService: PantheonService,
+    private contemplationService: ContemplationService,
     mainLoopService: MainLoopService,
     private battleService: BattleService
   ) {
