@@ -1464,7 +1464,12 @@ export class BattleService {
     if (effects.length === 0) {
       effects = this.techniqueEffectsList;
     }
-    const effectIndex = Math.floor(Math.random() * effects.length * 5);
+    let noEffectChanceFactor = 5;
+    const warConcept = this.contemplationService.getConcept(CONCEPT_WAR);
+    if (warConcept && warConcept.progress > 0) {
+      noEffectChanceFactor = 1 + 4 / (1 + 1e-13 * warConcept.progress);
+    }
+    const effectIndex = Math.floor(Math.random() * effects.length * noEffectChanceFactor);
     let effect = undefined;
     let suffix = '';
     if (effectIndex < effects.length) {

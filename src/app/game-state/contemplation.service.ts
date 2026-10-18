@@ -647,7 +647,7 @@ export class ContemplationService {
     {
       name: CONCEPT_WAR,
       description:
-        'Contemplate the senseless devastatation and brutality of war.<br><br>Improves damage, defense, and some techniques.',
+        'Contemplate the senseless devastatation and brutality of war.<br><br>Improves damage, defense, and some techniques.<br>Also improves the chance of getting effects on new techniques you develop.',
       progress: 0,
       effect:
         CONCEPT_EFFECT_DEVASTATION +
