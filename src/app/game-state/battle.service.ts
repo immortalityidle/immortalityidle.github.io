@@ -133,6 +133,8 @@ export interface BattleProperties {
   hiddenTechniquePrefixes: string[];
   discoveredTechniqueEffects: string[];
   blockedTechniqueEffects: string[];
+  dicoveredTechniqueAttributes: string[];
+  blockedTechniqueAttributes: string[];
   voidSkipCounter: number;
   pauseOnBattle: boolean;
   qiAttacksUnlocked: boolean;
@@ -565,6 +567,75 @@ export class BattleService {
       discovered: false,
     },
     { value: EFFECT_SLOW, description: "Techniques that slow your foe's attacks.", allowed: true, discovered: false },
+  ];
+
+  techniqueAttributeList: TechniqueDevelopmentEntry[] = [
+    {
+      value: 'strength',
+      description: 'Strong',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'toughness',
+      description: 'Tough',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'speed',
+      description: 'Swift',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'intelligence',
+      description: 'Cunning',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'charisma',
+      description: 'Charming',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'spirituality',
+      description: 'Holy',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'earthLore',
+      description: 'Stone',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'metalLore',
+      description: 'Steel',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'woodLore',
+      description: 'Oaken',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'waterLore',
+      description: 'Icy',
+      allowed: true,
+      discovered: false,
+    },
+    {
+      value: 'fireLore',
+      description: 'Fiery',
+      allowed: true,
+      discovered: false,
+    },
   ];
 
   private elementalFactor = 2;
@@ -1206,6 +1277,8 @@ export class BattleService {
     const hiddenPrefixes: string[] = [];
     const discoveredEffects: string[] = [];
     const blockedEffects: string[] = [];
+    const discoveredAttributes: string[] = [];
+    const blockedAttributes: string[] = [];
 
     for (const prefix of this.techniquePrefixAdjectiveList) {
       if (prefix.discovered) {
@@ -1224,6 +1297,14 @@ export class BattleService {
       }
       if (!prefix.allowed) {
         blockedEffects.push(prefix.value);
+      }
+    }
+    for (const prefix of this.techniqueAttributeList) {
+      if (prefix.discovered) {
+        discoveredAttributes.push(prefix.value);
+      }
+      if (!prefix.allowed) {
+        blockedAttributes.push(prefix.value);
       }
     }
     const eradicatedMonsterTypes = [];
@@ -1273,6 +1354,8 @@ export class BattleService {
       hiddenTechniquePrefixes: hiddenPrefixes,
       discoveredTechniqueEffects: discoveredEffects,
       blockedTechniqueEffects: blockedEffects,
+      dicoveredTechniqueAttributes: discoveredAttributes,
+      blockedTechniqueAttributes: blockedAttributes,
       voidSkipCounter: this.voidSkipCounter,
       pauseOnBattle: this.pauseOnBattle,
       maximumTechniqueQiUsage: this.maximumTechniqueQiUsage,
@@ -1341,6 +1424,10 @@ export class BattleService {
     for (const prefix of this.techniqueEffectsList) {
       prefix.discovered = properties.discoveredTechniqueEffects.includes(prefix.value);
       prefix.allowed = !properties.blockedTechniqueEffects.includes(prefix.value);
+    }
+    for (const prefix of this.techniqueAttributeList) {
+      prefix.discovered = properties.dicoveredTechniqueAttributes.includes(prefix.value);
+      prefix.allowed = !properties.blockedTechniqueAttributes.includes(prefix.value);
     }
     this.pauseOnBattle = properties.pauseOnBattle;
     this.skipKillCountReset = properties.skipKillCountReset;
@@ -1425,32 +1512,13 @@ export class BattleService {
     }
     prefix.discovered = true;
 
-    const attributeKeys = Object.keys(this.characterService.attackPower);
-    const attribute = attributeKeys[Math.floor(Math.random() * attributeKeys.length)] as AttributeType;
-    let attributePrefix = '';
-    if (attribute === 'strength') {
-      attributePrefix = 'Strong';
-    } else if (attribute === 'toughness') {
-      attributePrefix = 'Tough';
-    } else if (attribute === 'speed') {
-      attributePrefix = 'Swift';
-    } else if (attribute === 'intelligence') {
-      attributePrefix = 'Cunning';
-    } else if (attribute === 'charisma') {
-      attributePrefix = 'Charming';
-    } else if (attribute === 'spirituality') {
-      attributePrefix = 'Holy';
-    } else if (attribute === 'earthLore') {
-      attributePrefix = 'Stone';
-    } else if (attribute === 'metalLore') {
-      attributePrefix = 'Steel';
-    } else if (attribute === 'woodLore') {
-      attributePrefix = 'Oaken';
-    } else if (attribute === 'waterLore') {
-      attributePrefix = 'Icy';
-    } else if (attribute === 'fireLore') {
-      attributePrefix = 'Fiery';
+    let elemeents = this.techniqueAttributeList.filter(entry => entry.allowed && !entry.hidden);
+    if (elemeents.length === 0) {
+      // tried to filter out everything, allow everything
+      elemeents = this.techniqueAttributeList.filter(entry => !entry.hidden);
     }
+    const attributeEntry = prefixes[Math.floor(Math.random() * elemeents.length)];
+
     const attackNouns = ['Fist', 'Strike', 'Kick', 'Blow', 'Slam', 'Slap', 'Smack', 'Pumelling', 'Barrage', 'Attack'];
     const attackNoun = attackNouns[Math.floor(Math.random() * attackNouns.length)];
     const ticksRequired = 5 + Math.floor(Math.random() * 10);
@@ -1477,7 +1545,7 @@ export class BattleService {
       suffix = ' of ' + effect;
       effects[effectIndex].discovered = true;
     }
-    let techniqueName = prefix.value + ' ' + attributePrefix + ' ' + attackNoun + suffix;
+    let techniqueName = prefix.value + ' ' + attributeEntry.description + ' ' + attackNoun + suffix;
     while (this.techniques.find(entry => entry.name === techniqueName)) {
       techniqueName += '!!';
     }
@@ -1491,7 +1559,7 @@ export class BattleService {
       ticks: 0,
       baseDamage: 1,
       unlocked: true,
-      attribute: attribute,
+      attribute: attributeEntry.value as AttributeType,
       familyTechnique: true,
       staminaCost: staminaCost,
       healthCost: healthCost,

@@ -887,6 +887,8 @@ export class GameStateService {
       hiddenTechniquePrefixes: props?.hiddenTechniquePrefixes || ['Expensive'],
       discoveredTechniqueEffects: props?.discoveredTechniqueEffects || [],
       blockedTechniqueEffects: props?.blockedTechniqueEffects || [],
+      dicoveredTechniqueAttributes: props?.dicoveredTechniqueAttributes || [],
+      blockedTechniqueAttributes: props?.blockedTechniqueAttributes || [],
       voidSkipCounter: props?.voidSkipCounter || 0,
       pauseOnBattle: props?.pauseOnBattle || false,
       maximumTechniqueQiUsage: props?.maximumTechniqueQiUsage || 1000,
@@ -1459,8 +1461,11 @@ export class GameStateService {
         newGameState.battles.skipKillCountReset = true;
         const blockedPrefixes: string[] = [];
         const blockedEffects: string[] = [];
+        const blockedAttributes: string[] = [];
         const discoveredPrefixes: string[] = [];
         const discoveredEffects: string[] = [];
+        const discoveredAttributes: string[] = [];
+        const hiddenPrefixes: string[] = [];
 
         for (const prefix of this.battleService.techniquePrefixAdjectiveList) {
           if (!prefix.allowed) {
@@ -1468,6 +1473,9 @@ export class GameStateService {
           }
           if (prefix.discovered) {
             discoveredPrefixes.push(prefix.value);
+          }
+          if (prefix.hidden) {
+            hiddenPrefixes.push(prefix.value);
           }
         }
         for (const prefix of this.battleService.techniqueEffectsList) {
@@ -1478,10 +1486,21 @@ export class GameStateService {
             discoveredEffects.push(prefix.value);
           }
         }
+        for (const prefix of this.battleService.techniqueAttributeList) {
+          if (!prefix.allowed) {
+            blockedAttributes.push(prefix.value);
+          }
+          if (prefix.discovered) {
+            discoveredAttributes.push(prefix.value);
+          }
+        }
         newGameState.battles.blockedTechniquePrefixes = blockedPrefixes;
         newGameState.battles.blockedTechniqueEffects = blockedEffects;
+        newGameState.battles.blockedTechniqueAttributes = blockedAttributes;
         newGameState.battles.discoveredTechniquePrefixes = discoveredPrefixes;
         newGameState.battles.discoveredTechniqueEffects = discoveredEffects;
+        newGameState.battles.dicoveredTechniqueAttributes = discoveredAttributes;
+        newGameState.battles.hiddenTechniquePrefixes = hiddenPrefixes;
 
         newGameState.followers.autoDismissUnlocked = this.followersService.autoDismissUnlocked;
 

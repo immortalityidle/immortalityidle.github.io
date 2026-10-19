@@ -34,6 +34,22 @@
                 <br/>
             }
         }
+        @for (prefix of battleService.techniqueAttributeList; track prefix.value) {
+            @if (prefix.discovered){
+                <span tooltip='{{prefix.description}} techniques'>
+                    <input
+                        type="checkbox"
+                        (change)="entryToggled($event, prefix)"
+                        [id]="'prefix' + prefix.value"
+                        [checked]="prefix.allowed"
+                        />
+                    <label [for]="'prefix' + prefix.value">
+                        Continue developing {{prefix.value}} techniques
+                    </label>
+                </span>
+                <br/>
+            }
+        }
     </span>
   </div>
 </div>
