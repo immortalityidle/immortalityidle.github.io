@@ -1512,12 +1512,13 @@ export class BattleService {
     }
     prefix.discovered = true;
 
-    let elemeents = this.techniqueAttributeList.filter(entry => entry.allowed && !entry.hidden);
-    if (elemeents.length === 0) {
+    let attributes = this.techniqueAttributeList.filter(entry => entry.allowed && !entry.hidden);
+    if (attributes.length === 0) {
       // tried to filter out everything, allow everything
-      elemeents = this.techniqueAttributeList.filter(entry => !entry.hidden);
+      attributes = this.techniqueAttributeList.filter(entry => !entry.hidden);
     }
-    const attributeEntry = prefixes[Math.floor(Math.random() * elemeents.length)];
+    const attributeEntry = prefixes[Math.floor(Math.random() * attributes.length)];
+    attributeEntry.discovered = true;
 
     const attackNouns = ['Fist', 'Strike', 'Kick', 'Blow', 'Slam', 'Slap', 'Smack', 'Pumelling', 'Barrage', 'Attack'];
     const attackNoun = attackNouns[Math.floor(Math.random() * attackNouns.length)];
