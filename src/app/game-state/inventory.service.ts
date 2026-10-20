@@ -882,6 +882,13 @@ export class InventoryService {
       // don't rename grandma's stick!
       name = baseName;
       imageFileName = 'stick';
+    } else if (baseName === 'hammer') {
+      if (this.hellService?.inHell()) {
+        name = prefix + ' copper ' + baseName + suffix;
+      } else {
+        name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
+      }
+      imageFileName = 'copperHammer';
     } else {
       name = prefix + ' ' + materialPrefix + ' ' + baseName + suffix;
     }

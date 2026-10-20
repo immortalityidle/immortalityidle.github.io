@@ -1345,7 +1345,7 @@ export class HellService {
       projectionActivities: [this.activityService.OddJobs, this.activityService.BurnMoney],
       hint: "You'll need a really strong hammer to break through these hellsteel chain. Too bad the only material around is copper.",
       progress: () => {
-        if (this.characterService.equipment.rightHand?.name === 'Copper Hammer') {
+        if (this.characterService.equipment.rightHand?.weaponStats?.baseName === 'hammer') {
           return Math.min(this.characterService.equipment.rightHand?.weaponStats?.baseDamage || 0, 10000);
         } else {
           return 0;

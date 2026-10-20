@@ -1546,7 +1546,7 @@ export class BattleService {
       suffix = ' of ' + effect;
       effects[effectIndex].discovered = true;
     }
-    let techniqueName = prefix.value + ' ' + attributeEntry.description + ' ' + attackNoun + suffix;
+    let techniqueName = prefix.value + ' ' + attributeEntry.value + ' ' + attackNoun + suffix;
     while (this.techniques.find(entry => entry.name === techniqueName)) {
       techniqueName += '!!';
     }
