@@ -1517,7 +1517,7 @@ export class BattleService {
       // tried to filter out everything, allow everything
       attributes = this.techniqueAttributeList.filter(entry => !entry.hidden);
     }
-    const attributeEntry = prefixes[Math.floor(Math.random() * attributes.length)];
+    const attributeEntry = attributes[Math.floor(Math.random() * attributes.length)];
     attributeEntry.discovered = true;
 
     const attackNouns = ['Fist', 'Strike', 'Kick', 'Blow', 'Slam', 'Slap', 'Smack', 'Pumelling', 'Barrage', 'Attack'];
