@@ -418,7 +418,11 @@ export class FarmService {
         const remainder = fieldDays % field.originalDaysToHarvest;
         field.daysToHarvest = field.originalDaysToHarvest - remainder;
         if (harvests > 0) {
-          if (this.autoStaggerEnabled && (this.intervalHarvests[field.cropName] || 0) >= this.autoStaggerLimit) {
+          if (
+            days === 1 && // only perform autostaggering outside of seclusion
+            this.autoStaggerEnabled &&
+            (this.intervalHarvests[field.cropName] || 0) >= this.autoStaggerLimit
+          ) {
             harvests = 0;
             field.daysToHarvest = 0;
           } else {
