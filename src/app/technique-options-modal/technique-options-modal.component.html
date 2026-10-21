@@ -40,11 +40,11 @@
                     <input
                         type="checkbox"
                         (change)="entryToggled($event, prefix)"
-                        [id]="'prefix' + prefix.value"
+                        [id]="'attribute' + prefix.value"
                         [checked]="prefix.allowed"
                         />
-                    <label [for]="'prefix' + prefix.value">
-                        Continue developing {{prefix.value}} techniques
+                    <label [for]="'attribute' + prefix.value">
+                        Continue developing {{prefix.description}} techniques
                     </label>
                 </span>
                 <br/>
