@@ -54,6 +54,7 @@ import {
   GOD_HERA,
   GOD_HERMES,
   GOD_POSEIDON,
+  GOD_ZEUS,
   PantheonService,
 } from './pantheon.service';
 import {
@@ -235,6 +236,7 @@ export class ActivityService {
       this.SpeakWithDemeter,
       this.OfferDemeterWealth,
       this.MineDarklightGems,
+      this.PrepareFeast,
 
       this.BurnMoney,
       this.HonorAncestors,
@@ -6585,7 +6587,7 @@ export class ActivityService {
           this.characterService.staminaCap += 10;
         }
         if (this.characterService.attributes.strength.value < 1e65) {
-          console.log(
+          this.logService.log(
             LogTopic.EVENT,
             'Hades calls out: "Feel free to take whatever you need from my lands, but you\'ll need a little more muscle on your frame if you want to get anything from these stones."'
           );
@@ -6605,6 +6607,131 @@ export class ActivityService {
       },
     ],
     requirements: [{}],
+    divinityRequired: [true],
+    unlocked: true,
+    skipApprenticeshipLevel: 0,
+  };
+
+  PrepareFeast: Activity = {
+    level: 0,
+    name: ['Prepare a Feast'],
+    location: LocationType.LightningLodge,
+    realm: Realm.PhilosopherStates,
+    imageBaseName: 'prepareFeast',
+    activityType: ActivityType.PrepareFeast,
+    description: ['Prepare a feast fit for the gods of the Philosopher states.'],
+    yinYangEffect: [YinYangEffect.None],
+    consequenceDescription: [
+      "With a combination of the foods from your land and the new ones you have discovered since leaving, you hope to create festivities jubilant enough to make Hera forget her husband's indescretions.<br><br>You are tempted to try to send Zeus to the Hell of the Mountain of Ice for a few millenia to make sure this isn't required again.",
+    ],
+    consequence: [
+      () => {
+        this.characterService.status.stamina.value -= 30000000;
+        const requiredWine = 1e5;
+        const requiredNectar = 1e3;
+        const requiredDistinctMeals = 12;
+        const requiredMeals = 1e5;
+        // nectar, wine, ambrosia, divine meals. multiple types of each required in large quantities
+        const wineStacks = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .filter(itemStack => itemStack.item?.id === 'nectar');
+        let totalWine = 0;
+        for (const wineStack of wineStacks) {
+          totalWine += wineStack.quantity;
+        }
+        if (totalWine < requiredWine) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Zeus observes the preparations and shakes his head. "No, no, no! Drinks, strange god! The wine must flow like water!"'
+          );
+          return;
+        }
+
+        const nectarStacks = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .filter(itemStack => itemStack.item?.id === 'nectar');
+        let totalNectar = 0;
+        for (const nectarStack of nectarStacks) {
+          totalNectar += nectarStack.quantity;
+        }
+        if (totalNectar === 0) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Zeus observes the preparations and shakes his head. "No, no, no! Drinks, strange god! Get some proper drinks!"'
+          );
+          return;
+        } else if (totalNectar < requiredNectar) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Zeus observes the preparations and shakes his head. "More drinks, strange god! Nectar for all!"'
+          );
+          return;
+        }
+        const divineFoodStacks = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .filter(itemStack => itemStack.item?.imageFile === 'divinefood' && itemStack.quantity >= requiredMeals)
+          .sort((a, b) => (a.item?.value || 0) - (b.item?.value || 0));
+        let lastValue = 0;
+        let distinctValues = 0;
+        for (const divineFoodStack of divineFoodStacks) {
+          if (divineFoodStack.item?.value !== lastValue) {
+            distinctValues++;
+          }
+          lastValue = divineFoodStack.item?.value || 0;
+        }
+        if (distinctValues < requiredDistinctMeals) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Zeus observes the preparations with interest. "Surely you wouldn\'t deny us a taste of a few more delicacies from your homeland!"'
+          );
+          return;
+        }
+        const ambrosiaStacks = this.inventoryService.itemStacks
+          .slice(this.inventoryService.heirloomSlots())
+          .filter(itemStack => itemStack.item?.imageFile === 'ambrosia');
+        lastValue = 0;
+        distinctValues = 0;
+        for (const ambrosiaStack of ambrosiaStacks) {
+          if (ambrosiaStack.item?.value !== lastValue) {
+            distinctValues++;
+          }
+          lastValue = ambrosiaStack.item?.value || 0;
+        }
+        if (distinctValues < requiredDistinctMeals) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Zeus is eagerly observing the preparations. "So close to perfect! We\'ll just need some proper meals now! A wide variety! She\'ll forget all about those mortal women!"'
+          );
+          return;
+        }
+        for (const divineFoodStack of divineFoodStacks) {
+          this.inventoryService.eatFood(divineFoodStack.item!, divineFoodStack.quantity, true);
+        }
+        for (const ambrosiaStack of ambrosiaStacks) {
+          this.inventoryService.eatFood(ambrosiaStack.item!, ambrosiaStack.quantity, true);
+        }
+        this.logService.log(LogTopic.EVENT, 'Zeus and Hera seem to enjoy the feast immensely.');
+        this.characterService.increaseAttribute('strength', 10000);
+        this.characterService.increaseAttribute('toughness', 10000);
+        this.characterService.increaseAttribute('speed', 10000);
+        this.characterService.increaseAttribute('charisma', 10000);
+        this.characterService.increaseAttribute('intelligence', 10000);
+        this.characterService.increaseAttribute('cooking', 100);
+        this.characterService.healthBonusDivine += 1000;
+
+        this.pantheonService.increaseGodProgress(GOD_ZEUS, 1);
+      },
+    ],
+    resourceUse: [
+      {
+        stamina: 30000000,
+      },
+    ],
+    requirements: [
+      {
+        cooking: 1e20,
+      },
+    ],
     divinityRequired: [true],
     unlocked: true,
     skipApprenticeshipLevel: 0,

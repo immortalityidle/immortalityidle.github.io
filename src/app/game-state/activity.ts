@@ -9,7 +9,7 @@ export enum YinYangEffect {
 }
 
 export enum ActivityType {
-  OddJobs,
+  OddJobs = 0,
   Resting,
   GatherHerbs,
   ChopWood,
@@ -117,7 +117,8 @@ export enum ActivityType {
   SpeakWithDemeter,
   OfferDemeterWealth,
   MineDarklightGems,
-  Hell, // hell needs to be last for indexing purposes
+  PrepareFeast,
+  Hell = 99999, // hell needs to be last for indexing purposes
 }
 
 export type ActivityResource = {

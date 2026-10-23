@@ -1,6 +1,6 @@
 import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LocationType, Realm } from './location.service';
-import { BattleService, EFFECT_DOOM, EFFECT_POISON, Technique } from './battle.service';
+import { BattleService, EFFECT_AEGIS, EFFECT_DOOM, EFFECT_POISON, Technique } from './battle.service';
 import { Item } from './inventory.service';
 import { MainLoopService } from './main-loop.service';
 
@@ -38,6 +38,7 @@ export interface God {
   techniqueCooldowns: number[];
   techniqueEffects?: string[];
   techniqueUnvoidable?: boolean[];
+  summonEffect?: string;
   challengeMessage: WritableSignal<string>;
   attributes: string[];
   defeatEffect?: string;
@@ -349,7 +350,7 @@ export class PantheonService {
           challengeMessage: signal<string>(
             "You want me to take time out of my schedule for a duel?<br>Are you mad, strange foreigner?<br>In the best of times, running the underworld barely leaves me a spare moment, but now?<br>Persephone's mother is convinced that I kidnapped my bride and is threatening to destroy the entire realm!<br>Convince her to relent and we can talk about your little trading of combat pointers."
           ),
-          attributes: [],
+          attributes: ['justice', 'wisdom', 'justice', 'presence', 'wrath'],
           baseLootLevel: 55,
         },
         {
@@ -366,11 +367,14 @@ export class PantheonService {
           baseDamage: this.greekBaseDamage * Math.pow(this.greekScaling, 10),
           baseDefense: this.greekBaseDefense * Math.pow(this.greekScaling, 10),
           baseHealth: this.greekBaseHealth * Math.pow(this.greekScaling, 10),
-          techniqueNames: [],
-          techniqueCooldowns: [],
-          challengeMessage: signal<string>(''),
-          attributes: [],
+          techniqueNames: ['Crackling Static', 'Lightning Strike', 'Fury of the Heavens'],
+          techniqueCooldowns: [2, 5, 100],
+          challengeMessage: signal<string>(
+            "A fight? That sounds wonderful!<br>One problem that I need you to help with first, though.<br>My wife seems to think that I've been unfaithful and is threatening to kill me again, can you believe it?<br>I'm going to need you to distract her with something big.<br>A party, perhaps. I don't know.<br>You seem clever. You'll figure it out."
+          ),
+          attributes: ['justice', 'justice', 'presence', 'presence', 'wrath'],
           baseLootLevel: 60,
+          summonEffect: 'callOlympus',
         },
       ],
     },
@@ -388,7 +392,7 @@ export class PantheonService {
           timesDefeated: signal<number>(1),
           unlocked: signal<boolean>(false),
           discovered: signal<boolean>(false),
-          unlockProgress: signal<number>(100),
+          unlockProgress: signal<number>(0),
           unlockProgressRequired: signal<number>(100),
           unlockProgressPercent: signal<number>(0),
           baseDamage: 1e250,
@@ -396,7 +400,9 @@ export class PantheonService {
           baseHealth: 1e250,
           techniqueNames: ['Karmic Crush', 'Penance', 'Condemnation', 'Eternal Damnation'],
           techniqueCooldowns: [28, 7, 88, 2828],
-          challengeMessage: signal<string>(''),
+          challengeMessage: signal<string>(
+            "You'll need to defeat some lesser gods before you are ready to challenge me!"
+          ),
           attributes: [],
           baseLootLevel: 250,
         },
@@ -477,18 +483,21 @@ export class PantheonService {
     return god.discovered.set(true);
   }
 
-  challengeGod(god: God) {
-    if (this.battleService!.enemies.length > 0) {
+  challengeGod(god: God, rematchLevel = -1, ignoreSoloCheck = false) {
+    if (this.battleService!.enemies.length > 0 && !ignoreSoloCheck) {
       // don't start a divine duel while you're already in a fight
       return;
     }
+    if (rematchLevel === -1) {
+      rematchLevel = god.timesDefeated();
+    }
     let rematchString = '';
     if (god.timesDefeated() > 0) {
-      rematchString = ' - Rematch #' + god.timesDefeated();
+      rematchString = ' - Rematch #' + rematchLevel;
     }
     const techniques: Technique[] = [];
     for (let i = 0; i < god.techniqueNames.length; i++) {
-      let damage = god.baseDamage * Math.pow(100, god.timesDefeated()) * Math.pow(god.techniqueCooldowns[i], 2);
+      let damage = god.baseDamage * Math.pow(100, rematchLevel) * Math.pow(god.techniqueCooldowns[i], 2);
       if (god.techniqueCooldowns[i] < 3) {
         // special treatment for very fast attacks
         damage *= 0.5;
@@ -513,15 +522,15 @@ export class PantheonService {
     }
     const loot: Item[] = [];
     for (const attribute of god.attributes) {
-      loot.push(this.generateToken(attribute, god.baseLootLevel + god.timesDefeated()));
+      loot.push(this.generateToken(attribute, god.baseLootLevel + rematchLevel));
     }
 
     this.battleService!.addEnemy({
       name: god.name() + rematchString,
       baseName: god.name(),
-      health: god.baseHealth * Math.pow(100, god.timesDefeated()),
-      maxHealth: god.baseHealth * Math.pow(100, god.timesDefeated()),
-      defense: god.baseDefense * Math.pow(100, god.timesDefeated()),
+      health: god.baseHealth * Math.pow(100, rematchLevel),
+      maxHealth: god.baseHealth * Math.pow(100, rematchLevel),
+      defense: god.baseDefense * Math.pow(100, rematchLevel),
       loot: loot,
       techniques: techniques,
       location: LocationType.DivineArena,
@@ -529,6 +538,29 @@ export class PantheonService {
       immunities: [EFFECT_DOOM, EFFECT_POISON],
       defeatEffect: god.defeatEffect,
     });
+    if (god.summonEffect === 'callOlympus') {
+      const zeus = this.battleService?.enemies.find(enemy => enemy.baseName === GOD_ZEUS);
+      if (zeus) {
+        zeus.statusEffects = [
+          {
+            name: EFFECT_AEGIS,
+            description: 'This god cannot be harmed as long as any of their allies stand.',
+            power: 1,
+            ticksLeft: Infinity,
+          },
+        ];
+      }
+      const philosopherStatesPantheon = this.pantheons.find(pantheon => pantheon.name() === Realm.PhilosopherStates);
+      if (philosopherStatesPantheon) {
+        for (let i = 0; i < philosopherStatesPantheon?.gods.length - 1; i++) {
+          this.challengeGod(
+            philosopherStatesPantheon?.gods[i],
+            (philosopherStatesPantheon?.gods.length - i - 1 + rematchLevel) * 2,
+            true
+          );
+        }
+      }
+    }
   }
 
   resetIdentity() {

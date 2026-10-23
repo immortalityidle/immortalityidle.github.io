@@ -263,6 +263,7 @@ export const EFFECT_PIERCING = 'Piercing';
 export const EFFECT_HASTE = 'Haste';
 export const EFFECT_SLOW = 'Slow';
 export const EFFECT_DARKLIGHT = 'Darklight';
+export const EFFECT_AEGIS = 'Aegis';
 
 export const EFFECT_FEEDER = 'feeder';
 export const EFFECT_ZOMBIE_DECOY = 'zombie_decoy';
@@ -2463,6 +2464,13 @@ export class BattleService {
         if (doomEffect) {
           if (doomEffect.power > 2) {
             damage *= doomEffect.power;
+          }
+        }
+        const aegisEffect = this.currentEnemy.statusEffects.find(e => e.name === EFFECT_AEGIS);
+        if (aegisEffect) {
+          if (this.enemies.length > 1) {
+            this.logService.log(LogTopic.COMBAT, 'Your attack is negated by the power of the aegis.');
+            return;
           }
         }
       }

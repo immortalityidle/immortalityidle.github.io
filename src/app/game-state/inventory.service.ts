@@ -1719,12 +1719,12 @@ export class InventoryService {
     return true;
   }
 
-  public eatFood(foodItem: Item, quantity = 1) {
-    if (this.foodEatenToday >= this.maxFoodPerDay) {
+  public eatFood(foodItem: Item, quantity = 1, ignoreLimits = false) {
+    if (this.foodEatenToday >= this.maxFoodPerDay && !ignoreLimits) {
       this.logService.log(LogTopic.EVENT, 'Your stomach is too full to handle any more food today');
       return 0;
     }
-    if (quantity > this.maxFoodPerDay - this.foodEatenToday) {
+    if (quantity > this.maxFoodPerDay - this.foodEatenToday && !ignoreLimits) {
       quantity = this.maxFoodPerDay - this.foodEatenToday;
     }
     let bonusMultiplier = 1;
