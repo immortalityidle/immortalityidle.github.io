@@ -6679,10 +6679,17 @@ export class ActivityService {
           }
           lastValue = divineFoodStack.item?.value || 0;
         }
+        if (distinctValues < 1) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Zeus frowns at the preparations. "I don\'t know about the gods of your homeland, but the gods here have an appetite! We need more divine food!"'
+          );
+          return;
+        }
         if (distinctValues < requiredDistinctMeals) {
           this.logService.log(
             LogTopic.EVENT,
-            'Zeus observes the preparations with interest. "Surely you wouldn\'t deny us a taste of a few more delicacies from your homeland!"'
+            'Zeus observes the preparations with interest. "Surely you wouldn\'t deny us a taste of a few more types of delicacies from your homeland!"'
           );
           return;
         }
@@ -6697,10 +6704,17 @@ export class ActivityService {
           }
           lastValue = ambrosiaStack.item?.value || 0;
         }
+        if (distinctValues < 1) {
+          this.logService.log(
+            LogTopic.EVENT,
+            'Zeus is eagerly observing the preparations. "We\'ll need some proper meals now! Ambrosia for all!"'
+          );
+          return;
+        }
         if (distinctValues < requiredDistinctMeals) {
           this.logService.log(
             LogTopic.EVENT,
-            'Zeus is eagerly observing the preparations. "So close to perfect! We\'ll just need some proper meals now! A wide variety! She\'ll forget all about those mortal women!"'
+            'Zeus is salivating. "So close to perfect! We just need a wider variety of food fit for the Olympian gods! Then she\'ll forget all about those mortal women!"'
           );
           return;
         }
@@ -6718,7 +6732,16 @@ export class ActivityService {
         this.characterService.increaseAttribute('intelligence', 10000);
         this.characterService.increaseAttribute('cooking', 100);
         this.characterService.healthBonusDivine += 1000;
-
+        for (const nectarStack of nectarStacks) {
+          this.characterService.healthBonusDivine += nectarStack.quantity / 10;
+          const index = this.inventoryService.itemStacks.indexOf(nectarStack);
+          this.inventoryService.setItemEmptyStack(index);
+        }
+        for (const wineStack of wineStacks) {
+          this.characterService.healthBonusDivine += wineStack.quantity / 1000;
+          const index = this.inventoryService.itemStacks.indexOf(wineStack);
+          this.inventoryService.setItemEmptyStack(index);
+        }
         this.pantheonService.increaseGodProgress(GOD_ZEUS, 1);
       },
     ],

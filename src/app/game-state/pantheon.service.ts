@@ -488,12 +488,12 @@ export class PantheonService {
       // don't start a divine duel while you're already in a fight
       return;
     }
+    let rematchString = '';
     if (rematchLevel === -1) {
       rematchLevel = god.timesDefeated();
-    }
-    let rematchString = '';
-    if (god.timesDefeated() > 0) {
-      rematchString = ' - Rematch #' + rematchLevel;
+      if (rematchLevel > 0) {
+        rematchString = ' - Rematch #' + rematchLevel;
+      }
     }
     const techniques: Technique[] = [];
     for (let i = 0; i < god.techniqueNames.length; i++) {
@@ -555,7 +555,7 @@ export class PantheonService {
         for (let i = 0; i < philosopherStatesPantheon?.gods.length - 1; i++) {
           this.challengeGod(
             philosopherStatesPantheon?.gods[i],
-            (philosopherStatesPantheon?.gods.length - i - 1 + rematchLevel) * 2,
+            (philosopherStatesPantheon?.gods.length - i - 1 + rematchLevel) * 1.8,
             true
           );
         }
