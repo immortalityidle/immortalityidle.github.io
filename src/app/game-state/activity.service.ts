@@ -6109,7 +6109,7 @@ export class ActivityService {
 
         let gemStack = this.inventoryService.itemStacks
           .slice(this.inventoryService.heirloomSlots())
-          .find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value > 2000);
+          .find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value > 1700);
         if (!gemStack) {
           this.logService.log(
             LogTopic.EVENT,
@@ -6121,7 +6121,7 @@ export class ActivityService {
           .slice(this.inventoryService.heirloomSlots())
           .find(
             itemStack =>
-              itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value > 2000 && itemStack.quantity >= 100000
+              itemStack.item?.type === LOOT_TYPE_GEM && itemStack.item.value > 1700 && itemStack.quantity >= 100000
           );
         if (!gemStack) {
           this.logService.log(LogTopic.EVENT, "These gems will do, but we'll need more of them.");
