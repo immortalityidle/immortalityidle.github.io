@@ -1396,7 +1396,7 @@ export class FollowersService {
         this.characterService.meridianRank() / 10 +
         this.characterService.soulCoreRank() / 10 +
         this.characterService.bloodlineRank / 10 +
-        Math.log10(this.characterService.attributes.animalHandling.value + 1)
+        Math.log10(this.characterService.getAttributeValue('animalHandling') + 1)
     );
     if (this.menagerieUnlocked) {
       this.petsCap += Math.floor(this.menagerie.maxPetIncrease);
@@ -2140,7 +2140,7 @@ export class FollowersService {
       }
       const attribute = trigger.attribute as AttributeType;
       if (this.characterService.attributes[attribute]) {
-        if (this.characterService.attributes[attribute].value >= trigger.value) {
+        if (this.characterService.getAttributeValue(attribute) >= trigger.value) {
           this.followerTriggerIndex++;
           this.loadSavedAssignments(trigger.savedAssignmentsName, false);
         }
@@ -2164,7 +2164,7 @@ export class FollowersService {
       }
       const attribute = trigger.attribute as AttributeType;
       if (this.characterService.attributes[attribute]) {
-        if (this.characterService.attributes[attribute].value >= trigger.value) {
+        if (this.characterService.getAttributeValue(attribute) >= trigger.value) {
           this.petTriggerIndex++;
           this.loadSavedAssignments(trigger.savedAssignmentsName, true);
         }

@@ -3,7 +3,7 @@ import { CharacterService } from '../game-state/character.service';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { HomeService } from '../game-state/home.service';
 import { MatIcon } from '@angular/material/icon';
-import { NgClass, DecimalPipe } from '@angular/common';
+import { NgClass, DecimalPipe, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { HealthService } from './health.service';
 import { BigNumberPipe } from '../pipes';
@@ -30,6 +30,7 @@ import { GameStateService } from '../game-state/game-state.service';
     forwardRef(() => NgClass),
     forwardRef(() => DecimalPipe),
     forwardRef(() => BigNumberPipe),
+    forwardRef(() => TitleCasePipe),
     forwardRef(() => TooltipDirective),
     YinYangComponent,
   ],

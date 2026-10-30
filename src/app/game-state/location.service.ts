@@ -155,7 +155,7 @@ export class LocationService {
       description: 'A bustling city. A thriving hub of crafts and trades.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 50;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 50;
       },
     },
     [LocationType.SmallPond]: {
@@ -163,7 +163,7 @@ export class LocationService {
       description: 'A freshwater lake ideal for fishing.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 100;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 100;
       },
     },
     [LocationType.Forest]: {
@@ -171,7 +171,7 @@ export class LocationService {
       description: 'A forest where you can chop wood or look for a wide variety of herbs.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 200;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 200;
       },
     },
     [LocationType.Mine]: {
@@ -179,7 +179,7 @@ export class LocationService {
       description: 'A mine where you can find coal or metal ores.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 500;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 500;
       },
     },
     [LocationType.Desert]: {
@@ -187,7 +187,7 @@ export class LocationService {
       description: 'A sandy desert wasteland.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 2000;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 2000;
       },
     },
     [LocationType.Jungle]: {
@@ -195,7 +195,7 @@ export class LocationService {
       description: 'A lush tropical jungle.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 10000;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 10000;
       },
     },
     [LocationType.Dungeon]: {
@@ -203,7 +203,7 @@ export class LocationService {
       description: 'This dark and dank dungeon is full of monsters.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 200000;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 200000;
       },
     },
     [LocationType.Beach]: {
@@ -212,7 +212,7 @@ export class LocationService {
         'A beautiful beach where you can definitely relax without worrying about any monsters creeping from the waves to murder you.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e6;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 1e6;
       },
     },
 
@@ -221,7 +221,7 @@ export class LocationService {
       description: 'The depths of the sea.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e8;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 1e8;
       },
     },
     [LocationType.MountainTops]: {
@@ -229,7 +229,7 @@ export class LocationService {
       description: 'The tops of the highest mountains.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e10;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 1e10;
       },
     },
     [LocationType.AshenCrater]: {
@@ -238,7 +238,7 @@ export class LocationService {
         'A huge empty hole in the ground, covered in gray ash and smoke. The ground here is scorching, with glowing red cracks revealing fire just under the surface.',
       realm: Realm.MortalRealm,
       unlock: () => {
-        return this.characterService.attributes.speed.value * this.distanceMultiplier > 1e14;
+        return this.characterService.getAttributeValue('speed') * this.distanceMultiplier > 1e14;
       },
     },
     [LocationType.Gates]: {

@@ -2021,9 +2021,9 @@ export class BattleService {
       damage /= this.characterService.attributes.wisdom.value * Math.log10(10 + strategyConcept.progress) + 1;
     }
 
-    if (this.characterService.attributes.metalFist.value >= 1) {
+    if (this.characterService.getAttributeValue('metalFist') >= 1) {
       // Math.log(100)=4.605170185988092
-      damage /= Math.log(this.characterService.attributes.metalFist.value + 100) / 4.605170185988092;
+      damage /= Math.log(this.characterService.getAttributeValue('metalFist') + 100) / 4.605170185988092;
     }
 
     const enemyName = this.titleCasePipe.transform(enemy.name);
@@ -2201,7 +2201,7 @@ export class BattleService {
     if (
       !this.characterService.equipment.rightHand &&
       !this.characterService.equipment.leftHand &&
-      this.characterService.attributes.metalFist.value > 0
+      this.characterService.getAttributeValue('metalFist') > 0
     ) {
       this.characterService.increaseAttribute('metalFist', 0.001);
     }

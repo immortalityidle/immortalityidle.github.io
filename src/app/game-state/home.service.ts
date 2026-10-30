@@ -2122,7 +2122,7 @@ export class HomeService {
       valueRequired = 1e15;
     }
 
-    if (this.characterService.attributes.metalLore.value < valueRequired) {
+    if (this.characterService.getAttributeValue('metalLore') < valueRequired) {
       this.logService.injury(LogTopic.EVENT, 'You lack the necessary knowledge and cause a deadly explosion.');
       this.characterService.status.health.value -= this.characterService.status.health.max * 0.6;
       if (this.activityService?.pauseOnImpossibleFail && !divineChain) {
@@ -2153,7 +2153,7 @@ export class HomeService {
 
     valueRequired = 200;
     if (divineChain) {
-      valueRequired = 2000;
+      valueRequired = 1800;
     }
     const gemStack = workstation.inputs.find(itemStack => itemStack.item?.type === LOOT_TYPE_GEM);
     if (!gemStack || gemStack.quantity < 10 || (gemStack.item?.value || 0) < valueRequired) {
@@ -2406,9 +2406,9 @@ export class HomeService {
     if (materialStack) {
       let grade = (materialStack?.item?.value || 1) + workstation.power * 5;
       if (materialStack.item?.type === 'wood') {
-        grade += Math.log10(this.characterService.attributes.woodLore.value);
+        grade += Math.log10(this.characterService.getAttributeValue('woodLore'));
       } else if (materialStack.item?.type === ITEM_TYPE_METAL || materialStack.item?.type === ITEM_TYPE_REFINED_METAL) {
-        grade += Math.log10(this.characterService.attributes.metalLore.value);
+        grade += Math.log10(this.characterService.getAttributeValue('metalLore'));
       }
 
       grade += activityLevel;

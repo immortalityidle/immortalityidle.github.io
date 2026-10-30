@@ -555,7 +555,7 @@ export class PantheonService {
         for (let i = 0; i < philosopherStatesPantheon?.gods.length - 1; i++) {
           this.challengeGod(
             philosopherStatesPantheon?.gods[i],
-            (philosopherStatesPantheon?.gods.length - i - 1 + rematchLevel) * 1.8,
+            (philosopherStatesPantheon?.gods.length - i - 1 + rematchLevel) * 1.75,
             true
           );
         }

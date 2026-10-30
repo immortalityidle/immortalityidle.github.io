@@ -1047,7 +1047,7 @@ export class InventoryService {
     if (filteredHerbs.length === 0) {
       filteredHerbs = Herbs.filter(herb => herb.locations.includes(LocationType.SmallTown));
     }
-    const woodLore = this.characterService.attributes.woodLore.value;
+    const woodLore = this.characterService.getAttributeValue('woodLore');
 
     let grade;
     if (workerPower === -1) {
@@ -1200,7 +1200,7 @@ export class InventoryService {
 
   getOre(value: number = -1, skipSnobbery: boolean = false): Item {
     let oreValue = value;
-    const earthLore = this.characterService.attributes.earthLore.value;
+    const earthLore = this.characterService.getAttributeValue('earthLore');
     if (value === -1) {
       oreValue = Math.floor(Math.pow(earthLore / 1e12, 0.15) * 800);
     } else {
@@ -1276,7 +1276,7 @@ export class InventoryService {
   }
 
   getWood(value: number = -1, skipSnobbery: boolean = false): Item {
-    const woodLore = this.characterService.attributes.woodLore.value;
+    const woodLore = this.characterService.getAttributeValue('woodLore');
     let woodValue;
     if (value === -1) {
       woodValue = Math.floor(Math.pow(woodLore / 1e12, 0.15) * 800);
@@ -1329,7 +1329,7 @@ export class InventoryService {
 
   getHide(value: number = -1, skipSnobbery: boolean = false): Item {
     let hideValue;
-    const animalHandling = this.characterService.attributes.animalHandling.value;
+    const animalHandling = this.characterService.getAttributeValue('animalHandling');
     if (hideValue === -1) {
       hideValue = Math.floor(Math.pow(animalHandling / 1e12, 0.15) * 800);
     } else {

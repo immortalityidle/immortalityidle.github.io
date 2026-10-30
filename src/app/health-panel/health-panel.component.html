@@ -84,6 +84,14 @@
         </div>
       </div>
     </div>
+    @if (characterService.shapeshiftingUnlocked){
+    <div class="statusRow">
+      <div class="iconButton" (click)="characterService.changeForm()" tooltip="{{characterService.currentForm | titlecase}} form. Click to change to a new form.">
+          <img src="assets/images/forms/{{characterService.currentForm}}.png"
+            width="48" height="48"  alt="{{characterService.currentForm | titlecase}}"/>
+      </div>
+    </div>
+    }
   </div>
   @if (characterService.displayEnergy.length > 0){
     <div class="flexColumn">

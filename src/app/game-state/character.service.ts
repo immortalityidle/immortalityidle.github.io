@@ -180,6 +180,9 @@ export interface CharacterProperties {
   healthBonusPets: number;
   defenseBonusPets: number;
   healthBonusFoodCap: number;
+  shapeshiftingUnlocked: boolean;
+  availableForms: string[];
+  currentForm: string;
 }
 
 export const INITIAL_AGE = 18 * 365;
@@ -188,6 +191,11 @@ export const SPIRITUAL_ATTRIBUTES = 'Spiritual Attributes';
 export const DIVINE_ATTRIBUTES = 'Divine Attributes';
 export const LORE_ATTRIBUTES = 'Lore';
 export const SKILL_ATTRIBUTES = 'Skills';
+
+export const FORM_HUMAN = 'human';
+export const FORM_BULL = 'bull';
+export const FORM_EAGLE = 'eagle';
+export const FORM_SWAN = 'swan';
 
 @Injectable({
   providedIn: 'root',
@@ -703,6 +711,9 @@ export class CharacterService {
   seclusionEnabled = signal<boolean>(false);
   yinYangHealthModifier = 1;
   healthBonusFoodCap = 19000;
+  shapeshiftingUnlocked = false;
+  availableForms = [FORM_HUMAN];
+  currentForm = FORM_HUMAN;
 
   constructor(
     private injector: Injector,
@@ -743,7 +754,7 @@ export class CharacterService {
         const beautyConcept = this.contemplationService.getConcept(CONCEPT_BEAUTY);
         if (beautyConcept && beautyConcept.progress > 0) {
           const spriritualBeauty =
-            Math.log(this.attributes.charisma.value) * Math.log10(beautyConcept.progress + 10) * 1e-6;
+            Math.log(this.getAttributeValue('charisma')) * Math.log10(beautyConcept.progress + 10) * 1e-6;
           this.attributes.spirituality.value += spriritualBeauty * elapsedDays;
         }
         if (this.bloodlineRank >= 9 && !this.hellService?.inHell()) {
@@ -772,7 +783,7 @@ export class CharacterService {
       const attributeKeys = Object.keys(this.attributes);
       for (const key of attributeKeys) {
         const attributeKey = key as AttributeType;
-        this.attributes[attributeKey].displayValue.set(this.attributes[attributeKey].value);
+        this.attributes[attributeKey].displayValue.set(this.getAttributeValue(attributeKey));
         this.attributes[attributeKey].displayAptitude.set(this.attributes[attributeKey].aptitude);
       }
       let displayEnergyIndex = 0;
@@ -807,7 +818,7 @@ export class CharacterService {
         ' health.';
       healthBreakdownString += '<br><br>Base Health: 100.';
       healthBreakdownString +=
-        '<br>Toughness Bonus: ' + Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5) + '.';
+        '<br>Toughness Bonus: ' + Math.floor(Math.log2(this.getAttributeValue('toughness') + 2) * 5) + '.';
       if (this.healthBonusFood > 0) {
         healthBreakdownString += '<br>Food Bonus: ' + this.bigNumberPipe.transform(this.healthBonusFood) + '.';
       }
@@ -883,7 +894,7 @@ export class CharacterService {
         '.';
     } else if (this.status.nutrition.value <= 0) {
       this.status.nutrition.value = 0;
-      if (this.attributes.spirituality.value > 0) {
+      if (this.getAttributeValue('spirituality') > 0) {
         // you're spiritual now, you can fast!
         const starvationDamage = Math.max(this.status.health.value * 0.2, 20);
         this.logService.injury(
@@ -1207,10 +1218,10 @@ export class CharacterService {
 
     const keys = Object.keys(this.attributes) as AttributeType[];
     for (const key in keys) {
-      if (this.attributes[keys[key]].value > 0 && this.attributes[keys[key]].attributeGroup !== DIVINE_ATTRIBUTES) {
+      if (this.getAttributeValue(keys[key]) > 0 && this.attributes[keys[key]].attributeGroup !== DIVINE_ATTRIBUTES) {
         // gain aptitude based on last life's value
         const addedValue =
-          (this.attributes[keys[key]].value - (this.attributes[keys[key]].lifeStartValue || 0)) /
+          (this.getAttributeValue(keys[key]) - (this.attributes[keys[key]].lifeStartValue || 0)) /
           this.aptitudeGainDivider;
         if (addedValue > 0) {
           // never reduce aptitudes during reincarnation
@@ -1227,13 +1238,13 @@ export class CharacterService {
             message +
             '\n    New starting value: ' +
             this.bigNumberPipe.transform(
-              this.getAttributeStartingValue(this.attributes[keys[key]].value, this.attributes[keys[key]].aptitude)
+              this.getAttributeStartingValue(this.getAttributeValue(keys[key]), this.attributes[keys[key]].aptitude)
             ) +
             '\n';
         }
         // start at the aptitude value
         this.attributes[keys[key]].value = this.getAttributeStartingValue(
-          this.attributes[keys[key]].value,
+          this.getAttributeValue(keys[key]),
           this.attributes[keys[key]].aptitude
         );
         this.attributes[keys[key]].lifeStartValue = this.attributes[keys[key]].value;
@@ -1303,7 +1314,7 @@ export class CharacterService {
         effectiveHealthBonusMagic +
         effectiveHealthBonusSoul +
         this.healthBonusDivine +
-        Math.floor(Math.log2(this.attributes.toughness.value + 2) * 5)) *
+        Math.floor(Math.log2(this.getAttributeValue('toughness') + 2) * 5)) *
       this.healthBonusFactor;
     if (this.healthBonusPets >= 1) {
       this.status.health.max *= this.healthBonusPets;
@@ -1335,12 +1346,12 @@ export class CharacterService {
       if ((keys[key] === 'intelligence' || keys[key] === 'charisma') && this.bonusBrains) {
         this.attributes[keys[key]].aptitudeMult *= 1000;
       }
-      if (this.highestAttributes[keys[key]]() < this.attributes[keys[key]].value) {
-        this.highestAttributes[keys[key]].set(this.attributes[keys[key]].value);
+      if (this.highestAttributes[keys[key]]() < this.getAttributeValue(keys[key])) {
+        this.highestAttributes[keys[key]].set(this.getAttributeValue(keys[key]));
       }
     }
 
-    this.spiritualityLifespan = this.getAptitudeMultipier(this.attributes.spirituality.value, true) * 5; // No empowerment for lifespan
+    this.spiritualityLifespan = this.getAptitudeMultipier(this.getAttributeValue('spirituality'), true) * 5; // No empowerment for lifespan
     this.lifespan =
       this.baseLifespan +
       this.foodLifespan +
@@ -1367,18 +1378,18 @@ export class CharacterService {
     }
     for (const keyString in this.attackPower) {
       const key = keyString as AttributeType;
-      const attributePower = Math.sqrt(this.attributes[key].value) || 1;
+      const attributePower = Math.sqrt(this.getAttributeValue(key)) || 1;
       this.attackPower[key] = Math.floor(attributePower) || 1;
-      if (this.attributes.combatMastery.value > 1) {
+      if (this.getAttributeValue('combatMastery') > 1) {
         // multiply by log base 100 of combatMastery
         // Math.log(100)=4.605170185988092
-        this.attackPower[key] *= Math.log(this.attributes.combatMastery.value + 100) / 4.605170185988092;
+        this.attackPower[key] *= Math.log(this.getAttributeValue('combatMastery') + 100) / 4.605170185988092;
       }
       if (this.righteousWrathUnlocked) {
         this.attackPower[key] *= 2;
       }
     }
-    const toughnessDefense = Math.sqrt(this.attributes.toughness.value) || 1;
+    const toughnessDefense = Math.sqrt(this.getAttributeValue('toughness')) || 1;
     this.defense = Math.floor(toughnessDefense * (head + body + legs + feet)) || 1;
     if (this.righteousWrathUnlocked) {
       this.defense *= 2;
@@ -1545,6 +1556,30 @@ export class CharacterService {
     }
   }
 
+  getAttributeValue(attribute: AttributeType): number {
+    let multiplier = 1;
+    if (this.currentForm === FORM_BULL) {
+      if (attribute === 'strength') {
+        multiplier = 100;
+      } else if (attribute === 'intelligence' || attribute === 'charisma') {
+        multiplier = 0.01;
+      }
+    } else if (this.currentForm === FORM_EAGLE) {
+      if (attribute === 'speed') {
+        multiplier = 100;
+      } else if (attribute === 'strength' || attribute === 'toughness') {
+        multiplier = 0.01;
+      }
+    } else if (this.currentForm === FORM_SWAN) {
+      if (attribute === 'charisma') {
+        multiplier = 100;
+      } else if (attribute === 'speed' || attribute === 'strength') {
+        multiplier = 0.01;
+      }
+    }
+    return this.attributes[attribute].value * multiplier;
+  }
+
   increaseAttribute(attribute: AttributeType, amount: number, qiCompressionBonus: boolean = false): number {
     let increaseAmount = amount;
     if (this.attributes[attribute].attributeGroup !== DIVINE_ATTRIBUTES) {
@@ -1691,6 +1726,9 @@ export class CharacterService {
       healthBonusPets: this.healthBonusPets,
       defenseBonusPets: this.defenseBonusPets,
       healthBonusFoodCap: this.healthBonusFoodCap,
+      shapeshiftingUnlocked: this.shapeshiftingUnlocked,
+      availableForms: this.availableForms,
+      currentForm: this.currentForm,
     };
   }
 
@@ -1769,6 +1807,9 @@ export class CharacterService {
     this.healthBonusPets = properties.healthBonusPets;
     this.defenseBonusPets = properties.defenseBonusPets;
     this.healthBonusFoodCap = properties.healthBonusFoodCap;
+    this.shapeshiftingUnlocked = properties.shapeshiftingUnlocked;
+    this.availableForms = properties.availableForms;
+    this.currentForm = properties.currentForm;
 
     this.recalculateDerivedStats();
   }
@@ -1788,5 +1829,20 @@ export class CharacterService {
     this.mainLoopService.longTickIntervalMS = 500;
     this.mainLoopService.hyperSpeed = 1;
     this.inSeclusion.set(false);
+  }
+
+  unlockForm(newForm: string) {
+    if (!this.availableForms.includes(newForm)) {
+      this.availableForms.push(newForm);
+    }
+  }
+
+  changeForm() {
+    let index = this.availableForms.indexOf(this.currentForm);
+    index++;
+    if (index >= this.availableForms.length) {
+      index = 0;
+    }
+    this.currentForm = this.availableForms[index];
   }
 }

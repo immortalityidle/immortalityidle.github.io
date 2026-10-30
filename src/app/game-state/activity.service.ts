@@ -759,7 +759,7 @@ export class ActivityService {
       }
       const attribute = trigger.attribute as AttributeType;
       if (this.characterService.attributes[attribute]) {
-        if (this.characterService.attributes[attribute].value >= trigger.value) {
+        if (this.characterService.getAttributeValue(attribute) >= trigger.value) {
           this.triggerIndex++;
           this.loadActivityLoop(trigger.scheduleName);
         }
@@ -1082,7 +1082,7 @@ export class ActivityService {
       if (activity.requirements[level][key] !== undefined) {
         requirementValue = activity.requirements[level][key] ?? 0;
       }
-      if (this.characterService.attributes[key as AttributeType].value < requirementValue) {
+      if (this.characterService.getAttributeValue(key as AttributeType) < requirementValue) {
         return false;
       }
     }
@@ -1918,7 +1918,7 @@ export class ActivityService {
           return;
         }
 
-        if (this.characterService.attributes.charisma.value < 5e16) {
+        if (this.characterService.getAttributeValue('charisma') < 5e16) {
           this.logService.injury(
             LogTopic.EVENT,
             "The dragon doesn't like the sound of your voice and takes a bite out of you. Maybe you should practice speaking with humans first."
@@ -2287,7 +2287,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('charisma', 0.1);
         this.characterService.increaseAttribute('performance', 0.1);
         this.characterService.status.stamina.value -= 5;
-        let money = 3 + Math.log2(this.characterService.attributes.charisma.value);
+        let money = 3 + Math.log2(this.characterService.getAttributeValue('charisma'));
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
@@ -2300,7 +2300,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('charisma', 0.2);
         this.characterService.increaseAttribute('performance', 0.1);
         this.characterService.status.stamina.value -= 5;
-        let money = 10 + Math.log2(this.characterService.attributes.charisma.value);
+        let money = 10 + Math.log2(this.characterService.getAttributeValue('charisma'));
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
@@ -2313,7 +2313,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('charisma', 0.3);
         this.characterService.increaseAttribute('performance', 0.1);
         this.characterService.status.stamina.value -= 5;
-        let money = 20 + Math.log2(this.characterService.attributes.charisma.value * 2);
+        let money = 20 + Math.log2(this.characterService.getAttributeValue('charisma') * 2);
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
@@ -2326,7 +2326,7 @@ export class ActivityService {
         this.characterService.increaseAttribute('charisma', 0.5);
         this.characterService.increaseAttribute('performance', 0.1);
         this.characterService.status.stamina.value -= 5;
-        let money = 30 + Math.log2(this.characterService.attributes.charisma.value * 10);
+        let money = 30 + Math.log2(this.characterService.getAttributeValue('charisma') * 10);
         if (this.familySpecialty === ActivityType.Begging) {
           money += money * 0.2;
         }
@@ -2398,8 +2398,8 @@ export class ActivityService {
           let money =
             5 +
             Math.log2(
-              (this.characterService.attributes.charisma.value +
-                2 * this.characterService.attributes.intelligence.value) /
+              (this.characterService.getAttributeValue('charisma') +
+                2 * this.characterService.getAttributeValue('intelligence')) /
                 3
             );
           if (this.familySpecialty === ActivityType.Cooking) {
@@ -2419,10 +2419,10 @@ export class ActivityService {
           let money =
             10 +
             Math.log2(
-              (this.characterService.attributes.charisma.value +
-                2 * this.characterService.attributes.intelligence.value) /
+              (this.characterService.getAttributeValue('charisma') +
+                2 * this.characterService.getAttributeValue('intelligence')) /
                 3 +
-                this.characterService.attributes.spirituality.value * 10
+                this.characterService.getAttributeValue('spirituality') * 10
             );
           if (this.familySpecialty === ActivityType.Cooking) {
             money += money * 0.2;
@@ -2505,8 +2505,8 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Blacksmithing)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.toughness.value
-            ) + this.characterService.attributes.metalLore.value;
+              this.characterService.getAttributeValue('strength') + this.characterService.getAttributeValue('toughness')
+            ) + this.characterService.getAttributeValue('metalLore');
           if (this.familySpecialty === ActivityType.Blacksmithing) {
             money += money * 0.2;
           }
@@ -2529,9 +2529,9 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Blacksmithing)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.toughness.value
+              this.characterService.getAttributeValue('strength') + this.characterService.getAttributeValue('toughness')
             ) +
-            this.characterService.attributes.metalLore.value * 2;
+            this.characterService.getAttributeValue('metalLore') * 2;
           if (this.familySpecialty === ActivityType.Blacksmithing) {
             money += money * 0.2;
           }
@@ -2554,10 +2554,10 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Blacksmithing)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.toughness.value
+              this.characterService.getAttributeValue('strength') + this.characterService.getAttributeValue('toughness')
             ) +
             this.characterService.attributes.fireLore.value +
-            this.characterService.attributes.metalLore.value * 5;
+            this.characterService.getAttributeValue('metalLore') * 5;
           if (this.familySpecialty === ActivityType.Blacksmithing) {
             money += money * 0.2;
           }
@@ -2580,10 +2580,10 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Blacksmithing)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.toughness.value
+              this.characterService.getAttributeValue('strength') + this.characterService.getAttributeValue('toughness')
             ) +
             this.characterService.attributes.fireLore.value +
-            this.characterService.attributes.metalLore.value * 10;
+            this.characterService.getAttributeValue('metalLore') * 10;
           if (this.familySpecialty === ActivityType.Blacksmithing) {
             money += money * 0.2;
           }
@@ -2708,8 +2708,8 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 10;
         if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
           let money =
-            Math.log2(this.characterService.attributes.intelligence.value) +
-            this.characterService.attributes.waterLore.value;
+            Math.log2(this.characterService.getAttributeValue('intelligence')) +
+            this.characterService.getAttributeValue('waterLore');
           if (this.familySpecialty === ActivityType.Alchemy) {
             money += money * 0.2;
           }
@@ -2728,8 +2728,8 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 10;
         if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
           let money =
-            Math.log2(this.characterService.attributes.intelligence.value) +
-            this.characterService.attributes.waterLore.value * 2;
+            Math.log2(this.characterService.getAttributeValue('intelligence')) +
+            this.characterService.getAttributeValue('waterLore') * 2;
           if (this.familySpecialty === ActivityType.Alchemy) {
             money += money * 0.2;
           }
@@ -2748,8 +2748,8 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 10;
         if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
           let money =
-            Math.log2(this.characterService.attributes.intelligence.value) +
-            this.characterService.attributes.waterLore.value * 5;
+            Math.log2(this.characterService.getAttributeValue('intelligence')) +
+            this.characterService.getAttributeValue('waterLore') * 5;
           if (this.familySpecialty === ActivityType.Alchemy) {
             money += money * 0.2;
           }
@@ -2768,8 +2768,8 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 20;
         if (!this.unpaidActivities.includes(ActivityType.Alchemy)) {
           let money =
-            Math.log2(this.characterService.attributes.intelligence.value) +
-            this.characterService.attributes.waterLore.value * 10;
+            Math.log2(this.characterService.getAttributeValue('intelligence')) +
+            this.characterService.getAttributeValue('waterLore') * 10;
           if (this.familySpecialty === ActivityType.Alchemy) {
             money += money * 0.2;
           }
@@ -2970,8 +2970,9 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Woodworking)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.intelligence.value
-            ) + this.characterService.attributes.woodLore.value;
+              this.characterService.getAttributeValue('strength') +
+                this.characterService.getAttributeValue('intelligence')
+            ) + this.characterService.getAttributeValue('woodLore');
           if (this.familySpecialty === ActivityType.Woodworking) {
             money += money * 0.2;
           }
@@ -2991,9 +2992,10 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Woodworking)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.intelligence.value
+              this.characterService.getAttributeValue('strength') +
+                this.characterService.getAttributeValue('intelligence')
             ) +
-            this.characterService.attributes.woodLore.value * 2;
+            this.characterService.getAttributeValue('woodLore') * 2;
           if (this.familySpecialty === ActivityType.Woodworking) {
             money += money * 0.2;
           }
@@ -3013,9 +3015,10 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Woodworking)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.intelligence.value
+              this.characterService.getAttributeValue('strength') +
+                this.characterService.getAttributeValue('intelligence')
             ) +
-            this.characterService.attributes.woodLore.value * 5;
+            this.characterService.getAttributeValue('woodLore') * 5;
 
           if (this.familySpecialty === ActivityType.Woodworking) {
             money += money * 0.2;
@@ -3036,9 +3039,10 @@ export class ActivityService {
         if (!this.unpaidActivities.includes(ActivityType.Woodworking)) {
           let money =
             Math.log2(
-              this.characterService.attributes.strength.value + this.characterService.attributes.intelligence.value
+              this.characterService.getAttributeValue('strength') +
+                this.characterService.getAttributeValue('intelligence')
             ) +
-            this.characterService.attributes.woodLore.value * 10;
+            this.characterService.getAttributeValue('woodLore') * 10;
           if (this.familySpecialty === ActivityType.Woodworking) {
             money += money * 0.2;
           }
@@ -3124,8 +3128,9 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 20;
         if (!this.unpaidActivities.includes(ActivityType.Leatherworking)) {
           let money =
-            Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-            this.characterService.attributes.earthLore.value;
+            Math.log2(
+              this.characterService.getAttributeValue('speed') + this.characterService.getAttributeValue('toughness')
+            ) + this.characterService.getAttributeValue('earthLore');
           if (this.familySpecialty === ActivityType.Leatherworking) {
             money += money * 0.2;
           }
@@ -3145,8 +3150,10 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 20;
         if (!this.unpaidActivities.includes(ActivityType.Leatherworking)) {
           let money =
-            Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-            this.characterService.attributes.earthLore.value * 2;
+            Math.log2(
+              this.characterService.getAttributeValue('speed') + this.characterService.getAttributeValue('toughness')
+            ) +
+            this.characterService.getAttributeValue('earthLore') * 2;
           if (this.familySpecialty === ActivityType.Leatherworking) {
             money += money * 0.2;
           }
@@ -3166,8 +3173,10 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 20;
         if (!this.unpaidActivities.includes(ActivityType.Leatherworking)) {
           let money =
-            Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-            this.characterService.attributes.earthLore.value * 5;
+            Math.log2(
+              this.characterService.getAttributeValue('speed') + this.characterService.getAttributeValue('toughness')
+            ) +
+            this.characterService.getAttributeValue('earthLore') * 5;
           if (this.familySpecialty === ActivityType.Leatherworking) {
             money += money * 0.2;
           }
@@ -3187,8 +3196,10 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 40;
         if (!this.unpaidActivities.includes(ActivityType.Leatherworking)) {
           let money =
-            Math.log2(this.characterService.attributes.speed.value + this.characterService.attributes.toughness.value) +
-            this.characterService.attributes.earthLore.value * 10;
+            Math.log2(
+              this.characterService.getAttributeValue('speed') + this.characterService.getAttributeValue('toughness')
+            ) +
+            this.characterService.getAttributeValue('earthLore') * 10;
           if (this.familySpecialty === ActivityType.Leatherworking) {
             money += money * 0.2;
           }
@@ -3280,12 +3291,12 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 100;
         if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
           let money =
-            this.characterService.attributes.smithing.value +
+            this.characterService.getAttributeValue('smithing') +
             this.characterService.attributes.cooking.value +
-            this.characterService.attributes.alchemy.value +
-            this.characterService.attributes.woodwork.value +
-            this.characterService.attributes.leatherwork.value +
-            this.characterService.attributes.formationMastery.value;
+            this.characterService.getAttributeValue('alchemy') +
+            this.characterService.getAttributeValue('woodwork') +
+            this.characterService.getAttributeValue('leatherwork') +
+            this.characterService.getAttributeValue('formationMastery');
           money *= this.incomeMultiplier * 10;
           money = this.characterService.updateMoney(money);
           this.FormationCreation.lastIncome = money;
@@ -3299,12 +3310,12 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 200;
         if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
           let money =
-            this.characterService.attributes.smithing.value +
+            this.characterService.getAttributeValue('smithing') +
             this.characterService.attributes.cooking.value +
-            this.characterService.attributes.alchemy.value +
-            this.characterService.attributes.woodwork.value +
-            this.characterService.attributes.leatherwork.value +
-            this.characterService.attributes.formationMastery.value;
+            this.characterService.getAttributeValue('alchemy') +
+            this.characterService.getAttributeValue('woodwork') +
+            this.characterService.getAttributeValue('leatherwork') +
+            this.characterService.getAttributeValue('formationMastery');
           money *= this.incomeMultiplier * 100;
           money = this.characterService.updateMoney(money);
           this.FormationCreation.lastIncome = money;
@@ -3318,12 +3329,12 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 500;
         if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
           let money =
-            this.characterService.attributes.smithing.value +
+            this.characterService.getAttributeValue('smithing') +
             this.characterService.attributes.cooking.value +
-            this.characterService.attributes.alchemy.value +
-            this.characterService.attributes.woodwork.value +
-            this.characterService.attributes.leatherwork.value +
-            this.characterService.attributes.formationMastery.value;
+            this.characterService.getAttributeValue('alchemy') +
+            this.characterService.getAttributeValue('woodwork') +
+            this.characterService.getAttributeValue('leatherwork') +
+            this.characterService.getAttributeValue('formationMastery');
           money *= this.incomeMultiplier * 1000;
           money = this.characterService.updateMoney(money);
           this.FormationCreation.lastIncome = money;
@@ -3337,12 +3348,12 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 1000;
         if (!this.unpaidActivities.includes(ActivityType.FormationCreation)) {
           let money =
-            this.characterService.attributes.smithing.value +
+            this.characterService.getAttributeValue('smithing') +
             this.characterService.attributes.cooking.value +
-            this.characterService.attributes.alchemy.value +
-            this.characterService.attributes.woodwork.value +
-            this.characterService.attributes.leatherwork.value +
-            this.characterService.attributes.formationMastery.value;
+            this.characterService.getAttributeValue('alchemy') +
+            this.characterService.getAttributeValue('woodwork') +
+            this.characterService.getAttributeValue('leatherwork') +
+            this.characterService.getAttributeValue('formationMastery');
           money *= this.incomeMultiplier;
           money = this.characterService.updateMoney(money);
           this.FormationCreation.lastIncome = money;
@@ -3493,7 +3504,9 @@ export class ActivityService {
       () => {
         this.characterService.status.stamina.value -= 20;
         let farmPower = Math.floor(
-          Math.log10(this.characterService.attributes.woodLore.value + this.characterService.attributes.earthLore.value)
+          Math.log10(
+            this.characterService.getAttributeValue('woodLore') + this.characterService.getAttributeValue('earthLore')
+          )
         );
         if (farmPower < 1) {
           farmPower = 1;
@@ -3747,7 +3760,7 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 100;
         let lowStat = 'earthLore' as AttributeType;
         for (const attribute of ['metalLore', 'woodLore', 'waterLore', 'fireLore'] as AttributeType[]) {
-          if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
+          if (this.characterService.getAttributeValue(attribute) < this.characterService.getAttributeValue(lowStat)) {
             lowStat = attribute;
           }
         }
@@ -3914,22 +3927,27 @@ export class ActivityService {
 
   SoulCultivation: Activity = {
     level: 0,
-    name: ['Soul Cultivation', 'Divine Cultivation'],
+    name: ['Soul Cultivation', 'Divine Cultivation', 'Olympian Cultivation'],
     location: LocationType.Self,
     imageBaseName: 'soulcultivation',
     activityType: ActivityType.SoulCultivation,
-    description: ['Focus on the development of your immortal soul.', 'Focus on the development of your divine soul.'],
-    yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance],
+    description: [
+      'Focus on the development of your immortal soul.',
+      'Focus on the development of your divine soul.',
+      'Use the knowledge you have gained from foreign gods to improve the development of your divine soul.',
+    ],
+    yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
     consequenceDescription: [
       "An immortal's cultivation technique. Balance your attributes and your lore, and improve yourself in every way.",
       "An divine being's cultivation technique. Balance your attributes and your lore, and improve yourself in every way.",
+      'An advanced divine cultivation technique. Improve your divinity in every way.',
     ],
     consequence: [
       () => {
         this.characterService.status.health.value -= 1000;
         let lowStat = 'earthLore' as AttributeType;
         for (const attribute of ['metalLore', 'woodLore', 'waterLore', 'fireLore'] as AttributeType[]) {
-          if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
+          if (this.characterService.getAttributeValue(attribute) < this.characterService.getAttributeValue(lowStat)) {
             lowStat = attribute;
           }
         }
@@ -3937,7 +3955,7 @@ export class ActivityService {
 
         lowStat = 'strength' as AttributeType;
         for (const attribute of ['speed', 'toughness', 'intelligence', 'charisma'] as AttributeType[]) {
-          if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
+          if (this.characterService.getAttributeValue(attribute) < this.characterService.getAttributeValue(lowStat)) {
             lowStat = attribute;
           }
         }
@@ -3959,7 +3977,7 @@ export class ActivityService {
         this.characterService.status.qi.value -= 10000 / (this.characterService.qiCompressionLevel + 1);
         let lowStat = 'earthLore' as AttributeType;
         for (const attribute of ['metalLore', 'woodLore', 'waterLore', 'fireLore'] as AttributeType[]) {
-          if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
+          if (this.characterService.getAttributeValue(attribute) < this.characterService.getAttributeValue(lowStat)) {
             lowStat = attribute;
           }
         }
@@ -3967,7 +3985,7 @@ export class ActivityService {
 
         lowStat = 'strength' as AttributeType;
         for (const attribute of ['speed', 'toughness', 'intelligence', 'charisma'] as AttributeType[]) {
-          if (this.characterService.attributes[attribute].value < this.characterService.attributes[lowStat].value) {
+          if (this.characterService.getAttributeValue(attribute) < this.characterService.getAttributeValue(lowStat)) {
             lowStat = attribute;
           }
         }
@@ -3986,6 +4004,37 @@ export class ActivityService {
           this.characterService.yin += 10;
         }
       },
+      () => {
+        this.characterService.status.qi.value -= 100000 / (this.characterService.qiCompressionLevel + 1);
+        let lowStat = 'earthLore' as AttributeType;
+        for (const attribute of ['metalLore', 'woodLore', 'waterLore', 'fireLore'] as AttributeType[]) {
+          if (this.characterService.getAttributeValue(attribute) < this.characterService.getAttributeValue(lowStat)) {
+            lowStat = attribute;
+          }
+        }
+        this.characterService.increaseAttribute(lowStat, 1000, true);
+
+        lowStat = 'strength' as AttributeType;
+        for (const attribute of ['speed', 'toughness', 'intelligence', 'charisma'] as AttributeType[]) {
+          if (this.characterService.getAttributeValue(attribute) < this.characterService.getAttributeValue(lowStat)) {
+            lowStat = attribute;
+          }
+        }
+        this.characterService.increaseAttribute(lowStat, 1000, true);
+        this.characterService.increaseAttribute('spirituality', 100, true);
+
+        this.characterService.healthBonusSoul += 1000;
+        this.characterService.healthBonusDivine += 100;
+        this.characterService.status.stamina.max += 1000;
+        this.characterService.increaseMaxQi(1000);
+        this.characterService.recalculateDerivedStats();
+        this.characterService.checkOverage();
+        if (this.characterService.yin > this.characterService.yang) {
+          this.characterService.yang += 100;
+        } else {
+          this.characterService.yin += 100;
+        }
+      },
     ],
     resourceUse: [
       {
@@ -3993,6 +4042,9 @@ export class ActivityService {
       },
       {
         qi: 10000,
+      },
+      {
+        qi: 100000,
       },
     ],
     requirements: [
@@ -4002,11 +4054,19 @@ export class ActivityService {
       {
         spirituality: 1e25,
       },
+      {
+        spirituality: 1e32,
+      },
     ],
-    immortalityRequired: [true, true],
-    divinityRequired: [false, true],
-    conceptRequirements: ['', CONCEPT_DIVINITY],
-    conceptRequirementsLevel: [0, 1e12],
+    immortalityRequired: [true, true, true],
+    divinityRequired: [false, true, true],
+    conceptRequirements: ['', CONCEPT_DIVINITY, ''],
+    conceptRequirementsLevel: [0, 1e12, 0],
+    extraRequirements: [
+      () => true,
+      () => true,
+      () => (this.pantheonService.getGod(GOD_ZEUS)?.timesDefeated() || 0) > 0,
+    ],
     unlocked: false,
     skipApprenticeshipLevel: 0,
   };
@@ -4202,7 +4262,7 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
-        this.followerService.trainFollower(10 * Math.log10(this.characterService.attributes.charisma.value), false);
+        this.followerService.trainFollower(10 * Math.log10(this.characterService.getAttributeValue('charisma')), false);
         this.characterService.yang++;
       },
     ],
@@ -4352,7 +4412,7 @@ export class ActivityService {
         }
         this.characterService.increaseAttribute('animalHandling', 1, true);
         this.followerService.trainFollower(
-          10 * Math.log10(this.characterService.attributes.animalHandling.value),
+          10 * Math.log10(this.characterService.getAttributeValue('animalHandling')),
           true
         );
         this.characterService.yang++;
@@ -4634,7 +4694,7 @@ export class ActivityService {
     consequenceDescription: ['Uses 1000 hell money. Gives you a small chance of finding a follower.'],
     consequence: [
       () => {
-        if (this.characterService.attributes.charisma.value < 1e6) {
+        if (this.characterService.getAttributeValue('charisma') < 1e6) {
           this.logService.log(LogTopic.EVENT, 'You completely fail to catch the attention of any of the damned.');
           return;
         }
@@ -4769,7 +4829,7 @@ export class ActivityService {
     consequenceDescription: ['Produces one copper bar.'],
     consequence: [
       () => {
-        if (this.characterService.attributes.strength.value < 1e24) {
+        if (this.characterService.getAttributeValue('strength') < 1e24) {
           this.logService.log(LogTopic.EVENT, "You try to crack into the pillar, but you're not strong enough.");
           return;
         }
@@ -4801,7 +4861,7 @@ export class ActivityService {
     consequenceDescription: ['Produces the worst hammer in the world.'],
     consequence: [
       () => {
-        if (this.characterService.attributes.strength.value < 1e24) {
+        if (this.characterService.getAttributeValue('strength') < 1e24) {
           this.logService.log(
             LogTopic.EVENT,
             'Your weak muscles flinch at the very thought of trying to mold metal by hand.'
@@ -4854,8 +4914,8 @@ export class ActivityService {
     consequence: [
       () => {
         if (
-          this.characterService.attributes.strength.value < 1e24 ||
-          this.characterService.attributes.toughness.value < 1e24
+          this.characterService.getAttributeValue('strength') < 1e24 ||
+          this.characterService.getAttributeValue('toughness') < 1e24
         ) {
           this.logService.log(
             LogTopic.EVENT,
@@ -4965,11 +5025,11 @@ export class ActivityService {
     consequenceDescription: ['Focus your connection to water and turn that lava back to stone.'],
     consequence: [
       () => {
-        if (this.characterService.attributes.waterLore.value < 1e16) {
+        if (this.characterService.getAttributeValue('waterLore') < 1e16) {
           this.logService.log(LogTopic.EVENT, "Your connection to water isn't nearly as strong as you thought it was.");
           return;
         }
-        const numberSpawned = Math.log10(this.characterService.attributes.waterLore.value);
+        const numberSpawned = Math.log10(this.characterService.getAttributeValue('waterLore'));
         for (let i = 0; i < numberSpawned; i++) {
           this.battleService.addEnemy({
             name: 'Lava Golem',
@@ -5098,14 +5158,14 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 200000;
-        if (this.characterService.attributes.intelligence.value <= 1e24) {
+        if (this.characterService.getAttributeValue('intelligence') <= 1e24) {
           this.logService.log(
             LogTopic.EVENT,
             'You stumble around completely lost like the rest of the souls here. If only you were smarter.'
           );
           return;
         }
-        const threshold = Math.log10(this.characterService.attributes.intelligence.value - 1e24) * 0.00001;
+        const threshold = Math.log10(this.characterService.getAttributeValue('intelligence') - 1e24) * 0.00001;
         if (Math.random() < threshold) {
           this.hellService!.exitFound = true;
         }
@@ -5140,11 +5200,11 @@ export class ActivityService {
           return;
         }
 
-        if (this.characterService.attributes.charisma.value <= 1e24) {
+        if (this.characterService.getAttributeValue('charisma') <= 1e24) {
           this.logService.log(LogTopic.EVENT, 'The damned souls completely ignore your attempts at instruction.');
           return;
         }
-        const numberTaught = Math.floor(Math.log10(this.characterService.attributes.charisma.value - 1e24));
+        const numberTaught = Math.floor(Math.log10(this.characterService.getAttributeValue('charisma') - 1e24));
         this.hellService!.soulsEscaped += numberTaught;
       },
     ],
@@ -5173,11 +5233,11 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
-        if (this.characterService.attributes.charisma.value <= 1e24) {
+        if (this.characterService.getAttributeValue('charisma') <= 1e24) {
           this.logService.log(LogTopic.EVENT, 'The damned here completely ignore you attempts.');
           return;
         }
-        const threshold = Math.log10(this.characterService.attributes.charisma.value - 1e24) * 0.00001;
+        const threshold = Math.log10(this.characterService.getAttributeValue('charisma') - 1e24) * 0.00001;
         if (Math.random() < threshold) {
           this.inventoryService.addItem(this.itemRepoService.items['treasureMap']);
         } else {
@@ -5213,14 +5273,14 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
-        if (this.characterService.attributes.intelligence.value <= 1e24) {
+        if (this.characterService.getAttributeValue('intelligence') <= 1e24) {
           this.logService.log(
             LogTopic.EVENT,
             "The puzzle your best puzzling but can't figure out how to even start on this relic."
           );
           return;
         }
-        const threshold = Math.log10(this.characterService.attributes.intelligence.value - 1e24) * 0.00001;
+        const threshold = Math.log10(this.characterService.getAttributeValue('intelligence') - 1e24) * 0.00001;
         if (Math.random() < threshold) {
           if (this.inventoryService.consume('treasureMap') > 0) {
             this.inventoryService.addItem(this.itemRepoService.items['stolenRelic']);
@@ -5258,11 +5318,11 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 1000;
-        if (this.characterService.attributes.speed.value <= 1e24) {
+        if (this.characterService.getAttributeValue('speed') <= 1e24) {
           this.logService.log(LogTopic.EVENT, 'You are too slow to even attempt replacing a treasure.');
           return;
         }
-        const threshold = Math.log10(this.characterService.attributes.speed.value - 1e24) * 0.00001;
+        const threshold = Math.log10(this.characterService.getAttributeValue('speed') - 1e24) * 0.00001;
         if (Math.random() < threshold) {
           if (this.inventoryService.consume('stolenRelic') > 0) {
             this.hellService!.relicsReturned++;
@@ -5301,7 +5361,7 @@ export class ActivityService {
       () => {
         this.characterService.status.stamina.value -= 1000;
         // TODO: tune this
-        const damage = Math.max(100000 - this.characterService.attributes.toughness.value / 1e23, 100);
+        const damage = Math.max(100000 - this.characterService.getAttributeValue('toughness') / 1e23, 100);
         this.characterService.status.health.value -= damage;
         if (this.characterService.status.health.value <= 0) {
           this.battleService.beaten = true;
@@ -5335,11 +5395,11 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.status.stamina.value -= 500000;
-        if (this.characterService.attributes.intelligence.value <= 1e24) {
+        if (this.characterService.getAttributeValue('intelligence') <= 1e24) {
           this.logService.log(LogTopic.EVENT, "You can't even begin to read the complex contracts.");
           return;
         }
-        const threshold = Math.log10(this.characterService.attributes.intelligence.value - 1e24) * 0.00001;
+        const threshold = Math.log10(this.characterService.getAttributeValue('intelligence') - 1e24) * 0.00001;
         if (Math.random() < threshold) {
           this.hellService!.contractsExamined++;
         } else {
@@ -6297,7 +6357,7 @@ export class ActivityService {
     consequence: [
       () => {
         this.characterService.increaseAttribute('intelligence', 1000, true);
-        const successChance = this.characterService.attributes.intelligence.value * 1e-62;
+        const successChance = this.characterService.getAttributeValue('intelligence') * 1e-62;
         if (Math.random() < successChance) {
           this.logService.log(LogTopic.EVENT, 'You manage to win a game against the goddess.');
           this.pantheonService.increaseGodProgress(GOD_ATHENA, 1);
@@ -6443,7 +6503,7 @@ export class ActivityService {
         }
 
         this.characterService.increaseAttribute('toughness', 1000, true);
-        let successChance = this.characterService.attributes.toughness.value * 1e-64;
+        let successChance = this.characterService.getAttributeValue('toughness') * 1e-64;
         if (Math.random() > successChance) {
           this.logService.log(
             LogTopic.EVENT,
@@ -6454,7 +6514,7 @@ export class ActivityService {
         }
 
         this.characterService.increaseAttribute('charisma', 1000, true);
-        successChance = this.characterService.attributes.charisma.value * 1e-64;
+        successChance = this.characterService.getAttributeValue('charisma') * 1e-64;
         if (Math.random() > successChance) {
           this.logService.log(
             LogTopic.EVENT,
@@ -6464,7 +6524,7 @@ export class ActivityService {
         }
 
         this.characterService.increaseAttribute('intelligence', 1000, true);
-        successChance = this.characterService.attributes.intelligence.value * 1e-64;
+        successChance = this.characterService.getAttributeValue('intelligence') * 1e-64;
         if (Math.random() > successChance) {
           this.logService.log(
             LogTopic.EVENT,
@@ -6586,7 +6646,7 @@ export class ActivityService {
         if (this.characterService.staminaCap < 1e11) {
           this.characterService.staminaCap += 10;
         }
-        if (this.characterService.attributes.strength.value < 1e65) {
+        if (this.characterService.getAttributeValue('strength') < 1e65) {
           this.logService.log(
             LogTopic.EVENT,
             'Hades calls out: "Feel free to take whatever you need from my lands, but you\'ll need a little more muscle on your frame if you want to get anything from these stones."'

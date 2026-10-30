@@ -1,6 +1,6 @@
 import { Injectable, Injector, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
-import { CharacterService } from './character.service';
+import { CharacterService, FORM_BULL, FORM_EAGLE, FORM_SWAN } from './character.service';
 import { InventoryService } from './inventory.service';
 import { HomeService, HomeType, WORKSTATION_DIVINE_ANVIL, WORKSTATION_ENERGY_MANIPULATOR } from './home.service';
 import { ItemRepoService } from './item-repo.service';
@@ -49,6 +49,7 @@ import {
   GOD_HERA,
   GOD_POSEIDON,
   GOD_YAMA,
+  GOD_ZEUS,
   PANTHEON_CELESTIAL_EMPIRE,
   PantheonService,
 } from './pantheon.service';
@@ -406,11 +407,11 @@ export class AchievementService {
       hint: 'An aspiring immortal needs to develop all the basic attributes.',
       check: () => {
         return (
-          this.characterService.attributes.strength.value >= 1000 &&
-          this.characterService.attributes.speed.value >= 1000 &&
-          this.characterService.attributes.charisma.value >= 1000 &&
-          this.characterService.attributes.intelligence.value >= 1000 &&
-          this.characterService.attributes.toughness.value >= 1000
+          this.characterService.getAttributeValue('strength') >= 1000 &&
+          this.characterService.getAttributeValue('speed') >= 1000 &&
+          this.characterService.getAttributeValue('charisma') >= 1000 &&
+          this.characterService.getAttributeValue('intelligence') >= 1000 &&
+          this.characterService.getAttributeValue('toughness') >= 1000
         );
       },
       effect: () => {
@@ -439,7 +440,7 @@ export class AchievementService {
       description: 'You can now grow cabbage in your farm. Watch out for kids running by when you sell them.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 2;
+        return this.characterService.getAttributeValue('woodLore') > 2;
       },
       effect: () => {
         this.farmService.unlockCrop('cabbage');
@@ -451,7 +452,7 @@ export class AchievementService {
       description: 'You can now grow beans in your farm.',
       hint: "They're not really a fruit.",
       check: () => {
-        return this.characterService.attributes.woodLore.value > 5;
+        return this.characterService.getAttributeValue('woodLore') > 5;
       },
       effect: () => {
         this.farmService.unlockCrop('beans');
@@ -463,7 +464,7 @@ export class AchievementService {
       description: 'You can now grow broccoli in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 10;
+        return this.characterService.getAttributeValue('woodLore') > 10;
       },
       effect: () => {
         this.farmService.unlockCrop('broccoli');
@@ -475,7 +476,7 @@ export class AchievementService {
       description: 'You can now grow calabash in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 50;
+        return this.characterService.getAttributeValue('woodLore') > 50;
       },
       effect: () => {
         this.farmService.unlockCrop('calabash');
@@ -487,7 +488,7 @@ export class AchievementService {
       description: 'You can now grow taro in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 100;
+        return this.characterService.getAttributeValue('woodLore') > 100;
       },
       effect: () => {
         this.farmService.unlockCrop('taro');
@@ -499,7 +500,7 @@ export class AchievementService {
       description: 'You can now grow pears in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 1000;
+        return this.characterService.getAttributeValue('woodLore') > 1000;
       },
       effect: () => {
         this.farmService.unlockCrop('pear');
@@ -511,7 +512,7 @@ export class AchievementService {
       description: 'You can now grow melons in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 10000;
+        return this.characterService.getAttributeValue('woodLore') > 10000;
       },
       effect: () => {
         this.farmService.unlockCrop('melon');
@@ -523,7 +524,7 @@ export class AchievementService {
       description: 'You can now grow plums in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 1e6;
+        return this.characterService.getAttributeValue('woodLore') > 1e6;
       },
       effect: () => {
         this.farmService.unlockCrop('plum');
@@ -535,7 +536,7 @@ export class AchievementService {
       description: 'You can now grow apricot in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 1e9;
+        return this.characterService.getAttributeValue('woodLore') > 1e9;
       },
       effect: () => {
         this.farmService.unlockCrop('apricot');
@@ -547,7 +548,7 @@ export class AchievementService {
       description: 'You can now grow peaches in your farm.',
       hint: 'Work that farm!',
       check: () => {
-        return this.characterService.attributes.woodLore.value > 1e12;
+        return this.characterService.getAttributeValue('woodLore') > 1e12;
       },
       effect: () => {
         this.farmService.unlockCrop('peach');
@@ -1095,8 +1096,8 @@ export class AchievementService {
       hint: 'An aspiring immortal should take the red one. Take it over and over.',
       check: () => {
         return (
-          this.characterService.attributes.woodLore.value > 1024 &&
-          this.characterService.attributes.waterLore.value > 1024
+          this.characterService.getAttributeValue('woodLore') > 1024 &&
+          this.characterService.getAttributeValue('waterLore') > 1024
         );
       },
       effect: () => {
@@ -1112,8 +1113,8 @@ export class AchievementService {
       hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
-          this.characterService.attributes.woodLore.value > 1024 &&
-          this.characterService.attributes.intelligence.value > 1024
+          this.characterService.getAttributeValue('woodLore') > 1024 &&
+          this.characterService.getAttributeValue('intelligence') > 1024
         );
       },
       effect: () => {
@@ -1130,8 +1131,8 @@ export class AchievementService {
       hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
-          this.characterService.attributes.metalLore.value > 1024 &&
-          this.characterService.attributes.earthLore.value > 1024
+          this.characterService.getAttributeValue('metalLore') > 1024 &&
+          this.characterService.getAttributeValue('earthLore') > 1024
         );
       },
       effect: () => {
@@ -1148,8 +1149,8 @@ export class AchievementService {
       hint: 'There are lots of activities an aspiring immortal can do on their way to immortality.<br>Maybe you should try getting good at a few of them.',
       check: () => {
         return (
-          this.characterService.attributes.animalHandling.value > 1024 &&
-          this.characterService.attributes.speed.value > 1024
+          this.characterService.getAttributeValue('animalHandling') > 1024 &&
+          this.characterService.getAttributeValue('speed') > 1024
         );
       },
       effect: () => {
@@ -1236,7 +1237,7 @@ export class AchievementService {
       description: "You've developed enough spirituality to come to understand the value of grandmothers.",
       hint: "You'll need to meditate on this one to figure it out.",
       check: () => {
-        return this.characterService.attributes.spirituality.value > 1;
+        return this.characterService.getAttributeValue('spirituality') > 1;
       },
       effect: () => {
         this.inventoryService.grandmotherGift = true;
@@ -1298,10 +1299,10 @@ export class AchievementService {
       hint: 'Seek the balance of the dao.',
       check: () => {
         const fireLore = this.characterService.attributes.fireLore.value;
-        const earthLore = this.characterService.attributes.earthLore.value;
-        const woodLore = this.characterService.attributes.woodLore.value;
-        const waterLore = this.characterService.attributes.waterLore.value;
-        const metalLore = this.characterService.attributes.metalLore.value; //Reduce the bulk
+        const earthLore = this.characterService.getAttributeValue('earthLore');
+        const woodLore = this.characterService.getAttributeValue('woodLore');
+        const waterLore = this.characterService.getAttributeValue('waterLore');
+        const metalLore = this.characterService.getAttributeValue('metalLore'); //Reduce the bulk
 
         const lowValue = Math.min(metalLore, waterLore, woodLore, earthLore, fireLore);
         const highValue = Math.max(metalLore, waterLore, woodLore, earthLore, fireLore);
@@ -1577,11 +1578,11 @@ export class AchievementService {
         'You have balanced your powerful mind and body and unlocked the ability to develop techniques that use your Qi to strike down your enemies.',
       hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
-        const speed = this.characterService.attributes.speed.value;
-        const toughness = this.characterService.attributes.toughness.value;
-        const charisma = this.characterService.attributes.charisma.value;
-        const intelligence = this.characterService.attributes.intelligence.value;
-        const strength = this.characterService.attributes.strength.value; //Reduce the bulk
+        const speed = this.characterService.getAttributeValue('speed');
+        const toughness = this.characterService.getAttributeValue('toughness');
+        const charisma = this.characterService.getAttributeValue('charisma');
+        const intelligence = this.characterService.getAttributeValue('intelligence');
+        const strength = this.characterService.getAttributeValue('strength'); //Reduce the bulk
 
         const lowValue = Math.min(speed, toughness, charisma, intelligence, strength);
         const highValue = Math.max(speed, toughness, charisma, intelligence, strength);
@@ -1598,12 +1599,12 @@ export class AchievementService {
         'You have balanced your powerful spirit with your mind and body.<br>You unlocked the ability to use your Qi to protect yourself.',
       hint: 'The dao embraces all things in perfect harmony.',
       check: () => {
-        const spirituality = this.characterService.attributes.spirituality.value;
-        const speed = this.characterService.attributes.speed.value;
-        const toughness = this.characterService.attributes.toughness.value;
-        const charisma = this.characterService.attributes.charisma.value;
-        const intelligence = this.characterService.attributes.intelligence.value;
-        const strength = this.characterService.attributes.strength.value; //Reduce the bulk
+        const spirituality = this.characterService.getAttributeValue('spirituality');
+        const speed = this.characterService.getAttributeValue('speed');
+        const toughness = this.characterService.getAttributeValue('toughness');
+        const charisma = this.characterService.getAttributeValue('charisma');
+        const intelligence = this.characterService.getAttributeValue('intelligence');
+        const strength = this.characterService.getAttributeValue('strength'); //Reduce the bulk
 
         const lowValue = Math.min(speed, toughness, charisma, intelligence, strength, spirituality);
         const highValue = Math.max(speed, toughness, charisma, intelligence, strength, spirituality);
@@ -1646,7 +1647,7 @@ export class AchievementService {
       description: 'You have developed enough spirituality to ascend.',
       hint: 'Only with spiritual development can you ascend to higher states.',
       check: () => {
-        return this.characterService.attributes.spirituality.value >= 10;
+        return this.characterService.getAttributeValue('spirituality') >= 10;
       },
       effect: () => {
         this.characterService.ascensionUnlocked = true;
@@ -2221,6 +2222,21 @@ export class AchievementService {
       effect: () => {
         this.contemplationService.discoverConcept(CONCEPT_WEALTH);
         this.battleService.unhideTechniquePrefix('Expensive');
+      },
+      unlocked: false,
+    },
+    {
+      name: 'Dirty Old God',
+      description: 'Zeus has revealed his secrets of shapeshifting, allowing you to change your physical form.',
+      hint: 'Foreign gods might teach you a thing or two.',
+      check: () => {
+        return this.pantheonService.getGod(GOD_ZEUS)!.timesDefeated() > 0;
+      },
+      effect: () => {
+        this.characterService.shapeshiftingUnlocked = true;
+        this.characterService.unlockForm(FORM_BULL);
+        this.characterService.unlockForm(FORM_EAGLE);
+        this.characterService.unlockForm(FORM_SWAN);
       },
       unlocked: false,
     },

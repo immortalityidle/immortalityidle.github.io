@@ -30,7 +30,7 @@ export class LifeSummaryComponent {
     if (this.characterService.age < 25 * 365) {
       this.tip =
         'Life for an aspiring immortal can be brutal in the beginning. You may need to swallow your pride and do whatever is necessary to survive. A better home goes a long way toward keeping you safe.';
-    } else if (this.characterService.age < 35 * 365 && this.characterService.attributes.intelligence.value < 200) {
+    } else if (this.characterService.age < 35 * 365 && this.characterService.getAttributeValue('intelligence') < 200) {
       this.tip =
         'Life for an aspiring immortal can be frustratingly short. Perhaps increasing your intelligence might open up new avenues for extending your life.';
     } else if (this.characterService.age < 50 * 365) {
@@ -38,14 +38,14 @@ export class LifeSummaryComponent {
         'Life for an aspiring immortal can be frustratingly short. Farming some healthy food might give you just what you need.';
     } else if (
       this.activityService.completedApprenticeships.length < 4 &&
-      this.characterService.attributes.spirituality.value <= 0
+      this.characterService.getAttributeValue('spirituality') <= 0
     ) {
       this.tip =
         'Blacksmithing, alchemy, woodworking, and leatherworking are all essential trades for an aspiring immortal. You should master them all.';
-    } else if (this.characterService.attributes.spirituality.value <= 0) {
+    } else if (this.characterService.getAttributeValue('spirituality') <= 0) {
       this.tip =
         "Balance is important to aspiring immortals. You'll need to develop all of your attributes if you want to progress in your journey.";
-    } else if (this.characterService.attributes.spirituality.value <= 10) {
+    } else if (this.characterService.getAttributeValue('spirituality') <= 10) {
       this.tip =
         'Developing your spirituality is essential. Focusing on your spiritual development will help you on your way to immortality.';
     } else if (!this.inventoryService.autoWeaponMergeUnlocked) {

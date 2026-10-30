@@ -297,7 +297,7 @@ baguaMap = [
         "A quiet shrine for contemplative prayer.<br>You won't be able to use this unless you have some innate spirituality.<br>Increases spirituality.",
       useConsumes: false,
       use: () => {
-        if (this.characterService.attributes.spirituality.value > 0) {
+        if (this.characterService.getAttributeValue('spirituality') > 0) {
           this.characterService.increaseAttribute('spirituality', 0.001);
         }
       },
@@ -845,7 +845,7 @@ baguaMap = [
       useConsumes: false,
       locked: true,
       use: () => {
-        if (this.characterService.attributes.spirituality.value > 0) {
+        if (this.characterService.getAttributeValue('spirituality') > 0) {
           this.characterService.increaseAttribute('spirituality', 0.005);
         }
       },
@@ -965,7 +965,7 @@ baguaMap = [
       useConsumes: false,
       locked: true,
       use: () => {
-        if (this.characterService.attributes.spirituality.value > 0) {
+        if (this.characterService.getAttributeValue('spirituality') > 0) {
           this.characterService.increaseAttribute('spirituality', 0.02);
         }
       },

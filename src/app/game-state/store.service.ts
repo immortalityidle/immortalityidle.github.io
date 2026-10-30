@@ -231,7 +231,7 @@ export class StoreService {
       this.logService.log(LogTopic.EVENT, "You can't condense your soul core any further.");
       return;
     }
-    if (this.characterService.attributes.spirituality.value < this.characterService.condenseSoulCoreCost) {
+    if (this.characterService.getAttributeValue('spirituality') < this.characterService.condenseSoulCoreCost) {
       this.logService.log(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
@@ -248,7 +248,7 @@ export class StoreService {
       this.logService.log(LogTopic.EVENT, "You can't reinforce your meridians any further.");
       return;
     }
-    if (this.characterService.attributes.spirituality.value < this.characterService.reinforceMeridiansCost) {
+    if (this.characterService.getAttributeValue('spirituality') < this.characterService.reinforceMeridiansCost) {
       this.logService.log(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }
@@ -262,7 +262,7 @@ export class StoreService {
   }
 
   upgradeBloodline() {
-    if (this.characterService.attributes.spirituality.value < this.characterService.bloodlineCost) {
+    if (this.characterService.getAttributeValue('spirituality') < this.characterService.bloodlineCost) {
       this.logService.log(LogTopic.EVENT, "You don't have the spirituality required to ascend.");
       return;
     }

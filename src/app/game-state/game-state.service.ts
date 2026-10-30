@@ -4,7 +4,7 @@ import { BattleService, BattleProperties, RIGHT_HAND_TECHNIQUE, LEFT_HAND_TECHNI
 import { LogProperties, LogService } from './log.service';
 import { MainLoopProperties, MainLoopService } from './main-loop.service';
 import { AchievementProperties, AchievementService, MEMORY_JOIN_THE_GODS } from './achievement.service';
-import { AttributeType, CharacterProperties, INITIAL_AGE } from './character.service';
+import { AttributeType, CharacterProperties, FORM_HUMAN, INITIAL_AGE } from './character.service';
 import { CharacterService } from './character.service';
 import { FollowersService, FollowersProperties, HQType, FOLLOWER_TYPE_TECHNIQUE_MASTER } from './followers.service';
 import { HomeService, HomeProperties, HomeType, WORKSTATION_TRAINING_CHAMBER } from './home.service';
@@ -1352,6 +1352,9 @@ export class GameStateService {
       healthBonusPets: props?.healthBonusPets || 1,
       defenseBonusPets: props?.defenseBonusPets || 1,
       healthBonusFoodCap: props?.healthBonusFoodCap || 19000,
+      shapeshiftingUnlocked: props?.shapeshiftingUnlocked || false,
+      availableForms: props?.availableForms || [FORM_HUMAN],
+      currentForm: props?.currentForm || FORM_HUMAN,
     };
   }
 
