@@ -3,10 +3,16 @@ import { FarmService } from '../game-state/farm.service';
 import { MatIcon } from '@angular/material/icon';
 import { CamelToTitlePipe } from '../pipes';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-farm-options-modal',
-  imports: [forwardRef(() => MatIcon), forwardRef(() => CamelToTitlePipe), forwardRef(() => TooltipDirective)],
+  imports: [
+    forwardRef(() => MatIcon),
+    forwardRef(() => CamelToTitlePipe),
+    forwardRef(() => TooltipDirective),
+    MatDialogClose,
+  ],
   templateUrl: './farm-options-modal.component.html',
   styleUrl: './farm-options-modal.component.less',
 })

@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivityService, DisplayActivity } from '../game-state/activity.service';
+import { MatDialogClose } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-activity-options-modal',
-  imports: [],
+  imports: [MatDialogClose, MatIcon],
   templateUrl: './activity-options-modal.component.html',
   styleUrl: './activity-options-modal.component.less',
 })

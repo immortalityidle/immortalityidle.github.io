@@ -1,24 +1,23 @@
-<mat-drawer-container class="drawer-container">
-    <mat-drawer #drawer mode="over">
-        <app-mobile-drawer />
-    </mat-drawer>
-    <mat-drawer-content class="drawer-content">
-        <div class="app-bar">
-            <button mat-icon-button (click)="drawer.toggle()">
-                <mat-icon>menu</mat-icon>
-            </button>
-            <div class="app-title">
-                Immortality Idle 2
+<div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
+    <mat-drawer-container class="drawer-container">
+        <mat-drawer #drawer mode="over">
+            <app-mobile-drawer />
+        </mat-drawer>
+        <mat-drawer-content class="drawer-content">
+            <div class="app-bar">
+                <button mat-icon-button (click)="drawer.toggle()">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <div class="app-title">
+                    Immortality Idle 2
+                    <span class="versionNumber" (click)="commonButtonsService.changelogClicked()">v{{applicationVersion}}</span>
+                </div>
             </div>
-        </div>
-        <app-mobile-health />
-        <div class="main-part">
-            <app-mobile-widget-carousel class="grow" [carouselName]="'carousel1'" [startWidget]="'activities'" />
-            <mat-divider />
-            <app-mobile-widget-carousel class="grow" [carouselName]="'carousel2'" [startWidget]="'time'" />
-        </div>
-        <app-mobile-time-buttons />
-    </mat-drawer-content>
-</mat-drawer-container>
-  
-
+            <div class="main-part">
+                @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
+                    <app-mobile-panel-wrapper [panelId]="panelLayout.id"/>
+                }
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>  

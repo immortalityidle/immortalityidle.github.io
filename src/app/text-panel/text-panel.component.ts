@@ -1,12 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-text-panel',
   template: 'passed in {{ data.name }}',
   templateUrl: './text-panel.component.html',
   styleUrls: ['./text-panel.component.less', '../app.component.less'],
-  imports: [],
+  imports: [MatIcon, MatDialogClose],
 })
 export class TextPanelComponent {
   titleText = '';

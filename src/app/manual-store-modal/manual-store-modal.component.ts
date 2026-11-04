@@ -5,6 +5,7 @@ import { NgClass, TitleCasePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-store-modal',
@@ -16,6 +17,7 @@ import { BigNumberPipe } from '../pipes';
     forwardRef(() => TitleCasePipe),
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
+    MatDialogClose,
   ],
 })
 export class ManualStoreModalComponent {

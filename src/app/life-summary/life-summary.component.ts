@@ -1,15 +1,17 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
 import { ImpossibleTaskService } from '../game-state/impossibleTask.service';
 import { InventoryService } from '../game-state/inventory.service';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-life-summary',
   templateUrl: './life-summary.component.html',
   styleUrls: ['./life-summary.component.less', '../app.component.less'],
+  imports: [MatIcon, MatDialogClose],
 })
 export class LifeSummaryComponent {
   causeOfDeath = '';

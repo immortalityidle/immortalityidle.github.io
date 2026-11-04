@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject } from '@angular/core';
 import { FollowersService, Follower, SavedAssignments, AssignmentTrigger } from '../game-state/followers.service';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
@@ -23,6 +23,7 @@ import { CharacterService } from '../game-state/character.service';
     forwardRef(() => MatTab),
     forwardRef(() => MatIcon),
     forwardRef(() => MatSelectModule),
+    MatDialogClose,
   ],
 })
 export class FollowerManagementPanelComponent {

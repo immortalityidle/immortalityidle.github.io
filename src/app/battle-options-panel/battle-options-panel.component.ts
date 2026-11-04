@@ -5,12 +5,14 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MatSelectModule } from '@angular/material/select';
 import { InventoryService } from '../game-state/inventory.service';
 import { FollowersService } from '../game-state/followers.service';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-battle-options-panel',
   templateUrl: './battle-options-panel.component.html',
   styleUrls: ['./battle-options-panel.component.less', '../app.component.less'],
-  imports: [forwardRef(() => MatSelectModule), forwardRef(() => TooltipDirective)],
+  imports: [forwardRef(() => MatSelectModule), forwardRef(() => TooltipDirective), MatIcon, MatDialogClose],
 })
 export class BattleOptionsPanelComponent {
   constructor(

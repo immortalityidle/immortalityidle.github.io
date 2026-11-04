@@ -331,9 +331,14 @@ export class FarmService {
     if (this.fields.length >= maxFields) {
       return;
     }
-    const cropItem =
-      this.inventoryService.farmFoodList.find(item => item.name === this.defaultCropType) ||
-      this.inventoryService.farmFoodList[0];
+    let cropItem = this.inventoryService.farmFoodList.find(item => item.name === this.defaultCropType);
+    if (!cropItem) {
+      cropItem = this.itemRepoService.items[this.defaultCropType];
+    }
+    if (!cropItem) {
+      cropItem = this.inventoryService.farmFoodList[0];
+    }
+
     this.fields.push({
       cropName: cropItem.name,
       cropId: cropItem.id,

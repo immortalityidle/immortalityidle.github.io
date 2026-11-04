@@ -1,12 +1,6 @@
 import { Component, forwardRef, inject, viewChild, DOCUMENT } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import {
-  KtdGridComponent,
-  KtdGridItemComponent,
-  KtdGridDragHandle,
-  KtdGridLayoutItem,
-  KtdGridLayout,
-} from '@katoid/angular-grid-layout';
+import { KtdGridComponent, KtdGridItemComponent, KtdGridDragHandle, KtdGridLayout } from '@katoid/angular-grid-layout';
 import { ActivityPanelComponent } from '../activity-panel/activity-panel.component';
 import { AttributesPanelComponent } from '../attributes-panel/attributes-panel.component';
 import { BattlePanelComponent } from '../battle-panel/battle-panel.component';
@@ -100,20 +94,6 @@ export class StandardLayoutComponent {
     this.gameStateService.layout.set(layout);
     // always save when the player moves the windows around
     this.gameStateService.savetoLocalStorage();
-  }
-
-  protected getPanel(layoutPanel: KtdGridLayoutItem) {
-    for (const panel of this.gameStateService.panels) {
-      if (panel.id === layoutPanel.id) {
-        return panel;
-      }
-    }
-    return {
-      id: 'undefinedPanel',
-      name: '',
-      icon: '',
-      panelHelp: '',
-    };
   }
 
   protected nextPanelClick(index: number) {

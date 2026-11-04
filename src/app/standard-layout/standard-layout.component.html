@@ -131,15 +131,15 @@
           (layoutUpdated)="onLayoutUpdated($event)">
           @if (!characterService.inSeclusion()){
             @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
-              <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" [id]="getPanel(panelLayout).id">
+              <ktd-grid-item [draggable]="!gameStateService.lockPanels" [resizable]="!gameStateService.lockPanels" dragStartThreshold="0" [id]="panelLayout.id">
                 <div class="panel">
                   <div ktdGridDragHandle [ngClass]="{'grabCursor': !gameStateService.lockPanels}" class="panelHeader">
                     <mat-icon>
-                      {{getPanel(panelLayout).icon}}
+                      {{gameStateService.getPanel(panelLayout.id).icon}}
                     </mat-icon>
-                    <span>{{getPanel(panelLayout).name}}</span>
+                    <span>{{gameStateService.getPanel(panelLayout.id).name}}</span>
                     <span class="floatRight">
-                      <mat-icon [tooltip]="getPanel(panelLayout).panelHelp">
+                      <mat-icon [tooltip]="gameStateService.getPanel(panelLayout.id).panelHelp">
                         help
                       </mat-icon>
                       @if(!gameStateService.allPanelsUsed){

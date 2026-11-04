@@ -2406,6 +2406,9 @@ export class BattleService {
       } else if (effect === EFFECT_EXPLOSIVE) {
         damage *= 1000;
         this.characterService.status.health.value -= damage;
+        if (this.characterService.status.health.value < 0) {
+          this.characterService.status.health.value = 0;
+        }
         // destroy the weapon
         if (technique.name === RIGHT_HAND_TECHNIQUE) {
           this.characterService.equipment.rightHand = null;

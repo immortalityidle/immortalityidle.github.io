@@ -1,5 +1,7 @@
 <div class='darkMode optionsDiv'>
-  <span>Inventory Options</span>
+  <mat-icon mat-button mat-dialog-close class="iconButton floatRight">close</mat-icon>
+  <h3>Inventory Options</h3>
+  <hr/>
   <mat-tab-group>
     @if (inventoryService.autoSellOldHerbs || inventoryService.autoSellOldWood || inventoryService.autoSellOldOre || inventoryService.autoSellOldHides || inventoryService.autoSellOldGemsUnlocked ||
       inventoryService.autoSellUnlocked() || inventoryService.autoUseUnlocked() || inventoryService.autoEatUnlocked() || inventoryService.autoBalanceUnlocked()) {

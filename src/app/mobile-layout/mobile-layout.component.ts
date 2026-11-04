@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
-import { MobileHealthComponent } from './mobile-health/mobile-health.component';
-import { MobileTimeButtonsComponent } from './mobile-time-buttons/mobile-time-buttons.component';
+import { Component, inject } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MobileDrawerComponent } from './mobile-drawer/mobile-drawer.component';
-import { MobileWidgetCarouselComponent } from './mobile-widget-carousel/mobile-widget-carousel.component';
+import { CommonButtonsService } from '../common-buttons.service';
+import { environment } from 'src/environments/environment';
+import { GameStateService } from '../game-state/game-state.service';
+import { MobilePanelWrapperComponent } from './mobile-panel-wrapper/mobile-panel-wrapper.component';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-mobile-layout',
@@ -15,12 +17,16 @@ import { MobileWidgetCarouselComponent } from './mobile-widget-carousel/mobile-w
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
-    MobileHealthComponent,
-    MobileTimeButtonsComponent,
     MobileDrawerComponent,
-    MobileWidgetCarouselComponent,
+    MobilePanelWrapperComponent,
+    NgClass,
   ],
   templateUrl: './mobile-layout.component.html',
   styleUrl: './mobile-layout.component.less',
 })
-export class MobileLayoutComponent {}
+export class MobileLayoutComponent {
+  protected readonly commonButtonsService = inject(CommonButtonsService);
+  protected readonly gameStateService = inject(GameStateService);
+
+  protected applicationVersion = environment.appVersion;
+}

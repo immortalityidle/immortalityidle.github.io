@@ -9,6 +9,8 @@ import { NgClass, NgOptimizedImage, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { BigNumberPipe } from '../pipes';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-store-modal',
@@ -20,6 +22,8 @@ import { BigNumberPipe } from '../pipes';
     forwardRef(() => BigNumberPipe),
     forwardRef(() => TooltipDirective),
     forwardRef(() => NgOptimizedImage),
+    MatIcon,
+    MatDialogClose,
   ],
 })
 export class StoreModalComponent {

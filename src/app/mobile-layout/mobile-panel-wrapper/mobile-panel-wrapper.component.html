@@ -1,0 +1,52 @@
+<div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
+    <div tooltip="Test tooltip">
+        <span>
+            
+        </span>
+    </div>
+    <div class="panel">
+        @if (panelId() === 'timePanel'){
+            <app-time-panel class="panelComponent"></app-time-panel>
+        } @else if (panelId() === 'schedulePanel'){
+            <app-schedule-panel class="panelComponent"></app-schedule-panel>
+        } @else if (panelId() === 'attributesPanel'){
+            <app-attributes-panel class="panelComponent"></app-attributes-panel>
+        } @else if (panelId() === 'healthPanel'){
+            <app-health-panel class="panelComponent"></app-health-panel>
+        } @else if (panelId() === 'activityPanel'){
+            <app-activity-panel class="panelComponent" ></app-activity-panel>
+        } @else if (panelId() === 'battlePanel'){
+            <app-battle-panel class="panelComponent" ></app-battle-panel>
+        } @else if (panelId() === 'equipmentPanel'){
+            <app-equipment-panel class="panelComponent" ></app-equipment-panel>
+        } @else if (panelId() === 'homePanel'){
+            <app-home-panel class="panelComponent" ></app-home-panel>
+        } @else if (panelId() === 'inventoryPanel'){
+            <app-inventory-panel class="panelComponent" ></app-inventory-panel>
+        } @else if (panelId() === 'logPanel'){
+            <app-log-panel class="panelComponent" ></app-log-panel>
+        } @else if (panelId() === 'portalPanel'){
+            <app-portal-panel class="panelComponent" ></app-portal-panel>
+        } @else if (panelId() === 'followersPanel'){
+            <app-followers-panel class="panelComponent"></app-followers-panel>
+        } @else if (panelId() === 'petsPanel'){
+            <app-pets-panel class="panelComponent" ></app-pets-panel>
+        } @else if (panelId() === 'farmPanel'){
+            <app-farm-panel class="panelComponent" ></app-farm-panel>
+        } @else if (panelId() === 'locationPanel'){
+            <app-location-panel class="panelComponent" ></app-location-panel>
+        } @else if (panelId() === 'impossibleTasksPanel'){
+            <app-impossible-task-panel class="panelComponent" ></app-impossible-task-panel>
+        } @else if (panelId() === 'techniquePanel'){
+            <app-technique-panel class="panelComponent" ></app-technique-panel>
+        } @else if (panelId() === 'craftingPanel'){
+            <app-crafting-panel class="panelComponent" ></app-crafting-panel>
+        } @else if (panelId() === 'hellStatusPanel'){
+            <app-hell-status-panel class="panelComponent" ></app-hell-status-panel>
+        } @else if (panelId() === 'contemplationPanel'){
+            <app-contemplation-panel class="panelComponent" ></app-contemplation-panel>
+        } @else if (panelId() === 'divineDuelsPanel'){
+            <app-divine-duels-panel class="panelComponent" ></app-divine-duels-panel>
+        }
+  </div>
+</div>

@@ -6,11 +6,12 @@ import { InventoryService } from '../game-state/inventory.service';
 import { GameStateService } from '../game-state/game-state.service';
 import { FollowersService } from '../game-state/followers.service';
 import { MainLoopService } from '../game-state/main-loop.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogClose } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-crafting-options-modal',
-  imports: [],
+  imports: [MatIcon, MatDialogClose],
   templateUrl: './crafting-options-modal.component.html',
   styleUrl: './crafting-options-modal.component.less',
 })

@@ -1,5 +1,5 @@
 import { Component, forwardRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
@@ -10,10 +10,17 @@ import { MainLoopService } from '../game-state/main-loop.service';
 import { FarmService } from '../game-state/farm.service';
 import { TitleCasePipe } from '@angular/common';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-inventory-options-modal',
-  imports: [forwardRef(() => TitleCasePipe), forwardRef(() => MatTabGroup), forwardRef(() => MatTab)],
+  imports: [
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => MatTabGroup),
+    forwardRef(() => MatTab),
+    MatIcon,
+    MatDialogClose,
+  ],
   templateUrl: './inventory-options-modal.component.html',
   styleUrl: './inventory-options-modal.component.less',
 })

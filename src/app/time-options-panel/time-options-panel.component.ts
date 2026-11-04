@@ -9,6 +9,7 @@ import { CamelToTitlePipe } from '../pipes';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MatIcon } from '@angular/material/icon';
 import { BattleService } from '../game-state/battle.service';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-time-options-panel',
@@ -21,6 +22,7 @@ import { BattleService } from '../game-state/battle.service';
     forwardRef(() => MatTab),
     forwardRef(() => CamelToTitlePipe),
     forwardRef(() => TooltipDirective),
+    MatDialogClose,
   ],
 })
 export class TimeOptionsPanelComponent {

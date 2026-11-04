@@ -1821,4 +1821,18 @@ export class GameStateService {
       this.activityService.ReturnToGodhoodPortal.unlocked = true;
     }
   }
+
+  getPanel(panelId: string) {
+    for (const panel of this.panels) {
+      if (panel.id === panelId) {
+        return panel;
+      }
+    }
+    return {
+      id: 'undefinedPanel',
+      name: '',
+      icon: '',
+      panelHelp: '',
+    };
+  }
 }

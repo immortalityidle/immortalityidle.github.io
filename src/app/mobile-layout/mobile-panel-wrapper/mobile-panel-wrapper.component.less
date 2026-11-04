@@ -1,0 +1,40 @@
+@import (reference) "../../../styles.less";
+
+.wrapper {
+    max-height: 50vh;
+    overflow: hidden;
+}
+
+.panel {
+    background-color: var(--panelBackground);
+    display: flex;
+    flex-direction: column;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--panelBorder);
+    border-radius: 3px;
+    box-sizing: border-box;
+    flex: auto;
+}
+
+.panelHeader {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    background-color: var(--panelHeader);
+    border-bottom: 1px solid var(--panelBorder);
+    color: var(--bodyText);
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0px;
+    z-index: 10;
+}
+
+.panelComponent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}

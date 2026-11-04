@@ -13,6 +13,8 @@ import { ActivityType } from '../game-state/activity';
 import { FarmService } from '../game-state/farm.service';
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-statistics-panel',
@@ -23,6 +25,8 @@ import { CamelToTitlePipe, BigNumberPipe } from '../pipes';
     forwardRef(() => KeyValuePipe),
     forwardRef(() => CamelToTitlePipe),
     forwardRef(() => BigNumberPipe),
+    MatIcon,
+    MatDialogClose,
   ],
 })
 export class StatisticsPanelComponent {

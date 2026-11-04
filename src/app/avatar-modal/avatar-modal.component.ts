@@ -12,10 +12,12 @@ import {
   AVATAR_WANDERER,
   GameStateService,
 } from '../game-state/game-state.service';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-avatar-modal',
-  imports: [],
+  imports: [MatIcon, MatDialogClose],
   templateUrl: './avatar-modal.component.html',
   styleUrl: './avatar-modal.component.less',
 })

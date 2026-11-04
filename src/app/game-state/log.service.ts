@@ -155,9 +155,7 @@ export class LogService {
 
   updateLogTopics() {
     Object.values(LogTopic).forEach(topic => {
-      if (topic !== LogTopic.STORY) {
-        this.logs[topic] = this.logs[topic].slice(-300);
-      }
+      this.logs[topic] = this.logs[topic].slice(-100);
       if (this.topicProperties[topic].enabled) {
         this.topicProperties[topic].hasNewMessages = false;
       }

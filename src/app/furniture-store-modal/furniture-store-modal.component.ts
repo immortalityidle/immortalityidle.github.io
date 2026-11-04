@@ -8,12 +8,20 @@ import { GameStateService } from '../game-state/game-state.service';
 import { TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-furniture-store-modal',
   templateUrl: './furniture-store-modal.component.html',
   styleUrls: ['./furniture-store-modal.component.less'],
-  imports: [forwardRef(() => TitleCasePipe), forwardRef(() => TooltipDirective), forwardRef(() => BigNumberPipe)],
+  imports: [
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => TooltipDirective),
+    forwardRef(() => BigNumberPipe),
+    MatIcon,
+    MatDialogClose,
+  ],
 })
 export class FurnitureStoreModalComponent {
   buyDisabled = true;

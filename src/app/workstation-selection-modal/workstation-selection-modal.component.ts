@@ -1,17 +1,24 @@
 import { Component, forwardRef } from '@angular/core';
 import { HomeService, Workstation } from '../game-state/home.service';
 import { GameStateService } from '../game-state/game-state.service';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { CharacterService } from '../game-state/character.service';
 import { TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-workstation-selection-modal',
   templateUrl: './workstation-selection-modal.component.html',
   styleUrls: ['./workstation-selection-modal.component.less', '../app.component.less'],
-  imports: [forwardRef(() => TitleCasePipe), forwardRef(() => BigNumberPipe), forwardRef(() => TooltipDirective)],
+  imports: [
+    forwardRef(() => TitleCasePipe),
+    forwardRef(() => BigNumberPipe),
+    forwardRef(() => TooltipDirective),
+    MatIcon,
+    MatDialogClose,
+  ],
 })
 export class WorkstationSelectionModalComponent {
   constructor(

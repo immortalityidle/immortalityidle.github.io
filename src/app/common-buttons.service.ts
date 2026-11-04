@@ -12,6 +12,7 @@ import { StoreService } from './game-state/store.service';
 import { GameStateService } from './game-state/game-state.service';
 import { CreditsModalComponent } from './credits-modal/credits-modal.component';
 import { MainLoopService } from './game-state/main-loop.service';
+import { AppService } from './app.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,10 +22,12 @@ export class CommonButtonsService {
   private readonly mainLoopService = inject(MainLoopService);
   private readonly gameStateService = inject(GameStateService);
   private readonly storeService = inject(StoreService);
+  private readonly appService = inject(AppService);
 
   changelogClicked() {
     this.dialog.open(ChangelogPanelComponent, {
       autoFocus: false,
+      width: this.appService.isMobile() ? '100vw' : '600px',
     });
   }
 

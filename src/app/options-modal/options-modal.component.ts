@@ -1,5 +1,5 @@
 import { Component, forwardRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
 import { GameStateService } from '../game-state/game-state.service';
@@ -10,12 +10,13 @@ import { environment } from '../../environments/environment';
 import { FarmService } from '../game-state/farm.service';
 import { FormsModule } from '@angular/forms';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-options-modal',
   templateUrl: './options-modal.component.html',
   styleUrls: ['./options-modal.component.less'],
-  imports: [forwardRef(() => FormsModule), forwardRef(() => TooltipDirective)],
+  imports: [forwardRef(() => FormsModule), forwardRef(() => TooltipDirective), MatIcon, MatDialogClose],
 })
 export class OptionsModalComponent {
   constructor(
