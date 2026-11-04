@@ -1042,6 +1042,26 @@ baguaMap = [
       },
       shopable: false,
     },
+    {
+      id: 'battleSpears',
+      name: 'Battle Spears',
+      type: 'furniture',
+      subtype: 'fitness',
+      color: 'red',
+      elements: [ELEMENT_FIRE, ELEMENT_METAL],
+      increaseAmount: 50,
+      value: 1e24,
+      description: 'A pair of decorative blazing spears. Super manly! You feel invigorated just looking at them.',
+      useConsumes: false,
+      locked: true,
+      use: () => {
+        this.characterService.increaseAttribute('strength', 50);
+        this.characterService.yang += 100;
+        this.characterService.status.stamina.value += 100;
+        this.characterService.checkOverage();
+      },
+      shopable: false,
+    },
   ];
 
   items: { [key: string]: Item } = {

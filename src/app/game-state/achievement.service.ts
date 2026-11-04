@@ -2170,6 +2170,7 @@ export class AchievementService {
         return this.pantheonService.getGod(GOD_ARES)!.timesDefeated() > 0;
       },
       effect: () => {
+        this.inventoryService.unlockFurniture('Battle Spears');
         this.contemplationService.discoverConcept(CONCEPT_WAR);
       },
       unlocked: false,
