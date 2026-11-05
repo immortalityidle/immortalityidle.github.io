@@ -483,8 +483,8 @@ export class PantheonService {
     return god.discovered.set(true);
   }
 
-  challengeGod(god: God, rematchLevel = -1, ignoreSoloCheck = false) {
-    if (this.battleService!.enemies.length > 0 && !ignoreSoloCheck) {
+  challengeGod(god: God, rematchLevel = -1, calledAsAlly = false) {
+    if (this.battleService!.enemies.length > 0 && !calledAsAlly) {
       // don't start a divine duel while you're already in a fight
       return;
     }
@@ -521,8 +521,10 @@ export class PantheonService {
       });
     }
     const loot: Item[] = [];
-    for (const attribute of god.attributes) {
-      loot.push(this.generateToken(attribute, god.baseLootLevel + rematchLevel));
+    if (!calledAsAlly) {
+      for (const attribute of god.attributes) {
+        loot.push(this.generateToken(attribute, god.baseLootLevel + rematchLevel));
+      }
     }
 
     this.battleService!.addEnemy({

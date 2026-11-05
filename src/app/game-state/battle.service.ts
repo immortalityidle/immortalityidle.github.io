@@ -3224,7 +3224,7 @@ export class BattleService {
   }
 
   private defeatEffect(enemy: Enemy) {
-    if (enemy.divine) {
+    if (enemy.divine && enemy.loot.length !== 0) {
       this.pantheonService.defeatGod(enemy.baseName);
     }
     if (enemy.unlocksFurniture) {
