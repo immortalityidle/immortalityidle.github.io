@@ -6646,7 +6646,7 @@ export class ActivityService {
         if (this.characterService.staminaCap < 1e11) {
           this.characterService.staminaCap += 10;
         }
-        if (this.characterService.getAttributeValue('strength') < 1e65) {
+        if (this.characterService.getAttributeValue('strength') < 1e65 / 2) {
           this.logService.log(
             LogTopic.EVENT,
             'Hades calls out: "Feel free to take whatever you need from my lands, but you\'ll need a little more muscle on your frame if you want to get anything from these stones."'
