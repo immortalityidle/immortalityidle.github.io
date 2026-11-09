@@ -1,4 +1,4 @@
-import { Injectable, Injector, signal } from '@angular/core';
+import { inject, Injectable, Injector, signal } from '@angular/core';
 import { ActivityService, ActivityProperties } from './activity.service';
 import { BattleService, BattleProperties, RIGHT_HAND_TECHNIQUE, LEFT_HAND_TECHNIQUE } from './battle.service';
 import { LogProperties, LogService } from './log.service';
@@ -27,6 +27,7 @@ import {
 import { PantheonProperties, PantheonService } from './pantheon.service';
 import { BigNumberPipe } from '../pipes';
 import { ActivityType } from './activity';
+import { AppService } from '../app.service';
 
 const LOCAL_STORAGE_GAME_STATE_KEY = 'immortalityIdle2GameState';
 
@@ -88,6 +89,7 @@ export interface Panel {
   providedIn: 'root',
 })
 export class GameStateService {
+  private readonly appService = inject(AppService);
   lastSaved = new Date().getTime();
   isDarkMode = false;
   isExperimental = window.location.href.includes('experimental');
@@ -501,6 +503,9 @@ export class GameStateService {
     }
     this.importGame(gameStateSerialized);
     this.dialog.open(OfflineModalComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
       data: { earnedTicks: this.mainLoopService.earnedTicks },
       autoFocus: false,
     });
@@ -1822,7 +1827,7 @@ export class GameStateService {
     }
   }
 
-  getPanel(panelId: string) {
+  getPanel(panelId: string): Panel {
     for (const panel of this.panels) {
       if (panel.id === panelId) {
         return panel;
@@ -1833,6 +1838,7 @@ export class GameStateService {
       name: '',
       icon: '',
       panelHelp: '',
+      unlocked: false,
     };
   }
 }

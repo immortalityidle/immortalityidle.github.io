@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { FarmService } from '../game-state/farm.service';
 import { MatIcon } from '@angular/material/icon';
 import { NgOptimizedImage, PercentPipe, TitleCasePipe } from '@angular/common';
@@ -8,6 +8,7 @@ import { HomeService } from '../game-state/home.service';
 import { HellService } from '../game-state/hell.service';
 import { FarmOptionsModalComponent } from '../farm-options-modal/farm-options-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-farm-panel',
@@ -23,6 +24,8 @@ import { MatDialog } from '@angular/material/dialog';
   ],
 })
 export class FarmPanelComponent {
+  private readonly appService = inject(AppService);
+
   constructor(
     protected farmService: FarmService,
     protected homeService: HomeService,
@@ -76,7 +79,9 @@ export class FarmPanelComponent {
 
   protected farmOptions() {
     this.dialog.open(FarmOptionsModalComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

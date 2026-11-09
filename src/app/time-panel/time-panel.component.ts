@@ -10,6 +10,7 @@ import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-time-panel',
@@ -23,6 +24,7 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class TimePanelComponent {
+  private readonly appService = inject(AppService);
   protected activityService = inject(ActivityService);
   protected battleService = inject(BattleService);
   protected characterService = inject(CharacterService);
@@ -38,7 +40,9 @@ export class TimePanelComponent {
 
   timeOptions() {
     this.dialog.open(TimeOptionsPanelComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

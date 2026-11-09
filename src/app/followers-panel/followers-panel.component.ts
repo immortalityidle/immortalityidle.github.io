@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FollowerManagementPanelComponent } from '../follower-management-panel/follower-management-panel.component';
 import { CharacterService } from '../game-state/character.service';
@@ -10,6 +10,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
 import { InventoryService } from '../game-state/inventory.service';
 import { CdkDrag, CdkDragMove, CdkDragRelease, CdkDropList } from '@angular/cdk/drag-drop';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-followers-panel',
@@ -28,6 +29,7 @@ import { CdkDrag, CdkDragMove, CdkDragRelease, CdkDropList } from '@angular/cdk/
   ],
 })
 export class FollowersPanelComponent {
+  private readonly appService = inject(AppService);
   popupCounter = 0;
   private dragPositionX = 0;
   private dragPositionY = 0;
@@ -47,7 +49,9 @@ export class FollowersPanelComponent {
 
   followerOptionsClicked(): void {
     this.dialog.open(FollowerManagementPanelComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { pets: false },
       autoFocus: false,
     });

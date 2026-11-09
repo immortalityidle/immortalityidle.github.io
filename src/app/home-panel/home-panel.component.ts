@@ -45,7 +45,9 @@ export class HomePanelComponent {
     } else {
       this.storeService.setFurnitureIndex(furnitureIndex);
       this.dialog.open(FurnitureStoreModalComponent, {
-        width: '600px',
+        width: this.appService.isMobile() ? '100vw' : '600px',
+        maxWidth: this.appService.isMobile() ? '100vw' : '600px',
+        maxHeight: '100vh',
         data: { someField: 'foo' },
         autoFocus: false,
       });

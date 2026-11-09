@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, input } from '@angular/core';
+import { Component, forwardRef, inject, input, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivityPanelComponent } from 'src/app/activity-panel/activity-panel.component';
@@ -10,7 +10,7 @@ import { DivineDuelsPanelComponent } from 'src/app/divine-duels-panel/divine-due
 import { EquipmentPanelComponent } from 'src/app/equipment-panel/equipment-panel.component';
 import { FarmPanelComponent } from 'src/app/farm-panel/farm-panel.component';
 import { FollowersPanelComponent } from 'src/app/followers-panel/followers-panel.component';
-import { GameStateService } from 'src/app/game-state/game-state.service';
+import { GameStateService, Panel } from 'src/app/game-state/game-state.service';
 import { HealthPanelComponent } from 'src/app/health-panel/health-panel.component';
 import { HellStatusPanelComponent } from 'src/app/hell-status-panel/hell-status-panel.component';
 import { HomePanelComponent } from 'src/app/home-panel/home-panel.component';
@@ -56,8 +56,12 @@ import { TooltipDirective } from 'src/app/tooltip/tooltip.directive';
   templateUrl: './mobile-panel-wrapper.component.html',
   styleUrl: './mobile-panel-wrapper.component.less',
 })
-export class MobilePanelWrapperComponent {
+export class MobilePanelWrapperComponent implements OnInit {
   protected readonly gameStateService = inject(GameStateService);
   readonly panelId = input.required<string>();
-  //panel = this.gameStateService.getPanel(this.panelId());
+  panel: Panel | undefined = undefined;
+
+  ngOnInit(): void {
+    this.panel = this.gameStateService.getPanel(this.panelId());
+  }
 }

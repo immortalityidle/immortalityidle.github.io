@@ -67,6 +67,7 @@ import {
 } from './activity';
 import { AvatarModalComponent } from '../avatar-modal/avatar-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { AppService } from '../app.service';
 
 export interface ActivityProperties {
   autoRestart: boolean;
@@ -135,6 +136,7 @@ export interface DisplayActivity {
   providedIn: 'root',
 })
 export class ActivityService {
+  private readonly appService = inject(AppService);
   private dialog = inject(MatDialog);
   camelToTitle = new CamelToTitlePipe();
   bigNumberPipe: BigNumberPipe;
@@ -5826,6 +5828,9 @@ export class ActivityService {
     consequence: [
       () => {
         this.dialog.open(AvatarModalComponent, {
+          width: this.appService.isMobile() ? '100vw' : undefined,
+          maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+          maxHeight: '100vh',
           autoFocus: false,
         });
       },
@@ -5849,6 +5854,9 @@ export class ActivityService {
     consequence: [
       () => {
         this.dialog.open(AvatarModalComponent, {
+          width: this.appService.isMobile() ? '100vw' : undefined,
+          maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+          maxHeight: '100vh',
           autoFocus: false,
         });
       },

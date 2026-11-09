@@ -1,8 +1,10 @@
 <div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
-    <div tooltip="Test tooltip">
-        <span>
-            
-        </span>
+    <div class="sideHeader" tooltip="Test tooltip">
+        @if (panel !== undefined){
+            <span>
+                {{panel.name}}
+            </span>
+        }
     </div>
     <div class="panel">
         @if (panelId() === 'timePanel'){

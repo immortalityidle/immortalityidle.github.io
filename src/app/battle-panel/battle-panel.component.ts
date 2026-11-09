@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BattleOptionsPanelComponent } from '../battle-options-panel/battle-options-panel.component';
 import { BattleService } from '../game-state/battle.service';
@@ -7,6 +7,7 @@ import { NgOptimizedImage, TitleCasePipe } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { BigNumberPipe } from '../pipes';
 import { CharacterService } from '../game-state/character.service';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-battle-panel',
@@ -21,6 +22,7 @@ import { CharacterService } from '../game-state/character.service';
   ],
 })
 export class BattlePanelComponent {
+  private readonly appService = inject(AppService);
   protected Math = Math;
 
   constructor(
@@ -31,7 +33,9 @@ export class BattlePanelComponent {
 
   protected battleOptions() {
     this.dialog.open(BattleOptionsPanelComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { HomeService, Workstation } from '../game-state/home.service';
 import { MatDialog } from '@angular/material/dialog';
 import { HellService } from '../game-state/hell.service';
@@ -11,6 +11,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CraftingOptionsModalComponent } from '../crafting-options-modal/crafting-options-modal.component';
 import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-crafting-panel',
@@ -28,6 +29,7 @@ import { BigNumberPipe, CamelToTitlePipe } from '../pipes';
   ],
 })
 export class CraftingPanelComponent {
+  private readonly appService = inject(AppService);
   protected Math = Math;
 
   private dragPositionX = 0;
@@ -43,7 +45,9 @@ export class CraftingPanelComponent {
 
   protected craftingOptions() {
     this.dialog.open(CraftingOptionsModalComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -62,7 +66,9 @@ export class CraftingPanelComponent {
   protected addWorkstation() {
     this.homeService.updateAvailableWorkstations();
     this.dialog.open(WorkstationSelectionModalComponent, {
-      width: '600px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

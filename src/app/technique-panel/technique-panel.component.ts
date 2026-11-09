@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import {
   BattleService,
   EFFECT_CORRUPTION,
@@ -24,6 +24,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TechniqueOptionsModalComponent } from '../technique-options-modal/technique-options-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ContemplationService } from '../game-state/contemplation.service';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-technique-panel',
@@ -37,6 +38,7 @@ import { ContemplationService } from '../game-state/contemplation.service';
   styleUrl: './technique-panel.component.less',
 })
 export class TechniquePanelComponent {
+  private readonly appService = inject(AppService);
   effectDescriptions: { [key: string]: string } = {};
   conceptDescriptions: { [key: string]: string } = {};
 
@@ -80,7 +82,9 @@ export class TechniquePanelComponent {
 
   optionsClicked() {
     this.dialog.open(TechniqueOptionsModalComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

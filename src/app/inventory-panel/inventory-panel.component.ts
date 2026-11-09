@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { CharacterService } from '../game-state/character.service';
 import { EquipmentPosition } from '../game-state/character.service';
 import { InventoryService, instanceOfEquipment } from '../game-state/inventory.service';
@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LOOT_TYPE_GEM } from '../game-state/battle.service';
 import { FollowersService } from '../game-state/followers.service';
 import { BigNumberPipe } from '../pipes';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-inventory-panel',
@@ -31,6 +32,7 @@ import { BigNumberPipe } from '../pipes';
   ],
 })
 export class InventoryPanelComponent {
+  private readonly appService = inject(AppService);
   equipmentSlots: string[];
   instanceOfEquipment = instanceOfEquipment;
   dragPositionX = 0;
@@ -332,7 +334,9 @@ export class InventoryPanelComponent {
 
   optionsClicked() {
     this.dialog.open(InventoryOptionsModalComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

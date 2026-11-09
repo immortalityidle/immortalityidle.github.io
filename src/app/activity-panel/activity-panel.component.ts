@@ -13,6 +13,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { ActivityPanelService } from './activity-panel.service';
 import { ActivityOptionsModalComponent } from '../activity-options-modal/activity-options-modal.component';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-activity-panel',
@@ -27,6 +28,7 @@ import { ActivityOptionsModalComponent } from '../activity-options-modal/activit
   ],
 })
 export class ActivityPanelComponent {
+  private readonly appService = inject(AppService);
   protected Math = Math;
 
   protected activityService = inject(ActivityService);
@@ -140,7 +142,9 @@ export class ActivityPanelComponent {
 
   optionsClicked() {
     this.dialog.open(ActivityOptionsModalComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

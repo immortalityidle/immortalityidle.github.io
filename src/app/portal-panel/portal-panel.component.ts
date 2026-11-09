@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { GameStateService } from '../game-state/game-state.service';
 import { ActivityService } from '../game-state/activity.service';
 import { CharacterService } from '../game-state/character.service';
@@ -12,6 +12,7 @@ import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { CamelToTitlePipe } from '../pipes';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-portal-panel',
@@ -25,6 +26,7 @@ import { CamelToTitlePipe } from '../pipes';
   ],
 })
 export class PortalPanelComponent {
+  private readonly appService = inject(AppService);
   Math: Math;
   dragPositionX = 0;
   dragPositionY = 0;
@@ -58,7 +60,9 @@ export class PortalPanelComponent {
       dialogProperties.imageFiles = ['assets/images/activities/' + activity.imageBaseName + activity.level + '.png'];
     }
     this.dialog.open(TextPanelComponent, {
-      width: '400px',
+      width: this.appService.isMobile() ? '100vw' : '600px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '600px',
+      maxHeight: '100vh',
       data: dialogProperties,
       autoFocus: false,
     });

@@ -2624,7 +2624,7 @@ export class BattleService {
         this.bigNumberPipe.transform(damage) +
         ' damage.';
     }
-    if (lifesteal) {
+    if (lifesteal && this.characterService.status.health.value > 0) {
       const healAmount = Math.min(this.characterService.status.health.max * lifesteal * 0.01, enemyHealth, damage);
       this.characterService.status.health.value += healAmount;
       this.characterService.checkOverage();

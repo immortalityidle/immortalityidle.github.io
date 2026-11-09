@@ -8,11 +8,13 @@ import { BattleService } from '../game-state/battle.service';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { MainLoopService } from '../game-state/main-loop.service';
 import { BigNumberPipe } from '../pipes';
+import { AppService } from '../app.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ActivityPanelService {
+  private readonly appService = inject(AppService);
   private activityService = inject(ActivityService);
   private battleService = inject(BattleService);
   private dialog = inject(MatDialog);
@@ -79,7 +81,9 @@ export class ActivityPanelService {
       dialogProperties.imageFiles = ['assets/images/activities/' + activity.imageBaseName + activity.level + '.png'];
     }
     this.dialog.open(TextPanelComponent, {
-      width: '400px',
+      width: this.appService.isMobile() ? '100vw' : '400px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '400px',
+      maxHeight: '100vh',
       data: dialogProperties,
       autoFocus: false,
     });

@@ -1,4 +1,4 @@
-import { Injectable, Injector, signal } from '@angular/core';
+import { inject, Injectable, Injector, signal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { CharacterService, FORM_BULL, FORM_EAGLE, FORM_SWAN } from './character.service';
 import { InventoryService } from './inventory.service';
@@ -53,6 +53,7 @@ import {
   PANTHEON_CELESTIAL_EMPIRE,
   PantheonService,
 } from './pantheon.service';
+import { AppService } from '../app.service';
 
 export interface Achievement {
   name: string;
@@ -94,6 +95,7 @@ export interface Memory {
   providedIn: 'root',
 })
 export class AchievementService {
+  private readonly appService = inject(AppService);
   gameStateService?: GameStateService;
   unlockedAchievements: string[] = [];
   disabledAchievements: string[] = [];
@@ -2307,7 +2309,9 @@ export class AchievementService {
     }
 
     const dialogRef = this.dialog.open(TextPanelComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { titleText: memory.title, bodyTextArray: memory.text, imageFiles: imageFiles },
       autoFocus: false,
     });
@@ -2318,6 +2322,9 @@ export class AchievementService {
 
   reviewMemories() {
     this.dialog.open(MemoriesPanelComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
       data: {},
       autoFocus: false,
     });

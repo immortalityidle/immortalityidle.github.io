@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { LogService, LogTopic } from '../game-state/log.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LogFilterPanelComponent } from '../log-filter-panel/log-filter-panel.component';
@@ -6,6 +6,7 @@ import { GameStateService } from '../game-state/game-state.service';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-log-panel',
@@ -14,6 +15,8 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   imports: [forwardRef(() => MatIcon), forwardRef(() => NgClass), forwardRef(() => TooltipDirective)],
 })
 export class LogPanelComponent {
+  private readonly appService = inject(AppService);
+
   constructor(public logService: LogService, public gameStateService: GameStateService, public dialog: MatDialog) {}
 
   topicFilter(event: Event, topic: LogTopic) {
@@ -23,7 +26,9 @@ export class LogPanelComponent {
 
   logFilterClicked(): void {
     this.dialog.open(LogFilterPanelComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });

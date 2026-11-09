@@ -12,6 +12,7 @@ import { TextPanelComponent } from '../text-panel/text-panel.component';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-schedule-panel',
@@ -26,6 +27,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
   ],
 })
 export class SchedulePanelComponent {
+  private readonly appService = inject(AppService);
   protected activityService = inject(ActivityService);
   protected battleService = inject(BattleService);
   protected characterService = inject(CharacterService);
@@ -41,7 +43,9 @@ export class SchedulePanelComponent {
 
   scheduleOptions() {
     this.dialog.open(TimeOptionsPanelComponent, {
-      width: '700px',
+      width: this.appService.isMobile() ? '100vw' : '700px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '700px',
+      maxHeight: '100vh',
       data: { someField: 'foo' },
       autoFocus: false,
     });
@@ -205,7 +209,9 @@ export class SchedulePanelComponent {
       dialogProperties.imageFiles = ['assets/images/activities/' + activity.imageBaseName + activity.level + '.png'];
     }
     this.dialog.open(TextPanelComponent, {
-      width: '400px',
+      width: this.appService.isMobile() ? '100vw' : '600px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '600px',
+      maxHeight: '100vh',
       data: dialogProperties,
       autoFocus: false,
     });

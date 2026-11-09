@@ -2,34 +2,39 @@
 
 .wrapper {
     max-height: 50vh;
+    min-height: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    white-space: nowrap;
 }
 
 .panel {
     background-color: var(--panelBackground);
     display: flex;
     flex-direction: column;
-    top: 0px;
-    left: 0px;
     width: 100%;
     height: 100%;
     border: 2px solid var(--panelBorder);
     border-radius: 3px;
     box-sizing: border-box;
     flex: auto;
+    overflow: auto;
 }
 
-.panelHeader {
-    top: 0px;
-    left: 0px;
-    width: 100%;
+.sideHeader {
+    width: 22px;
     background-color: var(--panelHeader);
-    border-bottom: 1px solid var(--panelBorder);
+    border-right: 1px solid var(--panelBorder);
     color: var(--bodyText);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     margin: 0px;
+    padding-top: 10px;
     z-index: 10;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
 }
 
 .panelComponent {

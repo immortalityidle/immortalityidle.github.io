@@ -9,13 +9,15 @@
                     <mat-icon>menu</mat-icon>
                 </button>
                 <div class="app-title">
-                    Immortality Idle 2
+                    <span>
+                        Immortality Idle 2
+                    </span>
                     <span class="versionNumber" (click)="commonButtonsService.changelogClicked()">v{{applicationVersion}}</span>
                 </div>
             </div>
             <div class="main-part">
                 @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
-                    <app-mobile-panel-wrapper [panelId]="panelLayout.id"/>
+                    <app-mobile-panel-wrapper class="panelWrapper" [panelId]="panelLayout.id"/>
                 }
             </div>
         </mat-drawer-content>

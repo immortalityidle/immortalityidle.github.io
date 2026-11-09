@@ -1,4 +1,4 @@
-import { Injectable, Injector, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Injector, signal, WritableSignal } from '@angular/core';
 import { LogService, LogTopic } from './log.service';
 import { MainLoopService } from './main-loop.service';
 import { ActivityService } from './activity.service';
@@ -16,6 +16,7 @@ import {
   CONCEPT_WEALTH,
   ContemplationService,
 } from './contemplation.service';
+import { AppService } from '../app.service';
 
 export type CharacterAttribute = {
   [key: string]: number | undefined;
@@ -201,6 +202,7 @@ export const FORM_SWAN = 'swan';
   providedIn: 'root',
 })
 export class CharacterService {
+  private readonly appService = inject(AppService);
   private camelToTitlePipe = new CamelToTitlePipe();
   private bigNumberPipe: BigNumberPipe;
   private activityService?: ActivityService;
@@ -1131,7 +1133,9 @@ export class CharacterService {
         this.dialogRef.close();
       }
       this.dialogRef = this.dialog.open(LifeSummaryComponent, {
-        width: '600px',
+        width: this.appService.isMobile() ? '100vw' : '600px',
+        maxWidth: this.appService.isMobile() ? '100vw' : '600px',
+        maxHeight: '100vh',
         data: { causeOfDeath: causeOfDeath, attributeGains: attributeGains },
         autoFocus: false,
       });

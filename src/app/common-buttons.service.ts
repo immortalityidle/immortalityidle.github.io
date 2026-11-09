@@ -28,31 +28,43 @@ export class CommonButtonsService {
     this.dialog.open(ChangelogPanelComponent, {
       autoFocus: false,
       width: this.appService.isMobile() ? '100vw' : '600px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '600px',
+      maxHeight: '100vh',
     });
   }
 
   tutorialClicked() {
     this.dialog.open(TutorialPanelComponent, {
       autoFocus: false,
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
     });
   }
 
   storeClicked(): void {
     this.dialog.open(StoreModalComponent, {
-      width: '600px',
+      width: this.appService.isMobile() ? '100vw' : '600px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '600px',
+      maxHeight: '100vh',
       autoFocus: false,
     });
   }
 
   manualStoreClicked(): void {
     this.dialog.open(ManualStoreModalComponent, {
-      width: '600px',
+      width: this.appService.isMobile() ? '100vw' : '600px',
+      maxWidth: this.appService.isMobile() ? '100vw' : '600px',
+      maxHeight: '100vh',
       autoFocus: false,
     });
   }
 
   optionsClicked(): void {
     this.dialog.open(OptionsModalComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
       autoFocus: false,
     });
   }
@@ -60,18 +72,27 @@ export class CommonButtonsService {
   ascensionStoreClicked() {
     this.storeService.updateAscensions();
     this.dialog.open(AscensionStoreModalComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
       autoFocus: false,
     });
   }
 
   statisticsClicked() {
     this.dialog.open(StatisticsPanelComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
       autoFocus: false,
     });
   }
 
   achievementsClicked() {
     this.dialog.open(AchievementPanelComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
       autoFocus: false,
     });
   }
