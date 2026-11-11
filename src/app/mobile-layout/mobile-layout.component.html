@@ -16,8 +16,26 @@
                 </div>
             </div>
             <div class="main-part">
-                @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
-                    <app-mobile-panel-wrapper class="panelWrapper" [panelId]="panelLayout.id"/>
+                @if (characterService.inSeclusion()){
+                    <div class="seclusionDiv">
+                        <div>
+                        <span>You are cultivating in a state of seclusion, tuning out the external world to focus on your divine progression.</span>
+                        </div>
+                        <div>
+                        <span>
+                            Days in seclusion: {{characterService.daysInSeclusionDisplay() | bigNumber}}
+                        </span>
+                        </div>
+                        <div>
+                        <span>
+                            <button (click)="characterService.endSeclusion()">Exit Seclusion</button>
+                        </span>
+                        </div>
+                    </div>
+                } @else {
+                    @for (panelLayout of gameStateService.layout() ?? []; track panelLayout.id){
+                        <app-mobile-panel-wrapper class="panelWrapper" [panelId]="panelLayout.id"/>
+                    }
                 }
             </div>
         </mat-drawer-content>

@@ -1,3 +1,11 @@
+@if(!gameStateService.allPanelsUsed){
+    <div class="menu-item" (click)="gameStateService.addLayoutPanel()">
+        <mat-icon tooltip="Add a game panel." class="iconButton" aria-label="Tutorial" aria-hidden="false">
+            splitscreen_add
+        </mat-icon>
+        Add Game Panel
+    </div>
+}
 <div class="menu-item" (click)="commonButtonsService.tutorialClicked()">
     <mat-icon tooltip="Confused?<br>Click here for a tutorial." class="iconButton" aria-label="Tutorial" aria-hidden="false">
         help
@@ -43,9 +51,56 @@
     Ascension Techniques
 </div>
 }
+@if (achievementService.memoriesUnlocked()) {
+    <div class="menu-item" (click)="achievementService.reviewMemories()">
+        <mat-icon tooltip="Review Your Memories" class="iconButton" aria-label="Memories" aria-hidden="false"
+        (click)="achievementService.reviewMemories()">
+        psychology
+        </mat-icon>
+        Memories
+    </div>
+}
 <div class="menu-item" (click)="commonButtonsService.saveClicked()">
     <mat-icon tooltip="Save<br>The game autosaves every few minutes, but click here if you want to manually save the game right now." class="iconButton" aria-label="Save" aria-hidden="false">
         save
     </mat-icon>
     Save
 </div>
+<div class="menu-item" (click)="commonButtonsService.creditsClicked()">
+    <mat-icon tooltip="Who made this awesome free game?" class="iconButton" aria-label="Credits" aria-hidden="false">
+        contact_page
+    </mat-icon>
+    Credits
+</div>
+<div class="menu-item">
+    <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" tooltip="Immortality Idle Discord.">
+        <mat-icon class="iconButton" aria-label="Discord Link" aria-hidden="false">
+            chat
+        </mat-icon>
+        Discord Link
+    </a>
+</div>
+@if (characterService.immortal() && !hellService.inHell() && !hellService.hellUnlocked() && !characterService.god()) {
+    <div class="menu-item" (click)="gameStateService.joinTheGodsClick()">
+        <mat-icon tooltip="Join the gods" class="iconButton" aria-label="Join the Gods" aria-hidden="false">
+            mountain_steam
+        </mat-icon>
+        Join the Gods
+    </div>
+}
+@if (characterService.seclusionEnabled() && !characterService.inSeclusion()) {
+    <div class="menu-item" (click)="characterService.startSeclusion()">
+        <mat-icon tooltip="Enter a state of seclusion, avoiding all distractions from the external world.<br>Time will flow at an accelerated rate and you will continue with your established schedule, but you will not engage in any battles.<br>You will not be able to see or interact with most game functions until you leave seclusion." class="iconButton" aria-label="Enter Seclusion" aria-hidden="false">
+            self_improvement
+        </mat-icon>
+        Enter Seclusion
+    </div>
+}
+@if (mainLoopService.playMusic){
+    <div class="menu-item" (click)="mainLoopService.nextTrack()">
+        <mat-icon tooltip="Now Playing: {{mainLoopService.nowPlaying}}" class="iconButton" aria-label="Next Music Track" aria-hidden="false">
+            music_note
+        </mat-icon>
+        Next Music Track
+    </div>
+}

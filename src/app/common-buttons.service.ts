@@ -105,6 +105,9 @@ export class CommonButtonsService {
   creditsClicked() {
     this.gameStateService.creditsClicked = true;
     this.dialog.open(CreditsModalComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
       autoFocus: false,
     });
   }

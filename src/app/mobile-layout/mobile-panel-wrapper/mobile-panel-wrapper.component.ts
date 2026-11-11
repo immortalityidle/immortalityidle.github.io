@@ -64,4 +64,24 @@ export class MobilePanelWrapperComponent implements OnInit {
   ngOnInit(): void {
     this.panel = this.gameStateService.getPanel(this.panelId());
   }
+
+  previousPanelClick() {
+    this.gameStateService.changeLayoutPanelbyId(this.panelId(), true);
+  }
+
+  nextPanelClick() {
+    this.gameStateService.changeLayoutPanelbyId(this.panelId());
+  }
+
+  upPanelClick() {
+    this.gameStateService.shiftLayoutPanel(this.panelId(), true);
+  }
+
+  downPanelClick() {
+    this.gameStateService.shiftLayoutPanel(this.panelId(), false);
+  }
+
+  closePanelClick() {
+    this.gameStateService.removeLayoutPanelbyId(this.panelId());
+  }
 }

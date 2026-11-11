@@ -7,7 +7,6 @@
     display: flex;
     flex-direction: row;
     flex-grow: 1;
-    white-space: nowrap;
 }
 
 .panel {
@@ -24,15 +23,20 @@
 }
 
 .sideHeader {
-    width: 22px;
+    width: 23px;
     background-color: var(--panelHeader);
     border-right: 1px solid var(--panelBorder);
     color: var(--bodyText);
     font-size: 12px;
     font-weight: 400;
     margin: 0px;
-    padding-top: 10px;
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+}
+
+.sideHeaderTitle {
+    padding-top: 10px;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
 }
@@ -42,4 +46,21 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+.sidebarIconButton {
+  border: 1px var(--bodyText) solid;
+  border-radius: 2px;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  min-height: 20px;
+  min-width: 20px;
+  font-size: 20px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  margin-left: 1px;
+  margin-right: 1px;
+  vertical-align: middle;
+  color: var(--bodyText);
 }

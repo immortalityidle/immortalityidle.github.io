@@ -64,6 +64,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('window:beforeunload', [])
+  onBeforeUnload(): void {
+    this.gameStateService.savetoLocalStorage();
+  }
+
   constructor(
     private mainLoopService: MainLoopService,
     private gameStateService: GameStateService,

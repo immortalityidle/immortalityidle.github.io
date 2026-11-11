@@ -368,11 +368,25 @@ export class GameStateService {
     }
   }
 
+  changeLayoutPanelbyId(panelId: string, backwardSearch: boolean = false) {
+    const index = this.layout()?.findIndex(entry => entry.id === panelId);
+    if (index !== undefined && index >= 0) {
+      this.changeLayoutPanel(index, backwardSearch);
+    }
+  }
+
   removeLayoutPanel(index: number) {
     const newLayout = JSON.parse(JSON.stringify(this.layout()));
     newLayout.splice(index, 1);
     this.layout.set(newLayout);
     this.updateAllPanelsUsed();
+  }
+
+  removeLayoutPanelbyId(panelId: string) {
+    const index = this.layout()?.findIndex(entry => entry.id === panelId);
+    if (index !== undefined && index >= 0) {
+      this.removeLayoutPanel(index);
+    }
   }
 
   addLayoutPanel(newPanelId = '', x = 0, y = 0, w = 30, h = 20) {
@@ -405,6 +419,31 @@ export class GameStateService {
     this.layout.set(newLayout);
     this.updateAllPanelsUsed();
     this.newPanelAvailable.set(false);
+  }
+
+  shiftLayoutPanel(panelId: string, upwards: boolean) {
+    const index = this.layout()?.findIndex(entry => entry.id === panelId);
+    if (index === undefined || index < 0) {
+      return;
+    }
+    if (upwards && index === 0) {
+      return;
+    }
+    if (!upwards && index === this.layout()!.length - 1) {
+      return;
+    }
+
+    const newLayout = JSON.parse(JSON.stringify(this.layout()));
+    const [entry] = newLayout.splice(index, 1);
+    let newIndex = index;
+    if (upwards) {
+      newIndex--;
+    } else {
+      newIndex++;
+    }
+    newLayout.splice(newIndex, 0, entry);
+    this.layout.set(newLayout);
+    this.updateAllPanelsUsed();
   }
 
   getNextUnusedPanelId(startIndex: number, backwards: boolean = false) {

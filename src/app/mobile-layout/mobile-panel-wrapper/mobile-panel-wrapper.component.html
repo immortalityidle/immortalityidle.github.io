@@ -1,9 +1,30 @@
 <div class="wrapper" [ngClass]="{'darkMode': gameStateService.isDarkMode}">
-    <div class="sideHeader" tooltip="Test tooltip">
+    <div class="sideHeader">
         @if (panel !== undefined){
-            <span>
-                {{panel.name}}
-            </span>
+            <mat-icon>
+                {{panel.icon}}
+            </mat-icon>
+            <mat-icon [tooltip]="panel.panelHelp">
+                help
+            </mat-icon>
+            <span class = "sideHeaderTitle">{{panel.name}}</span>
+            <mat-icon class="sidebarIconButton" (click)="closePanelClick()" tooltip="Hide this panel">
+                close
+            </mat-icon>
+            <mat-icon class="sidebarIconButton" (click)="upPanelClick()" tooltip="Move this panel up">
+                arrow_upward
+            </mat-icon>
+            <mat-icon class="sidebarIconButton" (click)="downPanelClick()" tooltip="Move this panel down">
+                arrow_downward
+            </mat-icon>
+            @if(!gameStateService.allPanelsUsed){
+                <mat-icon class="sidebarIconButton" (click)="previousPanelClick()" tooltip="Display the previous panel">
+                    arrow_back
+                </mat-icon>
+                <mat-icon class="sidebarIconButton" (click)="nextPanelClick()" tooltip="Display the next panel">
+                    arrow_forward
+                </mat-icon>
+            }
         }
     </div>
     <div class="panel">

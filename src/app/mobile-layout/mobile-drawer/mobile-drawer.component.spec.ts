@@ -8,9 +8,8 @@ describe('MobileDrawerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MobileDrawerComponent]
-    })
-    .compileComponents();
+      imports: [MobileDrawerComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MobileDrawerComponent);
     component = fixture.componentInstance;
