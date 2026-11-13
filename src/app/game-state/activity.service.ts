@@ -855,6 +855,9 @@ export class ActivityService {
     if (yinYangEffect === YinYangEffect.Balance) {
       return '\n\nPromotes a balance of Yin and Yang energies.';
     }
+    if (yinYangEffect === YinYangEffect.Both) {
+      return '\n\nPromotes both Yin and Yang energies.';
+    }
     return '';
   }
 
@@ -2384,7 +2387,7 @@ export class ActivityService {
       'Work as a spiritual chef, devoting great energy to creating food that feeds both body and soul. If you have a cooking workstation of your own, you can even make some meals for yourself.',
       'Create the most divine meals. You will need a cooking workstation worthy of you.',
     ],
-    yinYangEffect: [YinYangEffect.None, YinYangEffect.Balance, YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.None, YinYangEffect.None, YinYangEffect.None],
     consequenceDescription: [
       'Increases charisma and intelligence and provides a little money.',
       'Increases charisma, intelligence, and spirituality.',
@@ -2489,7 +2492,7 @@ export class ActivityService {
       'Create useful and beautiful metal objects. You might produce a decent weapon occasionally.',
       'Work the forges like a true master.',
     ],
-    yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both, YinYangEffect.Both, YinYangEffect.Both, YinYangEffect.Both],
     consequenceDescription: [
       'Increases strength and toughness and provides a little money.',
       'Increases strength, toughness, and money.',
@@ -3279,7 +3282,7 @@ export class ActivityService {
       'Work on your own in creating formation flags, talismans, arrays, and other essential parts of kits that can help you in battle.<br><br>This requires expertise in many other professions.',
       'Masterfully create formation flags, talismans, arrays, and other essential parts of kits that can help you in battle.',
     ],
-    yinYangEffect: [YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance, YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both, YinYangEffect.Both, YinYangEffect.Both, YinYangEffect.Both],
     consequenceDescription: [
       'If you have a formation workstation, you can make some weak formations kits.',
       'If you have a formation workstation, you can make some simple formations kits.',
@@ -3356,7 +3359,7 @@ export class ActivityService {
             this.characterService.getAttributeValue('woodwork') +
             this.characterService.getAttributeValue('leatherwork') +
             this.characterService.getAttributeValue('formationMastery');
-          money *= this.incomeMultiplier;
+          money *= this.incomeMultiplier * 5000;
           money = this.characterService.updateMoney(money);
           this.FormationCreation.lastIncome = money;
         }
@@ -3587,7 +3590,7 @@ export class ActivityService {
     description: [
       'Smelt metal ores and fuel into usable metal. You can even keep the metal bars if you have a smelter of your own.',
     ],
-    yinYangEffect: [YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both],
     consequenceDescription: [
       'Increases toughness and intelligence. If you have metal ores, you can make them into bars.',
     ],
@@ -3889,7 +3892,7 @@ export class ActivityService {
     imageBaseName: 'corecultivation',
     activityType: ActivityType.CoreCultivation,
     description: ['Focus on the development of your soul core.'],
-    yinYangEffect: [YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both],
     consequenceDescription: [
       'A very advanced cultivation technique. Make sure you have achieved a deep understanding of elemental balance before attempting this. Gives you a small chance of increasing your Qi capabilities.',
     ],
@@ -4080,7 +4083,7 @@ export class ActivityService {
     imageBaseName: 'infuseequipment',
     activityType: ActivityType.InfuseEquipment,
     description: ['Infuse the power of a gem into your equipment.'],
-    yinYangEffect: [YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both],
     consequenceDescription: ['An advanced magical technique.'],
     consequence: [
       () => {
@@ -4117,7 +4120,7 @@ export class ActivityService {
     description: [
       'Direct your magical energy into reinforcing your physical body, making it healthier and more able to sustain damage without falling.',
     ],
-    yinYangEffect: [YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both],
     consequenceDescription: ['Make sure you have enough magical power before attempting this.'],
     consequence: [
       () => {
@@ -4164,7 +4167,7 @@ export class ActivityService {
     imageBaseName: 'extendlife',
     activityType: ActivityType.ExtendLife,
     description: ['Direct your magical energy into extending your lifespan, making you live longer.'],
-    yinYangEffect: [YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both],
     consequenceDescription: ['Make sure you have enough magical power before attempting this.'],
     consequence: [
       () => {
@@ -4321,7 +4324,7 @@ export class ActivityService {
     description: [
       'Hone every fiber of your being to martial sepremacy. Your experience in the Hell of Mirrors allowed you to examine your own combat form and understand how to improve it. Now all you need is practice.',
     ],
-    yinYangEffect: [YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.Both],
     consequenceDescription: ['Trains your Combat Mastery.'],
     consequence: [
       () => {
@@ -4625,7 +4628,7 @@ export class ActivityService {
     description: [
       'Manipulate absorbed energy, allowing you to use an Energy Manipulator workstation to convert energy between different forms.',
     ],
-    yinYangEffect: [YinYangEffect.Balance],
+    yinYangEffect: [YinYangEffect.None],
     consequenceDescription: ['Use an Energy Manipulator workstation.'],
     consequence: [
       () => {

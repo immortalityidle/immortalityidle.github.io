@@ -12,6 +12,7 @@ import { MobileLayoutComponent } from './mobile-layout/mobile-layout.component';
 import { StandardLayoutComponent } from './standard-layout/standard-layout.component';
 import { AppService } from './app.service';
 import { MatIconRegistry } from '@angular/material/icon';
+import { Overlay } from '@angular/cdk/overlay';
 
 const mobileBreakpoint = 500;
 
@@ -69,6 +70,15 @@ export class AppComponent implements OnInit, OnDestroy {
     this.gameStateService.savetoLocalStorage();
   }
 
+  @HostListener('touchstart')
+  @HostListener('click')
+  hideTooltip() {
+    while (this.gameStateService.overlayRefs.length !== 0) {
+      const ref = this.gameStateService.overlayRefs.pop();
+      ref.detach();
+    }
+  }
+
   constructor(
     private mainLoopService: MainLoopService,
     private gameStateService: GameStateService,
@@ -79,7 +89,8 @@ export class AppComponent implements OnInit, OnDestroy {
     public inventoryService: InventoryService,
     public homeService: HomeService,
     public farmService: FarmService,
-    public iconRegistry: MatIconRegistry
+    public iconRegistry: MatIconRegistry,
+    private overlay: Overlay
   ) {
     iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
   }

@@ -1338,7 +1338,9 @@ export class CharacterService {
         this.attributes[attribute].attributeGroup === DIVINE_ATTRIBUTES,
         petMultiplier
       );
-      const concepts = this.contemplationService.concepts.filter(concept => concept.effect.includes(keys[key]));
+      const concepts = this.contemplationService.concepts.filter(
+        concept => concept.progress > 0 && concept.effect.includes(keys[key])
+      );
       let conceptMultiplier = 1;
       for (const concept of concepts) {
         conceptMultiplier += Math.log10(10 + concept.progress);
@@ -1496,7 +1498,7 @@ export class CharacterService {
 
   updateMoney(amount: number, justSetIt = false): number {
     if (justSetIt) {
-      if (this.showUpdateAnimations) {
+      if (this.showUpdateAnimations && !this.appService.isMobile()) {
         this.moneyUpdates = amount - this.money;
       }
       this.money = amount;
@@ -1512,7 +1514,7 @@ export class CharacterService {
         amount /= divider;
       }
       this.money += amount;
-      if (this.showUpdateAnimations) {
+      if (this.showUpdateAnimations && !this.appService.isMobile()) {
         this.moneyUpdates += amount;
       }
     }

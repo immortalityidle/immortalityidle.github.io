@@ -113,6 +113,9 @@ export class GameStateService {
   avatarChallengeDisplay = signal<string>('');
   completedAvatarChallenges: string[] = [];
   private bigNumberPipe: BigNumberPipe;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  overlayRefs: any[] = [];
+  tooltipTimeoutId = 0;
 
   panels: Panel[] = [
     {
@@ -389,7 +392,7 @@ export class GameStateService {
     }
   }
 
-  addLayoutPanel(newPanelId = '', x = 0, y = 0, w = 30, h = 20) {
+  addLayoutPanel(newPanelId = '', x = 0, y = 0, w = 30, h = 20, index = -1) {
     const currentLayout = this.layout();
     if (currentLayout && newPanelId === '') {
       // sanity check that the panel getting added isn't already in the layout
@@ -409,13 +412,18 @@ export class GameStateService {
       // no unused panels, bail out
       return;
     }
-    newLayout.push({
+    const newElement = {
       id: panelId,
       x: x,
       y: y,
       w: w,
       h: h,
-    });
+    };
+    if (index === -1) {
+      newLayout.push(newElement);
+    } else {
+      newLayout.splice(index, 0, newElement);
+    }
     this.layout.set(newLayout);
     this.updateAllPanelsUsed();
     this.newPanelAvailable.set(false);

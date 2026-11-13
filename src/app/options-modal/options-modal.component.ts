@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef, inject } from '@angular/core';
 import { MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { CharacterService } from '../game-state/character.service';
 import { FollowersService } from '../game-state/followers.service';
@@ -11,6 +11,7 @@ import { FarmService } from '../game-state/farm.service';
 import { FormsModule } from '@angular/forms';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { MatIcon } from '@angular/material/icon';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-options-modal',
@@ -19,6 +20,8 @@ import { MatIcon } from '@angular/material/icon';
   imports: [forwardRef(() => FormsModule), forwardRef(() => TooltipDirective), MatIcon, MatDialogClose],
 })
 export class OptionsModalComponent {
+  protected appService = inject(AppService);
+
   constructor(
     public homeService: HomeService,
     public farmService: FarmService,

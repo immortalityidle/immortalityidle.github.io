@@ -244,9 +244,9 @@ export class AchievementService {
       effect: () => {
         this.mainLoopService.timeUnlocked = true;
         this.gameStateService!.unlockPanel('timePanel');
-        this.gameStateService!.addLayoutPanel('timePanel', 0, 8, 30, 8);
+        this.gameStateService!.addLayoutPanel('timePanel', 0, 8, 30, 8, 2);
         this.gameStateService!.unlockPanel('schedulePanel');
-        this.gameStateService!.addLayoutPanel('schedulePanel', 0, 14, 30, 14);
+        this.gameStateService!.addLayoutPanel('schedulePanel', 0, 14, 30, 14, 3);
       },
       unlocked: false,
     },

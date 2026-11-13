@@ -6,6 +6,7 @@ export enum YinYangEffect {
   Yang,
   Balance,
   None,
+  Both,
 }
 
 export enum ActivityType {

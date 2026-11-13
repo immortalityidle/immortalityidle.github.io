@@ -2,6 +2,7 @@ import { ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy, On
 import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { TooltipComponent } from './tooltip.component';
+import { GameStateService } from '../game-state/game-state.service';
 
 // We want this at the module level, so that it's a shared property with all tooltips, then we
 // can make it so only the first tooltip in the stack is shown.
@@ -13,20 +14,20 @@ let tooltipShown = false;
 })
 export class TooltipDirective implements OnInit, OnDestroy {
   @Input('tooltip') text = '';
-  // @ts-expect-error defined in ngOnInit instead of constructor
-  private overlayRef: OverlayRef;
-  timeoutId = 0;
   delay = 300;
+  // @ts-expect-error defined in ngOnInit instead of constructor
+  overlayRef: OverlayRef;
 
   constructor(
     private overlay: Overlay,
     private overlayPositionBuilder: OverlayPositionBuilder,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private gameStateService: GameStateService
   ) {}
 
   ngOnDestroy(): void {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
+    if (this.gameStateService.tooltipTimeoutId) {
+      clearTimeout(this.gameStateService.tooltipTimeoutId);
     }
     this.overlayRef.detach();
     this.overlayRef.dispose();
@@ -49,7 +50,6 @@ export class TooltipDirective implements OnInit, OnDestroy {
         offsetY: 8,
       },
     ]);
-
     this.overlayRef = this.overlay.create({ positionStrategy });
   }
 
@@ -62,31 +62,37 @@ export class TooltipDirective implements OnInit, OnDestroy {
     }
     tooltipShown = true;
 
-    window.clearTimeout(this.timeoutId);
-    this.timeoutId = window.setTimeout(() => {
+    window.clearTimeout(this.gameStateService.tooltipTimeoutId);
+    this.gameStateService.tooltipTimeoutId = window.setTimeout(() => {
       if (this.text.trim().length !== 0) {
-        const tooltipRef: ComponentRef<TooltipComponent> = this.overlayRef.attach(
-          new ComponentPortal(TooltipComponent)
-        );
-        tooltipRef.instance.text = this.text;
+        if (!this.overlayRef.hasAttached()) {
+          const tooltipRef: ComponentRef<TooltipComponent> = this.overlayRef.attach(
+            new ComponentPortal(TooltipComponent)
+          );
+          tooltipRef.instance.text = this.text;
+          while (this.gameStateService.overlayRefs.length !== 0) {
+            const ref = this.gameStateService.overlayRefs.pop();
+            ref.detach();
+          }
+          this.gameStateService.overlayRefs.push(this.overlayRef);
+        }
       }
     }, this.delay);
   }
 
   @HostListener('mouseout')
   @HostListener('mouseleave')
-  @HostListener('touchend')
-  @HostListener('touchcancel')
   @HostListener('change')
   @HostListener('click')
   @HostListener('drag')
   @HostListener('invalid')
+  @HostListener('touchmove')
   hide() {
     tooltipShown = false;
-    if (this.timeoutId) {
-      window.clearTimeout(this.timeoutId);
+    if (this.gameStateService.tooltipTimeoutId) {
+      window.clearTimeout(this.gameStateService.tooltipTimeoutId);
     }
-
+    this.gameStateService.tooltipTimeoutId = 0;
     this.overlayRef.detach();
   }
 
