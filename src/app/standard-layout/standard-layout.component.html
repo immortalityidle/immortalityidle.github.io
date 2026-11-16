@@ -25,6 +25,10 @@
           (click)="commonButtonsService.optionsClicked()">
           settings
         </mat-icon>
+        <mat-icon tooltip="Layout Options" class="iconButton" aria-label="Layout Options" aria-hidden="false"
+          (click)="commonButtonsService.layoutOptionsClicked()">
+          mobile_layout
+        </mat-icon>
         <mat-icon tooltip="Achievements!" class="iconButton" aria-label="Achievements" aria-hidden="false"
           (click)="commonButtonsService.achievementsClicked()">
           military_tech
@@ -89,11 +93,6 @@
         </span>
       }
 
-
-      <span class="floatRight">
-        <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
-        <label for="lockPanels">Lock panels in place</label>
-      </span>
       @if(!gameStateService.allPanelsUsed){
         <span class="floatRight">
           <button (click)="gameStateService.addLayoutPanel()"

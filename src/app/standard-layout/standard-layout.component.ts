@@ -86,10 +86,6 @@ export class StandardLayoutComponent {
   protected compactType: 'vertical' | 'horizontal' | null = 'vertical';
   protected gridGap = 4;
 
-  protected lockPanelsToggle() {
-    this.gameStateService.lockPanels = !this.gameStateService.lockPanels;
-  }
-
   protected onLayoutUpdated(layout: KtdGridLayout) {
     this.gameStateService.layout.set(layout);
     // always save when the player moves the windows around

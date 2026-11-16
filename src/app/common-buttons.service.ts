@@ -13,6 +13,7 @@ import { GameStateService } from './game-state/game-state.service';
 import { CreditsModalComponent } from './credits-modal/credits-modal.component';
 import { MainLoopService } from './game-state/main-loop.service';
 import { AppService } from './app.service';
+import { LayoutOptionsModalComponent } from './layout-options-modal/layout-options-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -62,6 +63,15 @@ export class CommonButtonsService {
 
   optionsClicked(): void {
     this.dialog.open(OptionsModalComponent, {
+      width: this.appService.isMobile() ? '100vw' : undefined,
+      maxWidth: this.appService.isMobile() ? '100vw' : undefined,
+      maxHeight: '100vh',
+      autoFocus: false,
+    });
+  }
+
+  layoutOptionsClicked(): void {
+    this.dialog.open(LayoutOptionsModalComponent, {
       width: this.appService.isMobile() ? '100vw' : undefined,
       maxWidth: this.appService.isMobile() ? '100vw' : undefined,
       maxHeight: '100vh',

@@ -6,6 +6,12 @@
         Add Game Panel
     </div>
 }
+<div class="menu-item" (click)="commonButtonsService.layoutOptionsClicked()">
+    <mat-icon tooltip="Layout Options" class="iconButton" aria-label="Layout Options" aria-hidden="false">
+        mobile_layout
+    </mat-icon>
+    Layout Options
+</div>
 <div class="menu-item" (click)="commonButtonsService.tutorialClicked()">
     <mat-icon tooltip="Confused?<br>Click here for a tutorial." class="iconButton" aria-label="Tutorial" aria-hidden="false">
         help

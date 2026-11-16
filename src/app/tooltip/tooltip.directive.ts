@@ -55,6 +55,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
 
   @HostListener('mouseover', ['$event'])
   @HostListener('touchstart', ['$event'])
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   show(event) {
     if (tooltipShown || (event.buttons && event.buttons > 0)) {
@@ -97,6 +98,7 @@ export class TooltipDirective implements OnInit, OnDestroy {
   }
 
   @HostListener('mousemove', ['$event'])
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   maybeHide(event) {
     if (event.buttons && event.buttons > 0) {

@@ -64,6 +64,7 @@ interface GameState {
   easyModeEver: boolean;
   lockPanels: boolean;
   layout: KtdGridLayout;
+  savedLayouts: SavedLayoutEntry[];
   creditsClicked: boolean;
   supportClicked: boolean;
   divineGameState: string;
@@ -85,6 +86,11 @@ export interface Panel {
   unlocked: boolean;
 }
 
+export interface SavedLayoutEntry {
+  name: string;
+  layout: KtdGridLayout;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -99,6 +105,7 @@ export class GameStateService {
   lockPanels = false;
   dragging = false;
   layout = signal<KtdGridLayout | undefined>(undefined);
+  savedLayouts: SavedLayoutEntry[] = [];
   allPanelsUsed = false;
   creditsClicked = false;
   supportClicked = false;
@@ -621,6 +628,7 @@ export class GameStateService {
     if (gameState.layout) {
       this.layout.set(gameState.layout);
     }
+    this.savedLayouts = gameState.savedLayouts || [];
     this.lockPanels = gameState.lockPanels ?? true;
     this.creditsClicked = gameState.creditsClicked || false;
     this.supportClicked = gameState.supportClicked || false;
@@ -654,6 +662,7 @@ export class GameStateService {
       easyModeEver: gameState.easyModeEver ?? false,
       lockPanels: gameState.lockPanels ?? false,
       layout: gameState.layout ?? [],
+      savedLayouts: gameState.savedLayouts || [],
       creditsClicked: gameState.creditsClicked || false,
       supportClicked: gameState.supportClicked || false,
       divineGameState: gameState.divineGameState || '',
@@ -1441,6 +1450,7 @@ export class GameStateService {
       easyModeEver: this.easyModeEver,
       lockPanels: this.lockPanels,
       layout: this.layout() ?? [],
+      savedLayouts: this.savedLayouts,
       creditsClicked: this.creditsClicked,
       supportClicked: this.supportClicked,
       divineGameState: this.divineGameState,
@@ -1600,6 +1610,7 @@ export class GameStateService {
         newGameState.supportClicked = this.supportClicked;
 
         newGameState.layout = this.layout() ?? [];
+        newGameState.savedLayouts = this.savedLayouts;
 
         if (avatarType === AVATAR_BLOODTHIRSTY_BRAWLER) {
           newGameState.character.attributes.combatMastery.value = 1;
@@ -1887,5 +1898,31 @@ export class GameStateService {
       panelHelp: '',
       unlocked: false,
     };
+  }
+
+  saveLayout(layoutName: string) {
+    const layoutEntry = this.savedLayouts.find(entry => entry.name === layoutName);
+    if (layoutEntry) {
+      layoutEntry.layout = JSON.parse(JSON.stringify(this.layout()));
+    } else {
+      this.savedLayouts.push({
+        name: layoutName,
+        layout: JSON.parse(JSON.stringify(this.layout())),
+      });
+    }
+  }
+
+  removeLayout(layoutName: string) {
+    const index = this.savedLayouts.findIndex(entry => entry.name === layoutName);
+    if (index !== -1) {
+      this.savedLayouts.splice(index, 1);
+    }
+  }
+
+  loadLayout(layoutName: string) {
+    const layoutEntry = this.savedLayouts.find(entry => entry.name === layoutName);
+    if (layoutEntry) {
+      this.layout.set(layoutEntry.layout);
+    }
   }
 }

@@ -1,1 +1,38 @@
-<p>layout-options-modal works!</p>
+<div class='darkMode'>
+  <mat-icon mat-button mat-dialog-close class="iconButton floatRight">close</mat-icon>
+  <h3>Layout Options</h3>
+  <hr/>
+  <div>
+      <div>
+        <span>
+          <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
+          <label for="lockPanels">Lock panels in place</label>
+        </span>
+      </div>
+      <div>
+        <button class="saveButton" tooltip="Reset your current layout." (click)="gameStateService.resetPanels()">
+          Reset Current Layout
+        </button>
+      </div>
+      <div>
+        <button class="saveButton" tooltip="Save your current layout." (click)="saveLayout()">
+          Save Current Layout
+        </button>
+        <span class="spacedSpan">as</span>
+        <input min="0" value="{{inputSave}}" type="text" class="inputBox" (change)="inputSaveChange($event)"/>
+      </div>
+      <div>
+        @for (entry of gameStateService.savedLayouts; track entry.name){
+            <div class="optionsRow">
+            <span class="grower">{{entry.name}}</span>
+            <button class="saveButton" tooltip="Load layout." (click)="gameStateService.loadLayout(entry.name)">
+                Load
+            </button>
+            <button class="saveButton" tooltip="Remove this saved layout." (click)="gameStateService.removeLayout(entry.name)">
+                Remove
+            </button>
+            </div>
+        }
+      </div>
+  </div>
+</div>
