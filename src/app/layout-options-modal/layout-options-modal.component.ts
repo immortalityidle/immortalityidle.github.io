@@ -26,4 +26,14 @@ export class LayoutOptionsModalComponent {
   protected lockPanelsToggle() {
     this.gameStateService.lockPanels = !this.gameStateService.lockPanels;
   }
+
+  showPanelToggle(panelId: string) {
+    const panel = this.gameStateService.panels.find(entry => entry.id === panelId);
+    if (panel) {
+      panel.hidden = !panel.hidden;
+      if (panel.hidden) {
+        this.gameStateService.removeLayoutPanelbyId(panelId);
+      }
+    }
+  }
 }

@@ -2,7 +2,7 @@
   <mat-icon mat-button mat-dialog-close class="iconButton floatRight">close</mat-icon>
   <h3>Layout Options</h3>
   <hr/>
-  <div>
+  <div class="layoutOptionsContainer">
       <div>
         <span>
           <input type="checkbox" id="lockPanels" (change)="lockPanelsToggle()" [checked]="gameStateService.lockPanels"/>
@@ -24,15 +24,34 @@
       <div>
         @for (entry of gameStateService.savedLayouts; track entry.name){
             <div class="optionsRow">
-            <span class="grower">{{entry.name}}</span>
-            <button class="saveButton" tooltip="Load layout." (click)="gameStateService.loadLayout(entry.name)">
-                Load
-            </button>
-            <button class="saveButton" tooltip="Remove this saved layout." (click)="gameStateService.removeLayout(entry.name)">
-                Remove
-            </button>
+                <span class="grower">{{entry.name}}</span>
+                <button class="saveButton" tooltip="Load layout." (click)="gameStateService.loadLayout(entry.name)">
+                    Load
+                </button>
+                <button class="saveButton" tooltip="Remove this saved layout." (click)="gameStateService.removeLayout(entry.name)">
+                    Remove
+                </button>
             </div>
         }
+      </div>
+      <div>
+        <div>
+            <span>
+            Active Panels (unchecked panels will be hidden)
+            </span>
+        </div>
+        <div>
+            @for (entry of gameStateService.panels; track entry.id){
+                @if (entry.unlocked){
+                    <div class="optionsRow">
+                        <span>
+                            <input type="checkbox" id="panelList-{{entry.id}}" (change)="showPanelToggle(entry.id)" [checked]="!entry.hidden"/>
+                            <label for="lockPanels">{{entry.name}}</label>
+                        </span>
+                    </div>
+                }
+            }
+        </div>
       </div>
   </div>
 </div>

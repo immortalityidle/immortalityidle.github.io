@@ -70,6 +70,7 @@ interface GameState {
   divineGameState: string;
   avatarChallenge: string;
   completedAvatarChallenges: string[];
+  hiddenPanels: string[];
 }
 
 declare global {
@@ -84,6 +85,7 @@ export interface Panel {
   icon: string;
   panelHelp: string;
   unlocked: boolean;
+  hidden?: boolean;
 }
 
 export interface SavedLayoutEntry {
@@ -468,7 +470,7 @@ export class GameStateService {
     }
     if (backwards) {
       for (let i = startIndex - 1; i >= 0; i--) {
-        if (!this.panels[i].unlocked) {
+        if (!this.panels[i].unlocked || this.panels[i].hidden) {
           continue;
         }
         if (!layout.find(({ id }) => id === this.panels[i].id)) {
@@ -476,7 +478,7 @@ export class GameStateService {
         }
       }
       for (let i = this.panels.length - 1; i >= startIndex; i--) {
-        if (!this.panels[i].unlocked) {
+        if (!this.panels[i].unlocked || this.panels[i].hidden) {
           continue;
         }
         if (!layout.find(({ id }) => id === this.panels[i].id)) {
@@ -485,7 +487,7 @@ export class GameStateService {
       }
     } else {
       for (let i = startIndex + 1; i < this.panels.length; i++) {
-        if (!this.panels[i].unlocked) {
+        if (!this.panels[i].unlocked || this.panels[i].hidden) {
           continue;
         }
         if (!layout.find(({ id }) => id === this.panels[i].id)) {
@@ -493,7 +495,7 @@ export class GameStateService {
         }
       }
       for (let i = 0; i <= startIndex; i++) {
-        if (!this.panels[i].unlocked) {
+        if (!this.panels[i].unlocked || this.panels[i].hidden) {
           continue;
         }
         if (!layout.find(({ id }) => id === this.panels[i].id)) {
@@ -511,7 +513,7 @@ export class GameStateService {
       return;
     }
     for (let i = 0; i < this.panels.length; i++) {
-      if (!this.panels[i].unlocked) {
+      if (!this.panels[i].unlocked || this.panels[i].hidden) {
         continue;
       }
       if (!layout.find(({ id }) => id === this.panels[i].id)) {
@@ -574,7 +576,7 @@ export class GameStateService {
     // clear out layout entries for panels that don't exist or are not unlocked
     for (let i = layoutData.layout.length - 1; i >= 0; i--) {
       const panel = this.panels.find(({ id }) => id === layoutData.layout[i].id);
-      if (!panel || !panel.unlocked) {
+      if (!panel || !panel.unlocked || panel.hidden) {
         layoutData.layout.splice(i, 1);
       }
     }
@@ -632,6 +634,9 @@ export class GameStateService {
     this.lockPanels = gameState.lockPanels ?? true;
     this.creditsClicked = gameState.creditsClicked || false;
     this.supportClicked = gameState.supportClicked || false;
+    for (const panel of this.panels) {
+      panel.hidden = gameState.hiddenPanels.includes(panel.id);
+    }
     this.updateAllPanelsUsed();
     this.newPanelAvailable.set(false);
     this.divineGameState = gameState.divineGameState;
@@ -668,6 +673,7 @@ export class GameStateService {
       divineGameState: gameState.divineGameState || '',
       avatarChallenge: gameState.avatarChallenge || '',
       completedAvatarChallenges: gameState.completedAvatarChallenges || [],
+      hiddenPanels: gameState.hiddenPanels || [],
     };
     return returnValue;
   }
@@ -1428,6 +1434,12 @@ export class GameStateService {
   }
 
   getGameExport(): string {
+    const hiddenPanels = [];
+    for (const panel of this.panels) {
+      if (panel.hidden) {
+        hiddenPanels.push(panel.id);
+      }
+    }
     const gameState: GameState = {
       achievements: this.achievementService.getProperties(),
       impossibleTasks: this.impossibleTaskService.getProperties(),
@@ -1456,6 +1468,7 @@ export class GameStateService {
       divineGameState: this.divineGameState,
       avatarChallenge: this.avatarChallenge,
       completedAvatarChallenges: this.completedAvatarChallenges,
+      hiddenPanels: hiddenPanels,
     };
     let gameStateString = JSON.stringify(gameState);
     gameStateString = 'ii2' + btoa(encodeURIComponent(gameStateString));
