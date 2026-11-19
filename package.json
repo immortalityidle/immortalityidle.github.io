@@ -1,12 +1,11 @@
 {
   "name": "immortalityidle",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "prebuild": "npm --no-git-tag-version version patch",
     "build": "ng build",
-    "build-experimental": "ng build --output-path='build/experimental' --base-href='/experimental/'",
     "build-experimental2": "ng build --output-path='build/experimental2' --base-href='/experimental2/browser/'",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

@@ -2575,7 +2575,7 @@ export class BattleService {
           damage *= Math.log10(freedomConcept.progress + 10);
         }
       }
-      if (technique.concept === CONCEPT_EFFECT_EXPENSIVE) {
+      if (technique.concept === CONCEPT_EFFECT_EXPENSIVE && this.characterService.money >= 2) {
         const wealthConceptProgress = this.contemplationService.getConcept(CONCEPT_WEALTH)?.progress || 2;
         const moneyMultiplier = Math.log2(this.characterService.money) * Math.log2(wealthConceptProgress) * 100; // TODO: tune this
         this.characterService.updateMoney(0, true);

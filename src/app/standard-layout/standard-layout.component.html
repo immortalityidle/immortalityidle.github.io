@@ -57,6 +57,9 @@
       <span class="topText">
         <a href="https://discord.gg/Na7Qmwy3XK" target="_blank" rel="noopener noreferrer" tooltip="Have questions?<br>Try the Immortality Idle Discord.">Discord</a>
       </span>
+      <span class="topText">
+        <a href="https://immortalityidle.github.io/v1/" target="_blank" rel="noopener noreferrer" tooltip="Looking for the old version of the game? Click here!">Looking for the old version?</a>
+      </span>
       @if (characterService.immortal() && !hellService.inHell() && !hellService.hellUnlocked() && !characterService.god()) {
         <span class="topText">
           <button (click)="gameStateService.joinTheGodsClick()">Join the Gods</button>
