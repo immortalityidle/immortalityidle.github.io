@@ -73,7 +73,9 @@ export class TechniquePanelComponent {
 
     for (const techniqueConcept of this.contemplationService.techniqueConcepts) {
       this.conceptDescriptions[techniqueConcept] = 'Strengthened by contemplation of: ';
-      const relevantConcepts = this.contemplationService.concepts.filter(c => c.effect.includes(techniqueConcept));
+      const relevantConcepts = this.contemplationService.concepts.filter(
+        c => c.effect.includes(techniqueConcept) && c.progress > 0
+      );
       for (const concept of relevantConcepts) {
         this.conceptDescriptions[techniqueConcept] += '<br>' + concept.name;
       }

@@ -2010,8 +2010,8 @@ export class BattleService {
     if (this.characterService.attributes.justice.value > 0) {
       damage /= this.characterService.attributes.justice.value * 2 + 1;
     }
-    const defenseConcepts = this.contemplationService.concepts.filter(concept =>
-      concept.effect.includes(CONCEPT_EFFECT_DEFENCE)
+    const defenseConcepts = this.contemplationService.concepts.filter(
+      concept => concept.effect.includes(CONCEPT_EFFECT_DEFENCE) && concept.progress > 0
     );
     for (const concept of defenseConcepts) {
       damage /= Math.log10(10 + concept.progress);
@@ -2485,8 +2485,9 @@ export class BattleService {
 
       const armorReducingConcepts = this.contemplationService.concepts.filter(
         concept =>
-          concept.effect.includes(CONCEPT_EFFECT_ARMOR_REDUCTION) ||
-          (technique.concept && concept.effect.includes(technique.concept))
+          (concept.effect.includes(CONCEPT_EFFECT_ARMOR_REDUCTION) ||
+            (technique.concept && concept.effect.includes(technique.concept))) &&
+          concept.progress > 0
       );
       for (const concept of armorReducingConcepts) {
         defense /= Math.log10(10 + concept.progress);
@@ -2537,8 +2538,9 @@ export class BattleService {
 
       const damageConcepts = this.contemplationService.concepts.filter(
         concept =>
-          concept.effect.includes(CONCEPT_EFFECT_DAMAGE) ||
-          (technique.concept && concept.effect.includes(technique.concept))
+          (concept.effect.includes(CONCEPT_EFFECT_DAMAGE) ||
+            (technique.concept && concept.effect.includes(technique.concept))) &&
+          concept.progress > 0
       );
       for (const concept of damageConcepts) {
         damage *= Math.log10(10 + concept.progress);

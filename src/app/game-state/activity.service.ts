@@ -4530,8 +4530,8 @@ export class ActivityService {
         this.characterService.status.stamina.value -= 100000;
         let creationPower = 1;
         let creationQuantity = 0;
-        const creation_concepts = this.contemplationService.concepts.filter(concept =>
-          concept.effect.includes(CONCEPT_EFFECT_CREATION)
+        const creation_concepts = this.contemplationService.concepts.filter(
+          concept => concept.effect.includes(CONCEPT_EFFECT_CREATION) && concept.progress > 0
         );
         for (const concept of creation_concepts) {
           creationPower += Math.ceil(4 * Math.log2(2 + concept.progress));

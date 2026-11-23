@@ -1278,15 +1278,17 @@ export class CharacterService {
     if (this.bonusHealth) {
       this.healthBonusFactor = 5;
     }
-    const lifeConcepts = this.contemplationService.concepts.filter(concept => concept.effect.includes('life'));
+    const lifeConcepts = this.contemplationService.concepts.filter(
+      concept => concept.effect.includes('life') && concept.progress > 0
+    );
     for (const concept of lifeConcepts) {
       this.healthBonusFactor *= Math.log10(10 + concept.progress);
     }
     this.healthBonusFactor += this.fengshuiScore / 20;
 
     if (this.contemplationService.getConcept(CONCEPT_ABUNDANCE)?.discovered) {
-      const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
-        concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
+      const foodIncreasingConcepts = this.contemplationService.concepts.filter(
+        concept => concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD) && concept.progress > 0
       );
       let foodConceptMultiplier = 1;
       for (const concept of foodIncreasingConcepts) {

@@ -105,8 +105,8 @@ export class FarmService {
 
     mainLoopService.longTickSubject.subscribe(() => {
       this.conceptMultiplier = 1;
-      const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
-        concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
+      const foodIncreasingConcepts = this.contemplationService.concepts.filter(
+        concept => concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD) && concept.progress > 0
       );
       for (const concept of foodIncreasingConcepts) {
         this.conceptMultiplier += Math.log10(10 + concept.progress);
@@ -449,7 +449,6 @@ export class FarmService {
             this.intervalHarvests[field.cropName] = (this.intervalHarvests[field.cropName] || 0) + harvests;
           }
         } else if (field.daysToHarvest > 0) {
-          field.daysToHarvest--;
           field.yield += workValue * field.plots;
           if (field.yield > field.maxPlotYield * field.plots) {
             field.yield = field.maxPlotYield * field.plots;
@@ -466,6 +465,7 @@ export class FarmService {
         }
       }
     }
+    this.fieldWork = 0;
     if (totalYield > 0 && days === 1) {
       this.consecutiveHarvests++;
       if (this.consecutiveHarvests >= 30) {

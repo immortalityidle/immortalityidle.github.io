@@ -1298,8 +1298,8 @@ export class HomeService {
         this.bestHome = this.homeValue;
       }
       let conceptMultiplier = 1;
-      const concepts = this.contemplationService.concepts.filter(concept =>
-        concept.effect.includes(CONCEPT_EFFECT_HOME_RECOVERY)
+      const concepts = this.contemplationService.concepts.filter(
+        concept => concept.effect.includes(CONCEPT_EFFECT_HOME_RECOVERY) && concept.progress > 0
       );
       for (const concept of concepts) {
         conceptMultiplier *= Math.log10(10 + concept.progress);
@@ -2025,8 +2025,8 @@ export class HomeService {
       return;
     }
     let conceptMultiplier = 1;
-    const foodIncreasingConcepts = this.contemplationService.concepts.filter(concept =>
-      concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD)
+    const foodIncreasingConcepts = this.contemplationService.concepts.filter(
+      concept => concept.effect.includes(CONCEPT_EFFECT_FOOD_YIELD) && concept.progress > 0
     );
     for (const concept of foodIncreasingConcepts) {
       conceptMultiplier += Math.log10(10 + concept.progress);

@@ -71,9 +71,12 @@ export class TooltipDirective implements OnInit, OnDestroy {
             new ComponentPortal(TooltipComponent)
           );
           tooltipRef.instance.text = this.text;
-          while (this.gameStateService.overlayRefs.length !== 0) {
-            const ref = this.gameStateService.overlayRefs.pop();
-            ref.detach();
+          for (let i = this.gameStateService.overlayRefs.length - 1; i >= 0; i--) {
+            const ref = this.gameStateService.overlayRefs[i];
+            if (ref !== this.overlayRef) {
+              ref.detach();
+              this.gameStateService.overlayRefs.splice(i, 1);
+            }
           }
           this.gameStateService.overlayRefs.push(this.overlayRef);
         }
