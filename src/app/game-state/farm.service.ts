@@ -344,7 +344,7 @@ export class FarmService {
       cropId: cropItem.id,
       plots: 0,
       yield: 0,
-      maxPlotYield: Math.floor(200 / cropItem.value),
+      maxPlotYield: Math.ceil(200 / cropItem.value),
       daysToHarvest: 180 + cropItem.value,
       originalDaysToHarvest: 180 + cropItem.value,
       averageYield: 0,

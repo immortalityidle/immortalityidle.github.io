@@ -25,6 +25,7 @@ export class ManualStoreModalComponent {
 
   constructor(protected storeService: StoreService) {
     storeService.storeOpened = true;
+    this.storeService.selectedItem = null;
   }
 
   protected slotClicked(item: Item) {
