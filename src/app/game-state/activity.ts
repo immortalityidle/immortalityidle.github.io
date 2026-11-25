@@ -156,6 +156,7 @@ export interface Activity {
   projectionOnly?: boolean;
   impossibleTaskIndex?: number;
   hells?: number[];
+  downgradable?: boolean;
 }
 
 export interface ActivityLoopEntry {

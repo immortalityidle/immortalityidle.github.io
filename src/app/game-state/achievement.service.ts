@@ -2078,6 +2078,23 @@ export class AchievementService {
       unlocked: false,
     },
     {
+      name: 'Paragon',
+      description: 'You have mastered all the ascension techniques and become a paragon of cultivation power.',
+      hint: 'Ascend!',
+      check: () => {
+        return (
+          this.characterService.soulCoreRank() >= 9 &&
+          this.characterService.meridianRank() >= 9 &&
+          this.characterService.bloodlineRank >= 9 &&
+          this.characterService.qiCompressionLevel >= 9
+        );
+      },
+      effect: () => {
+        // no effect
+      },
+      unlocked: false,
+    },
+    {
       name: 'The Arena Is Open',
       description: 'You have discovered the arena where the gods duel.',
       hint: 'One of the great wonders of existence, accessible only from the Divine Realm.',

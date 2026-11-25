@@ -1168,7 +1168,13 @@ export class ActivityService {
 
   upgradeActivities(): void {
     for (const activity of this.activities) {
-      if (activity.level < activity.description.length - 1) {
+      if (activity.downgradable && !this.meetsRequirementsByLevel(activity, activity.level)) {
+        if (activity.level > 0) {
+          activity.level--;
+        } else {
+          activity.unlocked = false;
+        }
+      } else if (activity.level < activity.description.length - 1) {
         if (this.meetsRequirementsByLevel(activity, activity.level + 1)) {
           activity.level++;
           if (activity.unlocked && activity.discovered && (activity.notifiedLevel || -1) < activity.level) {
@@ -4074,6 +4080,7 @@ export class ActivityService {
     ],
     unlocked: false,
     skipApprenticeshipLevel: 0,
+    downgradable: true,
   };
 
   InfuseEquipment: Activity = {
